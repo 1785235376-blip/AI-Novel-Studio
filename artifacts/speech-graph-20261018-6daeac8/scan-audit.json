@@ -1,0 +1,457 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "e89d34583cfa00baa49c611f580d0de91af7d95e",
+      "path": "API_CATALOG.json",
+      "bytes": 1538531,
+      "sha256": "2e37dd30eb3394e7e1b5dc070cbf33f12f93de51d8d398bda923ea3aa50217f1"
+    },
+    {
+      "blob": "402917cd4e8342987b50a609411ccfcdc4d212de",
+      "path": "API_CATALOG.md",
+      "bytes": 411988,
+      "sha256": "7699106ad50c2ddaed62bb50b7ebc3c10f254e5bb9c6d0e558e451a77684e2d9"
+    },
+    {
+      "blob": "95707a4ad5f647101e6d4e97863949efaf82ae1f",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 635226,
+      "sha256": "3e7acbb64571ac27e8b4828484d43b3299d189bf16e4e554c0d381956f29f100"
+    },
+    {
+      "blob": "8d7e552c0c32ab668b02ea2945bfa8a48851a939",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 137064,
+      "sha256": "b62da1c17468053a9ea5bdb50525dbe052d8c43ebd6ac47b1a035fe144026f59"
+    },
+    {
+      "blob": "0ec3a666af004b39e11163bb3163437b2271796f",
+      "path": "app/creative/api.py",
+      "bytes": 30402,
+      "sha256": "10c41fdc8b9e9380e6146bbc2fd2c18c5d5d9c31cc7e67ec336530e6fcffc6da"
+    },
+    {
+      "blob": "83180b89486349142fee4b750685ebd037ae747e",
+      "path": "app/creative/production_execution.py",
+      "bytes": 122899,
+      "sha256": "e808643ccc91424b08a74c90a3afc680a484a309e63a73f212c6b182f099be2c"
+    },
+    {
+      "blob": "48608237ab2948c52844f13a40bb7851f75ba5da",
+      "path": "app/creative/production_execution_models.py",
+      "bytes": 22474,
+      "sha256": "11b4b1252c45d50fc6a0fab13650ffd6ed70529e90b8bc5e33034006749b73ce"
+    },
+    {
+      "blob": "82b0c7666e68225bf9b0e24a11f242e48122c6e7",
+      "path": "app/creative/storyboard.py",
+      "bytes": 54137,
+      "sha256": "6845f5ab62bce05860547de8eec3b49cd54218fa3fb97f4f69ac055722d1e62e"
+    },
+    {
+      "blob": "2496df585222e43e0d3debab1e69dc39e96bd15b",
+      "path": "app/services/studio_audio_execution.py",
+      "bytes": 85469,
+      "sha256": "c0e5c804b125bb2b4fff5f353f32e00c8f85e93a23068b0f543ec89a6d9668db"
+    },
+    {
+      "blob": "3b7f2568a6d427aab10da645813c72ef3e038123",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 38620,
+      "sha256": "b547fe041d6ef03c80d884ce284ae5c1ed0e771b3b9cbfe06de3727429e7d5b1"
+    },
+    {
+      "blob": "148d03d281b2719fc0ee326ed32e630bb0bf9613",
+      "path": "docs/delivery/v2-development/graph-failure-final.json",
+      "bytes": 673219,
+      "sha256": "9bb0b33d5bb1dd9cd7f7026cc5b7614c7a443e1e4e867c7d0908f8d8ee548d7a"
+    },
+    {
+      "blob": "0ce9f1f5cfa7402d7d4d6a43e3a839b6c76f3cbe",
+      "path": "docs/delivery/v2-development/graph-failure-final.log",
+      "bytes": 985,
+      "sha256": "c3638ccebc0f1fb15814d8a41e6b431ec6658fd9da56bd45b0430316ded02f7a"
+    },
+    {
+      "blob": "d57b999dfb770a7d5ea6501ace395819f6b53be2",
+      "path": "docs/delivery/v2-development/graph-failure-focused-final.json",
+      "bytes": 672812,
+      "sha256": "be842064ab38789f836f2482e10a57c87d36778a20e5476c0b9a4073fdf72b96"
+    },
+    {
+      "blob": "e6a8e5115e754feba549c8b2c7e29587a2cfb442",
+      "path": "docs/delivery/v2-development/graph-failure-focused-final.log",
+      "bytes": 6679,
+      "sha256": "795cebd71e0fcf4737d16b810b397ecc193e2e6430f57f75cc34c9217ad47c2e"
+    },
+    {
+      "blob": "08fc750d5fe94a411b60e624065e6294f7c7cb59",
+      "path": "docs/delivery/v2-development/graph-failure-focused.json",
+      "bytes": 672658,
+      "sha256": "4311fa6d71554f99971cca9da1ddfa00f356698ab6c794244f6de9454f15cf45"
+    },
+    {
+      "blob": "3e1a017554d3d91891af1ec0e6bc81ca0bb910a7",
+      "path": "docs/delivery/v2-development/graph-failure-focused.log",
+      "bytes": 10863,
+      "sha256": "da96c32c06ad090aea2eed0f866c368f1ed8bf9b6ce025bf8186241ae9028faa"
+    },
+    {
+      "blob": "9c361ce2021e85cc10db8805554791715dff9253",
+      "path": "docs/delivery/v2-development/graph-failure-regression.json",
+      "bytes": 673086,
+      "sha256": "e9c73cab194dee2d9c0e95330ffb4b50154d00e25afb295a7a6bc38e7b1a6f4b"
+    },
+    {
+      "blob": "c18b33b385eb947ef7c1bf1ee0fe44bda21d9e2e",
+      "path": "docs/delivery/v2-development/graph-failure-regression.log",
+      "bytes": 672,
+      "sha256": "07e7b521bc21ee6048d0eee392c5043f9857c10a19d95ef5046effae65aad643"
+    },
+    {
+      "blob": "bef0dff8116088e16131ecda0df003b8da6818d1",
+      "path": "docs/delivery/v2-development/graph-failure-tokens-final.json",
+      "bytes": 672745,
+      "sha256": "e825ac9b718a7d00628a28d012ce7c68ee420b9aa8b30ce2924a5efe2c7a10a4"
+    },
+    {
+      "blob": "edbc4223d88fd74822879bbb39435dcf158a42da",
+      "path": "docs/delivery/v2-development/graph-failure-types-final.json",
+      "bytes": 672797,
+      "sha256": "7aa62b8a0caa7a78c1e31070e450c9d2f4675a5786f6769690419622b719d416"
+    },
+    {
+      "blob": "ecdb68ca5315eddd5e94405eb4e88948d57fe08d",
+      "path": "docs/delivery/v2-development/graph-failure-types.json",
+      "bytes": 672616,
+      "sha256": "21db57f3e00ad98e81f075733bfac3bbfec69094d669dfc62e31be0d69d67be0"
+    },
+    {
+      "blob": "5b17708a7825b9cf6cccfb4c9322b687600b3f66",
+      "path": "docs/delivery/v2-development/speech-graph-integration-20261018.md",
+      "bytes": 4274,
+      "sha256": "52d0bc72c128c9ab6859229296901b1a64b46d725d3e8b8e24a248408d178271"
+    },
+    {
+      "blob": "4b7a73ef783086ddfa55331d7a5a76d6014e8980",
+      "path": "docs/delivery/v2-development/speech-graph-integration-frontend.json",
+      "bytes": 754130,
+      "sha256": "afe04b0e526a0705acd93b06b934de9d60dc88b9babcf94b5291f50ebb0bc08e"
+    },
+    {
+      "blob": "9e60fc985c0de0660be1b54a86eb9f0025d5a26e",
+      "path": "docs/delivery/v2-development/speech-graph-integration-frontend.log",
+      "bytes": 4913,
+      "sha256": "bb82d76438b91dc5f3a627e33364d580deda6b04d5141c9cb9d6fdc6ace1c405"
+    },
+    {
+      "blob": "6d8c7d5c995e3cc65036b5f316d783c9b217eae3",
+      "path": "docs/delivery/v2-development/storyboard-speech-authority-file.json",
+      "bytes": 745323,
+      "sha256": "f25449bc716833e19fc6cdf9f2cbc8cdbb02ba9f797095432a0977f54671ffc5"
+    },
+    {
+      "blob": "ba6e0ac3266956a769dddc7fe544f33a948224e7",
+      "path": "docs/delivery/v2-development/storyboard-speech-authority-file.log",
+      "bytes": 1065,
+      "sha256": "af18ffa5f8ff4c8d549648f51095bf64f6bc5fecdaeba2c329fea1da281003a4"
+    },
+    {
+      "blob": "96a7aa0cf623060e225a6825bbc856c22fe8ffed",
+      "path": "docs/delivery/v2-development/storyboard-speech-backend-final.json",
+      "bytes": 745449,
+      "sha256": "d4efba12abca4b26994665750b3b98ccb1883ea4227fbaf632301b0a9338ed0c"
+    },
+    {
+      "blob": "5c980ade2b00634c9ef445e1db92465d25d7dc8a",
+      "path": "docs/delivery/v2-development/storyboard-speech-backend-final.log",
+      "bytes": 133635,
+      "sha256": "44a6c642f12fb8c53d4cebe24476f06a3b3f4af3fcee1e36b2255920a2a8bb3f"
+    },
+    {
+      "blob": "dfdac8d0925605211b43b9c098a65b852e692965",
+      "path": "docs/delivery/v2-development/storyboard-speech-backend-reviewed.json",
+      "bytes": 745619,
+      "sha256": "cb83f1f3a27ba01a11336bd8e56cf1a975f07516ee2239affb78b47f79836975"
+    },
+    {
+      "blob": "bc4068a24d996340a4cfc31a8133e36d6937c8c4",
+      "path": "docs/delivery/v2-development/storyboard-speech-backend-reviewed.log",
+      "bytes": 1227,
+      "sha256": "2db671833c02a84e19368c63fe39453f9609db6fd8c3c59de811958641cf81ee"
+    },
+    {
+      "blob": "6f0ae5d192dfc2726e98487c253bb2e3ac835aa1",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-expanded.json",
+      "bytes": 746615,
+      "sha256": "64fba1206497aa11426f0863ce7bc08c7847ff399274a363c850da37b7cc3851"
+    },
+    {
+      "blob": "63e4576903f9c19cc1e9ce4c9f92654b6ca37f4d",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-expanded.log",
+      "bytes": 1873,
+      "sha256": "2f42ba9ca8c99b04cc55e6afded609a5a3d4b551a0011a4ac91763b2f75f2f4c"
+    },
+    {
+      "blob": "4c2cbde48ac11e5e44a13150f7b48704adb2a12f",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-tokens.json",
+      "bytes": 745923,
+      "sha256": "89c26b17a898124eca3688d8131b30e4d7f2ca4bd48c8c67beae7bda76be7374"
+    },
+    {
+      "blob": "0982b7d2f8449dd2ccd265d1f86a77c46471946e",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-typecheck.json",
+      "bytes": 746012,
+      "sha256": "5badcc522b08cf7ee9a06134179f981a0c102c2468120967ce5fd809b562f10b"
+    },
+    {
+      "blob": "0f25f153620bf0bc17d9c0016f5c5469857e5444",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-visual.json",
+      "bytes": 745357,
+      "sha256": "c69a4812b4d6cd84302d2200e2bf9766fac1519ea801794ff5db65b9898a40a2"
+    },
+    {
+      "blob": "4f3d2faffe22e3b75bfd248af66ac54e3ee1629b",
+      "path": "docs/delivery/v2-development/storyboard-speech-frontend-visual.log",
+      "bytes": 17262,
+      "sha256": "046f491ee3859a17b23f712674edf26c358c1578a1c894fad65d8c0c6799fd82"
+    },
+    {
+      "blob": "ace16742ec47775de8ba2bcacf52f2130b6cb3c0",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-file.json",
+      "bytes": 753113,
+      "sha256": "608ae375d2c079da9afc1725d89d7c892a50575b776e7d4c0928382f8e9bc93c"
+    },
+    {
+      "blob": "e5f1013483f62bcc58db08320c4798bca2aecc0a",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-file.log",
+      "bytes": 1045,
+      "sha256": "9ffe88895e05f34fba50a606b16ee02a1a7e69b89844bc1271d86b1b1afa1c9d"
+    },
+    {
+      "blob": "ac53f3758754fd657f4b639bdd43067857305929",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-postgres-cleanup.json",
+      "bytes": 307610,
+      "sha256": "15340a19e939a30b9b0273cd2b5e213e180a2ddd1def1bd6c7cd9c488461b47b"
+    },
+    {
+      "blob": "7ef218199e5a6f1bd510de385dbd37ef4a0e5afb",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "c5d36366eba610de769e69df920af67dbded1cefe874136180ca6d521ca1ba8b"
+    },
+    {
+      "blob": "3eb0f3ca894ee17b1a78371a4edef79c5a83dae6",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-postgres.json",
+      "bytes": 752280,
+      "sha256": "4525d480ee366de4bedf8142a7a29cbfb240ed3c7df004863e44d1bd453e37a3"
+    },
+    {
+      "blob": "26c0443fdf780045e958f6417844c2fc670d7986",
+      "path": "docs/delivery/v2-development/storyboard-speech-integration-postgres.log",
+      "bytes": 1098,
+      "sha256": "041914b2d0ee4f9b14b07344c011359ab26363a16c582d4dafea14950f21e048"
+    },
+    {
+      "blob": "a9807b7a9152cb050dc2eb963bd302b3007bdbb4",
+      "path": "docs/delivery/v2-development/storyboard-speech-legacy-baseline.json",
+      "bytes": 745583,
+      "sha256": "6bd08b1a0756d0a85eadbff492e0eb47207d130c1d26b187f3376247f45dfc88"
+    },
+    {
+      "blob": "7f07981ef72bd69ef87ab18350dcae0cd4b7634b",
+      "path": "docs/delivery/v2-development/storyboard-speech-legacy-baseline.log",
+      "bytes": 1070,
+      "sha256": "fb0a50df8785a670cbc4c2fa4e3387891d29ef34fcde19252904deb2af217445"
+    },
+    {
+      "blob": "e420d05cf040cb1811a1b6c90dcefcfcb2e68bc9",
+      "path": "docs/delivery/v2-development/storyboard-speech-public-build.json",
+      "bytes": 752476,
+      "sha256": "0515b32702cee95621bde06e4be4660cdda2199cb14f1700250295a453c92e86"
+    },
+    {
+      "blob": "443913954162d88c43b5d5c744a73b8dc686fff5",
+      "path": "docs/delivery/v2-development/storyboard-speech-public-build.log",
+      "bytes": 634,
+      "sha256": "49e848c7940b7a82a872168841732840a4f222d6fb3cba317b624602d6039e8d"
+    },
+    {
+      "blob": "695464e575fcabba30604869f19d0abbc785adbe",
+      "path": "docs/delivery/v2-development/storyboard-speech-slice.md",
+      "bytes": 3745,
+      "sha256": "be925a4c641e74288f3cbb38c026ec917f478443ac845de36362f80d1ebde869"
+    },
+    {
+      "blob": "574eabdb75c1af72049e502f1a89af398b3fb512",
+      "path": "docs/delivery/v2-development/storyboard-speech-wire-capture.json",
+      "bytes": 745595,
+      "sha256": "2885dc02a0915b5f313c96d4567b84296f5c178f1d640595ebc746aee9fdba2b"
+    },
+    {
+      "blob": "26d897126588561b04535f0f89511b3b920df5a9",
+      "path": "docs/delivery/v2-development/storyboard-speech-wire-capture.log",
+      "bytes": 1071,
+      "sha256": "e3340972ea6e9c49fc5fe7954df1b5bc2344db78029acf2c790fbd32fbc75c51"
+    },
+    {
+      "blob": "4e4587fe455ab4f77f40ea426b17ff9fb2dbaf9e",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_storyboard_speech_postgres.py",
+      "bytes": 1767,
+      "sha256": "8821e8d3aa0dfb04b3dcd1e00117e28887aa2ebd75fd9aa45e855d70b67d890b"
+    },
+    {
+      "blob": "97b8909a60ee1622170f61d6aef68a47a167ff32",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 781874,
+      "sha256": "6eb2696e1a19c569881b64bc95afc1e5a3e7991379e5068db759c8a229a06394"
+    },
+    {
+      "blob": "57f5cea0386cede82db16e9ab10fe4766495baab",
+      "path": "frontend/src/creative/GraphFailureNavigation.additive.test.tsx",
+      "bytes": 6481,
+      "sha256": "33c9130250903b7ffc6a23a3e026b58a4c065ae99348a79791992dee553cb148"
+    },
+    {
+      "blob": "18195f681cf23fa68bd4e154e5ab7c0f29d81945",
+      "path": "frontend/src/creative/GraphRunPanel.test.tsx",
+      "bytes": 22513,
+      "sha256": "4085299942f715def22b1154980901e52c8ddd4731f1a6e77e96f3477e799627"
+    },
+    {
+      "blob": "f87b5a9cb51f5a1581b375c2faebcf6362c79215",
+      "path": "frontend/src/creative/StoryboardProductionPanel.tsx",
+      "bytes": 18486,
+      "sha256": "2741c851ccda6c404b1916dc043811e8d770498c45107166cb34715f47a1d064"
+    },
+    {
+      "blob": "e5a73d3bd1d6db94748b95e88d18291b1644ac8a",
+      "path": "frontend/src/creative/StoryboardSpeechControls.additive.test.tsx",
+      "bytes": 12066,
+      "sha256": "cfce568e020adec88b4cbaa3e28097afcccc3bfa5e6d5d4b7939569a76a88e9f"
+    },
+    {
+      "blob": "33fcd54cb079c98ca308da87128c6e6693588c39",
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "bytes": 37600,
+      "sha256": "7043cf4a8e9b9c1be2767593745afe1c4c64da76c01bf8c430a5065981c8152a"
+    },
+    {
+      "blob": "bc6d845ab5b4144976ec52859e4140de1f5b5408",
+      "path": "frontend/src/creative/fixtures/storyboard-speech.file-api-v1.json",
+      "bytes": 11354,
+      "sha256": "3a1f8d1568b9e26d7beff54f48b17857996e02137a91c27a62308ce7d121ca77"
+    },
+    {
+      "blob": "d74580125812e706d00b63cfbba693890a503f13",
+      "path": "frontend/src/creative/fixtures/storyboard-speech.file-api.json",
+      "bytes": 11354,
+      "sha256": "884954c2eede9c353529fc19b17f506e4157a21d65b3a845b28334a4f7cc506a"
+    },
+    {
+      "blob": "d209cd9780cd559ae04d8c58d3132c8050f9af2f",
+      "path": "frontend/src/creative/graphFailureGuidance.test.ts",
+      "bytes": 1166,
+      "sha256": "548124a5cfaa15b7e4e9a93b0800741d7602c77e3df9a8beff464bcf5c67bf2f"
+    },
+    {
+      "blob": "0f63d91f03edba0dc77e8673bd95d0fba1e1d635",
+      "path": "frontend/src/creative/graphFailureGuidance.ts",
+      "bytes": 1419,
+      "sha256": "1e48ea4a9a64819899fc8c179736517c27f17ea34617a07a016d81f08de5b943"
+    },
+    {
+      "blob": "d67091a1292c4d7176f1b31eef3a6405369450fe",
+      "path": "frontend/src/creative/storyboardSpeech.testFixtures.ts",
+      "bytes": 4047,
+      "sha256": "0448c4e562f16f150088d68626650199d7824570222df8d8e3c1fa3dec31d3a1"
+    },
+    {
+      "blob": "298ef0a2daf0f392a00e81ad5b2b6fa32fc4c204",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 57717,
+      "sha256": "0615c5a607af252bd345a3baaa2651c2e2eb768afc26f536a7fe56167b29172b"
+    },
+    {
+      "blob": "d1e74a726fee459932f16679e1bb6c7f7cb2fbe2",
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "bytes": 8211,
+      "sha256": "a896506438dffe2126dcd1cc0b2274808fb00e8060558b9c7eaf8a2f441e2f65"
+    },
+    {
+      "blob": "456a0fb685ecaa72f75c26989c78a6b339b48779",
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "bytes": 64581,
+      "sha256": "bbf97ec9625c8484cbd1c70745ec0fdf829721da96890c25a8b81b5b1709cc15"
+    },
+    {
+      "blob": "dc9fac513b895a0a966dafb760c9eaf08273f67c",
+      "path": "frontend/src/creative/studioStoryboardClient.ts",
+      "bytes": 13813,
+      "sha256": "0cc45e41c6e1a90caa1cd5f4d42971cf77875d946f5c06c64b8f7623b4d72975"
+    },
+    {
+      "blob": "151c25a883b185c394ae7eebd414c5a024e64bdc",
+      "path": "frontend/src/creative/studioStoryboardSpeech.additive.test.ts",
+      "bytes": 8972,
+      "sha256": "5fafca700d93f54d91b3d989ef7527e0d8e06dc3b7b1824de4aec5a6ef554264"
+    },
+    {
+      "blob": "f2e73c7261c22f2223811de0602b51261102cb10",
+      "path": "frontend/src/creative/studioStoryboardSpeechContract.ts",
+      "bytes": 6273,
+      "sha256": "4eef52c01d52c1d775657c42c385fa779c132441c481e1b305a0b74452c45040"
+    },
+    {
+      "blob": "d64fb51c8146ec4960081cc16a4254ddbaad599c",
+      "path": "frontend/src/creative/useStoryboardProductionController.ts",
+      "bytes": 36099,
+      "sha256": "87f93530d54ac52fc687086c7507baa225131259dc19a44979682ba62ced511b"
+    },
+    {
+      "blob": "ae50f7770ad2da3a4c1f91b044f907a7ec57799b",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 87478,
+      "sha256": "1267bcfaf12ad7e2287af2bf0381a4dbac93ef635562654a53adbd5786e04a21"
+    },
+    {
+      "blob": "ba72a09b0cd20094ab7dc7a3155c291dfb175269",
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "bytes": 28263,
+      "sha256": "f5c755e1720f700bf4ef017ff1dde49fe2c7c4daa5ec2e6c64e348ae46cf7c53"
+    },
+    {
+      "blob": "3af1e617f8a500d5e707ba3922b0e4764f1d4af1",
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "bytes": 71932,
+      "sha256": "633eca4b4ff119fa19e3ab5d9c9ca538b3b31bab72f8298bd0bc5d84c33463f7"
+    },
+    {
+      "blob": "972d0c233e884e1f777971ee708607714cc02736",
+      "path": "tests/fixtures/storyboard_speech_legacy_ce3ac098.json",
+      "bytes": 2184,
+      "sha256": "28f9d02b4e6cef378ef867b73d3853402c91e2283e1a469e0e7b8ec26e2745de"
+    },
+    {
+      "blob": "40bd5f3bcfd7c84272f58a3ec6863d4a4e895788",
+      "path": "tests/test_v2_storyboard_speech.py",
+      "bytes": 13563,
+      "sha256": "96ad39704bab1a257929fe115c878570c9f079c7ef804e87e730beadd49c444d"
+    },
+    {
+      "blob": "0ea5c77868610e2bcc7074482173b37ccb8a6a3f",
+      "path": "tests/test_v2_storyboard_speech_api.py",
+      "bytes": 7355,
+      "sha256": "9e1b2f6415346a5578f890b3ef9e381d97ba9949e5baa52480ab429d3eea514b"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
