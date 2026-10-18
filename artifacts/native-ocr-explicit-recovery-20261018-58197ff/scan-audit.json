@@ -1,0 +1,175 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "5fdeeabef8d19fb70b00444e5cc5a7b4a1cff38b",
+      "path": "API_CATALOG.json",
+      "bytes": 1451396,
+      "sha256": "3f4e32c13e6d2c231a3cda6d5183c4678428d9da8cd2e8a9b412bde18a7725e1"
+    },
+    {
+      "blob": "2fb98232137d9f3c80151e0ca23c0359a95a5dba",
+      "path": "API_CATALOG.md",
+      "bytes": 387921,
+      "sha256": "ed2bd8eb6d38801abe14d0d212638ca055ef7c002ec7f25d3ad9fdd73092292b"
+    },
+    {
+      "blob": "4b59d05d55a8e65db2eea88bcedad404bc46e18a",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 594120,
+      "sha256": "d9f83a5ca9175f611d7cd80bced72177156c50604d206f7bbe9e9a873d20d762"
+    },
+    {
+      "blob": "85e8841390b43e9d50c07a467e3d828f85e8d2ae",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 128760,
+      "sha256": "3d079916ebee8a1944feaaef134443b4eb07fba052fa9c1061d2ea3d63a9b509"
+    },
+    {
+      "blob": "1a983686f6e99b205aa662e4c24b76c21bc3b521",
+      "path": "app/experimental/api.py",
+      "bytes": 41186,
+      "sha256": "8318c3e407680ff3560fc892ec5ad50c8f1368026d982f7b21d94d36905fd6aa"
+    },
+    {
+      "blob": "a5237e7248e39073e933c374ad56ca95594bc94e",
+      "path": "app/experimental/model_broker.py",
+      "bytes": 57065,
+      "sha256": "492a7a2c2f30e628c61dbd9fe3d08a10bc133f13bfe74054c874dd724a6a0b28"
+    },
+    {
+      "blob": "1266b137c01ff04cc21749c2208ded2d854fdace",
+      "path": "app/experimental/research_library_api.py",
+      "bytes": 19400,
+      "sha256": "8ebe0936b8a0a971636c77cb6092f2920578616d8645219d249c05b312feaf8e"
+    },
+    {
+      "blob": "e3863b67c8ca42fefa51a3f04328f06ec78a9b58",
+      "path": "app/experimental/research_native_ocr.py",
+      "bytes": 28699,
+      "sha256": "b5442e18c4ff324bd276ccce32e9399725de974428af5a3d05d5639e60769697"
+    },
+    {
+      "blob": "dde3226a57b265f24b9fd7d4874d93d30eb709e5",
+      "path": "docs/RESEARCH_OCR_EXPLICIT_RECOVERY.md",
+      "bytes": 2856,
+      "sha256": "93d771dfa2c576ab73806e4948135f68e987de7eb9df832c8426eaa0e7471aaa"
+    },
+    {
+      "blob": "8026779305a951f9fe3f32cdad5cefe98d74c3f8",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-build-r1.json",
+      "bytes": 679465,
+      "sha256": "d37ceefa6375c15b59022489c24e2915f6e66eb1ff10d4665591d4e6b198dca7"
+    },
+    {
+      "blob": "9459e2b04dd71d40f9f8944dca629ffe8d84d874",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-build-r1.log",
+      "bytes": 2984,
+      "sha256": "38e18514c1b199376c9d59830098006688eace0fc54ae34f27a4828311d48547"
+    },
+    {
+      "blob": "d5cdc90eebd5108c11b775b76c412aadeddc8bc4",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r1.json",
+      "bytes": 679065,
+      "sha256": "4b9877524779c07dd99a014469196835090c026d6c95fd9cb63611dc82ea8bd9"
+    },
+    {
+      "blob": "1f7389c0652f217a64d6982efa812b55fd2f47dd",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r1.log",
+      "bytes": 1075,
+      "sha256": "810f72759342c91e031fea7fc1eec27bc4a0d4f6af34e75c0f3752fac7d2cd61"
+    },
+    {
+      "blob": "4e574f6f82b9715370131fe8b1a55f575d3f5056",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r2.json",
+      "bytes": 679184,
+      "sha256": "2d559cb6453bd25967b5cf1ee5e253f122d63cf3bb20aeb3fe7ae8a78e2f0d63"
+    },
+    {
+      "blob": "5a657b408c960dc3a20a5e5dbce546b608344293",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r2.log",
+      "bytes": 1078,
+      "sha256": "5a7c599a49cdf7b679fc12f2589352eda0a262bc392931bdf758fb0c642f2556"
+    },
+    {
+      "blob": "2f11640c79feb9c8b0a27ecde3de2ab38ed9ab68",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r3.json",
+      "bytes": 678996,
+      "sha256": "66edebf0d301c589ce9d6a61a98dac31a577ed7cb9ef16122e34c7a492a740b7"
+    },
+    {
+      "blob": "ff5087ed880b79c0589e69e40ed1ba11ffc0aaed",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-file-r3.log",
+      "bytes": 1075,
+      "sha256": "b1cc6c4b6e11e079381a9ff0deaf4e21539035735e8baa5cf966818f0d0c4730"
+    },
+    {
+      "blob": "89a24699c774208cc22b7a5480b3d0422ec7507e",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r1-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "046e8ddc0b5befcbb7dfb52cb1fb598f506c7e742eceffcf5e3b6ab2d47753d4"
+    },
+    {
+      "blob": "d4670d6c3712436bef401d32643c354d676cb485",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r1.json",
+      "bytes": 679241,
+      "sha256": "6d37f9eabfce928d15480abf1311f69871ab2de01111e52e7b133aa66ebefda6"
+    },
+    {
+      "blob": "e612a02401d1506b374b0c1d3e38e8f3227c6ed7",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r1.log",
+      "bytes": 1082,
+      "sha256": "760773f6fbb1ee222a771559fef29923a82975ad5d695712433e8919e3ebe81a"
+    },
+    {
+      "blob": "9a12d515ba970bd14569078e4266087a16d6a02d",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r2-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "d6449c7aced89adbfaf03a8357de0f8177ec0402521af0f97ed523bf1679c865"
+    },
+    {
+      "blob": "549225faedd4487ebac0796ce7e37cd5cb8e0a6e",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r2.json",
+      "bytes": 679122,
+      "sha256": "d9689e832ea5cf15e6890be9990658231d13fb9cd201177f16886d1e48fe046d"
+    },
+    {
+      "blob": "73d8c45888baafacbad2eac4b9cc95066f0444d3",
+      "path": "docs/delivery/v2-development/native-ocr-explicit-recovery-pg-r2.log",
+      "bytes": 1080,
+      "sha256": "9be0204a8868ec13ea190bf4b737393f5e35449c7eba23aec9e5375531cbe991"
+    },
+    {
+      "blob": "c8a36e2f55b85aa4aba2d72d997df8e7ce5dea8b",
+      "path": "frontend/src/experimental/ResearchNativeOCRPanel.test.tsx",
+      "bytes": 10875,
+      "sha256": "6a76934e2ef465699845ec591bcd1aa3af872ceb0a3685f38d009484fee05116"
+    },
+    {
+      "blob": "6c6ef83b2c88f8b5bd1c5e832e70a65bc87f600a",
+      "path": "frontend/src/experimental/ResearchNativeOCRPanel.tsx",
+      "bytes": 9063,
+      "sha256": "a1aff4ee394cedd8ee3776f581b59d1025d243c2d6d08bbac58f7faf97fb621b"
+    },
+    {
+      "blob": "7a242cc75fbb139fd0a845723fa68da764e3dc49",
+      "path": "frontend/src/experimental/researchNativeOCRClient.ts",
+      "bytes": 3623,
+      "sha256": "be579701dc522e91d1a2ab9aeacf64b4480c23d239cfc686ed56bfba07e20fcb"
+    },
+    {
+      "blob": "8dde8854015e1012e5fccc262fdfbb6c49fa187b",
+      "path": "tests/test_research_native_ocr_recovery_additive.py",
+      "bytes": 9771,
+      "sha256": "9f4f636a472d0ee23a61f36c3191f59a92990b90f921c46d536def42195fb393"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
