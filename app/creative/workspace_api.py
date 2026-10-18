@@ -34,6 +34,13 @@ def is_independent_studio_route(method, normalized_path):
     }
     if method in production_patterns and re.fullmatch(production_patterns[method], normalized_path) is not None:
         return True
+    canvas_patterns = {
+        "GET": root + r"/canvas-views(?:/[^/]+)?",
+        "POST": root + r"/canvas-views",
+        "PUT": root + r"/canvas-views/[^/]+",
+    }
+    if method in canvas_patterns and re.fullmatch(canvas_patterns[method], normalized_path) is not None:
+        return True
     # Closed graph routes retain the same feature and project authority checks.
     # Unknown actions/methods never gain collaboration middleware admission.
     graph_patterns = {

@@ -250,4 +250,6 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     for action in ("execute", "approve", "reject", "cancel", "pause", "resume"):
         router.add_api_route("/projects/{nid}/studio/graph-runs/{rid}/" + action,
                              action_handler(action), methods=["POST"])
+    from .canvas_view_api import create_canvas_view_router
+    router.include_router(create_canvas_view_router(service, graph_invoke))
     return router
