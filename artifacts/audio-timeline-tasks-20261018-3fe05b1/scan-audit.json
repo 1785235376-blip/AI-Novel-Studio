@@ -1,0 +1,547 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "2accb6a401801fa785507eaddf24e2bb2129abd8",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "d091ff6e18dbeea6d3711fa94c5502e196c6cc03069a364acb7083ef1abaea28"
+    },
+    {
+      "blob": "cccfc4d36cf06fec9051828c9685f777eeaed901",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597855,
+      "sha256": "0178011bf3c4cda69ac8e06067e5ac315f3d99ff8f3a2da9d2af7a35145ade3c"
+    },
+    {
+      "blob": "5101b5df15aebb9d60620a90a0dae9f890e6fdbd",
+      "path": "app/creative/graph_timeline_execution.py",
+      "bytes": 16011,
+      "sha256": "902bee9fb0e9632d9131af8c196fb2eb5368c55fafd5cc26e7ec1200e084ac4f"
+    },
+    {
+      "blob": "ed6e06195f516458bb920e0d845351b711ca75bb",
+      "path": "app/creative/production_execution.py",
+      "bytes": 118345,
+      "sha256": "4f452f40d2685b3fe83892f6cc2c6698d2892919d9a8ca59a03cc9f39ec6add1"
+    },
+    {
+      "blob": "9c5233c6c679958d32e67a810134355c0abadf68",
+      "path": "app/creative/timeline_playback.py",
+      "bytes": 8485,
+      "sha256": "270048f6fe884acabde481e53ec7ca70522347e81aaff728145adae45addb68a"
+    },
+    {
+      "blob": "4139bc16468f5d1837d07b18695c2b2dceb5fe7d",
+      "path": "app/creative/timeline_transfer.py",
+      "bytes": 8517,
+      "sha256": "185feeb4797bd6c8ea749202946992fd702610807f091e88fffd44beafe5c95c"
+    },
+    {
+      "blob": "aac5aa6a0b54b5fc3dfbecce3cf18a53334ac196",
+      "path": "app/services/studio_timeline_edit.py",
+      "bytes": 15420,
+      "sha256": "7f7fcfccacc0a8a029000fb3e59b3f661f0c7506567a214236206207d3f0a812"
+    },
+    {
+      "blob": "ec50750e54baa0def9f25f461ce8883198e722a0",
+      "path": "app/services/studio_timeline_export.py",
+      "bytes": 17883,
+      "sha256": "a3cd31f1982aaa7a251e8454a209e0f82e62b4a49923245d557b5bb979b0b1e3"
+    },
+    {
+      "blob": "97d62ccb6fa1dd0df136009284f4e1ba7b93f133",
+      "path": "app/services/studio_timeline_render.py",
+      "bytes": 28992,
+      "sha256": "86cace218ad5d12cd48ecfbb8853188058098a6d30040a3b19f4df8a24bfd40a"
+    },
+    {
+      "blob": "3a5cbc107019e5431a170dd029ea063ee83824e1",
+      "path": "app/services/studio_timeline_schema.py",
+      "bytes": 12769,
+      "sha256": "f8a73bc2c843553276559e5922463df75c5f86fcf93e7691d063b7ec532536fa"
+    },
+    {
+      "blob": "9a27a894b84e3e5631947522a0bb7bfa79a14aef",
+      "path": "app/services/video_assembly_service.py",
+      "bytes": 46178,
+      "sha256": "be7e3c87df82fd5afb6dfe008152642170c82e42b40878325dcd006e41f754d7"
+    },
+    {
+      "blob": "0fbacdc187a63b89a8f567af466d8786103ec7bd",
+      "path": "docs/STUDIO_PRODUCTION_TASK_REOPENING.md",
+      "bytes": 1758,
+      "sha256": "29df732dd0beeee03432716e16f8548550cd4d0d63162d4202b60a157fd0fb5f"
+    },
+    {
+      "blob": "02267063dd372d38b8945cc12eb62fc8cc233305",
+      "path": "docs/delivery/v2-development/audio-only-api-debug-20261018.json",
+      "bytes": 703845,
+      "sha256": "9672cd50845ac97a4f6605bc3a638de30699b2bd48c2c667a35ac92cfb897d02"
+    },
+    {
+      "blob": "170ce9de64deb89771bba2dcbdee4955a5cce689",
+      "path": "docs/delivery/v2-development/audio-only-api-debug-20261018.log",
+      "bytes": 3322,
+      "sha256": "9b2a11431b230e2b5b803dd67e1420a442249eb81375392155ec2c7b3cfffb4b"
+    },
+    {
+      "blob": "4fe18206a18fbb530eca0dc07eea59e4ed254ebc",
+      "path": "docs/delivery/v2-development/audio-only-file-debug-20261018.json",
+      "bytes": 703490,
+      "sha256": "67622044b54c47d9eed7bcb18e2f32564e2cdda3e23607f625219e70a6265069"
+    },
+    {
+      "blob": "d2c04185dd439a02ecd1a1d721c495d1e1715043",
+      "path": "docs/delivery/v2-development/audio-only-file-debug-20261018.log",
+      "bytes": 8722,
+      "sha256": "cdbf5b255eaf97c5a3b4102b49e76d2caf7ccc636debf08867bc6d75d4544726"
+    },
+    {
+      "blob": "8abb0d31d7bead96260d362d21b65ded89782b7a",
+      "path": "docs/delivery/v2-development/audio-only-file-debug2-20261018.json",
+      "bytes": 703592,
+      "sha256": "a422be777f069862008ea4a7bfe918f9900ff1ecaf23b3c0b29de3009ba1329e"
+    },
+    {
+      "blob": "eeadd7b88fbc3bc69ea7eea3667eaf541c4ed190",
+      "path": "docs/delivery/v2-development/audio-only-file-debug2-20261018.log",
+      "bytes": 1055,
+      "sha256": "bc6b5c180d2ff871d043627db68ecf66e073fdcddd7d0935a2cbc76520423e80"
+    },
+    {
+      "blob": "37dcd80e03c32e7d2c34564ac7e00adee1941f42",
+      "path": "docs/delivery/v2-development/audio-only-file-final-20261018.json",
+      "bytes": 705300,
+      "sha256": "7d5d893abc9da1b383a905360218359b94595c9a8952f911a514c646d3dda444"
+    },
+    {
+      "blob": "683b7c82bd94f35f57ec6c443ddfb37aeeb55d66",
+      "path": "docs/delivery/v2-development/audio-only-file-final-20261018.log",
+      "bytes": 1546,
+      "sha256": "5ef6dfb17f12d829a1129cd956d39ee9dacaea996cfdf921db01794f1114c20e"
+    },
+    {
+      "blob": "914a9441786446efd731529f3e328487a4f73462",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug3-20261018.json",
+      "bytes": 704202,
+      "sha256": "8d25f5b12df4746924f116b533e2596363874ca6f79f5c8537920fb424bbeb66"
+    },
+    {
+      "blob": "4a022797da762bc2ccefb8cb708b11a35ec12922",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug3-20261018.log",
+      "bytes": 3664,
+      "sha256": "d9e0c5900d04bce900b8d9ecfce87796f312714927d7dbf7c1a48adf10f16273"
+    },
+    {
+      "blob": "7a7815f8ff368b430ff2d683dae8a81a2d479dc7",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug4-20261018.json",
+      "bytes": 704470,
+      "sha256": "f01a74811b356113a0c9f5e7fc6de17f5a2d27c5fc76b10162828f17fb359f42"
+    },
+    {
+      "blob": "c8065573e3e44154778a70842d078fe261c91fef",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug4-20261018.log",
+      "bytes": 5218,
+      "sha256": "c3390d0c23da768f0bc2faa5e79f1c5da0ce21beb1d0232b48e0edc15f9cacfa"
+    },
+    {
+      "blob": "1145e1b8a22e49fad6c0a69d7b4eee38bb0016a2",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug5-20261018.json",
+      "bytes": 704888,
+      "sha256": "0163e243111afb2113983505164dced042bf8255033cecdd2d11b8e4dbc010ba"
+    },
+    {
+      "blob": "b46c6d401d19bf1ef103f0d64ee9b62b3b904eda",
+      "path": "docs/delivery/v2-development/audio-only-focused-debug5-20261018.log",
+      "bytes": 1055,
+      "sha256": "764c5135de052061045a8f0867d9681ab1c795099d6124a6a483cd278cb9b294"
+    },
+    {
+      "blob": "acafc1b7b373fde1fb9bfa093eec8e001aaba603",
+      "path": "docs/delivery/v2-development/audio-only-frontend-focused-20261018.log",
+      "bytes": 888,
+      "sha256": "045af702232ef2b4b1bd221721aad07d9939db8e893b83ed9d79b2ddedbe8739"
+    },
+    {
+      "blob": "75cfc0cd3e949ad34510d8ffe6b6ab655e8ee5b4",
+      "path": "docs/delivery/v2-development/audio-only-frontend-regression-20261018.log",
+      "bytes": 4342,
+      "sha256": "a50732c200ddf300e6ae71617dea5370d7708c3287a04873f0308e30df7d103c"
+    },
+    {
+      "blob": "fa170011c8e48bad761e8839e90132dd658f631c",
+      "path": "docs/delivery/v2-development/audio-only-legacy-byte-debug-20261018.json",
+      "bytes": 704736,
+      "sha256": "db34eb8c995d6e82817e030ada48651ff90bc9ae20c3c26db4b70eb23fdaa3b6"
+    },
+    {
+      "blob": "3737ff41034a8c77be6d580132bdf0c76830e240",
+      "path": "docs/delivery/v2-development/audio-only-legacy-byte-debug-20261018.log",
+      "bytes": 786,
+      "sha256": "85633e4b2606f34dd8e25b40cc3c8601d2496beab093e2d9fdc33b685e27459a"
+    },
+    {
+      "blob": "c5bf49873c68401638fbc5a91864414b807c7f14",
+      "path": "docs/delivery/v2-development/audio-only-legacy-byte-final-20261018.json",
+      "bytes": 704747,
+      "sha256": "0bfa6f882a542f36fb36768348f4be51f9325b15a723b75a6b13defef17e43ad"
+    },
+    {
+      "blob": "02c210aa1a6eca1c18093a81e9df2d6f3c6c72f9",
+      "path": "docs/delivery/v2-development/audio-only-legacy-byte-probe-20261018.py",
+      "bytes": 2583,
+      "sha256": "99c5c0cb3d2079e0100a4abf923723fb69fdacd732eab519011960a13fc7a97a"
+    },
+    {
+      "blob": "2dabdb5aa96e0f027fbc72d35f6dda07bda84a4e",
+      "path": "docs/delivery/v2-development/audio-only-pg-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "74749f4e225ac218c9e86445e1fd5a438057a8af5e13b639c51f808e489d123b"
+    },
+    {
+      "blob": "7a2765d99eed60baa04df34e089d07c0d6824949",
+      "path": "docs/delivery/v2-development/audio-only-pg-final-20261018.json",
+      "bytes": 704931,
+      "sha256": "72cea06d8d51ce633f5f6b65df0afa36b9bf0b778fb3c8af94b84e1e6c52cf12"
+    },
+    {
+      "blob": "31c203b3be5ff509a3c3254c319a79e9d0c089c8",
+      "path": "docs/delivery/v2-development/audio-only-pg-final-20261018.log",
+      "bytes": 1059,
+      "sha256": "590756f2cb1c0e38d36f711e616225795859bacb3a41694b5764357d0d8aedf3"
+    },
+    {
+      "blob": "d8fa2df8a84041179308ddbdd061d0df05d89a57",
+      "path": "docs/delivery/v2-development/audio-only-timeline-mixdown-20261018.md",
+      "bytes": 8839,
+      "sha256": "0e4cf99de934900fc163d3853cbc3053b1cabf5ae32e77c71cfa25b303cac81d"
+    },
+    {
+      "blob": "160406725cd7eea2db03f39227369297243e9b72",
+      "path": "docs/delivery/v2-development/audio-only-video-regression-debug-20261018.json",
+      "bytes": 705290,
+      "sha256": "c6439c426825a87ca609624502857c4a8c78e7e8ccaacf09eb0a0e8ed23e6fcf"
+    },
+    {
+      "blob": "3f68cd69e9179432b6161e330cbdf92f093e2422",
+      "path": "docs/delivery/v2-development/audio-only-video-regression-debug-20261018.log",
+      "bytes": 1453,
+      "sha256": "7cfa2a119baab6fc8825c120ffff2fac1e2631935a3470f08e3ceae099c6bdf0"
+    },
+    {
+      "blob": "bc34a0b5e3c6b10ce913651b2f2cbd9a790154b7",
+      "path": "docs/delivery/v2-development/audio-studio-tasks-final.json",
+      "bytes": 704884,
+      "sha256": "43af86d6623580c9c88596f1e8e4f8c592da64a332cf54edbcceb091314c1c43"
+    },
+    {
+      "blob": "598790ecd8ef327f6be35bfa746c099d008f1125",
+      "path": "docs/delivery/v2-development/audio-studio-tasks-final.log",
+      "bytes": 4186,
+      "sha256": "76166f3b3929e81a6265d487f0a49a7339ae263cf18a58acbba4b0c1a4f2aa94"
+    },
+    {
+      "blob": "c5d1724ebcf650ba67735df09102336181ed043a",
+      "path": "docs/delivery/v2-development/audio-studio-tasks-public.json",
+      "bytes": 704946,
+      "sha256": "d68a5b5e417b0b12d646088b4635ac4372d5bd7fee1a7ea0504c547af6bdd133"
+    },
+    {
+      "blob": "7c6088a264069b11169dd9af003d4dae7ceabb75",
+      "path": "docs/delivery/v2-development/audio-studio-tasks-public.log",
+      "bytes": 634,
+      "sha256": "cebac9f7985dda747c28ff78b705e95a222311a9ef5a0eaa857ee03da97693f8"
+    },
+    {
+      "blob": "42fdce9266f41fddd53a521091da897c76ddb69d",
+      "path": "docs/delivery/v2-development/b10-offline-local-file-receive-20261018.md",
+      "bytes": 4675,
+      "sha256": "b182bb83c6dda8749b77359375093ec78ca71d20dfb75dfd34f8d80abd96efa6"
+    },
+    {
+      "blob": "9585b129029e226ce02ba4a25b72e8e4c96d4e5d",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-fences.json",
+      "bytes": 704063,
+      "sha256": "e249392004ad4aa23fa1356ed30b863cd7dd27116142b5fc9434067bdf4cdbf8"
+    },
+    {
+      "blob": "0d21bee7d2f66e1e4288fcde43633883a8d00ced",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-fences.log",
+      "bytes": 6741,
+      "sha256": "01c6a2b660ba09aeceb9d407290741c71d76f978ce248768db84505ed22aaf7b"
+    },
+    {
+      "blob": "2b5e4531cedbf92e9e08abca5aec3cc81ccc716c",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-final-metadata.json",
+      "bytes": 704946,
+      "sha256": "0120ec3d0894231041b3eb9f657a71b0eeff5fd7ca31f9d7800d973cbbc8585e"
+    },
+    {
+      "blob": "1a7c2a1513afdac06fae8ab7393b2fe7953f7025",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-final-metadata.log",
+      "bytes": 2689,
+      "sha256": "722452fa4e45261a90411db72ce1a75b8340230c8bfbcc95ad374c6f19d3a4bc"
+    },
+    {
+      "blob": "eb01bdc65e25c475856ae86bbc73d3e3e0dcee0d",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-final.json",
+      "bytes": 704866,
+      "sha256": "d836ed20b645e72a3f8a6bfd13c0124417845b627872b9864ab7ac7c8a23ad3b"
+    },
+    {
+      "blob": "14379ef2b6201111d1ab2ee74bf746de75ad7adf",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-final.log",
+      "bytes": 2547,
+      "sha256": "91b3409809af72577e6c9331145d2525e436564b6d7b0a6fde9115a58c070cd5"
+    },
+    {
+      "blob": "ac0d93064cd65d0dc9140aaa0791b1c4b2155a7b",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-focused.json",
+      "bytes": 703939,
+      "sha256": "6c432789bc8346311cbf772882b9fc741834175c936e1257bbe6606699feb655"
+    },
+    {
+      "blob": "773607d8c87e78c34a4422a912ef40ae4c3cb0a5",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-focused.log",
+      "bytes": 401,
+      "sha256": "c2407d80978db0db5e3f3a8893c538bdcbea967b1ee71a2c9a7f43736990cf2f"
+    },
+    {
+      "blob": "e1948a11470f5f9bd61ebaddf5d177678bb22d67",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-mounted.json",
+      "bytes": 704883,
+      "sha256": "cd79869ca5b5ac8c1e8ff635bcad8bd3c61a080a149e3a0f10021397b0f91ff9"
+    },
+    {
+      "blob": "6249cbaa35f7dbcc8f4acece1e40aa8ecab7118b",
+      "path": "docs/delivery/v2-development/u07-studio-task-reopening-mounted.log",
+      "bytes": 2694,
+      "sha256": "c43f3e70de11b1887e2ddf568a0d10a9b83310028fea0d42767e653378aa1768"
+    },
+    {
+      "blob": "f5ae8c71afc9317eedf2b2e6c6c594c34122eb72",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 11116,
+      "sha256": "62120c9824d73a6899a7b7f9daa7651e603089094705b98aeee7afa32ed045b9"
+    },
+    {
+      "blob": "6ff0a2e5e5f1ce79e7976c9adf40f4e81f3a2c83",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx",
+      "bytes": 18725,
+      "sha256": "f727f0604524971312300f8c5c188cc4831b3eb87d3247168d74537cb2e88410"
+    },
+    {
+      "blob": "7382848ea6221669e6d0d385e4cc15bb80246c90",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "bytes": 70863,
+      "sha256": "dfb82545967021aaa3512f26d14d996b7d922277563542309392b5ec6d7ddb0b"
+    },
+    {
+      "blob": "07ada3fd4cca0bb451022fee2295cb5bde7b1f19",
+      "path": "frontend/src/creative/StudioGraphTimelineNodeEditor.tsx",
+      "bytes": 11453,
+      "sha256": "548831ab33dd135a4623754a9d55a9af0521098cdc19434587d2fcf3985f43ca"
+    },
+    {
+      "blob": "c18441d91baa048ecb6099a963e1263363771851",
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "bytes": 37515,
+      "sha256": "7b8adc08152c952929f54c4a0a15f1d0d0579c013f5e31e007219dae00bb08bf"
+    },
+    {
+      "blob": "78daa004a3c10b56d52db880c07fa1efd5cec8bb",
+      "path": "frontend/src/creative/StudioTimelineAssetHandoff.tsx",
+      "bytes": 10893,
+      "sha256": "b56724c792f2cbaab9653e5c85465cc7a504c1096981f9b3554cfaa252dbd2b9"
+    },
+    {
+      "blob": "07f50a3e2293eee72b9a5d52ca1e8b13cd2e64c8",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "bytes": 50376,
+      "sha256": "e9143e943ade4b8ff7d952ae5a2937dcaefc5806e06ae2f8e017bae63c1870d6"
+    },
+    {
+      "blob": "28a8bfbd18ee91acc1f4dcf44447b5c0ae9deace",
+      "path": "frontend/src/creative/StudioTimelineExportPanel.tsx",
+      "bytes": 5159,
+      "sha256": "6a914329fff3f96d18abcfe0e018f38c20bdbf3e8681988912640c8241e69592"
+    },
+    {
+      "blob": "a031efb21700288766af13c7a0209a5fceec9cfc",
+      "path": "frontend/src/creative/StudioTimelineMeasurement.tsx",
+      "bytes": 2283,
+      "sha256": "3235e477e7cc9975c872eb27f597a73a0fecfb52038614e6f38488a1a47e1a02"
+    },
+    {
+      "blob": "c7f6f2876975c9c319600f06ffc5757ccc058b84",
+      "path": "frontend/src/creative/StudioTimelinePlaybackOptions.tsx",
+      "bytes": 2860,
+      "sha256": "213dde976adbb5840edb8fab8ab9ed26eea133ff18e7d078c96891bdcd357e2e"
+    },
+    {
+      "blob": "7bdc00857d3ed89ba399f40de338959d536ac726",
+      "path": "frontend/src/creative/StudioTimelinePlaybackPanel.tsx",
+      "bytes": 5605,
+      "sha256": "3fbef4ccaf05086364e61b81178b7ca5c658f9518220ffcd3f90d2d2edda8427"
+    },
+    {
+      "blob": "8c507bbd25bb53c3115b903197c08e8c91a15755",
+      "path": "frontend/src/creative/StudioTimelineTransferPanel.tsx",
+      "bytes": 8664,
+      "sha256": "ddc68a5c5dadc55706104bd432fa3ce12b1d0fca1cabe4bbea874131cc3edb48"
+    },
+    {
+      "blob": "8839a521b3b556625dc584d854cfe3399812eb6d",
+      "path": "frontend/src/creative/nleCaptionEditing.ts",
+      "bytes": 1890,
+      "sha256": "97a29310fa3cfc1081364b6f04bf7770a93f3867780e3fe00ee6a936a458e50b"
+    },
+    {
+      "blob": "c97893e7a5fc7c44dcd7549f582fdf92fc1c5f91",
+      "path": "frontend/src/creative/studioAudioTimeline.additive.test.tsx",
+      "bytes": 21251,
+      "sha256": "169018a4655ff99b4b0e47c96ce8204ece705a527f531544c17ad85d3b3640ee"
+    },
+    {
+      "blob": "a0decaadb4fb5f16e15f4dca1b7ea18283693173",
+      "path": "frontend/src/creative/studioAudioTimeline.testFixtures.ts",
+      "bytes": 4847,
+      "sha256": "1e5101459913c87e0a0fe1ae26923fe4e65d44b2aed1535ad647826897d7d3bf"
+    },
+    {
+      "blob": "4ff36e5cdf9e1995b3801e66bde25c4ab1a1d09a",
+      "path": "frontend/src/creative/studioGraphTimelineContract.ts",
+      "bytes": 12108,
+      "sha256": "2d16bce869d17495cb313eda17dcccd4cb8916f501346c599fdd628b53a69866"
+    },
+    {
+      "blob": "c829e711b8da82f810c64ae61d8b99a614f0c546",
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "bytes": 64144,
+      "sha256": "696f1400e0b62513bf8c21ac5809644c8374b205f8baa28724b1d36abf8c0a7d"
+    },
+    {
+      "blob": "72ef1df5472a1ca344076810e00bfebc3f621172",
+      "path": "frontend/src/creative/studioTimelineExportTypes.ts",
+      "bytes": 6595,
+      "sha256": "57c27e2bcbee79c88966330a0978b4ed6484c63f1cee0e465c1f1724fa48fb99"
+    },
+    {
+      "blob": "e81642b152bdb3a0901ef674adf36f2a1393e4c8",
+      "path": "frontend/src/creative/studioTimelinePlaybackTypes.ts",
+      "bytes": 4337,
+      "sha256": "49d81b0866cc563d439ae360ee6852198ebefe50461f0504e7a10645a9fded06"
+    },
+    {
+      "blob": "9ab608ddfe8460360a8e7b58c4b438d060add756",
+      "path": "frontend/src/creative/studioTimelineSourceEditContract.ts",
+      "bytes": 10817,
+      "sha256": "9ba8d9f9ce6993e8f99d97a6b1e302ed179859ac44edd56b75672e692d3981d4"
+    },
+    {
+      "blob": "69d6b08b2152a8e5795e56f445f7a51c34b99c63",
+      "path": "frontend/src/creative/studioTimelineTransferTypes.ts",
+      "bytes": 10851,
+      "sha256": "451b3698b37484e5d33017d2a8aeff720ac769318f61dbb4fbeffe35b429490b"
+    },
+    {
+      "blob": "6941d31085ecb3e1ad762c82c17718743db2b6b5",
+      "path": "frontend/src/creative/studioTimelineTypes.ts",
+      "bytes": 20815,
+      "sha256": "f269890792ee39f17010ecc830b2348cc5b1bafe20b8852e08f2a3abfa149a92"
+    },
+    {
+      "blob": "c3db38294b2f8fb3d7f93fbff656fb67957578ab",
+      "path": "frontend/src/creative/useStudioGraphTimelineEditor.ts",
+      "bytes": 13539,
+      "sha256": "2f5fff0af3513f08d0ee15af74c8e688eaadf9478618004116cc7f5d0e5e47a0"
+    },
+    {
+      "blob": "546f8bb6fd11548ffb324e5f8dceae855b55acd8",
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "bytes": 71507,
+      "sha256": "8a2c51c1f2530e4b30a26800157ae88ea2a906a22b23827b11a0fc1fada1fdf9"
+    },
+    {
+      "blob": "389f25c391d08b05667cc4028fa15627b856e160",
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "bytes": 53323,
+      "sha256": "2516d0d5d684171cf973620dd13b52f976adf4496fd6727272da9755e1447786"
+    },
+    {
+      "blob": "6e50bba913ad53d6f85bb1415ce144227e43df00",
+      "path": "frontend/src/creative/useStudioTimelinePlayback.ts",
+      "bytes": 18381,
+      "sha256": "d08200c929c4d97f7dba289701bb39d7d67f10dd4cb7c8521461c627af220993"
+    },
+    {
+      "blob": "22d1851b17691b8d8f9f9ffc7e4f91c52e93f9ae",
+      "path": "frontend/src/nle/ExportDeliveryPanel.tsx",
+      "bytes": 4632,
+      "sha256": "0742d6f55df5c48c9ceb2d0054960edde9b4f5d97df8ebb7cb799d225f6a1f5e"
+    },
+    {
+      "blob": "d31a3cb31d6947a649f33aa61acd7c6ab512347b",
+      "path": "frontend/src/nle/TimelineWorkspacePanel.tsx",
+      "bytes": 5644,
+      "sha256": "a25eb5aeb208c2e7066f8b79559aae708fbba3ff42f0d2ddb77d7b1002548f4c"
+    },
+    {
+      "blob": "5c84a42ebe0e39b0e2c809fdc924126aeac2eaeb",
+      "path": "frontend/src/nle/timelineOps.ts",
+      "bytes": 62924,
+      "sha256": "a8f03338bce4281bbebb9c6073a38f2b6fd247646f0d329f0d14ffb2a76f282e"
+    },
+    {
+      "blob": "da9e488247720f7c0af2682e0dcf632ef684f11a",
+      "path": "frontend/src/nle/timelineOpsTypes.ts",
+      "bytes": 15030,
+      "sha256": "3116b56cbcf00b85b5d2dcae99f00e89133faaf3415b609e20a74a647fb7bd54"
+    },
+    {
+      "blob": "13ce01c7bc8f8c9c1c01a7b73c71a8b6f5e3fc28",
+      "path": "frontend/src/taskcenter/IndependentStudioProductionTasks.test.tsx",
+      "bytes": 9391,
+      "sha256": "f22a33df2dbef38fe412d881b5f4345848737b2fc6e0ab9342c74c201e40aa71"
+    },
+    {
+      "blob": "175011f380db99ed4f35585fd748487ecdff9215",
+      "path": "frontend/src/taskcenter/StudioProductionTasks.test.tsx",
+      "bytes": 18367,
+      "sha256": "11520d4f3bc8025dc38d063084fbb714005688f961a2e63a70039c79186ab5c9"
+    },
+    {
+      "blob": "a6a5ec5662e518f8f974c2998c88c57f4157a280",
+      "path": "frontend/src/taskcenter/StudioProductionTasks.tsx",
+      "bytes": 8851,
+      "sha256": "8e10e3b1934fd03ab90bd48e06b841ad5fb69852ed38db8c8c6d7de0ef78db81"
+    },
+    {
+      "blob": "ba223736dc15f4f3c5c353d2849df5e6a1c99f64",
+      "path": "frontend/src/taskcenter/studioProductionTask.ts",
+      "bytes": 2174,
+      "sha256": "19e57502245b3a4ca9599426c88efe98aeb47cb5cd46cd0a3333b117d6eaa8c9"
+    },
+    {
+      "blob": "9d867799cf212f089350c580169a6a0c00b400cb",
+      "path": "tests/test_v2_audio_only_timeline.py",
+      "bytes": 15700,
+      "sha256": "a94de1ef4e026e6b9889b496d6701ed0e5af3e06d0071ece4490a76d24c87b68"
+    },
+    {
+      "blob": "f6cdaaa9d8ee9bab9aaa9a9bf310b489717dfe79",
+      "path": "tests/test_v2_audio_only_timeline_api.py",
+      "bytes": 5554,
+      "sha256": "80f0ca1b6042499b3bba72472efa38664197cb8eb8bf695914ec23eba3647204"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
