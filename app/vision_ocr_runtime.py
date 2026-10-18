@@ -91,8 +91,11 @@ class VisionOCRModelNode:
         if execution_id is None:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '原主机执行节点尚未注册')
         route = provider.route_snapshot()
-        fields = {'schema', 'provider_id', 'model_id', 'endpoint', 'model_sha256', 'admission_digest', 'languages', 'adapter_version'}
-        if (not isinstance(route, dict) or set(route) != fields or route.get('schema') != 'local-vision-ocr-admission/1'
+        native = isinstance(route, dict) and route.get('schema') == 'local-vision-ocr-native-admission/1'
+        fields = {'schema', 'provider_id', 'model_id', 'model_sha256', 'admission_digest', 'languages', 'adapter_version'}
+        fields.add('executable_sha256' if native else 'endpoint')
+        if (not isinstance(route, dict) or set(route) != fields
+                or route.get('schema') not in {'local-vision-ocr-admission/1', 'local-vision-ocr-native-admission/1'}
                 or route.get('provider_id') != provider_id or route.get('model_id') != model_id
                 or not isinstance(route.get('languages'), list) or not 1 <= len(route['languages']) <= 32
                 or any(not isinstance(x, str) or not re.fullmatch(r'[A-Za-z]{2,3}(?:-[A-Za-z]{2,8})?', x) for x in route['languages'])
@@ -101,7 +104,7 @@ class VisionOCRModelNode:
                 or not _hash(route.get('model_sha256')) or not _hash(route.get('admission_digest'))):
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, 'OCR 模型缺少当前可信准入回执')
         try:
-            local = isinstance(route['endpoint'], str) and local_endpoint(route['endpoint']) == route['endpoint']
+            local = _hash(route['executable_sha256']) if native else isinstance(route['endpoint'], str) and local_endpoint(route['endpoint']) == route['endpoint']
         except (ValueError, TypeError):
             local = False
         if not local:
