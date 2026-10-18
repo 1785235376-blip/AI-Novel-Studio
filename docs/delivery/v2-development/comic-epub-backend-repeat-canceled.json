@@ -1,0 +1,12 @@
+{
+  "status": "CANCELED",
+  "label": "comic-epub-backend-frozen",
+  "exit_code": 130,
+  "completion_claimed": false,
+  "reason": "Coordinator requested stopping unchanged backend suite repeat and reconciling exact backend/test/script hashes instead.",
+  "started_utc": "2026-10-18T22:20:13Z",
+  "interrupted_utc": "2026-10-18T22:20:22Z",
+  "runner_receipt_emitted": false,
+  "replacement_evidence": "comic-epub-backend-source-reconciliation.json",
+  "original_pass_evidence": "comic-epub-backend-compat.json"
+}

@@ -1,0 +1,12 @@
+{
+  "verified_receipt": "docs/delivery/v2-development/comic-epub-backend-compat.json",
+  "receipt_sha256": "16b935c118fd8ca14a204bd835890903f290b2b940a08350f208e01658666cb7",
+  "backend_test_script_files_checked": 1501,
+  "backend_test_script_changes": [],
+  "missing_paths": [],
+  "concurrent_frontend_changes": [
+    "frontend/src/experimental/ComicPublicationPanel.epub.test.tsx"
+  ],
+  "result": "PASS",
+  "scope": "All non-frontend source paths from original pre-run source snapshot reconciled against current freeze. No backend/test/script edits occurred; no unchanged-suite repeat needed."
+}

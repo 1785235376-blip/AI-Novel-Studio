@@ -1,0 +1,90 @@
+..FF.................................................................... [ 86%]
+..........s                                                              [100%]
+=================================== FAILURES ===================================
+___________________ test_titles_are_text_not_html[file-/api] ___________________
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7fbf794dc170>, prefix='/api', base='/api/novels/r3-mount..., main=<module 'app.main' from '/workspace/scratch/20a0022d2b33/comic-epub-slice/app/main.py'>, comic_test_projects=[])
+
+    def test_titles_are_text_not_html(mounted):
+        e = mounted; service, pages, book, path = setup_book(e, 1)
+        title = '<script src="https://evil.example/x">& 😺 中文</script>'
+        doc = copy.deepcopy(pages[0]['document']); doc['title'] = title
+        row = service.save(e.nid, e.scope, 'local-author', doc, rid=pages[0]['id'], expected_version=pages[0]['version'])
+        report = service.preflight(e.nid, e.scope, 'local-author', row['id'], row['version'])
+        service.approve(e.nid, e.scope, 'local-author', row['id'], row['version'], report['review_digest'], True)
+>       book = service.save_book(e.nid, e.scope, 'local-author', {'title': title, 'chapters': book['chapters'],
+            'expected_page_versions': {row['id']: row['version']}}, rid=book['id'], expected_version=book['version'])
+
+tests/test_comic_publication_epub.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/comic_collections.py:144: in save_book
+    check_version(page, body.expected_page_versions[pid])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+row = {'approval': {'actor': 'local-author', 'at': '2026-10-18T22:17:16.898202+00:00', 'digest': '8f205152c2986adc91f0388139...cc071134360e7c6'}, 'asset_sources': {}, 'character_sources': {}, 'created_at': '2026-10-18T22:17:16.868616+00:00', ...}
+expected_version = 3
+
+    def check_version(row, expected_version):
+        if expected_version != row["version"]:
+>           raise CapabilityVersionConflict(copy.deepcopy(row))
+E           app.services.v1_capability_service.CapabilityVersionConflict: capability record version conflict
+
+app/experimental/common.py:29: CapabilityVersionConflict
+_________________ test_titles_are_text_not_html[file-/api/v1] __________________
+
+mounted = namespace(client=<starlette.testclient.TestClient object at 0x7fbf79a3a7b0>, prefix='/api/v1', base='/api/v1/novels/r3..., main=<module 'app.main' from '/workspace/scratch/20a0022d2b33/comic-epub-slice/app/main.py'>, comic_test_projects=[])
+
+    def test_titles_are_text_not_html(mounted):
+        e = mounted; service, pages, book, path = setup_book(e, 1)
+        title = '<script src="https://evil.example/x">& 😺 中文</script>'
+        doc = copy.deepcopy(pages[0]['document']); doc['title'] = title
+        row = service.save(e.nid, e.scope, 'local-author', doc, rid=pages[0]['id'], expected_version=pages[0]['version'])
+        report = service.preflight(e.nid, e.scope, 'local-author', row['id'], row['version'])
+        row = service.approve(e.nid, e.scope, 'local-author', row['id'], row['version'], report['review_digest'], True)
+>       book = service.save_book(e.nid, e.scope, 'local-author', {'title': title, 'chapters': book['chapters'],
+            'expected_page_versions': {row['id']: row['version']}}, rid=book['id'], expected_version=book['version'])
+
+tests/test_comic_publication_epub.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/comic_collections.py:144: in save_book
+    check_version(page, body.expected_page_versions[pid])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+row = {'approval': {'actor': 'local-author', 'at': '2026-10-18T22:17:17.041068+00:00', 'digest': 'a52effc192d3ddbf5a0e8c1082...2df6305c404a566'}, 'asset_sources': {}, 'character_sources': {}, 'created_at': '2026-10-18T22:17:17.015897+00:00', ...}
+expected_version = 3
+
+    def check_version(row, expected_version):
+        if expected_version != row["version"]:
+>           raise CapabilityVersionConflict(copy.deepcopy(row))
+E           app.services.v1_capability_service.CapabilityVersionConflict: capability record version conflict
+
+app/experimental/common.py:29: CapabilityVersionConflict
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_comic_publication_epub.py::test_actual_epub_structure_order_viewports_hashes_and_no_mutation[file-/api]
+  /workspace/scratch/20a0022d2b33/comic-epub-slice/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_comic_publication_epub.py::test_whole_request_budgets[file-/api-source]
+tests/test_comic_publication_epub.py::test_exact_epub_pins[file-/api-digest]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored in: <function ZipFile.__del__ at 0x7fbf82dc60c0>
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py", line 1977, in __del__
+      self.close()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py", line 1994, in close
+      self.fp.seek(self.start_dir)
+  ValueError: I/O operation on closed file.
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_comic_publication_epub.py::test_titles_are_text_not_html[file-/api]
+FAILED tests/test_comic_publication_epub.py::test_titles_are_text_not_html[file-/api/v1]
+2 failed, 80 passed, 1 skipped, 78 deselected, 4 warnings in 20.38s

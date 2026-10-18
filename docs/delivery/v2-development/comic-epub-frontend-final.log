@@ -1,0 +1,24 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-epub-slice/frontend
+
+ ✓ src/experimental/ComicPublicationPanel.test.tsx (72 tests) 7146ms
+   ✓ mounts below the original tree, makes no implicit posts, and requires an explicit direction and saved-order review 330ms
+ ✓ src/experimental/ComicPublicationPanel.pageArchive.test.tsx (60 tests) 7356ms
+   ✓ reviews ordered 'JPEG'/'LOSSY'/100 and saves one verified ZIP with exact pins 393ms
+ ✓ src/experimental/ComicCollectionTree.test.tsx (13 tests) 1488ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 227ms
+ ✓ src/experimental/comicLayoutsClient.publication.test.ts (35 tests) 75ms
+ ✓ src/experimental/comicLayoutsClient.epub.test.ts (43 tests) 101ms
+ ✓ src/experimental/comicLayoutsClient.pageArchive.test.ts (38 tests) 85ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 73ms
+ ✓ src/experimental/ComicPublicationPanel.epub.test.tsx (54 tests) 5745ms
+   ✓ requires explicit EPUB language, LTR direction and current review; saves one verified file for duplicate clicks 397ms
+ ✓ src/boundedResponseBlob.test.ts (19 tests) 16ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 167ms
+ ✓ src/experimental/api.test.ts (5 tests) 10ms
+
+ Test Files  12 passed (12)
+      Tests  369 passed (369)
+   Start at  07:20:22
+   Duration  16.16s (transform 2.02s, setup 170ms, collect 4.05s, tests 22.49s, environment 3.04s, prepare 603ms)
+

@@ -24,6 +24,10 @@ export type ComicBookPageResult = { book: ComicBook; page: ComicRecord };
 export type ComicReadingDirection = 'LTR' | 'RTL';
 export type ComicPublicationPage = { id: string; version: number; review_digest: string };
 export type ComicPublicationPreflight = { book_version: number; reading_direction: ComicReadingDirection; pages: ComicPublicationPage[]; publication_digest: string; page_count: number; losses: string[] };
+export type ComicEpubOptions = { format: 'comic-epub-fixed-raster-v1'; language: 'und' };
+export type ComicEpubLimits = { max_metadata_bytes: number; max_output_bytes: number; total_page_pixels: number; reserved_metadata_bytes: number; reserved_output_bytes: number };
+export type ComicEpubPublicationPreflight = ComicPublicationPreflight & ComicEpubOptions & { page_dimensions: { width_pixels: number; height_pixels: number }[]; epub_limits: ComicEpubLimits };
+export const comicPublicationMaxOutputBytes = 64 * 1024 * 1024;
 export type ComicPdfPageDimensions = { width_pixels: number; height_pixels: number; width_points: number; height_points: number };
 export type ComicPdfPublicationPreflight = ComicPublicationPreflight & { format: 'comic-pdf-raster-v1'; dpi: number; page_dimensions: ComicPdfPageDimensions[] };
 export type ComicPageArchiveQuality = 60 | 80 | 95 | 100;
@@ -46,6 +50,28 @@ export function comicLayoutsClient(client: ExperimentalClient) {
     pdfPublicationPreflight: (book: ComicBook, reading_direction: ComicReadingDirection, dpi: number) => {
       if (!validComicPdfDpi(dpi)) return invalidPublication();
       return client.post<ComicPdfPublicationPreflight>(`/comic-layouts/books/${encodeURIComponent(book.id)}/pdf-publication-preflight`, { expected_version: book.version, reading_direction, dpi });
+    },
+    epubPublicationPreflight: (book: ComicBook, reading_direction: ComicReadingDirection, options: ComicEpubOptions) => {
+      if (!validComicEpubOptions(options) || !validComicReadingDirection(reading_direction)) return invalidPublication();
+      return client.post<ComicEpubPublicationPreflight>(`/comic-layouts/books/${encodeURIComponent(book.id)}/epub-publication-preflight`, {
+        expected_version: book.version, reading_direction, format: options.format, language: options.language,
+      });
+    },
+    downloadEpub: async (book: ComicBook, report: ComicEpubPublicationPreflight) => {
+      if (!client.postBlob || !report || book.version !== report.book_version || !validComicEpubOptions(report) || !validComicReadingDirection(report.reading_direction)
+        || !Array.isArray(report.pages) || report.pages.length < 1 || report.pages.length > 100 || report.page_count !== report.pages.length
+        || new Set(report.pages.map(page => page?.id)).size !== report.pages.length
+        || report.pages.some(page => !page || typeof page.id !== 'string' || !page.id || !Number.isSafeInteger(page.version) || page.version < 1 || !/^[a-f0-9]{64}$/.test(page.review_digest))
+        || !/^[a-f0-9]{64}$/.test(report.publication_digest)) return invalidPublication();
+      const { blob, headers } = await client.postBlob(`/comic-layouts/books/${encodeURIComponent(book.id)}/export-epub`, {
+        expected_version: report.book_version, reading_direction: report.reading_direction, format: report.format, language: report.language,
+        pages: report.pages.map(({ id, version, review_digest }) => ({ id, version, review_digest })), publication_digest: report.publication_digest,
+      }, { maxBytes: comicPublicationMaxOutputBytes });
+      const sha256 = headers.get('X-Content-SHA256');
+      if (blob.type.split(';')[0] !== 'application/epub+zip' || !blob.size || blob.size > comicPublicationMaxOutputBytes || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
+      const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+      if (Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') !== sha256) return invalidPublication();
+      return blob;
     },
     pageArchivePreflight: (book: ComicBook, reading_direction: ComicReadingDirection, options: ComicPageArchiveOptions) => {
       if (!validComicPageArchiveOptions(options)) return invalidPublication();
@@ -71,9 +97,9 @@ export function comicLayoutsClient(client: ExperimentalClient) {
       const { blob, headers } = await client.postBlob(`/comic-layouts/books/${encodeURIComponent(book.id)}/export-cbz`, {
         expected_version: report.book_version, reading_direction: report.reading_direction,
         pages: report.pages.map(({ id, version, review_digest }) => ({ id, version, review_digest })), publication_digest: report.publication_digest,
-      });
+      }, { maxBytes: comicPublicationMaxOutputBytes });
       const sha256 = headers.get('X-Content-SHA256');
-      if (blob.type.split(';')[0] !== 'application/vnd.comicbook+zip' || !blob.size || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
+      if (blob.type.split(';')[0] !== 'application/vnd.comicbook+zip' || !blob.size || blob.size > comicPublicationMaxOutputBytes || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
       const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
       if (Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') !== sha256) return invalidPublication();
       return blob;
@@ -83,9 +109,9 @@ export function comicLayoutsClient(client: ExperimentalClient) {
       const { blob, headers } = await client.postBlob(`/comic-layouts/books/${encodeURIComponent(book.id)}/export-pdf`, {
         expected_version: report.book_version, reading_direction: report.reading_direction, dpi: report.dpi,
         pages: report.pages.map(({ id, version, review_digest }) => ({ id, version, review_digest })), publication_digest: report.publication_digest,
-      });
+      }, { maxBytes: comicPublicationMaxOutputBytes });
       const sha256 = headers.get('X-Content-SHA256');
-      if (blob.type.split(';')[0] !== 'application/pdf' || !blob.size || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
+      if (blob.type.split(';')[0] !== 'application/pdf' || !blob.size || blob.size > comicPublicationMaxOutputBytes || headers.get('X-Comic-Publication-Digest') !== report.publication_digest || !sha256 || !/^[a-f0-9]{64}$/.test(sha256)) return invalidPublication();
       const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
       if (Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('') !== sha256) return invalidPublication();
       return blob;
@@ -102,6 +128,10 @@ export function comicLayoutsClient(client: ExperimentalClient) {
     downloadOra: (row: ComicRecord) => client.blob(path(row) + `/export-ora?expected_version=${row.version}`),
     download: (row: ComicRecord) => client.blob(path(row) + `/export?expected_version=${row.version}`),
   };
+}
+export function validComicReadingDirection(direction: unknown): direction is ComicReadingDirection { return direction === 'LTR' || direction === 'RTL'; }
+export function validComicEpubOptions(options: { format: unknown; language: unknown } | null | undefined): options is ComicEpubOptions {
+  return !!options && options.format === 'comic-epub-fixed-raster-v1' && options.language === 'und';
 }
 export function validComicPdfDpi(dpi: number): boolean { return Number.isInteger(dpi) && dpi >= 36 && dpi <= 600; }
 export function validComicPageArchiveOptions(options: { image_format: unknown; loss_mode: unknown; quality: unknown } | null | undefined): options is ComicPageArchiveOptions {

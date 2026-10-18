@@ -108,3 +108,10 @@ it('does not post a PDF export with an outdated book version or a different form
   await expect(api().downloadPdf(book, { ...pdfReport, format: 'cbz' } as unknown as ComicPdfPublicationPreflight)).rejects.toMatchObject({ problem: { code: 'COMIC_PUBLICATION_INVALID_RESPONSE' } });
   expect(fetch).not.toHaveBeenCalled();
 });
+
+it.each(['CBZ', 'PDF'])('bounds %s response consumption while preserving exact request contracts', async format => {
+  const arrayBuffer = vi.fn(), postBlob = vi.fn().mockResolvedValue({ blob: { type: format === 'PDF' ? 'application/pdf' : 'application/vnd.comicbook+zip', size: 67108865, arrayBuffer }, headers: new Headers(headers()) });
+  const client = comicLayoutsClient({ ...experimentalClient('novel', { sessionToken: 'trusted' }), postBlob });
+  await expect(format === 'PDF' ? client.downloadPdf(book, pdfReport) : client.downloadCbz(book, report)).rejects.toMatchObject({ problem: { code: 'COMIC_PUBLICATION_INVALID_RESPONSE' } });
+  expect(postBlob).toHaveBeenCalledWith(expect.stringContaining(format === 'PDF' ? '/export-pdf' : '/export-cbz'), expect.anything(), { maxBytes: 67108864 }); expect(arrayBuffer).not.toHaveBeenCalled();
+});

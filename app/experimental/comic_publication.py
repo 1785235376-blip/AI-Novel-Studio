@@ -39,6 +39,16 @@ class PDFPublicationExportIn(PDFPublicationIn, PublicationExportIn):
     pass
 
 
+class EPUBPublicationIn(PublicationIn):
+    format: Literal['comic-epub-fixed-raster-v1']
+    # Explicit caller acknowledgement: content language is unspecified, not inferred.
+    language: Literal['und']
+
+
+class EPUBPublicationExportIn(EPUBPublicationIn, PublicationExportIn):
+    pass
+
+
 class PageArchiveIn(PublicationIn):
     image_format: Literal['JPEG', 'WEBP']
     loss_mode: Literal['LOSSY', 'LOSSLESS']
@@ -145,6 +155,9 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
         _pdf_admission(rows, request.dpi)
     if isinstance(request, PageArchiveIn):
         archive_limits = _archive_admission(rows, request)
+    if isinstance(request, EPUBPublicationIn):
+        from .comic_epub_package import admit
+        epub_limits = admit(book, rows, MAX_ARCHIVE_BYTES)
     pages = []
     for row in rows:
         guard()
@@ -161,6 +174,8 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
         binding.update(format='comic-pdf-raster-v1', dpi=request.dpi)
     if isinstance(request, PageArchiveIn):
         binding.update(_archive_options(request))
+    if isinstance(request, EPUBPublicationIn):
+        binding.update(format=request.format, language=request.language)
     guard()
     # Prevent a structure change during the preflight itself.
     latest = service._book_row(nid, scope, actor, rid)
@@ -185,6 +200,11 @@ def _locked_snapshot(service, nid, scope, actor, rid, request, guard):
                            'height_points': r['document']['height'] * 72 / request.dpi} for r in rows])
     if isinstance(request, PageArchiveIn):
         receipt.update(**_archive_options(request), losses=_archive_losses(request), page_archive_limits=archive_limits)
+    if isinstance(request, EPUBPublicationIn):
+        from .comic_epub_package import LOSSES as EPUB_LOSSES
+        receipt.update(format=request.format, language=request.language, losses=EPUB_LOSSES,
+                       epub_limits=epub_limits, page_dimensions=[{
+                           'width_pixels': r['document']['width'], 'height_pixels': r['document']['height']} for r in rows])
     return book, rows, receipt
 
 
@@ -367,6 +387,38 @@ def export_page_archive(service, nid, scope, actor, rid, value, guard=lambda: No
             put(archive, 'manifest.json', json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode())
             if any(p['bubbles'] for row in rows for p in row['document']['panels']):
                 put(archive, 'OFL.txt', licensed_font()[1])
+        final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+        if final != receipt:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        guard()
+        return stream.getvalue(), receipt['publication_digest']
+
+
+def epub_publication_preflight(service, nid, scope, actor, rid, value, guard=lambda: None):
+    request = EPUBPublicationIn.model_validate(value)
+    with publication_budget():
+        return _snapshot(service, nid, scope, actor, rid, request, guard)[2]
+
+
+def export_epub(service, nid, scope, actor, rid, value, guard=lambda: None):
+    from .comic_epub_package import Package
+    request = EPUBPublicationExportIn.model_validate(value)
+    with publication_budget():
+        book, rows, receipt = _snapshot(service, nid, scope, actor, rid, request, guard)
+        if request.publication_digest != receipt['publication_digest'] or [p.model_dump() for p in request.pages] != receipt['pages']:
+            raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
+        stream = BoundedBuffer()
+        writer = Package(stream, book, rows, request, receipt)
+        try:
+            for index, row in enumerate(rows, 1):
+                guard()
+                data = _render_page(service, nid, scope, actor, row)
+                writer.page(index, data)
+                del data
+        finally:
+            writer.finish()
+        # No bytes leave the original current approval/source/authority boundary
+        # before the entire ZIP and all pages have been globally revalidated.
         final = _snapshot(service, nid, scope, actor, rid, request, guard)[2]
         if final != receipt:
             raise StaleSourceError('COMIC_PUBLICATION_CHANGED')
