@@ -1,0 +1,661 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "c8a129641454cad99ef2334f5f9022c8a3464ab7",
+      "path": "API_CATALOG.json",
+      "bytes": 1467237,
+      "sha256": "ad88b5eb74b5f94c6a1e6a94409bf6aca42e630cccb36aab6d80f9fe61ac81b1"
+    },
+    {
+      "blob": "d0863e7eb917e55dc1325c1343367f76182ab1eb",
+      "path": "API_CATALOG.md",
+      "bytes": 391912,
+      "sha256": "9f825704bdcdc8434c31fd620b2de9a43e3a2cb600687d0fdb2675d9f442dc92"
+    },
+    {
+      "blob": "92efa880dfab161af3c148bb19bd3a254cd276a1",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 603663,
+      "sha256": "ec40562bf1888707a6c858bb890b7da64bd131ec13102afaeb43a6b0ca76e1dc"
+    },
+    {
+      "blob": "dc050c6008d6b26b317b95b4673b758bf2980f71",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 130061,
+      "sha256": "622c5b2c71c4fa533347ad62ebf783062679d715252243d986a42240b96c63ab"
+    },
+    {
+      "blob": "949ebe0ca8c319beb1f5cc1e1f3b6737047e1c46",
+      "path": "app/canon_extraction.py",
+      "bytes": 2990,
+      "sha256": "40d592e4062eeaad38bbbf71d5efc1d84205d78f8b14dbd0612b9f528352e102"
+    },
+    {
+      "blob": "33acaa6958424c5c0aac11365f8586751aacbd6c",
+      "path": "app/creative/timeline_transfer.py",
+      "bytes": 8702,
+      "sha256": "a2fc7270805ec90b0e7f8f30000e58cea984c0c94840120c568726a11477e15a"
+    },
+    {
+      "blob": "ae306fc96eb375151b03691ff0a9cea45d0feb6c",
+      "path": "app/experimental/api.py",
+      "bytes": 41529,
+      "sha256": "8eaef6e3d782d9e7c8346546c55708579e8b57f554f9becd342858054149a190"
+    },
+    {
+      "blob": "e7f12c840484ff1a914b1808a6c5381d56015a4a",
+      "path": "app/experimental/planning.py",
+      "bytes": 27815,
+      "sha256": "9893f9a2a3ecce2909a2bb899a778c64c7a663583e050f9b87a829827650ae8c"
+    },
+    {
+      "blob": "0d68a3d1750a3abe482225fdb5bf49d19a21e02e",
+      "path": "app/experimental/planning_model.py",
+      "bytes": 21672,
+      "sha256": "fd48c94f539966621872771eb6de389eb2b3954cea138d69291886528fbd9835"
+    },
+    {
+      "blob": "07be7014e9fd7ca977a4d49863727c1724777c80",
+      "path": "app/experimental/planning_model_api.py",
+      "bytes": 4752,
+      "sha256": "e8fb4d9612d3b9f8361845910b4698ea5cb6d400310d60b0b50572d454ae0585"
+    },
+    {
+      "blob": "4ed0e1e427d8f5c5c84848969d33a51bf7a170b0",
+      "path": "app/experimental/ux.py",
+      "bytes": 49576,
+      "sha256": "fdc6d8c3a8a90faf79fed47910b7c043fc632557e1fa333c425a3ec39905284b"
+    },
+    {
+      "blob": "b91abd975c0534bb92647d86ff3fb43d40ebad8e",
+      "path": "app/jobs.py",
+      "bytes": 95749,
+      "sha256": "58291dcc8d17fbd4f255dc6df5f2a4bff40b2bb18f52e4cc3323b7e72e17be50"
+    },
+    {
+      "blob": "d93a2ee5ffeba68ec6fd332cc7e8060582ca88f9",
+      "path": "app/providers.py",
+      "bytes": 16201,
+      "sha256": "69cccfbf2e081c5054cb3729102247a4e9de338b285e1e9f5df3f370990a4dd3"
+    },
+    {
+      "blob": "80fbcebc12050dbeafdce477f75d46375d9ff4cf",
+      "path": "app/services/pending_canon_review_service.py",
+      "bytes": 9897,
+      "sha256": "29a6860bf5e8e600387b993d36429f1362ed40df4c3191aac214c73087a62084"
+    },
+    {
+      "blob": "36f8ee49027be264d691831b1b48c644b784ec1e",
+      "path": "app/services/studio_timeline_caption_style.py",
+      "bytes": 1683,
+      "sha256": "501330898a4a44371615fae85c03dabceb6300f0c60bcf1e201358466199e19a"
+    },
+    {
+      "blob": "73450529a4eb6e23279dbc77f271fc0afd6cffc5",
+      "path": "app/services/studio_timeline_edit.py",
+      "bytes": 16006,
+      "sha256": "073575d2c5dd2623f4e9a6195edcfe509abdc305ca8c3411358ecad60eac657c"
+    },
+    {
+      "blob": "7c88cff2a88ecf2dcadf530c9d1605ef330187ea",
+      "path": "app/services/studio_timeline_exchange.py",
+      "bytes": 20810,
+      "sha256": "de77cb2ef579f7d754487cc3e6629a56fae15939eef2401ac104a0ee50a64389"
+    },
+    {
+      "blob": "98ed3cdc0722a3f1078b237f0122ea20267c04ef",
+      "path": "app/services/studio_timeline_render.py",
+      "bytes": 30503,
+      "sha256": "731aa7795f1b48e1a7955f0a8a02ad33304f475683c78c42c3fd53cf35931857"
+    },
+    {
+      "blob": "c78dc674176b3f7fbc1a7feea99157518d5498c0",
+      "path": "app/services/studio_timeline_schema.py",
+      "bytes": 13680,
+      "sha256": "754fab553c6a778bade2970f691e8cf33b8ef04f513add6ce168e268d95460a0"
+    },
+    {
+      "blob": "a39767eb5408af4e4824424a30d472089865c42c",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 20810,
+      "sha256": "54db50a833832848741cda1a505c1f0aae0230e62560ee964f540710e73bf985"
+    },
+    {
+      "blob": "73a54ca40536e17019bc9afea9a1def8ca95270e",
+      "path": "docs/delivery/v2-development/canon-source-file-stable-final.json",
+      "bytes": 711910,
+      "sha256": "99f182953cd8e2ba7b3209c204c8aff960150531a3b66b77dfe8c6fc743eb2ba"
+    },
+    {
+      "blob": "6f6f242ab606146ebae39505366df37b18e5f0a8",
+      "path": "docs/delivery/v2-development/canon-source-file-stable-final.log",
+      "bytes": 1125,
+      "sha256": "2758f7f2fd371dcc304792fa8fd012506bd565ba6e287e6f2ba7aa75905a0c48"
+    },
+    {
+      "blob": "cf6d3dd0e33a41fe96b5a44c43c113b22e543c5a",
+      "path": "docs/delivery/v2-development/canon-source-final.json",
+      "bytes": 711647,
+      "sha256": "3632f358812710498149d6679f75c69699a0aa7c34cf9303e82a83d4b205f1cc"
+    },
+    {
+      "blob": "d01733f7aec3ff38b0786e3af8fca79f9d69627b",
+      "path": "docs/delivery/v2-development/canon-source-final.log",
+      "bytes": 1125,
+      "sha256": "cb057a850a77360918030caffdd51ae5804b4b8b70c46c9092b931856485f326"
+    },
+    {
+      "blob": "0bd56cb3d99ccc2639b60a475f5371083f2da140",
+      "path": "docs/delivery/v2-development/canon-source-final2.json",
+      "bytes": 711799,
+      "sha256": "621c1f188b54c9ca0bb92f12e96e3c767f7e6a7a5d923c9863c647a73b8cbc13"
+    },
+    {
+      "blob": "cbad47c96a73544b6fa6ba2791056bdce47fde93",
+      "path": "docs/delivery/v2-development/canon-source-final2.log",
+      "bytes": 1125,
+      "sha256": "b566fd80b38e98c015513b996f05ba8d4929f58701230575ce333899d494ed54"
+    },
+    {
+      "blob": "7183df8d0f89e0978e6e7f62c055813302c664fe",
+      "path": "docs/delivery/v2-development/canon-source-green.json",
+      "bytes": 711152,
+      "sha256": "dfa4929e1e39e940a7237c4b9108b62132d70b9e3f5578b4d965f9fee1866187"
+    },
+    {
+      "blob": "4db4b76bf96fb08007e805fb0559253c9a7ce8f2",
+      "path": "docs/delivery/v2-development/canon-source-green.log",
+      "bytes": 1125,
+      "sha256": "c36e4f9b6ea90d69051a9013f1acde18c53d2f11a8bf295494225cf9c82b357e"
+    },
+    {
+      "blob": "1646ee4b92f596f0218b0cc66afda77ff76cd7c2",
+      "path": "docs/delivery/v2-development/canon-source-pg-final-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "317edf5ae146e0dfe2bd57d3e17a778f0f2eeecc8d9b8661f244f3590d569c6f"
+    },
+    {
+      "blob": "9493f9b47af172c7f2822649efe0dbd47eb2fb0d",
+      "path": "docs/delivery/v2-development/canon-source-pg-final.json",
+      "bytes": 711940,
+      "sha256": "dbd152af890f0e06fbf8d51a4d9679805c12e3e1ebcac9d8a545f15dc07ae2ed"
+    },
+    {
+      "blob": "c234b8f27aec548346081e1ff980ca85dc66c6dd",
+      "path": "docs/delivery/v2-development/canon-source-pg-final.log",
+      "bytes": 1058,
+      "sha256": "c5c97c3d0452e359eeba0e72cc71fff379856967eb67c96872ddb41deaabbddb"
+    },
+    {
+      "blob": "e0698e4886ba11d70e2c5f1ff6f24f3d23c951f6",
+      "path": "docs/delivery/v2-development/canon-source-producer-red.json",
+      "bytes": 710849,
+      "sha256": "9172ea0c6d50066c92a50cc290ccb3b7643ef5eed8cfee49554098688bda729d"
+    },
+    {
+      "blob": "1b3d31c8df7c8f0127108f73f1b3a92a56ba1ece",
+      "path": "docs/delivery/v2-development/canon-source-producer-red.log",
+      "bytes": 13675,
+      "sha256": "457e1fcf881799f3b9b630acacab8cb93a3f99d020ee0ae7ec507419c3ea5efa"
+    },
+    {
+      "blob": "5fc28d94d48937c60ab2b27709d84ae743f374d2",
+      "path": "docs/delivery/v2-development/canon-source-product-red.json",
+      "bytes": 710482,
+      "sha256": "59f017fc0d44120307d94d99f92b219f50e617fd3b4a12ef848bf7039094427b"
+    },
+    {
+      "blob": "48ba9d3ee1dd08136151d4e8db193a74bce1b0a6",
+      "path": "docs/delivery/v2-development/canon-source-product-red.log",
+      "bytes": 14798,
+      "sha256": "7a285d03b8a56b37b4c4a0b24a4a12d400443c3fb558056eb129286bdce93b30"
+    },
+    {
+      "blob": "fc2d4513cae03c6b38dd1530016f96e371893711",
+      "path": "docs/delivery/v2-development/canon-source-provenance-20261018.md",
+      "bytes": 7008,
+      "sha256": "b362860bcf3f3a4c84c0a2ba5b7c5eddc0dfdb662a75cbcf1b62d5d5818948f2"
+    },
+    {
+      "blob": "c71c6a6cb5e58598d08c5a31254babdbe14a0849",
+      "path": "docs/delivery/v2-development/canon-source-red.json",
+      "bytes": 709627,
+      "sha256": "116b471a708e2cf8b67651b701712d2ae018027aa1c9f507a8b891927e2b6304"
+    },
+    {
+      "blob": "52ef1ad696dc2f3829d651c9149651712ded7280",
+      "path": "docs/delivery/v2-development/canon-source-ui-final.json",
+      "bytes": 711565,
+      "sha256": "0e538a2db677681856f40446c0f330548af647abed9d343e4216a190d8e974f0"
+    },
+    {
+      "blob": "34933889574d27cd62b02c7666d4f69cb89c27a6",
+      "path": "docs/delivery/v2-development/canon-source-ui-final.log",
+      "bytes": 332,
+      "sha256": "cce00e789e684a6c207a0d2ad0633709c785d062d98a9d0d049ee27b860e455f"
+    },
+    {
+      "blob": "ed9eeb273e54bf9b9b6ee2959a925c702b3321a1",
+      "path": "docs/delivery/v2-development/canon-source-ui.json",
+      "bytes": 711226,
+      "sha256": "2e04a2aa07aa4b77ceb7f0cb4a75bfcdd17e9ddd0b991f823103a349f212f394"
+    },
+    {
+      "blob": "5409001ecc6cdb9e51a0dea5fb5f7813c7772c38",
+      "path": "docs/delivery/v2-development/canon-source-ui.log",
+      "bytes": 333,
+      "sha256": "9696d88df7ee0d953e2c74c54fd7f3c9480afe855661ce0c8161aad7f6013504"
+    },
+    {
+      "blob": "1cb55af1d6cf63bf20bbe07d098354b4debeb476",
+      "path": "docs/delivery/v2-development/caption-style-20261018.md",
+      "bytes": 8896,
+      "sha256": "7531ba2fb0fcb52ed60fb9fb69d24424fb6f7da0a35344ee0f41365f30c09489"
+    },
+    {
+      "blob": "92dbfdea602f358bb444e2371c80e66003f848ea",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/after.png",
+      "bytes": 1057,
+      "sha256": "a16b2eb5ee1d744d67edf927c5ada8b063b4176b5ba0c69411489a2aa4126c65"
+    },
+    {
+      "blob": "934ccce974659aafd02fd142312032a2cbafe835",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/bottom-during.png",
+      "bytes": 3499,
+      "sha256": "df9a2320a694645570bf3bb75846e21d708f600808d5286f2a538b3b8de4b77d"
+    },
+    {
+      "blob": "7feaad52ff72f30cea88ac4bc7bf214cbabeb46f",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/bottom.mp4",
+      "bytes": 5532,
+      "sha256": "e9ab830a2082999cfeed08927d5964de005ef2b198130f51897b0cda0dad5363"
+    },
+    {
+      "blob": "ac5653d0513167bebb1680772c50cfa16be1e6ea",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/caption-style-proof.json",
+      "bytes": 2926,
+      "sha256": "43cb6a129dd5f33c59a0c26d8a8afb507052374a9333558497438ea66834a7a8"
+    },
+    {
+      "blob": "28bd12dc01d373076830583904749f5370fd97ed",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/file-saved-caption-proof.json",
+      "bytes": 449,
+      "sha256": "4b5ed13bec66ec922bcc377b476422aeef0faba74b7e2f69628e099db933aaaf"
+    },
+    {
+      "blob": "90cb234a0693a742073f9d422f0199e14c14369c",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/file-saved-style.mp4",
+      "bytes": 3669,
+      "sha256": "e9f8ad2277380b7b63fc4662f93fe01f3d753380822c60f8cb8b8b5083c52240"
+    },
+    {
+      "blob": "3c91f60719d436ce32c0d02df753e06b93629d22",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/large-during.png",
+      "bytes": 7213,
+      "sha256": "06049fe09339ab880a42505202470900268b34346bbb766e55782a196e2d1da7"
+    },
+    {
+      "blob": "23f7354797bc3e0179a80ab5bfdcac63fc106313",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/large.mp4",
+      "bytes": 7762,
+      "sha256": "4143efb94a60a5ab5a710a0d23f2729d4f55105808c289416ab300edc62e69c0"
+    },
+    {
+      "blob": "445228d3d258d5bc965df4ffda6d214b430a59b5",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/manifest.json",
+      "bytes": 2525,
+      "sha256": "a9a8c3e5ef62b991a0f7d981713dfe1af444770720d8e456a4d10de646d20cbd"
+    },
+    {
+      "blob": "f811375cb11d4834be7b58535fe1c3924804a82d",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/outlined-during.png",
+      "bytes": 3918,
+      "sha256": "ce5e877ee2213b9c57f842a2875fdd9f2c889a2fe7abf03044603b8987361c77"
+    },
+    {
+      "blob": "dd56801548079e8a26bf8e7b4c6a452c200f77c9",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/outlined.mp4",
+      "bytes": 5583,
+      "sha256": "f744d462ef59be80dbdce3a1185dbc852b024bd5b4382e405ec63af6e8112520"
+    },
+    {
+      "blob": "9b92e78e8ae2846a59a589c1430a7f20bc0a2d32",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/top-during.png",
+      "bytes": 3943,
+      "sha256": "0bf990a2fef0d29752c2ad1f9b5aeca032831be58e91cb02851688778cd58dfc"
+    },
+    {
+      "blob": "5adbdb049f0e3af3d8f226e70bb8229540f57048",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/top.mp4",
+      "bytes": 5839,
+      "sha256": "82dd8ad62bf7d96c0c3597b1a10b4c96daed3d5dbc5e6f8d2194f33a8334c5a8"
+    },
+    {
+      "blob": "6cb3be89e63bc1eac4767536bf9209f59b691721",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/white-during.png",
+      "bytes": 3670,
+      "sha256": "c5dae531a496049893c3e98f38e6d08afe7cae305d547433e088591b584ed0b6"
+    },
+    {
+      "blob": "cf8a3c2aa30c467f4758002344d5e16a0fcad0b6",
+      "path": "docs/delivery/v2-development/caption-style-cpu-evidence-20261018/white.mp4",
+      "bytes": 5999,
+      "sha256": "8cda364287582a095b65e1f4d68cde14832a5b92c1ad3c6a9856b8449f5fd028"
+    },
+    {
+      "blob": "40fbd3269f6c40afb61b0c82f8f4bcad8646fcc0",
+      "path": "docs/delivery/v2-development/caption-style-file-debug2-20261018.json",
+      "bytes": 711303,
+      "sha256": "2c143c25ab64dd3775354ffd499081e161b24bca6ecc7c86fd2462720c869b06"
+    },
+    {
+      "blob": "659ab8eea4d3625e5280419d033caba17ae20a8c",
+      "path": "docs/delivery/v2-development/caption-style-file-debug2-20261018.log",
+      "bytes": 2632,
+      "sha256": "787ef8494b1e5d2d301e7268c2332348585fbf8275dc4307f75df8ae5fbd6989"
+    },
+    {
+      "blob": "139ade7d90ac7de08a54d0ad4bee9a301de94193",
+      "path": "docs/delivery/v2-development/caption-style-file-debug3-20261018.json",
+      "bytes": 711734,
+      "sha256": "2c23c03ff43d294861f8f50788a810a42cfcf0d0c59115916524ed8259c2694c"
+    },
+    {
+      "blob": "7a376036086867a01e498f58e985751e314449e0",
+      "path": "docs/delivery/v2-development/caption-style-file-debug3-20261018.log",
+      "bytes": 3231,
+      "sha256": "cec41b2c56e7423b766415ec4a72ae6cebd15b15be2b72066fb47595b291cc10"
+    },
+    {
+      "blob": "216c72052c03ed05c31b0139b0ba446020523d15",
+      "path": "docs/delivery/v2-development/caption-style-file-debug4-20261018.json",
+      "bytes": 711876,
+      "sha256": "36e7339395185e51f5b76b69f1d057d5a988974902e035910332a1e8c18fd487"
+    },
+    {
+      "blob": "515270a26d63917d4f3b63988e6db287e3746e98",
+      "path": "docs/delivery/v2-development/caption-style-file-debug4-20261018.log",
+      "bytes": 1053,
+      "sha256": "e2e0da4d175c75cf5b40b57c415f891691ff0798e6a8c098bd3c4df85a7ad845"
+    },
+    {
+      "blob": "65ff41ed168118c32a0627e3fb704e76244a8e1e",
+      "path": "docs/delivery/v2-development/caption-style-file-final-20261018.json",
+      "bytes": 712042,
+      "sha256": "81c0b8b52837b90b12af3883772655493f0c883a90c99b90c9e85f7f3a519e0c"
+    },
+    {
+      "blob": "499622459e59ba68acf40e59851cf88cb501458b",
+      "path": "docs/delivery/v2-development/caption-style-file-final-20261018.log",
+      "bytes": 1134,
+      "sha256": "1d0a61443b15070720f9eecc220d55524688b5b3b6556651a7e07c44d0bd7706"
+    },
+    {
+      "blob": "46e1f64f98fd099cd2805966998cbb9a106771aa",
+      "path": "docs/delivery/v2-development/caption-style-pg-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "9590c6dfdef402641e0a520d88681086d2c7a841812d01d7ea000a56218af508"
+    },
+    {
+      "blob": "bfc080931e6b3488b8bfdc9af4cdd56c3dcb2a47",
+      "path": "docs/delivery/v2-development/caption-style-pg-final-20261018.json",
+      "bytes": 711924,
+      "sha256": "c428363c31aa73cf03b64d07cad66859e92c54fae58e89a350d6a359da4a4bfd"
+    },
+    {
+      "blob": "c84733e6dbb24a0eb46493a3934e4a861e8c5906",
+      "path": "docs/delivery/v2-development/caption-style-pg-final-20261018.log",
+      "bytes": 1060,
+      "sha256": "c17e4b1395ca6df292da3f979c586656919380293c0ea5412d84977d7601a1b3"
+    },
+    {
+      "blob": "3e74b934ed5339118736476f5e7f7370692adb13",
+      "path": "docs/delivery/v2-development/caption-style-ui-20261018.md",
+      "bytes": 5567,
+      "sha256": "4590850f5286742d69474d93753c7fdc9fdd07e9ffd23aa69c62738ec4d3a708"
+    },
+    {
+      "blob": "f5b3b2b91a1040e459abc3de136113b93a4b3f61",
+      "path": "docs/delivery/v2-development/layered-planning-admission-debug1-20261018.json",
+      "bytes": 711766,
+      "sha256": "77dd7c06e5c91b28bf40f71d4bcadf6c830d8c9def07a5914f1e72b4b9ae0145"
+    },
+    {
+      "blob": "0705fb00eae45416ec71d37aea5ce6165868ac13",
+      "path": "docs/delivery/v2-development/layered-planning-admission-debug1-20261018.log",
+      "bytes": 1136,
+      "sha256": "6d2b2b4acfe037e7e17fc507c68cd75407a51b15f5903724f1c825d0022bdb07"
+    },
+    {
+      "blob": "adb23f493d2e9e842b68e109017a4d21e5ff59a7",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug1-20261018.json",
+      "bytes": 710930,
+      "sha256": "bdcc93361893698e372eb9ae971987f9a79ae3257f2910f5435527a186a3277a"
+    },
+    {
+      "blob": "5ba173a0a653671e60602c07c73a35305abfc5cd",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug1-20261018.log",
+      "bytes": 1084,
+      "sha256": "25bcd7f9f43de6cb4ec0714a502051e2b3d07bc7b61127b90d7d91ad49abbc90"
+    },
+    {
+      "blob": "097ba73272eb5e6905d0ecba5674dec517539eee",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug2-20261018.json",
+      "bytes": 711508,
+      "sha256": "cca4545366073ee510b6ebc63827ec93737eb8f9366f5b60ec94147e7dd2fe72"
+    },
+    {
+      "blob": "e2c7bdfdb635437b0f17d4853a4ef4b2ad96e084",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug2-20261018.log",
+      "bytes": 1160,
+      "sha256": "b83cec2de82dee582086aba719021facbacb0deb66a44f1efcf7b3f3983dc269"
+    },
+    {
+      "blob": "264a6252a6f9332cc42c4c577cbdf6848a156787",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug3-20261018.json",
+      "bytes": 711769,
+      "sha256": "408eb761ea7b6defed07e3be2feae8fffa68abf4cf7240f91e7bb8da677d534e"
+    },
+    {
+      "blob": "d1c7b3dc4bbe92f3933ca9d1991357997015eca3",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug3-20261018.log",
+      "bytes": 102666,
+      "sha256": "a2a2e0729b16c2a6434b3af8e24a4de256e89e50da8087c535ead278758e3f4c"
+    },
+    {
+      "blob": "874a1cb60d578e89bcd7099f964131d9ef048202",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug4-20261018.json",
+      "bytes": 711770,
+      "sha256": "6458c038c44bc5e89b6f2e891c38ace0e7b9bed162c8eecf938520ecc4e3a8e4"
+    },
+    {
+      "blob": "9202f5c19cb1e45c4e9c421b8874312ae7d09cde",
+      "path": "docs/delivery/v2-development/layered-planning-file-debug4-20261018.log",
+      "bytes": 1150,
+      "sha256": "ac54630b8e12b1421e5a14ea2d40cbab8d6c8bac0f8e973be2dae0657ece4fc3"
+    },
+    {
+      "blob": "50e98ef760a88c63136efc5b547b6fb947a9390c",
+      "path": "docs/delivery/v2-development/layered-planning-legacy-debug1-20261018.json",
+      "bytes": 709614,
+      "sha256": "2dc2e8669a1e8d4842ffa5eedd4edbf64a7d9e8f9988c545cbc01947012cf86d"
+    },
+    {
+      "blob": "c7b2434ebfe91ff98bfb0a13068cf9fbb0ed2a4d",
+      "path": "docs/delivery/v2-development/layered-planning-legacy-debug1-20261018.log",
+      "bytes": 1025,
+      "sha256": "50385052e4513f5e28b692aa21b9ec3ed3060253164a13070da67d71e67cdcbb"
+    },
+    {
+      "blob": "d6b42434227221904f27666a94351ab9fd466bb4",
+      "path": "docs/delivery/v2-development/layered-planning-model-20261018.md",
+      "bytes": 7285,
+      "sha256": "879bd4b7d2368648040414577dfff00f897815f9ba23c71b5d726984e7967161"
+    },
+    {
+      "blob": "914cd41237f023e54b9b2d9ae60281359a20ea4d",
+      "path": "docs/delivery/v2-development/layered-planning-pg-final-20261018-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "61e22c7ff8ac8f5d68fc1cfcb17703d9c473badda068328f0cdcc88ec549dacd"
+    },
+    {
+      "blob": "3bfa985574b6520aca755c39a29b4300c16c7349",
+      "path": "docs/delivery/v2-development/layered-planning-pg-final-20261018.json",
+      "bytes": 711903,
+      "sha256": "5f68bf20fc43f8f0413632bf6f4b528a45a0b5278c82a4b82c74be7c2559eaaf"
+    },
+    {
+      "blob": "975758b9bb63f5bdad8a98da83f2f090e1b01956",
+      "path": "docs/delivery/v2-development/layered-planning-pg-final-20261018.log",
+      "bytes": 1087,
+      "sha256": "3b38e74baee399b00c79213f559bf197e25b52ade7609dc76e03e273b0c2e11e"
+    },
+    {
+      "blob": "64fbfe2c63b1de553a246c50211f92b6fe26d19c",
+      "path": "docs/delivery/v2-development/planning-canon-caption-public.json",
+      "bytes": 711986,
+      "sha256": "898d1acf71599e945449eb036b0b66fa05d99e24134b649d0f65b2047f8328d7"
+    },
+    {
+      "blob": "ae03499fe0714644e6b5f28219795f76f57c7748",
+      "path": "docs/delivery/v2-development/planning-canon-caption-public.log",
+      "bytes": 634,
+      "sha256": "8b6c09d5f13229de570b97c337c2f773248f9b2d5f9e040a7b839f2ad8cdf865"
+    },
+    {
+      "blob": "1fa34e14ecd3b6010de7de74c18566245cab2dda",
+      "path": "docs/delivery/v2-development/planning-canon-caption-ui-final.json",
+      "bytes": 712109,
+      "sha256": "9497c160c457f343a18e23f9f4aeaeb5e2c7ec4d781242050e72951fe722a486"
+    },
+    {
+      "blob": "56be7decea78f625afafa46caa8da55685c237e7",
+      "path": "docs/delivery/v2-development/planning-canon-caption-ui-final.log",
+      "bytes": 3202,
+      "sha256": "ca2c0831d28ce3934b240c61e97a4e9ffa1a9804db32b19fd0ef4e5eae9ace8a"
+    },
+    {
+      "blob": "3310a71cb66e35040e9d4f609d6238fc2ffdb244",
+      "path": "docs/delivery/v2-development/planning-canon-caption-wave-20261018.md",
+      "bytes": 3035,
+      "sha256": "6ce5a68f0b5d023ff4834aa238938ecc1f8643b41e92d1e6b2b8d3186031c1f3"
+    },
+    {
+      "blob": "6c8fa180fa7f8283a88891f6ee68871dfb8fd491",
+      "path": "docs/v2/CURRENT_DEVELOPMENT_GAPS_20261018.md",
+      "bytes": 14654,
+      "sha256": "77a4e023cb442a024b1bc2df238f083fd0d80006c9d49953832fe54cb4ae0a86"
+    },
+    {
+      "blob": "430d7c99aec5bbe7dca12178f5c2e05665462a47",
+      "path": "frontend/src/creative/StudioTimelineCaptionStyle.additive.test.tsx",
+      "bytes": 14305,
+      "sha256": "4e8e546c76a5caeb2343af1a948e97b6c41f628b843fdc6d85f4d290ab1cb392"
+    },
+    {
+      "blob": "08d21f22c5760c5ff20feeb93db097825a45c09b",
+      "path": "frontend/src/creative/StudioTimelineCaptionStyle.tsx",
+      "bytes": 4638,
+      "sha256": "67b51e73a2e62a9fa43d75f0f05c4c574804b45313640796d427cf85aee15947"
+    },
+    {
+      "blob": "cd8ae38894ff50a2162ce2878fb7e72973988bbb",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "bytes": 52087,
+      "sha256": "84d5c46fb9ed0790f2547f19b1fbba2b175e36d87583cbcacb7e46313ec2d417"
+    },
+    {
+      "blob": "56d0170ccca2829623dac2930a58305c68ff1aec",
+      "path": "frontend/src/creative/studioTimelineTypes.ts",
+      "bytes": 22552,
+      "sha256": "7ed11136156e95fb5c77ab5bcebd16168f573118eac34b5ac350a87c347325cc"
+    },
+    {
+      "blob": "c01f13f0737619a3d2c53797caf409015ad14974",
+      "path": "frontend/src/experimental/ExperimentalWorkbench.tsx",
+      "bytes": 15512,
+      "sha256": "231dcf98af3d7802b3a77ef09c94291f8b09fe4a8d4c497bc189defd9419eabf"
+    },
+    {
+      "blob": "9c809d460b2503735e7c49f8a3fb8ae8253fe862",
+      "path": "frontend/src/experimental/PlanningModelPanel.test.tsx",
+      "bytes": 22255,
+      "sha256": "f7de983a0d60c2179903e7241fc7ac37fc75d75c2f6dc150d7375a104a1d01ae"
+    },
+    {
+      "blob": "3b811ce3bd5ab307eb3ba0b4691f25520956ebe7",
+      "path": "frontend/src/experimental/PlanningModelPanel.tsx",
+      "bytes": 22121,
+      "sha256": "239fc46bb510e5d12e4b5ee69e00c0ebac258a7766ba4f0513fc7848d0482dda"
+    },
+    {
+      "blob": "e3758a78117f7ea8cdcc363db8fd5cc36dd3d5fc",
+      "path": "frontend/src/experimental/PlanningPanel.tsx",
+      "bytes": 19204,
+      "sha256": "e5afd7042a5b7293c2e66d0efd5e1a3487e3a025e8acfcaa647eb49792b142a7"
+    },
+    {
+      "blob": "ee3a6a3182f5b3c390a89a1b64612ab2565d5082",
+      "path": "frontend/src/nle/timelineOps.ts",
+      "bytes": 63078,
+      "sha256": "f1f9a4a51b0307a5719e0636518896244ef7c9744e541a62ba686b10be394819"
+    },
+    {
+      "blob": "2a928e7e09be8335787cb853f350803762c0f0e7",
+      "path": "frontend/src/novel/PendingCanonReviewPanel.test.tsx",
+      "bytes": 8641,
+      "sha256": "0c005b3088cba2a94a6d5f1cd8ef4e286921886088347b349b8bc80a0c03b84f"
+    },
+    {
+      "blob": "b37dda9d32fafd52dec6a4beaf67e2b82d1381c8",
+      "path": "frontend/src/novel/PendingCanonReviewPanel.tsx",
+      "bytes": 7848,
+      "sha256": "feb7cd39b8c793f08ef7559ece8846ef5fcc1ce514fff883a87fd2df99b7ee9b"
+    },
+    {
+      "blob": "8c23fc6e5d8b8c6af8162c6e61c2d441726c11f1",
+      "path": "frontend/src/novel/pendingCanonReviewClient.ts",
+      "bytes": 2707,
+      "sha256": "f54193fee7e08ca7a477854de98b68e49bcd5815f4b59a81409d0befc7cb17da"
+    },
+    {
+      "blob": "e225b5e38d862d7b19a981694b4d8c434678e284",
+      "path": "packaging/public-build.json",
+      "bytes": 24163,
+      "sha256": "ca038b3962437abd9ad5cb1917fd0b5176729b58885d6307296940bfabea6e3e"
+    },
+    {
+      "blob": "f99e1e1c4a4962c595895f9dae875eba131599d4",
+      "path": "tests/test_canon_generation_source.py",
+      "bytes": 12835,
+      "sha256": "ca6d89fffbd960a10364c8b6b4cce21f069dc4834b5e4bc7e025ef57f68cb2c9"
+    },
+    {
+      "blob": "035b3f911a80605da648b137e889453c71a7a6d2",
+      "path": "tests/test_v2_layered_planning_model.py",
+      "bytes": 29393,
+      "sha256": "c3a0c26ae50e79991c578186603fb808be4c45dc92eb0323193f351cb46812ea"
+    },
+    {
+      "blob": "6f4878c1ba8176ce13056e958779baf391790947",
+      "path": "tests/test_v2_timeline_caption_style.py",
+      "bytes": 17614,
+      "sha256": "4f642f530626d7f643d4ffcf1b193ea7872c0e2308fb82d4a8410dc311e1e207"
+    },
+    {
+      "blob": "03e3aaba58d1aedebe97197a16da947d757914cc",
+      "path": "tests/test_v2_timeline_caption_style_api.py",
+      "bytes": 4355,
+      "sha256": "5043eb6c91861351e8addaf38eaf17cda144e903084c1840e99bf6fe59da3472"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
