@@ -1,0 +1,79 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "6e4545ce9bd410041c10d3f1eb033791425cb7b9",
+      "path": "docs/MEDIA_CANVAS_GRAPH_ASSET_HANDOFF.md",
+      "bytes": 2131,
+      "sha256": "96f99a9ea2ee4842e187140eef124b885c60dc27fc8516c4a549c367737ee13d"
+    },
+    {
+      "blob": "823a5237bc82f8589a695c65479e9229dde7d585",
+      "path": "docs/delivery/v2-development/canvas-graph-handoff-final.json",
+      "bytes": 696265,
+      "sha256": "8bfdd56c07259cc6352bb194374305a4f39158b6828ded09c566656fc6666e6c"
+    },
+    {
+      "blob": "44a55cf47a448b4c03569e171e35c8bed7dc24ff",
+      "path": "docs/delivery/v2-development/canvas-graph-handoff-final.log",
+      "bytes": 2348,
+      "sha256": "328ad47e7aac7dc6bb60daa17573212306d68df31de977dd75b217e839924e65"
+    },
+    {
+      "blob": "8f6a889d85e1d720277b3592024edff5ea001de8",
+      "path": "docs/delivery/v2-development/canvas-graph-handoff.json",
+      "bytes": 696211,
+      "sha256": "550b2cdd30ee1450a959c7469ebc22e2330b8983fd4a3639cbcd0285426d1b58"
+    },
+    {
+      "blob": "37634ba2f7c4b021bc793fb9a8a5115052e4e05e",
+      "path": "docs/delivery/v2-development/canvas-graph-handoff.log",
+      "bytes": 7496,
+      "sha256": "85f5099517ae4b4eda7b33f48f60734ec5a0ca7679ce74614b327f64017b710e"
+    },
+    {
+      "blob": "8771f8c0eeec74c3f378456f4110d1979914f6c1",
+      "path": "frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx",
+      "bytes": 5835,
+      "sha256": "b67e2dc6a80447d3a0ba7ae69e04997810c1db4eb6452c85c4cdb338f9f51318"
+    },
+    {
+      "blob": "7120b359fe4225ac34e670ed4944086b36acfc12",
+      "path": "frontend/src/creative/MediaCanvasGraphHandoff.tsx",
+      "bytes": 4319,
+      "sha256": "dfc033ab66b16b40a6205fcc91c5dff46da78248e8f171b1365cceab6a491ca3"
+    },
+    {
+      "blob": "6f3195e8928ca134946363fcd4102ad6bcba5ef4",
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "bytes": 13772,
+      "sha256": "21e6da1777c052ad0cf3159de53311f1c24ae7176cb12f379d860fd6329b342d"
+    },
+    {
+      "blob": "713e4b0c3f091c6be75dfcb266eab5e46c2a97c3",
+      "path": "frontend/src/creative/mediaCanvasGraphHandoff.ts",
+      "bytes": 2429,
+      "sha256": "ff7661f7601dc35f02c798b3858e97feddd411c610ebab4c69d8ed236cf71e77"
+    },
+    {
+      "blob": "a97605f8c7e8655b09424ca076854dc4a73572ec",
+      "path": "frontend/src/creative/useStudioGraphEditor.tsx",
+      "bytes": 4268,
+      "sha256": "ee60f926c0410c29f304857c48ef276032a5351bdd4a2600c0934a5c6a0ea6c5"
+    },
+    {
+      "blob": "8b6b9a85dbeb86eedd9fbbaa3a03ffa17d547ea9",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 85855,
+      "sha256": "40bab10d6d0dda53a946cebf31d8fae83481f78fa9480d734dd5826cad2b949e"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
