@@ -7,6 +7,8 @@ import sys
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.backup_restore import BackupError, backup_directory, restore_directory, verify_backup
 
 
@@ -70,7 +72,7 @@ def test_manifest_traversal_or_credential_member_rejected(tmp_path,path):
 
 def test_symlink_and_unlisted_members_rejected(tmp_path):
     source,_=fixture_tree(tmp_path); saved=tmp_path/"backup"; backup(source,saved)
-    (saved/"novel_data/link").symlink_to(source/"novel_data",target_is_directory=True)
+    symlink_or_skip(saved/"novel_data/link", source/"novel_data", target_is_directory=True)
     with pytest.raises(BackupError,match="Symlink"):verify_backup(saved)
     (saved/"novel_data/link").unlink();(saved/"extra").write_text("injected")
     with pytest.raises(BackupError,match="unlisted"):verify_backup(saved)

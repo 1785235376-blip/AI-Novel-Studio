@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "4533bc91331860602e3a1a9ef942dbc0eecb325ecb5726c2d4c1bf7bfaa26fa2",
+  "application_source_fingerprint_sha256": "39d9e253e15a76c8f421ac7e3d5a1773963daa5a99c8b868fb23ba13e4bc5ac3",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -10,12 +10,12 @@
     "app/agent_catalog.py": "3372978dba5ef3c0752fa5cea7486b41cab1cc56e652dc766c8b9ee10080b599",
     "app/agents.py": "634a140d1f84d07400e47c9ba502cc6174b1cc5aa82cad480a314f2c7baa3687",
     "app/ai_planning_api.py": "1396e13bce5664317cd5d1d85b2f27e17eadc8ccb2147e422106843f73dd418c",
-    "app/api.py": "60e7af58e58ef5d4cfd7e1fecc0fe9d7b2de5c71c0fee34a616bcf854f537f8c",
+    "app/api.py": "acdca1488e4906b47a71d06cad2655374fef7cbdffdbeebea49200adc77f6a47",
     "app/application/audit_service.py": "ebaf8b5089dad466d4e165c58d027f254db6fa7a99d468ac200bb656454346a8",
     "app/application/collaboration_service.py": "836ed233d4bbfe2b9deb718509e0501ec023b95b3be9a972a911204bd21c78d2",
     "app/application/contracts.py": "52bf5a0312fc6e83d64f8347d33c25e3f332d133211c26b4f077e39064079e32",
     "app/application/events.py": "8a2e3139f6a662bd42d52293f60ba0def2fc207d59aaea4b2b34ee88cd17b647",
-    "app/application/persistence.py": "7d77e380f8fbf84928ade130c4c022469636a62bbe7fd4e89c1e42c44c50c3a4",
+    "app/application/persistence.py": "f34f58c6866cade1f85f1c81b9432a4cf39f3d30c07bab175c7bc3f19c4eca9d",
     "app/application/runtime_service.py": "4b56d77f6cb3ee19ef9af78a28715d8afc8189aea7a675ce9587d96fd60049f3",
     "app/application/task_service.py": "bf15bc3023b97884cb2f4da7764b5df5c451a9201debb737709ba15535d445dc",
     "app/asset_lifecycle_api.py": "b0208ff5cc92fb5ff392e7044d6a55bf25a77ea80e58a0fd67a1bd338652074e",
@@ -37,7 +37,7 @@
     "app/backup_restore.py": "fd26994e6d07c2b862d3f282d7d1443ab7edd9e316c36cd2524bd3df7c01a250",
     "app/chapter_identity.py": "87949c7fb5313004a23d88af3556e1b0e2f0f74b3faa33e35aff6ae856e6559e",
     "app/collaboration.py": "542a3d122d11df1b77e8b89f165cbed5789be53fe4f73cc09451b8d7af0be478",
-    "app/collaboration_admin.py": "6b2a78c0c5d549862020e071ffd1192e885d5ee9928c1ef397f68d344270b8f1",
+    "app/collaboration_admin.py": "47cd13de0023a40769ceedc5f3ffd32f6781e5f6013431a263da30f5e01be33c",
     "app/collaboration_admin_contracts.py": "01057d90ad7d124f4773c72777f414a5e9ecb26ce98fabf4252b72e0d3507788",
     "app/collaboration_api.py": "aa550882512269aabb6e3ba448c2a28e6c007b7cdf6534adc01c6e165746157f",
     "app/collaboration_contracts.py": "95dd3b68c827932907cdfcd33a7a9063bc64e4abffedfe9bf25946d7cfdf2816",
@@ -55,6 +55,14 @@
     "app/creative/adaptation_receipt.py": "86071c1c6b0fc9a633e0ce376e766ec6e25ad157f70594233f30056d717c8ac4",
     "app/creative/ai_execution.py": "7ab5bd82d2443c3ce61ad5fa9aeb9554f265c06bff2d8b1782e20e167ffc0782",
     "app/creative/api.py": "d4f4f2f1b4d668c2194b2689ed9ece2287e78c259a0642bb05a053fcc1604bc1",
+    "app/creative/bible_api.py": "9040dd1a8ebd3469b59241365910d7fe370741431db0e2329da884b8748607ca",
+    "app/creative/bible_projection.py": "44bcce83294c71af72ef936e5d77933db4f2bc404f736a848231581799db43d4",
+    "app/creative/bible_workspace.py": "7cc860a3b0be2575c2089771f7f49ac59fb798ebe1fea3ba4f7bbe82c8f198ce",
+    "app/creative/camera_language.py": "66acb20f44aa8f7d82d808bdf1b8afe46401f4545efd2e281231b80f69fb1917",
+    "app/creative/content_policy.py": "65e0b56b63673b200c612eaa3df21b033b7b673b5e6fbe1ecaac9c761a458bbd",
+    "app/creative/director_intent.py": "76dae42c5af407fa4f7b520d9600e693186e9ef714652963c04af5e76f86b4c1",
+    "app/creative/director_workspace.py": "768d4b5405655212878a5cd7eb15d0229b313b84acacd7dff64bb5d6fc272ba4",
+    "app/creative/director_workspace_api.py": "1791c6e8183b4478c3fc8ec54785a007442a3fa54275400bd9f26414d2c21b46",
     "app/creative/generation.py": "068144ee6e48d56c46d04662c1aba0861febcbe30a03d0829f7a6477049e053e",
     "app/creative/graph.py": "aa9fcd0a1e404fae2cca3198da53367f696229109e39a3f4a362c93a36932c28",
     "app/creative/graph_api.py": "d47feafacf1fcea90b5a9d54d62cefd2d8491b4d8d6c7f8b9ca8fc96941bb592",
@@ -63,31 +71,42 @@
     "app/creative/graph_image_nodes.py": "85aec65641c179dcb9d17311e2720b2be88eac85b0887a01fd964f13d8940de1",
     "app/creative/graph_media_binding.py": "4608bd98219a7d1eebf0dbd4eb2191e9d6c62a9a194db2857d409998ee944689",
     "app/creative/graph_media_execution.py": "e8bacda6630543a658d7d2aa2668b6f9e706df38272dd21bdc4d40764a193fab",
-    "app/creative/graph_models.py": "cabcc16e431e59803127f4edfaf28f237200eef68ab58c57078c332d031e57bd",
+    "app/creative/graph_models.py": "22e579399916b56a7ff74a98875a807811131a7ba20e1b7c5934b34e8058c08e",
     "app/creative/graph_planning_nodes.py": "1f12910cc7bd159361b96e8c39e6f25ee0141181a18ab92110083a97dd71ccf9",
     "app/creative/graph_timeline_execution.py": "fff11b0c1c183f7dbb1b983be361259ef5e1aa817c8e0b4d8f701e402896631f",
     "app/creative/graph_video_nodes.py": "67987609fbe5a7d07706021b23bf82bd14308ec73cf2098134817ee7f0d71acf",
-    "app/creative/models.py": "ffc5e03e2ba94ef6eaede01d2a722f59467cfd66c50935483f26f64488d8172e",
+    "app/creative/models.py": "44f7e38d6ebd1dde309b557b9ed31803e818d532dd20d1db1930999c785097c9",
     "app/creative/production_contract_api.py": "9d3c228ca86578e7f9fbbeacf74b552a9010e2c66c66e049b086e4edbfa2229b",
     "app/creative/production_contracts.py": "281607b57ae46b242e1f581fe9d69900f73b58608820df83632b1a1df6ab34a1",
     "app/creative/production_execution.py": "153794f0de25e6b62516074fe7b7c952cdae710465307f7511ede717e5dd6851",
     "app/creative/production_execution_api.py": "da27d71614ac89a1ddff72790336ad563a6e89ecdea626b26e8ee54b82bbb303",
     "app/creative/production_execution_models.py": "250c74068d15d71d6e3305af8f59582bd054b43e74babe4bb496f1fde7b7e93e",
+    "app/creative/production_workflow.py": "6560c3aa21ce95ab9a1c7f678956bf3f44884942bf0965a3802f6899c907de4e",
+    "app/creative/production_workflow_api.py": "4c2e9ae20af747846aa2a9bbffc1dd3a983c05ef8197b5042ea0cdce8f10011c",
+    "app/creative/production_workflow_models.py": "59510c5cf8fc3e7d83b9757928fe95f34ac9dc52a9404b4957d03dbadc349939",
     "app/creative/project_store.py": "17eaef6b7a9c382d24f59e85850c0b2a9ed8334b69c10c47ee0959084dac3cbd",
+    "app/creative/prompt_adoption.py": "b32bf22d4a34b45d2fa972f042b76edbbb6af55fa80eb1463aa6937b8f87d699",
+    "app/creative/prompt_adoption_api.py": "a35c5a392fec0bc38446752e0c44cf79a3853edda7b5ce3fc40e2d58e78d8089",
+    "app/creative/prompt_api.py": "ff5a7cb7225ad881eca3305631a84a4dac18be56e8dc889e11a3786581283e1d",
+    "app/creative/prompt_asset.py": "bf96bbfa10dfd28795ebb02c66cabf37709e1c4214475e472b900be12a8e74e3",
+    "app/creative/prompt_authoring.py": "aa65f5260c77a27fc459ff5432c2e2addfc3a5ec9706fe7d3a802b81aae2aa27",
+    "app/creative/prompt_authoring_api.py": "58ee2ae1c887713bb99c9a94b81dbfb15bb87768e6962dc4258bb212876de32a",
+    "app/creative/prompt_authoring_models.py": "65910c9e90fc2ec0f651f23a3b3e5e5764ef2a2ee0eb66ee9d233934e7a1bb2d",
+    "app/creative/prompt_workspace.py": "e371478f9028ff3a77aaf59e79dc301f53d6a7fa28520edd42dac47ceed529e9",
     "app/creative/proposals.py": "6d2e755f89ba7e99a1fdfc82c8abbf06efd8417d970e2b0bace685e4874cb1e2",
     "app/creative/screenplay_export.py": "375783b05774b262aa0a7984db7efc4928d5a18ce96812a817c104802bff9b81",
     "app/creative/screenplay_presets.py": "61e6e69de513e7c918661c2ccd55ecefc672a593295663c3bc84998aac8f8b5e",
     "app/creative/script_export.py": "d94eb8dc9d55d27aaf83f0fb1d97c9e20a102830692f9b1d8111ae4bcd91a144",
-    "app/creative/service.py": "f25216fd38690ee74620e35fe66a64ec273c05accbcf65d3138c8914eacc051f",
+    "app/creative/service.py": "e240ad4d7bd00454ccc9a12ef814e3fb5549c600285a4348f6214ff8741777eb",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/storyboard.py": "3c0f9959c482f51c41787b60471fedbc39a3628991031804eb86f5270a94f525",
     "app/creative/text_assets.py": "9c295da83af44cfaf49c0edd65f3dc1f5fc9d88ea808cb368ebb750bdb091d76",
     "app/creative/text_execution_receipt.py": "3797c24bfec8d499558bb0f2a1fc6d5ff78911d06b8ee6a6c46c4b20a582df65",
     "app/creative/timeline_playback.py": "e82a2a62801b94a888ed5af73a8dfd54b5560f8c1bac8e8ba23b3665e52a666c",
     "app/creative/timeline_transfer.py": "12128a136db571c46d10eceb5eb3d0489eb75f04c9966eaad801f5221b9d5c49",
-    "app/creative/workspace.py": "5ad030e162575e2ac35c728ac769c5e6bb9423c82dd4bc5cb51427f5bcc37d63",
-    "app/creative/workspace_api.py": "dafcd4e8a83eba0ca68f29655d71c59aa8b5bcd85e11ff40339fb7f606d62c01",
-    "app/creative/workspace_models.py": "5f38c1d510dfeca63d0372782a5076f10589984386d0c8680b0feea13ccdb9b3",
+    "app/creative/workspace.py": "d3dc5a02bb866aca3381d0934ae48ae2d5f9b4e6eb03861ce859e0ebe1a50bbf",
+    "app/creative/workspace_api.py": "ce558660a30e1015d7cb41a94c04faacd226fecf97caaec3b231c1e92a67165d",
+    "app/creative/workspace_models.py": "546a71c45a91594a9e79e3404479d6fabffe5a7da0b13eb80bdfd0d3d608983e",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
     "app/credential_vault.py": "1ae84eab118b9b3317ddb1812bd544702dc96a93bd63b5314c7e9e46848c4a40",
     "app/dependencies.py": "33aae7f3ae51340e3ebb0e311322f4c1b908e31f6a7c49f61e3115709fdb01c6",
@@ -95,7 +114,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "3fc2ca2782d6eaa60569bddb41f750eee00c1c0a9349c98a12476f7c2eabcb03",
+    "app/experimental/api.py": "0a68f5ef4e73640b71754326e269c6ebdea8d93327eea5067c559176f269f98a",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -203,7 +222,7 @@
     "app/experimental/voice_direction_api.py": "2f6adb8bc0904d13553e95fdfaa6f2bb9f849f38dcee30b2046251f84b2b91cd",
     "app/experimental/workspace_interaction.py": "c7bf0ee9ad31f3d718d62920bb988e09c596408bc0b02d6266547e72241b6659",
     "app/experimental/workspace_task_owners.py": "8b5306892df70dec2c74f2858df69681b307e6978a212891be6b70fe449f9e74",
-    "app/experimental/world.py": "f996f6496b78692ba7c5ae4bb81a84dc7987a18b11fcf7da988ce211b2acc273",
+    "app/experimental/world.py": "d0e72baef39d46b8b022f4806ab43f4b9e050f7a79156d29fe366579937531e1",
     "app/experimental/world_api.py": "0447865577f20e1ff317b9c877076b325611f2f47f9a2d53c6c5ae949798a5ae",
     "app/experimental/writer_room.py": "736e92a90dacc1caa1911eff2eb1bdd816faf3f78d6ae3d92a14b265c6f0ed62",
     "app/experimental/writer_room_api.py": "d12afcb81b472ca9083bad07690bb1804949893ad419a2a00a1782620d2b1b92",
@@ -242,9 +261,9 @@
     "app/lore/memory_agent.py": "00449fdafa51de7790400fa083cd69fa1e9cf92f2ce524cd80c6c4c40d53031b",
     "app/lore/schemas.py": "2f03db0d13c096551f69b76906ca48289bb0e1f7c21830b605ab2f9984ed21e5",
     "app/lore/validators.py": "4caa6681df7497b34eed9386200527fe15ea38e19923c86e43d496c07299ffb5",
-    "app/main.py": "bc79694e1bafa16cb41d2ed65bd4648e7f3cb502452a48af16adfb3ff52bb0c8",
+    "app/main.py": "110e7b742ab45b6f63dd9fb5ad0d02b1152663dcf4741d109f7b633a6c6a34f5",
     "app/manuscript_sources.py": "3095bcbe132ab3ff2507e008c6cfd2f8a98da87364a3c983f4e2f43ef27d27a7",
-    "app/media_files.py": "a3ddca3d9d705a31fd8c4312a48c9dcee21be35a5bce6d55ba901377a39a6e87",
+    "app/media_files.py": "2616955eff7fc723d61f018a39013d858df4ec296266737bb6fcf22c37035973",
     "app/media_frames.py": "478cf6c2af5268cb7fea3a7547d9fb60531636e56e0ed2caaf5b3fd8587dacc0",
     "app/migrate_file_to_postgres.py": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
     "app/model_center/__init__.py": "034f5d7bcdc5a548765d66dfe6442411e8680b3f761e6c38f310b475c3a8ac0b",
@@ -256,10 +275,11 @@
     "app/model_center/discovery_environment.py": "25604fe938fd5420e218565ce31346f685cce8c604471097b550cc628dcaf031",
     "app/model_center/discovery_onboarding_types.py": "51b65d835b8414220d4790417a97889410914a488b9df04382c9952d53f12cce",
     "app/model_center/discovery_prerequisites.py": "8e9f6910e0ad39e4ec46602278f3cb7de5501a180937e92271bd06a5668dfd80",
-    "app/model_center/discovery_probes.py": "69ff55b80b69a9e6f80510235153585b0efe0922dc883f13351ab4f235e2dbae",
+    "app/model_center/discovery_probes.py": "911abe2b77db09882b89342796976b1f851bd111a99c33fde7c93011e8f40146",
     "app/model_center/discovery_scope.py": "25539e385058fa330ebcc7c9264772dd4debbb7e1356f585c6f33229aae86f07",
     "app/model_center/discovery_types.py": "99ca672105053f68f3fc754467983ac2d75a4e57ec1d7407e425ad88c64e1ae0",
     "app/model_center/domain.py": "67d10aea8d1ef6036b4585c6921d93d37c38ac80ad6a826eb238690477a3a87d",
+    "app/model_center/runtime_observation.py": "4be244e74cc477bd5a21c3ca680de2768fd8d36a23e55b8bd42e8022b072a7ab",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
     "app/model_center/service.py": "a6736db944161b0b95a63a7181bc5eb5326cdc30bbfb234ea1a128514b7576fa",
     "app/model_center/whisper_runtime.py": "fc26647f00759f34d95c7140f95316f2c184833507151956d0ef5cba1e519ab2",
@@ -313,9 +333,10 @@
     "app/plugin_worker_process.py": "0b9a5a00349db0cc8ef2b28ad3386120f7cb37fd85f6789639f0622c1cb7b4b4",
     "app/plugin_worker_protocol.py": "4a42e61e04794263b0615b070bc4c23e3d893df32a5aed85f27c53fb4d662982",
     "app/privacy.py": "b974aa809d395f3282c9dd3670b2fd8687457f12ba2b4a8510fa3625d63c3557",
+    "app/project_retirement.py": "4abf46a92326bc43988610edcc1fc20377803e3aced3e0643f408f68a37849d1",
     "app/provider_routing_policy_v2.py": "9f0dc2728fbdcd21c42711f9c2441187cd2f86097a31819d7cfae7c73785f765",
     "app/provider_runtime_v2_contracts.py": "3e8ba4e4f65ad404ebe7ecf1e6b4beb473a31ee5b1846897a23c384e168213cc",
-    "app/provider_runtime_v2_host_hardware_inventory.py": "487d33b293ee1602f4f5480810a7eb3a03fa5a664b9c7e9a1224fa5749bcca22",
+    "app/provider_runtime_v2_host_hardware_inventory.py": "b571cb47a56980f93bc28652a8bfb53c27bfdd5e6a24dd9926f463f362a29b57",
     "app/provider_runtime_v2_model_center_snapshot_bridge.py": "0c53417d3acaa10a45177b21197234c928456a638a428da55ee233808b05740f",
     "app/provider_runtime_v2_routing_service.py": "3aa48ff41aca7fcb3e753ca2aec9bf0f934ba787073ef0fe203ff13f2b06772e",
     "app/provider_support.py": "b19cb8d9feffca5f64094889891aa263adc831f3bad0026d53af8b1dc2f350a5",
@@ -323,7 +344,7 @@
     "app/release_readiness.py": "5bf833679a181d6592aeb303c98b86913f24b552217a41633e86e7b095c7784c",
     "app/repositories/__init__.py": "065accc874c34a216239d588d5a17b842accf9d61cfb0ab2c9d6145534ab051e",
     "app/repositories/adaptation_versions.py": "367d2fa1eab2f1cb8470131b3a4c3ca8609b695ff4e8d34f9cab701556e0add3",
-    "app/repositories/authorization_interfaces.py": "b8fa64e186b2d57bf72f221f2e5b3163d125f735e1c462f0c0439b80ef123508",
+    "app/repositories/authorization_interfaces.py": "7eb4d441f125fa26925b19ff5a7414867e83721ba090197b3e786a0b59f245d3",
     "app/repositories/branch_manuscript.py": "3846e0777335a6dbd43614bdde11f067465de62305e15db8c5ff8ab34840fb0b",
     "app/repositories/bundle.py": "c863ee00d6c0afa6265b65709c9e26d894903308391b3c6651cde7ba02758cc7",
     "app/repositories/canon_repository.py": "02bc9f3b06d4e157f0e9c53ab4d24c19090714ad5a310376de8543f64267d7b2",
@@ -335,12 +356,12 @@
     "app/repositories/file/continuity.py": "51f1a261813425f11ffb49a3da3801424d0934f8f724ed4c92934f780609be39",
     "app/repositories/file/finding_lock.py": "30ff20f522e7f9bf186f07a6b30e1864764e4e5d3e9590e9de14030ee3f13b89",
     "app/repositories/file/generation.py": "3cebdcdb793850e3b474cdc015a5077ff7f0dd9e654a254d9aa5b633abf4fb65",
-    "app/repositories/file/identity.py": "0547c896bb97266a70f4e5fab1dbb4e35b89202a44af5949c046ed3c2f008dc8",
+    "app/repositories/file/identity.py": "3c269feebc4a80cf660d534d495079e5adf3b2d617246f2ecd2b75c9d6054305",
     "app/repositories/file/lore.py": "f214f2f52ec551aa9781065824995dccfb6b0b896a29301cf3b6ed5be44d11ef",
     "app/repositories/file/mutation_coordinator.py": "6f23aa5802ff58ec68724a0437f6bbcf89789f59f5d05c72cc762b0e9f2884f0",
     "app/repositories/file/narrative.py": "d96f2f8339b3f891ad70b87da72e04b67867c6e0f3d3e0fdc4084caf73f99ad2",
-    "app/repositories/file/novel.py": "a9209c3ae13e42b7cd56145f7bfc8974493cf4d8e0429301b1bcb892eaa31ec5",
-    "app/repositories/file/scope.py": "fc5f8b0649831b49143bc52b937a10d1a2c63247be5db68ebec28c6fa010e7c2",
+    "app/repositories/file/novel.py": "2a1699a11363f639f838419164f8b6f795a6b81089bccba236af5ee92c2dec4d",
+    "app/repositories/file/scope.py": "b3f664468ab78a0398ca90ee008f4395c055aedd8fc1539139088f15abecbffc",
     "app/repositories/generation_repository.py": "75d392c7d7f1cf554065deef78e1fc34dea9e2f420c5512317853f474f525df2",
     "app/repositories/identity_interfaces.py": "cdc6eee509d3f3b3d9c71fd55fbd32c354a2a224fabee84f8e9d186d8421f8b7",
     "app/repositories/interfaces.py": "b27aaa6acc8ff206adcc3fdad97b21ce4d96ef9faab571819a3ba44f0257db71",
@@ -356,34 +377,34 @@
     "app/repositories/postgres/lore.py": "28f9971be0e66d7bd9ff5a9ab90499858d695b8f867bbdbfdd951f63b8096757",
     "app/repositories/postgres/models.py": "55c8184a6acad2d9bf4d7d3838f4bbb12a53c693ad157482c95049e348ea1966",
     "app/repositories/postgres/narrative.py": "6958f2aa0a039c7d2733c5d821229a6d12441579dbee1a22cdf5b40669b37b50",
-    "app/repositories/postgres/novel.py": "28d613cc0be08febe7ce169a8769dab8f57dbcdc9106d98f422095df6ec4cbbf",
-    "app/repositories/postgres/scope.py": "15a74205deb951c50f1d54fcd33849bcabbdc5008f3f24c37449f3944d1ba130",
+    "app/repositories/postgres/novel.py": "d74cdb9b924f617e2554af5308ad63c71373566e55e863591aef821288674382",
+    "app/repositories/postgres/scope.py": "9097dde635bc6c3d8305a4ef6fb22acd441b2ee3dc66458783364a9a8891cfb9",
     "app/repositories/postgres/serialization.py": "dc8db6b7139e89d61d85aa7b610e3c609f85cf1814d41f39b9ad2a14b5705cb9",
     "app/repositories/postgres/session.py": "681de0ce9a2bde2933935d1cfbdc6b695f4cdeddae9c83d9507b608d78bed3e9",
     "app/repositories/scoped_narrative.py": "b3267b25ea17d0b992a2bacd3a0721bc2e1dccd5fd5c575c787433638e795470",
     "app/repositories/screenplay_versions.py": "44e20a611d6ed6eb3f9a385ad244509438f99f9782a0f1260650f6a163af32af",
     "app/repositories/story_record_versions.py": "af242c568f6cbec82e0e88cd606407095cf332e33fb962393fa7aea82d73d5cf",
     "app/repositories/structured_cas.py": "51062aa96ed33449a39709c0cebe4157d64cbccc3182e2bdc8f8a58f33f7e944",
-    "app/repository.py": "7b69936cfa3ece1d63a0f97cf396055adf12e156d4032639cb86f3b1f91dbc6d",
+    "app/repository.py": "b72108f416345ae02fb32847fb5b278e936c97318bd61f60b9396b265ff5bd80",
     "app/review.py": "eef02b474f4dac471542dba4b071b501d4babac64512415276ca93b4667c77ba",
     "app/revision_constraints.py": "7e7cfa66ca5cccbb5a1b4952282f08e3115a62e2c90db36063ff0a2cf9f35441",
     "app/router.py": "3beaa3c71faca91042a06d38347a821057343bb720b3296e34490144173876ea",
     "app/runtime.py": "989a547503b5d7ce0aa3037db7a92826afa1cc40c8159fefbcf6c19bdb2e79c6",
     "app/runtime_diagnostics.py": "554221723160a2470eb1bec0c1575baf8d6a92266985c349a0140f96bf132124",
-    "app/runtime_events.py": "b01d7869fa2b3fc52818ef5f367b1a453a6e98fd08f1cb87d34879b5c5033397",
+    "app/runtime_events.py": "cc5ab2298a6731e82c9a12a48983dc956c259be67d468d0ae442da100122213e",
     "app/services/__init__.py": "ebde975a810ad851d27680e104ad36a497093c8b86eb4e9dfb8f0eba524813a5",
     "app/services/adaptation_service.py": "2ac6124cffab0d6cdcae0d851b61aeaf61c83d97e5f99d34021e7db0b8225242",
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "8765422dd467edfd62f035920a6333ff85ef5ea824c936c4f9093f9f6c7020d0",
+    "app/services/asset_library_service.py": "9518ca28ddbb48aca098ffd3e6b7ccf7bdbdbbb0dfd5a93d3af533364d9650c4",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "0b1840e0a0d7df70e633e78ed4dbb9fbfe392db6ab1e098c23c987d8dd2b63a7",
-    "app/services/authorization_service.py": "b115f9b906bb7d09d0ec0dbdf5d8f10637e7ec77447de4ff7b90daed97a759ef",
+    "app/services/authorization_service.py": "ad1862ae3aa21eb9547e4d9ddadf30c08a4aeff8e9a2c4a9d345548d689bd374",
     "app/services/branch_manuscript_service.py": "56973b8a1819a7580ff71d25caa94c549199813e2dc80fc2aa59bde3482e79f9",
     "app/services/canon_service.py": "f1d985bcd028a39147a1548dacebfdf5508ec8e226faff696cb7b050e513b843",
     "app/services/chapter_service.py": "30430822dd30f6ef0eac50f708941797801d099f842c357d4bc25c04ecfd9900",
-    "app/services/collaboration_scope_service.py": "aacf1cc9a80697288ca8261b0380c19f7136e62c7cf793a2bc702ea790c09ef2",
+    "app/services/collaboration_scope_service.py": "605fe6b9de231240f4b76fe54595db3f24ca02dbc3e060c8db637e6bcd6c1dfd",
     "app/services/context_service.py": "184c44949b85b9815528c1b0ef6ca15b0f5cf2e83decd38ef1b5bc7279869cc4",
     "app/services/context_snapshot_service.py": "cc1c32a28725acb69cf732063233e4489868dc0b2b3b337c65dbee04912ed13c",
     "app/services/continuity_finding_service.py": "ac10263f095d7458da6b0b4351a53634c661fb3dd13d186895b7537ff67e1022",
@@ -397,7 +418,7 @@
     "app/services/harness_context_adapter.py": "1ebef87658a8364ec5583cd46d7bc85816e55c546cfc360f809363ea428abf5b",
     "app/services/harness_process_service.py": "2deed86d9505787ef4d3d210474c4a60fe550dc04b84b905db76650196b9fc0e",
     "app/services/identity_service.py": "e19317f74f7ae466fd4f5e9eb967c1bcbbf4dd0aec3f5a6e0a746e61fc4c8412",
-    "app/services/image_job_service.py": "5d767f118689c6964db42c0fa313a367079d77aa6fe25bfbc36c8aa7719f15a5",
+    "app/services/image_job_service.py": "57da66cde9b258ce27ea9b7bff31d7b6d435fb7d5bc8f641c85813b338fc8737",
     "app/services/import_apply_service.py": "2f79299dfada85875414e6b6e7c09878306cf574a322bbbe8a1f837c6f017216",
     "app/services/import_review_service.py": "9acc616f847adc37e8f2b8aa447f1a58e1ccc8e94fe43c3cd115080225364211",
     "app/services/lore_service.py": "3eb39d278406894027052c5e15c068c949a5f88758b90d7cf3fb857d38c192cd",
@@ -409,7 +430,7 @@
     "app/services/novel_service.py": "7c80efe13490b1ee3fd69c33d6e122e33e3e244929403bf52ad316058ff32abd",
     "app/services/pending_canon_review_service.py": "88e521a506446839dbf1ee62f089c02f88d6627b52bc12857ab447f00b8ed318",
     "app/services/screenplay_service.py": "2c0e86d5561a68c426646f46b2b4986bd8a88ac65cb9a995428467ad17367be9",
-    "app/services/studio_audio_execution.py": "489281e2ee2fbc229aff831268835269fa357034749ee4f49531a1bdc4a941ac",
+    "app/services/studio_audio_execution.py": "69ffb1b480ae80aa5e3a89a586c1e91b7c28c1950e42f30ba2d85663c5ebebe2",
     "app/services/studio_audio_trim_profiles.py": "b81e54cb2edc1ded89b75e4c9d6a39d55ba5b401fff685e1021382e9ef0fa6f5",
     "app/services/studio_image_control_contract.py": "48534f0b626b769474bb8a7d0fa86cf2189b3c8a0599eb54e9d54450a1bdf32b",
     "app/services/studio_image_cutout.py": "cb06258734697b7f74e70876c0549f27e5ad3400e3e58307d54c776372b2339f",
@@ -428,24 +449,25 @@
     "app/services/studio_video_provider_recipes.py": "3888e275e14204f211fa8b896520533b0e5b7bf2f0c1f2a6e760ba4394c8f17a",
     "app/services/user_preference_service.py": "ba4b93c6f5fb0698b9129620881b8f0a5d63d10fd98f9c67fd12d6cb48164075",
     "app/services/v1_capability_service.py": "4844ba77d191517e0c24f3180b51171bc2b52fcdcc5d16f372f80d77e9e46fb4",
-    "app/services/video_assembly_service.py": "eaf5645281d9ab7a2d5a04ba1b741803a01d118dbde37ddc402bbd1a36ae40bf",
+    "app/services/video_assembly_service.py": "6f9c34d503eefc4c257cda2aee85a4fa8de10d086678c699134a06e944378493",
     "app/services/visual_memory_index.py": "5b66df550b5db76e21cfe68b386cfa5db0618fa7d7573ef60ef8d69d7df38720",
     "app/source_privacy.py": "8a541344bef69f37d3703c7e4755a8ada338a6f7e761b92d6ca56a4a2ebf87ab",
     "app/stable_identity.py": "6e87a8aeb85e4040774c461719115230f1e6e82928816173aa6f4c44962f1b59",
     "app/storage.py": "5375c80375270fe90caa20770d5dd88589793fe8785712755c382dc99e20d1ec",
     "app/story_record_api.py": "838455f0373f6722c9d9486b8b1151185de1e66d7811fac76fd30dd2b3192599",
     "app/structured_log.py": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f",
-    "app/trusted_sessions.py": "c43a09552f3b940b02df2119dd7d060927c6eaeaed9502fdcdebb57bd17b3394",
+    "app/trusted_sessions.py": "11f2520cade262fae3317e23c4379b0d376359faecc1df33160a4f1ba80c67bd",
     "app/video_assembly_api.py": "4b9fafc79e883ae13824289ebb75c87efcd8fc6c7a7204275c676555597b55a4",
     "app/visual_workflow.py": "a5ad2b66b50289603df914bead47ecc12e351d15c4fc957192af9693382206c7",
+    "app/windows_file_identity.py": "bf3a8a433a38411e5d643c0c0ff0338f92d5e221c25c87b5b90aa720a51f57b9",
     "app/workflow.py": "c8f65bfcc73b454038a177aeb519b2e3cd032d8f9ed57fe4bb8b50d0d3e607ef",
     "app/workflow_api.py": "5db645456385c1199d15b0c13576bb092696e948fff592954d6077bb0120211c",
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 410,
+    "added": 436,
     "changed_contract": 24,
-    "current_method_paths": 2243,
+    "current_method_paths": 2269,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -462,7 +484,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "647fab1ae139a420bd20e68db768cef926950083114d7b58d227093caad414c5",
+    "sha256": "820093c52d24127c8e279e55988fadf4c4269c805b3793caf763820fede1b4f0",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -5622,6 +5644,42 @@
     },
     {
       "method": "GET",
+      "path": "/api/projects/{nid}/studio/bible",
+      "operation_id": "bible_projection_api_projects__nid__studio_bible_get",
+      "owner_ref": "805919d2a487a496d2775f8eb6c70865c9c89abf3ab11df0c7cc816d1975012a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "875ba4371720a57ca2ee154c1a1941310a9fdbd376483ff240de016956d7e110",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/director/workspace/{rid}",
+      "operation_id": "director_workspace_api_projects__nid__studio_director_workspace__rid__get",
+      "owner_ref": "5fe52edd1e4ded0c73bec021859fc6191624cb0d3cf207a25f2cb89cfe113eb1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "62339c6a9d251848a03ea10d7e5c54b069678d0f1f05da4a43616d9226e66c58",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/documents/{document_id}/prompt-adoption",
+      "operation_id": "read_adoptions_api_projects__nid__studio_documents__document_id__prompt_adoption_get",
+      "owner_ref": "0441bbe8139cc4258b9e46d3b0042f9ec43550edafda238c5d26697052257e4d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "ce56f247c9f388124ac1a7f7b61cad966b0f6b3bdc5fd7621b67e1241174924c",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
       "path": "/api/projects/{nid}/studio/graph-runs/{rid}",
       "operation_id": "run_api_projects__nid__studio_graph_runs__rid__get",
       "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
@@ -5834,6 +5892,66 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0af81dca7ee1536aa234d1b356e42fd82464a2a9b7ad4fc325242767dd0e3395",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/production/workflow",
+      "operation_id": "workflow_projection_api_projects__nid__studio_production_workflow_get",
+      "owner_ref": "db603df8f5d38b2a11174041fd6a6e4194e590a49d0e99b2124dfcfeff86336d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "06d5aafd30dad5f60ba577ec15eef559d58ce5c8ab436a57ff22e0744126c54a",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/prompts",
+      "operation_id": "prompt_library_api_projects__nid__studio_prompts_get",
+      "owner_ref": "f51be95db58bdc53faba187ccaefb3be2d2cd506c76c0ee9d6c0c5e3484e74eb",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "b7023907cf830f28b1edcceedb5015e6492a10b7fcb7ba34cb993126fe701298",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/prompts/context",
+      "operation_id": "prompt_context_api_projects__nid__studio_prompts_context_get",
+      "owner_ref": "33178c72d1c5df6ca5f31bba342818416e6de5b6888c3c6bde127ee585eaac77",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "53d9f046ec6939f1b1802554160a6d989f8c5f64fc75f1d0e3e6ea02055bf1da",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/prompts/{family_id}",
+      "operation_id": "prompt_detail_api_projects__nid__studio_prompts__family_id__get",
+      "owner_ref": "abd360d208ff0235d5cc171fea87776c95936cb496b6a4443a3cab19075c195b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "3577654d7344c5fe84a45108daa148c67071a779022464e3e6b85f90e7516771",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/body",
+      "operation_id": "prompt_revision_body_api_projects__nid__studio_prompts__family_id__revisions__asset_id__body_get",
+      "owner_ref": "bc747306264290bbeae57b1312cd911586da1776684937942377c9a976d50766",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "0ae31590504571cde02afc2c8c39b389d8bd7427ea92b85a4a0e5806dfb57fe2",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -10807,6 +10925,42 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/bible",
+      "operation_id": "bible_projection_api_v1_projects__nid__studio_bible_get",
+      "owner_ref": "805919d2a487a496d2775f8eb6c70865c9c89abf3ab11df0c7cc816d1975012a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "6c897544d3b2d83f2a5abf535c550e747918bdd4d937a6946c740fc3446281fc",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/director/workspace/{rid}",
+      "operation_id": "director_workspace_api_v1_projects__nid__studio_director_workspace__rid__get",
+      "owner_ref": "5fe52edd1e4ded0c73bec021859fc6191624cb0d3cf207a25f2cb89cfe113eb1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "1ecb4ca23ebd728df67589d81a18e8cf8d5e9a83d190b4329311122b659aedf5",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/documents/{document_id}/prompt-adoption",
+      "operation_id": "read_adoptions_api_v1_projects__nid__studio_documents__document_id__prompt_adoption_get",
+      "owner_ref": "0441bbe8139cc4258b9e46d3b0042f9ec43550edafda238c5d26697052257e4d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "70813e5a9c5a8c0367aca7016bf9c706fe27e38693914b6bb068836ebaf31dc4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}",
       "operation_id": "run_api_v1_projects__nid__studio_graph_runs__rid__get",
       "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
@@ -11019,6 +11173,66 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8f8ca9deae9406821d05b6eae96b429282cb56b04681e20c89bdc1c983d32884",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/production/workflow",
+      "operation_id": "workflow_projection_api_v1_projects__nid__studio_production_workflow_get",
+      "owner_ref": "db603df8f5d38b2a11174041fd6a6e4194e590a49d0e99b2124dfcfeff86336d",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "47752298c68221af88cf7e34b8a1991e2263c8541d4ae6d41661b9c1603501c8",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/prompts",
+      "operation_id": "prompt_library_api_v1_projects__nid__studio_prompts_get",
+      "owner_ref": "f51be95db58bdc53faba187ccaefb3be2d2cd506c76c0ee9d6c0c5e3484e74eb",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "c1b85539eccc916e483a9cec8dbe5c97d5bcf019b3c10d8ea366231a19d10d49",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/prompts/context",
+      "operation_id": "prompt_context_api_v1_projects__nid__studio_prompts_context_get",
+      "owner_ref": "33178c72d1c5df6ca5f31bba342818416e6de5b6888c3c6bde127ee585eaac77",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "440eb9fb330e321cf6d4dd3b213c09eacbbb317c5d6acd9a13601a4c578a7f0d",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/prompts/{family_id}",
+      "operation_id": "prompt_detail_api_v1_projects__nid__studio_prompts__family_id__get",
+      "owner_ref": "abd360d208ff0235d5cc171fea87776c95936cb496b6a4443a3cab19075c195b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "dbffbb37d384687fa306a54211902e66b4b2ce180887077aab25b02e5eb69c3d",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/body",
+      "operation_id": "prompt_revision_body_api_v1_projects__nid__studio_prompts__family_id__revisions__asset_id__body_get",
+      "owner_ref": "bc747306264290bbeae57b1312cd911586da1776684937942377c9a976d50766",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "5c3dbc470528d175ec51c863cf30fd5a7a9e1fc1f96b91c385848e9f36b188f9",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -13534,7 +13748,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "23c4e3d2ae36f41a2547b3eeba43423ece738899c3fac18db863d3d6276db4d0",
-      "schema_graph_sha256": "2fd76bd97ce9a312500d711d366e6df38c0dff877e29c5894d4cdbba1479c45a"
+      "schema_graph_sha256": "8fe0c6ecdb3cfe87d498e824258de1ea1f6702e00f8640e8c97e3c259925273c"
     },
     {
       "method": "POST",
@@ -13594,7 +13808,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bd91db37c76819cfae9ecb662c5de458f389f315315880389c1881a05b5baf1a",
-      "schema_graph_sha256": "04d8ad330a3c883a1e7aeabb220073b454703c0c640e820ea9383c1f5e296fed"
+      "schema_graph_sha256": "985297a4a2ac539a6181cef034495a1137d3f5a69fcb65907c6a85227a573f66"
     },
     {
       "method": "POST",
@@ -13606,7 +13820,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "31dc700dbec6d86d0ad3c9e93ec44f995af7058170dd5dadc1ea71c51bd43cb1",
-      "schema_graph_sha256": "1c5b1630734d850360c6184e0494a5fd94d50b1e0ea4a37f6b79930014f42480"
+      "schema_graph_sha256": "c200d66742b97308749d58814e56f47bbe343c8848b937ceab1b08cf770410e4"
     },
     {
       "method": "POST",
@@ -16512,7 +16726,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ad66b597c14745030602589ade174cfbf5a9aebbae5639f722435382a18d7149",
-      "schema_graph_sha256": "a7fbed63edd54eed666fb65765a4eb65afa367f190dc976f9b7028c682b4ae6d"
+      "schema_graph_sha256": "f1e1bb4e9c0c72b26eaacbad2a34d5dbf53192fe49a51d562b44f59148598125"
     },
     {
       "method": "POST",
@@ -17584,6 +17798,18 @@
     },
     {
       "method": "POST",
+      "path": "/api/projects/{nid}/studio/documents/{document_id}/shots/{shot_id}/prompt-adoption",
+      "operation_id": "adopt_prompt_api_projects__nid__studio_documents__document_id__shots__shot_id__prompt_adoption_post",
+      "owner_ref": "764d434532a189212df110869650fc2042b06292b39705d9dc373a496387bfb0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "d8fa062f3490787f3685d96f6018fc9d8ad6a59452b527d811017ba463172a6a",
+      "schema_graph_sha256": "91fec3b314cab53951b404468d53ee6771ec42b45eef2c043446b4e2ec3bbb35"
+    },
+    {
+      "method": "POST",
       "path": "/api/projects/{nid}/studio/graph-runs/{rid}/approve",
       "operation_id": "creative_graph_approve_api_projects__nid__studio_graph_runs__rid__approve_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
@@ -18037,6 +18263,54 @@
       ],
       "operation_sha256": "93c200648422b3295d7832cf058fd5efebe40c4e49f96b096d5a063fd71f8d1c",
       "schema_graph_sha256": "b0db7a138d3e31a6667cd3f525eb6c2b884d46ad6f882fa4cffed4198d947b0d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/production/workflow/intent",
+      "operation_id": "workflow_intent_api_projects__nid__studio_production_workflow_intent_post",
+      "owner_ref": "f1c16813558950471d6c4df8b4c75e278f2942a31a5f8abe5c06423bd0903ed9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "208fd86e52445790ad9d006b4a102eacabbc1487144174d851ea0641bbb824c0",
+      "schema_graph_sha256": "625feecf642cdc92325b9e0047e75efa710282f873ca8292c209dfdf701323fe"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/prompts",
+      "operation_id": "create_prompt_api_projects__nid__studio_prompts_post",
+      "owner_ref": "96f1b17453d868fdd464e54b44a00bc2fd8004cd9b85a7eed4956f7500e092fc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "bda1cdf1ba95449647982785d055230e1d54470f80eee987270d47ab4f7b0521",
+      "schema_graph_sha256": "7c663d29b4a8415dd51cfb042a5f0937875bd754670855cad2a15f21c381eefe"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/prompts/{family_id}/revisions",
+      "operation_id": "revise_prompt_api_projects__nid__studio_prompts__family_id__revisions_post",
+      "owner_ref": "d4ba8d94ae16623d13939757a9e1b5ff306e9564da768f6cf06443687ce3b92a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "9462f3841a493b64bc9c420c47d4eb69534f2ec0c3f3b0692523f7239fde05d8",
+      "schema_graph_sha256": "06624f752f778175d0fe17c930ed79d7ffa02af4d459c36458d9454fe1cb48b3"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/approve",
+      "operation_id": "approve_revision_api_projects__nid__studio_prompts__family_id__revisions__asset_id__approve_post",
+      "owner_ref": "37497b7ea124127cd90cf1aa60f49b8a8318dd2e3cb51a1d740e449d6ff935b4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "12efa8665330ce18a514a54035d8ab6d11502f83d92b7efb5110fdca89a98e93",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
       "method": "POST",
@@ -20119,7 +20393,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8631315bc19966415abdc5e0f5283afaa61ccdf0fdad01736fed4abcc755552a",
-      "schema_graph_sha256": "2fd76bd97ce9a312500d711d366e6df38c0dff877e29c5894d4cdbba1479c45a"
+      "schema_graph_sha256": "8fe0c6ecdb3cfe87d498e824258de1ea1f6702e00f8640e8c97e3c259925273c"
     },
     {
       "method": "POST",
@@ -20179,7 +20453,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c82ab86ee5432b2c427464f4171717205363e1131f5b5f4d93bf5d9b77baa078",
-      "schema_graph_sha256": "04d8ad330a3c883a1e7aeabb220073b454703c0c640e820ea9383c1f5e296fed"
+      "schema_graph_sha256": "985297a4a2ac539a6181cef034495a1137d3f5a69fcb65907c6a85227a573f66"
     },
     {
       "method": "POST",
@@ -20191,7 +20465,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e1ad8388ffc7e24377d82be9f32c9cd63dc6f625015b13bb95c46106151bbc08",
-      "schema_graph_sha256": "1c5b1630734d850360c6184e0494a5fd94d50b1e0ea4a37f6b79930014f42480"
+      "schema_graph_sha256": "c200d66742b97308749d58814e56f47bbe343c8848b937ceab1b08cf770410e4"
     },
     {
       "method": "POST",
@@ -23097,7 +23371,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d932037d4c6ea9420ad26eb1ea6ba13a2395ce9b98b2a2876eda151a1295d15a",
-      "schema_graph_sha256": "a7fbed63edd54eed666fb65765a4eb65afa367f190dc976f9b7028c682b4ae6d"
+      "schema_graph_sha256": "f1e1bb4e9c0c72b26eaacbad2a34d5dbf53192fe49a51d562b44f59148598125"
     },
     {
       "method": "POST",
@@ -24169,6 +24443,18 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/documents/{document_id}/shots/{shot_id}/prompt-adoption",
+      "operation_id": "adopt_prompt_api_v1_projects__nid__studio_documents__document_id__shots__shot_id__prompt_adoption_post",
+      "owner_ref": "764d434532a189212df110869650fc2042b06292b39705d9dc373a496387bfb0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "a1883b606efc17caa9856a90a6782c1bc5bf19ce9496949810f6c827e32175c5",
+      "schema_graph_sha256": "91fec3b314cab53951b404468d53ee6771ec42b45eef2c043446b4e2ec3bbb35"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/approve",
       "operation_id": "creative_graph_approve_api_v1_projects__nid__studio_graph_runs__rid__approve_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
@@ -24622,6 +24908,54 @@
       ],
       "operation_sha256": "bbcd84d2f483f4a18e96cc4f29cf9e6f6ef82482212b1e764912dff27cd637a8",
       "schema_graph_sha256": "b0db7a138d3e31a6667cd3f525eb6c2b884d46ad6f882fa4cffed4198d947b0d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/production/workflow/intent",
+      "operation_id": "workflow_intent_api_v1_projects__nid__studio_production_workflow_intent_post",
+      "owner_ref": "f1c16813558950471d6c4df8b4c75e278f2942a31a5f8abe5c06423bd0903ed9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "60c6c72b90931b9c3d001806cc332c32e883416b151f55047f05c9aa9bed41f8",
+      "schema_graph_sha256": "625feecf642cdc92325b9e0047e75efa710282f873ca8292c209dfdf701323fe"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/prompts",
+      "operation_id": "create_prompt_api_v1_projects__nid__studio_prompts_post",
+      "owner_ref": "96f1b17453d868fdd464e54b44a00bc2fd8004cd9b85a7eed4956f7500e092fc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "5d1c1faa232989724973efc969f614a3e737e54f338cfd72bd87e77dd365c618",
+      "schema_graph_sha256": "7c663d29b4a8415dd51cfb042a5f0937875bd754670855cad2a15f21c381eefe"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/prompts/{family_id}/revisions",
+      "operation_id": "revise_prompt_api_v1_projects__nid__studio_prompts__family_id__revisions_post",
+      "owner_ref": "d4ba8d94ae16623d13939757a9e1b5ff306e9564da768f6cf06443687ce3b92a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "c05b107bfbd6ee5a79a2bb08cf7718b65dcd4c0ec3d3d181c17dd50c7b059d98",
+      "schema_graph_sha256": "06624f752f778175d0fe17c930ed79d7ffa02af4d459c36458d9454fe1cb48b3"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/prompts/{family_id}/revisions/{asset_id}/approve",
+      "operation_id": "approve_revision_api_v1_projects__nid__studio_prompts__family_id__revisions__asset_id__approve_post",
+      "owner_ref": "37497b7ea124127cd90cf1aa60f49b8a8318dd2e3cb51a1d740e449d6ff935b4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
+      ],
+      "operation_sha256": "6317a851d1214540eaeff64f0e6086645a8397464d55a1964658f1f11c0d3ce2",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
       "method": "POST",
@@ -25546,7 +25880,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d1211ee1c44c8757877f03f6bde100ccd4e9f52fdcea141e9a04bfa6210b75a3",
-      "schema_graph_sha256": "0a987f10be8359cb646d70f86c57db88858badeb33a35e7c247dc4dd1855c0fc"
+      "schema_graph_sha256": "8a9d4c852a67c53a18ed65613d27b1eeb0b86910efb10bd9dec6b9aa9267346e"
     },
     {
       "method": "PUT",
@@ -25847,7 +26181,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "00312b23265e98a4d71db1152f93e10583977420c644a3aefa4c9f0ffec07a9f",
-      "schema_graph_sha256": "91a1512a1ebce4aa8ca36dc498523672380d8bbd0f43465b98738f5b1a0b7cbd"
+      "schema_graph_sha256": "a879d04ccba1c2b72d20b2e34bfd5e32e1efa881146237512a05b027c5e639c3"
     },
     {
       "method": "PUT",
@@ -26279,7 +26613,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "087a07f503d2abab1b02dab37a612219a6be77694c057618c869223cf91d7225",
-      "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
+      "schema_graph_sha256": "0c461ec06bd96dc89bd55bb93dfaf2f3a297484b776f168f3963d4f60b968b7e"
     },
     {
       "method": "PUT",
@@ -26604,7 +26938,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c70ac95ea89c2a4b231b0a11e7165f59fd31d893e95622ce771bf75f1d8974ab",
-      "schema_graph_sha256": "0a987f10be8359cb646d70f86c57db88858badeb33a35e7c247dc4dd1855c0fc"
+      "schema_graph_sha256": "8a9d4c852a67c53a18ed65613d27b1eeb0b86910efb10bd9dec6b9aa9267346e"
     },
     {
       "method": "PUT",
@@ -26905,7 +27239,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0597d4d801e32d55e7d2bca79b899c59d68b37daae3bc1c240597f93cd653902",
-      "schema_graph_sha256": "91a1512a1ebce4aa8ca36dc498523672380d8bbd0f43465b98738f5b1a0b7cbd"
+      "schema_graph_sha256": "a879d04ccba1c2b72d20b2e34bfd5e32e1efa881146237512a05b027c5e639c3"
     },
     {
       "method": "PUT",
@@ -27337,7 +27671,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "761a8e710480776aef19cda323beea28f2112eae1a0c72d94da48c1d468cb5fc",
-      "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
+      "schema_graph_sha256": "0c461ec06bd96dc89bd55bb93dfaf2f3a297484b776f168f3963d4f60b968b7e"
     },
     {
       "method": "PUT",

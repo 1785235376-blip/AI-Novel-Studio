@@ -240,7 +240,7 @@ def samples():
 def test_generated_schema_and_dto_accept_same_valid_sample(slug):
     model = samples()[slug]
     data = model.model_dump(mode="json")
-    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text())
+    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text(encoding='utf-8'))
     jsonschema.Draft202012Validator.check_schema(schema)
     jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(
         data
@@ -252,7 +252,7 @@ def test_generated_schema_and_dto_accept_same_valid_sample(slug):
 def test_unknown_fields_rejected_by_schema_and_dto(slug):
     data = samples()[slug].model_dump(mode="json")
     data["unexpected_field"] = "not accepted"
-    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text())
+    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text(encoding='utf-8'))
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(data)
     with pytest.raises(p.ProtocolViolation, match="invalid Local Interop"):
@@ -261,7 +261,7 @@ def test_unknown_fields_rejected_by_schema_and_dto(slug):
 
 @pytest.mark.parametrize("slug", sorted(SCHEMAS))
 def test_all_object_shapes_forbid_unknown_properties(slug):
-    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text())
+    schema = json.loads((CONTRACTS / f"{slug}.schema.json").read_text(encoding='utf-8'))
     for node in (schema, *schema.get("$defs", {}).values()):
         if node.get("type") == "object":
             assert node["additionalProperties"] is False
@@ -693,7 +693,7 @@ def test_transport_operation_must_match_strict_payload_type():
 
 
 def test_contract_manifest_matches_bytes_and_regeneration(tmp_path):
-    manifest = json.loads((CONTRACTS / "parity-manifest.json").read_text())
+    manifest = json.loads((CONTRACTS / "parity-manifest.json").read_text(encoding='utf-8'))
     assert manifest["protocol_version"] == p.PROTOCOL_VERSION
     for name, expected in manifest["files"].items():
         assert sha256((ROOT / name).read_bytes()).hexdigest() == expected, name
@@ -733,17 +733,17 @@ def test_evidence_cannot_be_future_dated_or_duplicated():
 def test_schema_rejects_cross_field_handoff_and_privacy_violations():
     handoff = samples()["handoff"].model_dump(mode="json")
     handoff["target"]["feature"] = "model-center"
-    schema = json.loads((CONTRACTS / "handoff.schema.json").read_text())
+    schema = json.loads((CONTRACTS / "handoff.schema.json").read_text(encoding='utf-8'))
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(handoff)
     diagnostic_data = diagnostic().model_dump(mode="json")
     diagnostic_data["privacy_scope"] = "CONSENTED_CLOUD"
-    schema = json.loads((CONTRACTS / "diagnostic.schema.json").read_text())
+    schema = json.loads((CONTRACTS / "diagnostic.schema.json").read_text(encoding='utf-8'))
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(diagnostic_data)
     result = samples()["verifier-result"].model_dump(mode="json")
     result["evidence"] = []
-    schema = json.loads((CONTRACTS / "verifier-result.schema.json").read_text())
+    schema = json.loads((CONTRACTS / "verifier-result.schema.json").read_text(encoding='utf-8'))
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(result)
 
@@ -761,7 +761,7 @@ def test_diagnostics_operation_matches_http_tutor_request_shape():
     request = diagnostic_request()
     wrapped = p.TransportRequest(operation="DIAGNOSTICS", payload=request)
     data = wrapped.model_dump(mode="json")
-    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text())
+    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text(encoding='utf-8'))
     jsonschema.Draft202012Validator(schema).validate(data)
     validated = p.parse_wire(p.TransportRequest, data)
     # HTTP sends exactly this payload, carrying the same session/request identity.
@@ -794,7 +794,7 @@ def test_diagnostics_operation_rejects_inconsistent_wire_shapes(invalid_shape):
         "operation": "DIAGNOSTICS",
         "payload": payload,
     }
-    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text())
+    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text(encoding='utf-8'))
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(data)
     with pytest.raises(p.ProtocolViolation) as caught:

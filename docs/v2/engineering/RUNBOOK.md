@@ -249,3 +249,26 @@ Delete only the run directory created by the run itself (`$run`), after retainin
 
 Never delete: model weights, user projects, RC1 artifacts, another worktree, committed evidence.
 Report bytes created and cleaned before deleting anything.
+
+---
+
+## Windows development-host profile matrix (added 2026-10-19, round 2)
+
+The isolated runner remains the only supported way to execute the backend suites on
+Windows. Several suites additionally require explicit environment, because they spawn
+child processes, assert shell syntax or assert runner-profile paths:
+
+| Suite family | Required environment |
+| --- | --- |
+| All backend pytest runs | `PROJECT_ROOT=<repo>`, profile under `<repo>/.runtime`, `PYTHONPATH=<repo>` |
+| Child-process probes (leases, revocation, authority) | `PYTHONPATH=<repo>` so `sys.executable -c` children import `app` |
+| CI shell-syntax assertions (`bash -n`) | Git-for-Windows `bin` on `PATH` |
+| R3-I HTTP suites | `NOVEL_DATA_PATH=<repo>/.runtime/v2-checks/<label>/data/novels` and `PROJECT_ROOT` |
+| R3-I authorized / revocation | `ENABLE_COLLABORATION_RUNTIME=true`, `EXPERIMENTAL_FEATURES=narrative_production_v2`, exported before app import |
+| R3-I adoption | collaboration runtime OFF, `EXPERIMENTAL_FEATURES` set by the suite itself |
+| Windows symlink fixtures | Developer Mode / SeCreateSymbolicLinkPrivilege; otherwise the tests skip with an explicit reason and Linux CI covers them |
+| Real-text/owned-process runner | POSIX only; Windows fails closed by design (`BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM`) |
+
+Line endings: contracts and source hashes are byte-bound. Keep the checkout LF
+(`core.autocrlf=false` or `input`) and regenerate contracts with the LF-safe generator; never
+regenerate `contracts/local-interop` from a CRLF checkout.

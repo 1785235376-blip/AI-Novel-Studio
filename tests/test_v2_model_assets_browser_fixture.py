@@ -36,7 +36,7 @@ def test_m4b_original_http_archival_and_recovery_without_browser(tmp_path):
     assert receipt["blocked_attempts"] == [] and receipt["cloud_calls"] == 0
     assert receipt["quality_verification"] == receipt["real_inference"] == receipt["browser"] == "NOT_RUN"
     assert receipt["no_chapters"] and receipt["model_weights_loaded"] is False
-    evidence = json.loads(wire.read_text())
+    evidence = json.loads(wire.read_text(encoding='utf-8'))
     assert evidence["dispatch_input"]["archive_result"] is True
     assert evidence["fault_http_status"] == 500
     assert evidence["draft"]["asset_output"]["asset_id"] == evidence["recovered"]["asset_output"]["asset_id"]

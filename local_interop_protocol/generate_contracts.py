@@ -390,7 +390,7 @@ def generate(root: Path | None = None) -> None:
         schema["$id"] = f"https://schemas.poemseed.dev/local-interop/v1/{slug}.schema.json"
         _constraints(schema)
         (destination / f"{slug}.schema.json").write_text(
-            json.dumps(schema, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+            json.dumps(schema, indent=2, ensure_ascii=False, sort_keys=True) + "\n", newline="\n"
         )
         definitions.update(schema.get("$defs", {}))
         definitions[model.__name__] = {
@@ -402,7 +402,7 @@ def generate(root: Path | None = None) -> None:
         "$defs": definitions,
     }
     (destination / "common.schema.json").write_text(
-        json.dumps(common, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+        json.dumps(common, indent=2, ensure_ascii=False, sort_keys=True) + "\n", newline="\n"
     )
     lines = [
         "// Generated public Local Interop 1.0 DTOs. Validate Schema + semantics at ingress.",
@@ -415,8 +415,8 @@ def generate(root: Path | None = None) -> None:
             required = "" if key in definition.get("required", []) else "?"
             lines.append(f"  readonly {key}{required}: {_ts_type(node)};")
         lines.extend(["}", ""])
-    (destination / "protocol.ts").write_text("\n".join(lines))
-    (destination / "protocol.rs").write_text(_rust_types(definitions))
+    (destination / "protocol.ts").write_text("\n".join(lines), newline="\n")
+    (destination / "protocol.rs").write_text(_rust_types(definitions), newline="\n")
     paths = sorted(
         list((root / "local_interop_protocol").glob("*.py"))
         + [
@@ -434,7 +434,7 @@ def generate(root: Path | None = None) -> None:
         },
     }
     (destination / "parity-manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", newline="\n"
     )
 
 

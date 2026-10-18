@@ -264,6 +264,7 @@ async def collaboration_fail_closed(request,call_next):
             (method=="GET" and normalized_path.startswith("/api/collaboration/")) or
             (method=="GET" and re.fullmatch(r"/api/novels/[^/]+/chapters/archived",normalized_path) is not None) or
             (method=="DELETE" and re.fullmatch(r"/api/novels/[^/]+",normalized_path) is not None) or
+            (method=="POST" and normalized_path=="/api/experimental/projects") or
             (method=="POST" and re.fullmatch(r"/api/collaboration/workspaces/[^/]+/projects/[^/]+/storylines/[^/]+/branches/[^/]+/chapters",normalized_path) is not None) or
             re.fullmatch(r"/api/chapters/[^/]+(?:/history)?",normalized_path) is not None and method=="GET" or
             re.fullmatch(r"/api/chapters/[^/]+",normalized_path) is not None and method=="PUT" or

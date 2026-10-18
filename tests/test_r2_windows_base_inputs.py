@@ -106,8 +106,8 @@ def test_embedded_import_path_is_relative_and_isolated():
 
 
 def test_every_locked_wheel_has_exact_origin_digest_and_license():
-    manifest = json.loads(base.LOCK.read_text())
-    requirements = (ROOT / "packaging/requirements-windows.lock.txt").read_text()
+    manifest = json.loads(base.LOCK.read_text(encoding='utf-8'))
+    requirements = (ROOT / "packaging/requirements-windows.lock.txt").read_text(encoding='utf-8')
     assert len(manifest["wheels"]) >= 27
     for item in [*manifest["runtime_inputs"], *manifest["wheels"]]:
         base.checked_url(item["url"])
@@ -123,17 +123,17 @@ def test_every_locked_wheel_has_exact_origin_digest_and_license():
 
 
 def test_full_package_forwards_font_and_builds_self_contained_host():
-    script = (ROOT / "scripts/package_windows_acceptance.ps1").read_text()
+    script = (ROOT / "scripts/package_windows_acceptance.ps1").read_text(encoding='utf-8')
     assert "-VerifiedFontDirectory (Resolve-Absolute $VerifiedFontDirectory 'VerifiedFontDirectory')" in script
-    build = (ROOT / "scripts/build_windows_application.ps1").read_text()
+    build = (ROOT / "scripts/build_windows_application.ps1").read_text(encoding='utf-8')
     assert "--self-contained true" in build
     assert "restore $hostProjectPath -r win-x64 -p:SelfContained=true" in build
-    sdk = json.loads((ROOT / "global.json").read_text())["sdk"]
+    sdk = json.loads((ROOT / "global.json").read_text(encoding='utf-8'))["sdk"]
     assert sdk == {"version": "8.0.424", "rollForward": "disable", "allowPrerelease": False}
 
 
 def test_native_verification_is_explicit_and_synthetic():
-    script = (ROOT / "scripts/verify_windows_base.py").read_text()
+    script = (ROOT / "scripts/verify_windows_base.py").read_text(encoding='utf-8')
     assert 'sys.platform != "win32"' in script
     assert "CREATE EXTENSION pgcrypto" in script
     assert '"--format=custom"' in script
@@ -144,7 +144,7 @@ def test_native_verification_is_explicit_and_synthetic():
 
 
 def test_real_locked_metadata_closes_windows_dependency_markers():
-    lock = json.loads(base.LOCK.read_text())
+    lock = json.loads(base.LOCK.read_text(encoding='utf-8'))
     base.validate_dependency_closure(lock)
     lock["wheels"] = [item for item in lock["wheels"] if item["name"] != "tzdata"]
     with pytest.raises(ValueError, match="tzdata"):
@@ -152,7 +152,7 @@ def test_real_locked_metadata_closes_windows_dependency_markers():
 
 
 def test_runtime_notices_are_copied_from_exact_restored_packages():
-    source = (ROOT / "scripts/build_windows_application.ps1").read_text()
+    source = (ROOT / "scripts/build_windows_application.ps1").read_text(encoding='utf-8')
     assert "obj\\project.assets.json" in source
     assert "Microsoft.NETCore.App.Runtime.win-x64" in source
     assert "Microsoft.WindowsDesktop.App.Runtime.win-x64" in source

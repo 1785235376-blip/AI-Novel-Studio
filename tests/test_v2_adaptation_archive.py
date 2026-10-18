@@ -236,11 +236,11 @@ def test_archive_and_proposal_tampering_masks_all_generated_projections(creative
     item, = archived(e, result)
     if field.startswith("_") or field == "version":
         path = e.assets._meta_path(item["id"])
-        meta = json.loads(path.read_text())
+        meta = json.loads(path.read_text(encoding='utf-8'))
         if field == "version": meta[field] = True
         elif field == "_text_result_review": meta[field] = {"status": "APPROVED", "receipt": {}, "history": []}
         else: meta.pop(field)
-        path.write_text(json.dumps(meta))
+        path.write_text(json.dumps(meta), encoding='utf-8')
     else:
         with e.creative.store.transaction(e.nid, result["scope"]) as state:
             current = state["collections"][e.creative.adaptations.COLLECTION][result["id"]]

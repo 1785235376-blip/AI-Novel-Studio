@@ -12,7 +12,14 @@ import sys
 import time
 from pathlib import Path
 
+import os
+
 import pytest
+
+POSIX_PROC_REQUIRED = pytest.mark.skipif(
+    os.name != "posix",
+    reason="/proc/<pid> environment and cwd evidence requires a POSIX procfs; hosted Linux CI covers it",
+)
 
 from app.plugin_runtime_contracts import new_execution_attempt_id, new_job_id
 from app.plugin_test_worker_supervisor import (
@@ -126,6 +133,7 @@ def test_allowlist_environment_drops_all_parent_python_star(monkeypatch):
     assert "PATH" not in env
 
 
+@POSIX_PROC_REQUIRED
 def test_spawned_worker_environ_has_no_inherited_python_star(supervisor, monkeypatch):
     monkeypatch.setenv("PYTHONPATH", "/evil/path")
     monkeypatch.setenv("PYTHONHOME", "/evil/home")
@@ -247,6 +255,7 @@ def test_pth_startup_hook_does_not_run(supervisor, monkeypatch, tmp_path):
     assert not marker.exists()
 
 
+@POSIX_PROC_REQUIRED
 def test_hostile_cwd_does_not_replace_host_worker(supervisor, monkeypatch, tmp_path):
     marker = tmp_path / "cwd_json.marker"
     worker_marker = tmp_path / "cwd_worker.marker"

@@ -8,6 +8,8 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
+
+from windows_test_support import os_symlink_or_skip
 from fastapi.testclient import TestClient
 
 from app.config import settings
@@ -162,7 +164,7 @@ def test_symlink_escape_is_rejected(plugin_root, tmp_path):
     target = plugin / "resources" / "escape.json"
     if target.exists():
         target.unlink()
-    os.symlink(outside, target)
+    os_symlink_or_skip(target, outside)
     manifest = json.loads((plugin / "manifest.json").read_text())
     data = b'{"secret":"nope"}'
     manifest["resources"] = [_resource("writing_presets", "resources/escape.json", data)]

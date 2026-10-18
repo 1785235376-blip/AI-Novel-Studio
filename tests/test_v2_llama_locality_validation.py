@@ -3,6 +3,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.asset_providers import AssetProviderRegistry
 from app.model_center.discovery_bridge import LocalDiscoveryBridge
 from app.model_center.discovery import LocalDiscoveryService
@@ -73,7 +75,7 @@ def test_external_llama_requires_all_locality_evidence(tmp_path, change, blocker
         target = tmp_path / "different.gguf"
         gguf(target)
         path.unlink()
-        path.symlink_to(target)
+        symlink_or_skip(path, target)
     elif change == "mismatched_path":
         target = tmp_path / "different.gguf"
         gguf(target)

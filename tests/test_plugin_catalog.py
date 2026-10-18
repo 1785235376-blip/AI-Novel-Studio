@@ -7,6 +7,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+
+from windows_test_support import os_symlink_or_skip
 from fastapi.testclient import TestClient
 
 from app.config import settings
@@ -645,7 +647,7 @@ def test_good_plus_symlink_invalid_is_partial(plugin_root, tmp_path):
     def mutate():
         target = plugin / "resources" / "gone.json"
         target.unlink()
-        os.symlink(outside, target)
+        os_symlink_or_skip(target, outside)
 
     _assert_partial_good(plugin_root, "mix-link", mutate)
 

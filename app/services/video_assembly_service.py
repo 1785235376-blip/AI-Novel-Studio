@@ -13,6 +13,7 @@ import subprocess
 import tempfile
 from uuid import uuid4
 from ..media_files import inspect_media, MediaValidationError
+from ..windows_file_identity import change_time_ns
 from ..repository import now
 from ..storage import atomic_write
 from ..repositories.file.mutation_coordinator import workspace_mutation
@@ -131,6 +132,7 @@ class VideoAssemblyService:
             return observed[:-1] if os.name == "nt" else observed
 
         before = path.stat()
+        before_change = change_time_ns(path=path)
         if before.st_size > limit:
             raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
         # Binary, unbuffered I/O bounds actual bytes, including the single
@@ -139,15 +141,25 @@ class VideoAssemblyService:
         # filesystem metadata, not an OS-level snapshot or a new writer lock.
         with path.open("rb", buffering=0) as source:
             opened = os.fstat(source.fileno())
+            opened_change = change_time_ns(fd=source.fileno())
             if opened.st_size > limit:
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
             if cross_snapshot(opened) != cross_snapshot(before):
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
+            if (before_change is not None and opened_change is not None
+                    and before_change != opened_change):
+                raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
             data = source.read(limit + 1)
             after = os.fstat(source.fileno())
+            after_change = change_time_ns(fd=source.fileno())
+            path_change = change_time_ns(path=path)
             if len(data) > limit or after.st_size > limit:
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_LIMIT")
             if (len(data) != before.st_size or snapshot(after) != snapshot(opened)
+                    or (opened_change is not None and after_change is not None
+                        and opened_change != after_change)
+                    or (before_change is not None and path_change is not None
+                        and before_change != path_change)
                     or snapshot(path.stat()) != snapshot(before)):
                 raise ValueError("STUDIO_TIMELINE_RECEIPT_INVALID")
         return data

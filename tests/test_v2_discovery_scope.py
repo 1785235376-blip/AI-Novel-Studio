@@ -13,6 +13,8 @@ from unittest.mock import Mock
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.model_center.discovery import LocalDiscoveryService
 from app.model_center.discovery_scope import PREVIEW_LIMIT, PREVIEW_TTL_SECONDS
 from app.model_center.discovery_types import DiscoverySettingsInput, LocalRuntimeInput
@@ -132,7 +134,7 @@ def test_path_identity_changes_reject_before_probe(tmp_path, change):
     if change == 'replace': root.rename(tmp_path / 'old'); root.mkdir()
     if change == 'link':
         other = tmp_path / 'other'; other.mkdir()
-        root.rmdir(); root.symlink_to(other, target_is_directory=True)
+        root.rmdir(); symlink_or_skip(root, other, target_is_directory=True)
     if change == 'metadata': gguf(root / 'qwen.gguf')
     with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'): start(svc, scope)
     assert not svc.client.calls
@@ -370,9 +372,9 @@ def test_nofollow_metadata_read_rejects_link_swap_after_path_check(tmp_path, mon
         if value == str(path) and not swapped:
             swapped = True
             if ancestor:
-                model_dir.rename(tmp_path / 'original-models'); model_dir.symlink_to(other, target_is_directory=True)
+                model_dir.rename(tmp_path / 'original-models'); symlink_or_skip(model_dir, other, target_is_directory=True)
             else:
-                path.unlink(); path.symlink_to(other / 'qwen.gguf')
+                path.unlink(); symlink_or_skip(path, other / 'qwen.gguf')
         return checked
     monkeypatch.setattr(environment, 'safe_local_path', check)
     result = gguf_metadata(path)
@@ -420,7 +422,7 @@ def test_passive_hardware_never_calls_platform_processor(tmp_path, monkeypatch):
     monkeypatch.setattr('platform.system', lambda: 'Linux')
     monkeypatch.setattr('platform.machine', lambda: 'Synthetic')
     monkeypatch.setattr('platform.processor', Mock(side_effect=AssertionError('may launch uname')))
-    monkeypatch.setattr('os.sysconf', lambda _: 1)
+    monkeypatch.setattr(os, 'sysconf', lambda _: 1, raising=False)
     monkeypatch.setattr('os.cpu_count', lambda: 4)
     assert host_hardware()['cpu'] == 'Synthetic'
 

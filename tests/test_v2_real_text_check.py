@@ -6,6 +6,7 @@ simulated receipts are not real-inference acceptance evidence.
 from collections import deque
 import hashlib
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -13,6 +14,14 @@ from unittest.mock import Mock
 import pytest
 
 from scripts import run_v2_real_text_check as runner
+
+# The runner fails closed on Windows before input validation because owned process-tree
+# cleanup is not supported there (BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM).
+# These contracts describe the POSIX runner that hosted Linux CI exercises.
+pytestmark = pytest.mark.skipif(
+    os.name == "nt",
+    reason="real-text runner is BLOCKED_UNSUPPORTED_OWNED_PROCESS_PLATFORM on Windows; POSIX CI covers the harness contracts",
+)
 
 
 @pytest.fixture(autouse=True)

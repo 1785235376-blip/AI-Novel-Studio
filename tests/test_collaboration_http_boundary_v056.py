@@ -104,7 +104,10 @@ def test_collaboration_mode_allows_authorized_project_delete(monkeypatch):
     monkeypatch.setattr(api, "trusted_session_resolver", resolver)
     monkeypatch.setattr(api, "collaboration_scope_service", scope_service)
     monkeypatch.setattr(api, "membership_authorization_service", AllowRead())
-    monkeypatch.setattr(api, "novel_service", SimpleNamespace(delete=lambda novel_id: deleted.append(novel_id)))
+    # Collaboration-mode deletion runs through AtomicPathMutationPort, whose novel
+    # repository owns the atomic project-path lifecycle; keep the assertion intent.
+    novel_repository = SimpleNamespace(delete=lambda novel_id, **kwargs: deleted.append(novel_id))
+    monkeypatch.setattr(api, "novel_service", SimpleNamespace(novels=novel_repository))
 
     response = TestClient(app).delete("/api/novels/book", headers={"X-Session-Token": "owner"})
 

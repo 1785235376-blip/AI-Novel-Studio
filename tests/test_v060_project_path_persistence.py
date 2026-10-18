@@ -30,12 +30,17 @@ def test_file_project_path_creation_is_linked_named_audited_and_navigable(tmp_pa
 
 @pytest.mark.file_backend_only
 def test_navigation_keeps_legacy_linked_project_without_novel_metadata_reachable(tmp_path):
+    from dataclasses import asdict
     bundle=create_repository_bundle(data_root=tmp_path)
     scopes=CollaborationScopeService(bundle.scope,bundle.novels)
     scopes.create_workspace(Workspace("w","Workspace"))
     bundle.scope.link_project("legacy-project","w")
-    scopes.create_storyline(Storyline("story","w","legacy-project","Legacy Story"))
-    scopes.create_branch(Branch("branch","w","legacy-project","story","main"))
+    # Legacy installs can hold scope rows whose original novel metadata is gone; the
+    # navigation contract still surfaces them. Current writes fail closed instead.
+    bundle.scope.create("storylines",asdict(Storyline("story","w","legacy-project","Legacy Story")))
+    bundle.scope.create("branches",asdict(Branch("branch","w","legacy-project","story","main")))
     paths=scopes.navigation_paths("w")
     assert paths[0]["project_name"]=="未命名小说"
     assert paths[0]["project_id"]=="legacy-project"
+    with pytest.raises(ValueError,match="project does not exist"):
+        scopes.create_storyline(Storyline("story-2","w","legacy-project","Other"))

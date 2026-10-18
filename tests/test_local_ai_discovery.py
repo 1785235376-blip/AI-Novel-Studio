@@ -10,6 +10,8 @@ from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+
+from windows_test_support import symlink_or_skip
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -125,7 +127,7 @@ def test_truncated_gguf_and_unknown_architecture_remain_unverified(tmp_path):
 def test_scans_only_configured_roots_bounded_depth_and_no_link(tmp_path):
     root=tmp_path/'models';root.mkdir(); gguf(root/'qwen.gguf')
     private=tmp_path/'private';private.mkdir();gguf(private/'secret.gguf')
-    (root/'link').symlink_to(private, target_is_directory=True)
+    symlink_or_skip(root/'link', private, target_is_directory=True)
     (root/'readme.txt').write_text('private prompt never read')
     deep=root/'a'/'b'/'c'/'d';deep.mkdir(parents=True);gguf(deep/'too-deep.gguf')
     found=list(scan_gguf_roots([str(root)],threading.Event(),time.monotonic()+5))

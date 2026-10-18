@@ -3,6 +3,8 @@ import json
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.plugin_package_manager import PluginPackageManager
 from app.plugin_contracts import PluginContractError
 from app.plugin_discovery import load_plugin_package
@@ -51,6 +53,6 @@ def test_malformed_or_executable_package_cannot_change_installed_files(tmp_path,
 
 def test_plugin_root_symlink_is_rejected(tmp_path):
     other=tmp_path/"outside";other.mkdir()
-    root=tmp_path/"plugins";root.symlink_to(other,target_is_directory=True)
+    root=tmp_path/"plugins";symlink_or_skip(root, other, target_is_directory=True)
     with pytest.raises(ValueError):PluginPackageManager(root).install(bundle())
     assert not list(other.iterdir())

@@ -14,6 +14,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.experimental.flags import enabled_flags, require_flag
 from app.packaged_profile import DEFAULT_PROFILE, PROFILE_ENV, V2_PROFILE, validate_profile
 from app.packaging import packaged_desktop_launcher as desktop
@@ -133,7 +135,7 @@ def test_linked_v2_root_never_aliases_original_storage(tmp_path):
     local.mkdir()
     old = local / "AI-Novel-Studio"
     old.mkdir()
-    (local / V2_DIRECTORY).symlink_to(old, target_is_directory=True)
+    symlink_or_skip(local / V2_DIRECTORY, old, target_is_directory=True)
     with pytest.raises(ValueError, match="PACKAGED_V2_LINKED_PATH"):
         resolve_profile_paths(V2_PROFILE, local_app_data=local, user_profile=tmp_path / "User")
 
@@ -143,7 +145,7 @@ def test_late_linked_data_owner_is_rejected_before_backend_or_postgres(tmp_path,
     value.paths.user_data.mkdir(parents=True)
     target = tmp_path / "v1-database"
     target.mkdir()
-    value.paths.database.symlink_to(target, target_is_directory=True)
+    symlink_or_skip(value.paths.database, target, target_is_directory=True)
     factory = processes.PackagedProcessFactory(value, object())
     monkeypatch.setattr(factory, "_start_postgres", lambda *a: pytest.fail("postgres launched"))
     with pytest.raises(ValueError, match="PACKAGED_V2_LINKED_PATH"):

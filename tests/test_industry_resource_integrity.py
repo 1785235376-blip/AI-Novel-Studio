@@ -8,6 +8,8 @@ from zipfile import ZipFile
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app import industry_export_formats as exports
 
 
@@ -159,7 +161,7 @@ def test_path_like_loader_result_is_not_opened(tmp_path):
     secret = tmp_path / "secret"
     secret.write_bytes(CONTENT)
     symlink = tmp_path / "link"
-    symlink.symlink_to(secret)
+    symlink_or_skip(symlink, secret)
     assert resolve(Loader(content=symlink))["binaries"] == {}
 
 

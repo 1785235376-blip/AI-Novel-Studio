@@ -20,6 +20,7 @@ engineering baseline, a machine-readable requirement index, and explicit release
 | [SECURITY_AND_ISOLATION.md](SECURITY_AND_ISOLATION.md) | Host trust, project scope/roles, public vs internal-research separation, cloud consent, secret/log redaction, path boundaries, third-party licensing, C2PA/source-claim boundaries | Not a claim that Windows host attestation or remote collaboration is accepted |
 | [MEDIA_AND_COMIC_CONTRACTS.md](MEDIA_AND_COMIC_CONTRACTS.md) | Image/Video/Audio/Subtitle/Timeline/Comic engineering contracts, real media verification, layer/panel/bubble data, export capability table, loss reporting, dynamic-comic handoff | Does not claim ORA/CBZ/PDF comic export, AI comic generation or dynamic comics exist |
 | [RELEASE_GATES.md](RELEASE_GATES.md) | Release gate definition for the full V2 (roadmap + DIF + COMIC), artifact/signing policy, CI/offline rules, performance/disk budgets, human acceptance duties | This round is **not** release-ready and cannot issue a V2 tag |
+| [TRIAGE_20261019_r2.md](TRIAGE_20261019_r2.md) | Round-2 classification of all 203 round-1 failures and remaining open issues |
 | [DEFECTS_20261019_r1.md](DEFECTS_20261019_r1.md) | Defects found, minimal reproduction, fix commit, regression evidence, remaining defects | Fixed defects are evidence-bound to a SHA |
 
 ## Authority order

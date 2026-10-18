@@ -13,6 +13,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from windows_test_support import symlink_or_skip
+
 from app.packaged_profile import DEFAULT_PROFILE, V2_PROFILE
 from app.packaging import packaged_desktop_host as host_module
 from app.packaging import launch_profiles
@@ -36,7 +38,7 @@ def test_linked_files_or_nested_dirs_cannot_alias_v1_state(tmp_path, relative):
         old.write_text("original state")
     link = value.paths.user_data.parent / relative
     link.parent.mkdir(parents=True, exist_ok=True)
-    link.symlink_to(old, target_is_directory=directory)
+    symlink_or_skip(link, old, target_is_directory=directory)
     with pytest.raises(ValueError, match="PACKAGED_V2_LINKED_PATH"):
         validate_profile_paths(V2_PROFILE, value.paths)
     if not directory:
@@ -80,7 +82,7 @@ def test_v1_path_resolution_does_not_apply_v2_link_or_scan_policy(tmp_path):
     original.paths.config.mkdir(parents=True)
     elsewhere = tmp_path / "existing-default-config"
     elsewhere.write_text("existing behavior")
-    (original.paths.config / "asset-providers.json").symlink_to(elsewhere)
+    symlink_or_skip(original.paths.config / "asset-providers.json", elsewhere)
     validate_profile_paths(DEFAULT_PROFILE, original.paths)
     assert config(tmp_path).paths == original.paths
 

@@ -316,7 +316,12 @@ def test_file_corrupt_marker_fails_closed_without_reading_external_content(tmp_p
     elif corruption == "symlink":
         external = tmp_path / "unrelated-private-marker.json"
         external.write_text(json.dumps({"schema_version": 1, "project_incarnation": original.split(":")[1]}))
-        marker.symlink_to(external)
+        try:
+            marker.symlink_to(external)
+        except OSError as error:
+            if getattr(error, "winerror", None) == 1314:
+                pytest.skip("WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink identity contract")
+            raise
     else:
         marker.write_text({"invalid_json": "{", "oversized": " " * 257,
             "invalid_uuid": '{"schema_version":1,"project_incarnation":"not-a-uuid"}',

@@ -51,9 +51,9 @@ def test_fixture_never_infers_content_consent(level):
 
 def test_delivery_manifest_has_all_requirements_and_honest_native_gaps():
     root = Path(__file__).resolve().parents[1]
-    requirements = json.loads((root / "DESKTOP_INTEGRATION_READINESS_MATRIX.json").read_text())
+    requirements = json.loads((root / "DESKTOP_INTEGRATION_READINESS_MATRIX.json").read_text(encoding='utf-8'))
     assert [row["section"] for row in requirements["requirements"]] == list(range(1, 70))
-    matrix = json.loads((root / "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json").read_text())
+    matrix = json.loads((root / "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json").read_text(encoding='utf-8'))
     assert len(matrix["scenarios"]) == 24
     assert matrix["production_acceptance"] == "LOCAL_REQUIRED"
     assert matrix["scenarios"][20]["native_status"] == "NOT_RUN"

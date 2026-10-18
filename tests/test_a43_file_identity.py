@@ -175,10 +175,11 @@ def test_typed_tokens_are_canonical_scoped_and_never_numeric_aliases(tmp_path):
             repo.get(cid)
     with pytest.raises(FileNotFoundError):
         repo.save_summary("two", chapter["id"], "CROSS_PROJECT")
+    from contextlib import nullcontext
     from threading import RLock
     from types import SimpleNamespace
     from app.application.persistence import FileAtomicChapterAuditPort
-    audited = FileAtomicChapterAuditPort(repo, SimpleNamespace(lock=RLock()))
+    audited = FileAtomicChapterAuditPort(repo, SimpleNamespace(lock=RLock(), mutation=nullcontext))
     for project_id in ("../one", "..", "one/two", "one\\two"):
         with pytest.raises(FileNotFoundError):
             audited.create_chapter_with_audit(project_id, "Must not create", "synthetic", lambda row: {})

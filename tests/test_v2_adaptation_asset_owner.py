@@ -562,10 +562,10 @@ def test_damaged_private_contract_never_falls_back_to_generic_asset_visibility(o
     with lease(owner):
         row = create(owner)
         path = owner.assets._meta_path(row["id"])
-        value = json.loads(path.read_text())
+        value = json.loads(path.read_text(encoding='utf-8'))
         if field == "version": value[field] = True
         else: value.pop(field)
-        path.write_text(json.dumps(value))
+        path.write_text(json.dumps(value), encoding='utf-8')
         for actor in (None, owner.actor):
             assert not owner.assets.list(owner.nid, actor_id=actor)
             with pytest.raises(FileNotFoundError): owner.assets.get(row["id"], actor_id=actor)

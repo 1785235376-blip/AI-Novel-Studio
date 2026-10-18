@@ -1,6 +1,7 @@
 """Real local synthetic file parsers and transport policy; no external fetches."""
 import io
 import json
+import os
 import socket
 import subprocess
 import zipfile
@@ -36,7 +37,11 @@ def test_actual_docx_uses_paragraph_citations_ignores_external_relationships():
     assert result['paragraphs'] == [{'paragraph': 1, 'page': None, 'text': 'Tidal gates open at dawn.'}]
 
 
-@pytest.mark.parametrize('path', ['../escape', '/absolute', 'C:/file', 'a\\b'])
+@pytest.mark.parametrize('path', [
+    '../escape', '/absolute', 'C:/file',
+    pytest.param('a\\b', marks=pytest.mark.skipif(
+        os.name == 'nt', reason='zipfile normalizes os.sep on Windows; a hostile backslash entry cannot be represented')),
+])
 def test_docx_archive_paths_failclosed(path):
     with pytest.raises(ValueError, match='ARCHIVE_PATH'): extract.extract_document('bad.docx', docx(extra=[(path, 'malicious')]))
 
@@ -78,7 +83,14 @@ def test_real_image_preserved_without_ocr_claim():
     with pytest.raises(ValueError, match='INVALID_IMAGE'): extract.extract_document('source.png', b'not image')
 
 
-@pytest.mark.parametrize('name,data', [('../source.txt', b'a'), ('bad.exe', b'a'), ('zero.txt', b''), ('bad.txt', b'\x00'), ('bad.txt', b'\xff'), ('bad.txt', b'x' * (extract.MAX_BYTES + 1))])
+@pytest.mark.parametrize('name,data', [
+    pytest.param('../source.txt', b'a', id='traversal'),
+    pytest.param('bad.exe', b'a', id='bad-extension'),
+    pytest.param('zero.txt', b'', id='empty'),
+    pytest.param('bad.txt', b'\x00', id='nul-byte'),
+    pytest.param('bad.txt', b'\xff', id='invalid-utf8'),
+    pytest.param('bad.txt', b'x' * (extract.MAX_BYTES + 1), id='oversized'),
+])
 def test_file_limits_names_and_types(name, data):
     with pytest.raises(ValueError): extract.extract_document(name, data)
 

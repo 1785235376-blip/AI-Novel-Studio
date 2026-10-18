@@ -17,6 +17,11 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / "scripts/v2_media_prerequisites.mjs"
 
+# The synthetic fixtures are extensionless Python scripts executed through PATH by Node's
+# execFile, which Windows CreateProcess cannot execute. POSIX (hosted Linux CI) covers them;
+# the real installed-tools test below remains cross-platform.
+POSIX_ONLY = pytest.mark.skipif(os.name == "nt", reason="synthetic POSIX executable shims; hosted Linux CI covers this contract")
+
 
 def probe(path=None):
     node = shutil.which("node")
@@ -44,6 +49,7 @@ def executable(folder, name, behavior="success"):
     file.chmod(0o700)
 
 
+@POSIX_ONLY
 def test_synthetic_success_checks_both_tools_in_order_without_install(tmp_path):
     for name in ("ffmpeg", "ffprobe"):
         executable(tmp_path, name)
@@ -63,6 +69,7 @@ def test_synthetic_success_checks_both_tools_in_order_without_install(tmp_path):
     ("invalid", "NONZERO_OR_INVALID_VERSION"), ("timeout", "TIMEOUT_OR_OUTPUT_LIMIT"),
     ("oversize", "TIMEOUT_OR_OUTPUT_LIMIT"),
 ])
+@POSIX_ONLY
 def test_synthetic_missing_nonzero_invalid_timeout_and_output_limit_fail_closed(tmp_path, tool, behavior, reason):
     for name in ("ffmpeg", "ffprobe"):
         if name != tool or behavior != "missing":
