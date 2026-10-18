@@ -16,6 +16,8 @@ it('captures actor/branch and reviewed text with literal pronunciation without u
  expect((screen.getByLabelText('说话人') as HTMLSelectElement).value).toBe('');
  fireEvent.change(screen.getByLabelText('说话人'),{target:{value:'alice'}});fireEvent.change(screen.getByLabelText('此片段审核朗读文本'),{target:{value:'你好，重庆'}});
  fireEvent.change(screen.getByLabelText('片段发音规则（每行 原词=读音）'),{target:{value:'重庆=chongqing'}});
+ expect((screen.getByLabelText('发音替换后的朗读文本预览') as HTMLTextAreaElement).value).toBe('你好，chongqing');
+ expect(fetch.mock.calls.some(([,r])=>r.method==='PUT'||r.method==='POST')).toBe(false);
  fireEvent.click(screen.getByLabelText('已核对说话人归属'));fireEvent.click(screen.getByLabelText('已审核此片段朗读文本'));fireEvent.click(screen.getByLabelText('已确认此声音的使用授权'));
  fireEvent.click(screen.getByRole('button',{name:'保存声音方向'}));await waitFor(()=>expect(fetch.mock.calls.some(([,r])=>r.method==='PUT')).toBe(true));
  const [url,req]=fetch.mock.calls.find(([,r])=>r.method==='PUT')!;expect(url).toContain('/voice-direction/plans/plan/segments/seg');

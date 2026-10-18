@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 536ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  19:39:38
+   Duration  1.41s (transform 227ms, setup 16ms, collect 336ms, tests 536ms, environment 287ms, prepare 60ms)
+
