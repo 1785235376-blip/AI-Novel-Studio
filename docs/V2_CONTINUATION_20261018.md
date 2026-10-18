@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:15 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:19 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 20:15 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:19 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-b5062095926fb449429482467a014b66688744a1 (explicit IMAGE declaration/adoption).
+560bdcc5f1f626351150c4586e17957422680873 (chapter-only authored audience comparison).
 Latest byte-verified public archive is
-e57446be2776d4066e3a9892c2bd1f142222a7eb on
+cfe6ef459f7cc1bb49a611a8b1bed0b36dc2201e on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -348,3 +348,12 @@ all3096 source paths match. No public mounted workflow or live-model acceptance.
 Prior source c7bffde8 is archive e57446be2776d4066e3a9892c2bd1f142222a7eb,
 parent8996f8a2:13 paths/5,096,930 bytes independently verified. New mounted
 workflow, ORA review/attachment and Audience comparison remain isolated.
+
+## 20:19 UTC local audience checkpoint
+
+Product 560bdcc5f1f626351150c4586e17957422680873 adds source/incarnation-pinned
+hypothetical profiles, author-entered feedback and original review decisions.
+File53 plus mountedFile2, realPG31 with one File-only skip, UI42, TS/build/token
+and PUBLIC6 pass. Actual simulated reader feedback is not implemented.
+Previous source994d0d6b archived as cfe6ef459f7cc1bb49a611a8b1bed0b36dc2201e:
+13 paths/4,788,862 bytes verified against exact parent e57446be.

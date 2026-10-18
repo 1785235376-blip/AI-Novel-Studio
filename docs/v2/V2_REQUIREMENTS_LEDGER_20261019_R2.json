@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T20:15:00Z",
+  "updated_at_utc": "2026-10-18T20:19:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -20909,11 +20909,19 @@
         "U11",
         "DIF-07"
       ],
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Explicit reader profiles, differing version-pinned feedback, human dispositions and offline history are not yet established for this new requirement.",
+      "gap": "Chapter-only hypothetical profiles, explicit author observations and original dispositions/history exist. Comic/page/shot anchors, actual simulated reading and readable authorized prior-version evidence remain open.",
       "next_action": "Define parameterized simulated readers and evidence-linked feedback in existing review; label it simulation, never market or real-user data.",
-      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement."
+      "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement.",
+      "bounded_evidence": [
+        {
+          "product_sha": "560bdcc5f1f626351150c4586e17957422680873",
+          "summary": "Local source/incarnation-pinned profiles and AUTHOR_ENTERED comparison, deterministic declared-speed estimate, original review-thread decisions; File/PG mounted original ChapterService checks. No simulated opinions.",
+          "report": "docs/delivery/v2-development/audience-integration-20261018.md",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIF-12",
@@ -21981,8 +21989,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "b5062095926fb449429482467a014b66688744a1",
-    "report": "docs/delivery/v2-development/director-adoption-integration-20261018.md",
+    "product_sha": "560bdcc5f1f626351150c4586e17957422680873",
+    "report": "docs/delivery/v2-development/audience-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }
