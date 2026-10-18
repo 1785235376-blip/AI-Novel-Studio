@@ -1,0 +1,10 @@
+{
+  "source_head": "2f420b72e0f17c6aaaff34a18d14306f9fbfc640",
+  "prerequisite": "3a7b3b3c992db49be19b93842dc69fb27a901666",
+  "source_commits": [
+    "714193937d306cde76bb9a5a681e54ac950c6724",
+    "2f420b72e0f17c6aaaff34a18d14306f9fbfc640"
+  ],
+  "bundle": "continuation.bundle",
+  "scope": "Reviewed GLB clay PNG save through original Asset owner and explicit preview confirmation"
+}
