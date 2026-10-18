@@ -1,0 +1,51 @@
+# Current implementation gaps after full Master Roadmap recovery
+
+Audit source: 2a85d9287a1c3c41ff8de0005538ceb64d4c9e42, 2026-10-18 15:32 UTC. Basis: complete original 904-line roadmap and later frozen-product-anchor-20261016.txt, current code and original-owner wiring. This is a bounded source-backed gap shortlist, not whole-V2 acceptance or a numeric completion estimate. Historical inventory labels remain historical. Newer uncommitted work must not be counted as complete.
+
+The source normalizer was also probed read-only with the existing clean dependency interpreter: video+audio accepted; audio-only rejected with STUDIO_TIMELINE_VIDEO_TRACK_REQUIRED; clip color and caption style rejected with STUDIO_TIMELINE_FIELDS_INVALID. Initial system-Python import failed because sqlalchemy was absent; the clean-interpreter probe exited 0. This was not a media render or full test run.
+
+## Confirmed code gaps by core module
+
+| Module | Existing implementation that must not be rebuilt | Remaining bounded implementation |
+|---|---|---|
+| Text | Independent SCRIPT/SCREENPLAY, actual single-chapter semantic adaptation, difference report and reviewed adoption | Multi-chapter/range adaptation; current adaptation_models request accepts one chapter_id and optional exact selection |
+| Image | T2I/I2I/reference/inpaint/upscale, painted masks, CPU cutout, source-bound review/Asset output | Outpaint/expanded-canvas operation; executable LoRA/control parameters in closed provider recipes; broaden deliberately narrow manual-mask PNG intake |
+| Director | Semantic SCREENPLAY/STORYBOARD proposal paths, original preview/review, source evidence, multi-console comparison and selected-scene child drafts | Direct image/video/3D-reference analysis; structured audience/target duration/platform/budget intent; direct audio/postproduction suggestion contracts; structured camera geometry bridge |
+| Storyboard | Independent documents, stable shot IDs, ordering/timing, CSV, Shot→Image/Video links | Verified image-thumbnail Shot Board/comparison and broader batch field authoring |
+| Video | Async provider lifecycle, T2V/I2V Comfy recipes, configured HTTP V2V contract, reviewed candidate output | Source-interval/keyframe selection and temporal-reference preprocessing; current reference command takes one whole source video |
+| Audio | Import/audition, TTS/MUSIC/SFX, trim/gain/fades/rate/channels/peak processing, WAV/FLAC/MP3; ASR/MFA/Whisper under original subtitle owner | Independent multitrack audio timeline and audio-only preview/mixdown through original timeline owner |
+| Editing | Real tracks/edit operations/captions/FFmpeg render/preview cache/history and OTIO transfer | Basic color adjustment and caption styling; their fields are currently rejected by the closed schema |
+| 3D | Bounded GLB, transformed mesh/material inspection, diagnostic orbit view, CPU clay/depth PNG and reviewed image Asset output | Actual authored-camera extraction/export and concrete minimal Blender/UE exchange; diagnostic yaw/pitch projection is not authored camera data |
+
+Evidence pointers: app/creative/adaptation_models.py and adaptation_generation.py; app/creative/production_execution_models.py; app/services/studio_image_provider_recipes.py; frontend/src/creative/StudioManualMaskPanel.tsx; app/creative/proposals.py and director_model_api.py; app/creative/models.py and graph_models.py; frontend/src/storyboard/ShotCard.tsx; app/services/studio_video_provider.py; app/services/studio_timeline_schema.py, studio_timeline_edit.py and studio_timeline_renderer.py; app/model_reference_scene.py and model_reference_depth.py.
+
+## Advanced capability gaps and corrections
+
+- A07: model_benchmark.py explicitly rejects VIDEO_WORKFLOW execution as import-only. Executed records leave tokens_per_second and gpu_memory_bytes unset, cold_start_state NOT_MEASURED. Text/image execution and evidence/preferences already exist. Missing measurement implementation differs from absent target hardware for acceptance.
+- A08: experimental/director.py already owns CameraGrammar and exact camera_checks. The existing geometry checker remains tied to the older screenplay plan; Creative Director/Graph has no equivalent source-bound bridge. Reuse that checker and original document owner, keeping user-authored geometry and model suggestions distinguishable.
+- A09: production_lineage.py and change_impact.py consolidate older consumers but do not enumerate all newer Creative Graph/Studio Timeline consumers. Those newer owners have source guards; an incomplete consolidated impact view is not a claim that source protection is absent.
+- A13: production manifests/replay currently resolve original image MediaService tasks. A whole-production selection layer across existing video/audio/Graph/Timeline receipts is missing. Do not add another queue or replace individual approval owners.
+- B10: durable manual chapter exchange, selection changes, deduplication, three-way conflicts, original CAS, tombstones and UNKNOWN recovery already exist. Limits: local-project chapters only, first 100 chapter choices, 20 selected chapters/channel, no asset/branch exchange. Production transport/encryption are injected fixtures, not a deployed authenticated service. Original roadmap defers production cloud/realtime; later B10 remains required, without authorizing paid hosting.
+
+Do not re-create these implemented paths based on older indexed owner files:
+- A01/A02/A03/A11 and B02/B05: mounted UI and original AuthorPreparer→Broker→JobManager coordinators.
+- A04/A05: reviewed temporal knowledge in character-restricted authoring.
+- A10: native image/PDF OCR and embedding/hybrid-search paths.
+- B04: actual MFA/Whisper adapters and trusted host configuration.
+- B09: BranchManuscriptService fork, three-way merge and recovery plus mounted BranchManuscriptPanel. The older ProjectForks service is not the complete feature.
+- A12: original Studio multitrack OTIO transfer exists. References-only media and effects/subtitles retained in Studio metadata are exact limitations; target NLE acceptance remains unrun. Optional FCPXML/EDL are not automatically mandatory.
+- B07: Ren'Py text/menu export and typed Godot data adapter exist. A typed adapter is not a playable game project or deployed media package.
+
+## Next substantial original-owner slice
+
+Independent audio timeline finish line: AUDIO → import two WAVs → arrange two audio tracks with trim/gain/fade → save/reopen → explicit mixed-audio preview → reviewed genuine WAV Asset/export.
+
+Preserve schema-1/2 video bytes/digests; introduce an explicit versioned audio-only shape under the original timeline owner, never a dummy VIDEO track. Reuse original CAS/edit/history/source guards and budgets. Start with one closed PCM16/48kHz/stereo WAV profile; enforce the existing 25 MiB output cap using actual uncompressed sample count. Reuse FFmpeg audio filters but remove video mapping and black-frame generation. Update original candidate/review/recovery expected-kind checks from the exact bound profile, not a caller-supplied arbitrary kind. Existing Graph timeline exports can retain video-only contract initially. Playback must use the same source/profile-pinned cache and UNKNOWN lifecycle with actual audio/wav and HTMLAudioElement, without automatic rendering on open.
+
+Critical existing video assumptions are in video_assembly_service.py, creative/production_execution.py, studio_timeline_export.py, timeline_playback.py, useStudioTimelinePlayback.ts and StudioTimelinePlaybackPanel.tsx. Merely removing the VIDEO-track guard is insufficient.
+
+## Acceptance and scope boundaries
+
+Real model/literary/visual quality, target Windows/IME/install/upgrade, true browser interaction/performance, and final 2V/2A/subtitle product journey remain separate acceptance stages. Prior CPU render receipts remain valid at their own source, not automatically at final source. Full DCC, auto-rigging, complete 3D camera simulator, Resolve-equivalent grading and advanced realtime voice/cloning are separately scoped extensions in original Appendix A; respect later specific additions without silently requiring entire external products.
+
+U01–U16 and FS/CORE still need complete current functional reconciliation. Their structural owner index cannot support a whole-product percentage. Maintain implementation gaps and acceptance gaps separately; do not calculate a false completion rate from test count or source-file presence.
