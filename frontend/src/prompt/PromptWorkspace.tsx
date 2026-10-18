@@ -11,6 +11,7 @@ import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
 import { Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { PromptEditorPanel } from './PromptEditorPanel';
+import { PromptIndependentDraft } from './PromptIndependentDraft';
 import { PromptLibraryPanel } from './PromptLibraryPanel';
 import { RevisionDiff } from './PromptRevisionDiff';
 import { PromptVersionHistory } from './PromptVersionHistory';
@@ -90,6 +91,11 @@ export function PromptWorkspace(props: PromptWorkspaceProps) {
             fieldError={state.fieldError}
             onEdit={edit} onSave={save} onRetry={retry}
             onRebase={() => { if (detail) void rebase(detail.familyId); }} onDiscard={discard} />
+
+          <PromptIndependentDraft draft={state.draft} detail={detail}
+            scopeKey={JSON.stringify([projectId, branchId, actor])} transport={transport}
+            disabled={controller.locked || !writable || state.loading}
+            onCopy={content => { startNew(); edit(content); }} />
 
           {detail && (
             <section className="prompt-history" aria-label="版本历史">
