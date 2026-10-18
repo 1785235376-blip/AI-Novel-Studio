@@ -1,0 +1,68 @@
+{
+  "contract": "studio-video-reference-cpu-evidence/1",
+  "fixture": "Locally generated testsrc2 MPEG4, 64x48, 10fps, 2 seconds; no downloaded or user media",
+  "source_file": "synthetic-source.mp4",
+  "source_sha256": "9ab4e2a13e15ae9ba8ac008d73f02b77af0c4f47d66a9c73b7e229b69f6c9f1e",
+  "source_bytes": 7428,
+  "sampling": {
+    "in_ms": 300,
+    "out_ms": 1300,
+    "sample_count": 2
+  },
+  "media": {
+    "duration_ms": 2000,
+    "width": 64,
+    "height": 48,
+    "time_base": {
+      "num": 1,
+      "den": 10240
+    },
+    "frame_count": 20,
+    "timing_policy": "MONOTONIC_ZERO_ORIGIN_PTS",
+    "orientation": "UNROTATED_SQUARE_PIXELS"
+  },
+  "frames": [
+    {
+      "index": 0,
+      "requested_ms": 300,
+      "source_frame_index": 3,
+      "pts": 3072,
+      "time_ms": {
+        "num": 300,
+        "den": 1
+      },
+      "width": 64,
+      "height": 48,
+      "png_sha256": "03c7d91552403d8f98a6d2662cfe68690a4c4394862a3ab36642b4b93b31210b",
+      "file": "sample-0.png",
+      "byte_count": 3224
+    },
+    {
+      "index": 1,
+      "requested_ms": 800,
+      "source_frame_index": 8,
+      "pts": 8192,
+      "time_ms": {
+        "num": 800,
+        "den": 1
+      },
+      "width": 64,
+      "height": 48,
+      "png_sha256": "ae3bc9e35f9d52d7b70794bdb45fdf972292fb22f37b70f3bf642eeb1a03acca",
+      "file": "sample-1.png",
+      "byte_count": 3598
+    }
+  ],
+  "preview_digest": "3ece9ccd9a5f55757249193cdb93640c6c47dc50676151f27b973dde488946f9",
+  "selected_index": 1,
+  "saved_png_sha256": "ae3bc9e35f9d52d7b70794bdb45fdf972292fb22f37b70f3bf642eeb1a03acca",
+  "model_called": false,
+  "semantic_analysis": false,
+  "pixel_policy": "Exact displayed RGB PNG retained on explicit save; no larger save-time rendering",
+  "receipt": "video-reference-file-r2.json",
+  "limitations": [
+    "Low-resolution references only, longest edge<=320; no upscale",
+    "No semantic keyframe detection or V2V interval application",
+    "Real browser and target Windows/model acceptance remain separate"
+  ]
+}

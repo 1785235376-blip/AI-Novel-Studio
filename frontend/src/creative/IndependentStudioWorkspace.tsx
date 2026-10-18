@@ -1,3 +1,4 @@
+import { StudioVideoReferencePanel } from './StudioVideoReferencePanel';
 import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
@@ -162,6 +163,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const promptDraftChanged = useCallback((value: boolean) => { promptDirtyRef.current = value; setPromptDirty(value); }, []);
   const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
+  const lastVideoReferenceSave = useRef<{body:string;key:string;unknown:boolean}>();
   const lastClaySave = useRef<{body:string;key:string;unknown:boolean}>();
   const lastImport = useRef<{ body: string; key: string }>();
   const sameStudioIdentity = useCallback(() => {
@@ -539,6 +541,27 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         onDirtyChange={promptDraftChanged} />
     )}
     {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
+    {module === 'VIDEO' && workspaceView === 'ASSETS' && overview && !denied && <StudioVideoReferencePanel scope={client} assets={rows}
+      blocked={busy || dirty} canSave={writable} isCurrent={current}
+      onPreview={(asset, window, signal) => guarded(() => client.previewVideoReference(asset, window, signal), signal)}
+      onSave={async (asset, review, selectedIndex, signal) => {
+        if (!current() || !writable || busyRef.current || dirtyRef.current || signal.aborted) throw new Error('请先处理当前输入并核对写入权限。');
+        const identity = JSON.stringify([asset.id, asset.version, asset.sha256, review.preview_digest, selectedIndex, review.frames[selectedIndex].png_sha256]);
+        if (lastVideoReferenceSave.current?.unknown && lastVideoReferenceSave.current.body !== identity) throw new Error('上次参考帧保存结果未知，请先核对相同原视频和采样帧，不要另建请求。');
+        if (lastVideoReferenceSave.current?.body !== identity) lastVideoReferenceSave.current = {body:identity,key:crypto.randomUUID(),unknown:false};
+        const request = lastVideoReferenceSave.current;
+        try {
+          request.unknown = true;
+          const result = await graphMutation(() => client.saveVideoReference(asset, review, selectedIndex, request.key, signal));
+          if (!current()) return;
+          request.unknown = false; refreshedAsset(result.asset);
+          setNotice(result.receipt.replayed ? '已核对原来的视频参考帧素材，未重复创建。' : '视频参考帧已保存到原素材库，保留视频来源版本与时间戳。图片到视频可通过现有素材入口另行明确使用；未调用模型。');
+          await loadProductionAssets();
+        } catch (reason) {
+          if (current()) setNotice('参考帧保存结果未确认。请先核对素材库；相同视频、采样与所选帧重试将复用本会话原请求。刷新页面前请先核对，避免重复创建。');
+          throw reason;
+        } finally { if (current()) invalidateStorage(); }
+      }} />}
     {workspaceView === 'ASSETS' && overview && !denied && <StudioModelReferencePanel scope={client} assets={rows} blocked={busy || dirty} canImport={writable && overview.capabilities.manual_import === true} canExport={overview.capabilities.manual_export === true} isCurrent={current}
       onInspect={asset => guarded(() => client.inspectModelReference(asset))}
       onMesh={(asset,signal) => guarded(() => client.inspectModelMesh(asset,signal),signal)}

@@ -179,6 +179,9 @@ class IndependentWorkspaceService:
                 "source_asset_id": origin["source"]["id"], "source_version": origin["source"]["version"],
                 "source_sha256": origin["source"]["sha256"],
                 **{key: origin[key] for key in ("width", "height", "yaw", "pitch", "png_sha256", "scene_index")}}
+        if "_video_reference_origin" in row:
+            from ..services.studio_video_reference_origin import project
+            public["video_reference"] = project(self.assets._video_reference_record(row))
         return {**public,
                 "provenance": provenance,
                 "relationships": self.relationships.project(nid, scope, row)}
@@ -361,6 +364,14 @@ class IndependentWorkspaceService:
                 **({"scene_preview": parsed["scene_preview"]} if scene_preview else {}),
                 **({"material_inspection": parsed["material_inspection"]} if material_inspection else {})}
 
+    def preview_video_reference(self, nid, scope, aid, value, guard):
+        from .video_reference import VideoReferencePreparation
+        return VideoReferencePreparation(self).preview(nid, scope, aid, value, guard)
+
+    def save_video_reference(self, nid, scope, actor, aid, value, guard):
+        from .video_reference import VideoReferencePreparation
+        return VideoReferencePreparation(self).save(nid, scope, actor, aid, value, guard)
+
     def export_model_depth(self, nid, scope, aid, value, guard=lambda: None):
         from .workspace_models import StaticSceneDepthExport
         from .model_reference_depth import render_depth
@@ -503,6 +514,10 @@ class IndependentWorkspaceService:
                 origin = self.assets._model_reference_record(row)
                 if body.origin != "MANUAL_EDIT" or body.chapter_ids or body.parent_asset_ids != [origin["source"]["id"]]:
                     raise ValueError("MODEL_REFERENCE_SOURCE_IMMUTABLE")
+            if "_video_reference_origin" in row:
+                origin = self.assets._video_reference_record(row)
+                if body.origin != "MANUAL_EDIT" or body.chapter_ids or body.parent_asset_ids != [origin["source"]["id"]]:
+                    raise ValueError("VIDEO_REFERENCE_SOURCE_IMMUTABLE")
             if row.get("_studio_result_origin"):
                 origin = copy.deepcopy(row["_studio_result_origin"])
                 parent_ids = self._production_asset_ids(origin)

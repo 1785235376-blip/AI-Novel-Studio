@@ -1,3 +1,4 @@
+import { VIDEO_REFERENCE_PREVIEW, VIDEO_REFERENCE_ASSET, checkedVideoReferenceSource, checkedVideoReferenceWindow, checkedVideoReferencePreview, checkedVideoReferenceSaved, type VideoReferenceOrigin, type VideoReferencePreview, type VideoReferenceWindow } from './studioVideoReferenceContract';
 import {CLAY_ASSET_CONTRACT,checkedClayAssetResult,type ClayAssetOrigin} from './studioModelClaySaveContract';
 import type {ModelClayExport} from './studioModelClayContract';
 import { checkedModelClay } from './studioModelClayContract';
@@ -43,7 +44,7 @@ export type StudioLineageOrigin = 'ORIGINAL_INPUT' | 'GENERATED_RESULT' | 'DERIV
 export type StudioLineageLink = { id?: string; label?: string; version?: number; digest?: string; state: string };
 /** The existing production-lineage projection, not a second asset owner. */
 export type ProductionLineage = AssetProvenance;
-export type StudioAsset = Asset & { version: number; model_reference?: ClayAssetOrigin; manual_mask?: StudioMaskReceipt; provenance?: Asset['provenance'] & { source_task_id?: string | null } };
+export type StudioAsset = Asset & { version: number; video_reference?: VideoReferenceOrigin; model_reference?: ClayAssetOrigin; manual_mask?: StudioMaskReceipt; provenance?: Asset['provenance'] & { source_task_id?: string | null } };
 export type StudioReferenceKind = AssetRelationshipReferenceKind;
 export type StudioReference = AssetRelationshipReference;
 export type StudioReferences = { items: StudioReference[]; read_only: true; content_copied: false };
@@ -347,6 +348,27 @@ export function studioClient(projectId: string, context: CollaborationContext) {
       return { items: value.items.map(checkedAsset) };
     }),
     importAsset: (body: StudioImportInput) => transport.json<StudioAsset>(`${base}/assets`, 'POST', body, undefined, body.idempotency_key).then(checkedAsset),
+    previewVideoReference: async (asset: StudioAsset, input: VideoReferenceWindow, signal?: AbortSignal) => {
+      const source = checkedVideoReferenceSource(checkedAsset(asset)), window = checkedVideoReferenceWindow(input);
+      if (signal?.aborted) throw new DOMException('预览已取消。', 'AbortError');
+      const value = await transport.json<unknown>(`${assetUrl(source.id)}/video-reference/preview`, 'POST', {
+        contract: VIDEO_REFERENCE_PREVIEW, source_version: source.version, source_sha256: source.sha256, ...window,
+      }, signal);
+      return checkedVideoReferencePreview(value, source, window);
+    },
+    saveVideoReference: async (asset: StudioAsset, review: VideoReferencePreview, selectedIndex: number, key: string, signal?: AbortSignal) => {
+      const source = checkedVideoReferenceSource(checkedAsset(asset));
+      if (!Number.isSafeInteger(selectedIndex) || selectedIndex < 0 || selectedIndex >= review.sample_count
+        || typeof key !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(key)) throw new Error('视频参考保存选择或请求标识无效。');
+      const checked = await checkedVideoReferencePreview(review, source, review), frame = checked.frames[selectedIndex];
+      if (signal?.aborted) throw new DOMException('保存已取消，请核对素材库。', 'AbortError');
+      const value = await transport.json<unknown>(`${assetUrl(source.id)}/video-reference/save`, 'POST', {
+        contract: VIDEO_REFERENCE_ASSET, source_version: source.version, source_sha256: source.sha256,
+        in_ms: checked.in_ms, out_ms: checked.out_ms, sample_count: checked.sample_count, selected_index: selectedIndex,
+        reviewed_preview_digest: checked.preview_digest, reviewed_png_sha256: frame.png_sha256, confirm_reference: true, idempotency_key: key,
+      }, signal, key);
+      const result = checkedVideoReferenceSaved(value, source, checked, selectedIndex); checkedAsset(result.asset); return result;
+    },
     importModelReference: async (body: ModelReferenceImport) => {
       if(body.contract!=='studio-static-glb-import/1'||typeof body.filename!=='string'||!body.filename.toLowerCase().endsWith('.glb')||body.filename.length>255||typeof body.content_base64!=='string'||body.content_base64.length>4*Math.ceil(8*1024*1024/3)||typeof body.idempotency_key!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$/.test(body.idempotency_key)) throw new Error('GLB 导入输入无效。');
       let binary:string;try{binary=atob(body.content_base64);}catch{throw new Error('GLB 文件编码无效。');}

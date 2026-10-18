@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/studioClient.test.ts (38 tests) 22ms
+ ✓ src/creative/studioVideoReferenceContract.additive.test.ts (12 tests) 78ms
+ ✓ src/creative/StudioVideoReferencePanel.additive.test.tsx (15 tests) 561ms
+ ✓ src/creative/StudioModelClaySave.additive.test.tsx (4 tests) 240ms
+ ✓ src/creative/StudioVideoReferenceWorkspace.additive.test.tsx (2 tests) 1549ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt false 802ms
+   ✓ saves through original VIDEO workspace and refreshes original assets, lost receipt true 746ms
+
+ Test Files  5 passed (5)
+      Tests  71 passed (71)
+   Start at  02:18:32
+   Duration  5.82s (transform 3.57s, setup 74ms, collect 6.02s, tests 2.45s, environment 1.13s, prepare 364ms)
+

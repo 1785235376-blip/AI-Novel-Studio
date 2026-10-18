@@ -19,7 +19,7 @@ def is_independent_studio_route(method, normalized_path):
     root = r"/api/projects/[^/]+/studio"
     patterns = {
         "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials))?))?)?|director/workspace/[^/]+))?",
-        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save)))?))",
+        "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save)|video-reference/(?:preview|save)))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
     }
@@ -96,6 +96,28 @@ class ModelReferenceImportRoute(PrivateProductionRoute):
                 return await handler(request)
             except RequestValidationError:
                 raise HTTPException(422, {"code": "MODEL_REFERENCE_REQUEST_INVALID"}, headers=headers) from None
+            except HTTPException as exc:
+                exc.headers = {**(exc.headers or {}), **headers}
+                raise
+        return checked
+
+
+class VideoReferenceRoute(PrivateProductionRoute):
+    """Bound source-only requests; validation never echoes private input."""
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+            try:
+                payload = bytearray()
+                async for part in request.stream():
+                    if len(payload) + len(part) > 4096:
+                        raise HTTPException(413, {"code": "VIDEO_REFERENCE_REQUEST_LIMIT"}, headers=headers)
+                    payload.extend(part)
+                request._body = bytes(payload)
+                return await handler(request)
+            except RequestValidationError:
+                raise HTTPException(422, {"code": "VIDEO_REFERENCE_REQUEST_INVALID"}, headers=headers) from None
             except HTTPException as exc:
                 exc.headers = {**(exc.headers or {}), **headers}
                 raise
@@ -227,6 +249,40 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.import_asset(nid, scope, actor, body, guard))
+
+    from .video_reference import ReferencePreview, ReferenceSave
+    video_reference_router = APIRouter(route_class=VideoReferenceRoute)
+
+    def video_reference_call(nid, token, branch, permission, callback):
+        def operation(actor, scope, guard):
+            from ..experimental.common import StaleSourceError
+            try:
+                return callback(actor, scope, guard)
+            except StaleSourceError:
+                guard()
+                raise HTTPException(409, {"code": "VIDEO_REFERENCE_SOURCE_CHANGED"}) from None
+            except ValueError as error:
+                guard()
+                code = str(error)
+                if re.fullmatch(r"VIDEO_REFERENCE_[A-Z_]{1,80}", code) is None:
+                    code = "VIDEO_REFERENCE_UNAVAILABLE"
+                raise HTTPException(422, {"code": code}) from None
+        with service.store.existing_owner_only():
+            return invoke(nid, token, branch, permission, operation)
+
+    @video_reference_router.post("/projects/{nid}/studio/assets/{aid}/video-reference/preview")
+    def preview_video_reference(nid: str, aid: str, body: ReferencePreview,
+                                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return video_reference_call(nid, x_session_token, x_branch_id, "domain.read",
+            lambda actor, scope, guard: service.preview_video_reference(nid, scope, aid, body, guard))
+
+    @video_reference_router.post("/projects/{nid}/studio/assets/{aid}/video-reference/save", status_code=201)
+    def save_video_reference(nid: str, aid: str, body: ReferenceSave,
+                             x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return video_reference_call(nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.save_video_reference(nid, scope, actor, aid, body, guard))
+
+    router.include_router(video_reference_router)
 
     def model_reference_call(nid, token, branch, permission, callback):
         def operation(actor, scope, guard):
