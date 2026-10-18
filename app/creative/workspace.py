@@ -327,7 +327,7 @@ class IndependentWorkspaceService:
         guard()
         return self._persist_manual_import(nid, scope, actor, body, data, "model/gltf-binary", guard)
 
-    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False, scene_preview=False):
+    def inspect_model_reference(self, nid, scope, aid, guard=lambda: None, *, mesh_preview=False, scene_preview=False, material_inspection=False):
         from .model_reference_glb import MAX_BYTES, inspect_static_glb
         from ..experimental.common import StaleSourceError
         guard()
@@ -337,11 +337,13 @@ class IndependentWorkspaceService:
                 raise ValueError("MODEL_REFERENCE_GLB_ASSET_REQUIRED")
             snapshot = {"id": row["id"], "kind": "ASSET", "asset_kind": "model", "version": row["version"], "digest": row["sha256"]}
             _, data = self.pinned_content(nid, scope, snapshot, max_bytes=MAX_BYTES, guard=guard)
-        if type(mesh_preview) is not bool or type(scene_preview) is not bool or mesh_preview and scene_preview:
+        if (any(type(v) is not bool for v in (mesh_preview, scene_preview, material_inspection))
+                or sum((mesh_preview, scene_preview, material_inspection)) > 1):
             raise ValueError("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
-        parsed = (inspect_static_glb(data, include_geometry=True, include_scene=True) if scene_preview else
+        parsed = (inspect_static_glb(data, include_materials=True) if material_inspection else
+                  inspect_static_glb(data, include_geometry=True, include_scene=True) if scene_preview else
                   inspect_static_glb(data, include_geometry=True) if mesh_preview else inspect_static_glb(data))
-        inspection = parsed["inspection"] if mesh_preview or scene_preview else parsed
+        inspection = parsed["inspection"] if mesh_preview or scene_preview or material_inspection else parsed
         guard()
         with self._asset_scope(nid, scope):
             current = self._row(nid, scope, aid)
@@ -350,7 +352,8 @@ class IndependentWorkspaceService:
             guard()
         return {"asset_snapshot": snapshot, "inspection": inspection,
                 **({"mesh_preview": parsed["mesh_preview"]} if mesh_preview else {}),
-                **({"scene_preview": parsed["scene_preview"]} if scene_preview else {})}
+                **({"scene_preview": parsed["scene_preview"]} if scene_preview else {}),
+                **({"material_inspection": parsed["material_inspection"]} if material_inspection else {})}
 
     def export_model_depth(self, nid, scope, aid, value, guard=lambda: None):
         from .workspace_models import StaticSceneDepthExport

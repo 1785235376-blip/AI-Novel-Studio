@@ -70,8 +70,9 @@ def _inspect_json(value):
             _fail("MODEL_REFERENCE_GLB_NUMBER_INVALID")
 
 
-def inspect_static_glb(data: bytes, *, include_geometry=False, include_scene=False):
-    if type(include_geometry) is not bool or type(include_scene) is not bool or include_scene and not include_geometry:
+def inspect_static_glb(data: bytes, *, include_geometry=False, include_scene=False, include_materials=False):
+    if (type(include_geometry) is not bool or type(include_scene) is not bool or type(include_materials) is not bool
+            or include_scene and not include_geometry or include_materials and (include_geometry or include_scene)):
         _fail("MODEL_REFERENCE_GLB_PREVIEW_OPTION_INVALID")
     if not isinstance(data, bytes) or not 28 <= len(data) <= MAX_BYTES:
         _fail("MODEL_REFERENCE_GLB_SIZE_INVALID")
@@ -228,6 +229,9 @@ def inspect_static_glb(data: bytes, *, include_geometry=False, include_scene=Fal
             "full_gltf_conformance_verified": False, "external_resources_loaded": False,
             "model_called": False, "preview_available": False, "frame_export_available": False}
 
+    if include_materials:
+        from .model_reference_materials import inspect_materials
+        return {"inspection": inspection, "material_inspection": inspect_materials(document)}
     if include_scene:
         from .model_reference_scene import scene_geometry
         return {"inspection": inspection, "scene_preview": scene_geometry(document, preview_meshes)}

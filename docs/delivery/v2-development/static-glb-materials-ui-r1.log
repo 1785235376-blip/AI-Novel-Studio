@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/StudioModelMaterials.additive.test.tsx (4 tests) 55ms
+ ✓ src/creative/StudioModelReferenceWorkspace.additive.test.tsx (2 tests) 1256ms
+   ✓ imports through original workspace, with lost-response retry false and no FFmpeg 725ms
+   ✓ imports through original workspace, with lost-response retry true and no FFmpeg 530ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  12:34:31
+   Duration  5.16s (transform 2.54s, setup 22ms, collect 3.79s, tests 1.31s, environment 610ms, prepare 103ms)
+

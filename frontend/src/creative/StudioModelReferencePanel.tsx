@@ -1,3 +1,4 @@
+import { StudioModelMaterialInspection, type ModelMaterialRead } from './StudioModelMaterialInspection';
 import type { ModelDepthRequest } from './StudioModelDepthExport';
 import { StudioModelMeshPreview } from './StudioModelMeshPreview';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -6,7 +7,7 @@ import { Button, Panel, StatusMessage } from '../ui/primitives';
 import type { StudioAsset } from './studioClient';
 import { MODEL_REFERENCE_MAX_BYTES, checkedModelReferenceInspection, modelReferenceError, type ModelReferenceInspection, type ModelScenePreview, type ModelMeshPreview } from './studioModelReferenceContract';
 type Input={filename:string;content_base64:string};
-type Props={scope:object;assets:StudioAsset[];blocked:boolean;canImport:boolean;canExport?:boolean;isCurrent:()=>boolean;onImport:(input:Input)=>Promise<StudioAsset>;onInspect:(asset:StudioAsset)=>Promise<ModelReferenceInspection>;onMesh?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelMeshPreview>;onDepth?:ModelDepthRequest;onScene?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelScenePreview>};
+type Props={scope:object;assets:StudioAsset[];blocked:boolean;canImport:boolean;canExport?:boolean;isCurrent:()=>boolean;onImport:(input:Input)=>Promise<StudioAsset>;onInspect:(asset:StudioAsset)=>Promise<ModelReferenceInspection>;onMesh?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelMeshPreview>;onMaterials?:ModelMaterialRead;onDepth?:ModelDepthRequest;onScene?:(asset:StudioAsset,signal:AbortSignal)=>Promise<ModelScenePreview>};
 export function StudioModelReferencePanel(props:Props){
  const [input,setInput]=useState<Input>(),[selected,setSelected]=useState(''),[pending,setPending]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[unknown,setUnknown]=useState(false);
  const [receipt,setReceipt]=useState<{scope:object;asset:StudioAsset;value:ModelReferenceInspection}>();
@@ -44,6 +45,7 @@ export function StudioModelReferencePanel(props:Props){
   <label>已保存 GLB 参考<select value={selected} disabled={props.blocked||pending} onChange={event=>{if(current()&&!busy.current){selection.current++;setSelected(event.target.value);setReceipt(undefined);setError('');}}}><option value="">明确选择原素材版本</option>{props.assets.filter(row=>row.kind==='model'&&!row.deleted_at).map(row=><option key={row.id} value={row.id}>{row.filename} · v{row.version}</option>)}</select></label>
   <Button disabled={props.blocked||pending||!asset} onClick={()=>void inspect()}>读取当前 GLB 几何检查</Button>
   {asset&&props.onMesh&&<StudioModelMeshPreview scope={props.scope} asset={asset} disabled={props.blocked||pending} canExport={props.canExport} isCurrent={props.isCurrent} read={props.onMesh} readScene={props.onScene} onDepth={props.onDepth}/> }
+  {asset&&props.onMaterials&&<StudioModelMaterialInspection scope={props.scope} asset={asset} disabled={props.blocked||pending} isCurrent={props.isCurrent} read={props.onMaterials}/>}
   {pending&&<StatusMessage>正在处理明确选择的 GLB 操作…</StatusMessage>}{error&&<StatusMessage tone="warning">{error}</StatusMessage>}{notice&&<StatusMessage>{notice}</StatusMessage>}
   {visible&&<section aria-label="GLB 原素材几何回执"><p>原素材 {visible.asset_snapshot.id} · v{visible.asset_snapshot.version} · {visible.inspection.byte_count} 字节</p><p>{visible.inspection.mesh_count} 个网格 · {visible.inspection.primitive_count} 个图元 · 按图元计 {visible.inspection.position_count_per_primitive} 个位置、{visible.inspection.triangle_count_per_primitive} 个三角形</p><p>网格局部包围盒：[{visible.inspection.bounds.min.join(', ')}] 至 [{visible.inspection.bounds.max.join(', ')}]</p><p>未应用场景节点变换，不是实例化后的场景总量；不代表完整 glTF 合规、许可授权或渲染验收。原文件下载与来源声明继续使用现有素材入口。</p></section>}
  </Panel>;

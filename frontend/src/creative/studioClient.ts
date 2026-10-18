@@ -1,3 +1,4 @@
+import { checkedModelMaterials } from './studioModelMaterialsContract';
 import { checkedDepthCamera, checkedModelDepth, type ModelDepthCamera } from './studioModelDepthContract';
 import { checkedModelReferenceAsset, checkedModelReferenceInspection, checkedModelMeshPreview, checkedModelScenePreview, type ModelReferenceImport } from './studioModelReferenceContract';
 import { ApiError, type Asset, type AssetProvenance, type AssetRelationship, type AssetRelationshipKind, type AssetRelationshipReference, type AssetRelationshipReferenceKind, type AssetRelationshipTarget, type CollaborationContext } from '../api';
@@ -354,6 +355,7 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     },
     inspectModelReference: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference`, 'GET', undefined, signal).then(value => checkedModelReferenceInspection(value,checkedAsset(asset))),
     inspectModelMesh: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/mesh-preview`, 'GET', undefined, signal).then(value => checkedModelMeshPreview(value,checkedAsset(asset))),
+    inspectModelMaterials: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/materials`, 'GET', undefined, signal).then(value => checkedModelMaterials(value,checkedAsset(asset))),
     inspectModelScene: (asset: StudioAsset, signal?: AbortSignal) => transport.json<unknown>(`${assetUrl(asset.id)}/model-reference/scene-preview`, 'GET', undefined, signal).then(value => checkedModelScenePreview(value,checkedAsset(asset))),
     exportModelDepth: async (asset: StudioAsset, camera: ModelDepthCamera, signal?: AbortSignal) => {
       const source=structuredClone(checkedModelReferenceAsset(checkedAsset(asset))),view=checkedDepthCamera(camera);
