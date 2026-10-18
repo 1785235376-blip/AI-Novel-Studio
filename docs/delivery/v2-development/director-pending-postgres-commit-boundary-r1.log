@@ -1,0 +1,106 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_____ test_terminal_transaction_fault_has_truthful_durable_outcome[False] ______
+
+pg_lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd8860ab9b0>
+after_commit = False
+
+    @pytest.mark.parametrize('after_commit',[False,True])
+    def test_terminal_transaction_fault_has_truthful_durable_outcome(pg_lifecycle,monkeypatch,after_commit):
+        from sqlalchemy.orm import Session
+        from app.repositories.postgres.models import GenerationJobModel
+        e=board(pg_lifecycle);repository=e.persistence.repository
+        if after_commit:
+            original=repository._publish_director_terminal
+            def uncertain(*args):
+                original(*args)
+                raise OSError('Synthetic acknowledgment loss after PostgreSQL commit')
+            monkeypatch.setattr(repository,'_publish_director_terminal',uncertain)
+        else:
+            original_flush=Session.flush
+            def failing_flush(session,*args,**kwargs):
+                if any(isinstance(row,GenerationJobModel) and FIELD in (row.request or {}).get('_repository_payload',{}) for row in session.dirty):
+                    raise OSError('Synthetic failure before PostgreSQL terminal commit')
+                return original_flush(session,*args,**kwargs)
+            monkeypatch.setattr(Session,'flush',failing_flush)
+>       job,body=publish(e);saved=e.persistence.get(job.id)
+                 ^^^^^^^^^^
+
+tests/test_director_postgres_pending_additive.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+e = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def publish(e, *, schema=True, evidence=True):
+        from creative_director_execution_fixture import preview as old_preview
+        e.wire_text = json.dumps(output(e))
+        prepared = preview(e) if schema else old_preview(e)
+        receipt = e.coordinator._dispatch_independent(e.ctx, e.row["id"], {
+            "expected_version": prepared["version"], "reviewed_preview_digest": prepared["model_preview"]["preview_digest"]},
+            e.guard, host_authority=e.authority, terminal_evidence=evidence)
+        job = wait(e, e.manager.get(receipt["model_execution"]["job_id"]))
+>       assert job.status == "COMPLETED"
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests/test_director_durable_pending_review.py:32: AssertionError
+______ test_terminal_transaction_fault_has_truthful_durable_outcome[True] ______
+
+pg_lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd87f55e210>
+after_commit = True
+
+    @pytest.mark.parametrize('after_commit',[False,True])
+    def test_terminal_transaction_fault_has_truthful_durable_outcome(pg_lifecycle,monkeypatch,after_commit):
+        from sqlalchemy.orm import Session
+        from app.repositories.postgres.models import GenerationJobModel
+        e=board(pg_lifecycle);repository=e.persistence.repository
+        if after_commit:
+            original=repository._publish_director_terminal
+            def uncertain(*args):
+                original(*args)
+                raise OSError('Synthetic acknowledgment loss after PostgreSQL commit')
+            monkeypatch.setattr(repository,'_publish_director_terminal',uncertain)
+        else:
+            original_flush=Session.flush
+            def failing_flush(session,*args,**kwargs):
+                if any(isinstance(row,GenerationJobModel) and FIELD in (row.request or {}).get('_repository_payload',{}) for row in session.dirty):
+                    raise OSError('Synthetic failure before PostgreSQL terminal commit')
+                return original_flush(session,*args,**kwargs)
+            monkeypatch.setattr(Session,'flush',failing_flush)
+>       job,body=publish(e);saved=e.persistence.get(job.id)
+                 ^^^^^^^^^^
+
+tests/test_director_postgres_pending_additive.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+e = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def publish(e, *, schema=True, evidence=True):
+        from creative_director_execution_fixture import preview as old_preview
+        e.wire_text = json.dumps(output(e))
+        prepared = preview(e) if schema else old_preview(e)
+        receipt = e.coordinator._dispatch_independent(e.ctx, e.row["id"], {
+            "expected_version": prepared["version"], "reviewed_preview_digest": prepared["model_preview"]["preview_digest"]},
+            e.guard, host_authority=e.authority, terminal_evidence=evidence)
+        job = wait(e, e.manager.get(receipt["model_execution"]["job_id"]))
+>       assert job.status == "COMPLETED"
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests/test_director_durable_pending_review.py:32: AssertionError
+=============================== warnings summary ===============================
+tests/test_director_postgres_pending_additive.py::test_terminal_transaction_fault_has_truthful_durable_outcome[False]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_postgres_pending_additive.py::test_terminal_transaction_fault_has_truthful_durable_outcome[False]
+FAILED tests/test_director_postgres_pending_additive.py::test_terminal_transaction_fault_has_truthful_durable_outcome[True]
+2 failed, 15 deselected, 1 warning in 7.36s

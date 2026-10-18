@@ -645,6 +645,17 @@ class DirectorModelCoordinator:
             guard(); host_authority.guard()
         return deepcopy({key: val for key, val in stored.items() if key != "history"})
 
+    def _terminal_repository_matches(self, repository):
+        if self.store.backend == 'file':
+            from ..repositories.generation_repository import GenerationRepository
+            return (isinstance(repository, GenerationRepository)
+                    and repository.root.resolve() == (self.store.root / 'runtime/jobs').resolve())
+        if self.store.backend == 'postgres':
+            from ..repositories.postgres.generation import PostgresGenerationRepository
+            return (isinstance(repository, PostgresGenerationRepository)
+                    and repository._matches_director_store(self.store.store))
+        return False
+
     def _dispatch_independent(self, ctx, rid, value, guard, *, host_authority, terminal_evidence=False):
         # Private historical-only opt-in. No request/preview/public payload key
         # is introduced, and unsupported owners fail before admission effects.
@@ -652,10 +663,8 @@ class DirectorModelCoordinator:
             raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OPTION_INVALID")
         terminal_repository = None
         if terminal_evidence:
-            from ..repositories.generation_repository import GenerationRepository
             terminal_repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
-            if (self.store.backend != "file" or not isinstance(terminal_repository, GenerationRepository)
-                    or terminal_repository.root.resolve() != (self.store.root / "runtime/jobs").resolve()):
+            if not self._terminal_repository_matches(terminal_repository):
                 raise ValueError("CREATIVE_DIRECTOR_TERMINAL_BACKEND_UNSUPPORTED")
         from pydantic import BaseModel, ConfigDict, Field
         from ..model_execution import _CreativeDirectorCapability
@@ -1014,10 +1023,8 @@ class DirectorModelCoordinator:
                 quota_view=lambda: self.store._view(raw, binding.project_incarnation))
 
     def _pending_repository(self):
-        from ..repositories.generation_repository import GenerationRepository
         repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
-        if (self.store.backend != "file" or not isinstance(repository, GenerationRepository)
-                or repository.root.resolve() != (self.store.root / "runtime/jobs").resolve()
+        if (not self._terminal_repository_matches(repository)
                 or self.broker.store is not self.store.store):
             raise ValueError("CREATIVE_DIRECTOR_PENDING_BACKEND_UNSUPPORTED")
         return repository
@@ -1047,7 +1054,10 @@ class DirectorModelCoordinator:
         job_id = (routing.get("model_execution") or {}).get("job_id")
         if not isinstance(job_id, str) or not job_id:
             raise ValueError("CREATIVE_DIRECTOR_PENDING_ADMISSION_REQUIRED")
-        repository._job_path(job_id)
+        if self.store.backend == "file":
+            repository._job_path(job_id)
+        else:
+            repository._validate_director_job_id(job_id)
         with self.manager._review_mutation(job_id), ExitStack() as locks:
             try:
                 job = self.manager.get(job_id)

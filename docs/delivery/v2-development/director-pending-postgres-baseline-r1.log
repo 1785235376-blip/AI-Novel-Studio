@@ -1,0 +1,47 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_real_postgres_terminal_pending_review_and_reopen _____________
+
+pg_lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_real_postgres_terminal_pending_review_and_reopen(pg_lifecycle):
+        e=board(pg_lifecycle)
+>       job,body=publish(e)
+                 ^^^^^^^^^^
+
+tests/test_director_postgres_pending_additive.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_director_durable_pending_review.py:28: in publish
+    receipt = e.coordinator._dispatch_independent(e.ctx, e.row["id"], {
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.generation.DirectorModelCoordinator object at 0x7f8e7eb2a900>
+ctx = namespace(novel_id='independent-director', scope={'mode': 'local', 'novel_id': 'independent-director'}, actor='director-host-actor', token='fixture-current-host-token', branch=None)
+rid = '93a39a1b-33af-478f-8367-cefa0b996be5'
+value = {'expected_version': 2, 'reviewed_preview_digest': '5145e90bec79c624eabf940d9a11e7c46ce303da21ff60b6e536c126e106d790'}
+guard = <function pg_lifecycle.<locals>.guard at 0x7f8e7eb1ea20>
+
+    def _dispatch_independent(self, ctx, rid, value, guard, *, host_authority, terminal_evidence=False):
+        # Private historical-only opt-in. No request/preview/public payload key
+        # is introduced, and unsupported owners fail before admission effects.
+        if type(terminal_evidence) is not bool:
+            raise ValueError("CREATIVE_DIRECTOR_TERMINAL_OPTION_INVALID")
+        terminal_repository = None
+        if terminal_evidence:
+            from ..repositories.generation_repository import GenerationRepository
+            terminal_repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
+            if (self.store.backend != "file" or not isinstance(terminal_repository, GenerationRepository)
+                    or terminal_repository.root.resolve() != (self.store.root / "runtime/jobs").resolve()):
+>               raise ValueError("CREATIVE_DIRECTOR_TERMINAL_BACKEND_UNSUPPORTED")
+E               ValueError: CREATIVE_DIRECTOR_TERMINAL_BACKEND_UNSUPPORTED
+
+app/creative/generation.py:659: ValueError
+=============================== warnings summary ===============================
+tests/test_director_postgres_pending_additive.py::test_real_postgres_terminal_pending_review_and_reopen
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_postgres_pending_additive.py::test_real_postgres_terminal_pending_review_and_reopen
+1 failed, 1 warning in 5.51s

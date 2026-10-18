@@ -1,0 +1,68 @@
+............F.                                                           [100%]
+=================================== FAILURES ===================================
+_________ test_independent_coordinators_concurrent_prepare_and_review __________
+
+pg_lifecycle = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/director-pendin...firmed': True, 'runtime_config': {'management': 'EXTERNAL', 'type': 'LLAMA_CPP', 'endpoint': 'http://127.0.0.1:8999'}})
+
+    def test_independent_coordinators_concurrent_prepare_and_review(pg_lifecycle):
+        from copy import deepcopy
+        from types import SimpleNamespace
+        from concurrent.futures import ThreadPoolExecutor
+        from test_director_durable_pending_review import DENIALS
+        e=board(pg_lifecycle);job,body=publish(e);other=SimpleNamespace(**vars(e));restart(other)
+        before=e.raw.read(e.nid,e.scope)['collections'][e.documents.proposals.COLLECTION][e.row['id']]['version']
+>       with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda owner:prepare(owner,deepcopy(body)),[e,other]))
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_director_postgres_pending_additive.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_director_postgres_pending_additive.py:112: in <lambda>
+    with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda owner:prepare(owner,deepcopy(body)),[e,other]))
+                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_director_durable_pending_review.py:39: in prepare
+    return e.coordinator._prepare_independent_pending_review(e.ctx, e.row["id"], body, e.guard, host_authority=e.authority)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/generation.py:1247: in _prepare_independent_pending_review
+    with self._pending_transaction(ctx, rid, guard, host_authority) as (raw, row, binding, repository, locks):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/creative/generation.py:1043: in _pending_transaction
+    repository = self._pending_repository()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.generation.DirectorModelCoordinator object at 0x7f866fd22b40>
+
+    def _pending_repository(self):
+        repository = getattr(self.manager.persistence, "repository", self.manager.persistence)
+        if (not self._terminal_repository_matches(repository)
+                or self.broker.store is not self.store.store):
+>           raise ValueError("CREATIVE_DIRECTOR_PENDING_BACKEND_UNSUPPORTED")
+E           ValueError: CREATIVE_DIRECTOR_PENDING_BACKEND_UNSUPPORTED
+
+app/creative/generation.py:1029: ValueError
+=============================== warnings summary ===============================
+tests/test_director_postgres_pending_additive.py::test_real_postgres_terminal_pending_review_and_reopen
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_director_postgres_pending_additive.py::test_independent_coordinators_concurrent_prepare_and_review
+1 failed, 13 passed, 1 warning in 22.27s

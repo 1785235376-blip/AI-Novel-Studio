@@ -1,6 +1,8 @@
 from __future__ import annotations
 from ...runtime_events import committed_change
 from datetime import datetime,timezone
+from contextlib import contextmanager
+from copy import deepcopy
 from sqlalchemy import select, text
 from .common import chapter_or_raise,external_uuid,novel_or_raise
 from .models import GenerationJobModel, NovelModel
@@ -35,15 +37,14 @@ class PostgresGenerationRepository:
 
     @committed_change("TASK")
     def save(self,item):
-        from ...creative.director_terminal_evidence import FIELD
+        from ...creative.director_terminal_evidence import FIELD, preserve_evidence
         if FIELD in item:
             raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
         with self.database.session() as session:
             binding = graph_job_binding(item)
             novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
-            iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);chapter_uuid=None
-            if row is not None and FIELD in self._payload(row):
-                raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
+            iid=external_uuid(item["id"]);row=session.scalar(select(GenerationJobModel).where(GenerationJobModel.id == iid).with_for_update());chapter_uuid=None
+            item = preserve_evidence(self._payload(row) if row is not None else None, item)
             if binding is None and row is not None and graph_job_binding(self._payload(row)) is not None:
                 raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             if binding is None and item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
@@ -85,6 +86,93 @@ class PostgresGenerationRepository:
             else:
                 for key,value in values.items():setattr(row,key,value)
             session.flush()
+    def _matches_director_store(self, store):
+        """Same original PostgreSQL endpoint; never accept a second job database."""
+        from sqlalchemy.engine import make_url
+        from .session import Database
+        if type(self.database) is not Database or getattr(store, 'backend', None) != 'postgres':
+            return False
+        try:
+            url = store.database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+            return self.database.engine.url == make_url(url)
+        except (ValueError, TypeError, AttributeError):
+            return False
+
+    @staticmethod
+    def _validate_director_job_id(jid):
+        from uuid import UUID
+        if not isinstance(jid, str):
+            raise ValueError('GENERATION_JOB_ID_INVALID')
+        try:
+            if str(UUID(jid)) != jid: raise ValueError('noncanonical')
+        except ValueError:
+            raise ValueError('GENERATION_JOB_ID_INVALID') from None
+
+    def _publish_director_terminal(self, job, capability, evidence):
+        """Live original worker only: owner KEY SHARE then generation-row leaf."""
+        from threading import get_ident
+        import hashlib
+        from ...model_execution import _CreativeDirectorCapability
+        from ...creative.director_terminal_evidence import FIELD, validate_evidence, digest, _PublicationAcknowledgment
+        self._validate_director_job_id(job.id)
+        if type(capability) is not _CreativeDirectorCapability:
+            raise ValueError('CREATIVE_DIRECTOR_TERMINAL_OWNER_REQUIRED')
+        capability._check(job, started=True)
+        repository = getattr(capability.manager.persistence, 'repository', capability.manager.persistence)
+        if (repository is not self or not capability.worker_claimed
+                or capability.publication_state != 'PUBLISHING'
+                or capability.publication_thread != get_ident()
+                or capability._publication_binding is None
+                or capability._publication_binding[1] is not self
+                or capability._publication_binding[2] != job.expected_request_digest
+                or capability.terminal_publication is not capability._publication_binding[0]):
+            raise ValueError('CREATIVE_DIRECTOR_TERMINAL_OWNER_REQUIRED')
+        item = job.public()
+        if (item.get('status') != 'COMPLETED' or item.get('execution_outcome') != 'COMPLETED'
+                or item.get('terminal_hook_status') != 'COMPLETED' or not job.output.strip()):
+            raise ValueError('CREATIVE_DIRECTOR_TERMINAL_RESULT_REQUIRED')
+        evidence = validate_evidence(evidence, item)
+        if (evidence['output_digest'] != hashlib.sha256(job.output.encode('utf-8')).hexdigest()
+                or evidence['output_bytes'] != len(job.output.encode('utf-8'))
+                or evidence['route']['fingerprint'] != capability.route_fingerprint
+                or evidence['route']['provider_id'] != job.requested_provider or job.provider != job.requested_provider
+                or evidence['route']['model_id'] != job.requested_model or job.model != job.requested_model):
+            raise ValueError('CREATIVE_DIRECTOR_TERMINAL_OUTPUT_CHANGED')
+        binding = graph_job_binding(item)
+        with self.database.session() as session:
+            owner_id = self._graph_owner(session, item, binding)
+            row = session.scalar(select(GenerationJobModel).where(
+                GenerationJobModel.id == external_uuid(job.id)).with_for_update())
+            if row is None: raise ValueError('CREATIVE_DIRECTOR_TERMINAL_ORIGINAL_JOB_REQUIRED')
+            if row.novel_id != owner_id:
+                raise GenerationProjectIdentityError('GENERATION_GRAPH_PROJECT_OWNER_CHANGED')
+            previous = self._payload(row)
+            check_graph_job_update(previous, item)
+            if FIELD in previous: raise ValueError('CREATIVE_DIRECTOR_TERMINAL_ALREADY_ATTEMPTED')
+            if any(previous.get(key) != item.get(key) for key in (
+                    'status', 'execution_outcome', 'terminal_hook_status', 'output', 'provider', 'model',
+                    'requested_provider', 'requested_model', 'generation_deadline', 'generation_max_output_bytes')):
+                raise ValueError('CREATIVE_DIRECTOR_TERMINAL_ORIGINAL_JOB_CHANGED')
+            item[FIELD] = evidence
+            row.request = {**dict(row.request or {}), '_repository_payload': deepcopy(item)}
+            session.flush()
+        return _PublicationAcknowledgment(capability, self, job, digest(evidence))
+
+    @contextmanager
+    def _director_snapshot_leaf(self, jid):
+        """Detached row under a leaf lock retained through original scope commit.
+
+        Caller already holds raw scope and original owner. No authority/policy
+        callback or owner acquisition is performed while this leaf is held.
+        Generic saves take the same row lock, so clearing cannot interleave.
+        """
+        self._validate_director_job_id(jid)
+        with self.database.session() as session:
+            row = session.scalar(select(GenerationJobModel).where(
+                GenerationJobModel.id == external_uuid(jid)).with_for_update())
+            if row is None: raise KeyError(jid)
+            yield deepcopy(self._payload(row))
+
     def get(self,jid):
         with self.database.session() as session:
             row=session.get(GenerationJobModel,external_uuid(jid))

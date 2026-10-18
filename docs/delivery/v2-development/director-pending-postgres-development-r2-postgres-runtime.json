@@ -1,0 +1,37 @@
+{
+  "utc": "2026-10-18T04:55:13.216761+00:00",
+  "database_mode": "reuse",
+  "database": "v2_director_pending_red_20261018",
+  "database_created": false,
+  "database_retained": true,
+  "database_existed_before": null,
+  "data_path": ".runtime/director-acceptance-pgdata-20261017",
+  "boundary": "real disposable PostgreSQL; loopback only; no model calls",
+  "migration_status": "not_requested_reuse",
+  "migrations": [],
+  "harness_timeouts": {
+    "connect_seconds": 5,
+    "statement_ms": 60000,
+    "lock_ms": 5000
+  },
+  "status": "FAIL",
+  "checks_exit_code": 1,
+  "server_stop": "stopped",
+  "startup_ownership": "confirmed",
+  "cleanup_status": "completed",
+  "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "endpoint": "127.0.0.1:55439/v2_director_pending_red_20261018",
+  "database_oid": 29964,
+  "database_user": "postgres",
+  "probe_sql": "SELECT version(), current_database(), host(inet_server_addr()), inet_server_port(), 1, (SELECT oid::bigint FROM pg_catalog.pg_database WHERE datname = current_database()), current_user",
+  "probe_result": [
+    "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "v2_director_pending_red_20261018",
+    "127.0.0.1",
+    55439,
+    1,
+    29964,
+    "postgres"
+  ],
+  "finished_utc": "2026-10-18T04:55:38.984881+00:00"
+}
