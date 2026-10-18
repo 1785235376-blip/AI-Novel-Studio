@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 18:20 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 19:33 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 18:20 UTC. Working branch:
+Current checkpoint: 2026-10-18 19:33 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-e96b749ad7cd6eab29befe0db051c9e1fbf4a060 (bounded camera/benchmark wave).
+9d5ac505b4ef67e556af16162129f0830b83310d (Style authoring/local vision runtime).
 Latest byte-verified public archive is
-c8a93e10c4444e6fd7a1fbfea9b4f16dcbc817b0 on
+bab2926453fdb2ea9980e507c61bc2c33d062bcf on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -272,3 +272,18 @@ owner lifecycles with explicit test-only corrections. Final owner-test receipt
 Style DNA UI, guarded local vision runtime and native Comic layers/ORA export are
 being developed in separate isolated worktrees. They are not included in this
 checkpoint; unsupported runtime/adoption/format capabilities remain unavailable.
+
+## 19:33 UTC Style authoring/runtime checkpoint
+
+Product 9d5ac505b4ef67e556af16162129f0830b83310d adds original Style authoring
+and guarded local VISION runtime. See style-ui-local-vision-integration-20261018.md
+in the delivery evidence directory: File 99, real PG 5, UI 42, TypeScript/Vite/token
+and PUBLIC 6 passed with stable sources; all 3067 source paths match this commit.
+No live model inference occurred. Durable Director IMAGE jobs, terminal review and
+adoption remain unavailable. Host in-app dirty-navigation protection remains open.
+
+Previous checkpoint cab201e was publicly archived as
+bab2926453fdb2ea9980e507c61bc2c33d062bcf: 13 files / 5,871,246 bytes, anonymous
+exact-parent/path/byte/hash verification passed. Fresh remote observation at
+19:20 UTC left main and PR47/48 heads unchanged. New source publication remains
+archive-only; no main merge, release, tag or new public source branch.

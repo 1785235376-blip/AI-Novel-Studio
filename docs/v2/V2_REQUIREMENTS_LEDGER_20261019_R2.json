@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T19:20:00Z",
+  "updated_at_utc": "2026-10-18T19:33:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -20813,7 +20813,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Backend authored hierarchy and exact-source read-only resolution exist; UI, generation/Impact adoption and complete style coverage remain. Bound multimodal STYLE cannot use legacy A02 analysis/execution previews.",
+      "gap": "Global plus one exact chapter override authoring/resolution UI exists. Scene/shot/multi-override authoring, host dirty-navigation integration, execution and Impact adoption remain; bound styles cannot use legacy A02 execution.",
       "next_action": "Reuse original style and asset references for global/scene/panel scopes, conflicts and Impact Engine change previews.",
       "evidence_scope": "This reconciliation maps source and prior evidence; it runs no product test and does not certify the full new requirement.",
       "bounded_evidence": [
@@ -20821,6 +20821,12 @@
           "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
           "summary": "Original STYLE owns eight typed dimensions, global/chapter/scene/shot resolution, current/history privacy, canonical digest and epoch fencing.",
           "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "9d5ac505b4ef67e556af16162129f0830b83310d",
+          "summary": "Original Style panel supports save/reopen/approval and canonical-digest resolution, preserving richer profiles read-only.",
+          "report": "docs/delivery/v2-development/style-ui-local-vision-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21908,11 +21914,21 @@
       "public_checks": 6,
       "postgres_evidence": "Comic76; Style/foundation58 passed in combined run plus corrected missing-owner target1; serialized revocation6 overlaps. Original failures retained, not one invented all-green run.",
       "formal_acceptance": false
+    },
+    {
+      "product_sha": "9d5ac505b4ef67e556af16162129f0830b83310d",
+      "report": "docs/delivery/v2-development/style-ui-local-vision-integration-20261018.md",
+      "scope": "Style authoring UI and guarded local VISION runtime; durable Director IMAGE jobs/adoption remain blocked",
+      "file_tests": 99,
+      "postgres_tests": 5,
+      "frontend_tests": 42,
+      "public_checks": 6,
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "eb8b8b8ed617c34e1e01415fa5eef9d4c074c348",
-    "report": "docs/delivery/v2-development/comic-style-vision-integration-20261018.md",
+    "product_sha": "9d5ac505b4ef67e556af16162129f0830b83310d",
+    "report": "docs/delivery/v2-development/style-ui-local-vision-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }
