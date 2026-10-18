@@ -1,3 +1,5 @@
+import {directorDraftBackup} from './directorDraftBackup';
+import {downloadPortableBlob} from '../experimental/portableProjectsClient';
 import { reviewedDirectorSnapshot, type ReviewedDirectorReceipt, type ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -244,6 +246,13 @@ export function GraphDirectorConsole({ client, canvasHandoff, pin, selectionKey,
         onOpenStoryboard(request, () => originCurrent() && current() && authored === authorEpoch.current && selected === selection.current.generation && owns(generation));
       } : undefined} client={client} source={base} snapshot={snapshot} active={active && authorized} canCreate={editing && !dirty && storyboardAllowed} busy={busy || working} isCurrent={isCurrent} read={read} mutate={mutate} onPending={setHandoffPending} />}
       {(dirty || blocked) && <section aria-label="导演草稿处理"><p>导演草稿尚未保存或待核对，图编辑与运行暂时锁定。内容仅保留在本次页面中，关闭页面可能丢失。</p>
+        <Button disabled={!authorized || !canMutate || busy || working} onClick={() => {
+          if (!current() || !authorized || !canMutate || busy || working || lock.current || composing.current || renderedAuthorEpoch !== authorEpoch.current) return;
+          try { downloadPortableBlob(directorDraftBackup(draft, base, snapshot, blocked), 'director-author-draft-backup.json');
+            setNotice('已发起本地作者草稿备份下载。原草稿、未保存状态与图绑定保持不变；这不是服务端保存回执。');
+          } catch (reason) { setError(reason instanceof Error ? reason.message : '本地草稿备份未完成，原输入保持不变。'); }
+        }}>下载导演未保存草稿备份</Button>
+        <p>备份是可阅读的 JSON 作者副本，不含会话凭证，不会自动导入、重试保存或运行；请自行保管其中的创作内容。</p>
         {candidate && <><p>已核对服务端：{candidate.document.title} · v{candidate.document.version} · {candidate.pin.digest}</p><DirectorDraftComparison local={draft} server={candidate.document} /></>}
         <label><input type="checkbox" checked={discardConfirmed} disabled={busy || working} onChange={event => setDiscardConfirmed(event.target.checked)} />{blocked && !candidate ? '确认仅放弃导演本地草稿，远端结果仍未知；再次创建前先核对目录' : '确认放弃导演本地草稿'}{candidate ? '并采用已核对原版本' : ''}</label>
         <Button disabled={!discardConfirmed || busy || working} onClick={discard}>处理导演本地草稿</Button>

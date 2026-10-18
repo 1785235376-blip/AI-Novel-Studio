@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorDraftBackup.additive.test.tsx (2 tests) 187ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 995ms
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  13:43:10
+   Duration  2.07s (transform 396ms, setup 36ms, collect 1.01s, tests 1.18s, environment 583ms, prepare 116ms)
+
