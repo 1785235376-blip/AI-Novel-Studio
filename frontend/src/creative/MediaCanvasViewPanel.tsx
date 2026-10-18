@@ -1,11 +1,12 @@
+import { MediaCardViewport } from './MediaCardViewport';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { apiErrorView } from '../api';
 import type { StudioGraphEditorProps } from './useStudioGraphEditorController';
 import { checkedCanvasDefinition, type CanvasDefinition, type CanvasViewRecord, type CanvasViewSummary } from './studioCanvasViewClient';
 import type { StudioAsset } from './studioClient';
-import { clampGraphPosition, clampGraphZoom, graphWorldToScreen } from './graphCanvasGeometry';
-import { MEDIA_CARD_HEIGHT, MEDIA_CARD_WIDTH, mediaViewportCenter, visibleMediaCards } from './mediaCanvasGeometry';
+import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
+import { mediaViewportCenter } from './mediaCanvasGeometry';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
 type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy'> & { onDirtyChange: (dirty: boolean) => void };
@@ -17,7 +18,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const [selected, setSelected] = useState(''), [assetId, setAssetId] = useState(''), [query, setQuery] = useState('');
   const [pending, setPending] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [discard, setDiscard] = useState(false), [size, setSize] = useState({ width: 800, height: 480 });
-  const area = useRef<HTMLDivElement>(null), alive = useRef(true), pendingRef = useRef(false), draftRef = useRef(draft), live = useRef(props);
+  const alive = useRef(true), pendingRef = useRef(false), draftRef = useRef(draft), live = useRef(props);
   draftRef.current = draft; live.current = props;
   const dirty = uncertain || JSON.stringify(draft) !== JSON.stringify(base?.definition ?? blank());
   const client = props.client.graphs.canvasViews;
@@ -30,12 +31,6 @@ export function MediaCanvasViewPanel(props: Props) {
   const editable = !locked() && props.canMutate && !uncertain;
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
-  useLayoutEffect(() => {
-    const element = area.current; if (!element) return;
-    const resize = () => { const r = element.getBoundingClientRect(); if (r.width > 0 && r.height > 0) setSize({ width: r.width, height: r.height }); };
-    resize(); if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(resize); observer.observe(element); return () => observer.disconnect();
-  }, [props.active]);
   function edit(next: CanvasDefinition) {
     if (locked() || !live.current.canMutate || uncertain) return;
     try { const valid = checkedCanvasDefinition(next); draftRef.current = valid; setDraft(valid); setDiscard(false); setNotice('尚未保存'); live.current.onDirtyChange(true); }
@@ -51,7 +46,7 @@ export function MediaCanvasViewPanel(props: Props) {
   function adopt(row: CanvasViewRecord) { setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
   function open(id: string) { if (dirty && !discard) return; void work(false, () => client!.get(id), adopt); }
   const states = new Map(base?.reference_states.map(row => [row.card_id, row]) ?? []);
-  const shown = visibleMediaCards(draft, size.width, size.height, query), card = draft.cards.find(c => c.id === selected);
+  const card = draft.cards.find(c => c.id === selected);
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布">
     <h3>媒体素材画布</h3><p>独立保存素材引用与位置。此视图不执行生成，也不改变执行图；素材内容预览仍在原素材面板中进行。</p>
@@ -81,12 +76,7 @@ export function MediaCanvasViewPanel(props: Props) {
       {(['x', 'y'] as const).map(axis => <label key={axis}>视口 {axis}<input type="number" min={-100000} max={100000} value={draft.viewport[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, [axis]: clampGraphPosition(e.target.valueAsNumber) } })} /></label>)}
       <label>缩放<input type="number" step="0.1" min="0.35" max="2.5" value={draft.viewport.zoom} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, zoom: clampGraphZoom(e.target.valueAsNumber) } })} /></label>
     </div>
-    <div className="media-canvas__viewport" ref={area} aria-label="媒体卡片视口">
-      {shown.cards.map(item => { const point = graphWorldToScreen(item.position, draft.viewport), state = states.get(item.id); return <div key={item.id} className="media-canvas__card" style={{ left: point.x, top: point.y, width: MEDIA_CARD_WIDTH * draft.viewport.zoom, height: MEDIA_CARD_HEIGHT * draft.viewport.zoom }}>
-        <Button aria-pressed={item.id === selected} onClick={() => setSelected(item.id)}>{state?.filename ?? item.id}</Button><p>{item.asset?.kind ?? '不可用'} · {state?.state ?? '待保存校验'}</p><small>{item.asset?.asset_id ?? '源绑定已隐藏'}</small>
-      </div>; })}
-    </div>
-    <p>共 {draft.cards.length}/1000 张，匹配 {shown.matched} 张，当前视口渲染 {shown.cards.length} 张。{shown.clipped && '重叠卡片较多，仅显示前 128 张；请缩小查找范围或调整视口。'}</p>
+    <MediaCardViewport definition={draft} states={states} selected={selected} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={setSelected} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
       <Button disabled={!editable} onClick={() => { edit({ ...draftRef.current, cards: draftRef.current.cards.filter(c => c.id !== card.id) }); setSelected(''); }}>移除此引用卡片</Button></div>}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <p role="status">{notice}</p>}

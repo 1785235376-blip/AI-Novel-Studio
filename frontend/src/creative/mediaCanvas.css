@@ -6,3 +6,7 @@
 .media-canvas__card{position:absolute;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;border:var(--border-default);border-radius:var(--radius-lg);background:var(--color-bg-surface);padding:var(--space-2)}
 .media-canvas__card>p,.media-canvas__card>small{margin:0;overflow-wrap:anywhere;font-size:12px}
 .media-canvas__card>[aria-pressed=true]{border-color:var(--color-selection-border);background:var(--color-selection-bg)}
+
+.media-canvas__viewport{touch-action:none}
+.media-canvas__viewport:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
+.media-canvas__card{user-select:none}
