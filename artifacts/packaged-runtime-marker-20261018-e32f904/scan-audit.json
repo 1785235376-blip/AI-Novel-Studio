@@ -1,0 +1,67 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "78378fe8b3d7fedb523c36ed38c0b34ba6613137",
+      "path": "API_CATALOG.json",
+      "bytes": 1451396,
+      "sha256": "c9695e9aa21e06da13d799e19bf7aa39b770c301d0746fae0dc9bd28967086ab"
+    },
+    {
+      "blob": "e22192478efe86ca6124b24540d0cc9d35ee1bbb",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 594119,
+      "sha256": "c13de70cbaf1054f097f44d8159e4fe69577a78f7e81c90edac2ae34f721be0e"
+    },
+    {
+      "blob": "4cfcf3496f54283a22fdf9240974d842678833c4",
+      "path": "app/runtime.py",
+      "bytes": 17747,
+      "sha256": "0cf67f374d1411e9d0476c52b27ebde8c9ad6129be56f650919c510062f86cdd"
+    },
+    {
+      "blob": "d04deba48bc8c5a1c66f9659a964e9e86ec13686",
+      "path": "docs/PACKAGED_RUNTIME_MARKER.md",
+      "bytes": 1834,
+      "sha256": "5e63780b9331ba2a682d866f19e4e024dda5e546db911a4aeff6c15171ade3b3"
+    },
+    {
+      "blob": "247a40e4f09c3cf9bfee65f505518abce0657720",
+      "path": "docs/delivery/v2-development/packaged-runtime-marker-green.json",
+      "bytes": 681463,
+      "sha256": "f686af77560d4ddd38bc8d0b34c1c045a8c3025f57c51388f369900b4e81da54"
+    },
+    {
+      "blob": "d39f1e28f4a7f1f52990af5f9caf8b59175047fc",
+      "path": "docs/delivery/v2-development/packaged-runtime-marker-green.log",
+      "bytes": 638,
+      "sha256": "e3bd4462a57f5b5a82d88652093793d89f4cc122d9561c030dac4ef012fb8078"
+    },
+    {
+      "blob": "7b9efd7b43b46fc769f743e1158bf5b79ad5cc4c",
+      "path": "docs/delivery/v2-development/packaged-runtime-marker-red.json",
+      "bytes": 680904,
+      "sha256": "670f1183429cab082e5be087c10da1dd76e51f636464c3be32bcf47b259d4ea6"
+    },
+    {
+      "blob": "15cf2116f0c306a96c29eaaf61085edf1ce0602d",
+      "path": "docs/delivery/v2-development/packaged-runtime-marker-red.log",
+      "bytes": 5889,
+      "sha256": "4fe1327d78b9c0cec52b26d919f40403eee45b1553781e1db3ab468403fd318b"
+    },
+    {
+      "blob": "0ca989866bd48601923e5573d82044223003c780",
+      "path": "tests/test_packaged_runtime_marker_additive.py",
+      "bytes": 1879,
+      "sha256": "7bcf38bc667bb658f8a49d096a5293d707579eb768b9bc4372e550bbe5b64135"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
