@@ -223,7 +223,7 @@ def main(argv: list[str] | None = None) -> int:
         "database": args.database, "database_created": False,
         "database_retained": not args.fresh_database, "database_existed_before": None,
         "data_path": data.relative_to(root).as_posix(),
-        "boundary": "real disposable PostgreSQL; loopback only; no model calls",
+        "boundary": "real disposable PostgreSQL; database loopback only; test activity is recorded by the check command and report",
         "migration_status": "pending" if args.fresh_database else "not_requested_reuse",
         "migrations": [entry for entry, _ in migrations],
         "harness_timeouts": {"connect_seconds": CONNECT_TIMEOUT_SECONDS,

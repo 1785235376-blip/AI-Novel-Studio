@@ -63,6 +63,7 @@ class Job:
     graph_binding:dict|None=None
     creative_director_binding:dict|None=None
     research_ocr_binding:dict|None=None
+    research_ocr_execution_authority:object=field(default=None,repr=False)
     creative_execution_authority:object=field(default=None,repr=False)
     creative_director_cancel_requested:bool=field(default=False,repr=False)
     prepared_text_invocation:object=field(default=None,repr=False)
@@ -166,7 +167,7 @@ def mark_generation_origin(job, origin):
 
 
 def generation_content_available(job):
-    if is_research_ocr_job(job): return False
+    if _is_research_ocr_execution(job): return False
     # Passive Creative evidence has no executable or content-serving authority,
     # even if a caller supplies forged live hooks or a Graph invocation.
     if _is_creative_execution(job): return False
@@ -209,7 +210,7 @@ def require_generation_content(job):
 
 
 def require_whole_generation_acceptance(job):
-    if is_research_ocr_job(job):
+    if _is_research_ocr_execution(job):
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "RESEARCH_OCR_EXECUTION_UNAVAILABLE"})
     if is_creative_director_job(job):
@@ -315,7 +316,7 @@ def check_generation_bounds(job, *, delta="", completion_text=None):
 
 
 def _deny_creative_director_execution(job):
-    if is_research_ocr_job(job):
+    if _is_research_ocr_execution(job):
         raise ValueError("RESEARCH_OCR_EXECUTION_UNAVAILABLE")
     if _is_creative_execution(job):
         raise ValueError("CREATIVE_DIRECTOR_EXECUTION_UNAVAILABLE")
@@ -351,12 +352,17 @@ def _is_creative_execution(job):
     return is_creative_director_job(job) or type(getattr(job, "creative_execution_authority", None)) is _CreativeDirectorCapability
 
 
+def _is_research_ocr_execution(job):
+    from .experimental.research_ocr_execution import _ResearchOCRCapability
+    return is_research_ocr_job(job) or type(getattr(job, "research_ocr_execution_authority", None)) is _ResearchOCRCapability
+
+
 def _isolated_generation(job):
-    return _is_creative_execution(job) or job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}
+    return _is_research_ocr_execution(job) or _is_creative_execution(job) or job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}
 
 
 class JobManager:
-    transient_fields={"creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
@@ -376,7 +382,7 @@ class JobManager:
                 self._restore_job(item)
 
     def _restore_job(self, item):
-        if is_creative_director_job(item) or is_research_ocr_job(item):
+        if is_creative_director_job(item) or _is_research_ocr_execution(item):
             from .repositories.generation_repository import graph_job_binding
             try: graph_job_binding(item)
             except ValueError: return
@@ -391,9 +397,14 @@ class JobManager:
         # Recovery is a durable state transition. A later reader/restart
         # must not see the interrupted task as still executing or reviewable.
         if recovered:
-            if is_creative_director_job(self.jobs[item["id"]]) or is_research_ocr_job(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
+            if is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
             self._persist(self.jobs[item["id"]])
     def _persist(self,job):
+        from .experimental.research_ocr_execution import _ResearchOCRCapability
+        ocr = getattr(job, "research_ocr_execution_authority", None)
+        if type(ocr) is _ResearchOCRCapability and (ocr.job is not job or ocr.manager is not self
+                or any(getattr(job, key) != value for key, value in ocr.identity.items())):
+            raise ValueError("RESEARCH_OCR_PERSISTENCE_IDENTITY_CHANGED")
         from .model_execution import _CreativeDirectorCapability
         capability = getattr(job, "creative_execution_authority", None)
         if type(capability) is _CreativeDirectorCapability and (capability.job is not job or capability.job_id != job.id):
@@ -608,9 +619,20 @@ class JobManager:
         _deny_creative_director_execution(job)
         return self._start_prepared_validated(job)
 
+    def _prepare_research_ocr_job(self, **kwargs):
+        from .experimental.research_ocr_execution import prepare
+        return prepare(self, **kwargs)
+
+    def _start_research_ocr_job(self, job):
+        from .experimental.research_ocr_execution import require_capability
+        capability = require_capability(self, job, started=False)
+        capability.started = True
+        return self._start_prepared_validated(job)
+
     def _start_prepared_validated(self, job):
-        if is_research_ocr_job(job):
-            raise ValueError("RESEARCH_OCR_EXECUTION_UNAVAILABLE")
+        if _is_research_ocr_execution(job):
+            from .experimental.research_ocr_execution import require_capability
+            require_capability(self, job, started=True)
         if _is_creative_execution(job):
             _require_creative_execution_session(job, manager=self, started=True)
             self._guard_creative_request(job)
@@ -806,6 +828,15 @@ class JobManager:
         with job.condition:
             if job._terminal_hook_called or job.terminal_hook_status is not None: return
             terminal_hook = job.on_terminal
+            if _is_research_ocr_execution(job):
+                from .experimental.research_ocr_execution import _ResearchOCRCapability
+                capability = job.research_ocr_execution_authority
+                if type(capability) is not _ResearchOCRCapability or capability.job is not job or capability.manager is not self:
+                    return
+                terminal_hook = capability.on_terminal
+                if job.on_terminal is not terminal_hook or job.before_dispatch is not capability.before_dispatch:
+                    job.output = ""; job.status = "FAILED"
+                    job.error_code = "GENERATION_AUTHORITY_REVOKED"
             if _is_creative_execution(job):
                 from .model_execution import _CreativeDirectorCapability
                 capability = job.creative_execution_authority
@@ -847,8 +878,9 @@ class JobManager:
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
-        if is_research_ocr_job(job):
-            raise ValueError("RESEARCH_OCR_EXECUTION_UNAVAILABLE")
+        if _is_research_ocr_execution(job):
+            from .experimental.research_ocr_execution import run
+            return run(self, job)
         # Outside try/finally: no terminal callback, persistence, or provider
         # path may be reached by directly handing this inert domain to a worker.
         if _is_creative_execution(job):
@@ -1128,7 +1160,7 @@ class JobManager:
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
         passive = self.get(jid)
-        if is_creative_director_job(passive) or is_research_ocr_job(passive): require_generation_content(passive)
+        if is_creative_director_job(passive) or _is_research_ocr_execution(passive): require_generation_content(passive)
         from .repositories.file.mutation_coordinator import workspace_mutation
         from .repositories.chapter_repository import VersionConflict
         from pathlib import Path

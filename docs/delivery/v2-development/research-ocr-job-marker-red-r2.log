@@ -1,0 +1,93 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_stripped_passive_markers_cannot_select_author_worker[file] ________
+
+rig = namespace(nid='v2-independent-2e20d17a26c04e06b580bcd3bbfefefe', scope={'mode': 'local', 'novel_id': 'v2-independent-2...IdentityRepository object at 0x7f5715d3a180>), create_project=<function rig.<locals>.create_project at 0x7f5718036d40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5718b71b50>
+
+    def test_stripped_passive_markers_cannot_select_author_worker(rig,monkeypatch):
+        import app.jobs as jobs_module
+        e=setup(rig,monkeypatch);original=e.manager._run;author_calls=[]
+        def forbidden(*args,**kwargs):
+            author_calls.append(True)
+            raise RuntimeError('OCR must never enter Author routing')
+        monkeypatch.setattr(jobs_module.runtime,'router',forbidden)
+        def run(job):
+            job.research_ocr_binding=None;job.experimental_origin=None;job.operation='continue'
+            original(job)
+        monkeypatch.setattr(e.manager,'_run',run)
+        e.manager._start_research_ocr_job(e.job);wait(e)
+>       assert e.job.research_ocr_execution_authority.worker_claimed, 'Transient OCR task escaped its typed worker'
+E       AssertionError: Transient OCR task escaped its typed worker
+E       assert False
+E        +  where False = <app.experimental.research_ocr_execution._ResearchOCRCapability object at 0x7f5715acc440>.worker_claimed
+E        +    where <app.experimental.research_ocr_execution._ResearchOCRCapability object at 0x7f5715acc440> = Job(id='a3e296a9-2f73-4019-bb21-1fcdf9e76937', operation='continue', novel_id='v2-independent-2e20d17a26c04e06b580bcd3...nding=None, adaptation_publication=None, graph_binding=None, creative_director_binding=None, research_ocr_binding=None).research_ocr_execution_authority
+E        +      where Job(id='a3e296a9-2f73-4019-bb21-1fcdf9e76937', operation='continue', novel_id='v2-independent-2e20d17a26c04e06b580bcd3...nding=None, adaptation_publication=None, graph_binding=None, creative_director_binding=None, research_ocr_binding=None) = namespace(service=<app.experimental.research_library.ResearchLibraryService object at 0x7f5715ceb740>, row={'title': '...n_publication=None, graph_binding=None, creative_director_binding=None, research_ocr_binding=None), calls=['terminal']).job
+
+tests/test_research_ocr_job_execution_additive.py:147: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_research_ocr_job_execution_additive.py::test_stripped_passive_markers_cannot_select_author_worker[file]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_research_ocr_job_execution_additive.py::test_stripped_passive_markers_cannot_select_author_worker[file]
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1 (run)
+  
+  Traceback (most recent call last):
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 894, in _run
+      job.status="GENERATING";self._emit(job)
+                              ^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 672, in _emit
+      try: self._persist(job)
+           ^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 402, in _persist
+      self.persistence.save(job.public())
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/services/generation_service.py", line 4, in save
+      def save(self,item):return self.repository.save(item)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/runtime_events.py", line 101, in call
+      result = method(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/repositories/generation_repository.py", line 137, in save
+      raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
+  app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_JOB_BINDING_CHANGED
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/tests/test_research_ocr_job_execution_additive.py", line 144, in run
+      original(job)
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 1082, in _run
+      job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
+                                                                                                                                                                                     ^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 672, in _emit
+      try: self._persist(job)
+           ^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/jobs.py", line 402, in _persist
+      self.persistence.save(job.public())
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/services/generation_service.py", line 4, in save
+      def save(self,item):return self.repository.save(item)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/runtime_events.py", line 101, in call
+      result = method(*args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+    File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/repositories/generation_repository.py", line 137, in save
+      raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
+  app.repositories.generation_repository.GenerationProjectIdentityError: GENERATION_GRAPH_JOB_BINDING_CHANGED
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_research_ocr_job_execution_additive.py::test_stripped_passive_markers_cannot_select_author_worker[file]
+1 failed, 17 deselected, 3 warnings in 5.60s
