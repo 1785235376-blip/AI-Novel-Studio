@@ -2,6 +2,7 @@
 export const brokerCost = (value: number | null | undefined) => value == null || !Number.isFinite(value)
   ? '未知（不能当作免费）' : `${value / 1_000_000} USD（${value} µUSD）`;
 const reasons: Record<string, string> = {
+  VISION_MODEL_ADMISSION_NOT_CONFIGURED: '视觉/OCR 的真实任务执行链尚未接通；模型声明不代表可运行',
   MODEL_DISABLED: '模型未启用；请在原模型配置中核对',
   PROVIDER_NOT_CONFIGURED: 'Provider 尚未配置；请在 AI 主控中心核对配置',
   PROVIDER_UNAVAILABLE: 'Provider 当前不可用；请在原配置入口核对状态',

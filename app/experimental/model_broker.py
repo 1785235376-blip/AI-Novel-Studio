@@ -349,6 +349,11 @@ class ModelBrokerService(DomainService):
                         reasons.append('VISION_CLOUD_BUDGET_EGRESS_NOT_INTEGRATED')
                     if capability.verification == 'MOCK_ONLY' and not synthetic:
                         reasons.append('VISION_SYNTHETIC_ADAPTER_NOT_VERIFIED')
+                    # Research's original ReviewAdapterJobs still rejects real
+                    # dispatch. A declared contract or constructed runtime node
+                    # is not its missing JobManager/admission integration.
+                    if capability.verification != 'MOCK_ONLY':
+                        reasons.append('VISION_MODEL_ADMISSION_NOT_CONFIGURED')
                     identity = {'adapter': f'{type(adapter).__module__}.{type(adapter).__qualname__}',
                         'adapter_hash': implementation_hash(type(adapter)),
                         'model_version': capability.model_revision,
