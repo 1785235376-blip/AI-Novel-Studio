@@ -2,9 +2,9 @@ import type { ExperimentalClient } from './api';
 import type { Source } from './researchLibraryClient';
 export type OCRRoute = { provider_id: string; model_id: string; display_name: string; languages: string[] };
 export type OCRPreview = { receipt_version: number; source_binding: { source_id: string; source_version: number; source_digest: string }; provider_id: string; model_id: string; language: string; expires_at: string; reviewed_preview_digest: string; external_provider_fee_microusd: number; host_compute_cost_included: false };
-export type OCRRow = { id: string; version: number; status: string; request: { source_id: string; source_version: number; operation: string }; native_ocr_preview?: OCRPreview | null; result?: { blocks: { text: string; page: number; citation: { source_id: string; source_version: number; quote_sha256: string } }[] } | null };
+export type OCRRow = { id: string; version: number; status: string; request: { source_id: string; source_version: number; operation: string }; native_ocr_preview?: OCRPreview | null; result?: { blocks: { text: string; page: number; citation: { source_id: string; source_version: number; source_digest: string; result_digest: string; layer: 'RESEARCH_DERIVED' } }[] } | null };
 export function currentOCR(row: OCRRow, source: Source) {
-  return !!row && typeof row.id === 'string' && Number.isInteger(row.version) && row.version > 0 && row.request?.operation === 'OCR' && row.request.source_id === source.id && row.request.source_version === source.version;
+  return !!row && typeof row.id === 'string' && Number.isInteger(row.version) && row.version > 0 && row.request?.operation === 'OCR' && row.request.source_id === source.id && row.request.source_version === source.version && (!row.result || (Array.isArray(row.result.blocks) && row.result.blocks.every(block => typeof block.text === 'string' && block.citation?.source_id === source.id && block.citation.source_version === source.version && block.citation.source_digest === source.content_sha256 && block.citation.layer === 'RESEARCH_DERIVED' && /^[a-f0-9]{64}$/.test(block.citation.result_digest))));
 }
 export function researchNativeOCRClient(client: ExperimentalClient) {
   const base = '/research-library/analysis', path = (id: string) => `${base}/jobs/${encodeURIComponent(id)}`;

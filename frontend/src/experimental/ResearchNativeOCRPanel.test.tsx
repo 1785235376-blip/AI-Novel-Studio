@@ -22,7 +22,7 @@ function fixture() {
   if(url.endsWith('/review'))return response(saved={...saved,version:saved.version+1,status:'REVIEWED'});
   return response(saved);
  }));
- return {calls,complete:()=>saved={...preview,version:4,status:'REVIEW_REQUIRED',result:{blocks:[{text:'STUDIO OCR 123',page:1,citation:{source_id:'image',source_version:1,quote_sha256:'c'.repeat(64)}}]}}};
+ return {calls,complete:()=>saved={...preview,version:4,status:'REVIEW_REQUIRED',result:{blocks:[{text:'STUDIO OCR 123',page:1,citation:{source_id:'image',source_version:1,source_digest:'a'.repeat(64),result_digest:'c'.repeat(64),layer:'RESEARCH_DERIVED'}}]}}};
 }
 it('requires reviewed preview, runs explicitly, refreshes and reviews saved result',async()=>{
  const f=fixture();render(<ResearchNativeOCRPanel client={client()} source={source}/>);
@@ -35,7 +35,7 @@ it('requires reviewed preview, runs explicitly, refreshes and reviews saved resu
  const dispatch=f.calls.find(c=>c.url.endsWith('/native-dispatch'))!;
  expect(dispatch.body.reviewed_preview_digest).toBe('b'.repeat(64));expect(dispatch.body.expected_version).toBe(2);
  f.complete();fireEvent.click(screen.getByRole('button',{name:'刷新 OCR 状态'}));
- await screen.findByText('STUDIO OCR 123');fireEvent.click(screen.getByRole('button',{name:'核对文字后标记已审核'}));
+ await screen.findByText('STUDIO OCR 123');expect(screen.getByText(new RegExp('摘要 '+ 'c'.repeat(64)))).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'核对文字后标记已审核'}));
  await screen.findByText('REVIEWED · v5');
  expect(f.calls.filter(c=>c.url.endsWith('/native-dispatch'))).toHaveLength(1);
 });
@@ -78,4 +78,10 @@ it('an uncertain dispatch retry keeps the same application idempotency key',asyn
  await screen.findByText('读取或操作失败，请重试。');
  fireEvent.click(screen.getByRole('button',{name:'确认执行 OCR'}));
  await screen.findByText('RUNNING · v3');expect(keys).toHaveLength(2);expect(keys[0]).toBe(keys[1]);
+});
+
+it('rejects derived OCR citations bound to a different source digest',async()=>{
+ const { currentOCR } = await import('./researchNativeOCRClient');
+ const row={...initial,result:{blocks:[{text:'wrong',page:1,citation:{source_id:'image',source_version:1,source_digest:'d'.repeat(64),result_digest:'c'.repeat(64),layer:'RESEARCH_DERIVED' as const}}]}};
+ expect(currentOCR(row,source)).toBe(false);
 });
