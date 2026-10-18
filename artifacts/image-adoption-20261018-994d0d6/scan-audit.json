@@ -1,0 +1,169 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "8e97341e4a49b520fd924986b6739d91f50c7619",
+      "path": "API_CATALOG.json",
+      "bytes": 1504167,
+      "sha256": "d22a7bded8008acb325b1d690bb997efe9a3b26f4a2aef9be3ab1cfa4beb4805"
+    },
+    {
+      "blob": "7cd1bf08d37f8c9d1c8a8d620b5974f530e56085",
+      "path": "API_CATALOG.md",
+      "bytes": 401853,
+      "sha256": "64fd35f7d9f0ec91f8f71e2fdcadadebabec8d3fde6b6388a310ababff5f3a81"
+    },
+    {
+      "blob": "c6678b3f867febd89e7bede8b1dc8ae0566535a1",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 621231,
+      "sha256": "f838cc7a915eebe0d742bf24828eeee235e7a7c4c433e14aa21836fdad8eb8ed"
+    },
+    {
+      "blob": "ff0b700f9353f99859685cfbcd7107d8b93e067f",
+      "path": "app/creative/director_image_adoption.py",
+      "bytes": 1486,
+      "sha256": "f291c5fd61dbd50817c67975a9bfd4068965237cb0732d635fdc6ace9cb0ddfe"
+    },
+    {
+      "blob": "88c774ffe375a66313fdaf642e5e5237c15a751b",
+      "path": "app/creative/director_image_generation.py",
+      "bytes": 21158,
+      "sha256": "f889c9f6aa32c9266841bf99abb626326ff38411521b3e16ac15c575f1604903"
+    },
+    {
+      "blob": "8f63462c0c7f0c7a3358dcb9fc3bc384565983b7",
+      "path": "app/experimental/director_image_accounting.py",
+      "bytes": 8418,
+      "sha256": "1d9a4f1362c4c93f5014c832412821fb3ca4b2d1d8093a775aba7fc46de26927"
+    },
+    {
+      "blob": "4506f50102d1f7c9c6e2e2ac9145fa7f5ecf36b6",
+      "path": "app/experimental/model_broker.py",
+      "bytes": 67403,
+      "sha256": "b2555245a4f0fd622c9b57e71ec3ba6659d92b44818e03f4009299f89dc3da49"
+    },
+    {
+      "blob": "3ec510a54cce8591f0cbd25a32545b56abe353e5",
+      "path": "app/experimental/model_broker_api.py",
+      "bytes": 17809,
+      "sha256": "f9226cb7fae9936f3799878270b513ddb7f84850393115357bee15aeda513f0a"
+    },
+    {
+      "blob": "6e269c1f2caa891db79d75d21b9febdc45a6790c",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 35064,
+      "sha256": "5a4070af96ebc66e4154f7fa4223bc4d09cda1fd26b1c00463e02b353d6c7763"
+    },
+    {
+      "blob": "381a0eaed27342df999f8007c7e49cc5b6d4825c",
+      "path": "docs/delivery/v2-development/director-adoption-committed-source-verification.json",
+      "bytes": 174,
+      "sha256": "bb92a79ce9365e65bee0286c42699b997940d71250c458eababb1189225f92b3"
+    },
+    {
+      "blob": "8268c095cc12fa184f73a883b7cc3f6b2426d185",
+      "path": "docs/delivery/v2-development/director-adoption-integration-20261018.md",
+      "bytes": 2351,
+      "sha256": "0a98ad6996dd48cc91035b4d3ab42fc15c112b0851fa6cf81552b3400de1dea8"
+    },
+    {
+      "blob": "f98a19711b4ec87c9808cba02040d1173807157e",
+      "path": "docs/delivery/v2-development/director-adoption-integration-file.json",
+      "bytes": 740065,
+      "sha256": "caa1382ed84272ca15eabd9df93d703fcbd609f7a6ed2728ab0b6d6b6bcf5c0a"
+    },
+    {
+      "blob": "660ca9fcfbe1f4eb1cff2d0ab333fd48db987e34",
+      "path": "docs/delivery/v2-development/director-adoption-integration-file.log",
+      "bytes": 1111,
+      "sha256": "998a1736b895808e32e3579eed441fdfd14c60028f8d9f48d1575d3df85148e2"
+    },
+    {
+      "blob": "066ec640fea649a1ee8fb87895068801c73e55e0",
+      "path": "docs/delivery/v2-development/director-adoption-integration-postgres-cleanup.json",
+      "bytes": 1604,
+      "sha256": "2e1be30449a14e2506f99fca9adda4a77d43c15b47671c9d2eee5543ba51c55c"
+    },
+    {
+      "blob": "1d7bfa8c0e504fbbdf20d25ae35c2b52f98c9af6",
+      "path": "docs/delivery/v2-development/director-adoption-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "24cd4ae09a2a97e7f7e9a434663ca584534fc51100025eddf5b5889b5b4a53c1"
+    },
+    {
+      "blob": "050a8387cb4cdcddf4b544f491cd5d3fc27130ba",
+      "path": "docs/delivery/v2-development/director-adoption-integration-postgres.json",
+      "bytes": 739986,
+      "sha256": "ba3dad82b158918530cea53dfbc0f4d89421b4f626038bee558083c3f7a4aeb1"
+    },
+    {
+      "blob": "9c4fd38a8839b473a66e19acc7549e82f577391e",
+      "path": "docs/delivery/v2-development/director-adoption-integration-postgres.log",
+      "bytes": 1178,
+      "sha256": "fc0bf14231214a94348c23ac6f3dfd970c391ca77077366aee64d5c8f902dbff"
+    },
+    {
+      "blob": "39127c139ec4c15fe09c37e509dd89a7b62568e9",
+      "path": "docs/delivery/v2-development/director-adoption-integration-public.json",
+      "bytes": 740242,
+      "sha256": "714a76fcacfa077f6669ef3669b10a5ef741de44dc9f6483732924db05619192"
+    },
+    {
+      "blob": "c9a2011c0d6890233026341619642c67ecf1d50d",
+      "path": "docs/delivery/v2-development/director-adoption-integration-public.log",
+      "bytes": 634,
+      "sha256": "af58279f03c90f4f59d6a360712aaa2aeccef5c912c08f9c786e6dce5c8a9a0b"
+    },
+    {
+      "blob": "701723562a73f227793f062d598aee269b4551f5",
+      "path": "docs/delivery/v2-development/director-image-adoption-reviewed-v1.json",
+      "bytes": 733426,
+      "sha256": "60848d282a472d2e1d7a1b82cb4fc00a6999ea85a7a41359b6bfab4aebd414b4"
+    },
+    {
+      "blob": "239b5421c75155eae156d018583758701ff24546",
+      "path": "docs/delivery/v2-development/director-image-adoption-reviewed-v1.log",
+      "bytes": 1601,
+      "sha256": "32512220be5524a1baf68b277913a4bd45705ec4c26211b0c9559291453c1c58"
+    },
+    {
+      "blob": "698b30f2a923cf69d26412f80c7c911a9e20fac6",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_director_adoption_postgres.py",
+      "bytes": 1603,
+      "sha256": "d35a2b08829e15792bb8b6e48e35068d9e9036a0240686dc53f8700e33ccef13"
+    },
+    {
+      "blob": "9b47f26092d502d657af9c9f8d1e42bd6c87d8fe",
+      "path": "docs/development/director_image_adoption_v1.md",
+      "bytes": 2923,
+      "sha256": "53b4e334bfb7e7d8c11202ef5a9e0bd34679f43d21203aef9b18b1b363cc08c0"
+    },
+    {
+      "blob": "0e050794bba086ee4eccc6a19016c1737d64bdca",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 776958,
+      "sha256": "e4bd38a0ac4da4d42cf21282c9b9766b67397abfbd25f4002c4fe42fed320aee"
+    },
+    {
+      "blob": "946801f2394e85b5e4b2f0622c979d40b484e057",
+      "path": "packaging/public-build.json",
+      "bytes": 25673,
+      "sha256": "facdcbf7c65d5c36f211b49b248dda8c92c40c0cfe657ff153cb707f65f047c7"
+    },
+    {
+      "blob": "6a6d7b5f711cd3dcef3dc2988908227258a79bac",
+      "path": "tests/test_director_image_adoption_additive.py",
+      "bytes": 9404,
+      "sha256": "acf22e14e7aebc6d4b757e843f1bb35cfa7f95fc62ac0f97c4263b11674a4b77"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
