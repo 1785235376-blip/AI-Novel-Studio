@@ -1,0 +1,8 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "source_head": "1ccbce1c7d7f74388ee95f05a051c4873099dd6b",
+  "prerequisite": "ffbfc59554c5f8d1ef817e7779e8e10411d07d59",
+  "source_branch": "work/dot-recovered-20261018",
+  "publication": "archive only; no main merge or Release",
+  "scope": "graph-local-reuse"
+}

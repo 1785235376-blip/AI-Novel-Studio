@@ -1,0 +1,379 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "58dca5124f0a30ef7e1557be07b04772bcd09700",
+      "path": "API_CATALOG.json",
+      "bytes": 1541262,
+      "sha256": "33d2497581dec3729888dd2e985fda091725ec9dcc734f81b462ddb9d09db41a"
+    },
+    {
+      "blob": "a600bd8985576bcc9f9ecb2b72edae691ac456bc",
+      "path": "API_CATALOG.md",
+      "bytes": 412826,
+      "sha256": "20f20b419571ae503921dee616affe20014012993adcfa1bbe5609843ef1ef21"
+    },
+    {
+      "blob": "dcc5307e84425215a185c05cee8740c4dc08f595",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 636286,
+      "sha256": "bfb018e2e194a601fea0aa3f245807ef9332a423128fad3f65b6804101bcecf3"
+    },
+    {
+      "blob": "aa2100b146ebfdd7879a77da29626d588c30bde2",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 137388,
+      "sha256": "5eac6c29c13ef193532c20b9f28f868460514ad525e655e7970cd31efe759c14"
+    },
+    {
+      "blob": "0e2e952859a797c394a3230b88ff33068af248b5",
+      "path": "app/creative/graph.py",
+      "bytes": 37947,
+      "sha256": "392dbec6603fec44c7d395f3bd33be0c448866bbdd080921978d9c9d3389f85d"
+    },
+    {
+      "blob": "2de5d6f18b33fca5153af458d31929816375ba23",
+      "path": "app/creative/graph_execution.py",
+      "bytes": 34245,
+      "sha256": "77a24a0533b8807a5ff2c753e652174e4e9536cf4071cc98db80d2d6b1d05804"
+    },
+    {
+      "blob": "e0b32102febabca45cfe4285860f37f80b764855",
+      "path": "app/creative/graph_local_reuse.py",
+      "bytes": 9673,
+      "sha256": "28d78f739bc4ae87807b926fd2532ea2b7e88485e18f5154f6f2ae77367c605b"
+    },
+    {
+      "blob": "a9896dbcc66ea868572983ca247a7292ff825e6b",
+      "path": "app/creative/graph_models.py",
+      "bytes": 47277,
+      "sha256": "4b41d5ddb28e99f5d4893b27ac63db379bc0cd782efc071265ba80daed4889d1"
+    },
+    {
+      "blob": "82abb9aed58015d93eb541f0c0840f94aac78748",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 40247,
+      "sha256": "8517775b74eda1e325808cf177e6a568ffcb2e9fade6ae213e1dfb7346a255a9"
+    },
+    {
+      "blob": "d815722c03ea803eea771888f91b1213ce869dcb",
+      "path": "docs/delivery/v2-development/graph-fixture-residue-inspect-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "70e5de32b8d8788d0023e804e9596906655c9cd7848566e0719894b71f132f39"
+    },
+    {
+      "blob": "02c0699d332f1adc7016bccfd5ef695e83d47dc8",
+      "path": "docs/delivery/v2-development/graph-fixture-residue-inspect.json",
+      "bytes": 753580,
+      "sha256": "2366cc401c8d480c9e01cfb46f2b4fcae070fc4c9efacc8e34f0200876df7167"
+    },
+    {
+      "blob": "f18451dd364f0ac1b5d0d1a825d66f9e0917b7c2",
+      "path": "docs/delivery/v2-development/graph-fixture-residue-inspect.log",
+      "bytes": 9808,
+      "sha256": "a6978ee747cf7d71c890cac0f6537397c432fec99d066f2cbb90446e06a852f5"
+    },
+    {
+      "blob": "28769a84f644b20ce780d910f3185ef4acc67ab4",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r2.json",
+      "bytes": 748628,
+      "sha256": "b1e4a7ef33ca72df5313c048daafa16c00448cbedd726d055114cd6e3c173713"
+    },
+    {
+      "blob": "47edd20a86296414841e0f810f1609d41fd6cb39",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r2.log",
+      "bytes": 84290,
+      "sha256": "da240066f2a47113f3585d3d9f6a98e9a4781a150fb67b243d8aaa7396104ac7"
+    },
+    {
+      "blob": "5e35acc194255da88426c60186d9a1a46d3abbeb",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r3.json",
+      "bytes": 748628,
+      "sha256": "cead1ad9172808dab7650dff468f0ad603add66825412cdc69e14d2249760b09"
+    },
+    {
+      "blob": "7fc7bb76168648e02e44d3825e6bed669233a681",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r3.log",
+      "bytes": 3471,
+      "sha256": "a2438ee9a667b088d54dd55da4d19e045e3a1e04d4656d1b77ff1536103d494c"
+    },
+    {
+      "blob": "5aea289a96b14438126c35690e80587ea64e76ea",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r4.json",
+      "bytes": 748727,
+      "sha256": "381cf7f95c2a1433b8bc51e400b27579d1df9d26b5b9e526067221295c7c7e70"
+    },
+    {
+      "blob": "a742b7878bf5b1494da3c1c74133e03c3aa0d09e",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r4.log",
+      "bytes": 11418,
+      "sha256": "f190d294a1bbd35d0bde9c7f9fb7d18830cf6e89159da1eca3b6f7776d41029c"
+    },
+    {
+      "blob": "d688f2f0ae560da3a3e853e6ae27977f07d37c6e",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r5.json",
+      "bytes": 748822,
+      "sha256": "96bfc2e424b6b98d49e9801cf4a85455727aef10ec174c3b8347d700070f996d"
+    },
+    {
+      "blob": "743f3d6c0d4bac310cafbf660a4619af61993ba0",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r5.log",
+      "bytes": 1445,
+      "sha256": "060d91327786ea2505693e72b024cdf6cb04740657199f154d6ccbfa2b265dc8"
+    },
+    {
+      "blob": "8d97f380885258a9d0a205ea54f3bc0448f1a508",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r6.json",
+      "bytes": 748823,
+      "sha256": "699eef67a1a469f9a65b879e9b0916a31f33652274c9beea09ccfed8c76fab01"
+    },
+    {
+      "blob": "075235df150c72751bcf493cdcea739039962736",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file-r6.log",
+      "bytes": 1445,
+      "sha256": "a2a0c2958021830c0e9663ec777d6711f861fcd26c7dc97723bcaffcf651737a"
+    },
+    {
+      "blob": "eb814a330d5610836796d9a8ba7ff734003c73cc",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file.json",
+      "bytes": 748597,
+      "sha256": "53c354b7ccda3133965b46e35c7f006a05d15b25e65c43b0c1e0555e7ec7e8ee"
+    },
+    {
+      "blob": "e00717b21afd2e1d7d1a07dab127bc0210af3e42",
+      "path": "docs/delivery/v2-development/graph-local-reuse-file.log",
+      "bytes": 113599,
+      "sha256": "b778cf2fd64cde50e65badc64e5c0a5cae519a31d1591eaa6f74112cf1c1aced"
+    },
+    {
+      "blob": "86a4fc19f0199ef95cdec8728922004cb5a0bd92",
+      "path": "docs/delivery/v2-development/graph-local-reuse-final-postgres-cleanup.json",
+      "bytes": 307753,
+      "sha256": "8bd3890b3b9280351c9c5500d77d86ab04c23205d2a4a935bac2588f54af3266"
+    },
+    {
+      "blob": "699ceda12592369c6747a72bb1706dda8cfdba5a",
+      "path": "docs/delivery/v2-development/graph-local-reuse-final-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "ccf3c291d9c19c00a3471d7f6550a4e9e43f27779b5c4ac6b9d112dde1a0c6c1"
+    },
+    {
+      "blob": "d73816e08459fed23eddfcd1318c745ba2d0af79",
+      "path": "docs/delivery/v2-development/graph-local-reuse-final-postgres.json",
+      "bytes": 753637,
+      "sha256": "67e60822978a0d4f1ecf9d20b088e74a2cbefbfc476a8f6fdd27cc85ebcc859a"
+    },
+    {
+      "blob": "aa1621a92e65d30da5a7bdf26baaae9ede91812b",
+      "path": "docs/delivery/v2-development/graph-local-reuse-final-postgres.log",
+      "bytes": 1210,
+      "sha256": "e19c34b79646e353b43ba5947a162cce94fbe62d0de4e558a9f10b4cfd91ac34"
+    },
+    {
+      "blob": "8569b1ab5c653d7c66c5a0732db1fd132a2cb534",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-20261018.md",
+      "bytes": 4804,
+      "sha256": "2ffd633905f1d46fdcbc3a7b815bdc01e45e5de5a2e4c1950fa5fa22701362b1"
+    },
+    {
+      "blob": "3537e974b6636e324b5318a5b3be86c332b7516c",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-frontend.json",
+      "bytes": 755316,
+      "sha256": "70e738087ad47c78b616a2b8198883435b3db4b8c99494f0e339d56b060cb554"
+    },
+    {
+      "blob": "177a8801aa3cc90d8197861223df304db60de8c4",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-frontend.log",
+      "bytes": 7658,
+      "sha256": "579e8e30f529d552439af53935e2b4079b7a83b3f9617049cf8728eac744ee91"
+    },
+    {
+      "blob": "dc5f043cddb30ee7c2890cb39b81bd67aa1cb834",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-postgres-cleanup.json",
+      "bytes": 312776,
+      "sha256": "b8f15764ec15a642530f18f9d9c032e6527fcd15f5f7ffe7f72cf2d0b45c6918"
+    },
+    {
+      "blob": "b8c3fd682e7d5be137a0222c9b83e21c10160d02",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "48784a1dcd7384b6e91a3ce9f7214286dc134cd997d3a6d22c811ba9b8c9cc18"
+    },
+    {
+      "blob": "74c47ef712392b93ea677aa056e64199e31aba8e",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-postgres.json",
+      "bytes": 753685,
+      "sha256": "e8e49ce8144fa06513bf8ed433937d4339f5b2e422721b470a9c18d67013669a"
+    },
+    {
+      "blob": "cd190388039b1a5bcfeece0f9464b80bd6c69400",
+      "path": "docs/delivery/v2-development/graph-local-reuse-integration-postgres.log",
+      "bytes": 1627,
+      "sha256": "599fe0cab2862df08ac600413b7d56ab0dd7fbe7ac14298555cc4fbd9c03f1ad"
+    },
+    {
+      "blob": "e2bb39930560b076b1a9b7c2438563555f24362a",
+      "path": "docs/delivery/v2-development/graph-local-reuse-public-build.json",
+      "bytes": 753906,
+      "sha256": "feb4008e4945e5f0557e1aae411147cca4c9f2a18d7f7377e0c2bf87f6530223"
+    },
+    {
+      "blob": "87543cf9e84ea2924256822bef89f0c8f7659659",
+      "path": "docs/delivery/v2-development/graph-local-reuse-public-build.log",
+      "bytes": 634,
+      "sha256": "5bede10aa1b56a06b99439f2ba6c7aff19c68957b69b8094ae1a1fec7340173c"
+    },
+    {
+      "blob": "20caab71194a78ba9d32f5125de022af0c394ebf",
+      "path": "docs/delivery/v2-development/graph-local-reuse/README.md",
+      "bytes": 5463,
+      "sha256": "7f1f3a08e68f4ee89a613d016a43f202806f0ac951a4a0dfb6cd9602b8186233"
+    },
+    {
+      "blob": "a7121e9fe35430bb85663594ed30b0c9ba736257",
+      "path": "docs/delivery/v2-development/graph-local-reuse/frontend-diff-check.log",
+      "bytes": 24,
+      "sha256": "f8ee1b1f3e0b2e5a1fd70d673b67904df9d24a61c71daf608433495258135e5b"
+    },
+    {
+      "blob": "bb5b9ce18581e21ddfe29de4ffe02b9de77e58f0",
+      "path": "docs/delivery/v2-development/graph-local-reuse/frontend-typecheck.log",
+      "bytes": 25,
+      "sha256": "4315d33137f8bf0ec4e7d5f377310c5a6632e65f7abb04071c77f9a7fd9a797a"
+    },
+    {
+      "blob": "fefd39f020e18b6dd3f2ccfd0a196de46297ddc8",
+      "path": "docs/delivery/v2-development/graph-local-reuse/frontend-verification.md",
+      "bytes": 4709,
+      "sha256": "4710e640441f81690e8b902110ba8bbe3414bc9a63cff7e640cdb34ef14a92b2"
+    },
+    {
+      "blob": "0fc947a54b843f861d80525a5fb686d80c0333d3",
+      "path": "docs/delivery/v2-development/graph-local-reuse/frontend-vitest.log",
+      "bytes": 1158,
+      "sha256": "c3b8ac75e9713cf94955013b7b8d984a214d34ab21f28bdcc51b5f8a094f153b"
+    },
+    {
+      "blob": "33b42a96cb726e5819e4c841b77a6b4daf52247b",
+      "path": "docs/delivery/v2-development/graph-local-reuse/verify_final_postgres.py",
+      "bytes": 1889,
+      "sha256": "7533f8957b7d4065e85de749ebaadba2f5be544c3c8da9837540cde7854dc6a6"
+    },
+    {
+      "blob": "ca5fc0d56b37816a071f80a9ba1b7cb72f2951d8",
+      "path": "docs/delivery/v2-development/graph-local-reuse/verify_postgres.py",
+      "bytes": 1901,
+      "sha256": "73d4cfe32846893c3b6615b91e4f39c10ebdda0f401c7efa92388eabfc604cf7"
+    },
+    {
+      "blob": "350c61d86211647a903da50966388ee502720314",
+      "path": "docs/delivery/v2-development/graph-owned-fixture-cleanup-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "0e0fccb094ce7fe8d772fa05a1f6d3f064dd66bd1a9c788ed1ac48af3c95cab8"
+    },
+    {
+      "blob": "e7a66a256e2674fca3b4334e31939fb023cc1ae4",
+      "path": "docs/delivery/v2-development/graph-owned-fixture-cleanup-proof.json",
+      "bytes": 267,
+      "sha256": "8534de3a9e07fbc33100542a09a57062e545812a422bd90f8dc4618f01e9b95f"
+    },
+    {
+      "blob": "d9697e92369fa3feeadec490c14f33df49228acf",
+      "path": "docs/delivery/v2-development/graph-owned-fixture-cleanup.json",
+      "bytes": 753606,
+      "sha256": "540056d03a17b2ec4645e407b5226d5c4caf83beca1eb17f67437911e25e0ceb"
+    },
+    {
+      "blob": "747fc29173d06ef902bc14cbdbb121deb40c1be3",
+      "path": "docs/delivery/v2-development/graph-owned-fixture-cleanup.log",
+      "bytes": 149,
+      "sha256": "17ef8f882f8dcaa2445586482a617ffc6b965d8827e0a975207e3339853acd29"
+    },
+    {
+      "blob": "efc674bb246bbf47ab3f8224f0a3c41ea5c153bf",
+      "path": "docs/delivery/v2-development/graph-scoped-fixture-cleanup-file.json",
+      "bytes": 748660,
+      "sha256": "9726879366b1f6ead0b238e8db62efc0178121142b3c56c7e2a86954e7e1249b"
+    },
+    {
+      "blob": "153334cb1a639f3f573b84b55dba2831db1353e1",
+      "path": "docs/delivery/v2-development/graph-scoped-fixture-cleanup-file.log",
+      "bytes": 1091,
+      "sha256": "289f94bc83269bdb264562c937d5e1678cce5c2c184a96b9f5d3a8cbcdbf56fd"
+    },
+    {
+      "blob": "f99069d8c651c912315a5c44d20adbfd61d36a8d",
+      "path": "docs/delivery/v2-development/style-vision-integration/cleanup_graph_owned_fixtures.py",
+      "bytes": 3101,
+      "sha256": "d3434e712be4356b53db9970810e89f1f1d2d377b15fe64646d96636359707c3"
+    },
+    {
+      "blob": "20c4d81edb45dda538c645e230ed1e6f84142f67",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 784120,
+      "sha256": "8f3a6d86ed4795b5e808c19e311e7744898cd1505de4b9293f61588fa71ecaed"
+    },
+    {
+      "blob": "48899795f55e082913309816f36232d5d31b353a",
+      "path": "frontend/src/creative/GraphRunPanel.test.tsx",
+      "bytes": 31653,
+      "sha256": "847761043676752314c95839b9980342d00cde66a0667952abd4480dd5a4c291"
+    },
+    {
+      "blob": "aefab3acccdbcb29ece813e26685b49a12dcf3fa",
+      "path": "frontend/src/creative/studioGraphClient.test.ts",
+      "bytes": 27484,
+      "sha256": "cf2978bf5d3e01dacd5626d646024f364e311320e8b4fb4d53d98b13dbfa32c1"
+    },
+    {
+      "blob": "f8ad2d79c4b9d235728ecfdd9e78b51f6138a19c",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 108762,
+      "sha256": "74ec5825e794057867a02e913e424156c4af85e6e30983994201b94c1f481f9d"
+    },
+    {
+      "blob": "3f4f919dc0b018f598003a51a5b95053f9fc434e",
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "bytes": 8967,
+      "sha256": "3d6bd8c013688133657ba42c51c7f0662c2a14e9c7b1055dbb9426bc00110908"
+    },
+    {
+      "blob": "d37e43c6550cfe1d72b72d1ac76b8ef7db21fc8b",
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "bytes": 16766,
+      "sha256": "98e3185bc546ff3ce73d12b06ad391f70aa0da614112905d781034af7f318162"
+    },
+    {
+      "blob": "5095e7e67c8bb3e416fcf6a432f5360a720ceefb",
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "bytes": 31028,
+      "sha256": "f94788a995d3bf58f7e10666d70a65baa91a940fe0aee7a287b436465ff46060"
+    },
+    {
+      "blob": "06a73c876ae54e4ffb2ae98f164c350b5e4cb565",
+      "path": "packaging/public-build.json",
+      "bytes": 26022,
+      "sha256": "29376f3024582144b269a13f77053a8ec6b14fa5bfe5f6e5cb0cb5c8bf281435"
+    },
+    {
+      "blob": "628c5d859c30597369118b0b590f6a3e12e27374",
+      "path": "tests/test_v2_creative_graph_api.py",
+      "bytes": 13156,
+      "sha256": "31ef108f0afb2cb951e623a06760d8f437542e321ce0b03ae6e8d71730c05643"
+    },
+    {
+      "blob": "96f45cd6821fe510a7e3604b6a5af15f423f5450",
+      "path": "tests/test_v2_graph_local_reuse.py",
+      "bytes": 14623,
+      "sha256": "5fa46b697864ef3f4f1be6a5653d271fcd0492bab34bc09bc986c0f9e824bd63"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
