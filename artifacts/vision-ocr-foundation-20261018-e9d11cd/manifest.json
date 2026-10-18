@@ -1,0 +1,11 @@
+{
+  "source_head": "e9d11cd3755c51c54ffb5cec95f4e1b2ef84a58d",
+  "prerequisite": "eb47e52efeffc058e45780c88ca4319b4914bb62",
+  "bundle": "continuation.bundle",
+  "scope": "Typed OCR foundation through original registries with source hash, local admission, language, identity and output bounds. Research real dispatch remains closed and unconfigured. Final 152 checks passed, 36 PG cases deselected; includes actual offline public wheel. No real OCR provider, browser, GPU or V2 release acceptance.",
+  "test_wheel": {
+    "file": "ai_novel_studio-0.7.0-py3-none-any.whl",
+    "status": "actual offline PUBLIC wheel tested; not a Release",
+    "sha256": "59ce4f29a464ca811566ce2c4cdccdad0ed175146154345067a70ba84f2e4023"
+  }
+}
