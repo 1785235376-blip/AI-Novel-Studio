@@ -1,0 +1,73 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "87f65715fde468d1e2d7511a9a8ecd03c77f29dc",
+      "path": "docs/GRAPH_PROJECT_REFERENCE_TEMPLATES.md",
+      "bytes": 2478,
+      "sha256": "15064355ea9069323795c61e3973bbd81665d9bae8abc1052333ecdce7dc0550"
+    },
+    {
+      "blob": "9e16e464ef69c7ed180afbf9e5f926ff22a343cc",
+      "path": "docs/delivery/v2-development/graph-project-templates-final.json",
+      "bytes": 693137,
+      "sha256": "18ffc4658fbc6a4ec3efa4af49d9029302c8306c82bc660aa0dfe2c3368ec44e"
+    },
+    {
+      "blob": "31159bc782e0f659e6c31ffeda8ed55940e153ed",
+      "path": "docs/delivery/v2-development/graph-project-templates-final.log",
+      "bytes": 3209,
+      "sha256": "6c7214d850a6cf8bf9d01d62b3e1d3cb90466048afaaf9586030e5404bef887e"
+    },
+    {
+      "blob": "648d57468e5f1dbd9cfd2116173d406028ffe3ec",
+      "path": "docs/delivery/v2-development/graph-project-templates.json",
+      "bytes": 692744,
+      "sha256": "5efbe3af3f9950820cae838fe8448dae129add853d1ed4934a7efaf4e1105337"
+    },
+    {
+      "blob": "c6944355a42e17a1c232e840582a976538986d10",
+      "path": "docs/delivery/v2-development/graph-project-templates.log",
+      "bytes": 2861,
+      "sha256": "a22ab4e6d3286e50ce7858ada16163952c03e7fce6ad4e6ee9537254a2a5c1b2"
+    },
+    {
+      "blob": "1a0dfc4dda42ef06cb533d099525f738fb94a56c",
+      "path": "frontend/src/creative/GraphProjectTemplateTools.additive.test.tsx",
+      "bytes": 4919,
+      "sha256": "c3c617cbca74cf8852bf2c35000851f879d75caf86b3c84fbbe541128dfdfd19"
+    },
+    {
+      "blob": "fe8cab4bf28feb369d197e791068a43f1d2db0ef",
+      "path": "frontend/src/creative/GraphProjectTemplateTools.tsx",
+      "bytes": 7231,
+      "sha256": "aa613c7e5a7a5678d7d2dcc6eab52801f20fd86474b7138c816b60083273eccc"
+    },
+    {
+      "blob": "b9f7719dc8425f3ed2d525bc7df53f9b63b58378",
+      "path": "frontend/src/creative/graphProjectTemplates.additive.test.ts",
+      "bytes": 3987,
+      "sha256": "542bf1dd365c01fea977732282035a9778f3231c748032f2542cfb0d5b8ac515"
+    },
+    {
+      "blob": "ebc6f064cdfaf61c4458ef06d3d81271aad0d8ab",
+      "path": "frontend/src/creative/graphProjectTemplates.ts",
+      "bytes": 5483,
+      "sha256": "524c6c3bc924dc61f95bcdfdd5f95d89223ed0b2e1bdbcb1007436819fa9d785"
+    },
+    {
+      "blob": "cd87dd77b3711f2ba01ef4141d600793245e6e67",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 56860,
+      "sha256": "995ab73e6674167125814666ce056637031ab9cf637b6eb308c9f47084cc3bdd"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
