@@ -8,10 +8,17 @@ from ..storage import atomic_write
 
 
 class GenerationProjectIdentityError(ValueError):
-    """A graph job may never be adopted by a replacement project owner."""
+    """A source-bound job may never be adopted by a replacement project owner."""
 
 
 def graph_job_binding(item):
+    from ..experimental.research_ocr_binding import is_research_ocr_job, research_ocr_job_binding
+    # Reuse the original source-bound persistence owner without fake Graph IDs.
+    if is_research_ocr_job(item):
+        try:
+            return research_ocr_job_binding(item)
+        except ValueError:
+            raise GenerationProjectIdentityError("GENERATION_RESEARCH_OCR_BINDING_INVALID") from None
     from ..creative.director_binding import is_creative_director_job, creative_director_job_binding
     # Classify the disjoint passive domain before either existing executable
     # branch. A mixed or incomplete identity never chooses a fallback engine.
@@ -64,6 +71,9 @@ def graph_job_binding(item):
 def check_graph_job_update(previous, item):
     from ..creative.director_binding import is_creative_director_job
     keys = ("novel_id", "actor_id", "scope", "graph_binding", "adaptation_binding", "expected_request_digest")
+    from ..experimental.research_ocr_binding import is_research_ocr_job
+    if is_research_ocr_job(item) or (previous is not None and is_research_ocr_job(previous)):
+        keys += ("research_ocr_binding", "operation", "experimental_origin", "chapter_id", "profile", "creative_director_binding")
     if is_creative_director_job(item) or (previous is not None and is_creative_director_job(previous)):
         keys += ("creative_director_binding", "operation", "experimental_origin", "chapter_id")
     if previous is not None and (graph_job_binding(previous) is None or any(

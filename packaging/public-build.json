@@ -201,6 +201,7 @@
     "app/experimental/research_extract.py",
     "app/experimental/research_library.py",
     "app/experimental/research_library_api.py",
+    "app/experimental/research_ocr_binding.py",
     "app/experimental/research_vision.py",
     "app/experimental/review_adapter_jobs.py",
     "app/experimental/review_adapter_projection.py",
