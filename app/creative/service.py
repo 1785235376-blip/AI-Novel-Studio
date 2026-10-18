@@ -402,7 +402,8 @@ class CreativeService(DomainService):
                         # Preserve older default derivation exactly; rich,
                         # authored direction is copied only when present.
                         for source_name, target_name in (("composition", "composition"), ("lens", "lens"), ("shot_suggestion", "frame_prompt"),
-                                                         ("lighting", "lighting"), ("color_palette", "color")):
+                                                         ("lighting", "lighting"), ("color_palette", "color"),
+                                                         ("camera_grammar", "camera_grammar")):
                             if direction.get(source_name) is not None:
                                 shot[target_name] = direction[source_name]
                         if direction.get("performances") is not None:

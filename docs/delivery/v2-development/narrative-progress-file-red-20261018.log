@@ -1,0 +1,64 @@
+FFss                                                                     [100%]
+=================================== FAILURES ===================================
+___ test_blank_facts_actual_route_uses_original_reviewed_progress[file-/api] ___
+
+review_env = namespace(client=<starlette.testclient.TestClient object at 0x7ff2d2aa6540>, prefix='/api', base='/api/novels/r3-mount...stclient.TestClient object at 0x7ff2d29b1d00>, review_base='/api/projects/r3-mounted-1c84efc47107400787c56c5ccec8c15b')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff2d68ec3b0>
+
+    def test_blank_facts_actual_route_uses_original_reviewed_progress(review_env, monkeypatch):
+        e = review_env
+        chapters, ids, links, state = owner_fixture(e)
+        captured = e.api.finding_review_service
+        for name in ('continuity', 'narrative', 'chapters', 'novels'):
+            monkeypatch.setattr(captured, name, getattr(e, name))
+        response = checked(e.client.post(e.review_base + '/narrative/review-checks', json={
+            'chapter_id': chapters[-1]['id'], 'expected_source_version': chapters[-1]['version'], 'facts': {},
+        }))
+        assert response['provenance'] == 'STORED_NARRATIVE_FACTS'
+>       assert [(row['finding_type'], row['subject_id']) for row in response['items']] == [
+            ('FORESHADOWING_OVERDUE', ids['unpaid'])]
+E       AssertionError: assert [('THREAD_STA...c15b-unpaid')] == [('FORESHADOW...c15b-unpaid')]
+E         
+E         At index 0 diff: ('THREAD_STALE', 'r3-mounted-1c84efc47107400787c56c5ccec8c15b-thread') != ('FORESHADOWING_OVERDUE', 'r3-mounted-1c84efc47107400787c56c5ccec8c15b-unpaid')
+E         Left contains 2 more items, first extra item: ('FORESHADOWING_OVERDUE', 'r3-mounted-1c84efc47107400787c56c5ccec8c15b-seed')
+E         Use -v to get more diff
+
+tests/test_v2_narrative_progress_projection.py:63: AssertionError
+_ test_blank_facts_actual_route_uses_original_reviewed_progress[file-/api/v1] __
+
+review_env = namespace(client=<starlette.testclient.TestClient object at 0x7ff2d2a0b1d0>, prefix='/api/v1', base='/api/v1/novels/r3...lient.TestClient object at 0x7ff2d1413380>, review_base='/api/v1/projects/r3-mounted-f1c15ee365684d9e8313e0ee82228849')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff2d68ed190>
+
+    def test_blank_facts_actual_route_uses_original_reviewed_progress(review_env, monkeypatch):
+        e = review_env
+        chapters, ids, links, state = owner_fixture(e)
+        captured = e.api.finding_review_service
+        for name in ('continuity', 'narrative', 'chapters', 'novels'):
+            monkeypatch.setattr(captured, name, getattr(e, name))
+        response = checked(e.client.post(e.review_base + '/narrative/review-checks', json={
+            'chapter_id': chapters[-1]['id'], 'expected_source_version': chapters[-1]['version'], 'facts': {},
+        }))
+        assert response['provenance'] == 'STORED_NARRATIVE_FACTS'
+>       assert [(row['finding_type'], row['subject_id']) for row in response['items']] == [
+            ('FORESHADOWING_OVERDUE', ids['unpaid'])]
+E       AssertionError: assert [('THREAD_STA...8849-unpaid')] == [('FORESHADOW...8849-unpaid')]
+E         
+E         At index 0 diff: ('THREAD_STALE', 'r3-mounted-f1c15ee365684d9e8313e0ee82228849-thread') != ('FORESHADOWING_OVERDUE', 'r3-mounted-f1c15ee365684d9e8313e0ee82228849-unpaid')
+E         Left contains 2 more items, first extra item: ('FORESHADOWING_OVERDUE', 'r3-mounted-f1c15ee365684d9e8313e0ee82228849-seed')
+E         Use -v to get more diff
+
+tests/test_v2_narrative_progress_projection.py:63: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_narrative_progress_projection.py::test_blank_facts_actual_route_uses_original_reviewed_progress[file-/api]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_narrative_progress_projection.py::test_blank_facts_actual_route_uses_original_reviewed_progress[file-/api]
+FAILED tests/test_v2_narrative_progress_projection.py::test_blank_facts_actual_route_uses_original_reviewed_progress[file-/api/v1]
+2 failed, 2 skipped, 2 warnings in 5.97s

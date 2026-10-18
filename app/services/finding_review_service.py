@@ -102,7 +102,7 @@ class FindingReviewService:
             if row.get('provenance') == 'STORED_CONTINUITY_FACTS':
                 stale = stale or digest(self._stored_continuity_facts(nid)) != row['context_digest']
             if row.get('provenance') == 'STORED_NARRATIVE_FACTS':
-                stale = stale or digest(self._stored_narrative_facts(nid, chapter)) != row['context_digest']
+                stale = stale or digest(self._stored_narrative_context(nid, chapter)) != row['context_digest']
         except (FileNotFoundError, KeyError):
             stale = True
         out['stale_source'] = stale
@@ -132,15 +132,20 @@ class FindingReviewService:
         return {key: repo.list_by_project(collection, nid) for key, collection in
                 [("events", "timeline"), ("locations", "locations"), ("knowledge", "knowledge"), ("relationships", "relationships")]}
 
-    def _stored_narrative_facts(self, nid, chapter):
+    def _stored_narrative_context(self, nid, chapter):
         repo = self._repository('narrative')
         facts = {'current_chapter': int(chapter.get('number') or 1)}
         for kind in ('expectations', 'mysteries', 'character_goals'):
             facts[kind] = repo.list(nid, kind)
         facts['narrative_events'] = repo.list(nid, 'events')
-        # Preserve the original explicit progress semantics, rather than guessing
-        # progress from words in the manuscript or promoting Research into Canon.
-        return facts
+        from .narrative_progress_projection import project_progress
+        progress, sources = project_progress(nid, facts['current_chapter'], self.chapters,
+            repo.list(nid, 'chapter_links'), facts['narrative_events'],
+            repo.list(nid, 'threads'), repo.list(nid, 'foreshadowing'))
+        facts.update(progress)
+        # Bind supporting links, entity associations, and chapter snapshots even
+        # when a change leaves the derived max/min chapter numbers unchanged.
+        return {'facts': facts, 'progress_sources': sources}
 
     def _facts(self, nid, scope, kind, facts):
         if len(json.dumps(facts, default=str).encode()) > 200_000: raise ValueError('FINDING_FACTS_LIMIT')
@@ -196,6 +201,7 @@ class FindingReviewService:
         if source['version'] != body.expected_source_version: raise FindingReviewConflict('FINDING_SOURCE_STALE')
         facts = deepcopy(body.facts)
         provenance = 'AUTHOR_SUPPLIED_FACTS'
+        stored_context = None
         if not facts and kind == 'continuity':
             # Only the original local project owner supplies implicit facts. A
             # branch must provide explicit observations; it never borrows mainline.
@@ -205,21 +211,28 @@ class FindingReviewService:
         elif not facts and kind == 'narrative':
             if scope['mode'] != 'local': raise ValueError('BRANCH_FACTS_REQUIRED')
             provenance = 'STORED_NARRATIVE_FACTS'
-            facts = self._stored_narrative_facts(nid, chapter)
+            stored_context = self._stored_narrative_context(nid, chapter)
+            facts = stored_context['facts']
         findings = self._facts(nid, scope, kind, facts)
         if len(findings) > MAX_FINDINGS: raise ValueError('FINDING_RESULT_LIMIT')
-        context_digest = digest(facts)
+        context_digest = digest(stored_context if stored_context is not None else facts)
         source_digest = digest({'source': source, 'context_digest': context_digest})
         repo = self._repository(kind)
+        def ensure_source():
+            check()
+            current, current_chapter = self._source(nid, scope, body.chapter_id)
+            if current != source: raise FindingReviewConflict('FINDING_SOURCE_STALE')
+            if stored_context is not None and digest(self._stored_narrative_context(nid, current_chapter)) != context_digest:
+                raise FindingReviewConflict('FINDING_SOURCE_STALE')
+        # Revalidate even when the projection produces no findings.
+        ensure_source()
         result = []
         for finding in findings:
-            check()
-            current, _ = self._source(nid, scope, body.chapter_id)
-            if current != source: raise FindingReviewConflict('FINDING_SOURCE_STALE')
+            ensure_source()
             identity = digest({'scope': scope, 'kind': kind, 'chapter_id': body.chapter_id, 'original_id': finding['id']})
             fingerprint = digest({k: finding.get(k) for k in ('finding_type', 'rule_id', 'subject_type', 'subject_id', 'description', 'evidence_ids')})
             def observe(old):
-                check()
+                ensure_source()
                 if old and not self._owned(old, nid, scope): raise FileNotFoundError(identity)
                 if old and old['source_digest'] == source_digest and old['finding_fingerprint'] == fingerprint:
                     return old
@@ -229,11 +242,11 @@ class FindingReviewService:
                 row.update({k: v for k, v in finding.items() if k not in {'id', 'created_at', 'status'}})
                 row.update(status='OPEN', source=deepcopy(source), source_digest=source_digest, context_digest=context_digest,
                            finding_fingerprint=fingerprint, provenance=provenance, updated_at=now(), feedback_reason='')
-                check()
+                ensure_source()
                 return row
             saved = repo.mutate_finding(nid, identity, observe)
             result.append(self._public(saved, nid, scope))
-        check()
+        ensure_source()
         return {'items': result, 'status': 'COMPLETED', 'owner': OWNER, 'model_called': False,
                 'source': source, 'source_digest': source_digest, 'provenance': provenance,
                 'recovery': 'Repeat the same source check safely; identical findings retain review decisions.'}

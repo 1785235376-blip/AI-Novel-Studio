@@ -1,0 +1,95 @@
+..........................F                                              [100%]
+=================================== FAILURES ===================================
+________________ test_color_compiles_before_real_cross_dissolve ________________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/basic-color-file-debug2-20261018/tmp/test_color_compiles_before_rea0')
+
+    @pytest.mark.file_backend_only
+    def test_color_compiles_before_real_cross_dissolve(tmp_path):
+        data = pixels_png(); pin = {'id': 'image', 'kind': 'ASSET', 'asset_kind': 'image', 'version': 1, 'digest': hashlib.sha256(data).hexdigest()}
+        value = timeline(pin); value['duration_ms'] = 1400
+        left = clip(value); left.update(out_ms=800, color_adjustment={**NEUTRAL, 'brightness': .2},
+            transition_out={'kind': 'CROSS_DISSOLVE', 'to_clip_id': 'right', 'duration_ms': 200})
+        right = deepcopy(left); right.pop('transition_out'); right.update(id='right', start_ms=600, color_adjustment={**NEUTRAL, 'saturation': 0})
+        value['tracks'][0]['clips'].append(right)
+        def guard(snapshot): return {'snapshot': deepcopy(pin), 'data': data, 'row': {'id': 'image', 'kind': 'image', 'version': 1, 'sha256': pin['digest']}}
+>       output, measured = render_studio_timeline(value, source_guard=guard, guard=lambda: None, max_bytes=CAP)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_timeline_basic_color.py:293: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/studio_timeline_render.py:476: in render_studio_timeline
+    run_guarded_process(command, cwd=directory, guard=guard, timeout=RENDER_TIMEOUT_SECONDS)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+command = ['/usr/bin/ffmpeg', '-nostdin', '-v', 'error', '-xerror', '-threads', ...]
+
+    def run_guarded_process(command, *, cwd, guard, timeout, stdout_path=None):
+        """Drain only the original server-built process under its execution fence.
+    
+        Unused stdout goes directly to DEVNULL. Captured stdout is written by this
+        owner, never beyond 1 MiB; stderr retains only its original 64 KiB private
+        diagnostic prefix and drains the rest without disk storage. Both streams
+        drain fairly in fixed-size chunks, including after exit, under the same
+        cancellation/deadline checks. No reader threads can outlive the execution.
+        """
+        guard()
+        target = None
+        process = None
+        reaped = False
+        stderr = bytearray()
+        try:
+            if stdout_path is not None:
+                target = open(stdout_path, "wb")
+            process = subprocess.Popen(command, cwd=str(cwd), stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE if target is not None else subprocess.DEVNULL,
+                stderr=subprocess.PIPE, shell=False, bufsize=0,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            deadline = time.monotonic() + timeout
+            streams = [stream for stream in (process.stdout, process.stderr) if stream is not None]
+            if os.name != "nt":
+                for stream in streams:
+                    os.set_blocking(stream.fileno(), False)
+            stdout_size = 0
+            while True:
+                guard()
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(command, timeout)
+                progressed = False
+                for stream in tuple(streams):
+                    chunk = _read_process_pipe(stream)
+                    if chunk is None:
+                        continue
+                    if not chunk:
+                        streams.remove(stream)
+                        continue
+                    progressed = True
+                    if stream is process.stderr:
+                        stderr.extend(chunk[:max(0, _PROCESS_STDERR_LIMIT - len(stderr))])
+                    else:
+                        remaining = _PROCESS_STDOUT_LIMIT - stdout_size
+                        target.write(chunk[:remaining])
+                        stdout_size += min(len(chunk), remaining)
+                        if len(chunk) > remaining:
+                            raise MediaValidationError("STUDIO_TIMELINE_PROBE_OUTPUT_LIMIT")
+                # A fast-exiting child must still have its complete pipes checked.
+                # Inherited writers cannot keep a drain alive beyond the deadline.
+                if process.poll() is not None and not streams:
+                    break
+                if not progressed:
+                    time.sleep(min(_PROCESS_POLL_SECONDS, max(0, deadline - time.monotonic())))
+            guard()
+            if process.returncode:
+>               raise subprocess.CalledProcessError(process.returncode, command, stderr=bytes(stderr))
+E               subprocess.CalledProcessError: Command '['/usr/bin/ffmpeg', '-nostdin', '-v', 'error', '-xerror', '-threads', '1', '-f', 'lavfi', '-i', 'color=c=black:s=64x64:r=10:d=1.400', '-threads', '1', '-protocol_whitelist', 'file,pipe', '-loop', '1', '-framerate', '10', '-t', '0.800', '-i', '/tmp/novel-studio-timeline-qpi4ka17/source-0.png', '-threads', '1', '-protocol_whitelist', 'file,pipe', '-loop', '1', '-framerate', '10', '-t', '0.800', '-i', '/tmp/novel-studio-timeline-qpi4ka17/source-0.png', '-filter_complex_threads', '1', '-filter_complex', "[0:v]setpts=PTS-STARTPTS[vbase];anullsrc=r=48000:cl=stereo,atrim=duration=1.400[abase];[1:v:0]trim=start=0.000:end=0.800,setpts=(PTS-STARTPTS)*1/1,format=rgba,split=2[crgb1][calpha1];[calpha1]alphaextract[ca1];[crgb1]format=yuv444p,eq=brightness=0.20000000:contrast=1.00000000:saturation=1.00000000[ceq1];[ceq1][ca1]alphamerge,scale=64:64:force_original_aspect_ratio=decrease,format=rgba,pad=64:64:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps=10,settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,tpad=stop_mode=clone:stop_duration=0.100,trim=duration=0.800[vc1];[2:v:0]trim=start=0.000:end=0.800,setpts=(PTS-STARTPTS)*1/1,format=rgba,split=2[crgb2][calpha2];[calpha2]alphaextract[ca2];[crgb2]format=yuv444p,eq=brightness=0.00000000:contrast=1.00000000:saturation=0.00000000[ceq2];[ceq2][ca2]alphamerge,scale=64:64:force_original_aspect_ratio=decrease,format=rgba,pad=64:64:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps=10,settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,tpad=stop_mode=clone:stop_duration=0.100,trim=duration=0.800[vc2];[vc1][vc2]xfade=transition=fade:duration=0.200:offset=0.600[vxf2];[vxf2]trim=duration=1.400,unpremultiply=inplace=1,format=rgba,colorchannelmixer=aa=1.00000000,setpts=PTS+0.000/TB[vxd1];[vbase][vxd1]overlay=x=0:y=0:eof_action=pass:repeatlast=0:enable='gte(t,0.000)*lt(t,1.400)'[vo1];[abase]amix=inputs=1:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95[aout]", '-map', '[vo1]', '-map', '[aout]', '-t', '1.400', '-c:v', 'mpeg4', '-b:v', '8000000', '-c:a', 'aac', '-b:a', '96000', '-pix_fmt', 'yuv420p', '-r', '10', '-ar', '48000', '-ac', '2', '-threads', '1', '-fs', '26214401', '-y', '/tmp/novel-studio-timeline-qpi4ka17/timeline.mp4']' returned non-zero exit status 234.
+
+app/services/studio_timeline_export.py:244: CalledProcessError
+=============================== warnings summary ===============================
+tests/test_v2_timeline_basic_color.py::test_closed_color_contract_rejects_invalid_numbers_fields_and_expressions[None]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_timeline_basic_color.py::test_color_compiles_before_real_cross_dissolve
+1 failed, 26 passed, 4 deselected, 1 warning in 23.19s

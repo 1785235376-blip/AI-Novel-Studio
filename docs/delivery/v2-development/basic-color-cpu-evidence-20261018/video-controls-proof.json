@@ -1,0 +1,66 @@
+{
+  "baseline": {
+    "sha256": "743c89664ed9ea86343af7b0ecbd1eb63670e1cbd5574630dcacea652cd0d95e",
+    "bytes": 2294,
+    "rgb_samples": [
+      [
+        31,
+        46,
+        62
+      ],
+      [
+        159,
+        190,
+        223
+      ]
+    ]
+  },
+  "brightness": {
+    "sha256": "12d10ab382b54abf7dc13c0fcc313042aca3af227aa77069e94fad33f7789150",
+    "bytes": 2293,
+    "rgb_samples": [
+      [
+        89,
+        104,
+        120
+      ],
+      [
+        216,
+        247,
+        253
+      ]
+    ]
+  },
+  "contrast": {
+    "sha256": "8bea0022b105478aeac94d735de054bfdebd6024f46a9b38c95441866053f5db",
+    "bytes": 2294,
+    "rgb_samples": [
+      [
+        73,
+        88,
+        104
+      ],
+      [
+        130,
+        161,
+        194
+      ]
+    ]
+  },
+  "saturation": {
+    "sha256": "c1b16672d3ef7ab03d1eb7df4ed1ee9873e09901f24797755b6ce26d5960e150",
+    "bytes": 2292,
+    "rgb_samples": [
+      [
+        42,
+        44,
+        41
+      ],
+      [
+        183,
+        185,
+        182
+      ]
+    ]
+  }
+}

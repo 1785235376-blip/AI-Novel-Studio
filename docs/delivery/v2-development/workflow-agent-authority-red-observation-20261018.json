@@ -1,0 +1,38 @@
+{
+  "kind": "mounted_route_before_fix_observation",
+  "route": "POST /api/agent-queue/{run_id}/agent/execute",
+  "original_workflow_api_sha256": "5db645456385c1199d15b0c13576bb092696e948fff592954d6077bb0120211c",
+  "receipt": "workflow-agent-authority-red-20261018.json",
+  "log": "workflow-agent-authority-red-20261018.log",
+  "jobs": [
+    {
+      "id": "86a9d64a-5103-4445-a594-c659a9dc1085",
+      "operation": "AGENT_TASK",
+      "status": "FAILED",
+      "error_code": "AGENT_AUTHORITY_MISSING",
+      "owner": {
+        "actor_id": "workflow-owner-b074ea10-0d69-4418-a978-be5558c75437",
+        "workspace_id": "workflow-space-b074ea10-0d69-4418-a978-be5558c75437"
+      },
+      "branch_id": null,
+      "execution_mode": "model",
+      "provider": "deepseek",
+      "model": "deepseek-chat"
+    },
+    {
+      "id": "3e9d105e-5a55-42fb-8f9d-8fca22bc4411",
+      "operation": "AGENT_TASK",
+      "status": "FAILED",
+      "error_code": "AGENT_AUTHORITY_MISSING",
+      "owner": {
+        "actor_id": "workflow-owner-9fd03767-9547-49fc-a9e7-a0b0abdc9c80",
+        "workspace_id": "workflow-space-9fd03767-9547-49fc-a9e7-a0b0abdc9c80"
+      },
+      "branch_id": "branch-9fd03767-9547-49fc-a9e7-a0b0abdc9c80",
+      "execution_mode": "model",
+      "provider": "deepseek",
+      "model": "deepseek-chat"
+    }
+  ],
+  "executor": "NoNetworkNode test double; no real provider calls"
+}

@@ -445,7 +445,7 @@ const EDIT_CONTEXT_KEYS = ['timeline', 'clipId', 'targetTrackId', 'atMs', 'start
 
 const EDIT_KIND_UNSUPPORTED_BY_OWNER: Record<string, string> = {
   speed: '原编辑服务没有"变速"动作；速度只能在片段已有字段上整段设置，本面不生成该指令。',
-  grade: '本工作包不做调色；原编辑服务也没有调色语义。',
+  grade: '高级调色、LUT 与自定义滤镜不支持；基础亮度、对比度和饱和度请使用片段属性中的基础调色控件。',
   composite: '本工作包不做合成；原编辑服务也没有合成语义。',
   transition: '原编辑服务只接受片段上已存在的交叉溶解字段，没有独立的转场动作。',
   render: '渲染由原制作任务发起，不属于编辑指令。',

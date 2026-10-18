@@ -1,3 +1,4 @@
+import { validCameraGrammar, type CameraGrammar } from './cameraGrammar';
 export const WORKSPACE_MODES = [
   { id: 'NOVEL', label: '小说', english: 'Novel' },
   { id: 'SCREENPLAY', label: '剧本', english: 'Screenplay' },
@@ -19,12 +20,12 @@ export type Dialogue = { speaker: string; text: string; delivery: string };
 export type VisualTarget = { style: string; atmosphere: string; reference_works: string[]; color: string; rhythm: string; genre?: string | null };
 export type DirectorPerformance = { character: string; action: string; expression: string; state: string };
 export type DirectorPlanning = { rationale: string; sequence_reason: string; duration_reason: string; uncertainty: string; assumptions: string[]; alternatives: { choice: string; tradeoff: string }[]; evidence: { scene_id: string; field: string; dialogue_index: number | null; excerpt: string }[] };
-export type DirectorNote = { id: string; note: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; pacing: string; performance: string;
+export type DirectorNote = { id: string; note: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; emotion: string; pacing: string; performance: string; camera_grammar?: CameraGrammar | null;
   planning?: DirectorPlanning | null; shot_suggestion?: string | null; composition?: string | null; lens?: string | null; character_state?: string | null; performances?: DirectorPerformance[] | null; lighting?: string | null; color_palette?: string | null; material?: string | null; transition?: string | null };
 export type DirectorSceneNote = DirectorNote & { number: number; scene_id: string; blocking: string };
 export type CreativeScene = { id: string; sequence: number; source_chapter_id: string | null; heading: string; time: string; location: string; characters: string[]; action: string; dialogue: Dialogue[]; emotion: string; director_notes: DirectorNote[] };
 export type ShotContinuity = { previous_shot_id?: string | null; next_shot_id?: string | null; characters: string; outfit: string; environment: string; camera: string; time?: string | null; lighting?: string | null };
-export type CreativeShot = { id: string; number: number; scene_id: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; frame_prompt: string; composition: string; color: string; action: string; dialogue: Dialogue[]; sound_effect: string; lens: string; lighting: string; environment: string; sound: string; director_notes: DirectorNote[]; characters?: string[] | null; emotion?: string | null; continuity?: ShotContinuity | null; director_note_ids?: string[] | null; video_generation_hint?: string | null };
+export type CreativeShot = { id: string; number: number; scene_id: string; shot_size: string; camera_angle: string; camera_motion: string; duration_seconds: number; frame_prompt: string; composition: string; color: string; action: string; dialogue: Dialogue[]; sound_effect: string; lens: string; lighting: string; environment: string; sound: string; director_notes: DirectorNote[]; characters?: string[] | null; emotion?: string | null; continuity?: ShotContinuity | null; director_note_ids?: string[] | null; video_generation_hint?: string | null; camera_grammar?: CameraGrammar | null };
 export type VideoSegment = { shot_id: string; duration_seconds: number; note: string };
 export type VideoPlan = { frame_rate: number; width: number; height: number; notes: string; segments: VideoSegment[] };
 export type CreativeInput = { mode: CreativeMode; title: string; source_chapter_ids: string[]; source_independent: boolean; scenes: CreativeScene[]; director_notes: DirectorSceneNote[]; shots: CreativeShot[]; video_plan: VideoPlan | null; script?: ScriptContent | null; visual_target?: VisualTarget | null };
@@ -54,5 +55,8 @@ export function creativeAuthoringProblems(value: CreativeInput): string[] {
   return [
     ...(!validDirectorGenre(value.visual_target) ? ['文档类型 / 题材超过 2000 字符'] : []),
     ...value.shots.filter(shot => creativeTextLength(shot.continuity?.time) > 4000).map(shot => `镜头 ${shot.number} 的时间连续性超过 4000 字符`),
+    ...[...value.director_notes, ...value.shots, ...value.scenes.flatMap(scene => scene.director_notes), ...value.shots.flatMap(shot => shot.director_notes)]
+      .filter(row => row.camera_grammar != null && !validCameraGrammar(row.camera_grammar))
+      .map(row => `手填机位几何 ${row.id} 无效：请核对坐标、轴线人物及有意选择理由`),
   ];
 }

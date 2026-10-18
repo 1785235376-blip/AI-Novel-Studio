@@ -42,6 +42,17 @@ class AdaptationOutput(StrictCreativeModel):
     scenes: list[AdaptedScene] = Field(min_length=1, max_length=100)
     report: AdaptationReport
 
+    @classmethod
+    def model_json_schema(cls, *args, **kwargs):
+        # AdaptedScene already rejects all nested director notes. Keep its model
+        # prompt schema unchanged when the authored DirectorNote gains geometry.
+        schema = super().model_json_schema(*args, **kwargs)
+        definitions = schema.get("$defs", {})
+        definitions.get("DirectorNote", {}).get("properties", {}).pop("camera_grammar", None)
+        for name in ("CameraGrammar", "Point", "Movement"):
+            definitions.pop(name, None)
+        return schema
+
     @model_validator(mode="after")
     def linked(self):
         ids = {row.id for row in self.scenes}

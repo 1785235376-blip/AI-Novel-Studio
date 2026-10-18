@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from 'vitest';
-import { MAX_OFFLINE_SYNC_BYTES, offlineSyncInputError, parseOfflineSyncMessage, readOfflineSyncFile } from './offlineSyncFile';
+import { MAX_OFFLINE_SYNC_BYTES, OfflineSyncInputError, offlineSyncInputError, parseOfflineSyncMessage, readOfflineSyncFile } from './offlineSyncFile';
 
 afterEach(() => { vi.restoreAllMocks(); });
 
@@ -9,6 +9,50 @@ it('reads the actual local file and preserves whitespace and literal Unicode wit
   expect(await readOfflineSyncFile(new File([text], 'exchange.json', { type: 'application/json' }))).toBe(text);
   expect(await readOfflineSyncFile(new File(['null'], 'copy.txt', { type: 'text/plain' }))).toBe('null');
   expect(parseOfflineSyncMessage('false')).toBe(false);
+});
+
+it('rejects stack-exhausting JSON before preview even when it is well under the byte limit', () => {
+  const text = '['.repeat(10_000) + '0' + ']'.repeat(10_000);
+  expect(new TextEncoder().encode(text).byteLength).toBe(20_001);
+  // JSON.parse accepts this input, but the existing Details preview cannot
+  // stringify it. The offline-input boundary must reject it first.
+  const parsed = JSON.parse(text);
+  expect(() => JSON.stringify(parsed, null, 2)).toThrow(RangeError);
+  expect(() => parseOfflineSyncMessage(text)).toThrow(OfflineSyncInputError);
+  expect(() => parseOfflineSyncMessage(text)).toThrow('同步消息的 JSON 嵌套不能超过 64 层，请简化消息后重试；原输入已保留。');
+});
+
+const nestedJson = (depth: number, kind: 'array' | 'object' | 'mixed', leaf = '0') => {
+  let text = leaf;
+  for (let index = 0; index < depth; index++) {
+    text = kind === 'object' || (kind === 'mixed' && index % 2) ? '{"child":' + text + '}' : '[' + text + ']';
+  }
+  return text;
+};
+
+it.each(['array', 'object', 'mixed'] as const)('accepts exactly 64 %s container levels and safely rejects level 65 for paste and files', async kind => {
+  const boundary = nestedJson(64, kind), excessive = nestedJson(65, kind);
+  expect(JSON.stringify(parseOfflineSyncMessage(boundary))).toBe(boundary);
+  expect(await readOfflineSyncFile(new File([boundary], 'boundary.json'))).toBe(boundary);
+  expect(() => parseOfflineSyncMessage(excessive)).toThrow(/嵌套不能超过 64 层/);
+  await expect(readOfflineSyncFile(new File([excessive], 'too-deep-private.json'))).rejects.toThrow(/嵌套不能超过 64 层/);
+});
+
+it('ignores structural-looking characters inside strings, escaped quotes, and escaped backslashes', async () => {
+  const literal = '[]{}"\\\\\\" closing: ]} opening: [{ \n 合成🙂'.repeat(100) + '\\\\';
+  const text = nestedJson(64, 'mixed', JSON.stringify(literal));
+  expect(JSON.stringify(parseOfflineSyncMessage(text))).toBe(text);
+  expect(await readOfflineSyncFile(new File([text], 'escaped.json'))).toBe(text);
+  expect(parseOfflineSyncMessage(JSON.stringify({ [literal]: literal, sibling: [] }))).toEqual({ [literal]: literal, sibling: [] });
+});
+
+it('preserves one leading BOM at the depth boundary and rejects excessive BOM-prefixed nesting', async () => {
+  const boundary = '\uFEFF' + nestedJson(64, 'mixed');
+  expect(JSON.stringify(parseOfflineSyncMessage(boundary))).toBe(boundary.slice(1));
+  expect(await readOfflineSyncFile(new File([boundary], 'boundary-bom.json'))).toBe(boundary);
+  const excessive = '\uFEFF' + nestedJson(65, 'mixed');
+  expect(() => parseOfflineSyncMessage(excessive)).toThrow(/嵌套不能超过 64 层/);
+  await expect(readOfflineSyncFile(new File([excessive], 'private-bom.json'))).rejects.toThrow(/嵌套不能超过 64 层/);
 });
 
 it('accepts exactly 512 KiB and rejects a single additional actual byte', async () => {

@@ -1,4 +1,5 @@
 import { ApiError } from '../api';
+import { validCameraGrammar } from './cameraGrammar';
 import type { CreativeInput, VisualTarget, CreativeShot, DirectorPlanning, DirectorSceneNote } from './types';
 
 export type PlanningSnapshot = { id: string; version: number; digest: string };
@@ -61,7 +62,8 @@ export function checkedDirectorPlanning(value: unknown): DirectorPlanning {
 }
 function note(value: unknown, ordered = false) {
   const record = row(value), required = ['id', 'note', 'shot_size', 'camera_angle', 'camera_motion', 'duration_seconds', 'emotion', 'pacing', 'performance', 'blocking', ...(ordered ? ['number', 'scene_id'] : [])];
-  closed(record, required, ['planning', 'shot_suggestion', 'composition', 'lens', 'character_state', 'performances', 'lighting', 'color_palette', 'material', 'transition']);
+  closed(record, required, ['planning', 'shot_suggestion', 'composition', 'lens', 'character_state', 'performances', 'lighting', 'color_palette', 'material', 'transition', 'camera_grammar']);
+  if (record.camera_grammar != null && !validCameraGrammar(record.camera_grammar)) invalid();
   fields(record, required.filter(key => !['duration_seconds', 'number'].includes(key))); integer(record.duration_seconds, 1, 600);
   string(record.emotion, 2000);
   if (ordered) integer(record.number, 1, 10000);
@@ -78,7 +80,8 @@ export function checkedDirectorSceneNote(value: unknown): DirectorSceneNote {
 }
 export function checkedCreativeShot(value: unknown): CreativeShot {
     const shot = row(value); const required = ['id', 'number', 'scene_id', 'shot_size', 'camera_angle', 'camera_motion', 'duration_seconds', 'frame_prompt', 'composition', 'lens', 'lighting', 'environment', 'sound', 'color', 'action', 'dialogue', 'sound_effect', 'director_notes'];
-    closed(shot, required, ['characters', 'emotion', 'continuity', 'director_note_ids', 'video_generation_hint']); fields(shot, required.filter(key => !['number', 'duration_seconds', 'dialogue', 'director_notes'].includes(key)));
+    closed(shot, required, ['characters', 'emotion', 'continuity', 'director_note_ids', 'video_generation_hint', 'camera_grammar']); fields(shot, required.filter(key => !['number', 'duration_seconds', 'dialogue', 'director_notes'].includes(key)));
+    if (shot.camera_grammar != null && !validCameraGrammar(shot.camera_grammar)) invalid();
     string(shot.action, 16000); integer(shot.number, 1, 10000); integer(shot.duration_seconds, 1, 600);
     if (shot.characters != null) strings(shot.characters, 100); if (shot.emotion != null) string(shot.emotion, 4000);
     if (shot.video_generation_hint != null) string(shot.video_generation_hint, 4000);

@@ -1,0 +1,717 @@
+..................EEssEsEEEEEEEsssssssEsEs.............................. [ 58%]
+.............EEEEEsssssEsEsEsEEssEsEsEsEsEs..ss..ss                      [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-DIRECTOR] _
+
+request = <SubRequest 'rig' for <Function test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-DIRECTOR]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-STORYBOARD] _
+
+request = <SubRequest 'rig' for <Function test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-STORYBOARD]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_owner_save_cas_r1').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_original_checker_reused_and_incomplete_geometry_stays_unknown[file] _
+
+request = <SubRequest 'rig' for <Function test_original_checker_reused_and_incomplete_geometry_stays_unknown[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_checker_reused_a0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_checker_reused_a0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_checker_reused_a0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_original_checker_reused_a0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-scene] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-scene]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-coordinate_system] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-coordinate_system]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author1').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-position] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-position]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author2')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author2').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author2') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author2').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-axis] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-axis]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author3')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author3').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author3') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author3').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-on_axis] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-on_axis]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author4')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author4').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author4') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author4').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-same_side] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-same_side]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author5')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author5').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author5') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author5').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_scene_geometry_and_authored_override_are_not_guessed[file-override] _
+
+request = <SubRequest 'rig' for <Function test_scene_geometry_and_authored_override_are_not_guessed[file-override]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author6')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author6').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author6') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_scene_geometry_and_author6').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_geometry_survives_original_review_and_director_to_storyboard_derivation[file] _
+
+request = <SubRequest 'rig' for <Function test_geometry_survives_original_review_and_director_to_storyboard_derivation[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_geometry_survives_origina0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_geometry_survives_origina0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_geometry_survives_origina0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_geometry_survives_origina0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_workspace_keeps_original_archive_scope_and_project_incarnation_fences[file] _
+
+request = <SubRequest 'rig' for <Function test_workspace_keeps_original_archive_scope_and_project_incarnation_fences[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_workspace_keeps_original_0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_workspace_keeps_original_0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_workspace_keeps_original_0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_workspace_keeps_original_0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_strict_bounded_visual_direction_rejects_invalid_data[file-changes0] _
+
+request = <SubRequest 'rig' for <Function test_strict_bounded_visual_direction_rejects_invalid_data[file-changes0]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_strict_bounded_visual_direction_rejects_invalid_data[file-changes1] _
+
+request = <SubRequest 'rig' for <Function test_strict_bounded_visual_direction_rejects_invalid_data[file-changes1]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir1').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_strict_bounded_visual_direction_rejects_invalid_data[file-changes2] _
+
+request = <SubRequest 'rig' for <Function test_strict_bounded_visual_direction_rejects_invalid_data[file-changes2]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir2')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir2').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir2') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir2').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_strict_bounded_visual_direction_rejects_invalid_data[file-changes3] _
+
+request = <SubRequest 'rig' for <Function test_strict_bounded_visual_direction_rejects_invalid_data[file-changes3]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir3')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir3').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir3') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir3').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_strict_bounded_visual_direction_rejects_invalid_data[file-changes4] _
+
+request = <SubRequest 'rig' for <Function test_strict_bounded_visual_direction_rejects_invalid_data[file-changes4]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir4')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir4').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir4') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_strict_bounded_visual_dir4').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_independent_director_and_storyboard_persist_without_novel_source[file] _
+
+request = <SubRequest 'rig' for <Function test_independent_director_and_storyboard_persist_without_novel_source[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_independent_director_and_0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_independent_director_and_0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_independent_director_and_0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_independent_director_and_0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_explicit_director_note_derivation_keeps_each_shot_and_source_immutable[file] _
+
+request = <SubRequest 'rig' for <Function test_explicit_director_note_derivation_keeps_each_shot_and_source_immutable[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_director_note_de0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_director_note_de0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_director_note_de0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_director_note_de0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_default_derivation_remains_one_shot_per_scene_and_keeps_old_provenance[file] _
+
+request = <SubRequest 'rig' for <Function test_default_derivation_remains_one_shot_per_scene_and_keeps_old_provenance[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_default_derivation_remain0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_default_derivation_remain0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_default_derivation_remain0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_default_derivation_remain0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_explicit_note_policy_rejects_missing_director_notes[file-SCREENPLAY-notes0] _
+
+request = <SubRequest 'rig' for <Function test_explicit_note_policy_rejects_missing_director_notes[file-SCREENPLAY-notes0]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_explicit_note_policy_rejects_missing_director_notes[file-DIRECTOR-notes1] _
+
+request = <SubRequest 'rig' for <Function test_explicit_note_policy_rejects_missing_director_notes[file-DIRECTOR-notes1]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje1')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje1').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje1') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_explicit_note_policy_reje1').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_rich_derivation_cas_reauthorization_and_parent_edit_guards[file] _
+
+request = <SubRequest 'rig' for <Function test_rich_derivation_cas_reauthorization_and_parent_edit_guards[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_rich_derivation_cas_reaut0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_rich_derivation_cas_reaut0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_rich_derivation_cas_reaut0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_rich_derivation_cas_reaut0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_visual_goal_clear_restore_and_export_use_original_version_owner[file] _
+
+request = <SubRequest 'rig' for <Function test_visual_goal_clear_restore_and_export_use_original_version_owner[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_visual_goal_clear_restore0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_visual_goal_clear_restore0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_visual_goal_clear_restore0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_visual_goal_clear_restore0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_proposal_visual_target_is_exact_reviewed_and_rich_output_preserves_source[file] _
+
+request = <SubRequest 'rig' for <Function test_proposal_visual_target_is_exact_reviewed_and_rich_output_preserves_source[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_proposal_visual_target_is0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_proposal_visual_target_is0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_proposal_visual_target_is0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_proposal_visual_target_is0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_changed_proposal_goal_cannot_bypass_exact_review[file] _
+
+request = <SubRequest 'rig' for <Function test_changed_proposal_goal_cannot_bypass_exact_review[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_changed_proposal_goal_can0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_changed_proposal_goal_can0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_changed_proposal_goal_can0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_changed_proposal_goal_can0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+_ ERROR at setup of test_production_fields_api_owner_private_response_and_derive[file] _
+
+request = <SubRequest 'rig' for <Function test_production_fields_api_owner_private_response_and_derive[file]>>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_production_fields_api_own0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+>       assert tmp_path.resolve().is_relative_to(root / ".runtime")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport') / '.runtime'))
+E        +    where is_relative_to = PosixPath('/tmp/pytest-of-agent/pytest-0/test_production_fields_api_own0').is_relative_to
+E        +      where PosixPath('/tmp/pytest-of-agent/pytest-0/test_production_fields_api_own0') = resolve()
+E        +        where resolve = PosixPath('/tmp/pytest-of-agent/pytest-0/test_production_fields_api_own0').resolve
+
+tests/test_v2_creative_foundation.py:35: AssertionError
+=============================== warnings summary ===============================
+.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_director_camera_geometry.py::test_legacy_model_schemas_keep_exact_prebridge_hashes
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_v2_director_camera_geometry.py::test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-DIRECTOR]
+ERROR tests/test_v2_director_camera_geometry.py::test_original_owner_save_cas_reopen_history_and_exact_source_projection[file-STORYBOARD]
+ERROR tests/test_v2_director_camera_geometry.py::test_original_checker_reused_and_incomplete_geometry_stays_unknown[file]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-scene]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-coordinate_system]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-position]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-axis]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-on_axis]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-same_side]
+ERROR tests/test_v2_director_camera_geometry.py::test_scene_geometry_and_authored_override_are_not_guessed[file-override]
+ERROR tests/test_v2_director_camera_geometry.py::test_geometry_survives_original_review_and_director_to_storyboard_derivation[file]
+ERROR tests/test_v2_director_camera_geometry.py::test_workspace_keeps_original_archive_scope_and_project_incarnation_fences[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_strict_bounded_visual_direction_rejects_invalid_data[file-changes0]
+ERROR tests/test_v2_director_storyboard_production.py::test_strict_bounded_visual_direction_rejects_invalid_data[file-changes1]
+ERROR tests/test_v2_director_storyboard_production.py::test_strict_bounded_visual_direction_rejects_invalid_data[file-changes2]
+ERROR tests/test_v2_director_storyboard_production.py::test_strict_bounded_visual_direction_rejects_invalid_data[file-changes3]
+ERROR tests/test_v2_director_storyboard_production.py::test_strict_bounded_visual_direction_rejects_invalid_data[file-changes4]
+ERROR tests/test_v2_director_storyboard_production.py::test_independent_director_and_storyboard_persist_without_novel_source[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_explicit_director_note_derivation_keeps_each_shot_and_source_immutable[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_default_derivation_remains_one_shot_per_scene_and_keeps_old_provenance[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_explicit_note_policy_rejects_missing_director_notes[file-SCREENPLAY-notes0]
+ERROR tests/test_v2_director_storyboard_production.py::test_explicit_note_policy_rejects_missing_director_notes[file-DIRECTOR-notes1]
+ERROR tests/test_v2_director_storyboard_production.py::test_rich_derivation_cas_reauthorization_and_parent_edit_guards[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_visual_goal_clear_restore_and_export_use_original_version_owner[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_proposal_visual_target_is_exact_reviewed_and_rich_output_preserves_source[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_changed_proposal_goal_cannot_bypass_exact_review[file]
+ERROR tests/test_v2_director_storyboard_production.py::test_production_fields_api_owner_private_response_and_derive[file]
+65 passed, 31 skipped, 2 warnings, 27 errors in 11.83s

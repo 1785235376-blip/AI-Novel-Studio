@@ -63,6 +63,9 @@ function pendingReceipt(value: unknown,proposal: string,expected: PlanningSnapsh
   const r=object(value);closed(r,['contract','proposal_id','expected_version','director_notes','output_digest','visual_target','provenance']);
   if(r.contract!==(mode==='SCREENPLAY'?'DIRECTOR_SCREENPLAY_MODEL_PENDING_REVIEW_V2':'DIRECTOR_MODEL_PENDING_REVIEW_V1')||r.proposal_id!==proposal||!Array.isArray(r.director_notes)||!r.director_notes.length||r.director_notes.length>200) invalid();
   const notes=r.director_notes.map(checkedDirectorSceneNote), p=object(r.provenance);
+  // A pending model candidate cannot claim explicitly authored coordinates.
+  // The separate human review submission may add geometry through the owner.
+  if (notes.some(note => Object.hasOwn(note, 'camera_grammar'))) invalid();
   closed(p,['method','model_called','provider_id','model_id','model_version','route_fingerprint','synthetic','parameters','source_mode',
     'source_document_id','source_version','source_digest','source_mapping','job_id','request_digest','preview_digest','candidate_output_digest','terminal_evidence_digest','quality_verification']);
   if(p.method!=='MODEL_ASSISTED'||p.model_called!==true||p.synthetic!==false||p.quality_verification!=='HUMAN_REVIEW_REQUIRED') invalid();

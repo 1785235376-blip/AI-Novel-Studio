@@ -1,3 +1,4 @@
+import { ClipColorPanel } from './ClipColorPanel';
 import { selectionDuplicateOperations, selectionDuplicateTargets } from './timelineSelectionDuplicate';
 import { selectionMoveOperations } from './timelineSelectionMove';
 import { useEffect, useRef, useState } from 'react';
@@ -17,7 +18,7 @@ const ACTIONS = [
   ['ripple', '波纹删除（clip.remove, ripple）'],
   ['source-replace', '替换素材（clip.update → source_snapshot）'],
   ['speed', '速度调整（原服务无此动作，将明确拒绝）'],
-  ['grade', '调色（本工作包不支持，将明确拒绝）'],
+  ['grade', '高级调色 / LUT（不支持，将明确拒绝）'],
 ] as const;
 
 const numeric = (value: string): number => value.trim() === '' ? Number.NaN : Number(value);
@@ -149,6 +150,8 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
         <div><dt>速度</dt><dd>{first.speedNum} / {first.speedDen}</dd></div>
         <div><dt>素材</dt><dd>{first.sourceKind} · v{first.clip.source_snapshot.version} · <code>{first.clip.source_snapshot.digest}</code></dd></div>
       </dl>
+      {first.trackKind === 'VIDEO' && <ClipColorPanel key={JSON.stringify([contextKey, props.editable])}
+        timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable} onEdit={props.onEdit} />}
       {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
       <div className="nle-clip__form">
         <label>整体移动增量（毫秒，可为负）<input type="number" step={1} value={selectionOffset} aria-label="整体移动增量（毫秒，可为负）"

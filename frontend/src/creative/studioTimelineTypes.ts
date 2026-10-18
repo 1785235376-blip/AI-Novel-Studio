@@ -2,11 +2,12 @@ import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
 
 export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string };
+export type StudioTimelineColorAdjustment = { brightness: number; contrast: number; saturation: number };
 export type StudioTimelineTransition = { kind: 'CROSS_DISSOLVE'; to_clip_id: string; duration_ms: number };
 export type StudioTimelineClip = { id: string; source_snapshot: StudioTimelineSource; start_ms: number; in_ms: number; out_ms: number;
   x?: number; y?: number; width?: number; height?: number; speed_num?: number; speed_den?: number; opacity?: number;
   muted?: boolean; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number; include_audio?: boolean;
-  crop?: { x: number; y: number; width: number; height: number }; transition_out?: StudioTimelineTransition };
+  crop?: { x: number; y: number; width: number; height: number }; transition_out?: StudioTimelineTransition; color_adjustment?: StudioTimelineColorAdjustment };
 export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: number; muted: boolean; gain_db: number;
   role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
@@ -84,7 +85,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     if (!Array.isArray(track.clips) || !track.clips.length || track.clips.length > TIMELINE_LIMITS.clips) throw new Error('每条轨道需要至少一个片段。');
     const clips = track.clips.map(rawClip => {
       const clip = object(rawClip, ['id', 'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'x', 'y', 'width', 'height',
-        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio', 'crop', 'transition_out'] : [])]);
+        ...(extended ? ['speed_num', 'speed_den', 'opacity', 'muted', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'include_audio', 'crop', 'transition_out', 'color_adjustment'] : [])]);
       const cid = id(clip.id), source = object(clip.source_snapshot, ['id', 'kind', 'asset_kind', 'version', 'digest']);
       if (clipIds.has(cid) || ++clipsCount > TIMELINE_LIMITS.clips) throw new Error('片段标识重复或超过三十个片段。');
       clipIds.add(cid);
@@ -113,6 +114,11 @@ export function checkedTimeline(value: unknown): StudioTimeline {
           if (includeAudio && assetKind !== 'video') throw new Error('静态画面不能包含视频原声。');
           if (!includeAudio && output.gain_db !== 0) throw new Error('视频片段的音量只在明确加入原声时可调整。');
           Object.assign(output, { opacity: scalar(defaulted(clip, 'opacity', 1), 0, 1), include_audio: includeAudio });
+          if ('color_adjustment' in clip) {
+            const color = object(clip.color_adjustment, ['brightness', 'contrast', 'saturation']);
+            output.color_adjustment = { brightness: scalar(color.brightness, -1, 1),
+              contrast: scalar(color.contrast, 0, 2), saturation: scalar(color.saturation, 0, 3) };
+          }
           if ('crop' in clip) {
             const crop = object(clip.crop, ['x', 'y', 'width', 'height']);
             output.crop = { x: integer(crop.x, 0, 32767), y: integer(crop.y, 0, 32767),
@@ -125,7 +131,7 @@ export function checkedTimeline(value: unknown): StudioTimeline {
               duration_ms: integer(transition.duration_ms, Math.ceil(2000 / fps!), 10000) };
           }
         }
-      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop', 'transition_out'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪、转场或视频原声设置。');
+      } else if (['x', 'y', 'width', 'height', 'opacity', 'include_audio', 'crop', 'transition_out', 'color_adjustment'].some(key => key in clip)) throw new Error('音频片段没有画面位置、尺寸、透明度、像素裁剪、转场、调色或视频原声设置。');
       return output;
     }).sort((left, right) => left.start_ms - right.start_ms || compareText(left.id, right.id));
     if (kind === 'VIDEO') {

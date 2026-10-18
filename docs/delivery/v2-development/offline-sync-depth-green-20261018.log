@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/offlineSyncFile.test.ts (24 tests) 183ms
+ ✓ src/experimental/OfflineSyncReceive.test.tsx (40 tests) 759ms
+
+ Test Files  2 passed (2)
+      Tests  64 passed (64)
+   Start at  01:03:19
+   Duration  1.63s (transform 212ms, setup 32ms, collect 320ms, tests 942ms, environment 682ms, prepare 124ms)
+

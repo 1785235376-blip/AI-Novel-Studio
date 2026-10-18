@@ -79,6 +79,7 @@ it.each([
   ['malformed JSON', new File(['{"private":"secret",broken}'], 'invalid.json'), /有效的 JSON/],
   ['invalid UTF-8', new File([new Uint8Array([0xff])], 'invalid.json'), /UTF-8 文本/],
   ['oversized bytes', new File([new Uint8Array(fileReader.MAX_OFFLINE_SYNC_BYTES + 1)], 'large.json'), /512 KiB，请选择/],
+  ['excessive nesting', new File(['['.repeat(10_000) + '0' + ']'.repeat(10_000)], 'private-deep.json'), /嵌套不能超过 64 层/],
 ] as const)('keeps prior input and clears obsolete preview after a %s file', async (_label, file, message) => {
   const { receive } = setup(); paste(); pickTarget(); fireEvent.click(screen.getByRole('button', { name: '预览待接收消息' }));
   expect(screen.getByText('待接收信封预览')).toBeTruthy(); choose(file);
@@ -86,6 +87,39 @@ it.each([
   expect(screen.getByRole('alert').textContent).not.toContain('secret');
   expect(textarea().value).toBe(original); expect(target().value).toBe('chapter');
   expect(screen.queryByText('待接收信封预览')).toBeNull(); expect(receive).not.toHaveBeenCalled();
+});
+
+it('rejects deeply pasted JSON without rendering an unsafe preview and allows a corrected manual receive', async () => {
+  const { receive, apply } = setup(); pickTarget();
+  const deep = '['.repeat(10_000) + '0' + ']'.repeat(10_000); paste(deep);
+  fireEvent.click(screen.getByRole('button', { name: '预览待接收消息' }));
+  expect(screen.getByRole('alert').textContent).toBe('同步消息的 JSON 嵌套不能超过 64 层，请简化消息后重试；原输入已保留。');
+  expect(textarea().value).toBe(deep); expect(target().value).toBe('chapter');
+  expect(screen.queryByText('待接收信封预览')).toBeNull();
+  expect(screen.queryByRole('button', { name: '接收到待审核收件箱' })).toBeNull();
+  expect(receive).not.toHaveBeenCalled(); expect(apply).not.toHaveBeenCalled();
+  const corrected = '\uFEFF' + JSON.stringify(envelope); paste(corrected);
+  fireEvent.click(screen.getByRole('button', { name: '预览待接收消息' }));
+  expect(screen.queryByRole('alert')).toBeNull(); expect(receive).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '接收到待审核收件箱' }));
+  await screen.findByText(/候选已保存至本机收件箱/);
+  expect(receive).toHaveBeenCalledTimes(1);
+  expect(receive).toHaveBeenCalledWith(expect.objectContaining({ id: 'channel', version: 1 }), envelope, 'chapter', false);
+  expect(textarea().value).toBe(corrected); expect(apply).not.toHaveBeenCalled();
+});
+
+it('keeps BOM-prefixed file text intact while preview and receive use the unchanged envelope', async () => {
+  const { receive, apply } = setup(); pickTarget();
+  const text = '\uFEFF' + JSON.stringify(envelope); choose(new File([text], 'windows-exchange.json'));
+  await screen.findByText(/本地文件已载入文本框/);
+  expect(textarea().value).toBe(text); expect(receive).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '预览待接收消息' }));
+  expect(screen.getByText('待接收信封预览')).toBeTruthy(); expect(receive).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '接收到待审核收件箱' }));
+  await screen.findByText(/候选已保存至本机收件箱/);
+  expect(receive).toHaveBeenCalledTimes(1);
+  expect(receive).toHaveBeenCalledWith(expect.objectContaining({ id: 'channel', version: 1 }), envelope, 'chapter', false);
+  expect(textarea().value).toBe(text); expect(apply).not.toHaveBeenCalled();
 });
 
 it('preserves input after native abort and permits selecting the same file again', async () => {

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from ..experimental.common import now
 from .director_intent import DIRECTOR_WORKSPACE_CONTRACT, project_director_workspace
+from .director_camera_geometry import project_camera_geometry
 
 
 class DirectorWorkspaceService:
@@ -43,6 +44,9 @@ class DirectorWorkspaceService:
         project = self.workspace.novels.get(nid)
         document = self.creative.get(nid, scope, rid)
         projected = project_director_workspace(document)
+        geometry = project_camera_geometry(document, self.creative.document_digest(document))
+        if geometry is not None:
+            projected["camera_geometry"] = geometry
         projected.update(
             project_id=nid,
             scope=self._scope_view(nid, scope),

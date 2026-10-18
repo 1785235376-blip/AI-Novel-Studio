@@ -1,0 +1,61 @@
+{
+  "file_and_postgres_before_after_proofs_equal": true,
+  "files": {
+    "source-swatches.png": {
+      "sha256": "5926b6b51f1973c6852e95be5fc7d9de57435076e08ec733f4a8c2bc17438d21",
+      "bytes": 144
+    },
+    "after.png": {
+      "sha256": "698e7bd87ad5f04a1efbf3ed07478ed02d544f91ebacd662b41726f58eeb9ee3",
+      "bytes": 173
+    },
+    "saturation.mp4": {
+      "sha256": "8a73af747862764aafbe426d1e3f4dbe12d02e2dd43700154d74aa8a43c49a83",
+      "bytes": 2292
+    },
+    "uncolored-dissolve-proof.json": {
+      "sha256": "0ae8db5723f24b677d65e82c9d8ec02565b868bfb92f0d2e774e02cc17faac39",
+      "bytes": 262
+    },
+    "legacy-byte-proof.json": {
+      "sha256": "9494f9f00e7995063c4b9a0547736312e89f23bd014ae3c9e83ffd342d643d60",
+      "bytes": 544
+    },
+    "brightness.mp4": {
+      "sha256": "b71200cda719dfa826efd7332e81ef8510f9d05affacbc9908ccfc8293e0c622",
+      "bytes": 2293
+    },
+    "contrast.mp4": {
+      "sha256": "686ae00bf9decc40522b28ccdeda1a06f23369ee2f32b6e58bcf20d7ce3a9f8f",
+      "bytes": 2294
+    },
+    "before.mp4": {
+      "sha256": "101c18875c966f0419c754637cf3ffb6f254de09c6d5dce6956e6398e6e90ff0",
+      "bytes": 3129
+    },
+    "after.mp4": {
+      "sha256": "eceadb75f918aa2bb6349c101b0d0bffffd121caf6663769c57a622a3f69b3c2",
+      "bytes": 3131
+    },
+    "image-controls-proof.json": {
+      "sha256": "c0080d83af75402c3930dfb4437b5baf7bba5accf1c6b83ad33a941ff92a7635",
+      "bytes": 1029
+    },
+    "video-controls-proof.json": {
+      "sha256": "122ad4f2e35ed004722d3d5735245198b781981b8d853fa06d29edf04cfdee0c",
+      "bytes": 1029
+    },
+    "basic-color-proof.json": {
+      "sha256": "1b90d30b66868a71d6c5428610a47ddace39f43899a0dc5ee60fc3e1f9e1cf53",
+      "bytes": 593
+    },
+    "colored-dissolve-proof.json": {
+      "sha256": "bdfa712ee8314ead55e1750ef30c4d403df36b02cc12770f82e724f9e61544dd",
+      "bytes": 264
+    },
+    "before.png": {
+      "sha256": "c4acf87a817192eb0ad5e9b0380e015ac3d7ceb7091c0fb2527dd09de8386534",
+      "bytes": 173
+    }
+  }
+}

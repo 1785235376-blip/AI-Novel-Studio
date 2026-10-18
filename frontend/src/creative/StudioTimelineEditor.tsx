@@ -1,3 +1,4 @@
+import { applyClipColorOperation } from '../nle/timelineClipColor';
 import {StudioTimelineSourceBoundsRepair} from './StudioTimelineSourceBoundsRepair';
 import {useStudioTimelineSourceBounds} from './useStudioTimelineSourceBounds';
 import { StudioTimelineCloseGaps } from './StudioTimelineCloseGaps';
@@ -302,6 +303,20 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
             const applied = live.c.change(value => { if (value.timeline.schema_version !== 3) value.timeline.captions = next.timeline.captions; });
             setNleNotice(applied ? '字幕编辑已应用到本地时间线；可撤销，明确保存前不会写入服务端。' : '字幕编辑未应用，请核对当前编辑状态。');
           } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '字幕编辑未应用。'); }
+          return;
+        }
+        if (command.kind === 'clip.update' && command.payload && typeof command.payload === 'object'
+          && 'changes' in command.payload && command.payload.changes && typeof command.payload.changes === 'object'
+          && Object.hasOwn(command.payload.changes, 'color_adjustment')) {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+            || !live.c.canEdit || live.props.busy || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          try {
+            const next = applyClipColorOperation(draft.timeline, nleClips, command.payload);
+            const applied = live.c.change(input => { input.timeline = next; });
+            setNleNotice(applied ? '基础调色已应用到本地草稿，可撤销；尚未保存或渲染。' : '调色参数未改变，或当前编辑状态不允许应用。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '基础调色未应用。'); }
           return;
         }
         if (command.kind === 'clip.update') {

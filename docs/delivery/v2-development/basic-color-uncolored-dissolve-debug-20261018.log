@@ -1,0 +1,20 @@
+[Parsed_xfade_29 @ 0x7f6044031c40] The inputs needs to be a constant frame rate; current rate of 1/0 is invalid
+[Parsed_xfade_29 @ 0x7f6044031c40] Failed to configure output pad on Parsed_xfade_29
+[fc#0 @ 0x55bafd8ff980] Error reinitializing filters!
+[fc#0 @ 0x55bafd8ff980] Task finished with error code: -22 (Invalid argument)
+[fc#0 @ 0x55bafd8ff980] Terminating thread with return code -22 (Invalid argument)
+[vost#0:0/mpeg4 @ 0x55bafd935880] Could not open encoder before EOF
+[aost#0:1/aac @ 0x55bafd924c80] Could not open encoder before EOF
+[aost#0:1/aac @ 0x55bafd924c80] Task finished with error code: -22 (Invalid argument)
+[aost#0:1/aac @ 0x55bafd924c80] Terminating thread with return code -22 (Invalid argument)
+[vost#0:0/mpeg4 @ 0x55bafd935880] Task finished with error code: -22 (Invalid argument)
+[vost#0:0/mpeg4 @ 0x55bafd935880] Terminating thread with return code -22 (Invalid argument)
+[out#0/mp4 @ 0x55bafd90d700] Nothing was written into output file, because at least one of its streams received no packets.
+
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/services/studio_timeline_render.py", line 476, in render_studio_timeline
+    run_guarded_process(command, cwd=directory, guard=guard, timeout=RENDER_TIMEOUT_SECONDS)
+  File "/workspace/scratch/20a0022d2b33/studio-director-transport/app/services/studio_timeline_export.py", line 244, in run_guarded_process
+    raise subprocess.CalledProcessError(process.returncode, command, stderr=bytes(stderr))
+subprocess.CalledProcessError: Command '['/usr/bin/ffmpeg', '-nostdin', '-v', 'error', '-xerror', '-threads', '1', '-f', 'lavfi', '-i', 'color=c=black:s=64x64:r=10:d=1.400', '-threads', '1', '-protocol_whitelist', 'file,pipe', '-loop', '1', '-framerate', '10', '-t', '0.800', '-i', '/tmp/novel-studio-timeline-78qsnnwf/source-0.png', '-threads', '1', '-protocol_whitelist', 'file,pipe', '-loop', '1', '-framerate', '10', '-t', '0.800', '-i', '/tmp/novel-studio-timeline-78qsnnwf/source-0.png', '-filter_complex_threads', '1', '-filter_complex', "[0:v]setpts=PTS-STARTPTS[vbase];anullsrc=r=48000:cl=stereo,atrim=duration=1.400[abase];[1:v:0]trim=start=0.000:end=0.800,setpts=(PTS-STARTPTS)*1/1,scale=64:64:force_original_aspect_ratio=decrease,format=rgba,pad=64:64:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps=10,settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,tpad=stop_mode=clone:stop_duration=0.100,trim=duration=0.800[vc1];[2:v:0]trim=start=0.000:end=0.800,setpts=(PTS-STARTPTS)*1/1,scale=64:64:force_original_aspect_ratio=decrease,format=rgba,pad=64:64:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps=10,settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,tpad=stop_mode=clone:stop_duration=0.100,trim=duration=0.800[vc2];[vc1][vc2]xfade=transition=fade:duration=0.200:offset=0.600[vxf2];[vxf2]trim=duration=1.400,unpremultiply=inplace=1,format=rgba,colorchannelmixer=aa=1.00000000,setpts=PTS+0.000/TB[vxd1];[vbase][vxd1]overlay=x=0:y=0:eof_action=pass:repeatlast=0:enable='gte(t,0.000)*lt(t,1.400)'[vo1];[abase]amix=inputs=1:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95[aout]", '-map', '[vo1]', '-map', '[aout]', '-t', '1.400', '-c:v', 'mpeg4', '-b:v', '8000000', '-c:a', 'aac', '-b:a', '96000', '-pix_fmt', 'yuv420p', '-r', '10', '-ar', '48000', '-ac', '2', '-threads', '1', '-fs', '26214401', '-y', '/tmp/novel-studio-timeline-78qsnnwf/timeline.mp4']' returned non-zero exit status 234.

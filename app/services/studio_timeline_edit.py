@@ -159,9 +159,9 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.insert":
             body = _fields(raw, ("op", "track_id", "clip"))
             _fields(body["clip"], ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"),
-                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out"))
+                ("x", "y", "width", "height", "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out", "color_adjustment"))
             _id(body["clip"]["id"])
-            if any(key in body["clip"] for key in ("crop", "transition_out")) and result.get("schema_version") != 2:
+            if any(key in body["clip"] for key in ("crop", "transition_out", "color_adjustment")) and result.get("schema_version") != 2:
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             _integer(body["clip"]["start_ms"])
             _duration(body["clip"])
@@ -171,18 +171,20 @@ def apply_timeline_edits(timeline, operations):
         elif operation == "clip.update":
             body = _fields(raw, ("op", "clip_id", "changes"))
             changes = _fields(body["changes"], (), ("source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out"))
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "include_audio", "fade_in_ms", "fade_out_ms", "crop", "transition_out", "color_adjustment"))
             if not changes:
                 raise ValueError("STUDIO_TIMELINE_EDIT_EMPTY")
-            if any(key in changes for key in ("crop", "transition_out")) and result.get("schema_version") != 2:
+            if any(key in changes for key in ("crop", "transition_out", "color_adjustment")) and result.get("schema_version") != 2:
                 raise ValueError("STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED")
             for key in ("start_ms", "in_ms", "out_ms", "x", "y", "width", "height", "speed_num", "speed_den", "fade_in_ms", "fade_out_ms"):
                 if key in changes:
                     _integer(changes[key])
             row, clip = locate(body["clip_id"])
             editable(row)
+            if "color_adjustment" in changes and row["kind"] != "VIDEO":
+                raise ValueError("STUDIO_TIMELINE_COLOR_REQUIRES_VIDEO")
             applied = deepcopy(changes)
-            for optional in ("crop", "transition_out"):
+            for optional in ("crop", "transition_out", "color_adjustment"):
                 if optional in applied and applied[optional] is None:
                     clip.pop(optional, None)
                     applied.pop(optional)

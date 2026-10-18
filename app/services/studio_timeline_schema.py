@@ -68,7 +68,7 @@ def normalize_timeline_v2(value, *, audio_only=False):
         clips = []
         for raw_clip in track["clips"]:
             clip = _object(raw_clip, ("id", "source_snapshot", "start_ms", "in_ms", "out_ms", "x", "y", "width", "height",
-                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio", "crop", "transition_out"),
+                "speed_num", "speed_den", "opacity", "gain_db", "muted", "fade_in_ms", "fade_out_ms", "include_audio", "crop", "transition_out", "color_adjustment"),
                 ("id", "source_snapshot", "start_ms", "in_ms", "out_ms"))
             cid = _identity(clip["id"])
             if cid in clip_ids:
@@ -115,6 +115,14 @@ def normalize_timeline_v2(value, *, audio_only=False):
                     raise ValueError("STUDIO_TIMELINE_STILL_RANGE_INVALID")
                 if not item["include_audio"] and item["gain_db"] != 0:
                     raise ValueError("STUDIO_TIMELINE_GAIN_REQUIRES_AUDIO")
+                if "color_adjustment" in clip:
+                    color = _object(clip["color_adjustment"], ("brightness", "contrast", "saturation"),
+                                    ("brightness", "contrast", "saturation"))
+                    # Deliberately bounded basic FFmpeg eq controls, not a
+                    # filter-expression or LUT surface. Missing stays absent.
+                    item["color_adjustment"] = {key: number(color[key], low, high,
+                        "STUDIO_TIMELINE_COLOR_ADJUSTMENT_INVALID")
+                        for key, low, high in (("brightness", -1, 1), ("contrast", 0, 2), ("saturation", 0, 3))}
                 if "crop" in clip:
                     crop = _object(clip["crop"], ("x", "y", "width", "height"), ("x", "y", "width", "height"))
                     # Pixels refer to the original coded source, before display
@@ -129,7 +137,7 @@ def normalize_timeline_v2(value, *, audio_only=False):
                         raise ValueError("STUDIO_TIMELINE_TRANSITION_KIND_INVALID")
                     item["transition_out"] = {"kind": "CROSS_DISSOLVE", "to_clip_id": _identity(transition["to_clip_id"]),
                         "duration_ms": _integer(transition["duration_ms"], math.ceil(2000 / fps), 10_000)}
-            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio", "crop", "transition_out")):
+            elif any(key in clip for key in ("x", "y", "width", "height", "opacity", "include_audio", "crop", "transition_out", "color_adjustment")):
                 raise ValueError("STUDIO_TIMELINE_VIDEO_GEOMETRY_REQUIRES_VIDEO")
             clips.append(item)
         clips.sort(key=lambda item: (item["start_ms"], item["id"]))

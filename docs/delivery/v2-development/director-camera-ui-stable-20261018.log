@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 1557ms
+ ✓ src/creative/CreativeAuthoringFields.test.tsx (12 tests) 2195ms
+   ✓ Full-document authoring uses the original save and history flow > updates all preserved content once with expected_version, reopens it, and restores previous genre/time as a new version 551ms
+   ✓ Full-document authoring uses the original save and history flow > retains genre/time on a save conflict until explicit server replacement 405ms
+ ✓ src/creative/CameraGrammarEditor.additive.test.tsx (8 tests) 1377ms
+   ✓ viewing and unrelated edits leave legacy fields absent; two notes use the original Save 492ms
+ ✓ src/director/DirectorWorkspace.test.tsx (12 tests) 337ms
+ ✓ src/director/DirectorCameraEvidence.additive.test.tsx (20 tests) 232ms
+ ✓ src/creative/directorModelClient.test.ts (35 tests) 22ms
+ ✓ src/creative/studioGraphDirectorClient.test.ts (14 tests) 15ms
+
+ Test Files  7 passed (7)
+      Tests  113 passed (113)
+   Start at  01:12:06
+   Duration  12.08s (transform 1.80s, setup 54ms, collect 3.20s, tests 5.74s, environment 1.73s, prepare 384ms)
+

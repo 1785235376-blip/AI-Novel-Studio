@@ -261,6 +261,8 @@ def studio_timeline_to_exchange(timeline, *, title):
             if track["kind"] == "VIDEO":
                 if "transition_out" in clip:
                     _loss(report, ip + ".transition_out", "VIDEO_CROSS_DISSOLVE_NOT_NATIVE_NLE_PRESERVED_IN_STUDIO_METADATA")
+                if "color_adjustment" in clip:
+                    _loss(report, ip, "BASIC_COLOR_NOT_NATIVE_NLE_PRESERVED_IN_STUDIO_METADATA")
                 if "crop" in clip:
                     _loss(report, ip, "CLIP_PIXEL_CROP_REQUIRES_STUDIO_METADATA")
                 if (clip["x"], clip["y"], clip["width"], clip["height"], clip["opacity"]) != (

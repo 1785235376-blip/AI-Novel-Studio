@@ -1057,7 +1057,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       const projection = await createDirectorWorkspaceClient(projectId, transport, capturedScope).readDirectorWorkspace(snapshot.id, signal);
       if (signal?.aborted) throw new DOMException('Read aborted', 'AbortError');
       owner(projection as unknown as Record<string, unknown>);
-      if (projection.document.mode !== 'DIRECTOR' || projection.document.version !== snapshot.version) {
+      if (projection.document.mode !== 'DIRECTOR' || projection.document.version !== snapshot.version
+        || projection.camera_geometry && projection.camera_geometry.document_snapshot.digest !== snapshot.digest) {
         throw new ApiError({ status: 409, code: 'CREATIVE_GRAPH_PLANNING_DOCUMENT_CHANGED', message: '导演文档在读取时已变化，未采用此结果，请重新核对来源。' });
       }
       await currentPin();

@@ -1,0 +1,39 @@
+{
+  "before": {
+    "sha256": "101c18875c966f0419c754637cf3ffb6f254de09c6d5dce6956e6398e6e90ff0",
+    "bytes": 3129,
+    "rgb_samples": [
+      [
+        32,
+        47,
+        63
+      ],
+      [
+        160,
+        191,
+        224
+      ]
+    ]
+  },
+  "after": {
+    "sha256": "eceadb75f918aa2bb6349c101b0d0bffffd121caf6663769c57a622a3f69b3c2",
+    "bytes": 3131,
+    "rgb_samples": [
+      [
+        79,
+        81,
+        76
+      ],
+      [
+        255,
+        255,
+        255
+      ]
+    ]
+  },
+  "authored": {
+    "brightness": 0.2,
+    "contrast": 1.25,
+    "saturation": 0
+  }
+}

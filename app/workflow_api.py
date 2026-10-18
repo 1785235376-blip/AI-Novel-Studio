@@ -45,8 +45,69 @@ def read_run(run_id, token, permission="domain.read"):
     return current, check(guard(service.get_workflow_run, run_id), current, permission)
 
 
-def stamp(collection, record, current, branch_id=None):
-    return service._update(collection, record["id"], {"owner":owner(current), "branch_id":branch_id}, novel_id=record["novel_id"], expected_version=record["version"], action="WORKFLOW_SCOPE_BOUND", target_type="Workflow")
+def stamp(collection, record, current, branch_id=None, project_incarnation=None):
+    binding = {"owner":owner(current), "branch_id":branch_id}
+    if project_incarnation is not None:
+        binding["project_incarnation"] = project_incarnation
+    return service._update(collection, record["id"], binding, novel_id=record["novel_id"], expected_version=record["version"], action="WORKFLOW_SCOPE_BOUND", target_type="Workflow")
+
+
+def _project_store():
+    # Reuse the original File marker / PostgreSQL owner, not a public project ID.
+    from .experimental.api import creative_service
+    return creative_service.store
+
+
+def _check_run_incarnation(record, store):
+    identity = record.get("project_incarnation")
+    if not identity:
+        # Old durable claims have no trustworthy restart provenance. Never
+        # adopt them into a same-ID replacement project at execution time.
+        raise HTTPException(409, {
+            "code":"WORKFLOW_EXECUTION_PROVENANCE_REQUIRED",
+            "message":"This saved run has no verified project identity. Create a new workflow run and review its agent step.",
+        })
+    try:
+        with store.existing_owner_only():
+            unchanged = store.incarnation(record["novel_id"]) == identity
+    except (FileNotFoundError, ValueError):
+        unchanged = False
+    if not unchanged:
+        raise HTTPException(409, {
+            "code":"WORKFLOW_PROJECT_CHANGED",
+            "message":"The original project identity is no longer current. Create a new workflow run for the current project.",
+        })
+
+
+def _agent_execution_authority(token, initiating_actor, linked, node_id, job, store, session_generation):
+    """Recheck the live session, record scope, project owner and exact claim."""
+    from .api import _agent_job_actor_for_record, trusted_session_resolver
+
+    def reauthorize(current_job):
+        current_actor = _agent_job_actor_for_record(token, current_job, "domain.write")
+        if (current_actor != initiating_actor
+                or trusted_session_resolver.binding_generation(token) != session_generation):
+            raise HTTPException(403, {"code":"WORKFLOW_SESSION_CHANGED"})
+        with service._lock:
+            current_run = check(service.get_workflow_run(linked["id"]), current_actor, "domain.write")
+            if (any(current_run.get(key) != linked.get(key) for key in (
+                    "novel_id", "branch_id", "owner", "project_incarnation", "workflow_id",
+                    "workflow_version", "definition_snapshot", "attempt", "retry_of", "created_at", "started_at"))
+                    or any(current_job.get(key) != job.get(key) for key in (
+                        "id", "novel_id", "branch_id", "owner", "chapter_id", "chapter_version", "context_hash",
+                        "agent_id", "prompt_role", "instruction", "target", "provider", "model", "execution_mode", "output_schema"))):
+                raise HTTPException(409, {"code":"WORKFLOW_AGENT_CLAIM_CHANGED"})
+            state = current_run.get("node_states", {}).get(node_id) or {}
+            output = state.get("output") or {}
+            claimed_output = linked["node_states"][node_id]["output"]
+            if (current_run.get("status") != "RUNNING" or state.get("status") != "WORKING"
+                    or output.get("execution") != "CLAIMED"
+                    or any(output.get(key) != claimed_output.get(key)
+                           for key in ("agent_job_id", "claimed_by", "claimed_at"))):
+                raise HTTPException(409, {"code":"WORKFLOW_AGENT_CLAIM_CHANGED"})
+            _check_run_incarnation(current_run, store)
+
+    return reauthorize
 
 
 def idem(current, key, payload):
@@ -129,10 +190,10 @@ def create_run(workflow_id: str, body: WorkflowRunIn, x_session_token: str | Non
     current=actor(x_session_token)
     definition=check(guard(service.get_workflow,workflow_id),current,"domain.write")
     body=body.model_copy(update={"initiated_by":current.actor_id})
-    with service._lock:
+    with service._lock, _project_store().owner_lease(definition["novel_id"]) as incarnation:
         record=guard(service.create_workflow_run,workflow_id,body,idem(current,idempotency_key,[workflow_id,body.model_dump()]))
         stored=service.get_workflow_run(record["id"])
-        return stored if stored.get("owner") else stamp("workflow_runs",stored,current,definition.get("branch_id"))
+        return stored if stored.get("owner") else stamp("workflow_runs",stored,current,definition.get("branch_id"),incarnation)
 
 
 @router.get("/workflow-runs/{run_id}")
@@ -173,8 +234,12 @@ def queue(novel_id: str | None = None, x_session_token: str | None = Header(defa
 
 @router.post("/agent-queue/{run_id}/{node_id}/execute", status_code=202)
 def execute_agent(run_id: str, node_id: str, body: ExecuteAgentIn, x_session_token: str | None = Header(default=None)):
-    current,record=read_run(run_id,x_session_token,"domain.write")
+    from .api import trusted_session_resolver
     with service._lock:
+        current,record=read_run(run_id,x_session_token,"domain.write")
+        store = _project_store()
+        guard(_check_run_incarnation, record, store)
+        session_generation = trusted_session_resolver.binding_generation(x_session_token)
         claimed=guard(service.claim_agent_task,run_id,node_id,current.actor_id)
         node=next(n for n in claimed["definition_snapshot"]["nodes"] if n["id"]==node_id)
         try:
@@ -184,7 +249,8 @@ def execute_agent(run_id: str, node_id: str, body: ExecuteAgentIn, x_session_tok
             state={**claimed["node_states"][node_id]}
             state["output"]={**state["output"],"agent_job_id":job["id"]}
             linked=service._update("workflow_runs",run_id,{"node_states":{**claimed["node_states"],node_id:state},"external_ai_calls":job["target"]=="cloud"},novel_id=record["novel_id"],expected_version=claimed["version"],action="AGENT_JOB_LINKED",target_type="WorkflowRun")
-            agent_job_service.start(job["id"])
+            agent_job_service.start(job["id"], _agent_execution_authority(
+                x_session_token, current, linked, node_id, job, store, session_generation))
             return linked
         except Exception:
             service.complete_agent_task(run_id,node_id,"FAILED",error="AGENT_START_FAILED")
@@ -209,8 +275,10 @@ def sync_agent(run_id: str, node_id: str, x_session_token: str | None = Header(d
 def retry(run_id: str, x_session_token: str | None = Header(default=None), idempotency_key: str | None = Header(default=None)):
     current,source=read_run(run_id,x_session_token,"domain.write")
     with service._lock:
+        store = _project_store()
+        guard(_check_run_incarnation, source, store)
         result=guard(service.retry_workflow_run,run_id,idem(current,idempotency_key,run_id))
-        return stamp("workflow_runs",result,current,source.get("branch_id"))
+        return stamp("workflow_runs",result,current,source.get("branch_id"),source["project_incarnation"])
 
 
 @router.post("/workflow-runs/{run_id}/{action}")

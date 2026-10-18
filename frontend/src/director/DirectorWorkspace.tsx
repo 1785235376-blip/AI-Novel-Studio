@@ -1,3 +1,4 @@
+import { DirectorCameraEvidencePanel } from './DirectorCameraEvidencePanel';
 import { useEffect, useRef, useState } from 'react';
 
 import { Badge, Button, Panel, Spinner, StatusMessage } from '../ui/primitives';
@@ -109,6 +110,7 @@ function DirectorWorkspaceSession({ client, documentId, active = true }: Workspa
         <Button onClick={() => { if (currentProjection.current === projection) setDraft(undefined); }}>清除本次镜头语言草稿</Button>
       </StatusMessage>}
 
+      <DirectorCameraEvidencePanel evidence={projection.camera_geometry} />
       <ContinuityPanel panel={projection.continuity} />
     </>}
   </Panel>;

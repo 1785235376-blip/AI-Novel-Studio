@@ -381,6 +381,17 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                         if "crop" in clip:
                             crop = clip["crop"]
                             visual += f"crop={crop['width']}:{crop['height']}:{crop['x']}:{crop['y']}:exact=1,"
+                        color = clip.get("color_adjustment")
+                        if color is not None and color != {"brightness": 0, "contrast": 1, "saturation": 1}:
+                            # eq works on YUV picture planes. Keep the original
+                            # alpha separately, then restore it before scaling,
+                            # opacity, fades and two-source transitions. Only
+                            # closed finite numbers reach these fixed filters.
+                            visual += (f"format=rgba,split=2[crgb{index}][calpha{index}];"
+                                f"[calpha{index}]alphaextract[ca{index}];"
+                                f"[crgb{index}]format=yuv444p,eq=brightness={color['brightness']:.8f}:"
+                                f"contrast={color['contrast']:.8f}:saturation={color['saturation']:.8f}[ceq{index}];"
+                                f"[ceq{index}][ca{index}]alphamerge,")
                         visual += (f"scale={clip['width']}:{clip['height']}:force_original_aspect_ratio=decrease,"
                             f"format=rgba,pad={clip['width']}:{clip['height']}:(ow-iw)/2:(oh-ih)/2:color=black@0,setsar=1,fps={timeline['fps']},")
                         if clip["id"] in participants:
@@ -391,6 +402,10 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
                             visual += (f"settb=AVTB,setpts=PTS-STARTPTS,format=gbrap,premultiply=inplace=1,"
                                 f"tpad=stop_mode=clone:stop_duration={_seconds(math.ceil(1000 / timeline['fps']))},"
                                 f"trim=duration={_seconds(clip_duration_ms(clip))}")
+                            # Native premultiply can erase CFR metadata even
+                            # when its input passed through fps. xfade requires
+                            # both CFR and matching timebases after this stage.
+                            visual += f",fps={timeline['fps']},settb=AVTB"
                             filters.append(visual + f"[{label}]")
                         else:
                             # Geometry, opacity and fades are numbers from the closed DTO.

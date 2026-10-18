@@ -216,13 +216,13 @@ def test_stored_narrative_foreshadowing_expectation_is_reviewable_and_facts_inva
     e = review_env
     chapter = e.chapters.create(e.nid, {'title': 'Second chapter', 'content': 'Earlier seed returns.'})
     chapter = e.chapters.get(chapter['id'])
-    expectation = NarrativeExpectation('seed-expectation', e.nid, 'FORESHADOWING', 'seed', 'FORESHADOWING_PAYOFF_BY', 1)
+    expectation = NarrativeExpectation(e.nid + '-seed-expectation', e.nid, 'FORESHADOWING', 'seed', 'FORESHADOWING_PAYOFF_BY', 1)
     e.narrative.create_expectation(expectation)
     body = FindingCheckIn(chapter_id=chapter['id'], expected_source_version=chapter['version'])
     row = e.review.check(e.nid, e.scope, 'author', 'narrative', body)['items'][0]
     assert row['finding_type'] == 'FORESHADOWING_OVERDUE' and row['provenance'] == 'STORED_NARRATIVE_FACTS'
     e.review.review(e.nid, e.scope, 'author', 'narrative', row['id'], decision(row))
-    e.narrative.create_expectation(NarrativeExpectation('second-expectation', e.nid, 'THREAD', 'thread', 'THREAD_PROGRESS_BY', 1))
+    e.narrative.create_expectation(NarrativeExpectation(e.nid + '-second-expectation', e.nid, 'THREAD', 'thread', 'THREAD_PROGRESS_BY', 1))
     assert e.review.get(e.nid, e.scope, 'narrative', row['id'])['stale_source']
 
 

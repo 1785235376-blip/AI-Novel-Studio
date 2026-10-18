@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/nle/timelineOps.test.ts (52 tests) 70ms
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (34 tests) 791ms
+ ✓ src/nle/nlePanels.test.tsx (18 tests) 426ms
+ ✓ src/creative/StudioTimelineBasicColor.additive.test.tsx (31 tests) 1484ms
+   ✓ routes mounted Inspector through staged draft/undo/explicit Save and original reopen without rendering 740ms
+
+ Test Files  4 passed (4)
+      Tests  135 passed (135)
+   Start at  01:05:33
+   Duration  6.15s (transform 837ms, setup 32ms, collect 1.38s, tests 2.77s, environment 1.20s, prepare 231ms)
+

@@ -1,14 +1,34 @@
 export const MAX_OFFLINE_SYNC_BYTES = 512 * 1024;
+const MAX_OFFLINE_SYNC_DEPTH = 64;
 
 /** Fixed messages only: never show parser excerpts, file contents or local paths. */
 export class OfflineSyncInputError extends Error {}
 const tooLarge = () => new OfflineSyncInputError('同步消息不能超过 512 KiB，请选择较小的交换文件。');
+const tooDeep = () => new OfflineSyncInputError('同步消息的 JSON 嵌套不能超过 64 层，请简化消息后重试；原输入已保留。');
 const unreadable = () => new OfflineSyncInputError('无法读取本地文件，请重新选择文件；原输入已保留。');
 const cancelled = () => new DOMException('文件读取已取消。', 'AbortError');
 
-/** Syntax and byte limit only. The original sync owner validates the envelope. */
+/** Bound containers before parsing so recursive preview serialization stays safe. */
+function checkStructuralDepth(text: string): void {
+  let depth = 0, inString = false, escaped = false;
+  for (let index = 0; index < text.length; index++) {
+    const character = text[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (character === '\\') escaped = true;
+      else if (character === '"') inString = false;
+    } else if (character === '"') inString = true;
+    else if (character === '[' || character === '{') {
+      if (++depth > MAX_OFFLINE_SYNC_DEPTH) throw tooDeep();
+    } else if (character === ']' || character === '}') depth--;
+  }
+  // JSON.parse remains responsible for all syntax, including bracket matching.
+}
+
+/** Syntax and resource limits only. The original sync owner validates the envelope. */
 export function parseOfflineSyncMessage(text: string): unknown {
   if (new TextEncoder().encode(text).byteLength > MAX_OFFLINE_SYNC_BYTES) throw tooLarge();
+  checkStructuralDepth(text);
   // Accept one UTF-8 BOM from local text exporters, but retain the exact input
   // in the editor and enforce its bytes above. Never trim other content.
   try { return JSON.parse(text.startsWith('\uFEFF') ? text.slice(1) : text); }

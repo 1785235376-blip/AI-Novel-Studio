@@ -1,0 +1,74 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/experimental/offlineSyncFile.test.ts (24 tests | 5 failed) 154ms
+   × rejects stack-exhausting JSON before preview even when it is well under the byte limit 50ms
+     → expected function to throw an error, but it didn't
+   × accepts exactly 64 array container levels and safely rejects level 65 for paste and files 3ms
+     → expected [Function] to throw an error
+   × accepts exactly 64 object container levels and safely rejects level 65 for paste and files 1ms
+     → expected [Function] to throw an error
+   × accepts exactly 64 mixed container levels and safely rejects level 65 for paste and files 1ms
+     → expected [Function] to throw an error
+   × preserves one leading BOM at the depth boundary and rejects excessive BOM-prefixed nesting 1ms
+     → expected [Function] to throw an error
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 19 passed (24)
+   Start at  01:02:18
+   Duration  752ms (transform 47ms, setup 15ms, collect 37ms, tests 154ms, environment 302ms, prepare 65ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/offlineSyncFile.test.ts > rejects stack-exhausting JSON before preview even when it is well under the byte limit
+AssertionError: expected function to throw an error, but it didn't
+ ❯ src/experimental/offlineSyncFile.test.ts:21:47
+     19|   const parsed = JSON.parse(text);
+     20|   expect(() => JSON.stringify(parsed, null, 2)).toThrow(RangeError);
+     21|   expect(() => parseOfflineSyncMessage(text)).toThrow(OfflineSyncInput…
+       |                                               ^
+     22|   expect(() => parseOfflineSyncMessage(text)).toThrow('同步消息的 JSON…
+     23| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/experimental/offlineSyncFile.test.ts > accepts exactly 64 array container levels and safely rejects level 65 for paste and files
+ FAIL  src/experimental/offlineSyncFile.test.ts > accepts exactly 64 object container levels and safely rejects level 65 for paste and files
+ FAIL  src/experimental/offlineSyncFile.test.ts > accepts exactly 64 mixed container levels and safely rejects level 65 for paste and files
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ src/experimental/offlineSyncFile.test.ts:37:52
+     35|   expect(JSON.stringify(parseOfflineSyncMessage(boundary))).toBe(bound…
+     36|   expect(await readOfflineSyncFile(new File([boundary], 'boundary.json…
+     37|   expect(() => parseOfflineSyncMessage(excessive)).toThrow(/嵌套不能超…
+       |                                                    ^
+     38|   await expect(readOfflineSyncFile(new File([excessive], 'too-deep-pri…
+     39| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/experimental/offlineSyncFile.test.ts > preserves one leading BOM at the depth boundary and rejects excessive BOM-prefixed nesting
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ src/experimental/offlineSyncFile.test.ts:54:52
+     52|   expect(await readOfflineSyncFile(new File([boundary], 'boundary-bom.…
+     53|   const excessive = '\uFEFF' + nestedJson(65, 'mixed');
+     54|   expect(() => parseOfflineSyncMessage(excessive)).toThrow(/嵌套不能超…
+       |                                                    ^
+     55|   await expect(readOfflineSyncFile(new File([excessive], 'private-bom.…
+     56| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+

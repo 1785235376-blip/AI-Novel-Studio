@@ -216,6 +216,7 @@ export type NleClipChanges = {
   speed_num?: number; speed_den?: number; opacity?: number;
   gain_db?: number; muted?: boolean; include_audio?: boolean;
   fade_in_ms?: number; fade_out_ms?: number;
+  color_adjustment?: StudioTimelineClip['color_adjustment'] | null;
   crop?: StudioTimelineClip['crop'] | null;
   transition_out?: StudioTimelineTransition | null;
 };

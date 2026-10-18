@@ -64,6 +64,6 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
     {props.waveform && <TimelineWaveformPanel {...props.waveform} />}
     {timeline.schema_version !== 3 && <SubtitleTrackPanel timeline={timeline} subtitles={props.subtitles} editable={props.editable} onEdit={props.onEdit} />}
     <ExportDeliveryPanel mediaKind={timeline.schema_version === 3 ? 'AUDIO' : 'VIDEO'} exportReceipt={props.exportReceipt} limits={props.limits} usage={usage} />
-    <p className="nle-workspace__foot">本批次不改变已保存的时间线契约、不提高任何上限、不做调色与合成；本地 Windows、真实媒体与重型渲染验收仍待执行。</p>
+    <p className="nle-workspace__foot">基础调色通过原时间线保存与渲染；不提高任何上限，不支持高级调色或 LUT。本地 Windows、真实媒体与重型渲染验收仍待执行。</p>
   </Panel>;
 }

@@ -1,3 +1,4 @@
+import type { DirectorCameraEvidence } from './directorCameraEvidence';
 /**
  * Phase14-A 导演工作台 — 表示层类型与冻结词表。
  *
@@ -190,6 +191,7 @@ export type DirectorWorkspaceProjection = {
   director_intent: DirectorIntentProjection;
   shot_cards: ShotCardProjection[];
   continuity: ContinuityPanel;
+  camera_geometry?: DirectorCameraEvidence;
 };
 
 export type DirectorWorkspaceSurfaceState = 'IDLE' | 'LOADING' | 'READY' | 'EMPTY' | 'DENIED' | 'FAILED';

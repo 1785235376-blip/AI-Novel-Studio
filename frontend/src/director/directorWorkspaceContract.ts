@@ -1,3 +1,4 @@
+import { checkedDirectorCameraEvidence } from './directorCameraEvidence';
 /**
  * Phase14-A 严格解码器。
  *
@@ -356,7 +357,7 @@ export function directorWorkspaceProjection(value: unknown, expectedDocumentId: 
   const row = record(value);
   closed(row, ['contract', 'schema_version', 'advisory_only', 'execution_authority', 'auto_modify',
                'project_id', 'scope', 'generated_at', 'project_context', 'document',
-               'required_shot_card_fields', 'director_intent', 'shot_cards', 'continuity']);
+               'required_shot_card_fields', 'director_intent', 'shot_cards', 'continuity'], ['camera_geometry']);
   if (row.contract !== DIRECTOR_WORKSPACE_CONTRACT) directorWorkspaceInvalid();
   if (row.advisory_only !== true || row.execution_authority !== false || row.auto_modify !== false) {
     directorWorkspaceInvalid();
@@ -387,6 +388,7 @@ export function directorWorkspaceProjection(value: unknown, expectedDocumentId: 
     director_intent: directorIntent(row.director_intent),
     shot_cards: list(row.shot_cards, 1000).map(shotCard),
     continuity: continuityPanel(row.continuity),
+    ...(row.camera_geometry === undefined ? {} : { camera_geometry: checkedDirectorCameraEvidence(row.camera_geometry, { id: documentId, version: Number(document.version), mode: String(document.mode) }, directorWorkspaceInvalid) }),
   };
 }
 

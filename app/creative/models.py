@@ -8,7 +8,25 @@ from __future__ import annotations
 from typing import Annotated, ClassVar, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_serializer, model_validator
+
+from ..experimental.director import CameraGrammar
+
+def _authored_camera_grammar(value):
+    # These are authored position labels, not Character-owner identities.
+    # Constrain only this additive Creative contract, never legacy A08 data.
+    labels = value.get("character_positions", {}) if isinstance(value, dict) else getattr(value, "character_positions", {})
+    if isinstance(labels, dict) and any(not isinstance(key, str) or not key.strip() or len(key) > 240
+            or any(ord(c) < 32 or ord(c) == 127 for c in key) for key in labels):
+        raise ValueError("CREATIVE_CAMERA_POSITION_LABEL_INVALID")
+    parsed = CameraGrammar.model_validate(value, strict=True)
+    if isinstance(labels, dict) and len(parsed.character_positions) != len(labels):
+        raise ValueError("CREATIVE_CAMERA_POSITION_LABEL_DUPLICATE")
+    return parsed
+
+
+# Reuse A08's closed grammar; the Creative owner additionally refuses coercion.
+AuthoredCameraGrammar = Annotated[CameraGrammar, BeforeValidator(_authored_camera_grammar)]
 
 CreativeMode = Literal["SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT"]
 MODES = ("SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT")
@@ -107,7 +125,7 @@ class DirectorPlanning(DirectorPlanningText):
 
 
 class DirectorNote(OptionalProductionFields):
-    production_optional_fields = ("planning", "shot_suggestion", "composition", "lens", "character_state", "performances", "lighting", "color_palette", "material", "transition")
+    production_optional_fields = ("planning", "shot_suggestion", "composition", "lens", "character_state", "performances", "lighting", "color_palette", "material", "transition", "camera_grammar")
     id: Identifier = Field(default_factory=identifier)
     note: str = Field(default="", max_length=8000, strict=True)
     shot_size: str = Field(default="", max_length=80, strict=True)
@@ -128,6 +146,7 @@ class DirectorNote(OptionalProductionFields):
     color_palette: str | None = Field(default=None, max_length=2000, strict=True)
     material: str | None = Field(default=None, max_length=4000, strict=True)
     transition: str | None = Field(default=None, max_length=2000, strict=True)
+    camera_grammar: AuthoredCameraGrammar | None = None
 
     @model_validator(mode="after")
     def distinct_performers(self):
@@ -177,7 +196,7 @@ class ShotContinuity(OptionalProductionFields):
 
 
 class ShotCard(OptionalProductionFields):
-    production_optional_fields = ("characters", "emotion", "continuity", "director_note_ids", "video_generation_hint")
+    production_optional_fields = ("characters", "emotion", "continuity", "director_note_ids", "video_generation_hint", "camera_grammar")
     id: Identifier = Field(default_factory=identifier)
     number: int = Field(ge=1, le=10000, strict=True)
     scene_id: Identifier
@@ -201,6 +220,7 @@ class ShotCard(OptionalProductionFields):
     continuity: ShotContinuity | None = None
     director_note_ids: list[Identifier] | None = Field(default=None, max_length=100)
     video_generation_hint: str | None = Field(default=None, max_length=4000, strict=True)
+    camera_grammar: AuthoredCameraGrammar | None = None
 
     @model_validator(mode="after")
     def distinct_characters(self):
@@ -371,6 +391,10 @@ class DirectorModelDispatch(ProposalAction):
 class DirectorModelNote(DirectorSceneNote):
     # Stable model IDs are required so reparsing cannot mint a new output digest.
     id: Identifier
+    # Geometry is explicitly authored, never manufactured by semantic output.
+    # ClassVar removes the inherited field from both validation and JSON schema;
+    # extra="forbid" rejects even an explicit null, without silent stripping.
+    camera_grammar: ClassVar[None] = None
 
 
 class DirectorModelOutput(StrictCreativeModel):

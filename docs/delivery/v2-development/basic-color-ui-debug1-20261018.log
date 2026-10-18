@@ -1,0 +1,27 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ❯ src/creative/StudioTimelineBasicColor.additive.test.tsx (31 tests | 1 failed) 1379ms
+   × closed basic color contract and original operation > rejects undefined without a second editing contract 6ms
+     → expected [Function] to throw an error
+   ✓ routes mounted Inspector through staged draft/undo/explicit Save and original reopen without rendering 669ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 30 passed (31)
+   Start at  01:04:22
+   Duration  2.53s (transform 431ms, setup 20ms, collect 600ms, tests 1.38s, environment 331ms, prepare 56ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/StudioTimelineBasicColor.additive.test.tsx > closed basic color contract and original operation > rejects undefined without a second editing contract
+AssertionError: expected [Function] to throw an error
+ ❯ src/creative/StudioTimelineBasicColor.additive.test.tsx:51:64
+     49|     if (fault === 'extra') op.changes.source_snapshot = source;
+     50|     if (fault === 'undefined') op.changes.color_adjustment = undefined;
+     51|     expect(() => applyClipColorOperation(input, selected, op)).toThrow…
+       |                                                                ^
+     52|   });
+     53| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,80 @@
+..................F...F..                                                [100%]
+=================================== FAILURES ===================================
+_ test_color_original_edit_save_reopen_history_playback_cache_review_export[file] _
+
+color_timeline = namespace(nid='v2-independent-acdd4feb100b4f2880147a0aa92eff86', scope={'mode': 'local', 'novel_id': 'v2-independent-a...'created_at': '2026-10-18T16:02:55.317142+00:00', 'updated_at': '2026-10-18T16:02:55.317142+00:00', 'branch_id': None})
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/basic-color-file-debug1-20261018/tmp/test_color_original_edit_save_0')
+
+    def test_color_original_edit_save_reopen_history_playback_cache_review_export(color_timeline, tmp_path):
+        e = color_timeline; initial = e.row
+        before = e.production.timeline_playback_preview(e.nid, e.scope, e.actor, initial['id'], reviewed(initial), lambda: None)
+        assert before['cache_state'] == 'MISSING' and not e.production.list(e.nid, e.scope, e.actor, lambda: None)['items']
+        baseline = e.production.timeline_playback_build(e.nid, e.scope, e.actor, initial['id'],
+            {**reviewed(initial), 'reviewed_playback_digest': before['playback_digest']}, lambda: None)['job']
+        assert baseline['status'] == 'SUCCEEDED', baseline
+        _, original_data = e.production.candidate(e.nid, e.scope, e.actor, 'timeline', baseline['id'], lambda: None)
+        body = edit_body(initial, change(ADJUSTED), 'color-edit')
+        edited = e.production.timeline_edit(e.nid, e.scope, e.actor, initial['id'], body, lambda: None)
+        assert e.production.timeline_edit(e.nid, e.scope, e.actor, initial['id'], body, lambda: None) == edited
+        assert clip(edited['timeline'])['color_adjustment'] == ADJUSTED
+        with pytest.raises(StaleSourceError): e.production.timeline_playback_build(e.nid, e.scope, e.actor, initial['id'], {**reviewed(initial), 'reviewed_playback_digest': before['playback_digest']}, lambda: None)
+        # Whole-document UI Save uses the same original owner and preserves color.
+        saved = e.production.timeline_save(e.nid, e.scope, e.actor, edited['id'],
+            {'expected_version': edited['version'], 'title': 'Saved basic color', 'timeline': edited['timeline']}, lambda: None)
+        fresh = production(e, reopened(e)); assert fresh.timeline_get(e.nid, e.scope, e.actor, saved['id'], lambda: None) == saved
+        preview = fresh.timeline_playback_preview(e.nid, e.scope, e.actor, saved['id'], reviewed(saved), lambda: None)
+        assert preview['playback_digest'] != before['playback_digest'] and preview['cache_state'] == 'MISSING'
+        built = fresh.timeline_playback_build(e.nid, e.scope, e.actor, saved['id'], {**reviewed(saved), 'reviewed_playback_digest': preview['playback_digest']}, lambda: None)
+        job = built['job']; assert job['status'] == 'SUCCEEDED', job
+        with pytest.raises(FileNotFoundError): e.service.asset(e.nid, e.scope, job['output_candidate']['id'])
+        _, data = fresh.candidate(e.nid, e.scope, e.actor, 'timeline', job['id'], lambda: None)
+        old_proof, new_proof = decode(original_data, tmp_path / 'before.mp4'), decode(data, tmp_path / 'after.mp4')
+        assert old_proof['sha256'] != new_proof['sha256']
+>       assert all(max(rgb) - min(rgb) <= 3 for rgb in new_proof['rgb_samples'])
+E       assert False
+E        +  where False = all(<generator object test_color_original_edit_save_reopen_history_playback_cache_review_export.<locals>.<genexpr> at 0x7f590756c660>)
+
+tests/test_v2_timeline_basic_color.py:146: AssertionError
+__ test_each_basic_control_changes_real_pixels_and_neutral_is_identity[image] __
+
+kind = 'image'
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/v2-checks/basic-color-file-debug1-20261018/tmp/test_each_basic_control_change0')
+
+    @pytest.mark.file_backend_only
+    @pytest.mark.parametrize('kind', ['image', 'video'])
+    def test_each_basic_control_changes_real_pixels_and_neutral_is_identity(kind, tmp_path):
+        data = pixels_png()
+        if kind == 'video':
+            path = tmp_path / 'swatches.png'; path.write_bytes(data); target = tmp_path / 'swatches.mp4'
+            run_guarded_process([shutil.which('ffmpeg'), '-nostdin', '-v', 'error', '-threads', '1', '-loop', '1', '-i', str(path), '-t', '1', '-r', '10', '-c:v', 'mpeg4', '-threads', '1', '-y', str(target)], cwd=tmp_path, guard=lambda: None, timeout=20)
+            data = target.read_bytes()
+        pin = {'id': kind, 'kind': 'ASSET', 'asset_kind': kind, 'version': 1, 'digest': hashlib.sha256(data).hexdigest()}
+        def guard(snapshot): return {'snapshot': deepcopy(pin), 'data': data, 'row': {'id': kind, 'kind': kind, 'version': 1, 'sha256': pin['digest']}}
+        value = timeline(pin); original, _ = render_studio_timeline(value, source_guard=guard, guard=lambda: None, max_bytes=CAP)
+        baseline = decode(original, tmp_path / 'baseline.mp4')
+        neutral = apply_timeline_edits(value, change(NEUTRAL)); neutral_data, _ = render_studio_timeline(neutral, source_guard=guard, guard=lambda: None, max_bytes=CAP)
+        assert original == neutral_data
+        proofs = {'baseline': baseline}
+        for control, setting in [('brightness', .2), ('contrast', .5), ('saturation', 0)]:
+            adjusted = apply_timeline_edits(value, change({**NEUTRAL, control: setting}))
+            output, _ = render_studio_timeline(adjusted, source_guard=guard, guard=lambda: None, max_bytes=CAP)
+            result = decode(output, tmp_path / f'{control}.mp4'); proofs[control] = result
+            assert result['sha256'] != baseline['sha256'] and result['rgb_samples'] != baseline['rgb_samples']
+            if control == 'brightness': assert sum(result['rgb_samples'][0]) > sum(baseline['rgb_samples'][0]) + 90
+            if control == 'contrast': assert sum(result['rgb_samples'][1]) - sum(result['rgb_samples'][0]) < .65 * (sum(baseline['rgb_samples'][1]) - sum(baseline['rgb_samples'][0]))
+>           if control == 'saturation': assert all(max(rgb) - min(rgb) <= 3 for rgb in result['rgb_samples'])
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert False
+E            +  where False = all(<generator object test_each_basic_control_changes_real_pixels_and_neutral_is_identity.<locals>.<genexpr> at 0x7f5907558c80>)
+
+tests/test_v2_timeline_basic_color.py:234: AssertionError
+=============================== warnings summary ===============================
+tests/test_v2_timeline_basic_color.py::test_closed_color_contract_rejects_invalid_numbers_fields_and_expressions[None]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_timeline_basic_color.py::test_color_original_edit_save_reopen_history_playback_cache_review_export[file]
+FAILED tests/test_v2_timeline_basic_color.py::test_each_basic_control_changes_real_pixels_and_neutral_is_identity[image]
+2 failed, 23 passed, 4 deselected, 1 warning in 21.07s
