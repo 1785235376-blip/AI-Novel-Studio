@@ -1,0 +1,20 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/graphSelectionCopy.test.ts (17 tests) 17ms
+ ✓ src/creative/graphTextTemplates.additive.test.ts (13 tests) 11ms
+ ✓ src/creative/GraphTextTemplateTools.additive.test.tsx (8 tests) 127ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4484ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1030ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 466ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 916ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 721ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 439ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 337ms
+
+ Test Files  4 passed (4)
+      Tests  47 passed (47)
+   Start at  21:40:17
+   Duration  8.32s (transform 2.97s, setup 58ms, collect 4.33s, tests 4.64s, environment 713ms, prepare 254ms)
+
+src/creative/graphTextTemplates.additive.test.ts(18,122): error TS2322: Type '3' is not assignable to type '16'.

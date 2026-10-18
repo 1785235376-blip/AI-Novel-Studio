@@ -1,3 +1,4 @@
+import { GraphTextTemplateTools } from './GraphTextTemplateTools';
 import { GraphDraftChecklist } from './GraphDraftChecklist';
 import { GraphStoryboardStarter } from './GraphStoryboardStarter';
 import { GraphStarterPanel } from './GraphStarterPanel';
@@ -204,6 +205,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
           <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
         </div>}
       </section>
+      <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
         onInsertionInteraction={canvas ? controller.invalidatePositionedInsertion : undefined}
         onRequestInsertion={canvas ? controller.requestPositionedInsertion : undefined} connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}

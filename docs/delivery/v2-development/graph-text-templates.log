@@ -1,0 +1,29 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/graphSelectionCopy.test.ts (17 tests) 17ms
+ ❯ src/creative/graphTextTemplates.additive.test.ts (9 tests | 1 failed) 15ms
+   × refuses receipt without inheriting authority 5ms
+     → expected [Function] to throw an error
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4368ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 1035ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 466ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 837ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 680ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 453ms
+   ✓ independent studio graph content integration > displays redacted saved references without enabling a full-save or deletion roundtrip 318ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 34 passed (35)
+   Start at  21:37:31
+   Duration  8.05s (transform 2.63s, setup 44ms, collect 3.66s, tests 4.40s, environment 343ms, prepare 194ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/graphTextTemplates.additive.test.ts > refuses receipt without inheriting authority
+AssertionError: expected [Function] to throw an error
+ ❯ src/creative/graphTextTemplates.additive.test.ts:16:67
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
