@@ -1,16 +1,16 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:09 UTC. This document inventories bounded additions, not a
+Updated 2026-10-18 20:15 UTC. This document inventories bounded additions, not a
 replacement for the frozen feature matrix or a V2 percentage/Release declaration.
 The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
 
 ## Source and publication
 
-Current checkpoint: 2026-10-18 20:09 UTC. Working branch:
+Current checkpoint: 2026-10-18 20:15 UTC. Working branch:
 work/dot-recovered-20261018. Latest committed product source is
-2a9287733aea93bdda4dd2de27c3021b46dc6ded (private ORA staging/recovery).
+b5062095926fb449429482467a014b66688744a1 (explicit IMAGE declaration/adoption).
 Latest byte-verified public archive is
-8996f8a2d0c53a591e4f887fb30f314e1177f53e on
+e57446be2776d4066e3a9892c2bd1f142222a7eb on
 archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
 different identities; the archive stores prerequisite-bound incremental bundles.
 The restored local source contains the integrated working product, whereas the
@@ -339,3 +339,12 @@ Prior source64083447 was archived as8996f8a2d0c53a591e4f887fb30f314e1177f53e,
 exact parent114f61a:13 paths/4,946,353 bytes anonymously verified. No main or normal
 source branch changed. Next isolated work: explicit human-cost IMAGE adoption,
 ORA review/attachment and chapter-only author-entered Audience comparison.
+
+## 20:15 UTC IMAGE declaration/adoption checkpoint
+
+Product b5062095926fb449429482467a014b66688744a1 adds explicit human-declared
+local cost and original scene-note adoption. File46/realPG46/PUBLIC6 pass;
+all3096 source paths match. No public mounted workflow or live-model acceptance.
+Prior source c7bffde8 is archive e57446be2776d4066e3a9892c2bd1f142222a7eb,
+parent8996f8a2:13 paths/5,096,930 bytes independently verified. New mounted
+workflow, ORA review/attachment and Audience comparison remain isolated.

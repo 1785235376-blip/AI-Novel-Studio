@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-18T20:09:00Z",
+  "updated_at_utc": "2026-10-18T20:15:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -8226,6 +8226,12 @@
           "product_sha": "0d72d692dfa56f6a47d8050d12eaf98e364c9e05",
           "summary": "Internal sealed IMAGE V3 Job/Broker terminal/pending persistence against existing DIRECTOR scene. No mounted execution, accounting reconciliation or adoption; injected transport only.",
           "report": "docs/delivery/v2-development/director-passport-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "b5062095926fb449429482467a014b66688744a1",
+          "summary": "Explicit unmeasured human cost declaration and exact original DIRECTOR scene-note adoption with immutable terminal and atomic replay proof. Internal only; mounted workflow remains open.",
+          "report": "docs/delivery/v2-development/director-adoption-integration-20261018.md",
           "formal_acceptance": false
         }
       ]
@@ -21975,8 +21981,8 @@
     }
   ],
   "current_checkpoint": {
-    "product_sha": "2a9287733aea93bdda4dd2de27c3021b46dc6ded",
-    "report": "docs/delivery/v2-development/ora-staging-integration-20261018.md",
+    "product_sha": "b5062095926fb449429482467a014b66688744a1",
+    "report": "docs/delivery/v2-development/director-adoption-integration-20261018.md",
     "source_identity_section": "Historical initial reconciliation baseline, not the current HEAD",
     "all_fixed_ids_accepted": false
   }
