@@ -1,0 +1,6 @@
+{
+  "source_head": "4de76c72ab1a95328bb88db25ead021a8b771aba",
+  "prerequisite": "ff06d6ca682da7b95e36eb7a166a94cf2ac2d857",
+  "bundle": "continuation.bundle",
+  "scope": "Correct derived citation contract and actual frontend rebuild"
+}
