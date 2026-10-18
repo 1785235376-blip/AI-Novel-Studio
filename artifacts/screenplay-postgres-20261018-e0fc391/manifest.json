@@ -1,0 +1,9 @@
+{
+  "source_head": "e0fc391dcfe0f8efe46a2167192f4660c8c78892",
+  "prerequisite": "80b42c81b593a58ee5f330415054b576135930c2",
+  "postgres_screenplay_http_checks": 2,
+  "database_mode": "reuse",
+  "database_oid": 31303,
+  "production_changes": false,
+  "full_v2_release": "NOT_CLAIMED"
+}
