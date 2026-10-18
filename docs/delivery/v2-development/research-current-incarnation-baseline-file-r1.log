@@ -1,0 +1,118 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-source] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...-checks/research-current-incarnation-baseline-file-r1/pytest/test_current_reads_refuse_prev0'), backend='file', url='')
+operation = 'source'
+
+    @pytest.mark.parametrize('operation',['source','original','history','resolve'])
+    def test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records(rig,operation):
+        e=rig;service,first,current,saved,_=previous_project(e)
+        calls={'source':lambda:service.source(e.nid,e.scope,e.actor,first['id']),
+               'original':lambda:service.original(e.nid,e.scope,e.actor,first['id']),
+               'history':lambda:service.source_history(e.nid,e.scope,e.actor,first['id']),
+               'resolve':lambda:service.resolve(e.nid,e.scope,e.actor,citation(current))}
+        denied=False
+        try:calls[operation]()
+        except FileNotFoundError:denied=True
+        assert e.store.read(e.nid,e.scope)==saved
+>       assert denied,'Retained previous-project record was exposed through '+operation
+E       AssertionError: Retained previous-project record was exposed through source
+E       assert False
+
+tests/test_research_current_incarnation_additive.py:31: AssertionError
+_ test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-original] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...-checks/research-current-incarnation-baseline-file-r1/pytest/test_current_reads_refuse_prev1'), backend='file', url='')
+operation = 'original'
+
+    @pytest.mark.parametrize('operation',['source','original','history','resolve'])
+    def test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records(rig,operation):
+        e=rig;service,first,current,saved,_=previous_project(e)
+        calls={'source':lambda:service.source(e.nid,e.scope,e.actor,first['id']),
+               'original':lambda:service.original(e.nid,e.scope,e.actor,first['id']),
+               'history':lambda:service.source_history(e.nid,e.scope,e.actor,first['id']),
+               'resolve':lambda:service.resolve(e.nid,e.scope,e.actor,citation(current))}
+        denied=False
+        try:calls[operation]()
+        except FileNotFoundError:denied=True
+        assert e.store.read(e.nid,e.scope)==saved
+>       assert denied,'Retained previous-project record was exposed through '+operation
+E       AssertionError: Retained previous-project record was exposed through original
+E       assert False
+
+tests/test_research_current_incarnation_additive.py:31: AssertionError
+_ test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-history] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...-checks/research-current-incarnation-baseline-file-r1/pytest/test_current_reads_refuse_prev2'), backend='file', url='')
+operation = 'history'
+
+    @pytest.mark.parametrize('operation',['source','original','history','resolve'])
+    def test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records(rig,operation):
+        e=rig;service,first,current,saved,_=previous_project(e)
+        calls={'source':lambda:service.source(e.nid,e.scope,e.actor,first['id']),
+               'original':lambda:service.original(e.nid,e.scope,e.actor,first['id']),
+               'history':lambda:service.source_history(e.nid,e.scope,e.actor,first['id']),
+               'resolve':lambda:service.resolve(e.nid,e.scope,e.actor,citation(current))}
+        denied=False
+        try:calls[operation]()
+        except FileNotFoundError:denied=True
+        assert e.store.read(e.nid,e.scope)==saved
+>       assert denied,'Retained previous-project record was exposed through '+operation
+E       AssertionError: Retained previous-project record was exposed through history
+E       assert False
+
+tests/test_research_current_incarnation_additive.py:31: AssertionError
+_ test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-resolve] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...-checks/research-current-incarnation-baseline-file-r1/pytest/test_current_reads_refuse_prev3'), backend='file', url='')
+operation = 'resolve'
+
+    @pytest.mark.parametrize('operation',['source','original','history','resolve'])
+    def test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records(rig,operation):
+        e=rig;service,first,current,saved,_=previous_project(e)
+        calls={'source':lambda:service.source(e.nid,e.scope,e.actor,first['id']),
+               'original':lambda:service.original(e.nid,e.scope,e.actor,first['id']),
+               'history':lambda:service.source_history(e.nid,e.scope,e.actor,first['id']),
+               'resolve':lambda:service.resolve(e.nid,e.scope,e.actor,citation(current))}
+        denied=False
+        try:calls[operation]()
+        except FileNotFoundError:denied=True
+        assert e.store.read(e.nid,e.scope)==saved
+>       assert denied,'Retained previous-project record was exposed through '+operation
+E       AssertionError: Retained previous-project record was exposed through resolve
+E       assert False
+
+tests/test_research_current_incarnation_additive.py:31: AssertionError
+_ test_old_records_are_absent_from_current_list_and_new_owner_positive_still_works[file] _
+
+rig = namespace(nid='v2-identical-title-lifecycle', scope={'mode': 'local', 'novel_id': 'v2-identical-title-lifecycle'}, act...-checks/research-current-incarnation-baseline-file-r1/pytest/test_old_records_are_absent_fr0'), backend='file', url='')
+
+    def test_old_records_are_absent_from_current_list_and_new_owner_positive_still_works(rig):
+        e=rig;service,first,current,saved,old_identity=previous_project(e)
+        visible=service.sources(e.nid,e.scope,e.actor)
+        assert e.store.read(e.nid,e.scope)==saved
+>       assert visible['items']==[]
+E       AssertionError: assert [{'access': '...080c65', ...}] == []
+E         
+E         Left contains one more item: {'access': 'PRIVATE', 'accessed_at': '2026-10-18T04:21:09.726179+00:00', 'author': 'Synthetic author', 'content_sha256': '8b0bb1252dd69bf23583257eba5a74dd0d3c13d57e6ff6d30618843a4f080c65', ...}
+E         Use -v to get more diff
+
+tests/test_research_current_incarnation_additive.py:38: AssertionError
+=============================== warnings summary ===============================
+../studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-ci-reconciliation/.runtime/ci-reconciliation-python-r1/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_research_current_incarnation_additive.py::test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-source]
+  /workspace/scratch/20a0022d2b33/studio-director-transport/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_research_current_incarnation_additive.py::test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-source]
+FAILED tests/test_research_current_incarnation_additive.py::test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-original]
+FAILED tests/test_research_current_incarnation_additive.py::test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-history]
+FAILED tests/test_research_current_incarnation_additive.py::test_current_reads_refuse_previous_incarnation_without_rewriting_retained_records[file-resolve]
+FAILED tests/test_research_current_incarnation_additive.py::test_old_records_are_absent_from_current_list_and_new_owner_positive_still_works[file]
+5 failed, 5 deselected, 2 warnings in 5.11s

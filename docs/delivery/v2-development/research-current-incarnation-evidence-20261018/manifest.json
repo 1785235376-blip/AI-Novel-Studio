@@ -1,0 +1,455 @@
+{
+  "boundary": "Actual synthetic persisted scope snapshots, before fixture cleanup; original payloads unchanged",
+  "counts": {
+    "research-current-incarnation-baseline-file-r2": 15,
+    "research-current-incarnation-baseline-pg-r2": 15,
+    "research-current-incarnation-file-r2": 22,
+    "research-current-incarnation-pg-r1": 22
+  },
+  "files": [
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "45e7d08fc87e6476741d0b30f0b586aad911aed8c380bf7505f528b73f0aa67d",
+      "scope_sha256": "158831f3b171bd2b187d404305a68b26612a179c193f65ab62b2b4429dde3a00"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-source.json",
+      "bytes": 4012,
+      "sha256": "939c886e0c0f842b74cadec0a2fa0dbf2589e303d494cf5cd5b06a3bc508e8c4",
+      "scope_sha256": "158831f3b171bd2b187d404305a68b26612a179c193f65ab62b2b4429dde3a00"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "43c44ee12b5a317bcf8203cc6b3c024d93354e5b8ec1abb399724d94d62f575d",
+      "scope_sha256": "158831f3b171bd2b187d404305a68b26612a179c193f65ab62b2b4429dde3a00"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-original.json",
+      "bytes": 4012,
+      "sha256": "5f3a19b3415fa93f753c14d90a03ee30e4f7970f264839530dca3afbf6281b61",
+      "scope_sha256": "82ef13bf3f2e0e6d55a7a37f835fe62ea4367024ed46e4f7453d4aa8fd87060f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "5f5d8a551713d8b90010fb0541a7371b5250e56fe7f594db97f3cda7bc7b0f76",
+      "scope_sha256": "82ef13bf3f2e0e6d55a7a37f835fe62ea4367024ed46e4f7453d4aa8fd87060f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "4d19ef60e615565d8262c6555668db31c187b64305c54818ece1238efbe9b8f8",
+      "scope_sha256": "82ef13bf3f2e0e6d55a7a37f835fe62ea4367024ed46e4f7453d4aa8fd87060f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-history.json",
+      "bytes": 4012,
+      "sha256": "f964cc9d19b823e0b46ec8a2f20014d4ba8b15d1dff9945d082bc957eb5bbcd9",
+      "scope_sha256": "23952b803d6727e566d7fb87b28986f65964197a94e7c454c0b63c8961795a48"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "b68245e507b856d8bed29e866042a63c8bcb6a4014b3b899af73b0c37ffa681b",
+      "scope_sha256": "23952b803d6727e566d7fb87b28986f65964197a94e7c454c0b63c8961795a48"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "0122bec352d7069bdb20cd2d56d1c18d750012d97572f4c1ef75354e6ea97533",
+      "scope_sha256": "23952b803d6727e566d7fb87b28986f65964197a94e7c454c0b63c8961795a48"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "4575af836b5affecdb4743d906c49e47a3cb2725cc86127b8adef5343da23295",
+      "scope_sha256": "84011aa4736ad361eadec9e633cb9db3d0d03ec3c04f160940ad2d3b8cebc83f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-resolve.json",
+      "bytes": 4012,
+      "sha256": "dbee3765b3326429d2e5223c8c0bed8df9f627b51e012280117ccd990a973053",
+      "scope_sha256": "84011aa4736ad361eadec9e633cb9db3d0d03ec3c04f160940ad2d3b8cebc83f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "970bd4acd5ddb20b7315e6d4f5d554f7405016e8f484576a288ced2caa05544e",
+      "scope_sha256": "84011aa4736ad361eadec9e633cb9db3d0d03ec3c04f160940ad2d3b8cebc83f"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-list.json",
+      "bytes": 4060,
+      "sha256": "840effddf968cc9470fd35ff899d0aee661c422786c2bc3a6f5bf675896da986",
+      "scope_sha256": "25fae7ea6c115a9cf0c23f20011829fd041b2f8de4a8c96c8af155673a632fee"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "d028a1ae241ebecb880d5ab16b097e7007abab83578adeb615e639f6e5eaa12a",
+      "scope_sha256": "25fae7ea6c115a9cf0c23f20011829fd041b2f8de4a8c96c8af155673a632fee"
+    },
+    {
+      "path": "research-current-incarnation-baseline-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "95cd44a87da48275816e1faaa700da2ad94865bdf92f8cf5505f24daee915324",
+      "scope_sha256": "25fae7ea6c115a9cf0c23f20011829fd041b2f8de4a8c96c8af155673a632fee"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "a7ac1ad308eebfd09d7054cce0c91a94c57e6a6ac796ea34fe68587da24c91ec",
+      "scope_sha256": "15114f601cdaac46d43fd4044e852d63bba8f860099d75773862ae08afa6cbda"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-source.json",
+      "bytes": 4024,
+      "sha256": "7ce2fcc209c13f49339dfd94432e9896f648d9795a81ba9c277877aeece5bbeb",
+      "scope_sha256": "15114f601cdaac46d43fd4044e852d63bba8f860099d75773862ae08afa6cbda"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "7e3dd54486cdd6a995260cedf3e8976bb90614a89d564e4c89da66c0737e1d03",
+      "scope_sha256": "15114f601cdaac46d43fd4044e852d63bba8f860099d75773862ae08afa6cbda"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-original.json",
+      "bytes": 4024,
+      "sha256": "4d5bd16d84fc0776fe731c8e981dc00d89303fa51010b3ae3f965a77a9f88367",
+      "scope_sha256": "4e6bf41c475b1d66d1c0cef4ab64ce84302b0537f0480a6acf086d0157cbf396"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "b6482cda6d163b96f939aeeffe7383368c0cd56301e2a004f09471fbab5fbfca",
+      "scope_sha256": "4e6bf41c475b1d66d1c0cef4ab64ce84302b0537f0480a6acf086d0157cbf396"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "38004ad648524b0bd53dee53b51ea45f5caf3584445fb200b1706afd710d276c",
+      "scope_sha256": "4e6bf41c475b1d66d1c0cef4ab64ce84302b0537f0480a6acf086d0157cbf396"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-history.json",
+      "bytes": 4024,
+      "sha256": "f1ff112074c6ce1e6ae3585d3357117b2aed4fdf9b3ad738a86bc6d08c79de24",
+      "scope_sha256": "736416fe554c35663386d32fb2a4d67f63d0b8020475ddff4c071541a76fb5c8"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "990c7f1e42cb8b6080e605b9084e6b010d096af32c8a78553b3b8849f10c8323",
+      "scope_sha256": "736416fe554c35663386d32fb2a4d67f63d0b8020475ddff4c071541a76fb5c8"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "26daeaf70bc99f62d435a33c3541fb182a1e516630153718ad0e6125fe4114d5",
+      "scope_sha256": "736416fe554c35663386d32fb2a4d67f63d0b8020475ddff4c071541a76fb5c8"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "a0c6ea78dc0eaba71579b60eecb270a6a7bb66b38903448034e9887042908a79",
+      "scope_sha256": "7cc2615ac755be74a00c2bed5f9993e6e57a3d1dd01c72678c800ebf9e006a04"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-resolve.json",
+      "bytes": 4024,
+      "sha256": "d39d758288b803c86d5d74bbde0884804969e0bdc8a63019c469edc0c53d041f",
+      "scope_sha256": "7cc2615ac755be74a00c2bed5f9993e6e57a3d1dd01c72678c800ebf9e006a04"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "66151cc2cd52df18c1d5bbd6b460278dbf91ca096fc89273e65348af279ef25c",
+      "scope_sha256": "7cc2615ac755be74a00c2bed5f9993e6e57a3d1dd01c72678c800ebf9e006a04"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-list.json",
+      "bytes": 4072,
+      "sha256": "18ebd0a5dc769e94af9f62ffc67c6ff577d91ab2478b452ec9c012faa86d808d",
+      "scope_sha256": "880526840d3d508a5bd98281b1f94a5cae3352dc44bcfe6181c818d65b3b80e0"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "5dee3cb48a2a8a26ad597d3a46fa85081ea13a643da830a8773a9add59378419",
+      "scope_sha256": "880526840d3d508a5bd98281b1f94a5cae3352dc44bcfe6181c818d65b3b80e0"
+    },
+    {
+      "path": "research-current-incarnation-baseline-pg-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "2ae9320079411a9c4af4867b74e6513aaf029dfadbc1ad515d63341f2d1c762d",
+      "scope_sha256": "880526840d3d508a5bd98281b1f94a5cae3352dc44bcfe6181c818d65b3b80e0"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "6a9336cfbc0ad2d1cc868dca80bf38b59ab6e47c5f68a3683026acc5cd0fff51",
+      "scope_sha256": "f319d736f2665b7351e383155f65e51716bfaa2f5f60ed36b498b9b37cc61b70"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-source.json",
+      "bytes": 4011,
+      "sha256": "ab595ff8804fd69d8d5869d817d4add3e6a71502f8913d77e9e90613fd5b7a71",
+      "scope_sha256": "f319d736f2665b7351e383155f65e51716bfaa2f5f60ed36b498b9b37cc61b70"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "ea57176b6fbdb270add075ea6c073a0606552cfd4e10677dcef02f1e903d99c1",
+      "scope_sha256": "f319d736f2665b7351e383155f65e51716bfaa2f5f60ed36b498b9b37cc61b70"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-original.json",
+      "bytes": 4011,
+      "sha256": "2758eb3f7d4062f1ad2b66476ce65e3f76cd89e646a767bdd3e8a93bc122d62d",
+      "scope_sha256": "b2714562c8dd5e0f5bc66c994aa4a9f892a9711927d713a1b425ce78e3f2269d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "b3ebc7f095119c272ee555f642637b118cd3594e53ace89bd83e374eb90fb9d3",
+      "scope_sha256": "b2714562c8dd5e0f5bc66c994aa4a9f892a9711927d713a1b425ce78e3f2269d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "0c6e3ee11074ff78ec37fbac2c743c44620719e844320db255c82d979be3f71d",
+      "scope_sha256": "b2714562c8dd5e0f5bc66c994aa4a9f892a9711927d713a1b425ce78e3f2269d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-history.json",
+      "bytes": 4011,
+      "sha256": "b0076629a6790714ff005efadb3485b6661a6933b639b845992e85c45233dfe9",
+      "scope_sha256": "3432c2b2b01b81d48c93a1c5a95bf7173c022cb872bbbeca82c401805abce2aa"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "61c02db5193aed75ba08cfc7e792e0313b705230d3681cccfc7a4692c4c9dff8",
+      "scope_sha256": "3432c2b2b01b81d48c93a1c5a95bf7173c022cb872bbbeca82c401805abce2aa"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "67a0863a70c736da2702e6f49f9df2b7d6cffc5a8ec4fd0def1ffe47dd13c9fe",
+      "scope_sha256": "3432c2b2b01b81d48c93a1c5a95bf7173c022cb872bbbeca82c401805abce2aa"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "a058ce788ce4be915f3f58c1929222280e664a165e76ca25301dc003563a570c",
+      "scope_sha256": "8b6f4e71e8edb1708224ace0da6c3fa394b00924f45af2a36b6d37d36118699d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-resolve.json",
+      "bytes": 4011,
+      "sha256": "9382d100b37f137523889b7cad2640428de671ee9406053e85e400f6be61785d",
+      "scope_sha256": "8b6f4e71e8edb1708224ace0da6c3fa394b00924f45af2a36b6d37d36118699d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "287bc19894c259eb836075e05d088f0c0456447ba5e4025ebb58a5bc126d0c4a",
+      "scope_sha256": "8b6f4e71e8edb1708224ace0da6c3fa394b00924f45af2a36b6d37d36118699d"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-fresh-positive.json",
+      "bytes": 5725,
+      "sha256": "6db81d868addba42b3c06dddd956b5f0f0029be0de0a095caddf45e24e77ccb8",
+      "scope_sha256": "dcbd0ff8f4a74d04488576516804de7e577ae6a90ff991cf93c0cdfe6b94fbea"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-list.json",
+      "bytes": 4014,
+      "sha256": "0cd0ca17967fc73f5c391db4a8dbaf4860c4f85de7aebb81352af4c81fc704a6",
+      "scope_sha256": "952627818018dbba05d9ce0a2fe35b6c44bdece9f070bd0f61e05384fe80fe90"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-recreation.json",
+      "bytes": 3993,
+      "sha256": "6b00ec087b85f0bca5bafaa3528c59a903992f6b349060b78ecc30205be01760",
+      "scope_sha256": "952627818018dbba05d9ce0a2fe35b6c44bdece9f070bd0f61e05384fe80fe90"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4063,
+      "sha256": "a981b6a5438e160b2f632545801d0e60fd77ccd450b4dd285c41e1a2c82ac130",
+      "scope_sha256": "952627818018dbba05d9ce0a2fe35b6c44bdece9f070bd0f61e05384fe80fe90"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re0/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4812,
+      "sha256": "0577d8d26036589dfb23eb930ae2f8f0fe440e537f6b00088f979a5c9f46accd",
+      "scope_sha256": "dc97c580aceb57c93410082ffcdb064530009e8e23127cadf833c64b4aa46346"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re0/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3238,
+      "sha256": "0173607148b9f2b76d31f375569d71ef40b83d0ec170902bb865ba9c26ed2feb",
+      "scope_sha256": "f58921dcc056f845cfd849686dd2fa7d6ec4328f4de5c8b8af585186ea7c1fdb"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re1/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4812,
+      "sha256": "668c3f8b3e75a37c9044ab638c6476661768343a7dcf236286d1c5a8aa4c9f00",
+      "scope_sha256": "7e17cd4636ae360b1e32712c0b4de2f9da663665c1beb7d61025959b282e8746"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re1/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3238,
+      "sha256": "9dfad1533886225f116d8e5255abefe360abfc8b8c3010c2268cf9f0ef099384",
+      "scope_sha256": "4c36b5d49c79605a54740ad699ef9a65e84588744eaf102605c4ac5dbd076df0"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re2/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4812,
+      "sha256": "a7508430767dd692499e11f45f71e92f1f0bc7e64eb7fb4771ea8314bad2a294",
+      "scope_sha256": "b80c22a54f2da72a74316d772558746e054ab244544cf95440b89608c6323e13"
+    },
+    {
+      "path": "research-current-incarnation-file-r2/pytest/test_retired_note_cannot_be_re2/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3238,
+      "sha256": "a941d25e4d5e1a2e9b554f9cfdb9c3dc723e9e5aad10f435c0ef341fda73686b",
+      "scope_sha256": "3ee8afb4d4740fff2691e87036e6e5e06dbe2af66a2b42d7bc67b8bd07a15836"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "acd841dc268547783ecbe86297e860501e5c2b51df957bc77c5e8a94f08b2b19",
+      "scope_sha256": "f10416e154e16f7e8ec66085a57d2c7c35f751e9969b3a5b56ffdc811111d85b"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/after-source.json",
+      "bytes": 4023,
+      "sha256": "8bc810226e57cf9ef0af782b2e4d68aca720a78380344f5cc4c244d742296f63",
+      "scope_sha256": "f10416e154e16f7e8ec66085a57d2c7c35f751e9969b3a5b56ffdc811111d85b"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "9bfd6a10c84849f4b65b54e6994446875771e8a251911e65d15c0b55747ce07d",
+      "scope_sha256": "f10416e154e16f7e8ec66085a57d2c7c35f751e9969b3a5b56ffdc811111d85b"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-original.json",
+      "bytes": 4023,
+      "sha256": "b84ae83da41d751add7910dd28ee24f8a4887b26cad4f4cc46ec4c4dece5a51d",
+      "scope_sha256": "afea04b8994b8b721541bda412a5b896a0e76d33491af81214a577f45767ff94"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "b61fdb86d43f4c38115094fdaa4f9621abd54bc55a2e4ecae8b4d3c5b8ebe92c",
+      "scope_sha256": "afea04b8994b8b721541bda412a5b896a0e76d33491af81214a577f45767ff94"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev1/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "3e8f7bdb6dd3c0185b3cb887328ab9303e6c66ee6c5d60b1e897c9818c87d38a",
+      "scope_sha256": "afea04b8994b8b721541bda412a5b896a0e76d33491af81214a577f45767ff94"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-history.json",
+      "bytes": 4023,
+      "sha256": "b5e4fe11345456a4f0b321557890a3696cbe47f6115220cadf0e634de7b8d96f",
+      "scope_sha256": "8f7e835bb0abac5e30ddb252ee173d1132b89325d042d9ddd9fbe4b671fbf0f8"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "20ae797fcdf231c0de819595301534633dde20c62d0f615b75f7b49418efb61e",
+      "scope_sha256": "8f7e835bb0abac5e30ddb252ee173d1132b89325d042d9ddd9fbe4b671fbf0f8"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev2/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "00914c346960d9289174f4b2617aad8f15835ce165133dc5c977a486829be650",
+      "scope_sha256": "8f7e835bb0abac5e30ddb252ee173d1132b89325d042d9ddd9fbe4b671fbf0f8"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "e0c6fe1fa2ba73812e4be2efe15a9bf6531771036f1cef36d1be482c472fa5b9",
+      "scope_sha256": "bc5c3bbf242fd70c59b536f57b4cfbaac909b670ba0fc04a3db799b9950533e1"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/after-resolve.json",
+      "bytes": 4023,
+      "sha256": "bea5ea41f99b7e5221ff23872970d24d356334db216fb75ffd7a85c81818740d",
+      "scope_sha256": "bc5c3bbf242fd70c59b536f57b4cfbaac909b670ba0fc04a3db799b9950533e1"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_current_reads_refuse_prev3/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "a49f9abb417cc583bdc8c96b6bc7dd30bda385b88141efec4fb75f77140eedb8",
+      "scope_sha256": "bc5c3bbf242fd70c59b536f57b4cfbaac909b670ba0fc04a3db799b9950533e1"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-fresh-positive.json",
+      "bytes": 5745,
+      "sha256": "6bff412a17228ad9d30ddb0c920adf639115a2675d071abea9be177560820712",
+      "scope_sha256": "69dd3f63eba76db8dbda0afb55940f55468b520d9da483511362d3bba5566ed2"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-list.json",
+      "bytes": 4026,
+      "sha256": "03118faaf5a783fbda64097afee96bb1ff72882a8351d0bd68408cfa5c986084",
+      "scope_sha256": "161eb0049e985ce30fd40e741aa2b110acd28c4d2bba5d15ddb03a0d30dcfa1a"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/after-recreation.json",
+      "bytes": 4005,
+      "sha256": "36057f74a5a728c97c7187b9f9bee4193a9abbc5584f2fc8a1685a1632b9cb08",
+      "scope_sha256": "161eb0049e985ce30fd40e741aa2b110acd28c4d2bba5d15ddb03a0d30dcfa1a"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_old_records_are_absent_fr0/.incarnation-evidence/before-recreation.json",
+      "bytes": 4079,
+      "sha256": "b4143ae236ab2980b9cf4207c4c202a47aebbb51abb358122fad397d79effc60",
+      "scope_sha256": "161eb0049e985ce30fd40e741aa2b110acd28c4d2bba5d15ddb03a0d30dcfa1a"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re0/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4824,
+      "sha256": "7735bd6d0e48d83474c6bafa2e815d947eaabbee04267a622ad63da612a2d5df",
+      "scope_sha256": "4c69df7357692eb0d6dde6cc25bec7383e0f24cbef4b29c48fe9b0b9978f7b45"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re0/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3246,
+      "sha256": "1d2037a8a8c1d1bb0a25c4d45d065a4c5ca8ecfab305e51e45c0ecdffd8e22f6",
+      "scope_sha256": "71a8036242b130407256e97fd99a389e4b1c89b094dee4cbabe88b4256ab0979"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re1/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4824,
+      "sha256": "35f8d1c0ce87aba9c3209f72f335581c5ea03289f0075068e8748fbc6be3d45d",
+      "scope_sha256": "9acdf59020f4ad725a4ba1df4ee79b096c15fec64bb53629bb62815708f28254"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re1/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3246,
+      "sha256": "cf3e5ac1e7901b7dde7ee310a09556427e64d521ce200603e1f683ef62c0a2b2",
+      "scope_sha256": "4a58c00ee8a8c8dc6d6da5f7fd2963710a227d3726bcacc45aea05ed5a97a055"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re2/.incarnation-evidence/note-after-denial.json",
+      "bytes": 4824,
+      "sha256": "5abb6c312891ce38098993c9da809de2ab0883af00f8262e164261b33dafe86d",
+      "scope_sha256": "9908b9db63e4f8418b5b0c32bf056cd61f4c7204b172570445b15b37fedfe941"
+    },
+    {
+      "path": "research-current-incarnation-pg-r1/pytest/test_retired_note_cannot_be_re2/.incarnation-evidence/note-before-recreation.json",
+      "bytes": 3246,
+      "sha256": "a689481875f5f4e0f8af777b3eb08b2e0ec9f2001c9d50b35f23b29f8febb1f2",
+      "scope_sha256": "757f2439c582cd0f10eb0da28e0ad60165d9c50b50f27a448df7fba979ad4c04"
+    }
+  ]
+}

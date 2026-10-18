@@ -68,9 +68,12 @@ def create_research_library_router(service, authorize, require_flag):
             return identity
         actor, scope = access()
         historical = fn == service.inspect_history
-        identity = invoke(service.history_identity, nid) if historical else None
+        monitor = service.historical_inspection and fn not in (service.import_file, service.import_web)
+        identity = invoke(service.history_identity if historical else service.current_identity, nid) if monitor else None
         def guard():
             if access() != (actor, scope): raise HTTPException(403, {'code': 'RESEARCH_AUTHORITY_CHANGED'})
+            if monitor and invoke(service.current_identity, nid) != identity:
+                raise HTTPException(404, {'code': 'EXPERIMENTAL_NOT_FOUND'})
         if mutation:
             result = invoke(fn, nid, scope, actor, *args, guard=guard)
             guard()

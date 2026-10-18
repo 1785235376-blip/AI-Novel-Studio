@@ -112,6 +112,29 @@ class ResearchLibraryService(DomainService):
         with owner.existing_owner_only():
             return owner.incarnation(nid)
 
+    def current_identity(self, nid):
+        """Observe only. An uninitialized owner is not authority for old rows."""
+        try:
+            return self.history_identity(nid)
+        except FileNotFoundError:
+            return None
+
+    def _current_row(self, nid, scope, row):
+        if not self.historical_inspection:
+            return True
+        identity = self.current_identity(nid)
+        return bool(identity and row and row.get('novel_id') == nid
+                    and row.get('scope') == scope
+                    and row.get('research_project_incarnation') == identity)
+
+    def _require_reference_owner(self, nid, scope, row, state, refs):
+        # Ownership proof is independent of citation freshness/visibility, so an
+        # author can repair their own stale note or cancel a revoked-source job.
+        if self.historical_inspection and (not refs or any(
+                not self._current_row(nid, scope, collection(state, SOURCES).get(ref.get('source_id')))
+                for ref in refs)):
+            raise FileNotFoundError(row['id'])
+
     @staticmethod
     def _visible(row, actor):
         return row.get('status') == 'ACTIVE' and (row.get('access') == 'PROJECT' or row.get('created_by') == actor)
@@ -127,7 +150,7 @@ class ResearchLibraryService(DomainService):
         return value
 
     def _legacy_sources(self, nid, scope):
-        if self.legacy is None or scope.get('mode') != 'local': return []
+        if self.historical_inspection or self.legacy is None or scope.get('mode') != 'local': return []
         projected = []
         for source in self.legacy.list_research(nid)['items']:
             if source.get('status') != 'ACTIVE': continue
@@ -147,7 +170,7 @@ class ResearchLibraryService(DomainService):
         rows = []
         for rid in collection(state, SOURCES):
             row = require_row(state, SOURCES, rid)
-            if self._visible(row, actor): rows.append(copy.deepcopy(row))
+            if self._visible(row, actor) and self._current_row(nid, scope, row): rows.append(copy.deepcopy(row))
         return rows + self._legacy_sources(nid, scope)
 
     def _source(self, nid, scope, actor, rid, state=None):
@@ -245,7 +268,8 @@ class ResearchLibraryService(DomainService):
     def _owned_source(self, nid, scope, actor, rid, state):
         self.novels.get(nid)
         row = require_row(state, SOURCES, rid)
-        if row.get('created_by') != actor or row.get('novel_id') != nid or row.get('scope') != scope:
+        if (row.get('created_by') != actor or row.get('novel_id') != nid or row.get('scope') != scope
+                or not self._current_row(nid, scope, row)):
             raise FileNotFoundError(rid)
         return row
 
@@ -253,14 +277,16 @@ class ResearchLibraryService(DomainService):
         self.novels.get(nid)
         state = self.store.read(nid, scope)
         rows = [self._public(row) for row in collection(state, SOURCES).values()
-                if row.get('created_by') == actor and row.get('status') in {'REVOKED', 'DELETED'}]
+                if row.get('created_by') == actor and row.get('status') in {'REVOKED', 'DELETED'}
+                and self._current_row(nid, scope, row)]
         return {'items': rows, 'total': len(rows), 'restoration_requires_review': True}
 
     def source_history(self, nid, scope, actor, rid):
         state = self.store.read(nid, scope)
         row = self._owned_source(nid, scope, actor, rid, state)
         # Current visibility never grants access to older private revisions.
-        return {'items': [self._public(value) for value in [*row.get('history', []), snapshot(row)]],
+        return {'items': [self._public(value) for value in [*row.get('history', []), snapshot(row)]
+                          if self._current_row(nid, scope, value)],
                 'current_version': row['version'], 'restore_creates_new_version': True}
 
     def inspect_history(self, nid, scope, actor, rid, expected_current_version, value):
@@ -306,7 +332,7 @@ class ResearchLibraryService(DomainService):
         state = self.store.read(nid, scope)
         row = self._owned_source(nid, scope, actor, rid, state)
         revision = next((item for item in [*row.get('history', []), snapshot(row)] if item['version'] == version), None)
-        if not revision or not revision.get('content_base64'): raise FileNotFoundError(rid)
+        if not revision or not revision.get('content_base64') or not self._current_row(nid, scope, revision): raise FileNotFoundError(rid)
         return base64.b64decode(revision['content_base64']), revision['filename']
 
     def replace_file(self, nid, scope, actor, rid, value, *, guard):
@@ -334,7 +360,8 @@ class ResearchLibraryService(DomainService):
             original = next((revision for revision in row.get('history', [])
                 if revision['version'] == body.restore_version and revision['status'] == 'ACTIVE'), None)
             if original is None: raise ValueError('RESEARCH_ACTIVE_REVISION_REQUIRED')
-            protected = {'id', 'novel_id', 'scope', 'version', 'history', 'created_by', 'created_at', 'updated_by', 'updated_at'}
+            if not self._current_row(nid, scope, original): raise FileNotFoundError(rid)
+            protected = {'id', 'novel_id', 'scope', 'version', 'history', 'created_by', 'created_at', 'updated_by', 'updated_at', 'research_project_incarnation'}
             values = {k: copy.deepcopy(v) for k, v in original.items() if k not in protected}
             # Restoring historical access must never republish private content.
             values.update(access='PRIVATE', restored_from_version=body.restore_version)
@@ -459,7 +486,9 @@ class ResearchLibraryService(DomainService):
         rows = []
         for row in collection(state, NOTES).values():
             if row['created_by'] != actor or row['status'] != 'ACTIVE': continue
-            try: self._validate_refs(nid, scope, actor, row['citations'], state)
+            try:
+                self._require_reference_owner(nid, scope, row, state, row.get('citations', []))
+                self._validate_refs(nid, scope, actor, row['citations'], state)
             except StaleSourceError:
                 # Only the author's own currently active sources permit draft
                 # recovery. Revoked/private third-party citations stay hidden.
@@ -475,6 +504,7 @@ class ResearchLibraryService(DomainService):
             guard()
             row = require_row(state, NOTES, rid)
             if row['created_by'] != actor or row['status'] != 'ACTIVE': raise FileNotFoundError(rid)
+            self._require_reference_owner(nid, scope, row, state, row.get('citations', []))
             # An unavailable old citation is not authorization to reveal its
             # source. Replacement references must all be currently visible.
             self._validate_refs(nid, scope, actor, body.model_dump()['citations'], state)
@@ -490,6 +520,7 @@ class ResearchLibraryService(DomainService):
             guard()
             row = require_row(state, NOTES, rid)
             if row['created_by'] != actor or row['status'] != 'ACTIVE': raise FileNotFoundError(rid)
+            self._require_reference_owner(nid, scope, row, state, row.get('citations', []))
             check_version({'id': rid, 'version': row['version']}, expected_version)
             change_row(row, actor, expected_version, lambda target: target.update(status='DELETED'))
             guard()
@@ -499,6 +530,7 @@ class ResearchLibraryService(DomainService):
         state = self.store.read(nid, scope)
         row = require_row(state, NOTES, rid)
         if row['created_by'] != actor: raise FileNotFoundError(rid)
+        self._require_reference_owner(nid, scope, row, state, row.get('citations', []))
         items = []
         for revision in [*row.get('history', []), snapshot(row)]:
             try: self._validate_refs(nid, scope, actor, revision['citations'], state)
@@ -561,12 +593,30 @@ class ResearchLibraryService(DomainService):
                 'model_quality': 'NOT_RUN', 'automatic_canon': False, 'review_required': True,
                 'operations': ['OCR', 'SCAN_PDF_VISION', 'IMAGE_UNDERSTANDING', 'CHART_UNDERSTANDING', 'TABLE_UNDERSTANDING']}
 
+    def _analysis_owner(self, nid, scope, actor, rid):
+        if not self.historical_inspection:
+            return
+        state = self.store.read(nid, scope)
+        row = require_row(state, 'research_analysis_jobs', rid)
+        if row.get('created_by') != actor:
+            raise FileNotFoundError(rid)
+        self._require_reference_owner(nid, scope, row, state, [row.get('request', {})])
+
     def analysis_jobs(self, nid, scope, actor):
         from .research_vision import research_analysis_jobs
-        return research_analysis_jobs(self).list(nid, scope, actor)
+        if not self.historical_inspection:
+            return research_analysis_jobs(self).list(nid, scope, actor)
+        items = []
+        for row in self.list(nid, scope, 'research_analysis_jobs'):
+            try:
+                items.append(self.analysis_job(nid, scope, actor, row['id']))
+            except FileNotFoundError:
+                continue
+        return {'items': items, 'total': len(items), 'automatic_resume': False}
 
     def analysis_job(self, nid, scope, actor, rid):
         from .research_vision import research_analysis_jobs
+        self._analysis_owner(nid, scope, actor, rid)
         return research_analysis_jobs(self).get(nid, scope, actor, rid)
 
     def create_analysis(self, nid, scope, actor, value, *, guard):
@@ -575,4 +625,8 @@ class ResearchLibraryService(DomainService):
 
     def analysis_action(self, nid, scope, actor, rid, action, expected_version, *, guard):
         from .research_vision import research_analysis_jobs
-        return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, guard)
+        self._analysis_owner(nid, scope, actor, rid)
+        def current_guard():
+            guard()
+            self._analysis_owner(nid, scope, actor, rid)
+        return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, current_guard)
