@@ -16,3 +16,9 @@ The original generic Save contract is deliberately unchanged. A 9-second source 
 ## Remaining boundaries
 
 Only bounded mono/stereo PCM16 WAV up to 8 MiB / ten minutes is supported. MP3, FLAC, video/VFR, target Windows/native execution and full product-browser acceptance are not claimed. The observation is ephemeral and is not passed off as a saved edit, media approval, generic validation of all sources or V2 release readiness.
+
+## Explicit local-draft repair followthrough
+
+After a valid out-of-bounds observation, the editor can preview shortening only the selected clip's source out point to the measured integer-millisecond maximum. It requires explicit confirmation and applies through the original `c.change` local history owner. No file, other clip, subtitle, placement, service save or render is changed. Locked tracks, changed drafts/pins, an empty remaining range, and original speed/fade/transition constraints reject the proposal. Source/identity/revision changes invalidate consent; consent is consumed synchronously and unmounted or repeated retained callbacks cannot apply it again.
+
+`timeline-source-repair-ui-r1`: seven focused tests, TypeScript and production build passed. Before finalizing, lifecycle and synchronous-consent guards were added with another regression. `timeline-source-repair-ui-r2`: eight focused tests, TypeScript and production build passed. These are UI/pure-helper checks, not a product-browser or end-to-end save/undo claim. The generic backend Save contract remains unchanged.

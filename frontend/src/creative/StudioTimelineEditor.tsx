@@ -1,3 +1,4 @@
+import {StudioTimelineSourceBoundsRepair} from './StudioTimelineSourceBoundsRepair';
 import {useStudioTimelineSourceBounds} from './useStudioTimelineSourceBounds';
 import { StudioTimelineCloseGaps } from './StudioTimelineCloseGaps';
 import { applyNleCaptionCommand } from './nleCaptionEditing';
@@ -279,6 +280,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
     <section aria-label="音频源时长核对"><Button disabled={!sourceBounds.canRequest} onClick={()=>void sourceBounds.request()}>核对所选音频源时长</Button><p>仅支持当前保存片段的 PCM16 WAV（8 MiB、十分钟内）。核对实际源采样长度；不修改裁剪、不保存、不执行渲染。</p>
       {sourceBounds.unavailable&&<p>{sourceBounds.unavailable}</p>}{sourceBounds.pending&&<StatusMessage>正在核对源文件长度…</StatusMessage>}{sourceBounds.error&&<StatusMessage tone="warning">{sourceBounds.error}</StatusMessage>}
       {sourceBounds.preview&&<StatusMessage tone={sourceBounds.preview.within_source?'info':'warning'}>源文件 {sourceBounds.preview.frame_count} 帧 / {sourceBounds.preview.sample_rate} Hz；整数毫秒出点最多 {sourceBounds.preview.maximum_out_ms} ms。{sourceBounds.preview.within_source?'当前源入出范围在实测长度内。':'当前保存的源入出范围越界，请手动调整后重新保存。'} 此结果只说明源时长，不代表全时间线验收。</StatusMessage>}
+      {sourceBounds.preview&&c.base&&<StudioTimelineSourceBoundsRepair scope={props.client} source={c.base} draft={draft} observation={sourceBounds.preview} disabled={!sourceBounds.canRequest} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision} onApply={next=>{const applied=c.change(input=>{input.timeline=next.timeline;});if(applied)setNleNotice('已按实测长度收短本地草稿出点，可撤销；尚未保存或渲染。');return applied;}}/>}
     </section>
     <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
