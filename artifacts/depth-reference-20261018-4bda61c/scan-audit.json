@@ -1,0 +1,12 @@
+{
+  "scope": "all new Git blobs including receipts and retained logs",
+  "result": {
+    "counts": {},
+    "scanned": 27,
+    "blobs": 27,
+    "total_bytes": 2967084,
+    "max_blob": 653912,
+    "hits": []
+  },
+  "limitations": "Pattern scan is not a guarantee of absence of secrets; new fixtures are synthetic, no user project content or credentials intentionally included."
+}
