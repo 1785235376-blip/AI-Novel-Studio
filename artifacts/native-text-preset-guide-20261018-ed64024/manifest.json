@@ -1,0 +1,12 @@
+{
+  "source_head": "ed6402416e07c58be91ad14571801ca2ac4c9a26",
+  "prerequisite": "18b43b7d81ef8972f96594dd59577efe2de707ba",
+  "bundle": "continuation.bundle",
+  "scope": "Local-only Claude/Gemini configuration hints in the existing Model Center, using existing model variables and adapters. No credential read, API call, registration, preference or cost change. Final 49 UI checks, TypeScript and Vite passed. Test frontend build included separately; not an installer or Release.",
+  "frontend_test_build": {
+    "archive": "frontend-dist.tar.gz",
+    "verification": "frontend-build-verification.json",
+    "complete_application": false,
+    "installer": false
+  }
+}

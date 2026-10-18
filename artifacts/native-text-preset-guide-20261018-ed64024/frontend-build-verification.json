@@ -1,0 +1,68 @@
+{
+  "build_label": "native-text-preset-guide-ui-r3",
+  "archive_sha256": "905b79abea5e51a4a98b01d329bfb23a9d875b9649e8ae02b4d2ac1210b1a7eb",
+  "files": {
+    "index.html": {
+      "bytes": 326,
+      "sha256": "6aa0a6db4d71ad7ff547a7bd555534b247465b1c01e68fc6a2c61cbfc62e4bd0"
+    },
+    "assets/ExperimentalWorkbench-C_hmiYW_.js": {
+      "bytes": 815019,
+      "sha256": "e02153ef61623fd8ff9cbc332ade4cc8278ba5db84ed935d414994e46e036b76"
+    },
+    "assets/index-BADKrjKg.js": {
+      "bytes": 30154,
+      "sha256": "696f3e9cc2bfa2fcb60ab187363637c6074618d5a657a39a9edf55f1d26d5d6d"
+    },
+    "assets/LocalTutorIntegration-BRshkv99.css": {
+      "bytes": 3626,
+      "sha256": "87b9bc1757000d4ff1364524d627600b7d4ad88eaa3f21ea0d072d6ad29bb9dc"
+    },
+    "assets/style-6MlQLGa4.css": {
+      "bytes": 3788,
+      "sha256": "9da58e75fb03b4ae56b9204f968c8a4b155e4527f24008364c5eb9c1ad85448d"
+    },
+    "assets/App-DnIBqNlt.js": {
+      "bytes": 2502985,
+      "sha256": "cdb0ec997b1340f04545b33940edda78d25fc2efb5309da787df95d98956dc86"
+    },
+    "assets/react-vendor-D3pO_op5.js": {
+      "bytes": 142976,
+      "sha256": "35539930060cd39417338afc8940bb1213d8d1dff683e25a6eb15291f8adfae9"
+    },
+    "assets/LocalTutorIntegration-DtX81Usc.js": {
+      "bytes": 47635,
+      "sha256": "18b6c67dc279bf648cef63da1fe28e149e0d4b1debcabfe5f4dcf33a74be576d"
+    },
+    "assets/Health-D_ll0tAC.js": {
+      "bytes": 989,
+      "sha256": "4147da5985fa7a59caeeab7e5f911749c745800896c8d16eb696a6157da7f6d6"
+    },
+    "assets/query-vendor-CUnTvSIi.js": {
+      "bytes": 45602,
+      "sha256": "1fc0a3c6574061fdc18929187fdf6b0d00ab3c003918530126100a762e69a97b"
+    },
+    "assets/ExperimentalWorkbench-BkplvLLE.css": {
+      "bytes": 4227,
+      "sha256": "eb03b5f08475d0fc486898aaedcfe9cf3c5d7bd09b82320b5a78c85ee8dc3b9e"
+    },
+    "assets/editor-vendor-WoPbGn4i.js": {
+      "bytes": 307091,
+      "sha256": "10bb7ac7f6564af822100aee709abbec617a51b0efb78a1e8d92f085e3744499"
+    },
+    "assets/App-DRLVwzqD.css": {
+      "bytes": 215510,
+      "sha256": "fdaaace8b9d67b861d6688d8ad5690b307b8f5291b9d7c6946924e066051dbc4"
+    },
+    "assets/index-Cj-tLRQ5.css": {
+      "bytes": 32292,
+      "sha256": "5399d8df3be57bb061fb8c48846d79c359846f844e18b776c58f2de48c58ade7"
+    },
+    "assets/style-DlN96Cyi.js": {
+      "bytes": 45115,
+      "sha256": "1545af3e144ded699c5326d2939b360ff278715bb6cfee2565506f2fbfbb0075"
+    }
+  },
+  "hits": [],
+  "boundary": "Test frontend assets only; not backend, installer or release"
+}
