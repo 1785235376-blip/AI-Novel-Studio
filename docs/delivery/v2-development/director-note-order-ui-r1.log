@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/creative/DirectorNoteActions.additive.test.tsx (3 tests) 100ms
+ ✓ src/creative/DirectorDraftBackup.additive.test.tsx (2 tests) 152ms
+ ✓ src/creative/GraphDirectorConsole.test.tsx (12 tests) 978ms
+
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+   Start at  13:46:49
+   Duration  2.08s (transform 545ms, setup 60ms, collect 1.41s, tests 1.23s, environment 891ms, prepare 169ms)
+
+src/creative/DirectorNoteActions.additive.test.tsx(11,168): error TS2345: Argument of type '() => "new-note"' is not assignable to parameter of type '() => `${string}-${string}-${string}-${string}-${string}`'.
+  Type '"new-note"' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/creative/DirectorNoteActions.additive.test.tsx(11,485): error TS2345: Argument of type '() => "first"' is not assignable to parameter of type '() => `${string}-${string}-${string}-${string}-${string}`'.
+  Type '"first"' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
