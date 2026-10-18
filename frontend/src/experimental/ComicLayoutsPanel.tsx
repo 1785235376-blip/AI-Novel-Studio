@@ -4,7 +4,7 @@ import { ComicLayersPanel } from './ComicLayersPanel';
 import { comicLayersError, reconcileComicLayers } from './comicLayers';
 import { ComicCollectionTree } from './ComicCollectionTree';
 import { ComicReadingOrderPanel } from './ComicReadingOrderPanel';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
@@ -18,12 +18,14 @@ import type { ComicCatalog } from './comicLayoutsClient';
 type DuplicateIntent = { target: ComicDuplicateTarget; base: ComicDocument; catalog: ComicCatalog; ticket: number; error?: string };
 const EMPTY_COMIC_RECORDS: ComicRecord[] = [];
 let nextScope = 0;
-type ComicPanelProps = { client: ExperimentalClient; onDirtyChange?: (dirty: boolean) => void; onBusyChange?: (busy: boolean) => void; isOwnerCurrent?: () => boolean };
+export type ComicImageGenerationHost = { page: ComicRecord; disabled: boolean; isCurrent: () => boolean;
+  onDirtyChange: (dirty: boolean) => void; onBusyChange: (busy: boolean) => void; onAdopt: (page: ComicRecord) => void };
+type ComicPanelProps = { renderImageGeneration?: (host: ComicImageGenerationHost) => ReactNode; client: ExperimentalClient; onDirtyChange?: (dirty: boolean) => void; onBusyChange?: (busy: boolean) => void; isOwnerCurrent?: () => boolean };
 export function ComicLayoutsPanel({ client, ...props }: ComicPanelProps) {
   const identity = useMemo(() => ++nextScope, [client]);
   return <ComicLayoutsContent key={identity} client={client} {...props} />;
 }
-function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurrent }: ComicPanelProps) {
+function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurrent, renderImageGeneration }: ComicPanelProps) {
   const api = useMemo(() => comicLayoutsClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]);
   const action = useReviewAction(); const epoch = useRef(0);
@@ -31,12 +33,14 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const [past, setPast] = useState<ComicDocument[]>([]); const [future, setFuture] = useState<ComicDocument[]>([]); const [dirty, storeDirty] = useState(false);
   const [treeDirty, storeTreeDirty] = useState(false), [treeBusy, storeTreeBusy] = useState(false), [oraDirty, storeOraDirty] = useState(false);
   const [, setCollectionActive] = useState(false);
+  const [imageDirty, setImageDirty] = useState(false), [imageBusy, setImageBusy] = useState(false);
+  const imageDirtyRef = useRef(false), imageBusyRef = useRef(false);
   const pageDirtyRef = useRef(false), treeDirtyRef = useRef(false), treeBusyRef = useRef(false), oraDirtyRef = useRef(false);
-  const setDirty = (value: boolean) => { pageDirtyRef.current = value; onDirtyChange?.(value || treeDirtyRef.current || oraDirtyRef.current); storeDirty(value); };
-  const navigationBlocked = treeDirty || dirty || oraDirty;
-  const navigationAllowed = () => !treeDirtyRef.current && !pageDirtyRef.current && !oraDirtyRef.current;
+  const setDirty = (value: boolean) => { pageDirtyRef.current = value; onDirtyChange?.(value || treeDirtyRef.current || oraDirtyRef.current || imageDirtyRef.current); storeDirty(value); };
+  const navigationBlocked = treeDirty || dirty || oraDirty || imageDirty;
+  const navigationAllowed = () => !treeDirtyRef.current && !pageDirtyRef.current && !oraDirtyRef.current && !imageDirtyRef.current;
   const [oraBusy, setOraBusy] = useState(false); const oraBusyRef = useRef(false);
-  const busy = action.busy || treeBusy || oraBusy;
+  const busy = action.busy || treeBusy || oraBusy || imageBusy || imageDirty;
   const [report, setReport] = useState<ComicPreflight>(); const [segments, setSegments] = useState<string[]>([]); const [loadedSegments, setLoadedSegments] = useState<number[]>([]); const [previewFailed, setPreviewFailed] = useState(false); const [width, setWidth] = useState(360); const [reviewed, setReviewed] = useState(false);
   const [assetId, setAssetId] = useState(''); const [assetUrl, setAssetUrl] = useState(''); const [assetLoaded, setAssetLoaded] = useState(false); const [assetReviewed, setAssetReviewed] = useState(false);
   const [arrangement, setArrangement] = useState<{ result: ComicArrangement; ticket: number; base: ComicDocument }>();
@@ -47,7 +51,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   const renderedGeneration = editorGeneration.current;
   // A callback owns the document generation it rendered. Consume that ownership
   // synchronously, before React paints, for edits, navigation and async admission.
-  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !actionPending.current && !treeBusyRef.current && !oraBusyRef.current && !action.busy;
+  const currentEditor = () => (isOwnerCurrent?.() ?? true) && arrangementAlive.current && renderedGeneration === editorGeneration.current && !imageDirtyRef.current && !imageBusyRef.current && !actionPending.current && !treeBusyRef.current && !oraBusyRef.current && !action.busy;
   const duplicateCurrent = useRef<{ document?: ComicDocument; catalog?: ComicCatalog; allowed: boolean; intent?: DuplicateIntent }>({ allowed: false });
   const [restoreVersion, setRestoreVersion] = useState('');
   const [layerEditError, setLayerEditError] = useState('');
@@ -70,7 +74,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
   const invalidate = () => { setLayerEditError(''); editorGeneration.current++; epoch.current++; arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate(); setReport(undefined); setSegments([]); setLoadedSegments([]); setPreviewFailed(false); setReviewed(false); };
-  useEffect(() => { onDirtyChange?.(dirty || treeDirty || oraDirty); }, [dirty, treeDirty, oraDirty, onDirtyChange]);
+  useEffect(() => { onDirtyChange?.(dirty || treeDirty || oraDirty || imageDirty); }, [dirty, treeDirty, oraDirty, imageDirty, onDirtyChange]);
   useEffect(() => () => { onDirtyChange?.(false); onBusyChange?.(false); }, [onDirtyChange, onBusyChange]);
   const edit = (next: ComicDocument) => {
     if (!currentEditor()) return;
@@ -88,7 +92,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
     if (!currentEditor() || composing.current) return;
     editorGeneration.current++; actionPending.current = true; onBusyChange?.(true); arrangementEpoch.current++; setArrangement(undefined); cancelDuplicate();
     try { await action.run(isCurrent => operation(() => isCurrent() && (isOwnerCurrent?.() ?? true)), message); }
-    finally { actionPending.current = false; if (arrangementAlive.current && (isOwnerCurrent?.() ?? true)) onBusyChange?.(treeBusyRef.current); }
+    finally { actionPending.current = false; if (arrangementAlive.current && (isOwnerCurrent?.() ?? true)) onBusyChange?.(treeBusyRef.current || oraBusyRef.current || imageBusyRef.current); }
   };
   const patchPanel = (id: string, patch: Partial<ComicPanel>) => document && edit({ ...document, panels: document.panels.map(p => p.id === id ? { ...p, ...patch } : p) });
   const runPreview = () => void runAction(async isCurrent => {
@@ -110,19 +114,29 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
         {!asset.approved && !asset.manual_review_available && <StatusMessage>此图片必须回原生成任务进行审核，不能在排版区绕过。</StatusMessage>}
       </>}
     </Panel>}
-    <ComicCollectionTree client={client} records={records.data?.items || EMPTY_COMIC_RECORDS} recordsReady={rowsReady} pageDirty={dirty || oraDirty} externalBusy={action.busy || oraBusy} selectedPageId={row?.id}
+    <ComicCollectionTree client={client} records={records.data?.items || EMPTY_COMIC_RECORDS} recordsReady={rowsReady} pageDirty={dirty || oraDirty || imageDirty} externalBusy={action.busy || oraBusy || imageBusy} selectedPageId={row?.id}
       isOwnerCurrent={() => arrangementAlive.current && (isOwnerCurrent?.() ?? true)} getOwnerRevision={() => editorGeneration.current}
       onActiveChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; setCollectionActive(value); }}
-      onDirtyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeDirtyRef.current = value; storeTreeDirty(value); onDirtyChange?.(pageDirtyRef.current || value || oraDirtyRef.current); }}
-      onBusyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeBusyRef.current = value; storeTreeBusy(value); onBusyChange?.(actionPending.current || oraBusyRef.current || value); }}
+      onDirtyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeDirtyRef.current = value; storeTreeDirty(value); onDirtyChange?.(pageDirtyRef.current || value || oraDirtyRef.current || imageDirtyRef.current); }}
+      onBusyChange={value => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; editorGeneration.current++; treeBusyRef.current = value; storeTreeBusy(value); onBusyChange?.(actionPending.current || oraBusyRef.current || value || imageBusyRef.current); }}
       onOpenPage={load} onPageCreated={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true) || pageDirtyRef.current || treeDirtyRef.current || oraDirtyRef.current) return; commitLoad(page); records.reload(); }} />
-    <ComicOraImportPanel client={client} page={!dirty && !treeDirty && savedCurrent ? row : undefined} disabled={!available || action.busy || treeBusy || isComposing}
+    <ComicOraImportPanel client={client} page={!dirty && !treeDirty && savedCurrent ? row : undefined} disabled={!available || action.busy || treeBusy || imageDirty || imageBusy || isComposing}
       isOwnerCurrent={() => arrangementAlive.current && (isOwnerCurrent?.() ?? true)} getOwnerRevision={() => editorGeneration.current}
-      onDirtyChange={value => { oraDirtyRef.current = value; storeOraDirty(value); onDirtyChange?.(value || pageDirtyRef.current || treeDirtyRef.current); }}
-      onBusyChange={value => { oraBusyRef.current = value; setOraBusy(value); onBusyChange?.(value || actionPending.current || treeBusyRef.current); }}
+      onDirtyChange={value => { oraDirtyRef.current = value; storeOraDirty(value); onDirtyChange?.(value || pageDirtyRef.current || treeDirtyRef.current || imageDirtyRef.current); }}
+      onBusyChange={value => { oraBusyRef.current = value; setOraBusy(value); onBusyChange?.(value || actionPending.current || treeBusyRef.current || imageBusyRef.current); }}
       onAttached={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; commitLoad(page); records.reload(); catalog.reload(); }} />
+    {renderImageGeneration && row && document && <section key={`${row.id}:${row.version}:${renderedGeneration}`}>
+      {renderImageGeneration({ page: row, disabled: !available || !savedCurrent || sourceChanged || dirty || treeDirty || oraDirty || action.busy || treeBusy || oraBusy || isComposing,
+        isCurrent: () => arrangementAlive.current && (isOwnerCurrent?.() ?? true) && renderedGeneration === editorGeneration.current
+          && !pageDirtyRef.current && !treeDirtyRef.current && !oraDirtyRef.current && !actionPending.current && !treeBusyRef.current && !oraBusyRef.current && !composing.current,
+        onDirtyChange: value => { imageDirtyRef.current = value; setImageDirty(value); onDirtyChange?.(value || pageDirtyRef.current || treeDirtyRef.current || oraDirtyRef.current); },
+        onBusyChange: value => { imageBusyRef.current = value; setImageBusy(value); onBusyChange?.(value || actionPending.current || treeBusyRef.current || oraBusyRef.current); },
+        onAdopt: page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true) || renderedGeneration !== editorGeneration.current || pageDirtyRef.current || treeDirtyRef.current || oraDirtyRef.current || actionPending.current || treeBusyRef.current || oraBusyRef.current || composing.current || !savedCurrent || page.id !== row.id || page.version !== row.version + 1 || page.status !== 'DRAFT') return;
+          commitLoad(page); records.reload(); catalog.reload(); },
+      })}
+    </section>}
     <Panel title="布局草稿与手工编辑">
-      {navigationBlocked && <StatusMessage tone="warning">有未保存的页面、书结构或 ORA 本地输入。请先保存或明确放弃相应修改，再切换布局或来源。</StatusMessage>}
+      {navigationBlocked && <StatusMessage tone="warning">有未保存的页面、书结构、ORA 或图片生成本地输入。请先保存或明确放弃相应修改，再切换布局或来源。</StatusMessage>}
       {dirty && <Button disabled={busy} onClick={() => { if (!currentEditor() || composing.current) return; if (row) commitLoad(row); else { invalidate(); setDocument(undefined); setPast([]); setFuture([]); setDirty(false); } }}>放弃当前页面修改</Button>}
       <Button disabled={!available || busy || navigationBlocked} onClick={() => { if (!currentEditor() || !navigationAllowed()) return; invalidate(); setRow(undefined); setDocument(blankComic('PAGE', catalog.data!.presets.PAGE)); setPast([]); setFuture([]); setDirty(true); }}>新建空白漫画页</Button>
       <Field label="漫画来源剧本"><select disabled={!available || busy || navigationBlocked} value={document?.screenplay_id || ''} onChange={e => { if (!currentEditor() || !navigationAllowed()) return; const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(!!source); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>

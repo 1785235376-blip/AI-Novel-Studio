@@ -505,7 +505,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>创作开始</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>任务中心</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
     {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && !identityRetired && <Panel title="漫画制作 Comic">
       <Button aria-expanded={comicOpen} onClick={() => navigate(() => setComicOpen(!comicOpen))}>{comicOpen ? '关闭漫画制作' : '打开漫画制作'}</Button>
-      {comicOpen && <StudioComicPanel projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
+      {comicOpen && <StudioComicPanel canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
     </Panel>}
     {workspaceView === 'TASKS' && !denied && <TaskCenterPanel projectId={projectId}
       transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}

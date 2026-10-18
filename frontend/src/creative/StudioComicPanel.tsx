@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react';
+import { StudioComicImageGeneration } from './StudioComicImageGeneration';
+import { studioComicImageClient } from './studioComicImageClient';
+import { studioProductionClient } from './studioProductionClient';
 import { ApiError, type CollaborationContext } from '../api';
 import { ComicLayoutsPanel } from '../experimental/ComicLayoutsPanel';
 import type { ExperimentalClient } from '../experimental/api';
@@ -7,10 +10,12 @@ import { studioTransport } from './studioClient';
 import type { BlobReadLimit } from '../boundedResponseBlob';
 
 /** Image subview over the original B06 owner; no copied documents or permission fallback. */
-export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange, onBusyChange }: {
-  projectId: string; context: CollaborationContext; isCurrent: () => boolean;
+export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange, onBusyChange, canMutate = false, canReview = false }: {
+  canMutate?: boolean; canReview?: boolean; projectId: string; context: CollaborationContext; isCurrent: () => boolean;
   onDirtyChange: (dirty: boolean) => void; onBusyChange: (busy: boolean) => void;
 }) {
+  const production = useMemo(() => studioProductionClient(projectId, context), [projectId, context]);
+  const imageClient = useMemo(() => studioComicImageClient(projectId, context), [projectId, context]);
   const [denied, setDenied] = useState(false);
   const client = useMemo<ExperimentalClient>(() => {
     const transport = studioTransport(context);
@@ -36,5 +41,5 @@ export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange,
   }, [projectId, context, isCurrent]);
   if (denied) return <StatusMessage tone="error">当前身份或分支没有漫画访问权限。图片模块导航不会授予权限；请核对原项目授权后重新打开。</StatusMessage>;
   return <><p>漫画制作沿用原项目与漫画记录。此入口仍需已启用的漫画、资产来源和导演能力，以及原项目授权；不会自动启用功能或调用模型。</p>
-    <ComicLayoutsPanel client={client} isOwnerCurrent={isCurrent} onDirtyChange={onDirtyChange} onBusyChange={onBusyChange} /></>;
+    <ComicLayoutsPanel renderImageGeneration={host => <StudioComicImageGeneration {...host} client={imageClient} production={production} canMutate={canMutate} canReview={canReview} />} client={client} isOwnerCurrent={isCurrent} onDirtyChange={onDirtyChange} onBusyChange={onBusyChange} /></>;
 }
