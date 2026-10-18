@@ -1,0 +1,157 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "66154ff41cca29b1e6c24d822e9d01a39ef7103e",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "f01286f4212affa232c34443ddb391c71b6432171e3a4ac10e6c07fb0d740685"
+    },
+    {
+      "blob": "86f485ee5a53f522c58b37b579fd8a37b03cbdcd",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597386,
+      "sha256": "4a2c667841d5a4e909c6a8b518387002e6a030c69d0cb2c9876a3b6e5b28b040"
+    },
+    {
+      "blob": "5a10ec901d550670b4b442a18dbd5148a1635025",
+      "path": "app/experimental/research_ocr_binding.py",
+      "bytes": 4099,
+      "sha256": "279df7b728b26b744bcebac8c3889da7082087563ec379b6d2128257ed812cf3"
+    },
+    {
+      "blob": "e36eb9e0c9eb8ec17ac3d30cc88624f16bbd2eaa",
+      "path": "app/experimental/research_vision.py",
+      "bytes": 12112,
+      "sha256": "fbb3138d008857009b64c3f8386e7b6056a48a74397cecea1f7ada6cfdd53619"
+    },
+    {
+      "blob": "e1843a00a71eb4f99858ffb0159cb0ffc0ce7476",
+      "path": "app/local_pdf_ocr.py",
+      "bytes": 4643,
+      "sha256": "8958e900dd7ebe5fa142f6b5702a6a28d229d8af8d0d01ce3c95db42b0825760"
+    },
+    {
+      "blob": "9ec2591cbaab5c910d65aa212fb524a3fc839274",
+      "path": "app/vision_ocr_runtime.py",
+      "bytes": 12594,
+      "sha256": "9c52b712e99fa6b545ac7f2335502957880eaf3ad098030a577e933c345d7c30"
+    },
+    {
+      "blob": "219196652adc0d66963ca1dc7ded3f3d9d1bf872",
+      "path": "docs/NATIVE_PDF_OCR_MODEL_SEAM.md",
+      "bytes": 2451,
+      "sha256": "ed35efc7794b552eafa9fe131943f4cd66f5cf202006af99d1587b56a86a2c20"
+    },
+    {
+      "blob": "994ab16cbaabe941c97cf5811b6cbcd1a24b5782",
+      "path": "docs/RESEARCH_PDF_OCR_SOURCE_IDENTITY.md",
+      "bytes": 1844,
+      "sha256": "90e3a8bc42548099406c0ec4155aabf7fbebbad40cc4c6cb74044f259162d8f6"
+    },
+    {
+      "blob": "403c1396a4d3bcee183b2cdec40690d470ed6e7d",
+      "path": "docs/delivery/v2-development/native-pdf-model-final.json",
+      "bytes": 694450,
+      "sha256": "74b61a3a1f1b839e5117ef02c84713a2c4a2096614361fc80b2a9a02bfac555d"
+    },
+    {
+      "blob": "7bed43a9bd5156eca3b076fc8be5a9b2277a9e44",
+      "path": "docs/delivery/v2-development/native-pdf-model-final.log",
+      "bytes": 702,
+      "sha256": "fea13b69891ed5e67c3cb3ce121abd6073b48c3292026db64f8529c7412e37a7"
+    },
+    {
+      "blob": "05b637195dd72291d6cd7cff4fa97ac53eeb7b44",
+      "path": "docs/delivery/v2-development/native-pdf-model.json",
+      "bytes": 694086,
+      "sha256": "33b2db13f83a2b15e32664d7213dc596505fde54af34f1acc8b80ce276de664c"
+    },
+    {
+      "blob": "ea5d6632773e53cd69e4123d25fcc4638a8f8805",
+      "path": "docs/delivery/v2-development/native-pdf-model.log",
+      "bytes": 2416,
+      "sha256": "3f2ae4bc90de90853a081eff02e2b2197b90f16023fb2f440cc3f3b7e79c88d8"
+    },
+    {
+      "blob": "f33ce1a733d9c3bdd2506c77177ba8dde1265ce5",
+      "path": "docs/delivery/v2-development/research-pdf-identity-file.json",
+      "bytes": 694464,
+      "sha256": "b26af63f493d7ebcc8f88bc0da7e1ff40023da1703dfc5e9e0e6e36819abfdb9"
+    },
+    {
+      "blob": "72b0fff6a69ecfc72ff31861d6427ea01fe1c675",
+      "path": "docs/delivery/v2-development/research-pdf-identity-file.log",
+      "bytes": 1071,
+      "sha256": "ca1367bc64ca16da537c7f2b7ad6482e95c7c7360b888bc881620509fcadacc4"
+    },
+    {
+      "blob": "8cad68ab59235bf1a2e78aafc4031d58e978251a",
+      "path": "docs/delivery/v2-development/research-pdf-identity-pg-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "b40dec8be3be39d6016acb5d0bb21d8d51b4a8cbb3e35aa5cb06b6d52c803d3b"
+    },
+    {
+      "blob": "c1296deabb8ecd8aba9acbbca19a041d0e861099",
+      "path": "docs/delivery/v2-development/research-pdf-identity-pg.json",
+      "bytes": 694521,
+      "sha256": "e09a39713bf608e812672fdc712529f2f52251710a68a5b5926a8980a2228670"
+    },
+    {
+      "blob": "7fd5a89c08884f55765f30bfc1d725ddf6045521",
+      "path": "docs/delivery/v2-development/research-pdf-identity-pg.log",
+      "bytes": 1075,
+      "sha256": "db5ce3b47bdf52bbfff06d25345bd24e948661341ff64631685813db521fd0e1"
+    },
+    {
+      "blob": "93036dce161cfdae20baedbe10685f6a4d18d7e6",
+      "path": "docs/delivery/v2-development/research-pdf-identity-public.json",
+      "bytes": 694568,
+      "sha256": "dc24533256b0889bf913a32b397d1534f540aecdb195e250801fb0583fac3d97"
+    },
+    {
+      "blob": "e931f278e1f4bcbf56300554580c0d275702b3c6",
+      "path": "docs/delivery/v2-development/research-pdf-identity-public.log",
+      "bytes": 605,
+      "sha256": "ca8061e4f76c96bf2ae796f9fb7a920f9b7263c30df4b9ab0cd1ef17b44a5f26"
+    },
+    {
+      "blob": "1809aaabfd21b0a2e7fd41692928d8137345e43b",
+      "path": "packaging/public-build.json",
+      "bytes": 23890,
+      "sha256": "f9c5a8adb6e1250525415302edb7d4226bd6f1204c34ac30fa70e53a762285ac"
+    },
+    {
+      "blob": "9ef6ded7989b1d965d3d2c3b01953c1f7ee10151",
+      "path": "tests/test_local_pdf_ocr_additive.py",
+      "bytes": 6166,
+      "sha256": "0b7581f7f8e7aef37e83135de20f18a6cd99327a36b0eefb3f2c078cc9032b56"
+    },
+    {
+      "blob": "e58788c1fd7870c3307915c2b10255361834224f",
+      "path": "tests/test_research_pdf_ocr_identity_additive.py",
+      "bytes": 3833,
+      "sha256": "80ddfccdf13e958bd2158359d4f98c5b116cdea1376eaf3e24884ed7fd58a954"
+    },
+    {
+      "blob": "90f75c52f6851ddbf6fa4ae33cdd3706eeab510a",
+      "path": "API_CATALOG.json",
+      "bytes": 1456408,
+      "sha256": "bfbc96c570893166e49f3a6923ea1ad1da8eb9cf9edc7ae0f6f886fe26d9db28"
+    },
+    {
+      "blob": "1cda2e084753c2583dfc0ba6ec3caaf8f93f7a25",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 597242,
+      "sha256": "811ce225db8362103028aa04057adf93350501a13f423222afc61070df259195"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
