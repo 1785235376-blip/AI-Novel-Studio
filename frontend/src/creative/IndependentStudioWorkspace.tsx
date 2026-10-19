@@ -91,6 +91,13 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const origin = useRef(signature(projectId, context));
   const alive = useRef(true), revoked = useRef(false), authorityLost = useRef(false), busyRef = useRef(false);
   const [identityRetired, setIdentityRetired] = useState(false);
+  // Retirement closes private controllers permanently. Only the existing Novel
+  // navigation may leave for the original Host verification; it grants no authority.
+  const navigationEpoch = useRef(0), studioRetired = useRef(false), novelExitCommitted = useRef(false), draftSeen = useRef(false), pendingWrites = useRef(0);
+  const leaveRisk = useRef({ dirty: false, unknown: false, comicInFlight: false, requestIds: [] as string[] });
+  const captureLeaveRisk = useRef<() => void>(() => {});
+  const [, redrawLeaveGuard] = useState(0);
+  const [acknowledgeUnknown, setAcknowledgeUnknown] = useState(false);
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const directorSource = useMemo(() => creativeClient(projectId, context), [client]);
   const productionClient = useMemo(() => studioProductionClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
@@ -116,11 +123,14 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [storyboardDirty, setStoryboardDirty] = useState(false), storyboardDirtyRef = useRef(false);
   const [comicOpen, setComicOpen] = useState(false), [comicDirty, setComicDirty] = useState(false), [comicError, setComicError] = useState('');
   const comicDirtyRef = useRef(false), comicBusyRef = useRef(false);
-  const comicDraftChanged = useCallback((value: boolean) => { comicDirtyRef.current = value; setComicDirty(value); }, []);
-  const comicBusyChanged = useCallback((value: boolean) => { comicBusyRef.current = value; }, []);
+  const comicDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; comicDirtyRef.current = value; setComicDirty(value); }, []);
+  const comicBusyChanged = useCallback((value: boolean) => {
+    comicBusyRef.current = value;
+    if (alive.current) redrawLeaveGuard(epoch => epoch + 1);
+  }, []);
   const storyboardOperation = useRef(false);
   const storyboardOwnsOperation = useCallback(() => storyboardOperation.current, []);
-  const storyboardDraftChanged = useCallback((value: boolean) => { storyboardDirtyRef.current = value; setStoryboardDirty(value); }, []);
+  const storyboardDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; storyboardDirtyRef.current = value; setStoryboardDirty(value); }, []);
   useEffect(() => { if (workspaceView !== 'PRODUCTION') { setStoryboardHandoff(undefined); storyboardDraftChanged(false); } }, [workspaceView, storyboardDraftChanged]);
   const [assetHandoff, setAssetHandoff] = useState<TimelineAssetHandoff>();
   const [mediaHandoff, setMediaHandoff] = useState<TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' }>();
@@ -144,7 +154,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     // carries the mode, and this never fabricates a location to store it.
     rememberLocalStudioInterfaceMode(projectId, mode);
   }, [projectId]);
-  const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discard, setDiscard] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<{ kind: 'CURRENT'; action: () => void; epoch: number } | { kind: 'NOVEL'; epoch: number }>(), [discard, setDiscard] = useState(false);
   const selectionEpoch = useRef(0), overviewEpoch = useRef(0), storageEpoch = useRef(0), storageReading = useRef(false);
   // A request retires stale callbacks immediately, but the current relationship
   // form remains visibly disabled until that same-source read settles. The new
@@ -158,21 +168,21 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const mediaDirtyRef = useRef(false), timelineDirtyRef = useRef(false), assetReadEpoch = useRef(0);
   const [maskDirty, setMaskDirty] = useState(false);
   const maskDirtyRef = useRef(false);
-  const maskDraftChanged = useCallback((value: boolean) => { maskDirtyRef.current = value; setMaskDirty(value); }, []);
+  const maskDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; maskDirtyRef.current = value; setMaskDirty(value); }, []);
   const [workflowDirty, setWorkflowDirty] = useState(false), [workflowModule, setWorkflowModule] = useState<ProductionWorkflowModuleId>('director'), [workflowAssetKind, setWorkflowAssetKind] = useState<ProductionWorkflowAssetKind>('image');
   const workflowDirtyRef = useRef(false);
-  const workflowDraftChanged = useCallback((value: boolean) => { workflowDirtyRef.current = value; setWorkflowDirty(value); }, []);
-  const mediaDraftChanged = useCallback((value: boolean) => { mediaDirtyRef.current = value; setMediaDirty(value); }, []);
+  const workflowDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; workflowDirtyRef.current = value; setWorkflowDirty(value); }, []);
+  const mediaDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; mediaDirtyRef.current = value; setMediaDirty(value); }, []);
   // The Prompt workspace holds a local draft (and possibly an in-flight submit). It joins the
   // host's existing leave-confirmation rather than adding its own beforeunload.
   const promptDirtyRef = useRef(false);
   const [promptDirty, setPromptDirty] = useState(false);
-  const promptDraftChanged = useCallback((value: boolean) => { promptDirtyRef.current = value; setPromptDirty(value); }, []);
-  const timelineDraftChanged = useCallback((value: boolean) => { timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
+  const promptDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; promptDirtyRef.current = value; setPromptDirty(value); }, []);
+  const timelineDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; timelineDirtyRef.current = value; setTimelineDirty(value); }, []);
   const verifiedCallback = useRef(onVerified); verifiedCallback.current = onVerified;
   const lastVideoReferenceSave = useRef<{body:string;key:string;unknown:boolean}>();
   const lastClaySave = useRef<{body:string;key:string;unknown:boolean}>();
-  const lastImport = useRef<{ body: string; key: string }>();
+  const lastImport = useRef<{ body: string; key: string; unknown: boolean }>();
   const sameStudioIdentity = useCallback(() => {
     const state = useStudio.getState();
     return origin.current === signature(state.novelId, { sessionToken: state.sessionToken, actor: state.actor, scope: state.scope });
@@ -185,9 +195,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
+  const deny = useCallback(() => { captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
   const retireIdentity = useCallback(() => {
-    authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
+    captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); studioRetired.current = true; authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
     setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined);
@@ -218,6 +228,15 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       throw reason;
     }
   }, [current, deny]);
+  const guardedWrite = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
+    if (!current()) throw new Error('项目或会话已改变，请重新打开。');
+    pendingWrites.current++;
+    try { return await guarded(operation); }
+    finally {
+      pendingWrites.current--;
+      if (alive.current) redrawLeaveGuard(epoch => epoch + 1);
+    }
+  }, [current, guarded]);
   useEffect(() => {
     if (!comicOpen || comicWorkspace || !overview || module !== 'IMAGE' || !current()) return;
     const abort = new AbortController(); setComicError(''); comicBusyChanged(true);
@@ -317,6 +336,28 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
   const relationshipDirtyRef = useRef(relationshipDirty); relationshipDirtyRef.current = relationshipDirty;
+  const lineageDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; lineageDirtyRef.current = value; setLineageDirty(value); }, []);
+  const relationshipDraftChanged = useCallback((value: boolean) => { if (value) draftSeen.current = true; relationshipDirtyRef.current = value; setRelationshipDirty(value); }, []);
+  if (dirty || promptDirty) draftSeen.current = true;
+  captureLeaveRisk.current = () => {
+    const risk = leaveRisk.current;
+    risk.dirty ||= draftSeen.current || dirtyRef.current || comicDirtyRef.current || storyboardDirtyRef.current
+      || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current;
+    risk.unknown ||= pendingWrites.current > 0 || (busyRef.current && draftSeen.current) || preferenceController.blocked || graph.directorPending
+      || !!lastImport.current?.unknown || !!lastVideoReferenceSave.current?.unknown || !!lastClaySave.current?.unknown;
+    // This child only reports a boolean and reports false again during unmount.
+    // A cleanup is not a settlement receipt for an operation already in flight.
+    risk.comicInFlight ||= comicBusyRef.current;
+    if (risk.unknown) risk.requestIds = [...new Set([...risk.requestIds,
+      lastImport.current?.key, lastVideoReferenceSave.current?.key, lastClaySave.current?.key,
+      cutoutLease.current?.job.request_id, productionJob?.job.request_id].filter((id): id is string => !!id))];
+  };
+  useEffect(() => {
+    if (current() && !dirty && !promptDirty && !pendingWrites.current) draftSeen.current = false;
+  }, [dirty, promptDirty, current]);
+  const navigationBusy = (retiredExit = false) => busyRef.current || pendingWrites.current > 0 || comicBusyRef.current
+    || storyboardOperation.current || editorPreparing.current || !!cutoutLease.current
+    || (retiredExit ? leaveRisk.current.comicInFlight : !!preferenceController.pending);
   const refresh = useCallback(async () => {
     if (busyRef.current || !current()) return;
     overviewReading.current?.abort(); const abort = new AbortController(); overviewReading.current = abort;
@@ -348,7 +389,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   }, [client, current, guarded, projectId, module]);
   useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh]);
   useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current) { event.preventDefault(); event.returnValue = ''; } };
+    const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current || comicBusyRef.current || leaveRisk.current.dirty || leaveRisk.current.unknown || leaveRisk.current.comicInFlight) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [dirty, promptDirty]);
   useEffect(() => {
@@ -387,19 +428,21 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       if (busyRef.current || dirtyRef.current) throw new Error('请先保存或放弃当前输入，再导入其他资产。');
       busyRef.current = true; setBusy(true); setNotice('');
       const identity = JSON.stringify([body.filename, body.kind, body.content_base64]);
-      if (lastImport.current?.body !== identity) lastImport.current = { body: identity, key: crypto.randomUUID() };
+      if (lastImport.current?.body !== identity) lastImport.current = { body: identity, key: crypto.randomUUID(), unknown: true };
+      lastImport.current.unknown = true;
       try {
-        const imported = await guarded(() => client.importAsset({ filename: body.filename, kind: body.kind as 'image' | 'video' | 'audio', content_base64: body.content_base64, idempotency_key: lastImport.current!.key }));
+        const imported = await guardedWrite(() => client.importAsset({ filename: body.filename, kind: body.kind as 'image' | 'video' | 'audio', content_base64: body.content_base64, idempotency_key: lastImport.current!.key }));
+        lastImport.current!.unknown = false;
         // Saving provenance is a second mutation. A failed declaration never repeats the import.
-        try { const asset = await guarded(() => declared(imported)); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); return asset; }
+        try { const asset = await guardedWrite(() => declared(imported)); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); return asset; }
         catch (reason) { if (!current()) throw reason; setPendingDeclaration(imported); setNotice('文件已保存，来源声明尚未保存。可仅重试声明，无需重新上传。'); return imported; }
       } finally { busyRef.current = false; if (current()) { setBusy(false); invalidateStorage(); } }
     },
     download: asset => overview?.capabilities.manual_export === true ? guarded(() => client.download(asset.id)) : Promise.reject(new Error('当前无法导出资产。')),
-    remove: asset => { if (!writable || busyRef.current || dirtyRef.current) return Promise.reject(new Error('当前不能删除资产。')); busyRef.current = true; setBusy(true); return guarded(() => client.remove(asset.id, asset.version!)).finally(() => { busyRef.current = false; if (current()) { setBusy(false); invalidateStorage(); } }); },
+    remove: asset => { if (!writable || busyRef.current || dirtyRef.current) return Promise.reject(new Error('当前不能删除资产。')); busyRef.current = true; setBusy(true); return guardedWrite(() => client.remove(asset.id, asset.version!)).finally(() => { busyRef.current = false; if (current()) { setBusy(false); invalidateStorage(); } }); },
     trash: async () => { const value = await guarded(() => client.assets(true)); const items = value.items.filter(asset => !!asset.deleted_at); return { items, total: items.length }; },
-    restore: asset => { if (!writable || busyRef.current || dirtyRef.current) return Promise.reject(new Error('当前不能恢复资产。')); busyRef.current = true; setBusy(true); return guarded(() => client.restore(asset.id, asset.version!)).finally(() => { busyRef.current = false; if (current()) { setBusy(false); invalidateStorage(); } }); },
-  }), [cacheKey, writable, dirty, busy, overview?.capabilities.manual_import, overview?.capabilities.manual_export, overview?.capabilities.media_validator_configured, current, guarded, client, declared, invalidateStorage]);
+    restore: asset => { if (!writable || busyRef.current || dirtyRef.current) return Promise.reject(new Error('当前不能恢复资产。')); busyRef.current = true; setBusy(true); return guardedWrite(() => client.restore(asset.id, asset.version!)).finally(() => { busyRef.current = false; if (current()) { setBusy(false); invalidateStorage(); } }); },
+  }), [cacheKey, writable, dirty, busy, overview?.capabilities.manual_import, overview?.capabilities.manual_export, overview?.capabilities.media_validator_configured, current, guarded, guardedWrite, client, declared, invalidateStorage]);
   useEffect(() => {
     if (!overview || !requestedAssetId) return;
     let active = true; const epoch = ++selectionEpoch.current;
@@ -422,12 +465,18 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     catch (reason) { if (current()) setNotice(apiErrorView(reason, '资产读取失败。').message); }
     finally { busyRef.current = false; if (alive.current) { setBusy(false); setReadingAsset(false); } }
   };
-  const navigate = (action: () => void) => {
-    if (!current()) return;
+  const navigate = (action: () => void, novelExit = false) => {
+    const authorized = current(), retiredExit = !authorized && novelExit;
+    if (!authorized && (!retiredExit || !alive.current || studioRetired.current || novelExitCommitted.current || !sameStudioIdentity())) return;
     editorTicket.current++; pendingEditor.current = undefined;
-    if (busyRef.current || comicBusyRef.current) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
-    if (dirty || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current) { setDiscard(false); setPendingNavigation(() => action); return; }
-    action();
+    if (navigationBusy(retiredExit)) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
+    const needsConfirmation = retiredExit ? leaveRisk.current.dirty || leaveRisk.current.unknown
+      : dirty || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current;
+    if (needsConfirmation) {
+      setDiscard(false); setAcknowledgeUnknown(false);
+      setPendingNavigation(retiredExit ? { kind: 'NOVEL', epoch: navigationEpoch.current } : { kind: 'CURRENT', action, epoch: navigationEpoch.current }); return;
+    }
+    if (retiredExit) { novelExitCommitted.current = true; onModuleChange('NOVEL'); } else action();
   };
   const relationshipEpoch = selectionEpoch.current;
   const openRelationshipAsset = (expected: AssetReferencePin) => {
@@ -508,16 +557,25 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     };
     pendingEditor.current = prepare;
     if (dirtyRef.current || promptDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current) {
-      setDiscard(false); setPendingNavigation(() => () => {});
+      setDiscard(false); setPendingNavigation({ kind: 'CURRENT', action: () => {}, epoch: navigationEpoch.current });
     } else void prepare();
   };
   const confirmNavigation = () => {
-    if (!discard || !pendingNavigation || !current()) return;
-    if (busyRef.current || preferenceController.pending) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
-    if (pendingEditor.current) { void pendingEditor.current(); return; }
-    const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
-    discardNavigationDrafts(); action();
+    if (!pendingNavigation || pendingNavigation.epoch !== navigationEpoch.current) return;
+    const retiredExit = pendingNavigation.kind === 'NOVEL';
+    if (retiredExit) {
+      if (!alive.current || studioRetired.current || novelExitCommitted.current || !sameStudioIdentity()
+        || (leaveRisk.current.dirty && !discard) || (leaveRisk.current.unknown && !acknowledgeUnknown)) return;
+    } else if (!discard || !current()) return;
+    if (navigationBusy(retiredExit)) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
+    if (!retiredExit && pendingEditor.current) { void pendingEditor.current(); return; }
+    setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false);
+    // Retired controllers cannot discard, save, execute, cancel or replay. The
+    // original IDs and unknown-result markers remain available for later review.
+    if (pendingNavigation.kind === 'NOVEL') { novelExitCommitted.current = true; onModuleChange('NOVEL'); }
+    else { discardNavigationDrafts(); pendingNavigation.action(); }
   };
+  const retiredExitPending = pendingNavigation?.kind === 'NOVEL';
   const sidebar = comicOnly ? <div className="independent-studio-sidebar"><h2>独立漫画</h2><p>空白漫画页和书册沿用原项目保存，无需小说来源。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button></div> : <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={storyboardDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty} />
     <details onToggle={event => { if (event.currentTarget.open && !storage && overview) void loadStorage(); }}><summary>项目存储</summary>{storageLoading && <StatusMessage>正在核对项目存储…</StatusMessage>}{storage ? <><p>有效资产 {storage.assets.count} 项 · {storage.assets.bytes} 字节</p><p>回收站 {storage.trash.count} 项 · {storage.trash.bytes} 字节</p>
@@ -631,19 +689,27 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         if (!current() || !writable || overview.capabilities.manual_import !== true || busyRef.current || dirtyRef.current) throw new Error('请先处理当前输入并核对项目写入权限。');
         busyRef.current = true; setBusy(true); setNotice('');
         const identity = JSON.stringify([body.filename,'model',body.content_base64]);
-        if (lastImport.current?.body !== identity) lastImport.current = {body:identity,key:crypto.randomUUID()};
+        if (lastImport.current?.body !== identity) lastImport.current = {body:identity,key:crypto.randomUUID(),unknown:true};
+        lastImport.current.unknown = true;
         try {
-          const imported = await guarded(() => client.importModelReference({contract:'studio-static-glb-import/1',...body,idempotency_key:lastImport.current!.key}));
+          const imported = await guardedWrite(() => client.importModelReference({contract:'studio-static-glb-import/1',...body,idempotency_key:lastImport.current!.key}));
+          lastImport.current!.unknown = false;
           let asset = imported;
-          try {asset = await guarded(() => declared(imported));setPendingDeclaration(undefined);}
+          try {asset = await guardedWrite(() => declared(imported));setPendingDeclaration(undefined);}
           catch (reason) {if(!current())throw reason;setPendingDeclaration(imported);setNotice('GLB 文件已保存，来源声明尚未保存。可仅重试声明，无需重新上传。');}
           if(current())refreshedAsset(asset);return asset;
         } finally {busyRef.current=false;if(current()){setBusy(false);invalidateStorage();}}
       }} />}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !comicWorkspace && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
-    {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
-    {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
+    {pendingNavigation && (!denied || retiredExitPending) && <section className="creative-navigation-confirm" role="alert">
+      <p>{retiredExitPending ? '授权失效前的未保存输入与待核对请求仍受保护。返回小说仅用于原入口重新验证；离开不会保存、取消或重复提交。' : storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p>
+      {(!retiredExitPending || leaveRisk.current.dirty) && <label><input type="checkbox" disabled={navigationBusy(retiredExitPending)} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label>}
+      {retiredExitPending && leaveRisk.current.unknown && <><p>原请求结果仍待核对。{leaveRisk.current.requestIds.length > 0 && `原请求标识：${leaveRisk.current.requestIds.join('、')}`}</p><label><input type="checkbox" disabled={navigationBusy(true)} checked={acknowledgeUnknown} onChange={event => setAcknowledgeUnknown(event.target.checked)} />确认保留原请求待核对后离开</label></>}
+      <Button disabled={navigationBusy(retiredExitPending) || (retiredExitPending ? (leaveRisk.current.dirty && !discard) || (leaveRisk.current.unknown && !acknowledgeUnknown) : !discard)} onClick={confirmNavigation}>确认离开</Button>
+      <Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false); }}>{retiredExitPending ? '留在当前页' : '继续编辑'}</Button>
+    </section>}
+    {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guardedWrite(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
     {productionView && overview && !denied && !storyboardHandoff && <ProductionDashboard controller={workflow} selectedModuleId={workflowModule}
       onSelectModule={setWorkflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} />}
@@ -720,13 +786,13 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       }} onOpenAsset={id => navigate(() => { void refreshSelectedAsset(id); })} onRefreshAssets={() => { void loadProductionAssets(); }} />}
   </div>;
   const extra = selected && <>{selected.provenance && <section className="independent-studio-lineage" aria-label="独立资产来源"><p>版本 v{selected.version} · {selected.provenance.origin} · {selected.provenance.integrity}</p><p>许可：{selected.provenance.license.label}（作者声明，未作法律验证）</p>{selected.provenance.stale && <StatusMessage tone="warning">来源已变化或不可用，请核对后再复用。</StatusMessage>}
-    <StudioAssetDeclarationForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty || maskDirty} onDirtyChange={setLineageDirty} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current || maskDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guarded(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
+    <StudioAssetDeclarationForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty || maskDirty} onDirtyChange={lineageDraftChanged} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current || maskDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guardedWrite(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
     <Button disabled={busy} onClick={() => navigate(() => { void refreshSelectedAsset(selected.id); })}>重新读取当前资产</Button>
   </section>}
-    <AssetRelationshipsPanel key={`${relationshipRenderEpoch.current}:${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty || maskDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={setRelationshipDirty} onOpenAsset={openRelationshipAsset} mutate={async operation => {
+    <AssetRelationshipsPanel key={`${relationshipRenderEpoch.current}:${selected.id}:${selected.version}:${formRevision}`} asset={selected} client={client} canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} blocked={lineageDirty || maskDirty} busy={busy} isCurrent={current} read={guarded} onDirtyChange={relationshipDraftChanged} onOpenAsset={openRelationshipAsset} mutate={async operation => {
       if (busyRef.current || lineageDirtyRef.current || maskDirtyRef.current || !current()) throw new Error('请先保存或放弃来源输入，再修改关联。');
       busyRef.current = true; setBusy(true);
-      try { const asset = await guarded(operation); refreshedAsset(asset); setNotice('关联已保存，原文件和引用内容未改变。'); return asset; }
+      try { const asset = await guardedWrite(operation); refreshedAsset(asset); setNotice('关联已保存，原文件和引用内容未改变。'); return asset; }
       finally { busyRef.current = false; if (alive.current) setBusy(false); }
     }} />
   </>;
@@ -737,7 +803,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       isCurrent: () => current() && editorTicket.current === editorSession.ticket && editorLocation.current === editorSession.module }}
     onExit={() => { editorTicket.current++; setEditorSession(undefined); setNotice('已返回独立创作图；分镜沿原文档保存，图绑定未改变。'); }}
     onModuleChange={next => { editorTicket.current++; setEditorSession(undefined); onModuleChange(next); }} />;
-  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || comicWorkspace?.project.title || scope.project }} projectNoun={comicOnly || overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
+  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next), next === 'NOVEL')} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || comicWorkspace?.project.title || scope.project }} projectNoun={comicOnly || overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
     inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : comicOnly ? <EmptyState title="漫画制作" detail="页面和书册权限由原漫画入口核对。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel>{!storyboardHandoff && <ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/>}</> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
     status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {comicOnly ? '独立漫画' : productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
 }
