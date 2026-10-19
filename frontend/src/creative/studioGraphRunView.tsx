@@ -13,7 +13,8 @@ export function studioGraphRunView(controller: StudioGraphRunController, props: 
   const { preflight, reviewed, outputReviewed, runs, selected, error, notice, loading, uncertain, note,
     creationUncertain, canLocateNode, locateNode, locked, modelLocked, canReadRuns, canSelectRun, terminal, current, inspect, listRuns, openRun, createRun,
     localReuseEligible, reuseReviewedLocalDependencies, canChooseLocalReuse, changeLocalReuse,
-    action, canAction, reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel } = controller;
+    action, canAction, reviewPreflight, reviewOutput, changeNote, modelAction, mediaAction, modelUnavailable, readModel,
+    retryPlan, canPrepareRetry, canSubmitRetry, prepareRetry, confirmRetry, retryFailedLocal } = controller;
   return <section className="studio-graph-run" aria-label="创作图运行与审核">
     <h3>节点运行</h3><p>先核对保存图与节点范围。前置节点使用原工作流；模型和媒体节点分别预览、确认与执行。媒体 schema 3 核对原资产版本与内容，审核后才供下游采用。</p>
     {!graph && <p>先保存创作图，再核对选中节点的运行范围。</p>}{dirty && <StatusMessage tone="warning">创作图有未保存修改，请先保存后运行。</StatusMessage>}
@@ -25,6 +26,14 @@ export function studioGraphRunView(controller: StudioGraphRunController, props: 
     {!!runs.length && <label>已保存运行<select aria-label="已保存运行" disabled={!canSelectRun} value={selected?.id || ''} onChange={event => { if (event.target.value) void openRun(event.target.value); }}><option value="">选择运行记录</option>{runs.map(row => <option key={row.id} value={row.id}>{row.id} · {GRAPH_STATUS_LABELS[row.status] || row.status} · v{row.version}</option>)}</select></label>}
     {selected && <section aria-label="当前创作图运行"><p>运行 {selected.id} · v{selected.version} · 图 v{selected.graph_version}</p><Badge>{GRAPH_STATUS_LABELS[selected.status] || selected.status}</Badge><p>缓存命中 {selected.cache.hits} / 未命中 {selected.cache.misses}；{selected.cache.mode === GRAPH_LOCAL_DEPENDENCY_REUSE_MODE ? '本次已选择跨保存版本复用已审核本地依赖；本次输出仍须重新人工审核。' : '仅同图版本的已审核本地结果。'}{(selected.model_runtime || selected.media_runtime) && '模型及媒体输出不复用缓存。'}</p>{selected.media_runtime ? <p>媒体调用与结果以逐节点原任务回执为准，审核结果见下方面板。</p> : selected.model_runtime ? <p>模型调用：{selected.model_called ? '已调用' : '调用记录尚待核对'} · 云端调用：0 · 应用到正文：否</p> : <p>模型调用：无 · 外部调用：0 · 应用到正文：否</p>}<p>运行时限 {selected.timeout_seconds} 秒 · 截止 {selected.deadline_at}。暂停、恢复与审核不会重新计时。</p>
       {selected.stale && <StatusMessage tone="warning">来源图已经变化，运行输出不可继续采用，请重新核对当前图。</StatusMessage>}
+      {selected.retry_of && <p>第 {selected.attempt} 次尝试 · 上次运行 {selected.retry_of}；原运行历史保留。</p>}
+      {selected.status === 'FAILED' && !selected.model_runtime && !selected.media_runtime && <section aria-label="失败本地运行重试">
+        <p>仅支持同版本 schema 1 纯本地图。沿用失败运行的输入与节点范围，只创建新尝试；执行与审核仍需分别确认。修改图或输入后不能重试旧运行。</p>
+        <Button disabled={!canPrepareRetry} onClick={() => void prepareRetry()}>核对失败运行重试</Button>
+        {retryPlan && <><p>原运行 {retryPlan.run.id} · v{retryPlan.run.version}；图 v{retryPlan.graph.version}；{Object.keys(retryPlan.run.node_states).length} 个节点。</p>
+          <label><input type="checkbox" checked={retryPlan.confirmed} disabled={locked || retryPlan.uncertain || !canMutate} onChange={event => confirmRetry(event.target.checked)} />已核对原失败运行，仅创建关联的新尝试</label>
+          <Button disabled={!canSubmitRetry} onClick={() => void retryFailedLocal()}>{retryPlan.uncertain ? '使用同一请求核对重试创建' : '仅创建重试运行'}</Button></>}
+      </section>}
       {uncertain && <StatusMessage tone="warning">版本或回执不确定。请先重新读取运行，不会自动重复动作。</StatusMessage>}
       <Button disabled={!canReadRuns} onClick={() => void openRun(selected.id)}>重新读取当前运行</Button>
       <ul>{Object.entries(selected.node_states).map(([id, state]) => <li key={id}>{id} · {GRAPH_STATUS_LABELS[state.status] || state.status}{state.error && <span> · {state.error.code}</span>}

@@ -16,7 +16,9 @@ export type StudioGraphRunPanelProps = {
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
 };
 type ReadKind = 'INSPECT' | 'LIST' | 'OPEN' | 'RESTORE' | 'MODEL_READ';
-type OperationKind = ReadKind | 'CREATE' | 'ACTION' | 'MODEL' | 'MEDIA';
+type OperationKind = ReadKind | 'CREATE' | 'ACTION' | 'MODEL' | 'MEDIA' | 'RETRY_READ' | 'RETRY';
+type RetryPlan = { run: StudioGraphRun; graph: StudioGraphRecord; client: StudioGraphClient;
+  digest: string; request: string; confirmed: boolean; uncertain: boolean };
 type Operation = { id: number; kind: OperationKind; client: StudioGraphClient; owner: string; controller: AbortController };
 const targets = (ids: string[]) => JSON.stringify([...ids].sort());
 const terminalRun = (run?: StudioGraphRun) => !!run && ['SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'].includes(run.status);
@@ -35,6 +37,9 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const [selected, setSelected] = useState<StudioGraphRun>(), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [pendingKind, setPendingKind] = useState<OperationKind>(), [uncertain, setUncertain] = useState(false), [note, setNote] = useState('');
   const [creationUncertain, setCreationUncertain] = useState(false);
+  const [retryPlan, setRetryPlan] = useState<RetryPlan>();
+  const retryRef = useRef<RetryPlan>();
+  function changeRetry(value?: RetryPlan) { retryRef.current = value; setRetryPlan(value); }
   const [reuseReviewedLocalDependencies, setReuseReviewedLocalDependencies] = useState(false);
   const reuseLocalRef = useRef(false);
   const alive = useRef(true), revoked = useRef(false), sequence = useRef(0), pending = useRef<Operation>();
@@ -101,6 +106,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   }
   function markUncertain(value: boolean) { uncertainRef.current = value; setUncertain(value); }
   function clearPrivateState() {
+    changeRetry();
     preflightRef.current = undefined; selectedRef.current = undefined; preflightConsentRef.current = undefined;
     setPreflight(undefined); setPreflightConsent(undefined); setSelected(undefined); setRuns([]); resetReview();
     noteRef.current = ''; setNote(''); creation.current = undefined; setCreationUncertain(false);
@@ -142,6 +148,9 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     if (!props.canMutate && !creation.current?.uncertain && pending.current?.kind !== 'CREATE') resetLocalReuse();
   }, [props.canMutate]);
   useEffect(() => { resetReview(); }, [props.canReview, props.dirty]);
+  useEffect(() => {
+    if (!retryRef.current?.uncertain && pending.current?.kind !== 'RETRY') changeRetry();
+  }, [props.dirty, props.canMutate]);
   useEffect(() => { if (selected && current()) latest.current.onRunSelectionChange?.(selected.id); }, [selected?.id, props.onRunSelectionChange, current]);
 
   // Navigation recovery remains an abortable owner GET, never a run action.
@@ -242,6 +251,68 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
         if (creation.current?.request === request) creation.current.uncertain = uncertainFailure(value);
         setCreationUncertain(uncertainFailure(value)); if (uncertainFailure(value)) markUncertain(true);
         failure(value, operation); if (current()) setNotice('创建回执需要核对。相同范围的明确重试保留原请求标识；不会自动重试。');
+      }
+    } finally { finish(operation); }
+  }
+  function eligibleFailedRetry() {
+    const source = latest.current, run = selectedRef.current, graph = source.graph;
+    return !!source.client.retryLocal && current() && source.canMutate && !source.busy && !source.dirty
+      && !!run && !!graph && localDependencyReuseEligible(graph) && run.status === 'FAILED' && !run.stale
+      && run.graph_id === graph.id && run.graph_version === graph.version && !run.model_runtime && !run.media_runtime
+      && !run.local_subgraph_runtime && !run.model_called;
+  }
+  function canPrepareRetry() {
+    return navigationScope === navigationFence.current.token && eligibleFailedRetry() && !pending.current
+      && !uncertainRef.current && !retryRef.current?.uncertain;
+  }
+  async function prepareRetry() {
+    if (!canPrepareRetry()) return;
+    const source = latest.current, run = selectedRef.current!, graph = source.graph!;
+    const operation = begin('RETRY_READ'); if (!operation) return;
+    changeRetry(); setError('');
+    try {
+      const flight = await source.read(() => source.client.preflight(graph.id, {
+        expected_version: graph.version, target_node_ids: Object.keys(run.node_states).sort() }, operation.controller.signal), operation.controller.signal);
+      if (!live(operation) || !eligibleFailedRetry() || selectedRef.current !== run || latest.current.graph !== graph) return;
+      if (!flight.executable || targets(flight.selected_closure) !== targets(Object.keys(run.node_states))) throw invalidRun();
+      changeRetry({ run, graph, client: source.client, digest: flight.preflight_digest,
+        request: graphId('retry'), confirmed: false, uncertain: false });
+    } catch (value) { failure(value, operation); } finally { finish(operation); }
+  }
+  function canSubmitRetry(requireConsent = true) {
+    const plan = retryRef.current, source = latest.current;
+    return navigationScope === navigationFence.current.token && eligibleFailedRetry() && !pending.current
+      && !!plan && retryMatches(plan) && plan.client === source.client
+      && (!requireConsent || plan.confirmed);
+  }
+  function retryMatches(plan: RetryPlan) {
+    const run = selectedRef.current, graph = latest.current.graph;
+    return !!run && !!graph && plan.run.id === run.id && plan.run.version === run.version
+      && plan.graph.id === graph.id && plan.graph.version === graph.version
+      && plan.graph.definition_digest === graph.definition_digest && plan.graph.execution_digest === graph.execution_digest;
+  }
+  function confirmRetry(checked: boolean) {
+    if (!canSubmitRetry(false) || retryRef.current?.uncertain) return;
+    changeRetry({ ...retryRef.current!, confirmed: checked });
+  }
+  async function retryFailedLocal() {
+    if (!canSubmitRetry()) return;
+    const source = latest.current, plan = retryRef.current!;
+    const operation = begin('RETRY'); if (!operation) return; setError('');
+    try {
+      const value = await source.mutate(() => source.client.retryLocal!(plan.run.id, {
+        expected_version: plan.run.version, expected_graph_version: plan.graph.version,
+        reviewed_preflight_digest: plan.digest, request_id: plan.request }));
+      if (!live(operation)) return;
+      if (value.retry_of !== plan.run.id || !value.attempt || value.attempt < 2) throw invalidRun();
+      acceptRun(value, undefined, plan.graph.version); changeRetry(); markUncertain(false);
+      setNotice('已建立关联的新尝试，原失败记录保留。没有自动执行节点；请核对当前运行状态。');
+    } catch (value) {
+      if (live(operation)) {
+        const unknown = uncertainFailure(value);
+        changeRetry({ ...plan, uncertain: unknown, confirmed: unknown });
+        failure(value, operation);
+        if (unknown && current()) setNotice('重试创建回执不确定。仅可使用同一请求键明确核对，不会自动创建另一尝试。');
       }
     } finally { finish(operation); }
   }
@@ -394,6 +465,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const reviewed = !!key && key === preflightConsent, outputReviewed = !!outputKey && outputKey === outputConsent;
   const visible = current();
   return { preflight: visible ? preflight : undefined, reviewed: visible && reviewed, outputReviewed: visible && outputReviewed,
+    retryPlan: visible && retryPlan && retryMatches(retryPlan) ? retryPlan : undefined,
+    canPrepareRetry: canPrepareRetry(), canSubmitRetry: canSubmitRetry(), prepareRetry, confirmRetry, retryFailedLocal,
     runs: visible ? runs : [], selected: visible ? selected : undefined, error, notice, note: visible ? note : '', uncertain, creationUncertain, locked,
     modelLocked: props.busy || props.dirty || !current() || !!pendingKind && !['MODEL_READ', 'LIST'].includes(pendingKind),
     localReuseEligible: visible && localDependencyReuseEligible(props.graph), reuseReviewedLocalDependencies: visible && reuseReviewedLocalDependencies,

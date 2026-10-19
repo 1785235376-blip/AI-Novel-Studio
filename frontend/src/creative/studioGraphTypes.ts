@@ -89,6 +89,9 @@ export type StudioGraphRunCreateInput = {
   reuse_reviewed_local_dependencies?: boolean;
 };
 export type StudioGraphAction = 'execute' | 'approve' | 'reject' | 'cancel' | 'pause' | 'resume';
+export type StudioGraphFailedLocalRetryInput = {
+  expected_version: number; expected_graph_version: number; reviewed_preflight_digest: string; request_id: string;
+};
 export type StudioGraphActionInput = {
   expected_version: number;
   node_id?: string;
@@ -215,6 +218,9 @@ export type StudioGraphNodeState = {
   error: { code: string } | null;
 };
 export type StudioGraphRun = StudioGraphOwner & {
+  /** Optional for older embedded readers; server-owned immediate attempt relation. */
+  retry_of?: string | null;
+  attempt?: number;
   id: string;
   version: number;
   graph_id: string;

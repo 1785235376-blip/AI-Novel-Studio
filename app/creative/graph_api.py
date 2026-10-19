@@ -7,7 +7,7 @@ from urllib.parse import quote
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 
 from ..experimental.production_lineage_api import PrivateProductionRoute
-from .graph_models import (GraphAction, GraphCreate, GraphPreflight, GraphRunCreate, GraphSave,
+from .graph_models import (GraphAction, GraphCreate, GraphPreflight, GraphRunCreate, GraphSave, GraphFailedLocalRetry,
     GraphMediaPreflight, GraphMediaRunCreate)
 
 
@@ -294,6 +294,13 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.get_run(nid, scope, actor, rid, guard=guard), request, target=(service.RUNS, rid))
+
+    @router.post("/projects/{nid}/studio/graph-runs/{rid}/retry-local", status_code=201)
+    def retry_local(nid: str, rid: str, request: Request, body: GraphFailedLocalRetry,
+                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.executor.retry_failed_local(nid, scope, actor, rid, body.model_dump(), guard),
+            request, target=(service.RUNS, rid))
 
     def action_handler(action):
         permission = "domain.review" if action in {"approve", "reject"} else "domain.write"

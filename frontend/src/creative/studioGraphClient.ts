@@ -12,7 +12,7 @@ import type {
   RecordedGraphMediaCommand, GraphImageOperation, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
   StudioGraphDefinitionId, StudioGraphDraft, StudioGraphNode, StudioGraphOutput, StudioGraphParameters,
   StudioGraphParameterSchema, StudioGraphPort, StudioGraphPosition, StudioGraphPreflight,
-  StudioGraphPreflightInput, StudioGraphCreateInput, StudioGraphSaveInput, StudioGraphRunCreateInput,
+  StudioGraphPreflightInput, StudioGraphCreateInput, StudioGraphSaveInput, StudioGraphRunCreateInput, StudioGraphFailedLocalRetryInput,
   StudioGraphRecord, StudioGraphReferenceState, StudioGraphRun, StudioGraphRunStatus, StudioGraphCatalog,
   StudioGraphScope, StudioGraphOwner, StudioGraphNodeState, StudioGraphNodeStatus,
   StudioGraphModelCapabilities, StudioGraphModelPreviewInput, StudioGraphModelDispatchInput, StudioGraphModelRefreshInput,
@@ -1084,6 +1084,11 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       ...(local ? { local_subgraph_runtime: local } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
     if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
+    if (row.attempt !== undefined || row.retry_of !== undefined) {
+      result.attempt = integer(row.attempt, 1, 100);
+      result.retry_of = row.retry_of === null ? null : resourceId(row.retry_of);
+      if (result.retry_of === runId || (result.retry_of === null ? result.attempt !== 1 : result.attempt < 2)) invalid();
+    }
     return remember ? rememberRun(result) : result;
   }
   function rememberRun(result: StudioGraphRun): StudioGraphRun {
@@ -1271,6 +1276,21 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       if (row.reuse_reviewed_local_dependencies !== undefined && bool(row.reuse_reviewed_local_dependencies, true)) payload.reuse_reviewed_local_dependencies = true;
       return transport.json(`${url}/runs`, 'POST', payload, undefined, payload.request_id).then(value => checkedRunResponse(value, undefined, graphId));
     },
+    retryLocal: (runId: string, value: StudioGraphFailedLocalRetryInput): Promise<StudioGraphRun> => {
+      const expectedGraphId = observedRuns.get(runId);
+      if (!expectedGraphId) invalid(true);
+      const row = record(value, true);
+      closed(row, ['expected_version', 'expected_graph_version', 'reviewed_preflight_digest', 'request_id']);
+      const payload: StudioGraphFailedLocalRetryInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true),
+        expected_graph_version: integer(row.expected_graph_version, 1, Number.MAX_SAFE_INTEGER, true),
+        reviewed_preflight_digest: digest(row.reviewed_preflight_digest, true), request_id: id(row.request_id, true) };
+      return transport.json(`${runUrl(runId)}/retry-local`, 'POST', payload, undefined, payload.request_id).then(async value => {
+        const result = await checkedRunResponse(value, undefined, expectedGraphId);
+        if (result.retry_of !== runId || !result.attempt || result.attempt < 2 || result.id === runId
+          || result.graph_version !== payload.expected_graph_version || result.model_runtime || result.media_runtime || result.local_subgraph_runtime) invalid();
+        return result;
+      });
+    },
     getRun: (runId: string, signal?: AbortSignal): Promise<StudioGraphRun> => transport.json(runUrl(runId), 'GET', undefined, signal).then(value => checkedRunResponse(value, runId)),
     previewModel: (runId: string, value: StudioGraphModelPreviewInput): Promise<StudioGraphRun> => {
       const url = runUrl(runId), row = record(value, true);
@@ -1352,5 +1372,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
 type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews' | 'localSubgraphCatalog' | 'localSubgraphList'>;
-export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient>
-  & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient>;
+type StudioGraphRetryClient = Pick<ReturnType<typeof createStudioGraphClient>, 'retryLocal'>;
+export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient | keyof StudioGraphRetryClient>
+  & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient> & Partial<StudioGraphRetryClient>;

@@ -892,6 +892,13 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
+class GraphFailedLocalRetry(Strict):
+    expected_version: int = Field(ge=1, strict=True)
+    expected_graph_version: int = Field(ge=1, strict=True)
+    reviewed_preflight_digest: Digest
+    request_id: RequestId
+
+
 def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False, include_video=False, include_local_subgraph=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),

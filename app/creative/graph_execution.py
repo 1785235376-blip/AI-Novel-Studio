@@ -15,7 +15,7 @@ from ..experimental.declarative_agents import _ScopedOriginalWorkflowHost
 from ..experimental.declarative_adapter_sdk import AdapterCapabilities, AdapterRequest, run_trusted_local
 from ..experimental.store import canonical
 from ..workflow_recipes import execute_local_recipe_node
-from .graph_models import (GraphAction, GraphRunCreate, GraphMediaRunCreate, parse_graph_run_create,
+from .graph_models import (GraphAction, GraphRunCreate, GraphMediaRunCreate, GraphFailedLocalRetry, parse_graph_run_create,
                           MAX_OUTPUT_BYTES, MAX_NODES, MAX_HISTORY, MAX_MEDIA_HISTORY,
                           RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS, validate_output_ports, LOCAL_SUBGRAPH_CONTRACT)
 from .project_store import BINDING
@@ -210,7 +210,17 @@ class CreativeGraphExecutor:
         guard()
         return graph
 
-    def create(self, nid, scope, actor, rid, body, guard):
+    def retry_failed_local(self, nid, scope, actor, source_id, value, guard):
+        body = GraphFailedLocalRetry.model_validate(value)
+        _, current = self.service._context(nid, scope, actor, guard)
+        source = self.service._owned(nid, scope, actor, self.service.RUNS, source_id)
+        # Only creation below mutates, under the original scope transaction.
+        return self.create(nid, scope, actor, source["graph_id"], {
+            "expected_graph_version": body.expected_graph_version,
+            "reviewed_preflight_digest": body.reviewed_preflight_digest,
+            "request_id": body.request_id}, current, _retry=(source_id, body))
+
+    def create(self, nid, scope, actor, rid, body, guard, *, _retry=None):
         body = GraphMediaRunCreate.model_validate(body.model_dump() if isinstance(body, GraphRunCreate) else body)
         incarnation, current = self.service._context(nid, scope, actor, guard)
         original = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid)
@@ -219,6 +229,16 @@ class CreativeGraphExecutor:
         with phase as state:
             graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, rid, state)
             check_version(graph, body.expected_graph_version)
+            source = None
+            if _retry is not None:
+                from .graph_failed_retry import validate_source
+                source_id, retry_body = _retry
+                source = self.service._owned(nid, scope, actor, self.service.RUNS, source_id, state)
+                if source["graph_id"] != rid:
+                    raise StaleSourceError("CREATIVE_GRAPH_RETRY_SOURCE_CHANGED")
+                validate_source(self, nid, scope, actor, source, graph, retry_body, current, state)
+                body = GraphRunCreate(**{**body.model_dump(), "target_node_ids": sorted(source["selected_closure"]),
+                    "reuse_reviewed_local_dependencies": source.get("reuse_reviewed_local_dependencies", False)})
             body = parse_graph_run_create(body, graph["definition"])
             if body.reuse_reviewed_local_dependencies:
                 from .graph_local_reuse import eligible
@@ -231,7 +251,11 @@ class CreativeGraphExecutor:
             if preflight["preflight_digest"] != body.reviewed_preflight_digest:
                 raise StaleSourceError("CREATIVE_GRAPH_EXACT_PREFLIGHT_REQUIRED")
             current()
-            request_digest = digest([rid, body.model_dump(), incarnation, scope, actor])
+            request_binding = [rid, body.model_dump(), incarnation, scope, actor]
+            if source is not None:
+                from .graph_failed_retry import CONTRACT
+                request_binding.append([CONTRACT, source["id"], source["version"]])
+            request_digest = digest(request_binding)
             rows = state["collections"].setdefault(self.service.RUNS, {})
             found = next((row for row in rows.values() if row.get("created_by") == actor and row.get("request_id") == body.request_id), None)
             if found:
@@ -267,6 +291,8 @@ class CreativeGraphExecutor:
                 payload.update(graph_schema_version=6, local_subgraph_contract=LOCAL_SUBGRAPH_CONTRACT,
                     local_subgraph_bindings=deepcopy(preflight["local_subgraph_bindings"]), local_subgraph_receipts={})
                 payload["cache"]["mode"] = SUBGRAPH_CACHE_MODE
+            if source is not None:
+                payload.update(retry_of=source["id"], attempt=source["attempt"] + 1)
             if body.reuse_reviewed_local_dependencies:
                 payload["reuse_reviewed_local_dependencies"] = True
                 payload["cache"]["mode"] = DEPENDENCY_CACHE_MODE
@@ -320,7 +346,7 @@ class CreativeGraphExecutor:
         except (StaleSourceError, FileNotFoundError):
             guard(); stale = True
         result = {key: deepcopy(row[key]) for key in ("id", "version", "graph_id", "graph_version", "status",
-            "current_node_id", "cache", "created_at", "updated_at", "reviewed")}
+            "current_node_id", "cache", "created_at", "updated_at", "reviewed", "retry_of", "attempt")}
         result.update(project_id=nid, scope=deepcopy(scope), stale=stale,
             timeout_seconds=row["timeout_seconds"], deadline_at=self._timing(row),
             node_states={node_id: {"status": value["status"],
