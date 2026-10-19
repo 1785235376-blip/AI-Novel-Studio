@@ -1,0 +1,86 @@
+{
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "versions": {
+    "pytest": "8.4.2",
+    "reportlab": "4.5.1",
+    "opentimelineio": "0.18.1",
+    "Pillow": "12.3.0",
+    "fonttools": "4.59.1"
+  },
+  "requirements": [
+    {
+      "requirement": "fastapi>=0.115,<1",
+      "version": "0.141.1",
+      "satisfied": true
+    },
+    {
+      "requirement": "uvicorn>=0.30,<1",
+      "version": "0.52.1",
+      "satisfied": true
+    },
+    {
+      "requirement": "psycopg[binary]>=3.2,<4",
+      "version": "3.3.4",
+      "satisfied": true
+    },
+    {
+      "requirement": "sqlalchemy>=2.0,<3",
+      "version": "2.0.51",
+      "satisfied": true
+    },
+    {
+      "requirement": "httpx>=0.27,<1",
+      "version": "0.28.1",
+      "satisfied": true
+    },
+    {
+      "requirement": "pydantic-settings>=2.6,<3",
+      "version": "2.15.0",
+      "satisfied": true
+    },
+    {
+      "requirement": "reportlab>=4.0,<5",
+      "version": "4.5.1",
+      "satisfied": true
+    },
+    {
+      "requirement": "pypdf==6.19.0",
+      "version": "6.19.0",
+      "satisfied": true
+    },
+    {
+      "requirement": "jsonschema>=4.18,<5",
+      "version": "4.26.0",
+      "satisfied": true
+    },
+    {
+      "requirement": "pytest>=8,<9",
+      "version": "8.4.2",
+      "satisfied": true
+    },
+    {
+      "requirement": "jsonschema>=4.18,<5",
+      "version": "4.26.0",
+      "satisfied": true
+    },
+    {
+      "requirement": "opentimelineio==0.18.1",
+      "version": "0.18.1",
+      "satisfied": true
+    },
+    {
+      "requirement": "Pillow==12.3.0",
+      "version": "12.3.0",
+      "satisfied": true
+    },
+    {
+      "requirement": "fonttools==4.59.1",
+      "version": "4.59.1",
+      "satisfied": true
+    }
+  ],
+  "all_satisfied": true,
+  "installation_performed": false,
+  "font_sha256": "eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461",
+  "pip_check_exit": 0
+}

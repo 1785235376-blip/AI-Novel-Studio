@@ -1,0 +1,192 @@
+[WebServer] (node:120548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:125708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:125708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] Error:   Failed to scan for dependencies from entries:
+[WebServer]   D:/codex鏁版嵁/2026-10-19/task/studio-v2-cloud-config-ux/frontend/index.html
+[WebServer] D:/codex鏁版嵁/2026-10-19/task/studio-v2-cloud-config-ux/frontend/tests/e2e/export-recovery.html
+[WebServer] 
+[WebServer]   X [ERROR] No matching export in "src/creative/directorCameraReuse.ts" for import "DirectorCameraReuse"
+[WebServer] 
+[WebServer]     src/creative/CreativeCanvas.tsx:4:9:
+[WebServer]       4 鈹?import { DirectorCameraReuse } from './DirectorCameraReuse';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/graphCanvasNotes.ts" for import "GraphNoteEditor"
+[WebServer] 
+[WebServer]     src/creative/GraphCanvas.tsx:18:9:
+[WebServer]       18 鈹?import { GraphNoteEditor, GraphNoteCards } from './GraphCanvasNotes';
+[WebServer]          鈺?         ~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/graphCanvasNotes.ts" for import "GraphNoteCards"
+[WebServer] 
+[WebServer]     src/creative/GraphCanvas.tsx:18:26:
+[WebServer]       18 鈹?import { GraphNoteEditor, GraphNoteCards } from './GraphCanvasNotes';
+[WebServer]          鈺?                          ~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/directorDraftComparison.ts" for import "DirectorDraftComparison"
+[WebServer] 
+[WebServer]     src/creative/GraphDirectorConsole.tsx:19:9:
+[WebServer]       19 鈹?import { DirectorDraftComparison } from './DirectorDraftComparison';
+[WebServer]          鈺?         ~~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/mediaCanvasGraphHandoff.ts" for import "MediaCanvasGraphHandoff"
+[WebServer] 
+[WebServer]     src/creative/MediaCanvasViewPanel.tsx:3:9:
+[WebServer]       3 鈹?import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/canvasAssetPreview.ts" for import "CanvasAssetPreview"
+[WebServer] 
+[WebServer]     src/creative/MediaCanvasViewPanel.tsx:9:9:
+[WebServer]       9 鈹?import { CanvasAssetPreview } from './CanvasAssetPreview';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/timelineTransferReview.ts" for import "TimelineTransferReview"
+[WebServer] 
+[WebServer]     src/creative/StudioTimelineTransferPanel.tsx:1:9:
+[WebServer]       1 鈹?import { TimelineTransferReview } from './TimelineTransferReview';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/graphDraftChecklist.ts" for import "GraphDraftChecklist"
+[WebServer] 
+[WebServer]     src/creative/studioGraphEditorView.tsx:8:9:
+[WebServer]       8 鈹?import { GraphDraftChecklist } from './GraphDraftChecklist';
+[WebServer]         鈹?         ~~~~~~~~~~~~~~~~~~~
+[WebServer]         鈺?         graphDraftChecklist
+[WebServer] 
+[WebServer]   Did you mean to import "graphDraftChecklist" instead?
+[WebServer] 
+[WebServer]     src/creative/graphDraftChecklist.ts:6:16:
+[WebServer]       6 鈹?export function graphDraftChecklist(draft:StudioGraphDefinition,cat...
+[WebServer]         鈺?                ~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/graphStoryboardStarter.ts" for import "GraphStoryboardStarter"
+[WebServer] 
+[WebServer]     src/creative/studioGraphEditorView.tsx:9:9:
+[WebServer]       9 鈹?import { GraphStoryboardStarter } from './GraphStoryboardStarter';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/creative/graphPlanningFork.ts" for import "GraphPlanningFork"
+[WebServer] 
+[WebServer]     src/creative/studioGraphEditorView.tsx:26:9:
+[WebServer]       26 鈹?import { GraphPlanningFork } from './GraphPlanningFork';
+[WebServer]          鈺?         ~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/experimental/branchComparisonReview.ts" for import "BranchComparisonReview"
+[WebServer] 
+[WebServer]     src/experimental/BranchManuscriptPanel.tsx:6:9:
+[WebServer]       6 鈹?import { BranchComparisonReview } from './BranchComparisonReview';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/experimental/productionReceiptReview.ts" for import "ProductionReceiptReview"
+[WebServer] 
+[WebServer]     src/experimental/ProductionLineagePanel.tsx:7:9:
+[WebServer]       7 鈹?import { ProductionReceiptReview, ReceiptNavigation } from './Produ...
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/experimental/productionReceiptReview.ts" for import "ReceiptNavigation"
+[WebServer] 
+[WebServer]     src/experimental/ProductionLineagePanel.tsx:7:34:
+[WebServer]       7 鈹?...roductionReceiptReview, ReceiptNavigation } from './ProductionRe...
+[WebServer]         鈺?                           ~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/experimental/captionTextReplace.ts" for import "CaptionTextReplace"
+[WebServer] 
+[WebServer]     src/experimental/SubtitleTimelinePanel.tsx:5:9:
+[WebServer]       5 鈹?import { CaptionTextReplace } from './CaptionTextReplace';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/experimental/productionReceiptReview.ts" for import "ReceiptNavigation"
+[WebServer] 
+[WebServer]     src/experimental/pristineReplayNavigation.tsx:3:9:
+[WebServer]       3 鈹?import { ReceiptNavigation } from './ProductionReceiptReview';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer] X [ERROR] No matching export in "src/taskcenter/taskCostReceipt.ts" for import "TaskCostReceiptView"
+[WebServer] 
+[WebServer]     src/taskcenter/TaskList.tsx:1:9:
+[WebServer]       1 鈹?import { TaskCostReceiptView } from './TaskCostReceipt';
+[WebServer]         鈺?         ~~~~~~~~~~~~~~~~~~~
+[WebServer] 
+[WebServer] 
+[WebServer]     at failureErrorWithLog (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1467:15)
+[WebServer]     at D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:926:25
+[WebServer]     at runOnEndCallbacks (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:1307:45)
+[WebServer]     at buildResponseToResult (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:924:7)
+[WebServer]     at D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:936:9
+[WebServer]     at new Promise (<anonymous>)
+[WebServer]     at requestCallbacks.on-end (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:935:54)
+[WebServer]     at handleRequest (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:628:17)
+[WebServer]     at handleIncomingPacket (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:653:7)
+[WebServer]     at Socket.readFromStdout (D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\node_modules\.pnpm\esbuild@0.25.12\node_modules\esbuild\lib\main.js:581:7)
+[WebServer]     at Socket.emit (node:events:518:28)
+[WebServer]     at addChunk (node:internal/streams/readable:561:12)
+[WebServer]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[WebServer]     at Readable.push (node:internal/streams/readable:392:5)
+[WebServer]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+  x  1 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1366 (1.0m)
+(node:133528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:133528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1440 (630ms)
+  ok 3 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1920 (550ms)
+
+
+  1) [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1366 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: '鏄庣‘璇诲彇鐧剧偧鏂囨湰棰勮' })
+        - locator resolved to <button class="ui-button ui-button--secondary">鏄庣‘璇诲彇鐧剧偧鏂囨湰棰勮</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+
+
+      31 |     });
+      32 |     const read = page.getByRole('button', { name: '鏄庣‘璇诲彇鐧剧偧鏂囨湰棰勮' }); await expect(read).toBeVisible();
+    > 33 |     expect(requests).toEqual([]); await read.click();
+         |                                              ^
+      34 |     await page.getByLabel('鐧剧偧 API 鍦板尯').selectOption('cn-hongkong');
+      35 |     await page.getByLabel('鐧剧偧鏂囨湰妯″瀷 ID').fill('synthetic-model');
+      36 |     await page.getByRole('button', { name: '鏈湴棰勬绔偣涓庢ā鍨?ID锛堜笉杩炴帴锛? }).click();
+        at D:\codex鏁版嵁\2026-10-19\task\studio-v2-cloud-config-ux\frontend\tests\visual\cloud-config.spec.ts:33:46
+
+    Error Context: ..\..\..\task-5\cloud-config-evidence\browser-r1\cloud-config-cloud-preset-preflight-and-safe-failure-1366-chromium\error-context.md
+
+    attachment #2: trace (application/zip) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    ..\..\..\task-5\cloud-config-evidence\browser-r1\cloud-config-cloud-preset-preflight-and-safe-failure-1366-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\..\task-5\cloud-config-evidence\browser-r1\cloud-config-cloud-preset-preflight-and-safe-failure-1366-chromium\trace.zip
+
+    鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
+  1 failed
+    [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1366 
+  2 passed (1.1m)

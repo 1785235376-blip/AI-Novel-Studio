@@ -1,0 +1,14 @@
+[WebServer] (node:129640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:122888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:122888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1366 (618ms)
+  ok 2 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1440 (544ms)
+  ok 3 [chromium] 鈥?tests\visual\cloud-config.spec.ts:5:3 鈥?cloud preset preflight and safe failure 1920 (536ms)
+
+  3 passed (3.7s)

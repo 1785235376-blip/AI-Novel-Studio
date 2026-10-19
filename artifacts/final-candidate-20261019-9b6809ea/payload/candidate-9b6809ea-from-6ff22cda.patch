@@ -1,0 +1,1823 @@
+diff --git a/app/experimental/comic_layers.py b/app/experimental/comic_layers.py
+index 4ec42039..c46698a1 100644
+--- a/app/experimental/comic_layers.py
++++ b/app/experimental/comic_layers.py
+@@ -105,7 +105,7 @@ def validate_references(stack, panels):
+ def iter_layer_images(document, images, placements, text=None):
+     """Yield one cropped transparent RGBA surface at a time, never N full pages."""
+     from PIL import Image, ImageDraw
+-    from .comic_layouts import _image, _text_layout, licensed_font
++    from .comic_layouts import _image, _text_layout, _text_x, licensed_font
+     panels = {p['id']: p for p in document['panels']}
+     bubbles = {b['id']: b for p in document['panels'] for b in p['bubbles']}
+     if text is None:
+@@ -141,7 +141,7 @@ def iter_layer_images(document, images, placements, text=None):
+         elif kind == 'BUBBLE_TEXT':
+             font, lines, line_height = text[obj['id']]
+             for index, line in enumerate(lines):
+-                draw.text((12, 12 + index * line_height), line, font=font, fill='black', anchor='lt')
++                draw.text((_text_x(obj, font, line), 12 + index * line_height), line, font=font, fill='black', anchor='lt')
+         yield item, obj['x'], obj['y'], surface
+ 
+ 
+diff --git a/app/experimental/comic_layouts.py b/app/experimental/comic_layouts.py
+index 9c77ee2c..cf1b8503 100644
+--- a/app/experimental/comic_layouts.py
++++ b/app/experimental/comic_layouts.py
+@@ -43,6 +43,18 @@ class Bubble(Rect):
+     text: str = Field(min_length=1, max_length=1000)
+     character_id: str | None = Field(default=None, max_length=240)
+     font_size: int = Field(default=28, ge=14, le=96, strict=True)
++    text_align: Literal['LEFT', 'CENTER', 'RIGHT'] = 'LEFT'
++    line_height_percent: int = Field(default=150, ge=100, le=250, strict=True)
++
++    @model_serializer(mode='wrap')
++    def preserve_legacy_typography(self, handler):
++        document = handler(self)
++        # Reading, re-saving or restoring old approval-bound documents must not
++        # inject fields or change their digest. Defaults apply only at render.
++        for field in ('text_align', 'line_height_percent'):
++            if field not in self.model_fields_set:
++                document.pop(field, None)
++        return document
+ 
+     @model_validator(mode='after')
+     def plain(self):
+@@ -229,6 +241,12 @@ def _overlap(a, b):
+     return max(a['x'], b['x']) < min(a['x'] + a['width'], b['x'] + b['width']) and max(a['y'], b['y']) < min(a['y'] + a['height'], b['y'] + b['height'])
+ 
+ 
++def _text_x(bubble, font, line):
++    align = bubble.get('text_align', 'LEFT')
++    remaining = bubble['width'] - 24 - font.getlength(line)
++    return 12 + (remaining / 2 if align == 'CENTER' else remaining if align == 'RIGHT' else 0)
++
++
+ def _text_layout(bubble, font_data, coverage):
+     from PIL import ImageFont
+     if any(ord(c) not in coverage for c in bubble['text'] if c != '\n'):
+@@ -256,12 +274,13 @@ def _text_layout(bubble, font_data, coverage):
+             else:
+                 line += char
+         lines.append(line)
+-    line_height = math.ceil(bubble['font_size'] * 1.5)
++    line_height = math.ceil(bubble['font_size'] * bubble.get('line_height_percent', 150) / 100)
+     if len(lines) * line_height > bubble['height'] - 24:
+         raise ValueError('COMIC_TEXT_OVERFLOW')
+     for index, line in enumerate(lines):
+         left, top, right, bottom = font.getbbox(line, anchor='lt')
+-        if left < -12 or right > bubble['width'] - 12 or index * line_height + bottom > bubble['height'] - 24:
++        x = _text_x(bubble, font, line)
++        if x + left < 0 or x + right > bubble['width'] or index * line_height + bottom > bubble['height'] - 24:
+             raise ValueError('COMIC_TEXT_OVERFLOW')
+     return font, lines, line_height
+ 
+@@ -356,7 +375,7 @@ def compose(document, images, *, render=False):
+                 box = (bubble['x'], bubble['y'], bubble['x'] + bubble['width'] - 1, bubble['y'] + bubble['height'] - 1)
+                 draw.rounded_rectangle(box, radius=16 if bubble['kind'] == 'DIALOGUE' else 0, fill='white', outline='black', width=2)
+                 font, lines, line_height = text[bubble['id']]
+-                for i, line in enumerate(lines): draw.text((bubble['x'] + 12, bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
++                for i, line in enumerate(lines): draw.text((bubble['x'] + _text_x(bubble, font, line), bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
+     output = []
+     for segment in segments:
+         stream = segment_buffer(); canvas.crop((0, segment['y'], document['width'], segment['y'] + segment['height'])).save(stream, format='PNG', compress_level=9)
+diff --git a/app/experimental/timeline_exchange.py b/app/experimental/timeline_exchange.py
+index 50a03317..34b4fb07 100644
+--- a/app/experimental/timeline_exchange.py
++++ b/app/experimental/timeline_exchange.py
+@@ -82,7 +82,6 @@ def _to_native(value):
+ 
+ 
+ def _read_time(item, key, native):
+-    fallback = _native_time(native)
+     metadata = item.metadata.get(NS, {}) if hasattr(item, "metadata") else {}
+     if metadata and not hasattr(metadata, "get"):
+         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
+@@ -90,6 +89,11 @@ def _read_time(item, key, native):
+         exact = dict(metadata.get(key, {})) if metadata else {}
+     except (TypeError, ValueError):
+         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID") from None
++    if native is None:
++        if exact:
++            raise ValueError("OTIO_EXACT_TIME_METADATA_MISMATCH")
++        return None
++    fallback = _native_time(native)
+     if exact:
+         try:
+             exact = {k: dict(v) for k, v in exact.items()}
+@@ -125,8 +129,27 @@ def _extras(item, path, report, *, speed_supported=False, studio_supported=False
+     if getattr(item, "markers", []):
+         _loss(report, path, "MARKERS_NOT_REPRESENTED")
+     extension = getattr(item, "metadata", {}).get(NS, {})
+-    supported = {"in_offset", "out_offset"} if getattr(item, "schema_name", lambda: "")() == "Transition" else {"start", "duration", "speed"} if getattr(item, "schema_name", lambda: "")() == "Clip" else {"start", "duration"} if getattr(item, "schema_name", lambda: "")() == "Gap" else set()
+-    if extension and (not hasattr(extension, "keys") or set(extension.keys()) - supported):
++    supported = {
++        "Timeline": {"global_start_time"},
++        "Transition": {"in_offset", "out_offset"},
++        "Clip": {"start", "duration", "speed"},
++        "Gap": {"start", "duration"},
++        "ExternalReference": {"start", "duration"},
++        "MissingReference": {"start", "duration"},
++    }.get(getattr(item, "schema_name", lambda: "")(), set())
++    unknown = False
++    if extension:
++        if not hasattr(extension, "keys"):
++            unknown = True
++        else:
++            unknown = bool(set(extension.keys()) - supported)
++            # A recognized time key does not make its entire payload representable.
++            # Rational internals remain subject to fraction()'s closed input contract.
++            for key in supported - {"speed"}:
++                exact = extension.get(key)
++                if hasattr(exact, "keys") and set(exact.keys()) - {"frames", "rate"}:
++                    unknown = True
++    if unknown:
+         _loss(report, path, "UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED")
+     if any(key not in ({NS, STUDIO_NS} if studio_supported else {NS}) for key in getattr(item, "metadata", {})):
+         _loss(report, path, "APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED")
+@@ -251,7 +274,7 @@ def read_otio(text):
+         raise ValueError("OTIO_ROOT_TRIM_NOT_SUPPORTED")
+     if timeline.tracks.name:
+         _loss(report, "tracks", "ROOT_STACK_NAME_NOT_REPRESENTED")
+-    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _native_time(timeline.global_start_time) if timeline.global_start_time is not None else None}
++    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _read_time(timeline, "global_start_time", timeline.global_start_time)}
+     if len(timeline.tracks) > 16:
+         raise ValueError("OTIO_TRACK_LIMIT_16")
+     total_items = 0
+@@ -295,14 +318,18 @@ def read_otio(text):
+                 if isinstance(ref, otio.schema.ExternalReference):
+                     row["target_url"] = _url(ref.target_url)
+                     row["media_state"] = "EXTERNAL_REFERENCE_NOT_OPENED"
+-                    if ref.available_range is not None:
+-                        row["available_range"] = {"start": _native_time(ref.available_range.start_time), "duration": _native_time(ref.available_range.duration)}
+                 elif isinstance(ref, otio.schema.MissingReference):
+                     row["target_url"] = None; row["media_state"] = "MISSING"
+                     _loss(report, ip, "MISSING_MEDIA", "WARNING")
+                 else:
+                     row["target_url"] = None; row["media_state"] = "UNSUPPORTED_REFERENCE"
+                     _loss(report, ip, "MEDIA_REFERENCE_TYPE_NOT_REPRESENTED")
++                if isinstance(ref, (otio.schema.ExternalReference, otio.schema.MissingReference)):
++                    available = ref.available_range
++                    exact_start = _read_time(ref, "start", available.start_time if available is not None else None)
++                    exact_duration = _read_time(ref, "duration", available.duration if available is not None else None)
++                    if available is not None:
++                        row["available_range"] = {"start": exact_start, "duration": exact_duration}
+                 if len(item.media_references()) > 1:
+                     _loss(report, ip, "ALTERNATE_MEDIA_REFERENCES_NOT_REPRESENTED")
+             elif not isinstance(item, otio.schema.Gap):
+@@ -349,6 +376,7 @@ def write_otio(doc):
+         timeline.metadata[STUDIO_NS] = validate_studio_extension(doc["studio"])
+     if doc.get("global_start_time") is not None:
+         timeline.global_start_time = _to_native(doc["global_start_time"])
++        timeline.metadata[NS] = {"global_start_time": doc["global_start_time"]}
+     for row in doc["tracks"]:
+         track = otio.schema.Track(name=row["name"], kind=row["kind"])
+         for item in row["items"]:
+@@ -360,8 +388,9 @@ def write_otio(doc):
+                 span = otio.opentime.TimeRange(_to_native(item["start"]), _to_native(item["duration"]))
+                 if item["kind"] == "Clip":
+                     ref = otio.schema.ExternalReference(target_url=_url(item["target_url"])) if item.get("target_url") else otio.schema.MissingReference()
+-                    if item.get("available_range") and item.get("target_url"):
++                    if item.get("available_range"):
+                         ref.available_range = otio.opentime.TimeRange(_to_native(item["available_range"]["start"]), _to_native(item["available_range"]["duration"]))
++                        ref.metadata[NS] = item["available_range"]
+                     native = otio.schema.Clip(name=item["name"], source_range=span, media_reference=ref)
+                     if "speed" in item:
+                         speed = fraction(item["speed"])
+@@ -401,8 +430,12 @@ def summary(doc):
+         cursor = Fraction(); cuts = []
+         for item in track["items"]:
+             if item["kind"] == "Transition": continue
+-            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(seconds(item["duration"])), "source_in_seconds": rational(seconds(item["start"])), "source_out_seconds": rational(seconds(item["start"]) + seconds(item["duration"]))})
+-            cursor += seconds(item["duration"])
++            duration, source_in = seconds(item["duration"]), seconds(item["start"])
++            # LinearTimeWarp leaves native item duration/track placement intact;
++            # its media consumption follows the original Studio import contract.
++            speed = fraction(item["speed"]) if item["kind"] == "Clip" and "speed" in item else Fraction(1)
++            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(duration), "source_in_seconds": rational(source_in), "source_out_seconds": rational(source_in + duration * speed)})
++            cursor += duration
+         tracks.append({"name": track["name"], "kind": track["kind"], "duration_seconds": rational(cursor), "cuts": cuts})
+     return {"name": doc["name"], "tracks": tracks, "duration_semantics": "EXACT_RATIONAL_HALF_OPEN_SOURCE_RANGES", "renders_media": False, "audio_video_relation": "INDEPENDENT_TRACK_TIMING_ONLY_NO_LINKED_CLIP_CONTRACT"}
+ 
+diff --git a/frontend/playwright.cloud-config.config.ts b/frontend/playwright.cloud-config.config.ts
+new file mode 100644
+index 00000000..8f87fa0e
+--- /dev/null
++++ b/frontend/playwright.cloud-config.config.ts
+@@ -0,0 +1,3 @@
++import { defineConfig } from '@playwright/test';
++import base from './playwright.visual.config';
++export default defineConfig({ ...base, testMatch: /cloud-config\.spec\.ts/, outputDir: 'test-results/cloud-config', reporter: 'list' });
+diff --git a/frontend/playwright.comic-typography.config.ts b/frontend/playwright.comic-typography.config.ts
+new file mode 100644
+index 00000000..fff9eac0
+--- /dev/null
++++ b/frontend/playwright.comic-typography.config.ts
+@@ -0,0 +1,3 @@
++import { defineConfig } from '@playwright/test';
++import base from './playwright.visual.config';
++export default defineConfig({ ...base, testMatch: /comic-typography\.spec\.ts/, outputDir: 'test-results/comic-typography', reporter: 'list' });
+diff --git a/frontend/src/creative/CameraGrammarEditor.additive.test.tsx b/frontend/src/creative/CameraGrammarEditor.additive.test.tsx
+index 4beec7f2..522c6b3a 100644
+--- a/frontend/src/creative/CameraGrammarEditor.additive.test.tsx
++++ b/frontend/src/creative/CameraGrammarEditor.additive.test.tsx
+@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
+ import { ApiError } from '../api';
+ import { CreativeCanvas } from './CreativeCanvas';
+ import { GraphDirectorConsole, type GraphDirectorSource } from './GraphDirectorConsole';
+-import { compareDirectorDraft } from './directorDraftComparison';
++import { compareDirectorDraft } from './directorDraftComparisonHelpers';
+ import { documentInput, newDocument, newScene, newShot, type CreativeInput, type CreativeDocument } from './types';
+ import { cameraGeometry } from './cameraGeometry.testFixture';
+ import { validCameraGrammar } from './cameraGrammar';
+diff --git a/frontend/src/creative/CanvasAssetPreview.additive.test.tsx b/frontend/src/creative/CanvasAssetPreview.additive.test.tsx
+index f5245fea..7c0bace2 100644
+--- a/frontend/src/creative/CanvasAssetPreview.additive.test.tsx
++++ b/frontend/src/creative/CanvasAssetPreview.additive.test.tsx
+@@ -2,8 +2,8 @@
+ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { CanvasAssetPreview } from './CanvasAssetPreview';
+-import { loadCanvasAssetPreview } from './canvasAssetPreview';
+-vi.mock('./canvasAssetPreview', async original => ({ ...await original<typeof import('./canvasAssetPreview')>(), loadCanvasAssetPreview: vi.fn() }));
++import { loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
++vi.mock('./canvasAssetPreviewHelpers', async original => ({ ...await original<typeof import('./canvasAssetPreviewHelpers')>(), loadCanvasAssetPreview: vi.fn() }));
+ // Keep this test about owner/selection admission; original AssetInspector tests cover its media element lifecycle.
+ vi.mock('../novel/AssetInspector', () => ({ AssetInspector: ({ asset }: any) => <output aria-label="preview asset">{asset.filename}</output> }));
+ afterEach(() => { cleanup(); vi.clearAllMocks(); });
+diff --git a/frontend/src/creative/CanvasAssetPreview.tsx b/frontend/src/creative/CanvasAssetPreview.tsx
+index 419f40b4..62b10fe5 100644
+--- a/frontend/src/creative/CanvasAssetPreview.tsx
++++ b/frontend/src/creative/CanvasAssetPreview.tsx
+@@ -4,7 +4,7 @@ import { Button, StatusMessage } from '../ui/primitives';
+ import { apiErrorView } from '../api';
+ import type { StudioClient } from './studioClient';
+ import type { CanvasAssetReference } from './studioCanvasViewClient';
+-import { checkCanvasPreviewAsset, loadCanvasAssetPreview } from './canvasAssetPreview';
++import { checkCanvasPreviewAsset, loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
+ type Props = { reference: CanvasAssetReference; owner: object; client: StudioClient; disabled: boolean; isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T> };
+ export function CanvasAssetPreview(props: Props) {
+   const [result, setResult] = useState<{ token: object; value: Awaited<ReturnType<typeof loadCanvasAssetPreview>> }>(), [error, setError] = useState(''), [pending, setPending] = useState(false);
+diff --git a/frontend/src/creative/DirectorCameraReuse.test.tsx b/frontend/src/creative/DirectorCameraReuse.test.tsx
+index fcfc4648..726e85db 100644
+--- a/frontend/src/creative/DirectorCameraReuse.test.tsx
++++ b/frontend/src/creative/DirectorCameraReuse.test.tsx
+@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { CreativeCanvas } from './CreativeCanvas';
+ import { DirectorCameraReuse } from './DirectorCameraReuse';
+-import { previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuse';
++import { previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuseHelpers';
+ import { emptyCameraGrammar } from './cameraGrammar';
+ import { newDocument, newScene, type CreativeInput, type DirectorSceneNote } from './types';
+ afterEach(cleanup);
+diff --git a/frontend/src/creative/DirectorCameraReuse.tsx b/frontend/src/creative/DirectorCameraReuse.tsx
+index 7e4e7dd4..183d3864 100644
+--- a/frontend/src/creative/DirectorCameraReuse.tsx
++++ b/frontend/src/creative/DirectorCameraReuse.tsx
+@@ -1,7 +1,7 @@
+ import { useLayoutEffect, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+ import type { CreativeInput } from './types';
+-import { cameraValueLabel, DIRECTOR_CAMERA_FIELDS, previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuse';
++import { cameraValueLabel, DIRECTOR_CAMERA_FIELDS, previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuseHelpers';
+ 
+ type Props = { draft: CreativeInput; sceneId: string; version?: number; dirty: boolean; canEdit: boolean; busy: boolean; onChange: (draft: CreativeInput) => void };
+ export function DirectorCameraReuse(props: Props) {
+diff --git a/frontend/src/creative/DirectorDraftComparison.additive.test.tsx b/frontend/src/creative/DirectorDraftComparison.additive.test.tsx
+index ae917f7e..1c2e28ca 100644
+--- a/frontend/src/creative/DirectorDraftComparison.additive.test.tsx
++++ b/frontend/src/creative/DirectorDraftComparison.additive.test.tsx
+@@ -1,7 +1,7 @@
+ // @vitest-environment jsdom
+ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { afterEach, expect, it } from 'vitest';
+-import { compareDirectorDraft } from './directorDraftComparison';
++import { compareDirectorDraft } from './directorDraftComparisonHelpers';
+ import { DirectorDraftComparison } from './DirectorDraftComparison';
+ import { newDocument, newScene, type CreativeInput } from './types';
+ const draft=():CreativeInput=>({...newDocument('DIRECTOR'),title:'Director',source_independent:true,scenes:[{...newScene(1),id:'s',action:'before'}],director_notes:[{id:'note',number:1,scene_id:'s',blocking:'left',note:'meaning',shot_size:'MEDIUM',camera_angle:'EYE',camera_motion:'STATIC',duration_seconds:5,emotion:'calm',pacing:'slow',performance:'natural'}]});
+diff --git a/frontend/src/creative/DirectorDraftComparison.tsx b/frontend/src/creative/DirectorDraftComparison.tsx
+index 5458adc5..5f959a49 100644
+--- a/frontend/src/creative/DirectorDraftComparison.tsx
++++ b/frontend/src/creative/DirectorDraftComparison.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useMemo, useState } from 'react';
+ import { Button } from '../ui/primitives';
+ import type { CreativeInput } from './types';
+-import { compareDirectorDraft } from './directorDraftComparison';
++import { compareDirectorDraft } from './directorDraftComparisonHelpers';
+ export function DirectorDraftComparison({local,server}:{local:CreativeInput;server:CreativeInput}){
+   const rows=useMemo(()=>compareDirectorDraft(local,server),[local,server]);
+   const [page,setPage]=useState(0);
+diff --git a/frontend/src/creative/DirectorIntentConstraints.test.tsx b/frontend/src/creative/DirectorIntentConstraints.test.tsx
+index 4b283e6c..51243ed3 100644
+--- a/frontend/src/creative/DirectorIntentConstraints.test.tsx
++++ b/frontend/src/creative/DirectorIntentConstraints.test.tsx
+@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
+ import { GraphDirectorConsole, type GraphDirectorSource } from './GraphDirectorConsole';
+ import { DirectorTargetPanel } from './DirectorTargetPanel';
+ import { checkedVisualTarget } from './studioProductionGraphContract';
+-import { compareDirectorDraft } from './directorDraftComparison';
++import { compareDirectorDraft } from './directorDraftComparisonHelpers';
+ import { creativeAuthoringProblems, documentInput, newDocument, validDirectorIntent, type CreativeDocument, type CreativeInput } from './types';
+ const legacy = { style: '', atmosphere: '', reference_works: [], color: '', rhythm: '' };
+ const target = { ...legacy, target_audience: 'First-time viewers', target_platform: 'Local screening', production_budget_constraints: 'Use existing sets; no paid cloud calls' };
+diff --git a/frontend/src/creative/GraphCanvasNotes.tsx b/frontend/src/creative/GraphCanvasNotes.tsx
+index 82dfff7d..0a0c5bbf 100644
+--- a/frontend/src/creative/GraphCanvasNotes.tsx
++++ b/frontend/src/creative/GraphCanvasNotes.tsx
+@@ -3,7 +3,7 @@ import type { PointerEvent } from 'react';
+ import { Button } from '../ui/primitives';
+ import type { StudioGraphCanvasNote, StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
+ import { clampGraphPosition, graphScreenToWorld } from './graphCanvasGeometry';
+-import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, GRAPH_NOTE_LIMIT, GRAPH_NOTE_RENDER_LIMIT, withGraphNotes, visibleGraphNotes, graphNoteDisplayWindow } from './graphCanvasNotes';
++import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, GRAPH_NOTE_LIMIT, GRAPH_NOTE_RENDER_LIMIT, withGraphNotes, visibleGraphNotes, graphNoteDisplayWindow } from './graphCanvasNotesHelpers';
+ 
+ import { GraphNoteNavigator } from './GraphNoteNavigator';
+ 
+diff --git a/frontend/src/creative/GraphDraftChecklist.additive.test.tsx b/frontend/src/creative/GraphDraftChecklist.additive.test.tsx
+index c9598185..c1aa90ac 100644
+--- a/frontend/src/creative/GraphDraftChecklist.additive.test.tsx
++++ b/frontend/src/creative/GraphDraftChecklist.additive.test.tsx
+@@ -1,7 +1,7 @@
+ // @vitest-environment jsdom
+ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+-import { graphDraftChecklist } from './graphDraftChecklist';
++import { graphDraftChecklist } from './graphDraftChecklistHelpers';
+ import { GraphDraftChecklist } from './GraphDraftChecklist';
+ import { blankGraph } from './graphDraft';
+ import { buildGraphStarter } from './graphStarter';
+diff --git a/frontend/src/creative/GraphDraftChecklist.tsx b/frontend/src/creative/GraphDraftChecklist.tsx
+index 670e918f..ec281c8e 100644
+--- a/frontend/src/creative/GraphDraftChecklist.tsx
++++ b/frontend/src/creative/GraphDraftChecklist.tsx
+@@ -1,7 +1,7 @@
+ import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
+-import { graphDraftChecklist } from './graphDraftChecklist';
++import { graphDraftChecklist } from './graphDraftChecklistHelpers';
+ import type { StudioGraphCatalogDefinition, StudioGraphDefinition } from './studioGraphTypes';
+ type Props={draft:StudioGraphDefinition;catalog:readonly StudioGraphCatalogDefinition[];scope:object;disabled:boolean;onSelect:(ids:string[])=>void};
+ export function GraphDraftChecklist(props:Props){
+diff --git a/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx b/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx
+index e279cfef..f99e470a 100644
+--- a/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx
++++ b/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx
+@@ -2,7 +2,7 @@
+ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { GraphPlanningFork } from './GraphPlanningFork';
+-import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
++import { planningSourceFork, planningSourceReferences } from './graphPlanningForkHelpers';
+ import type { StudioGraphDefinition } from './studioGraphTypes';
+ 
+ afterEach(cleanup);
+diff --git a/frontend/src/creative/GraphPlanningFork.test.tsx b/frontend/src/creative/GraphPlanningFork.test.tsx
+index f0eee1b6..d366feeb 100644
+--- a/frontend/src/creative/GraphPlanningFork.test.tsx
++++ b/frontend/src/creative/GraphPlanningFork.test.tsx
+@@ -2,7 +2,7 @@
+ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+ import { afterEach, describe, expect, it, vi } from 'vitest';
+ import { GraphPlanningFork } from './GraphPlanningFork';
+-import { planningSourceFork } from './graphPlanningFork';
++import { planningSourceFork } from './graphPlanningForkHelpers';
+ import type { PlanningDocument } from './studioProductionGraphContract';
+ import type { StudioGraphDefinition } from './studioGraphTypes';
+ 
+diff --git a/frontend/src/creative/GraphPlanningFork.tsx b/frontend/src/creative/GraphPlanningFork.tsx
+index 91946195..93ea2475 100644
+--- a/frontend/src/creative/GraphPlanningFork.tsx
++++ b/frontend/src/creative/GraphPlanningFork.tsx
+@@ -3,7 +3,7 @@ import { apiErrorView } from '../api';
+ import { Button, StatusMessage } from '../ui/primitives';
+ import type { StudioGraphClient } from './studioGraphClient';
+ import { checkedPlanningDocument, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
+-import type { PlanningSourceReference } from './graphPlanningFork';
++import type { PlanningSourceReference } from './graphPlanningForkHelpers';
+ 
+ type Props = {
+   client: Pick<StudioGraphClient, 'planningDocuments'>;
+diff --git a/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx b/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx
+index 7acd6984..b35cf8d1 100644
+--- a/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx
++++ b/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx
+@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest';
+ import { blankGraph, connectionIssue } from './graphDraft';
+ import { checkedStudioGraphDraft } from './studioGraphClient';
+ import { checkedStoryboardReceipt } from './studioStoryboardContract';
+-import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
++import { buildStoryboardVideoStarter } from './graphStoryboardStarterHelpers';
+ import { GraphStoryboardStarter } from './GraphStoryboardStarter';
+ import type { StudioGraphCatalog } from './studioGraphTypes';
+ import { useStudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';
+diff --git a/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx b/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx
+index 8ec99c67..a1c932f1 100644
+--- a/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx
++++ b/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx
+@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest';
+ import { blankGraph, connectionIssue } from './graphDraft';
+ import { checkedStudioGraphDraft } from './studioGraphClient';
+ import { checkedStoryboardReceipt } from './studioStoryboardContract';
+-import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
++import { buildStoryboardVideoBranches } from './graphStoryboardStarterHelpers';
+ import { useStudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';
+ import { studioGraphEditorView } from './studioGraphEditorView';
+ import type { StudioClient } from './studioClient';
+diff --git a/frontend/src/creative/GraphStoryboardStarter.tsx b/frontend/src/creative/GraphStoryboardStarter.tsx
+index 6f45ab33..7a25736e 100644
+--- a/frontend/src/creative/GraphStoryboardStarter.tsx
++++ b/frontend/src/creative/GraphStoryboardStarter.tsx
+@@ -1,6 +1,6 @@
+ import { useLayoutEffect, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+-import { MAX_STORYBOARD_VIDEO_BRANCHES } from './graphStoryboardStarter';
++import { MAX_STORYBOARD_VIDEO_BRANCHES } from './graphStoryboardStarterHelpers';
+ import { apiErrorView } from '../api';
+ import type { PlanningDocument } from './studioProductionGraphContract';
+ import type { StoryboardReceipt } from './studioStoryboardContract';
+diff --git a/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx b/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx
+index 8771f8c0..2fd2300d 100644
+--- a/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx
++++ b/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx
+@@ -2,7 +2,7 @@
+ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
+-import { appendCanvasAssetNode, verifyCanvasGraphAsset } from './mediaCanvasGraphHandoff';
++import { appendCanvasAssetNode, verifyCanvasGraphAsset } from './mediaCanvasGraphHandoffHelpers';
+ import { blankGraph } from './graphDraft';
+ import { imageGraphCatalog, imageGraphRecord } from './studioImageGraph.testFixtures';
+ import { useStudioGraphEditorController, type StudioGraphEditorProps, type StudioGraphEditorController } from './useStudioGraphEditorController';
+diff --git a/frontend/src/creative/MediaCanvasGraphHandoff.tsx b/frontend/src/creative/MediaCanvasGraphHandoff.tsx
+index 7120b359..56be007a 100644
+--- a/frontend/src/creative/MediaCanvasGraphHandoff.tsx
++++ b/frontend/src/creative/MediaCanvasGraphHandoff.tsx
+@@ -1,6 +1,6 @@
+ import { useLayoutEffect, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+-import { verifyCanvasGraphAsset, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
++import { verifyCanvasGraphAsset, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
+ import type { CanvasAssetReference } from './studioCanvasViewClient';
+ import type { StudioClient } from './studioClient';
+ type Props = { reference: CanvasAssetReference; owner: object; disabled: boolean; isCurrent: () => boolean;
+diff --git a/frontend/src/creative/MediaCanvasViewPanel.tsx b/frontend/src/creative/MediaCanvasViewPanel.tsx
+index 2399226e..628e581d 100644
+--- a/frontend/src/creative/MediaCanvasViewPanel.tsx
++++ b/frontend/src/creative/MediaCanvasViewPanel.tsx
+@@ -1,7 +1,7 @@
+ import { useMediaCanvasRecovery } from './useMediaCanvasRecovery';
+ import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
+ import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
+-import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
++import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
+ import { alignCanvasCards } from './mediaCanvasSelection';
+ import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
+ import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';
+diff --git a/frontend/src/creative/StudioTimelineEditor.tsx b/frontend/src/creative/StudioTimelineEditor.tsx
+index dbb2ebe0..cb31ea04 100644
+--- a/frontend/src/creative/StudioTimelineEditor.tsx
++++ b/frontend/src/creative/StudioTimelineEditor.tsx
+@@ -16,7 +16,7 @@ import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type Studio
+ import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useStudioTimelineEditor';
+ import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
+ import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
+-import { transferClipTarget } from './timelineTransferReview';
++import { transferClipTarget } from './timelineTransferReviewHelpers';
+ import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
+ import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
+ import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
+diff --git a/frontend/src/creative/TimelineTransferReview.test.tsx b/frontend/src/creative/TimelineTransferReview.test.tsx
+index 589b8197..8debbc4e 100644
+--- a/frontend/src/creative/TimelineTransferReview.test.tsx
++++ b/frontend/src/creative/TimelineTransferReview.test.tsx
+@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+ import { webcrypto } from 'node:crypto';
+ import { TimelineTransferReview } from './TimelineTransferReview';
+-import { transferClipTarget } from './timelineTransferReview';
++import { transferClipTarget } from './timelineTransferReviewHelpers';
+ import { StudioTimelineEditor } from './StudioTimelineEditor';
+ import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
+ import type { StudioProductionClient } from './studioProductionClient';
+diff --git a/frontend/src/creative/TimelineTransferReview.tsx b/frontend/src/creative/TimelineTransferReview.tsx
+index 8ad16980..d0833186 100644
+--- a/frontend/src/creative/TimelineTransferReview.tsx
++++ b/frontend/src/creative/TimelineTransferReview.tsx
+@@ -1,7 +1,7 @@
+ import { useState } from 'react';
+ import { Button } from '../ui/primitives';
+ import type { TimelineTransferPreview } from './studioTimelineTransferTypes';
+-import { transferClipTarget, transferLossText } from './timelineTransferReview';
++import { transferClipTarget, transferLossText } from './timelineTransferReviewHelpers';
+ 
+ export function TimelineTransferReview({ preview, disabled, onLocate }: { preview: TimelineTransferPreview; disabled: boolean;
+   onLocate?: (preview: TimelineTransferPreview, path: string) => void }) {
+diff --git a/frontend/src/creative/canvasAssetPreview.additive.test.ts b/frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts
+similarity index 98%
+rename from frontend/src/creative/canvasAssetPreview.additive.test.ts
+rename to frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts
+index 8e258f09..32c53edf 100644
+--- a/frontend/src/creative/canvasAssetPreview.additive.test.ts
++++ b/frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts
+@@ -1,6 +1,6 @@
+ import { webcrypto } from 'node:crypto';
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+-import { CANVAS_PREVIEW_MAX_BYTES, loadCanvasAssetPreview } from './canvasAssetPreview';
++import { CANVAS_PREVIEW_MAX_BYTES, loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
+ import type { CanvasAssetReference } from './studioCanvasViewClient';
+ beforeEach(() => vi.stubGlobal('crypto', webcrypto)); afterEach(() => vi.unstubAllGlobals());
+ async function fixture() { const bytes = new Uint8Array([137, 80, 78, 71]), digest = Buffer.from(await webcrypto.subtle.digest('SHA-256', bytes)).toString('hex');
+diff --git a/frontend/src/creative/canvasAssetPreview.ts b/frontend/src/creative/canvasAssetPreviewHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/canvasAssetPreview.ts
+rename to frontend/src/creative/canvasAssetPreviewHelpers.ts
+diff --git a/frontend/src/creative/directorCameraReuse.ts b/frontend/src/creative/directorCameraReuseHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/directorCameraReuse.ts
+rename to frontend/src/creative/directorCameraReuseHelpers.ts
+diff --git a/frontend/src/creative/directorDraftComparison.ts b/frontend/src/creative/directorDraftComparisonHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/directorDraftComparison.ts
+rename to frontend/src/creative/directorDraftComparisonHelpers.ts
+diff --git a/frontend/src/creative/graphCanvasLargeNotes.test.ts b/frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts
+similarity index 99%
+rename from frontend/src/creative/graphCanvasLargeNotes.test.ts
+rename to frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts
+index bb0422fb..2a72b3fa 100644
+--- a/frontend/src/creative/graphCanvasLargeNotes.test.ts
++++ b/frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts
+@@ -1,6 +1,6 @@
+ import { expect, it } from 'vitest';
+ import { checkedStudioGraphDraft } from './studioGraphClient';
+-import { graphNoteDefinitionBytes, graphNumberSpellingReserve, graphNoteDisplayWindow, withGraphNotes } from './graphCanvasNotes';
++import { graphNoteDefinitionBytes, graphNumberSpellingReserve, graphNoteDisplayWindow, withGraphNotes } from './graphCanvasNotesHelpers';
+ import type { StudioGraphDefinition } from './studioGraphTypes';
+ const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: '大空间便笺', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
+ const notes = (count = 1024) => Array.from({ length: count }, (_, i) => ({ id: `note_${i + 1}`, text: `雨夜·镜头${String(i + 1).padStart(4, '0')}`, position: { x: (i % 40) * 320, y: Math.floor(i / 40) * 220 } }));
+diff --git a/frontend/src/creative/graphCanvasNotes.test.ts b/frontend/src/creative/graphCanvasNotes.test.ts
+index 8d48f848..3f3765b9 100644
+--- a/frontend/src/creative/graphCanvasNotes.test.ts
++++ b/frontend/src/creative/graphCanvasNotes.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, expect, it } from 'vitest';
+-import { graphNoteDefinitionBytes, graphNoteDisplayIndex, visibleGraphNotes, withGraphNotes } from './graphCanvasNotes';
++import { graphNoteDefinitionBytes, graphNoteDisplayIndex, visibleGraphNotes, withGraphNotes } from './graphCanvasNotesHelpers';
+ import type { StudioGraphDefinition } from './studioGraphTypes';
+ const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: 'Notes', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
+ const notes = (count: number, text = 'Scene 🎬') => Array.from({ length: count }, (_, i) => ({ id: `n${i}`, text, position: { x: i * 500, y: i * 100 } }));
+diff --git a/frontend/src/creative/graphCanvasNotes.ts b/frontend/src/creative/graphCanvasNotesHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/graphCanvasNotes.ts
+rename to frontend/src/creative/graphCanvasNotesHelpers.ts
+diff --git a/frontend/src/creative/graphDraftChecklist.ts b/frontend/src/creative/graphDraftChecklistHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/graphDraftChecklist.ts
+rename to frontend/src/creative/graphDraftChecklistHelpers.ts
+diff --git a/frontend/src/creative/graphPlanningFork.ts b/frontend/src/creative/graphPlanningForkHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/graphPlanningFork.ts
+rename to frontend/src/creative/graphPlanningForkHelpers.ts
+diff --git a/frontend/src/creative/graphStoryboardStarter.ts b/frontend/src/creative/graphStoryboardStarterHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/graphStoryboardStarter.ts
+rename to frontend/src/creative/graphStoryboardStarterHelpers.ts
+diff --git a/frontend/src/creative/mediaCanvasGraphHandoff.ts b/frontend/src/creative/mediaCanvasGraphHandoffHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/mediaCanvasGraphHandoff.ts
+rename to frontend/src/creative/mediaCanvasGraphHandoffHelpers.ts
+diff --git a/frontend/src/creative/storyboardImagePreview.ts b/frontend/src/creative/storyboardImagePreview.ts
+index 5d876390..81d149f7 100644
+--- a/frontend/src/creative/storyboardImagePreview.ts
++++ b/frontend/src/creative/storyboardImagePreview.ts
+@@ -1,7 +1,7 @@
+ import { ApiError } from '../api';
+ import type { CreativeClient } from './client';
+ import type { StudioClient, StudioAsset } from './studioClient';
+-import { checkCanvasPreviewAsset } from './canvasAssetPreview';
++import { checkCanvasPreviewAsset } from './canvasAssetPreviewHelpers';
+ import { checkedStoryboardReceipt, type StoryboardReceipt, type StoryboardShot } from './studioStoryboardContract';
+ import { documentInput, type CreativeDocument } from './types';
+ import { inspectStoryboardRaster } from './storyboardImageRaster';
+diff --git a/frontend/src/creative/timelineTransferReview.ts b/frontend/src/creative/timelineTransferReviewHelpers.ts
+similarity index 100%
+rename from frontend/src/creative/timelineTransferReview.ts
+rename to frontend/src/creative/timelineTransferReviewHelpers.ts
+diff --git a/frontend/src/creative/useStudioGraphEditorController.ts b/frontend/src/creative/useStudioGraphEditorController.ts
+index a2a2bc8c..2a39cdbb 100644
+--- a/frontend/src/creative/useStudioGraphEditorController.ts
++++ b/frontend/src/creative/useStudioGraphEditorController.ts
+@@ -1,11 +1,11 @@
+-import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
++import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
+ import { uniqueGraphProviders } from './graphProviderChoices';
+ import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
+-import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
++import { buildStoryboardVideoBranches } from './graphStoryboardStarterHelpers';
+ import { checkedStoryboardReceipt } from './studioStoryboardContract';
+ import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
+ import type { PlanningCanvasHandoff } from './directorCanvasHandoff';
+-import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
++import { planningSourceFork, planningSourceReferences } from './graphPlanningForkHelpers';
+ import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
+ import { checkedStudioGraphDraft } from './studioGraphClient';
+ import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
+diff --git a/frontend/src/experimental/BranchComparisonReview.test.tsx b/frontend/src/experimental/BranchComparisonReview.test.tsx
+index f4db1763..2c224ebe 100644
+--- a/frontend/src/experimental/BranchComparisonReview.test.tsx
++++ b/frontend/src/experimental/BranchComparisonReview.test.tsx
+@@ -2,7 +2,7 @@
+ import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+ import { afterEach, expect, it } from 'vitest';
+ import { BranchComparisonReview } from './BranchComparisonReview';
+-import { branchBlockExcerpt, type BranchComparison } from './branchComparisonReview';
++import { branchBlockExcerpt, type BranchComparison } from './branchComparisonReviewHelpers';
+ afterEach(cleanup);
+ const block = (text: string) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
+ const changed = { kind: 'CONFLICT', start: 0, end: 1, base: [block('旧的🪷')], ORIGINAL: [block('来源修改')], FORK: [block('分支修改')] };
+diff --git a/frontend/src/experimental/BranchComparisonReview.tsx b/frontend/src/experimental/BranchComparisonReview.tsx
+index e76767e1..5cd4bb5d 100644
+--- a/frontend/src/experimental/BranchComparisonReview.tsx
++++ b/frontend/src/experimental/BranchComparisonReview.tsx
+@@ -1,7 +1,7 @@
+ import { useState } from 'react';
+ import { Badge, Button, StatusMessage } from '../ui/primitives';
+ import { Details } from './shared';
+-import { branchBlockExcerpt, branchSegment, branchSegmentLabels, type BranchComparison, type BranchReference } from './branchComparisonReview';
++import { branchBlockExcerpt, branchSegment, branchSegmentLabels, type BranchComparison, type BranchReference } from './branchComparisonReviewHelpers';
+ 
+ function Receipt({ label, value }: { label: string; value: BranchReference }) {
+   return <article className="experimental-record"><strong>{label}</strong>
+diff --git a/frontend/src/experimental/BranchManuscriptPanel.tsx b/frontend/src/experimental/BranchManuscriptPanel.tsx
+index ba78b587..69f52391 100644
+--- a/frontend/src/experimental/BranchManuscriptPanel.tsx
++++ b/frontend/src/experimental/BranchManuscriptPanel.tsx
+@@ -4,7 +4,7 @@ import type { ExperimentalClient } from './api';
+ import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
+ import { useReviewAction } from './styleReviewClient';
+ import { BranchComparisonReview } from './BranchComparisonReview';
+-import type { BranchComparison as Compare } from './branchComparisonReview';
++import type { BranchComparison as Compare } from './branchComparisonReviewHelpers';
+ import type { WorkspaceNavigation } from './uxClient';
+ 
+ type Chapter = { id: string; title: string; version: number; novel_id: string; branch_id: string; origin?: { chapter_id: string; scope: { branch_id?: string } } };
+diff --git a/frontend/src/experimental/CaptionTextReplace.tsx b/frontend/src/experimental/CaptionTextReplace.tsx
+index ca4be5f5..bf29d47b 100644
+--- a/frontend/src/experimental/CaptionTextReplace.tsx
++++ b/frontend/src/experimental/CaptionTextReplace.tsx
+@@ -1,7 +1,7 @@
+ import { useLayoutEffect, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+ import { Field } from './shared';
+-import { previewCaptionTextReplacement, type CaptionTextReplacement } from './captionTextReplace';
++import { previewCaptionTextReplacement, type CaptionTextReplacement } from './captionTextReplaceHelpers';
+ import type { CaptionCue, CaptionTrack } from './voiceSubtitleClient';
+ 
+ type Props = { row: CaptionTrack; cues: CaptionCue[]; binding: string; disabled: boolean;
+diff --git a/frontend/src/experimental/ComicLayoutsPanel.tsx b/frontend/src/experimental/ComicLayoutsPanel.tsx
+index a4255ecc..31c8d784 100644
+--- a/frontend/src/experimental/ComicLayoutsPanel.tsx
++++ b/frontend/src/experimental/ComicLayoutsPanel.tsx
+@@ -239,6 +239,14 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
+               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 类型`}><select value={bubble.kind} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, kind: e.target.value as 'DIALOGUE' | 'NARRATION' } : b) })}><option value="DIALOGUE">对白气泡</option><option value="NARRATION">旁白框</option></select></Field>
+               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 人物`}><select value={bubble.character_id || ''} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, character_id: e.target.value || null } : b) })}><option value="">未指定 / 旁白</option>{catalog.data!.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 字号`}><input type="number" min={14} max={96} step={1} value={bubble.font_size} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, font_size: Number(e.target.value) } : b) })} /></Field>
++              <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 文字对齐`}><select value={bubble.text_align ?? 'LEFT'} onChange={event => {
++                const value = event.target.value;
++                if (value === 'LEFT' || value === 'CENTER' || value === 'RIGHT') patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, text_align: value } : b) });
++              }}><option value="LEFT">左对齐</option><option value="CENTER">居中</option><option value="RIGHT">右对齐</option></select></Field>
++              <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 行距 (%)`}><input type="number" min={100} max={250} step={1} value={bubble.line_height_percent ?? 150} onChange={event => {
++                const value = event.target.valueAsNumber;
++                if (Number.isInteger(value) && value >= 100 && value <= 250) patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, line_height_percent: value } : b) });
++              }} /></Field>
+               <RectFields label={`格框 ${index + 1} 气泡 ${bi + 1}`} value={bubble} onChange={patch => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, ...patch } : b) })} />
+               <Button onClick={() => patchPanel(panel.id, { bubbles: panel.bubbles.filter(b => b.id !== bubble.id) })}>移除格框 {index + 1} 气泡 {bi + 1}</Button>
+             </fieldset>)}
+diff --git a/frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx b/frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx
+new file mode 100644
+index 00000000..a1c7af6d
+--- /dev/null
++++ b/frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx
+@@ -0,0 +1,93 @@
++// @vitest-environment jsdom
++import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
++import { afterEach, beforeEach, expect, it, vi } from 'vitest';
++import { ComicLayoutsPanel } from './ComicLayoutsPanel';
++import { experimentalClient } from './api';
++import { comicPreset, type ComicDocument } from './comicLayoutsClient';
++
++const source = { id: 'screenplay', title: 'Synthetic typography', edit_version: 4, shot_status: 'APPROVED', checks: [], shots: [{ id: 'shot', number: 1, scene_id: 'scene', shot_size: 'MEDIUM', camera_angle: 'EYE_LEVEL', camera_motion: 'STATIC', duration_seconds: 5 }] };
++const preset = { width: 800, height: 1120, safe_area: 24, segment_height: 1120 };
++const catalog = { screenplays: [source], characters: [], assets: [], presets: { PAGE: preset, WEBTOON: { ...preset, height: 2400, segment_height: 1200 } }, renderer: { available: true }, font: { available: true } };
++const reply = (value: unknown) => new Response(JSON.stringify(value));
++const client = (id = 'novel') => experimentalClient(id, { sessionToken: 'trusted' });
++const align = (panel = 1, bubble = 1) => screen.getByLabelText(`格框 ${panel} 气泡 ${bubble} 文字对齐`) as HTMLSelectElement;
++const spacing = () => screen.getByLabelText('格框 1 气泡 1 行距 (%)') as HTMLInputElement;
++function harness(intercept?: (url: string, init: RequestInit) => Response | Promise<Response> | undefined) {
++  const document = comicPreset(source, 'PAGE', preset);
++  document.panels[0].height = 400;
++  document.panels[0].bubbles = [1, 2].map(i => ({ id: `bubble-${i}`, kind: 'DIALOGUE', text: '天地\n日', character_id: null, font_size: 32, x: i * 100, y: 50, width: 180, height: 160 }));
++  document.panels.push({ ...document.panels[0], id: 'other-panel', order: 2, y: 500,
++    bubbles: [{ ...document.panels[0].bubbles[0], id: 'other-bubble', y: 550 }] });
++  let row = { id: 'layout', version: 1, status: 'DRAFT', stale: false, document, history_versions: [] as number[] };
++  const fetch = vi.fn(async (url: string, init: RequestInit) => {
++    const custom = intercept?.(url, init); if (custom) return custom;
++    if (init.method === 'PUT') {
++      const { expected_version, ...saved } = JSON.parse(String(init.body));
++      row = { ...row, version: expected_version + 1, document: saved as ComicDocument };
++      return reply(row);
++    }
++    if (url.endsWith('/preflight')) return reply({ version: row.version, status: row.status, review_digest: 'typography-digest', can_render: true, segments: [{ index: 0 }], issues: [] });
++    if (url.includes('/segments/')) return new Response(new Blob(['SYNTHETIC PNG'], { type: 'image/png' }));
++    return reply(url.endsWith('/catalog') ? catalog : { items: [row] });
++  });
++  vi.stubGlobal('fetch', fetch);
++  return { fetch, document };
++}
++beforeEach(() => { URL.createObjectURL = vi.fn(() => 'blob:typography'); URL.revokeObjectURL = vi.fn(); });
++afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
++
++it('displays legacy defaults without adding them to an unchanged save', async () => {
++  const { fetch } = harness(); render(<ComicLayoutsPanel client={client()} />);
++  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
++  expect(align().value).toBe('LEFT'); expect(spacing().value).toBe('150');
++  fireEvent.click(screen.getByRole('button', { name: '保存漫画布局草稿' }));
++  await waitFor(() => expect(fetch.mock.calls.some(([, init]) => init.method === 'PUT')).toBe(true));
++  const saved = JSON.parse(String(fetch.mock.calls.find(([, init]) => init.method === 'PUT')![1].body));
++  expect(saved.panels[0].bubbles[0]).not.toHaveProperty('text_align');
++  expect(saved.panels[0].bubbles[0]).not.toHaveProperty('line_height_percent');
++});
++
++it('edits one bubble, undoes and redoes, then saves and reopens the exact authored fields', async () => {
++  const { fetch, document } = harness(); render(<ComicLayoutsPanel client={client()} />);
++  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
++  fireEvent.change(align(), { target: { value: 'CENTER' } });
++  fireEvent.change(spacing(), { target: { value: '200' } });
++  fireEvent.click(screen.getByRole('button', { name: '撤销本地排版' })); expect(spacing().value).toBe('150');
++  fireEvent.click(screen.getByRole('button', { name: '撤销本地排版' })); expect(align().value).toBe('LEFT');
++  fireEvent.click(screen.getByRole('button', { name: '重做本地排版' }));
++  fireEvent.click(screen.getByRole('button', { name: '重做本地排版' }));
++  expect(align().value).toBe('CENTER'); expect(spacing().value).toBe('200');
++  expect(align(1, 2).value).toBe('LEFT'); expect(align(2, 1).value).toBe('LEFT');
++  fireEvent.click(screen.getByRole('button', { name: '保存漫画布局草稿' }));
++  await waitFor(() => expect(fetch.mock.calls.some(([, init]) => init.method === 'PUT')).toBe(true));
++  const saved = JSON.parse(String(fetch.mock.calls.find(([, init]) => init.method === 'PUT')![1].body));
++  expect(saved).toMatchObject({ expected_version: 1 });
++  expect(saved.panels[0].bubbles[0]).toEqual({ ...document.panels[0].bubbles[0], text_align: 'CENTER', line_height_percent: 200 });
++  expect(saved.panels[0].bubbles[1]).toEqual(document.panels[0].bubbles[1]);
++  expect(saved.panels[1]).toEqual(document.panels[1]);
++  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
++  expect(align().value).toBe('CENTER'); expect(spacing().value).toBe('200');
++  expect(fetch.mock.calls.some(([url]) => /generate|execute|approve|export/.test(url))).toBe(false);
++});
++
++it('rejects empty fractional and out-of-range spacing without changing the draft', async () => {
++  harness(); render(<ComicLayoutsPanel client={client()} />);
++  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
++  for (const value of ['', '99', '251', '150.5']) {
++    fireEvent.change(spacing(), { target: { value } }); expect(spacing().value).toBe('150');
++  }
++  expect((screen.getByRole('button', { name: '撤销本地排版' }) as HTMLButtonElement).disabled).toBe(true);
++});
++
++it('retires preview pixels and review consent after a typography edit', async () => {
++  harness(); render(<ComicLayoutsPanel client={client()} />);
++  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
++  fireEvent.click(screen.getByRole('button', { name: '预检并渲染当前布局' }));
++  fireEvent.load(await screen.findByRole('img', { name: /漫画分段/ }));
++  fireEvent.click(screen.getByRole('checkbox', { name: /已核对图片、阅读顺序/ }));
++  expect((screen.getByRole('button', { name: '批准当前漫画布局' }) as HTMLButtonElement).disabled).toBe(false);
++  fireEvent.change(align(), { target: { value: 'RIGHT' } });
++  expect(screen.queryByRole('img', { name: /漫画分段/ })).toBeNull();
++  expect(screen.queryByRole('button', { name: '批准当前漫画布局' })).toBeNull();
++  expect(vi.mocked(URL.revokeObjectURL).mock.calls.map(call => call[0])).toEqual(['blob:typography']);
++});
+diff --git a/frontend/src/experimental/ProductionLineagePanel.tsx b/frontend/src/experimental/ProductionLineagePanel.tsx
+index cca66c10..9947b92b 100644
+--- a/frontend/src/experimental/ProductionLineagePanel.tsx
++++ b/frontend/src/experimental/ProductionLineagePanel.tsx
+@@ -6,7 +6,7 @@ import { Details, Field, Form, ids, ResourceState, useAction, useResource } from
+ import type { WorkspaceNavigation } from './uxClient';
+ import { ProductionReceiptReview, ReceiptNavigation } from './ProductionReceiptReview';
+ import { PristineReplayNavigation, usePristineReplayNavigation } from './pristineReplayNavigation';
+-import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReview';
++import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReviewHelpers';
+ import { StudioUsagesPanel } from './StudioUsagesPanel';
+ import { ProductionPassportSidecar } from './ProductionPassportSidecar';
+ 
+diff --git a/frontend/src/experimental/ProductionReceiptReview.test.tsx b/frontend/src/experimental/ProductionReceiptReview.test.tsx
+index 9c3c7a81..5d22a04c 100644
+--- a/frontend/src/experimental/ProductionReceiptReview.test.tsx
++++ b/frontend/src/experimental/ProductionReceiptReview.test.tsx
+@@ -2,7 +2,7 @@
+ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { ProductionReceiptReview, ReceiptNavigation } from './ProductionReceiptReview';
+-import { originalChapterTarget, originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage, receiptOutputs } from './productionReceiptReview';
++import { originalChapterTarget, originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage, receiptOutputs } from './productionReceiptReviewHelpers';
+ afterEach(cleanup);
+ const clickHandler = (node: HTMLElement) => (node as any)[Object.keys(node).find(key => key.startsWith('__reactProps$'))!].onClick as () => void;
+ const target = originalTaskTarget('original-task')!;
+diff --git a/frontend/src/experimental/ProductionReceiptReview.tsx b/frontend/src/experimental/ProductionReceiptReview.tsx
+index 28b9ce02..af9b2be2 100644
+--- a/frontend/src/experimental/ProductionReceiptReview.tsx
++++ b/frontend/src/experimental/ProductionReceiptReview.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useRef, useState } from 'react';
+ import { Button, StatusMessage } from '../ui/primitives';
+ import type { WorkspaceNavigation } from './uxClient';
+-import { uniqueChapterTarget, originalTaskTarget, receiptPins, receiptOutputs } from './productionReceiptReview';
++import { uniqueChapterTarget, originalTaskTarget, receiptPins, receiptOutputs } from './productionReceiptReviewHelpers';
+ 
+ /** Navigation never adopts a source or replays a task. Require explicit leave consent. */
+ export function ReceiptNavigation({ target, label, onNavigate, disabled = false, receiptIdentity = '' }: { target?: WorkspaceNavigation; label: string; onNavigate?: (target: WorkspaceNavigation) => void; disabled?: boolean; receiptIdentity?: string }) {
+diff --git a/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx b/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx
+index 407ec7b0..21e59356 100644
+--- a/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx
++++ b/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx
+@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+ import { SubtitleTimelinePanel } from './SubtitleTimelinePanel';
+ import { experimentalClient } from './api';
+-import { previewCaptionTextReplacement } from './captionTextReplace';
++import { previewCaptionTextReplacement } from './captionTextReplaceHelpers';
+ const cue={id:'first',start_tick:100,end_tick:200,text:'小雨.* 小雨',segment_id:null,overlap_reason:''};
+ const track={id:'track',version:3,title:'Captions',asset_id:'audio',asset_snapshot:{version:1,digest:'media'},plan_id:null,timebase:{numerator:1000,denominator:1},media:{duration_seconds:{numerator:5,denominator:1},waveform:{status:'UNAVAILABLE'}},cues:[cue,{...cue,id:'second',start_tick:300,end_tick:400,text:'小雨'}],speakers:{},warnings:[],stale:false};
+ let fetchMock:ReturnType<typeof vi.fn>;
+diff --git a/frontend/src/experimental/branchComparisonReview.ts b/frontend/src/experimental/branchComparisonReviewHelpers.ts
+similarity index 100%
+rename from frontend/src/experimental/branchComparisonReview.ts
+rename to frontend/src/experimental/branchComparisonReviewHelpers.ts
+diff --git a/frontend/src/experimental/captionTextReplace.ts b/frontend/src/experimental/captionTextReplaceHelpers.ts
+similarity index 100%
+rename from frontend/src/experimental/captionTextReplace.ts
+rename to frontend/src/experimental/captionTextReplaceHelpers.ts
+diff --git a/frontend/src/experimental/comicLayoutsClient.ts b/frontend/src/experimental/comicLayoutsClient.ts
+index d800b2c9..46728210 100644
+--- a/frontend/src/experimental/comicLayoutsClient.ts
++++ b/frontend/src/experimental/comicLayoutsClient.ts
+@@ -4,7 +4,7 @@ import type { DirectorScreenplay } from './directorClient';
+ import type { RefNode } from '../novel/useMultimodalWorkspacePersistence';
+ // Original canvas coordinate/identity contract, with explicit print dimensions.
+ export type ComicRect = Pick<RefNode, 'x' | 'y'> & { width: number; height: number };
+-export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number };
++export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number; text_align?: 'LEFT' | 'CENTER' | 'RIGHT'; line_height_percent?: number };
+ export type ComicAppearanceReference = { character_id: string; asset_id: string; expected_asset_version: number; note: string };
+ export type ComicPanel = ComicRect & { id: string; shot_id: string | null; artwork_mode?: 'IMAGE' | 'BLANK'; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
+ export type ComicNativeLayerKind = 'PANEL_ART' | 'PANEL_FRAME' | 'BUBBLE_SHAPE' | 'BUBBLE_TEXT';
+diff --git a/frontend/src/experimental/judgeRevisionHandoff.test.ts b/frontend/src/experimental/judgeRevisionHandoff.helpers.test.ts
+similarity index 100%
+rename from frontend/src/experimental/judgeRevisionHandoff.test.ts
+rename to frontend/src/experimental/judgeRevisionHandoff.helpers.test.ts
+diff --git a/frontend/src/experimental/pristineReplayNavigation.test.tsx b/frontend/src/experimental/pristineReplayNavigation.test.tsx
+index 984852ec..f2e5e919 100644
+--- a/frontend/src/experimental/pristineReplayNavigation.test.tsx
++++ b/frontend/src/experimental/pristineReplayNavigation.test.tsx
+@@ -3,7 +3,7 @@ import { StrictMode, useLayoutEffect } from 'react';
+ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+ import { afterEach, expect, it, vi } from 'vitest';
+ import { PristineReplayNavigation, usePristineReplayNavigation } from './pristineReplayNavigation';
+-import { originalTaskTarget } from './productionReceiptReview';
++import { originalTaskTarget } from './productionReceiptReviewHelpers';
+ import type { WorkspaceNavigation } from './uxClient';
+ 
+ afterEach(cleanup);
+diff --git a/frontend/src/experimental/productionReceiptReview.ts b/frontend/src/experimental/productionReceiptReviewHelpers.ts
+similarity index 100%
+rename from frontend/src/experimental/productionReceiptReview.ts
+rename to frontend/src/experimental/productionReceiptReviewHelpers.ts
+diff --git a/frontend/src/experimental/templateCopyEditing.test.ts b/frontend/src/experimental/templateCopyEditing.helpers.test.ts
+similarity index 100%
+rename from frontend/src/experimental/templateCopyEditing.test.ts
+rename to frontend/src/experimental/templateCopyEditing.helpers.test.ts
+diff --git a/frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx b/frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx
+new file mode 100644
+index 00000000..3af3ae59
+--- /dev/null
++++ b/frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx
+@@ -0,0 +1,104 @@
++// @vitest-environment jsdom
++import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
++import { afterEach, expect, it, vi } from 'vitest';
++import { ApiError } from '../api';
++import { BailianPresetPanel } from './BailianPresetPanel';
++import wire from './bailianPresetWire.testFixture.json';
++import type { StudioGraphTransport } from '../creative/studioGraphClient';
++const endpoint = '/api/model-center/provider-presets/bailian-text';
++function setup(read: () => Promise<unknown> = async () => structuredClone(wire)) {
++  const calls = vi.fn(async (url: string, method: string) => {
++    if (url !== endpoint || method !== 'GET') throw new Error('Only the existing public preset read is allowed');
++    return read();
++  });
++  return { calls, props: { projectId: 'project', transport: { json: calls } as unknown as StudioGraphTransport,
++    identity: 'scope', active: true, denied: false, busy: false, isCurrent: () => true,
++    read: async <T,>(work: () => Promise<T>) => work() } };
++}
++const readButton = () => screen.getByRole('button', { name: '明确读取百炼文本预设' });
++const checkButton = () => screen.getByRole('button', { name: '本地预检端点与模型 ID（不连接）' });
++afterEach(() => { cleanup(); vi.restoreAllMocks(); });
++
++it('checks the existing regional endpoint and model syntax without another request or persistence', async () => {
++  const { calls, props } = setup(); const writes = vi.spyOn(Storage.prototype, 'setItem');
++  render(<BailianPresetPanel {...props} />); expect(calls).not.toHaveBeenCalled();
++  fireEvent.click(readButton()); await screen.findByLabelText('百炼 API 地区');
++  fireEvent.click(checkButton()); expect(screen.getByText('请先按实际 API 账户选择地区。')).toBeTruthy();
++  fireEvent.change(screen.getByLabelText('百炼 API 地区'), { target: { value: 'cn-hongkong' } });
++  fireEvent.click(checkButton()); expect(screen.getByText('请填写账户中实际可用的文本模型 ID。')).toBeTruthy();
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'model with spaces' } });
++  fireEvent.click(checkButton()); expect(screen.getByText(/模型 ID 格式无效/)).toBeTruthy();
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'synthetic-model' } });
++  expect(screen.queryByText(/模型 ID 格式无效/)).toBeNull();
++  fireEvent.click(checkButton()); expect(screen.getByText('本地格式预检通过（未连接）')).toBeTruthy();
++  expect(screen.getByText(/未验证模型存在、账户权限、额度或实际推理/)).toBeTruthy();
++  expect((screen.getByLabelText('手动主机配置预览（未应用）') as HTMLTextAreaElement).value).toBe('ALIYUN_BAILIAN_REGION=cn-hongkong\nALIYUN_BAILIAN_MODEL=synthetic-model');
++  fireEvent.change(screen.getByLabelText('百炼 API 地区'), { target: { value: 'cn-beijing' } });
++  expect(screen.queryByText('本地格式预检通过（未连接）')).toBeNull();
++  expect(calls).toHaveBeenCalledTimes(1); expect(writes).not.toHaveBeenCalled();
++});
++
++it.each<[number, string]>([
++  [401, '宿主会话需要重新登录'], [403, '当前会话没有预设读取权限'],
++  [404, '当前宿主尚未提供百炼预设'], [409, '项目或分支上下文已变化'],
++  [429, '宿主请求受到限流'], [503, '宿主预设服务暂不可用'],
++])('classifies host preset HTTP %s without showing raw error bodies or retrying', async (status, title) => {
++  const { calls, props } = setup(async () => { throw new ApiError({ status, code: 'SYNTHETIC_UNTRUSTED_CODE', message: 'SYNTHETIC_SECRET_MUST_NOT_RENDER', details: { api_key: 'SYNTHETIC_ONLY' } }); });
++  const view = render(<BailianPresetPanel {...props} />); fireEvent.click(readButton());
++  await screen.findByText(title); expect(screen.queryByText(/SYNTHETIC_SECRET|SYNTHETIC_UNTRUSTED/)).toBeNull();
++  expect(screen.getByText(/不是百炼云端连接测试/)).toBeTruthy();
++  view.rerender(<BailianPresetPanel {...props} />); expect(calls).toHaveBeenCalledTimes(1);
++});
++
++it('uses a fixed fallback for unknown transport errors and retries only on an explicit read', async () => {
++  let fail = true;
++  const { calls, props } = setup(async () => { if (fail) throw new TypeError('SYNTHETIC_RAW_TRANSPORT_BODY'); return structuredClone(wire); });
++  render(<BailianPresetPanel {...props} />); fireEvent.click(readButton());
++  await screen.findByText('宿主预设读取未完成'); expect(screen.queryByText(/SYNTHETIC_RAW_TRANSPORT_BODY/)).toBeNull();
++  expect(calls).toHaveBeenCalledTimes(1); fail = false;
++  fireEvent.click(readButton()); await screen.findByLabelText('百炼 API 地区');
++  expect(calls).toHaveBeenCalledTimes(2); expect(screen.queryByText('宿主预设读取未完成')).toBeNull();
++});
++
++it('retires local checks on A-B-A, denial and activation changes without an automatic read', async () => {
++  const { calls, props } = setup(); const view = render(<BailianPresetPanel {...props} />);
++  fireEvent.click(readButton()); await screen.findByLabelText('百炼 API 地区');
++  fireEvent.change(screen.getByLabelText('百炼 API 地区'), { target: { value: 'cn-beijing' } });
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'synthetic-model' } }); fireEvent.click(checkButton());
++  view.rerender(<BailianPresetPanel {...props} identity="B" />); view.rerender(<BailianPresetPanel {...props} />);
++  expect(screen.queryByLabelText('百炼 API 地区')).toBeNull(); expect(screen.queryByText('本地格式预检通过（未连接）')).toBeNull();
++  view.rerender(<BailianPresetPanel {...props} denied />); expect(screen.queryByRole('button')).toBeNull();
++  view.rerender(<BailianPresetPanel {...props} active={false} />); view.rerender(<BailianPresetPanel {...props} />);
++  expect(screen.queryByLabelText('百炼 API 地区')).toBeNull(); expect(calls).toHaveBeenCalledTimes(1);
++});
++
++it('does not display a late failure after project identity returns to A', async () => {
++  let reject!: (reason: unknown) => void;
++  const { calls, props } = setup(() => new Promise((_resolve, fail) => { reject = fail; }));
++  const view = render(<BailianPresetPanel {...props} />); fireEvent.click(readButton());
++  view.rerender(<BailianPresetPanel {...props} identity="B" />); view.rerender(<BailianPresetPanel {...props} />);
++  await act(async () => reject(new ApiError({ status: 503, code: 'SYNTHETIC', message: 'SYNTHETIC_LATE_BODY' })));
++  expect(screen.queryByText('宿主预设服务暂不可用')).toBeNull(); expect(screen.queryByText(/SYNTHETIC_LATE_BODY/)).toBeNull(); expect(calls).toHaveBeenCalledTimes(1);
++});
++
++it('rejects an untrusted preset response without showing its endpoint or private fields', async () => {
++  const { calls, props } = setup(async () => ({ ...wire, private_debug: 'SYNTHETIC_PRIVATE_RESPONSE' }));
++  render(<BailianPresetPanel {...props} />); fireEvent.click(readButton());
++  await screen.findByText('宿主预设响应无法核验');
++  expect(screen.queryByText(/SYNTHETIC_PRIVATE_RESPONSE/)).toBeNull();
++  expect(screen.queryByLabelText('百炼 API 地区')).toBeNull(); expect(calls).toHaveBeenCalledTimes(1);
++});
++
++it('a retained precheck handler checks the latest draft and cannot bypass busy state', async () => {
++  const { props } = setup(); const view = render(<BailianPresetPanel {...props} />);
++  fireEvent.click(readButton()); await screen.findByLabelText('百炼 API 地区');
++  fireEvent.change(screen.getByLabelText('百炼 API 地区'), { target: { value: 'cn-beijing' } });
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'valid-synthetic' } });
++  const button = checkButton();
++  const handler = (button as unknown as Record<string, { onClick: () => void }>)[Object.keys(button).find(key => key.startsWith('__reactProps'))!].onClick;
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'invalid model' } });
++  act(handler); expect(screen.getByText(/模型 ID 格式无效/)).toBeTruthy();
++  fireEvent.change(screen.getByLabelText('百炼文本模型 ID'), { target: { value: 'valid-synthetic' } });
++  view.rerender(<BailianPresetPanel {...props} busy />); act(handler);
++  expect(screen.queryByText('本地格式预检通过（未连接）')).toBeNull();
++});
+diff --git a/frontend/src/modelcenter/BailianPresetPanel.tsx b/frontend/src/modelcenter/BailianPresetPanel.tsx
+index 71a0aa56..2037cf27 100644
+--- a/frontend/src/modelcenter/BailianPresetPanel.tsx
++++ b/frontend/src/modelcenter/BailianPresetPanel.tsx
+@@ -1,8 +1,7 @@
+ import {useEffect,useMemo,useRef,useState} from 'react';
+-import {apiErrorView} from '../api';
+ import {Button,StatusMessage} from '../ui/primitives';
+ import {createModelCenterClient} from './modelCenterClient';
+-import {bailianHostPreview,type BailianPresetCatalog} from './bailianPresetContract';
++import {bailianHostPreview,checkBailianConfiguration,bailianPresetReadProblem,type BailianConfigurationCheck,type BailianPresetProblem,type BailianPresetCatalog} from './bailianPresetContract';
+ import type {ModelCenterPanelProps} from './modelCenterTypes';
+ type Props=Pick<ModelCenterPanelProps,'projectId'|'transport'|'scope'|'identity'|'active'|'denied'|'busy'|'isCurrent'|'read'>;
+ export function BailianPresetPanel(props:Props){
+@@ -10,12 +9,13 @@ export function BailianPresetPanel(props:Props){
+  const client=useMemo(()=>{try{return createModelCenterClient(props.projectId,props.transport,props.scope);}catch{return undefined;}},[props.projectId,props.transport,scopeKey]);
+  const owner=useRef({client,key,token:{}}),active=useRef<AbortController>(),alive=useRef(true),latest=useRef(props);latest.current=props;
+  if(owner.current.client!==client||owner.current.key!==key){active.current?.abort();active.current=undefined;owner.current={client,key,token:{}};}const token=owner.current.token;
+- const [state,setState]=useState<{token:object;catalog?:BailianPresetCatalog;pending?:boolean;error?:string;region:string;model:string}>();
++ const [state,setState]=useState<{token:object;catalog?:BailianPresetCatalog;pending?:boolean;error?:BailianPresetProblem;check?:BailianConfigurationCheck;region:string;model:string}>();
+  useEffect(()=>{alive.current=true;return()=>{alive.current=false;active.current?.abort();};},[]);
+  const current=()=>alive.current&&owner.current.token===token&&latest.current.active&&!latest.current.denied&&!latest.current.busy&&latest.current.isCurrent();
+- async function read(){if(!current()||active.current||!client)return;const abort=new AbortController();active.current=abort;setState({token,pending:true,region:'',model:''});try{const catalog=await props.read(()=>client.bailianPresets(abort.signal));if(current()&&!abort.signal.aborted)setState({token,catalog,region:'',model:''});}catch(reason){if(current()&&!abort.signal.aborted)setState({token,region:'',model:'',error:apiErrorView(reason,'百炼预设读取失败。').message});}finally{if(active.current===abort){active.current=undefined;if(alive.current&&owner.current.token===token)setState(v=>v?.token===token?{...v,pending:false}:v);}}}
++ async function read(){if(!current()||active.current||!client)return;const abort=new AbortController();active.current=abort;setState({token,pending:true,region:'',model:''});try{const catalog=await props.read(()=>client.bailianPresets(abort.signal));if(current()&&!abort.signal.aborted)setState({token,catalog,region:'',model:''});}catch(reason){if(current()&&!abort.signal.aborted)setState({token,region:'',model:'',error:bailianPresetReadProblem(reason)});}finally{if(active.current===abort){active.current=undefined;if(alive.current&&owner.current.token===token)setState(v=>v?.token===token?{...v,pending:false}:v);}}}
+  if(!props.active||props.denied||!props.isCurrent())return null;
+  const visible=state?.token===token?state:undefined,catalog=visible?.catalog,selected=catalog?.regions.find(r=>r.id===visible?.region),preview=catalog?bailianHostPreview(catalog,visible!.region,visible!.model):undefined;
+- function change(field:'region'|'model',value:string){if(!current()||active.current)return;setState(s=>s?.token===token?{...s,[field]:value}:s);}
+- return <section aria-label="百炼文本连接预设"><h3>阿里百炼 · 文本连接预设</h3><p>只准备原主机启动配置提示，不应用配置、不注册或验证模型、不接收密钥、不调用云端。</p><Button disabled={!client||props.busy||!!visible?.pending} onClick={()=>void read()}>明确读取百炼文本预设</Button>{!client&&<StatusMessage tone="warning">当前项目上下文无效，预设读取已停用。</StatusMessage>}{visible?.pending&&<StatusMessage>正在读取内置预设…</StatusMessage>}{visible?.error&&<StatusMessage tone="warning">{visible.error}</StatusMessage>}{catalog&&<><label>百炼 API 地区<select disabled={props.busy} value={visible!.region} onChange={e=>change('region',e.target.value)}><option value="">按实际 API 账户选择地区</option>{catalog.regions.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label><label>百炼文本模型 ID<input disabled={props.busy} maxLength={200} value={visible!.model} placeholder="填写控制台实际可用的模型 ID" onChange={e=>change('model',e.target.value)}/></label>{selected&&<p>标准共享 Base URL：{selected.base_url}</p>}<p>此处使用标准按量 API，地区与凭据须匹配；Coding / Token Plan 不属于此预设。只准备非思考文本请求，未验证所填模型是否支持。</p>{preview?<label>手动主机配置预览（未应用）<textarea readOnly value={preview}/></label>:<StatusMessage>选择地区并填写有效模型 ID 后显示配置提示。模型 ID 不接受空格、引号或控制字符。</StatusMessage>}<p>配置仍通过原主机与凭据入口完成；本面板不显示当前配置或密钥状态，也不会改变本地／云端偏好。实际云端调用需要另行核对发送内容、授权和费用。</p><a href={catalog.official_reference} target="_blank" rel="noreferrer">查看百炼官方地区与计费计划说明</a></>}</section>;
++ function change(field:'region'|'model',value:string){if(!current()||active.current)return;setState(s=>s?.token===token?{...s,[field]:value,check:undefined}:s);}
++ function check(){if(!current()||active.current)return;setState(s=>s?.token===token&&s.catalog&&current()?{...s,check:checkBailianConfiguration(s.catalog,s.region,s.model)}:s);}
++ return <section aria-label="百炼文本连接预设"><h3>阿里百炼 · 文本连接预设</h3><p>只准备原主机启动配置提示，不应用配置、不注册或验证模型、不接收密钥、不调用云端。</p><Button disabled={!client||props.busy||!!visible?.pending} onClick={()=>void read()}>明确读取百炼文本预设</Button>{!client&&<StatusMessage tone="warning">当前项目上下文无效，预设读取已停用。</StatusMessage>}{visible?.pending&&<StatusMessage>正在读取内置预设…</StatusMessage>}{visible?.error&&<StatusMessage tone="warning"><strong>{visible.error.title}</strong><p>{visible.error.action}</p><p>这是宿主预设读取结果，不是百炼云端连接测试；本地／云端偏好未变更。</p></StatusMessage>}{catalog&&<><label>百炼 API 地区<select disabled={props.busy} value={visible!.region} onChange={e=>change('region',e.target.value)}><option value="">按实际 API 账户选择地区</option>{catalog.regions.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label><label>百炼文本模型 ID<input disabled={props.busy} maxLength={200} value={visible!.model} placeholder="填写控制台实际可用的模型 ID" onChange={e=>change('model',e.target.value)}/></label><Button disabled={props.busy||!!visible?.pending} onClick={check}>本地预检端点与模型 ID（不连接）</Button>{visible?.check&&<StatusMessage tone={visible.check.valid?'success':'warning'}><strong>{visible.check.message}</strong>{visible.check.valid&&<p>仅核对原预设地区端点和模型 ID 格式；未验证模型存在、账户权限、额度或实际推理。请按实际地区与计费计划核对云端账户；此处不读取密钥，也不修改配置或本地／云端偏好。</p>}</StatusMessage>}{selected&&<p>标准共享 Base URL：{selected.base_url}</p>}<p>此处使用标准按量 API，地区与凭据须匹配；Coding / Token Plan 不属于此预设。只准备非思考文本请求，未验证所填模型是否支持。</p>{preview?<label>手动主机配置预览（未应用）<textarea readOnly value={preview}/></label>:<StatusMessage>选择地区并填写有效模型 ID 后显示配置提示。模型 ID 不接受空格、引号或控制字符。</StatusMessage>}<p>配置仍通过原主机与凭据入口完成；本面板不显示当前配置或密钥状态，也不会改变本地／云端偏好。实际云端调用需要另行核对发送内容、授权和费用。</p><a href={catalog.official_reference} target="_blank" rel="noreferrer">查看百炼官方地区与计费计划说明</a></>}</section>;
+ }
+diff --git a/frontend/src/modelcenter/bailianPresetContract.ts b/frontend/src/modelcenter/bailianPresetContract.ts
+index ffc5e731..cdf84318 100644
+--- a/frontend/src/modelcenter/bailianPresetContract.ts
++++ b/frontend/src/modelcenter/bailianPresetContract.ts
+@@ -10,7 +10,41 @@ export function checkedBailianPresets(value:unknown):BailianPresetCatalog{
+  const seen=new Set<string>();for(const value of r.regions){const region=exact(value,['id','label','base_url']);if(typeof region.id!=='string'||!Object.hasOwn(endpoints,region.id)||seen.has(region.id)||region.base_url!==endpoints[region.id]||typeof region.label!=='string'||!region.label||region.label.length>80||/[\u0000-\u001f]/.test(region.label))invalid();seen.add(region.id);}
+  return structuredClone(value) as BailianPresetCatalog;
+ }
++export type BailianConfigurationCheck = { valid: boolean; code: 'REGION_REQUIRED' | 'MODEL_REQUIRED' | 'MODEL_FORMAT_INVALID' | 'FORMAT_VALID'; message: string; base_url?: string };
++function configurationCheck(catalog: BailianPresetCatalog, region: string, model: string): BailianConfigurationCheck {
++ const selected = catalog.regions.find(item => item.id === region);
++ if (!selected) return { valid: false, code: 'REGION_REQUIRED', message: '请先按实际 API 账户选择地区。' };
++ if (!model) return { valid: false, code: 'MODEL_REQUIRED', message: '请填写账户中实际可用的文本模型 ID。' };
++ if (typeof model !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/.test(model)) return {
++   valid: false, code: 'MODEL_FORMAT_INVALID', message: '模型 ID 格式无效：使用 1–200 个字母、数字或 . _ : / -，首位须为字母或数字；不接受空格、引号或命令字符。' };
++ return { valid: true, code: 'FORMAT_VALID', message: '本地格式预检通过（未连接）', base_url: selected.base_url };
++}
++/** Existing preset constants only. No key read, network, registration or settings write. */
++export function checkBailianConfiguration(catalog: BailianPresetCatalog, region: string, model: string): BailianConfigurationCheck {
++ return configurationCheck(checkedBailianPresets(catalog), region, model);
++}
+ export function bailianHostPreview(catalog:BailianPresetCatalog,region:string,model:string):string|undefined{
+- const checked=checkedBailianPresets(catalog);if(!checked.regions.some(r=>r.id===region)||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/.test(model))return;
++ const checked=checkedBailianPresets(catalog);if(!configurationCheck(checked,region,model).valid)return;
+  return `${checked.region_variable}=${region}\n${checked.model_variable}=${model}`;
+ }
++
++export type BailianPresetProblem = { code: string; title: string; action: string };
++/** Classifies the original HOST preset read, never a provider connection test.
++ * Arbitrary response messages/details/codes may contain private values and are
++ * deliberately not copied to the view. Retry remains an explicit user action. */
++export function bailianPresetReadProblem(reason: unknown): BailianPresetProblem {
++ if (reason instanceof ApiError) {
++  const { status, code } = reason.problem;
++  if (code === 'STUDIO_RESPONSE_INVALID' || code === 'MODEL_CENTER_SECRET_VALUE_REJECTED') return {
++   code: 'PRESET_RESPONSE_INVALID', title: '宿主预设响应无法核验', action: '没有显示响应内容。请确认宿主版本与当前客户端兼容，再手动读取；不要把密钥或原始响应粘贴到模型 ID 中。' };
++  if (code === 'MODEL_CENTER_CATALOG_SCOPE_MISMATCH' || status === 409) return {
++   code: 'PRESET_CONTEXT_CHANGED', title: '项目或分支上下文已变化', action: '请重新打开目标项目或分支后手动读取；旧结果不能用于当前上下文。' };
++  if (status === 401) return { code: 'PRESET_SESSION_REQUIRED', title: '宿主会话需要重新登录', action: '请重新登录本地宿主会话后手动读取。这不是百炼 API Key 的认证结论。' };
++  if (status === 403) return { code: 'PRESET_READ_DENIED', title: '当前会话没有预设读取权限', action: '请核对当前项目、分支和会话权限；不会自动切换凭据或重试。' };
++  if (status === 404) return { code: 'PRESET_UNAVAILABLE', title: '当前宿主尚未提供百炼预设', action: '请核对宿主版本与预设功能是否可用；不需要在此修改云端账号或购买额度。' };
++  if (status === 429) return { code: 'PRESET_RATE_LIMITED', title: '宿主请求受到限流', action: '请稍后手动读取；不会自动重试，也不会发起模型请求。' };
++  if (Number.isInteger(status) && status >= 500 && status <= 599) return {
++   code: 'PRESET_HOST_UNAVAILABLE', title: '宿主预设服务暂不可用', action: '请检查本地宿主服务是否正常，再手动读取；此结果不能判断百炼云端是否可用。' };
++ }
++ return { code: 'PRESET_READ_INCOMPLETE', title: '宿主预设读取未完成', action: '请检查与本地宿主的连接后手动读取；未展示原始错误内容，也不会自动外发或重试。' };
++}
+diff --git a/frontend/src/modelcenter/bailianPresetPreflight.test.ts b/frontend/src/modelcenter/bailianPresetPreflight.test.ts
+new file mode 100644
+index 00000000..1cf02c9e
+--- /dev/null
++++ b/frontend/src/modelcenter/bailianPresetPreflight.test.ts
+@@ -0,0 +1,42 @@
++import { describe, expect, it } from 'vitest';
++import { ApiError } from '../api';
++import wire from './bailianPresetWire.testFixture.json';
++import { bailianHostPreview, bailianPresetReadProblem, checkBailianConfiguration, checkedBailianPresets } from './bailianPresetContract';
++
++describe('local-only Bailian configuration preflight', () => {
++  it('uses each original regional endpoint and never infers model availability', () => {
++    const catalog = checkedBailianPresets(wire); const before = structuredClone(catalog);
++    for (const region of catalog.regions) {
++      expect(checkBailianConfiguration(catalog, region.id, 'synthetic-model')).toEqual({ valid: true,
++        code: 'FORMAT_VALID', message: '本地格式预检通过（未连接）', base_url: region.base_url });
++      expect(bailianHostPreview(catalog, region.id, 'synthetic-model')).toContain(`ALIYUN_BAILIAN_REGION=${region.id}`);
++    }
++    expect(catalog).toEqual(before);
++  });
++  it.each(['', 'unknown-region'])('requires a supported region: %j', region => {
++    expect(checkBailianConfiguration(checkedBailianPresets(wire), region, 'synthetic').code).toBe('REGION_REQUIRED');
++  });
++  it.each(['bad model', 'line\nOTHER=value', '$(run)', 'x;run', 'x"quoted', '-prefix', 'x'.repeat(201), null, {}])('refuses malformed model %j without preparing host text', model => {
++    const catalog = checkedBailianPresets(wire);
++    expect(checkBailianConfiguration(catalog, 'cn-beijing', model as string).valid).toBe(false);
++    expect(bailianHostPreview(catalog, 'cn-beijing', model as string)).toBeUndefined();
++  });
++  it('keeps endpoint and response-field fences, even before a local check', () => {
++    for (const base_url of ['http://dashscope.aliyuncs.com/compatible-mode/v1', 'https://untrusted.invalid/v1', 'https://coding-intl.dashscope.aliyuncs.com/v1', 'https://user:synthetic@dashscope.aliyuncs.com/compatible-mode/v1']) {
++      const bad = structuredClone(wire); bad.regions[0].base_url = base_url;
++      expect(() => checkBailianConfiguration(bad as never, 'cn-beijing', 'synthetic')).toThrow();
++    }
++    expect(() => checkBailianConfiguration({ ...wire, api_key: 'SYNTHETIC_ONLY' } as never, 'cn-beijing', 'synthetic')).toThrow();
++  });
++});
++
++it.each(['STUDIO_RESPONSE_INVALID', 'MODEL_CENTER_SECRET_VALUE_REJECTED'])('maps controlled response failure %s without echoing payload', code => {
++  const problem = bailianPresetReadProblem(new ApiError({ status: 200, code, message: 'SYNTHETIC_PRIVATE_BODY', details: { private: 'SYNTHETIC_ONLY' } }));
++  expect(problem.code).toBe('PRESET_RESPONSE_INVALID');
++  expect(JSON.stringify(problem)).not.toMatch(/SYNTHETIC_PRIVATE_BODY|SYNTHETIC_ONLY/);
++});
++it('maps only controlled context codes and host status; unknown exception text stays private', () => {
++  expect(bailianPresetReadProblem(new ApiError({ status: 403, code: 'MODEL_CENTER_CATALOG_SCOPE_MISMATCH', message: 'hidden' })).code).toBe('PRESET_CONTEXT_CHANGED');
++  expect(bailianPresetReadProblem(new ApiError({ status: 418, code: 'SYNTHETIC_UNKNOWN', message: 'SYNTHETIC_PRIVATE' })).code).toBe('PRESET_READ_INCOMPLETE');
++  expect(bailianPresetReadProblem({ status: 401, message: 'SYNTHETIC_PRIVATE' }).code).toBe('PRESET_READ_INCOMPLETE');
++});
+diff --git a/frontend/src/taskcenter/TaskCenter.additive.test.tsx b/frontend/src/taskcenter/TaskCenter.additive.test.tsx
+index a751aaa0..446b5986 100644
+--- a/frontend/src/taskcenter/TaskCenter.additive.test.tsx
++++ b/frontend/src/taskcenter/TaskCenter.additive.test.tsx
+@@ -60,7 +60,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+ describe('original task receipt companion view', () => {
+   it('shows receipt evidence and preserves task info on a later failed read', async () => {
+     const { ledgerRow, receiptTask, receiptScope } = await import('./taskCostReceiptFixtures');
+-    const { taskCostReceipt } = await import('./taskCostReceipt');
++    const { taskCostReceipt } = await import('./taskCostReceiptHelpers');
+     const fake = fakeClient({ readTasks: vi.fn(async () => tasks({ items: [projectedTask({ ...receiptTask, status: 'COMPLETED', stage_label: '已完成' })], unavailable: [] })) });
+     const readCostReceipt = vi.fn().mockResolvedValueOnce(taskCostReceipt({ ledger: [ledgerRow()] }, receiptTask, FIXTURE_PROJECT, receiptScope))
+       .mockResolvedValueOnce({ kind: 'UNKNOWN', reason: 'UNREADABLE' });
+@@ -94,7 +94,7 @@ describe('original task receipt companion view', () => {
+ 
+ it.each(['UNKNOWN_UPSTREAM', 'KNOWN_SYNTHETIC_ZERO'])('renders %s without implying an invoice or enabling retry', async costState => {
+   const { ledgerRow, receiptTask, receiptScope } = await import('./taskCostReceiptFixtures');
+-  const { taskCostReceipt } = await import('./taskCostReceipt');
++  const { taskCostReceipt } = await import('./taskCostReceiptHelpers');
+   const fake = fakeClient({ readTasks: vi.fn(async () => tasks({ items: [projectedTask(receiptTask)], unavailable: [] })) });
+   const row = costState === 'UNKNOWN_UPSTREAM'
+     ? ledgerRow({ status: 'UNKNOWN_UPSTREAM', cost_state: costState, actual_microusd: null })
+diff --git a/frontend/src/taskcenter/TaskCostReceipt.tsx b/frontend/src/taskcenter/TaskCostReceipt.tsx
+index 0409fcab..776ec57e 100644
+--- a/frontend/src/taskcenter/TaskCostReceipt.tsx
++++ b/frontend/src/taskcenter/TaskCostReceipt.tsx
+@@ -1,5 +1,5 @@
+ import { Button, StatusMessage } from '../ui/primitives';
+-import { receiptAmount } from './taskCostReceipt';
++import { receiptAmount } from './taskCostReceiptHelpers';
+ import type { TaskCenterController } from './useTaskCenter';
+ import type { TaskCenterTask } from './taskCenterTypes';
+ 
+diff --git a/frontend/src/taskcenter/TaskList.tsx b/frontend/src/taskcenter/TaskList.tsx
+index 9dd9e17e..534bf2f7 100644
+--- a/frontend/src/taskcenter/TaskList.tsx
++++ b/frontend/src/taskcenter/TaskList.tsx
+@@ -1,5 +1,5 @@
+ import { TaskCostReceiptView } from './TaskCostReceipt';
+-import { taskRecoveryGuidance } from './taskCostReceipt';
++import { taskRecoveryGuidance } from './taskCostReceiptHelpers';
+ import { useState } from 'react';
+ import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
+ import {
+diff --git a/frontend/src/taskcenter/taskCostReceipt.test.ts b/frontend/src/taskcenter/taskCostReceipt.test.ts
+index 067a914a..8b285ccb 100644
+--- a/frontend/src/taskcenter/taskCostReceipt.test.ts
++++ b/frontend/src/taskcenter/taskCostReceipt.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, expect, it } from 'vitest';
+-import { receiptAmount, taskCostReceipt, taskRecoveryGuidance } from './taskCostReceipt';
++import { receiptAmount, taskCostReceipt, taskRecoveryGuidance } from './taskCostReceiptHelpers';
+ import { taskCenterProjection } from './taskCenterContract';
+ import { FIXTURE_PROJECT, projectedTask, tasksResponse } from './taskCenterFixtures';
+ 
+diff --git a/frontend/src/taskcenter/taskCostReceiptClient.ts b/frontend/src/taskcenter/taskCostReceiptClient.ts
+index d323dbef..1c4b4ffc 100644
+--- a/frontend/src/taskcenter/taskCostReceiptClient.ts
++++ b/frontend/src/taskcenter/taskCostReceiptClient.ts
+@@ -1,7 +1,7 @@
+ import type { CollaborationContext } from '../api';
+ import type { StudioGraphTransport } from '../creative/studioGraphClient';
+ import { readModelBrokerHistory } from '../experimental/modelBrokerClient';
+-import { taskCostReceipt, unknownCostReceipt, type TaskCostReceipt } from './taskCostReceipt';
++import { taskCostReceipt, unknownCostReceipt, type TaskCostReceipt } from './taskCostReceiptHelpers';
+ import type { TaskCenterScope, TaskCenterTask } from './taskCenterTypes';
+ 
+ /** Independent read-only companion; never expands the original task owner. */
+diff --git a/frontend/src/taskcenter/taskCostReceipt.ts b/frontend/src/taskcenter/taskCostReceiptHelpers.ts
+similarity index 100%
+rename from frontend/src/taskcenter/taskCostReceipt.ts
+rename to frontend/src/taskcenter/taskCostReceiptHelpers.ts
+diff --git a/frontend/src/taskcenter/useTaskCostReceipt.test.ts b/frontend/src/taskcenter/useTaskCostReceipt.test.ts
+index 7f8c7799..b1844386 100644
+--- a/frontend/src/taskcenter/useTaskCostReceipt.test.ts
++++ b/frontend/src/taskcenter/useTaskCostReceipt.test.ts
+@@ -5,7 +5,7 @@ import { useTaskCenter, type TaskCenterControllerProps } from './useTaskCenter';
+ import { taskCenterProjection } from './taskCenterContract';
+ import { FIXTURE_PROJECT, projectedTask, tasksResponse } from './taskCenterFixtures';
+ import type { TaskCenterClient } from './taskCenterTypes';
+-import type { TaskCostReceipt } from './taskCostReceipt';
++import type { TaskCostReceipt } from './taskCostReceiptHelpers';
+ import type { TaskCostReceiptClient } from './taskCostReceiptClient';
+ const projection = () => taskCenterProjection(tasksResponse({ items: ['job-1', 'job-2'].map(id =>
+   projectedTask({ id, authority: 'author_generation' })), unavailable: [] }), FIXTURE_PROJECT);
+diff --git a/frontend/src/taskcenter/useTaskCostReceipt.ts b/frontend/src/taskcenter/useTaskCostReceipt.ts
+index 64bfaa1b..cb8cd44a 100644
+--- a/frontend/src/taskcenter/useTaskCostReceipt.ts
++++ b/frontend/src/taskcenter/useTaskCostReceipt.ts
+@@ -1,7 +1,7 @@
+ import { useCallback, useEffect, useRef, useState } from 'react';
+ import type { TaskCenterControllerProps } from './useTaskCenter';
+ import type { TaskCenterTask } from './taskCenterTypes';
+-import { unknownCostReceipt, type TaskCostReceipt } from './taskCostReceipt';
++import { unknownCostReceipt, type TaskCostReceipt } from './taskCostReceiptHelpers';
+ 
+ type Selection = { companionEpoch: number; identity: string; task: TaskCenterTask; receipt?: TaskCostReceipt; loading: boolean };
+ /** One explicit selected read. No cache, polling, mutation, or automatic retry. */
+diff --git a/frontend/tests/visual/cloud-config.spec.ts b/frontend/tests/visual/cloud-config.spec.ts
+new file mode 100644
+index 00000000..5ed94b60
+--- /dev/null
++++ b/frontend/tests/visual/cloud-config.spec.ts
+@@ -0,0 +1,56 @@
++import { expect, test } from '@playwright/test';
++import { readFileSync } from 'node:fs';
++const wire = JSON.parse(readFileSync(new URL('../../src/modelcenter/bailianPresetWire.testFixture.json', import.meta.url), 'utf8'));
++for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
++  test(`cloud preset preflight and safe failure ${viewport.width}`, async ({ page }, info) => {
++    await page.setViewportSize(viewport);
++    let fail = false; const requests: { url: string; method: string }[] = [];
++    await page.route('**/api/**', route => {
++      const request = route.request(); requests.push({ url: request.url(), method: request.method() });
++      if (!request.url().endsWith('/api/model-center/provider-presets/bailian-text') || request.method() !== 'GET') return route.abort();
++      return fail ? route.fulfill({ status: 503, json: { code: 'SYNTHETIC_UNKNOWN', message: 'SYNTHETIC_PRIVATE_BODY' } }) : route.fulfill({ json: wire });
++    });
++    await page.goto('/ui-fixture?module=IMAGE'); await expect(page.locator('.app-shell')).toBeVisible();
++    await page.evaluate(async () => {
++      const load = (url: string) => import(/* @vite-ignore */ url);
++      const { default: React } = await load('/node_modules/.vite/deps/react.js');
++      const { default: ReactDOM } = await load('/node_modules/.vite/deps/react-dom_client.js');
++      const { BailianPresetPanel } = await load('/src/modelcenter/BailianPresetPanel.tsx');
++      const { ApiError } = await load('/src/api.ts');
++      await load('/src/modelcenter/modelCenter.css');
++      const slot = document.createElement('div'); slot.className = 'model-center-panel';
++      document.querySelector('.main-workspace')!.replaceChildren(slot);
++      const transport = { json: async (url: string, method: string, _body: unknown, signal: AbortSignal) => {
++        const response = await fetch(url, { method, signal });
++        if (!response.ok) throw new ApiError({ status: response.status, code: 'SYNTHETIC_UNKNOWN', message: 'SYNTHETIC_PRIVATE_BODY' });
++        return response.json();
++      } };
++      ReactDOM.createRoot(slot).render(React.createElement(BailianPresetPanel, { projectId: 'fixture', transport,
++        identity: 'fixture', active: true, denied: false, busy: false, isCurrent: () => true,
++        read: (work: () => Promise<unknown>) => work() }));
++    });
++    const read = page.getByRole('button', { name: '明确读取百炼文本预设' }); await expect(read).toBeVisible();
++    expect(requests).toEqual([]); await read.click();
++    await page.getByLabel('百炼 API 地区').selectOption('cn-hongkong');
++    await page.getByLabel('百炼文本模型 ID').fill('synthetic-model');
++    await page.getByRole('button', { name: '本地预检端点与模型 ID（不连接）' }).click();
++    await expect(page.getByText('本地格式预检通过（未连接）', { exact: true })).toBeVisible();
++    await expect(page.getByText(/未验证模型存在、账户权限、额度或实际推理/)).toBeVisible();
++    expect(requests).toHaveLength(1); await page.evaluate(() => document.fonts.ready);
++    await page.screenshot({ path: info.outputPath(`cloud-preflight-${viewport.width}.png`) });
++    fail = true; await read.click();
++    await expect(page.getByText('宿主预设服务暂不可用', { exact: true })).toBeVisible();
++    await expect(page.getByText(/不是百炼云端连接测试/)).toBeVisible();
++    await expect(page.getByText('SYNTHETIC_PRIVATE_BODY')).toHaveCount(0);
++    const geometry = await page.evaluate(() => {
++      const rect = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
++      const main = document.querySelector('.main-workspace')!;
++      return { header: rect('.global-header').height, context: rect('.context-bar').height, status: rect('.status-bar').height,
++        sidebar: rect('.workspace-sidebar').width, inspector: rect('.workspace-inspector').width,
++        overflow: document.documentElement.scrollWidth > innerWidth, mainOverflow: main.scrollWidth > main.clientWidth };
++    });
++    expect(geometry).toEqual({ header: 56, context: 44, status: 32, sidebar: 248, inspector: 340, overflow: false, mainOverflow: false });
++    expect(requests).toHaveLength(2); expect(requests.every(request => request.method === 'GET')).toBe(true);
++    await page.screenshot({ path: info.outputPath(`cloud-safe-error-${viewport.width}.png`) });
++  });
++}
+diff --git a/frontend/tests/visual/comic-typography.spec.ts b/frontend/tests/visual/comic-typography.spec.ts
+new file mode 100644
+index 00000000..4bba8d03
+--- /dev/null
++++ b/frontend/tests/visual/comic-typography.spec.ts
+@@ -0,0 +1,51 @@
++import { expect, test } from '@playwright/test';
++
++for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
++  test(`comic typography geometry and undo ${viewport.width}`, async ({ page }, info) => {
++    await page.setViewportSize(viewport);
++    const generation: string[] = [];
++    const preset = { width: 640, height: 640, safe_area: 24, segment_height: 640 };
++    const document = { title: 'Synthetic typography', source_mode: 'INDEPENDENT', screenplay_id: null, expected_screenplay_version: null,
++      preset: 'PAGE', font_family: 'NOTO_SANS_SC_OFL', ...preset,
++      panels: [{ id: 'panel', shot_id: null, artwork_mode: 'BLANK', order: 1, x: 24, y: 24, width: 592, height: 592,
++        character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN',
++        bubbles: [{ id: 'bubble', kind: 'DIALOGUE', text: '天地\n日', character_id: null, font_size: 32, x: 40, y: 40, width: 300, height: 200 }] }] };
++    await page.route('**/api/**', route => {
++      const url = route.request().url(); if (/generate|execute/.test(url)) generation.push(url);
++      return route.fulfill({ json: url.endsWith('/comic-layouts/catalog')
++        ? { screenplays: [], characters: [], assets: [], presets: { PAGE: preset, WEBTOON: preset }, renderer: { available: true }, font: { available: true } }
++        : { items: url.endsWith('/comic-layouts/records') ? [{ id: 'layout', version: 1, status: 'DRAFT', stale: false, document, history_versions: [] }] : [] } });
++    });
++    await page.goto('/ui-fixture?module=IMAGE');
++    await expect(page.locator('.app-shell')).toBeVisible();
++    await page.evaluate(async () => {
++      const load = (url: string) => import(/* @vite-ignore */ url);
++      const { default: React } = await load('/node_modules/.vite/deps/react.js');
++      const { default: ReactDOM } = await load('/node_modules/.vite/deps/react-dom_client.js');
++      const { ComicLayoutsPanel } = await load('/src/experimental/ComicLayoutsPanel.tsx');
++      const { experimentalClient } = await load('/src/experimental/api.ts');
++      await load('/src/experimental/experimental.css');
++      const slot = window.document.createElement('div');
++      window.document.querySelector('.main-workspace')!.replaceChildren(slot);
++      ReactDOM.createRoot(slot).render(React.createElement(ComicLayoutsPanel, { client: experimentalClient('typography-fixture', { sessionToken: 'fixture' }) }));
++    });
++    await page.getByRole('button', { name: /打开布局/ }).click();
++    const alignment = page.getByLabel('格框 1 气泡 1 文字对齐');
++    const spacing = page.getByLabel('格框 1 气泡 1 行距 (%)');
++    await expect(alignment).toHaveValue('LEFT'); await expect(spacing).toHaveValue('150');
++    await alignment.selectOption('CENTER'); await spacing.fill('200');
++    await page.getByRole('button', { name: '撤销本地排版', exact: true }).click(); await expect(spacing).toHaveValue('150');
++    await page.getByRole('button', { name: '重做本地排版', exact: true }).click(); await expect(spacing).toHaveValue('200');
++    await alignment.scrollIntoViewIfNeeded();
++    await page.evaluate(() => document.fonts.ready);
++    const geometry = await page.evaluate(() => {
++      const height = (selector: string) => document.querySelector(selector)!.getBoundingClientRect().height;
++      const main = document.querySelector('.main-workspace')!;
++      return { header: height('.global-header'), context: height('.context-bar'), status: height('.status-bar'),
++        overflow: document.documentElement.scrollWidth > innerWidth, mainOverflow: main.scrollWidth > main.clientWidth };
++    });
++    expect(geometry).toEqual({ header: 56, context: 44, status: 32, overflow: false, mainOverflow: false });
++    expect(generation).toEqual([]);
++    await page.screenshot({ path: info.outputPath(`comic-typography-${viewport.width}.png`) });
++  });
++}
+diff --git a/scripts/inventory_v2_continuation.py b/scripts/inventory_v2_continuation.py
+index 5889b3c6..11dab5be 100644
+--- a/scripts/inventory_v2_continuation.py
++++ b/scripts/inventory_v2_continuation.py
+@@ -33,7 +33,7 @@ extra={
+  'GRAPH-04':(['frontend/src/creative/GraphCanvas.tsx','frontend/src/creative/GraphCanvas.insertion.additive.test.tsx','frontend/src/creative/StudioGraphInsertion.additive.test.tsx'],'Current canvas insertion controls and tests exist; real keyboard/browser acceptance remains separate.'),
+  'GRAPH-06':(['frontend/src/creative/GraphVisualGroups.tsx','frontend/src/creative/graphVisualMembership.ts','frontend/src/creative/graphVisualHierarchy.ts','docs/GRAPH_VISUAL_GROUP_MEMBERSHIP.md'],'Persisted visual groups, two-level hierarchy and explicit direct membership edits exist. Not an executable nested subworkflow.'),
+  'GRAPH-08':(['frontend/src/creative/StudioGraphDraftRecovery.tsx','frontend/src/creative/StudioGraphDraftRecovery.test.tsx'],'Explicit graph draft recovery exists; inspect its bounded contract rather than treating old missing text as current absence.'),
+- 'GRAPH-10':(['frontend/src/creative/GraphCanvasLargeNotes.test.tsx','frontend/src/creative/GraphNoteNavigator.tsx','frontend/src/creative/graphCanvasNotes.ts'],'Large-note bounded rendering and note navigation exist; browser FPS/memory remain unmeasured here.'),
++ 'GRAPH-10':(['frontend/src/creative/GraphCanvasLargeNotes.test.tsx','frontend/src/creative/GraphNoteNavigator.tsx','frontend/src/creative/graphCanvasNotesHelpers.ts'],'Large-note bounded rendering and note navigation exist; browser FPS/memory remain unmeasured here.'),
+  'CONSOLE-01':(['frontend/src/creative/GraphDirectorConsole.tsx','frontend/src/creative/GraphDirectorProposalReview.tsx','frontend/src/creative/GraphDirectorStoryboardHandoff.tsx'],'Current mounted Console has original review and storyboard handoff; this inventory does not re-run its end-to-end gate.'),
+  'A08':(['docs/INDEPENDENT_DIRECTOR_REVIEW.md','docs/DIRECTOR_SHEET_EXPORT.md','docs/DIRECTOR_NOTE_REMOVAL.md','frontend/src/creative/GraphDirectorConsole.tsx'],'See current Director/PG/review/CSV slices; film/model quality remains distinct.'),
+  'A10':(['app/experimental/research_vision.py','app/experimental/review_adapter_jobs.py','app/experimental/research_native_ocr.py','docs/RESEARCH_NATIVE_OCR_COORDINATOR.md','docs/RESEARCH_OCR_EXPLICIT_RECOVERY.md','docs/RESEARCH_OCR_REVIEWED_TEXT_EXPORT.md'],'Generic ReviewAdapterJobs still refuses non-MOCK_ONLY dispatch. A separate admitted native OCR path now reuses original JobManager, broker and Research owners with pinned source/host, human review, reviewed TXT export and explicit host-confirmed recovery. English smoke and targeted File/PG/UI evidence do not establish Chinese/PDF quality, actual process-kill recovery or browser acceptance.'),
+diff --git a/tests/test_comic_typography.py b/tests/test_comic_typography.py
+new file mode 100644
+index 00000000..40a6412f
+--- /dev/null
++++ b/tests/test_comic_typography.py
+@@ -0,0 +1,128 @@
++"""Original Comic typography: exact legacy bytes, real text pixels and history."""
++import copy
++import hashlib
++import io
++import json
++import zipfile
++
++import pytest
++from PIL import Image, ImageChops
++from pydantic import ValidationError
++
++from app.experimental.comic_layouts import LayoutIn, LayoutEdit, ComicLayoutsService, compose
++from app.experimental.common import StaleSourceError
++from app.services.v1_capability_service import CapabilityVersionConflict
++from test_r3_media_support import rig, branch_scope
++from test_r5_comic_layouts import comic, image_asset, layout, save, preflight, approve
++from test_comic_layers import layered
++
++
++def document():
++    return LayoutIn.model_validate({'title': 'Synthetic typography', 'source_mode': 'INDEPENDENT',
++        'width': 640, 'height': 640, 'segment_height': 640,
++        'panels': [{'id': 'panel', 'order': 1, 'artwork_mode': 'BLANK', 'x': 24, 'y': 24,
++            'width': 592, 'height': 592, 'bubbles': [{'id': 'text', 'text': '天地\n日',
++                'font_size': 32, 'x': 40, 'y': 40, 'width': 300, 'height': 200}]}]}).model_dump()
++
++
++def pixels(doc):
++    report, output = compose(doc, {}, render=True)
++    assert report['can_render'], report
++    assert len(output) == 1
++    return report, output[0]
++
++
++@pytest.mark.parametrize('field,bad', [
++    ('text_align', 'JUSTIFY'), ('text_align', 'left'), ('text_align', None), ('text_align', {}),
++    ('line_height_percent', 99), ('line_height_percent', 251), ('line_height_percent', True),
++    ('line_height_percent', 150.0), ('line_height_percent', '150'), ('line_height_percent', None),
++])
++def test_strict_typography_fields_reject_malformed_values(field, bad):
++    doc = document()
++    doc['panels'][0]['bubbles'][0][field] = bad
++    with pytest.raises(ValidationError): LayoutIn.model_validate(doc)
++
++
++def test_legacy_omission_and_explicit_defaults_survive_serialization():
++    old = document()
++    assert 'text_align' not in old['panels'][0]['bubbles'][0]
++    assert 'line_height_percent' not in old['panels'][0]['bubbles'][0]
++    assert LayoutEdit.model_validate({**old, 'expected_version': 7}).model_dump(exclude={'expected_version'}) == old
++    assert json.loads(LayoutIn.model_validate(old).model_dump_json()) == old
++    explicit = copy.deepcopy(old)
++    explicit['panels'][0]['bubbles'][0].update(text_align='LEFT', line_height_percent=150)
++    assert LayoutIn.model_validate(explicit).model_dump() == explicit
++    assert pixels(explicit) == pixels(old)
++
++
++def test_legacy_default_pixels_match_unchanged_baseline_golden():
++    assert hashlib.sha256(pixels(document())[1]).hexdigest() == '80c60591c6e8cb3249802e7d631d796c242930f236725d57434566a3a32c1dff'
++
++
++def text_bounds(data):
++    image = Image.open(io.BytesIO(data)).convert('RGB').crop((52, 52, 328, 228))
++    return ImageChops.difference(image, Image.new('RGB', image.size, 'white')).getbbox()
++
++
++def test_real_alignment_and_line_spacing_pixels_match_native_layers(tmp_path):
++    doc = document()
++    results = {}
++    for align in ('LEFT', 'CENTER', 'RIGHT'):
++        for spacing in (150, 200):
++            current = copy.deepcopy(doc)
++            current['panels'][0]['bubbles'][0].update(text_align=align, line_height_percent=spacing)
++            report, data = pixels(current)
++            layer_doc = LayoutIn.model_validate(layered(current)).model_dump()
++            layer_report, layer_data = pixels(layer_doc)
++            assert layer_data == data
++            results[align, spacing] = text_bounds(data)
++            (tmp_path / f'{align.lower()}-{spacing}.png').write_bytes(data)
++    assert results['LEFT', 150][0] < results['CENTER', 150][0] < results['RIGHT', 150][0]
++    for align in ('LEFT', 'CENTER', 'RIGHT'):
++        assert results[align, 200][1] == results[align, 150][1]
++        assert results[align, 200][3] - results[align, 150][3] == 16
++
++
++def test_larger_spacing_uses_existing_overflow_blocker():
++    doc = document(); bubble = doc['panels'][0]['bubbles'][0]
++    bubble.update(height=128, line_height_percent=150)
++    assert pixels(doc)
++    bubble['line_height_percent'] = 250
++    report, output = compose(doc, {}, render=True)
++    assert output == [] and not report['can_render']
++    assert any(issue['code'] == 'COMIC_TEXT_OVERFLOW' and issue['target'] == bubble['id'] for issue in report['issues'])
++
++
++def test_original_save_reopen_restore_and_approval_keep_other_objects(rig, comic, image_asset):
++    body = layout(rig, image_asset)
++    panel = body['panels'][0]
++    panel['bubbles'] = [
++        {'id': 'first', 'text': '天地\n日', 'x': 40, 'y': 40, 'width': 300, 'height': 200},
++        {'id': 'other', 'text': 'Unchanged', 'x': 400, 'y': 40, 'width': 300, 'height': 200},
++    ]
++    original = save(comic, rig, body)
++    original_report = preflight(comic, rig, original)
++    approved = approve(comic, rig, original, original_report)
++    before = copy.deepcopy(approved['document'])
++    other_page = save(comic, rig, {**body, 'title': 'Other unchanged page'})
++    changed = copy.deepcopy(before)
++    changed['panels'][0]['bubbles'][0].update(text_align='RIGHT', line_height_percent=200)
++    edited = comic.save(rig.nid, rig.scope, rig.actor, changed, rid=approved['id'], expected_version=approved['version'])
++    assert edited['status'] == 'DRAFT'
++    assert edited['document']['panels'][0]['bubbles'][1] == before['panels'][0]['bubbles'][1]
++    assert {k: v for k, v in edited['document']['panels'][0].items() if k != 'bubbles'} == {k: v for k, v in before['panels'][0].items() if k != 'bubbles'}
++    reopened = ComicLayoutsService(rig.store, rig.novels, rig.chapters, rig.screenplays, rig.assets)
++    assert next(item for item in reopened.records(rig.nid, rig.scope, rig.actor)['items'] if item['id'] == edited['id'])['document'] == changed
++    with pytest.raises(ValueError, match='APPROVAL'): reopened.export(rig.nid, rig.scope, rig.actor, edited['id'], edited['version'])
++    with pytest.raises(CapabilityVersionConflict): reopened.save(rig.nid, rig.scope, rig.actor, changed, rid=edited['id'], expected_version=approved['version'])
++    assert reopened.records(rig.nid, rig.scope, 'other')['items'] == []
++    assert reopened.records(rig.nid, branch_scope(rig), rig.actor)['items'] == []
++    with pytest.raises(StaleSourceError): reopened.approve(rig.nid, rig.scope, rig.actor, edited['id'], edited['version'], original_report['review_digest'], True)
++    current = approve(reopened, rig, edited)
++    preview = reopened.preview(rig.nid, rig.scope, rig.actor, edited['id'], current['version'], 0)
++    with zipfile.ZipFile(io.BytesIO(reopened.export(rig.nid, rig.scope, rig.actor, edited['id'], current['version']))) as archive:
++        assert archive.read('segment-001.png') == preview
++    restored = reopened.restore(rig.nid, rig.scope, rig.actor, edited['id'], current['version'], original['version'])
++    assert restored['document'] == before and restored['status'] == 'DRAFT'
++    assert next(item for item in reopened.records(rig.nid, rig.scope, rig.actor)['items'] if item['id'] == other_page['id']) == other_page
++    assert len(rig.assets.list(rig.nid)) == 1
+diff --git a/tests/test_v2_otio_exact_source_time.py b/tests/test_v2_otio_exact_source_time.py
+new file mode 100644
+index 00000000..168fc141
+--- /dev/null
++++ b/tests/test_v2_otio_exact_source_time.py
+@@ -0,0 +1,251 @@
++"""Exact time receipts through the pinned native parser, without NLE acceptance."""
++import copy
++import json
++from fractions import Fraction
++
++import pytest
++
++from app.experimental.timeline_exchange import (
++    NS, STUDIO_NS, fraction, rational, read_otio, seconds, semantic_document,
++    summary, time_value, write_otio,
++)
++from app.services.studio_timeline_exchange import (
++    exchange_to_studio_timeline, studio_timeline_to_exchange,
++)
++
++
++def document(*, speed=Fraction(2, 3), missing=False):
++    rate = Fraction(30000, 1001)
++    return {
++        'name': 'Synthetic rational source range',
++        'global_start_time': None,
++        'tracks': [{'name': 'V1', 'kind': 'Video', 'items': [{
++            'kind': 'Clip', 'name': 'trimmed',
++            'start': time_value(Fraction(1, 3), rate),
++            'duration': time_value(Fraction(13, 3), rate),
++            'speed': rational(speed),
++            'target_url': None if missing else 'media/inert-synthetic.mov',
++        }]}],
++    }
++
++
++@pytest.mark.parametrize('speed', [Fraction(1), Fraction(2), Fraction(1, 2), Fraction(2, 3)])
++def test_summary_source_out_uses_speed_without_changing_timeline_placement(speed):
++    doc = document(speed=speed)
++    item = doc['tracks'][0]['items'][0]
++    doc['tracks'][0]['items'].append({
++        'kind': 'Gap', 'name': 'tail', 'start': time_value(0), 'duration': time_value(1),
++    })
++    before = copy.deepcopy(doc)
++    cuts = summary(doc)['tracks'][0]['cuts']
++    assert fraction(cuts[0]['source_in_seconds']) == seconds(item['start'])
++    assert fraction(cuts[0]['source_out_seconds']) == seconds(item['start']) + seconds(item['duration']) * speed
++    assert fraction(cuts[0]['duration_seconds']) == seconds(item['duration'])
++    assert fraction(cuts[1]['start_seconds']) == seconds(item['duration'])
++    assert doc == before
++
++
++@pytest.mark.parametrize('missing', [False, True])
++def test_native_file_roundtrip_keeps_exact_declared_media_range(tmp_path, missing):
++    pytest.importorskip('opentimelineio')
++    doc = document(missing=missing)
++    item = doc['tracks'][0]['items'][0]
++    item['available_range'] = {
++        'start': time_value(Fraction(1, 7), Fraction(30000, 1001)),
++        'duration': time_value(Fraction(50, 3), Fraction(30000, 1001)),
++    }
++    before = copy.deepcopy(doc)
++    output = tmp_path / 'exact-media-range.otio'
++    output.write_bytes(write_otio(doc))
++    restored, losses = read_otio(output.read_text(encoding='utf-8'))
++    assert semantic_document(restored) == semantic_document(doc)
++    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED' for row in losses)
++    assert write_otio(restored) == output.read_bytes()
++    assert doc == before
++
++
++def test_native_file_roundtrip_keeps_exact_global_start_time(tmp_path):
++    pytest.importorskip('opentimelineio')
++    doc = document()
++    doc['global_start_time'] = time_value(Fraction(1, 3), Fraction(30000, 1001))
++    output = tmp_path / 'exact-global-start.otio'
++    output.write_bytes(write_otio(doc))
++    restored, losses = read_otio(output.read_text(encoding='utf-8'))
++    assert semantic_document(restored) == semantic_document(doc)
++    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED' for row in losses)
++
++
++@pytest.mark.parametrize('target', ['global_start_time', 'available_start', 'available_duration'])
++def test_new_exact_time_metadata_must_match_native_values(target):
++    pytest.importorskip('opentimelineio')
++    doc = document()
++    doc['global_start_time'] = time_value(24)
++    doc['tracks'][0]['items'][0]['available_range'] = {
++        'start': time_value(0), 'duration': time_value(240),
++    }
++    raw = json.loads(write_otio(doc))
++    if target == 'global_start_time':
++        exact = raw['metadata'][NS]['global_start_time']
++    else:
++        ref = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
++        exact = ref['metadata'][NS]['start' if target == 'available_start' else 'duration']
++    exact['frames']['numerator'] += 1
++    with pytest.raises(ValueError, match='EXACT_TIME_METADATA_MISMATCH'):
++        read_otio(json.dumps(raw))
++
++
++def test_retimed_original_timeline_file_then_native_edit_retains_source_bounds(tmp_path):
++    otio = pytest.importorskip('opentimelineio')
++    from pathlib import Path
++    capture = json.loads((Path(__file__).resolve().parents[1] /
++        'frontend/src/creative/fixtures/phase6.capture.editing-pipeline.json').read_text(encoding='utf-8'))
++    timeline = copy.deepcopy(capture['created']['timeline'])
++    timeline['duration_ms'] = 4000
++    clip = timeline['tracks'][0]['clips'][0]
++    clip.update(in_ms=120, out_ms=2400, speed_num=2, speed_den=3)
++    converted = studio_timeline_to_exchange(timeline, title='Synthetic retime edit')
++    path = tmp_path / 'original-retimed.otio'
++    path.write_bytes(write_otio(converted['document']))
++    native = otio.core.deserialize_json_from_string(path.read_text(encoding='utf-8'))
++    native.metadata.pop(STUDIO_NS)
++    native.tracks[0][0].name = 'Externally renamed cut'
++    path.write_text(otio.core.serialize_json_to_string(native), encoding='utf-8')
++    decoded, _ = read_otio(path.read_text(encoding='utf-8'))
++    restored = exchange_to_studio_timeline(decoded, media_bindings=converted['media_bindings'], canvas={})
++    actual = restored['timeline']['tracks'][0]['clips'][0]
++    cut = summary(decoded)['tracks'][0]['cuts'][0]
++    assert (actual['in_ms'], actual['out_ms'], actual['speed_num'], actual['speed_den']) == (120, 2400, 2, 3)
++    assert fraction(cut['source_in_seconds']) * 1000 == actual['in_ms']
++    assert fraction(cut['source_out_seconds']) * 1000 == actual['out_ms']
++    assert 'RESOLVE_PREMIERE_INTEROPERABILITY_NOT_RUN' in {row['code'] for row in converted['report']}
++
++
++@pytest.mark.parametrize('target', ['global_start_time', 'available_range'])
++def test_exact_metadata_cannot_restore_a_removed_native_time(target):
++    pytest.importorskip('opentimelineio')
++    doc = document()
++    doc['global_start_time'] = time_value(24)
++    doc['tracks'][0]['items'][0]['available_range'] = {
++        'start': time_value(0), 'duration': time_value(240),
++    }
++    raw = json.loads(write_otio(doc))
++    if target == 'global_start_time':
++        raw['global_start_time'] = None
++    else:
++        raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']['available_range'] = None
++    with pytest.raises(ValueError, match='EXACT_TIME_METADATA_MISMATCH'):
++        read_otio(json.dumps(raw))
++
++
++@pytest.mark.parametrize('target', ['global_start_time', 'available_start', 'available_duration'])
++@pytest.mark.parametrize('bad_rational', [
++    {'numerator': 1, 'denominator': 0},
++    {'numerator': 10**15 + 1, 'denominator': 1},
++])
++def test_new_exact_metadata_retains_existing_rational_limits(target, bad_rational):
++    pytest.importorskip('opentimelineio')
++    doc = document()
++    doc['global_start_time'] = time_value(24)
++    doc['tracks'][0]['items'][0]['available_range'] = {
++        'start': time_value(0), 'duration': time_value(240),
++    }
++    raw = json.loads(write_otio(doc))
++    if target == 'global_start_time':
++        exact = raw['metadata'][NS]['global_start_time']
++    else:
++        ref = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
++        exact = ref['metadata'][NS]['start' if target == 'available_start' else 'duration']
++    exact['frames'] = bad_rational
++    with pytest.raises(ValueError, match='RATIONAL_LIMIT'):
++        read_otio(json.dumps(raw))
++
++
++def test_native_mixed_track_retime_receipts_keep_independent_placement_and_dissolve(tmp_path):
++    pytest.importorskip('opentimelineio')
++    doc = document(speed=Fraction(2, 3))
++    first = doc['tracks'][0]['items'][0]
++    dissolve = {'kind': 'Transition', 'name': 'dissolve', 'transition_type': 'SMPTE_Dissolve',
++        'in_offset': time_value(1, 100), 'out_offset': time_value(1, 100)}
++    second = copy.deepcopy(first)
++    second['speed'] = rational(Fraction(1, 2))
++    doc['tracks'][0]['items'].extend([dissolve, second])
++    audio = copy.deepcopy(first)
++    audio.update(name='dialogue', target_url='media/inert-synthetic.wav',
++        start=time_value(12000, 48000), duration=time_value(96000, 48000), speed=rational(2))
++    doc['tracks'].append({'name': 'A1', 'kind': 'Audio', 'items': [audio]})
++    path = tmp_path / 'mixed-rate-retimed.otio'
++    path.write_bytes(write_otio(doc))
++    decoded, _ = read_otio(path.read_text(encoding='utf-8'))
++    tracks = summary(decoded)['tracks']
++    assert fraction(tracks[0]['duration_seconds']) == 2 * seconds(first['duration'])
++    assert fraction(tracks[0]['cuts'][1]['start_seconds']) == seconds(first['duration'])
++    assert fraction(tracks[0]['cuts'][1]['source_out_seconds']) == seconds(second['start']) + seconds(second['duration']) / 2
++    assert fraction(tracks[1]['cuts'][0]['source_in_seconds']) == Fraction(1, 4)
++    assert fraction(tracks[1]['cuts'][0]['source_out_seconds']) == Fraction(17, 4)
++    assert fraction(tracks[1]['duration_seconds']) == 2
++
++
++EXACT_METADATA_TARGETS = [
++    'global_start_time', 'external_start', 'external_duration',
++    'missing_start', 'missing_duration',
++]
++
++
++def exact_metadata_fixture(target):
++    doc = document(missing=target.startswith('missing_'))
++    doc['global_start_time'] = time_value(24)
++    doc['tracks'][0]['items'][0]['available_range'] = {
++        'start': time_value(0), 'duration': time_value(240),
++    }
++    raw = json.loads(write_otio(doc))
++    if target == 'global_start_time':
++        owner, key, path = raw, target, 'timeline'
++    else:
++        owner = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
++        key, path = target.split('_', 1)[1], 'tracks[0].items[0].media_reference'
++    return doc, raw, owner['metadata'][NS][key], path
++
++
++@pytest.mark.parametrize('target', EXACT_METADATA_TARGETS)
++def test_unknown_exact_time_fields_have_explicit_losses(target):
++    pytest.importorskip('opentimelineio')
++    doc, raw, exact, path = exact_metadata_fixture(target)
++    exact['vendor_payload'] = {'nested': {'comment': 'unrepresented exact-time field'}}
++    restored, losses = read_otio(json.dumps(raw))
++    assert {'path': path, 'code': 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED',
++            'severity': 'LOSS'} in losses
++    assert semantic_document(restored) == semantic_document(doc)
++    output = write_otio(restored)
++    assert b'unrepresented exact-time field' not in output
++    again, output_losses = read_otio(output.decode('utf-8'))
++    assert semantic_document(again) == semantic_document(doc)
++    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED'
++                   for row in output_losses)
++
++
++@pytest.mark.parametrize('target', EXACT_METADATA_TARGETS)
++@pytest.mark.parametrize('field', ['frames', 'rate'])
++def test_unknown_fields_nested_inside_exact_rationals_remain_rejected(target, field):
++    pytest.importorskip('opentimelineio')
++    _, raw, exact, _ = exact_metadata_fixture(target)
++    exact[field]['vendor_payload'] = {'nested': {'comment': 'invalid rational field'}}
++    with pytest.raises(ValueError, match='OTIO_INVALID_RATIONAL'):
++        read_otio(json.dumps(raw))
++
++
++@pytest.mark.parametrize('missing', [False, True])
++def test_legacy_integer_global_and_available_times_need_no_exact_metadata(missing):
++    pytest.importorskip('opentimelineio')
++    doc = document(missing=missing)
++    doc['global_start_time'] = time_value(24)
++    item = doc['tracks'][0]['items'][0]
++    item.update(start=time_value(24), duration=time_value(24),
++                available_range={'start': time_value(0), 'duration': time_value(240)})
++    raw = json.loads(write_otio(doc))
++    raw['metadata'].pop(NS)
++    ref = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
++    ref['metadata'].pop(NS)
++    restored, losses = read_otio(json.dumps(raw))
++    assert semantic_document(restored) == semantic_document(doc)
++    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED'
++                   for row in losses)
+diff --git a/tests/test_v2_otio_transfer_owner.py b/tests/test_v2_otio_transfer_owner.py
+new file mode 100644
+index 00000000..6cc2861e
+--- /dev/null
++++ b/tests/test_v2_otio_transfer_owner.py
+@@ -0,0 +1,64 @@
++"""Retimed OTIO preview/import through the existing File Timeline owner."""
++import copy
++import json
++from fractions import Fraction
++
++import pytest
++
++from app.creative.production_execution import TIMELINES
++from app.experimental.common import StaleSourceError
++from app.experimental.timeline_exchange import time_value, write_otio
++from app.services.studio_timeline_exchange import studio_timeline_to_exchange
++from test_v2_independent_workspace import rig, import_asset, reopened
++from test_v2_audio_editing_pipeline import production, cpu_video, timeline
++
++
++def test_original_owner_previews_then_imports_retimed_otio_as_draft(rig, tmp_path):
++    pytest.importorskip('opentimelineio')
++    e = rig
++    e.service.activate(e.nid, e.scope, e.actor)
++    asset = import_asset(e, data=cpu_video(tmp_path / 'synthetic-blue.mp4'),
++                         filename='synthetic-blue.mp4', kind='video')
++    owner = production(e)
++    value = timeline(asset)
++    value['tracks'][0]['clips'][0].update(in_ms=120, out_ms=720, speed_num=2, speed_den=3)
++    row = owner.timeline_save(e.nid, e.scope, e.actor, None,
++        {'expected_version': 0, 'title': 'Synthetic retimed timeline', 'timeline': value}, lambda: None)
++    projected = studio_timeline_to_exchange(row['timeline'], title=row['title'])
++    doc = copy.deepcopy(projected['document'])
++    doc.pop('studio')
++    doc['global_start_time'] = time_value(Fraction(1, 3), Fraction(30000, 1001))
++    doc['tracks'][0]['items'][0]['available_range'] = {
++        'start': time_value(0, Fraction(30000, 1001)),
++        'duration': time_value(Fraction(30000, 1001), Fraction(30000, 1001)),
++    }
++    raw = json.loads(write_otio(doc))
++    raw['metadata']['external_review'] = {'status': 'APPROVED', 'execute': True}
++    content = json.dumps(raw)
++    body = {'expected_version': row['version'], 'reviewed_timeline_digest': row['timeline_digest'],
++            'direction': 'IMPORT', 'format': 'OTIO', 'content': content,
++            'media_bindings': projected['media_bindings']}
++    before = e.raw_store.read(e.nid, e.scope)
++    preview = owner.timeline_transfer_preview(e.nid, e.scope, e.actor, row['id'], body, lambda: None)
++    assert e.raw_store.read(e.nid, e.scope) == before
++    assert (preview['model_called'], preview['automatic_replay'], preview['external_media_access']) == (False, False, False)
++    assert preview['target_applications'] == {'Resolve': 'NOT_RUN', 'Premiere': 'NOT_RUN'}
++    assert 'GLOBAL_TIMECODE_NOT_STUDIO_TIMELINE_PLACEMENT' in {item['code'] for item in preview['loss_report']}
++    apply = {**body, 'reviewed_preview_digest': preview['preview_digest'],
++             'request_id': 'otio-exact-reviewed-import', 'acknowledge_losses': False}
++    with pytest.raises(ValueError, match='REVIEW_LOSS_REPORT_REQUIRED'):
++        owner.timeline_transfer_import(e.nid, e.scope, e.actor, row['id'], apply, lambda: None)
++    with pytest.raises(StaleSourceError, match='PREVIEW_CHANGED'):
++        owner.timeline_transfer_import(e.nid, e.scope, e.actor, row['id'],
++            {**apply, 'reviewed_preview_digest': '0' * 64, 'acknowledge_losses': True}, lambda: None)
++    assert e.raw_store.read(e.nid, e.scope) == before
++    imported = owner.timeline_transfer_import(e.nid, e.scope, e.actor, row['id'],
++        {**apply, 'acknowledge_losses': True}, lambda: None)
++    clip = imported['timeline']['tracks'][0]['clips'][0]
++    assert (clip['in_ms'], clip['out_ms'], clip['speed_num'], clip['speed_den']) == (120, 720, 2, 3)
++    assert imported['version'] == row['version'] + 1
++    stored = e.raw_store.read(e.nid, e.scope)
++    assert stored['collections'][TIMELINES][row['id']]['status'] == 'DRAFT'
++    assert {key: value for key, value in stored['collections'].items() if key != TIMELINES} == {
++        key: value for key, value in before['collections'].items() if key != TIMELINES}
++    assert production(e, reopened(e)).timeline_get(e.nid, e.scope, e.actor, row['id'], lambda: None) == imported

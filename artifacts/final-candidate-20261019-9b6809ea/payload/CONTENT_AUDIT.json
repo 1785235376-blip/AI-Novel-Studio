@@ -1,0 +1,453 @@
+{
+  "status": "ALLOWLISTED_LOCAL_SOURCE_AND_EVIDENCE_NO_UNCLASSIFIED_CREDENTIAL_FINDING",
+  "base": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "bundle": {
+    "file": "candidate-9b6809ea-from-6ff22cda.bundle",
+    "uniquePrerequisite": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+    "ref": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35 refs/heads/work/v2-integration-candidate-20261019",
+    "bytes": 52078,
+    "sha256": "1d8d2173e832328f440693ffc0d0447b14ed49ba0c508b36ed8de82c7d338899"
+  },
+  "newDeltaBlobCount": 64,
+  "newDeltaBlobs": [
+    {
+      "path": "app/experimental/comic_layers.py",
+      "gitBlob": "c46698a129fa2e201544f6a0dfedf6ff3fcf4a4d",
+      "bytes": 6672,
+      "sha256": "84930f1bd5dc9349c67d75046d8f259815b45a877321dd91761435bf496c3faf"
+    },
+    {
+      "path": "app/experimental/comic_layouts.py",
+      "gitBlob": "cf1b8503df54befcfcf7303fb04c53396b73902a",
+      "bytes": 56815,
+      "sha256": "7ef73af6165da789ce28b73642c1c33fdb91c6fac75a323bdf8acf146bd2acca"
+    },
+    {
+      "path": "app/experimental/timeline_exchange.py",
+      "gitBlob": "34b4fb07609c2fed2511c975d8b39aa33287f97c",
+      "bytes": 33359,
+      "sha256": "6daace385d277151f282da65a251d6d9ae8477b2dc5284ebffb53464f95248d7"
+    },
+    {
+      "path": "frontend/playwright.cloud-config.config.ts",
+      "gitBlob": "8f87fa0e48c10299ca0d3ff93f5482389c664dd4",
+      "bytes": 233,
+      "sha256": "172b28ad675665b06ee8e0a753f0b2b5dfd15195f5880a4300ef521619ba1f46"
+    },
+    {
+      "path": "frontend/playwright.comic-typography.config.ts",
+      "gitBlob": "fff9eac0d974a87a817fe146315d7221b0ea5b33",
+      "bytes": 241,
+      "sha256": "955325b22dc7ee0340bd6e7c98b9f3762888ca0d77b328428394be3aadb50a13"
+    },
+    {
+      "path": "frontend/src/creative/CameraGrammarEditor.additive.test.tsx",
+      "gitBlob": "522c6b3abec1c4a2afe98c2ec828ad7647437b89",
+      "bytes": 11032,
+      "sha256": "161d096b74553c4b3e7041d0b4b806e7243306680bebf6cdaca6bbb27f327af6"
+    },
+    {
+      "path": "frontend/src/creative/CanvasAssetPreview.additive.test.tsx",
+      "gitBlob": "7c0bace2a2d1c4e42afd11c5f50a98842599d020",
+      "bytes": 3221,
+      "sha256": "cc1de139d43ccbc1e12b996421faba5608fe6f7183439ab18a3d470ba925ae1c"
+    },
+    {
+      "path": "frontend/src/creative/CanvasAssetPreview.tsx",
+      "gitBlob": "62b10fe5167da1a5c7b1b12f7dd20d28c3c0f8c9",
+      "bytes": 3131,
+      "sha256": "efe43074f7d0a31ca0f7077ef7a99022f49ea303f7d564f39d9791c8f456215d"
+    },
+    {
+      "path": "frontend/src/creative/DirectorCameraReuse.test.tsx",
+      "gitBlob": "726e85db3717dad0d3fbeb5ad2d3a5dfb29965a6",
+      "bytes": 10837,
+      "sha256": "f57f365f24acde952309e0612172472cab44cc1c3e7f50205e8beeca09e2777f"
+    },
+    {
+      "path": "frontend/src/creative/DirectorCameraReuse.tsx",
+      "gitBlob": "183d3864d51cf9ba13aeaf8b74c7f1a9808e8914",
+      "bytes": 6154,
+      "sha256": "9b5ad0bc59fbe18f992079c9f44afab4e5d05a75a144070265d09f6605813c44"
+    },
+    {
+      "path": "frontend/src/creative/DirectorDraftComparison.additive.test.tsx",
+      "gitBlob": "1c2e28ca9652728b2753f78b49f048cb0057e906",
+      "bytes": 3329,
+      "sha256": "e5c6f8321f69b2c7a964045026fc25a9a96727bd8540c44dac91c8d41463fade"
+    },
+    {
+      "path": "frontend/src/creative/DirectorDraftComparison.tsx",
+      "gitBlob": "5f959a49ce57a78b15914489b8a5c2b58bb0b752",
+      "bytes": 1756,
+      "sha256": "22d568e1b838b60fce2f0ea479bc696e867703160258b60b3a1854205ef59143"
+    },
+    {
+      "path": "frontend/src/creative/DirectorIntentConstraints.test.tsx",
+      "gitBlob": "51243ed3cd5b84b41450e3acb76989a215882ad9",
+      "bytes": 5840,
+      "sha256": "7048e4520079863271bd55ac2b6f0ea54f8444b3ff1e1c2aa48d0d947e780a64"
+    },
+    {
+      "path": "frontend/src/creative/GraphCanvasNotes.tsx",
+      "gitBlob": "0a0c5bbf8dbac458c882e5ccde8ec02e93b5bfeb",
+      "bytes": 11063,
+      "sha256": "6091a94afcabe8b5105e38c90212500200ceafee7bc3bb6dbb0e99a9a5d909ff"
+    },
+    {
+      "path": "frontend/src/creative/GraphDraftChecklist.additive.test.tsx",
+      "gitBlob": "c1aa90aceae441cc83b9667229588c565fccb911",
+      "bytes": 4000,
+      "sha256": "ec817d0a8db9b01ae39112ca15df3c450eb409dbfede4d0545668bd91db14955"
+    },
+    {
+      "path": "frontend/src/creative/GraphDraftChecklist.tsx",
+      "gitBlob": "ec281c8e7b583e7501269369963cc50a87904b6b",
+      "bytes": 2828,
+      "sha256": "956758bb19035f4dd574b219268c5a0cbefbadf39df21b66a866930ddaa5febf"
+    },
+    {
+      "path": "frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx",
+      "gitBlob": "f99e470ad576b6c4360c208a396b6c4d0275f3bf",
+      "bytes": 5035,
+      "sha256": "5bad3bdddcaa518df5e167963b68a8970fcc0098cdc7adc588aa631190d41b2c"
+    },
+    {
+      "path": "frontend/src/creative/GraphPlanningFork.test.tsx",
+      "gitBlob": "d366feeb411c39199922401301b4aaf64f30bed9",
+      "bytes": 7707,
+      "sha256": "79452e9ecc2a0a55e81bb2cb6b9f0de88cc94b2ca5231d2cb7db940c200c1ee2"
+    },
+    {
+      "path": "frontend/src/creative/GraphPlanningFork.tsx",
+      "gitBlob": "93ea24751b763a2e8c03c8e33df03e41561f87ae",
+      "bytes": 7076,
+      "sha256": "ea414f1bbf84564f58c7079c95fdef9942bb56d435c000bd0808c613a0550228"
+    },
+    {
+      "path": "frontend/src/creative/GraphStoryboardStarter.additive.test.tsx",
+      "gitBlob": "b35cf8d1144d1d2fa736141a58b768ef8e1836dd",
+      "bytes": 8411,
+      "sha256": "8b875872198ae3067583cd55949ded57ead6e8e568c91d386718023785388feb"
+    },
+    {
+      "path": "frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx",
+      "gitBlob": "a1c932f1d6b0158e2d72dfcf7843716df7f700ed",
+      "bytes": 10392,
+      "sha256": "852b08178a8bca03569c538b6edf3f23cce34f25a1c2e8a87229f2eea4ca791b"
+    },
+    {
+      "path": "frontend/src/creative/GraphStoryboardStarter.tsx",
+      "gitBlob": "7a25736ed7a632383186872d7d03665daf3851a5",
+      "bytes": 6291,
+      "sha256": "689246884cd21c6d0e77c0776a359885e77132e48a98686ae789fa236b00e078"
+    },
+    {
+      "path": "frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx",
+      "gitBlob": "2fd2300d7e725891a5f2420be10f4592407d33ea",
+      "bytes": 5842,
+      "sha256": "80cd6ac3966c67112f93ab14d458e61954bb682b223bb7666cf0c73a773384b5"
+    },
+    {
+      "path": "frontend/src/creative/MediaCanvasGraphHandoff.tsx",
+      "gitBlob": "56be007a6e1055862c15f66ff4089258d1f8778b",
+      "bytes": 4326,
+      "sha256": "de477b0c9c5add2486675f7f98cc908d4b8bb823b030e4f1883c08512dea1688"
+    },
+    {
+      "path": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "gitBlob": "628e581dba8bc14b132e9e67a58c80b66c1e771e",
+      "bytes": 15788,
+      "sha256": "3bd4726f41439615b790252887c63422ad5774115dc62a0e8387eee237ee01d0"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "gitBlob": "cb31ea04b626cc3036c3cad2dd50f0866afcfb2a",
+      "bytes": 54284,
+      "sha256": "e6e6e7cbbdd6e34e8c76bf9b48990e14a4016b799433536ad7c900a664e2425f"
+    },
+    {
+      "path": "frontend/src/creative/TimelineTransferReview.test.tsx",
+      "gitBlob": "8debbc4e8c32e549730792e3a030703b58c61b37",
+      "bytes": 15301,
+      "sha256": "c6ceca034ecdec2038fd20ec661714c22279887da07896b6f56932caf9d33ea2"
+    },
+    {
+      "path": "frontend/src/creative/TimelineTransferReview.tsx",
+      "gitBlob": "d083318608bb9a3b32caf880dea08eea2608481d",
+      "bytes": 3056,
+      "sha256": "827e2f5831d1b825b4a90ebde8e7c427eaf0ebc7a96d8c3bda12bdc53a0f8fe4"
+    },
+    {
+      "path": "frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts",
+      "gitBlob": "32c53edfe3246ee884b269b9e634686cf944a5dd",
+      "bytes": 2816,
+      "sha256": "a6107f2020d769f1f591fd1f9b693e31ea29bdc2197758dd6dd4143e61d683f7"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts",
+      "gitBlob": "2a72b3fa8cde6e526b658160bcb0f476cc40cc2e",
+      "bytes": 5214,
+      "sha256": "7c343b21c9adf14bfa576322a6fc242116fff1bb3c7ff1b2308f61f04942a11c"
+    },
+    {
+      "path": "frontend/src/creative/graphCanvasNotes.test.ts",
+      "gitBlob": "3f3765b9f48087ed2c21092b4f974886e17388d3",
+      "bytes": 3078,
+      "sha256": "d6d22a105fa759a46186450f4cbe8c22669c068fcb3094378107decf9dfdf0bd"
+    },
+    {
+      "path": "frontend/src/creative/storyboardImagePreview.ts",
+      "gitBlob": "81d149f774b3d1ba724642c03a4d1c435aa7f9fb",
+      "bytes": 11533,
+      "sha256": "ec84b3fb6efff238c8afe9ca47d6f500ea612cfa15b645c40eaa5ba1cbbe6a43"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "gitBlob": "2a39cdbbe94c1cf8ee20f4c8c435a87c2f364e08",
+      "bytes": 88294,
+      "sha256": "80a32eb917b161d3621c20132763f14692610cd65223d786975583a65b4b3395"
+    },
+    {
+      "path": "frontend/src/experimental/BranchComparisonReview.test.tsx",
+      "gitBlob": "2c224ebe13592ea8366161b26413b17856e6dfb0",
+      "bytes": 4879,
+      "sha256": "c87eb47c926a9ed0dc6bdb0ab4658402a5e09c292e951580fa1149e7685b9ead"
+    },
+    {
+      "path": "frontend/src/experimental/BranchComparisonReview.tsx",
+      "gitBlob": "5cd4bb5dd38e400a58d0936060b74b514a2dd8e9",
+      "bytes": 4132,
+      "sha256": "a50c3bf8daddea3dabea5e812efd3fd9bf6ab2cd5139bbe73d0deec4cff86063"
+    },
+    {
+      "path": "frontend/src/experimental/BranchManuscriptPanel.tsx",
+      "gitBlob": "69f52391147bef8d296b8105ee194395e180ea05",
+      "bytes": 13339,
+      "sha256": "828050a2c054b863b9ca0e7341c27b14d9593e263d26f27d21609b183bbc33a7"
+    },
+    {
+      "path": "frontend/src/experimental/CaptionTextReplace.tsx",
+      "gitBlob": "bf29d47b92f1c8b6979b846b7a69610b6f375e5b",
+      "bytes": 7242,
+      "sha256": "4eeac45afb95284861092ca9b61e3baa717028dae573d2fa5e96bf5e2e60c95a"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "gitBlob": "31c8d7849c206db5ba2c461eb48baa4f97bb13b9",
+      "bytes": 46084,
+      "sha256": "b7fd1e7fddd5256f05ccb37be26b251d9467ec1cb8beea89046b46f3b4957e1a"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx",
+      "gitBlob": "a1c7af6d3f430abdbdc7ab965252f6b8b5042fc7",
+      "bytes": 6991,
+      "sha256": "8c160e1bbb69302599b09e1d105451a994ef0ccf8aeb2942134e20d5d8e649da"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "gitBlob": "9947b92be99de902bb34522a480db2345f306395",
+      "bytes": 27781,
+      "sha256": "89f73243123697fc41598c6e0b3e9b1023d2b2ddd076733c40fc38b81ef98de5"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionReceiptReview.test.tsx",
+      "gitBlob": "5d22a04c02510b3b71cfecf7da74a605a1c27930",
+      "bytes": 9193,
+      "sha256": "d4dafdecde5660229e013b4a7a71ab91b926ee41d08f3c6a86d609280995ed7e"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionReceiptReview.tsx",
+      "gitBlob": "af9b2be2c6c71cd14687d00135866432ad0b315b",
+      "bytes": 6128,
+      "sha256": "03a483a5876a8422d712f1d9f9349360270f7e5683383eb3a51d0a7c49726a85"
+    },
+    {
+      "path": "frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx",
+      "gitBlob": "21e59356d5d5ccbc1790469ac0024499e45718a6",
+      "bytes": 6445,
+      "sha256": "bf2bc7c8f7486749e5f598d1c39ee6ae8ca46cce9a82742db83faf198a2d84dd"
+    },
+    {
+      "path": "frontend/src/experimental/comicLayoutsClient.ts",
+      "gitBlob": "46728210081bc0d85f10fb2500543bb26739e1c8",
+      "bytes": 19366,
+      "sha256": "f52ce4ded79f458ae9ce1023f2318d3181d24158940d2924cf14eef45cfe0268"
+    },
+    {
+      "path": "frontend/src/experimental/pristineReplayNavigation.test.tsx",
+      "gitBlob": "f2e5e919f872b10d0919cb3a35b928f1ad8101d9",
+      "bytes": 3241,
+      "sha256": "f823197e6ffe51c2cc136742f41605198b226f6f922dbe469f5bff72c7d81fb8"
+    },
+    {
+      "path": "frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx",
+      "gitBlob": "3af3ae595df5f27f1fa48fc96e3cf85f70c29de1",
+      "bytes": 8272,
+      "sha256": "562e6c5ee559b4618e1633f3065ef481b7b234ca655cc9774b7062055ce263b7"
+    },
+    {
+      "path": "frontend/src/modelcenter/BailianPresetPanel.tsx",
+      "gitBlob": "2037cf27517af0e801613b8c1ed4f89698ec5bcc",
+      "bytes": 5549,
+      "sha256": "efd949cea660556f698e1e9818e7141929b0f964b439cf04204c2d79992cdf93"
+    },
+    {
+      "path": "frontend/src/modelcenter/bailianPresetContract.ts",
+      "gitBlob": "cdf843181d5fd6315d79099ed5240ff1a6af15a1",
+      "bytes": 6693,
+      "sha256": "f919878d740526d92d8da07bd02d5e174f395341f259c1a5c14936d6b5b3ef50"
+    },
+    {
+      "path": "frontend/src/modelcenter/bailianPresetPreflight.test.ts",
+      "gitBlob": "1cf02c9ed32edeaaa28c1018ab22338663ffd4b1",
+      "bytes": 3221,
+      "sha256": "a5838bc3e11f6225743f63fe567b689a0a846fe5f0d1adf7bd81760d8cb6390c"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "gitBlob": "446b5986ae42c604dbebab9563af5d4411aea960",
+      "bytes": 7449,
+      "sha256": "af9d0372bd8f58e51c0a92a2b43a8ea344e641e12920c925989d0617a14cb733"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskCostReceipt.tsx",
+      "gitBlob": "776ec57ef822bff4346643279f8120715c1bb0fd",
+      "bytes": 3335,
+      "sha256": "5914622cf1d135e2cdf93ebebaeeb4cc8b33ea081c960890eb56c8b9854efaaf"
+    },
+    {
+      "path": "frontend/src/taskcenter/TaskList.tsx",
+      "gitBlob": "534bf2f7ccce26b14dc706324797e9723115684e",
+      "bytes": 11217,
+      "sha256": "16e9e083105f700760f7270b1b8529fabd2d9a50ab947e71e4f83657dfeacbe2"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceipt.test.ts",
+      "gitBlob": "8b285ccba01c27ae31d0433ce789a3c6cef6a434",
+      "bytes": 4301,
+      "sha256": "9ef420eb85dd39f572c740494e72b28eb95ce5887e610f6af89f180aaefbfbea"
+    },
+    {
+      "path": "frontend/src/taskcenter/taskCostReceiptClient.ts",
+      "gitBlob": "1c4b4ffcf1f7fa5f10384a9ee66f8a6375fecafa",
+      "bytes": 2081,
+      "sha256": "c185eb8197f27a965689f61cca685e4e53b57d174e3aa91ac9224022146c36cd"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.test.ts",
+      "gitBlob": "b18443867a9761ca4a993fb57e1471b9e4c19143",
+      "bytes": 6241,
+      "sha256": "665a6d3fab6177cc0810f2062a54bed02eb7dfbc1923ae1cc6e223e919ecb0f7"
+    },
+    {
+      "path": "frontend/src/taskcenter/useTaskCostReceipt.ts",
+      "gitBlob": "cb8cd44a81505d2d9bf8a927c812681d00655139",
+      "bytes": 3064,
+      "sha256": "2d9f993be07c0b5a66ab48f20da26bab6f8dd8c542decb05703360dfad6357fd"
+    },
+    {
+      "path": "frontend/tests/visual/cloud-config.spec.ts",
+      "gitBlob": "5ed94b6073376cfefa514121715e67d8652230e3",
+      "bytes": 4432,
+      "sha256": "c6db22ead8eec2e129de7a7cec9c5572a27aebcd65433ada8e148ab8cd23a57b"
+    },
+    {
+      "path": "frontend/tests/visual/comic-typography.spec.ts",
+      "gitBlob": "4bba8d03b6eae8bfb57dbb533a61de16394eaa8c",
+      "bytes": 3908,
+      "sha256": "c676625e365bbdb1c47a88beec0a74616338c75b543d6bca0e442ab5f3739aa5"
+    },
+    {
+      "path": "scripts/inventory_v2_continuation.py",
+      "gitBlob": "11dab5befe97e759c8304c6f66d60c1d6a8cd199",
+      "bytes": 7129,
+      "sha256": "dac2b7bc74572d25d3a77dab2b3f05efdcfd0fe59a5c718a3bc4019875b8066a"
+    },
+    {
+      "path": "tests/test_comic_typography.py",
+      "gitBlob": "40a6412fd3802b2356747fa7099b95c8085b0619",
+      "bytes": 7049,
+      "sha256": "3fa41674b18e82ea35a25a8473e317e13d5374e50af5a822ba8724916f5b4323"
+    },
+    {
+      "path": "tests/test_v2_otio_exact_source_time.py",
+      "gitBlob": "168fc141643353eced2a6e7209b8c48961b13490",
+      "bytes": 11997,
+      "sha256": "b7e665d797a3f59498ee32587aa9f73532a0870416b52673184cc5c4ecb1da8e"
+    },
+    {
+      "path": "tests/test_v2_otio_transfer_owner.py",
+      "gitBlob": "6cc2861e6788582dfca1a6cc177a36f9bf69e5fa",
+      "bytes": 3934,
+      "sha256": "148022db37ed84107aad2419f2ada43b5418c7da990e3efb5d3269918149e368"
+    },
+    {
+      "path": "app/experimental/timeline_exchange.py",
+      "gitBlob": "a9c117e52d5b5542f41faa96af5e9b9a6d4379cb",
+      "bytes": 32870,
+      "sha256": "a716a71b6b82628a4b68fdcf8b896ad5ebb5cdc0988fccd5b50a7c29012f579a"
+    },
+    {
+      "path": "tests/test_v2_otio_exact_source_time.py",
+      "gitBlob": "6cdc6bfaf3c437d9cabe3c73a9381eb73e0c174f",
+      "bytes": 8983,
+      "sha256": "3b6aa5be37ac1fb72307b01935001ac885d6f7ad50857e340c8fa5fe349709f4"
+    }
+  ],
+  "backendAllowlist": [
+    "app/experimental/comic_layers.py",
+    "app/experimental/comic_layouts.py",
+    "app/experimental/timeline_exchange.py"
+  ],
+  "nsfwSpecificBackendIncluded": false,
+  "excluded": [
+    "runtime/test profiles and databases",
+    "private config/credentials and environment dumps",
+    "models/GPU outputs",
+    "node_modules/venvs",
+    "fonts/screenshots/trace archives",
+    "production dist"
+  ],
+  "credentialScan": {
+    "patterns": [
+      "private-key",
+      "openai-secret",
+      "github-secret",
+      "aws-access-key",
+      "credential-in-url"
+    ],
+    "unclassifiedFindings": 0,
+    "syntheticFixtureClassifications": [
+      {
+        "label": "delta:frontend/src/modelcenter/bailianPresetPreflight.test.ts",
+        "kind": "credential-in-url",
+        "classification": "EXACT_STATIC_NEGATIVE_TEST_FIXTURE_EXPECTED_TO_BE_REJECTED",
+        "source": "frontend/src/modelcenter/bailianPresetPreflight.test.ts:25",
+        "fixtureUser": "user",
+        "fixturePassword": "synthetic",
+        "networkRequest": false
+      },
+      {
+        "label": "package:candidate-9b6809ea-from-6ff22cda.patch",
+        "kind": "credential-in-url",
+        "classification": "EXACT_STATIC_NEGATIVE_TEST_FIXTURE_EXPECTED_TO_BE_REJECTED",
+        "source": "frontend/src/modelcenter/bailianPresetPreflight.test.ts:25",
+        "fixtureUser": "user",
+        "fixturePassword": "synthetic",
+        "networkRequest": false
+      }
+    ],
+    "scope": "new reachable Git source blobs, commit metadata and all text payload files; binary bundle source inspected through exact Git delta objects"
+  },
+  "cloudFirstFailurePreserved": {
+    "rawLogCopiedByteExact": true,
+    "traceRetainedAtOriginalOwner": true,
+    "traceIncludedInPackage": false,
+    "originalTraceSha256": "3bb598704786dd73e070eabf0c2ac8d73621b685f606dca526cd68ec4587f757"
+  },
+  "filesAudited": 42,
+  "networkOrModelExecution": false,
+  "remoteWrites": 0
+}

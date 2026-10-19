@@ -1,0 +1,30 @@
+LOCAL RECOVERABLE CANDIDATE — NOT ACCEPTED / NOT UPLOADED
+
+Final head: 9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35
+Tree: 1e4a3c46c7898594698d7f1cf0580d6f2cac84a1
+Unique prerequisite: 6ff22cdadcf830ed5ec6343ea20966f8a74649c5
+Intermediate preserved and recoverable: da6228f49304e9edf298c754e78c2abde0873243
+Branch: work/v2-integration-candidate-20261019
+
+Ordered source mapping
+Windows module names: d36c32662889b1a70f21384e8a1b525a160a00fa -> d36c32662889b1a70f21384e8a1b525a160a00fa
+NLE exact time: 19a5b6fbf05d1690fe4bd8d6217612aa3c96e9a8 -> 40db3125f77af3baf5ff4f3eabd77e75411b3a10
+NLE unknown metadata: de966262af21609fbda4bf235fe30e59f13fbdd5 -> 6f3a8157c6d156ee0c74b794be6c36e691a4d270
+Comic typography: 28dc20c5fbbfe9a39935810cb02d2cc35265a172 -> da6228f49304e9edf298c754e78c2abde0873243
+Cloud configuration local UX: c2d6b682d64685b9d2599bbd323b3751a737b1dd -> 9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35
+All original source patches and file blobs match. Zero cherry-pick conflicts or manual source edits. Five original feature worktrees remain unchanged and clean. Existing type/build/package/Python configuration is unchanged.
+
+Actual validation, with failures kept
+Final original Windows tsc -b: exit 0. Original Vite build: exit 0 (existing >500 kB warning retained). Original test discovery and UI token guards pass.
+Final original Vitest config: 17 files / 283 tests, 282 pass / 1 fail; all 184 modelcenter tests pass. Sole failure remains ComicLayoutsPanel.layers.test.tsx:91, 'ORA export needs approved loaded current pixels and admits a double click once'. Exact isolated d36 baseline has 10/11 in the same file with matching assertion payload; final failure was compared again. No weakened assertion or resolver.
+Merged targeted backend: 9 files, 172 pass / 59 PostgreSQL deselected, exit 0. Run on exact da6228f4 before the authorized frontend-only cloud cherry-pick. Every backend tested source byte remains identical at final 9b6809ea. Two original NLE baseline cases separately still fail (exit 1); not suppressed or counted as passed. Python3.11.9 / pytest8.4.2 / ReportLab4.5.1 / OTIO0.18.1 / Pillow12.3.0 / fonttools4.59.1 meet all project/dev/used-extra constraints; fresh pip check passed. Reused existing private environment and pinned OFL font read-only; no installs or downloads.
+First backend attempt: 171 pass and 1 fixture setup error because the harness profile was outside candidate .runtime. The fixture's original path assertion was kept; only the harness profile placement was corrected for the successful rerun. Raw first and final records are included; counts are not added together.
+Independent review receipts and evidence hashes for Windows, NLE, Comic and Cloud are bound to exact candidate/source Git blobs. Original NLE file hash difference was LF/CRLF mixture only: reviewed working-byte hashes and canonical committed text were checked separately, not ignored.
+
+Limitations
+Known ORA failure and two original NLE failures remain. No PostgreSQL/full real-backend browser/full V2 acceptance. Cloud browser evidence is synthetic intercepted HOST GET fixtures only: first 1366 click timed out, later fixture rerun passed; original first-failure log is included and trace remains at its original owner location. No cold-start stability, real provider connectivity, inference or billing claim. No models/GPU/paid APIs, source push/archive upload/main merge/tag/Release. Parallel Comic handoff helper/contract work is excluded.
+
+Recovery proof
+An independent no-local clone at exact 6ff with neither final nor da intermediate candidate objects and no alternates fetched this bundle successfully. Restored head/tree and intermediate match; git fsck --full exit 0. Five delta commits are included. See evidence/restore-receipt.json. Bundle includes only tracked delta source and required Git objects. Package excludes test/runtime profiles, databases, private credentials/config, model weights, NSFW-specific backend, node_modules/venvs/fonts and production dist. Production build was validated but its files are not shipped.
+
+See SOURCE_MAP.json, VALIDATION.json, CONTENT_AUDIT.json and SHA256SUMS. Both bundle and patch are review candidates only.

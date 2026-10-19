@@ -1,0 +1,777 @@
+{
+  "status": "CANDIDATE_LOCAL_ONLY_NOT_ACCEPTED_OR_PUBLISHED",
+  "base": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "tree": "1e4a3c46c7898594698d7f1cf0580d6f2cac84a1",
+  "intermediate": "da6228f49304e9edf298c754e78c2abde0873243",
+  "branch": "work/v2-integration-candidate-20261019",
+  "commits": [
+    {
+      "slice": "Windows module names",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "integrated": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "parent": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+      "sourcePatchId": "f06a69cef636909db773b46c0d8d5287201d19e1",
+      "integratedPatchId": "f06a69cef636909db773b46c0d8d5287201d19e1"
+    },
+    {
+      "slice": "NLE exact time",
+      "source": "19a5b6fbf05d1690fe4bd8d6217612aa3c96e9a8",
+      "integrated": "40db3125f77af3baf5ff4f3eabd77e75411b3a10",
+      "parent": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourcePatchId": "5528c3655dfba42ed26d3f846aca12a5f16ca998",
+      "integratedPatchId": "5528c3655dfba42ed26d3f846aca12a5f16ca998"
+    },
+    {
+      "slice": "NLE unknown metadata",
+      "source": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "integrated": "6f3a8157c6d156ee0c74b794be6c36e691a4d270",
+      "parent": "40db3125f77af3baf5ff4f3eabd77e75411b3a10",
+      "sourcePatchId": "6b6229da396071fe2d644ab1c5895afb9baeefd6",
+      "integratedPatchId": "6b6229da396071fe2d644ab1c5895afb9baeefd6"
+    },
+    {
+      "slice": "Comic typography",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "integrated": "da6228f49304e9edf298c754e78c2abde0873243",
+      "parent": "6f3a8157c6d156ee0c74b794be6c36e691a4d270",
+      "sourcePatchId": "7d000aea9afb8b6a726d1547daff8bdc25755195",
+      "integratedPatchId": "7d000aea9afb8b6a726d1547daff8bdc25755195"
+    },
+    {
+      "slice": "Cloud configuration local UX",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "integrated": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+      "parent": "da6228f49304e9edf298c754e78c2abde0873243",
+      "sourcePatchId": "dcd2cb1589dc37349ae2823757ae3f64ec9f8ce3",
+      "integratedPatchId": "dcd2cb1589dc37349ae2823757ae3f64ec9f8ce3"
+    }
+  ],
+  "changedPaths": [
+    {
+      "status": "M",
+      "file": "app/experimental/comic_layers.py",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "c46698a129fa2e201544f6a0dfedf6ff3fcf4a4d",
+      "candidateBlob": "c46698a129fa2e201544f6a0dfedf6ff3fcf4a4d"
+    },
+    {
+      "status": "M",
+      "file": "app/experimental/comic_layouts.py",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "cf1b8503df54befcfcf7303fb04c53396b73902a",
+      "candidateBlob": "cf1b8503df54befcfcf7303fb04c53396b73902a"
+    },
+    {
+      "status": "M",
+      "file": "app/experimental/timeline_exchange.py",
+      "source": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "sourceBlob": "34b4fb07609c2fed2511c975d8b39aa33287f97c",
+      "candidateBlob": "34b4fb07609c2fed2511c975d8b39aa33287f97c"
+    },
+    {
+      "status": "A",
+      "file": "frontend/playwright.cloud-config.config.ts",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "8f87fa0e48c10299ca0d3ff93f5482389c664dd4",
+      "candidateBlob": "8f87fa0e48c10299ca0d3ff93f5482389c664dd4"
+    },
+    {
+      "status": "A",
+      "file": "frontend/playwright.comic-typography.config.ts",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "fff9eac0d974a87a817fe146315d7221b0ea5b33",
+      "candidateBlob": "fff9eac0d974a87a817fe146315d7221b0ea5b33"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/CameraGrammarEditor.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "522c6b3abec1c4a2afe98c2ec828ad7647437b89",
+      "candidateBlob": "522c6b3abec1c4a2afe98c2ec828ad7647437b89"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/CanvasAssetPreview.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "7c0bace2a2d1c4e42afd11c5f50a98842599d020",
+      "candidateBlob": "7c0bace2a2d1c4e42afd11c5f50a98842599d020"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/CanvasAssetPreview.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "62b10fe5167da1a5c7b1b12f7dd20d28c3c0f8c9",
+      "candidateBlob": "62b10fe5167da1a5c7b1b12f7dd20d28c3c0f8c9"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/DirectorCameraReuse.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "726e85db3717dad0d3fbeb5ad2d3a5dfb29965a6",
+      "candidateBlob": "726e85db3717dad0d3fbeb5ad2d3a5dfb29965a6"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/DirectorCameraReuse.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "183d3864d51cf9ba13aeaf8b74c7f1a9808e8914",
+      "candidateBlob": "183d3864d51cf9ba13aeaf8b74c7f1a9808e8914"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/DirectorDraftComparison.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "1c2e28ca9652728b2753f78b49f048cb0057e906",
+      "candidateBlob": "1c2e28ca9652728b2753f78b49f048cb0057e906"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/DirectorDraftComparison.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "5f959a49ce57a78b15914489b8a5c2b58bb0b752",
+      "candidateBlob": "5f959a49ce57a78b15914489b8a5c2b58bb0b752"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/DirectorIntentConstraints.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "51243ed3cd5b84b41450e3acb76989a215882ad9",
+      "candidateBlob": "51243ed3cd5b84b41450e3acb76989a215882ad9"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphCanvasNotes.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "0a0c5bbf8dbac458c882e5ccde8ec02e93b5bfeb",
+      "candidateBlob": "0a0c5bbf8dbac458c882e5ccde8ec02e93b5bfeb"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphDraftChecklist.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "c1aa90aceae441cc83b9667229588c565fccb911",
+      "candidateBlob": "c1aa90aceae441cc83b9667229588c565fccb911"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphDraftChecklist.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "ec281c8e7b583e7501269369963cc50a87904b6b",
+      "candidateBlob": "ec281c8e7b583e7501269369963cc50a87904b6b"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "f99e470ad576b6c4360c208a396b6c4d0275f3bf",
+      "candidateBlob": "f99e470ad576b6c4360c208a396b6c4d0275f3bf"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphPlanningFork.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "d366feeb411c39199922401301b4aaf64f30bed9",
+      "candidateBlob": "d366feeb411c39199922401301b4aaf64f30bed9"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphPlanningFork.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "93ea24751b763a2e8c03c8e33df03e41561f87ae",
+      "candidateBlob": "93ea24751b763a2e8c03c8e33df03e41561f87ae"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphStoryboardStarter.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "b35cf8d1144d1d2fa736141a58b768ef8e1836dd",
+      "candidateBlob": "b35cf8d1144d1d2fa736141a58b768ef8e1836dd"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "a1c932f1d6b0158e2d72dfcf7843716df7f700ed",
+      "candidateBlob": "a1c932f1d6b0158e2d72dfcf7843716df7f700ed"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/GraphStoryboardStarter.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "7a25736ed7a632383186872d7d03665daf3851a5",
+      "candidateBlob": "7a25736ed7a632383186872d7d03665daf3851a5"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "2fd2300d7e725891a5f2420be10f4592407d33ea",
+      "candidateBlob": "2fd2300d7e725891a5f2420be10f4592407d33ea"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/MediaCanvasGraphHandoff.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "56be007a6e1055862c15f66ff4089258d1f8778b",
+      "candidateBlob": "56be007a6e1055862c15f66ff4089258d1f8778b"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "628e581dba8bc14b132e9e67a58c80b66c1e771e",
+      "candidateBlob": "628e581dba8bc14b132e9e67a58c80b66c1e771e"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "cb31ea04b626cc3036c3cad2dd50f0866afcfb2a",
+      "candidateBlob": "cb31ea04b626cc3036c3cad2dd50f0866afcfb2a"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/TimelineTransferReview.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "8debbc4e8c32e549730792e3a030703b58c61b37",
+      "candidateBlob": "8debbc4e8c32e549730792e3a030703b58c61b37"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/TimelineTransferReview.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "d083318608bb9a3b32caf880dea08eea2608481d",
+      "candidateBlob": "d083318608bb9a3b32caf880dea08eea2608481d"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/canvasAssetPreview.additive.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "32c53edfe3246ee884b269b9e634686cf944a5dd",
+      "candidateBlob": "32c53edfe3246ee884b269b9e634686cf944a5dd"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/canvasAssetPreview.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/canvasAssetPreviewHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "fc8844420bcb8f5f9ba0f7cd914cf2c70c513e20",
+      "candidateBlob": "fc8844420bcb8f5f9ba0f7cd914cf2c70c513e20"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/directorCameraReuse.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/directorCameraReuseHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "a8e2722d8b21895e13e708c905737e9ce29b14e9",
+      "candidateBlob": "a8e2722d8b21895e13e708c905737e9ce29b14e9"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/directorDraftComparison.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/directorDraftComparisonHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "b6b987fe49871fb83d1cc8582c0ee294ef839ca3",
+      "candidateBlob": "b6b987fe49871fb83d1cc8582c0ee294ef839ca3"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "2a72b3fa8cde6e526b658160bcb0f476cc40cc2e",
+      "candidateBlob": "2a72b3fa8cde6e526b658160bcb0f476cc40cc2e"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/graphCanvasLargeNotes.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/graphCanvasNotes.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "3f3765b9f48087ed2c21092b4f974886e17388d3",
+      "candidateBlob": "3f3765b9f48087ed2c21092b4f974886e17388d3"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/graphCanvasNotes.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/graphCanvasNotesHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "df27faead2e3e59ca2b4ce84a3c2615ac125feb1",
+      "candidateBlob": "df27faead2e3e59ca2b4ce84a3c2615ac125feb1"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/graphDraftChecklist.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/graphDraftChecklistHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "009a7b438129305ae0f52a54693f6ceb8bef188d",
+      "candidateBlob": "009a7b438129305ae0f52a54693f6ceb8bef188d"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/graphPlanningFork.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/graphPlanningForkHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "5a647c9264a56ac45ecb19d0cd89727833274121",
+      "candidateBlob": "5a647c9264a56ac45ecb19d0cd89727833274121"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/graphStoryboardStarter.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/graphStoryboardStarterHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "77828e66d003655b147f2dded028b544898a3c7d",
+      "candidateBlob": "77828e66d003655b147f2dded028b544898a3c7d"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/mediaCanvasGraphHandoff.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/mediaCanvasGraphHandoffHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "713e4b0c3f091c6be75dfcb266eab5e46c2a97c3",
+      "candidateBlob": "713e4b0c3f091c6be75dfcb266eab5e46c2a97c3"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/storyboardImagePreview.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "81d149f774b3d1ba724642c03a4d1c435aa7f9fb",
+      "candidateBlob": "81d149f774b3d1ba724642c03a4d1c435aa7f9fb"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/creative/timelineTransferReview.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/creative/timelineTransferReviewHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "4c83a6c3886e5f1cff6167602c297e064e1faad7",
+      "candidateBlob": "4c83a6c3886e5f1cff6167602c297e064e1faad7"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "2a39cdbbe94c1cf8ee20f4c8c435a87c2f364e08",
+      "candidateBlob": "2a39cdbbe94c1cf8ee20f4c8c435a87c2f364e08"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/BranchComparisonReview.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "2c224ebe13592ea8366161b26413b17856e6dfb0",
+      "candidateBlob": "2c224ebe13592ea8366161b26413b17856e6dfb0"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/BranchComparisonReview.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "5cd4bb5dd38e400a58d0936060b74b514a2dd8e9",
+      "candidateBlob": "5cd4bb5dd38e400a58d0936060b74b514a2dd8e9"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/BranchManuscriptPanel.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "69f52391147bef8d296b8105ee194395e180ea05",
+      "candidateBlob": "69f52391147bef8d296b8105ee194395e180ea05"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/CaptionTextReplace.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "bf29d47b92f1c8b6979b846b7a69610b6f375e5b",
+      "candidateBlob": "bf29d47b92f1c8b6979b846b7a69610b6f375e5b"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "31c8d7849c206db5ba2c461eb48baa4f97bb13b9",
+      "candidateBlob": "31c8d7849c206db5ba2c461eb48baa4f97bb13b9"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "a1c7af6d3f430abdbdc7ab965252f6b8b5042fc7",
+      "candidateBlob": "a1c7af6d3f430abdbdc7ab965252f6b8b5042fc7"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "9947b92be99de902bb34522a480db2345f306395",
+      "candidateBlob": "9947b92be99de902bb34522a480db2345f306395"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/ProductionReceiptReview.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "5d22a04c02510b3b71cfecf7da74a605a1c27930",
+      "candidateBlob": "5d22a04c02510b3b71cfecf7da74a605a1c27930"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/ProductionReceiptReview.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "af9b2be2c6c71cd14687d00135866432ad0b315b",
+      "candidateBlob": "af9b2be2c6c71cd14687d00135866432ad0b315b"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "21e59356d5d5ccbc1790469ac0024499e45718a6",
+      "candidateBlob": "21e59356d5d5ccbc1790469ac0024499e45718a6"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/experimental/branchComparisonReview.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/branchComparisonReviewHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "f17d16b37144d4efc52d500bb9fe77a088877717",
+      "candidateBlob": "f17d16b37144d4efc52d500bb9fe77a088877717"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/experimental/captionTextReplace.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/captionTextReplaceHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "a34f55cc95237849d99b43d57f3c0d7fbdc16387",
+      "candidateBlob": "a34f55cc95237849d99b43d57f3c0d7fbdc16387"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/comicLayoutsClient.ts",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "46728210081bc0d85f10fb2500543bb26739e1c8",
+      "candidateBlob": "46728210081bc0d85f10fb2500543bb26739e1c8"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/judgeRevisionHandoff.helpers.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "ab0d594be4d83d0e0f86b1b3b166c38cff037884",
+      "candidateBlob": "ab0d594be4d83d0e0f86b1b3b166c38cff037884"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/experimental/judgeRevisionHandoff.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/experimental/pristineReplayNavigation.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "f2e5e919f872b10d0919cb3a35b928f1ad8101d9",
+      "candidateBlob": "f2e5e919f872b10d0919cb3a35b928f1ad8101d9"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/experimental/productionReceiptReview.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/productionReceiptReviewHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "6774e5651d3059ac63380e013e7cf74372a0b927",
+      "candidateBlob": "6774e5651d3059ac63380e013e7cf74372a0b927"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/experimental/templateCopyEditing.helpers.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "35d58abd4f0ee7f01e7dad8432e89c279750566b",
+      "candidateBlob": "35d58abd4f0ee7f01e7dad8432e89c279750566b"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/experimental/templateCopyEditing.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "3af3ae595df5f27f1fa48fc96e3cf85f70c29de1",
+      "candidateBlob": "3af3ae595df5f27f1fa48fc96e3cf85f70c29de1"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/modelcenter/BailianPresetPanel.tsx",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "2037cf27517af0e801613b8c1ed4f89698ec5bcc",
+      "candidateBlob": "2037cf27517af0e801613b8c1ed4f89698ec5bcc"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/modelcenter/bailianPresetContract.ts",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "cdf843181d5fd6315d79099ed5240ff1a6af15a1",
+      "candidateBlob": "cdf843181d5fd6315d79099ed5240ff1a6af15a1"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/modelcenter/bailianPresetPreflight.test.ts",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "1cf02c9ed32edeaaa28c1018ab22338663ffd4b1",
+      "candidateBlob": "1cf02c9ed32edeaaa28c1018ab22338663ffd4b1"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "446b5986ae42c604dbebab9563af5d4411aea960",
+      "candidateBlob": "446b5986ae42c604dbebab9563af5d4411aea960"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/TaskCostReceipt.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "776ec57ef822bff4346643279f8120715c1bb0fd",
+      "candidateBlob": "776ec57ef822bff4346643279f8120715c1bb0fd"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/TaskList.tsx",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "534bf2f7ccce26b14dc706324797e9723115684e",
+      "candidateBlob": "534bf2f7ccce26b14dc706324797e9723115684e"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/taskCostReceipt.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "8b285ccba01c27ae31d0433ce789a3c6cef6a434",
+      "candidateBlob": "8b285ccba01c27ae31d0433ce789a3c6cef6a434"
+    },
+    {
+      "status": "D",
+      "file": "frontend/src/taskcenter/taskCostReceipt.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/taskCostReceiptClient.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "1c4b4ffcf1f7fa5f10384a9ee66f8a6375fecafa",
+      "candidateBlob": "1c4b4ffcf1f7fa5f10384a9ee66f8a6375fecafa"
+    },
+    {
+      "status": "A",
+      "file": "frontend/src/taskcenter/taskCostReceiptHelpers.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "7501c47ddb55c1852719540fb6998b583a9436ac",
+      "candidateBlob": "7501c47ddb55c1852719540fb6998b583a9436ac"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/useTaskCostReceipt.test.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "b18443867a9761ca4a993fb57e1471b9e4c19143",
+      "candidateBlob": "b18443867a9761ca4a993fb57e1471b9e4c19143"
+    },
+    {
+      "status": "M",
+      "file": "frontend/src/taskcenter/useTaskCostReceipt.ts",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "cb8cd44a81505d2d9bf8a927c812681d00655139",
+      "candidateBlob": "cb8cd44a81505d2d9bf8a927c812681d00655139"
+    },
+    {
+      "status": "A",
+      "file": "frontend/tests/visual/cloud-config.spec.ts",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "sourceBlob": "5ed94b6073376cfefa514121715e67d8652230e3",
+      "candidateBlob": "5ed94b6073376cfefa514121715e67d8652230e3"
+    },
+    {
+      "status": "A",
+      "file": "frontend/tests/visual/comic-typography.spec.ts",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "4bba8d03b6eae8bfb57dbb533a61de16394eaa8c",
+      "candidateBlob": "4bba8d03b6eae8bfb57dbb533a61de16394eaa8c"
+    },
+    {
+      "status": "M",
+      "file": "scripts/inventory_v2_continuation.py",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "sourceBlob": "11dab5befe97e759c8304c6f66d60c1d6a8cd199",
+      "candidateBlob": "11dab5befe97e759c8304c6f66d60c1d6a8cd199"
+    },
+    {
+      "status": "A",
+      "file": "tests/test_comic_typography.py",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "sourceBlob": "40a6412fd3802b2356747fa7099b95c8085b0619",
+      "candidateBlob": "40a6412fd3802b2356747fa7099b95c8085b0619"
+    },
+    {
+      "status": "A",
+      "file": "tests/test_v2_otio_exact_source_time.py",
+      "source": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "sourceBlob": "168fc141643353eced2a6e7209b8c48961b13490",
+      "candidateBlob": "168fc141643353eced2a6e7209b8c48961b13490"
+    },
+    {
+      "status": "A",
+      "file": "tests/test_v2_otio_transfer_owner.py",
+      "source": "19a5b6fbf05d1690fe4bd8d6217612aa3c96e9a8",
+      "sourceBlob": "6cc2861e6788582dfca1a6cc177a36f9bf69e5fa",
+      "candidateBlob": "6cc2861e6788582dfca1a6cc177a36f9bf69e5fa"
+    }
+  ],
+  "backendPaths": [
+    "app/experimental/comic_layers.py",
+    "app/experimental/comic_layouts.py",
+    "app/experimental/timeline_exchange.py"
+  ],
+  "configuration": [
+    {
+      "file": "frontend/tsconfig.json",
+      "baseBlob": "b7f29995d00fbe0c9ded237dc1572def07ddb81c",
+      "finalBlob": "b7f29995d00fbe0c9ded237dc1572def07ddb81c"
+    },
+    {
+      "file": "frontend/vite.config.ts",
+      "baseBlob": "e843974d9ef1921c59cc41505fa9923b9aa563c3",
+      "finalBlob": "e843974d9ef1921c59cc41505fa9923b9aa563c3"
+    },
+    {
+      "file": "frontend/vitest.setup.ts",
+      "baseBlob": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4",
+      "finalBlob": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4"
+    },
+    {
+      "file": "frontend/package.json",
+      "baseBlob": "58c150187f953a284ba8a77690b72bd13470aedb",
+      "finalBlob": "58c150187f953a284ba8a77690b72bd13470aedb"
+    },
+    {
+      "file": "frontend/pnpm-lock.yaml",
+      "baseBlob": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c",
+      "finalBlob": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c"
+    },
+    {
+      "file": "pyproject.toml",
+      "baseBlob": "597f1d6f1e8670001e0041b371dc038864e6104a",
+      "finalBlob": "597f1d6f1e8670001e0041b371dc038864e6104a"
+    }
+  ],
+  "originalWorktrees": [
+    {
+      "name": "studio-v2-selected-video-binding",
+      "head": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+      "branch": "work/v2-selected-video-local-binding-20261019",
+      "status": ""
+    },
+    {
+      "name": "studio-v2-windows-module-resolution",
+      "head": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "branch": "work/v2-windows-module-resolution-20261019",
+      "status": ""
+    },
+    {
+      "name": "studio-v2-a12-otio-fidelity",
+      "head": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "branch": "work/v2-a12-otio-fidelity-20261019",
+      "status": ""
+    },
+    {
+      "name": "studio-v2-comic-typography",
+      "head": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "branch": "work/v2-comic-typography-20261019",
+      "status": ""
+    },
+    {
+      "name": "studio-v2-cloud-config-ux",
+      "head": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "branch": "work/v2-cloud-config-ux-20261019",
+      "status": ""
+    }
+  ],
+  "backendRunHead": "da6228f49304e9edf298c754e78c2abde0873243",
+  "backendSourceBytesUnchangedThroughFinalHead": true,
+  "independentReviews": [
+    {
+      "name": "NLE",
+      "source": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "receiptSha256": "c2fa23e5ef5aa538bfcd4da9d55a3a1721a8fca6241812667f799aad44840047",
+      "files": 7,
+      "evidenceHashes": 10
+    },
+    {
+      "name": "Comic",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "receiptSha256": "3d383ae5b98330b7d86f1ad6297ffffc4f85cda1d3c014c96e13aec29da560b5",
+      "files": 8,
+      "evidenceHashes": 15
+    },
+    {
+      "name": "Windows",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "receiptSha256": "6487e3fd42176f3892bfd18281cdb8caf38f09ffdbb98a774a0f4dfb1e836551",
+      "files": 60,
+      "evidenceHashes": 7
+    },
+    {
+      "name": "CloudConfiguration",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "receiptSha256": "8da188926d7dbd5df41386859d75f74b9f9cfd1e583ed64ab9430c5ce0adfd67",
+      "files": 6,
+      "evidenceHashes": 6
+    }
+  ]
+}

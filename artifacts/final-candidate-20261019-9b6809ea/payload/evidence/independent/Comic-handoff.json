@@ -1,0 +1,110 @@
+{
+  "timestamp_utc": "2026-10-19T05:22:42.372907+00:00",
+  "conclusion": "NO_NEW_BLOCKING_DEFECT_FOUND; KNOWN_BASELINE_VERIFICATION_FAILURES_REMAIN",
+  "repository": "D:\\codex数据\\2026-10-19\\task\\studio-v2-comic-typography",
+  "commit": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+  "baseline": "c1638908168cfdcea0b63cef9388b88cf66a91f3",
+  "working_tree": "CLEAN",
+  "product_tests_git_refs_modified": false,
+  "normal_execution_attempt": {
+    "outcome": "PROCESS_NOT_CREATED",
+    "error": "exec-server rejected request (-32603): helper_unknown_error: setup refresh had errors"
+  },
+  "reviewed_execution": {
+    "method": "official exec_command require_escalated after explicit authorization",
+    "outcome": "SUCCEEDED",
+    "security_or_network_settings_changed": false
+  },
+  "source_sha256": {
+    "app/experimental/comic_layers.py": "84930f1bd5dc9349c67d75046d8f259815b45a877321dd91761435bf496c3faf",
+    "app/experimental/comic_layouts.py": "7ef73af6165da789ce28b73642c1c33fdb91c6fac75a323bdf8acf146bd2acca",
+    "frontend/playwright.comic-typography.config.ts": "955325b22dc7ee0340bd6e7c98b9f3762888ca0d77b328428394be3aadb50a13",
+    "frontend/src/experimental/ComicLayoutsPanel.tsx": "b7fd1e7fddd5256f05ccb37be26b251d9467ec1cb8beea89046b46f3b4957e1a",
+    "frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx": "8c160e1bbb69302599b09e1d105451a994ef0ccf8aeb2942134e20d5d8e649da",
+    "frontend/src/experimental/comicLayoutsClient.ts": "f52ce4ded79f458ae9ce1023f2318d3181d24158940d2924cf14eef45cfe0268",
+    "frontend/tests/visual/comic-typography.spec.ts": "c676625e365bbdb1c47a88beec0a74616338c75b543d6bca0e442ab5f3739aa5",
+    "tests/test_comic_typography.py": "3fa41674b18e82ea35a25a8473e317e13d5374e50af5a822ba8724916f5b4323"
+  },
+  "original_evidence_hashes_verified": true,
+  "final_source_evidence_chronology": "backend-final, ui-green, browser-final completed after their relevant final source/test/config changes; source and evidence hashes match final frozen commit",
+  "coverage": {
+    "strict_fields": "LEFT/CENTER/RIGHT; strict integer 100..250; omission preserved and explicit defaults serialized; unknown fields rejected",
+    "legacy": "Exact baseline LayoutIn normalization, legacy digest and preflight report equal; omitted/explicit default PNG bytes equal to baseline",
+    "text_rendering": "Shared _text_x used in segment and BUBBLE_TEXT paths; 21 extra valid boundary combinations and 10 extra invalid inputs; long text and panel boundary blockers verified",
+    "ownership": "Original edit/currentEditor generation guard, client-key retirement, CAS, approval digest, source/privacy and asset guards retained; 113 backend and 20 UI passes include save/reopen/undo/restore and late callbacks",
+    "no_model_call": "No new generation/execution path; existing tests assert no automatic generation calls"
+  },
+  "independent_backend": {
+    "passed": 113,
+    "failed": 0,
+    "postgres_deselected": 40,
+    "skipped": 0,
+    "versions": {
+      "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+      "pytest": "8.4.2",
+      "reportlab": "4.5.1",
+      "Pillow": "12.3.0",
+      "fonttools": "4.59.1"
+    },
+    "raw_log": "backend.log",
+    "difference_from_original_112": "Original skipped pinned font gate supplied and passed"
+  },
+  "independent_ui": {
+    "passed": 20,
+    "failed": 1,
+    "raw_log": "ui-final.log",
+    "new_typography_plus_framing_passed": 10,
+    "failure": "unchanged ORA expect.any(Blob) assertion",
+    "baseline_same_environment_reproduced": true,
+    "baseline_log": "ui-baseline-ora.log",
+    "baseline_component_sha256": "f8c00340ca8c4fedbf376e5ecf7e72d778a4f39f28547c0a2040f08d50f6abf9",
+    "test_assertions_unchanged": true
+  },
+  "typecheck": {
+    "baseline_errors": 63,
+    "final_errors": 63,
+    "complete_diagnostic_signatures_equal": true,
+    "changed_comic_file_errors": [],
+    "options_weakened": false,
+    "report": "type-comparison.json",
+    "native_check_pass": false
+  },
+  "geometry": {
+    "original_new_typography_fixture_tests": 3,
+    "original_shell_tests": 3,
+    "viewports": [
+      "1366x768",
+      "1440x900",
+      "1920x1080"
+    ],
+    "original_logs_and_hashes_verified": true,
+    "scope": "Real React form mounted in existing IMAGE shell with synthetic API fixtures; checks controls/undo/shell heights/horizontal overflow; screenshot 1440 inspected",
+    "reviewer_reran_browser": false,
+    "full_real_backend_acceptance": false
+  },
+  "legacy_png_sha256": "80c60591c6e8cb3249802e7d631d796c242930f236725d57434566a3a32c1dff",
+  "remaining_limits": [
+    "PostgreSQL not run",
+    "Complete real-backend browser journey not run",
+    "ORA UI baseline assertion still fails",
+    "Native Windows TypeScript still has 63 baseline diagnostics",
+    "No models/GPU inference run"
+  ],
+  "evidence_sha256": {
+    "backend.json": "d3e6de010475f682820cc7a618960b8701470c8d18c62b655a534fb8daa90eff",
+    "backend.log": "8917b7c1be05768ce8c4a6806ec7af521cbb73af0c29dd2911f38b711ef505e9",
+    "baseline-native.json": "7ca25f52124dd8eb6a3e4ca41fea086f494554b3a96780b5e95827276b7983ce",
+    "baseline-native.log": "2934fc80649af77c3420c26f7e6fd9c1a2b286b4fed162fc63163fcf838bfade",
+    "final-native.json": "6ef1825227d94654aa096d20d62065c2e3189a36a97580438b2457e81421bd8d",
+    "final-native.log": "2934fc80649af77c3420c26f7e6fd9c1a2b286b4fed162fc63163fcf838bfade",
+    "independent-boundary-probes.json": "cf90ae362b33a2c9631e0fb3c16212a62f9e3ad5a18cf784e67ad4d3e958647d",
+    "independent-boundary-probes.log": "3217f3efe803a7f5335da08365cb90d7ef5a1a2cc54c04fd9bd260a4248afc58",
+    "original-hash-audit.json": "a7b8bc6f3c3541e5da685159fcf67c3b241a4f2e68fc2058165ef28031ca8cd0",
+    "read-only-ui.config.mts": "5fe70d3973da1d6ed9c272376256b3447bcfe29789f130b91b69d93a74f63ed2",
+    "type-comparison.json": "273b928ebe90084df626489de20e7bc7b7450d35bb9aaeb541e90ce0735590c7",
+    "ui-baseline-ora.json": "3f34580950e01ef6bc55e4546eae504e06924f2550a09dd673fc3b1bd101780f",
+    "ui-baseline-ora.log": "c9c2368835d9f5f6076932a5729d185f7b3091c14eac96b4da6ae4b8e354680c",
+    "ui-final.json": "2967ad95e5dc0ffe5ffa6ccda38b38144d6bfeb53b53ee202d3ef7512c85017b",
+    "ui-final.log": "601e3802343c518b2d433398754db2a499220414c91892ae77c5ce19f39d128a"
+  }
+}

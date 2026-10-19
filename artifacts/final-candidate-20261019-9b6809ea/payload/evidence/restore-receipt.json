@@ -1,0 +1,14 @@
+{
+  "status": "RESTORED_FROM_EXACT_6FF_WITHOUT_PRIOR_CANDIDATE_OBJECTS",
+  "base": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "tree": "1e4a3c46c7898594698d7f1cf0580d6f2cac84a1",
+  "intermediateRestored": "da6228f49304e9edf298c754e78c2abde0873243",
+  "independentRepo": "D:/codex数据/2026-10-19/task/candidate-local-recovery-da6228f4-20261019/verification/restore-repo",
+  "cloneMode": "--no-local --no-checkout --single-branch; branch pinned at exact 6ff; no alternates",
+  "candidatePresentBefore": false,
+  "intermediatePresentBefore": false,
+  "fetchExit": 0,
+  "fsckExit": 0,
+  "restoredCommits": 5
+}

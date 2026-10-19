@@ -1,0 +1,56 @@
+{
+  "timestamp_utc": "2026-10-19T05:21:07.614177+00:00",
+  "status": "AFFECTED_FILE_TESTS_PASS_IN_PROJECT_COMPATIBLE_PRIVATE_ENVIRONMENT",
+  "commit": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+  "working_tree": "CLEAN",
+  "product_and_tests_unchanged": true,
+  "venv": "D:\\codex数据\\2026-10-19\\task-3\\evidence\\otio-metadata-p2\\tools\\pytest8-venv",
+  "versions": {
+    "python": "3.11.9",
+    "pytest": "8.4.2",
+    "reportlab": "4.5.1",
+    "opentimelineio": "0.18.1"
+  },
+  "project_and_used_extra_requirements_satisfied": true,
+  "pip_check": "PASS",
+  "global_versions_unchanged": {
+    "pytest": "9.1.1",
+    "reportlab": "5.0.1"
+  },
+  "private_installed_packages": [
+    "pytest==8.4.2",
+    "reportlab==4.5.1"
+  ],
+  "unrelated_dependencies_modified": false,
+  "affected_result": {
+    "passed": 59,
+    "failed": 0,
+    "deselected": 19,
+    "raw_log": "compliant-affected.log"
+  },
+  "known_baseline_failures": {
+    "failed": 2,
+    "separate_raw_log": "compliant-known-baseline-failures.log",
+    "assertions_unchanged": true
+  },
+  "prior_diagnostic_evidence": "Preserved unchanged; superseded for current constraint verification only",
+  "not_run": [
+    "PostgreSQL",
+    "Resolve",
+    "Premiere",
+    "complete browser acceptance"
+  ],
+  "a12_complete": false,
+  "evidence_sha256": {
+    "compliant-affected.log": "ac860f702bd5c5bc837c6c30093f60d72b27f1aec60bd5aa29349fa4d47a3f57",
+    "compliant-affected.json": "22616437a198407889cce4d3c1c7c35df882f220ec9679e42a2b5443089f6444",
+    "compliant-known-baseline-failures.log": "295e9e85c97ffb56f9a70f80cf75424b45ec52c372a22e808d36d3507212f799",
+    "compliant-known-baseline-failures.json": "4352e8c5f1d6f06307287a475cbc7d392996b4e92ca372b63fef793b54fc5edf",
+    "compliant-dependencies.json": "cfc8fb9c1e37ef3f2436b2d6fa980ce8d5a65b962b0a10d1f3ed5b146792fb67",
+    "compliant-pip-check.log": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+    "reportlab4-install.log": "2b8a645faf92503b0d4c27e0e6ed2bf1b06b73ce2d9d787f7647ef93c5bef678",
+    "reportlab4-install-report.json": "ced943515a272d0d6365504018086aaf672ff77199046e3d5835dcc634f184bf",
+    "pytest8-install.log": "5018843eab467983a087a1977056cf0d3ae43f0d193675ec2011343e3f562a41",
+    "pytest8-install-report.json": "2313402d8697a38367aebe6ef4d777045879d351b23d04f3206bca9fc8499706"
+  }
+}

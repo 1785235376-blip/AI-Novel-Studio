@@ -1,0 +1,67 @@
+{
+  "status": "INHERITED_BASELINE_FAILURE_STILL_OPEN",
+  "baselineCommit": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+  "candidateCommit": "da6228f49304e9edf298c754e78c2abde0873243",
+  "baseline": {
+    "files": 1,
+    "total": 11,
+    "passed": 10,
+    "failed": 1,
+    "exit": 1
+  },
+  "candidate": {
+    "files": 8,
+    "total": 99,
+    "passed": 98,
+    "failed": 1,
+    "exit": 1
+  },
+  "failure": {
+    "file": "src/experimental/ComicLayoutsPanel.layers.test.tsx",
+    "title": "ORA export needs approved loaded current pixels and admits a double click once",
+    "payload": "AssertionError: expected \"spy\" to be called with arguments: [ Any<Blob>, 'comic-layers.ora' ]\n\nReceived: \n\n  1st spy call:\n\n  Array [\n-   Any<Blob>,\n+   Blob {\n+     Symbol(kHandle): Blob {},\n+     Symbol(kLength): 13,\n+     Symbol(kType): \"text/plain;charset=utf-8\",\n+   },\n    \"comic-layers.ora\",\n  ]\n\n\nNumber of calls: 1",
+    "rawMessages": [
+      "AssertionError: expected \"spy\" to be called with arguments: [ Any<Blob>, 'comic-layers.ora' ]\n\nReceived: \n\n  1st spy call:\n\n  Array [\n-   Any<Blob>,\n+   Blob {\n+     Symbol(kHandle): Blob {},\n+     Symbol(kLength): 13,\n+     Symbol(kType): \"text/plain;charset=utf-8\",\n+   },\n    \"comic-layers.ora\",\n  ]\n\n\nNumber of calls: 1\n\n    at Proxy.<anonymous> (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+expect@2.1.9/node_modules/@vitest/expect/dist/index.js:1465:13)\n    at Proxy.<anonymous> (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+expect@2.1.9/node_modules/@vitest/expect/dist/index.js:972:17)\n    at Proxy.methodWrapper (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/chai@5.3.3/node_modules/chai/index.js:1686:25)\n    at D:\\codex数据\\2026-10-19\\task\\studio-v2-integration-candidate-20261019\\frontend\\src\\experimental\\ComicLayoutsPanel.layers.test.tsx:91:24\n    at file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+runner@2.1.9/node_modules/@vitest/runner/dist/index.js:533:5\n    at runTest (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+runner@2.1.9/node_modules/@vitest/runner/dist/index.js:1056:11)\n    at runSuite (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+runner@2.1.9/node_modules/@vitest/runner/dist/index.js:1205:15)\n    at runFiles (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+runner@2.1.9/node_modules/@vitest/runner/dist/index.js:1262:5)\n    at startTests (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/@vitest+runner@2.1.9/node_modules/@vitest/runner/dist/index.js:1271:3)\n    at file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-integration-candidate-20261019/frontend/node_modules/.pnpm/vitest@2.1.9_@types+node@22.13.10_jsdom@25.0.1/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11"
+    ]
+  },
+  "assertionPayloadIdentical": true,
+  "comparison": "Failure file, full test title and assertion payload before the environment-specific stack trace match exactly; full unfiltered raw messages and JSON reports are retained. This comparison does not mark the failing test as passed.",
+  "blobProof": [
+    {
+      "file": "frontend/src/experimental/ComicLayoutsPanel.layers.test.tsx",
+      "baseBlob": "98508115acc788245fca07b2eaae5c2c3d785a03",
+      "candidateBlob": "98508115acc788245fca07b2eaae5c2c3d785a03",
+      "baselineExportByteExact": true
+    },
+    {
+      "file": "frontend/vite.config.ts",
+      "baseBlob": "e843974d9ef1921c59cc41505fa9923b9aa563c3",
+      "candidateBlob": "e843974d9ef1921c59cc41505fa9923b9aa563c3",
+      "baselineExportByteExact": true
+    },
+    {
+      "file": "frontend/vitest.setup.ts",
+      "baseBlob": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4",
+      "candidateBlob": "164231d2dd9dfcc173e8b58c98cc6ba0a05050f4",
+      "baselineExportByteExact": true
+    },
+    {
+      "file": "frontend/pnpm-lock.yaml",
+      "baseBlob": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c",
+      "candidateBlob": "6293ae5cce6754d9ee62aeb14bcf5a9eccebea6c",
+      "baselineExportByteExact": true
+    },
+    {
+      "file": "frontend/package.json",
+      "baseBlob": "58c150187f953a284ba8a77690b72bd13470aedb",
+      "candidateBlob": "58c150187f953a284ba8a77690b72bd13470aedb",
+      "baselineExportByteExact": true
+    },
+    {
+      "file": "tests/fixtures/comic_panel_duplicate.json",
+      "baseBlob": "a8c93a5a99302ababb058e47cc844c716c182530",
+      "candidateBlob": "a8c93a5a99302ababb058e47cc844c716c182530",
+      "baselineExportByteExact": true
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time _
+
+tmp_path = WindowsPath('D:/codex数据/2026-10-19/task/studio-v2-integration-candidate-20261019/.runtime/v2-checks/candidate-recovery-r2-known-nle-baseline-failures/tmp/test_official_parser_round_tri0')
+
+    def test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time(tmp_path):
+>       doc, report = read_otio(as_text(source_timeline())); assert report == []
+                                                             ^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [{'code': 'UN... 'LOSS'}, ...] == []
+E         
+E         Left contains 8 more items, first extra item: {'code': 'UNKNOWN_NATIVE_SCHEMA_FIELDS_NOT_REPRESENTED', 'path': 'timeline.tracks', 'severity': 'LOSS'}
+E         Use -v to get more diff
+
+tests\test_r4_timeline_exchange.py:41: AssertionError
+_ test_unsupported_effect_speed_mix_subtitle_and_nested_data_have_explicit_losses _
+
+    def test_unsupported_effect_speed_mix_subtitle_and_nested_data_have_explicit_losses():
+        timeline=source_timeline();timeline.tracks[0][0].effects.append(otio.schema.LinearTimeWarp(time_scalar=2))
+        timeline.tracks[0][0].effects.append(otio.schema.Effect(effect_name='unavailable-glow'))
+        timeline.tracks[1].metadata['mix']={'gain':0.2}; timeline.tracks[0][0].markers.append(otio.schema.Marker(name='caption'))
+        sub=otio.schema.Track(name='Captions',kind='Subtitle');sub.append(clip('caption'));timeline.tracks.append(sub)
+        nested=otio.schema.Stack(children=[otio.schema.Track(children=[clip('nested')])]);timeline.tracks[0].append(nested)
+        doc,report=read_otio(as_text(timeline)); codes={r['code'] for r in report}
+>       assert {'SPEED_EFFECT_NOT_REPRESENTED_TIMING_UNVERIFIED','EFFECT_NOT_REPRESENTED','APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED','MARKERS_NOT_REPRESENTED','SUBTITLE_OR_UNKNOWN_TRACK_NOT_REPRESENTED','NESTED_COMPOSITION_REPLACED_WITH_GAP'} <= codes
+E       AssertionError: assert {'APPLICATION..._REPRESENTED'} <= {'APPLICATION...ESENTED', ...}
+E         
+E         Extra items in the left set:
+E         'SPEED_EFFECT_NOT_REPRESENTED_TIMING_UNVERIFIED'
+
+tests\test_r4_timeline_exchange.py:67: AssertionError
+============================== warnings summary ===============================
+tests/test_r4_timeline_exchange.py::test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time
+  D:\codex数据\2026-10-19\task\studio-v2-integration-candidate-20261019\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_r4_timeline_exchange.py::test_official_parser_round_trip_tracks_gaps_dissolve_references_and_exact_time
+FAILED tests/test_r4_timeline_exchange.py::test_unsupported_effect_speed_mix_subtitle_and_nested_data_have_explicit_losses
+2 failed, 1 warning in 3.73s

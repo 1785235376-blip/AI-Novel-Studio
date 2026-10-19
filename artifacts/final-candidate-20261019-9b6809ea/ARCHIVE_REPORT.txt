@@ -1,0 +1,31 @@
+ARCHIVED DEVELOPMENT CANDIDATE — NOT A RELEASE OR FULL ACCEPTANCE
+
+This batch appends only artifacts/final-candidate-20261019-9b6809ea/ to the existing public archive branch. Expected archive parent: ae47897cb7459afd4a91eaf2aebe843e47aab18d. It does not update a product source branch, main, PR, Tag or Release, and does not claim CI passed.
+
+Product candidate: 9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35
+Product tree: 1e4a3c46c7898594698d7f1cf0580d6f2cac84a1
+Unique bundle prerequisite: 6ff22cdadcf830ed5ec6343ea20966f8a74649c5
+Preserved intermediate: da6228f49304e9edf298c754e78c2abde0873243
+
+The product source and tests are inside payload/candidate-9b6809ea-from-6ff22cda.bundle and the accompanying exact source patch. The archive branch's ordinary tree is NOT the current product tree. SOURCE_MAP.json binds all five delta commits to Windows, NLE/P2, Comic and cloud-configuration source commits and independent review evidence.
+
+Validation and remaining failures
+- Original native Windows TypeScript and original Vite build passed. Existing large-chunk warning remains.
+- Final original frontend run: 17 files, 282/283 passed. One unchanged ORA Blob matcher assertion remains FAILED; it was reproduced on exact d36 baseline and compared again at final candidate.
+- Merged targeted backend: 172 passed, 59 PostgreSQL cases deselected, in compatible Python3.11.9 / pytest8.4.2 / ReportLab4.5.1 / OTIO0.18.1 / Pillow12.3.0 / fonttools4.59.1; dependency constraints and pip check passed, with no new installation. These checks ran on exact da6228f4 BEFORE the frontend-only cloud commit; all tested backend bytes are unchanged at final candidate.
+- Two original NLE baseline tests separately still FAILED and are preserved. The first merged-backend attempt had 171 pass and one original fixture setup-path error; only the harness profile placement was corrected, then the unchanged bounded suite passed. These attempts are not added together.
+- Browser evidence uses synthetic/intercepted fixtures. The first cloud-configuration 1366 click timeout remains in the raw log and its original trace was retained at the original owner. A later fixture rerun passed. No cold-start stability or real provider/cloud connectivity, billing, inference or full-browser/full-V2 acceptance is claimed.
+- PostgreSQL, full real-backend browser journeys, target NLE interoperability and live models/GPU remain unaccepted. The separate Comic handoff helper/contract development is not included.
+
+Historical receipt wording
+The byte-exact payload was sealed BEFORE this archival upload. Its REPORT.txt, VALIDATION.json, manifests and logs retain their original local/not-uploaded/remoteWrites=0 wording as chronological evidence. This wrapper records the later authorized PUBLIC ARCHIVE append only; it does not promote the candidate to an accepted product or Release. Prior archive files are untouched.
+
+Recovery and integrity
+Bundle: 52078 bytes; SHA256 1d8d2173e832328f440693ffc0d0447b14ed49ba0c508b36ed8de82c7d338899. Its ONLY prerequisite is the complete 6ff22cdadcf830ed5ec6343ea20966f8a74649c5 product commit.
+Local review ZIP: 170998 bytes; SHA256 dc64b522c8ac58900e1b9219c2ffcc4c01f550077667a5301054d258f086ba53. It contains 45 payload files with verified CRC and SHA256.
+An independent base-only 6ff repository with no candidate objects or alternates recovered the final candidate and da intermediate, matching trees and git fsck --full. Publication is followed by a separate remote readback, file-hash verification and another base-only recovery from the downloaded bundle. See the task's publication receipt for that later result.
+
+Contents and exclusions
+Only checked tracked delta code/tests and selected byte-exact reports/raw logs/source maps/checksums are appended. No keys, private runtime/test profiles or databases, dependency environments, models, fonts, production dist or NSFW-specific backend are included. The only credential-shaped signature is an explicitly classified inert negative unit-test URL using user:synthetic, which the test expects to reject without a transport request.
+
+Read payload/REPORT.txt, payload/VALIDATION.json, payload/SOURCE_MAP.json and payload/RESTORE.txt for exact provenance and commands. Use the bundle only in a separate repository containing complete 6ff objects; never reset or overwrite an existing workspace. Verify ARCHIVE_SHA256SUMS and the payload's own SHA256SUMS before recovery.

@@ -1,0 +1,90 @@
+{
+  "status": "CANDIDATE_LOCAL_ONLY_NOT_ACCEPTED_OR_PUBLISHED",
+  "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "tree": "1e4a3c46c7898594698d7f1cf0580d6f2cac84a1",
+  "base": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "uniqueBundlePrerequisite": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "intermediate": "da6228f49304e9edf298c754e78c2abde0873243",
+  "worktree": "D:/codex数据/2026-10-19/task/studio-v2-integration-candidate-20261019",
+  "originalWorktreesUnchanged": true,
+  "conflicts": [],
+  "independentReviewSourcesVerified": true,
+  "frontend": {
+    "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+    "files": 17,
+    "total": 283,
+    "passed": 282,
+    "failed": 1,
+    "exit": 1,
+    "modelcenterTests": 184,
+    "failure": "ORA export needs approved loaded current pixels and admits a double click once",
+    "exactD36BaselineReproduced": true
+  },
+  "backend": {
+    "executedHead": "da6228f49304e9edf298c754e78c2abde0873243",
+    "sourceIdenticalAtFinalHead": true,
+    "affected": {
+      "files": 9,
+      "passed": 172,
+      "failed": 0,
+      "postgresDeselected": 59,
+      "exit": 0
+    },
+    "knownBaseline": {
+      "failed": 2,
+      "exit": 1
+    },
+    "firstAttempt": {
+      "passed": 171,
+      "setupError": 1,
+      "reason": "Isolation profile was outside candidate .runtime; original fixture assertion preserved. Moved only the harness profile to original required .runtime path and reran unchanged tests."
+    },
+    "dependencies": {
+      "pytest": "8.4.2",
+      "reportlab": "4.5.1",
+      "opentimelineio": "0.18.1",
+      "Pillow": "12.3.0",
+      "fonttools": "4.59.1"
+    },
+    "python": "3.11.9",
+    "requirementsSatisfied": true,
+    "pipCheckExit": 0,
+    "installedPackages": 0
+  },
+  "native": {
+    "tscExit": 0,
+    "viteExit": 0,
+    "originalConfigurationsUnchanged": true,
+    "existingChunkSizeWarning": true
+  },
+  "reviews": {
+    "Windows": "Independent bounded read-only review passed; 378 builder assertions verified without duplicate counting",
+    "NLE": "Independent compliant environment and 59 targeted passes verified; source/evidence hashes bound to final blobs",
+    "Comic": "Independent 113 backend passes and 20 UI passes plus known ORA failure verified; legacy byte boundaries retained",
+    "Cloud": "Independent 184 tests,186 string/preflight cases,56 safe error classification cases verified; no real provider connection acceptance"
+  },
+  "limits": [
+    "ORA Blob matcher assertion still FAIL",
+    "Two original NLE baseline tests still FAIL in a separate exact targeted run",
+    "PostgreSQL and full real-backend browser/V2 journey not run",
+    "Cloud browser uses intercepted synthetic fixtures; initial 1366 click timeout retained; no cold-start stability or real cloud connectivity/billing claim",
+    "No live model/GPU execution or paid API",
+    "No archive upload, source push, main merge, tag or Release",
+    "Candidate awaits parent verification; parallel Comic handoff helper/contract work is not included"
+  ],
+  "restore": {
+    "status": "RESTORED_FROM_EXACT_6FF_WITHOUT_PRIOR_CANDIDATE_OBJECTS",
+    "base": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+    "head": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+    "tree": "1e4a3c46c7898594698d7f1cf0580d6f2cac84a1",
+    "intermediateRestored": "da6228f49304e9edf298c754e78c2abde0873243",
+    "independentRepo": "D:/codex数据/2026-10-19/task/candidate-local-recovery-da6228f4-20261019/verification/restore-repo",
+    "cloneMode": "--no-local --no-checkout --single-branch; branch pinned at exact 6ff; no alternates",
+    "candidatePresentBefore": false,
+    "intermediatePresentBefore": false,
+    "fetchExit": 0,
+    "fsckExit": 0,
+    "restoredCommits": 5
+  },
+  "remoteWrites": 0
+}

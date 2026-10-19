@@ -1,0 +1,159 @@
+{
+  "timestamp_utc": "2026-10-19T05:30:10.413130+00:00",
+  "conclusion": "NO_BLOCKING_DEFECT_FOUND_IN_BOUNDED_WINDOWS_MODULE_RENAME_FIX",
+  "commit": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+  "parent": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "tree": "558890e54a67d6246f835755bf9fd1c978b4ddd7",
+  "working_tree": "CLEAN",
+  "review_read_only_product_tests_git_refs_unchanged": true,
+  "scope": {
+    "helper_renames": 13,
+    "test_renames": 4,
+    "classified_module_locators": 49,
+    "inventory_path_locators": 1,
+    "logical_files": 60,
+    "canonical_text_and_assertions_preserved": true,
+    "configuration_files_unchanged": [
+      "frontend/tsconfig.json",
+      "frontend/vite.config.ts",
+      "frontend/package.json",
+      "frontend/pnpm-lock.yaml"
+    ],
+    "active_files_audited": 3290,
+    "stale_active_references": [],
+    "case_conflicts": [],
+    "tracked_ts_files": 1409,
+    "working_files_match_committed_text": true
+  },
+  "independent_native_validation": {
+    "native_windows_tsc_exit": 0,
+    "tsc_command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\codex数据\\2026-10-19\\task\\studio-v2-windows-module-resolution\\frontend\\node_modules\\typescript\\bin\\tsc",
+      "--noEmit",
+      "--incremental",
+      "false",
+      "--pretty",
+      "false",
+      "--project",
+      "tsconfig.json"
+    ],
+    "original_vite_production_exit": 0,
+    "vite_command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\codex数据\\2026-10-19\\task\\studio-v2-windows-module-resolution\\frontend\\node_modules\\vite\\bin\\vite.js",
+      "build",
+      "--outDir",
+      "D:\\codex数据\\2026-10-19\\task-3\\evidence\\windows-module-resolution-review\\production-output"
+    ],
+    "special_resolver_or_custom_host": false,
+    "output_redirect_only": true,
+    "all_15_outputs_match_original_production_manifest": true
+  },
+  "builder_test_report_audit": {
+    "actual_passed_assertions": 378,
+    "unique_files": 30,
+    "first_run": {
+      "files": 29,
+      "tests": 377
+    },
+    "separate_correct_integration_run": {
+      "files": 1,
+      "tests": 1
+    },
+    "no_double_count": true,
+    "source_timestamps_precede_runs": true,
+    "reviewer_reran_378": false
+  },
+  "coordination": {
+    "comic_files_changed": false,
+    "backend_nle_files_changed": false,
+    "StudioTimelineEditor": "one helper import locator only",
+    "binding_controller": "only helper import locators; canonical body preserved",
+    "cross_branch_integration": "parent responsibility"
+  },
+  "bundle": {
+    "bytes": 26309,
+    "sha256": "85c4bed11c3cf3e520ea81f77fdb2a15c65f1c34a4582f0589302ad738400fc2",
+    "prerequisites": [
+      "-6ff22cdadcf830ed5ec6343ea20966f8a74649c5 feat(graph): preview bounded local video model bindings"
+    ],
+    "verified": true
+  },
+  "limitations": [
+    "No new browser visual/full V2 E2E",
+    "No live backend/model/GPU execution",
+    "No merge/push/Release/CI claim"
+  ],
+  "source_sha256": {
+    "frontend/src/creative/CameraGrammarEditor.additive.test.tsx": "161d096b74553c4b3e7041d0b4b806e7243306680bebf6cdaca6bbb27f327af6",
+    "frontend/src/creative/CanvasAssetPreview.additive.test.tsx": "cc1de139d43ccbc1e12b996421faba5608fe6f7183439ab18a3d470ba925ae1c",
+    "frontend/src/creative/CanvasAssetPreview.tsx": "efe43074f7d0a31ca0f7077ef7a99022f49ea303f7d564f39d9791c8f456215d",
+    "frontend/src/creative/DirectorCameraReuse.test.tsx": "f57f365f24acde952309e0612172472cab44cc1c3e7f50205e8beeca09e2777f",
+    "frontend/src/creative/DirectorCameraReuse.tsx": "9b5ad0bc59fbe18f992079c9f44afab4e5d05a75a144070265d09f6605813c44",
+    "frontend/src/creative/DirectorDraftComparison.additive.test.tsx": "e5c6f8321f69b2c7a964045026fc25a9a96727bd8540c44dac91c8d41463fade",
+    "frontend/src/creative/DirectorDraftComparison.tsx": "22d568e1b838b60fce2f0ea479bc696e867703160258b60b3a1854205ef59143",
+    "frontend/src/creative/DirectorIntentConstraints.test.tsx": "7048e4520079863271bd55ac2b6f0ea54f8444b3ff1e1c2aa48d0d947e780a64",
+    "frontend/src/creative/GraphCanvasNotes.tsx": "6091a94afcabe8b5105e38c90212500200ceafee7bc3bb6dbb0e99a9a5d909ff",
+    "frontend/src/creative/GraphDraftChecklist.additive.test.tsx": "ec817d0a8db9b01ae39112ca15df3c450eb409dbfede4d0545668bd91db14955",
+    "frontend/src/creative/GraphDraftChecklist.tsx": "956758bb19035f4dd574b219268c5a0cbefbadf39df21b66a866930ddaa5febf",
+    "frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx": "5bad3bdddcaa518df5e167963b68a8970fcc0098cdc7adc588aa631190d41b2c",
+    "frontend/src/creative/GraphPlanningFork.test.tsx": "79452e9ecc2a0a55e81bb2cb6b9f0de88cc94b2ca5231d2cb7db940c200c1ee2",
+    "frontend/src/creative/GraphPlanningFork.tsx": "ea414f1bbf84564f58c7079c95fdef9942bb56d435c000bd0808c613a0550228",
+    "frontend/src/creative/GraphStoryboardStarter.additive.test.tsx": "8b875872198ae3067583cd55949ded57ead6e8e568c91d386718023785388feb",
+    "frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx": "852b08178a8bca03569c538b6edf3f23cce34f25a1c2e8a87229f2eea4ca791b",
+    "frontend/src/creative/GraphStoryboardStarter.tsx": "689246884cd21c6d0e77c0776a359885e77132e48a98686ae789fa236b00e078",
+    "frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx": "80cd6ac3966c67112f93ab14d458e61954bb682b223bb7666cf0c73a773384b5",
+    "frontend/src/creative/MediaCanvasGraphHandoff.tsx": "de477b0c9c5add2486675f7f98cc908d4b8bb823b030e4f1883c08512dea1688",
+    "frontend/src/creative/MediaCanvasViewPanel.tsx": "3bd4726f41439615b790252887c63422ad5774115dc62a0e8387eee237ee01d0",
+    "frontend/src/creative/StudioTimelineEditor.tsx": "e6e6e7cbbdd6e34e8c76bf9b48990e14a4016b799433536ad7c900a664e2425f",
+    "frontend/src/creative/TimelineTransferReview.test.tsx": "c6ceca034ecdec2038fd20ec661714c22279887da07896b6f56932caf9d33ea2",
+    "frontend/src/creative/TimelineTransferReview.tsx": "827e2f5831d1b825b4a90ebde8e7c427eaf0ebc7a96d8c3bda12bdc53a0f8fe4",
+    "frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts": "a6107f2020d769f1f591fd1f9b693e31ea29bdc2197758dd6dd4143e61d683f7",
+    "frontend/src/creative/canvasAssetPreviewHelpers.ts": "7a3cd8a775d94defff6600fd0551630df72527d510d9efbca9ce5d8754c7ebb9",
+    "frontend/src/creative/directorCameraReuseHelpers.ts": "1d3ff0037e93200babb8e31e08d6cfff62ee4f6a89383288b65cf61f9a1264a3",
+    "frontend/src/creative/directorDraftComparisonHelpers.ts": "f1c640ad4d5c2fcad61b927b5d6a532052e36a570a9d3141c84cda2530ed1d48",
+    "frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts": "7c343b21c9adf14bfa576322a6fc242116fff1bb3c7ff1b2308f61f04942a11c",
+    "frontend/src/creative/graphCanvasNotes.test.ts": "d6d22a105fa759a46186450f4cbe8c22669c068fcb3094378107decf9dfdf0bd",
+    "frontend/src/creative/graphCanvasNotesHelpers.ts": "b3f3d0a5e0e9aa88dcb789e84d6fda17f6012028357545d08e30ed7d7d460222",
+    "frontend/src/creative/graphDraftChecklistHelpers.ts": "5c298bbc11a5483c6527fb84b56584384054261251bff38bfd99249c1cf65aa7",
+    "frontend/src/creative/graphPlanningForkHelpers.ts": "ef226e138d4dc40bc84c6345223f82c7753083c500c4b2ac68bf7762529c28cc",
+    "frontend/src/creative/graphStoryboardStarterHelpers.ts": "b6279c77635e933b442e860595c08ed9aa9b67f98c17867dcad11232a1017d22",
+    "frontend/src/creative/mediaCanvasGraphHandoffHelpers.ts": "ff7661f7601dc35f02c798b3858e97feddd411c610ebab4c69d8ed236cf71e77",
+    "frontend/src/creative/storyboardImagePreview.ts": "ec84b3fb6efff238c8afe9ca47d6f500ea612cfa15b645c40eaa5ba1cbbe6a43",
+    "frontend/src/creative/timelineTransferReviewHelpers.ts": "b68043f72c68bc5b7d96f66e3da67dec9bfb6d50f4a13690497b660aaeaa91e4",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "80a32eb917b161d3621c20132763f14692610cd65223d786975583a65b4b3395",
+    "frontend/src/experimental/BranchComparisonReview.test.tsx": "c87eb47c926a9ed0dc6bdb0ab4658402a5e09c292e951580fa1149e7685b9ead",
+    "frontend/src/experimental/BranchComparisonReview.tsx": "a50c3bf8daddea3dabea5e812efd3fd9bf6ab2cd5139bbe73d0deec4cff86063",
+    "frontend/src/experimental/BranchManuscriptPanel.tsx": "828050a2c054b863b9ca0e7341c27b14d9593e263d26f27d21609b183bbc33a7",
+    "frontend/src/experimental/CaptionTextReplace.tsx": "4eeac45afb95284861092ca9b61e3baa717028dae573d2fa5e96bf5e2e60c95a",
+    "frontend/src/experimental/ProductionLineagePanel.tsx": "89f73243123697fc41598c6e0b3e9b1023d2b2ddd076733c40fc38b81ef98de5",
+    "frontend/src/experimental/ProductionReceiptReview.test.tsx": "d4dafdecde5660229e013b4a7a71ab91b926ee41d08f3c6a86d609280995ed7e",
+    "frontend/src/experimental/ProductionReceiptReview.tsx": "03a483a5876a8422d712f1d9f9349360270f7e5683383eb3a51d0a7c49726a85",
+    "frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx": "bf2bc7c8f7486749e5f598d1c39ee6ae8ca46cce9a82742db83faf198a2d84dd",
+    "frontend/src/experimental/branchComparisonReviewHelpers.ts": "90d487c28c58e985bfedce0c156bb62b1e7f53aff16eb95dc933bcc7c5a53f7a",
+    "frontend/src/experimental/captionTextReplaceHelpers.ts": "45a21459c2f389ccb4da9d6be528e1ca72f1000694efd2932915b9cbf892069f",
+    "frontend/src/experimental/judgeRevisionHandoff.helpers.test.ts": "c8bf58f247b331e89f6e9b3ee87f9af1155ac6f37bedbc6b34485f9aceee3474",
+    "frontend/src/experimental/pristineReplayNavigation.test.tsx": "f823197e6ffe51c2cc136742f41605198b226f6f922dbe469f5bff72c7d81fb8",
+    "frontend/src/experimental/productionReceiptReviewHelpers.ts": "25d4bfe1db5210d631b49671f72813fa551b8847b4a6c03cc64e25cd79cfe2fa",
+    "frontend/src/experimental/templateCopyEditing.helpers.test.ts": "5e78858925676e86906c0fda5fd1a6467430834c597d021903730c8846fdfb0c",
+    "frontend/src/taskcenter/TaskCenter.additive.test.tsx": "af9d0372bd8f58e51c0a92a2b43a8ea344e641e12920c925989d0617a14cb733",
+    "frontend/src/taskcenter/TaskCostReceipt.tsx": "5914622cf1d135e2cdf93ebebaeeb4cc8b33ea081c960890eb56c8b9854efaaf",
+    "frontend/src/taskcenter/TaskList.tsx": "16e9e083105f700760f7270b1b8529fabd2d9a50ab947e71e4f83657dfeacbe2",
+    "frontend/src/taskcenter/taskCostReceipt.test.ts": "9ef420eb85dd39f572c740494e72b28eb95ce5887e610f6af89f180aaefbfbea",
+    "frontend/src/taskcenter/taskCostReceiptClient.ts": "c185eb8197f27a965689f61cca685e4e53b57d174e3aa91ac9224022146c36cd",
+    "frontend/src/taskcenter/taskCostReceiptHelpers.ts": "18ecf05ace1e583ffb676409b78dbfa2ed331c4c660fde5465a5aef1427830fc",
+    "frontend/src/taskcenter/useTaskCostReceipt.test.ts": "665a6d3fab6177cc0810f2062a54bed02eb7dfbc1923ae1cc6e223e919ecb0f7",
+    "frontend/src/taskcenter/useTaskCostReceipt.ts": "2d9f993be07c0b5a66ab48f20da26bab6f8dd8c542decb05703360dfad6357fd",
+    "scripts/inventory_v2_continuation.py": "dac2b7bc74572d25d3a77dab2b3f05efdcfd0fe59a5c718a3bc4019875b8066a"
+  },
+  "evidence_sha256": {
+    "independent-scope-audit.json": "d9740954a6a717066c40faf511839c857763e2df2abb956ebb2879b73bbb9c16",
+    "native-tsc.json": "6477d9259b67f675842d60e244432df68d73d5daf0c31323cf500e2ac31d0d31",
+    "native-tsc.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production-output-comparison.json": "70022ad3eab5f9f3d78886fcfad784182b3e35120653e065ceb3adf578492375",
+    "production-vite.json": "034a22ede334976c1039dcee2fb0ec8379a837498b0463a0ec39a6a96df43db2",
+    "production-vite.log": "859fe06dee7e30828d67ff255bd229cac14578f79663374e55a282f38cee40a1",
+    "test-and-coordination-audit.json": "3e3eaf70322ba9453b54b970e68883b78acae57660a9eacfb6c61038a9065604"
+  }
+}

@@ -1,0 +1,1160 @@
+{
+  "candidate": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "tree": "1e4a3c46c7898594698d7f1cf0580d6f2cac84a1",
+  "status": "REVIEW_EVIDENCE_BOUND_TO_EXACT_SOURCE_BLOBS",
+  "rows": [
+    {
+      "name": "NLE",
+      "source": "de966262af21609fbda4bf235fe30e59f13fbdd5",
+      "receipt": "D:\\codex数据\\2026-10-19\\task-3\\evidence\\otio-metadata-p2\\compliant-handoff.json",
+      "receiptSha256": "c2fa23e5ef5aa538bfcd4da9d55a3a1721a8fca6241812667f799aad44840047",
+      "conclusion": "AFFECTED_FILE_TESTS_PASS_IN_PROJECT_COMPATIBLE_PRIVATE_ENVIRONMENT",
+      "files": [
+        {
+          "file": "app/experimental/timeline_exchange.py",
+          "sourceBlob": "34b4fb07609c2fed2511c975d8b39aa33287f97c",
+          "candidateBlob": "34b4fb07609c2fed2511c975d8b39aa33287f97c",
+          "independentSha256": "6daace385d277151f282da65a251d6d9ae8477b2dc5284ebffb53464f95248d7",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "tests/test_v2_otio_exact_source_time.py",
+          "sourceBlob": "168fc141643353eced2a6e7209b8c48961b13490",
+          "candidateBlob": "168fc141643353eced2a6e7209b8c48961b13490",
+          "independentSha256": "8a1ff64d7d0538faa21a63422f219157639b07558a971f986065dc1eb426b4a0",
+          "hashMatches": [
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "tests/test_v2_otio_transfer_owner.py",
+          "sourceBlob": "6cc2861e6788582dfca1a6cc177a36f9bf69e5fa",
+          "candidateBlob": "6cc2861e6788582dfca1a6cc177a36f9bf69e5fa",
+          "independentSha256": "148022db37ed84107aad2419f2ada43b5418c7da990e3efb5d3269918149e368",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "tests/test_v2_nle_review.py",
+          "sourceBlob": "af324033cc57891512f58a954d65a15cfc786293",
+          "candidateBlob": "af324033cc57891512f58a954d65a15cfc786293",
+          "independentSha256": "2f570dbdebb8cb66c3ba328d7b143d490b2a2b26998558794b9dbae2acbd6aba",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "tests/test_r4_director_exchange_mounted.py",
+          "sourceBlob": "dd103d90040b6f4191aa8bdb4f152b28e0dd2c5e",
+          "candidateBlob": "dd103d90040b6f4191aa8bdb4f152b28e0dd2c5e",
+          "independentSha256": "44aaa89ad9d90819f97fd9dd9ce8bb23c0c8e3c72975e7602f87660c7143933f",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "pyproject.toml",
+          "sourceBlob": "597f1d6f1e8670001e0041b371dc038864e6104a",
+          "candidateBlob": "597f1d6f1e8670001e0041b371dc038864e6104a",
+          "independentSha256": "fba6dd9b9a7971156118ab488274cd0ff611250200e666f91a9c2b9d51bd0a9f",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "scripts/run_v2_checks.py",
+          "sourceBlob": "0e83563c66aafc10c60fee7c4cc6b8569a4cc000",
+          "candidateBlob": "0e83563c66aafc10c60fee7c4cc6b8569a4cc000",
+          "independentSha256": "64cf16c26412c5a1e36a1d4fb799519111ad409f7594ae15aa0b158e53396cd5",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        }
+      ],
+      "evidenceHashesVerified": [
+        {
+          "file": "compliant-affected.log",
+          "sha256": "ac860f702bd5c5bc837c6c30093f60d72b27f1aec60bd5aa29349fa4d47a3f57"
+        },
+        {
+          "file": "compliant-affected.json",
+          "sha256": "22616437a198407889cce4d3c1c7c35df882f220ec9679e42a2b5443089f6444"
+        },
+        {
+          "file": "compliant-known-baseline-failures.log",
+          "sha256": "295e9e85c97ffb56f9a70f80cf75424b45ec52c372a22e808d36d3507212f799"
+        },
+        {
+          "file": "compliant-known-baseline-failures.json",
+          "sha256": "4352e8c5f1d6f06307287a475cbc7d392996b4e92ca372b63fef793b54fc5edf"
+        },
+        {
+          "file": "compliant-dependencies.json",
+          "sha256": "cfc8fb9c1e37ef3f2436b2d6fa980ce8d5a65b962b0a10d1f3ed5b146792fb67"
+        },
+        {
+          "file": "compliant-pip-check.log",
+          "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+        },
+        {
+          "file": "reportlab4-install.log",
+          "sha256": "2b8a645faf92503b0d4c27e0e6ed2bf1b06b73ce2d9d787f7647ef93c5bef678"
+        },
+        {
+          "file": "reportlab4-install-report.json",
+          "sha256": "ced943515a272d0d6365504018086aaf672ff77199046e3d5835dcc634f184bf"
+        },
+        {
+          "file": "pytest8-install.log",
+          "sha256": "5018843eab467983a087a1977056cf0d3ae43f0d193675ec2011343e3f562a41"
+        },
+        {
+          "file": "pytest8-install-report.json",
+          "sha256": "2313402d8697a38367aebe6ef4d777045879d351b23d04f3206bca9fc8499706"
+        }
+      ]
+    },
+    {
+      "name": "Comic",
+      "source": "28dc20c5fbbfe9a39935810cb02d2cc35265a172",
+      "receipt": "D:\\codex数据\\2026-10-19\\task-3\\evidence\\comic-typography-review\\review-handoff.json",
+      "receiptSha256": "3d383ae5b98330b7d86f1ad6297ffffc4f85cda1d3c014c96e13aec29da560b5",
+      "conclusion": "NO_NEW_BLOCKING_DEFECT_FOUND; KNOWN_BASELINE_VERIFICATION_FAILURES_REMAIN",
+      "files": [
+        {
+          "file": "app/experimental/comic_layers.py",
+          "sourceBlob": "c46698a129fa2e201544f6a0dfedf6ff3fcf4a4d",
+          "candidateBlob": "c46698a129fa2e201544f6a0dfedf6ff3fcf4a4d",
+          "independentSha256": "84930f1bd5dc9349c67d75046d8f259815b45a877321dd91761435bf496c3faf",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "app/experimental/comic_layouts.py",
+          "sourceBlob": "cf1b8503df54befcfcf7303fb04c53396b73902a",
+          "candidateBlob": "cf1b8503df54befcfcf7303fb04c53396b73902a",
+          "independentSha256": "7ef73af6165da789ce28b73642c1c33fdb91c6fac75a323bdf8acf146bd2acca",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/playwright.comic-typography.config.ts",
+          "sourceBlob": "fff9eac0d974a87a817fe146315d7221b0ea5b33",
+          "candidateBlob": "fff9eac0d974a87a817fe146315d7221b0ea5b33",
+          "independentSha256": "955325b22dc7ee0340bd6e7c98b9f3762888ca0d77b328428394be3aadb50a13",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+          "sourceBlob": "31c8d7849c206db5ba2c461eb48baa4f97bb13b9",
+          "candidateBlob": "31c8d7849c206db5ba2c461eb48baa4f97bb13b9",
+          "independentSha256": "b7fd1e7fddd5256f05ccb37be26b251d9467ec1cb8beea89046b46f3b4957e1a",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/ComicLayoutsPanel.typography.test.tsx",
+          "sourceBlob": "a1c7af6d3f430abdbdc7ab965252f6b8b5042fc7",
+          "candidateBlob": "a1c7af6d3f430abdbdc7ab965252f6b8b5042fc7",
+          "independentSha256": "8c160e1bbb69302599b09e1d105451a994ef0ccf8aeb2942134e20d5d8e649da",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/comicLayoutsClient.ts",
+          "sourceBlob": "46728210081bc0d85f10fb2500543bb26739e1c8",
+          "candidateBlob": "46728210081bc0d85f10fb2500543bb26739e1c8",
+          "independentSha256": "f52ce4ded79f458ae9ce1023f2318d3181d24158940d2924cf14eef45cfe0268",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/tests/visual/comic-typography.spec.ts",
+          "sourceBlob": "4bba8d03b6eae8bfb57dbb533a61de16394eaa8c",
+          "candidateBlob": "4bba8d03b6eae8bfb57dbb533a61de16394eaa8c",
+          "independentSha256": "c676625e365bbdb1c47a88beec0a74616338c75b543d6bca0e442ab5f3739aa5",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "tests/test_comic_typography.py",
+          "sourceBlob": "40a6412fd3802b2356747fa7099b95c8085b0619",
+          "candidateBlob": "40a6412fd3802b2356747fa7099b95c8085b0619",
+          "independentSha256": "3fa41674b18e82ea35a25a8473e317e13d5374e50af5a822ba8724916f5b4323",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        }
+      ],
+      "evidenceHashesVerified": [
+        {
+          "file": "backend.json",
+          "sha256": "d3e6de010475f682820cc7a618960b8701470c8d18c62b655a534fb8daa90eff"
+        },
+        {
+          "file": "backend.log",
+          "sha256": "8917b7c1be05768ce8c4a6806ec7af521cbb73af0c29dd2911f38b711ef505e9"
+        },
+        {
+          "file": "baseline-native.json",
+          "sha256": "7ca25f52124dd8eb6a3e4ca41fea086f494554b3a96780b5e95827276b7983ce"
+        },
+        {
+          "file": "baseline-native.log",
+          "sha256": "2934fc80649af77c3420c26f7e6fd9c1a2b286b4fed162fc63163fcf838bfade"
+        },
+        {
+          "file": "final-native.json",
+          "sha256": "6ef1825227d94654aa096d20d62065c2e3189a36a97580438b2457e81421bd8d"
+        },
+        {
+          "file": "final-native.log",
+          "sha256": "2934fc80649af77c3420c26f7e6fd9c1a2b286b4fed162fc63163fcf838bfade"
+        },
+        {
+          "file": "independent-boundary-probes.json",
+          "sha256": "cf90ae362b33a2c9631e0fb3c16212a62f9e3ad5a18cf784e67ad4d3e958647d"
+        },
+        {
+          "file": "independent-boundary-probes.log",
+          "sha256": "3217f3efe803a7f5335da08365cb90d7ef5a1a2cc54c04fd9bd260a4248afc58"
+        },
+        {
+          "file": "original-hash-audit.json",
+          "sha256": "a7b8bc6f3c3541e5da685159fcf67c3b241a4f2e68fc2058165ef28031ca8cd0"
+        },
+        {
+          "file": "read-only-ui.config.mts",
+          "sha256": "5fe70d3973da1d6ed9c272376256b3447bcfe29789f130b91b69d93a74f63ed2"
+        },
+        {
+          "file": "type-comparison.json",
+          "sha256": "273b928ebe90084df626489de20e7bc7b7450d35bb9aaeb541e90ce0735590c7"
+        },
+        {
+          "file": "ui-baseline-ora.json",
+          "sha256": "3f34580950e01ef6bc55e4546eae504e06924f2550a09dd673fc3b1bd101780f"
+        },
+        {
+          "file": "ui-baseline-ora.log",
+          "sha256": "c9c2368835d9f5f6076932a5729d185f7b3091c14eac96b4da6ae4b8e354680c"
+        },
+        {
+          "file": "ui-final.json",
+          "sha256": "2967ad95e5dc0ffe5ffa6ccda38b38144d6bfeb53b53ee202d3ef7512c85017b"
+        },
+        {
+          "file": "ui-final.log",
+          "sha256": "601e3802343c518b2d433398754db2a499220414c91892ae77c5ce19f39d128a"
+        }
+      ]
+    },
+    {
+      "name": "Windows",
+      "source": "d36c32662889b1a70f21384e8a1b525a160a00fa",
+      "receipt": "D:\\codex数据\\2026-10-19\\task-3\\evidence\\windows-module-resolution-review\\review-handoff.json",
+      "receiptSha256": "6487e3fd42176f3892bfd18281cdb8caf38f09ffdbb98a774a0f4dfb1e836551",
+      "conclusion": "NO_BLOCKING_DEFECT_FOUND_IN_BOUNDED_WINDOWS_MODULE_RENAME_FIX",
+      "files": [
+        {
+          "file": "frontend/src/creative/CameraGrammarEditor.additive.test.tsx",
+          "sourceBlob": "522c6b3abec1c4a2afe98c2ec828ad7647437b89",
+          "candidateBlob": "522c6b3abec1c4a2afe98c2ec828ad7647437b89",
+          "independentSha256": "161d096b74553c4b3e7041d0b4b806e7243306680bebf6cdaca6bbb27f327af6",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/CanvasAssetPreview.additive.test.tsx",
+          "sourceBlob": "7c0bace2a2d1c4e42afd11c5f50a98842599d020",
+          "candidateBlob": "7c0bace2a2d1c4e42afd11c5f50a98842599d020",
+          "independentSha256": "cc1de139d43ccbc1e12b996421faba5608fe6f7183439ab18a3d470ba925ae1c",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/CanvasAssetPreview.tsx",
+          "sourceBlob": "62b10fe5167da1a5c7b1b12f7dd20d28c3c0f8c9",
+          "candidateBlob": "62b10fe5167da1a5c7b1b12f7dd20d28c3c0f8c9",
+          "independentSha256": "efe43074f7d0a31ca0f7077ef7a99022f49ea303f7d564f39d9791c8f456215d",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/DirectorCameraReuse.test.tsx",
+          "sourceBlob": "726e85db3717dad0d3fbeb5ad2d3a5dfb29965a6",
+          "candidateBlob": "726e85db3717dad0d3fbeb5ad2d3a5dfb29965a6",
+          "independentSha256": "f57f365f24acde952309e0612172472cab44cc1c3e7f50205e8beeca09e2777f",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/DirectorCameraReuse.tsx",
+          "sourceBlob": "183d3864d51cf9ba13aeaf8b74c7f1a9808e8914",
+          "candidateBlob": "183d3864d51cf9ba13aeaf8b74c7f1a9808e8914",
+          "independentSha256": "9b5ad0bc59fbe18f992079c9f44afab4e5d05a75a144070265d09f6605813c44",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/DirectorDraftComparison.additive.test.tsx",
+          "sourceBlob": "1c2e28ca9652728b2753f78b49f048cb0057e906",
+          "candidateBlob": "1c2e28ca9652728b2753f78b49f048cb0057e906",
+          "independentSha256": "e5c6f8321f69b2c7a964045026fc25a9a96727bd8540c44dac91c8d41463fade",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/DirectorDraftComparison.tsx",
+          "sourceBlob": "5f959a49ce57a78b15914489b8a5c2b58bb0b752",
+          "candidateBlob": "5f959a49ce57a78b15914489b8a5c2b58bb0b752",
+          "independentSha256": "22d568e1b838b60fce2f0ea479bc696e867703160258b60b3a1854205ef59143",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/DirectorIntentConstraints.test.tsx",
+          "sourceBlob": "51243ed3cd5b84b41450e3acb76989a215882ad9",
+          "candidateBlob": "51243ed3cd5b84b41450e3acb76989a215882ad9",
+          "independentSha256": "7048e4520079863271bd55ac2b6f0ea54f8444b3ff1e1c2aa48d0d947e780a64",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphCanvasNotes.tsx",
+          "sourceBlob": "0a0c5bbf8dbac458c882e5ccde8ec02e93b5bfeb",
+          "candidateBlob": "0a0c5bbf8dbac458c882e5ccde8ec02e93b5bfeb",
+          "independentSha256": "6091a94afcabe8b5105e38c90212500200ceafee7bc3bb6dbb0e99a9a5d909ff",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphDraftChecklist.additive.test.tsx",
+          "sourceBlob": "c1aa90aceae441cc83b9667229588c565fccb911",
+          "candidateBlob": "c1aa90aceae441cc83b9667229588c565fccb911",
+          "independentSha256": "ec817d0a8db9b01ae39112ca15df3c450eb409dbfede4d0545668bd91db14955",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphDraftChecklist.tsx",
+          "sourceBlob": "ec281c8e7b583e7501269369963cc50a87904b6b",
+          "candidateBlob": "ec281c8e7b583e7501269369963cc50a87904b6b",
+          "independentSha256": "956758bb19035f4dd574b219268c5a0cbefbadf39df21b66a866930ddaa5febf",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx",
+          "sourceBlob": "f99e470ad576b6c4360c208a396b6c4d0275f3bf",
+          "candidateBlob": "f99e470ad576b6c4360c208a396b6c4d0275f3bf",
+          "independentSha256": "5bad3bdddcaa518df5e167963b68a8970fcc0098cdc7adc588aa631190d41b2c",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphPlanningFork.test.tsx",
+          "sourceBlob": "d366feeb411c39199922401301b4aaf64f30bed9",
+          "candidateBlob": "d366feeb411c39199922401301b4aaf64f30bed9",
+          "independentSha256": "79452e9ecc2a0a55e81bb2cb6b9f0de88cc94b2ca5231d2cb7db940c200c1ee2",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphPlanningFork.tsx",
+          "sourceBlob": "93ea24751b763a2e8c03c8e33df03e41561f87ae",
+          "candidateBlob": "93ea24751b763a2e8c03c8e33df03e41561f87ae",
+          "independentSha256": "ea414f1bbf84564f58c7079c95fdef9942bb56d435c000bd0808c613a0550228",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphStoryboardStarter.additive.test.tsx",
+          "sourceBlob": "b35cf8d1144d1d2fa736141a58b768ef8e1836dd",
+          "candidateBlob": "b35cf8d1144d1d2fa736141a58b768ef8e1836dd",
+          "independentSha256": "8b875872198ae3067583cd55949ded57ead6e8e568c91d386718023785388feb",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx",
+          "sourceBlob": "a1c932f1d6b0158e2d72dfcf7843716df7f700ed",
+          "candidateBlob": "a1c932f1d6b0158e2d72dfcf7843716df7f700ed",
+          "independentSha256": "852b08178a8bca03569c538b6edf3f23cce34f25a1c2e8a87229f2eea4ca791b",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/GraphStoryboardStarter.tsx",
+          "sourceBlob": "7a25736ed7a632383186872d7d03665daf3851a5",
+          "candidateBlob": "7a25736ed7a632383186872d7d03665daf3851a5",
+          "independentSha256": "689246884cd21c6d0e77c0776a359885e77132e48a98686ae789fa236b00e078",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx",
+          "sourceBlob": "2fd2300d7e725891a5f2420be10f4592407d33ea",
+          "candidateBlob": "2fd2300d7e725891a5f2420be10f4592407d33ea",
+          "independentSha256": "80cd6ac3966c67112f93ab14d458e61954bb682b223bb7666cf0c73a773384b5",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/MediaCanvasGraphHandoff.tsx",
+          "sourceBlob": "56be007a6e1055862c15f66ff4089258d1f8778b",
+          "candidateBlob": "56be007a6e1055862c15f66ff4089258d1f8778b",
+          "independentSha256": "de477b0c9c5add2486675f7f98cc908d4b8bb823b030e4f1883c08512dea1688",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/MediaCanvasViewPanel.tsx",
+          "sourceBlob": "628e581dba8bc14b132e9e67a58c80b66c1e771e",
+          "candidateBlob": "628e581dba8bc14b132e9e67a58c80b66c1e771e",
+          "independentSha256": "3bd4726f41439615b790252887c63422ad5774115dc62a0e8387eee237ee01d0",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/StudioTimelineEditor.tsx",
+          "sourceBlob": "cb31ea04b626cc3036c3cad2dd50f0866afcfb2a",
+          "candidateBlob": "cb31ea04b626cc3036c3cad2dd50f0866afcfb2a",
+          "independentSha256": "e6e6e7cbbdd6e34e8c76bf9b48990e14a4016b799433536ad7c900a664e2425f",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/TimelineTransferReview.test.tsx",
+          "sourceBlob": "8debbc4e8c32e549730792e3a030703b58c61b37",
+          "candidateBlob": "8debbc4e8c32e549730792e3a030703b58c61b37",
+          "independentSha256": "c6ceca034ecdec2038fd20ec661714c22279887da07896b6f56932caf9d33ea2",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/TimelineTransferReview.tsx",
+          "sourceBlob": "d083318608bb9a3b32caf880dea08eea2608481d",
+          "candidateBlob": "d083318608bb9a3b32caf880dea08eea2608481d",
+          "independentSha256": "827e2f5831d1b825b4a90ebde8e7c427eaf0ebc7a96d8c3bda12bdc53a0f8fe4",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/canvasAssetPreview.helpers.additive.test.ts",
+          "sourceBlob": "32c53edfe3246ee884b269b9e634686cf944a5dd",
+          "candidateBlob": "32c53edfe3246ee884b269b9e634686cf944a5dd",
+          "independentSha256": "a6107f2020d769f1f591fd1f9b693e31ea29bdc2197758dd6dd4143e61d683f7",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/canvasAssetPreviewHelpers.ts",
+          "sourceBlob": "fc8844420bcb8f5f9ba0f7cd914cf2c70c513e20",
+          "candidateBlob": "fc8844420bcb8f5f9ba0f7cd914cf2c70c513e20",
+          "independentSha256": "7a3cd8a775d94defff6600fd0551630df72527d510d9efbca9ce5d8754c7ebb9",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/directorCameraReuseHelpers.ts",
+          "sourceBlob": "a8e2722d8b21895e13e708c905737e9ce29b14e9",
+          "candidateBlob": "a8e2722d8b21895e13e708c905737e9ce29b14e9",
+          "independentSha256": "1d3ff0037e93200babb8e31e08d6cfff62ee4f6a89383288b65cf61f9a1264a3",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/directorDraftComparisonHelpers.ts",
+          "sourceBlob": "b6b987fe49871fb83d1cc8582c0ee294ef839ca3",
+          "candidateBlob": "b6b987fe49871fb83d1cc8582c0ee294ef839ca3",
+          "independentSha256": "f1c640ad4d5c2fcad61b927b5d6a532052e36a570a9d3141c84cda2530ed1d48",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphCanvasLargeNotes.helpers.test.ts",
+          "sourceBlob": "2a72b3fa8cde6e526b658160bcb0f476cc40cc2e",
+          "candidateBlob": "2a72b3fa8cde6e526b658160bcb0f476cc40cc2e",
+          "independentSha256": "7c343b21c9adf14bfa576322a6fc242116fff1bb3c7ff1b2308f61f04942a11c",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphCanvasNotes.test.ts",
+          "sourceBlob": "3f3765b9f48087ed2c21092b4f974886e17388d3",
+          "candidateBlob": "3f3765b9f48087ed2c21092b4f974886e17388d3",
+          "independentSha256": "d6d22a105fa759a46186450f4cbe8c22669c068fcb3094378107decf9dfdf0bd",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphCanvasNotesHelpers.ts",
+          "sourceBlob": "df27faead2e3e59ca2b4ce84a3c2615ac125feb1",
+          "candidateBlob": "df27faead2e3e59ca2b4ce84a3c2615ac125feb1",
+          "independentSha256": "b3f3d0a5e0e9aa88dcb789e84d6fda17f6012028357545d08e30ed7d7d460222",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphDraftChecklistHelpers.ts",
+          "sourceBlob": "009a7b438129305ae0f52a54693f6ceb8bef188d",
+          "candidateBlob": "009a7b438129305ae0f52a54693f6ceb8bef188d",
+          "independentSha256": "5c298bbc11a5483c6527fb84b56584384054261251bff38bfd99249c1cf65aa7",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphPlanningForkHelpers.ts",
+          "sourceBlob": "5a647c9264a56ac45ecb19d0cd89727833274121",
+          "candidateBlob": "5a647c9264a56ac45ecb19d0cd89727833274121",
+          "independentSha256": "ef226e138d4dc40bc84c6345223f82c7753083c500c4b2ac68bf7762529c28cc",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/graphStoryboardStarterHelpers.ts",
+          "sourceBlob": "77828e66d003655b147f2dded028b544898a3c7d",
+          "candidateBlob": "77828e66d003655b147f2dded028b544898a3c7d",
+          "independentSha256": "b6279c77635e933b442e860595c08ed9aa9b67f98c17867dcad11232a1017d22",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/mediaCanvasGraphHandoffHelpers.ts",
+          "sourceBlob": "713e4b0c3f091c6be75dfcb266eab5e46c2a97c3",
+          "candidateBlob": "713e4b0c3f091c6be75dfcb266eab5e46c2a97c3",
+          "independentSha256": "ff7661f7601dc35f02c798b3858e97feddd411c610ebab4c69d8ed236cf71e77",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/storyboardImagePreview.ts",
+          "sourceBlob": "81d149f774b3d1ba724642c03a4d1c435aa7f9fb",
+          "candidateBlob": "81d149f774b3d1ba724642c03a4d1c435aa7f9fb",
+          "independentSha256": "ec84b3fb6efff238c8afe9ca47d6f500ea612cfa15b645c40eaa5ba1cbbe6a43",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/timelineTransferReviewHelpers.ts",
+          "sourceBlob": "4c83a6c3886e5f1cff6167602c297e064e1faad7",
+          "candidateBlob": "4c83a6c3886e5f1cff6167602c297e064e1faad7",
+          "independentSha256": "b68043f72c68bc5b7d96f66e3da67dec9bfb6d50f4a13690497b660aaeaa91e4",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/creative/useStudioGraphEditorController.ts",
+          "sourceBlob": "2a39cdbbe94c1cf8ee20f4c8c435a87c2f364e08",
+          "candidateBlob": "2a39cdbbe94c1cf8ee20f4c8c435a87c2f364e08",
+          "independentSha256": "80a32eb917b161d3621c20132763f14692610cd65223d786975583a65b4b3395",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/BranchComparisonReview.test.tsx",
+          "sourceBlob": "2c224ebe13592ea8366161b26413b17856e6dfb0",
+          "candidateBlob": "2c224ebe13592ea8366161b26413b17856e6dfb0",
+          "independentSha256": "c87eb47c926a9ed0dc6bdb0ab4658402a5e09c292e951580fa1149e7685b9ead",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/BranchComparisonReview.tsx",
+          "sourceBlob": "5cd4bb5dd38e400a58d0936060b74b514a2dd8e9",
+          "candidateBlob": "5cd4bb5dd38e400a58d0936060b74b514a2dd8e9",
+          "independentSha256": "a50c3bf8daddea3dabea5e812efd3fd9bf6ab2cd5139bbe73d0deec4cff86063",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/BranchManuscriptPanel.tsx",
+          "sourceBlob": "69f52391147bef8d296b8105ee194395e180ea05",
+          "candidateBlob": "69f52391147bef8d296b8105ee194395e180ea05",
+          "independentSha256": "828050a2c054b863b9ca0e7341c27b14d9593e263d26f27d21609b183bbc33a7",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/CaptionTextReplace.tsx",
+          "sourceBlob": "bf29d47b92f1c8b6979b846b7a69610b6f375e5b",
+          "candidateBlob": "bf29d47b92f1c8b6979b846b7a69610b6f375e5b",
+          "independentSha256": "4eeac45afb95284861092ca9b61e3baa717028dae573d2fa5e96bf5e2e60c95a",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/ProductionLineagePanel.tsx",
+          "sourceBlob": "9947b92be99de902bb34522a480db2345f306395",
+          "candidateBlob": "9947b92be99de902bb34522a480db2345f306395",
+          "independentSha256": "89f73243123697fc41598c6e0b3e9b1023d2b2ddd076733c40fc38b81ef98de5",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/ProductionReceiptReview.test.tsx",
+          "sourceBlob": "5d22a04c02510b3b71cfecf7da74a605a1c27930",
+          "candidateBlob": "5d22a04c02510b3b71cfecf7da74a605a1c27930",
+          "independentSha256": "d4dafdecde5660229e013b4a7a71ab91b926ee41d08f3c6a86d609280995ed7e",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/ProductionReceiptReview.tsx",
+          "sourceBlob": "af9b2be2c6c71cd14687d00135866432ad0b315b",
+          "candidateBlob": "af9b2be2c6c71cd14687d00135866432ad0b315b",
+          "independentSha256": "03a483a5876a8422d712f1d9f9349360270f7e5683383eb3a51d0a7c49726a85",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx",
+          "sourceBlob": "21e59356d5d5ccbc1790469ac0024499e45718a6",
+          "candidateBlob": "21e59356d5d5ccbc1790469ac0024499e45718a6",
+          "independentSha256": "bf2bc7c8f7486749e5f598d1c39ee6ae8ca46cce9a82742db83faf198a2d84dd",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/branchComparisonReviewHelpers.ts",
+          "sourceBlob": "f17d16b37144d4efc52d500bb9fe77a088877717",
+          "candidateBlob": "f17d16b37144d4efc52d500bb9fe77a088877717",
+          "independentSha256": "90d487c28c58e985bfedce0c156bb62b1e7f53aff16eb95dc933bcc7c5a53f7a",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/captionTextReplaceHelpers.ts",
+          "sourceBlob": "a34f55cc95237849d99b43d57f3c0d7fbdc16387",
+          "candidateBlob": "a34f55cc95237849d99b43d57f3c0d7fbdc16387",
+          "independentSha256": "45a21459c2f389ccb4da9d6be528e1ca72f1000694efd2932915b9cbf892069f",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/judgeRevisionHandoff.helpers.test.ts",
+          "sourceBlob": "ab0d594be4d83d0e0f86b1b3b166c38cff037884",
+          "candidateBlob": "ab0d594be4d83d0e0f86b1b3b166c38cff037884",
+          "independentSha256": "c8bf58f247b331e89f6e9b3ee87f9af1155ac6f37bedbc6b34485f9aceee3474",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/pristineReplayNavigation.test.tsx",
+          "sourceBlob": "f2e5e919f872b10d0919cb3a35b928f1ad8101d9",
+          "candidateBlob": "f2e5e919f872b10d0919cb3a35b928f1ad8101d9",
+          "independentSha256": "f823197e6ffe51c2cc136742f41605198b226f6f922dbe469f5bff72c7d81fb8",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/productionReceiptReviewHelpers.ts",
+          "sourceBlob": "6774e5651d3059ac63380e013e7cf74372a0b927",
+          "candidateBlob": "6774e5651d3059ac63380e013e7cf74372a0b927",
+          "independentSha256": "25d4bfe1db5210d631b49671f72813fa551b8847b4a6c03cc64e25cd79cfe2fa",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/experimental/templateCopyEditing.helpers.test.ts",
+          "sourceBlob": "35d58abd4f0ee7f01e7dad8432e89c279750566b",
+          "candidateBlob": "35d58abd4f0ee7f01e7dad8432e89c279750566b",
+          "independentSha256": "5e78858925676e86906c0fda5fd1a6467430834c597d021903730c8846fdfb0c",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/TaskCenter.additive.test.tsx",
+          "sourceBlob": "446b5986ae42c604dbebab9563af5d4411aea960",
+          "candidateBlob": "446b5986ae42c604dbebab9563af5d4411aea960",
+          "independentSha256": "af9d0372bd8f58e51c0a92a2b43a8ea344e641e12920c925989d0617a14cb733",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/TaskCostReceipt.tsx",
+          "sourceBlob": "776ec57ef822bff4346643279f8120715c1bb0fd",
+          "candidateBlob": "776ec57ef822bff4346643279f8120715c1bb0fd",
+          "independentSha256": "5914622cf1d135e2cdf93ebebaeeb4cc8b33ea081c960890eb56c8b9854efaaf",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/TaskList.tsx",
+          "sourceBlob": "534bf2f7ccce26b14dc706324797e9723115684e",
+          "candidateBlob": "534bf2f7ccce26b14dc706324797e9723115684e",
+          "independentSha256": "16e9e083105f700760f7270b1b8529fabd2d9a50ab947e71e4f83657dfeacbe2",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/taskCostReceipt.test.ts",
+          "sourceBlob": "8b285ccba01c27ae31d0433ce789a3c6cef6a434",
+          "candidateBlob": "8b285ccba01c27ae31d0433ce789a3c6cef6a434",
+          "independentSha256": "9ef420eb85dd39f572c740494e72b28eb95ce5887e610f6af89f180aaefbfbea",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/taskCostReceiptClient.ts",
+          "sourceBlob": "1c4b4ffcf1f7fa5f10384a9ee66f8a6375fecafa",
+          "candidateBlob": "1c4b4ffcf1f7fa5f10384a9ee66f8a6375fecafa",
+          "independentSha256": "c185eb8197f27a965689f61cca685e4e53b57d174e3aa91ac9224022146c36cd",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/taskCostReceiptHelpers.ts",
+          "sourceBlob": "7501c47ddb55c1852719540fb6998b583a9436ac",
+          "candidateBlob": "7501c47ddb55c1852719540fb6998b583a9436ac",
+          "independentSha256": "18ecf05ace1e583ffb676409b78dbfa2ed331c4c660fde5465a5aef1427830fc",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/useTaskCostReceipt.test.ts",
+          "sourceBlob": "b18443867a9761ca4a993fb57e1471b9e4c19143",
+          "candidateBlob": "b18443867a9761ca4a993fb57e1471b9e4c19143",
+          "independentSha256": "665a6d3fab6177cc0810f2062a54bed02eb7dfbc1923ae1cc6e223e919ecb0f7",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/taskcenter/useTaskCostReceipt.ts",
+          "sourceBlob": "cb8cd44a81505d2d9bf8a927c812681d00655139",
+          "candidateBlob": "cb8cd44a81505d2d9bf8a927c812681d00655139",
+          "independentSha256": "2d9f993be07c0b5a66ab48f20da26bab6f8dd8c542decb05703360dfad6357fd",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "scripts/inventory_v2_continuation.py",
+          "sourceBlob": "11dab5befe97e759c8304c6f66d60c1d6a8cd199",
+          "candidateBlob": "11dab5befe97e759c8304c6f66d60c1d6a8cd199",
+          "independentSha256": "dac2b7bc74572d25d3a77dab2b3f05efdcfd0fe59a5c718a3bc4019875b8066a",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        }
+      ],
+      "evidenceHashesVerified": [
+        {
+          "file": "independent-scope-audit.json",
+          "sha256": "d9740954a6a717066c40faf511839c857763e2df2abb956ebb2879b73bbb9c16"
+        },
+        {
+          "file": "native-tsc.json",
+          "sha256": "6477d9259b67f675842d60e244432df68d73d5daf0c31323cf500e2ac31d0d31"
+        },
+        {
+          "file": "native-tsc.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "production-output-comparison.json",
+          "sha256": "70022ad3eab5f9f3d78886fcfad784182b3e35120653e065ceb3adf578492375"
+        },
+        {
+          "file": "production-vite.json",
+          "sha256": "034a22ede334976c1039dcee2fb0ec8379a837498b0463a0ec39a6a96df43db2"
+        },
+        {
+          "file": "production-vite.log",
+          "sha256": "859fe06dee7e30828d67ff255bd229cac14578f79663374e55a282f38cee40a1"
+        },
+        {
+          "file": "test-and-coordination-audit.json",
+          "sha256": "3e3eaf70322ba9453b54b970e68883b78acae57660a9eacfb6c61038a9065604"
+        }
+      ]
+    },
+    {
+      "name": "CloudConfiguration",
+      "source": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+      "receipt": "D:\\codex数据\\2026-10-19\\task-3\\evidence\\cloud-config-ux-review\\review-handoff.json",
+      "receiptSha256": "8da188926d7dbd5df41386859d75f74b9f9cfd1e583ed64ab9430c5ce0adfd67",
+      "conclusion": "NO_NEW_BLOCKING_DEFECT_FOUND_IN_BOUNDED_LOCAL_CLOUD_CONFIGURATION_UX",
+      "files": [
+        {
+          "file": "frontend/playwright.cloud-config.config.ts",
+          "sourceBlob": "8f87fa0e48c10299ca0d3ff93f5482389c664dd4",
+          "candidateBlob": "8f87fa0e48c10299ca0d3ff93f5482389c664dd4",
+          "independentSha256": "2df4373c6a264427928fa1e77619a28c68941de7c4b55f98dcc4f25c43aa302b",
+          "hashMatches": [
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx",
+          "sourceBlob": "3af3ae595df5f27f1fa48fc96e3cf85f70c29de1",
+          "candidateBlob": "3af3ae595df5f27f1fa48fc96e3cf85f70c29de1",
+          "independentSha256": "a02b34689db83a04c5e7d18f78e12f34e6e5e15abc8a78ba24f15e4d9ebd3954",
+          "hashMatches": [
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/modelcenter/BailianPresetPanel.tsx",
+          "sourceBlob": "2037cf27517af0e801613b8c1ed4f89698ec5bcc",
+          "candidateBlob": "2037cf27517af0e801613b8c1ed4f89698ec5bcc",
+          "independentSha256": "efd949cea660556f698e1e9818e7141929b0f964b439cf04204c2d79992cdf93",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/modelcenter/bailianPresetContract.ts",
+          "sourceBlob": "cdf843181d5fd6315d79099ed5240ff1a6af15a1",
+          "candidateBlob": "cdf843181d5fd6315d79099ed5240ff1a6af15a1",
+          "independentSha256": "f919878d740526d92d8da07bd02d5e174f395341f259c1a5c14936d6b5b3ef50",
+          "hashMatches": [
+            "committedContent",
+            "candidateWorktreeBytes",
+            "candidateCanonicalLF",
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/src/modelcenter/bailianPresetPreflight.test.ts",
+          "sourceBlob": "1cf02c9ed32edeaaa28c1018ab22338663ffd4b1",
+          "candidateBlob": "1cf02c9ed32edeaaa28c1018ab22338663ffd4b1",
+          "independentSha256": "c8f2e7b1aa8f7cb674dada3207be827fa3672ea2e4e15585257b07795c16b157",
+          "hashMatches": [
+            "reviewedWorktreeBytes"
+          ]
+        },
+        {
+          "file": "frontend/tests/visual/cloud-config.spec.ts",
+          "sourceBlob": "5ed94b6073376cfefa514121715e67d8652230e3",
+          "candidateBlob": "5ed94b6073376cfefa514121715e67d8652230e3",
+          "independentSha256": "392a5f74e90d71c7df1c197166c017e5fd848298812fe652de6bab9b3c6c4446",
+          "hashMatches": [
+            "reviewedWorktreeBytes"
+          ]
+        }
+      ],
+      "evidenceHashesVerified": [
+        {
+          "file": "existing-native-diagnostics-comparison.json",
+          "sha256": "222e2a46d84d2027813a3f7d7887e5ee589c4dd5dad1ae71f849f128641f3c9f"
+        },
+        {
+          "file": "hash-audit.json",
+          "sha256": "6fcb33a1814a2c60eb62aee343e519d9e2f9246cd8e908f8015e37465d9cbf5a"
+        },
+        {
+          "file": "independent-contract-probes.json",
+          "sha256": "f1ff9815047edf42d02405a203d275b7d797dbb2637110b0cdaecf912b5dbb24"
+        },
+        {
+          "file": "modelcenter-tests.json",
+          "sha256": "f7f6b165c3446967931f6180c475297b138fc1aaacf47501ada5540825bb9290"
+        },
+        {
+          "file": "modelcenter-tests.log",
+          "sha256": "ecf192c9420f9bcbb95bec89a1047fe4ff1b73f78191cf075dc14bcd2b30931e"
+        },
+        {
+          "file": "unit-run.json",
+          "sha256": "a933475fca60668ce364abe8f08b25c1e5073364b7aef0911e1e2738b15a0304"
+        }
+      ]
+    }
+  ]
+}

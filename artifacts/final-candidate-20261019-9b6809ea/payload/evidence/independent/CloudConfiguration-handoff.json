@@ -1,0 +1,94 @@
+{
+  "timestamp_utc": "2026-10-19T05:39:36.895233+00:00",
+  "conclusion": "NO_NEW_BLOCKING_DEFECT_FOUND_IN_BOUNDED_LOCAL_CLOUD_CONFIGURATION_UX",
+  "repository": "D:\\codex数据\\2026-10-19\\task\\studio-v2-cloud-config-ux",
+  "commit": "c2d6b682d64685b9d2599bbd323b3751a737b1dd",
+  "baseline": "c1638908168cfdcea0b63cef9388b88cf66a91f3",
+  "working_tree": "CLEAN",
+  "review_product_tests_git_refs_unchanged": true,
+  "access": "Normal setup refresh still failed; official reviewed execution succeeded; no security settings changed",
+  "source_sha256": {
+    "frontend/playwright.cloud-config.config.ts": "2df4373c6a264427928fa1e77619a28c68941de7c4b55f98dcc4f25c43aa302b",
+    "frontend/src/modelcenter/BailianPresetPanel.preflight.test.tsx": "a02b34689db83a04c5e7d18f78e12f34e6e5e15abc8a78ba24f15e4d9ebd3954",
+    "frontend/src/modelcenter/BailianPresetPanel.tsx": "efd949cea660556f698e1e9818e7141929b0f964b439cf04204c2d79992cdf93",
+    "frontend/src/modelcenter/bailianPresetContract.ts": "f919878d740526d92d8da07bd02d5e174f395341f259c1a5c14936d6b5b3ef50",
+    "frontend/src/modelcenter/bailianPresetPreflight.test.ts": "c8f2e7b1aa8f7cb674dada3207be827fa3672ea2e4e15585257b07795c16b157",
+    "frontend/tests/visual/cloud-config.spec.ts": "392a5f74e90d71c7df1c197166c017e5fd848298812fe652de6bab9b3c6c4446"
+  },
+  "all_original_evidence_hashes_verified": true,
+  "test_result": {
+    "independent": true,
+    "files": 9,
+    "passed": 184,
+    "failed": 0,
+    "new_cases": 28,
+    "new_pure_cases": 16,
+    "new_ui_cases": 12,
+    "raw_report": "modelcenter-tests.json",
+    "raw_log": "modelcenter-tests.log",
+    "special_resolver": false
+  },
+  "local_contract_probes": {
+    "method": "In-memory pure contract comparison with shared synthetic ApiError; no source/test changes or transport calls",
+    "stringPreviewCompatibilityCases": 186,
+    "oldAndNewStringResultsIdentical": true,
+    "preflightAndOriginalPreviewAgree": true,
+    "errorClassificationCases": 56,
+    "arbitraryMessagesDetailsAndUnknownCodesNotReturned": true,
+    "messageAndDetailsGettersNeverRead": true,
+    "wireAndOriginalEndpointConstantsReused": true
+  },
+  "implementation_review": {
+    "original_preset_reused": true,
+    "original_four_endpoints_and_flags_unchanged": true,
+    "string_model_syntax_compatible_with_baseline": true,
+    "non_string_model_inputs_rejected": true,
+    "original_model_center_client_unchanged": true,
+    "transport_boundary": "Only explicitly admitted original HOST preset GET; no useEffect read, retry, write, provider inference, credential read or preference change added",
+    "sensitive_errors": "Only fixed controlled classifications reach the view; arbitrary reason.message/details/unknown code not copied",
+    "ownership": "Original owner token, identity/transport/scope/activation/denial ABA retirement and abort/current request guards retained; new check reads functional latest state and rechecks live current/busy; edits clear old checks"
+  },
+  "browser_evidence": {
+    "final_r2_passed": 3,
+    "viewports": [
+      "1366x768",
+      "1440x900",
+      "1920x1080"
+    ],
+    "actual_coverage": "Real React panel mounted in IMAGE fixture, intercepted original HOST preset GET, manual local check, fixed 503 feedback, no other calls, shell dimensions/no overflow",
+    "cold_r1_failed": 1,
+    "cold_r1_passed": 2,
+    "cold_failure": "1366 manual read button click timed out after 60s; existing Vite case-collision errors co-occurred",
+    "causal_attribution": "Co-occurrence alone does not prove case collision was the sole timeout cause; no cold-start stability claim",
+    "first_failure_and_trace_retained": true,
+    "reviewer_reran_browser": false,
+    "production_backend_or_provider_connection_verified": false
+  },
+  "native_types_limit": {
+    "cloud_cli_errors": 63,
+    "independently_verified_baseline_errors": 63,
+    "error_headlines_equal_after_root_normalization": true,
+    "cloud_typecheck_rerun": false,
+    "modelcenter_error_headlines": []
+  },
+  "official_document_check": {
+    "url": "https://www.alibabacloud.com/help/en/model-studio/base-url",
+    "page_updated": "2026-10-11",
+    "result": "The same four legacy shared-region OpenAI-compatible DashScope endpoints remain listed; region and billing-plan pairing still required. No endpoint migration or provider test performed."
+  },
+  "remaining_limits": [
+    "Existing native Windows 63 baseline diagnostics remain in this branch",
+    "Cold start not accepted",
+    "No real provider connectivity, billing, credential/config writes or inference",
+    "No PostgreSQL or full real-backend browser journey",
+    "No push/merge/Release"
+  ],
+  "evidence_sha256": {
+    "existing-native-diagnostics-comparison.json": "222e2a46d84d2027813a3f7d7887e5ee589c4dd5dad1ae71f849f128641f3c9f",
+    "hash-audit.json": "6fcb33a1814a2c60eb62aee343e519d9e2f9246cd8e908f8015e37465d9cbf5a",
+    "independent-contract-probes.json": "f1ff9815047edf42d02405a203d275b7d797dbb2637110b0cdaecf912b5dbb24",
+    "modelcenter-tests.json": "f7f6b165c3446967931f6180c475297b138fc1aaacf47501ada5540825bb9290",
+    "modelcenter-tests.log": "ecf192c9420f9bcbb95bec89a1047fe4ff1b73f78191cf075dc14bcd2b30931e",
+    "unit-run.json": "a933475fca60668ce364abe8f08b25c1e5073364b7aef0911e1e2738b15a0304"
+  }
+}
