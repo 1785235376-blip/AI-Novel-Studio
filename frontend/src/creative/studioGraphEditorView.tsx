@@ -12,6 +12,7 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
 import { AssetInspector } from '../novel/AssetInspector';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { GraphCanvas } from './GraphCanvas';
+import { GraphSelectedVideoBindingPanel } from './GraphSelectedVideoBindingPanel';
 import { GraphRunPanel } from './GraphRunPanel';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
@@ -213,6 +214,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       </section>
       <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
+      {videoGraph && <GraphSelectedVideoBindingPanel binding={controller.selectedVideoBinding} />}
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
         removalDefinitions={catalog.definitions} removalOwner={controller.insertionScope} removalDisabled={timelineEditor.formDirty}
         isRemovalCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}

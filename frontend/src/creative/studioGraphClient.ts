@@ -798,6 +798,8 @@ function catalog(value: unknown): StudioGraphCatalog {
 
 /** Reuse the canonical input decoder for local draft recovery; grants no authority. */
 export function checkedStudioGraphDraft(value: unknown): StudioGraphDefinition { return definition(value, true); }
+/** Original typed video rules, exposed for bounded local authoring before full Save. */
+export function checkedStudioGraphVideoParameters(value: unknown): StudioGraphParameters { return parameters(value, 'video_generate', true); }
 
 export function createStudioGraphClient(projectId: string, context: Pick<CollaborationContext, 'scope'>, transport: StudioGraphTransport) {
   const capturedScope = context.scope ? { ...context.scope } : undefined;

@@ -1,4 +1,6 @@
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
+import { uniqueGraphProviders } from './graphProviderChoices';
+import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
 import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
@@ -58,6 +60,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
   const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
   const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
+  const bindingMutationEpoch = useRef(0);
   const [independentConsent, setIndependentConsent] = useState('');
   const planningForkConsumed = useRef<object>();
   const [independentOrigin, setIndependentOrigin] = useState<{ identity: string; client: StudioClient; id: string; title: string; version: number; references: StudioGraphRecord['reference_states'] }>();
@@ -376,8 +379,13 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
     if (same(draftRef.current, next)) return;
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
-    crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
+    bindingMutationEpoch.current++; crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  const bindingDraftEpoch = bindingMutationEpoch.current;
+  const selectedVideoBinding = useGraphSelectedVideoBinding({ definition: draft, selected, catalog, source: providerSource,
+    scope: verificationScope, generation: bindingDraftEpoch, current: () => isVerificationCurrent() && bindingDraftEpoch === bindingMutationEpoch.current && !imageSelectionFence.current?.(),
+    editable: active && editable && !timelineEditor.formDirty && !checking && !imageSelectionFence.current?.(),
+    locked, read, apply: next => { change(next); return draftRef.current === next; } });
   function applyStarterGraph(kind: GraphStarterKind, text: string, scope: object): boolean {
     if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope)
       || insertionRef.current || !catalog || draftRef.current.nodes.length || draftRef.current.edges.length) return false;
@@ -792,7 +800,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     retired, retainedText, retainedTitle,
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
-    providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
+    selectedVideoBinding, providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true as const, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true as const, automatic_video_dispatch: false as const } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
     starterScope: verificationScope, applyStarterGraph, readStarterStoryboard, applyStoryboardStarter,
@@ -856,9 +864,7 @@ function useGraphProviderPicker(props: {
       const values = await captured.read(() => captured.source!.providers(controller.signal));
       if (!valid()) return;
       // Even identical duplicates are ambiguous: this unchanged graph schema stores only the tuple.
-      const counts = new Map<string, number>(), tuple = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id]);
-      values.forEach(row => counts.set(tuple(row), (counts.get(tuple(row)) || 0) + 1));
-      const unique = values.filter(row => counts.get(tuple(row)) === 1);
+      const unique = uniqueGraphProviders(values);
       const next = { source: captured.source, client: captured.client, identity: captured.identity, scope: captured.scope, rows: unique };
       catalogRef.current = next; setCatalog(next);
       if (unique.length !== values.length) setError('重复或含糊的服务配置已隐藏；原节点标识保持，请核对原服务配置。');
