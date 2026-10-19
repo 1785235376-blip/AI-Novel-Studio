@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="56" failures="0" errors="0" time="2.978">
+    <testsuite name="src/App.test.tsx" timestamp="2026-10-05T08:05:21.239Z" hostname="1c13474a30ae" tests="12" failures="0" errors="0" skipped="0" time="0.010755525">
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; sends TipTap selection text through rewrite request" time="0.002195483">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; accepts and rejects drafts only through explicit endpoints" time="0.000825483">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; cancels generation through the existing explicit endpoint" time="0.001855379">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; handles paragraph decisions" time="0.000264993">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; recognizes version conflicts" time="0.000133948">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; covers duplicate restore import and export endpoints" time="0.000419522">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; keeps Harness audit filters and explicit clear confirmation in the API contract" time="0.000893664">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; maps director shot constraints into an existing motion frame request" time="0.000396938">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; maps director dialogue to the existing speech synthesis request" time="0.00044536">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; batch synthesizes eligible director shots and skips incomplete ones" time="0.000416517">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; writes a created novel into the React Query cache before navigation" time="0.001311793">
+        </testcase>
+        <testcase classname="src/App.test.tsx" name="writer experience contracts &gt; does not load legacy local novels while a collaboration session is choosing scope" time="0.000148811">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/AppRevisionHistory.test.tsx" timestamp="2026-10-05T08:05:21.242Z" hostname="1c13474a30ae" tests="23" failures="0" errors="0" skipped="0" time="0.748293867">
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="refreshes mounted history when the server chapter advances from v2 to v3" time="0.124344126">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after project changes" time="0.016822874">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after branch changes" time="0.031281757">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after session changes" time="0.015779318">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after actor changes" time="0.01326919">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after workspace changes" time="0.01338444">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old revision-list responses after storyline changes" time="0.014178748">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="discards old selected-revision details after switching projects" time="0.029204639">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="ignores late restore completion after project navigation" time="0.035129838">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="ignores late restore completion after branch navigation" time="0.030373711">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="ignores late restore completion after session navigation" time="0.031458759">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="ignores late restore completion after actor navigation" time="0.02920571">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="ignores late restore completion after aba navigation" time="0.027023317">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="routes restore through actual App hydration without overwriting a newer dirty buffer" time="0.063532779">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="hydrates a clean buffer from the returned chapter without reloading" time="0.04253489">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="actual App preserves the new dirty buffer when old restore completes after project change" time="0.042069078">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="actual App preserves the new dirty buffer when old restore completes after branch change" time="0.04095588">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="actual App preserves the new dirty buffer when old restore completes after session change" time="0.044433933">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="actual App refreshes mounted history after chapter cache advances on AI Accept" time="0.028457913">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="StrictMode retains the first deferred history response and usable restore controls, collaboration=false" time="0.022060544">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="StrictMode retains the first deferred history response and usable restore controls, collaboration=true" time="0.025660097">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="StrictMode still ignores a late restore after a genuine unmount" time="0.016054716">
+        </testcase>
+        <testcase classname="src/AppRevisionHistory.test.tsx" name="StrictMode still fences a pending initial history request across a branch switch" time="0.009681294">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/RevisionHistory.independent-audit.test.tsx" timestamp="2026-10-05T08:05:21.245Z" hostname="1c13474a30ae" tests="3" failures="0" errors="0" skipped="0" time="0.14622892">
+        <testcase classname="src/RevisionHistory.independent-audit.test.tsx" name="initial history remains visible through live-root StrictMode=false" time="0.116721032">
+        </testcase>
+        <testcase classname="src/RevisionHistory.independent-audit.test.tsx" name="initial history remains visible through live-root StrictMode=true" time="0.026673399">
+        </testcase>
+        <testcase classname="src/RevisionHistory.independent-audit.test.tsx" name="history and restore fetch use captured context rather than changed API globals" time="0.001947766">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/RevisionPanel.test.tsx" timestamp="2026-10-05T08:05:21.246Z" hostname="1c13474a30ae" tests="4" failures="0" errors="0" skipped="0" time="0.074300011">
+        <testcase classname="src/RevisionPanel.test.tsx" name="RevisionPanel &gt; renders an accessible timeline and human-readable comparison" time="0.042795225">
+        </testcase>
+        <testcase classname="src/RevisionPanel.test.tsx" name="RevisionPanel &gt; requires explicit confirmation and submits both revision versions" time="0.014660311">
+        </testcase>
+        <testcase classname="src/RevisionPanel.test.tsx" name="RevisionPanel &gt; preserves the preview and persistent conflict after restore fails" time="0.011132273">
+        </testcase>
+        <testcase classname="src/RevisionPanel.test.tsx" name="RevisionPanel &gt; covers loading, empty, error, and unauthorized states" time="0.004905588">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/collaborationGuards.test.ts" timestamp="2026-10-05T08:05:21.246Z" hostname="1c13474a30ae" tests="7" failures="0" errors="0" skipped="0" time="0.014338534">
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; isolates recovery namespaces by opaque session without exposing the token" time="0.005712153">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; maps authorization and version failures without conflating them" time="0.004603901">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; drops a stale response after a scope switch" time="0.000428505">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; preserves local draft and server state as separate immutable conflict inputs" time="0.000706086">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; requires conflict hydration when a draft base is stale" time="0.000316138">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; retains and rebases durable edit B after in-flight save A succeeds" time="0.000374715">
+        </testcase>
+        <testcase classname="src/collaborationGuards.test.ts" name="collaboration transport contract &gt; coalesces rapid double save while the first request is in flight" time="0.000366002">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/generationRecovery.test.ts" timestamp="2026-10-05T08:05:21.248Z" hostname="1c13474a30ae" tests="2" failures="0" errors="0" skipped="0" time="0.00339491">
+        <testcase classname="src/generationRecovery.test.ts" name="generation recovery metadata &gt; persists only resumable task metadata in session storage" time="0.002229874">
+        </testcase>
+        <testcase classname="src/generationRecovery.test.ts" name="generation recovery metadata &gt; isolates chapters and clears completed work" time="0.000382076">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/uiContracts.test.ts" timestamp="2026-10-05T08:05:21.248Z" hostname="1c13474a30ae" tests="5" failures="0" errors="0" skipped="0" time="0.005990135">
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines every frozen layout token" time="0.0016468">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines one accent family and semantic states" time="0.001972212">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; builds the shell geometry from tokens" time="0.000374194">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the Inspector recoverable across desktop and narrow shell layouts" time="0.000359042">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the entry experience out of the legacy editor grid" time="0.000254146">
+        </testcase>
+    </testsuite>
+</testsuites>

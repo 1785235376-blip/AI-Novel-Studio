@@ -2,10 +2,11 @@ from __future__ import annotations
 import json
 from ...repository import FileRepository,read_json
 from ...storage import atomic_write,append_pending
+from ...privacy import privacy_record
 
 class FileCanonRepository:
     def __init__(self,backend:FileRepository):self.backend=backend
-    def list(self,novel_id):return read_json(self.backend.novels/novel_id/"canon.json",[])
+    def list(self,novel_id):return [privacy_record(row) for row in read_json(self.backend.novels/novel_id/"canon.json",[])]
     def _find(self,pending_id):
         for root in self.backend.novels.iterdir():
             path=root/"pending_canon"/f"{pending_id}.json"
@@ -22,6 +23,6 @@ class FileCanonRepository:
         root,path,item=self._find(pending_id)
         if proposals is not None:item["proposals"]=proposals
         item["status"]="APPROVED";atomic_write(path,json.dumps(item,ensure_ascii=False,indent=2))
-        canon=read_json(root/"canon.json",[]);canon.extend([{**p,"source":f"pending:{pending_id}","confidence":"USER_APPROVED"} for p in item.get("proposals",[])]);atomic_write(root/"canon.json",json.dumps(canon,ensure_ascii=False,indent=2));return item
+        canon=read_json(root/"canon.json",[]);canon.extend([{**privacy_record(p),"source":f"pending:{pending_id}","confidence":"USER_APPROVED"} for p in item.get("proposals",[])]);atomic_write(root/"canon.json",json.dumps(canon,ensure_ascii=False,indent=2));return item
     def reject(self,pending_id):
         _,path,item=self._find(pending_id);item["status"]="REJECTED";atomic_write(path,json.dumps(item,ensure_ascii=False,indent=2));return item

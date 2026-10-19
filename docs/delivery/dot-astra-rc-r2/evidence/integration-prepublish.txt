@@ -1,0 +1,5 @@
+Original R2 integration, isolated Linux, synthetic data only.
+Pre-publish full backend run: 1845 passed, 35 skipped, 1 failed. The sole failure was an outdated fake PostgreSQL Session lacking scalar after metadata FOR UPDATE locking; the fake was updated without relaxing production locking. Focused serialization/comparison recheck: 16 passed. Full rerun is pending.
+Frontend full suite: 103 files, 484 tests passed. Production build and design-token lint passed; large-chunk warning retained.
+Local browser launch is blocked by OS socket EPERM; no local browser assertions count as passed. Hosted CI will provide actual Chromium results.
+Current real providers, GPU, Windows interactive acceptance, full installer: NOT_RUN.

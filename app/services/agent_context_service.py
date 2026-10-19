@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timezone
 
 from ..agent_catalog import AGENTS
+from ..privacy import cloud_safe_context
 
 
 ROLE_SECTIONS = {
@@ -28,6 +29,19 @@ class AgentContextService:
             if section=="writing_context":payload[section]=self.context.build(novel_id,chapter_number,instruction,cloud,operation=agent_id)
             elif section=="outline":payload[section]=self.novels.get_outline(novel_id)
             else:payload[section]=self.novels.get_data_set(novel_id,section)
+        if cloud:
+            # Domain sections bypass the writing-context builder. Filter each
+            # source before constructing prompts; unknown provenance stays local.
+            for section, value in list(payload.items()):
+                if section == "writing_context":
+                    continue
+                if isinstance(value, list):
+                    payload[section] = cloud_safe_context(value)[0]
+                elif isinstance(value, dict):
+                    safe = cloud_safe_context([value])[0]
+                    payload[section] = safe[0] if safe else {}
+                else:
+                    payload[section] = {}
         chapter=self.chapters.get(f"{novel_id}:{chapter_number}")
         source_manifest=[{"section":key,"item_count":len(value) if isinstance(value,list) else (1 if value else 0)} for key,value in payload.items()]
         canonical=json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(",",":"),default=str)

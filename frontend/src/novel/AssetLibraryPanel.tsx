@@ -27,16 +27,32 @@ export function AssetLibraryPanel({
     input = useRef<HTMLInputElement>(null),
     [error, setError] = useState<unknown>(),
     [uploading, setUploading] = useState(false),
-    [kind, setKind] = useState("");
+    [kind, setKind] = useState(""),
+    [showTrash, setShowTrash] = useState(false);
   const assets = useQuery({
     queryKey: ["assets", novelId, kind, characterId, sceneId],
     queryFn: () => api.assets(novelId, kind || undefined, characterId, sceneId),
     enabled: !!novelId,
   });
   const remove = useMutation({
-    mutationFn: api.deleteAsset,
-    onSuccess: () =>
-      client.invalidateQueries({ queryKey: ["assets", novelId] }),
+    mutationFn: (assetId: string) => api.deleteAsset(assetId, novelId),
+    onSuccess: async (_, assetId) => {
+      if (selectedAssetId === assetId) onSelectAsset?.();
+      await client.invalidateQueries({ queryKey: ["assets", novelId] });
+      await client.invalidateQueries({ queryKey: ["asset-trash", novelId] });
+    },
+  });
+  const trash = useQuery({
+    queryKey: ["asset-trash", novelId],
+    queryFn: () => api.assetTrash(novelId),
+    enabled: !!novelId && showTrash,
+  });
+  const restore = useMutation({
+    mutationFn: (assetId: string) => api.restoreAsset(novelId, assetId),
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: ["assets", novelId] });
+      await client.invalidateQueries({ queryKey: ["asset-trash", novelId] });
+    },
   });
   async function upload(file?: File) {
     if (!file || !novelId || uploading) return;
@@ -149,7 +165,24 @@ export function AssetLibraryPanel({
           </select>
         </label>
         <small>{assets.data?.length || 0} 项资产</small>
+        <Button type="button" variant="ghost" disabled={!novelId} aria-pressed={showTrash}
+          onClick={() => setShowTrash(!showTrash)}>回收站</Button>
       </div>
+      <p className="novel-help">删除后原素材进入回收站，可恢复。已绑定的参考需重新审核后才能参与检索。</p>
+      {showTrash && <section aria-label="资产回收站">
+        <p className="novel-help">恢复前会校验原文件的大小和 SHA-256，损坏文件不会被恢复。</p>
+        {trash.isLoading && <p role="status">正在读取回收站…</p>}
+        {Boolean(trash.error) && <AssetError error={trash.error} fallback="回收站读取失败。"/>}
+        {Boolean(trash.error) && <Button variant="ghost" onClick={() => void trash.refetch()}>重试回收站</Button>}
+        {Boolean(restore.error) && <AssetError error={restore.error} fallback="资产恢复失败。"/>}
+        {!trash.isLoading && !trash.error && trash.data?.total === 0 && <p role="status">回收站为空。</p>}
+        {trash.data?.items.map(asset => <article key={asset.id}>
+          <span>{asset.filename}</span>
+          <Button variant="ghost" disabled={restore.isPending} onClick={() => restore.mutate(asset.id)}>
+            {restore.isPending && restore.variables === asset.id ? "恢复中…" : "恢复资产"}
+          </Button>
+        </article>)}
+      </section>}
       <div className="novel-record-list asset-library__grid">
         {assets.data?.map((asset) => (
           <AssetCard
@@ -158,7 +191,6 @@ export function AssetLibraryPanel({
             selected={selectedAssetId === asset.id}
             onSelect={() => onSelectAsset?.(asset)}
             onDelete={() => {
-              if (selectedAssetId === asset.id) onSelectAsset?.();
               remove.mutate(asset.id);
             }}
             deleting={remove.isPending && remove.variables === asset.id}
@@ -222,7 +254,7 @@ function AssetCard({
     return () => {
       active = false;
     };
-  }, [asset.id, asset.media_type]);
+  }, [asset.id, asset.media_type, asset.novel_id, asset.sha256]);
   useEffect(
     () => () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -265,6 +297,7 @@ function AssetCard({
             src={previewUrl || IMAGE_PLACEHOLDER_DATA_URI}
             alt={asset.filename}
             loading="lazy"
+            onError={() => setPreviewUrl("")}
             style={{
               maxWidth: "240px",
               maxHeight: "160px",

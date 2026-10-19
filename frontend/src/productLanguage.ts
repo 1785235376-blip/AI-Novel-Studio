@@ -1,5 +1,5 @@
 export type AiOperation = 'continue' | 'rewrite' | 'polish' | 'brainstorm' | 'review';
-export type GenerationStatus = 'QUEUED' | 'GENERATING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'ACCEPTED' | 'REJECTED';
+export type GenerationStatus = 'QUEUED' | 'GENERATING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'ACCEPTED' | 'REJECTED' | 'ACCEPTING' | 'ACCEPTANCE_UNCERTAIN';
 export type DomainRole = 'ADMIN' | 'DOMAIN_LEAD' | 'MEMBER';
 export type PermissionName = 'domain.read' | 'domain.write' | 'proposal.create' | 'proposal.review';
 export type ScopeKind = 'WORKSPACE' | 'PROJECT' | 'STORYLINE' | 'BRANCH' | 'CHAPTER';
@@ -20,7 +20,7 @@ export const generationStatusLabels: Record<GenerationStatus, string> = {
   COMPLETED: '生成完成',
   FAILED: '生成失败',
   CANCELLED: '已取消',
-  ACCEPTED: '已接受',
+  ACCEPTING: '采用中', ACCEPTANCE_UNCERTAIN: '采用结果待核对', ACCEPTED: '已接受',
   REJECTED: '已拒绝',
 };
 

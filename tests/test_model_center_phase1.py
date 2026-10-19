@@ -297,7 +297,10 @@ def test_runtime_probe_rejects_redirect_even_when_target_is_loopback():
         target.shutdown()
 
 
-def test_explicit_runtime_validation_can_probe_version():
+def test_explicit_runtime_validation_reads_passive_metadata_without_executing(monkeypatch):
+    calls=[]
+    monkeypatch.setattr("app.model_center.service.subprocess.run", lambda *args, **kwargs: calls.append(args))
+    monkeypatch.setattr("app.model_center.discovery_probes.platform.system", lambda: "Linux")
     definition = RuntimeDefinition(
         "python-version",
         RuntimeType.LLAMA_CPP,
@@ -305,7 +308,10 @@ def test_explicit_runtime_validation_can_probe_version():
         "http://127.0.0.1:54320",
     )
     result = RuntimeLifecycle().discover(definition, probe_version=True)
-    assert result["version"].startswith("Python ")
+    assert result["version"] is None
+    assert result["version_source"] == "NOT_VERIFIED"
+    assert result["executable_executed"] is False
+    assert calls == []
 
 
 def test_runtime_stop_refuses_unowned_process():

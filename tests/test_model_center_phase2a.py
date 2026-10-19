@@ -85,11 +85,14 @@ def test_llama_validation_checks_gguf_and_cuda_backend(tmp_path: Path, monkeypat
     center = create_default_model_center()
     values = llama_values(tmp_path)
     configured = center.configure_runtime_profile("llama-cpp-local", values)
-    class Version:
-        stdout = b"llama.cpp b7000 CUDA"
-        stderr = b""
-    monkeypatch.setattr("app.model_center.service.subprocess.run", lambda *_args, **_kwargs: Version())
+    # Synthetic passive Windows version resource + CUDA component, never a command.
+    monkeypatch.setattr("app.model_center.discovery_probes.executable_metadata",
+        lambda _path: {"version": "7.0.0.0", "version_source": "SYNTHETIC_WINDOWS_VERSION_RESOURCE"})
+    (tmp_path / "ggml-cuda.dll").write_bytes(b"SYNTHETIC_COMPONENT")
+    calls=[]
+    monkeypatch.setattr("app.model_center.service.subprocess.run", lambda *args, **kwargs: calls.append(args))
     assert center.validate_runtime(configured.id)["status"] == "READY"
+    assert calls == []
     Path(configured.model_path).write_bytes(b"nope")
     result = center.validate_runtime(configured.id)
     assert result["safe_error_code"] == "MODEL_FILE_INVALID"

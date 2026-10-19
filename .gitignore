@@ -36,3 +36,5 @@ database/backups/*
 !database/backups/.gitkeep
 *.dump
 *.bak
+/assets/fonts/*.ttf
+/assets/fonts/font-manifest.json

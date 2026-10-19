@@ -1,0 +1,76 @@
+{
+  "source_commit": "55a9082dbd3655c39a9b23bd4da19fedb3373072",
+  "run_id": 37281198873,
+  "job_id": 111669455843,
+  "backend": "actual PostgreSQL 16.15",
+  "artifact_id": 11332517596,
+  "artifact_sha256": "178c927c13961b457d1e14b3d7dc1403d1c634635c1dfe0a599edd26c1ecd445",
+  "revision_receipt": "checked_out_sha=55a9082dbd3655c39a9b23bd4da19fedb3373072\nevent_sha=55a9082dbd3655c39a9b23bd4da19fedb3373072\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37281198873\njob=backend-postgres\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+  "full_suite": {
+    "passed": 2144,
+    "skipped": 37,
+    "failed": 0
+  },
+  "new_controls": [
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_stale_generation_base_cannot_be_rebased[omitted]",
+      "time": "0.072",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_stale_generation_base_cannot_be_rebased[generation_base]",
+      "time": "0.070",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_stale_generation_base_cannot_be_rebased[new_current]",
+      "time": "0.072",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_concurrent_acceptance_has_one_durable_claim_and_proposal",
+      "time": "0.353",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_partial_acceptance_blocks_replay_after_manager_reopen",
+      "time": "0.355",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_interrupted_accepting_claim_survives_manager_reopen",
+      "time": "0.064",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_spawned_processes_accept_once_with_one_proposal",
+      "time": "1.816",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_acceptance_postgres",
+      "test": "test_postgres_fresh_child_cannot_replay_interrupted_claim",
+      "time": "1.683",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_dispatch_postgres",
+      "test": "test_postgres_character_policy_revocation_blocks_agent_dispatch[route_preparation]",
+      "time": "0.126",
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r2_dispatch_postgres",
+      "test": "test_postgres_character_policy_revocation_blocks_agent_dispatch[normalized_provider_resolution]",
+      "time": "0.139",
+      "status": "PASS"
+    }
+  ]
+}

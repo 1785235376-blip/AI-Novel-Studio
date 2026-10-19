@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest';
-import {isGenerationTerminal,isRecoveredDraftStale,recoverGenerationJob,VARIANT_TIMEOUT_ERROR,workingVariantIds} from './App';
+import {draftStateFromGeneration,isGenerationTerminal,isRecoveredDraftStale,recoverGenerationJob,VARIANT_TIMEOUT_ERROR,workingVariantIds} from './App';
 import {generationFailureMessage} from './novel/AiWritingPanel';
 
 describe('variant generation cancellation',()=>{
@@ -40,3 +40,10 @@ describe('variant generation cancellation',()=>{
     expect(isRecoveredDraftStale(undefined,4)).toBe(false);
   });
 });
+
+ it('never presents an in-flight or ambiguous acceptance as a ready draft',()=>{
+   expect(draftStateFromGeneration('ACCEPTING')).toBe('working');
+   expect(draftStateFromGeneration('ACCEPTANCE_UNCERTAIN')).toBe('failed');
+   expect(draftStateFromGeneration('COMPLETED')).toBe('ready');
+   expect(draftStateFromGeneration('UNRECOGNIZED')).toBe('failed');
+ });

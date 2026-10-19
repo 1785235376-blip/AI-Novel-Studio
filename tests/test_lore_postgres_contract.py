@@ -58,9 +58,6 @@ def test_real_postgres_memory_agent_creates_pending_only(bundle):
  with bundle.novels.database.session() as s:
   novel=s.scalar(select(NovelModel).where(NovelModel.slug==nid));s.add(CharacterModel(novel_id=novel.id,slug="lin",name="Lin",facts={}))
  output=json.dumps({"proposals":[{"proposal_type":"CHARACTER_MEMORY","payload":{"character_id":"lin","memory_type":"STATE_CHANGE","content":{"state":"changed"}},"confidence":.8,"evidence":[{"chapter_id":chapter["id"],"chapter_version":saved["version"],"excerpt":"Lin changed.","locator":{"kind":"DOCUMENT_RANGE","from":1,"to":12}}]}]})
- class R:
-  def generate(self,*a):return Generation(output,"fake","memory")
- class RT:
-  def router(self,*a):return R()
- agent=MemoryAgentRunner(bundle.novels,bundle.chapters,LoreService(bundle.lore),GenerationService(bundle.generations),AgentRunner(AgentRegistry()),RT());ids=agent.extract(nid,chapter["id"],saved["version"],job_id="agent-pg-job")
+ from test_memory_agent_contract import Runtime
+ agent=MemoryAgentRunner(bundle.novels,bundle.chapters,LoreService(bundle.lore),GenerationService(bundle.generations),AgentRunner(AgentRegistry()),Runtime(output));ids=agent.extract(nid,chapter["id"],saved["version"],job_id="agent-pg-job")
  assert len(ids)==1 and bundle.lore.get_proposal(ids[0])["status"]=="PENDING" and bundle.lore.list_memories(nid)==[]

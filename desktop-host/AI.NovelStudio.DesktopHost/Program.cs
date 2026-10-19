@@ -203,7 +203,19 @@ internal sealed class DesktopWindow : Form
             webView.Source = new Uri(launch.frontend_origin);
             Trace("NAVIGATION_STARTED");
         }
-        catch (WebViewRuntimeUnavailable) { throw; }
+        catch (Exception exception) when (exception is WebView2RuntimeNotFoundException or WebViewRuntimeUnavailable)
+        {
+            // The SDK throws when Evergreen is missing. Handle it here rather
+            // than rethrowing through the asynchronous WinForms Shown event.
+            Trace("WEBVIEW_RUNTIME_UNAVAILABLE");
+            WriteStatus("DESKTOP_WEBVIEW_UNAVAILABLE");
+            Console.Out.WriteLine("DESKTOP_WEBVIEW_UNAVAILABLE");
+            Console.Out.Flush();
+            MessageBox.Show(
+                "AI-Novel-Studio 需要 Windows WebView2 运行组件。请完成运行组件安装后重新启动应用。",
+                "AI-Novel-Studio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Close();
+        }
         catch (Exception exception)
         {
             Trace($"WEBVIEW_EXCEPTION={exception.GetType().Name}");

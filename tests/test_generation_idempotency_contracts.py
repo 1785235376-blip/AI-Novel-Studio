@@ -2,6 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier, Thread
 
 import pytest
+import hashlib
+import json
 from fastapi.testclient import TestClient
 
 from app.idempotency import IdempotencyStore
@@ -33,10 +35,29 @@ def isolated_generation_idempotency_store(tmp_path, monkeypatch):
     return store
 
 
+@pytest.fixture(autouse=True)
+def synthetic_chapter_authority(monkeypatch):
+    # These tests replace the executor; its synthetic chapter must now also be
+    # present at the mandatory pre-idempotency ownership check.
+    import app.api as api
+    monkeypatch.setattr(api.chapter_service, "get", lambda cid: {"id": cid, "novel_id": "n", "version": 1})
+
+
+def scoped_cache_key(operation, key):
+    authority = ["n", "c", "local-author", "local", None]
+    return "generate:" + operation + ":" + hashlib.sha256(json.dumps(authority).encode()).hexdigest() + ":" + key
+
+
+def cached_envelope():
+    from app.api import GenerateIn
+    payload = GenerateIn(**PAYLOAD).model_dump(exclude={"count"})
+    return {"request_digest": hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), "result": CACHED}
+
+
 def test_generation_replay_returns_cached_result_without_creating(monkeypatch, isolated_generation_idempotency_store):
     from app.api import jobs
 
-    isolated_generation_idempotency_store.put("generate:continue:replay-key", CACHED)
+    isolated_generation_idempotency_store.put(scoped_cache_key("continue", "replay-key"), cached_envelope())
     created = []
 
     def create(*args, **kwargs):
@@ -57,7 +78,7 @@ def test_generation_replay_returns_cached_result_without_creating(monkeypatch, i
 def test_generation_replay_contract_is_stable_across_repeats(monkeypatch, isolated_generation_idempotency_store):
     from app.api import jobs
 
-    isolated_generation_idempotency_store.put("generate:continue:replay-stable", CACHED)
+    isolated_generation_idempotency_store.put(scoped_cache_key("continue", "replay-stable"), cached_envelope())
     created = []
 
     def create(*args, **kwargs):
@@ -145,7 +166,7 @@ def test_generation_create_failure_is_not_cached_and_releases_lock(monkeypatch, 
     client = TestClient(app, raise_server_exceptions=False)
     first = client.post("/api/generate/continue", headers={"Idempotency-Key": "err-key"}, json=PAYLOAD)
     assert first.status_code == 500
-    assert isolated_generation_idempotency_store.get("generate:continue:err-key") is None
+    assert isolated_generation_idempotency_store.get(scoped_cache_key("continue", "err-key")) is None
     box = {}
 
     def retry():

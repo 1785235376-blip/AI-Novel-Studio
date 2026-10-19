@@ -85,7 +85,7 @@ class AdaptationService:
             mapping=item["blueprint"]["chapter_map"][index]
             manifest.append({"id":str(uuid4()),"source_chapter_id":source["chapter_id"],"source_version":source["version"],"target_chapter_id":target["id"],"unit":mapping["unit"],"action":mapping["action"],"status":"PENDING_REWRITE"})
         return self.novels.save_adaptation_proposal(novel_id,{**item,"execution_manifest":manifest,"execution_status":"PENDING_REWRITE","updated_at":datetime.now(timezone.utc).isoformat()})
-    def generate_draft(self,novel_id,proposal_id,task_id,mode="deterministic",provider=None,model=None):
+    def generate_draft(self,novel_id,proposal_id,task_id,mode="deterministic",provider=None,model=None,branch_id=None,reauthorize=None):
         item=self.get(novel_id,proposal_id);tasks=list(item.get("execution_manifest",[]));index=next((i for i,row in enumerate(tasks) if row["id"]==task_id),None)
         if index is None:raise KeyError(task_id)
         task=tasks[index]
@@ -98,9 +98,19 @@ class AdaptationService:
         try:
             if mode=="model":
                 if not provider or not model:raise ValueError("model generation requires provider and model")
+                from ..source_privacy import assert_current_manuscript_egress
+                cloud = self.runtime.is_remote_text_provider(provider)
+                def dispatch_guard():
+                    if reauthorize is not None:
+                        reauthorize()
+                    if cloud:
+                        if source.get("version") != task["source_version"]:
+                            raise ValueError("历史改编来源没有当前正文的云端授权，请使用本地模型。")
+                        assert_current_manuscript_egress(self.chapters, self.novels, novel_id, source, branch_id)
                 context={"adaptation_target":item["target"],"blueprint":item["blueprint"],"unit":task["unit"],"action":task["action"],"source_chapter_id":task["source_chapter_id"],"source_version":task["source_version"]}
                 prompt=self.agent_runner.build_prompt("writer",context,"Rewrite the source chapter according to the approved adaptation blueprint. Return JSON only with keys: schema, summary, content, source_chapter_id, source_version.",source_text)
-                node=self.runtime.prepare_text_route(provider,model,self.runtime.providers.get(provider));request=TextGenerationRequest(provider_id=provider,model_id=model,prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.4),metadata={"purpose":"adaptation_rewrite"},job_id=task_id)
+                node=self.runtime.prepare_text_route(provider,model,self.runtime.providers.get(provider));request=TextGenerationRequest(provider_id=provider,model_id=model,prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.4),metadata={"purpose":"adaptation_rewrite"},job_id=task_id,dispatch_guard=dispatch_guard)
+                dispatch_guard()
                 response=node.execute(TextModelNodeInput(request)).response;parsed=json.loads(response.text)
                 if parsed.get("schema")!="adaptation_chapter_draft" or parsed.get("source_chapter_id")!=task["source_chapter_id"] or parsed.get("source_version")!=task["source_version"] or not str(parsed.get("content","")).strip():raise ValueError("adaptation draft contract mismatch")
                 draft={**parsed,"target_chapter_id":task["target_chapter_id"],"unit":task["unit"],"action":task["action"],"generation_mode":"model","provider":response.provider_id,"model":response.model_id}
@@ -109,7 +119,7 @@ class AdaptationService:
             tasks[index]={**task,"status":"AWAITING_REVIEW","draft":draft,"generated_at":datetime.now(timezone.utc).isoformat()}
         except Exception as exc:
             code=exc.code.value if isinstance(exc,ModelRuntimeError) else "INVALID_ADAPTATION_DRAFT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "ADAPTATION_GENERATION_FAILED"
-            tasks[index]={**task,"status":"FAILED","error_code":code,"error":str(exc),"generated_at":datetime.now(timezone.utc).isoformat()}
+            tasks[index]={**task,"status":"FAILED","error_code":code,"error":"改编生成失败；来源权限、隐私或模型输出未通过检查。","generated_at":datetime.now(timezone.utc).isoformat()}
         updated={**item,"execution_manifest":tasks,"execution_status":"AWAITING_REVIEW" if tasks[index]["status"]=="AWAITING_REVIEW" else "FAILED","updated_at":datetime.now(timezone.utc).isoformat()};self.novels.save_adaptation_proposal(novel_id,updated);return tasks[index]
     def review_draft(self,novel_id,proposal_id,task_id,decision,note=""):
         if decision not in {"ACCEPTED","REJECTED"}:raise ValueError("invalid adaptation review decision")

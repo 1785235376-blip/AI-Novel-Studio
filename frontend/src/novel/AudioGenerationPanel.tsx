@@ -1,5 +1,6 @@
 import {useEffect,useMemo,useState} from 'react';
 import {api,apiErrorView} from '../api';
+import {CloudPromptConsent,useScopedRequestConsent} from '../useScopedRequestConsent';
 import {Badge,Button,Panel,StatusMessage} from '../ui/primitives';
 
 type Capability='TEXT_TO_AUDIO'|'AUDIO_EDIT'|'VIDEO_TO_AUDIO'|'SFX'|'FOLEY'|'MUSIC';
@@ -11,12 +12,14 @@ export function AudioGenerationPanel({novelId}:{novelId:string}){
   const [providers,setProviders]=useState<Provider[]>([]),[providerId,setProviderId]=useState('auto'),[modelId,setModelId]=useState('');
   const [prompt,setPrompt]=useState('为当前场景制作有空间层次、不过度抢对白的环境音。'),[sourceUri,setSourceUri]=useState(''),[duration,setDuration]=useState(8);
   const [loading,setLoading]=useState(false),[error,setError]=useState(''),[result,setResult]=useState<{provider_id:string;model_id:string;audio_uri:string;status:string;remote_task_id?:string}>();
-  useEffect(()=>{api.audioProviders().then(data=>setProviders(data.items||[])).catch(()=>setError('音频 Provider 目录读取失败，请检查本地服务。'))},[]);
+  const consent=useScopedRequestConsent([novelId,providerId,modelId,prompt,sourceUri,capability,duration]);
+  useEffect(()=>{setResult(undefined);setError('');setLoading(false)},[consent.requestKey]);
+  useEffect(()=>{let active=true;api.audioProviders().then(data=>{if(active)setProviders(data.items||[])}).catch(()=>{if(active)setError('音频 Provider 目录读取失败，请检查本地服务。')});return()=>{active=false}},[consent.scopeKey]);
   const supported=useMemo(()=>providers.filter(item=>item.capabilities.includes(capability)),[providers,capability]);
   useEffect(()=>{if(providerId!=='auto'&&!supported.some(item=>item.provider_id===providerId)){setProviderId('auto');setModelId('')}},[capability,providerId,supported]);
   const needsAudio=capability==='AUDIO_EDIT',needsVideo=capability==='VIDEO_TO_AUDIO';
   const sourceValid=!needsAudio&&!needsVideo||/^https?:\/\//i.test(sourceUri)||/^data:(audio|video)\//i.test(sourceUri);
-  async function generate(){setLoading(true);setError('');setResult(undefined);try{const data=await api.audioGenerate({provider_id:providerId,model_id:modelId.trim()||undefined,capability,prompt:prompt.trim(),source_audio_uri:needsAudio?sourceUri.trim()||undefined:undefined,source_video_uri:needsVideo?sourceUri.trim()||undefined:undefined,duration_seconds:duration,novel_id:novelId});setResult(data)}catch(reason){setError(apiErrorView(reason,'音频任务提交失败，请检查对应 Provider 是否已部署或配置。').message)}finally{setLoading(false)}}
+  async function generate(){if(loading)return;const current=consent.begin();setLoading(true);setError('');setResult(undefined);try{const data=await api.audioGenerate({provider_id:providerId,model_id:modelId.trim()||undefined,capability,prompt:prompt.trim(),source_audio_uri:needsAudio?sourceUri.trim()||undefined:undefined,source_video_uri:needsVideo?sourceUri.trim()||undefined:undefined,duration_seconds:duration,novel_id:novelId,allow_cloud_prompt:providerId!=='auto'&&consent.allowed});if(current())setResult(data)}catch(reason){if(current())setError(apiErrorView(reason,'音频任务提交失败，请检查对应 Provider 是否已部署或配置。').message)}finally{if(current())setLoading(false)}}
   return <Panel title="音频制作" actions={<Badge tone="info">本地优先</Badge>}>
     <label>制作类型<select aria-label="音频制作类型" value={capability} onChange={event=>setCapability(event.target.value as Capability)}>{options.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
     <label>Provider<select aria-label="音频制作 Provider" value={providerId} onChange={event=>{const id=event.target.value;setProviderId(id);setModelId(supported.find(item=>item.provider_id===id)?.default_model||'')}}><option value="auto">自动选择（本地优先）</option>{supported.map(item=><option key={item.provider_id} value={item.provider_id}>{item.display_name}{item.local?' · 本地':''}</option>)}</select></label>
@@ -25,6 +28,7 @@ export function AudioGenerationPanel({novelId}:{novelId:string}){
     {(needsAudio||needsVideo)&&<label>{needsAudio?'源音频地址':'源视频地址'}<input aria-label={needsAudio?'源音频地址':'源视频地址'} value={sourceUri} onChange={event=>setSourceUri(event.target.value)} placeholder="https://... 或 data:..."/></label>}
     <label>目标时长（秒）<input aria-label="音频目标时长" type="number" min="1" max="600" value={duration} onChange={event=>setDuration(Math.max(1,Math.min(600,Number(event.target.value)||1)))}/></label>
     {!sourceValid&&<StatusMessage tone="error">来源必须使用 http(s)、data:audio 或 data:video 地址。</StatusMessage>}
+    <CloudPromptConsent target={`${providerId} / ${modelId || "默认模型"}`} automatic={providerId==='auto'} checked={consent.allowed} onChange={consent.setAllowed}/>
     <Button loading={loading} disabled={loading||!prompt.trim()||!sourceValid} onClick={generate}>{result?.status==='FAILED'?'重新提交':'生成音频'}</Button>
     {!supported.length&&<p className="novel-help">当前目录没有支持此制作类型的 Provider。请在本机部署对应模型，或配置支持该能力的云端服务。</p>}
     {error&&<StatusMessage tone="error">{error}</StatusMessage>}

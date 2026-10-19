@@ -3,6 +3,7 @@ import {Activity,FileText,Play,RefreshCw,Settings2,ShieldAlert,Square,X} from 'l
 import {ApiError,api,type ModelCenterModel,type ModelCenterPipeline,type ModelCenterRuntime,type ModelCenterRuntimeConfiguration,type RuntimeCapabilitySnapshot,type RuntimeDiagnostics} from '../api';
 import {Badge,Button,EmptyState,Panel,StatusMessage} from './primitives';
 import './ModelCenter.css';
+import {LocalAiDiscovery} from './LocalAiDiscovery';
 
 const authCodes=['SESSION_REQUIRED','INVALID_SESSION'];
 
@@ -56,6 +57,7 @@ export function ModelCenter(){
  const field=(key:keyof ModelCenterRuntimeConfiguration,label:string,type='text')=><label>{label}<input type={type} value={String(configuration?.[key]??'')} onChange={event=>setConfiguration(current=>current?{...current,[key]:type==='number'?Number(event.target.value):event.target.value}:current)}/></label>;
  return <div className="model-center">
   {error&&<StatusMessage tone="error">{error}</StatusMessage>}
+  <LocalAiDiscovery canMutate={canMutate} onRegistryChange={()=>void refresh()}/>
   <Panel title="Model Center" actions={<Button variant="ghost" onClick={()=>void refresh()} disabled={loading}><RefreshCw aria-hidden="true"/>刷新</Button>}>
    {loading?<div role="status">正在读取模型注册表…</div>:!models.length?<EmptyState title="暂无模型" detail="注册本地模型后会显示在这里。"/>:<div className="model-center__models">{models.map(model=><article key={model.id}><header><div><strong>{model.display_name}</strong><small>{model.runtime_type}</small></div><Badge tone={model.status==='READY'?'success':model.status==='INCOMPATIBLE'?'error':'warning'}>{model.status}</Badge></header><div className="model-center__capabilities">{model.capabilities.map(item=><Badge key={item}>{item}</Badge>)}</div><dl><div><dt>验证</dt><dd>{model.verified?'Current Verified':model.historically_validated?'Historical Validation / Verified Baseline':'未完成推理验证'}</dd></div><div><dt>硬件</dt><dd>{model.hardware_profile_details[0]?.gpu_name||'未记录'}</dd></div></dl></article>)}</div>}
   </Panel>

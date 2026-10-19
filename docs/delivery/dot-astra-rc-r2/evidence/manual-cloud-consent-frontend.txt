@@ -1,0 +1,274 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 252ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (23 tests) 415ms
+ ✓ src/ui/AppShell.test.tsx (16 tests) 439ms
+ ✓ src/novel/ResearchPanel.test.tsx (14 tests) 831ms
+ ✓ src/novel/PluginManagerPanel.test.tsx (15 tests) 783ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 894ms
+ ✓ src/manualPromptConsent.test.tsx (17 tests) 835ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 1413ms
+   ✓ ExportPanel industry formats > submits Fountain 剧本 through the authenticated durable queue 353ms
+ ✓ src/novel/PluginInspector.test.tsx (8 tests) 238ms
+ ✓ src/novel/EntryExperience.test.tsx (10 tests) 707ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 491ms
+ ✓ src/novel/AiWritingPanel.test.tsx (12 tests) 467ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (7 tests) 537ms
+ ✓ src/novel/MultimodalDirectorWorkspace.test.tsx (11 tests) 722ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 278ms
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 518ms
+ ✓ src/ConflictDialog.test.tsx (6 tests) 83ms
+ ✓ src/novel/AiContextPreviewPanel.test.tsx (5 tests) 221ms
+ ✓ src/novel/VideoTimeline.test.tsx (12 tests) 129ms
+ ✓ src/novel/AIPlanningPanel.test.tsx (6 tests) 256ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 307ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 1211ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 89ms
+ ✓ src/novel/AiWritingVariants.test.tsx (6 tests) 482ms
+ ✓ src/novel/NovelImportPanel.test.tsx (3 tests) 102ms
+ ✓ src/novel/MotionTaskWorkspace.test.tsx (5 tests) 172ms
+ ✓ src/novel/VisualReferencePanel.test.tsx (3 tests) 216ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 111ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 856ms
+   ✓ rediscovers the same durable job and snapshot after full remount and downloads it 496ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 121ms
+ ✓ src/ui/FeatureLauncher.test.tsx (5 tests) 357ms
+ ✓ src/novel/ImageInfiniteCanvas.test.tsx (6 tests) 259ms
+ ✓ src/novel/VisualTextWorkflow.test.tsx (3 tests) 166ms
+ ✓ src/novel/DirectorShotList.test.tsx (6 tests) 208ms
+ ✓ src/novel/useMultimodalWorkspacePersistence.test.ts (7 tests) 43ms
+ ✓ src/novel/ChapterTree.test.tsx (5 tests) 310ms
+ ✓ src/PermissionManagement.test.tsx (3 tests) 77ms
+ ✓ src/novel/CreationWorkbenchPanel.test.tsx (4 tests) 234ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 121ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 242ms
+ ✓ src/novel/WorldTimelineView.test.tsx (3 tests) 176ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 57ms
+ ✓ src/novel/ChapterTree.lifecycle.test.tsx (5 tests) 263ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 140ms
+ ✓ src/novel/SourcePrivacyControl.test.tsx (2 tests) 139ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 265ms
+ ✓ src/novel/WorldRelationshipGraph.test.tsx (4 tests) 171ms
+ ✓ src/novel/WorldBuildingDashboard.test.tsx (4 tests) 145ms
+ ✓ src/novel/SpeechSynthesisPanel.test.tsx (3 tests) 220ms
+ ✓ src/novel/GenerationWorkflowTimeline.test.tsx (7 tests) 99ms
+ ✓ src/novel/DirectorShotCard.test.tsx (4 tests) 135ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 8ms
+ ✓ src/novel/ContinuityCheckPanel.test.tsx (2 tests) 138ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 145ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 270ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 178ms
+ ✓ src/novel/RuntimeDiagnostics.test.tsx (3 tests) 115ms
+ ✓ src/novel/AudioGenerationPanel.test.tsx (2 tests) 179ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 5ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 104ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 116ms
+ ✓ src/novel/NovelOverviewPanel.test.tsx (1 test) 71ms
+ ✓ src/novel/StoryPlanningWorkspace.test.tsx (2 tests) 92ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 139ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 76ms
+ ✓ src/novel/ConstraintImportPreview.test.tsx (2 tests) 92ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 168ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 16ms
+ ✓ src/novel/SceneEditor.test.tsx (1 test) 113ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 81ms
+ ✓ src/novel/ScreenplayPanel.motion-binding.test.ts (2 tests) 6ms
+ ✓ src/novel/ForeshadowingEditor.test.tsx (1 test) 97ms
+ ✓ src/novel/useMultimodalBindingManifest.test.ts (2 tests) 19ms
+ ✓ src/novel/StoryDatabase.test.tsx (2 tests) 85ms
+ ✓ src/novel/ImageTaskInspector.test.tsx (2 tests) 60ms
+ ✓ src/novel/VisualContextPanel.test.tsx (2 tests) 58ms
+ ✓ src/novel/RelationshipEditor.test.tsx (1 test) 153ms
+ ✓ src/novel/TimelineEditor.test.tsx (1 test) 110ms
+ ❯ src/novel/MotionPrivacyPanel.test.tsx (1 test | 1 failed) 1120ms
+   × requires visible current prompt review before approving an exact hash 1120ms
+     → expected "updateMotionPrivacy" to be called with arguments: [ 'project-a', 'screenplay-a', …(3) ]
+
+Received:
+
+  1st updateMotionPrivacy call:
+
+  Array [
+    "project-a",
+    "screenplay-a",
+    "task-a",
+    "CLOUD_ALLOWED",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
++   undefined,
+  ]
+
+
+Number of calls: 1
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"视频提示隐私审核"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m审核云端发送内容[0m
+        [36m</button>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m当前提示：[0m
+          [0mSynthetic camera pan[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m策略：[0m
+          [0mCLOUD_ALLOWED[0m
+          [0m · 目标：[0m
+          [0mfixture[0m
+          [0m/[0m
+          [0mfixture-model[0m
+          [0m。允许云端仅适用于这份提示、帧引用与参数；本地参考图继续遵守独立隐私限制。[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m帧引用与参数：[0m
+          [0m{}[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m允许向所选云 Provider 发送此提示[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m仅本地处理[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ✓ src/novel/OutlineEditor.test.tsx (1 test) 89ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 70ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 43ms
+ ✓ src/novel/StoryRouteEditor.test.tsx (1 test) 103ms
+ ✓ src/generationRecovery.test.ts (2 tests) 3ms
+ ✓ src/novel/CharacterEditor.test.tsx (1 test) 127ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 89ms
+ ✓ src/novel/VolumeEditor.test.tsx (1 test) 136ms
+ ✓ src/novel/WorkflowInspector.test.tsx (2 tests) 88ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 59ms
+ ✓ src/novel/LocationEditor.test.tsx (1 test) 142ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 8ms
+ ✓ src/novel/DirectorVoiceToolbar.test.tsx (1 test) 40ms
+ ✓ src/contracts.test.ts (7 tests) 14ms
+ ✓ src/e2eDatabaseContract.test.ts (20 tests) 407ms
+   ✓ E2E database environment contract > keeps the DSN out of Playwright commands and scopes each child environment 351ms
+ ✓ src/novel/BindingManifestPanel.test.tsx (1 test) 32ms
+ ✓ src/novel/WorldSummaryEditor.test.tsx (1 test) 103ms
+ ✓ src/packagedHost.test.ts (7 tests) 8ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 3ms
+ ✓ src/productLanguage.test.ts (4 tests) 6ms
+ ✓ src/novel/ChapterTree.css.test.ts (4 tests) 3ms
+ ✓ tests/uiContracts.test.ts (5 tests) 4ms
+ ✓ src/novel/importRecovery.test.ts (2 tests) 7ms
+ ✓ src/sourcePrivacyApi.test.ts (1 test) 3ms
+ ✓ src/Editor.typography.test.ts (3 tests) 5ms
+ ✓ src/novel/MotionTaskBatchControls.test.ts (1 test) 6ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 1100ms
+ ✓ src/generationVariants.test.ts (6 tests) 4ms
+ ✓ src/App.test.tsx (12 tests) 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/novel/MotionPrivacyPanel.test.tsx > requires visible current prompt review before approving an exact hash
+AssertionError: expected "updateMotionPrivacy" to be called with arguments: [ 'project-a', 'screenplay-a', …(3) ]
+
+Received:
+
+  1st updateMotionPrivacy call:
+
+  Array [
+    "project-a",
+    "screenplay-a",
+    "task-a",
+    "CLOUD_ALLOWED",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
++   undefined,
+  ]
+
+
+Number of calls: 1
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"视频提示隐私审核"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m审核云端发送内容[0m
+        [36m</button>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m当前提示：[0m
+          [0mSynthetic camera pan[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m策略：[0m
+          [0mCLOUD_ALLOWED[0m
+          [0m · 目标：[0m
+          [0mfixture[0m
+          [0m/[0m
+          [0mfixture-model[0m
+          [0m。允许云端仅适用于这份提示、帧引用与参数；本地参考图继续遵守独立隐私限制。[0m
+        [36m</p>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"novel-help"[39m
+        [36m>[39m
+          [0m帧引用与参数：[0m
+          [0m{}[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+        [36m>[39m
+          [0m允许向所选云 Provider 发送此提示[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"ui-button ui-button--ghost"[39m
+        [36m>[39m
+          [0m仅本地处理[0m
+        [36m</button>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ src/novel/MotionPrivacyPanel.test.tsx:15:35
+     13|  expect(await screen.findByText(/Synthetic camera pan/)).toBeTruthy();
+     14|  fireEvent.click(screen.getByRole('button',{name:'允许向所选云 Provide…
+     15|  await waitFor(()=>expect(update).toHaveBeenCalledWith('project-a','sc…
+       |                                   ^
+     16|  expect(screen.getByText(/fixture\/fixture-model/)).toBeTruthy();
+     17| });
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 107 passed (108)
+      Tests  1 failed | 547 passed (548)
+   Start at  23:41:48
+   Duration  14.60s (transform 5.13s, setup 0ms, collect 23.69s, tests 24.53s, environment 36.78s, prepare 6.90s)

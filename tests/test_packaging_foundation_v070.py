@@ -72,8 +72,10 @@ def test_backend_and_documentation_mismatches_fail_explicitly(tmp_path: Path):
 def test_format_versions_remain_separate_from_application_version():
     backup = (ROOT / "scripts" / "backup.ps1").read_text(encoding="utf-8")
     export = (ROOT / "scripts" / "export-project.ps1").read_text(encoding="utf-8")
-    assert "backup_version='0.1.0'" in backup
-    assert "app_version=(Get-ReleaseVersion $root)" in backup
+    from app.backup_restore import FORMAT_VERSION
+    assert FORMAT_VERSION == "0.2.0"
+    assert "--app-version',(Get-ReleaseVersion $root)" in backup
+    assert "app.backup_restore" in backup
     assert "version='0.1.0'" in export
     assert "app_version=(Get-ReleaseVersion $root)" in export
 

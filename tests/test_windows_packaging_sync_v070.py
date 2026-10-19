@@ -44,8 +44,11 @@ def test_formal_application_fails_closed_and_records_all_product_components():
     assert "frontend = [ordered]@{" in source
     assert "backend = [ordered]@{" in source
     assert "desktophost = [ordered]@{" in source
-    assert "CPython 3.12.10 x64" in source
-    assert "PostgreSQL 16.4 x64" in source
+    assert "python_runtime = (& (Join-Path $baseApplicationPath" in source
+    assert "postgresql_runtime = (& (Join-Path $baseApplicationPath" in source
+    assert "--version)" in source
+    assert "font_inventory = $fontInventory" in source
+    assert "Complete pinned OFL license is required" in source
     assert "dotnet_executable = $dotnetExecutable" in source
     assert "dotnet_sdk_version = $sdkVersion" in source
     assert "dotnet_sdk_base_path = $sdkBasePath" in source

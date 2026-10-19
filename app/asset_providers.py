@@ -1,6 +1,7 @@
 import base64
 import time
-from dataclasses import dataclass
+from urllib.parse import quote
+from dataclasses import dataclass, field
 from typing import Protocol
 IMAGE_PROVIDER_CATALOG={
     "comfyui":{"display_name":"ComfyUI（本地）","endpoint":"http://127.0.0.1:8188","default_model":"","api_style":"comfyui","local":True,"requires_credential":False},
@@ -13,12 +14,26 @@ IMAGE_PROVIDER_CATALOG={
 DEFAULT_IMAGE_ENDPOINTS={key:value["endpoint"] for key,value in IMAGE_PROVIDER_CATALOG.items()}
 DEFAULT_IMAGE_MODELS={key:value["default_model"] for key,value in IMAGE_PROVIDER_CATALOG.items()}
 
+def validate_image_parameters(parameters: dict, allowed=None) -> dict:
+    known={'size','quality','width','height','steps','seed','negative_prompt'}
+    if set(parameters)-known or (allowed is not None and set(parameters)-set(allowed)):
+        raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
+    for key in ('width','height'):
+        if key in parameters and (not isinstance(parameters[key],int) or isinstance(parameters[key],bool) or not 64<=parameters[key]<=2048 or parameters[key]%8): raise ValueError('image dimensions must be multiples of 8 between 64 and 2048')
+    if 'steps' in parameters and (not isinstance(parameters['steps'],int) or isinstance(parameters['steps'],bool) or not 1<=parameters['steps']<=150):raise ValueError('invalid image step count')
+    if 'seed' in parameters and (not isinstance(parameters['seed'],int) or isinstance(parameters['seed'],bool) or not 0<=parameters['seed']<=2147483647):raise ValueError('invalid image seed')
+    if 'size' in parameters and parameters['size'] not in {'auto','1024x1024','1536x1024','1024x1536'}:raise ValueError('unsupported image size')
+    if 'quality' in parameters and parameters['quality'] not in {'auto','low','medium','high','standard','hd'}:raise ValueError('unsupported image quality')
+    if 'negative_prompt' in parameters and (not isinstance(parameters['negative_prompt'],str) or len(parameters['negative_prompt'])>10000):raise ValueError('invalid negative prompt')
+    return dict(parameters)
+
 @dataclass(frozen=True)
 class AssetGenerationRequest:
     provider_id: str
     model_id: str
     prompt: str
     task_id: str
+    parameters: dict = field(default_factory=dict)
 
 @dataclass(frozen=True)
 class AssetGenerationResult:
@@ -90,6 +105,7 @@ class VideoGenerationRequest:
     end_frame: str
     task_id: str
     idempotency_key: str | None = None
+    parameters: dict = field(default_factory=dict)
 
 @dataclass(frozen=True)
 class VideoGenerationResult:
@@ -131,17 +147,17 @@ class HttpVideoProvider:
         reachable=self.health_check()
         return {"reachable":reachable,"default_model":self.default_model,"capabilities":self.capabilities()}
     def get_status(self,remote_task_id):
-        response=self.transport.get(self.endpoint+'/videos/'+str(remote_task_id),headers=self._headers(),timeout=15)
+        response=self.transport.get(self.endpoint+'/videos/'+quote(str(remote_task_id),safe=''),headers=self._headers(),timeout=15)
         response.raise_for_status(); data=response.json(); return {'status':data.get('status','UNKNOWN'),'progress':int(data.get('progress',0) or 0),'url':data.get('url') or data.get('video_url'),'error':data.get('error')}
     def cancel(self,remote_task_id):
-        response=self.transport.post(self.endpoint+'/videos/'+str(remote_task_id)+'/cancel',headers=self._headers(),json={},timeout=30)
+        response=self.transport.post(self.endpoint+'/videos/'+quote(str(remote_task_id),safe='')+'/cancel',headers=self._headers(),json={},timeout=30)
         response.raise_for_status()
         try:data=response.json()
         except Exception:data={}
         return {'status':str(data.get('status') or 'CANCELLED').upper()}
     def generate(self,request:VideoGenerationRequest)->VideoGenerationResult:
         headers={**self._headers(),'Idempotency-Key':request.idempotency_key or request.task_id}
-        response=self.transport.post(self.endpoint+'/videos',headers=headers,json={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id},timeout=30)
+        response=self.transport.post(self.endpoint+'/videos',headers=headers,json={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id,'parameters':request.parameters},timeout=30)
         response.raise_for_status(); data=response.json(); uri=data.get('url') or data.get('video_url'); remote=data.get('id') or data.get('task_id')
         if not uri and not remote: raise ValueError('video provider response missing url or task id')
         status=str(data.get('status') or ('SUCCEEDED' if uri else 'RUNNING')).upper()
@@ -162,10 +178,10 @@ class OpenAICompatibleImageProvider:
         if not api_key or not endpoint: raise ValueError("image provider credentials are required")
         self.transport,self.api_key,self.endpoint=transport,api_key,endpoint.rstrip('/')
     def health_check(self) -> bool:
-        try:return self.transport.get(self.endpoint+"/models",headers={"Authorization":f"Bearer {self.api_key}"},timeout=1.5).status_code<500
+        try:return 200<=self.transport.get(self.endpoint+"/models",headers={"Authorization":f"Bearer {self.api_key}"},timeout=1.5).status_code<300
         except Exception:return False
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
-        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json={"model":request.model_id,"prompt":request.prompt,"n":1},timeout=180)
+        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json={"model":request.model_id,"prompt":request.prompt,"n":1,**validate_image_parameters(request.parameters,{"size","quality"})},timeout=180)
         response.raise_for_status(); data=response.json(); item=(data.get("data") or [{}])[0]; uri=item.get("url") or item.get("b64_json")
         if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
         if not uri: raise ValueError("image provider response missing url")
@@ -173,7 +189,7 @@ class OpenAICompatibleImageProvider:
     def edit(self, request: AssetGenerationRequest, images: list[str], **options: object) -> AssetGenerationResult:
         if not images or len(images) > 5:
             raise ValueError("between 1 and 5 reference images are required")
-        payload={"model":request.model_id,"prompt":request.prompt,"images":[{"image_url":value} for value in images],"n":1}
+        payload={"model":request.model_id,"prompt":request.prompt,"images":[{"image_url":value} for value in images],"n":1,**validate_image_parameters(request.parameters,{"size","quality"})}
         for key in ("size","quality","output_format","output_compression","background","moderation"):
             if key in options and options[key] is not None: payload[key]=options[key]
         response=self.transport.post(self.endpoint+"/images/edits",headers={"Authorization":f"Bearer {self.api_key}"},json=payload,timeout=180)
@@ -188,7 +204,7 @@ class Automatic1111ImageProvider:
         try:return self.transport.get(self.endpoint+"/sdapi/v1/sd-models",timeout=1.5).status_code==200
         except Exception:return False
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
-        payload={"prompt":request.prompt,"steps":28,"width":1024,"height":1024}
+        payload={"prompt":request.prompt,"steps":28,"width":1024,"height":1024,**validate_image_parameters(request.parameters,{"width","height","steps","seed","negative_prompt"})}
         if request.model_id: payload["override_settings"]={"sd_model_checkpoint":request.model_id}
         response=self.transport.post(self.endpoint+"/sdapi/v1/txt2img",json=payload,timeout=180)
         response.raise_for_status(); images=response.json().get("images") or []
@@ -201,12 +217,13 @@ class ComfyUIImageProvider:
         try:return self.transport.get(self.endpoint+"/system_stats",timeout=1.5).status_code==200
         except Exception:return False
     def _workflow(self, request: AssetGenerationRequest) -> dict:
+        parameters=validate_image_parameters(request.parameters,{"width","height","steps","seed","negative_prompt"})
         return {
-            "3":{"class_type":"KSampler","inputs":{"seed":int(time.time()*1000)%2147483647,"steps":28,"cfg":7,"sampler_name":"euler","scheduler":"normal","denoise":1,"model":["4",0],"positive":["6",0],"negative":["7",0],"latent_image":["5",0]}},
+            "3":{"class_type":"KSampler","inputs":{"seed":parameters.get("seed",int(time.time()*1000)%2147483647),"steps":parameters.get("steps",28),"cfg":7,"sampler_name":"euler","scheduler":"normal","denoise":1,"model":["4",0],"positive":["6",0],"negative":["7",0],"latent_image":["5",0]}},
             "4":{"class_type":"CheckpointLoaderSimple","inputs":{"ckpt_name":request.model_id}},
-            "5":{"class_type":"EmptyLatentImage","inputs":{"width":1024,"height":1024,"batch_size":1}},
+            "5":{"class_type":"EmptyLatentImage","inputs":{"width":parameters.get("width",1024),"height":parameters.get("height",1024),"batch_size":1}},
             "6":{"class_type":"CLIPTextEncode","inputs":{"text":request.prompt,"clip":["4",1]}},
-            "7":{"class_type":"CLIPTextEncode","inputs":{"text":"low quality, blurry, artifacts","clip":["4",1]}},
+            "7":{"class_type":"CLIPTextEncode","inputs":{"text":parameters.get("negative_prompt","low quality, blurry, artifacts"),"clip":["4",1]}},
             "8":{"class_type":"VAEDecode","inputs":{"samples":["3",0],"vae":["4",2]}},
             "9":{"class_type":"SaveImage","inputs":{"filename_prefix":"AI-Novel-Studio","images":["8",0]}},
         }
@@ -216,7 +233,7 @@ class ComfyUIImageProvider:
         response.raise_for_status(); prompt_id=response.json().get("prompt_id")
         if not prompt_id: raise ValueError("ComfyUI response missing prompt_id")
         for _ in range(120):
-            history=self.transport.get(self.endpoint+"/history/"+str(prompt_id),timeout=10);history.raise_for_status()
+            history=self.transport.get(self.endpoint+"/history/"+quote(str(prompt_id),safe=""),timeout=10);history.raise_for_status()
             entry=history.json().get(str(prompt_id)) or {}
             for output in (entry.get("outputs") or {}).values():
                 images=output.get("images") or []

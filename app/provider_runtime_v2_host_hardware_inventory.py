@@ -39,6 +39,7 @@ class HostGpuFact:
 
     pci_vendor_id: int
     dedicated_vram_bytes: int | None
+    name: str = ""  # Display-only DXGI description; never used to infer vendor or memory.
 
 
 @dataclass(frozen=True)
@@ -246,10 +247,11 @@ class WindowsHostHardwareProbe:
         vendor_id: int,
         dedicated_vram_bytes: int,
         flags: int,
+        name: str = "",
     ) -> HostGpuFact | None:
         if flags & cls._DXGI_ADAPTER_FLAG_SOFTWARE:
             return None
-        return HostGpuFact(vendor_id, dedicated_vram_bytes)
+        return HostGpuFact(vendor_id, dedicated_vram_bytes, name=str(name).replace("\x00", "")[:128])
 
     @classmethod
     def _dxgi_gpu_facts(cls) -> tuple[HostGpuFact, ...]:
@@ -316,6 +318,7 @@ class WindowsHostHardwareProbe:
                         int(description.VendorId),
                         int(description.DedicatedVideoMemory),
                         int(description.Flags),
+                        str(description.Description),
                     )
                     if fact is not None:
                         facts.append(fact)

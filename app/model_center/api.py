@@ -65,10 +65,15 @@ def create_model_center_router(
         return HTTPException(409, {"code": str(exc)})
 
     @router.get("/models")
-    def models(): return {"items": [service.model(item.id) for item in service.models.values()]}
+    def models(x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        authorization = mutation_authorization(x_session_token) if mutation_authorization else {}
+        return {"items": [service.model(item.id) for item in service.models.values()
+                          if not item.metadata.get("local_discovery") or authorization.get("can_mutate")] }
 
     @router.get("/models/{model_id}")
-    def model(model_id: str):
+    def model(model_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        if model_id in service.models and service.models[model_id].metadata.get("local_discovery"):
+            require_control(x_session_token)
         try: return service.model(model_id)
         except KeyError: raise HTTPException(404, {"code": "MODEL_CENTER_MODEL_NOT_FOUND"}) from None
 

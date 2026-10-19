@@ -4,6 +4,8 @@ from datetime import datetime,timezone
 from sqlalchemy import select
 from .common import chapter_or_raise,external_uuid,novel_or_raise
 from .models import CanonModel,NovelModel,PendingCanonModel
+from .serialization import serialize_canon
+from ...privacy import merge_privacy, privacy_record
 
 class PostgresCanonRepository:
     def __init__(self,database):self.database=database
@@ -17,7 +19,7 @@ class PostgresCanonRepository:
     def list(self,nid):
         with self.database.session() as session:
             novel=novel_or_raise(session,nid);rows=session.scalars(select(CanonModel).where(CanonModel.novel_id==novel.id).order_by(CanonModel.approved_at)).all()
-            return [{**(x.fact_value or {}),"source":x.source,"confidence":(x.fact_value or {}).get("confidence","USER_APPROVED"),"privacy_level":x.privacy,"id":str(x.id)} for x in rows]
+            return [{**serialize_canon(x),"source":x.source,"confidence":(x.fact_value or {}).get("confidence","USER_APPROVED"),"id":str(x.id)} for x in rows]
     def list_pending(self,nid):
         with self.database.session() as session:
             novel=novel_or_raise(session,nid);rows=session.scalars(select(PendingCanonModel).where(PendingCanonModel.novel_id==novel.id,PendingCanonModel.status=="PENDING").order_by(PendingCanonModel.created_at)).all();return [self._pending(x,novel.slug) for x in rows]
@@ -40,10 +42,12 @@ class PostgresCanonRepository:
             if proposals is not None:payload["proposals"]=proposals
             row.proposal=payload;row.status="APPROVED";row.reviewed_by="local-user";row.reviewed_at=datetime.now(timezone.utc)
             for index,proposal in enumerate(payload.get("proposals",[])):
-                value={**proposal,"confidence":"USER_APPROVED"};entity_type=str(proposal.get("entity_type","story"));key=str(proposal.get("fact_key") or proposal.get("key") or hashlib.sha256(f"{pid}:{index}".encode()).hexdigest())
+                value={**privacy_record(proposal),"confidence":"USER_APPROVED"};entity_type=str(proposal.get("entity_type","story"));key=str(proposal.get("fact_key") or proposal.get("key") or hashlib.sha256(f"{pid}:{index}".encode()).hexdigest())
                 existing=session.scalar(select(CanonModel).where(CanonModel.novel_id==novel.id,CanonModel.entity_type==entity_type,CanonModel.entity_id.is_(None),CanonModel.fact_key==key))
-                if existing:existing.fact_value=value;existing.source=f"pending:{pid}";existing.approved_at=datetime.now(timezone.utc)
-                else:session.add(CanonModel(novel_id=novel.id,entity_type=entity_type,entity_id=None,fact_key=key,fact_value=value,privacy=proposal.get("privacy_level","CLOUD_ALLOWED"),source=f"pending:{pid}"))
+                if existing:
+                    value["privacy_level"]=merge_privacy(value["privacy_level"],serialize_canon(existing)["privacy_level"])
+                    existing.fact_value=value;existing.privacy=value["privacy_level"];existing.source=f"pending:{pid}";existing.approved_at=datetime.now(timezone.utc)
+                else:session.add(CanonModel(novel_id=novel.id,entity_type=entity_type,entity_id=None,fact_key=key,fact_value=value,privacy=value["privacy_level"],source=f"pending:{pid}"))
             session.flush();return self._pending(row,novel.slug)
     def reject(self,pid):
         with self.database.session() as session:
