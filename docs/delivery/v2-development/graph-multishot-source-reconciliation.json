@@ -1,0 +1,18 @@
+{
+  "graph-multishot-integration-ui": {
+    "status": "PASS",
+    "source_paths": 3212,
+    "changed_paths": []
+  },
+  "graph-multishot-integration-postgres": {
+    "status": "PASS",
+    "source_paths": 3212,
+    "changed_paths": []
+  },
+  "public_reuse": {
+    "tested_head": "ebcbf7395b702e09957b23823afeb6a529926e0d",
+    "status": "PASS",
+    "unchanged_app_paths": 542,
+    "qualification": "PUBLIC6 and original wheel reused; backend, contract and packaging inputs unchanged since f1b33b31. Frontend rebuilt now."
+  }
+}

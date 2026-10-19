@@ -449,3 +449,7 @@ Product b81b3aad9b28f3f20ee7ef73005b998fe926aa82 integrates saved-panel LOCAL T2
 ## 2026-10-19 01:15 UTC recovered independent Comic / fact impact integration
 
 Product 31337a9df5df7290bc9476f84923b0acd48ff519. Resource-aware source-free IMAGE-only Comic entry and read-only exact fact→shot→asset→Graph/Timeline inspection integrated. Root PG54 plus6intentionalFile-onlyskips with exact14tablecleanup; PUBLIC6,CJK2,UI194/11suites+TS/Vite/token pass. 3210 finalsourcepaths match. Modelcapacity interrupted work; recovery and rechecks completed, no uninterruptedwork claim. See docs/delivery/v2-development/comic-fact-integration-20261019.md. Previous verifiedarchive8d3ae719, source3313a7b6. FullV2/browser/model/PGbootstrap still open.
+
+## 2026-10-19 03:29 UTC explicit multi-shot Graph starter
+
+Product 2a9082b3344bf9f830fd0294609b94d9688c39c4. User-requested continuation resumed normally; selected1–4 approved Storyboard shots now form original emptyv5 branches in one undoable authoring action. RootUI102/7suites+TS/Vite/token and realPG2 with exact14tablecleanup PASS; originalPUBLIC6/backendwheel reused by unchanged542apppaths. No actualvideo/browser/TS-backendE2E acceptance. See docs/delivery/v2-development/graph-multishot-integration-20261019.md. Previous sourcef1b33b31 archived and anonymouslyverified at721b1379392404e479c7e79503aed3ea8f7664c1,14files5230637bytes.

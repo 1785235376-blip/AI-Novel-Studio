@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-19T01:15:00Z",
+  "updated_at_utc": "2026-10-19T03:29:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -1162,37 +1162,29 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
-    "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+    "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+    "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
     "items": [
       {
-        "area": "Source-free IMAGE-only Comic access",
+        "area": "Explicit approved multi-shot video Graph starter",
         "maps_to": [
-          "IMAGE-COMIC-01"
+          "CONSOLE-05",
+          "GRAPH-03",
+          "GRAPH-14",
+          "GRAPH-17",
+          "DIR-06"
         ],
-        "boundary": "Original source-free pages/books and narrow bootstrap; source-bound assets, ORA, archive and generation not admitted through IMAGE fallback."
-      },
-      {
-        "area": "Exact fact downstream use inspection",
-        "maps_to": [
-          "DIF-02"
-        ],
-        "boundary": "Read-only bounded fact-shot-asset-Graph/Timeline observation, no semantic rebuild/execution."
+        "boundary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance."
       }
     ],
     "reported_evidence": {
-      "file_tests": 58,
-      "postgres_tests": 54,
-      "postgres_file_specific_skips": 6,
-      "exact_14_table_cleanup": true,
-      "ui_tests": 194,
-      "ui_suites": 11,
+      "ui_tests": 102,
+      "ui_suites": 7,
       "typescript_vite_token": true,
-      "public_tests": 6,
-      "pinned_cjk_tests": 2,
-      "source_paths": 3210,
-      "pg_bootstrap": "NOT_RUN",
-      "browser": "NOT_RUN"
+      "postgres_tests": 2,
+      "exact_14_table_cleanup": true,
+      "public_checks_reused": 6,
+      "browser": "BLOCKED_BEFORE_RENDER"
     },
     "formal_acceptance": false
   },
@@ -4868,7 +4860,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+          "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+          "summary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "GRAPH-04",
@@ -5410,7 +5410,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+          "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+          "summary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "GRAPH-15",
@@ -5566,7 +5574,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+          "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+          "summary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "GRAPH-18",
@@ -6051,6 +6067,12 @@
           "product_sha": "f0d7fa56024f4f47d6fe8a68fc5310c119769f68",
           "report": "docs/delivery/v2-development/storyboard-split-integration-20261018.md",
           "summary": "Verified Director-derived Storyboard DRAFT return to current canvas. Explicit original-owner unconnected planning pin insertion, undo/save/reopen. No automatic approval, generation or full intelligent Director closure.",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+          "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+          "summary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance.",
           "formal_acceptance": false
         }
       ]
@@ -7878,7 +7900,15 @@
           }
         ],
         "current_verification": "NOT_REASSESSED"
-      }
+      },
+      "bounded_evidence": [
+        {
+          "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+          "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+          "summary": "1–4 selected shots, empty v5 graph, original history and per-branch review; no dispatch or full workflow acceptance.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "DIR-07",
@@ -22425,12 +22455,48 @@
         }
       ],
       "formal_acceptance": false
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
+      "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+      "items": [
+        {
+          "area": "Source-free IMAGE-only Comic access",
+          "maps_to": [
+            "IMAGE-COMIC-01"
+          ],
+          "boundary": "Original source-free pages/books and narrow bootstrap; source-bound assets, ORA, archive and generation not admitted through IMAGE fallback."
+        },
+        {
+          "area": "Exact fact downstream use inspection",
+          "maps_to": [
+            "DIF-02"
+          ],
+          "boundary": "Read-only bounded fact-shot-asset-Graph/Timeline observation, no semantic rebuild/execution."
+        }
+      ],
+      "reported_evidence": {
+        "file_tests": 58,
+        "postgres_tests": 54,
+        "postgres_file_specific_skips": 6,
+        "exact_14_table_cleanup": true,
+        "ui_tests": 194,
+        "ui_suites": 11,
+        "typescript_vite_token": true,
+        "public_tests": 6,
+        "pinned_cjk_tests": 2,
+        "source_paths": 3210,
+        "pg_bootstrap": "NOT_RUN",
+        "browser": "NOT_RUN"
+      },
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
-    "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
-    "archive_before_this_wave": "8d3ae719ffbf512e23105f6be383f5011caea5e5",
+    "product_sha": "2a9082b3344bf9f830fd0294609b94d9688c39c4",
+    "report": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+    "archive_before_this_wave": "721b1379392404e479c7e79503aed3ea8f7664c1",
     "release": "HOLD"
   },
   "historical_initial_bounded_wave": {
