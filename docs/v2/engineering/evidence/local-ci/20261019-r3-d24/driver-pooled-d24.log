@@ -1,0 +1,8 @@
+PG_START_EXIT 0
+DB_CREATED v2_d24_1792386138
+MIGRATIONS_APPLIED 20
+PYTEST_CMD [repo]\.venv\Scripts\python.exe -m pytest -q -s -p no:cacheprovider -p d24_probe --basetemp [repo]\.runtime\d24-instrumented\pytest -x tests/test_v2_text_execution_receipts.py::test_receipt_preserves_exact_request_original_identity_and_terminal_time[postgres]
+PYTEST_PID 133368
+PYTEST_EXIT 0 SECONDS 5.9
+PG_STOP_EXIT 0
+DONE v2_d24_1792386138

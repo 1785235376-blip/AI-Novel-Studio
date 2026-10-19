@@ -105,3 +105,14 @@ python scripts/run_v2_postgres_checks.py --pg-bin <PG bin> --data <owned .runtim
 1. 完整 PG 套件在 D-07 修复后仍需一次单独长跑并绑定 SHA（当前不冒充通过）。
 2. symlink 契约需要 Linux/特权 runner；宿主 CI 恢复后自动覆盖。
 3. 若未来出现新的 skip 消息，`audit_local_ci_skips.py` 会以退出码 1 报出未知 skip。
+
+
+## 7. Skip 审计工具的严格配对（round-3）
+
+- 旧实现按裸函数名匹配对照，会丢失模块/类与参数身份；round-3 改为：同一 module/class、同一函数名、
+  仅把首个 backend token 由 `postgres` 规范化为 `file`，其余参数必须完全相同，且对照节点必须在本轮
+  **passed** 集合中。跨模块同名、参数不同、对照被 skip、其他 backend 均判为 PostgreSQL-only。
+- 反例回归：`tests/test_local_ci_skip_audit.py`（1 条合法配对 + 7 条反例/边界：跨模块同名、参数不同、
+  缺对照、对照被 skip、未知 skip、symlink 允许、失败节点）。
+- 用新工具重审已提交的 round-2 LOCAL-02 JUnit：**467/467 合法配对、0 PostgreSQL-only、0 unknown skip**；
+  历史 467 项的配对结论不变，只是配对证据从“同名”收紧为“模块+类+完整参数”。

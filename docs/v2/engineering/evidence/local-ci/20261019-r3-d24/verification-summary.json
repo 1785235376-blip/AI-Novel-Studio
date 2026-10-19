@@ -1,0 +1,86 @@
+[
+  {
+    "label": "d24-full-file-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "seconds": 49.1,
+    "summary": "28 passed, 27 skipped in 44.93s",
+    "status": "PASS",
+    "database": null,
+    "junit": "d24-full-file-pg.xml",
+    "console": "d24-full-file-pg.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "d24-node-a-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "seconds": 9.1,
+    "summary": "1 passed in 4.66s",
+    "status": "PASS",
+    "database": null,
+    "junit": "d24-node-a-pg.xml",
+    "console": "d24-node-a-pg.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "d24-node-b-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "seconds": 9.1,
+    "summary": "1 passed in 4.85s",
+    "status": "PASS",
+    "database": null,
+    "junit": "d24-node-b-pg.xml",
+    "console": "d24-node-b-pg.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "d07-storm-node-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "seconds": 10.5,
+    "summary": "1 passed in 6.42s",
+    "status": "PASS",
+    "database": null,
+    "junit": "d07-storm-node-pg.xml",
+    "console": "d07-storm-node-pg.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "pool-regression-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "seconds": 6.4,
+    "summary": "5 passed in 2.49s",
+    "status": "PASS",
+    "database": null,
+    "junit": "pool-regression-pg.xml",
+    "console": "pool-regression-pg.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "d24-full-file-file",
+    "postgres": false,
+    "exit_code": 0,
+    "seconds": 61.3,
+    "summary": "28 passed, 27 skipped in 59.39s",
+    "status": "PASS",
+    "database": null,
+    "junit": "d24-full-file-file.xml",
+    "console": "d24-full-file-file.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  },
+  {
+    "label": "pool-regression-file",
+    "postgres": false,
+    "exit_code": 0,
+    "seconds": 1.0,
+    "summary": "",
+    "status": "PASS",
+    "database": null,
+    "junit": "pool-regression-file.xml",
+    "console": "pool-regression-file.console.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+  }
+]

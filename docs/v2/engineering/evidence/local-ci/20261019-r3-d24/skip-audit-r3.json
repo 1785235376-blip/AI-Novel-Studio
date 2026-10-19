@@ -1,0 +1,90 @@
+{
+  "junit": "docs/v2/engineering/evidence/local-ci/20261019-r2/LOCAL-02-junit.xml",
+  "counts": {
+    "total": 941,
+    "passed": 473,
+    "failed": 0,
+    "skipped": 468
+  },
+  "failed_nodes": [],
+  "skip_messages": {
+    "PostgreSQL implementation contract; covered by the real PostgreSQL full suite": 467,
+    "WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink identity contract": 1
+  },
+  "skip_by_file": {
+    "tests.test_v2_creative_project_lifecycle": 9,
+    "tests.test_structured_record_cas": 5,
+    "tests.test_surface_pending_canon_review": 32,
+    "tests.test_shared_project_route_authority": 422
+  },
+  "unknown_skips": [],
+  "postgres_contracts": 467,
+  "postgres_contracts_matched": 467,
+  "postgres_only_functions": [],
+  "postgres_pairing_examples": [
+    {
+      "skipped": "tests.test_v2_creative_project_lifecycle::test_same_title_recreate_preserves_history_but_never_revives_it[postgres]",
+      "control": "tests.test_v2_creative_project_lifecycle::test_same_title_recreate_preserves_history_but_never_revives_it[file]"
+    },
+    {
+      "skipped": "tests.test_v2_creative_project_lifecycle::test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres]",
+      "control": "tests.test_v2_creative_project_lifecycle::test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[file]"
+    },
+    {
+      "skipped": "tests.test_v2_creative_project_lifecycle::test_unbound_pre_incarnation_rows_are_preserved_and_fail_closed[postgres]",
+      "control": "tests.test_v2_creative_project_lifecycle::test_unbound_pre_incarnation_rows_are_preserved_and_fail_closed[file]"
+    },
+    {
+      "skipped": "tests.test_v2_creative_project_lifecycle::test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres]",
+      "control": "tests.test_v2_creative_project_lifecycle::test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[file]"
+    }
+  ],
+  "symlink_privilege_skips": [
+    "tests.test_v2_creative_project_lifecycle::test_file_corrupt_marker_fails_closed_without_reading_external_content[symlink]"
+  ],
+  "executed_function_names_with_pg_contracts": 40,
+  "behaviour_executed_counts": {
+    "project_create_read": 169,
+    "save_reread_persistence": 2,
+    "cas_conflict": 55,
+    "cross_project_denied": 230,
+    "review_candidate_not_promoted": 44,
+    "failure_revocation": 121
+  },
+  "behaviour_examples": {
+    "project_create_read": [
+      "tests.test_v2_creative_project_lifecycle::test_same_title_recreate_preserves_history_but_never_revives_it[file]",
+      "tests.test_v2_creative_project_lifecycle::test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[file]",
+      "tests.test_v2_creative_project_lifecycle::test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[file]",
+      "tests.test_v2_creative_project_lifecycle::test_file_corrupt_marker_fails_closed_without_reading_external_content[invalid_json]"
+    ],
+    "save_reread_persistence": [
+      "tests.test_surface_pending_canon_review::test_original_canon_approve_retry_terminal_edits_reject_and_save_are_idempotent[file-/api]",
+      "tests.test_surface_pending_canon_review::test_original_canon_approve_retry_terminal_edits_reject_and_save_are_idempotent[file-/api/v1]"
+    ],
+    "cas_conflict": [
+      "tests.test_structured_record_cas::test_original_record_create_compare_swap_and_no_private_conflict_payload[file-characters-hero-payload0]",
+      "tests.test_structured_record_cas::test_original_record_create_compare_swap_and_no_private_conflict_payload[file-locations-harbor-payload1]",
+      "tests.test_structured_record_cas::test_original_record_create_compare_swap_and_no_private_conflict_payload[file-relationships-allies-payload2]",
+      "tests.test_structured_record_cas::test_record_cas_serializes_two_original_clients_and_rechecks_after_legacy_upsert[file]"
+    ],
+    "cross_project_denied": [
+      "tests.test_v2_creative_project_lifecycle::test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[file]",
+      "tests.test_v2_creative_project_lifecycle::test_first_access_from_independent_scopes_uses_one_identity[file]",
+      "tests.test_shared_project_route_authority::test_original_project_reads_require_current_project_authority[file-packaged-off-/api-owner]",
+      "tests.test_shared_project_route_authority::test_original_project_reads_require_current_project_authority[file-packaged-off-/api-member]"
+    ],
+    "review_candidate_not_promoted": [
+      "tests.test_surface_pending_canon_review::test_canon_preview_cas_source_fence_human_review_no_duplicates_restart[file-/api]",
+      "tests.test_surface_pending_canon_review::test_canon_preview_cas_source_fence_human_review_no_duplicates_restart[file-/api/v1]",
+      "tests.test_surface_pending_canon_review::test_canon_pending_edits_and_source_change_invalidate_preview[file-/api]",
+      "tests.test_surface_pending_canon_review::test_canon_pending_edits_and_source_change_invalidate_preview[file-/api/v1]"
+    ],
+    "failure_revocation": [
+      "tests.test_v2_creative_project_lifecycle::test_unbound_pre_incarnation_rows_are_preserved_and_fail_closed[file]",
+      "tests.test_v2_creative_project_lifecycle::test_revoked_write_does_not_adopt_or_modify_unbound_history[file]",
+      "tests.test_v2_creative_project_lifecycle::test_file_corrupt_marker_fails_closed_without_reading_external_content[invalid_json]",
+      "tests.test_v2_creative_project_lifecycle::test_file_corrupt_marker_fails_closed_without_reading_external_content[oversized]"
+    ]
+  }
+}

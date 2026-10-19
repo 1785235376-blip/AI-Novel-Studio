@@ -40,8 +40,9 @@ Linux 状态：**NOT_RUN / BLOCKED_ENVIRONMENT**。本机存在 WSL Ubuntu-24.04
 | --- | --- | --- |
 | 此前阻塞节点 ×3 个全新数据库 | 1 passed in 7.39s / 1 passed in 7.44s / 1 passed in 7.32s | Engineering-Runs/local-ci-round2-20261019/d07-node-1792379853-1..3.log |
 | 整个 cross-process host 文件 | 1 passed, 1 skipped in 7.55s | d07-interop-file-1792379853.log |
-| 连接数（同一节点） | 1,210 → **5** authorized backends | PG log（log_connections=on） |
-| 24 文件 curated PG 子集 | （27 个失败均为既有 D-24，非本次连接修复回归） | d07-curated-1792379853.log |
+| 连接口径（round-2 归档） | “1,210” = 累计插桩 `psycopg.connect` 调用次数（日志未归档）；“5” = 修复后 PG `log_connections=on` 的累计 “connection authorized” 行数 —— 两个不同指标，不再并列成前后对比 | round-2 PG 日志 |
+| 同口径 round-3 复测（D-24 节点，真实 PG） | 未池化回放：173 次读取 / 466 次直连尝试 / 16.0 s FAIL；修复后：427 次读取 / 0 次直连 / **2** 个新建物理连接 / 825 次池借出 / 峰值并发 2 / 3.94 s PASS | [evidence/local-ci/20261019-r3-d24/](evidence/local-ci/20261019-r3-d24/) |
+| 24 文件 curated PG 子集 | 27 个失败是 D-24 的共享前置障碍（仅代表性节点在 a517e0a2 上验证过“修复前已存在”）；round-3 修复后受影响文件 PG 变体 **28 passed / 27 skipped** | d07-curated-1792379853.log · round-3 evidence |
 
 完整真实 PostgreSQL 套件（约 4.8k 条）本轮未整体重跑，仍是独立长跑门禁；D-24 保持 OPEN。
 
@@ -67,8 +68,18 @@ LOCAL-02 的 468 个 skip 已逐项分类：467 个 PostgreSQL 实现契约（PG
 对 HEAD `7e1ea003c975f585a26201e007f8e4a7872c7ee2`：**LOCAL_CI_PASS**（File/前端/浏览器最小切片），附加真实 PG 验证显示 D-07 连接阻塞已修复。
 该结论不改变 [RELEASE_GATES.md](RELEASE_GATES.md)：V2 仍是 **NOT RELEASE_READY**，宿主 CI 仍是 `HOSTED_BLOCKED_NO_RUNNER`，需求矩阵没有因本地快检被提升为 `ACCEPTED`。
 
-> **Round-2 修复说明（2026-10-19）**：本文件下表记录的是 round-1 原始证据副本的 SHA256。
-> round-1 的 `LOCAL-02-junit.xml` 曾因脱敏占位符 `<repo>` 破坏 XML 良构性（D-22）。
-> round-2 已将旧证据中的 `<repo>` 原位替换为 XML 安全的 `[repo]`（内容等价，仅占位符与哈希变化），
-> 修复后 XML 全部可解析；新证据全部使用修复后的 `scripts/redact_local_ci_evidence.py` 生成。
-> 因此下表中的旧哈希不再对应当前提交副本；数量、断言与退出码不受影响。
+
+> **证据版本与哈希说明（round-3 更正）**
+>
+> - 本文件上方的 SHA256 表对应 **round-2** 证据 `evidence/local-ci/20261019-r2/`，是本 PR 当前有效的 round-2 哈希表；round-3 未改动该目录。
+> - 历史 **round-1** 证据位于 `evidence/local-ci/20261019-final/`；其中 9 个文件（`LOCAL-01-backend.log`、`LOCAL-02-junit.xml`、`LOCAL-02-pytest.log`、`LOCAL-03-build.log`、`LOCAL-03-design-tokens.log`、`LOCAL-03-vitest.log`、`LOCAL_CI_RESULTS.json`、`REDACTION.md`、`results.json`）在 round-2 被原位把 `<repo>` 替换为 XML 安全的 `[repo]`（D-22），因此这些文件的哈希已变化。
+> - round-1 当时文档里记录的旧哈希描述的是**修复前副本**，不对应现在提交的内容；该说明**不适用于**上面的 round-2 有效哈希表。
+> - round-3 的证据与哈希见 [evidence/local-ci/20261019-r3-d24/](evidence/local-ci/20261019-r3-d24/) 及其 `SUMMARY.md`；round-3 执行 SHA 为 `415cbcc2`。
+
+## 7. Round-3（2026-10-19）：D-24 修复与定向回归
+
+- 根因：PG 模式 `ExperimentalStore` 对每次元数据读取新建连接（单节点同代码复现：173 次读取 / 466 次直连尝试 / 16.0s FAIL；修复后 427 次读取 / 0 次直连 / 2 个物理连接 / 3.94s PASS）。
+- 修复：`engine_for_url()` 进程级缓存的有界 SQLAlchemy 池 + `pooled_connection()`；事务语义保持 commit-on-clean-exit。
+- 验证：代表性节点 2 个 fresh DB **PASS**（4.66s / 4.85s）；完整受影响文件 PG **28 passed / 27 skipped**（44.93s，原 27 failed/1 passed）；File 对照 **28 passed / 27 skipped**；D-07 连接风暴节点 **PASS**（6.42s）；新增 5 项真实 PG 池回归 **PASS**。
+- Skip 审计工具改为严格 module/class+参数配对，历史 LOCAL-02 JUnit 重审 **467/467 匹配、0 PG-only**；新增 8 条正/反例测试。
+- 仍未完成：完整 PG/File 套件、D-20、D-17、Linux/宿主 CI；V2 仍 NOT RELEASE_READY。
