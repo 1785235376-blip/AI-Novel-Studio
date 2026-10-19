@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { GRAPH_NODE_LABELS } from './studioGraphLabels';
-import { graphDraftChecklist } from './graphDraftChecklist';
+import { graphDraftChecklist } from './graphDraftChecklistHelpers';
 import type { StudioGraphCatalogDefinition, StudioGraphDefinition } from './studioGraphTypes';
 type Props={draft:StudioGraphDefinition;catalog:readonly StudioGraphCatalogDefinition[];scope:object;disabled:boolean;onSelect:(ids:string[])=>void};
 export function GraphDraftChecklist(props:Props){

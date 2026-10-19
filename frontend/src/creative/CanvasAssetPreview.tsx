@@ -4,7 +4,7 @@ import { Button, StatusMessage } from '../ui/primitives';
 import { apiErrorView } from '../api';
 import type { StudioClient } from './studioClient';
 import type { CanvasAssetReference } from './studioCanvasViewClient';
-import { checkCanvasPreviewAsset, loadCanvasAssetPreview } from './canvasAssetPreview';
+import { checkCanvasPreviewAsset, loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
 type Props = { reference: CanvasAssetReference; owner: object; client: StudioClient; disabled: boolean; isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T> };
 export function CanvasAssetPreview(props: Props) {
   const [result, setResult] = useState<{ token: object; value: Awaited<ReturnType<typeof loadCanvasAssetPreview>> }>(), [error, setError] = useState(''), [pending, setPending] = useState(false);

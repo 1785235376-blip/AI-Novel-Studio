@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { ApiError } from '../api';
 import { CreativeCanvas } from './CreativeCanvas';
 import { GraphDirectorConsole, type GraphDirectorSource } from './GraphDirectorConsole';
-import { compareDirectorDraft } from './directorDraftComparison';
+import { compareDirectorDraft } from './directorDraftComparisonHelpers';
 import { documentInput, newDocument, newScene, newShot, type CreativeInput, type CreativeDocument } from './types';
 import { cameraGeometry } from './cameraGeometry.testFixture';
 import { validCameraGrammar } from './cameraGrammar';

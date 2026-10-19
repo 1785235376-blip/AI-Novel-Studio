@@ -1,11 +1,11 @@
-import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
+import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { uniqueGraphProviders } from './graphProviderChoices';
 import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
-import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
+import { buildStoryboardVideoBranches } from './graphStoryboardStarterHelpers';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
 import type { PlanningCanvasHandoff } from './directorCanvasHandoff';
-import { planningSourceFork, planningSourceReferences } from './graphPlanningFork';
+import { planningSourceFork, planningSourceReferences } from './graphPlanningForkHelpers';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';

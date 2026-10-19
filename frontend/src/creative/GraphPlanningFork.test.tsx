@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GraphPlanningFork } from './GraphPlanningFork';
-import { planningSourceFork } from './graphPlanningFork';
+import { planningSourceFork } from './graphPlanningForkHelpers';
 import type { PlanningDocument } from './studioProductionGraphContract';
 import type { StudioGraphDefinition } from './studioGraphTypes';
 

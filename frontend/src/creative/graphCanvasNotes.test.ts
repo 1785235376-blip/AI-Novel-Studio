@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { graphNoteDefinitionBytes, graphNoteDisplayIndex, visibleGraphNotes, withGraphNotes } from './graphCanvasNotes';
+import { graphNoteDefinitionBytes, graphNoteDisplayIndex, visibleGraphNotes, withGraphNotes } from './graphCanvasNotesHelpers';
 import type { StudioGraphDefinition } from './studioGraphTypes';
 const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: 'Notes', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
 const notes = (count: number, text = 'Scene 🎬') => Array.from({ length: count }, (_, i) => ({ id: `n${i}`, text, position: { x: i * 500, y: i * 100 } }));

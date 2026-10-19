@@ -4,7 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
 import { BranchComparisonReview } from './BranchComparisonReview';
-import type { BranchComparison as Compare } from './branchComparisonReview';
+import type { BranchComparison as Compare } from './branchComparisonReviewHelpers';
 import type { WorkspaceNavigation } from './uxClient';
 
 type Chapter = { id: string; title: string; version: number; novel_id: string; branch_id: string; origin?: { chapter_id: string; scope: { branch_id?: string } } };

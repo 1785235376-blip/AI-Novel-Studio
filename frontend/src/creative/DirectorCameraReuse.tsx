@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { CreativeInput } from './types';
-import { cameraValueLabel, DIRECTOR_CAMERA_FIELDS, previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuse';
+import { cameraValueLabel, DIRECTOR_CAMERA_FIELDS, previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuseHelpers';
 
 type Props = { draft: CreativeInput; sceneId: string; version?: number; dirty: boolean; canEdit: boolean; busy: boolean; onChange: (draft: CreativeInput) => void };
 export function DirectorCameraReuse(props: Props) {

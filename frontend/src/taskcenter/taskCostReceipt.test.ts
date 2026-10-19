@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { receiptAmount, taskCostReceipt, taskRecoveryGuidance } from './taskCostReceipt';
+import { receiptAmount, taskCostReceipt, taskRecoveryGuidance } from './taskCostReceiptHelpers';
 import { taskCenterProjection } from './taskCenterContract';
 import { FIXTURE_PROJECT, projectedTask, tasksResponse } from './taskCenterFixtures';
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { TaskCenterControllerProps } from './useTaskCenter';
 import type { TaskCenterTask } from './taskCenterTypes';
-import { unknownCostReceipt, type TaskCostReceipt } from './taskCostReceipt';
+import { unknownCostReceipt, type TaskCostReceipt } from './taskCostReceiptHelpers';
 
 type Selection = { companionEpoch: number; identity: string; task: TaskCenterTask; receipt?: TaskCostReceipt; loading: boolean };
 /** One explicit selected read. No cache, polling, mutation, or automatic retry. */

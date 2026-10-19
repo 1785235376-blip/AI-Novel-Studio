@@ -1,5 +1,5 @@
 import { Button, StatusMessage } from '../ui/primitives';
-import { receiptAmount } from './taskCostReceipt';
+import { receiptAmount } from './taskCostReceiptHelpers';
 import type { TaskCenterController } from './useTaskCenter';
 import type { TaskCenterTask } from './taskCenterTypes';
 

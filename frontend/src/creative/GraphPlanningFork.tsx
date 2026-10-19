@@ -3,7 +3,7 @@ import { apiErrorView } from '../api';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { StudioGraphClient } from './studioGraphClient';
 import { checkedPlanningDocument, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
-import type { PlanningSourceReference } from './graphPlanningFork';
+import type { PlanningSourceReference } from './graphPlanningForkHelpers';
 
 type Props = {
   client: Pick<StudioGraphClient, 'planningDocuments'>;

@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { ProductionReceiptReview, ReceiptNavigation } from './ProductionReceiptReview';
-import { originalChapterTarget, originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage, receiptOutputs } from './productionReceiptReview';
+import { originalChapterTarget, originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage, receiptOutputs } from './productionReceiptReviewHelpers';
 afterEach(cleanup);
 const clickHandler = (node: HTMLElement) => (node as any)[Object.keys(node).find(key => key.startsWith('__reactProps$'))!].onClick as () => void;
 const target = originalTaskTarget('original-task')!;

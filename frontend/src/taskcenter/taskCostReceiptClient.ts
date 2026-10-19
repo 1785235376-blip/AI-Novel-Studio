@@ -1,7 +1,7 @@
 import type { CollaborationContext } from '../api';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import { readModelBrokerHistory } from '../experimental/modelBrokerClient';
-import { taskCostReceipt, unknownCostReceipt, type TaskCostReceipt } from './taskCostReceipt';
+import { taskCostReceipt, unknownCostReceipt, type TaskCostReceipt } from './taskCostReceiptHelpers';
 import type { TaskCenterScope, TaskCenterTask } from './taskCenterTypes';
 
 /** Independent read-only companion; never expands the original task owner. */

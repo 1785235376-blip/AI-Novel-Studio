@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { checkedStudioGraphDraft } from './studioGraphClient';
-import { graphNoteDefinitionBytes, graphNumberSpellingReserve, graphNoteDisplayWindow, withGraphNotes } from './graphCanvasNotes';
+import { graphNoteDefinitionBytes, graphNumberSpellingReserve, graphNoteDisplayWindow, withGraphNotes } from './graphCanvasNotesHelpers';
 import type { StudioGraphDefinition } from './studioGraphTypes';
 const graph = (): StudioGraphDefinition => ({ schema_version: 1, title: '大空间便笺', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
 const notes = (count = 1024) => Array.from({ length: count }, (_, i) => ({ id: `note_${i + 1}`, text: `雨夜·镜头${String(i + 1).padStart(4, '0')}`, position: { x: (i % 40) * 320, y: Math.floor(i / 40) * 220 } }));

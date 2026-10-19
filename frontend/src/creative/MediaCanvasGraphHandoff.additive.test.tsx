@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
-import { appendCanvasAssetNode, verifyCanvasGraphAsset } from './mediaCanvasGraphHandoff';
+import { appendCanvasAssetNode, verifyCanvasGraphAsset } from './mediaCanvasGraphHandoffHelpers';
 import { blankGraph } from './graphDraft';
 import { imageGraphCatalog, imageGraphRecord } from './studioImageGraph.testFixtures';
 import { useStudioGraphEditorController, type StudioGraphEditorProps, type StudioGraphEditorController } from './useStudioGraphEditorController';

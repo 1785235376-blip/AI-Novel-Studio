@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
-import { verifyCanvasGraphAsset, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
+import { verifyCanvasGraphAsset, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import type { CanvasAssetReference } from './studioCanvasViewClient';
 import type { StudioClient } from './studioClient';
 type Props = { reference: CanvasAssetReference; owner: object; disabled: boolean; isCurrent: () => boolean;

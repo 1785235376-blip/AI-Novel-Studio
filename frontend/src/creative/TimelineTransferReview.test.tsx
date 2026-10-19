@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import { TimelineTransferReview } from './TimelineTransferReview';
-import { transferClipTarget } from './timelineTransferReview';
+import { transferClipTarget } from './timelineTransferReviewHelpers';
 import { StudioTimelineEditor } from './StudioTimelineEditor';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import type { StudioProductionClient } from './studioProductionClient';

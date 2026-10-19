@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { Field } from './shared';
-import { previewCaptionTextReplacement, type CaptionTextReplacement } from './captionTextReplace';
+import { previewCaptionTextReplacement, type CaptionTextReplacement } from './captionTextReplaceHelpers';
 import type { CaptionCue, CaptionTrack } from './voiceSubtitleClient';
 
 type Props = { row: CaptionTrack; cues: CaptionCue[]; binding: string; disabled: boolean;

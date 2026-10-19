@@ -1,5 +1,5 @@
 import { TaskCostReceiptView } from './TaskCostReceipt';
-import { taskRecoveryGuidance } from './taskCostReceipt';
+import { taskRecoveryGuidance } from './taskCostReceiptHelpers';
 import { useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {

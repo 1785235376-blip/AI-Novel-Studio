@@ -60,7 +60,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 describe('original task receipt companion view', () => {
   it('shows receipt evidence and preserves task info on a later failed read', async () => {
     const { ledgerRow, receiptTask, receiptScope } = await import('./taskCostReceiptFixtures');
-    const { taskCostReceipt } = await import('./taskCostReceipt');
+    const { taskCostReceipt } = await import('./taskCostReceiptHelpers');
     const fake = fakeClient({ readTasks: vi.fn(async () => tasks({ items: [projectedTask({ ...receiptTask, status: 'COMPLETED', stage_label: '已完成' })], unavailable: [] })) });
     const readCostReceipt = vi.fn().mockResolvedValueOnce(taskCostReceipt({ ledger: [ledgerRow()] }, receiptTask, FIXTURE_PROJECT, receiptScope))
       .mockResolvedValueOnce({ kind: 'UNKNOWN', reason: 'UNREADABLE' });
@@ -94,7 +94,7 @@ describe('original task receipt companion view', () => {
 
 it.each(['UNKNOWN_UPSTREAM', 'KNOWN_SYNTHETIC_ZERO'])('renders %s without implying an invoice or enabling retry', async costState => {
   const { ledgerRow, receiptTask, receiptScope } = await import('./taskCostReceiptFixtures');
-  const { taskCostReceipt } = await import('./taskCostReceipt');
+  const { taskCostReceipt } = await import('./taskCostReceiptHelpers');
   const fake = fakeClient({ readTasks: vi.fn(async () => tasks({ items: [projectedTask(receiptTask)], unavailable: [] })) });
   const row = costState === 'UNKNOWN_UPSTREAM'
     ? ledgerRow({ status: 'UNKNOWN_UPSTREAM', cost_state: costState, actual_microusd: null })

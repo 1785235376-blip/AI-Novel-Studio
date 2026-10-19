@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
-import { compareDirectorDraft } from './directorDraftComparison';
+import { compareDirectorDraft } from './directorDraftComparisonHelpers';
 import { DirectorDraftComparison } from './DirectorDraftComparison';
 import { newDocument, newScene, type CreativeInput } from './types';
 const draft=():CreativeInput=>({...newDocument('DIRECTOR'),title:'Director',source_independent:true,scenes:[{...newScene(1),id:'s',action:'before'}],director_notes:[{id:'note',number:1,scene_id:'s',blocking:'left',note:'meaning',shot_size:'MEDIUM',camera_angle:'EYE',camera_motion:'STATIC',duration_seconds:5,emotion:'calm',pacing:'slow',performance:'natural'}]});

@@ -2,8 +2,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { CanvasAssetPreview } from './CanvasAssetPreview';
-import { loadCanvasAssetPreview } from './canvasAssetPreview';
-vi.mock('./canvasAssetPreview', async original => ({ ...await original<typeof import('./canvasAssetPreview')>(), loadCanvasAssetPreview: vi.fn() }));
+import { loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
+vi.mock('./canvasAssetPreviewHelpers', async original => ({ ...await original<typeof import('./canvasAssetPreviewHelpers')>(), loadCanvasAssetPreview: vi.fn() }));
 // Keep this test about owner/selection admission; original AssetInspector tests cover its media element lifecycle.
 vi.mock('../novel/AssetInspector', () => ({ AssetInspector: ({ asset }: any) => <output aria-label="preview asset">{asset.filename}</output> }));
 afterEach(() => { cleanup(); vi.clearAllMocks(); });

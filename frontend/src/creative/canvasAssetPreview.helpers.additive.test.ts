@@ -1,6 +1,6 @@
 import { webcrypto } from 'node:crypto';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { CANVAS_PREVIEW_MAX_BYTES, loadCanvasAssetPreview } from './canvasAssetPreview';
+import { CANVAS_PREVIEW_MAX_BYTES, loadCanvasAssetPreview } from './canvasAssetPreviewHelpers';
 import type { CanvasAssetReference } from './studioCanvasViewClient';
 beforeEach(() => vi.stubGlobal('crypto', webcrypto)); afterEach(() => vi.unstubAllGlobals());
 async function fixture() { const bytes = new Uint8Array([137, 80, 78, 71]), digest = Buffer.from(await webcrypto.subtle.digest('SHA-256', bytes)).toString('hex');

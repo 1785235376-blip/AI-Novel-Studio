@@ -6,7 +6,7 @@ import { Details, Field, Form, ids, ResourceState, useAction, useResource } from
 import type { WorkspaceNavigation } from './uxClient';
 import { ProductionReceiptReview, ReceiptNavigation } from './ProductionReceiptReview';
 import { PristineReplayNavigation, usePristineReplayNavigation } from './pristineReplayNavigation';
-import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReview';
+import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReviewHelpers';
 import { StudioUsagesPanel } from './StudioUsagesPanel';
 import { ProductionPassportSidecar } from './ProductionPassportSidecar';
 

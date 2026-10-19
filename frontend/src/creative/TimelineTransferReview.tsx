@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/primitives';
 import type { TimelineTransferPreview } from './studioTimelineTransferTypes';
-import { transferClipTarget, transferLossText } from './timelineTransferReview';
+import { transferClipTarget, transferLossText } from './timelineTransferReviewHelpers';
 
 export function TimelineTransferReview({ preview, disabled, onLocate }: { preview: TimelineTransferPreview; disabled: boolean;
   onLocate?: (preview: TimelineTransferPreview, path: string) => void }) {

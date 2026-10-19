@@ -1,7 +1,7 @@
 import { useMediaCanvasRecovery } from './useMediaCanvasRecovery';
 import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
-import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
+import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { alignCanvasCards } from './mediaCanvasSelection';
 import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
 import { MediaCanvasGroupTools } from './MediaCanvasGroupTools';

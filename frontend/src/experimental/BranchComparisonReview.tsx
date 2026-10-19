@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { Details } from './shared';
-import { branchBlockExcerpt, branchSegment, branchSegmentLabels, type BranchComparison, type BranchReference } from './branchComparisonReview';
+import { branchBlockExcerpt, branchSegment, branchSegmentLabels, type BranchComparison, type BranchReference } from './branchComparisonReviewHelpers';
 
 function Receipt({ label, value }: { label: string; value: BranchReference }) {
   return <article className="experimental-record"><strong>{label}</strong>

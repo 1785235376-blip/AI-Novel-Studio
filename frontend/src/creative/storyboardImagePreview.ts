@@ -1,7 +1,7 @@
 import { ApiError } from '../api';
 import type { CreativeClient } from './client';
 import type { StudioClient, StudioAsset } from './studioClient';
-import { checkCanvasPreviewAsset } from './canvasAssetPreview';
+import { checkCanvasPreviewAsset } from './canvasAssetPreviewHelpers';
 import { checkedStoryboardReceipt, type StoryboardReceipt, type StoryboardShot } from './studioStoryboardContract';
 import { documentInput, type CreativeDocument } from './types';
 import { inspectStoryboardRaster } from './storyboardImageRaster';

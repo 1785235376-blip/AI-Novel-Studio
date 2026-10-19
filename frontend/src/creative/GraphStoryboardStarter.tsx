@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
-import { MAX_STORYBOARD_VIDEO_BRANCHES } from './graphStoryboardStarter';
+import { MAX_STORYBOARD_VIDEO_BRANCHES } from './graphStoryboardStarterHelpers';
 import { apiErrorView } from '../api';
 import type { PlanningDocument } from './studioProductionGraphContract';
 import type { StoryboardReceipt } from './studioStoryboardContract';

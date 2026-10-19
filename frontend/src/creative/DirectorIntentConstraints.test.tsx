@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GraphDirectorConsole, type GraphDirectorSource } from './GraphDirectorConsole';
 import { DirectorTargetPanel } from './DirectorTargetPanel';
 import { checkedVisualTarget } from './studioProductionGraphContract';
-import { compareDirectorDraft } from './directorDraftComparison';
+import { compareDirectorDraft } from './directorDraftComparisonHelpers';
 import { creativeAuthoringProblems, documentInput, newDocument, validDirectorIntent, type CreativeDocument, type CreativeInput } from './types';
 const legacy = { style: '', atmosphere: '', reference_works: [], color: '', rhythm: '' };
 const target = { ...legacy, target_audience: 'First-time viewers', target_platform: 'Local screening', production_budget_constraints: 'Use existing sets; no paid cloud calls' };

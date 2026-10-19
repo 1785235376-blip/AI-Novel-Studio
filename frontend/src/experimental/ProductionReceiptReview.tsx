@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import type { WorkspaceNavigation } from './uxClient';
-import { uniqueChapterTarget, originalTaskTarget, receiptPins, receiptOutputs } from './productionReceiptReview';
+import { uniqueChapterTarget, originalTaskTarget, receiptPins, receiptOutputs } from './productionReceiptReviewHelpers';
 
 /** Navigation never adopts a source or replays a task. Require explicit leave consent. */
 export function ReceiptNavigation({ target, label, onNavigate, disabled = false, receiptIdentity = '' }: { target?: WorkspaceNavigation; label: string; onNavigate?: (target: WorkspaceNavigation) => void; disabled?: boolean; receiptIdentity?: string }) {

@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 import { BranchComparisonReview } from './BranchComparisonReview';
-import { branchBlockExcerpt, type BranchComparison } from './branchComparisonReview';
+import { branchBlockExcerpt, type BranchComparison } from './branchComparisonReviewHelpers';
 afterEach(cleanup);
 const block = (text: string) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
 const changed = { kind: 'CONFLICT', start: 0, end: 1, base: [block('旧的🪷')], ORIGINAL: [block('来源修改')], FORK: [block('分支修改')] };

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
-import { graphDraftChecklist } from './graphDraftChecklist';
+import { graphDraftChecklist } from './graphDraftChecklistHelpers';
 import { GraphDraftChecklist } from './GraphDraftChecklist';
 import { blankGraph } from './graphDraft';
 import { buildGraphStarter } from './graphStarter';

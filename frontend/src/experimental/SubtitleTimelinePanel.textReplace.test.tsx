@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { SubtitleTimelinePanel } from './SubtitleTimelinePanel';
 import { experimentalClient } from './api';
-import { previewCaptionTextReplacement } from './captionTextReplace';
+import { previewCaptionTextReplacement } from './captionTextReplaceHelpers';
 const cue={id:'first',start_tick:100,end_tick:200,text:'小雨.* 小雨',segment_id:null,overlap_reason:''};
 const track={id:'track',version:3,title:'Captions',asset_id:'audio',asset_snapshot:{version:1,digest:'media'},plan_id:null,timebase:{numerator:1000,denominator:1},media:{duration_seconds:{numerator:5,denominator:1},waveform:{status:'UNAVAILABLE'}},cues:[cue,{...cue,id:'second',start_tick:300,end_tick:400,text:'小雨'}],speakers:{},warnings:[],stale:false};
 let fetchMock:ReturnType<typeof vi.fn>;

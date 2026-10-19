@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest';
 import { CreativeCanvas } from './CreativeCanvas';
 import { DirectorCameraReuse } from './DirectorCameraReuse';
-import { previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuse';
+import { previewDirectorCameraReuse, type DirectorCameraField } from './directorCameraReuseHelpers';
 import { emptyCameraGrammar } from './cameraGrammar';
 import { newDocument, newScene, type CreativeInput, type DirectorSceneNote } from './types';
 afterEach(cleanup);

@@ -5,7 +5,7 @@ import { useTaskCenter, type TaskCenterControllerProps } from './useTaskCenter';
 import { taskCenterProjection } from './taskCenterContract';
 import { FIXTURE_PROJECT, projectedTask, tasksResponse } from './taskCenterFixtures';
 import type { TaskCenterClient } from './taskCenterTypes';
-import type { TaskCostReceipt } from './taskCostReceipt';
+import type { TaskCostReceipt } from './taskCostReceiptHelpers';
 import type { TaskCostReceiptClient } from './taskCostReceiptClient';
 const projection = () => taskCenterProjection(tasksResponse({ items: ['job-1', 'job-2'].map(id =>
   projectedTask({ id, authority: 'author_generation' })), unavailable: [] }), FIXTURE_PROJECT);

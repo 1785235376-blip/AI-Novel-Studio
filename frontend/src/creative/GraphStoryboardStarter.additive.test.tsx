@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { blankGraph, connectionIssue } from './graphDraft';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
-import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
+import { buildStoryboardVideoStarter } from './graphStoryboardStarterHelpers';
 import { GraphStoryboardStarter } from './GraphStoryboardStarter';
 import type { StudioGraphCatalog } from './studioGraphTypes';
 import { useStudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';

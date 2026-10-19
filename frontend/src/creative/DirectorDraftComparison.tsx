@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../ui/primitives';
 import type { CreativeInput } from './types';
-import { compareDirectorDraft } from './directorDraftComparison';
+import { compareDirectorDraft } from './directorDraftComparisonHelpers';
 export function DirectorDraftComparison({local,server}:{local:CreativeInput;server:CreativeInput}){
   const rows=useMemo(()=>compareDirectorDraft(local,server),[local,server]);
   const [page,setPage]=useState(0);

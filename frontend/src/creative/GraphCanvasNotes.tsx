@@ -3,7 +3,7 @@ import type { PointerEvent } from 'react';
 import { Button } from '../ui/primitives';
 import type { StudioGraphCanvasNote, StudioGraphDefinition, StudioGraphPosition } from './studioGraphTypes';
 import { clampGraphPosition, graphScreenToWorld } from './graphCanvasGeometry';
-import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, GRAPH_NOTE_LIMIT, GRAPH_NOTE_RENDER_LIMIT, withGraphNotes, visibleGraphNotes, graphNoteDisplayWindow } from './graphCanvasNotes';
+import { GRAPH_NOTE_HEIGHT, GRAPH_NOTE_WIDTH, GRAPH_NOTE_LIMIT, GRAPH_NOTE_RENDER_LIMIT, withGraphNotes, visibleGraphNotes, graphNoteDisplayWindow } from './graphCanvasNotesHelpers';
 
 import { GraphNoteNavigator } from './GraphNoteNavigator';
 

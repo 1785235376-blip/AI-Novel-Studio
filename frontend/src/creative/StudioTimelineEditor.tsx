@@ -16,7 +16,7 @@ import { TIMELINE_LIMITS, timelineClipDuration, timelineSourceState, type Studio
 import { useStudioTimelineEditor, type StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import { StudioTimelineExportPanel } from './StudioTimelineExportPanel';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
-import { transferClipTarget } from './timelineTransferReview';
+import { transferClipTarget } from './timelineTransferReviewHelpers';
 import { StudioTimelineTransferPanel } from './StudioTimelineTransferPanel';
 import { StudioTimelinePlaybackPanel } from './StudioTimelinePlaybackPanel';
 import { StudioTimelineSourceEditPanel } from './StudioTimelineSourceEditPanel';
