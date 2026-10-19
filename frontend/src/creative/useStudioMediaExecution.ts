@@ -1,5 +1,6 @@
 import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { sameComicImageCommand } from './studioComicImageContract';
+import { CUTOUT_WEBP_PROFILE } from './studioCutoutContract';
 import { AUDIO_DENOISE_PROFILE, validDenoiseParameters } from './studioAudioDenoiseContract';
 import { sameStoryboardSpeech } from './studioStoryboardSpeechContract';
 import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
@@ -40,7 +41,7 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
-export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs' | 'target_lufs' | 'denoise_profile';
+export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs' | 'target_lufs' | 'denoise_profile' | 'cutout_output';
 type MediaRoute = 'local' | 'cloud';
 const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale'].includes(operation);
 type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
@@ -50,13 +51,13 @@ type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: stri
 type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
 type Operation = { id: number; kind: Kind; client: StudioProductionClient; controller: AbortController; canMutate: boolean; canReview: boolean };
 type Creation = { requestId: string; requestDigest: string; operation: MediaOperation; input: string; uncertain: boolean };
-const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
+const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile', 'cutout_output'];
 const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
   'm5.image.reference': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
   'm5.image.inpaint': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
-  'm5.image.cutout': [], 'm5.image.upscale': ['scale'],
+  'm5.image.cutout': ['cutout_output'], 'm5.image.upscale': ['scale'],
   'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
@@ -116,7 +117,8 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   const ranges: Partial<Record<MediaParameter, [number, number]>> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647], duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000], sample_rate: [8000, 96000], channels: [1, 2], fade_in_ms: [0, 120000], fade_out_ms: [0, 120000] };
   for (const name of parametersByOperation[draft.operation]) {
     const value = draft.parameters[name]; if (value === '') continue;
-    if (name === 'denoise_profile') { if (value !== AUDIO_DENOISE_PROFILE) throw new Error('请选择已有的本地降噪配方。'); result[name] = value; }
+    if (name === 'cutout_output') { if (value !== CUTOUT_WEBP_PROFILE) throw new Error('请选择已有的无损 WebP 配方。'); result[name] = value; }
+    else if (name === 'denoise_profile') { if (value !== AUDIO_DENOISE_PROFILE) throw new Error('请选择已有的本地降噪配方。'); result[name] = value; }
     else if (name === 'output_format') { if (value !== 'FLAC' && value !== 'MP3') throw new Error('独立音频格式请选择 FLAC 或 MP3，或留空保留默认 WAV。'); result[name] = value; }
     else if (name === 'negative_prompt') { if (value.length > 8000) throw new Error('负向提示超过长度限制。'); result[name] = value; }
     else if (name === 'voice_id') { if (value.length > 240 || !value.trim() || /[\x00-\x1f\x7f]/.test(value)) throw new Error('请填写有效的语音标识。'); result[name] = value; }
@@ -614,7 +616,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!blob.size || blob.size > 25 * 1024 * 1024 || !blob.type.startsWith(job.output_candidate.kind + '/')) throw invalid('候选媒体类型或大小不正确，请读取任务核对。');
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), byte => byte.toString(16).padStart(2, '0')).join('');
       if (!stillBound()) return;
-      if (job.operation_id === 'm5.image.cutout' && (blob.type !== 'image/png' || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
+      if (job.operation_id === 'm5.image.cutout' && (blob.type !== (job.command?.parameters.cutout_output === CUTOUT_WEBP_PROFILE ? 'image/webp' : 'image/png') || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
       if (job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16'
         && (job.output_candidate.kind !== 'audio' || blob.type !== 'audio/wav' || blob.size !== job.media_measurement?.byte_count))
         throw invalid('音频时间线 WAV 候选与绑定的输出配置或实际测量不一致，不可审核。');

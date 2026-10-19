@@ -40,6 +40,7 @@ class MediaParameters(ExecutionModel):
 
 class MediaExecutionParameters(MediaParameters):
     """Standalone additions; the original Graph parameter schema stays closed."""
+    cutout_output: Literal["WEBP_LOSSLESS_V1"] | None = None
     denoise_profile: Literal["STATIONARY_FFT_V1"] | None = None
     target_lufs: float | None = Field(default=None, ge=-30, le=-14)
     target_peak_dbfs: float | None = Field(default=None, ge=-24, le=-1)
@@ -51,6 +52,13 @@ class MediaExecutionParameters(MediaParameters):
     output_format: Literal["FLAC", "MP3"] | None = None
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
     scale: Literal[2, 4] | None = None
+
+    @field_validator("cutout_output", mode="before")
+    @classmethod
+    def exact_cutout_output(cls, value):
+        if value != "WEBP_LOSSLESS_V1":
+            raise ValueError("STUDIO_IMAGE_CUTOUT_OUTPUT_INVALID")
+        return value
 
     @field_validator("denoise_profile", mode="before")
     @classmethod
@@ -93,7 +101,7 @@ class MediaExecutionParameters(MediaParameters):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile"):
+        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile", "cutout_output"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
@@ -218,7 +226,7 @@ class _MediaCommandShape(ExecutionModel):
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
-            "m5.image.cutout": set(),
+            "m5.image.cutout": {"cutout_output"},
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
             "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
             "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
@@ -247,7 +255,7 @@ class _MediaCommandShape(ExecutionModel):
         if advanced or self.operation_id in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}:
             self._image_runtime_inputs()
         if self.operation_id == "m5.image.cutout":
-            if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or p:
+            if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or set(p) - {"cutout_output"}:
                 raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
             if (len(self.source_snapshots) != 2 or any(s.kind != "ASSET" or s.asset_kind != "image" for s in self.source_snapshots)):
                 raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")

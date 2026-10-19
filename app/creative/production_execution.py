@@ -452,7 +452,7 @@ class ProductionExecutionService:
             visit(snapshot.model_dump(exclude_none=True), 0)
 
     def _parameters(self, command):
-        if command.operation_id == "m5.image.cutout": return []
+        if command.operation_id == "m5.image.cutout": return ["cutout_output"]
         if command.operation_id.startswith("m5."):
             provider = self.image_registry.get(command.provider_id)
             config = self._image_configuration(provider)
@@ -531,7 +531,7 @@ class ProductionExecutionService:
             command = command.model_copy(update={"parameters": command.parameters.model_copy(update={"speech_rate": 1.0})})
         self._egress(nid, scope, command, binding, guard)
         body = command.model_dump()
-        if command.operation_id == "m5.image.cutout": body["parameters"] = {}
+        if command.operation_id == "m5.image.cutout": body["parameters"] = command.parameters.model_dump(exclude_none=True)
         source_dimensions = ({key: evidence[0]["measured"][key] for key in ("width", "height")}
             if command.operation_id == "m5.image.upscale" else None)
         recipe = self._recipe(command, source_dimensions=source_dimensions)
@@ -553,7 +553,7 @@ class ProductionExecutionService:
         recipe = {"contract": "studio-execution-recipe/1", "operation_id": command.operation_id,
             "adapter": "ORIGINAL_HTTP_PROVIDER", "parameters": parameters, "automatic_fallback": False}
         if command.operation_id == "m5.image.cutout":
-            recipe.update(adapter="LOCAL_CPU_MASK", output_profile="PNG_RGBA8_STORED_DEFLATE",
+            recipe.update(adapter="LOCAL_CPU_MASK", output_profile="WEBP_RGBA8_LOSSLESS_EXACT_V1" if command.parameters.cutout_output is not None else "PNG_RGBA8_STORED_DEFLATE",
                 mask_policy="WHITE_KEEP_BLACK_TRANSPARENT_ZERO")
         elif command.operation_id.startswith("m5."):
             from ..asset_providers import AssetGenerationRequest, ComfyUIImageProvider, Automatic1111ImageProvider

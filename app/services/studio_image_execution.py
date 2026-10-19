@@ -77,7 +77,8 @@ def _payload(body):
                 or key != "image_references" and not isinstance(item, dict)):
             raise ValueError("STUDIO_IMAGE_RUNTIME_INPUT_INVALID")
     if body["operation_id"] == "m5.image.cutout":
-        if body["provider_id"] is not None or body["model_id"] is not None or body["prompt"] != "" or body["parameters"] != {}:
+        from .studio_image_cutout_webp import parameters_valid
+        if body["provider_id"] is not None or body["model_id"] is not None or body["prompt"] != "" or (body["parameters"] != {} and not parameters_valid(body["parameters"])):
             raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
         return copy.deepcopy(body)
     _text(body["provider_id"]); _text(body["model_id"])
@@ -203,6 +204,11 @@ def _context(value, body, actor):
     elif (IMAGE_RUNTIME_FIELDS.intersection(body) or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
             or "denoising_strength" in body["parameters"]):
         raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_REQUIRED")
+    if body["operation_id"] == "m5.image.cutout":
+        from .studio_image_cutout_webp import PARAMETER, validate_context
+        if PARAMETER in body["parameters"] or any(isinstance(captured, dict) and isinstance(captured.get("parameters"), dict) and PARAMETER in captured["parameters"]
+                for captured in (value.get("command"), value.get("execution_recipe"))):
+            validate_context(body, value)
     _no_secrets(value)
     if len(_canonical(value).encode("utf-8")) > 128 * 1024:
         raise ValueError("STUDIO_IMAGE_CONTEXT_LIMIT")
@@ -216,6 +222,9 @@ def _cutout_proof(row):
         if ready is not None or row.get("output_asset_id"):
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_REQUIRED")
         return
+    from .studio_image_cutout_webp import parameters_valid, validate_proof
+    if parameters_valid(row["body"]["parameters"]):
+        return validate_proof(row)
     from .studio_image_cutout import CONTRACT as CUTOUT_CONTRACT, MAX_OUTPUT_BYTES
     from .studio_image_mask_authoring import dimensions
     fields = {"contract", "width", "height", "source_sha256", "mask_sha256", "output_sha256",
@@ -669,7 +678,11 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                         guard(); current()
                 checkpoint(); guard(); current()
                 data, proof = render_cutout(*values, checkpoint=checkpoint)
-                measured = {"kind": "image", "media_type": "image/png", "extension": "png",
+                from .studio_image_cutout_webp import parameters_valid, encode
+                webp = parameters_valid(job["body"]["parameters"])
+                if webp:
+                    data, proof = encode(data, proof, checkpoint)
+                measured = {"kind": "image", "media_type": "image/webp" if webp else "image/png", "extension": "webp" if webp else "png",
                     "width": proof["width"], "height": proof["height"], "byte_count": len(data)}
                 guard(); source_guard(); dispatch_guard(); current()
             else:

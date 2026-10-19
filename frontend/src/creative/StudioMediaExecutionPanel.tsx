@@ -2,14 +2,14 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS, mediaProviderKey, useStudioMediaExecution, type MediaParameter, type StudioMediaExecutionProps } from './useStudioMediaExecution';
 import type { MediaOperation } from './studioProductionClient';
-import { usableCutoutSource } from './studioCutoutContract';
+import { CUTOUT_WEBP_PROFILE, usableCutoutSource } from './studioCutoutContract';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 import { missingAudioMeasurementLabel } from './studioAudioReceiptContext';
 import { StudioAudioTrimTimecodes } from './StudioAudioTrimTimecodes';
 import { AUDIO_DENOISE_PROFILE } from './studioAudioDenoiseContract';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
-const labels: Record<MediaParameter, string> = { denoise_profile: '本地平稳噪声降噪（可选）', scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
+const labels: Record<MediaParameter, string> = { cutout_output: '抠图交付格式（可选）', denoise_profile: '本地平稳噪声降噪（可选）', scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
   negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量', denoising_strength: '重绘强度（大于 0 至 1，可选）', duration_seconds: '时长（1–600 秒）', frame_rate: '帧率（1–60）', voice_id: '语音标识',
   speech_rate: '语速（0.5–2）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）', target_lufs: '目标综合响度（-30 至 -14 LUFS，可选）', target_peak_dbfs: '增益前目标采样峰值（-24 至 -1 dBFS，可选）', gain_db: '增益（-60–12 dB，可选）', sample_rate: '输出采样率（8000–96000 Hz，可选）', channels: '输出声道（可选）', output_format: '独立音频交付格式（可选）', fade_in_ms: '淡入时长（毫秒，可选）', fade_out_ms: '淡出时长（毫秒，可选）' };
 const ranges: Partial<Record<MediaParameter, [number, number, number]>> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1],
@@ -29,6 +29,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
+    if (name === 'cutout_output') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认 PNG，保持原请求</option><option value={CUTOUT_WEBP_PROFILE}>无损 WebP · 保留透明像素</option></select></label>;
     if (name === 'denoise_profile') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">关闭，保持原请求</option><option value={AUDIO_DENOISE_PROFILE}>平稳底噪 · 本地 FFT 降噪</option></select></label>;
     if (name === 'output_format') return <label key={name}>{labels[name]}<select disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)}><option value="">默认 WAV，保持原请求</option><option value="FLAC">FLAC · 处理后 S16 无损压缩</option><option value="MP3">MP3 · 有损压缩（固定码率）</option></select></label>;
     if (name === 'negative_prompt') return <label key={name}>{labels[name]}<textarea maxLength={8000} disabled={!state.canEdit} value={value} onChange={event => state.changeParameter(name, event.target.value)} /></label>;
@@ -64,7 +65,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
-      {cutout && <p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。输出同尺寸 PNG；不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>}
+      {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
       {!trim && !cutout && <>
         {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>{crossRouteReferences ? '参考图配置按本地优先列出，也明确标注云端项。选择配置会同步切换制作路线，并清除旧许可；云端发送仍须单独确认。' : '默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。'}</p></>}
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
@@ -166,6 +167,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </section> : <p>尚未读取到已核对的{missingAudioMeasurementLabel(job)}输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
+        {job.processing_proof?.contract === 'cpu-binary-mask-cutout-webp/1' && <details><summary>本地无损 WebP 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · WebP {job.processing_proof.output_bytes} 字节</p><p>解码 RGBA 摘要：<code>{job.processing_proof.rgba_sha256}</code></p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
         {job.status === 'UNKNOWN' && <StatusMessage tone="warning">无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。</StatusMessage>}

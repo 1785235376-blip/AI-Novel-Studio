@@ -3,7 +3,7 @@ import { checkedStoryboardSpeechFields, sameStoryboardSpeech, type StoryboardSpe
 import {checkedTimelineSourceBounds,timelineSourceBoundsRequest} from './studioTimelineSourceBounds';
 import { checkedVideoReference, checkedVideoRecipe, checkedVideoCapabilities, sameVideoReference, storyboardShotFields, sameStoryboardShot, type VideoReference, type VideoCapabilities } from './studioVideoRuntimeContract';
 import type { ShotPin } from './studioStoryboardContract';
-import { checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
+import { CUTOUT_WEBP_PROFILE, CUTOUT_WEBP_OUTPUT, validCutoutParameters, checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
 import { checkedImageUpscaleProof, type ImageUpscaleProof, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
 import { maskDimension } from './studioManualMaskContract';
 import { AUDIO_DENOISE_PROFILE, validDenoiseParameters, validDenoiseProof, type AudioDenoiseProof } from './studioAudioDenoiseContract';
@@ -69,7 +69,7 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
+const parameterKeys = ['cutout_output', 'scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
 const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
@@ -90,7 +90,7 @@ function sources(v: unknown, limit: number): asserts v is RecordedProductionSour
 function cutoutCommand(v: unknown, recorded = false): asserts v is MediaCommand {
   const keys = ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note'];
   if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key)) || v.operation_id !== 'm5.image.cutout'
-    || v.provider_id !== null || v.model_id !== null || v.prompt !== '' || v.allow_cloud !== false || !record(v.parameters) || Object.keys(v.parameters).length
+    || v.provider_id !== null || v.model_id !== null || v.prompt !== '' || v.allow_cloud !== false || !validCutoutParameters(v.parameters)
     || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000) invalid();
   sources(v.source_snapshots, 2);
@@ -170,6 +170,7 @@ function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCom
 function commandScope(command: MediaCommand) {
   checkedComicImageFields(command);
   checkedStoryboardSpeechFields(command);
+  if (command.operation_id !== 'm5.image.cutout' && command.parameters.cutout_output !== undefined) invalid();
   if (Object.hasOwn(command, 'audio_profile') && command.operation_id !== 'm8.audio.trim') invalid();
   checkedVideoReference(command.video_reference, command.source_snapshots, command.operation_id);
   storyboardShotFields(command.storyboard_shot, command.source_snapshots, command.operation_id);
@@ -251,8 +252,9 @@ function recipe(v: unknown, operation: unknown): ProductionRecipe {
     const keys = ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'output_profile', 'mask_policy'];
     if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
       || v.contract !== 'studio-execution-recipe/1' || v.operation_id !== operation || !hex(v.recipe_digest)
-      || v.adapter !== 'LOCAL_CPU_MASK' || v.automatic_fallback !== false || v.output_profile !== 'PNG_RGBA8_STORED_DEFLATE'
-      || v.mask_policy !== 'WHITE_KEEP_BLACK_TRANSPARENT_ZERO' || !record(v.parameters) || Object.keys(v.parameters).length) invalid();
+      || v.adapter !== 'LOCAL_CPU_MASK' || v.automatic_fallback !== false || !validCutoutParameters(v.parameters)
+      || v.output_profile !== (v.parameters.cutout_output === CUTOUT_WEBP_PROFILE ? CUTOUT_WEBP_OUTPUT : 'PNG_RGBA8_STORED_DEFLATE')
+      || v.mask_policy !== 'WHITE_KEEP_BLACK_TRANSPARENT_ZERO') invalid();
     return v as ProductionRecipe;
   }
   if (!record(v) || v.contract !== 'studio-execution-recipe/1' || v.operation_id !== operation || !hex(v.recipe_digest)
@@ -387,6 +389,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (hasComicImageSource(c) && (!record(v.provider) || v.provider.local !== true || v.remote_compute_may_continue !== false)) invalid();
       checkedImageRuntimeInputs(c, c.source_snapshots, String(c.operation_id));
       checkedImageRecipeCommand(executionRecipe, c);
+      if (c.operation_id !== 'm5.image.cutout' && c.parameters.cutout_output !== undefined) invalid();
       if (c.operation_id === 'm5.image.upscale' ? c.prompt !== '' || c.allow_cloud || Object.keys(c.parameters).length !== 1 || ![2, 4].includes(c.parameters.scale as number) : c.parameters.scale !== undefined) invalid();
       if (c.operation_id === 'm5.image.upscale') {
         if (v.output_candidate !== null && v.processing_proof == null) invalid();
@@ -398,11 +401,12 @@ export function studioProductionClient(projectId: string, context: Collaboration
         ((s as Record<string, unknown>).kind === 'COMIC_PANEL' && key === 'asset_kind' ? ((s as Record<string, unknown>)[key] ?? null) !== ((v.sources as Array<Record<string, unknown>>)[index][key] ?? null) : (s as Record<string, unknown>)[key] !== (v.sources as Array<Record<string, unknown>>)[index][key])))) invalid();
       if (c.operation_id === 'm5.image.cutout') {
         cutoutCommand(c, true);
+        if (!record(executionRecipe.parameters) || executionRecipe.parameters.cutout_output !== c.parameters.cutout_output) invalid();
         if (v.sources.some(source => source.reference_only !== undefined)) invalid();
         if (['SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY'].includes(String(v.status)) || v.provider !== null || v.remote_compute_may_continue !== false || v.media_measurement != null
           || v.cancellation_mode != null && !['COOPERATIVE_LOCAL_CANCEL', 'LOCAL_RESULT_DISCARD'].includes(String(v.cancellation_mode))) invalid();
         if (v.output_candidate !== null && (v.output_candidate as Record<string, unknown>).kind !== 'image') invalid();
-        checkedCutoutProof(v.processing_proof, v.sources, v.output_candidate as { digest: string } | null);
+        checkedCutoutProof(v.processing_proof, v.sources, v.output_candidate as { digest: string } | null, c.parameters.cutout_output);
       }
       else if (c.operation_id === 'm8.audio.trim') {
         recordedTrimRecipe(executionRecipe, c);
@@ -502,6 +506,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       }
       if (command.operation_id === 'm5.image.cutout') {
         cutoutCommand(v.command, true);
+        const cutoutRecipe = recipe(v.execution_recipe, command.operation_id);
+        if (v.command.parameters.cutout_output !== command.parameters.cutout_output
+          || !record(cutoutRecipe.parameters) || cutoutRecipe.parameters.cutout_output !== command.parameters.cutout_output) invalid();
         const keys = ['contract', 'novel_id', 'branch_id', 'operation_id', 'request_id', 'request_digest', 'provider', 'sources', 'execution_recipe',
           'command', 'product_acceptance', 'execution_available', 'automatic_dispatch', 'output_policy', 'preview_digest'];
         if (v.provider !== null || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
