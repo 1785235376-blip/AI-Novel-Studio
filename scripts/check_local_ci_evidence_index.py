@@ -17,6 +17,21 @@ inside the evidence root (so @../@, absolute paths and symlinks cannot escape), 
 the file exists. Declared XML files and all archived XML under the evidence root are
 parsed; broken XML fails the check. @null@ / empty optional paths are ignored.
 
+XML statistics are deliberately separated (they are not interchangeable):
+
+* @declared_xml_paths_checked@ - declared path entries ending in @.xml@ that were
+  found and parsed successfully. A file declared by two receipts counts twice here
+  because two declared paths were checked.
+* @archived_xml_files_checked@ - distinct @*.xml@ files in the evidence root that
+  were parsed successfully (a file that is also declared is parsed once here).
+* @xml_files_checked_distinct@ - distinct XML files that were parsed successfully
+  either as a declared path or during the archive scan.
+* @xml_checked@ - compatibility alias for @declared_xml_paths_checked@; it is NOT a
+  distinct archived file count (see @xml_checked_meaning@).
+* @xml_invalid@ - invalid XML entries @[path, error, sources]@; the same broken file
+  appears once even when it is both declared and archived, with the sources that
+  observed it.
+
 Usage:
     python scripts/check_local_ci_evidence_index.py
     python scripts/check_local_ci_evidence_index.py --evidence-root docs/v2/engineering/evidence/local-ci --json-out report.json
@@ -37,7 +52,6 @@ SUMMARY_NAME = "verification-summary.json"
 RUN_RECEIPT_NAME = "LOCAL_CI_RESULTS.json"
 SUMMARY_PATH_KEYS = ("junit", "console", "log", "receipt")
 ABSOLUTE_PATH_RE = re.compile(r"^(?:[A-Za-z]:[\\/]|\\\\|/)")
-IGNORED_NON_STRING = object()
 
 
 def _display_root(root: Path) -> str:
@@ -74,6 +88,13 @@ def _run_receipt_path_fields(data: dict):
                         yield "checks.commands." + str(name) + ".log", command["log"]
 
 
+def _record_invalid_xml(report: dict, resolved: Path, root: Path, source: str,
+                        error: str) -> None:
+    relative = resolved.relative_to(root.resolve()).as_posix()
+    entry = report["_xml_invalid"].setdefault(relative, {"error": error, "sources": set()})
+    entry["sources"].add(source)
+
+
 def _check_path(report: dict, root: Path, receipt_kind: str, receipt_rel: str,
                 field: str, raw_value, base: Path, base_name: str) -> None:
     if raw_value is None:
@@ -92,7 +113,7 @@ def _check_path(report: dict, root: Path, receipt_kind: str, receipt_rel: str,
     candidate = (base / value).resolve()
     root_resolved = root.resolve()
     try:
-        relative = candidate.relative_to(root_resolved)
+        candidate.relative_to(root_resolved)
     except ValueError:
         report["out_of_root"].append(entry + ["resolves outside the evidence root"])
         return
@@ -100,11 +121,13 @@ def _check_path(report: dict, root: Path, receipt_kind: str, receipt_rel: str,
         report["missing"].append(entry + ["base=" + base_name])
         return
     if candidate.suffix.lower() == ".xml":
-        report["xml_checked"] += 1
         try:
             ET.parse(candidate)
         except ET.ParseError as exc:
-            report["xml_invalid"].append([receipt_rel, relative.as_posix(), str(exc)])
+            _record_invalid_xml(report, candidate, root, "declared", str(exc))
+            return
+        report["declared_xml_paths_checked"] += 1
+        report["_xml_valid_distinct"].add(candidate)
 
 
 def _check_verification_summary(report: dict, path: Path, root: Path) -> None:
@@ -155,8 +178,16 @@ def check_evidence_root(root: Path = DEFAULT_ROOT, *, repo_root: Path | None = N
         "missing": [],
         "out_of_root": [],
         "xml_invalid": [],
+        "declared_xml_paths_checked": 0,
+        "archived_xml_files_checked": 0,
+        "xml_files_checked_distinct": 0,
         "xml_checked": 0,
+        "xml_checked_meaning": (
+            "declared XML path entries parsed successfully; alias of "
+            "declared_xml_paths_checked, NOT a distinct archived XML file count"),
         "notes": [],
+        "_xml_invalid": {},
+        "_xml_valid_distinct": set(),
     }
     for path in sorted(root.rglob(SUMMARY_NAME)):
         report["receipt_files_scanned"] += 1
@@ -174,7 +205,19 @@ def check_evidence_root(root: Path = DEFAULT_ROOT, *, repo_root: Path | None = N
         try:
             ET.parse(xml_path)
         except ET.ParseError as exc:
-            report["xml_invalid"].append([xml_path.relative_to(root).as_posix(), str(exc)])
+            _record_invalid_xml(report, xml_path.resolve(), root, "archived", str(exc))
+            continue
+        report["archived_xml_files_checked"] += 1
+        report["_xml_valid_distinct"].add(xml_path.resolve())
+
+    report["xml_checked"] = report["declared_xml_paths_checked"]
+    report["xml_files_checked_distinct"] = len(report["_xml_valid_distinct"])
+    report["xml_invalid"] = [
+        [relative, entry["error"], sorted(entry["sources"])]
+        for relative, entry in sorted(report["_xml_invalid"].items())
+    ]
+    del report["_xml_invalid"]
+    del report["_xml_valid_distinct"]
 
     report["status"] = ("PASS" if not report["missing"] and not report["out_of_root"]
                         and not report["xml_invalid"] else "FAIL")
