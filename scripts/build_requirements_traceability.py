@@ -17,6 +17,7 @@ Usage:
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import subprocess
@@ -27,6 +28,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "v2" / "engineering" / "requirements-traceability.json"
 EVIDENCE = ROOT / "docs" / "v2" / "engineering" / "test-evidence-20261019-r1.json"
+
+SPEC_ID = "SPEC-2026.10.19-r1"
+SPEC_PATH = ROOT / "docs" / "v2" / "engineering" / "spec" / "SPEC-2026.10.19-r1.txt"
+SPEC_REL = "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt"
+SPEC_TITLE = "PoemSeed Studio V2 发布版全量增强需求书"
 
 TESTED_BASELINE_SHA = "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3"
 BASELINE_BRANCH = "work/v2-eng-baseline-20261019"
@@ -46,6 +52,82 @@ def git_head() -> str:
         return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     except Exception:
         return TESTED_BASELINE_SHA
+
+
+def _spec_field(body: str, label: str) -> str:
+    match = re.search(r"\*\*" + re.escape(label) + r"：\*\*(.*?)(?=\n\*\*[^\n：]+：\*\*|\Z)", body, re.S)
+    return " ".join(match.group(1).split()) if match else ""
+
+
+def load_spec() -> dict:
+    if not SPEC_PATH.exists():
+        raise ValueError(f"SPEC_SOURCE_MISSING: {SPEC_REL}")
+    data = SPEC_PATH.read_bytes()
+    digest = hashlib.sha256(data).hexdigest()
+    text = data.decode("utf-8")
+    if not text.startswith("# " + SPEC_TITLE):
+        raise ValueError("SPEC_TITLE_MISMATCH")
+    if SPEC_ID not in text:
+        raise ValueError("SPEC_VERSION_MISSING")
+    dif: dict[str, dict] = {}
+    headings = list(re.finditer(r"^### (DIF-\d{2})｜(.+)$", text, re.M))
+    for index, match in enumerate(headings):
+        end = headings[index + 1].start() if index + 1 < len(headings) else text.find("\n## 3.", match.end())
+        if end < 0:
+            end = len(text)
+        body = text[match.end():end]
+        dif[match.group(1)] = {
+            "line": text.count("\n", 0, match.start()) + 1,
+            "section": "2",
+            "title": match.group(2).strip(),
+            "goal": _spec_field(body, "目标"),
+            "must": _spec_field(body, "MUST"),
+            "forbidden": _spec_field(body, "不可偷换"),
+            "acceptance": _spec_field(body, "验收"),
+        }
+    comic: dict[str, dict] = {}
+    for match in re.finditer(r"^\*\*(IMAGE-COMIC-(\d{2}))｜(.+?)\*\*(.*)$", text, re.M):
+        comic[match.group(1)] = {
+            "line": text.count("\n", 0, match.start()) + 1,
+            "section": "3.2",
+            "title": match.group(3).strip().rstrip("。"),
+            "requirement": " ".join(match.group(4).split()),
+        }
+    if len(dif) != 12 or len(comic) != 20:
+        raise ValueError(f"SPEC_COVERAGE_INCOMPLETE dif={len(dif)} comic={len(comic)}")
+    return {
+        "id": SPEC_ID,
+        "path": SPEC_REL,
+        "sha256": digest,
+        "bytes": len(data),
+        "lines": text.count("\n") + 1,
+        "title": SPEC_TITLE,
+        "dif": dif,
+        "comic": comic,
+    }
+
+
+def bind_spec(rows: list[dict], spec: dict) -> None:
+    meta = {"document": spec["id"], "path": spec["path"], "sha256": spec["sha256"]}
+    for entry in rows:
+        if entry["group"] == "DIF":
+            item = spec["dif"].get(entry["id"])
+            if item is None:
+                raise ValueError(f"SPEC_BINDING_MISSING {entry['id']}")
+            entry["spec"] = {**meta, "section": item["section"], "line": item["line"], "title": item["title"],
+                             "goal": item["goal"], "must": item["must"],
+                             "forbidden": item["forbidden"], "acceptance": item["acceptance"]}
+            entry["user_behavior_must"] = item["must"] or entry["user_behavior_must"]
+            entry["expected_result"] = item["acceptance"] or entry["expected_result"]
+        elif entry["group"] == "IMAGE_COMIC":
+            item = spec["comic"].get(entry["id"])
+            if item is None:
+                raise ValueError(f"SPEC_BINDING_MISSING {entry['id']}")
+            entry["spec"] = {**meta, "section": item["section"], "line": item["line"],
+                             "title": item["title"], "requirement": item["requirement"]}
+            entry["user_behavior_must"] = item["requirement"] or entry["user_behavior_must"]
+        else:
+            continue
 
 
 def parse_capabilities() -> tuple[list[dict], frozenset[str]]:
@@ -207,7 +289,7 @@ ORIGINAL = [
     row(id="V2-M7", group="ORIGINAL_V2", title="M7 Video Studio, previs and reference control",
         user_behavior_must="T2V/I2V/V2V only as capability allows, typed reference image/video/previs/camera/depth/pose, local/authorized async adapters, queue/resource limits, preview and media storage; grey-model video vs true 3D camera clearly distinguished.",
         authority_owner="Video execution/assembly services + model registry + media validator",
-        existing_source_interfaces=["app/services/studio_video_execution.py", "app/video_assembly_service.py", "frontend/src/video*", "tests/test_v2_video_runtime_foundation.py"],
+        existing_source_interfaces=["app/services/studio_video_execution.py", "app/services/video_assembly_service.py", "frontend/src/video*", "tests/test_v2_video_runtime_foundation.py"],
         gap_type="PARTIAL",
         data_api_contract="Unsupported reference controls fail closed; produced video assets record provider/runtime evidence; no ref-control success claim without real output.",
         identity_permission_source_rules=AUTH,
@@ -219,7 +301,7 @@ ORIGINAL = [
     row(id="V2-M8", group="ORIGINAL_V2", title="M8 Audio Studio (TTS/voice/ASR/SFX/music)",
         user_behavior_must="Standalone audio: one sentence text→speech without a text project, voice profiles, ASR, basic editing/SFX/BGM assets, waveforms, independent export and timecode links without corrupting sources.",
         authority_owner="AudiobookService + audio execution/mix owners + asset library",
-        existing_source_interfaces=["app/audio_production_store.py", "app/audiobook_service.py", "app/services/studio_audio_execution.py", "app/experimental/subtitle_timeline.py", "tests/test_v2_audio_editing_pipeline.py"],
+        existing_source_interfaces=["app/audio_production_store.py", "app/services/audiobook_service.py", "app/services/studio_audio_execution.py", "app/experimental/subtitle_timeline.py", "tests/test_v2_audio_editing_pipeline.py"],
         gap_type="PARTIAL",
         data_api_contract="Audio tasks/captions versioned; real PCM/FFmpeg mixdown verified by independent parser; ASR/TTS model adapters NOT_CONFIGURED unless injected.",
         identity_permission_source_rules=AUTH + "; voice authorization evidence required for cloned voices",
@@ -231,7 +313,7 @@ ORIGINAL = [
     row(id="V2-M9", group="ORIGINAL_V2", title="M9 Editing Studio real multi-track NLE",
         user_behavior_must="Independent video/audio/subtitle tracks, drag, in/out points, split/transition, volume, subtitles, preview cache, real FFmpeg composition into a reopenable project exporting a complete video; audio/video sync and offline-media behavior reproducible.",
         authority_owner="studio_timeline_* owners + export snapshot authority",
-        existing_source_interfaces=["app/studio_timeline_edit.py", "app/studio_timeline_render.py", "app/studio_timeline_exchange.py", "frontend/src/nle", "tests/test_phase4_timeline.py"],
+        existing_source_interfaces=["app/services/studio_timeline_edit.py", "app/services/studio_timeline_render.py", "app/services/studio_timeline_exchange.py", "frontend/src/nle", "tests/test_phase4_timeline.py"],
         gap_type="PARTIAL",
         data_api_contract="Timeline documents versioned; render jobs are normal jobs; output MP4/WebM verified by ffprobe; OTIO/SRT/VTT loss reported.",
         identity_permission_source_rules=AUTH,
@@ -255,7 +337,7 @@ ORIGINAL = [
     row(id="V2-M11", group="ORIGINAL_V2", title="M11 Cross-module journeys, performance and full regression",
         user_behavior_must="Five independent journeys and combined paths (no hard-coded novel→video prerequisite); drag/asset replacement/cache reclaim/NLE latency/async queue/model offline/conflict/revocation/crash recovery; complete matrix and API/UI/test comparison at a frozen SHA.",
         authority_owner="Integration-level verification across existing owners (no new module)",
-        existing_source_interfaces=["tests/", ".github/ci/coverage_manifest_v2.json.gz", "docs/delivery/functional-surface-freeze/"],
+        existing_source_interfaces=["tests/", ".github/ci/coverage_manifest_v2.json.gz", "scripts/run_v2_checks.py", "tests/test_v2_studio_ci.py", "docs/delivery/functional-surface-freeze/"],
         gap_type="PARTIAL",
         data_api_contract="No new contract; this gate proves the existing ones compose.",
         identity_permission_source_rules="Each journey keeps its owner's authorization rules.",
@@ -267,7 +349,7 @@ ORIGINAL = [
     row(id="V2-M12", group="ORIGINAL_V2", title="M12 Windows final acceptance (user-authorized)",
         user_behavior_must="On Windows 11 + RTX 5080 16GB + 64GB: real install/upgrade/uninstall, first-run scan, reuse existing models/ComfyUI, full studio chain, security exit; 8/12/16GB VRAM constraints addressed; no user data in public repo; IME/high-DPI/interop results recorded separately.",
         authority_owner="User + released package; not a cloud/automated run",
-        existing_source_interfaces=["docs/AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md", "docs/desktop_host_acceptance_checklist.md", "docs/AI_NOVEL_STUDIO_V2_LOCAL_MODEL_INTEGRATION.md"],
+        existing_source_interfaces=["AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md", "docs/desktop_host_acceptance_checklist.md", "AI_NOVEL_STUDIO_V2_LOCAL_MODEL_INTEGRATION.md"],
         gap_type="BLOCKED",
         data_api_contract="Acceptance binds explicit package SHA256 and file hashes.",
         identity_permission_source_rules="User-authorized local only.",
@@ -804,11 +886,51 @@ def build_abu_rows(evidence: dict) -> list[dict]:
     return rows
 
 
+def attach_original_coverage(rows: list[dict]) -> None:
+    """Attach the detail index that proves each original requirement has a real owner.
+
+    The 25 original rows already name owners/tests/evidence as free text. This pass
+    resolves those names to repository paths and records existence, so the matrix is a
+    coverage proof and not a list of claims. Missing owner code is a hard failure (the
+    row is still allowed only when that is explicitly recorded); the validator enforces
+    that original rows carry resolved coverage.
+    """
+    path_pattern = re.compile(r"((?:app|scripts|tests|frontend|contracts|packaging|docs)/[A-Za-z0-9_./-]+\.(?:py|ts|tsx|json|md|ps1|txt|js|mjs|gz))")
+    for entry in rows:
+        if entry["group"] != "ORIGINAL_V2":
+            continue
+        owner_sources = []
+        for raw in entry.get("existing_source_interfaces", []):
+            for match in path_pattern.finditer(str(raw)):
+                relative = match.group(1).replace("\\", "/")
+                item = {"path": relative, "exists": (ROOT / relative).exists()}
+                if item not in owner_sources:
+                    owner_sources.append(item)
+        test_files = []
+        for match in path_pattern.finditer(str(entry.get("test_command", ""))):
+            relative = match.group(1).replace("\\", "/")
+            if not relative.startswith("tests/"):
+                continue
+            item = {"path": relative, "exists": (ROOT / relative).exists()}
+            if item not in test_files:
+                test_files.append(item)
+        evidence = []
+        if entry.get("evidence_path"):
+            relative = str(entry["evidence_path"]).replace("\\", "/")
+            evidence.append({"path": relative, "exists": (ROOT / relative).exists()})
+        status = "CODE_AND_TEST_PRESENT" if owner_sources and test_files else "CODE_PRESENT" if owner_sources else "MISSING"
+        entry["coverage"] = {"owner_sources": owner_sources, "test_files": test_files,
+                             "evidence": evidence, "status": status}
+
+
 def main() -> int:
     head = git_head()
     evidence = load_evidence()
     override_all = evidence.get("rows", {})
+    spec = load_spec()
     rows = ORIGINAL + DIF + COMIC + build_abu_rows(evidence.get("packages", {}))
+    bind_spec(rows, spec)
+    attach_original_coverage(rows)
 
     # apply evidence overlays for the hand-authored groups
     for entry in rows:
@@ -875,8 +997,36 @@ def main() -> int:
             "IMAGE-COMIC-01..20 + final same-build acceptance. This matrix is a tracking index, "
             "not a release certificate."
         ),
+        "sources": {
+            "release_scope_spec": {
+                "id": spec["id"],
+                "title": spec["title"],
+                "path": spec["path"],
+                "sha256": spec["sha256"],
+                "bytes": spec["bytes"],
+                "lines": spec["lines"],
+                "utf8_valid": True,
+                "status": "INGESTED_AND_HASH_VERIFIED",
+                "consumed_by": "DIF-01..DIF-12 and IMAGE-COMIC-01..IMAGE-COMIC-20 bindings in this matrix",
+            },
+            "master_roadmap": {
+                "path": "D:/PoemSeed/Documents/AI-Novel-Studio_V2/AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.md",
+                "status": "REFERENCED_EXTERNAL_NOT_INGESTED",
+            },
+            "abu_registry_in_tree": {
+                "path": "app/experimental/capabilities.py",
+                "status": "PARSED_FROM_TREE",
+            },
+        },
+        "spec_coverage": {
+            "document": spec["id"],
+            "sha256": spec["sha256"],
+            "dif_bound": len(spec["dif"]),
+            "comic_bound": len(spec["comic"]),
+            "binding": "each DIF/COMIC row carries spec.section, spec.line, spec.title and its MUST/acceptance text",
+        },
         "source_status": {
-            "release_scope_spec": "SOURCE_MISSING: SPEC-2026.10.19-r1 file not present on disk; DIF/COMIC MUST text marked SOURCE_MISSING where only titles were supplied",
+            "release_scope_spec": "INGESTED: SPEC-2026.10.19-r1 present at " + SPEC_REL + " with sha256 " + spec["sha256"],
             "master_roadmap": "D:/PoemSeed/Documents/AI-Novel-Studio_V2/AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.md (external to repo)",
             "abu_registry_in_tree": "app/experimental/capabilities.py (40 packages)",
         },
@@ -892,6 +1042,12 @@ def main() -> int:
             "by_status": count_by("status"),
             "by_test_result": count_by("test_result"),
             "by_release_blocking": count_by("release_blocking"),
+        },
+        "coverage_summary": {
+            "original_rows": len(ORIGINAL),
+            "original_with_resolved_owner": sum(1 for entry in rows if entry["group"] == "ORIGINAL_V2" and entry["coverage"]["owner_sources"]),
+            "original_with_test_file": sum(1 for entry in rows if entry["group"] == "ORIGINAL_V2" and entry["coverage"]["test_files"]),
+            "original_with_evidence": sum(1 for entry in rows if entry["group"] == "ORIGINAL_V2" and entry["coverage"]["evidence"]),
         },
         "groups": {
             "ORIGINAL_V2": "Original Master Roadmap release-required items and cross-cutting contracts",

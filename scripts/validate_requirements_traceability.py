@@ -13,6 +13,7 @@ Exit code 0 only when everything holds. Safe read-only: starts no app, model or 
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
@@ -20,6 +21,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "docs" / "v2" / "engineering" / "requirements-traceability.json"
+SPEC_ID = "SPEC-2026.10.19-r1"
+SPEC_PATH = ROOT / "docs" / "v2" / "engineering" / "spec" / "SPEC-2026.10.19-r1.txt"
+SPEC_REL = "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt"
 CAPABILITIES = ROOT / "app" / "experimental" / "capabilities.py"
 
 STATUS_VALUES = {"PLANNED", "IMPLEMENTED", "INTEGRATION_VERIFIED", "ACCEPTED", "BLOCKED"}
@@ -68,6 +72,33 @@ def validate(document: dict) -> list[str]:
         fail(problems, "status vocabulary mismatch")
     if set(vocabulary.get("test_result", [])) != TEST_RESULT_VALUES:
         fail(problems, "test_result vocabulary mismatch")
+
+    spec_source = (document.get("sources") or {}).get("release_scope_spec") or {}
+    if not SPEC_PATH.exists():
+        fail(problems, "release scope SPEC file missing: " + SPEC_REL)
+        spec_bytes = b""
+    else:
+        spec_bytes = SPEC_PATH.read_bytes()
+        spec_sha = hashlib.sha256(spec_bytes).hexdigest()
+        if spec_source.get("sha256") != spec_sha:
+            fail(problems, "SPEC sha256 mismatch between matrix and ingested file")
+        if spec_source.get("bytes") != len(spec_bytes):
+            fail(problems, "SPEC byte size mismatch")
+        spec_text = spec_bytes.decode("utf-8")
+        if not spec_text.startswith("# PoemSeed Studio V2 发布版全量增强需求书"):
+            fail(problems, "SPEC title/header mismatch")
+        if SPEC_ID not in spec_text:
+            fail(problems, "SPEC version marker missing")
+        if spec_source.get("lines") != spec_text.count("\n") + 1:
+            fail(problems, "SPEC line count mismatch")
+        if spec_source.get("status") != "INGESTED_AND_HASH_VERIFIED":
+            fail(problems, "SPEC source status is not INGESTED_AND_HASH_VERIFIED")
+        if spec_source.get("path") != SPEC_REL:
+            fail(problems, "SPEC path mismatch")
+    spec_coverage = document.get("spec_coverage") or {}
+    if spec_coverage.get("dif_bound") != 12 or spec_coverage.get("comic_bound") != 20:
+        fail(problems, "spec_coverage must bind 12 DIF and 20 COMIC requirements")
+    spec_sha = hashlib.sha256(spec_bytes).hexdigest() if spec_bytes else ""
 
     requirements = document.get("requirements")
     if not isinstance(requirements, list) or not requirements:
@@ -128,8 +159,51 @@ def validate(document: dict) -> list[str]:
                     fail(problems, f"{rid}: evidence_path escapes repository: {evidence}")
                 elif not target.exists():
                     fail(problems, f"{rid}: evidence_path missing: {evidence}")
-        if group == "DIF" and status in {"INTEGRATION_VERIFIED", "ACCEPTED"}:
-            fail(problems, f"{rid}: DIF requirement definitions are SOURCE_MISSING; cannot be {status}")
+        if group == "ORIGINAL_V2":
+            coverage = entry.get("coverage")
+            if not isinstance(coverage, dict):
+                fail(problems, f"{rid}: original requirement missing detail coverage index")
+            else:
+                owners = coverage.get("owner_sources") or []
+                if not owners:
+                    fail(problems, f"{rid}: no owner source resolved in coverage")
+                for owner in owners:
+                    if not isinstance(owner, dict) or not owner.get("path"):
+                        fail(problems, f"{rid}: invalid coverage owner entry")
+                    elif not (ROOT / owner["path"]).exists():
+                        fail(problems, f"{rid}: coverage owner path missing: {owner['path']}")
+                for test_file in coverage.get("test_files") or []:
+                    if not isinstance(test_file, dict) or not test_file.get("path"):
+                        fail(problems, f"{rid}: invalid coverage test entry")
+                    elif not (ROOT / test_file["path"]).exists():
+                        fail(problems, f"{rid}: coverage test path missing: {test_file['path']}")
+                for evidence in coverage.get("evidence") or []:
+                    if isinstance(evidence, dict) and evidence.get("path") and not (ROOT / evidence["path"]).exists():
+                        fail(problems, f"{rid}: coverage evidence path missing: {evidence['path']}")
+                if coverage.get("status") not in {"CODE_AND_TEST_PRESENT", "CODE_PRESENT", "MISSING"}:
+                    fail(problems, f"{rid}: invalid coverage status {coverage.get('status')}")
+                if coverage.get("status") == "MISSING":
+                    fail(problems, f"{rid}: original coverage status MISSING")
+        if group in {"DIF", "IMAGE_COMIC"}:
+            binding = entry.get("spec")
+            if not isinstance(binding, dict):
+                fail(problems, f"{rid}: missing SPEC binding")
+            else:
+                if binding.get("document") != SPEC_ID or binding.get("sha256") != spec_sha:
+                    fail(problems, f"{rid}: SPEC binding document/sha mismatch")
+                if binding.get("path") != SPEC_REL:
+                    fail(problems, f"{rid}: SPEC binding path mismatch")
+                if not isinstance(binding.get("line"), int) or binding["line"] < 1:
+                    fail(problems, f"{rid}: SPEC binding line invalid")
+                if not str(binding.get("title", "")).strip():
+                    fail(problems, f"{rid}: SPEC binding title empty")
+                if group == "DIF" and not (binding.get("must") and binding.get("acceptance")):
+                    fail(problems, f"{rid}: SPEC binding must/acceptance empty")
+                if group == "IMAGE_COMIC" and not binding.get("requirement"):
+                    fail(problems, f"{rid}: SPEC binding requirement empty")
+            for field in ("user_behavior_must", "expected_result"):
+                if "SOURCE_MISSING" in str(entry.get(field, "")):
+                    fail(problems, f"{rid}: {field} still claims SOURCE_MISSING after SPEC ingestion")
 
     for index in range(1, 13):
         rid = f"DIF-{index:02d}"
@@ -149,6 +223,12 @@ def validate(document: dict) -> list[str]:
         fail(problems, f"unknown A/B/U packages not in registry: {unknown_packages}")
     if by_group.get("ORIGINAL_V2", 0) < 20:
         fail(problems, "original V2 coverage must contain at least 20 requirements")
+
+    coverage_summary = document.get("coverage_summary") or {}
+    if coverage_summary.get("original_rows") != len([entry for entry in requirements if entry.get("group") == "ORIGINAL_V2"]):
+        fail(problems, "coverage_summary.original_rows mismatch")
+    if coverage_summary.get("original_with_resolved_owner", 0) < 20:
+        fail(problems, "fewer than 20 original requirements have a resolved owner source")
 
     counts = document.get("counts", {})
     expected = {

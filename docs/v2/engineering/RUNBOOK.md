@@ -272,3 +272,37 @@ child processes, assert shell syntax or assert runner-profile paths:
 Line endings: contracts and source hashes are byte-bound. Keep the checkout LF
 (`core.autocrlf=false` or `input`) and regenerate contracts with the LF-safe generator; never
 regenerate `contracts/local-interop` from a CRLF checkout.
+
+---
+
+## Unified Windows engineering entry point (round 3)
+
+Do not assemble ad-hoc pytest invocations for release evidence. The single entry point is
+
+    pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/run_windows_engineering_suite.ps1 -Profile targeted
+    pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/run_windows_engineering_suite.ps1 -Profile all -Label round3
+
+Profiles are declared in windows_profiles.json (single source):
+
+| Profile | What it runs | Environment |
+| --- | --- | --- |
+| full | complete File suite, only two documented multi-process/stress deselects | collaboration runtime off |
+| targeted | round-1 previously failing file set (dedicated-profile suites excluded) | default |
+| collaboration | prompt-process revocation | ENABLE_COLLABORATION_RUNTIME=true + narrative_production_v2 |
+| round3i-adoption | R3-I adoption closed loop | collaboration off, .runtime/v2-checks profile path |
+| round3i-authorized | R3-I authorized HTTP adoption | collaboration on + experimental flags, .runtime/v2-checks profile path |
+| r3-import | R3 import semantics | collaboration off, .runtime/v2-checks profile path |
+
+Each profile writes a raw log, a JUnit receipt and a per-profile JSON under
+<workspace>/Engineering-Runs/windows-engineering/<label>/, plus an aggregate JSON with
+Git HEAD, branch, Python/OS versions, per-profile counts and overall status. Counts are
+parsed from the JUnit receipt; a missing receipt is reported as RECEIPT_MISSING, never PASS.
+
+Round-3 environment notes:
+- A hung complete-suite run was observed at 17% in the order-sensitive
+  test_post_interop_shared_universe.py area; the file passes standalone (11 passed/11
+  skipped). Complete-suite evidence is therefore taken from a run that excludes that file and
+  the file is executed separately (D-20).
+- Benchmark loopback exception: the R4 worker allows only Windows socketpair loopback
+  (recorded as allowed_loopback_attempts); external connects and name resolution stay
+  denied (D-18).

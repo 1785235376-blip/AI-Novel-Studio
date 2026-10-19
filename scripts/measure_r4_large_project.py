@@ -191,9 +191,23 @@ def run_worker(size: int, enabled: bool, result: dict | None = None) -> dict:
     owned = Path(os.environ['R4_BENCHMARK_OWNED_DIRECTORY']).resolve()
     if Path(os.environ['NOVEL_DATA_PATH']).resolve() != owned / 'data' or not (owned / '.r4-owned').is_file():
         raise RuntimeError('refusing non-owned fixture directory')
-    network = {'blocked_connect_attempts': 0}
+    network = {'blocked_connect_attempts': 0, 'allowed_loopback_attempts': 0}
+    loopback = {'127.0.0.1', '::1', 'localhost'}
     def no_network(event, args):
-        if event in {'socket.connect', 'socket.getaddrinfo'}:
+        # Windows asyncio's ProactorEventLoop builds its self-pipe with
+        # socket.socketpair(), which is implemented as a loopback TCP connect
+        # and raises the same socket.connect audit event as real traffic. Local
+        # self-pairing is not network access; external connects and all name
+        # resolution remain denied so the benchmark still fails closed.
+        if event == 'socket.connect':
+            address = args[1] if len(args) > 1 else None
+            host = address[0] if isinstance(address, (tuple, list)) and address else None
+            if host in loopback:
+                network['allowed_loopback_attempts'] += 1
+                return
+            network['blocked_connect_attempts'] += 1
+            raise RuntimeError('benchmark forbids all network connections')
+        if event == 'socket.getaddrinfo':
             network['blocked_connect_attempts'] += 1
             raise RuntimeError('benchmark forbids all network connections')
     sys.addaudithook(no_network)

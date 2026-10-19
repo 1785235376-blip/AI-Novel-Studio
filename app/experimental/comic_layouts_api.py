@@ -58,6 +58,10 @@ def create_comic_layouts_router(service, authorize, require_flag):
     def records(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: service.records(nid,s,a))
 
+    @router.get('/records/{rid}')
+    def record(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: service.record(nid,s,a,rid))
+
     @router.get('/images/{aid}')
     def image(nid: str, aid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, 'domain.read', lambda a,s,g: Response(service.image_preview(nid,s,a,aid), media_type='image/png'))

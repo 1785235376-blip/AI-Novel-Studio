@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "document": "edition-manifest/1",
+  "spec": "SPEC-2026.10.19-r1",
+  "description": "Public distribution vs internal research edition boundary. Declarative build-gate data only; existing project/session/CAS owners remain the single runtime authority.",
+  "declared_editions": {
+    "PUBLIC": {
+      "description": "Public V2 distribution: server-owned experimental flags default OFF, no research-only data/model inputs packaged, credential entry only through the DesktopHost runtime channel.",
+      "runtime_isolation": "PARTIAL: default-off flags, packaged session bootstrap, loopback/packaged gates exist; a separate public backend deployment is not yet provisioned."
+    },
+    "INTERNAL_RESEARCH": {
+      "description": "Internal research deployment: additional research-only capabilities may be enabled by an operator, never by a public build artifact.",
+      "runtime_isolation": "BLOCKED: no separate internal-research backend compose/authz/data namespace exists in this repository yet."
+    }
+  },
+  "public_build_invariants": {
+    "experimental_flags_default": "OFF",
+    "v1_acceptance_mode": "DENY_ALL_EXPERIMENTAL",
+    "wildcard_flag_enable": "FORBIDDEN",
+    "required_packaged_launch_env": {
+      "ENABLE_CLOUD": "false",
+      "MOCK_PROVIDER": "false",
+      "ENABLE_PROVIDER_FALLBACK": "false",
+      "ENABLE_PACKAGED_RUNTIME": "true",
+      "ENABLE_COLLABORATION_RUNTIME": "true",
+      "EXPERIMENTAL_FEATURES": "explicit closed list, never '*'"
+    },
+    "required_static_defaults": {
+      "enable_packaged_runtime": false,
+      "enable_collaboration_runtime": false
+    },
+    "forbidden_public_inputs": [
+      ".env",
+      ".env.local",
+      ".env.production",
+      "*.pem",
+      "*.key",
+      "*.p12",
+      "*.gguf",
+      "*.safetensors",
+      "*.onnx",
+      "novel_data/**",
+      "user-data/**"
+    ],
+    "launcher_contract": {
+      "portable_entry": "packaging/portable/AI-Novel-Studio-Portable.cmd",
+      "isolated_python": "-B -I",
+      "fixed_application_root": true,
+      "reads_dotenv_or_credentials": false
+    }
+  },
+  "internal_research_boundary": {
+    "status": "BLOCKED",
+    "implemented": false,
+    "missing": [
+      "separate internal-research deployment/compose and its host controls",
+      "research-only backend namespace with its own authz/data isolation",
+      "packaging manifest that excludes research-only modules/assets from the public build",
+      "egress and model-upload policy difference between editions",
+      "cross-edition access tests on a real deployment (no-permission, cross-version, disabled route, config leak, residual resources)"
+    ],
+    "implemented_checks": [
+      "scripts/verify_public_edition.py static public-build invariants",
+      "tests/test_public_edition_boundary.py runtime default-off and non-leak checks"
+    ]
+  }
+}

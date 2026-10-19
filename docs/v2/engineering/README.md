@@ -21,6 +21,13 @@ engineering baseline, a machine-readable requirement index, and explicit release
 | [MEDIA_AND_COMIC_CONTRACTS.md](MEDIA_AND_COMIC_CONTRACTS.md) | Image/Video/Audio/Subtitle/Timeline/Comic engineering contracts, real media verification, layer/panel/bubble data, export capability table, loss reporting, dynamic-comic handoff | Does not claim ORA/CBZ/PDF comic export, AI comic generation or dynamic comics exist |
 | [RELEASE_GATES.md](RELEASE_GATES.md) | Release gate definition for the full V2 (roadmap + DIF + COMIC), artifact/signing policy, CI/offline rules, performance/disk budgets, human acceptance duties | This round is **not** release-ready and cannot issue a V2 tag |
 | [TRIAGE_20261019_r2.md](TRIAGE_20261019_r2.md) | Round-2 classification of all 203 round-1 failures and remaining open issues |
+| [TRIAGE_20261019_r3.md](TRIAGE_20261019_r3.md) | Round-3 closure: D-09/D-18/D-19, revocation profile status, JUnit accounting correction, suite skip/order audit, unified Windows entry results |
+| [REQUIREMENT_SOURCES.md](REQUIREMENT_SOURCES.md) | Authoritative requirement sources, SPEC-2026.10.19-r1 ingestion hash/verification, matrix binding and update procedure |
+| [EDITIONS_AND_BUILD_BOUNDARIES.md](EDITIONS_AND_BUILD_BOUNDARIES.md) | Public vs internal-research edition boundary, executed build invariants, remaining BLOCKED deployment isolation |
+| [SINGLE_AUTHORITY_MAP.md](SINGLE_AUTHORITY_MAP.md) | Graph/Asset/Job/Review/Timeline single-authority owners and cross-media dependency/recovery rules |
+| [COMPATIBILITY_MIGRATIONS_AND_OPERATIONS.md](COMPATIBILITY_MIGRATIONS_AND_OPERATIONS.md) | API/DTO/schema compatibility, DB migrations/rollback, incarnation/permissions, logging/backup/disk/supply-chain contracts |
+| [PROVIDER_MODEL_RESOURCE_POLICY.md](PROVIDER_MODEL_RESOURCE_POLICY.md) | Provider admission, model capability evidence, VRAM/resource/reclamation policy and honest gaps |
+| [WORLD_DEPENDENCY_INCREMENT_AUDIT.md](WORLD_DEPENDENCY_INCREMENT_AUDIT.md) | Story-world semantic dependency audit: reusable owners, implemented provenance increment, DIF-01/02 dependency block |
 | [DEFECTS_20261019_r1.md](DEFECTS_20261019_r1.md) | Defects found, minimal reproduction, fix commit, regression evidence, remaining defects | Fixed defects are evidence-bound to a SHA |
 
 ## Authority order
@@ -32,10 +39,10 @@ engineering baseline, a machine-readable requirement index, and explicit release
    `AI_NOVEL_STUDIO_V2_FINAL_DEVELOPMENT_REPORT.md`, `V2_ADVANCED_CAPABILITY_GAP_REPORT.md`,
    `docs/v2/*`, `docs/delivery/*`. These are evidence/history, not current status.
 5. User-issued scope documents. The release-scope file `PoemSeed_Studio_V2_Release_Scope_20261019.txt`
-   (SPEC-2026.10.19-r1) was requested by this round's instruction but **was not present on disk**
-   (`SOURCE_MISSING`, see BASELINE §2). Requirements were therefore taken from the original
-   `AI_NOVEL_STUDIO_V2_MASTER_ROADMAP`, the in-repo feature matrix, the A/B/U capability registry
-   (`app/experimental/capabilities.py`), and the explicitly listed DIF/COMIC IDs in the instruction.
+   (SPEC-2026.10.19-r1) is now **ingested and hash-verified** at
+   [spec/SPEC-2026.10.19-r1.txt](spec/SPEC-2026.10.19-r1.txt) (SHA256
+   `a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac`, 37,693 bytes / 352 lines).
+   Matrix DIF/COMIC rows bind its section/line/MUST/acceptance text; see [REQUIREMENT_SOURCES.md](REQUIREMENT_SOURCES.md).
 
 ## Status vocabulary (fixed)
 

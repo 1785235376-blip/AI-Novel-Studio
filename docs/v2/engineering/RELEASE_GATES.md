@@ -73,16 +73,16 @@ Intermediate checkpoints, internal builds and test runs are allowed and must be 
 | Gate | Status | Reason |
 | --- | --- | --- |
 | G1 | PARTIAL | Owners preserved in the tree; backup/restore not re-proven this round |
-| G2 | PARTIAL | Complete File suite re-run in round 2: **27 failed / 10021 passed / 5094 skipped / 13 errors** (was 190 failed / 14 errors). 37 remaining nodes are suites run without their required runner profile/flag (verified passing there); 2 OPEN (D-09, D-18), 2 intermittent harness cases (D-17, D-19). Focused real-PostgreSQL subset: 118 passed, 0 failed; full PG suite BLOCKED_ENVIRONMENT (D-07) |
+| G2 | PARTIAL | Round-3 complete File suite (D-20 file excluded, then standalone 11/11): **24 failed / 10023 passed / 5087 skipped / 12 errors / 3 deselected in 57 m 36 s**. All 36 failed/error nodes are dedicated-profile suites that pass in their own profiles (revocation 24/24, R3-I authorized 8/8, R3-I adoption 4/4). D-09/D-18/D-19 fixed. Focused real-PostgreSQL subset: 118 passed, 0 failed; full PostgreSQL suite 4,823 postgres-marked tests BLOCKED_ENVIRONMENT (D-07). No requirement row is ACCEPTED. |
 | G3 | PASS (after fix) | `pnpm test` 4303 passed / 8 skipped / 0 failed after excluding Playwright e2e specs from Vitest (D-01); build and token lint pass |
 | G4 | PARTIAL | System Edge 152: visual/geometry/Local-AI 15/15 PASS; creative-workbench journeys 8 failed at launcher precondition (D-10); live-backend E2E not executed |
 | G5 | PARTIAL | Real CPU media/comic paths exist; acceptance artifacts not fully regenerated this round |
 | G6 | NOT_RUN / LOCAL_REQUIRED | No authorized local model was run; no paid API used |
-| G7 | PARTIAL / HIGH RISK | Public/internal edition isolation MISSING (PLANNED); C2PA MISSING; consent/privacy controls exist |
-| G8 | PLANNED | 3/20 comic items implemented and 3 partial; remaining PLANNED |
+| G7 | PARTIAL / HIGH RISK | Public-build invariants IMPLEMENTED/VERIFIED (24 checks + 9 runtime tests); internal-research deployment isolation still BLOCKED (no separate authz/data namespace, no cross-edition tests); C2PA MISSING; consent/privacy controls exist |
+| G8 | PARTIAL | Comic rows 01/02/04/09/13/15/18 IMPLEMENTED/PARTIAL after the round-3 standalone page closed loop; no ORA/CBZ/PDF/EPUB, generation, consistency checks or agent, 13 remaining items PLANNED, no ACCEPTED comic item |
 | G9 | NOT_RUN / LOCAL_REQUIRED | Requires the user's Windows machine and explicit authorization |
 | G10 | BLOCKED_EXTERNAL | Hosted CI account/runner unavailable; local runs only |
 | G11 | NOT_RUN | Candidate packaging/signing not part of this baseline round |
 | G12 | PARTIAL | This directory + matrix + validator added; matrix itself tracks remaining work |
 
-**Verdict: NOT RELEASE_READY.** Do not publish V2 from this branch.
+**Verdict: NOT RELEASE_READY.** Do not publish V2 from this branch. SPEC is now ingested and D-09/D-18/D-19 are fixed; DIF-01..12 have 0 accepted/verified, comic has 0 accepted and 13 unimplemented items, internal-research isolation is BLOCKED, and Windows/GPU/CI acceptance is LOCAL_REQUIRED/BLOCKED_EXTERNAL.

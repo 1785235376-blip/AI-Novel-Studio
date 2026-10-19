@@ -158,25 +158,28 @@
       "test_command": "see RUNBOOK isolation contract + run directory accounting"
     },
     "IMAGE-COMIC-01": {
-      "test_result": "PASS",
-      "actual_result": "Comic entry/mounted API contract, OFF/V1/dependency fences passed on File and real PostgreSQL backends; 15/15 browser checks include the shell that hosts the entry.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
-      "test_command": "python -m pytest -q tests/test_r5_comic_mounted.py tests/test_r5_comic_layouts.py",
-      "status": "INTEGRATION_VERIFIED"
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "STANDALONE blank comic page creation without screenplay/chapter, import of an existing approved Image asset, CAS save/reopen, text edit and PNG-segment export verified end to end (41 passed / 1 skipped with the existing B06 suites). Gaps vs SPEC: create-from-manuscript and import-image-continue flows, volume/chapter tree, no-model independent project UI surface.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Demo closed loop in the existing comic-layouts owner; full SPEC acceptance is not claimed."
     },
     "IMAGE-COMIC-09": {
-      "test_result": "PASS",
-      "actual_result": "Bubble/narration plain-text objects, measured layout, overflow blockers and deterministic preview/export passed with the pinned OFL font.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
-      "status": "INTEGRATION_VERIFIED"
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "Independent plain-text bubble objects are editable without regenerating the panel image and are re-rendered deterministically; vector balloon tails, orientations, kerning/tracking and vertical layout are not implemented.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Text-only edit leaves the asset bytes/version unchanged in the verified test."
     },
     "IMAGE-COMIC-13": {
-      "test_result": "PASS",
-      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets, segmented real PNG rendering and byte-identical preview/export passed.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
-      "status": "INTEGRATION_VERIFIED"
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets with segmented PNG rendering are verified; dual-mode conversion with crop/overflow risk reporting is not implemented.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Existing B06 presets; conversion workflow absent."
     },
     "IMAGE-COMIC-17": {
       "test_result": "PARTIAL",
@@ -185,10 +188,36 @@
       "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (restore subset)"
     },
     "IMAGE-COMIC-18": {
+      "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
-      "actual_result": "Deterministic PNG-segment ZIP + manifest + OFL export verified; ORA/CBZ/PDF/EPUB exporters are absent.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (ZIP export subset)"
+      "actual_result": "Approved pages export deterministic ZIP of segmented PNGs with a hash manifest containing page identity; CBZ, PDF, EPUB 3.3 fixed-layout and print basics are not implemented.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "PNG segment export only; delivery-format set remains per SPEC 3.2."
+    },
+    "IMAGE-COMIC-02": {
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "Page records with stable page_number/reading_direction ordering and CAS revision history are verified; volume/chapter level tree, duplicate/split/merge/delete-restore and snapshot UX are not implemented.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Page level only; no volume/chapter tree yet."
+    },
+    "IMAGE-COMIC-04": {
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "Integer panel geometry, safe-area/overlap/reading-order preflight and PAGE/WEBTOON canvas presets are verified; drag handles, templates, masks, bleed and page-readable multi-column tooling are absent.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Bounded geometry owner reused; professional canvas tooling remains."
+    },
+    "IMAGE-COMIC-15": {
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
+      "actual_result": "Full layout state (panels/bubbles/page metadata) is persisted, reopened, versioned by CAS and exported; logical layers and verifiable OpenRaster (ORA) interchange are not implemented.",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
+      "notes": "Save/reopen verified; ORA remains a release target."
     }
   },
   "packages": {

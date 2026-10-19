@@ -55,7 +55,7 @@ class AppearanceReference(StrictModel):
 
 class ComicPanel(Rect):
     id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
-    shot_id: str = Field(min_length=1, max_length=240)
+    shot_id: str | None = Field(default=None, min_length=1, max_length=240)
     order: int = Field(ge=1, le=24, strict=True)
     character_ids: list[str] = Field(default_factory=list, max_length=20)
     asset_id: str | None = Field(default=None, min_length=1, max_length=240)
@@ -77,8 +77,14 @@ class ComicPanel(Rect):
 
 class LayoutIn(StrictModel):
     title: str = Field(min_length=1, max_length=240)
-    screenplay_id: str = Field(min_length=1, max_length=240)
-    expected_screenplay_version: int = Field(ge=1, strict=True)
+    # Two supported sources, both owned by this same page owner:
+    #   SCREENPLAY - the original B06 path (screenplay + shot binding retained);
+    #   STANDALONE - Image Studio blank comic page with no novel/chapter/screenplay.
+    source_mode: Literal['SCREENPLAY', 'STANDALONE'] = 'SCREENPLAY'
+    screenplay_id: str | None = Field(default=None, min_length=1, max_length=240)
+    expected_screenplay_version: int | None = Field(default=None, ge=1, strict=True)
+    page_number: int = Field(default=1, ge=1, le=500, strict=True)
+    reading_direction: Literal['LTR', 'RTL', 'VERTICAL'] = 'LTR'
     preset: Literal['PAGE', 'WEBTOON'] = 'PAGE'
     font_family: Literal['NOTO_SANS_SC_OFL'] = 'NOTO_SANS_SC_OFL'
     width: int = Field(default=800, ge=320, le=1600, strict=True)
@@ -98,6 +104,14 @@ class LayoutIn(StrictModel):
             raise ValueError('COMIC_TEXT_LIMIT')
         if len({b.id for b in bubbles}) != len(bubbles):
             raise ValueError('COMIC_DUPLICATE_BUBBLE_ID')
+        if self.source_mode == 'SCREENPLAY':
+            if not self.screenplay_id or not self.expected_screenplay_version:
+                raise ValueError('COMIC_SCREENPLAY_SOURCE_REQUIRED')
+            if any(panel.shot_id is None for panel in self.panels):
+                raise ValueError('COMIC_SCREENPLAY_SHOT_REQUIRED')
+        else:
+            if self.screenplay_id is not None or self.expected_screenplay_version is not None:
+                raise ValueError('COMIC_STANDALONE_SCREENPLAY_FORBIDDEN')
         return self
 
 
@@ -354,18 +368,29 @@ class ComicLayoutsService(DomainService):
             except (FileNotFoundError, ValueError): continue
             assets.append({k: row[k] for k in ('id', 'filename', 'version')} | {'approved': bool(row.get('approved_at')), 'manual_review_available': self._manual(row)})
         return {'screenplays': base['screenplays'], 'characters': base['characters'], 'assets': assets,
+                'source_modes': ['SCREENPLAY', 'STANDALONE'], 'standalone_requires_screenplay': False,
+                'standalone_requires_model': False, 'page_edit_loop': 'DRAFT_PREFLIGHT_REVIEW_APPROVE_EXPORT',
                 'presets': PRESETS, 'renderer': renderer_status(), 'font': font_status(), 'privacy_level': 'LOCAL_ONLY', 'automatic_generation': False,
                 'appearance_reference_policy': 'ORIGINAL_APPROVED_ASSET_VERSION_PINNED',
                 'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
 
     def _payload(self, nid, scope, actor, value):
         body = LayoutIn.model_validate(value); document = body.model_dump(); director = self._director()
-        source = director.screenplay(nid, scope, body.screenplay_id)
-        if source['edit_version'] != body.expected_screenplay_version: raise StaleSourceError('COMIC_SCREENPLAY_CHANGED')
-        shots = {shot['id']: shot for shot in source.get('shots', [])}
-        if any(p.shot_id not in shots for p in body.panels): raise ValueError('COMIC_UNKNOWN_SHOT')
-        characters = {cid for p in body.panels for cid in p.character_ids} | {b.character_id for p in body.panels for b in p.bubbles if b.character_id}
-        character_sources = director._character_sources(nid, scope, characters)
+        if body.source_mode == 'SCREENPLAY':
+            source = director.screenplay(nid, scope, body.screenplay_id)
+            if source['edit_version'] != body.expected_screenplay_version: raise StaleSourceError('COMIC_SCREENPLAY_CHANGED')
+            shots = {shot['id']: shot for shot in source.get('shots', [])}
+            if any(p.shot_id not in shots for p in body.panels): raise ValueError('COMIC_UNKNOWN_SHOT')
+            screenplay_version, source_evidence = source['edit_version'], director.evidence(nid, scope, source)
+            scene_ids = {p.id: shots[p.shot_id].get('scene_id') for p in body.panels}
+            characters = {cid for p in body.panels for cid in p.character_ids} | {b.character_id for p in body.panels for b in p.bubbles if b.character_id}
+            character_sources = director._character_sources(nid, scope, characters)
+        else:
+            # Standalone Image Studio comic page: no screenplay/shot/source claim. Project,
+            # asset, permission, version and review authority still come from the original
+            # owners because the record lives in this project's ExperimentalStore document.
+            screenplay_version, source_evidence, scene_ids = None, {}, {}
+            character_sources = {}
         assets = {}
         for panel in body.panels:
             if panel.asset_id:
@@ -376,14 +401,16 @@ class ComicLayoutsService(DomainService):
                 asset, _ = self._asset(nid, scope, actor, reference.asset_id)
                 if reference.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
                 assets[reference.asset_id] = self._binding(asset)
-        return {'document': document, 'screenplay_version': source['edit_version'], 'source_evidence': director.evidence(nid, scope, source),
+        return {'document': document, 'screenplay_version': screenplay_version, 'source_evidence': source_evidence,
                 'character_sources': character_sources, 'asset_sources': assets,
-                'scene_ids': {p.id: shots[p.shot_id].get('scene_id') for p in body.panels}, 'status': 'DRAFT', 'approval': None}
+                'scene_ids': scene_ids, 'status': 'DRAFT', 'approval': None}
 
     def _current(self, nid, scope, actor, row):
-        director = self._director(); source = director.screenplay(nid, scope, row['document']['screenplay_id'])
-        if source['edit_version'] != row['screenplay_version'] or director.evidence(nid, scope, source) != row['source_evidence'] or director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
-            raise StaleSourceError('COMIC_SOURCE_CHANGED')
+        document = row['document']
+        if document.get('source_mode', 'SCREENPLAY') == 'SCREENPLAY':
+            director = self._director(); source = director.screenplay(nid, scope, document['screenplay_id'])
+            if source['edit_version'] != row['screenplay_version'] or director.evidence(nid, scope, source) != row['source_evidence'] or director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
+                raise StaleSourceError('COMIC_SOURCE_CHANGED')
         images = {}
         for aid, binding in row['asset_sources'].items():
             asset, data = self._asset(nid, scope, actor, aid)
@@ -405,7 +432,13 @@ class ComicLayoutsService(DomainService):
                 'history_versions': [h['version'] for h in row['history']], 'automatic_promotion': False}
 
     def records(self, nid, scope, actor):
-        return {'items': [self._view(nid, scope, actor, row) for row in self.list(nid, scope, self.RECORDS) if row['created_by'] == actor]}
+        rows = [row for row in self.list(nid, scope, self.RECORDS) if row['created_by'] == actor]
+        # Stable page tree order: explicit page_number first, then record id for ties.
+        rows.sort(key=lambda row: (row['document'].get('page_number', 1), row['id']))
+        return {'items': [self._view(nid, scope, actor, row) for row in rows]}
+
+    def record(self, nid, scope, actor, rid):
+        return self._view(nid, scope, actor, self._row(nid, scope, actor, rid))
 
     def save(self, nid, scope, actor, value, guard=lambda: None, rid=None, expected_version=None):
         payload = self._payload(nid, scope, actor, value)
@@ -474,7 +507,12 @@ class ComicLayoutsService(DomainService):
         panel_sources = [{'panel_id': panel['id'], 'shot_id': panel['shot_id'], 'scene_id': row['scene_ids'].get(panel['id']),
             'image_brief': panel.get('image_brief', ''), 'asset_id': panel.get('asset_id'),
             'appearance_references': panel.get('appearance_references', [])} for panel in row['document']['panels']]
-        stream = io.BytesIO(); manifest = {'format': 'comic-png-segments-v1', 'layout_version': expected_version, 'review_digest': report['review_digest'],
+        stream = io.BytesIO(); document = row['document']; manifest = {'format': 'comic-png-segments-v1', 'layout_version': expected_version, 'review_digest': report['review_digest'],
+                                          'source_mode': document.get('source_mode', 'SCREENPLAY'),
+                                          'page': {'number': document.get('page_number', 1),
+                                                   'reading_direction': document.get('reading_direction', 'LTR'),
+                                                   'title': document.get('title', ''),
+                                                   'width': document.get('width'), 'height': document.get('height')},
                                           'status': 'APPROVED_LAYOUT_EXPORT_COPY', 'automatic_publication': False, 'segments': [],
                                           'panel_sources': panel_sources, 'asset_bindings': row['asset_sources'], 'privacy_level': 'LOCAL_ONLY'}
         def put(archive, name, data):

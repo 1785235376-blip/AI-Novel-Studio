@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "document": "windows-engineering-test-profiles/1",
+  "description": "Single Windows entry point profile definitions for scripts/run_windows_engineering_suite.ps1. 'full' is the complete File-backend suite; dedicated profiles carry the collaboration/runner-profile requirements documented in RUNBOOK.md. No profile silently skips a test without recording why.",
+  "profiles": {
+    "full": {
+      "description": "Complete File suite with the two documented multi-process/stress exceptions only.",
+      "test_paths": [
+        "tests"
+      ],
+      "deselections": [
+        "tests/test_stable_identity_foundation.py::test_real_multiprocess_cold_start_stress_50_iterations",
+        "tests/test_local_interop_cross_process_host.py"
+      ],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "false"
+      },
+      "profile_kind": "engineering-runs",
+      "expected_runtime_minutes": 50
+    },
+    "targeted": {
+      "description": "Round-1 previously failing file set under the default profile (dedicated-profile suites are exercised by their own profiles).",
+      "test_paths": [
+        "tests/test_a43_file_identity.py",
+        "tests/test_local_ai_discovery.py",
+        "tests/test_plugin_runtime_phase2a_worker_isolation.py",
+        "tests/test_r4_generation_origin_guards.py",
+        "tests/test_r4_performance_harness.py",
+        "tests/test_v2_adaptation_archive.py",
+        "tests/test_v2_adaptation_asset_owner.py",
+        "tests/test_v2_creative_project_lifecycle.py",
+        "tests/test_v2_independent_media_job.py",
+        "tests/test_v2_media_prerequisites.py",
+        "tests/test_v2_windows_timeline_receipt_identity.py",
+        "tests/test_collaboration_http_boundary_v056.py",
+        "tests/test_industry_resource_integrity.py",
+        "tests/test_local_interop_contracts.py",
+        "tests/test_local_interop_desktop_acceptance.py",
+        "tests/test_plugin_catalog.py",
+        "tests/test_plugin_discovery_security.py",
+        "tests/test_r2_backup_restore.py",
+        "tests/test_r2_plugin_packages.py",
+        "tests/test_r2_windows_base_inputs.py",
+        "tests/test_r4_research_extract.py",
+        "tests/test_surface_api_catalog.py",
+        "tests/test_surface_freeze_media_engine_adapters.py",
+        "tests/test_v060_project_path_persistence.py",
+        "tests/test_v2_authority_commit_leases.py",
+        "tests/test_v2_discovery_scope.py",
+        "tests/test_v2_llama_locality_validation.py",
+        "tests/test_v2_model_assets_browser_fixture.py",
+        "tests/test_v2_packaged_launch_isolation.py",
+        "tests/test_v2_packaged_launch_profile.py",
+        "tests/test_v2_real_text_check.py",
+        "tests/test_v2_studio_ci.py"
+      ],
+      "deselections": [],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "false"
+      },
+      "profile_kind": "engineering-runs",
+      "expected_runtime_minutes": 5
+    },
+    "collaboration": {
+      "description": "Prompt-commit revocation cross-process suite; requires the real collaboration runtime flag and experimental flags exported before app import.",
+      "test_paths": [
+        "tests/test_v2_prompt_process_revocation.py"
+      ],
+      "deselections": [],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "true",
+        "EXPERIMENTAL_FEATURES": "narrative_production_v2"
+      },
+      "profile_kind": "v2-checks",
+      "expected_runtime_minutes": 5
+    },
+    "round3i-adoption": {
+      "description": "R3-I HTTP adoption closed loop; suite itself sets experimental flags and needs a .runtime/v2-checks NOVEL_DATA_PATH; collaboration runtime stays off.",
+      "test_paths": [
+        "tests/test_round3i_http_adoption.py"
+      ],
+      "deselections": [],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "false"
+      },
+      "profile_kind": "v2-checks",
+      "expected_runtime_minutes": 1
+    },
+    "round3i-authorized": {
+      "description": "R3-I authorized HTTP adoption; requires collaboration runtime and experimental flags plus a .runtime/v2-checks profile path.",
+      "test_paths": [
+        "tests/test_round3i_http_authorized.py"
+      ],
+      "deselections": [],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "true",
+        "EXPERIMENTAL_FEATURES": "narrative_production_v2"
+      },
+      "profile_kind": "v2-checks",
+      "expected_runtime_minutes": 1
+    },
+    "r3-import": {
+      "description": "R3 import semantic suite; requires the runner-profile NOVEL_DATA_PATH under .runtime/v2-checks and collaboration runtime off.",
+      "test_paths": [
+        "tests/test_r3_import_semantic.py"
+      ],
+      "deselections": [],
+      "environment": {
+        "ENABLE_COLLABORATION_RUNTIME": "false"
+      },
+      "profile_kind": "v2-checks",
+      "expected_runtime_minutes": 1
+    }
+  }
+}

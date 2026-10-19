@@ -10,10 +10,29 @@ import shutil
 import logging
 import os
 import stat
+import time
 from uuid import uuid4
 
 from .file_project_lifecycle import project_operation
 from .storage import atomic_write
+
+
+def _rename_retry(source, target, *, attempts: int = 12, delay: float = 0.02):
+    """Rename without changing failure semantics, retrying transient Windows sharing errors.
+
+    Antivirus/indexers and other modules in the same process can briefly hold a
+    directory handle during a full-suite run; Windows reports that as WinError 5
+    (or 32), unlike POSIX rename. Retrying preserves the existing rollback contract
+    and still raises the original error once the bounded retries are exhausted.
+    """
+    for index in range(attempts):
+        try:
+            source.rename(target)
+            return
+        except OSError as error:
+            if index + 1 == attempts or getattr(error, "winerror", None) not in {5, 32}:
+                raise
+            time.sleep(delay * (index + 1))
 
 
 def quarantine_failed_file_creation(root):
@@ -21,7 +40,7 @@ def quarantine_failed_file_creation(root):
     if not root.exists():
         return None
     backup = root.with_name(f".{root.name}.delete-backup-{uuid4()}")
-    root.rename(backup)
+    _rename_retry(root, backup)
     return backup
 
 
@@ -74,12 +93,12 @@ def retire_file_project(backend, nid, *, scopes=None, authorization=None, audit_
         backup = root.with_name(f".{root.name}.delete-backup-{uuid4()}")
         def restore():
             if backup.exists() and not root.exists():
-                backup.rename(root)
+                _rename_retry(backup, root)
             for path,value in before.items():
                 if value is None:path.unlink(missing_ok=True)
                 else:atomic_write(path,value.decode("utf-8"))
         try:
-            root.rename(backup)
+            _rename_retry(root, backup)
             authorization.retire_project(nid, workspace)
             scopes.retire_project(nid, workspace)
             if audit_event is not None:

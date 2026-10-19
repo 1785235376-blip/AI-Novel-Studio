@@ -364,7 +364,13 @@ def test_real_model_adapter_requires_original_runtime_admission(env):
     with pytest.raises(ValueError,match='NOT_CONFIGURED'):action(e,task,'resume')
     catalog=e.service.processing_catalog()
     assert next(row for row in catalog['operations'] if row['operation']=='ASR')['status']=='NOT_CONFIGURED'
-    assert catalog['model_runtime_admission']=='NOT_CONFIGURED_ORIGINAL_MEDIA_RUNTIME_REQUIRED'
+    # The frozen surface was taken before commit 9f805f34 (timeline transfer,
+    # subtitle execution, private recovery) moved the shipped catalog from the
+    # generic NOT_CONFIGURED literal to the explicit registered-local-route
+    # admission state. The owner (app/experimental/subtitle_processing.py) is the
+    # authority; pin its exact published contract instead of the retired literal.
+    assert catalog['model_runtime_admission']=='ORIGINAL_AUDIO_MODEL_NODE_EXPLICIT_REGISTERED_LOCAL_ROUTE_REQUIRED'
+    assert catalog['model_runtime_admission_state'] in {'EXPLICIT_REGISTERED_LOCAL_ROUTE','NOT_CONFIGURED'}
 
 
 def test_media_audio_use_true_branch_manuscript_and_ignore_mainline_changes(env,monkeypatch):

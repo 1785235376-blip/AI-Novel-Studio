@@ -1,0 +1,122 @@
+{
+  "comic-blank-edit-loop.log.gz": {
+    "bytes": 358,
+    "sha256": "1e14f005dc0e76fa226c7b9f00331d4bee0bed08705c366d28474f411759e8d6"
+  },
+  "comic-blank-edit-loop.md": {
+    "bytes": 2511,
+    "sha256": "528c79a3e68856d03cae18f96854dfd10604862870c0fb4721ceb3519da86298"
+  },
+  "d09-d18-d19-verification.log.gz": {
+    "bytes": 362,
+    "sha256": "9b481d17bb5dda534c47a60aa485445fd6dde8763ec4bbb05a85dfdbed0498c0"
+  },
+  "final-public-edition-verifier.json.gz": {
+    "bytes": 957,
+    "sha256": "fe97af792a25d5d502c8ee76a78f1d83e18c3c44896a9bd15bdae9fe80526d6b"
+  },
+  "final-verification.log.gz": {
+    "bytes": 367,
+    "sha256": "c7664bc5e9637fadd414df2c8ec35bce1722045e41e99ab508a120335537319c"
+  },
+  "final-verification.xml.gz": {
+    "bytes": 3959,
+    "sha256": "d19322092035d18e4930ebede4e8dea37c161dc3c6d118a82fe6dfb23eb34ec0"
+  },
+  "interop-universe-standalone.log.gz": {
+    "bytes": 359,
+    "sha256": "04d81257c998ba2797a1e35bf06733250eec247b96d4ff6bb2563844aa832031"
+  },
+  "public-edition-boundary.md": {
+    "bytes": 1536,
+    "sha256": "2c20f0b15470e5c76fb7b61ca00febe593d3c4f89654330d3ba2a9aedd540ab6"
+  },
+  "public-edition-tests.log.gz": {
+    "bytes": 339,
+    "sha256": "81ba4439c79618dc6420df82101526a7aca47163d652dd566404af6354aaa3c8"
+  },
+  "public-edition-verifier-report.json.gz": {
+    "bytes": 958,
+    "sha256": "3ea215b9010f4b60516e23119aa983fa8c2c1a671f8c8ee870cb0561116eab54"
+  },
+  "revocation-profile-run-1.log.gz": {
+    "bytes": 570,
+    "sha256": "cf6f44becf4caf9b2b9ac52e8b886e5f60cf31e57b00b70f9a5fcef437754c4b"
+  },
+  "revocation-profile-run-2.log.gz": {
+    "bytes": 1020,
+    "sha256": "91c146957a61307b1a32605c944e19b6317c36528c797da0652f583aa52e861a"
+  },
+  "round3-complete-file-suite.log.gz": {
+    "bytes": 11379,
+    "sha256": "3576a71a72ba3d1fb5843e00fb2a2ad36390e7f50698032af03bc6ecdc8b5390"
+  },
+  "round3-complete-file-suite.xml.gz": {
+    "bytes": 241975,
+    "sha256": "3b773bdce6eab303e709b1c017dcb0d28a645467fb6cbc53e1301045831a0810"
+  },
+  "round3-suite-summary.md": {
+    "bytes": 877,
+    "sha256": "8b58cb386068bde6aab6fd737e0f141cc709453c79fe7f316588e3c8cfba4bae"
+  },
+  "windows-profile-collaboration.log.gz": {
+    "bytes": 519,
+    "sha256": "7cc542f1dccc75232eca37b3634384befa78994f7317f83ebf1ffe763823655f"
+  },
+  "windows-profile-collaboration.xml.gz": {
+    "bytes": 793,
+    "sha256": "1982ad63a7255ac393be64ee54ed7878cae4324b1c97582e82f80b29da1c9400"
+  },
+  "windows-profile-r3-import.log.gz": {
+    "bytes": 463,
+    "sha256": "075a769f6dd4e7eac09328243262153f59c300190514251eeccfb5b07b5dedfc"
+  },
+  "windows-profile-r3-import.xml.gz": {
+    "bytes": 1304,
+    "sha256": "8316d0d1be8349cc54048b1a32120a662a8d8486347297bf48ebe894e7588a4e"
+  },
+  "windows-profile-round3i-adoption.log.gz": {
+    "bytes": 414,
+    "sha256": "eb271e1e4b449bb28017735fcc699606a9fbd24d3ccafa41083f5482a0c6a89f"
+  },
+  "windows-profile-round3i-adoption.xml.gz": {
+    "bytes": 381,
+    "sha256": "84fae494b1f919a958e9e6d50274793eedd8cf12472d92d987659ec0d26c553a"
+  },
+  "windows-profile-round3i-authorized.log.gz": {
+    "bytes": 404,
+    "sha256": "3ab1d4240f281a328842225afcbc79304eb87fb67102414cbd1ca4f43e6bfa98"
+  },
+  "windows-profile-round3i-authorized.xml.gz": {
+    "bytes": 473,
+    "sha256": "8bec7eb913d93d5a2899da0c8c161e67f883923e1f714f1305d06d41212ccc0f"
+  },
+  "windows-profile-targeted-before-catalog-refresh-aggregate.json.gz": {
+    "bytes": 1297,
+    "sha256": "f24a0f0989134e894378b513926e43e82fde3180a97b4fd77eb05d87e6ce51f2"
+  },
+  "windows-profile-targeted-before-catalog-refresh.log.gz": {
+    "bytes": 2161,
+    "sha256": "b539c01e34f3bb9a6f7359d9f5413cd61dd4c795eff7e8a0be775be51b3f2733"
+  },
+  "windows-profile-targeted-before-catalog-refresh.xml.gz": {
+    "bytes": 24949,
+    "sha256": "7cd8faab318088c259617d1c98e769a28a52ba75503c96c7ec5d45b9a073e584"
+  },
+  "windows-profile-targeted-final-aggregate.json.gz": {
+    "bytes": 1280,
+    "sha256": "c830f3b6dd1859a6eb1a5e20096350d53ab141a1b6416dfaf80bee0a37fcc4f6"
+  },
+  "windows-profile-targeted-final.log.gz": {
+    "bytes": 1583,
+    "sha256": "c1e6daadaae53b5122a033959752a12734899363a82b37753535d0324f9ec83f"
+  },
+  "windows-profile-targeted-final.xml.gz": {
+    "bytes": 24585,
+    "sha256": "7383e21f74519ecaa70c2244d5f26f0339bc98707ef743c29460e7a6469db28a"
+  },
+  "windows-profiles-first-batch-aggregate.json.gz": {
+    "bytes": 860,
+    "sha256": "0d4a613e8bcf78f67a0e866adc04626a96f2cbf5e34909d2c3a50d441f873c5e"
+  }
+}

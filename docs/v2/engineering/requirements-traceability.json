@@ -5,11 +5,39 @@
   "base_branch": "feature/v2-narrative-platform",
   "engineering_branch": "work/v2-eng-baseline-20261019",
   "tested_baseline_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-  "generated_from_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-  "generated_at_utc": "2026-10-18T21:49:29+00:00",
+  "generated_from_sha": "a80a7bc183a3ec119388836e11fa0f4521a2653a",
+  "generated_at_utc": "2026-10-19T00:02:41+00:00",
   "release_policy": "Official V2 requires the original Master Roadmap release items + DIF-01..12 + IMAGE-COMIC-01..20 + final same-build acceptance. This matrix is a tracking index, not a release certificate.",
+  "sources": {
+    "release_scope_spec": {
+      "id": "SPEC-2026.10.19-r1",
+      "title": "PoemSeed Studio V2 发布版全量增强需求书",
+      "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+      "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+      "bytes": 37693,
+      "lines": 352,
+      "utf8_valid": true,
+      "status": "INGESTED_AND_HASH_VERIFIED",
+      "consumed_by": "DIF-01..DIF-12 and IMAGE-COMIC-01..IMAGE-COMIC-20 bindings in this matrix"
+    },
+    "master_roadmap": {
+      "path": "D:/PoemSeed/Documents/AI-Novel-Studio_V2/AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.md",
+      "status": "REFERENCED_EXTERNAL_NOT_INGESTED"
+    },
+    "abu_registry_in_tree": {
+      "path": "app/experimental/capabilities.py",
+      "status": "PARSED_FROM_TREE"
+    }
+  },
+  "spec_coverage": {
+    "document": "SPEC-2026.10.19-r1",
+    "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+    "dif_bound": 12,
+    "comic_bound": 20,
+    "binding": "each DIF/COMIC row carries spec.section, spec.line, spec.title and its MUST/acceptance text"
+  },
   "source_status": {
-    "release_scope_spec": "SOURCE_MISSING: SPEC-2026.10.19-r1 file not present on disk; DIF/COMIC MUST text marked SOURCE_MISSING where only titles were supplied",
+    "release_scope_spec": "INGESTED: SPEC-2026.10.19-r1 present at docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt with sha256 a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
     "master_roadmap": "D:/PoemSeed/Documents/AI-Novel-Studio_V2/AI_NOVEL_STUDIO_V2_MASTER_ROADMAP.md (external to repo)",
     "abu_registry_in_tree": "app/experimental/capabilities.py (40 packages)"
   },
@@ -53,21 +81,27 @@
     },
     "by_status": {
       "BLOCKED": 2,
-      "IMPLEMENTED": 26,
-      "INTEGRATION_VERIFIED": 39,
-      "PLANNED": 30
+      "IMPLEMENTED": 33,
+      "INTEGRATION_VERIFIED": 36,
+      "PLANNED": 26
     },
     "by_test_result": {
       "BLOCKED": 1,
-      "NOT_RUN": 46,
-      "PARTIAL": 11,
-      "PASS": 39
+      "NOT_RUN": 43,
+      "PARTIAL": 17,
+      "PASS": 36
     },
     "by_release_blocking": {
       "HIGH": 49,
       "MEDIUM": 47,
       "NONE": 1
     }
+  },
+  "coverage_summary": {
+    "original_rows": 25,
+    "original_with_resolved_owner": 25,
+    "original_with_test_file": 13,
+    "original_with_evidence": 3
   },
   "groups": {
     "ORIGINAL_V2": "Original Master Roadmap release-required items and cross-cutting contracts",
@@ -103,7 +137,27 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "NONE",
-      "notes": "Archive branch origin/archive/verified-studio-v2-... adds artifacts/ only: verified by diff-name filtering; no source delta."
+      "notes": "Archive branch origin/archive/verified-studio-v2-... adds artifacts/ only: verified by diff-name filtering; no source delta.",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+            "exists": true
+          },
+          {
+            "path": "docs/v2/README.md",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [
+          {
+            "path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+            "exists": true
+          }
+        ],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-M1",
@@ -139,7 +193,39 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/services/asset_library_service.py",
+            "exists": true
+          },
+          {
+            "path": "app/asset_lifecycle_api.py",
+            "exists": true
+          },
+          {
+            "path": "app/config.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_asset_library.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_asset_library.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_asset_lifecycle_r2.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M10",
@@ -176,7 +262,31 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/experimental/research_library.py",
+            "exists": true
+          },
+          {
+            "path": "app/experimental/offline_sync.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_post_interop_wave3_research.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r5_offline_sync.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M11",
@@ -187,6 +297,8 @@
       "existing_source_interfaces": [
         "tests/",
         ".github/ci/coverage_manifest_v2.json.gz",
+        "scripts/run_v2_checks.py",
+        "tests/test_v2_studio_ci.py",
         "docs/delivery/functional-surface-freeze/"
       ],
       "gap_type": "PARTIAL",
@@ -215,7 +327,22 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "scripts/run_v2_checks.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_studio_ci.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-M12",
@@ -224,9 +351,9 @@
       "user_behavior_must": "On Windows 11 + RTX 5080 16GB + 64GB: real install/upgrade/uninstall, first-run scan, reuse existing models/ComfyUI, full studio chain, security exit; 8/12/16GB VRAM constraints addressed; no user data in public repo; IME/high-DPI/interop results recorded separately.",
       "authority_owner": "User + released package; not a cloud/automated run",
       "existing_source_interfaces": [
-        "docs/AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md",
+        "AI_NOVEL_STUDIO_V2_WINDOWS_ACCEPTANCE_PLAN.md",
         "docs/desktop_host_acceptance_checklist.md",
-        "docs/AI_NOVEL_STUDIO_V2_LOCAL_MODEL_INTEGRATION.md"
+        "AI_NOVEL_STUDIO_V2_LOCAL_MODEL_INTEGRATION.md"
       ],
       "gap_type": "BLOCKED",
       "data_api_contract": "Acceptance binds explicit package SHA256 and file hashes.",
@@ -248,7 +375,18 @@
       "status": "BLOCKED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": "LOCAL_REQUIRED."
+      "notes": "LOCAL_REQUIRED.",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "docs/desktop_host_acceptance_checklist.md",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-M2",
@@ -284,7 +422,35 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/creative/graph.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/graph_api.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/graph_execution.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_creative_workflows.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_v2_creative_workflows.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M3",
@@ -320,7 +486,35 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/experimental/model_broker.py",
+            "exists": true
+          },
+          {
+            "path": "app/release_readiness.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_local_ai_environment_v2.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_local_ai_environment_v2.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r4_local_ai_inspection.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M4",
@@ -357,7 +551,27 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/creative/screenplay_export.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/prompt_authoring.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_v2_screenplay_export.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M5",
@@ -395,7 +609,39 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/services/studio_image_execution.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/studio_image_mask_authoring.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/studio_image_cutout.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_creative_workflows.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_r4_registered_local_media.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r2_media_api.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M6",
@@ -432,7 +678,35 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/experimental/director.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/director_workspace.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/storyboard.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_director_workspace.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_v2_director_workspace.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M7",
@@ -442,7 +716,7 @@
       "authority_owner": "Video execution/assembly services + model registry + media validator",
       "existing_source_interfaces": [
         "app/services/studio_video_execution.py",
-        "app/video_assembly_service.py",
+        "app/services/video_assembly_service.py",
         "frontend/src/video*",
         "tests/test_v2_video_runtime_foundation.py"
       ],
@@ -469,7 +743,35 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/services/studio_video_execution.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/video_assembly_service.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_video_runtime_foundation.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_v2_video_runtime_foundation.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_graph_video_foundation.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M8",
@@ -479,7 +781,7 @@
       "authority_owner": "AudiobookService + audio execution/mix owners + asset library",
       "existing_source_interfaces": [
         "app/audio_production_store.py",
-        "app/audiobook_service.py",
+        "app/services/audiobook_service.py",
         "app/services/studio_audio_execution.py",
         "app/experimental/subtitle_timeline.py",
         "tests/test_v2_audio_editing_pipeline.py"
@@ -506,7 +808,47 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/audio_production_store.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/audiobook_service.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/studio_audio_execution.py",
+            "exists": true
+          },
+          {
+            "path": "app/experimental/subtitle_timeline.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_audio_editing_pipeline.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_v2_audio_editing_pipeline.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r5_voice_subtitles.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r5_pause_aware_audio.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-M9",
@@ -515,9 +857,9 @@
       "user_behavior_must": "Independent video/audio/subtitle tracks, drag, in/out points, split/transition, volume, subtitles, preview cache, real FFmpeg composition into a reopenable project exporting a complete video; audio/video sync and offline-media behavior reproducible.",
       "authority_owner": "studio_timeline_* owners + export snapshot authority",
       "existing_source_interfaces": [
-        "app/studio_timeline_edit.py",
-        "app/studio_timeline_render.py",
-        "app/studio_timeline_exchange.py",
+        "app/services/studio_timeline_edit.py",
+        "app/services/studio_timeline_render.py",
+        "app/services/studio_timeline_exchange.py",
         "frontend/src/nle",
         "tests/test_phase4_timeline.py"
       ],
@@ -543,7 +885,39 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/services/studio_timeline_edit.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/studio_timeline_render.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/studio_timeline_exchange.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_phase4_timeline.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_phase4_timeline.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r4_timeline_exchange.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-X01",
@@ -574,7 +948,35 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "docs/v2/engineering/EXECUTION_AND_DATA_CONTRACTS.md",
+            "exists": true
+          },
+          {
+            "path": "app/jobs.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/asset_library_service.py",
+            "exists": true
+          },
+          {
+            "path": "app/creative/service.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [
+          {
+            "path": "docs/v2/engineering/EXECUTION_AND_DATA_CONTRACTS.md",
+            "exists": true
+          }
+        ],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X02",
@@ -607,7 +1009,22 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/authorization.py",
+            "exists": true
+          },
+          {
+            "path": "app/services/collaboration_scope_service.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X03",
@@ -641,7 +1058,26 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "scripts/backup.ps1",
+            "exists": true
+          },
+          {
+            "path": "scripts/restore.ps1",
+            "exists": true
+          },
+          {
+            "path": "docs/backup_restore.md",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X04",
@@ -676,7 +1112,39 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/services/asset_library_service.py",
+            "exists": true
+          },
+          {
+            "path": "app/asset_lifecycle_api.py",
+            "exists": true
+          },
+          {
+            "path": "app/review.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_asset_lifecycle_r2.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_asset_lifecycle_r2.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_asset_library.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-X05",
@@ -711,7 +1179,26 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/jobs.py",
+            "exists": true
+          },
+          {
+            "path": "app/model_execution.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_independent_media_job.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X06",
@@ -745,7 +1232,31 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/experimental/model_broker.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_r4_model_broker.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_r4_model_broker.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_post_interop_wave3_broker.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-X07",
@@ -777,7 +1288,31 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/config.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_local_ai_environment_v2.py",
+            "exists": true
+          }
+        ],
+        "test_files": [
+          {
+            "path": "tests/test_local_ai_environment_v2.py",
+            "exists": true
+          },
+          {
+            "path": "tests/test_v2_media_prerequisites.py",
+            "exists": true
+          }
+        ],
+        "evidence": [],
+        "status": "CODE_AND_TEST_PRESENT"
+      }
     },
     {
       "id": "V2-X08",
@@ -812,7 +1347,26 @@
       "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/privacy.py",
+            "exists": true
+          },
+          {
+            "path": "app/source_privacy.py",
+            "exists": true
+          },
+          {
+            "path": "app/net_safety.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X09",
@@ -846,7 +1400,26 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "app/experimental/flags.py",
+            "exists": true
+          },
+          {
+            "path": "app/packaging/runtime_identity.py",
+            "exists": true
+          },
+          {
+            "path": "app/release_readiness.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X10",
@@ -876,7 +1449,22 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "docs/ui/design_system.md",
+            "exists": true
+          },
+          {
+            "path": "scripts/check_ui_design_tokens.mjs",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X11",
@@ -905,7 +1493,18 @@
       "status": "BLOCKED",
       "test_result": "BLOCKED",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "docs/cloud_ci.md",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "V2-X12",
@@ -934,7 +1533,31 @@
       "status": "INTEGRATION_VERIFIED",
       "test_result": "PASS",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "",
+      "coverage": {
+        "owner_sources": [
+          {
+            "path": "scripts/run_v2_checks.py",
+            "exists": true
+          },
+          {
+            "path": "docs/v2/engineering/RUNBOOK.md",
+            "exists": true
+          },
+          {
+            "path": "scripts/pytest_temp_isolation.py",
+            "exists": true
+          }
+        ],
+        "test_files": [],
+        "evidence": [
+          {
+            "path": "docs/v2/engineering/BASELINE_20261019_r1.md",
+            "exists": true
+          }
+        ],
+        "status": "CODE_PRESENT"
+      }
     },
     {
       "id": "A01",
@@ -2176,7 +2799,7 @@
       "id": "DIF-01",
       "group": "DIF",
       "title": "Story Kernel",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1 (not present on disk). Known intent from the instruction: a single authoritative narrative kernel linking story facts, canon, causality and generation boundaries.",
+      "user_behavior_must": "支持角色身份与别名、事件时间区间、地点与道具状态、角色当时已知/未知事实、事件因果链、来源版本、事实冲突与作者裁决；同一事实跨媒介复用；既有正文和世界设定继续为权威输入；支持分支世界与不同剧情版本的隔离。AI 推测必须与作者确认的事实区别显示。",
       "authority_owner": "Candidate reuse: temporal story graph (A04) + character mind (A05) + canon/finding review owners; no dedicated Story Kernel owner exists",
       "existing_source_interfaces": [
         "app/experimental/story_graph.py",
@@ -2197,20 +2820,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_post_interop_scene_mind.py (related owner coverage only)",
       "input_sample": "Synthetic project with story graph facts.",
-      "expected_result": "A Story Kernel acceptance scenario must be authored once the SPEC is supplied; related owner tests alone cannot accept it.",
+      "expected_result": "给定多章节故事，录入角色秘密、物品毁损和时间线变更；小说、剧本、漫画、分镜引用一致；在事件发生前错误使用后续状态时发出可定位警告；无权跨项目读取事实被拒绝；关闭模型后仍能读取/手改事实。",
       "actual_result": "PLANNED: requirement text source missing; related A04/A05 owners are IMPLEMENTED/PARTIAL and tested separately.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 63,
+        "title": "Story Kernel：跨媒介故事世界内核",
+        "goal": "把小说、剧本、漫画、分镜和影片共享的角色、地点、事件、因果、时间和知识边界转为结构化、可追溯的叙事事实视图。",
+        "must": "支持角色身份与别名、事件时间区间、地点与道具状态、角色当时已知/未知事实、事件因果链、来源版本、事实冲突与作者裁决；同一事实跨媒介复用；既有正文和世界设定继续为权威输入；支持分支世界与不同剧情版本的隔离。AI 推测必须与作者确认的事实区别显示。",
+        "forbidden": "不能把“RAG 检索到相关段落”当作已建立事实关系，也不能让世界模拟器悄悄重写作者批准的剧情。",
+        "acceptance": "给定多章节故事，录入角色秘密、物品毁损和时间线变更；小说、剧本、漫画、分镜引用一致；在事件发生前错误使用后续状态时发出可定位警告；无权跨项目读取事实被拒绝；关闭模型后仍能读取/手改事实。"
+      }
     },
     {
       "id": "DIF-02",
       "group": "DIF",
       "title": "Impact Engine",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: compute and preview the impact of a change across story, assets, tasks and downstream artifacts before applying it.",
+      "user_behavior_must": "跨 `Text → Screenplay → Comic/Storyboard → Image → Video/Audio → Timeline/Export` 建立源版本关系；展示直接与间接影响、影响范围、可保留资产、重做建议和预计资源代价；可选择仅更新部分依赖；记录分析依据及作者决定；不自动改写被批准资产。",
       "authority_owner": "Candidate reuse: U06 change impact and selective refresh; asset lineage (A09); production manifest (A13)",
       "existing_source_interfaces": [
         "app/experimental/change_impact.py",
@@ -2232,20 +2867,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_r4_change_impact.py tests/test_r4_change_impact_mounted.py (related owner coverage only)",
       "input_sample": "Synthetic change set over versioned documents.",
-      "expected_result": "DIF-02 acceptance scenario required; existing impact preview tests are not a DIF-02 acceptance.",
+      "expected_result": "修改一条“角色后续应出现的伤痕”设定，能够列出相关漫画格、剧本镜头与视频；未受影响资产指纹不变；循环依赖、过期源或缺失证据返回明确阻塞原因，不虚构完整性。",
       "actual_result": "PLANNED: requirement source missing; related U06 owner is implemented and contract-tested.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 73,
+        "title": "Impact Engine：叙事变更影响分析",
+        "goal": "作者改动剧情事实、人物外观、镜头或模型参数后，在执行任何再生成之前，显示受影响对象和原因。",
+        "must": "跨 `Text → Screenplay → Comic/Storyboard → Image → Video/Audio → Timeline/Export` 建立源版本关系；展示直接与间接影响、影响范围、可保留资产、重做建议和预计资源代价；可选择仅更新部分依赖；记录分析依据及作者决定；不自动改写被批准资产。",
+        "forbidden": "已有的文件版本号、父资产 DAG 并不等价于完整的跨媒介“语义影响分析”。",
+        "acceptance": "修改一条“角色后续应出现的伤痕”设定，能够列出相关漫画格、剧本镜头与视频；未受影响资产指纹不变；循环依赖、过期源或缺失证据返回明确阻塞原因，不虚构完整性。"
+      }
     },
     {
       "id": "DIF-03",
       "group": "DIF",
       "title": "Identity Studio",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: authoritative character identity/appearance consistency across text and visual stages.",
+      "user_behavior_must": "支持角色参考集、版本化立绘、表情/姿态、服装与道具状态、固定视觉特征、配音特征、场景参考、跨镜头/跨漫画格一致性检查；允许主动创建“新服装版本”而非一律判错；绑定生成模型实际支持的参考能力；差异检测提供比较图和人工确认入口。",
       "authority_owner": "Candidate reuse: character knowledge and mind state (A05), visual identity/embeddings, asset appearance references, Character/Scene Bible",
       "existing_source_interfaces": [
         "app/experimental/visual_identity.py",
@@ -2266,20 +2913,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_round2_bible.py tests/test_post_interop_embedding_feature_isolation.py (related owner coverage only)",
       "input_sample": "Synthetic character bible + reference image.",
-      "expected_result": "DIF-03 acceptance requires a defined identity contract and cross-stage consistency scenario.",
+      "expected_result": "同一角色生成 8 个漫画格、3 个分镜和 2 个视频镜头；正确复用批准的身份参考；换装时间点前后状态不混淆；角色脸部偏差、丢失道具等可被标记复核；未知或模型不支持的控制方式如实显示。",
       "actual_result": "PLANNED: requirement source missing; character/bible/embedding owners exist but no Identity Studio acceptance.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 83,
+        "title": "Identity Studio：人物与场景身份连续性",
+        "goal": "将角色的剧情身份、视觉身份、声音身份及随剧情变化的外观状态绑定到统一资产与时间点。",
+        "must": "支持角色参考集、版本化立绘、表情/姿态、服装与道具状态、固定视觉特征、配音特征、场景参考、跨镜头/跨漫画格一致性检查；允许主动创建“新服装版本”而非一律判错；绑定生成模型实际支持的参考能力；差异检测提供比较图和人工确认入口。",
+        "forbidden": "",
+        "acceptance": "同一角色生成 8 个漫画格、3 个分镜和 2 个视频镜头；正确复用批准的身份参考；换装时间点前后状态不混淆；角色脸部偏差、丢失道具等可被标记复核；未知或模型不支持的控制方式如实显示。"
+      }
     },
     {
       "id": "DIF-04",
       "group": "DIF",
       "title": "Semantic Rebuild",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: rebuild a derived artifact from its exact semantic sources after an upstream change, preserving provenance and review.",
+      "user_behavior_must": "基于已批准源版本、运行配方、输入摘要和依赖图生成重制计划；区别“仅需重新排版”“局部修图”“必须重生单格/单镜头”“仅需重新导出”；执行前显示将覆盖的草稿和会保留的正式版本；支持人工审批、候选对比、回滚、取消后核实和未知状态恢复；无权云端调用不得偷偷发生。",
       "authority_owner": "Candidate reuse: revision intelligence (A11), selection assistant (U05), change impact (U06), asset lineage",
       "existing_source_interfaces": [
         "app/experimental/revision_intelligence.py",
@@ -2301,20 +2960,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_post_interop_revision_model.py tests/test_post_interop_revision_compare.py (related owner coverage only)",
       "input_sample": "Synthetic revision proposal set.",
-      "expected_result": "DIF-04 needs a rebuild scenario (source change -> semantic diff -> rebuild -> review) before acceptance.",
+      "expected_result": "漫画页只改一个对白气泡时不触发图像生成；修改单格背景时其余格保持字节或来源版本不变；修改影响跨镜头道具时给出多对象重制清单；网络中断后不重复付费执行未知任务。",
       "actual_result": "PLANNED: requirement source missing; related revision-intelligence owner implemented contract-level.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 91,
+        "title": "Semantic Rebuild：跨媒介局部重制",
+        "goal": "将“修一处内容，不重做整部作品”变为受控产品能力。",
+        "must": "基于已批准源版本、运行配方、输入摘要和依赖图生成重制计划；区别“仅需重新排版”“局部修图”“必须重生单格/单镜头”“仅需重新导出”；执行前显示将覆盖的草稿和会保留的正式版本；支持人工审批、候选对比、回滚、取消后核实和未知状态恢复；无权云端调用不得偷偷发生。",
+        "forbidden": "",
+        "acceptance": "漫画页只改一个对白气泡时不触发图像生成；修改单格背景时其余格保持字节或来源版本不变；修改影响跨镜头道具时给出多对象重制清单；网络中断后不重复付费执行未知任务。"
+      }
     },
     {
       "id": "DIF-05",
       "group": "DIF",
       "title": "Scene Twin",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: a scene-level simulation/twin of alternative staging or outcomes for directing/storyboarding decisions.",
+      "user_behavior_must": "支持模型/场景/相机的有类型资产与版本；为 Blender/UE5 建立至少一条真实可运行、可回读或有损说明的交换链；明确坐标系、单位、骨架/材质支持范围；可从 3D 场景导出镜头构图图像、深度/姿态/遮罩等受支持的参考；不把截图导入冒充完整三维互通。",
       "authority_owner": "Candidate reuse: bounded story simulation (A01), Director workspace, storyboard; no dedicated Scene Twin owner",
       "existing_source_interfaces": [
         "app/experimental/story_simulator.py",
@@ -2334,20 +3005,32 @@
       ],
       "test_command": "NOT_RUN - no DIF-05 scenario exists",
       "input_sample": "n/a",
-      "expected_result": "Requires a authored Scene Twin scenario and owner; simulation owner is not a twin acceptance.",
+      "expected_result": "真实 3D 文件和一组相机关键帧往返验证坐标/方向；一个镜头修改站位后，漫画/分镜参考更新但原素材不被覆盖；不支持的格式或材质属性生成损失清单。",
       "actual_result": "PLANNED: no DIF-05 implementation or acceptance; A01 simulator is a different bounded capability.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 99,
+        "title": "Scene Twin：三维场景与镜头数字孪生",
+        "goal": "为漫画和视频提供共用的 3D 场景布局、角色站位、相机与空间关系参考。",
+        "must": "支持模型/场景/相机的有类型资产与版本；为 Blender/UE5 建立至少一条真实可运行、可回读或有损说明的交换链；明确坐标系、单位、骨架/材质支持范围；可从 3D 场景导出镜头构图图像、深度/姿态/遮罩等受支持的参考；不把截图导入冒充完整三维互通。",
+        "forbidden": "",
+        "acceptance": "真实 3D 文件和一组相机关键帧往返验证坐标/方向；一个镜头修改站位后，漫画/分镜参考更新但原素材不被覆盖；不支持的格式或材质属性生成损失清单。"
+      }
     },
     {
       "id": "DIF-06",
       "group": "DIF",
       "title": "Performance Director",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: guide performance/emotion/pacing across scenes with evidence-linked direction notes.",
+      "user_behavior_must": "支持镜头级视线、表情、动作节奏、手势、肢体朝向、对白停顿、台词情绪、声画时间点和镜头节拍；区分导演意图、参考输入和模型最终输出；对不支持姿态/口型/动作控制的模型提供诚实降级或换模型建议；可对一个镜头局部修改后继续审查。",
       "authority_owner": "Candidate reuse: camera grammar and scene direction (A08/ai_director_v2), Director notes, voice direction (B03)",
       "existing_source_interfaces": [
         "app/creative/camera_language.py",
@@ -2368,20 +3051,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_v2_director_workspace.py tests/test_r4_director.py (related owner coverage only)",
       "input_sample": "Synthetic scene + director notes.",
-      "expected_result": "DIF-06 acceptance requires a defined performance-direction scenario; camera grammar is not sufficient.",
+      "expected_result": "一段双人对话在漫画、分镜及短片中具有同一情绪转折；修改停顿时间只影响需要重排的音视频任务；不会声称普通文本提示词就实现了精确骨骼控制。",
       "actual_result": "PLANNED: requirement source missing; A08 owner exists contract-level.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 107,
+        "title": "Performance Director：表演导演",
+        "goal": "让作者不仅描述“人物很悲伤”，还能控制可执行的表演细节。",
+        "must": "支持镜头级视线、表情、动作节奏、手势、肢体朝向、对白停顿、台词情绪、声画时间点和镜头节拍；区分导演意图、参考输入和模型最终输出；对不支持姿态/口型/动作控制的模型提供诚实降级或换模型建议；可对一个镜头局部修改后继续审查。",
+        "forbidden": "",
+        "acceptance": "一段双人对话在漫画、分镜及短片中具有同一情绪转折；修改停顿时间只影响需要重排的音视频任务；不会声称普通文本提示词就实现了精确骨骼控制。"
+      }
     },
     {
       "id": "DIF-07",
       "group": "DIF",
       "title": "Studio QA",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: cross-stage quality assurance with evidence, findings, review and regression against the project's own canon/style.",
+      "user_behavior_must": "确定性检查（缺页、错序、断链、超出气泡、缺失字幕、无效来源、帧率/音量/分辨率异常）与模型判断（人设一致性、表演情绪、故事节奏、画风偏差）分开呈现；提供证据定位、置信与限制、修复建议、作者忽略/确认与复审历史；不能由 AI QA 自行批准正式资产。",
       "authority_owner": "Candidate reuse: evidence-based narrative judge (A03), reader preflight (U11), safe batch preflight (U16), finding review",
       "existing_source_interfaces": [
         "app/experimental/narrative_judge.py",
@@ -2404,20 +3099,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_post_interop_style_judge.py tests/test_r4_portable_batches.py (related owner coverage only)",
       "input_sample": "Synthetic manuscript with known issues.",
-      "expected_result": "DIF-07 needs an end-to-end QA scenario; related judges/preflight are inputs, not acceptance.",
+      "expected_result": "故意构造错时台词、漫画阅读顺序颠倒、视频缺帧、对白溢出、音量突变，系统能定位并生成可操作提示；主观意见只标注建议而不自动定罪。",
       "actual_result": "PLANNED: requirement source missing; related owners exist contract-level.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 115,
+        "title": "Studio QA：跨模态质量与一致性审校",
+        "goal": "创建人机协作的审校机制，而不是虚构一个“AI 评分即通过”的认证器。",
+        "must": "确定性检查（缺页、错序、断链、超出气泡、缺失字幕、无效来源、帧率/音量/分辨率异常）与模型判断（人设一致性、表演情绪、故事节奏、画风偏差）分开呈现；提供证据定位、置信与限制、修复建议、作者忽略/确认与复审历史；不能由 AI QA 自行批准正式资产。",
+        "forbidden": "",
+        "acceptance": "故意构造错时台词、漫画阅读顺序颠倒、视频缺帧、对白溢出、音量突变，系统能定位并生成可操作提示；主观意见只标注建议而不自动定罪。"
+      }
     },
     {
       "id": "DIF-08",
       "group": "DIF",
       "title": "Model Lab",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: benchmark/compare local models and routes with real evidence, resource measurement and honest quality statements.",
+      "user_behavior_must": "支持不同模型在相同受控任务上比较质量、耗时、显存峰值、实际 API 费用、输出尺寸与功能限制；记录真实测量和估算的区别；适配原 Model Center / Provider / WorkflowRun；本地模型与云端模型须分别授权；显存预算与排队/卸载策略覆盖 8GB、12GB、16GB 档位。",
       "authority_owner": "Candidate reuse: explainable model broker (A06) + model benchmark (A07) + Model Center discovery",
       "existing_source_interfaces": [
         "app/experimental/model_benchmark.py",
@@ -2439,20 +3146,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_r4_model_broker.py tests/test_post_interop_wave3_broker.py (related owner coverage only)",
       "input_sample": "Synthetic routes; real inference NOT_RUN.",
-      "expected_result": "DIF-08 acceptance requires real benchmark runs on defined models; contract tests do not qualify as quality evidence.",
+      "expected_result": "同一人物漫画格可进行双模型 A/B、复用固定参考与种子（模型支持时）；实测与估算不混淆；模型中断、显存不足或远端拒绝时任务进入可恢复状态；CPU-only 模式可正常管理非推理工作。",
       "actual_result": "PLANNED: requirement source missing; no real model benchmark executed (no authorized model).",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 123,
+        "title": "Model Lab：模型对比、实测与智能调度",
+        "goal": "把选择模型从“看名字猜性能”变为有证据的任务适配。",
+        "must": "支持不同模型在相同受控任务上比较质量、耗时、显存峰值、实际 API 费用、输出尺寸与功能限制；记录真实测量和估算的区别；适配原 Model Center / Provider / WorkflowRun；本地模型与云端模型须分别授权；显存预算与排队/卸载策略覆盖 8GB、12GB、16GB 档位。",
+        "forbidden": "",
+        "acceptance": "同一人物漫画格可进行双模型 A/B、复用固定参考与种子（模型支持时）；实测与估算不混淆；模型中断、显存不足或远端拒绝时任务进入可恢复状态；CPU-only 模式可正常管理非推理工作。"
+      }
     },
     {
       "id": "DIF-09",
       "group": "DIF",
       "title": "Style DNA",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: extract, store and enforce a project/style fingerprint used for consistency and drift detection.",
+      "user_behavior_must": "储存写作语气、镜头语言、构图、用色、线稿/网点、人物设计、声音与音乐主题；区分全局风格、章节/场景风格和单格/单镜头覆盖；风格版本变更可交给 Impact Engine 分析；支持导入合法的参考资产与版权提示，不承诺对指定作者风格的一键精确复制。",
       "authority_owner": "Candidate reuse: A02 style metrics and drift (style_dna_v2), embeddings, style analysis",
       "existing_source_interfaces": [
         "app/experimental/style_analysis.py",
@@ -2471,20 +3190,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_post_interop_style_model.py tests/test_post_interop_style_judge.py (related owner coverage only)",
       "input_sample": "Synthetic two-style text corpus.",
-      "expected_result": "DIF-09 acceptance needs defined metric thresholds and drift scenarios; owner tests stop short.",
+      "expected_result": "同一个作品在小说、漫画、分镜和视频中复用同一视觉主题；局部改变漫画页风格不改动其他批准页；相冲突的层级规则在执行前可见。",
       "actual_result": "PLANNED: requirement source missing; A02 style owner implemented contract-level.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 131,
+        "title": "Style DNA：多模态风格规范",
+        "goal": "将“作品风格”从一句泛化提示词提升为可管理、可覆盖的规范集合。",
+        "must": "储存写作语气、镜头语言、构图、用色、线稿/网点、人物设计、声音与音乐主题；区分全局风格、章节/场景风格和单格/单镜头覆盖；风格版本变更可交给 Impact Engine 分析；支持导入合法的参考资产与版权提示，不承诺对指定作者风格的一键精确复制。",
+        "forbidden": "",
+        "acceptance": "同一个作品在小说、漫画、分镜和视频中复用同一视觉主题；局部改变漫画页风格不改动其他批准页；相冲突的层级规则在执行前可见。"
+      }
     },
     {
       "id": "DIF-10",
       "group": "DIF",
       "title": "Storyverse",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: shared-universe/multi-story world model with cross-story canon links and fork/merge safety.",
+      "user_behavior_must": "保存分支条件、选择后果、角色状态、回跳/收束点、来源和版本；可视化分支引用已批准世界事实；能够导出一种通用结构化交互包，以及经实际验证的 Ren'Py / Ink 目标适配器；不支持的语义提供显式有损转换报告；不绕过原分支权限。",
       "authority_owner": "Candidate reuse: shared-universe snapshots/pins, project forks (B09), temporal story graph (A04), offline sync (B10)",
       "existing_source_interfaces": [
         "app/experimental/story_graph.py",
@@ -2506,20 +3237,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_post_interop_shared_universe.py tests/test_r5_project_forks.py (related owner coverage only)",
       "input_sample": "Two synthetic stories sharing a universe.",
-      "expected_result": "DIF-10 acceptance scenario required; shared-universe snapshot owner is smaller in scope.",
+      "expected_result": "用带条件选择的短故事生成互动脚本，在目标运行环境中能正确走完主要分支；编辑一条世界规则能够检测受影响分支；不会将条件丢失却显示“完整导出”。",
       "actual_result": "PLANNED: requirement source missing; related universe/fork owners exist.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 139,
+        "title": "Storyverse：多分支互动叙事输出",
+        "goal": "同一作品可形成小说正篇、漫画支线与交互式叙事分支，而不是散落的独立副本。",
+        "must": "保存分支条件、选择后果、角色状态、回跳/收束点、来源和版本；可视化分支引用已批准世界事实；能够导出一种通用结构化交互包，以及经实际验证的 Ren'Py / Ink 目标适配器；不支持的语义提供显式有损转换报告；不绕过原分支权限。",
+        "forbidden": "",
+        "acceptance": "用带条件选择的短故事生成互动脚本，在目标运行环境中能正确走完主要分支；编辑一条世界规则能够检测受影响分支；不会将条件丢失却显示“完整导出”。"
+      }
     },
     {
       "id": "DIF-11",
       "group": "DIF",
       "title": "Audience Lab",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: simulate/measure audience reaction or reader experience to guide revision priorities.",
+      "user_behavior_must": "读者角色由显式参数定义（题材经验、目标年龄层、阅读速度、语言习惯等）；分析须引用具体段落/页/镜头与版本；显示不同读者建议存在分歧；允许人工采纳或驳回；不将模型输出称为真实用户测试、市场数据或成功率预测；处理敏感正文须遵守既有隐私与云端授权门禁。",
       "authority_owner": "Candidate reuse: reader preflight (U11), writer room (B08), reader sessions",
       "existing_source_interfaces": [
         "app/experimental/reader_preflight.py",
@@ -2540,20 +3283,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_r4_reader_sessions.py tests/test_r5_writer_room_mounted.py (related owner coverage only)",
       "input_sample": "n/a",
-      "expected_result": "DIF-11 needs an audience definition; reader preflight is not an audience lab.",
+      "expected_result": "同一漫画章节得到“新手阅读”和“长期读者”两份可追踪反馈；不同版本结果不混用；离线时无模型仍可查看过去审核记录，不擅自上传作品。",
       "actual_result": "PLANNED: no audience-lab implementation.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 147,
+        "title": "Audience Lab：读者/观众模拟审阅",
+        "goal": "为作者提供来自多种阅读目标的结构化反馈，辅助发现理解难点与节奏问题。",
+        "must": "读者角色由显式参数定义（题材经验、目标年龄层、阅读速度、语言习惯等）；分析须引用具体段落/页/镜头与版本；显示不同读者建议存在分歧；允许人工采纳或驳回；不将模型输出称为真实用户测试、市场数据或成功率预测；处理敏感正文须遵守既有隐私与云端授权门禁。",
+        "forbidden": "",
+        "acceptance": "同一漫画章节得到“新手阅读”和“长期读者”两份可追踪反馈；不同版本结果不混用；离线时无模型仍可查看过去审核记录，不擅自上传作品。"
+      }
     },
     {
       "id": "DIF-12",
       "group": "DIF",
       "title": "Production Passport",
-      "user_behavior_must": "SOURCE_MISSING: acceptance MUST text is defined by SPEC-2026.10.19-r1. Known intent: a portable, verifiable production passport for an artifact/project: sources, routes, reviews, rights and hashes across stages.",
+      "user_behavior_must": "导出机器可读与人类可读的来源报告；关联项目、模型/Provider、输入资产、人工/模型操作、许可声明、审批记录和导出摘要；证据缺失不得填造；允许按隐私策略隐藏敏感绝对路径/秘钥；对支持的媒体格式提供经真实验证的 C2PA 凭证生成或明确的 sidecar 退化方案。",
       "authority_owner": "Candidate reuse: production manifest and controlled replay (A13), asset lineage (A09), portable project (U14), export snapshot authority",
       "existing_source_interfaces": [
         "app/experimental/production_lineage.py",
@@ -2575,20 +3330,32 @@
       ],
       "test_command": "python -m pytest -q tests/test_r4_production_lineage.py tests/test_r4_portable_batches.py (related owner coverage only)",
       "input_sample": "Synthetic project with derived artifacts.",
-      "expected_result": "DIF-12 requires a defined passport schema/verification; lineage is a prerequisite, not the passport.",
+      "expected_result": "从成片追溯到漫画原格、原参考图与剧情章节；改动批准版后旧凭证不会被当作新文件证明；验证合法签名和被篡改文件的差异；明确“出处可追踪≠已完成法律版权认证”。",
       "actual_result": "PLANNED: requirement source missing; internal provenance owners exist.",
       "evidence_path": null,
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "2",
+        "line": 155,
+        "title": "Production Passport：素材出处与制作过程档案",
+        "goal": "让每份可交付作品都能说明重要素材、生成步骤、许可声明、版本和人工修改的来源。",
+        "must": "导出机器可读与人类可读的来源报告；关联项目、模型/Provider、输入资产、人工/模型操作、许可声明、审批记录和导出摘要；证据缺失不得填造；允许按隐私策略隐藏敏感绝对路径/秘钥；对支持的媒体格式提供经真实验证的 C2PA 凭证生成或明确的 sidecar 退化方案。",
+        "forbidden": "",
+        "acceptance": "从成片追溯到漫画原格、原参考图与剧情章节；改动批准版后旧凭证不会被当作新文件证明；验证合法签名和被篡改文件的差异；明确“出处可追踪≠已完成法律版权认证”。"
+      }
     },
     {
       "id": "IMAGE-COMIC-01",
       "group": "IMAGE_COMIC",
       "title": "Comic sub-entry (Image Studio child)",
-      "user_behavior_must": "Comic creation is a child feature of Image Studio (not a new top-level module), with a real entry from the existing workbench and the same project/asset system.",
+      "user_behavior_must": "在 Image Studio 内创建空白漫画、从现有文稿创建漫画、导入已有图片续做。漫画工程隶属于原 Studio 项目与 Asset，不需要小说/章节先行；新建不自动生成付费素材。",
       "authority_owner": "frontend ExperimentalWorkbench + app/experimental/comic_layouts*",
       "existing_source_interfaces": [
         "frontend/src/experimental/ExperimentalWorkbench.tsx",
@@ -2608,22 +3375,31 @@
         "API",
         "BROWSER"
       ],
-      "test_command": "python -m pytest -q tests/test_r5_comic_mounted.py tests/test_r5_comic_layouts.py",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "Mounted app with trusted session and enabled flags + approved synthetic image.",
       "expected_result": "Entry/API reachable only with flags; OFF/V1/dependency fences hold.",
-      "actual_result": "Comic entry/mounted API contract, OFF/V1/dependency fences passed on File and real PostgreSQL backends; 15/15 browser checks include the shell that hosts the entry.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/focused-summary.md",
+      "actual_result": "STANDALONE blank comic page creation without screenplay/chapter, import of an existing approved Image asset, CAS save/reopen, text edit and PNG-segment export verified end to end (41 passed / 1 skipped with the existing B06 suites). Gaps vs SPEC: create-from-manuscript and import-image-continue flows, volume/chapter tree, no-model independent project UI surface.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "INTEGRATION_VERIFIED",
-      "test_result": "PASS",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "Demo closed loop in the existing comic-layouts owner; full SPEC acceptance is not claimed.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 173,
+        "title": "子入口与独立项目",
+        "requirement": "在 Image Studio 内创建空白漫画、从现有文稿创建漫画、导入已有图片续做。漫画工程隶属于原 Studio 项目与 Asset，不需要小说/章节先行；新建不自动生成付费素材。"
+      }
     },
     {
       "id": "IMAGE-COMIC-02",
       "group": "IMAGE_COMIC",
       "title": "Comic project tree (volume/chapter/page)",
-      "user_behavior_must": "A comic production tree organizing volumes/chapters/pages/panels inside the project and asset system.",
+      "user_behavior_must": "提供漫画册/章节/页面/分格/图层/气泡的结构化树与编号，支持调整顺序、复制、拆分、合并、删除恢复、快照和冲突提示；已审核旧版本不可被静默覆盖。",
       "authority_owner": "MISSING; current layout records are flat per screenplay",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py (layout records only)"
@@ -2638,22 +3414,31 @@
         "UNIT",
         "API"
       ],
-      "test_command": "NOT_RUN - not implemented",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "n/a",
       "expected_result": "Requires owner + tree data model + API + tests.",
-      "actual_result": "NOT_RUN in this baseline round.",
-      "evidence_path": null,
+      "actual_result": "Page records with stable page_number/reading_direction ordering and CAS revision history are verified; volume/chapter level tree, duplicate/split/merge/delete-restore and snapshot UX are not implemented.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "PLANNED",
-      "test_result": "NOT_RUN",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "Page level only; no volume/chapter tree yet.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 175,
+        "title": "漫画工程层级",
+        "requirement": "提供漫画册/章节/页面/分格/图层/气泡的结构化树与编号，支持调整顺序、复制、拆分、合并、删除恢复、快照和冲突提示；已审核旧版本不可被静默覆盖。"
+      }
     },
     {
       "id": "IMAGE-COMIC-03",
       "group": "IMAGE_COMIC",
       "title": "Smart episode/panel splitting",
-      "user_behavior_must": "Intelligently split a story/script into episodes and panels respecting pacing and reading order.",
+      "user_behavior_must": "从作者提供的小说、剧本、分镜或大纲生成“章节 → 页面 → 分格”的分镜提案，包含叙事目的、画面主体、构图、人物动作、对话映射与来源片段；用户可以逐条接受或手改。",
       "authority_owner": "MISSING; only preset generation from existing screenplay shots",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: PRESETS PAGE/WEBTOON, initial ≤4/6 shots + manual add"
@@ -2678,13 +3463,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 177,
+        "title": "智能分集与分格策划",
+        "requirement": "从作者提供的小说、剧本、分镜或大纲生成“章节 → 页面 → 分格”的分镜提案，包含叙事目的、画面主体、构图、人物动作、对话映射与来源片段；用户可以逐条接受或手改。"
+      }
     },
     {
       "id": "IMAGE-COMIC-04",
       "group": "IMAGE_COMIC",
       "title": "Professional panel canvas",
-      "user_behavior_must": "A professional page/panel canvas with spatial editing, layers/guides and direct manipulation.",
+      "user_behavior_must": "手动/模板生成四格、网格、不规则格、跨页和长条格；可拖动格线、裁切蒙版、间距、出血、页面安全区、分格阅读顺序；页面可以有空格、无图格和纯文字格。",
       "authority_owner": "MISSING full canvas; numeric geometry controls + server raster preview only",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: Rect/ComicPanel geometry",
@@ -2700,22 +3494,31 @@
         "UNIT",
         "BROWSER"
       ],
-      "test_command": "NOT_RUN - not implemented",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "n/a",
       "expected_result": "A real canvas and its geometry regression are required; numeric controls are not a professional canvas.",
-      "actual_result": "NOT_RUN in this baseline round.",
-      "evidence_path": null,
+      "actual_result": "Integer panel geometry, safe-area/overlap/reading-order preflight and PAGE/WEBTOON canvas presets are verified; drag handles, templates, masks, bleed and page-readable multi-column tooling are absent.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "PLANNED",
-      "test_result": "NOT_RUN",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "Bounded geometry owner reused; professional canvas tooling remains.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 179,
+        "title": "专业分格排版画布",
+        "requirement": "手动/模板生成四格、网格、不规则格、跨页和长条格；可拖动格线、裁切蒙版、间距、出血、页面安全区、分格阅读顺序；页面可以有空格、无图格和纯文字格。"
+      }
     },
     {
       "id": "IMAGE-COMIC-05",
       "group": "IMAGE_COMIC",
       "title": "Per-panel image generation",
-      "user_behavior_must": "Generate a panel image from its brief via configured/authorized image capability, with review and provenance.",
+      "user_behavior_must": "根据格的 Story/Identity/Style/Shot 条件形成结构化任务，支持 T2I、I2I、指定参考、批量候选、并排对比、选择批准；失败只影响对应格，禁止批处理将未审核候选自动升级为正式页。",
       "authority_owner": "MISSING in comic; image generation exists only in Image Studio owners",
       "existing_source_interfaces": [
         "app/services/studio_image_execution.py (image owner, not comic-connected)"
@@ -2740,13 +3543,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 181,
+        "title": "逐格图像生成与批处理",
+        "requirement": "根据格的 Story/Identity/Style/Shot 条件形成结构化任务，支持 T2I、I2I、指定参考、批量候选、并排对比、选择批准；失败只影响对应格，禁止批处理将未审核候选自动升级为正式页。"
+      }
     },
     {
       "id": "IMAGE-COMIC-06",
       "group": "IMAGE_COMIC",
       "title": "Character/costume consistency",
-      "user_behavior_must": "Keep characters and costumes consistent across panels using authoritative identity/appearance references.",
+      "user_behavior_must": "引用 Identity Studio 的人物版本、表情、服装、道具和时间状态；跨格生成支持正反面/不同角度参考，允许剧情中的明确变装和伤痕变化，不把一切差异都误报成错误。",
       "authority_owner": "Partial contract: character_ids + AppearanceReference on panels; no consistency engine",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: AppearanceReference(character_id, asset_id, expected_asset_version)"
@@ -2771,13 +3583,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 183,
+        "title": "角色与服装跨页一致性",
+        "requirement": "引用 Identity Studio 的人物版本、表情、服装、道具和时间状态；跨格生成支持正反面/不同角度参考，允许剧情中的明确变装和伤痕变化，不把一切差异都误报成错误。"
+      }
     },
     {
       "id": "IMAGE-COMIC-07",
       "group": "IMAGE_COMIC",
       "title": "Pose / spatial control",
-      "user_behavior_must": "Control pose, camera and spatial composition of panel art.",
+      "user_behavior_must": "可将分镜框、角色站位、姿态/深度/3D 白模、镜头焦段意图等作为显式参考；仅对模型真实支持的姿态/Control/参考能力开通相应参数，其他模型显示降级路线。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -2799,13 +3620,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 185,
+        "title": "构图、姿态与空间控制",
+        "requirement": "可将分镜框、角色站位、姿态/深度/3D 白模、镜头焦段意图等作为显式参考；仅对模型真实支持的姿态/Control/参考能力开通相应参数，其他模型显示降级路线。"
+      }
     },
     {
       "id": "IMAGE-COMIC-08",
       "group": "IMAGE_COMIC",
       "title": "Local panel repaint/inpainting",
-      "user_behavior_must": "Repaint a region of a panel with mask-based local editing and review.",
+      "user_behavior_must": "作者可手工选区、蒙版、擦除、修补、扩图、换背景和局部生成；每次重绘创建候选并保留原版本；保护对白、气泡、边框与未选择的其他格。",
       "authority_owner": "Image Studio mask/inpaint exists for image assets; not connected to comic panels",
       "existing_source_interfaces": [
         "app/services/studio_image_mask_authoring.py",
@@ -2831,13 +3661,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 187,
+        "title": "局部重绘与图层化修稿",
+        "requirement": "作者可手工选区、蒙版、擦除、修补、扩图、换背景和局部生成；每次重绘创建候选并保留原版本；保护对白、气泡、边框与未选择的其他格。"
+      }
     },
     {
       "id": "IMAGE-COMIC-09",
       "group": "IMAGE_COMIC",
       "title": "Independent bubble text",
-      "user_behavior_must": "Bubbles/narration are independently editable objects with speaker, text, position and measured typography.",
+      "user_behavior_must": "气泡是独立矢量/结构化对象，支持轮廓、尾巴、位置、阅读顺序、嵌字、字号、字距、行距、对齐、横/竖排和换行；改对白不必重新生成背景图。",
       "authority_owner": "app/experimental/comic_layouts.py Bubble",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: Bubble(plain text, kind, speaker, font_size); measured layout/preflight"
@@ -2852,22 +3691,31 @@
         "UNIT",
         "API"
       ],
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "Page with CJK dialogue bubbles.",
       "expected_result": "Bubbles render as real pixels with deterministic layout; rich text unsupported.",
-      "actual_result": "Bubble/narration plain-text objects, measured layout, overflow blockers and deterministic preview/export passed with the pinned OFL font.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "actual_result": "Independent plain-text bubble objects are editable without regenerating the panel image and are re-rendered deterministically; vector balloon tails, orientations, kerning/tracking and vertical layout are not implemented.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "INTEGRATION_VERIFIED",
-      "test_result": "PASS",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "Text-only edit leaves the asset bytes/version unchanged in the verified test.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 189,
+        "title": "可编辑气泡与对白文字",
+        "requirement": "气泡是独立矢量/结构化对象，支持轮廓、尾巴、位置、阅读顺序、嵌字、字号、字距、行距、对齐、横/竖排和换行；改对白不必重新生成背景图。"
+      }
     },
     {
       "id": "IMAGE-COMIC-10",
       "group": "IMAGE_COMIC",
       "title": "SFX / onomatopoeia effects",
-      "user_behavior_must": "Sound-effect text/graphic effects with placement and typographic styling.",
+      "user_behavior_must": "支持拟声文字、动态线、速度线、集中线、冲击线、网点、黑白高反差、灰阶和可调图层混合；原始线稿和彩色稿分层处理，不能破坏原画不可逆地叠字。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -2889,13 +3737,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 191,
+        "title": "拟声字与漫画特效",
+        "requirement": "支持拟声文字、动态线、速度线、集中线、冲击线、网点、黑白高反差、灰阶和可调图层混合；原始线稿和彩色稿分层处理，不能破坏原画不可逆地叠字。"
+      }
     },
     {
       "id": "IMAGE-COMIC-11",
       "group": "IMAGE_COMIC",
       "title": "Line-art colorization",
-      "user_behavior_must": "Colorize line art with character/style consistency and review.",
+      "user_behavior_must": "提供线稿清理、背景去除、局部分区上色、灰阶/网点化、色彩版与黑白版分支；可手动修画、保留编辑来源，导出前有色彩和像素边界预览。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -2917,13 +3774,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 193,
+        "title": "线稿与上色流程",
+        "requirement": "提供线稿清理、背景去除、局部分区上色、灰阶/网点化、色彩版与黑白版分支；可手动修画、保留编辑来源，导出前有色彩和像素边界预览。"
+      }
     },
     {
       "id": "IMAGE-COMIC-12",
       "group": "IMAGE_COMIC",
       "title": "Cross-panel continuity",
-      "user_behavior_must": "Maintain visual/story continuity across panels (costume, props, space, lighting).",
+      "user_behavior_must": "关联 Story Kernel、Identity Studio 和 Studio QA；检查人物消失/重复、服装时间状态、道具位置、对白先后、格序、视线/场景轴线、跨页衔接；提示必须含具体页格位置与可验证依据。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -2944,13 +3810,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 195,
+        "title": "跨格/跨页连贯性检查",
+        "requirement": "关联 Story Kernel、Identity Studio 和 Studio QA；检查人物消失/重复、服装时间状态、道具位置、对白先后、格序、视线/场景轴线、跨页衔接；提示必须含具体页格位置与可验证依据。"
+      }
     },
     {
       "id": "IMAGE-COMIC-13",
       "group": "IMAGE_COMIC",
       "title": "Page comic / webtoon",
-      "user_behavior_must": "Support both page-based comics and vertical scrolling webtoon layouts with page/segment geometry.",
+      "user_behavior_must": "支持传统分页阅读和纵向滚动编辑；能够把同一分格序列排为多页或长条图，阅读顺序人工可改；转换时显示裁切与对白溢出风险，不承诺无损自动换版。",
       "authority_owner": "app/experimental/comic_layouts.py PRESETS PAGE/WEBTOON",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: PAGE 800x1120, WEBTOON 800x2400, segment_height; segments preview/export"
@@ -2965,22 +3840,31 @@
         "UNIT",
         "API"
       ],
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "Webtoon preset with multiple shots.",
       "expected_result": "Segmented PNG output deterministic and preview-identical.",
-      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets, segmented real PNG rendering and byte-identical preview/export passed.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "actual_result": "PAGE 800x1120 and WEBTOON 800x2400 presets with segmented PNG rendering are verified; dual-mode conversion with crop/overflow risk reporting is not implemented.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "INTEGRATION_VERIFIED",
-      "test_result": "PASS",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "Existing B06 presets; conversion workflow absent.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 197,
+        "title": "页漫与条漫双编辑模式",
+        "requirement": "支持传统分页阅读和纵向滚动编辑；能够把同一分格序列排为多页或长条图，阅读顺序人工可改；转换时显示裁切与对白溢出风险，不承诺无损自动换版。"
+      }
     },
     {
       "id": "IMAGE-COMIC-14",
       "group": "IMAGE_COMIC",
       "title": "Pacing and page-turn rhythm",
-      "user_behavior_must": "Guide pacing, page turns and reading rhythm for the layout.",
+      "user_behavior_must": "提供页数/格数/阅读顺序、对话密度、关键揭示镜头与翻页节点的审阅视图；AI 可提出节奏修改建议，但不得自动改变作者批准的剧情。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -3001,13 +3885,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 199,
+        "title": "篇章节奏与翻页设计",
+        "requirement": "提供页数/格数/阅读顺序、对话密度、关键揭示镜头与翻页节点的审阅视图；AI 可提出节奏修改建议，但不得自动改变作者批准的剧情。"
+      }
     },
     {
       "id": "IMAGE-COMIC-15",
       "group": "IMAGE_COMIC",
       "title": "Layers / ORA",
-      "user_behavior_must": "Layer-based editing with ORA/PSD-compatible import/export.",
+      "user_behavior_must": "页面包含画面、分格、气泡文字、拟声字、遮罩、特效与注释等逻辑图层；支持保存/重开完整编辑状态，并提供实际可验证的 OpenRaster（ORA）分层交换，兼容限制和图层效果损失必须报告。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [],
       "gap_type": "MISSING",
@@ -3020,22 +3913,31 @@
         "UNIT",
         "MEDIA"
       ],
-      "test_command": "NOT_RUN - not implemented",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "n/a",
       "expected_result": "Requires layer data model + ORA round-trip; absent.",
-      "actual_result": "NOT_RUN in this baseline round.",
-      "evidence_path": null,
+      "actual_result": "Full layout state (panels/bubbles/page metadata) is persisted, reopened, versioned by CAS and exported; logical layers and verifiable OpenRaster (ORA) interchange are not implemented.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "PLANNED",
-      "test_result": "NOT_RUN",
+      "status": "IMPLEMENTED",
+      "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "Save/reopen verified; ORA remains a release target.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 201,
+        "title": "可编辑图层与交换格式",
+        "requirement": "页面包含画面、分格、气泡文字、拟声字、遮罩、特效与注释等逻辑图层；支持保存/重开完整编辑状态，并提供实际可验证的 OpenRaster（ORA）分层交换，兼容限制和图层效果损失必须报告。"
+      }
     },
     {
       "id": "IMAGE-COMIC-16",
       "group": "IMAGE_COMIC",
       "title": "Multilingual typesetting",
-      "user_behavior_must": "Typeset text in multiple languages with correct line breaking, fonts and reading direction.",
+      "user_behavior_must": "支持中文、英文、日文等文字层编辑及横竖排，使用字体回退；可生成翻译候选，但气泡内文本与阅读顺序由人确认；AI 翻译不得直接替换批准译文。",
       "authority_owner": "PARTIAL: single pinned font Noto Sans SC only",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: font_family Literal['NOTO_SANS_SC_OFL'], CJK punctuation rules"
@@ -3059,13 +3961,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 203,
+        "title": "翻译与多语言排字",
+        "requirement": "支持中文、英文、日文等文字层编辑及横竖排，使用字体回退；可生成翻译候选，但气泡内文本与阅读顺序由人确认；AI 翻译不得直接替换批准译文。"
+      }
     },
     {
       "id": "IMAGE-COMIC-17",
       "group": "IMAGE_COMIC",
       "title": "Local re-layout / remake",
-      "user_behavior_must": "Re-layout or remake selected pages/panels without destroying approved history.",
+      "user_behavior_must": "联动 Impact Engine / Semantic Rebuild：仅改对白时重排文字层，仅改特定格时局部重绘或重生该格；对跨页影响预览后再执行，不刷新不相关页面和人工修饰。",
       "authority_owner": "PARTIAL: versioned restore creates a new DRAFT; no partial re-layout engine",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: saved-version restore/recheck"
@@ -3089,13 +4000,22 @@
       "status": "PLANNED",
       "test_result": "PARTIAL",
       "release_blocking": "MEDIUM",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 205,
+        "title": "智能局部重排与重制",
+        "requirement": "联动 Impact Engine / Semantic Rebuild：仅改对白时重排文字层，仅改特定格时局部重绘或重生该格；对跨页影响预览后再执行，不刷新不相关页面和人工修饰。"
+      }
     },
     {
       "id": "IMAGE-COMIC-18",
       "group": "IMAGE_COMIC",
       "title": "Comic format export",
-      "user_behavior_must": "Export comic deliverables in standard formats (e.g. ORA/CBZ/PDF/EPUB) with deterministic bytes.",
+      "user_behavior_must": "至少支持分页 PNG/JPEG/WebP、连续长图、CBZ、PDF、EPUB 3.3 固定版式，以及附带编辑工程的项目归档；支持尺寸、DPI、出血与安全区、阅读方向、元信息、打包验证；不得将未验证的 PDF/X 印刷合规声称为已支持。",
       "authority_owner": "PARTIAL: PNG segments + ZIP manifest + OFL only",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py: ZIP segment-NNN.png + manifest.json + OFL.txt"
@@ -3111,22 +4031,31 @@
         "UNIT",
         "MEDIA"
       ],
-      "test_command": "python -m pytest -q tests/test_r5_comic_layouts.py (ZIP export subset)",
+      "test_command": "python -m pytest -q -p no:cacheprovider -m 'not postgres_backend_only' tests/test_v2_comic_blank_edit_loop.py tests/test_r5_comic_layouts.py tests/test_r5_comic_mounted.py",
       "input_sample": "Approved PAGE layout.",
       "expected_result": "ZIP+PNG verified byte-identical to preview; other formats NOT_RUN.",
-      "actual_result": "Deterministic PNG-segment ZIP + manifest + OFL export verified; ORA/CBZ/PDF/EPUB exporters are absent.",
-      "evidence_path": "docs/v2/engineering/evidence/20261019-r1/media-summary.md",
+      "actual_result": "Approved pages export deterministic ZIP of segmented PNGs with a hash manifest containing page identity; CBZ, PDF, EPUB 3.3 fixed-layout and print basics are not implemented.",
+      "evidence_path": "docs/v2/engineering/evidence/20261019-r3/comic-blank-edit-loop.md",
       "code_sha": "a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "test_result": "PARTIAL",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "PNG segment export only; delivery-format set remains per SPEC 3.2.",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 207,
+        "title": "漫画导出与印刷基础",
+        "requirement": "至少支持分页 PNG/JPEG/WebP、连续长图、CBZ、PDF、EPUB 3.3 固定版式，以及附带编辑工程的项目归档；支持尺寸、DPI、出血与安全区、阅读方向、元信息、打包验证；不得将未验证的 PDF/X 印刷合规声称为已支持。"
+      }
     },
     {
       "id": "IMAGE-COMIC-19",
       "group": "IMAGE_COMIC",
       "title": "Dynamic-comic handoff",
-      "user_behavior_must": "Hand off comic pages to dynamic-comic (motion/voice/subtitle) production with preserved sources.",
+      "user_behavior_must": "批准的格/页可显式转为镜头卡、镜头停留、运镜建议、对白语音和音效候选，经原 Video/Audio/Timeline 管线生成动态漫画；漫画原资产仍保持可编辑与可追溯。",
       "authority_owner": "MISSING",
       "existing_source_interfaces": [
         "timeline/video owners exist but no comic→dynamic handoff contract"
@@ -3151,13 +4080,22 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 209,
+        "title": "漫画到动态漫转接",
+        "requirement": "批准的格/页可显式转为镜头卡、镜头停留、运镜建议、对白语音和音效候选，经原 Video/Audio/Timeline 管线生成动态漫画；漫画原资产仍保持可编辑与可追溯。"
+      }
     },
     {
       "id": "IMAGE-COMIC-20",
       "group": "IMAGE_COMIC",
       "title": "Comic Agent review",
-      "user_behavior_must": "Automated/assisted comic review (layout, readability, continuity, text) with evidence and human approval.",
+      "user_behavior_must": "在同一原 Agent/任务体系中提供可选的“分格策划、漫画画面、文字排版、一致性审校、印前审稿”角色，输出可编辑建议、原始来源和审核记录；不能让 Agent 越权写入或绕过人工确认。",
       "authority_owner": "MISSING comic-specific review; human digest review and narrative judge owners exist",
       "existing_source_interfaces": [
         "app/experimental/comic_layouts.py preflight + review",
@@ -3182,7 +4120,16 @@
       "status": "PLANNED",
       "test_result": "NOT_RUN",
       "release_blocking": "HIGH",
-      "notes": ""
+      "notes": "",
+      "spec": {
+        "document": "SPEC-2026.10.19-r1",
+        "path": "docs/v2/engineering/spec/SPEC-2026.10.19-r1.txt",
+        "sha256": "a681eb0f1deff156bbb2a7db437e19cabc11f290d28416f9f0c8fe8bd07785ac",
+        "section": "3.2",
+        "line": 211,
+        "title": "漫画专用协作审稿 Agent",
+        "requirement": "在同一原 Agent/任务体系中提供可选的“分格策划、漫画画面、文字排版、一致性审校、印前审稿”角色，输出可编辑建议、原始来源和审核记录；不能让 Agent 越权写入或绕过人工确认。"
+      }
     }
   ]
 }
