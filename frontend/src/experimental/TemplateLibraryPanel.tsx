@@ -1,9 +1,9 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
+import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import type { WorkspaceNavigation } from './uxClient';
 import { Details, Field, ResourceState, objectValue, useAction, useResource } from './shared';
-import { templateLibraryClient, type TemplateComparison, type TemplateInstance, type TemplatePackage, type TemplatePreview } from './templateLibraryClient';
+import { templateLibraryClient, type CatalogEntry, type TemplateComparison, type TemplateInstance, type TemplatePackage, type TemplatePreview } from './templateLibraryClient';
 let sequence = 0;
 const requestId = () => globalThis.crypto.randomUUID();
 const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow', safe_batch: '安全批处理参数', novel: '小说', genre: '类型', world: '世界', agent: 'Agent', story_structure: '故事结构' };
@@ -28,7 +28,7 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
   const api = useMemo(() => templateLibraryClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
   const copies = useResource(signal => api.instances(signal), [api]);
-  const [selected, setSelected] = useState(''), [type, setType] = useState(''), [favorites, setFavorites] = useState(false);
+  const [selected, setSelected] = useState(''), [type, setType] = useState(''), [favorites, setFavorites] = useState(false), [search, setSearch] = useState('');
   const [raw, setRaw] = useState(''), [preview, setPreview] = useState<TemplatePreview>();
   const [copy, setCopy] = useState<TemplateInstance>(), [edit, setEdit] = useState('');
   const [compare, setCompare] = useState<TemplateComparison>(), [overwrite, setOverwrite] = useState(false);
@@ -39,7 +39,12 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
   const action = useAction();
   const allEntries = [...(catalog.data?.items || []), ...(catalog.data?.extended_items || [])];
   const allTypes = [...new Set([...(catalog.data?.types || []), ...(catalog.data?.extended_types || [])])];
-  const available = allEntries.filter(row => (!type || row.package.manifest.type === type) && (!favorites || row.favorite));
+  // Local search over already-loaded templates only. Trimmed, case-insensitive
+  // substring match on title, description or author. Missing/null optional fields
+  // never become searchable literal strings and never throw.
+  const term = search.trim().toLowerCase();
+  const matchesSearch = (row: CatalogEntry) => !term || [row.package?.manifest?.title, row.package?.manifest?.description, row.package?.manifest?.author].some(value => typeof value === 'string' && value.toLowerCase().includes(term));
+  const available = allEntries.filter(row => (!type || row.package.manifest.type === type) && (!favorites || row.favorite) && matchesSearch(row));
   const entry = available.find(row => row.id === selected);
   const chooseCopy = (row?: TemplateInstance) => { epoch.current++; setCopy(row); setEdit(row ? JSON.stringify(row.content, null, 2) : ''); setCompare(undefined); setHistory([]); setRestore(''); setOverwrite(false); };
   const acceptCopy = (row: TemplateInstance, ticket: number) => { if (alive.current && epoch.current === ticket) { chooseCopy(row); copies.reload(); } };
@@ -48,7 +53,10 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
     <p>模板安装不运行脚本、不启用工具或模型。只接收不超过 128 KB 的 JSON 目录包；ZIP、外部图片、路径与远程下载均不支持。许可是提供方声明，尚未进行商业法律审核。</p>
     <Panel title="离线目录与预览">
       <ResourceState loading={catalog.loading} error={catalog.error} empty={!allEntries.length} />
-      <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{allTypes.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>
+      {!catalog.loading && !catalog.error && <p role="status">已加载 {allEntries.length} 个模板；当前类型、收藏与搜索条件叠加后匹配 {available.length} 个。</p>}
+      {!!term && !catalog.loading && !catalog.error && !!allEntries.length && !available.length && <EmptyState title="没有匹配的模板" detail="当前类型、收藏与搜索条件叠加后没有结果。清空搜索或调整筛选后再试。" />}
+      <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{allTypes.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><Field label="搜索已加载模板"><input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="标题、简介或作者" /></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>
+      <div className="experimental-actions"><Button disabled={!search} onClick={() => setSearch('')}>清空搜索</Button></div>
       <Field label="选择本地模板"><select value={selected} disabled={catalog.loading || !!catalog.error || action.busy} onChange={e => { setSelected(e.target.value); setConfirmUninstall(false); }}><option value="">请选择模板</option>{available.map(row => <option value={row.id} key={row.id}>{row.favorite ? '★ ' : ''}{row.package.manifest.title} · {row.package.manifest.version}</option>)}</select></Field>
       {entry && !catalog.loading && !catalog.error && <>
         <PackagePreview value={entry.package} />
