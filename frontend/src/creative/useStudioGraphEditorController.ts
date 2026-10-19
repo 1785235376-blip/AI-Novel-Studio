@@ -480,7 +480,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       const value = await client.graphs.get(id);
       const imageCatalog = await graphCatalogForRecord(value);
       return { value, imageCatalog };
-    }); if (current() && epoch === selectedEpoch.current && !imageSelectionFence.current?.()) { if (result.imageCatalog) { catalogEpoch.current++; setCatalog(result.imageCatalog); } accept(result.value); } }
+    }); if (current() && epoch === selectedEpoch.current && !imageSelectionFence.current?.()) { if (result.imageCatalog) { catalogEpoch.current++; setLoading(false); setCatalog(result.imageCatalog); } accept(result.value); } }
     catch (value) { if (current() && epoch === selectedEpoch.current) setError(apiErrorView(value, '创作图读取失败，当前草稿未替换。').message); }
   }
   function newGraph() { if (!current() || locked() || externalDirty || executionDirty) return; setIndependentConsent(''); setIndependentOrigin(undefined); setCatalog(schemaCatalogs.current.get(1)); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setBase(undefined); setDraft(blankGraph()); setSelected([]); setPast([]); setFuture([]); setBlocked(false); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); reportSelection.current?.({}); }
@@ -689,7 +689,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     }).then(({ value, imageCatalog }) => {
       if (valid && current() && epoch === selectedEpoch.current) {
         settled = true;
-        if (same(draftRef.current, originalDraft) && !saving.current) { if (imageCatalog) { catalogEpoch.current++; setCatalog(imageCatalog); } accept(value, true); }
+        if (same(draftRef.current, originalDraft) && !saving.current) { if (imageCatalog) { catalogEpoch.current++; setLoading(false); setCatalog(imageCatalog); } accept(value, true); }
       }
     }).catch(value => {
       if (valid && !abort.signal.aborted && current() && epoch === selectedEpoch.current) {
