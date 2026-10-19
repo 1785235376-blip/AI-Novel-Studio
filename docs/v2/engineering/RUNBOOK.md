@@ -4,6 +4,14 @@ Version: `ENG-2026.10.19-r1`. Every command below is expected to run from a **cl
 checkout/worktree**, never from the user's production checkout, RC1 tree or another agent's
 workspace.
 
+## 0. Local minimum CI (fast developer entry)
+
+For a fast, SHA-bound developer check before a PR, run the five documented steps in
+[LOCAL_CI_MINIMUM.md](LOCAL_CI_MINIMUM.md) (`scripts/run_local_ci.py`). It is a test-only
+command set: it starts an isolated backend/browser only for the duration of a test and never installs
+dependencies, downloads models, or acts as a one-click launcher. The full layers below remain the
+authoritative acceptance entries.
+
 ## 1. Supported host and minimum dependencies
 
 | Item | Requirement | Verified on this host (2026-10-19) |
