@@ -137,7 +137,19 @@ def _extras(item, path, report, *, speed_supported=False, studio_supported=False
         "ExternalReference": {"start", "duration"},
         "MissingReference": {"start", "duration"},
     }.get(getattr(item, "schema_name", lambda: "")(), set())
-    if extension and (not hasattr(extension, "keys") or set(extension.keys()) - supported):
+    unknown = False
+    if extension:
+        if not hasattr(extension, "keys"):
+            unknown = True
+        else:
+            unknown = bool(set(extension.keys()) - supported)
+            # A recognized time key does not make its entire payload representable.
+            # Rational internals remain subject to fraction()'s closed input contract.
+            for key in supported - {"speed"}:
+                exact = extension.get(key)
+                if hasattr(exact, "keys") and set(exact.keys()) - {"frames", "rate"}:
+                    unknown = True
+    if unknown:
         _loss(report, path, "UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED")
     if any(key not in ({NS, STUDIO_NS} if studio_supported else {NS}) for key in getattr(item, "metadata", {})):
         _loss(report, path, "APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED")

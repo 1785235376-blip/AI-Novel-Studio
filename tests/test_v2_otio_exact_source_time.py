@@ -183,3 +183,69 @@ def test_native_mixed_track_retime_receipts_keep_independent_placement_and_disso
     assert fraction(tracks[1]['cuts'][0]['source_in_seconds']) == Fraction(1, 4)
     assert fraction(tracks[1]['cuts'][0]['source_out_seconds']) == Fraction(17, 4)
     assert fraction(tracks[1]['duration_seconds']) == 2
+
+
+EXACT_METADATA_TARGETS = [
+    'global_start_time', 'external_start', 'external_duration',
+    'missing_start', 'missing_duration',
+]
+
+
+def exact_metadata_fixture(target):
+    doc = document(missing=target.startswith('missing_'))
+    doc['global_start_time'] = time_value(24)
+    doc['tracks'][0]['items'][0]['available_range'] = {
+        'start': time_value(0), 'duration': time_value(240),
+    }
+    raw = json.loads(write_otio(doc))
+    if target == 'global_start_time':
+        owner, key, path = raw, target, 'timeline'
+    else:
+        owner = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
+        key, path = target.split('_', 1)[1], 'tracks[0].items[0].media_reference'
+    return doc, raw, owner['metadata'][NS][key], path
+
+
+@pytest.mark.parametrize('target', EXACT_METADATA_TARGETS)
+def test_unknown_exact_time_fields_have_explicit_losses(target):
+    pytest.importorskip('opentimelineio')
+    doc, raw, exact, path = exact_metadata_fixture(target)
+    exact['vendor_payload'] = {'nested': {'comment': 'unrepresented exact-time field'}}
+    restored, losses = read_otio(json.dumps(raw))
+    assert {'path': path, 'code': 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED',
+            'severity': 'LOSS'} in losses
+    assert semantic_document(restored) == semantic_document(doc)
+    output = write_otio(restored)
+    assert b'unrepresented exact-time field' not in output
+    again, output_losses = read_otio(output.decode('utf-8'))
+    assert semantic_document(again) == semantic_document(doc)
+    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED'
+                   for row in output_losses)
+
+
+@pytest.mark.parametrize('target', EXACT_METADATA_TARGETS)
+@pytest.mark.parametrize('field', ['frames', 'rate'])
+def test_unknown_fields_nested_inside_exact_rationals_remain_rejected(target, field):
+    pytest.importorskip('opentimelineio')
+    _, raw, exact, _ = exact_metadata_fixture(target)
+    exact[field]['vendor_payload'] = {'nested': {'comment': 'invalid rational field'}}
+    with pytest.raises(ValueError, match='OTIO_INVALID_RATIONAL'):
+        read_otio(json.dumps(raw))
+
+
+@pytest.mark.parametrize('missing', [False, True])
+def test_legacy_integer_global_and_available_times_need_no_exact_metadata(missing):
+    pytest.importorskip('opentimelineio')
+    doc = document(missing=missing)
+    doc['global_start_time'] = time_value(24)
+    item = doc['tracks'][0]['items'][0]
+    item.update(start=time_value(24), duration=time_value(24),
+                available_range={'start': time_value(0), 'duration': time_value(240)})
+    raw = json.loads(write_otio(doc))
+    raw['metadata'].pop(NS)
+    ref = raw['tracks']['children'][0]['children'][0]['media_references']['DEFAULT_MEDIA']
+    ref['metadata'].pop(NS)
+    restored, losses = read_otio(json.dumps(raw))
+    assert semantic_document(restored) == semantic_document(doc)
+    assert not any(row['code'] == 'UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED'
+                   for row in losses)
