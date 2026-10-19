@@ -15,10 +15,11 @@ from pydantic import Field
 from ..source_privacy import source_privacy_status
 from .common import DomainService, StaleSourceError, change_row, check_version, new_row, snapshot
 from .media import CoverBriefIn, StoryboardBriefIn, RegisteredLocalImageWorkflowAdapter, StrictModel, digest, production_environment, supported_local_image
+from .storyboard_impact_adapter import SOURCE_KIND as STORYBOARD_SOURCE, StoryboardObservation
 
 
 class SourceRef(StrictModel):
-    kind: Literal['CHAPTER', 'CHARACTER', 'WORLD_RECORD', 'ASSET']
+    kind: Literal['CHAPTER', 'CHARACTER', 'WORLD_RECORD', 'ASSET', 'CREATIVE_STORYBOARD']
     id: str = Field(min_length=1, max_length=240)
 
 
@@ -91,6 +92,10 @@ class ChangeImpactService(DomainService):
 
     def _source(self, nid, scope, ref):
         kind, rid = ref['kind'], ref['id']
+        if kind == STORYBOARD_SOURCE:
+            # Modern source access is request-local and can never fall through
+            # to the legacy asset reader, even if public IDs happen to coincide.
+            raise FileNotFoundError('CHANGE_IMPACT_STORYBOARD_READ_OWNER_UNAVAILABLE')
         if kind == 'CHAPTER':
             row = self.chapters_for(scope).get(rid)
             if row.get('novel_id') != nid or row.get('branch_id') != scope.get('branch_id'):
@@ -276,8 +281,13 @@ class ChangeImpactService(DomainService):
             'refresh_candidate': supported and not reason, 'refresh_reason': reason,
             'knowledge_category': node['raw'].get('kind') if node['kind'] == 'WORLD_RECORD' else None}
 
-    def impact(self, nid, scope, value):
+    def impact(self, nid, scope, value, *, actor=None, observation=None):
         self._active(); body = ImpactRequest.model_validate(value)
+        if body.source.kind == STORYBOARD_SOURCE:
+            current = self._decision_guard(nid, scope, actor, body.source, lambda: None, observation)
+            result = observation.view(nid, scope, actor, body.source.id)
+            current()
+            return result
         source = self._source(nid, scope, body.source.model_dump())
         nodes, _ = self._inventory(nid, scope)
         key = node_key(source['kind'], source['id'])
@@ -318,8 +328,26 @@ class ChangeImpactService(DomainService):
                 'fingerprint': node['fingerprint'], 'evidence_digest': digest(public['evidence']),
                 **{key: public[key] for key in ('locked', 'lock_version', 'stale', 'refresh_candidate', 'refresh_reason')}}
 
-    def _decision_context(self, nid, scope, source, guard):
+    def _decision_guard(self, nid, scope, actor, source, guard, observation):
+        if source.kind != STORYBOARD_SOURCE:
+            return guard
+        if not self.enabled('narrative_production_v2') or not isinstance(observation, StoryboardObservation):
+            raise FileNotFoundError('CHANGE_IMPACT_STORYBOARD_READ_OWNER_UNAVAILABLE')
+        def current():
+            guard(); self._active()
+            if not self.enabled('narrative_production_v2'):
+                raise FileNotFoundError('CHANGE_IMPACT_STORYBOARD_READ_OWNER_UNAVAILABLE')
+            observation.context(nid, scope, actor, source.id)
+            guard()
+        current()
+        return current
+
+    def _decision_context(self, nid, scope, source, guard, *, actor=None, observation=None):
         self._active(); guard()
+        if source['kind'] == STORYBOARD_SOURCE:
+            if not isinstance(observation, StoryboardObservation):
+                raise FileNotFoundError('CHANGE_IMPACT_STORYBOARD_READ_OWNER_UNAVAILABLE')
+            return observation.context(nid, scope, actor, source['id'])
         view = self.impact(nid, scope, {'source': source})
         inventory, _ = self._inventory(nid, scope)
         nodes = {item['key']: {'public': item, 'fingerprint': inventory[item['key']]['fingerprint']}
@@ -327,8 +355,8 @@ class ChangeImpactService(DomainService):
         guard(); self._active()
         return view['source'], nodes
 
-    def _decision_preview(self, nid, scope, actor, body, guard):
-        source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard)
+    def _decision_preview(self, nid, scope, actor, body, guard, *, observation=None):
+        source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard, actor=actor, observation=observation)
         if len({item.key for item in body.selected}) != len(body.selected):
             raise ValueError('CHANGE_IMPACT_DUPLICATE_SELECTION')
         entries, items = [], []
@@ -345,11 +373,17 @@ class ChangeImpactService(DomainService):
                    'decision_only': True, 'automatic_execution': False}
         return preview, entries
 
-    def preview_decisions(self, nid, scope, actor, value, guard=lambda: None):
+    def preview_decisions(self, nid, scope, actor, value, guard=lambda: None, *, observation=None):
         """Read-only author intent preview; never preflight or prepare media."""
-        return self._decision_preview(nid, scope, actor, DecisionInput.model_validate(value), guard)[0]
+        body = DecisionInput.model_validate(value)
+        guard = self._decision_guard(nid, scope, actor, body.source, guard, observation)
+        return self._decision_preview(nid, scope, actor, body, guard, observation=observation)[0]
 
     def _decision_view(self, row, source, nodes):
+        if source['kind'] == STORYBOARD_SOURCE and (
+                row['source_snapshot'].get('binding', {}).get('incarnation_digest')
+                != source['binding']['incarnation_digest']):
+            raise FileNotFoundError('decision target unavailable')
         # Hide the whole private checkpoint if any original target is now hidden.
         if any(entry['key'] not in nodes for entry in row['entries']):
             raise FileNotFoundError('decision target unavailable')
@@ -364,9 +398,10 @@ class ChangeImpactService(DomainService):
                 'request_id': row['request_id'], 'preview_digest': row['preview_digest'], 'items': items, 'current': all(item['current'] for item in items),
                 'decision_only': True, 'automatic_execution': False}
 
-    def save_decisions(self, nid, scope, actor, value, guard=lambda: None):
+    def save_decisions(self, nid, scope, actor, value, guard=lambda: None, *, observation=None):
         """Append an immutable bounded checkpoint in the original impact owner."""
         body = DecisionSaveInput.model_validate(value); self._active(); guard()
+        guard = self._decision_guard(nid, scope, actor, body.source, guard, observation)
         request_digest = digest(body.model_dump())
         with self.store.transaction(nid, scope) as doc:
             guard(); self._active()
@@ -374,28 +409,29 @@ class ChangeImpactService(DomainService):
             existing = next((row for row in rows.values() if row['created_by'] == actor and row['request_id'] == body.request_id), None)
             if existing:
                 if existing['request_digest'] != request_digest: raise ValueError('CHANGE_IMPACT_DECISION_REQUEST_REUSED')
-                source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard)
+                source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard, actor=actor, observation=observation)
                 result = self._decision_view(existing, source, nodes)
             else:
                 if sum(row['created_by'] == actor for row in rows.values()) >= self.MAX_DECISIONS_PER_AUTHOR:
                     raise ValueError('CHANGE_IMPACT_DECISION_CAPACITY')
-                preview, entries = self._decision_preview(nid, scope, actor, body, guard)
+                preview, entries = self._decision_preview(nid, scope, actor, body, guard, observation=observation)
                 if preview['preview_digest'] != body.preview_digest:
                     raise StaleSourceError('CHANGE_IMPACT_DECISION_PREVIEW_CHANGED')
                 row = new_row(nid, scope, actor, {'status': 'RECORDED', 'source': body.source.model_dump(),
                     'source_snapshot': preview['source_snapshot'], 'entries': entries, 'preview_digest': body.preview_digest,
                     'request_id': body.request_id, 'request_digest': request_digest})
                 rows[row['id']] = row
-                source, nodes = self._decision_context(nid, scope, row['source'], guard)
+                source, nodes = self._decision_context(nid, scope, row['source'], guard, actor=actor, observation=observation)
                 result = self._decision_view(row, source, nodes)
                 if not result['current']: raise StaleSourceError('CHANGE_IMPACT_DECISION_PREVIEW_CHANGED')
             guard(); self._active()
         return result
 
-    def decisions(self, nid, scope, actor, value, guard=lambda: None):
+    def decisions(self, nid, scope, actor, value, guard=lambda: None, *, observation=None):
         body = ImpactRequest.model_validate(value)
+        guard = self._decision_guard(nid, scope, actor, body.source, guard, observation)
         source_ref = body.source.model_dump()
-        source, nodes = self._decision_context(nid, scope, source_ref, guard)
+        source, nodes = self._decision_context(nid, scope, source_ref, guard, actor=actor, observation=observation)
         result = []
         rows = [row for row in self.list(nid, scope, self.DECISIONS)
                 if row['created_by'] == actor and row['source'] == source_ref]
