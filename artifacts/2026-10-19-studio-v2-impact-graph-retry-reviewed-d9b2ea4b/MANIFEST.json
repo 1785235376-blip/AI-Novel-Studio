@@ -1,0 +1,623 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_DIF_DECISIONS_AND_GRAPH_FAILED_LOCAL_ADMISSION_P2_CLOSED",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "cb861f133cb792ff4d19c75df08a937f4daefbb7",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-impact-graph-retry-reviewed-d9b2ea4b",
+  "product_base": "25f9839459a39f79634b6024d22a5e644ea10da9",
+  "product_tip": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+  "product_tree": "dd365774d7c056b94464c0a2696d8c98f7a7e5a7",
+  "bundle_ref": "refs/heads/work/v2-impact-graph-retry-combined-20261019",
+  "bundle_filename": "studio-v2-25f98394-to-d9b2ea4b.bundle",
+  "bundle_commit_count": 3,
+  "unique_external_prerequisite": "25f9839459a39f79634b6024d22a5e644ea10da9",
+  "commit_mappings": [
+    {
+      "source": "7d06d1a2f56a041ffc793b4751b55e104b7338af",
+      "source_parent": "25f9839459a39f79634b6024d22a5e644ea10da9",
+      "adopted": "7d06d1a2f56a041ffc793b4751b55e104b7338af",
+      "adopted_parent": "25f9839459a39f79634b6024d22a5e644ea10da9",
+      "direct_original_commit_retained": true
+    },
+    {
+      "source": "7533f4c6c091bf157f0627acef86689bfb138bcd",
+      "source_parent": "25f9839459a39f79634b6024d22a5e644ea10da9",
+      "adopted": "00e4bede76bad12f87289c02a23402b8bb4396ba",
+      "adopted_parent": "7d06d1a2f56a041ffc793b4751b55e104b7338af",
+      "patch_bytes_equal": true,
+      "stable_patch_id": "2ec2dcfa5754b1d7b1891ee9c6347ca6224aabd5"
+    },
+    {
+      "source": "2e5ef296d8f908d07c37f444387fdd4efd0c591f",
+      "source_parent": "7533f4c6c091bf157f0627acef86689bfb138bcd",
+      "adopted": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+      "adopted_parent": "00e4bede76bad12f87289c02a23402b8bb4396ba",
+      "patch_bytes_equal": true,
+      "stable_patch_id": "f315e6c4c7f74419a21125d8aaa6cf7d88a77abf"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/graph_api.py",
+      "mode": "100644",
+      "blob": "00e9e47f4e5c48507a27a7c6650a12caf06b02e7",
+      "bytes": 21206,
+      "sha256": "52adb452d7cf75127de568bd6ba66ac5e2f129e3ab7c0a3bf3a516d3bd25ac67",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "app/creative/graph_execution.py",
+      "mode": "100644",
+      "blob": "8434c24c1f828c5974bd03c669b3a6d6815c5d79",
+      "bytes": 42412,
+      "sha256": "eddb519c43eda620b69962d76ae5110abbb30ca78f348a859269e00786fdd940",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "app/creative/graph_failed_retry.py",
+      "mode": "100644",
+      "blob": "45c161ac077a10927d34a010d3ed94392a69504e",
+      "bytes": 1687,
+      "sha256": "53ac5bf7ef7d8e943763a79e9a12f3e4ee0568da683d72a6e06cd06766c263ca",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "app/creative/graph_models.py",
+      "mode": "100644",
+      "blob": "24fc16b6101f49e24bb30d416a94a637a7a5a7d0",
+      "bytes": 49607,
+      "sha256": "a1b9611251f0f9e315ed4f680c037613fb8dde007205a8f9724d66a27771b7c7",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "app/creative/workspace_api.py",
+      "mode": "100644",
+      "blob": "b96f14b3958e6a7cab5286001979c90a8f4f7288",
+      "bytes": 34338,
+      "sha256": "a171cd078378dbd89d40d7be25d60b4ff4d7910326ecc68ea8be1d574ab1b451",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "app/experimental/change_impact.py",
+      "mode": "100644",
+      "blob": "28c9c041b6c80847bb32ddf79c2ebe94aea53ba2",
+      "bytes": 45026,
+      "sha256": "a244da33ce47dc16a5301254017e6f67306e6a002ca236d868239a17b1ef1118",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "app/experimental/change_impact_api.py",
+      "mode": "100644",
+      "blob": "551f17a8591721de09f9dd473b57bdef9bae9ef7",
+      "bytes": 5408,
+      "sha256": "0d31347871911d5bf8903ee30c2f88064c3cd5193bb5484f09722fc9df59c193",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "frontend/src/creative/GraphFailedLocalRetry.test.tsx",
+      "mode": "100644",
+      "blob": "3f6ef6cbcd60660c4e65ca19f475c3d235656106",
+      "bytes": 12201,
+      "sha256": "34942fd1731791fa33944fddb547086a348ea2b1a0763b42cb29f681374717e5",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "mode": "100644",
+      "blob": "a61f1ef827303ac75e4a3f8e3f698818fce0f579",
+      "bytes": 125278,
+      "sha256": "936af9564e47d27c16b832a3f4b887854794dd37f7b5c8ca2560123e776f96fb",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "mode": "100644",
+      "blob": "a9767f433ea7531a1599bdf39c882703bebb9a8a",
+      "bytes": 10288,
+      "sha256": "acf474bc6ecbca2a327fc959c03b7a1a6c8f0e0baac8ae0197d7c9e45070204e",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "mode": "100644",
+      "blob": "564b27d9fbe6d31fc21474a8614ab0463563318d",
+      "bytes": 19269,
+      "sha256": "1089d6d62f8e69bdb780cf4030209ed5c06d587af9026e8d7680931d30049629",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "mode": "100644",
+      "blob": "645c4ba756fe40f64e2c97a450b2995b6dbfad28",
+      "bytes": 35782,
+      "sha256": "518e1526526fbf1ff606dc659167546a85ef11ac299feb79d5a8ae60c6a8f862",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "frontend/src/experimental/ChangeImpactPanel.tsx",
+      "mode": "100644",
+      "blob": "61dc1f032052f4ee5ff019b1da3b46e2eed74a02",
+      "bytes": 13482,
+      "sha256": "f21e346543ead383ac5c88e636072e3f566410b1d278a8fcf2f83141c1199ef6",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "frontend/src/experimental/ImpactDecisionPanel.test.tsx",
+      "mode": "100644",
+      "blob": "943054237c2ea0ffab27d7ff9cb613c4c910f962",
+      "bytes": 13832,
+      "sha256": "16e421eb805441bac4780f9ba076456b75b13821a063d28519dbc110f59dced5",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "frontend/src/experimental/ImpactDecisionPanel.tsx",
+      "mode": "100644",
+      "blob": "2337c6befa5c463974230b0e2118803a3622e941",
+      "bytes": 12066,
+      "sha256": "65cdf9f132bb5b646865397d8f1b134711f1eefd2b2bd3b343a6be0b02fd7b44",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "frontend/src/experimental/changeImpactClient.ts",
+      "mode": "100644",
+      "blob": "5b08c864002f11e4e5ae0e32cc5e822382c374f3",
+      "bytes": 3901,
+      "sha256": "aeb1463e6e320dd1efbf67db081bc37b569fd851601f8ca0c91fbf2c409dff23",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "frontend/src/experimental/changeImpactDecisionContract.ts",
+      "mode": "100644",
+      "blob": "79a78708f4546faad05714e6a124421b3eaaa319",
+      "bytes": 5861,
+      "sha256": "6b3f675e2769b89db64d33ec3b021f774fd35099b87fdd43ba8b2e8d4c37c4e7",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "tests/test_r4_impact_decisions_additive.py",
+      "mode": "100644",
+      "blob": "69e166b76d024303880c5a93bae5e72c4b4f2b2d",
+      "bytes": 7420,
+      "sha256": "f8a41b9c148260c46cfafb124fc24ab25a18d0e82b46a5aeb3fc54f3c62cf621",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "tests/test_r4_impact_decisions_mounted_additive.py",
+      "mode": "100644",
+      "blob": "a7cd9ef095e0a65979c1b86de343776d12f99255",
+      "bytes": 4127,
+      "sha256": "c9904a37e8bb6d47e01c2e2fea8b794fdd243c92cea7e333df2a0642627fd5f5",
+      "source_final_commit": "7d06d1a2f56a041ffc793b4751b55e104b7338af"
+    },
+    {
+      "path": "tests/test_v2_graph_failed_local_retry.py",
+      "mode": "100644",
+      "blob": "bc213955dbd31f32001f0278a1c2db44b283c2fd",
+      "bytes": 8898,
+      "sha256": "d1505166502791db185881964d62562f43a6ae22e3c9bc919fef721b22a1b67e",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    },
+    {
+      "path": "tests/test_v2_graph_failed_local_retry_api.py",
+      "mode": "100644",
+      "blob": "1f07274401aac5c74caafa9cf2510a5ba099a8df",
+      "bytes": 2995,
+      "sha256": "d3144299ef0dc9b4f37da840f96345d0272063625a1c62ebb0bc8c1a48c2a3df",
+      "source_final_commit": "2e5ef296d8f908d07c37f444387fdd4efd0c591f"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+      "type": "commit",
+      "path": "",
+      "bytes": 265,
+      "sha256": "69f9c20743436950e9f5fd635e1f7649d2a91a6e1df0487f816e5de31c2046ae"
+    },
+    {
+      "oid": "00e4bede76bad12f87289c02a23402b8bb4396ba",
+      "type": "commit",
+      "path": "",
+      "bytes": 260,
+      "sha256": "322a84c0c7ae9f742d55baa51d711c365a4ebc4656e1697976ccac8c5ef7bd0c"
+    },
+    {
+      "oid": "7d06d1a2f56a041ffc793b4751b55e104b7338af",
+      "type": "commit",
+      "path": "",
+      "bytes": 342,
+      "sha256": "f9937a2013a3bdbb70d2cab46f71d7b4f92f783fba6ac2b624531f105b985cb5"
+    },
+    {
+      "oid": "dd365774d7c056b94464c0a2696d8c98f7a7e5a7",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "3d5129fe33d5b96a3a5260b4c8b3e3da8de21bec6334506128c12335e1cb49b7"
+    },
+    {
+      "oid": "a08b87a630fe3d542f7934ce6072a829508ad39e",
+      "type": "tree",
+      "path": "app",
+      "bytes": 5958,
+      "sha256": "c04b298fda47c36a5d8a933565f4d599599a2d82a47fe5aad28db7d13b10e73b"
+    },
+    {
+      "oid": "9388c3d91edbc230030bd1e4202f0e13f69ff546",
+      "type": "tree",
+      "path": "app/creative",
+      "bytes": 4685,
+      "sha256": "e791c25be8bd73b320e49fd5bd400b8dc67902626c77473f3a7c684e47853852"
+    },
+    {
+      "oid": "00e9e47f4e5c48507a27a7c6650a12caf06b02e7",
+      "type": "blob",
+      "path": "app/creative/graph_api.py",
+      "bytes": 21206,
+      "sha256": "52adb452d7cf75127de568bd6ba66ac5e2f129e3ab7c0a3bf3a516d3bd25ac67"
+    },
+    {
+      "oid": "8434c24c1f828c5974bd03c669b3a6d6815c5d79",
+      "type": "blob",
+      "path": "app/creative/graph_execution.py",
+      "bytes": 42412,
+      "sha256": "eddb519c43eda620b69962d76ae5110abbb30ca78f348a859269e00786fdd940"
+    },
+    {
+      "oid": "45c161ac077a10927d34a010d3ed94392a69504e",
+      "type": "blob",
+      "path": "app/creative/graph_failed_retry.py",
+      "bytes": 1687,
+      "sha256": "53ac5bf7ef7d8e943763a79e9a12f3e4ee0568da683d72a6e06cd06766c263ca"
+    },
+    {
+      "oid": "24fc16b6101f49e24bb30d416a94a637a7a5a7d0",
+      "type": "blob",
+      "path": "app/creative/graph_models.py",
+      "bytes": 49607,
+      "sha256": "a1b9611251f0f9e315ed4f680c037613fb8dde007205a8f9724d66a27771b7c7"
+    },
+    {
+      "oid": "b96f14b3958e6a7cab5286001979c90a8f4f7288",
+      "type": "blob",
+      "path": "app/creative/workspace_api.py",
+      "bytes": 34338,
+      "sha256": "a171cd078378dbd89d40d7be25d60b4ff4d7910326ecc68ea8be1d574ab1b451"
+    },
+    {
+      "oid": "2f7f6dbb67fe6749b272e669f64ad0af08f86d68",
+      "type": "tree",
+      "path": "app/experimental",
+      "bytes": 6943,
+      "sha256": "e623fba998b01e9c5109e70e895acca344457efaebe6600dbcaa1338c7a3937c"
+    },
+    {
+      "oid": "28c9c041b6c80847bb32ddf79c2ebe94aea53ba2",
+      "type": "blob",
+      "path": "app/experimental/change_impact.py",
+      "bytes": 45026,
+      "sha256": "a244da33ce47dc16a5301254017e6f67306e6a002ca236d868239a17b1ef1118"
+    },
+    {
+      "oid": "551f17a8591721de09f9dd473b57bdef9bae9ef7",
+      "type": "blob",
+      "path": "app/experimental/change_impact_api.py",
+      "bytes": 5408,
+      "sha256": "0d31347871911d5bf8903ee30c2f88064c3cd5193bb5484f09722fc9df59c193"
+    },
+    {
+      "oid": "55b87eca1ce19820276e6d90d73ccbe0c15a4062",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "d78816c3421532673a1b2547bec6454b8c6348c2990be0869cbff7ca90e4945d"
+    },
+    {
+      "oid": "6157658824161d7a10c9afa4e0f791c85153f14b",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "a64fca86d29b06f883d9693a20236fda41eaa5f3734271e4de1c22200d921cee"
+    },
+    {
+      "oid": "27c81f6528707c3e30d8be28767f99122ebc6b2a",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 35388,
+      "sha256": "8c8c4759bceae8d89c92a2e58c4ced344bb97d6cc09f93b456040182bcddefee"
+    },
+    {
+      "oid": "3f6ef6cbcd60660c4e65ca19f475c3d235656106",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphFailedLocalRetry.test.tsx",
+      "bytes": 12201,
+      "sha256": "34942fd1731791fa33944fddb547086a348ea2b1a0763b42cb29f681374717e5"
+    },
+    {
+      "oid": "a61f1ef827303ac75e4a3f8e3f698818fce0f579",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 125278,
+      "sha256": "936af9564e47d27c16b832a3f4b887854794dd37f7b5c8ca2560123e776f96fb"
+    },
+    {
+      "oid": "a9767f433ea7531a1599bdf39c882703bebb9a8a",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "bytes": 10288,
+      "sha256": "acf474bc6ecbca2a327fc959c03b7a1a6c8f0e0baac8ae0197d7c9e45070204e"
+    },
+    {
+      "oid": "564b27d9fbe6d31fc21474a8614ab0463563318d",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "bytes": 19269,
+      "sha256": "1089d6d62f8e69bdb780cf4030209ed5c06d587af9026e8d7680931d30049629"
+    },
+    {
+      "oid": "645c4ba756fe40f64e2c97a450b2995b6dbfad28",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "bytes": 35782,
+      "sha256": "518e1526526fbf1ff606dc659167546a85ef11ac299feb79d5a8ae60c6a8f862"
+    },
+    {
+      "oid": "8d7c24d51306bdde7e7bff208600e69d9f592015",
+      "type": "tree",
+      "path": "frontend/src/experimental",
+      "bytes": 18469,
+      "sha256": "636c63228ad1fdfc46886a97183f067e6ccdad366816d54c1466633d3d5eb693"
+    },
+    {
+      "oid": "61dc1f032052f4ee5ff019b1da3b46e2eed74a02",
+      "type": "blob",
+      "path": "frontend/src/experimental/ChangeImpactPanel.tsx",
+      "bytes": 13482,
+      "sha256": "f21e346543ead383ac5c88e636072e3f566410b1d278a8fcf2f83141c1199ef6"
+    },
+    {
+      "oid": "943054237c2ea0ffab27d7ff9cb613c4c910f962",
+      "type": "blob",
+      "path": "frontend/src/experimental/ImpactDecisionPanel.test.tsx",
+      "bytes": 13832,
+      "sha256": "16e421eb805441bac4780f9ba076456b75b13821a063d28519dbc110f59dced5"
+    },
+    {
+      "oid": "2337c6befa5c463974230b0e2118803a3622e941",
+      "type": "blob",
+      "path": "frontend/src/experimental/ImpactDecisionPanel.tsx",
+      "bytes": 12066,
+      "sha256": "65cdf9f132bb5b646865397d8f1b134711f1eefd2b2bd3b343a6be0b02fd7b44"
+    },
+    {
+      "oid": "5b08c864002f11e4e5ae0e32cc5e822382c374f3",
+      "type": "blob",
+      "path": "frontend/src/experimental/changeImpactClient.ts",
+      "bytes": 3901,
+      "sha256": "aeb1463e6e320dd1efbf67db081bc37b569fd851601f8ca0c91fbf2c409dff23"
+    },
+    {
+      "oid": "79a78708f4546faad05714e6a124421b3eaaa319",
+      "type": "blob",
+      "path": "frontend/src/experimental/changeImpactDecisionContract.ts",
+      "bytes": 5861,
+      "sha256": "6b3f675e2769b89db64d33ec3b021f774fd35099b87fdd43ba8b2e8d4c37c4e7"
+    },
+    {
+      "oid": "ee9b29d0a0932b8da56842ffdd0b301da56a1e48",
+      "type": "tree",
+      "path": "tests",
+      "bytes": 49535,
+      "sha256": "fe7a4c26c55aa1e53ae293b60ca1c86805a196c243ec71b027ed92f878f75781"
+    },
+    {
+      "oid": "69e166b76d024303880c5a93bae5e72c4b4f2b2d",
+      "type": "blob",
+      "path": "tests/test_r4_impact_decisions_additive.py",
+      "bytes": 7420,
+      "sha256": "f8a41b9c148260c46cfafb124fc24ab25a18d0e82b46a5aeb3fc54f3c62cf621"
+    },
+    {
+      "oid": "a7cd9ef095e0a65979c1b86de343776d12f99255",
+      "type": "blob",
+      "path": "tests/test_r4_impact_decisions_mounted_additive.py",
+      "bytes": 4127,
+      "sha256": "c9904a37e8bb6d47e01c2e2fea8b794fdd243c92cea7e333df2a0642627fd5f5"
+    },
+    {
+      "oid": "bc213955dbd31f32001f0278a1c2db44b283c2fd",
+      "type": "blob",
+      "path": "tests/test_v2_graph_failed_local_retry.py",
+      "bytes": 8898,
+      "sha256": "d1505166502791db185881964d62562f43a6ae22e3c9bc919fef721b22a1b67e"
+    },
+    {
+      "oid": "1f07274401aac5c74caafa9cf2510a5ba099a8df",
+      "type": "blob",
+      "path": "tests/test_v2_graph_failed_local_retry_api.py",
+      "bytes": 2995,
+      "sha256": "d3144299ef0dc9b4f37da840f96345d0272063625a1c62ebb0bc8c1a48c2a3df"
+    },
+    {
+      "oid": "23a23071f491c140d3087fcc0a1a1a9b622d1b5f",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "89cc5c8d5641903067ed452b20b301d32c488312f579d7bc87e7b23dd09d8fac"
+    },
+    {
+      "oid": "b183e55a24e11989b88c425a03e20ef95b82d597",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "bb2af8c9c8887100de5a317bade677205247200571e6d3de7d19813f96a0f8b4"
+    },
+    {
+      "oid": "5ff6558245ec9c1f8566fdce0b1c0da6ac462d2d",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "0943c52e2791b6a867197d41279a38b9b846ab7b2a1d0651ae2a39f5959d3c32"
+    },
+    {
+      "oid": "bbdca8d0239efc442ea169017d3d3d45da03a933",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 35388,
+      "sha256": "7342244aa2f025affea61e25042694a85483c1f413b2b880d12dda36525cccba"
+    },
+    {
+      "oid": "293c43262b75177ff7856e9d5196df07073aff8d",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphFailedLocalRetry.test.tsx",
+      "bytes": 9997,
+      "sha256": "9a41ed0696c9903989e4c1de4c8ca18ee1ac067b6f371525411fa5e79da4e4a2"
+    },
+    {
+      "oid": "ec9b8ef7e3f4e470a0ce0d28ff0c9f9bfdc7690e",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "bytes": 35683,
+      "sha256": "f86ce94868b87feef20a5c05959430f2c3d69bb979f28bd48a68e865822343ec"
+    },
+    {
+      "oid": "a6841c239891c2f9106670779a9e00067732b4d3",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "667b2eb2937dc30ddb5bb527be002a5a2f504bca607f549c1bbcab09cd6b3d6c"
+    },
+    {
+      "oid": "861c8bc74386dfb2e0e92199e34975c3b2a4b2b8",
+      "type": "tree",
+      "path": "app",
+      "bytes": 5958,
+      "sha256": "4adb38454d6b505c3479cb555b9b21151737f0c62268cefae9e5c8c34cdd0096"
+    },
+    {
+      "oid": "0389444ad5008592aebca32f845be0d65e9d9583",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "421f1207399a99b73442be220d520f684ef79b2f4585902e37618b6b4e35e461"
+    },
+    {
+      "oid": "6d8c0bdce17b10ea05c3ec492614046a8ac66e31",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "6afa0e1670a3e222e30f1c0fc4c13841040965b3e4a784d742f251e07c965dd0"
+    },
+    {
+      "oid": "36df28309a0faf568e39d3cc3ab637888d05dad5",
+      "type": "tree",
+      "path": "tests",
+      "bytes": 49405,
+      "sha256": "b921cb6313cbe9e0ac2f1489b31fa33e7eb17c331a4f535d1a9908f47e1005c5"
+    }
+  ],
+  "all21_final_blobs_equal_respective_sources": true,
+  "remaining_base_paths_unchanged": true,
+  "no_conflicts_or_shared_paths": true,
+  "prior_dc69_WebP_519a_preserved": true,
+  "validation": {
+    "product_tip": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+    "base": "25f9839459a39f79634b6024d22a5e644ea10da9",
+    "backend_smoke": {
+      "passed": 2,
+      "PG_deselected": 2,
+      "scope": "DIF File checkpoint/reopen/no authority + GRAPH same-key concurrent QUEUED admission; deterministic local rule failure fixture only"
+    },
+    "frontend_smoke": {
+      "passed": 2,
+      "skipped": 30,
+      "scope": "DIF explicit preview/consent/save/reopen mock client + GRAPH permission ABA old callback blocked/fresh exact same request recovery"
+    },
+    "typescript": {
+      "runs": 1,
+      "exit": 0
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "existing_chunk_warning": true
+    },
+    "author_full_suites_independent_reviews_browser_not_rerun": true,
+    "DIF": "decisions only; no preflight/task/lock/execution authority",
+    "GRAPH": "only confirmed FAILED schema1 entire graph pure-local explicit new QUEUED; same request key and UNKNOWN admission recovery retained",
+    "inherited_519a_browser": "BLOCKED_401_SESSION_REQUIRED_PREVIEW_SAVE_REOPEN_NOT_RUN",
+    "complete_DIF02_GRAPH21": "NOT_ACCEPTED",
+    "PG": "NOT_ACCEPTED",
+    "models_GPU_paid_API": "NOT_RUN_NOT_ACCEPTED",
+    "full_E2E": "NOT_ACCEPTED",
+    "checked_at": "2026-10-19T22:09:03.129327+00:00"
+  },
+  "DIF_execution_authority": false,
+  "GRAPH_scope": "only confirmed FAILED schema1 whole-graph pure-local explicit new QUEUED; exact request key/UNKNOWN admission recovery retained",
+  "P2_status": "CLOSED_by2e_independent2of2",
+  "complete_DIF02_GRAPH21": "NOT_ACCEPTED",
+  "PG": "NOT_ACCEPTED",
+  "models_GPU_paid_execution": "NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "inherited_519a_browser": {
+    "status": "BLOCKED",
+    "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+    "target": "original isolated backend19128 / frontend5322",
+    "reason": "401 SESSION_REQUIRED; author services stopped; no confirmed existing valid same-backend Host session",
+    "preview": "NOT_RUN",
+    "Save": "NOT_RUN",
+    "fresh_reopen": "NOT_RUN",
+    "original_denial": "backend HTTP401, not tool/approval rejection",
+    "services_stopped_evidence_retained": true,
+    "new_services_started": false,
+    "credentials_searched_read_created": false,
+    "auth_bypassed_or_settings_changed": false,
+    "uncertain_feature_writes": false,
+    "source_evidence": {
+      "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+      "target": "isolated backend 19128 / frontend 5322",
+      "reason": "author401 SESSION_REQUIRED; both services now stopped; no confirmed existing valid same-backend Host authorization; original session state is page/process-memory only",
+      "status": "BLOCKED_PREREQUISITE; browser feature sequence NOT EXECUTED; no uncertain writes",
+      "original_denial": "author backend401 SESSION_REQUIRED, not a new tool/approval denial",
+      "completed": "read-only five-file diff and supported Host-session source flow; 3 independent controller/component/helper checks",
+      "user_action": "Coordinate an existing registered same-backend Host credential and bind through original 本机可信会话 panel; revalidate after refresh/new context; no credential should be pasted into chat; no new credential/security change authorized here"
+    }
+  },
+  "privacy_scan": {
+    "high_risk_credential_findings": 0,
+    "only_reviewed_new_blob_paths": true,
+    "user_profiles_runtime_configs_env_raw_traces_dependencies_dist_real_user_data_packaged": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "impact-graph-retry-tests-evidence-sanitized.zip",
+      "bytes": 125668,
+      "sha256": "9de1bc0b55d90fd1cb09aa0dc70916294ce9ae86a3f9cb1e2d056c40e620d757",
+      "git_blob": "503240f175c2e9ccde7529dfed2131163a095e4c"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 6145,
+      "sha256": "f58e8309d916e1fa916a8ac33a16571306ad7957f564a2c6408b0c00b6860a82",
+      "git_blob": "a4ce825590dec1b5272daf44ea1eaeef48de59b5"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1750,
+      "sha256": "ba200a6d7497d615aa257bead3cc1984ae1021bb65cad3a02f1a5a40eff914a2",
+      "git_blob": "5a6e85e4cf6886c6f43f00916919d21b23124161"
+    },
+    {
+      "path": "studio-v2-25f98394-to-d9b2ea4b.bundle",
+      "bytes": 30705,
+      "sha256": "2edc04bdad1f14e5cfcb7da081c0282b589e82798d19d6c0b4774dc81f8371c2",
+      "git_blob": "2d5dc28bf0828bc3db4756a8ee2032936fd25ae1"
+    }
+  ]
+}
