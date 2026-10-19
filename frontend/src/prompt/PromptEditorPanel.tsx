@@ -13,6 +13,7 @@ import type { StudioInterfaceMode } from '../creative/studioWorkspaceResume';
 import type { Draft, DraftContent } from './promptDraft';
 import { bodyStateLabel } from './PromptLibraryPanel';
 import { PROMPT_BOUNDS, type PromptEntry } from './promptTypes';
+import { PromptBodyFinder } from './PromptBodyFinder';
 
 type Props = {
   draft: Draft;
@@ -138,6 +139,9 @@ export function PromptEditorPanel(props: Props) {
       <p id={byteCountId}>正文已用 {textBytes} / {PROMPT_BOUNDS.textBytes} 字节 · {excessBytes > 0
         ? `超过上限 ${excessBytes} 字节，请缩短后保存；当前内容未被截断。`
         : `剩余 ${-excessBytes} 字节。`}</p>
+      <PromptBodyFinder
+        key={JSON.stringify([props.copyScopeKey, draft.key, draft.familyId, draft.baseAssetId, draft.baseRevision])}
+        text={draft.content.text} target={textRef} disabled={locked || busy || bodyComposing} />
       <div className="prompt-editor-actions">
         <Button type="button" disabled={locked || !draft.content.text || copyPending !== null}
           onClick={() => void copyBody()}>{copyPending !== null ? '正在复制正文…' : '复制当前正文'}</Button>
