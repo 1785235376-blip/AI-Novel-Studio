@@ -12,7 +12,20 @@ from app.services import NovelService, ChapterService
 from app.services.screenplay_service import ScreenplayService
 from app.services.asset_library_service import AssetLibraryService
 from app.authorization import AuthorizationScope, ScopeKind, ModalityDomain, DomainRole, DomainRoleAssignment
-from test_r3_mounted_contracts import mounted, prefix, checked, scoped
+from test_r3_mounted_contracts import mounted, prefix, checked, scoped as mounted_scoped
+
+
+def scoped(mounted, monkeypatch):
+    """Record only this test's freshly generated authority owners for teardown."""
+    try:
+        return mounted_scoped(mounted, monkeypatch)
+    finally:
+        # scoped assigns these unique IDs before its first persistent write, so
+        # even a partial setup is reclaimed by the enclosing owner's finally.
+        if hasattr(mounted, 'workspace'):
+            mounted.comic_test_scopes.append((mounted.workspace, mounted.nid,
+                mounted.storyline, mounted.branch, mounted.other_branch,
+                mounted.lead, mounted.viewer))
 
 
 @pytest.fixture(autouse=True)
@@ -23,12 +36,26 @@ def original_independent_owner(request, monkeypatch):
     e = request.getfixturevalue('mounted')
     monkeypatch.setattr(e.experimental.comic_layouts_service, 'independent_store', CreativeProjectStore(e.store))
     e.comic_test_projects = []
+    e.comic_test_scopes = []
     try:
         yield
     finally:
         # Only exact IDs created by this test; scope documents have no FK cascade.
         if e.backend == 'postgres':
             with e.store._connect() as connection:
+                for workspace, project, storyline, branch, other_branch, lead, viewer in e.comic_test_scopes:
+                    # The generated workspace belongs exclusively to this fixture.
+                    # Include later IMAGE grants and membership/revocation audits,
+                    # but never sweep pre-existing workspaces or unrelated actors.
+                    for table in ('domain_role_assignments', 'permission_assignments', 'authorization_audit_events'):
+                        connection.execute(f"DELETE FROM {table} WHERE payload->'scope'->>'workspace_id'=%s", (workspace,))
+                    connection.execute('DELETE FROM workspace_memberships WHERE workspace_id=%s AND user_id IN (%s,%s)', (workspace, lead, viewer))
+                    connection.execute("DELETE FROM storyline_branches WHERE id IN (%s,%s) AND payload->>'workspace_id'=%s AND payload->>'project_id'=%s", (branch, other_branch, workspace, project))
+                    connection.execute("DELETE FROM storylines WHERE id=%s AND payload->>'workspace_id'=%s AND payload->>'project_id'=%s", (storyline, workspace, project))
+                    connection.execute('DELETE FROM project_workspaces WHERE project_id=%s AND workspace_id=%s', (project, workspace))
+                    connection.execute("UPDATE novels SET workspace_id='default-workspace' WHERE slug=%s AND workspace_id=%s", (project, workspace))
+                    connection.execute('DELETE FROM workspaces WHERE id=%s', (workspace,))
+                    connection.execute('DELETE FROM users WHERE id IN (%s,%s)', (lead, viewer))
                 for nid in e.comic_test_projects:
                     connection.execute('DELETE FROM experimental_scope_documents WHERE novel_id = %s', (nid,))
         for nid in e.comic_test_projects:
