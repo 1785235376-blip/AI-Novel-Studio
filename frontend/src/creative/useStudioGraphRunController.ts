@@ -45,7 +45,8 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const alive = useRef(true), revoked = useRef(false), sequence = useRef(0), pending = useRef<Operation>();
   const latest = useRef(props); latest.current = props;
   const selectedRef = useRef(selected); selectedRef.current = selected;
-  const navigationValues = [props.client, props.graph, props.onLocateNode, props.busy, props.dirty, props.isCurrent, props.isCurrent(), selected];
+  // Retire captured commands on write-authority changes, retaining UNKNOWN keys.
+  const navigationValues = [props.client, props.graph, props.onLocateNode, props.busy, props.dirty, props.canMutate, props.isCurrent, props.isCurrent(), selected];
   const navigationFence = useRef({ values: navigationValues, token: {} });
   if (navigationValues.some((value, index) => !Object.is(value, navigationFence.current.values[index]))) {
     navigationFence.current = { values: navigationValues, token: {} };

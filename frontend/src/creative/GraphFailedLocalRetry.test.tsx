@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ComponentProps } from 'react';
 import { ApiError } from '../api';
 import { GraphRunPanel } from './GraphRunPanel';
+import { useStudioGraphRunController } from './useStudioGraphRunController';
 import { createStudioGraphClient, type StudioGraphTransport } from './studioGraphClient';
 import type { StudioGraphPreflight, StudioGraphRecord, StudioGraphRun } from './studioGraphTypes';
 
@@ -29,11 +30,14 @@ const flight = (): StudioGraphPreflight => ({ ...owner, graph_id: 'graph', valid
   definition_digest: sha, preflight_digest: sha, expected_version: 3, model_called: false, external_calls: 0 });
 const perform = <T,>(work: () => Promise<T>) => work();
 type Props = ComponentProps<typeof GraphRunPanel>;
-function setup(options: Partial<Props> = {}) {
-  const client = { catalog: vi.fn(), list: vi.fn(), create: vi.fn(), get: vi.fn(), save: vi.fn(),
+function controlledClient() {
+  return { catalog: vi.fn(), list: vi.fn(), create: vi.fn(), get: vi.fn(), save: vi.fn(),
     modelCapabilities: vi.fn(), previewModel: vi.fn(), dispatchModel: vi.fn(), refreshModel: vi.fn(),
     preflight: vi.fn().mockResolvedValue(flight()), runs: vi.fn().mockResolvedValue({ items: [failed()] }),
     createRun: vi.fn(), getRun: vi.fn().mockResolvedValue(failed()), action: vi.fn(), retryLocal: vi.fn().mockResolvedValue(queued()) };
+}
+function setup(options: Partial<Props> = {}) {
+  const client = controlledClient();
   const props: Props = { client, graph: graph(), targetNodeIds: ['draft'], dirty: false, busy: false, canMutate: true, canReview: true,
     isCurrent: () => true, read: perform, mutate: perform, requestedRunId: 'failed', ...options };
   const view = render(<GraphRunPanel {...props} />);
@@ -80,6 +84,35 @@ describe('failed pure-local retry controls', () => {
     click('使用同一请求核对重试创建'); await screen.findByText(/第 2 次尝试/);
     expect(client.retryLocal.mock.calls[1]).toEqual(first);
     expect(client.retryLocal).toHaveBeenCalledTimes(2); expect(client.action).not.toHaveBeenCalled();
+  });
+  it('retires UNKNOWN recovery callbacks after write permission ABA while preserving the same key', async () => {
+    const client = controlledClient();
+    const props: Props = { client, graph: graph(), targetNodeIds: ['draft'], dirty: false, busy: false,
+      canMutate: true, canReview: true, isCurrent: () => true, read: perform, mutate: perform, requestedRunId: 'failed' };
+    const hook = renderHook((value: Props) => useStudioGraphRunController(value), { initialProps: props });
+    await waitFor(() => expect(hook.result.current.canPrepareRetry).toBe(true));
+    await act(async () => { await hook.result.current.prepareRetry(); });
+    act(() => hook.result.current.confirmRetry(true));
+    client.retryLocal.mockRejectedValueOnce(new ApiError({ status: 0, code: 'NETWORK_ERROR', message: 'lost reply' }));
+    await act(async () => { await hook.result.current.retryFailedLocal(); });
+    expect(client.retryLocal).toHaveBeenCalledTimes(1);
+    const first = client.retryLocal.mock.calls[0], oldRecovery = hook.result.current.retryFailedLocal;
+    expect(hook.result.current.retryPlan?.uncertain).toBe(true);
+    hook.rerender({ ...props, canMutate: false });
+    await act(async () => { await oldRecovery(); });
+    expect(client.retryLocal).toHaveBeenCalledTimes(1);
+    hook.rerender(props);
+    await act(async () => { await oldRecovery(); });
+    expect(client.retryLocal).toHaveBeenCalledTimes(1);
+    expect(hook.result.current.retryPlan?.uncertain).toBe(true);
+    expect(hook.result.current.retryPlan?.request).toBe(first[1].request_id);
+    // Only a fresh explicit callback may reconcile the original admission.
+    await act(async () => { await hook.result.current.retryFailedLocal(); });
+    expect(client.retryLocal).toHaveBeenCalledTimes(2);
+    expect(client.retryLocal.mock.calls[1]).toEqual(first);
+    expect(hook.result.current.selected?.id).toBe('new-attempt');
+    expect(client.preflight).toHaveBeenCalledTimes(1);
+    expect(client.action).not.toHaveBeenCalled(); expect(client.createRun).not.toHaveBeenCalled();
   });
   it('invalidates consent when unsaved input or write permission changes', async () => {
     const view = setup(); await prepare(); confirm(); view.rerender({ dirty: true });
