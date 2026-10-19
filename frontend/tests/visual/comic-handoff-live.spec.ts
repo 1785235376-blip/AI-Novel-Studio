@@ -9,10 +9,10 @@ if (!evidence) throw new Error('COMIC_LIVE_EVIDENCE_DIR must name a real task-pr
 const seed = JSON.parse(readFileSync(path.join(evidence, 'seed-result.json'), 'utf8'));
 const secret = JSON.parse(readFileSync(path.resolve(evidence, '../../task/studio-v2-comic-live-handoff-browser/.runtime/comic-live-profile/host.private.json'), 'utf8'));
 
-test('real approved whole pages -> real HTTP Assets and Timeline -> refresh recovery -> native Timeline open', async ({ page }, info) => {
+test('real approved whole pages and supported leaf images -> real HTTP Assets and Timeline -> refresh recovery -> native Timeline open', async ({ page }, info) => {
   const calls: { method: string; path: string; status: number; request: unknown; response: unknown }[] = [];
   const errors: string[] = [], pending: Promise<void>[] = [];
-  const title = 'SYNTHETIC Browser Live Draft';
+  const title = seed.external_sources ? 'SYNTHETIC Browser Leaf Image Draft' : 'SYNTHETIC Browser Live Draft';
   const project = seed.project.id as string;
   const base = `/api/projects/${project}/studio/production`;
   let created: any;
@@ -77,7 +77,11 @@ test('real approved whole pages -> real HTTP Assets and Timeline -> refresh reco
     await openComic();
     for (const row of seed.pages) {
       expect(row.status).toBe('APPROVED');
-      expect(row.document.panels.every((panel: any) => panel.artwork_mode === 'BLANK' && !panel.asset_id)).toBe(true);
+      if (seed.external_sources) {
+        expect(seed.source_assets).toHaveLength(2);
+        expect(row.document.panels.every((panel: any) => panel.artwork_mode === 'IMAGE'
+          && seed.source_assets.some((asset: any) => asset.id === panel.asset_id && asset.version === panel.expected_asset_version && asset.approved))).toBe(true);
+      } else expect(row.document.panels.every((panel: any) => panel.artwork_mode === 'BLANK' && !panel.asset_id)).toBe(true);
       await page.getByLabel(new RegExp(row.id)).check();
     }
     await page.getByLabel('Timeline 草稿标题', { exact: true }).fill(title);
