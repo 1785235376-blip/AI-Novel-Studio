@@ -1,0 +1,223 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "59ce46c5b8a4cfc2494986b8feada0272a73472a",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 47524,
+      "sha256": "09907c13978ab3e87f790b44f5e9ba68d04078909cdd04a46966f8406e7a865a"
+    },
+    {
+      "blob": "71eac47e7eefb014cf9b5a3c9369ee384ff0c36e",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-final-corrected.log",
+      "bytes": 742,
+      "sha256": "462c8a76f28a7e1ac3418e42e744a411682835c560407ede3276723ae20f4528"
+    },
+    {
+      "blob": "b0c69786d019c24052eec32cca9d408e85c35d26",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-final.log",
+      "bytes": 742,
+      "sha256": "4670d7fd6daaac72e987bae45eea3a4177d11831acd269ca802d74bc53298e4c"
+    },
+    {
+      "blob": "47094e3e3e8b6d49b35e6f068bd2557a80482de2",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-first.log",
+      "bytes": 1767,
+      "sha256": "59aff6d38a28daeb9b8992e97f25bdb3cc343f6ba3ce41345d8c0672dfceabb2"
+    },
+    {
+      "blob": "85fa15ad82a5fe8018b2565d5a89a58b5c5027b1",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-fixture-failure.log",
+      "bytes": 1704,
+      "sha256": "57538b934ebf6ca46f2a9b6b6ea0f20bbfbd41778cdb5ca0c254cd2da59c3094"
+    },
+    {
+      "blob": "bf22e4ec7bc8003fddef1783719f5d4e6f0236d8",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-second.log",
+      "bytes": 1634,
+      "sha256": "2f1ce3e329253920deffaed1b145acfa7955fc23f101dd7418f984d0a03f4d36"
+    },
+    {
+      "blob": "12adcbfc6d259aa64d4e05cd1229a6f81d38192b",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/frontend-third.log",
+      "bytes": 1634,
+      "sha256": "e8de318c9f39df52f9d51157f835487eedb0db153328b11fe8eb632f874945b0"
+    },
+    {
+      "blob": "96c2ccb81eee2dff3bbd0671a959247880471a4b",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/geometry-visual.log",
+      "bytes": 11918,
+      "sha256": "7975d1b8cfcc13bacd028fb6c7673d38a473635e700e2eab4d71b6f52ba5fafe"
+    },
+    {
+      "blob": "fb50a13a04969dee93fc8269753863edac56258d",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/source-sha256.txt",
+      "bytes": 597,
+      "sha256": "e35a4a3d8b0e8e7aeaa9ec6d7bf088b494353d3acee4bb64e8bc5115a613abe6"
+    },
+    {
+      "blob": "4023fc3efc86f951a6575fabe94e9dbf702d9841",
+      "path": "docs/delivery/v2-development/graph-multishot-evidence/typecheck-initial-failure.log",
+      "bytes": 173,
+      "sha256": "40bcf2348d11ca292cbe851bdf3aa2d3725d0e5d8ec60043c1dc36bf6ae0de7a"
+    },
+    {
+      "blob": "c2a9e209e8e85817c8d0c165320db5f119dd77dc",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-20261019.md",
+      "bytes": 3325,
+      "sha256": "0d95fecea67bcc27a4d56b4819c8a505cfe5f749a8b044fab4d4bb1b835b2ce5"
+    },
+    {
+      "blob": "c6910391d680c84506f496fcf83064932923ce70",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-postgres-cleanup.json",
+      "bytes": 307577,
+      "sha256": "36c51ecece9736342652f359ff20b7df18b636a872055666c0572d9f95ca26ff"
+    },
+    {
+      "blob": "aeec2e5bc94a38632121a84fb4e45898d6018825",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "f4016611db754e8934c61a8b197aceb9475ea48ff16a5bbed2a9c694fdd54a47"
+    },
+    {
+      "blob": "fdf5060519043ab84d0367b059a4efb560f0d459",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-postgres.json",
+      "bytes": 768976,
+      "sha256": "45dc851ed2042023a5d77529833a00ff9d67bf730fd5f6df28447d49e23374cd"
+    },
+    {
+      "blob": "c3c03044d07ecbf40197d65e0d39fcba2ea405bd",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-postgres.log",
+      "bytes": 1115,
+      "sha256": "92887c513196fa431bb85fde7fdb84811d3c02b0310cf1577294657ee6d4a23b"
+    },
+    {
+      "blob": "774d4101aceccb98da9684014d32406868e02442",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-ui.json",
+      "bytes": 769251,
+      "sha256": "585d9f16ca3d649e9f999c7dc8c367e3d09b000322959a3e6d96c5fc4a5ec7a3"
+    },
+    {
+      "blob": "16952089017a5572219cfb72d4310233c2c1f2c8",
+      "path": "docs/delivery/v2-development/graph-multishot-integration-ui.log",
+      "bytes": 2907,
+      "sha256": "27a5c8d37e4966a5595f162da125208cb8932a6c7349254d24da0a9d08298c0c"
+    },
+    {
+      "blob": "54ee713992a41ff6bd9ff78fade91856ec883d73",
+      "path": "docs/delivery/v2-development/graph-multishot-source-reconciliation.json",
+      "bytes": 526,
+      "sha256": "ac582f773a7ad29d5d8b85f206265a356987385bf8e34e099e1722110f1f571e"
+    },
+    {
+      "blob": "f3ef67e88bd75ef7c90a68704ddeaa9ed087e40d",
+      "path": "docs/delivery/v2-development/graph-multishot-starter-file-initial.json",
+      "bytes": 763878,
+      "sha256": "cc488f8a25ff6fb2a481b25dd2cd7d24a76021939e3750c33eda9081aa2d728c"
+    },
+    {
+      "blob": "797babe9ad3dcfc9eb66b3383cac64d98980cd10",
+      "path": "docs/delivery/v2-development/graph-multishot-starter-file-initial.log",
+      "bytes": 1079,
+      "sha256": "66942d94d333465508c1d58d94a84f5be905e628a026e9f1a3840e170db3bc80"
+    },
+    {
+      "blob": "0483093027914e45f5cc00a46448d93c6b7705a1",
+      "path": "docs/delivery/v2-development/graph-multishot-starter-report.md",
+      "bytes": 4804,
+      "sha256": "eebb7df0e95dc9fcbc2eb974c266bc89f79b916a43cf56e8d5bd748325a5adb6"
+    },
+    {
+      "blob": "2e78b531eeb1c18700027b339ddbfeba1a91f9a7",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-approved.json",
+      "bytes": 764098,
+      "sha256": "70970b15f7cec1b3690ff547c0754841c337188f9181c788d3a06ea009f68400"
+    },
+    {
+      "blob": "6df29082ffb018bdb4286016bbbaf385aa59b654",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-approved.log",
+      "bytes": 1095,
+      "sha256": "465dcaf836c9a33548950634322f5da17debcf0c81308c295c19f1685b5cb541"
+    },
+    {
+      "blob": "97b5b78b2f11e97028e241bfda22f924a4ac5366",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-final-file.json",
+      "bytes": 764118,
+      "sha256": "b15f8b71d852c212a0f88576b3eaba1095dacdce844af67158d5afc334a21cb0"
+    },
+    {
+      "blob": "e6407cdd3e90b1912473ea0ce934b3e56f9d9232",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-final-file.log",
+      "bytes": 1090,
+      "sha256": "b8806594f02ec85fe6a808a05670773e2bb6fe6907b64380f7225c9cce897c2d"
+    },
+    {
+      "blob": "27ce92b37e843d5fa178e8de4d199b425b1810f7",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-initial.json",
+      "bytes": 764007,
+      "sha256": "8fc3671773814df35e67ade16b616a56a2855d5b6f669ddf49e2a221074afcbe"
+    },
+    {
+      "blob": "3cdf03b988a958a6f643d6565812ced8f3e77cf4",
+      "path": "docs/delivery/v2-development/graph-multishot-video-regression-initial.log",
+      "bytes": 1095,
+      "sha256": "a0980dcbf589caae0bb9e7c991784c0dad2fbf751d91b9861c20311044b93950"
+    },
+    {
+      "blob": "b4a5a8b48bbf0cd7a9a72af27f21bf4a4a698d95",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_graph_multishot_postgres.py",
+      "bytes": 1737,
+      "sha256": "218562a533f8a851129ea81421abdfbf199b45cbe8941cc2b00ce97cf08dbdf5"
+    },
+    {
+      "blob": "1e284b1c2a9ea7f5e092d62831aaae504344132c",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 804564,
+      "sha256": "564ed22765a2954c4893371cb8770e0e4d6435d61e50b967ac34e2e5171605a5"
+    },
+    {
+      "blob": "8ec99c676de37ff0ac3790c8439534662fc1349f",
+      "path": "frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx",
+      "bytes": 10385,
+      "sha256": "33a826bdf1f5eb8999f6056b5e69e8178f3fa6e639fcf394d5eb8cebaefe3f7b"
+    },
+    {
+      "blob": "6f45ab335f046ac1a3ed50465425ed1051def8f3",
+      "path": "frontend/src/creative/GraphStoryboardStarter.tsx",
+      "bytes": 6284,
+      "sha256": "ed5c6fb5cbd69327913ff9a1888cdd8a4606a7f06f278773fe617e58d3a6f819"
+    },
+    {
+      "blob": "77828e66d003655b147f2dded028b544898a3c7d",
+      "path": "frontend/src/creative/graphStoryboardStarter.ts",
+      "bytes": 3768,
+      "sha256": "b6279c77635e933b442e860595c08ed9aa9b67f98c17867dcad11232a1017d22"
+    },
+    {
+      "blob": "8566df16318911e722f6d3ffd7b99cac32aff701",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 87723,
+      "sha256": "2e48c5c163c78de051d784c4eed230a7c60f5538d61511ffa0f966c83d839c68"
+    },
+    {
+      "blob": "0b73c3a355da4bbf999ba089d3f0fdc53ff591e8",
+      "path": "tests/test_v2_graph_multishot_starter_additive.py",
+      "bytes": 4640,
+      "sha256": "b7b145c41117c678446a0b95755680892cc47308ecac2758dc32ddf660e13053"
+    },
+    {
+      "blob": "4c5a72e80747b8e7bed978bfc7ba5c4645f37fa9",
+      "path": "docs/delivery/v2-development/graph-multishot-starter-report.md",
+      "bytes": 4590,
+      "sha256": "17c277335829d2cbffa789b828eda0683a7f1f0b01c1c598decdd1f1e3d50df2"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
