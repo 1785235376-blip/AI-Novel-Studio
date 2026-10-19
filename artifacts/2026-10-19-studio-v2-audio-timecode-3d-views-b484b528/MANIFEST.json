@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_INCREMENT_NOT_FULL_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "179a7d9ffa16736c43728df3a5a2bdffb9a1fae8",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-audio-timecode-3d-views-b484b528",
+  "product_base": "ca029891abc51265b2f483414316c30ddfdacd08",
+  "product_tip": "b484b528a1e3b66ab79947363914b5b75047a013",
+  "product_tree": "0691adf1c4bb64e85e2db789dcdd0418e117dce5",
+  "bundle_ref": "refs/heads/work/v2-audio-3d-ca-combined-20261019",
+  "bundle_filename": "studio-v2-ca029891-to-b484b528.bundle",
+  "unique_external_prerequisite": "ca029891abc51265b2f483414316c30ddfdacd08",
+  "patch_mapping": [
+    {
+      "original": "ec80560e3f88be76c05363cea4e07932b9e51cc3",
+      "combined": "6ca46f1ff0c2b212c696f23ad25c802b453b6259",
+      "stable_patch_id": "ef078e1134d545e60fbd27b0a626a9cc2206c3ce"
+    },
+    {
+      "original": "8ca1221f706a98c2382f6c16a041cd8c7a1007fd",
+      "combined": "3a817325d50e4b5177a5f18ce308170884d55156",
+      "stable_patch_id": "763fa78634bf74e48d42a17d46e4dedb72c46fff"
+    },
+    {
+      "original": "235d501bfd616cc2ad0ace1409a69b108b7ff7b2",
+      "combined": "b484b528a1e3b66ab79947363914b5b75047a013",
+      "stable_patch_id": "d52c04145c982a729bf9c82ef8b8196431200a81"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "docs/delivery/v2-development/audio-timecodes-20261019.md",
+      "original_commit": "235d501bfd616cc2ad0ace1409a69b108b7ff7b2",
+      "original_blob": "55d1c65c8b2541483e171c60a22fa43b7952fd3b",
+      "combined_blob": "55d1c65c8b2541483e171c60a22fa43b7952fd3b",
+      "equal": true,
+      "source_blob": "55d1c65c8b2541483e171c60a22fa43b7952fd3b"
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioAudioWav.test.tsx",
+      "original_commit": "ec80560e3f88be76c05363cea4e07932b9e51cc3",
+      "original_blob": "552af9b10e579091f9303b4c04619427c1fffcac",
+      "combined_blob": "552af9b10e579091f9303b4c04619427c1fffcac",
+      "equal": true,
+      "source_blob": "552af9b10e579091f9303b4c04619427c1fffcac"
+    },
+    {
+      "path": "frontend/src/creative/StudioAudioTrimTimecodes.tsx",
+      "original_commit": "235d501bfd616cc2ad0ace1409a69b108b7ff7b2",
+      "original_blob": "fca977dc952534fc2a413cefed55d35b8fde52aa",
+      "combined_blob": "fca977dc952534fc2a413cefed55d35b8fde52aa",
+      "equal": true,
+      "source_blob": "fca977dc952534fc2a413cefed55d35b8fde52aa"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "original_commit": "ec80560e3f88be76c05363cea4e07932b9e51cc3",
+      "original_blob": "9320d9f66c9e70563cf5b6168be86e187f5189d1",
+      "combined_blob": "9320d9f66c9e70563cf5b6168be86e187f5189d1",
+      "equal": true,
+      "source_blob": "9320d9f66c9e70563cf5b6168be86e187f5189d1"
+    },
+    {
+      "path": "frontend/src/creative/StudioModelMeshPreview.tsx",
+      "original_commit": "8ca1221f706a98c2382f6c16a041cd8c7a1007fd",
+      "original_blob": "7b006bc4980846971d81045c8f33f372c6a8649c",
+      "combined_blob": "7b006bc4980846971d81045c8f33f372c6a8649c",
+      "equal": true,
+      "source_blob": "7b006bc4980846971d81045c8f33f372c6a8649c"
+    },
+    {
+      "path": "frontend/src/creative/StudioModelViewPresets.additive.test.tsx",
+      "original_commit": "8ca1221f706a98c2382f6c16a041cd8c7a1007fd",
+      "original_blob": "3a1a9643edf060227e4e7cc47a2dd768cc689705",
+      "combined_blob": "3a1a9643edf060227e4e7cc47a2dd768cc689705",
+      "equal": true,
+      "source_blob": "3a1a9643edf060227e4e7cc47a2dd768cc689705"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioTrimTimecode.test.ts",
+      "original_commit": "ec80560e3f88be76c05363cea4e07932b9e51cc3",
+      "original_blob": "d6204902dc58b9e1a5a4f0d88139f36b3e9d2390",
+      "combined_blob": "d6204902dc58b9e1a5a4f0d88139f36b3e9d2390",
+      "equal": true,
+      "source_blob": "d6204902dc58b9e1a5a4f0d88139f36b3e9d2390"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioTrimTimecode.ts",
+      "original_commit": "ec80560e3f88be76c05363cea4e07932b9e51cc3",
+      "original_blob": "001614013c62089cd685d9d4a436b64f2250d5ed",
+      "combined_blob": "001614013c62089cd685d9d4a436b64f2250d5ed",
+      "equal": true,
+      "source_blob": "001614013c62089cd685d9d4a436b64f2250d5ed"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioTrimTimecodes.review.test.tsx",
+      "original_commit": "235d501bfd616cc2ad0ace1409a69b108b7ff7b2",
+      "original_blob": "a133c8e8d920ab17008042ede5ff883efa65186e",
+      "combined_blob": "a133c8e8d920ab17008042ede5ff883efa65186e",
+      "equal": true,
+      "source_blob": "a133c8e8d920ab17008042ede5ff883efa65186e"
+    }
+  ],
+  "all_other_ca_source_entries_identical": true,
+  "introduced_objects": [
+    {
+      "oid": "b484b528a1e3b66ab79947363914b5b75047a013",
+      "type": "commit",
+      "bytes": 287,
+      "sha256": "c47852d6b6d43e460f4fe4f79950a9722de5f01b1cf0b3cb9a9e308f45a36054"
+    },
+    {
+      "oid": "3a817325d50e4b5177a5f18ce308170884d55156",
+      "type": "commit",
+      "bytes": 289,
+      "sha256": "795cc7ba20d403aca7af4dcd8ec751ad46d9f663fa49b83bea465cf355fa8d77"
+    },
+    {
+      "oid": "6ca46f1ff0c2b212c696f23ad25c802b453b6259",
+      "type": "commit",
+      "bytes": 290,
+      "sha256": "6922b6b74cd925f5b1fb6c72c1a1cefccba16a2e1edc1b905236b9681a7c6eb9"
+    },
+    {
+      "oid": "0691adf1c4bb64e85e2db789dcdd0418e117dce5",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "32bfd8fd14f5cfa9d91b57aea4e417fe788565e0062af0248749d57063cb8ff7"
+    },
+    {
+      "oid": "4b539a8bfeb40f6de99e6d0de9cd319154b49413",
+      "type": "tree",
+      "bytes": 16235,
+      "sha256": "e423f9f51258cb89be64800a2747c4fada5c58380a22e569ac5fa013f3b6e901"
+    },
+    {
+      "oid": "de50041a0ee50545555aa0c883be46dc20160952",
+      "type": "tree",
+      "bytes": 793,
+      "sha256": "58b29d5f01ec6004b33fa3cb5eff76e63a800730ee78c77f45cbab772903c3aa"
+    },
+    {
+      "oid": "5c46e5d2ce9f73b3f5f7e115cf04a6ead24de62e",
+      "type": "tree",
+      "bytes": 349668,
+      "sha256": "7a2a6059fc21387b2178753bdd3c35bedaa548c2d6d1c2e5ab4feb9f359d272d"
+    },
+    {
+      "oid": "55d1c65c8b2541483e171c60a22fa43b7952fd3b",
+      "type": "blob",
+      "bytes": 5643,
+      "sha256": "c6262c374c84cdfc3fcee92b236d2205c47a08d160abb05824b2e06234bdb9b6"
+    },
+    {
+      "oid": "f7682cb0f4304f061256ef240aaf68e54df2a488",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "ee10a80af759fcfa3acef16618bb9f605e7b7e023b2c4e99ff504dfbe19fea22"
+    },
+    {
+      "oid": "937d92ea966e75788ab15f165f00b09ea6447b4d",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "81ff2db0b955ace075c92ff03f3f4f919d3c88430a06b818288e7ce19f92b01e"
+    },
+    {
+      "oid": "2b85979d1b549305e0746ffd45757fe5c72026ab",
+      "type": "tree",
+      "bytes": 34038,
+      "sha256": "b3927f1407794b4228abbd7c69c958c24de636f85c44fe0ced63f31e12512c8f"
+    },
+    {
+      "oid": "552af9b10e579091f9303b4c04619427c1fffcac",
+      "type": "blob",
+      "bytes": 23771,
+      "sha256": "844f14ee3832346cbdc4ca5064ec670a2f14c8366767e697b41a072ddb6a1a33"
+    },
+    {
+      "oid": "fca977dc952534fc2a413cefed55d35b8fde52aa",
+      "type": "blob",
+      "bytes": 2020,
+      "sha256": "76ab6634af6fce523e88e153c79a64e9ab44a535cb58b540669fa8cf00870dda"
+    },
+    {
+      "oid": "9320d9f66c9e70563cf5b6168be86e187f5189d1",
+      "type": "blob",
+      "bytes": 38250,
+      "sha256": "d6023bac1c83f43e47c9a513073dbf036e72909c693fa17e7d131ee09cfc0d2b"
+    },
+    {
+      "oid": "7b006bc4980846971d81045c8f33f372c6a8649c",
+      "type": "blob",
+      "bytes": 7928,
+      "sha256": "a4b6109fd6c2a4a471bad6f5262964d747d2f25e61b3a3e0dc604cb57dd55083"
+    },
+    {
+      "oid": "3a1a9643edf060227e4e7cc47a2dd768cc689705",
+      "type": "blob",
+      "bytes": 4727,
+      "sha256": "4dde710012d8d1fc53d25184a8b7f0495b3b17aa674592bf6d6b707cb4b9e1ad"
+    },
+    {
+      "oid": "d6204902dc58b9e1a5a4f0d88139f36b3e9d2390",
+      "type": "blob",
+      "bytes": 1107,
+      "sha256": "9c976804b608bc8741ccf43cbd6f3f6fb560a07f8cc7bd45482ddf39dbc8a62d"
+    },
+    {
+      "oid": "001614013c62089cd685d9d4a436b64f2250d5ed",
+      "type": "blob",
+      "bytes": 921,
+      "sha256": "91a3b78e50f0a1c1034aa5b1ccbfc9daf1041baffd1b34ecd3a0fb826a0345e8"
+    },
+    {
+      "oid": "a133c8e8d920ab17008042ede5ff883efa65186e",
+      "type": "blob",
+      "bytes": 7750,
+      "sha256": "0f7219f776eff936ae9d2abd2c67f63111e43c7cb45e12722aac586a7d9b9215"
+    },
+    {
+      "oid": "632c0117a34f2d6b782e18239dd29438f1c8ecb9",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "2ba87d609009921527200832828eaae48c6d9252a00ac4db09a6a99c2a9a11f8"
+    },
+    {
+      "oid": "e9a9cab52d0ed81055ca60c627b8462c13c9b7b0",
+      "type": "tree",
+      "bytes": 16235,
+      "sha256": "0c33d2e0328a34792a2ddadddbf34df199b6bab85230b8958074bf9043989c38"
+    },
+    {
+      "oid": "2cc7d8a891b4f99417165a671e936446bbd82c52",
+      "type": "tree",
+      "bytes": 793,
+      "sha256": "992c1664b965e0fe9df44ab38df5ca4d8b1b2a96f4581b6cb8b3059b454188b5"
+    },
+    {
+      "oid": "ea9260f9f5f3fee2584781ef0ca4cb43fb83f629",
+      "type": "tree",
+      "bytes": 349668,
+      "sha256": "4755d6d1145bedeb31a2111d2c5655500a296fb3d37c969c8a61cd6a839efa4b"
+    },
+    {
+      "oid": "ce2e339b0bc732d5ac012e3fdca3dd10f9125e88",
+      "type": "blob",
+      "bytes": 3584,
+      "sha256": "b173723e30e31e6f678d2fdc27652a6415e315c08a557767dd3b2cc2be5d9c45"
+    },
+    {
+      "oid": "746a9e8d8fb2fd16d5c6af49333b91df0c5cbc9e",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "7fbc9f45efa407d616a6eaaeb228d7e445c02f7a8a9daaa2a4239e051c593512"
+    },
+    {
+      "oid": "6e91fd773eeccbf722b4e72c5cc95181a525912b",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "d37f3ccfef63693638f057a651e83af296fbfb0028b886a1d3cdbf1e8d9d0966"
+    },
+    {
+      "oid": "6b1b788c34ec25f261de4ce12d81e3cec1bdccda",
+      "type": "tree",
+      "bytes": 33970,
+      "sha256": "13a5fcb5e3e885d9d80fc72982155d60124521645b6e907dda8f3a76f1f2f5e8"
+    },
+    {
+      "oid": "c4958e633358cea0068e285caeb732d53996f028",
+      "type": "blob",
+      "bytes": 1600,
+      "sha256": "a58ca6d53af2cbbf1dea8fdfedcebe5f72b56a99f57cae79bec6e1b209df228c"
+    },
+    {
+      "oid": "d2b9578013e3030c1dce59585310499408725db2",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "c49abceeada22a6b1a5a688deac77aa2a82afb1acb155d024d4f818e07a73182"
+    },
+    {
+      "oid": "5941a25af0ab5a3169e1c3fb4c983a2e2740ed9d",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "13414e444fd5e04b5622192233df8e04008e3d42c1c35e325fb5213e6df8bd99"
+    },
+    {
+      "oid": "19f62b36e7dc36be9560a754b4cc5bf3f7bcc57e",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "70e33f9a892bf79c98984cbe24c80dd49df0c8af863c9a61dfd1ca5d94f42096"
+    },
+    {
+      "oid": "b8bff0309b937f9b45fe14ea5fae1b9aef3506fa",
+      "type": "tree",
+      "bytes": 33902,
+      "sha256": "54f2f2692ed9b20afcb2793f083dbc830c6a2e9b4c59685100ea84bd677c141e"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_pattern_findings": 0,
+    "runtime_profile_or_raw_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 184371,
+      "sha256": "63b4e363a79f0c4394b4307890879e60ff248094708142be1bb251f76cfb326e",
+      "git_blob": "3150af7a1c996dab0fc376e836442ac7fbddedbf"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 2483,
+      "sha256": "b780ea19e5c4b01f06758cebb9755f6e4a39c606d1e4d150a851cd16e8b9dd10",
+      "git_blob": "93ae03c02aff375c934ce288eadefe4df924cb7c"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1369,
+      "sha256": "d4ac4a0a47148c4c523f6eb33ef031aec5fab533ad613eb1c499cc50ae891c74",
+      "git_blob": "acd57f242b89eca969b4a5de8e525eab768ac2d0"
+    },
+    {
+      "path": "studio-v2-ca029891-to-b484b528.bundle",
+      "bytes": 13201,
+      "sha256": "3b12beb9d5e7b152d064e4c8617baae232ce2a94e1b92aab39eb331659a28f96",
+      "git_blob": "af4c5d93be471ea8e6b7b160422dc0416c1fdc15"
+    }
+  ]
+}
