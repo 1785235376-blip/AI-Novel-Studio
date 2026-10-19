@@ -48,7 +48,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             if target is None or target[0] == "list":
                 return False
             record = service._owned(nid, scope, actor, target[0], target[1])
-            return record.get("graph_schema_version") == 6 or record.get("definition", {}).get("schema_version") == 6
+            return record.get("graph_schema_version") in {6, 7} or record.get("definition", {}).get("schema_version") in {6, 7}
 
         def checked_graph(actor, scope, guard, *, source_read_authorized=False):
             def host_required():
@@ -255,7 +255,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request,
-                      model_input=body.definition.schema_version in {2, 3, 4, 5}, local_input=body.definition.schema_version == 6)
+                      model_input=body.definition.schema_version in {2, 3, 4, 5}, local_input=body.definition.schema_version in {6, 7})
 
     @router.get("/projects/{nid}/studio/graphs/{gid}")
     def graph(nid: str, gid: str, request: Request,
@@ -269,7 +269,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request,
                       model_input=body.definition.schema_version in {2, 3, 4, 5}, target=(service.GRAPHS, gid),
-                      local_input=body.definition.schema_version == 6)
+                      local_input=body.definition.schema_version in {6, 7})
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/preflight")
     def preflight(nid: str, gid: str, request: Request, body: GraphPreflight | GraphMediaPreflight,
