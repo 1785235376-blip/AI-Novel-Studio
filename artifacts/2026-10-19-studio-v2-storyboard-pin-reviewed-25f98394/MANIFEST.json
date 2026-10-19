@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_CODE_INTEGRATION_ACCEPTED_BROWSER_HOST_BLOCKED",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "browser_acceptance": {
+    "status": "BLOCKED",
+    "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+    "target": "original isolated backend19128 / frontend5322",
+    "reason": "401 SESSION_REQUIRED; author services stopped; no confirmed existing valid same-backend Host session",
+    "preview": "NOT_RUN",
+    "Save": "NOT_RUN",
+    "fresh_reopen": "NOT_RUN",
+    "original_denial": "backend HTTP401, not tool/approval rejection",
+    "services_stopped_evidence_retained": true,
+    "new_services_started": false,
+    "credentials_searched_read_created": false,
+    "auth_bypassed_or_settings_changed": false,
+    "uncertain_feature_writes": false,
+    "source_evidence": {
+      "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+      "target": "isolated backend 19128 / frontend 5322",
+      "reason": "author401 SESSION_REQUIRED; both services now stopped; no confirmed existing valid same-backend Host authorization; original session state is page/process-memory only",
+      "status": "BLOCKED_PREREQUISITE; browser feature sequence NOT EXECUTED; no uncertain writes",
+      "original_denial": "author backend401 SESSION_REQUIRED, not a new tool/approval denial",
+      "completed": "read-only five-file diff and supported Host-session source flow; 3 independent controller/component/helper checks",
+      "user_action": "Coordinate an existing registered same-backend Host credential and bind through original 本机可信会话 panel; revalidate after refresh/new context; no credential should be pasted into chat; no new credential/security change authorized here"
+    }
+  },
+  "PG": "BLOCKED_NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "whole_feature_acceptance": "NOT_ACCEPTED",
+  "archive_parent": "fc262433d03f03b1d173d0013a37c1d4e515559c",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-storyboard-pin-reviewed-25f98394",
+  "product_base": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+  "product_tip": "25f9839459a39f79634b6024d22a5e644ea10da9",
+  "product_tree": "dad693abc7f85da648c8967847cd11876c5e87d7",
+  "source_commit": "519a1410aa1dc9f8d49e6414b770560e1a2e4792",
+  "source_parent": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+  "stable_patch_id": "d5db3e2b8be3e672c0738c32a57188a3e365a941",
+  "patch_bytes_equal": true,
+  "all5_final_blobs_equal_source": true,
+  "remaining_base_paths_unchanged": true,
+  "prior_dc69_and_WebP_preserved": true,
+  "bundle_ref": "refs/heads/work/v2-storyboard-pin-webp-combined-20261019",
+  "bundle_filename": "studio-v2-6b9be9c8-to-25f98394.bundle",
+  "unique_external_prerequisite": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+  "bundle_commit_count": 1,
+  "file_mapping": [
+    {
+      "path": "frontend/src/creative/GraphPlanningFork.storyboard.test.tsx",
+      "mode": "100644",
+      "blob": "6fcac45de572056db05e5273fec13f5b1c685d24",
+      "bytes": 12920,
+      "sha256": "28bc2e8295699013d7ade4b10f484df4939bb96de3c3f6eb0de1fbe3d0ee24ba"
+    },
+    {
+      "path": "frontend/src/creative/GraphPlanningFork.tsx",
+      "mode": "100644",
+      "blob": "2f0f0a88330737cb4d0ecd39fc8ba283644f8d71",
+      "bytes": 11338,
+      "sha256": "ce4f261202acfcb756488048795dee51249b58ea4454c48ac6efff84c54623f5"
+    },
+    {
+      "path": "frontend/src/creative/graphPlanningForkHelpers.ts",
+      "mode": "100644",
+      "blob": "97c7cb562d660ca66649b53860f96d27dce91b89",
+      "bytes": 6417,
+      "sha256": "93e14e0fc17d97f068cebd5c75cf598d8eadab70c2995d48ae97ab63033ad977"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "mode": "100644",
+      "blob": "ce0e1611150eef4e1755b1172af1af41e1e40620",
+      "bytes": 60311,
+      "sha256": "0c48e189b037a4ccae235ed2d7b85f853aea40a8823df408e5a0ef6131f9f1c9"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "blob": "f9b9e7027c022933fb9664d73c7cc522092cdad0",
+      "bytes": 94954,
+      "sha256": "5535db07ac614d901ca2734644b78570fec3f44ee533d94f778fdb2d6b32983f"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "25f9839459a39f79634b6024d22a5e644ea10da9",
+      "type": "commit",
+      "path": "",
+      "bytes": 309,
+      "sha256": "522da9e6a8e952a3ef96909def13a6cb5c472166108b50c347fabd65c85a2124"
+    },
+    {
+      "oid": "dad693abc7f85da648c8967847cd11876c5e87d7",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "817ca87f98ecfda488ef46efda9274af29e1ae32128823c705b264316c8ff8d8"
+    },
+    {
+      "oid": "8f45f30c6cbe1eb2e9862e44abf9c37c2d0d3722",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "af32823ccf854d176eb333f480ffbf910fbae96295b3c8962f13f975a08a12f8"
+    },
+    {
+      "oid": "1e7f461724fb9d70549be862f63b599e963edb5f",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "f7451751f7e12b3c6f53217c2e521d5945806bd47aa561db204be4cc63c96293"
+    },
+    {
+      "oid": "b9c8f328271c8bb6bcd552c04667d83a30dc160c",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 35330,
+      "sha256": "8803b70b86bc854a031804e9dca9cc64dcbec8cda65db5c33578684966b2b120"
+    },
+    {
+      "oid": "6fcac45de572056db05e5273fec13f5b1c685d24",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphPlanningFork.storyboard.test.tsx",
+      "bytes": 12920,
+      "sha256": "28bc2e8295699013d7ade4b10f484df4939bb96de3c3f6eb0de1fbe3d0ee24ba"
+    },
+    {
+      "oid": "2f0f0a88330737cb4d0ecd39fc8ba283644f8d71",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphPlanningFork.tsx",
+      "bytes": 11338,
+      "sha256": "ce4f261202acfcb756488048795dee51249b58ea4454c48ac6efff84c54623f5"
+    },
+    {
+      "oid": "97c7cb562d660ca66649b53860f96d27dce91b89",
+      "type": "blob",
+      "path": "frontend/src/creative/graphPlanningForkHelpers.ts",
+      "bytes": 6417,
+      "sha256": "93e14e0fc17d97f068cebd5c75cf598d8eadab70c2995d48ae97ab63033ad977"
+    },
+    {
+      "oid": "ce0e1611150eef4e1755b1172af1af41e1e40620",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 60311,
+      "sha256": "0c48e189b037a4ccae235ed2d7b85f853aea40a8823df408e5a0ef6131f9f1c9"
+    },
+    {
+      "oid": "f9b9e7027c022933fb9664d73c7cc522092cdad0",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 94954,
+      "sha256": "5535db07ac614d901ca2734644b78570fec3f44ee533d94f778fdb2d6b32983f"
+    }
+  ],
+  "validation": {
+    "product_tip": "25f9839459a39f79634b6024d22a5e644ea10da9",
+    "base": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+    "smoke": {
+      "selected": 3,
+      "passed": 3,
+      "skipped": 35,
+      "kind": "pin coupled independent draft/original explicit Save mock client + dc69 original Canvas adoption + existing native File WebP receipt decode"
+    },
+    "typescript": {
+      "runs": 1,
+      "exit": 0
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "existing_large_chunk_warning": true
+    },
+    "only_dependency_junction_created_no_copy_or_install": true,
+    "author_full_suites_independent_three_cases_File_and_shell_not_rerun": true,
+    "browser": {
+      "status": "BLOCKED",
+      "last_denial": "401 SESSION_REQUIRED",
+      "target": "original isolated backend19128/frontend5322; author services stopped",
+      "same_backend_valid_Host_session": "NOT_CONFIRMED_AVAILABLE",
+      "preview": "NOT_RUN",
+      "Save": "NOT_RUN",
+      "fresh_reopen": "NOT_RUN",
+      "no_services_started_credentials_created_or_auth_bypassed": true
+    },
+    "PG": "BLOCKED_NOT_ACCEPTED",
+    "full_E2E": "NOT_ACCEPTED",
+    "checked_at": "2026-10-19T20:56:21.879906+00:00"
+  },
+  "independent_review": {
+    "P1_P2": [],
+    "unique_cases": 3,
+    "first_run_passed": true,
+    "retained_not_rerun": true,
+    "browser_blocked": true
+  },
+  "requirements": "Bounded CORE-16 GRAPH-08 GRAPH-21 only; whole requirements not accepted; IMAGE-17 remains PARTIAL",
+  "privacy_scan": {
+    "high_risk_credential_findings": 0,
+    "only_reviewed_new_blob_paths": true,
+    "user_profiles_runtime_configs_env_raw_traces_dependencies_dist_real_user_data_packaged": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 4825,
+      "sha256": "d8b5e091e3b32786879f4c24f07906f57d9fc47ac20f43da36444f0e45cfe37c",
+      "git_blob": "65e8ae70a40ce7734f7050f6f4783fb8e31c251c"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1501,
+      "sha256": "fa46891d8e1c7afb9735fd6e5bf1a16cccd837c5d5a1888f3ca1ef7da7cf40db",
+      "git_blob": "7064905f99b32329931df0b566cd65da0ff07d06"
+    },
+    {
+      "path": "storyboard-pin-tests-evidence-sanitized.zip",
+      "bytes": 80560,
+      "sha256": "cc1864fc20339cb4173a5e369c0735179d6db70d2d53c2b2fae460cf1882eac4",
+      "git_blob": "b6a648b7bcfce916708da897f0ca6c450eb28081"
+    },
+    {
+      "path": "studio-v2-6b9be9c8-to-25f98394.bundle",
+      "bytes": 9102,
+      "sha256": "0b8fee73fd3b087018fe6a200bd4a0cce2d7f3ed7356890d4e333609eddda3ad",
+      "git_blob": "467ff221dc785ec92cf26dc3840651ef9c12f501"
+    }
+  ]
+}
