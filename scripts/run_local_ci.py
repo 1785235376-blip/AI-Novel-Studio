@@ -635,20 +635,25 @@ class LocalCi:
                     ports.add(port)
         stale_ports = sorted(port for port in ports if port_open(port))
         leaked = owned_processes(self.run_id)
+        browser_runtime = ROOT / ".runtime" / "v2-live-browser" / self.run_id
         runtime_bytes_before = size_tree(self.runtime)
+        browser_runtime_bytes_before = size_tree(browser_runtime)
         evidence_bytes = size_tree(self.evidence)
         shutil.rmtree(self.runtime, ignore_errors=True)
-        runtime_removed = not self.runtime.exists()
+        shutil.rmtree(browser_runtime, ignore_errors=True)
+        runtime_removed = not self.runtime.exists() and not browser_runtime.exists()
         checks = {
             "tracked_ports": sorted(ports),
             "stale_ports": stale_ports,
             "leaked_processes": leaked,
             "runtime_bytes_before": runtime_bytes_before,
+            "browser_runtime_bytes_before": browser_runtime_bytes_before,
             "evidence_bytes_retained": evidence_bytes,
             "runtime_removed": runtime_removed,
             "evidence_files": sorted(path.name for path in self.evidence.iterdir() if path.is_file()),
-            "scope_note": "Removed only .runtime/local-ci/<run-id> created by this run; "
-                          "logs/JUnit/hashes in the evidence directory are retained.",
+            "scope_note": "Removed only this run's .runtime/local-ci/<run-id> and "
+                          ".runtime/v2-live-browser/<run-id> directories; logs/JUnit/hashes "
+                          "in the evidence directory are retained.",
         }
         status = PASS if not stale_ports and not leaked and runtime_removed else FAIL
         self.record(step, status, started, clock, checks=checks)
