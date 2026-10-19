@@ -4,7 +4,7 @@ import type { DirectorScreenplay } from './directorClient';
 import type { RefNode } from '../novel/useMultimodalWorkspacePersistence';
 // Original canvas coordinate/identity contract, with explicit print dimensions.
 export type ComicRect = Pick<RefNode, 'x' | 'y'> & { width: number; height: number };
-export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number };
+export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number; text_align?: 'LEFT' | 'CENTER' | 'RIGHT'; line_height_percent?: number };
 export type ComicAppearanceReference = { character_id: string; asset_id: string; expected_asset_version: number; note: string };
 export type ComicPanel = ComicRect & { id: string; shot_id: string | null; artwork_mode?: 'IMAGE' | 'BLANK'; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; cover_x_percent?: number; cover_y_percent?: number; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
 export type ComicNativeLayerKind = 'PANEL_ART' | 'PANEL_FRAME' | 'BUBBLE_SHAPE' | 'BUBBLE_TEXT';

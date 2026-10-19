@@ -239,6 +239,14 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 类型`}><select value={bubble.kind} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, kind: e.target.value as 'DIALOGUE' | 'NARRATION' } : b) })}><option value="DIALOGUE">对白气泡</option><option value="NARRATION">旁白框</option></select></Field>
               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 人物`}><select value={bubble.character_id || ''} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, character_id: e.target.value || null } : b) })}><option value="">未指定 / 旁白</option>{catalog.data!.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 字号`}><input type="number" min={14} max={96} step={1} value={bubble.font_size} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, font_size: Number(e.target.value) } : b) })} /></Field>
+              <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 文字对齐`}><select value={bubble.text_align ?? 'LEFT'} onChange={event => {
+                const value = event.target.value;
+                if (value === 'LEFT' || value === 'CENTER' || value === 'RIGHT') patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, text_align: value } : b) });
+              }}><option value="LEFT">左对齐</option><option value="CENTER">居中</option><option value="RIGHT">右对齐</option></select></Field>
+              <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 行距 (%)`}><input type="number" min={100} max={250} step={1} value={bubble.line_height_percent ?? 150} onChange={event => {
+                const value = event.target.valueAsNumber;
+                if (Number.isInteger(value) && value >= 100 && value <= 250) patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, line_height_percent: value } : b) });
+              }} /></Field>
               <RectFields label={`格框 ${index + 1} 气泡 ${bi + 1}`} value={bubble} onChange={patch => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, ...patch } : b) })} />
               <Button onClick={() => patchPanel(panel.id, { bubbles: panel.bubbles.filter(b => b.id !== bubble.id) })}>移除格框 {index + 1} 气泡 {bi + 1}</Button>
             </fieldset>)}

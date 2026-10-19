@@ -105,7 +105,7 @@ def validate_references(stack, panels):
 def iter_layer_images(document, images, placements, text=None):
     """Yield one cropped transparent RGBA surface at a time, never N full pages."""
     from PIL import Image, ImageDraw
-    from .comic_layouts import _image, _text_layout, licensed_font
+    from .comic_layouts import _image, _text_layout, _text_x, licensed_font
     panels = {p['id']: p for p in document['panels']}
     bubbles = {b['id']: b for p in document['panels'] for b in p['bubbles']}
     if text is None:
@@ -141,7 +141,7 @@ def iter_layer_images(document, images, placements, text=None):
         elif kind == 'BUBBLE_TEXT':
             font, lines, line_height = text[obj['id']]
             for index, line in enumerate(lines):
-                draw.text((12, 12 + index * line_height), line, font=font, fill='black', anchor='lt')
+                draw.text((_text_x(obj, font, line), 12 + index * line_height), line, font=font, fill='black', anchor='lt')
         yield item, obj['x'], obj['y'], surface
 
 

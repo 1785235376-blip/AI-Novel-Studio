@@ -43,6 +43,18 @@ class Bubble(Rect):
     text: str = Field(min_length=1, max_length=1000)
     character_id: str | None = Field(default=None, max_length=240)
     font_size: int = Field(default=28, ge=14, le=96, strict=True)
+    text_align: Literal['LEFT', 'CENTER', 'RIGHT'] = 'LEFT'
+    line_height_percent: int = Field(default=150, ge=100, le=250, strict=True)
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_typography(self, handler):
+        document = handler(self)
+        # Reading, re-saving or restoring old approval-bound documents must not
+        # inject fields or change their digest. Defaults apply only at render.
+        for field in ('text_align', 'line_height_percent'):
+            if field not in self.model_fields_set:
+                document.pop(field, None)
+        return document
 
     @model_validator(mode='after')
     def plain(self):
@@ -229,6 +241,12 @@ def _overlap(a, b):
     return max(a['x'], b['x']) < min(a['x'] + a['width'], b['x'] + b['width']) and max(a['y'], b['y']) < min(a['y'] + a['height'], b['y'] + b['height'])
 
 
+def _text_x(bubble, font, line):
+    align = bubble.get('text_align', 'LEFT')
+    remaining = bubble['width'] - 24 - font.getlength(line)
+    return 12 + (remaining / 2 if align == 'CENTER' else remaining if align == 'RIGHT' else 0)
+
+
 def _text_layout(bubble, font_data, coverage):
     from PIL import ImageFont
     if any(ord(c) not in coverage for c in bubble['text'] if c != '\n'):
@@ -256,12 +274,13 @@ def _text_layout(bubble, font_data, coverage):
             else:
                 line += char
         lines.append(line)
-    line_height = math.ceil(bubble['font_size'] * 1.5)
+    line_height = math.ceil(bubble['font_size'] * bubble.get('line_height_percent', 150) / 100)
     if len(lines) * line_height > bubble['height'] - 24:
         raise ValueError('COMIC_TEXT_OVERFLOW')
     for index, line in enumerate(lines):
         left, top, right, bottom = font.getbbox(line, anchor='lt')
-        if left < -12 or right > bubble['width'] - 12 or index * line_height + bottom > bubble['height'] - 24:
+        x = _text_x(bubble, font, line)
+        if x + left < 0 or x + right > bubble['width'] or index * line_height + bottom > bubble['height'] - 24:
             raise ValueError('COMIC_TEXT_OVERFLOW')
     return font, lines, line_height
 
@@ -356,7 +375,7 @@ def compose(document, images, *, render=False):
                 box = (bubble['x'], bubble['y'], bubble['x'] + bubble['width'] - 1, bubble['y'] + bubble['height'] - 1)
                 draw.rounded_rectangle(box, radius=16 if bubble['kind'] == 'DIALOGUE' else 0, fill='white', outline='black', width=2)
                 font, lines, line_height = text[bubble['id']]
-                for i, line in enumerate(lines): draw.text((bubble['x'] + 12, bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
+                for i, line in enumerate(lines): draw.text((bubble['x'] + _text_x(bubble, font, line), bubble['y'] + 12 + i * line_height), line, font=font, fill='black', anchor='lt')
     output = []
     for segment in segments:
         stream = segment_buffer(); canvas.crop((0, segment['y'], document['width'], segment['y'] + segment['height'])).save(stream, format='PNG', compress_level=9)
