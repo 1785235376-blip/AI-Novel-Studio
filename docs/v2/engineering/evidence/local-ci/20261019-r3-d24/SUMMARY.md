@@ -165,3 +165,16 @@ Unit/regression suite for the changed code (File environment, run before this ev
 `tests/test_postgres_connection_bounds.py`, `tests/test_postgres_pool_transaction_semantics.py` (skipped in
 File mode by marker), `tests/test_local_ci_skip_audit.py`, `tests/test_run_v2_checks_output.py`,
 `tests/test_local_ci_evidence_redaction.py` - 25 passed.
+
+## Round-3 closeout corrections (2026-10-19)
+
+- `verification-summary.json` now points at the archived prefixed filenames and records
+  `pool-regression-file` as `SKIPPED_NOT_APPLICABLE` (recovered original: 5 skipped, 0 failed,
+  exit 0). See `CORRECTIONS.md` in this directory. The hash table above describes the
+  pre-correction snapshot; refreshed hashes for the changed/new files:
+  - `verification-summary.json`: ``VS_HASH``
+  - `CORRECTIONS.md`: ``CORR_HASH``
+- New closeout evidence (new runs at execution SHA `5e278819`, diagnostics provenance, evidence
+  index check): `docs/v2/engineering/evidence/local-ci/20261019-r3-closeout/`. The pre-fix D-24
+  timeout thread dump is not recoverable; `diagnostics/README.md` in the closeout directory records
+  the counter definitions and limits.

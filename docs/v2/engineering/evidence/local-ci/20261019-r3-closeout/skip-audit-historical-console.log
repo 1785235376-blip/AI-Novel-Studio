@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "total": 941,
+    "passed": 473,
+    "failed": 0,
+    "skipped": 468
+  },
+  "skip_messages": {
+    "PostgreSQL implementation contract; covered by the real PostgreSQL full suite": 467,
+    "WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE: hosted Linux CI covers the symlink identity contract": 1
+  },
+  "unknown_skips": [],
+  "symlink_privilege_skips": [
+    "tests.test_v2_creative_project_lifecycle::test_file_corrupt_marker_fails_closed_without_reading_external_content[symlink]"
+  ],
+  "postgres_contracts": 467,
+  "postgres_contracts_matched": 467,
+  "behaviour_executed_counts": {
+    "project_create_read": 169,
+    "save_reread_persistence": 2,
+    "cas_conflict": 55,
+    "cross_project_denied": 230,
+    "review_candidate_not_promoted": 44,
+    "failure_revocation": 121
+  }
+}

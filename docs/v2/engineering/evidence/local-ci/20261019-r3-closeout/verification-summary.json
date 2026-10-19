@@ -1,0 +1,69 @@
+[
+  {
+    "label": "closeout-pool-regression-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "summary": "6 passed (contract metrics captured)",
+    "status": "PASS",
+    "junit": "junit-pool-regression-pg-closeout.xml",
+    "console": "console-pool-regression-pg-closeout.log",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-pool-regression-file",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "6 skipped",
+    "status": "SKIPPED_NOT_APPLICABLE",
+    "skipped": 6,
+    "failed": 0,
+    "status_detail": "PostgreSQL-only test file; every case skipped by the postgres_backend_only marker in the File profile. Exit code 0 is recorded separately and is not a pool-behaviour PASS.",
+    "junit": "junit-pool-regression-file-closeout.xml",
+    "console": "console-pool-regression-file-closeout.log",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-unit-tests",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "29 passed",
+    "status": "PASS",
+    "junit": null,
+    "console": "console-unit-tests.log",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-evidence-index",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "evidence index check PASS",
+    "status": "PASS",
+    "junit": null,
+    "console": "evidence-index-console.log",
+    "receipt": "evidence-index.json",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-skip-audit-historical",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "467/467 historical pairs, 0 PostgreSQL-only",
+    "status": "PASS",
+    "junit": null,
+    "console": "skip-audit-historical-console.log",
+    "receipt": "skip-audit-historical.json",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "historical-round3-pool-regression-file",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "5 skipped in 0.16s (recovered original round-3 run)",
+    "status": "SKIPPED_NOT_APPLICABLE",
+    "skipped": 5,
+    "failed": 0,
+    "junit": "historical-pool-regression-file.xml",
+    "console": "historical-pool-regression-file.log",
+    "head": "415cbcc2"
+  }
+]

@@ -1,0 +1,20 @@
+
+# Connection-count evidence (round-3 instruments, re-read at closeout)
+
+Source logs: Engineering-Runs/local-ci-round3-20261019/d24-{unpooled-replay,fixed-metrics}-postgres.log,
+started by d24_driver.py with `log_connections=on` inside the disposable cluster settings and
+`D24_NO_WATCH=1` (the pg_stat_activity watcher was disabled, so it contributes no connections in
+these numbers). Both logs also contain the driver's own setup connections (maintenance DB create +
+migrations + identity probe, 3 connections) before pytest starts; the app/backend counters below do not.
+
+| Run | "connection authorized" log lines (whole log, includes driver setup) | probe new physical pool connections | probe direct connect() attempts |
+| --- | ---: | ---: | ---: |
+| unpooled replay (old store path) | `AUTH_REPLAY` | 0 (the old path bypasses the pool) | `DIRECT_REPLAY` |
+| pooled (fix) | `AUTH_POOLED` | 2 | 0 |
+
+Definitions: "connection authorized" counts every PostgreSQL backend creation logged by the
+server, independent of who opened it (SQLAlchemy pool, the bounded connect() helper, or the
+driver). "new physical pool connections" counts SQLAlchemy pool `connect` events only. A pool
+count of 0 therefore does **not** mean "no physical connections were opened": the unpooled replay
+opened hundreds through the helper (its count is in the direct-attempt column) - it only means
+none were opened through the pool.

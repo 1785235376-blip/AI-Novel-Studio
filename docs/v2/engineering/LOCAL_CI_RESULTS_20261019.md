@@ -80,6 +80,15 @@ LOCAL-02 的 468 个 skip 已逐项分类：467 个 PostgreSQL 实现契约（PG
 
 - 根因：PG 模式 `ExperimentalStore` 对每次元数据读取新建连接（单节点同代码复现：173 次读取 / 466 次直连尝试 / 16.0s FAIL；修复后 427 次读取 / 0 次直连 / 2 个物理连接 / 3.94s PASS）。
 - 修复：`engine_for_url()` 进程级缓存的有界 SQLAlchemy 池 + `pooled_connection()`；事务语义保持 commit-on-clean-exit。
-- 验证：代表性节点 2 个 fresh DB **PASS**（4.66s / 4.85s）；完整受影响文件 PG **28 passed / 27 skipped**（44.93s，原 27 failed/1 passed）；File 对照 **28 passed / 27 skipped**；D-07 连接风暴节点 **PASS**（6.42s）；新增 5 项真实 PG 池回归 **PASS**。
+- 验证：代表性节点 2 个 fresh DB **PASS**（4.66s / 4.85s）；完整受影响文件 PG **28 passed / 27 skipped**（44.93s，原 27 failed/1 passed）；File 对照 **28 passed / 27 skipped**；D-07 连接风暴节点 **PASS**（6.42s）。
+- closeout 补充：真实 PG 池回归文件 6 项 **PASS**（含“旧直连路径反例”——同一 50 次读取窗口下旧路径 50 次新建物理连接 / 0 次池借出被契约断言拒绝，池化路径 0 / 50 / 50 通过）；File profile 同文件 **6 skipped、exit 0** 记为 SKIPPED_NOT_APPLICABLE，不当作池行为 PASS。
 - Skip 审计工具改为严格 module/class+参数配对，历史 LOCAL-02 JUnit 重审 **467/467 匹配、0 PG-only**；新增 8 条正/反例测试。
 - 仍未完成：完整 PG/File 套件、D-20、D-17、Linux/宿主 CI；V2 仍 NOT RELEASE_READY。
+
+
+## 8. Round-3 closeout 证据更正（2026-10-19）
+
+- 旧证据 `20261019-r3-d24/verification-summary.json` 的 `junit`/`console` 已改为指向真实归档文件名（无归档的 console 置 null），原因见该目录 `CORRECTIONS.md`；`pool-regression-file` 由错误的 PASS 更正为 **SKIPPED_NOT_APPLICABLE**（原始恢复：5 skipped / 0 failed / exit 0）。
+- 新增 `scripts/check_local_ci_evidence_index.py` 与回归测试，证据回执声明的文件缺失即失败；closeout 检查 **PASS**（8 路径 / 0 缺失 / XML 全部良构）。
+- 诊断源码/指标/存活的 post-fix 线程栈样例已归档到 [evidence/local-ci/20261019-r3-closeout/](evidence/local-ci/20261019-r3-closeout/)；**修复前超时线程栈无法恢复**（同一日志路径被后续运行覆盖），限制已在 `diagnostics/README.md` 说明。
+- 本轮 execution SHA `5e278819`；交付提交仅追加文档/证据。

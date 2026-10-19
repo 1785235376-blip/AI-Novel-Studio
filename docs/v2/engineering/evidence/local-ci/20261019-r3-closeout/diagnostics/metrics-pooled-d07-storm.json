@@ -1,0 +1,14 @@
+{
+  "exit_status": 0,
+  "seconds": 6.39,
+  "unpooled_replay": false,
+  "store_reads": 0,
+  "direct_connect_attempts": 0,
+  "pool_new_connections": 0,
+  "pool_checkouts": 0,
+  "pool_peak": 0,
+  "pool_active": 0,
+  "persists": 0,
+  "emits": 0,
+  "hooks": 0
+}
