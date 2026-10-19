@@ -18,6 +18,7 @@ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
 import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS } from './studioGraphTypes';
 import { connectionIssue } from './graphDraft';
+import { GraphConnectionReplacement } from './GraphConnectionReplacement';
 import { GRAPH_IMAGE_OPERATION_LABELS, GRAPH_MEDIA_OPERATION_LABELS, mediaProviderKey } from './useStudioMediaExecution';
 import type { GraphMediaOperation } from './studioGraphTypes';
 import { GRAPH_MEDIA_PARAMETER_LABELS, graphMediaParameterNames } from './useStudioGraphEditorController';
@@ -224,6 +225,10 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
           source_node_id: source.nodeId, source_port: source.portId, target_node_id: target.nodeId, target_port: target.portId })}
         preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => controller.selectConnectionPort(port, controller.connectionScope)} />
       <GraphConnectionList definition={draft} definitions={catalog.definitions} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()} onChange={change} />
+      <GraphConnectionReplacement definition={draft} catalog={catalog} owner={controller.connectionReplacementScope}
+        disabled={!editable || timelineEditor.formDirty || checking || !!controller.positionedInsertion}
+        isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
+        onApply={(edgeId, nodeId, portId) => controller.replaceConnection(edgeId, nodeId, portId, controller.connectionReplacementScope)} />
       <GraphRunPanel onLocateNode={controller.locateRunNode} client={client.graphs} graph={base} targetNodeIds={selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}
   </section>;

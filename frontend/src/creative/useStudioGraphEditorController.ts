@@ -23,6 +23,7 @@ import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphPosition, StudioGraphRecord } from './studioGraphTypes';
 import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, videoGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
+import { graphConnectionReplacement } from './graphConnectionReplacementHelpers';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 import { graphDraftBaselineMatches, graphDraftRecoverable, readStudioGraphLocalDraft, studioGraphDraftKey,
   type StudioGraphDraftOwner, type StudioGraphLocalDraft } from './studioGraphLocalDraft';
@@ -649,6 +650,22 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (problem) { setError(problem); return; }
     change({ ...draft, edges: [...draft.edges, edge] }); setSourcePort(''); setTargetPort('');
   }
+  const replacementRequestEpoch = candidateEpoch.current;
+  const replacementValues = [verificationScope, insertionScope, replacementRequestEpoch, checking];
+  const replacementFence = useRef({ values: replacementValues, token: {} });
+  if (replacementValues.some((value, index) => !Object.is(value, replacementFence.current.values[index]))) replacementFence.current = { values: replacementValues, token: {} };
+  const connectionReplacementScope = replacementFence.current.token;
+  function replaceConnection(edgeId: string, sourceNodeId: string, sourcePortId: string, scope: object): boolean {
+    if (scope !== connectionReplacementScope || scope !== replacementFence.current.token || replacementRequestEpoch !== candidateEpoch.current
+      || !isVerificationCurrent() || !insertionCurrent(insertionScope) || candidateRequest.current && !candidateRequest.current.signal.aborted
+      || checking || insertionRef.current || imageSelectionFence.current?.() || !catalog) return false;
+    try {
+      const next = graphConnectionReplacement(draftRef.current, catalog, edgeId, { nodeId: sourceNodeId, portId: sourcePortId }).definition;
+      change(next); if (draftRef.current !== next) return false;
+      setSourcePort(''); setTargetPort('');
+      setNotice('输入连接已原子重接到本地草稿，可一次撤销；尚未保存或执行。'); return true;
+    } catch (reason) { setError(reason instanceof Error ? reason.message : '输入重接未应用。'); return false; }
+  }
   function travel(redo: boolean) {
     if (!editable || locked() || !current()) return;
     providerPicker.reset();
@@ -813,7 +830,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
     canvasAssetHandoff, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
-    nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
+    nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, replaceConnection, connectionReplacementScope, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
   };
