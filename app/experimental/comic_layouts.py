@@ -838,6 +838,93 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         if self._independent(row): binding['project_incarnation'] = row['project_incarnation']
         return {**report, 'review_digest': digest(binding), 'version': row['version'], 'status': row['status'], 'draft': row['status'] != 'APPROVED', 'font': binding['font']}
 
+    def page_source_authority(self, request, nid, token, branch_id=None):
+        """Server-only entry; actual Host/session and NOVEL read are required."""
+        return self.assets.comic_source_authority(self, request, nid, token, branch_id)
+
+    def page_source_reader(self, authority, page_id, expected_version, review_digest):
+        return self.assets.open_comic_page_sources(self, authority, page_id, expected_version, review_digest)
+
+    @contextmanager
+    def _page_source_authority(self, request, nid, token, branch):
+        from fastapi import HTTPException, Request
+        from .. import api, main
+        from . import api as experimental
+        from .flags import require_flag
+        from ..services.comic_page_origin import FEATURES
+        if not isinstance(request, Request):
+            raise ValueError('COMIC_SOURCE_REQUEST_REQUIRED')
+        experimental.require_inspection_host_session(token)
+        host = experimental.creative_model_host_authority(request, token)
+        if not host.principal:
+            raise HTTPException(403, {'code': 'COMIC_SOURCE_HOST_REQUIRED'})
+        registry = (main.packaged_bootstrap_registry.current().sessions
+                    if main.settings.enable_packaged_runtime else main.trusted_session_resolver)
+        with registry.binding_lease(token):
+            actor, scope = api._workbench_authorize(nid, token, branch, 'domain.read')
+            with api._workbench_authority_lease(nid, token, actor, scope), self._independent_owner().existing_owner_only():
+                incarnation = self._independent_identity(nid)
+                scope_key = self.store.key(nid, scope)
+                def current():
+                    for flag in FEATURES: require_flag(flag)
+                    experimental.require_inspection_host_session(token)
+                    host.guard()
+                    if (api._workbench_authorize(nid, token, branch, 'domain.read') != (actor, scope)
+                            or self._independent_identity(nid) != incarnation):
+                        raise HTTPException(403, {'code': 'COMIC_SOURCE_AUTHORITY_CHANGED'})
+                current()
+                yield dict(nid=nid, actor=actor, scope=copy.deepcopy(scope), scope_key=scope_key,
+                           incarnation=incarnation, principal=host.principal, guard=current)
+                current()
+
+    def _page_source_plan(self, context, rid, expected_version, review_digest):
+        from ..services.comic_page_origin import DIGEST
+        import re
+        if (type(expected_version) is not int or not 1 <= expected_version <= 2**53 - 1
+                or not isinstance(review_digest, str) or not re.fullmatch(DIGEST, review_digest)):
+            raise ValueError('COMIC_SOURCE_PIN_INVALID')
+        row = self._row(context['nid'], context['scope'], context['actor'], rid)
+        check_version(row, expected_version)
+        doc = row['document']
+        if (not self._independent(row) or doc['preset'] != 'PAGE'
+                or row['project_incarnation'] != context['incarnation']
+                or row['status'] != 'APPROVED' or row.get('approval', {}).get('digest') != review_digest
+                or row.get('approval', {}).get('actor') != context['actor']):
+            raise ValueError('COMIC_SOURCE_APPROVED_PAGE_REQUIRED')
+        # Initial contract is deliberately a closed leaf profile. No inferred
+        # ancestry, chapter/character privacy, Studio or ORA authorization.
+        if ('layer_stack' in doc or row['character_sources']
+                or row['source_evidence'] != {'sources': {}, 'privacy': {}}
+                or any(p.get('appearance_references') for p in doc['panels'])):
+            raise ValueError('COMIC_SOURCE_PROFILE_UNSUPPORTED')
+        roots = {p['asset_id'] for p in doc['panels'] if p['artwork_mode'] == 'IMAGE' and p.get('asset_id')}
+        if not 1 <= len(roots) <= 4 or roots != set(row['asset_sources']):
+            raise ValueError('COMIC_SOURCE_DEPENDENCY_LIMIT')
+        return {'page_id': rid, 'version': expected_version, 'review_digest': review_digest,
+                'row_digest': digest(row), 'document_digest': digest(doc),
+                'assets': copy.deepcopy(row['asset_sources'])}
+
+    def _validate_page_source_grant(self, grant, request, context, plan):
+        from .comic_publication_budget import publication_active, publication_budget
+        row = self._row(context['nid'], context['scope'], context['actor'], plan['page_id'])
+        images = {}
+        with (nullcontext() if publication_active() else publication_budget()):
+            for aid in plan['assets']:
+                meta = self.assets.page_source_metadata(grant, request, aid)
+                data = self.assets.page_source_content(grant, request, aid, max_bytes=self.assets.MAX_BYTES)
+                if renderer_status()['available']:
+                    image = _image(data); image.close()
+                images[aid] = data
+            report, _ = compose(row['document'], images)
+        binding = {'layout_id': row['id'], 'actor': context['actor'], 'scope': context['scope'],
+            'document': row['document'], 'source_evidence': row['source_evidence'],
+            'character_sources': row['character_sources'], 'asset_sources': row['asset_sources'],
+            'font': font_status(), 'renderer': renderer_status(), 'report': report,
+            'project_incarnation': row['project_incarnation']}
+        if not report['can_render'] or digest(binding) != plan['review_digest']:
+            raise ValueError('COMIC_SOURCE_REVIEW_CHANGED')
+        return report
+
     def approve(self, nid, scope, actor, rid, expected_version, review_digest, acknowledge_warnings, guard=lambda: None):
         def update(row):
             if row['created_by'] != actor: raise FileNotFoundError(rid)

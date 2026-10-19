@@ -12,6 +12,7 @@ import stat
 import tempfile
 import threading
 import uuid
+from contextvars import ContextVar
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -76,6 +77,30 @@ class AssetLibraryService:
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._scope = threading.local()
+        self._page_source_lock = threading.RLock()
+        self._page_source_handles = {}
+        self._page_source_request = ContextVar('asset_page_source_request', default=None)
+        self._page_source_grant = ContextVar('asset_page_source_grant', default=None)
+
+    def comic_source_authority(self, comic, request, novel_id, token, branch_id=None):
+        from .comic_page_source_reads import authority
+        return authority(self, comic, request, novel_id, token, branch_id)
+
+    def open_comic_page_sources(self, comic, authority, page_id, expected_version, review_digest):
+        from .comic_page_source_reads import open_sources
+        return open_sources(self, comic, authority, page_id, expected_version, review_digest)
+
+    def page_source_metadata(self, grant, request, asset_id):
+        from .comic_page_source_reads import metadata
+        return metadata(self, grant, request, asset_id)
+
+    def page_source_content(self, grant, request, asset_id, *, max_bytes):
+        from .comic_page_source_reads import content
+        return content(self, grant, request, asset_id, max_bytes)
+
+    def revalidate_page_sources(self, grant, request):
+        from .comic_page_source_reads import revalidate
+        return revalidate(self, grant, request)
 
     @contextmanager
     def project_scope(self, novel_id: str, branch_id: str | None, owner_lease, *, scope_key: str):
