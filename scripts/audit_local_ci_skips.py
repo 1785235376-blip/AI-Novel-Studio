@@ -7,6 +7,21 @@ the Windows symlink-privilege case (covered by hosted Linux CI). Everything else
 must execute. This script makes the taxonomy explicit and fails when an unknown
 skip reason appears or when a test function would be skipped on every backend.
 
+Pairing is strict (D-24 round-3 audit fix). A skipped PostgreSQL node counts as
+covered only when ALL of the following hold:
+
+* it shares the exact module/class and function identity with its control;
+* the PostgreSQL variant is the leading parameter token ("postgres" or
+  "postgres-...");
+* the only differing parameter token is that backend token, so every other
+  parameter value is identical;
+* the control node exists in the executed (passed) set and its backend token is
+  explicitly "file".
+
+Bare function names are therefore never sufficient: cross-module same-name
+functions, different parameter combinations, skipped controls and other backends
+are all reported as PostgreSQL-only instead of silently matching.
+
 Usage:
     python scripts/audit_local_ci_skips.py --junit docs/v2/engineering/evidence/local-ci/<run>/LOCAL-02-junit.xml
     python scripts/audit_local_ci_skips.py --junit <file> --fail-on-pg-only --json-out report.json
@@ -33,10 +48,47 @@ BEHAVIOUR_PATTERNS = {
     "review_candidate_not_promoted": [r"review", r"promot", r"approve", r"pending", r"canon"],
     "failure_revocation": [r"revok", r"rollback", r"fail", r"retire", r"orphan"],
 }
+BACKEND_TOKENS = {"file", "postgres", "postgresql"}
+
+
+def split_node(node: str) -> tuple[str, str, str | None]:
+    """Return (owner, function name, parameter string or None) for a JUnit node id.
+
+    owner keeps the full module/class identity (for example
+    "tests.test_x.TestY"), so functions with the same name in different modules
+    or classes can never be paired with each other.
+    """
+    owner, separator, name = node.rpartition("::")
+    if not separator:
+        owner, name = "", node
+    params = None
+    if name.endswith("]") and "[" in name:
+        name, _, params = name[:-1].partition("[")
+    return owner, name, params
+
+
+def backend_and_rest(params: str | None) -> tuple[str | None, str | None]:
+    """Split a parameter string into its leading backend token and the rest."""
+    if not params:
+        return None, None
+    token, separator, rest = params.partition("-")
+    if token not in BACKEND_TOKENS:
+        return None, params
+    return ("postgres" if token == "postgresql" else token), (rest if separator else "")
+
+
+def file_control(owner: str, name: str, params: str | None) -> str | None:
+    """Return the exact File-control node id for a PostgreSQL node, if any."""
+    backend, rest = backend_and_rest(params)
+    if backend != "postgres":
+        return None
+    control_params = "file" + (("-" + rest) if rest else "")
+    control_name = name + "[" + control_params + "]"
+    return (owner + "::" if owner else "") + control_name
 
 
 def base_name(name: str) -> str:
-    return re.sub(r"\[[^\]]*\]$", "", name)
+    return name[:-1].partition("[")[0] if name.endswith("]") and "[" in name else name
 
 
 def inspect(junit: Path) -> dict:
@@ -54,11 +106,20 @@ def inspect(junit: Path) -> dict:
         else:
             passed.append(node)
 
-    passed_base = {base_name(node.split("::")[-1]) for node in passed}
+    passed_set = set(passed)
+    passed_names = {split_node(node)[1] for node in passed}
     unknown = [row for row in skipped
                if not any(marker in row["message"] for marker in ALLOWED_SKIP_MARKERS)]
     pg_rows = [row for row in skipped if "PostgreSQL implementation contract" in row["message"]]
-    pg_only = [row for row in pg_rows if base_name(row["name"]) not in passed_base]
+    matched, pg_only, controls = [], [], []
+    for row in pg_rows:
+        owner, name, params = split_node(row["node"])
+        control = file_control(owner, name, params)
+        if control is not None and control in passed_set:
+            matched.append(row["node"])
+            controls.append({"skipped": row["node"], "control": control})
+        else:
+            pg_only.append(row["node"])
     symlink = [row for row in skipped if "WINDOWS_SYMLINK_PRIVILEGE_UNAVAILABLE" in row["message"]]
 
     behaviours = {key: [] for key in BEHAVIOUR_PATTERNS}
@@ -77,8 +138,11 @@ def inspect(junit: Path) -> dict:
         "skip_by_file": dict(collections.Counter(row["classname"] or "?" for row in skipped)),
         "unknown_skips": [row["node"] for row in unknown],
         "postgres_contracts": len(pg_rows),
-        "postgres_only_functions": [row["node"] for row in pg_only],
+        "postgres_contracts_matched": len(matched),
+        "postgres_only_functions": pg_only,
+        "postgres_pairing_examples": controls[:4],
         "symlink_privilege_skips": [row["node"] for row in symlink],
+        "executed_function_names_with_pg_contracts": len(passed_names & {split_node(row["node"])[1] for row in pg_rows}),
         "behaviour_executed_counts": {key: len(value) for key, value in behaviours.items()},
         "behaviour_examples": {key: value[:4] for key, value in behaviours.items()},
     }
@@ -97,6 +161,7 @@ def main(argv: list[str] | None = None) -> int:
                                  encoding="utf-8", newline="\n")
     print(json.dumps({key: report[key] for key in
                       ("counts", "skip_messages", "unknown_skips", "symlink_privilege_skips",
+                       "postgres_contracts", "postgres_contracts_matched",
                        "behaviour_executed_counts")}, ensure_ascii=False, indent=2))
     if report["counts"]["failed"]:
         return 1

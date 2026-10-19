@@ -73,8 +73,11 @@ class ExperimentalStore:
     def _connect(self):
         if not self.database_url:
             raise ValueError("PostgreSQL experimental store requires DATABASE_URL")
-        from ..repositories.postgres.connection import connect as postgres_connect
-        return postgres_connect(self.database_url)
+        # Borrow from the process pool instead of opening a new backend for every
+        # metadata read: the old unpooled path cost ~30 ms per read on Windows and
+        # starved generation workers past their bounded wait budget (D-24).
+        from ..repositories.postgres.connection import engine_for_url, pooled_connection
+        return pooled_connection(engine_for_url(self.database_url))
 
     def read(self, nid, scope):
         key = self.key(nid, scope)

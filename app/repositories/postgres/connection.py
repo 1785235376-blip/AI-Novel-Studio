@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 import time
 from contextlib import contextmanager
 
@@ -34,6 +35,8 @@ MAX_CONNECT_ATTEMPTS = 5
 RETRY_BACKOFF_SECONDS = 0.25
 
 _logger = logging.getLogger(__name__)
+_ENGINES = {}
+_ENGINE_LOCK = threading.Lock()
 
 
 def connect_timeout_seconds() -> float:
@@ -124,3 +127,47 @@ def pooled_connection(engine):
             raise
     finally:
         fairy.close()
+
+
+def engine_for_url(url: str):
+    """Return a process-cached SQLAlchemy engine with a bounded pool for one DSN.
+
+    The PostgreSQL experimental store used to open a brand-new connection for
+    every metadata read (hundreds per local-interop test), which on Windows costs
+    ~30 ms each and starved workers past their wait budgets (D-24). Reuse one
+    bounded pool per DSN instead. Engines are created lazily so File-only
+    processes never import SQLAlchemy.
+
+    The pool is deliberately small and bounded (4 + 4 overflow): callers borrow
+    one connection per operation and always return it; a checked-out connection
+    is never shared by two threads.
+    """
+    normalized = normalize_dsn(url)
+    engine = _ENGINES.get(normalized)
+    if engine is not None:
+        return engine
+    with _ENGINE_LOCK:
+        engine = _ENGINES.get(normalized)
+        if engine is not None:
+            return engine
+        from sqlalchemy import create_engine
+        driver_url = normalized.replace("postgresql://", "postgresql+psycopg://", 1)
+        engine = create_engine(
+            driver_url, pool_pre_ping=True, future=True,
+            pool_size=4, max_overflow=4, pool_timeout=max(2, connect_timeout()),
+            connect_args={"options": "-c timezone=UTC", "connect_timeout": connect_timeout()},
+        )
+        _ENGINES[normalized] = engine
+        return engine
+
+
+def clear_engine_cache() -> None:
+    """Dispose cached engines (tests and shutdown paths only)."""
+    with _ENGINE_LOCK:
+        engines = list(_ENGINES.values())
+        _ENGINES.clear()
+    for engine in engines:
+        try:
+            engine.dispose()
+        except Exception:
+            _logger.warning("failed to dispose a cached PostgreSQL engine")

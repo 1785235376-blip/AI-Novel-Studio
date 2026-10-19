@@ -147,7 +147,10 @@ def test_repository_factory_uses_pooled_connections():
     store = (ROOT / "app/experimental/store.py").read_text(encoding="utf-8")
     assert "pooled_connection(database.engine)" in factory
     assert "psycopg.connect(" not in factory
-    assert "postgres_connect(self.database_url)" in store
+    # D-24: the experimental store must borrow from the pool as well, not open a
+    # new backend per metadata read.
+    assert "pooled_connection(engine_for_url(self.database_url))" in store
+    assert "postgres_connect(" not in store
     assert "psycopg.connect(" not in store
 
 
@@ -204,3 +207,37 @@ def test_pooled_connection_rolls_back_and_returns_to_the_pool_on_error():
     assert engine.connection.commits == 0
     assert engine.connection.rollbacks == 1
     assert engine.fairy.closed is True
+
+
+def test_engine_for_url_is_cached_per_normalized_dsn_and_disposed(monkeypatch):
+    from app.repositories.postgres import connection as connection_module
+    created = []
+
+    class FakeEngine:
+        def __init__(self, url, **kwargs):
+            self.url = url
+            self.kwargs = kwargs
+            self.disposed = False
+            created.append(self)
+
+        def dispose(self):
+            self.disposed = True
+
+    monkeypatch.setattr("sqlalchemy.create_engine", lambda url, **kwargs: FakeEngine(url, **kwargs))
+    connection_module.clear_engine_cache()
+    try:
+        first = connection_module.engine_for_url("postgresql://pool@127.0.0.1:55432/engine_cache")
+        second = connection_module.engine_for_url("postgresql://pool@127.0.0.1:55432/engine_cache")
+        third = connection_module.engine_for_url("postgresql://pool@127.0.0.1:55432/engine_cache_other")
+        assert first is second
+        assert first is not third
+        assert len(created) == 2
+        assert created[0].url.startswith("postgresql+psycopg://")
+        assert created[0].kwargs["pool_size"] == 4
+        assert created[0].kwargs["max_overflow"] == 4
+        assert created[0].kwargs["connect_args"]["connect_timeout"] == connection_module.connect_timeout()
+        connection_module.clear_engine_cache()
+        assert created[0].disposed is True
+        assert created[1].disposed is True
+    finally:
+        connection_module.clear_engine_cache()
