@@ -1,0 +1,395 @@
+{
+  "schema_version": 1,
+  "status": "TWO_P2_CLOSED_LIMITED_FRONTEND_ARCHIVE",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "b3ef6092a15ee0f54722e324b28801cc9c4b6ff8",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-local-subgraph-frontend-reviewed-8e17abe2",
+  "product_base": "494cf355a4057a977e736fee4bb39130881cd089",
+  "product_tip": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+  "product_parent": "0ec1991024bd1ed4bac57a6ab61c0a3057aa3320",
+  "product_tree": "97dc9525587a7f0576eb332d2788eb4ef23fbd52",
+  "bundle_ref": "refs/heads/work/v2-local-subgraph-client-review-fix-20261019",
+  "bundle_filename": "studio-v2-494cf355-to-8e17abe2.bundle",
+  "unique_external_prerequisite": "494cf355a4057a977e736fee4bb39130881cd089",
+  "bundle_commit_count": 2,
+  "patch_mapping": [
+    {
+      "parent": "494cf355a4057a977e736fee4bb39130881cd089",
+      "commit": "0ec1991024bd1ed4bac57a6ab61c0a3057aa3320",
+      "stable_patch_id": "8fc58450639ef362a052a043a731b96771466ff4",
+      "patch_sha256": "faf96140b1b5b0d4b00f6f77417fa5d70d259c9003e17903b7fed4f45a40ce7a"
+    },
+    {
+      "parent": "0ec1991024bd1ed4bac57a6ab61c0a3057aa3320",
+      "commit": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+      "stable_patch_id": "e0a3554dfca61b6122ed28a2efbc51f6c444aadb",
+      "patch_sha256": "c1b5d259db94a00384042968d0223fdf4e853fcdbabf319a8dd7ff1564856c06"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "frontend/src/canvasops/canvasOps.ts",
+      "mode": "100644",
+      "blob": "da38d62f49e9a386b0205f29b799d01280a3ffe1",
+      "bytes": 49487,
+      "sha256": "b7153b460f1fba2a78ca301f0d722517f1d3fec7604256a9b729c6bd218c7bb4"
+    },
+    {
+      "path": "frontend/src/creative/GraphLocalSubgraphPanel.test.tsx",
+      "mode": "100644",
+      "blob": "a847afd9951f49299668d59787758e6f84c1f944",
+      "bytes": 8656,
+      "sha256": "1ef8b7598416ef790e9a6386c6d19c8ea83606e58d0794872a86e439489a33b4"
+    },
+    {
+      "path": "frontend/src/creative/GraphLocalSubgraphPanel.tsx",
+      "mode": "100644",
+      "blob": "ca5b1fa97939e95be746dfac75613866ed08e16c",
+      "bytes": 4698,
+      "sha256": "8e3ee8d6f151d14d1fc58210f034c2e5069c4bbfd8749392e48fefeaf6e6e8b0"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/localSubgraph.file-api.json",
+      "mode": "100644",
+      "blob": "889ebe9fd6ea8bc774c440b8a902bd36d280a8e6",
+      "bytes": 31133,
+      "sha256": "f0c55063669d468fc06234dbdd2ea25f9f78eabcea0b97b86f67e88ba9d59918"
+    },
+    {
+      "path": "frontend/src/creative/graphDraft.ts",
+      "mode": "100644",
+      "blob": "b2502a7f44f7d971fa19777fd1d50e9505fb9781",
+      "bytes": 6914,
+      "sha256": "461cea5ec4c681a63f36ffaeb3ab8be867a9a901f8cfab32a8bb35832c40a3ce"
+    },
+    {
+      "path": "frontend/src/creative/graphLocalSubgraph.ts",
+      "mode": "100644",
+      "blob": "5efac3b3dbbd5228eae1db064ab0fb0811c1adee",
+      "bytes": 5869,
+      "sha256": "98ef9e8adaa68b9d61f682e1d490daa50df67d9b4aabe03090ff140aa3d81960"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "mode": "100644",
+      "blob": "d42ecad79ab31b38f42d4e53cfc623ea5a40c42a",
+      "bytes": 123524,
+      "sha256": "6749d851287da065ab10740f53afeb3b8dc965d0f3fd45081a31a4e9840da763"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "mode": "100644",
+      "blob": "f4f5d94702bd788dd4935d74bb62fd4d8279def4",
+      "bytes": 60226,
+      "sha256": "1a9837d075ee930584b9f55bc7a087ff47454e214518c6e1288edcf8741d43ab"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLabels.ts",
+      "mode": "100644",
+      "blob": "1d8ddd756f4a9141455733e805306f102d902181",
+      "bytes": 1376,
+      "sha256": "3af610f468f366c20d25386d1833e0f542faf8412753bfe1d91617f446ff887e"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLocalSubgraph.test.ts",
+      "mode": "100644",
+      "blob": "cd18dafa7ee51aa03e9dfaf806057c660f1c1869",
+      "bytes": 7899,
+      "sha256": "721c5b3a286e6f5e9c1513c3775c82167f25ae63bb52eaa5ffe77615cd0033cc"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLocalSubgraphConsistency.test.ts",
+      "mode": "100644",
+      "blob": "3ae061eef0d00e19f54f13b69121e3da9e3c5a79",
+      "bytes": 6427,
+      "sha256": "ceaef2dff4ce93442fbe51d82e4f5756911bb7610781d4fd3f102585e0f610a4"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "mode": "100644",
+      "blob": "90266fda3c67b1432035a4aafe416f99702cc567",
+      "bytes": 18967,
+      "sha256": "53a3446f6f2145ca2f72ff8f931f5480ba4aec4bd2811528e30c4f6f693fd835"
+    },
+    {
+      "path": "frontend/src/creative/useGraphLocalSubgraphParent.ts",
+      "mode": "100644",
+      "blob": "281f8187d4f25d753d373a0f646080c94d7988b8",
+      "bytes": 7699,
+      "sha256": "f46865bca3799f99f67b310d0be8947eea3633572c880f80c5ec29c9953bb13a"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "blob": "6bf15f8d08f08238ae33550e9f5489254fbea3e5",
+      "bytes": 94506,
+      "sha256": "3f3a8ceca8eafff4f79fe596164d6120dfc3d704b476a05bcf62eec2c20b5485"
+    }
+  ],
+  "changed_frontend_paths": 14,
+  "new_backend_source_objects": 0,
+  "other_in_progress_features_included": false,
+  "final_validation": {
+    "product": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+    "base": "494cf355a4057a977e736fee4bb39130881cd089",
+    "smoke": {
+      "selected": 1,
+      "passed": 1,
+      "skipped": 5,
+      "type": "original client decodes retained actual File fixture; no new live backend run"
+    },
+    "typescript": {
+      "attempts": 2,
+      "first_exit": 1,
+      "first_reason": "Independent sparse worktree omitted two unchanged original imported JSON fixtures; no Vite build ran.",
+      "final_exit": 0,
+      "fixture_content_changed": false
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "existing_chunk_warning_retained": true
+    },
+    "full_suites_rerun": false,
+    "live_services_started": false,
+    "source_product_unchanged": true
+  },
+  "P2_1": "CLOSED_BY_UNCHANGED_INDEPENDENT_PROBE",
+  "P2_2": "CLOSED_BY_UNCHANGED_INDEPENDENT_PROBE",
+  "PG": {
+    "status": "BLOCKED",
+    "reason": "Controlled test environment missing; no PG run or credential discovery in this task"
+  },
+  "full_E2E": "NOT_ACCEPTED",
+  "retained_evidence": "Author real File + segmented browser passes; original independent 2 red/3 green and fix2 green retained separately, not rerun full suites.",
+  "object_inventory": [
+    {
+      "oid": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+      "type": "commit",
+      "path": "",
+      "bytes": 351,
+      "sha256": "06f4b7ea6803e8fbe6eb37949a1bcd5f4904a6b4ab5101711de0a08e71682dbf"
+    },
+    {
+      "oid": "0ec1991024bd1ed4bac57a6ab61c0a3057aa3320",
+      "type": "commit",
+      "path": "",
+      "bytes": 348,
+      "sha256": "23d15f7d85aba7732a1dcee6bb839998493eacedf510f81ea08bd38faa0d8f90"
+    },
+    {
+      "oid": "97dc9525587a7f0576eb332d2788eb4ef23fbd52",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "dee1a7725fcef94de83f7bf6dfa9b9067fb152fef10d4baa9c05efd2b6735abe"
+    },
+    {
+      "oid": "e13f43663173bd4f5c3b6db5ac381d56d478f71b",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "d81bee150e47a9a16db1c2981ecdac3b77c59a7f75d1c14750f863e71bc18a7c"
+    },
+    {
+      "oid": "6942ab03f78574bc0c5c1cd8f68aacc10a1cf1f8",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "1c125b88c4e8bdec5dc32d791360430898462338154378317868e4330a5dfe04"
+    },
+    {
+      "oid": "c0139d147b64e85403069fe8be30563efb85fa30",
+      "type": "tree",
+      "path": "frontend/src/canvasops",
+      "bytes": 599,
+      "sha256": "64c4ff821f6d82125e4f85f2267d3d316dbd1f3c655829e8d56b1f85fa28156b"
+    },
+    {
+      "oid": "da38d62f49e9a386b0205f29b799d01280a3ffe1",
+      "type": "blob",
+      "path": "frontend/src/canvasops/canvasOps.ts",
+      "bytes": 49487,
+      "sha256": "b7153b460f1fba2a78ca301f0d722517f1d3fec7604256a9b729c6bd218c7bb4"
+    },
+    {
+      "oid": "20426ab0b7a1fef53e2b7c0de5a12d0ad217f9b8",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 34876,
+      "sha256": "e47bcc6a85be6178af8447447c878315e26c20cc3188ece426193f38ef543b16"
+    },
+    {
+      "oid": "a847afd9951f49299668d59787758e6f84c1f944",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphLocalSubgraphPanel.test.tsx",
+      "bytes": 8656,
+      "sha256": "1ef8b7598416ef790e9a6386c6d19c8ea83606e58d0794872a86e439489a33b4"
+    },
+    {
+      "oid": "ca5b1fa97939e95be746dfac75613866ed08e16c",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphLocalSubgraphPanel.tsx",
+      "bytes": 4698,
+      "sha256": "8e3ee8d6f151d14d1fc58210f034c2e5069c4bbfd8749392e48fefeaf6e6e8b0"
+    },
+    {
+      "oid": "348ca08a536673bef3e01ba2eed78071370c6345",
+      "type": "tree",
+      "path": "frontend/src/creative/fixtures",
+      "bytes": 2111,
+      "sha256": "a73417e3c6e2dac3e58bf932391885c8c213f6bea1855cc52c95716169e0a8ca"
+    },
+    {
+      "oid": "889ebe9fd6ea8bc774c440b8a902bd36d280a8e6",
+      "type": "blob",
+      "path": "frontend/src/creative/fixtures/localSubgraph.file-api.json",
+      "bytes": 31133,
+      "sha256": "f0c55063669d468fc06234dbdd2ea25f9f78eabcea0b97b86f67e88ba9d59918"
+    },
+    {
+      "oid": "b2502a7f44f7d971fa19777fd1d50e9505fb9781",
+      "type": "blob",
+      "path": "frontend/src/creative/graphDraft.ts",
+      "bytes": 6914,
+      "sha256": "461cea5ec4c681a63f36ffaeb3ab8be867a9a901f8cfab32a8bb35832c40a3ce"
+    },
+    {
+      "oid": "5efac3b3dbbd5228eae1db064ab0fb0811c1adee",
+      "type": "blob",
+      "path": "frontend/src/creative/graphLocalSubgraph.ts",
+      "bytes": 5869,
+      "sha256": "98ef9e8adaa68b9d61f682e1d490daa50df67d9b4aabe03090ff140aa3d81960"
+    },
+    {
+      "oid": "d42ecad79ab31b38f42d4e53cfc623ea5a40c42a",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 123524,
+      "sha256": "6749d851287da065ab10740f53afeb3b8dc965d0f3fd45081a31a4e9840da763"
+    },
+    {
+      "oid": "f4f5d94702bd788dd4935d74bb62fd4d8279def4",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 60226,
+      "sha256": "1a9837d075ee930584b9f55bc7a087ff47454e214518c6e1288edcf8741d43ab"
+    },
+    {
+      "oid": "1d8ddd756f4a9141455733e805306f102d902181",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphLabels.ts",
+      "bytes": 1376,
+      "sha256": "3af610f468f366c20d25386d1833e0f542faf8412753bfe1d91617f446ff887e"
+    },
+    {
+      "oid": "cd18dafa7ee51aa03e9dfaf806057c660f1c1869",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphLocalSubgraph.test.ts",
+      "bytes": 7899,
+      "sha256": "721c5b3a286e6f5e9c1513c3775c82167f25ae63bb52eaa5ffe77615cd0033cc"
+    },
+    {
+      "oid": "3ae061eef0d00e19f54f13b69121e3da9e3c5a79",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphLocalSubgraphConsistency.test.ts",
+      "bytes": 6427,
+      "sha256": "ceaef2dff4ce93442fbe51d82e4f5756911bb7610781d4fd3f102585e0f610a4"
+    },
+    {
+      "oid": "90266fda3c67b1432035a4aafe416f99702cc567",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "bytes": 18967,
+      "sha256": "53a3446f6f2145ca2f72ff8f931f5480ba4aec4bd2811528e30c4f6f693fd835"
+    },
+    {
+      "oid": "281f8187d4f25d753d373a0f646080c94d7988b8",
+      "type": "blob",
+      "path": "frontend/src/creative/useGraphLocalSubgraphParent.ts",
+      "bytes": 7699,
+      "sha256": "f46865bca3799f99f67b310d0be8947eea3633572c880f80c5ec29c9953bb13a"
+    },
+    {
+      "oid": "6bf15f8d08f08238ae33550e9f5489254fbea3e5",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 94506,
+      "sha256": "3f3a8ceca8eafff4f79fe596164d6120dfc3d704b476a05bcf62eec2c20b5485"
+    },
+    {
+      "oid": "6ec96ab52bafb349e43ccbaa16d16e9e34ec49e6",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "d1d114c1fcacd60616b5ab98dbb7057031409472b979c61b1245e1782aa348d8"
+    },
+    {
+      "oid": "4eb1d62c1c3d43eba595eb4a380a775578bc8f1f",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "c5047142eab1a1a362570c3f5c2da0dd041f20bbc7be375794fb735c78fa79f5"
+    },
+    {
+      "oid": "0931c390d2a0fc6b73f1397a30138fc443463b1b",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "6337332e491cc2cc214efa4f9c5f5dd85d61352d269eee359ead4d550c566c80"
+    },
+    {
+      "oid": "80485739b40ec323e1b2c231b9de4ccaa3dbcc81",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 34805,
+      "sha256": "2f9e8faec25bbfe562b09d02a96f2a08cd06ba50d994440709adef0b2e29a7d3"
+    },
+    {
+      "oid": "f9e2f80a5c4b7237a804ebd54ecac5cfe0c68a1d",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 120046,
+      "sha256": "bfb38fb3b324b7250d0dff10b23f99dd9291b34883d2bbd39481f4b96030dde3"
+    }
+  ],
+  "privacy_scan": {
+    "actual_high_risk_credential_findings": 0,
+    "frontend_only_new_blob_paths": true,
+    "mature_backend_code_not_in_payload": true,
+    "real_user_data_or_runtime_profiles_included": false,
+    "redactions": "Local paths/ANSI/credential-shaped fields; unrelated paused_feature metadata excluded"
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "frontend-tests-evidence-sanitized.zip",
+      "bytes": 251245,
+      "sha256": "3542760a6fcd02e11accb2c2bd540432b2076bc52fb99e12fe60e71b6e14681d",
+      "git_blob": "52d7be2729039e5d43e7ea4228193e2289aa623c"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3505,
+      "sha256": "f5198524914619af815b63ef510bfee8c6006eec2cb84a59833c4d294aa41895",
+      "git_blob": "84f842e9fe40bc951db602ec36f2a15ef58d0607"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1455,
+      "sha256": "ce16b5fc5376c2037b18b92db84f4d58d07780270d04a6cfe544ca345c74dfd8",
+      "git_blob": "b1cf1f1a608d0832ff89719d7249b33604f92cf7"
+    },
+    {
+      "path": "studio-v2-494cf355-to-8e17abe2.bundle",
+      "bytes": 26441,
+      "sha256": "8ab192cdd7c02e4b9f373f0a7063920cb8ff6ee2876c01dc7f396d0a1ae541f0",
+      "git_blob": "ecd80610e302d2c9abe9cad791ea5a909f329a91"
+    }
+  ]
+}
