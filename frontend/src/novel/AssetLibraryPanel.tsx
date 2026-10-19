@@ -5,6 +5,7 @@ import { api, apiErrorView, type Asset } from "../api";
 import { Button, EmptyState, IconButton, Panel } from "../ui/primitives";
 import { useRequestedRecord } from "../experimental/useRequestedRecord";
 import { useStudio } from "../store";
+import { ASSET_LIBRARY_SORTS, assetLibraryView, type AssetLibrarySort } from './assetLibraryView';
 
 export const MAX_ASSET_BYTES = 25 * 1024 * 1024;
 /** Explicit owner adapter. Omitted consumers retain the original asset API. */
@@ -51,12 +52,14 @@ export function AssetLibraryPanel({
   const observer = useMemo(() => ++requestedAssetSequence, [authority, novelId, requestedAssetId]);
   const client = useQueryClient(),
     input = useRef<HTMLInputElement>(null),
+    searchInput = useRef<HTMLInputElement>(null),
     uploadPending = useRef(false),
     [error, setError] = useState<unknown>(),
     [uploading, setUploading] = useState(false),
     [kind, setKind] = useState(""),
     [showTrash, setShowTrash] = useState(false),
-    [search, setSearch] = useState("");
+    [search, setSearch] = useState(""),
+    [sort, setSort] = useState<AssetLibrarySort>('OWNER');
   const assetPrefix = adapter ? [adapter.cacheKey, novelId, 'assets'] : ['assets', novelId];
   const trashPrefix = adapter ? [adapter.cacheKey, novelId, 'trash'] : ['asset-trash', novelId];
   const canMutate = !adapter || adapter.canMutate;
@@ -67,7 +70,10 @@ export function AssetLibraryPanel({
     enabled: !!novelId,
     refetchOnMount: requestedAssetId ? 'always' : true,
   });
-  useEffect(() => { setKind(''); setShowTrash(false); }, [requestedAssetId]);
+  useEffect(() => { setKind(''); setSearch(''); setShowTrash(false); }, [requestedAssetId]);
+  const visibleAssets = useMemo(() => assetLibraryView(assets.data ?? [], search, sort), [assets.data, search, sort]);
+  const selectionHidden = !!selectedAssetId && assets.data?.some(asset => asset.id === selectedAssetId)
+    && !visibleAssets.some(asset => asset.id === selectedAssetId);
   const requestedReady = assets.isFetchedAfterMount && !assets.isFetching && !assets.error;
   const requested = useRequestedRecord(requestedAssetId, assets.data, !!requestedReady, observer);
   const remove = useMutation({
@@ -201,8 +207,8 @@ export function AssetLibraryPanel({
         !assets.data?.length && (
           <EmptyState title="暂无资产" detail="上传图片或其他创作素材。" />
         )}
-      <div className="asset-library__toolbar">
-        {adapter && <label>查找资产<input type="search" aria-label="查找资产" value={search} maxLength={200} onChange={event => setSearch(event.target.value)} /></label>}
+      <div className="asset-library__toolbar" style={{ flexWrap: 'wrap' }}>
+        <label>查找资产<input ref={searchInput} type="search" aria-label="查找资产" value={search} maxLength={200} onChange={event => setSearch(event.target.value)} /></label>
         <label>
           类型筛选
           <select value={kind} onChange={(e) => setKind(e.target.value)}>
@@ -210,12 +216,19 @@ export function AssetLibraryPanel({
             <option value="image">图片</option>
             <option value="video">视频</option>
             <option value="audio">音频</option>
+            <option value="file">文件</option>
           </select>
         </label>
-        <small>{assets.data?.length || 0} 项资产</small>
+        <label>资产排序<select aria-label="资产排序" value={sort} onChange={event => setSort(event.target.value as AssetLibrarySort)}>
+          {ASSET_LIBRARY_SORTS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+        </select></label>
+        <small role="status">显示 {visibleAssets.length} / {assets.data?.length || 0} 项资产</small>
+        {search && <Button type="button" variant="ghost" onClick={() => { setSearch(''); searchInput.current?.focus(); }}>清除查找</Button>}
         <Button type="button" variant="ghost" disabled={!novelId} aria-pressed={showTrash}
           onClick={() => setShowTrash(!showTrash)}>回收站</Button>
       </div>
+      <p className="novel-help">查找和排序仅作用于当前类型已读取的资产，按文件名匹配；不会扫描文件内容。</p>
+      {selectionHidden && <p role="status" className="novel-help">已选资产被当前查找隐藏，选择保持不变；清除查找可重新显示。</p>}
       <p className="novel-help">删除后原素材进入回收站，可恢复。已绑定的参考需重新审核后才能参与检索。</p>
       {showTrash && <section aria-label="资产回收站">
         <p className="novel-help">恢复前会校验原文件的大小和 SHA-256，损坏文件不会被恢复。</p>
@@ -232,9 +245,9 @@ export function AssetLibraryPanel({
         </article>)}
       </section>}
       <div className="novel-record-list asset-library__grid">
-        {adapter && search.trim() && assets.data?.length && !assets.data.some(asset => asset.filename.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ? <p role="status">没有匹配资产。</p> : null}
+        {!assets.isLoading && !assets.error && !!assets.data?.length && !visibleAssets.length && <p role="status">当前查找没有匹配资产。</p>}
         {requested.missing && <p role="status">请求的原资产当前不可读或已移除，请刷新搜索。</p>}
-        {(!requestedAssetId || requestedReady) && assets.data?.filter(asset => !search.trim() || asset.filename.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())).map((asset) => (
+        {(!requestedAssetId || requestedReady) && visibleAssets.map((asset) => (
           <AssetCard
             key={asset.id}
             asset={asset}
