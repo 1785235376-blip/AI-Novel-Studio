@@ -1,0 +1,321 @@
+{
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-6fc608e3-5c96-4433-952a-19e0be1be2f2",
+    "novel_id": "r3-mounted-7d8ad264dcc04fd9a7d4f5b1c73ee593",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "bb8a810456b30612c4257fa1ca90d1a61677efd2451e9e17e48367763fa65127",
+    "receipt_digest": "843096feddb2b3c06bfd9826693c0f186bef36371dec38e5ff5e12d72e24b338",
+    "attempt": 0,
+    "created_at": "2026-10-19T16:21:32.384872+00:00",
+    "updated_at": "2026-10-19T16:21:32.384872+00:00",
+    "error_code": null,
+    "review_state": "NOT_READY",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "851bcf4fea6a52cf6a41596272f1aa89316b8189244736fd9cf88b6ab0073929"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-6fc608e3-5c96-4433-952a-19e0be1be2f2",
+    "novel_id": "r3-mounted-7d8ad264dcc04fd9a7d4f5b1c73ee593",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "bb8a810456b30612c4257fa1ca90d1a61677efd2451e9e17e48367763fa65127",
+    "receipt_digest": "45b98fb6bc28b054a8d41028e2a4fa9e3db983592f9d63350bde4c066aa737e2",
+    "attempt": 1,
+    "created_at": "2026-10-19T16:21:32.384872+00:00",
+    "updated_at": "2026-10-19T16:21:32.824804+00:00",
+    "error_code": null,
+    "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "92d19528-2b98-4b75-a1b3-a1f6a61e7bf7",
+      "version": 1,
+      "digest": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "851bcf4fea6a52cf6a41596272f1aa89316b8189244736fd9cf88b6ab0073929"
+    },
+    "media_measurement": {
+      "duration_ms": 4000,
+      "byte_count": 128078,
+      "sample_rate": 16000,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389",
+      "loudness_matching": {
+        "contract": "studio-audio-loudness-match/1",
+        "method": "FFMPEG_LOUDNORM_INPUT/1",
+        "source_id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+        "source_version": 1,
+        "source_sha256": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1,
+        "input_lufs": -27.35,
+        "input_true_peak_dbtp": -24.25,
+        "applied_gain_db": 3.8500000000000014,
+        "true_peak_ceiling_dbtp": -1.0,
+        "tolerance_lu": 0.2,
+        "selected_pcm_sha256": "81e7109bb89c13118e95127082db7a767c179bab4738aadb1414d2325cc3046e",
+        "selected_frames": 64000,
+        "source_peak_s16": 2000,
+        "output_lufs": -23.45,
+        "output_true_peak_dbtp": -20.4,
+        "output_pcm_sha256": "4f7706f30e55b9f03c538ed489c4201caf80cbbbff5235f53b0089a4311959a2",
+        "output_frames": 64000,
+        "output_peak_s16": 3116,
+        "output_sha256": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389"
+      }
+    },
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-6fc608e3-5c96-4433-952a-19e0be1be2f2",
+    "novel_id": "r3-mounted-7d8ad264dcc04fd9a7d4f5b1c73ee593",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "bb8a810456b30612c4257fa1ca90d1a61677efd2451e9e17e48367763fa65127",
+    "receipt_digest": "4f952052639d4c9caa4e410220b2f39514447cac7b7a1c32fc1e20fa6841e202",
+    "attempt": 1,
+    "created_at": "2026-10-19T16:21:32.384872+00:00",
+    "updated_at": "2026-10-19T16:21:33.001864+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "92d19528-2b98-4b75-a1b3-a1f6a61e7bf7",
+      "version": 1,
+      "digest": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "851bcf4fea6a52cf6a41596272f1aa89316b8189244736fd9cf88b6ab0073929"
+    },
+    "media_measurement": {
+      "duration_ms": 4000,
+      "byte_count": 128078,
+      "sample_rate": 16000,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389",
+      "loudness_matching": {
+        "contract": "studio-audio-loudness-match/1",
+        "method": "FFMPEG_LOUDNORM_INPUT/1",
+        "source_id": "74742068-82f4-44c6-8c46-5834f3e4b7b9",
+        "source_version": 1,
+        "source_sha256": "d7a05b38ef1e42b9b01cca8551f5a1a71361f39ec6478fee6e7bc68544771821",
+        "in_ms": 500,
+        "out_ms": 4500,
+        "target_lufs": -23.5,
+        "sample_rate": 16000,
+        "channels": 1,
+        "input_lufs": -27.35,
+        "input_true_peak_dbtp": -24.25,
+        "applied_gain_db": 3.8500000000000014,
+        "true_peak_ceiling_dbtp": -1.0,
+        "tolerance_lu": 0.2,
+        "selected_pcm_sha256": "81e7109bb89c13118e95127082db7a767c179bab4738aadb1414d2325cc3046e",
+        "selected_frames": 64000,
+        "source_peak_s16": 2000,
+        "output_lufs": -23.45,
+        "output_true_peak_dbtp": -20.4,
+        "output_pcm_sha256": "4f7706f30e55b9f03c538ed489c4201caf80cbbbff5235f53b0089a4311959a2",
+        "output_frames": 64000,
+        "output_peak_s16": 3116,
+        "output_sha256": "63a691f75e2b6e8413a03e72e5c29d344e38fe4b14995b237b0dfef992929389"
+      }
+    },
+    "approved_asset_version": 2,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  }
+}

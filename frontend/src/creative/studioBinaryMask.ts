@@ -3,12 +3,62 @@ export const BINARY_MASK_MIN_SIZE = 64;
 export const BINARY_MASK_MAX_SIZE = 1024;
 export const BINARY_MASK_MAX_RADIUS = 32;
 export const BINARY_MASK_UNDO_LIMIT = 16;
+export const BINARY_MASK_POLYGON_MAX_VERTICES = 32;
+export type BinaryMaskPoint = Readonly<{ x: number; y: number }>;
+export type BinaryMaskPolygonPreview = Readonly<{ vertices: readonly BinaryMaskPoint[]; selected_pixels: number }>;
 
 export type SerializedBinaryMask = { bitplane_base64: string; keep_pixels: number; remove_pixels: number };
 type Stroke = { before: Uint8Array; x: number; y: number; radius: number; keep: boolean; changed: boolean };
 
 function integerInRange(value: number, minimum: number, maximum: number, name: string) {
   if (!Number.isInteger(value) || value < minimum || value > maximum) throw new Error(`${name}必须是 ${minimum}–${maximum} 之间的整数。`);
+}
+
+const cross = (a: BinaryMaskPoint, b: BinaryMaskPoint, c: BinaryMaskPoint) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+const onSegment = (a: BinaryMaskPoint, b: BinaryMaskPoint, p: BinaryMaskPoint) => cross(a, b, p) === 0 && p.x >= Math.min(a.x, b.x) && p.x <= Math.max(a.x, b.x) && p.y >= Math.min(a.y, b.y) && p.y <= Math.max(a.y, b.y);
+function intersects(a: BinaryMaskPoint, b: BinaryMaskPoint, c: BinaryMaskPoint, d: BinaryMaskPoint) {
+  const abC = cross(a, b, c), abD = cross(a, b, d), cdA = cross(c, d, a), cdB = cross(c, d, b);
+  return abC * abD < 0 && cdA * cdB < 0 || onSegment(a, b, c) || onSegment(a, b, d) || onSegment(c, d, a) || onSegment(c, d, b);
+}
+/** Pixel centers on the boundary are included; no antialiasing or implicit clipping. */
+function polygonSpans(vertices: readonly BinaryMaskPoint[], width: number, height: number): { vertices: readonly BinaryMaskPoint[]; spans: [number, number, number][] } {
+  if (!Array.isArray(vertices) || vertices.length < 3 || vertices.length > BINARY_MASK_POLYGON_MAX_VERTICES) throw new Error('多边形须有 3–32 个按轮廓排序的顶点。');
+  const points = vertices.map(point => {
+    if (!point || typeof point !== 'object') throw new Error('多边形顶点无效。');
+    integerInRange(point.x, 0, width, '顶点 X'); integerInRange(point.y, 0, height, '顶点 Y');
+    return Object.freeze({ x: point.x, y: point.y });
+  });
+  const count = points.length;
+  if (new Set(points.map(point => `${point.x},${point.y}`)).size !== count) throw new Error('多边形顶点不能重复；闭合边由预览自动连接。');
+  for (let i = 0; i < count; i++) {
+    const a = points[i], b = points[(i + 1) % count], c = points[(i + 2) % count];
+    if (cross(a, b, c) === 0 && (b.x - a.x) * (c.x - b.x) + (b.y - a.y) * (c.y - b.y) < 0) throw new Error('多边形存在退化的折返边。');
+    for (let j = i + 1; j < count; j++) {
+      if (j === i + 1 || i === 0 && j === count - 1) continue;
+      if (intersects(a, b, points[j], points[(j + 1) % count])) throw new Error('多边形不能自交或让非相邻边相触。');
+    }
+  }
+  if (points.reduce((area, point, i) => area + point.x * points[(i + 1) % count].y - points[(i + 1) % count].x * point.y, 0) === 0) throw new Error('多边形面积为零，不能填充退化选区。');
+  const spans: [number, number, number][] = [];
+  const minimumY = Math.min(...points.map(point => point.y)), maximumY = Math.max(...points.map(point => point.y));
+  for (let y = minimumY; y < maximumY; y++) {
+    const center = y + 0.5, hits: { numerator: number; denominator: number }[] = [];
+    for (let i = 0; i < count; i++) {
+      const a = points[i], b = points[(i + 1) % count];
+      if ((a.y > center) !== (b.y > center)) {
+        // Exact integer fractions preserve the inclusive half-pixel boundary rule.
+        const direction = Math.sign(b.y - a.y);
+        hits.push({ numerator: direction * (2 * a.x * (b.y - a.y) + (2 * y + 1 - 2 * a.y) * (b.x - a.x)), denominator: 2 * Math.abs(b.y - a.y) });
+      }
+    }
+    hits.sort((a, b) => a.numerator * b.denominator - b.numerator * a.denominator);
+    for (let i = 0; i < hits.length; i += 2) {
+      const a = hits[i], b = hits[i + 1];
+      const left = Math.ceil((2 * a.numerator - a.denominator) / (2 * a.denominator)), right = Math.floor((2 * b.numerator - b.denominator) / (2 * b.denominator));
+      if (left <= right) spans.push([y, left, right]);
+    }
+  }
+  return { vertices: Object.freeze(points), spans };
 }
 
 // A small portable encoder avoids spreading a maximum-size bitplane onto the stack.
@@ -142,6 +192,19 @@ export class BinaryMaskDraft {
     for (let row = y; row < y + height; row++) {
       for (let column = x; column < x + width; column++) changed = this.set(column, row, keep) || changed;
     }
+    if (changed) { this.remember(before); this.changeRevision++; } else before.fill(0);
+    return changed;
+  }
+
+  previewPolygon(vertices: readonly BinaryMaskPoint[]): BinaryMaskPolygonPreview {
+    this.assertIdle(); const selected = polygonSpans(vertices, this.width, this.height);
+    return Object.freeze({ vertices: selected.vertices, selected_pixels: selected.spans.reduce((total, [, left, right]) => total + right - left + 1, 0) });
+  }
+
+  polygon(vertices: readonly BinaryMaskPoint[], keep: boolean): boolean {
+    this.assertIdle(); this.validateKeep(keep);
+    const selected = polygonSpans(vertices, this.width, this.height), before = this.bits.slice(); let changed = false;
+    for (const [y, left, right] of selected.spans) for (let x = left; x <= right; x++) changed = this.set(x, y, keep) || changed;
     if (changed) { this.remember(before); this.changeRevision++; } else before.fill(0);
     return changed;
   }

@@ -39,7 +39,7 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
   REVIEWING: '审核提交待核对', APPROVED: '已审核入库', UNKNOWN: '分派结果不确定', FAILED: '执行失败', CANCELLED: '已丢弃本地结果',
 };
-export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs';
+export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs' | 'target_lufs';
 type MediaRoute = 'local' | 'cloud';
 const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale'].includes(operation);
 type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
@@ -49,7 +49,7 @@ type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: stri
 type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
 type Operation = { id: number; kind: Kind; client: StudioProductionClient; controller: AbortController; canMutate: boolean; canReview: boolean };
 type Creation = { requestId: string; requestDigest: string; operation: MediaOperation; input: string; uncertain: boolean };
-const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs'];
+const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs'];
 const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
@@ -60,7 +60,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
-  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs'],
+  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs'],
 };
 const initialDraft = (): Draft => ({ route: 'local', operation: 'm5.image.t2i', providerKey: '', prompt: '',
   parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: [], imageReferences: [], allowCloud: false, licenseNote: '' });
@@ -121,6 +121,9 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
     else if (name === 'size') { if (!['auto', '1024x1024', '1536x1024', '1024x1536'].includes(value)) throw new Error('图片规格不受支持。'); result[name] = value; }
     else if (name === 'quality') { if (!['auto', 'low', 'medium', 'high', 'standard', 'hd'].includes(value)) throw new Error('图片质量不受支持。'); result[name] = value; }
     else if (name === 'scale') { if (value !== '2' && value !== '4') throw new Error('超分倍率须明确选择 2 或 4。'); result[name] = Number(value); }
+    else if (name === 'target_lufs') {
+      const number = Number(value); if (!/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(number) || number < -30 || number > -14) throw new Error('目标综合响度须为 -30 至 -14 LUFS。'); result[name] = number;
+    }
     else if (name === 'target_peak_dbfs') {
       const number = Number(value); if (!/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) || !Number.isFinite(number) || number < -24 || number > -1) throw new Error('目标采样峰值须为 -24 至 -1 dBFS。'); result[name] = number;
     }
@@ -139,6 +142,8 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
       result[name] = number;
     }
   }
+  if (result.target_lufs !== undefined && (Number(result.out_ms) - Number(result.in_ms) < 3000 || result.target_peak_dbfs !== undefined
+    || result.output_format !== undefined || ['gain_db', 'fade_in_ms', 'fade_out_ms'].some(key => Number(result[key] ?? 0) !== 0))) throw new Error('响度匹配须为至少 3 秒的 PCM16 WAV，不能同时设置峰值目标、非零手动增益或淡入淡出。');
   if (result.target_peak_dbfs !== undefined) {
     if (result.output_format !== undefined) throw new Error('峰值归一化目前仅支持 PCM16 WAV 输出。');
     if (Number(result.target_peak_dbfs) + Number(result.gain_db ?? 0) > -1) throw new Error('目标采样峰值加手动增益须不高于 -1 dBFS。');

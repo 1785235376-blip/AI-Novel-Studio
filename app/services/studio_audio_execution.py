@@ -34,7 +34,8 @@ _ACTIVE: set[tuple[str, str, str]] = set()
 _ACTIVE_LOCK = threading.RLock()
 FADE_CONTROLS = {"fade_in_ms", "fade_out_ms"}
 PEAK_CONTROL = "target_peak_dbfs"
-TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL} | FADE_CONTROLS
+LOUDNESS_CONTROL = "target_lufs"
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL, LOUDNESS_CONTROL} | FADE_CONTROLS
 AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
@@ -168,6 +169,7 @@ def _trim_measurement(value, parameters):
     fields = {"duration_ms", "byte_count", "sample_rate", "channels", "sample_width", "container",
               "audio_codec", "profile_validation", "output_sha256"}
     if PEAK_CONTROL in parameters: fields.add("peak_normalization")
+    if LOUDNESS_CONTROL in parameters: fields.add("loudness_matching")
     if (not isinstance(value, dict) or set(value) != fields
             or any(type(value.get(key)) is not int for key in ("duration_ms", "byte_count", "sample_rate", "channels", "sample_width"))
             or not 0 < value["byte_count"] <= 25 * 1024 * 1024 or value["duration_ms"] < 1
@@ -179,6 +181,9 @@ def _trim_measurement(value, parameters):
         raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "原音频实际输出证明不一致", 409)
     _sha(value["output_sha256"])
     if PEAK_CONTROL in parameters: _peak_proof(value["peak_normalization"], parameters, value["sample_rate"])
+    if LOUDNESS_CONTROL in parameters:
+        from .studio_audio_loudness import validate_proof
+        validate_proof(value["loudness_matching"], parameters, value["output_sha256"])
     return value
 
 
@@ -281,6 +286,9 @@ def _body_shape(value):
                 raise _error("STUDIO_AUDIO_PEAK_WAV_ONLY", "峰值归一化目前仅支持 PCM16 WAV 输出", 400)
             if target + gain > -1:
                 raise _error("STUDIO_AUDIO_PEAK_HEADROOM_INVALID", "目标峰值加手动增益须不高于 -1 dBFS", 400)
+        if LOUDNESS_CONTROL in parameters:
+            from .studio_audio_loudness import validate_parameters
+            validate_parameters(parameters)
         trim_output_profile(parameters)
         if prompt:
             raise _error("STUDIO_AUDIO_TRIM_PROMPT_INVALID", "本地裁剪不使用生成提示词", 400)
@@ -371,6 +379,11 @@ def _binding(value, body):
         raise _error("STUDIO_AUDIO_PEAK_BINDING_REQUIRED", "峰值归一化缺少原命令或配方绑定", 403)
     if fade_bound and ("command" not in value or "execution_recipe" not in value):
         raise _error("STUDIO_AUDIO_FADE_BINDING_REQUIRED", "淡入淡出缺少原命令或配方绑定", 403)
+    loudness_bound = LOUDNESS_CONTROL in body["parameters"] or any(
+        isinstance(captured, dict) and isinstance(captured.get("parameters"), dict) and LOUDNESS_CONTROL in captured["parameters"]
+        for captured in (value.get("command"), value.get("execution_recipe")))
+    if loudness_bound and ("command" not in value or "execution_recipe" not in value):
+        raise _error("STUDIO_AUDIO_LOUDNESS_BINDING_REQUIRED", "Loudness matching requires original command and recipe", 403)
     speech_bound = "storyboard_speech" in body or "storyboard_speech" in value or (
         isinstance(value.get("command"), dict) and "storyboard_speech" in value["command"])
     if speech_bound and ("command" not in value or "execution_recipe" not in value
@@ -378,7 +391,7 @@ def _binding(value, body):
             or body.get("storyboard_speech") != value.get("storyboard_speech")
             or body.get("storyboard_speech") != value.get("command", {}).get("storyboard_speech")):
         raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED", "分镜对白绑定已变化", 409)
-    if "audio_profile" in body or fade_bound or peak_bound or speech_bound:
+    if "audio_profile" in body or fade_bound or peak_bound or loudness_bound or speech_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
@@ -393,7 +406,7 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_LOUDNESS_BINDING_CHANGED" if loudness_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
                 "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
@@ -526,6 +539,9 @@ class StudioAudioExecution:
             measured = _trim_measurement(row["measured"], body["parameters"])
             if PEAK_CONTROL in body["parameters"] and measured["peak_normalization"]["source_sha256"] != binding["sources"][0]["digest"]:
                 raise _error("STUDIO_AUDIO_PEAK_PROOF_INVALID", "峰值测量来源摘要与绑定来源不一致", 409)
+            if LOUDNESS_CONTROL in body["parameters"]:
+                from .studio_audio_loudness import validate_proof
+                validate_proof(measured["loudness_matching"], body["parameters"], measured["output_sha256"], binding["sources"][0])
             ready = row.get("publication_ready")
             receipt = copy.deepcopy(row); self._receipt(receipt)
             if (not isinstance(ready, dict) or ready.get("output_digest") != measured["output_sha256"]
@@ -756,6 +772,8 @@ class StudioAudioExecution:
                         ("total_samples", "decoded_pcm_bytes", "decoded_pcm_sha256", "bit_rate", "container_duration_ms")})
                 if PEAK_CONTROL in body["parameters"]:
                     proof["peak_normalization"] = measured["peak_normalization"]
+                if LOUDNESS_CONTROL in body["parameters"]:
+                    proof["loudness_matching"] = measured["loudness_matching"]
                 output_proof["measured"] = _trim_measurement(proof, body["parameters"])
             # Persist uncertainty before crossing from the audio owner to the
             # original source/asset owners. Never acquire those leases while
@@ -868,6 +886,7 @@ class StudioAudioExecution:
         container = "flac" if flac else "mp3" if mp3 else "wav"
         from ..media_files import _media_inspection_directory
         temporary = _media_inspection_directory() if flac or mp3 else tempfile.TemporaryDirectory(prefix="studio-audio-trim-")
+        loudness_proof = None
         with temporary as directory:
             source_path, target = Path(directory) / ("source." + measured["extension"]), Path(directory) / ("candidate." + container)
             if mp3:
@@ -877,9 +896,15 @@ class StudioAudioExecution:
             source_path.write_bytes(data)
             if self._attempt(nid, claim, context, guard, source_guard) is None: raise _error("STUDIO_AUDIO_ATTEMPT_SUPERSEDED", "音频裁剪已取消或失效", 409)
             from .studio_timeline_export import run_guarded_process
+            if LOUDNESS_CONTROL in parameters:
+                from .studio_audio_loudness import prepare
+                source_path, loudness_proof = prepare(data, parameters, source, executable, directory, inspection_current)
+                normalization_gain = loudness_proof["applied_gain_db"]
             filters = _trim_filters(parameters, normalization_gain_db=normalization_gain)
             seek = ["-ss", f"{parameters['in_ms'] / 1000:.3f}"]
             length = ["-t", f"{duration / 1000:.3f}"]
+            if loudness_proof is not None:
+                seek, length = [], []
             if peak_source is not None:
                 first = peak_source["first_frame"]
                 filters = ["-af", f"atrim=start_sample={first}:end_sample={first + peak_source['frames']},asetpts=PTS-STARTPTS," + filters[1]]
@@ -898,6 +923,9 @@ class StudioAudioExecution:
             if not target.is_file() or not 0 < target.stat().st_size <= self.assets.MAX_BYTES:
                 raise MediaValidationError("trim output exceeds asset limit")
             with target.open("rb") as stream: output = stream.read(self.assets.MAX_BYTES + 1)
+            if loudness_proof is not None:
+                from .studio_audio_loudness import finish
+                loudness_proof = finish(target, output, loudness_proof, parameters, executable, directory, inspection_current)
             if mp3:
                 from .studio_audio_mp3_profile import prove_mp3
                 result = prove_mp3(target, output, parameters, guard=inspection_current, max_bytes=self.assets.MAX_BYTES)
@@ -915,6 +943,8 @@ class StudioAudioExecution:
                 or result.get("sample_rate") != parameters.get("sample_rate", 48000)
                 or result.get("channels") != parameters.get("channels", 2) or result.get("sample_width") != 2):
             raise MediaValidationError("trim output does not match the reviewed PCM WAV profile")
+        if loudness_proof is not None:
+            result["loudness_matching"] = loudness_proof
         if peak_source is not None:
             actual = _peak_pcm(output, parameters, inspection_current, selected=False)
             result["peak_normalization"] = _peak_proof({
