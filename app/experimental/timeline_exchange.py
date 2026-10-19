@@ -82,7 +82,6 @@ def _to_native(value):
 
 
 def _read_time(item, key, native):
-    fallback = _native_time(native)
     metadata = item.metadata.get(NS, {}) if hasattr(item, "metadata") else {}
     if metadata and not hasattr(metadata, "get"):
         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
@@ -90,6 +89,11 @@ def _read_time(item, key, native):
         exact = dict(metadata.get(key, {})) if metadata else {}
     except (TypeError, ValueError):
         raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID") from None
+    if native is None:
+        if exact:
+            raise ValueError("OTIO_EXACT_TIME_METADATA_MISMATCH")
+        return None
+    fallback = _native_time(native)
     if exact:
         try:
             exact = {k: dict(v) for k, v in exact.items()}
@@ -125,7 +129,14 @@ def _extras(item, path, report, *, speed_supported=False, studio_supported=False
     if getattr(item, "markers", []):
         _loss(report, path, "MARKERS_NOT_REPRESENTED")
     extension = getattr(item, "metadata", {}).get(NS, {})
-    supported = {"in_offset", "out_offset"} if getattr(item, "schema_name", lambda: "")() == "Transition" else {"start", "duration", "speed"} if getattr(item, "schema_name", lambda: "")() == "Clip" else {"start", "duration"} if getattr(item, "schema_name", lambda: "")() == "Gap" else set()
+    supported = {
+        "Timeline": {"global_start_time"},
+        "Transition": {"in_offset", "out_offset"},
+        "Clip": {"start", "duration", "speed"},
+        "Gap": {"start", "duration"},
+        "ExternalReference": {"start", "duration"},
+        "MissingReference": {"start", "duration"},
+    }.get(getattr(item, "schema_name", lambda: "")(), set())
     if extension and (not hasattr(extension, "keys") or set(extension.keys()) - supported):
         _loss(report, path, "UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED")
     if any(key not in ({NS, STUDIO_NS} if studio_supported else {NS}) for key in getattr(item, "metadata", {})):
@@ -251,7 +262,7 @@ def read_otio(text):
         raise ValueError("OTIO_ROOT_TRIM_NOT_SUPPORTED")
     if timeline.tracks.name:
         _loss(report, "tracks", "ROOT_STACK_NAME_NOT_REPRESENTED")
-    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _native_time(timeline.global_start_time) if timeline.global_start_time is not None else None}
+    doc = {"name": _name(timeline.name, "timeline.name", report), "tracks": [], "global_start_time": _read_time(timeline, "global_start_time", timeline.global_start_time)}
     if len(timeline.tracks) > 16:
         raise ValueError("OTIO_TRACK_LIMIT_16")
     total_items = 0
@@ -295,14 +306,18 @@ def read_otio(text):
                 if isinstance(ref, otio.schema.ExternalReference):
                     row["target_url"] = _url(ref.target_url)
                     row["media_state"] = "EXTERNAL_REFERENCE_NOT_OPENED"
-                    if ref.available_range is not None:
-                        row["available_range"] = {"start": _native_time(ref.available_range.start_time), "duration": _native_time(ref.available_range.duration)}
                 elif isinstance(ref, otio.schema.MissingReference):
                     row["target_url"] = None; row["media_state"] = "MISSING"
                     _loss(report, ip, "MISSING_MEDIA", "WARNING")
                 else:
                     row["target_url"] = None; row["media_state"] = "UNSUPPORTED_REFERENCE"
                     _loss(report, ip, "MEDIA_REFERENCE_TYPE_NOT_REPRESENTED")
+                if isinstance(ref, (otio.schema.ExternalReference, otio.schema.MissingReference)):
+                    available = ref.available_range
+                    exact_start = _read_time(ref, "start", available.start_time if available is not None else None)
+                    exact_duration = _read_time(ref, "duration", available.duration if available is not None else None)
+                    if available is not None:
+                        row["available_range"] = {"start": exact_start, "duration": exact_duration}
                 if len(item.media_references()) > 1:
                     _loss(report, ip, "ALTERNATE_MEDIA_REFERENCES_NOT_REPRESENTED")
             elif not isinstance(item, otio.schema.Gap):
@@ -349,6 +364,7 @@ def write_otio(doc):
         timeline.metadata[STUDIO_NS] = validate_studio_extension(doc["studio"])
     if doc.get("global_start_time") is not None:
         timeline.global_start_time = _to_native(doc["global_start_time"])
+        timeline.metadata[NS] = {"global_start_time": doc["global_start_time"]}
     for row in doc["tracks"]:
         track = otio.schema.Track(name=row["name"], kind=row["kind"])
         for item in row["items"]:
@@ -360,8 +376,9 @@ def write_otio(doc):
                 span = otio.opentime.TimeRange(_to_native(item["start"]), _to_native(item["duration"]))
                 if item["kind"] == "Clip":
                     ref = otio.schema.ExternalReference(target_url=_url(item["target_url"])) if item.get("target_url") else otio.schema.MissingReference()
-                    if item.get("available_range") and item.get("target_url"):
+                    if item.get("available_range"):
                         ref.available_range = otio.opentime.TimeRange(_to_native(item["available_range"]["start"]), _to_native(item["available_range"]["duration"]))
+                        ref.metadata[NS] = item["available_range"]
                     native = otio.schema.Clip(name=item["name"], source_range=span, media_reference=ref)
                     if "speed" in item:
                         speed = fraction(item["speed"])
@@ -401,8 +418,12 @@ def summary(doc):
         cursor = Fraction(); cuts = []
         for item in track["items"]:
             if item["kind"] == "Transition": continue
-            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(seconds(item["duration"])), "source_in_seconds": rational(seconds(item["start"])), "source_out_seconds": rational(seconds(item["start"]) + seconds(item["duration"]))})
-            cursor += seconds(item["duration"])
+            duration, source_in = seconds(item["duration"]), seconds(item["start"])
+            # LinearTimeWarp leaves native item duration/track placement intact;
+            # its media consumption follows the original Studio import contract.
+            speed = fraction(item["speed"]) if item["kind"] == "Clip" and "speed" in item else Fraction(1)
+            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(duration), "source_in_seconds": rational(source_in), "source_out_seconds": rational(source_in + duration * speed)})
+            cursor += duration
         tracks.append({"name": track["name"], "kind": track["kind"], "duration_seconds": rational(cursor), "cuts": cuts})
     return {"name": doc["name"], "tracks": tracks, "duration_semantics": "EXACT_RATIONAL_HALF_OPEN_SOURCE_RANGES", "renders_media": False, "audio_video_relation": "INDEPENDENT_TRACK_TIMING_ONLY_NO_LINKED_CLIP_CONTRACT"}
 
