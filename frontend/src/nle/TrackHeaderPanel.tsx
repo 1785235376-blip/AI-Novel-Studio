@@ -25,18 +25,20 @@ export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
   const previousDocument = useRef(props.documentId);
   const documentChanged = previousDocument.current !== props.documentId;
   const selectedIds = documentChanged ? [] : normalizeClipSelection(props.selectedClipIds, clipOrder);
-  const hintId = useId(), alive = useRef(true), composing = useRef(false);
+  const hintId = useId(), alive = useRef(true), composing = useRef<HTMLElement | null>(null);
   const selectionKey = Array.isArray(props.selectedClipIds) ? props.selectedClipIds.filter(id => typeof id === 'string') : [];
   const contextKey = JSON.stringify([props.documentId, parsed.ok ? parsed.timeline : null, props.editable, selectionKey]);
   const context = useRef({ key: contextKey, generation: 0 });
   if (context.current.key !== contextKey) {
     context.current = { key: contextKey, generation: context.current.generation + 1 };
-    composing.current = false;
   }
   const generation = context.current.generation;
   const latest = useRef(props); latest.current = props;
-  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; composing.current = null; }; }, []);
   useLayoutEffect(() => {
+    // Generation changes retire callbacks, not a still-active DOM composition session.
+    // A removed input node (including a different document's keyed region) ends that session.
+    if (composing.current && !composing.current.isConnected) composing.current = null;
     previousDocument.current = props.documentId;
     // Clear a changed document and remove disappeared IDs before the Inspector can use the old selection.
     // Reordering/deduplication changes view state only; it never edits a timeline.
@@ -49,7 +51,7 @@ export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
     latest.current.onSelectClips(next);
   };
   if (!parsed.ok) {
-    return <section className="nle-tracks" aria-label="轨道头"><StatusMessage tone="error">{parsed.message}</StatusMessage>
+    return <section key={props.documentId} className="nle-tracks" aria-label="轨道头"><StatusMessage tone="error">{parsed.message}</StatusMessage>
       <EmptyState title="轨道头不可用" detail="需要一份通过原时间线契约校验的时间线。" /></section>;
   }
   const rows: Array<{ header: NleTrackHeaderState } | { failure: string }> = parsed.timeline.tracks.map(track => {
@@ -57,10 +59,12 @@ export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
     return checked.ok ? { header: checked.header } : { failure: checked.message };
   });
   const selected = new Set(selectedIds);
-  return <section className="nle-tracks" aria-label="轨道头" data-track-count={rows.length}
-    onCompositionStartCapture={() => { composing.current = true; }}
-    onCompositionEndCapture={() => { composing.current = false; }}
-    onBlurCapture={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) composing.current = false; }}
+  return <section key={props.documentId} className="nle-tracks" aria-label="轨道头" data-track-count={rows.length}
+    onCompositionStartCapture={event => {
+      if (event.target instanceof HTMLElement && event.target.isConnected) composing.current = event.target;
+    }}
+    onCompositionEndCapture={event => { if (event.target === composing.current) composing.current = null; }}
+    onBlurCapture={event => { if (event.target === composing.current) composing.current = null; }}
     onKeyDownCapture={event => {
       if (event.nativeEvent.isComposing || event.keyCode === 229 || composing.current) {
         if (event.key === 'Enter' || event.key === ' ' || event.keyCode === 229) event.preventDefault();
