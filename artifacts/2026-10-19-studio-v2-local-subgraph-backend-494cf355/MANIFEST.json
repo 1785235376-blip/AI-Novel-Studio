@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_SERVER_INCREMENT_NOT_FULL_SUBGRAPH_OR_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "2f25ed1aaf4e5d585047d6fd310cb8c35fe3f68d",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-local-subgraph-backend-494cf355",
+  "product_base": "3d14ade722814ea3b4472c1c166466597f3b53f5",
+  "product_tip": "494cf355a4057a977e736fee4bb39130881cd089",
+  "product_tree": "8dcd1b875f4dd87b4ac1bd8914ebe48de1a23495",
+  "bundle_ref": "refs/heads/work/v2-media-local-subgraph-combined-20261019",
+  "bundle_filename": "studio-v2-3d14ade7-to-494cf355.bundle",
+  "unique_external_prerequisite": "3d14ade722814ea3b4472c1c166466597f3b53f5",
+  "source_commit_count": 1,
+  "patch_mapping": [
+    {
+      "original": "812910a117e4c392798720ba21669f88cd33ffe0",
+      "combined": "494cf355a4057a977e736fee4bb39130881cd089",
+      "stable_patch_id": "7576c7e9a83f7911e0638bf86482fb250ecc2c6f"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/graph.py",
+      "source_blob": "62680dacaa960695ecf53cde52dff3ffffd1b048",
+      "combined_blob": "62680dacaa960695ecf53cde52dff3ffffd1b048"
+    },
+    {
+      "path": "app/creative/graph_api.py",
+      "source_blob": "2c027f75bbf3c446f12cfac2101591afb77fb864",
+      "combined_blob": "2c027f75bbf3c446f12cfac2101591afb77fb864"
+    },
+    {
+      "path": "app/creative/graph_execution.py",
+      "source_blob": "0820c74b62481e539e9dc16f5e46b16ad287cb95",
+      "combined_blob": "0820c74b62481e539e9dc16f5e46b16ad287cb95"
+    },
+    {
+      "path": "app/creative/graph_local_subgraph.py",
+      "source_blob": "28683e50877883ed4618c306de8fbe16fbf15a86",
+      "combined_blob": "28683e50877883ed4618c306de8fbe16fbf15a86"
+    },
+    {
+      "path": "app/creative/graph_models.py",
+      "source_blob": "9b295e07d2667a38c5dbfbc28a6b62f22dcd0c8d",
+      "combined_blob": "9b295e07d2667a38c5dbfbc28a6b62f22dcd0c8d"
+    },
+    {
+      "path": "tests/test_v2_graph_schema_version_gate.py",
+      "source_blob": "64e4a9fc81e1020d2336b1f662be3deb6fc1c250",
+      "combined_blob": "64e4a9fc81e1020d2336b1f662be3deb6fc1c250"
+    },
+    {
+      "path": "tests/test_v2_local_subgraph.py",
+      "source_blob": "d51bea65ac05b138c28266e77d113d100c5bb299",
+      "combined_blob": "d51bea65ac05b138c28266e77d113d100c5bb299"
+    },
+    {
+      "path": "tests/test_v2_local_subgraph_api.py",
+      "source_blob": "5c6c423ffde0e8cb266099700740d9d3df2aa777",
+      "combined_blob": "5c6c423ffde0e8cb266099700740d9d3df2aa777"
+    }
+  ],
+  "all_other_base_source_entries_identical": true,
+  "introduced_objects": [
+    {
+      "oid": "494cf355a4057a977e736fee4bb39130881cd089",
+      "type": "commit",
+      "bytes": 411,
+      "sha256": "173626c3335b9f2a0a1baacdd3e630de4dbcd7c48995ed26a06bfaa7f4f0f053"
+    },
+    {
+      "oid": "8dcd1b875f4dd87b4ac1bd8914ebe48de1a23495",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "7018d1f67ea49afc0286d5967a83273fdf855741ddd181f41466e9adee0e9717"
+    },
+    {
+      "oid": "21ca49838af0cbf7a1c9bf071317745a25bd8ff5",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "a683a40588fc4020d27541f14e26dc4867631e435e5371782a1a7396527525e7"
+    },
+    {
+      "oid": "810b2e9c3773c5d3bfb66526b421db2fde127a93",
+      "type": "tree",
+      "bytes": 4636,
+      "sha256": "b003fddbf1758ef1f4a8897f551ae9ee535fed89dd68a7be6939a98021c7ec69"
+    },
+    {
+      "oid": "62680dacaa960695ecf53cde52dff3ffffd1b048",
+      "type": "blob",
+      "bytes": 43520,
+      "sha256": "45f58072ab61c941938828a43b9bda70c23339237f0d64b32d68826e0ae779db"
+    },
+    {
+      "oid": "2c027f75bbf3c446f12cfac2101591afb77fb864",
+      "type": "blob",
+      "bytes": 20646,
+      "sha256": "9e72c75f375a8baaeb7275f3452d2142368c1714ed8e40d84f373f7e69c8afc2"
+    },
+    {
+      "oid": "0820c74b62481e539e9dc16f5e46b16ad287cb95",
+      "type": "blob",
+      "bytes": 40619,
+      "sha256": "0601c6a66a9b5bb6ed7a9b68efc10edc70b5a1ec653e1c3b059d7ee970daf31b"
+    },
+    {
+      "oid": "28683e50877883ed4618c306de8fbe16fbf15a86",
+      "type": "blob",
+      "bytes": 9781,
+      "sha256": "5e9809240a963c318616215b3738f4aca825917c39134ed9aeb922e24b3e6dd1"
+    },
+    {
+      "oid": "9b295e07d2667a38c5dbfbc28a6b62f22dcd0c8d",
+      "type": "blob",
+      "bytes": 49392,
+      "sha256": "6049ea1729ee592ce0555e4e71c71f835dc9558b558885a5d387e20dd1359fc2"
+    },
+    {
+      "oid": "edf970beb670321b89e08b706d4750371a15cc4e",
+      "type": "tree",
+      "bytes": 49103,
+      "sha256": "a5d28eeac071bb6d48fd7214f48c48e8b28612f69d613d82019e7ab3d33920ea"
+    },
+    {
+      "oid": "64e4a9fc81e1020d2336b1f662be3deb6fc1c250",
+      "type": "blob",
+      "bytes": 7064,
+      "sha256": "ef07d7cf3541e95d64aa3dfe5ab27bdc5a007823be5867a974b948d2676a3216"
+    },
+    {
+      "oid": "d51bea65ac05b138c28266e77d113d100c5bb299",
+      "type": "blob",
+      "bytes": 18468,
+      "sha256": "85c829c46a6292ea3325b1a09c15fa2f006921529f8b5ca4d85015209ab684c7"
+    },
+    {
+      "oid": "5c6c423ffde0e8cb266099700740d9d3df2aa777",
+      "type": "blob",
+      "bytes": 11931,
+      "sha256": "1c47873bce81018747f476c6169bf1e767f3564c321786e137314415636063b1"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_pattern_findings": 0,
+    "runtime_profile_or_raw_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 38126,
+      "sha256": "00055306ffe2d92485b967152c6a637bc54ef93f29d0a36f351b55b74de86ee9",
+      "git_blob": "01fd3f3982d4a695625d04e1fc3dad2774f8ec2d"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3229,
+      "sha256": "6a228e26bb790172b8a7ce866940fc9305010bf7c9648f619ddad2c6b028ff81",
+      "git_blob": "bb24f5a86ec834653144e4c8e650ef1f8f59125b"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1424,
+      "sha256": "ccdee1c661e5a912e52b4015ffd35142fb211be87b708b86b329a892150e84aa",
+      "git_blob": "b18c1591280e97be9bf697f301e0496cc4dfcfe3"
+    },
+    {
+      "path": "studio-v2-3d14ade7-to-494cf355.bundle",
+      "bytes": 16032,
+      "sha256": "412f0cff759b2015510d543056604b7d3a60afbdb3fe7564321196849c5cf92c",
+      "git_blob": "8764cf9f34db867b0f360bac88a0029c584a82ec"
+    }
+  ]
+}
