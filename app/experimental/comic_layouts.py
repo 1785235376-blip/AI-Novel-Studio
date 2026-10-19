@@ -524,10 +524,14 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         # Original unbound uploads retain their namespace. A second read uses
         # only the actual current project owner; no asset self-declaration can
         # select an incarnation, and private candidates never enter Comic.
+        from ..services.comic_ora_origin import CONTRACT as ORA_CONTRACT, FIELD as ORA_FIELD
         active = getattr(self.assets._scope, 'binding', None)
         if active is not None:
             with self._studio_asset_scope(nid, scope):
                 asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+                origin = asset.get(ORA_FIELD)
+                if isinstance(origin, dict) and origin.get('contract') == ORA_CONTRACT:
+                    raise FileNotFoundError(aid)
                 self._studio_image_review(asset)
                 return self._read_asset(nid, scope, actor, aid, approved=approved, pixel_budget=pixel_budget)
         try:
@@ -537,6 +541,9 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 raise
         with self._studio_asset_scope(nid, scope):
             asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+            origin = asset.get(ORA_FIELD)
+            if isinstance(origin, dict) and origin.get('contract') == ORA_CONTRACT:
+                raise FileNotFoundError(aid)
             self._studio_image_review(asset)
             return self._read_asset(nid, scope, actor, aid, approved=approved, pixel_budget=pixel_budget)
 
