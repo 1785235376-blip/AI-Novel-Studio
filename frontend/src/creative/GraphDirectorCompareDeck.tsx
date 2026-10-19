@@ -1,10 +1,12 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import { StudioGraphDirectorConsole } from './StudioGraphDirectorConsole';
+import { GraphDirectorRunOverview, type DirectorRunReader } from './GraphDirectorRunOverview';
 import type { StudioGraphClient } from './studioGraphClient';
 import type { StudioGraphDefinition, StudioGraphRecord } from './studioGraphTypes';
 type Props = { definition: StudioGraphDefinition; base?: StudioGraphRecord; identity: string; active: boolean;
-  client: Pick<StudioGraphClient, 'readDirectorWorkspace'>; isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T> };
+  client: Pick<StudioGraphClient, 'readDirectorWorkspace'> & DirectorRunReader; busy?: boolean;
+  onLocate?: (nodeId: string, graph: StudioGraphRecord) => boolean; isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T> };
 export function GraphDirectorCompareDeck(props: Props) {
   const nodes = props.definition.nodes.filter(node => node.definition_id === 'director_plan');
   const key = JSON.stringify([props.identity, props.base?.id, props.base?.version,
@@ -32,6 +34,7 @@ function DirectorCompareSession(props: Props) {
     <div className="creative-form-grid">{nodes.filter(node => chosen.includes(node.id)).map(node => <section key={node.id} aria-label={`导演对照 ${node.id}`}><h4>{node.id} · v{node.parameters.document_snapshot?.version ?? '?'}</h4>
       <StudioGraphDirectorConsole client={props.client} nodeId={node.id} snapshot={node.parameters.document_snapshot}
         identity={props.identity} active={props.active} referenceState={states.get(node.id)} isCurrent={props.isCurrent} read={props.read} />
+      <GraphDirectorRunOverview {...props} nodeId={node.id} />
     </section>)}</div>
   </Panel>;
 }

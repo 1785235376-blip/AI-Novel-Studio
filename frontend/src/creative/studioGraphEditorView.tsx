@@ -120,7 +120,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     <p>配置未验证实际推理；选择同时更新服务商与模型并清除云端许可。路线摘要仅用于当前列表识别，执行仍须按原流程重新预览、确认与审核。</p>
   </fieldset>;
   const content = <section className="studio-graph-editor" aria-label="独立创作图编辑器">
-    <GraphDirectorCompareDeck definition={draft} base={base} identity={identity} active={props.active && !props.denied} client={client.graphs} isCurrent={current} read={read} />
+    <GraphDirectorCompareDeck definition={draft} base={base} identity={identity} active={props.active && !props.denied} client={client.graphs} busy={busy} onLocate={controller.locateRunNode} isCurrent={current} read={read} />
     <Panel title="创作图 · 手工编排"><p>空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。</p>{catalog?.capabilities.model_execution && <p>可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。</p>}
       {videoGraph ? <p>视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。</p> : imageGraph ? <p>图片图 v4：资产引用 → 图片参考与权重 → 图片提示词 → 图片生成 → 媒体审核 → 正式素材。各节点可独立编排；最多四个图片生成节点。保存、预览、入队、执行和审核分别操作，真实推理与完整流程验收仍待完成。</p>
         : mediaEnabled ? <p>媒体图 v3 使用原任务服务逐项入队和执行。候选只能进入人工审核，审核后的当前素材才能用于下游。每图最多四个媒体制作节点；本机与完整流程验收仍待完成。</p> : <p>当前保留本地文本与手工工作流。旧图中的资产节点保持只读引用，不执行媒体处理。</p>}
