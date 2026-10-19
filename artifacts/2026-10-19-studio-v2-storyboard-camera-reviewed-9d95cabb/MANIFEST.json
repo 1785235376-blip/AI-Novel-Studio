@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_STORYBOARD_CAMERA_ADOPTION",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "e67ace9b6fa413bbdb28ed7a03375141bcf1e9ee",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-storyboard-camera-reviewed-9d95cabb",
+  "product_base": "a9974f24e7c556e3379f750f50d621be1255a05f",
+  "product_tip": "9d95cabbd111718e55063ef61f4b9249410a2432",
+  "product_tree": "ed1b4d6228341d43a3aa225ae92cb4c701d31dad",
+  "bundle_ref": "refs/heads/work/v2-storyboard-camera-audio-combined-20261019",
+  "bundle_filename": "studio-v2-a9974f24-to-9d95cabb.bundle",
+  "unique_external_prerequisite": "a9974f24e7c556e3379f750f50d621be1255a05f",
+  "bundle_commit_count": 1,
+  "source_commit": "dc69b31728098f07c998474899baa1ec4b83ecfd",
+  "source_parent": "0ec1991024bd1ed4bac57a6ab61c0a3057aa3320",
+  "stable_patch_id": "d8830c6ecc008fec0d2ef3d0bce32689544352fe",
+  "patch_bytes_equal": true,
+  "all_final_source_blobs_equal": true,
+  "old_source_ancestors_not_imported": true,
+  "file_mapping": [
+    {
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "mode": "100644",
+      "blob": "cafae089daadbc94111610f438dce58e74cbc918",
+      "bytes": 29188,
+      "sha256": "dcdb507973ad5c3342e1bd6e6d0f783f9b17b72aa3f8d73805aef490ddbb9c78"
+    },
+    {
+      "path": "frontend/src/creative/StoryboardDirectorCameraAdoption.test.tsx",
+      "mode": "100644",
+      "blob": "59c0f7d571abb78b0ce339f97fdb411219959fe6",
+      "bytes": 10333,
+      "sha256": "a07b7684419e413a441aa322abba4fb3579198f7c5593656b1d7da838a913853"
+    },
+    {
+      "path": "frontend/src/creative/StoryboardDirectorCameraAdoption.tsx",
+      "mode": "100644",
+      "blob": "233c06c2701937c976033099d2baa46bb5440797",
+      "bytes": 7245,
+      "sha256": "8af2d6282d4edeb4d99dfe67f5f2e404c2cc1f0d04898c51ae42042dabe97e8f"
+    },
+    {
+      "path": "frontend/src/creative/storyboardDirectorCameraAdoptionHelpers.ts",
+      "mode": "100644",
+      "blob": "af04d5f2b0781471f1aee6dec364c9c98b741786",
+      "bytes": 3003,
+      "sha256": "6c6365955eb7e56d665d151e1bdf5ad844312307ba7f3d3599407d596da20914"
+    }
+  ],
+  "validation": {
+    "product_tip": "9d95cabbd111718e55063ef61f4b9249410a2432",
+    "base": "a9974f24e7c556e3379f750f50d621be1255a05f",
+    "smoke": {
+      "selected": 2,
+      "passed": 2,
+      "skipped": 27,
+      "kind": "original Canvas guarded camera adoption/Undo mock host + existing Audio denoise receipt decoder"
+    },
+    "typescript": {
+      "runs": 1,
+      "exit": 0
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "existing_chunk_warning": true
+    },
+    "author_full_suites_rerun": false,
+    "fresh_File_or_browser_not_run": true,
+    "retained_author_real_Save": "v2->v3 and fresh browser reopen segmented results, no all-green single journey claim",
+    "PG": "BLOCKED",
+    "collaborative_browser_revocation_full_E2E": "NOT_ACCEPTED",
+    "models_paid_APIs_GPU_called": false
+  },
+  "retained_actual_Save": {
+    "retained_only_not_rerun": true,
+    "version_after_interruption": 2,
+    "old_worker_present": false,
+    "version_after_one_original_Save": 3,
+    "new_browser_reopened_version": 3,
+    "history_current_version": 3,
+    "C_original_PUT_count": 1,
+    "B_new_browser_writes": 0,
+    "metadata_only_UTC_timestamp_normalization": true
+  },
+  "independent_review": "3 unique cases passed across2 runs; original harness failure retained; no P1/P2",
+  "PG": "BLOCKED",
+  "full_E2E": "NOT_ACCEPTED",
+  "object_inventory": [
+    {
+      "oid": "9d95cabbd111718e55063ef61f4b9249410a2432",
+      "type": "commit",
+      "path": "",
+      "bytes": 318,
+      "sha256": "c4669e9e4b2b1efbdfe9ed6fa4299a6f4ee19842bf994d9c9d01fa334cf13492"
+    },
+    {
+      "oid": "ed1b4d6228341d43a3aa225ae92cb4c701d31dad",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "89929ec325af873c51b7de3da5c48a2f245c89546a13b3d6595e6c1abaa629d3"
+    },
+    {
+      "oid": "395a68730330853dc2c8a3f9302c36c4beee2381",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "793e1de20f55aada28ea2ab5b9e93e804a9cd9d5b99085dc70324c4d7459c276"
+    },
+    {
+      "oid": "6f0a06dabaeed44efda4b8eec62c6dbbde31c976",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "92e760109d2659ffe873333ea07d2ba28014ab58577fa073942dbb4f90989309"
+    },
+    {
+      "oid": "8801e87ddc7f8916a6e897c439644a33066491c0",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 35200,
+      "sha256": "8472e81d9520a99c990af8a9d1b17aee5d55021eea66b0c908dc82024942d0e3"
+    },
+    {
+      "oid": "cafae089daadbc94111610f438dce58e74cbc918",
+      "type": "blob",
+      "path": "frontend/src/creative/CreativeCanvas.tsx",
+      "bytes": 29188,
+      "sha256": "dcdb507973ad5c3342e1bd6e6d0f783f9b17b72aa3f8d73805aef490ddbb9c78"
+    },
+    {
+      "oid": "59c0f7d571abb78b0ce339f97fdb411219959fe6",
+      "type": "blob",
+      "path": "frontend/src/creative/StoryboardDirectorCameraAdoption.test.tsx",
+      "bytes": 10333,
+      "sha256": "a07b7684419e413a441aa322abba4fb3579198f7c5593656b1d7da838a913853"
+    },
+    {
+      "oid": "233c06c2701937c976033099d2baa46bb5440797",
+      "type": "blob",
+      "path": "frontend/src/creative/StoryboardDirectorCameraAdoption.tsx",
+      "bytes": 7245,
+      "sha256": "8af2d6282d4edeb4d99dfe67f5f2e404c2cc1f0d04898c51ae42042dabe97e8f"
+    },
+    {
+      "oid": "af04d5f2b0781471f1aee6dec364c9c98b741786",
+      "type": "blob",
+      "path": "frontend/src/creative/storyboardDirectorCameraAdoptionHelpers.ts",
+      "bytes": 3003,
+      "sha256": "6c6365955eb7e56d665d151e1bdf5ad844312307ba7f3d3599407d596da20914"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_findings": 0,
+    "only_reviewed_frontend_blob_paths": true,
+    "user_profiles_backend_dependencies_raw_traces_included": false
+  },
+  "restoration": "Reuse isolated prerequisite Git objects; no full source/history export",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "camera-tests-evidence-sanitized.zip",
+      "bytes": 51915,
+      "sha256": "810b86d440c90cb791a410db1e0a07d31d8582dcfdd2a46768557a3b144c14e4",
+      "git_blob": "473ffa0d9c48a0a861715f130d52df5ff2785ef3"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3199,
+      "sha256": "3c9aa10170bfa320d2504312afa6ac36b1ccfc58e9c1bcfcb33808fe8fff1f61",
+      "git_blob": "9cfe5aeff42ba94e440bac613f8f7651220b7385"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1120,
+      "sha256": "2c243ee2c4de1dc828d3e4cf96a4090093ad98669311d6151d44eb4f268b2e35",
+      "git_blob": "4c1ac72ad81269add3608b45e4de4cc11ba58d48"
+    },
+    {
+      "path": "studio-v2-a9974f24-to-9d95cabb.bundle",
+      "bytes": 8026,
+      "sha256": "ba033e4722e052e46c86d403dc0696645e9c000353cb886ba61b5bc0333f5def",
+      "git_blob": "c213c9526e02408dd8dfe9d47b6eb251d4331a3a"
+    }
+  ]
+}
