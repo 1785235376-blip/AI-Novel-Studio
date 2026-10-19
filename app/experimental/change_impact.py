@@ -40,6 +40,19 @@ class LockInput(SelectedNode):
     locked: bool
 
 
+class DecisionNode(SelectedNode):
+    choice: Literal['KEEP', 'REBUILD']
+
+
+class DecisionInput(ImpactRequest):
+    selected: list[DecisionNode] = Field(min_length=1, max_length=20)
+
+
+class DecisionSaveInput(DecisionInput):
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    request_id: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$')
+
+
 class RefreshInput(StrictModel):
     expected_version: int = Field(ge=1)
     preflight_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
@@ -58,6 +71,8 @@ class ChangeImpactService(DomainService):
     LOCKS = 'change_impact_locks_v2'
     PLANS = 'change_impact_preflights_v2'
     REFRESHES = 'change_impact_refreshes_v2'
+    DECISIONS = 'change_impact_decisions_v2'
+    MAX_DECISIONS_PER_AUTHOR = 25
     MAX_NODES = 5000
 
     def __init__(self, store, novels, chapters, story_graph, production, planning, audiobook, *, enabled=None):
@@ -295,6 +310,100 @@ class ChangeImpactService(DomainService):
                 locks[row['id']] = row
             guard(); self._active()
         return self._node_view(self._inventory(nid, scope)[0][body.key])
+
+    @staticmethod
+    def _decision_entry(node, choice):
+        public = node['public']
+        return {'key': public['key'], 'version': public['version'], 'choice': choice,
+                'fingerprint': node['fingerprint'], 'evidence_digest': digest(public['evidence']),
+                **{key: public[key] for key in ('locked', 'lock_version', 'stale', 'refresh_candidate', 'refresh_reason')}}
+
+    def _decision_context(self, nid, scope, source, guard):
+        self._active(); guard()
+        view = self.impact(nid, scope, {'source': source})
+        inventory, _ = self._inventory(nid, scope)
+        nodes = {item['key']: {'public': item, 'fingerprint': inventory[item['key']]['fingerprint']}
+                 for item in view['items'] if item['key'] in inventory}
+        guard(); self._active()
+        return view['source'], nodes
+
+    def _decision_preview(self, nid, scope, actor, body, guard):
+        source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard)
+        if len({item.key for item in body.selected}) != len(body.selected):
+            raise ValueError('CHANGE_IMPACT_DUPLICATE_SELECTION')
+        entries, items = [], []
+        for selected in body.selected:
+            node = nodes.get(selected.key)
+            if node is None: raise FileNotFoundError('selected node unavailable')
+            check_version(node['public'], selected.expected_version)
+            entries.append(self._decision_entry(node, selected.choice))
+            items.append({key: copy.deepcopy(node['public'][key]) for key in
+                          ('key', 'kind', 'label', 'version', 'locked', 'stale', 'refresh_candidate', 'refresh_reason')}
+                         | {'choice': selected.choice})
+        guard(); self._active()
+        preview = {'source_snapshot': source, 'items': items, 'preview_digest': digest([actor, scope, source, entries]),
+                   'decision_only': True, 'automatic_execution': False}
+        return preview, entries
+
+    def preview_decisions(self, nid, scope, actor, value, guard=lambda: None):
+        """Read-only author intent preview; never preflight or prepare media."""
+        return self._decision_preview(nid, scope, actor, DecisionInput.model_validate(value), guard)[0]
+
+    def _decision_view(self, row, source, nodes):
+        # Hide the whole private checkpoint if any original target is now hidden.
+        if any(entry['key'] not in nodes for entry in row['entries']):
+            raise FileNotFoundError('decision target unavailable')
+        source_current = source == row['source_snapshot']
+        items = []
+        for entry in row['entries']:
+            node = nodes[entry['key']]
+            items.append({'key': entry['key'], 'kind': node['public']['kind'], 'label': node['public']['label'],
+                          'version': entry['version'], 'current_version': node['public']['version'], 'choice': entry['choice'],
+                          'current': source_current and self._decision_entry(node, entry['choice']) == entry})
+        return {'id': row['id'], 'version': row['version'], 'source_snapshot': copy.deepcopy(row['source_snapshot']),
+                'request_id': row['request_id'], 'preview_digest': row['preview_digest'], 'items': items, 'current': all(item['current'] for item in items),
+                'decision_only': True, 'automatic_execution': False}
+
+    def save_decisions(self, nid, scope, actor, value, guard=lambda: None):
+        """Append an immutable bounded checkpoint in the original impact owner."""
+        body = DecisionSaveInput.model_validate(value); self._active(); guard()
+        request_digest = digest(body.model_dump())
+        with self.store.transaction(nid, scope) as doc:
+            guard(); self._active()
+            rows = doc['collections'].setdefault(self.DECISIONS, {})
+            existing = next((row for row in rows.values() if row['created_by'] == actor and row['request_id'] == body.request_id), None)
+            if existing:
+                if existing['request_digest'] != request_digest: raise ValueError('CHANGE_IMPACT_DECISION_REQUEST_REUSED')
+                source, nodes = self._decision_context(nid, scope, body.source.model_dump(), guard)
+                result = self._decision_view(existing, source, nodes)
+            else:
+                if sum(row['created_by'] == actor for row in rows.values()) >= self.MAX_DECISIONS_PER_AUTHOR:
+                    raise ValueError('CHANGE_IMPACT_DECISION_CAPACITY')
+                preview, entries = self._decision_preview(nid, scope, actor, body, guard)
+                if preview['preview_digest'] != body.preview_digest:
+                    raise StaleSourceError('CHANGE_IMPACT_DECISION_PREVIEW_CHANGED')
+                row = new_row(nid, scope, actor, {'status': 'RECORDED', 'source': body.source.model_dump(),
+                    'source_snapshot': preview['source_snapshot'], 'entries': entries, 'preview_digest': body.preview_digest,
+                    'request_id': body.request_id, 'request_digest': request_digest})
+                rows[row['id']] = row
+                source, nodes = self._decision_context(nid, scope, row['source'], guard)
+                result = self._decision_view(row, source, nodes)
+                if not result['current']: raise StaleSourceError('CHANGE_IMPACT_DECISION_PREVIEW_CHANGED')
+            guard(); self._active()
+        return result
+
+    def decisions(self, nid, scope, actor, value, guard=lambda: None):
+        body = ImpactRequest.model_validate(value)
+        source_ref = body.source.model_dump()
+        source, nodes = self._decision_context(nid, scope, source_ref, guard)
+        result = []
+        rows = [row for row in self.list(nid, scope, self.DECISIONS)
+                if row['created_by'] == actor and row['source'] == source_ref]
+        for row in sorted(rows, key=lambda row: (row['created_at'], row['id']), reverse=True):
+            try: result.append(self._decision_view(row, source, nodes))
+            except FileNotFoundError: continue
+        guard(); self._active()
+        return {'items': result}
 
     def _prepare_brief(self, nid, scope, actor, kind, recipe):
         return (self.media.prepare_cover if kind == 'COVER' else self.media.prepare_storyboard)(nid, scope, actor, recipe)

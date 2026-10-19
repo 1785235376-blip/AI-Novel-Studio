@@ -1,7 +1,7 @@
 """Author-only impact projection and current-authority selective dispatch."""
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, Query
 
-from .change_impact import ImpactRequest, LockInput, PreflightInput, RefreshInput, TaskVersion
+from .change_impact import DecisionInput, DecisionSaveInput, ImpactRequest, LockInput, PreflightInput, RefreshInput, TaskVersion
 from .production_lineage_api import PrivateProductionRoute, api_call
 
 
@@ -37,6 +37,23 @@ def create_change_impact_router(service, authorize, require_flag):
     def lock(nid: str, body: LockInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id)
         return api_call(service.set_lock, nid, scope, actor, body, fresh(nid, x_session_token, x_branch_id, actor, scope))
+
+    @router.post('/decisions/preview')
+    def preview_decisions(nid: str, body: DecisionInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.preview_decisions, nid, scope, actor, body, fresh(nid, x_session_token, x_branch_id, actor, scope))
+
+    @router.post('/decisions', status_code=201)
+    def save_decisions(nid: str, body: DecisionSaveInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.save_decisions, nid, scope, actor, body, fresh(nid, x_session_token, x_branch_id, actor, scope))
+
+    @router.get('/decisions')
+    def decisions(nid: str, source_kind: str = Query(min_length=1, max_length=30), source_id: str = Query(min_length=1, max_length=240),
+                  x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.decisions, nid, scope, actor, {'source': {'kind': source_kind, 'id': source_id}},
+                        fresh(nid, x_session_token, x_branch_id, actor, scope))
 
     @router.post('/preflights', status_code=201)
     def preflight(nid: str, body: PreflightInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

@@ -5,6 +5,7 @@ import { Field, ResourceState, useAction, useResource } from './shared';
 import { changeImpactClient, type ImpactNode, type ImpactPreflight, type ImpactRefresh, type ImpactSource } from './changeImpactClient';
 import type { WorkspaceNavigation } from './uxClient';
 import { StudioUsagesPanel } from './StudioUsagesPanel';
+import { ImpactDecisionPanel } from './ImpactDecisionPanel';
 
 type Props = { client: ExperimentalClient; onNavigate?: (target: WorkspaceNavigation) => void; readOnly?: boolean };
 const kinds: Record<string, string> = { CHAPTER: '章节', CHARACTER: '角色', WORLD_RECORD: '世界关系 / 知识', ASSET: '资产', PLANNING_NODE: '规划', PLANNING_PROPOSAL: '规划建议', MEDIA_BRIEF: '媒体需求', MEDIA_TASK: '媒体任务', AUDIO_PLAN: '配音计划', SUBTITLES: '字幕视图', EXPORT: '清单导出视图', SHOT: '镜头', SCREENPLAY_SCENE: '剧本场景', STORYBOARD_FRAME: '分镜卡片', MOTION_TASK: '视频任务', AUDIO_MIX: '混音候选' };
@@ -63,6 +64,7 @@ function ImpactSelection({ source, api, client, onPrepared, onNavigate }: { sour
         <details><summary>确切关联与来源证据</summary>{node.evidence.map(edge => <p key={edge.key}>{edge.label} · {evidenceStates[edge.state] || edge.state}{edge.recorded_version != null && ` · 记录 v${edge.recorded_version}`}{edge.current_version != null && ` → 当前 v${edge.current_version}`}</p>)}</details>
       </article>)}</div>
       <StatusMessage>模型推断影响：未运行。未记录的关系：未知。角色改名仅跟随稳定 ID 显示；全文替换需要独立预览，此处不会改正文。</StatusMessage>
+      <ImpactDecisionPanel api={api} view={resource.data} disabled={action.busy} />
       <Button disabled={action.busy || selected.length === 0} onClick={check}>预检选中的 {selected.length} 项</Button>
       {preflight && <section className="experimental-record" aria-label="选择性更新预检"><h3>{preflight.ready ? '可准备新的选中任务' : '当前不能执行选中更新'}</h3>
         {preflight.items.map(item => <div key={item.key}><p>{item.label}</p>{item.blockers.map(code => <StatusMessage key={code} tone="warning">{reasons[code] || code}</StatusMessage>)}</div>)}
