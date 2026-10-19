@@ -1,7 +1,8 @@
 import type { ExperimentalClient } from './api';
 import { segment } from './api';
 import { checkedDecisionPreview, checkedDecisionRows, checkedDecisionSave, type ImpactDecisionPreview, type ImpactDecisionSelection } from './changeImpactDecisionContract';
-export type ImpactSource = { kind: 'CHAPTER' | 'CHARACTER' | 'WORLD_RECORD' | 'ASSET'; id: string; label: string; binding: unknown };
+import { checkedStoryboardImpact } from './storyboardImpactContract';
+export type ImpactSource = { kind: 'CHAPTER' | 'CHARACTER' | 'WORLD_RECORD' | 'ASSET' | 'CREATIVE_STORYBOARD'; id: string; label: string; binding: unknown };
 export type ImpactNode = { key: string; kind: string; id: string; label: string; version: number; status: string; feature?: string; stale: boolean; locked: boolean; lock_version: number; refresh_candidate: boolean; refresh_reason: string | null; knowledge_category?: string; evidence: { key: string; label: string; state: string; recorded_version?: number | null; current_version?: number | null }[] };
 export type ImpactView = { source: ImpactSource; items: ImpactNode[]; coverage: string; inferred: unknown[]; unrecorded_dependencies: 'UNKNOWN'; automatic_regeneration: false };
 export type ImpactPreflight = { id: string; version: number; preflight_digest: string; ready: boolean; source_snapshot?: ImpactSource; maximum_candidates: number; items: { key: string; label: string; blockers: string[] }[]; cost: { state: string; currency: string; estimate_microusd: number | null }; verification: string };
@@ -9,7 +10,8 @@ export type ImpactRefresh = { id: string; version: number; node_key: string; tas
 export function changeImpactClient(client: ExperimentalClient) {
   return {
     sources: (signal?: AbortSignal) => client.get<{ items: ImpactSource[] }>('/change-impact/sources', signal),
-    query: (source: ImpactSource) => client.post<ImpactView>('/change-impact/query', { source: { kind: source.kind, id: source.id } }),
+    query: (source: ImpactSource) => client.post<ImpactView>('/change-impact/query', { source: { kind: source.kind, id: source.id } })
+      .then(value => source.kind === 'CREATIVE_STORYBOARD' ? checkedStoryboardImpact(value, source.id) : value),
     previewDecisions: (source: ImpactSource, selected: ImpactDecisionSelection[]) => client.post<unknown>('/change-impact/decisions/preview',
       { source: { kind: source.kind, id: source.id }, selected }).then(value => checkedDecisionPreview(value, source, selected)),
     saveDecisions: (source: ImpactSource, selected: ImpactDecisionSelection[], preview: ImpactDecisionPreview, requestId: string) => client.post<unknown>('/change-impact/decisions',

@@ -6,6 +6,7 @@ import { changeImpactClient, type ImpactNode, type ImpactPreflight, type ImpactR
 import type { WorkspaceNavigation } from './uxClient';
 import { StudioUsagesPanel } from './StudioUsagesPanel';
 import { ImpactDecisionPanel } from './ImpactDecisionPanel';
+import { StoryboardImpactDecisions } from './StoryboardImpactDecisions';
 
 type Props = { client: ExperimentalClient; onNavigate?: (target: WorkspaceNavigation) => void; readOnly?: boolean };
 const kinds: Record<string, string> = { CHAPTER: '章节', CHARACTER: '角色', WORLD_RECORD: '世界关系 / 知识', ASSET: '资产', PLANNING_NODE: '规划', PLANNING_PROPOSAL: '规划建议', MEDIA_BRIEF: '媒体需求', MEDIA_TASK: '媒体任务', AUDIO_PLAN: '配音计划', SUBTITLES: '字幕视图', EXPORT: '清单导出视图', SHOT: '镜头', SCREENPLAY_SCENE: '剧本场景', STORYBOARD_FRAME: '分镜卡片', MOTION_TASK: '视频任务', AUDIO_MIX: '混音候选' };
@@ -84,6 +85,7 @@ function ImpactWorkspace({ client, onNavigate }: Props) {
   const [sourceKey, setSourceKey] = useState('');
   const source = sources.data?.items.find(item => `${item.kind}:${item.id}` === sourceKey);
   return <Panel title="修改影响与选择性更新">
+    <StoryboardImpactDecisions api={api} />
     <StatusMessage>显示现有故事图谱、规划、资产血缘和生产来源中实际记录的关联。缺失关系保持未知。原稿、Canon 和已满意成果不会自动改写。</StatusMessage>
     <div className="experimental-actions"><Button disabled={sources.loading} onClick={() => { setSourceKey(''); sources.reload(); }}>刷新可访问来源</Button><Button disabled={refreshes.loading} onClick={refreshes.reload}>刷新更新任务</Button></div>
     <ResourceState loading={sources.loading} error={sources.error} />

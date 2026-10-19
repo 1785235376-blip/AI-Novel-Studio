@@ -107,6 +107,8 @@ def test_retained_guard_revocation_at_original_write_rolls_back_checkpoint(rig, 
 
 def test_original_mounted_file_route_fails_closed_while_modern_owner_ports_are_unwired(mounted, monkeypatch):
     e = mounted
+    monkeypatch.setattr(e.experimental.change_impact_service, '_storyboard_reader_factory', None)
+    monkeypatch.setattr(e.experimental.change_impact_service, '_graph_reader_factory', None)
     monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'change_impact_v2,temporal_story_graph_v2,world_character_engines_v2,asset_lineage_v2,narrative_production_v2')
     body = {'source': {'kind': 'CREATIVE_STORYBOARD', 'id': 'board'},
         'selected': [{'key': 'CREATIVE_GRAPH_NODE:untrusted', 'expected_version': 1, 'choice': 'REBUILD'}]}

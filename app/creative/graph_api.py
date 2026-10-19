@@ -108,6 +108,9 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             return invoke(nid, token, branch, "domain.read", source)
         return invoke(nid, token, branch, permission, checked)
 
+    from .impact_reads import bind_graph_reads
+    bind_graph_reads(service, graph_invoke)
+
     def model_call(request, nid, token, branch, permission, method, *args):
         def operation(actor, scope, guard):
             authority = capture_host(request, token)

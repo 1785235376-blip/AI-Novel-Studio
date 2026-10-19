@@ -71,6 +71,9 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
         return call(request, nid, token, branch, permission, callback)
 
+    from .impact_reads import bind_storyboard_reads
+    bind_storyboard_reads(service, storyboard_call)
+
     if director_images is not None:
         from .director_image_api import create_director_image_router
         router.include_router(create_director_image_router(director_images, invoke,

@@ -15,7 +15,7 @@ from pydantic import Field
 from ..source_privacy import source_privacy_status
 from .common import DomainService, StaleSourceError, change_row, check_version, new_row, snapshot
 from .media import CoverBriefIn, StoryboardBriefIn, RegisteredLocalImageWorkflowAdapter, StrictModel, digest, production_environment, supported_local_image
-from .storyboard_impact_adapter import SOURCE_KIND as STORYBOARD_SOURCE, StoryboardObservation
+from .storyboard_impact_adapter import SOURCE_KIND as STORYBOARD_SOURCE, StoryboardObservation, StoryboardReaders
 
 
 class SourceRef(StrictModel):
@@ -85,6 +85,15 @@ class ChangeImpactService(DomainService):
             from .flags import enabled_flags
             enabled = lambda name: name in enabled_flags()
         self.enabled = enabled
+        self._storyboard_reader_factory = None
+        self._graph_reader_factory = None
+
+    def storyboard_readers(self, request, token, branch):
+        """Bind original-owner factories to this request, never retain credentials."""
+        if self._storyboard_reader_factory is None or self._graph_reader_factory is None:
+            raise FileNotFoundError('CHANGE_IMPACT_STORYBOARD_READ_OWNER_UNAVAILABLE')
+        index, graph = self._graph_reader_factory(request, token, branch)
+        return StoryboardReaders(self._storyboard_reader_factory(request, token, branch), index, graph)
 
     def _active(self):
         if not all(self.enabled(f) for f in ('change_impact_v2', 'temporal_story_graph_v2', 'asset_lineage_v2')):
