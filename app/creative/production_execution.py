@@ -51,6 +51,7 @@ class ProductionExecutionService:
         self.audio_store, self.vault, self.transport = audio_store, vault, transport
         self.benchmark_video = None
         self.comic_images = None
+        self.comic_handoff = None
         from ..services.studio_video_execution import StudioVideoExecution
         self.video = StudioVideoExecution(video_owner)
         from .graph_asset_inputs import GraphAssetInputs
@@ -68,6 +69,8 @@ class ProductionExecutionService:
     def configure_comic(self, comic):
         from .comic_image_generation import ComicImageGeneration
         self.comic_images = ComicImageGeneration(self, comic)
+        from ..experimental.comic_timeline_handoff import ComicTimelineHandoff
+        self.comic_handoff = ComicTimelineHandoff(comic, self)
 
     def _comic_owner(self):
         if self.comic_images is None:
@@ -1260,6 +1263,9 @@ class ProductionExecutionService:
             if row["version"] != proof["input_version"] + 1 or row["timeline_digest"] != proof["output_digest"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_RECEIPT_CORRUPT")
             result["edit_receipt"] = proof
+        if 'comic_handoff_origin' in row:
+            from ..experimental.comic_timeline_handoff import validate_timeline_origin
+            result['comic_handoff_origin'] = validate_timeline_origin(row, history=history)
         if 'storyboard_origin' in row:
             from .storyboard import validate_storyboard_timeline_origin
             result['storyboard_origin'] = validate_storyboard_timeline_origin(row, history=history)
@@ -1602,6 +1608,12 @@ class ProductionExecutionService:
             if (row.get("_owner_actor_id") or (row["version"], row["sha256"], row["kind"]) !=
                     (source["version"], source["digest"], source["asset_kind"])):
                 raise StaleSourceError("STUDIO_TIMELINE_SOURCE_CHANGED")
+            if '_comic_page_origin' in row:
+                if self.comic_handoff is None:
+                    raise ValueError('COMIC_HANDOFF_ORIGINAL_OWNER_REQUIRED')
+                from ..services.comic_page_origin import record
+                origin = record(row)
+                self.comic_handoff.source_current(nid, scope, origin['actor'], row, guard)
             self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
         guard()
 

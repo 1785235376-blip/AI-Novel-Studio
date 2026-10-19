@@ -22,7 +22,8 @@ def handoff(rig, monkeypatch):
     monkeypatch.setenv('EXPERIMENTAL_FEATURES', ','.join(sorted(FEATURES)))
     comic = ComicLayoutsService(rig.raw_store, rig.novels, rig.chapters, None, rig.assets,
                                independent_store=rig.store)
-    return ComicTimelineHandoff(comic, production)
+    production.configure_comic(comic)
+    return production.comic_handoff
 
 
 def page(rig, handoff, *, approved=True, layers=False, text=False, shift=0):
@@ -255,7 +256,7 @@ def test_original_uploaded_artwork_preserves_native_bounded_read_boundary(rig, h
         assert image.getpixel((144, 320)) == (17, 34, 51)
         assert image.getpixel((24, 602)) == (0, 0, 0)
     assert before == rig.raw_store.read(rig.nid, rig.scope)
-    rig.assets.update_metadata(asset['id'], {'filename': 'source-edited.png'}, expected_version=reviewed['version'])
+    rig.assets.update_metadata(asset['id'], {'parameters': {'note': 'source-edited'}}, expected_version=reviewed['version'])
     with pytest.raises(ValueError): preview(rig, handoff, body)
 
 

@@ -159,6 +159,9 @@ class IndependentWorkspaceService:
                     or origin.get("incarnation") != row.get("_project_binding", {}).get("incarnation")
                     or not row.get("_origin_provenance")):
                 raise ValueError("CREATIVE_ASSET_ADAPTER_REQUIRED")
+        if '_comic_page_origin' in row:
+            from ..services.comic_page_origin import record
+            record(row)
         return row
 
     def _view(self, nid, scope, row):
@@ -166,7 +169,27 @@ class IndependentWorkspaceService:
         if isinstance(public.get("parameters"), dict):
             # Only current scoped projections disclose source/relationship IDs.
             public["parameters"].pop("asset_lineage_v2", None)
-        provenance = self._production_provenance(nid, scope, row) if row.get("_studio_result_origin") else self.lineage.asset(nid, scope, row["id"], include_impact=False)
+        if '_comic_page_origin' in row:
+            from ..services.comic_page_origin import record, project
+            origin = record(row)
+            public['comic_page'] = project(origin)
+            # No Comic/source-store read under an Asset/project lease. The
+            # original Timeline phase rechecks actual current page approval.
+            integrity = 'DELETED' if row.get('deleted_at') else 'VERIFIED'
+            if integrity == 'VERIFIED':
+                try: self.assets.content(row['id'], branch_id=scope.get('branch_id'))
+                except (FileNotFoundError, ValueError): integrity = 'CONTENT_UNAVAILABLE'
+            provenance = {'id': row['id'], 'label': row['filename'], 'kind': row['kind'],
+                'version': row['version'], 'digest': row['sha256'], 'deleted': bool(row.get('deleted_at')),
+                'integrity': integrity, 'origin': 'DERIVED_PROCESSING',
+                'license': {'label': 'UNSPECIFIED', 'source': '', 'note': ''},
+                'license_verification': 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION',
+                'operation': 'Original Comic whole-page render copy', 'parents': [],
+                'sources': [{**copy.deepcopy(origin['source']), 'state': 'UNVERIFIED'}],
+                'stale': True, 'source_task_id': None, 'generation': None,
+                'reference_only': True, 'product_acceptance': 'LOCAL_REQUIRED'}
+        else:
+            provenance = self._production_provenance(nid, scope, row) if row.get("_studio_result_origin") else self.lineage.asset(nid, scope, row["id"], include_impact=False)
         if "_manual_mask_origin" in row:
             origin = self.assets._manual_record(row)
             public["manual_mask"] = {"contract": origin["contract"],

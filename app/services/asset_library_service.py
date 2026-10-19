@@ -57,7 +57,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review", "_comic_page_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -204,7 +204,7 @@ class AssetLibraryService:
                _initial_prompt_write: dict | None = None,
                _initial_model_reference: dict | None = None, _model_reference_expected_retry_id: str | None = None,
                _initial_video_reference: dict | None = None, _video_reference_expected_retry_id: str | None = None,
-               _initial_comic_ora: dict | None = None):
+               _initial_comic_ora: dict | None = None, _initial_comic_page: dict | None = None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -246,6 +246,20 @@ class AssetLibraryService:
             identity["_project_binding"] = copy.deepcopy(binding)
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
+        if _initial_comic_page is not None:
+            from .comic_page_origin import marker, validate_png, FEATURES
+            origin = marker(_initial_comic_page)
+            if (binding is None or owner_actor_id is not None or not callable(guard)
+                    or kind != 'image' or media_type != 'image/png' or not FEATURES.issubset(required_features)
+                    or any(v is not None for v in (_initial_text_result, _initial_studio_result, _initial_manual_mask,
+                        _initial_model_reference, _initial_video_reference, _initial_prompt_write, _initial_comic_ora))
+                    or (origin['scope_key'], origin['incarnation'], origin['png_sha256']) !=
+                       (binding['scope_key'], binding['incarnation'], identity['sha256'])
+                    or idempotency_key != 'comic-page:' + origin['receipt_id'] + ':' + str(origin['index'])):
+                raise ValueError('COMIC_PAGE_ORIGIN_INVALID')
+            validate_png(data, origin)
+            identity.update(_comic_page_origin=origin, source_asset_ids=[],
+                            source_job_id=None, provider_id=None, model_id=None)
         if _initial_comic_ora is not None:
             from .comic_ora_origin import marker, FEATURES
             origin = marker(_initial_comic_ora)
@@ -423,6 +437,31 @@ class AssetLibraryService:
                 if _video_reference_expected_retry_id is not None and (video_prior is None or video_prior["id"] != _video_reference_expected_retry_id):
                     raise ValueError("VIDEO_REFERENCE_RETRY_CHANGED")
             comic_orphan_verified = False
+            if _initial_comic_page is not None:
+                expected_id = identity['_comic_page_origin']['asset_id']
+                for planned_path in (self._meta_path(expected_id), self._bin_path(expected_id)):
+                    try: planned_info = planned_path.lstat()
+                    except FileNotFoundError: continue
+                    if (not stat.S_ISREG(planned_info.st_mode)
+                            or getattr(planned_info, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0x400)):
+                        raise AssetIdempotencyConflict('COMIC_PAGE_STAGED_PATH_INVALID')
+                if self._meta_path(expected_id).exists():
+                    existing = self._load(expected_id)
+                    if (existing.get('novel_id') != novel_id or existing.get('idempotency_key') != idempotency_key
+                            or any(existing.get(k) != v for k, v in identity.items()) or existing.get('deleted_at')
+                            or not self._in_scope(existing, branch_id, owner_actor_id)):
+                        raise AssetIdempotencyConflict('COMIC_PAGE_STAGED_ID_CONFLICT')
+                    # Indexed native Assets retain the original normal ingestion
+                    # and Timeline content contract; this is not a preview read.
+                    self.content(expected_id, branch_id=branch_id)
+                    guard()
+                    return existing
+                if self._bin_path(expected_id).exists():
+                    # Unindexed bytes require the original no-follow bounded
+                    # reader. Windows remains explicitly unsupported here.
+                    self._verified_content({'id': expected_id, 'size': len(data), 'sha256': identity['sha256']},
+                                           max_bytes=self.MAX_BYTES, guard=guard)
+                    comic_orphan_verified = True
             if _initial_comic_ora is not None:
                 # Exact preallocated ID is journaled before this call. Never
                 # discover/adopt another actor's record via a generic list.
@@ -462,7 +501,8 @@ class AssetLibraryService:
                     if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                     if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                     return existing
-            asset_id = identity['_comic_ora_origin']['asset_id'] if _initial_comic_ora is not None else str(uuid.uuid4())
+            asset_id = (identity['_comic_page_origin']['asset_id'] if _initial_comic_page is not None else
+                        identity['_comic_ora_origin']['asset_id'] if _initial_comic_ora is not None else str(uuid.uuid4()))
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
                     "version": 1, "deleted_at": None, "idempotency_key": idempotency_key}
             if initial_review is not None:
@@ -1066,6 +1106,11 @@ class AssetLibraryService:
             if expected_version is not None and meta["version"] != expected_version:
                 from .v1_capability_service import CapabilityVersionConflict
                 raise CapabilityVersionConflict(self.public(meta))
+            if '_comic_page_origin' in meta:
+                from .comic_page_origin import record
+                record(meta)
+                if any(meta.get(k) != v for k, v in fields.items()):
+                    raise ValueError('COMIC_PAGE_METADATA_IMMUTABLE')
             if '_comic_ora_origin' in meta and any(meta.get(k) != v for k, v in fields.items()):
                 raise ValueError('COMIC_ORA_STAGED_METADATA_IMMUTABLE')
             if meta.get("_text_result_origin") is not None and any(
