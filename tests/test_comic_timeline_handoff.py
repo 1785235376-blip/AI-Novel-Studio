@@ -62,6 +62,13 @@ def preview(rig, handoff, body):
     return handoff.preview(rig.nid, rig.scope, rig.actor, body)
 
 
+def bounded_read_supported():
+    if os.name == 'nt':
+        from app.services.asset_bounded_file_windows import windows_bounded_read_supported
+        return windows_bounded_read_supported()
+    return bool(getattr(os, 'O_NOFOLLOW', 0) and getattr(os, 'O_NONBLOCK', 0))
+
+
 def test_real_full_page_bytes_order_and_no_mutation(rig, handoff):
     a, b = page(rig, handoff), page(rig, handoff, shift=10)
     body = request([b, a], [7000, 13000])
@@ -244,9 +251,8 @@ def test_original_uploaded_artwork_preserves_native_bounded_read_boundary(rig, h
     saved['review_digest'] = report['review_digest']
     body = request([saved])
     before = rig.raw_store.read(rig.nid, rig.scope)
-    if not getattr(os, 'O_NOFOLLOW', 0) or not getattr(os, 'O_NONBLOCK', 0):
-        # Preserve the original platform boundary. This is a refusal test,
-        # never a claim that artwork-page preview was accepted on Windows.
+    if not bounded_read_supported():
+        # Preserve refusal when the platform's admitted safe reader is absent.
         with pytest.raises(ValueError, match='ASSET_BOUNDED_READ_UNSUPPORTED'):
             preview(rig, handoff, body)
         assert before == rig.raw_store.read(rig.nid, rig.scope)

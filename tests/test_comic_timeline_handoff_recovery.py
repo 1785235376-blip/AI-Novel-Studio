@@ -1,7 +1,7 @@
 """Native File Asset/Timeline commits and explicit crash recovery, no renderer jobs.
 
-Input pages use real Comic shapes/text, with no external raster source. The
-existing Windows no-follow preview/orphan boundary remains a refused case.
+Input pages use real Comic shapes/text. Orphan recovery requires the platform's
+admitted safe reader; absence of that capability remains a refused case.
 """
 import copy
 import hashlib
@@ -15,7 +15,7 @@ from app.asset_providers import AssetProviderRegistry
 from app.experimental.comic_layouts import ComicLayoutsService
 from app.experimental.comic_timeline_handoff import COLLECTION
 from app.services.comic_page_origin import FIELD, FEATURES, record
-from test_comic_timeline_handoff import handoff, page, request, preview
+from test_comic_timeline_handoff import handoff, page, request, preview, bounded_read_supported
 from test_v2_independent_workspace import rig, reopened
 from test_v2_discovered_image_production import owner
 
@@ -310,7 +310,6 @@ def test_revocation_after_asset_metadata_commit_retains_exact_effect_for_explici
 
 
 def test_unindexed_native_png_keeps_original_no_follow_boundary(rig, handoff, monkeypatch):
-    import os
     value = body(rig, handoff, [page(rig, handoff)])
     original = rig.assets.create
     def stopped(*args, **kwargs): raise OSError('simulate crash before Asset commit')
@@ -321,7 +320,7 @@ def test_unindexed_native_png_keeps_original_no_follow_boundary(rig, handoff, mo
     _, images = preview(rig, handoff, value['request'])
     rig.assets._bin_path(aid).write_bytes(images[0])  # real exact-ID binary-before-metadata crash
     monkeypatch.setattr(rig.assets, 'create', original)
-    if not getattr(os, 'O_NOFOLLOW', 0) or not getattr(os, 'O_NONBLOCK', 0):
+    if not bounded_read_supported():
         with pytest.raises(ValueError, match='ASSET_BOUNDED_READ_UNSUPPORTED'): resume(rig, handoff)
         assert rig.assets._bin_path(aid).read_bytes() == images[0]
         assert not rig.assets._meta_path(aid).exists() and not timelines(rig)
