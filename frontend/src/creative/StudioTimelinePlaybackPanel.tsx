@@ -15,8 +15,12 @@ export function StudioTimelinePlaybackPanel({ controller: c }: { controller: Stu
     <p>先保存时间线，再读取缓存方案。首次明确生成经原本地渲染任务；同一版本、来源与编码器复用原私有结果。</p>
     {c.error && <StatusMessage tone="error">{c.error}</StatusMessage>}{c.notice && <StatusMessage tone="info">{c.notice}</StatusMessage>}
     {c.pending && <StatusMessage>正在处理播放缓存：{c.pending}。</StatusMessage>}
+    <label>播放预览分辨率<select value={c.resolution ?? 'ORIGINAL'} disabled={!c.canChooseResolution} onChange={event => c.changeResolution(event.currentTarget.value)}>
+      <option value="ORIGINAL">原分辨率（默认）</option><option value="HALF">1/2 预览（向下对齐偶数像素）</option>
+    </select></label>
+    <p>半分辨率仅缩小本次预览输出，至少 16×16；原作者画布与最终交付尺寸保持原样。音频时间线保持原 WAV 配置。</p>
     <Button disabled={!c.canOperate} loading={c.pending === 'PREVIEW'} onClick={() => void c.previewPlayback()}>读取此保存版本的播放方案</Button>
-    {c.preview && <><p>{c.preview.export_preview.export_profile.preset === 'AUDIO_WAV_PCM16' ? 'PCM16 WAV · 48 kHz · 立体声' : 'H.264 / AAC · 原画布尺寸'} · 原 v{c.preview.export_preview.timeline_snapshot.version} · {c.preview.job?.status ?? '尚未生成'}</p>
+    {c.preview && <><p>{c.preview.export_preview.export_profile.preset === 'AUDIO_WAV_PCM16' ? 'PCM16 WAV · 48 kHz · 立体声' : `H.264 / AAC · ${c.preview.export_preview.export_profile.preview_scale ? '1/2 预览' : '原画布尺寸'}${c.previewDimensions ? ` ${c.previewDimensions[0]}×${c.previewDimensions[1]}` : ''}`} · 原 v{c.preview.export_preview.timeline_snapshot.version} · {c.preview.job?.status ?? '尚未生成'}</p>
       <details><summary>原缓存任务与方案摘要</summary><p><code>{c.preview.job_id}</code></p><p><code>{c.preview.playback_digest}</code></p></details>
       <label><input type="checkbox" disabled={!c.canOperate} checked={c.confirmed} onChange={event => c.setConfirmed(event.currentTarget.checked)} />已核对保存版本、来源和本次播放方案</label>
       {!c.preview.job && <Button disabled={!c.canOperate || !c.confirmed} loading={c.pending === 'BUILD'} onClick={() => void c.buildPlayback()}>明确生成此版本的播放缓存</Button>}

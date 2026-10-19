@@ -12,8 +12,8 @@ import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
 import { checkedTimeline, checkedTimelineRow, timelineSources, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
 import { checkedTimelineTransferInput, checkedTimelineTransferPreview, timelineTransferInputDigest, type TimelineTransferInput, type TimelineTransferPreview } from './studioTimelineTransferTypes';
-import { checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
-import { timelinePlaybackMediaType, checkedTimelinePlayback, type TimelinePlayback } from './studioTimelinePlaybackTypes';
+import { timelineExportDimensions, checkedTimelineExportPreview, checkedTimelineExportProfile, type TimelineExportProfile } from './studioTimelineExportTypes';
+import { timelinePlaybackMediaType, checkedTimelinePlayback, timelinePlaybackResolution, type TimelinePlayback } from './studioTimelinePlaybackTypes';
 import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimelineWaveformTypes';
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 
@@ -308,7 +308,9 @@ function measurement(v: unknown, owner: unknown, executionRecipe: ProductionReci
     if (v.video_codec !== expected[0] || v.audio_codec !== expected[1] || v.container !== expected[2] || v.sample_rate !== 48000 || v.channels !== 2) invalid();
     try {
       const timeline = checkedTimeline(executionRecipe.timeline);
-      if (timeline.schema_version === 3 || v.width !== timeline.width || v.height !== timeline.height || Math.abs((v.fps as number) - timeline.fps) > 0.001
+      if (timeline.schema_version === 3) invalid();
+      const [width, height] = timelineExportDimensions(timeline, checkedTimelineExportProfile(executionRecipe.export_profile ?? { preset: 'REVIEW_MP4' }));
+      if (v.width !== width || v.height !== height || Math.abs((v.fps as number) - timeline.fps) > 0.001
         || Math.abs((v.duration_ms as number) - timeline.duration_ms) > Math.max(100, Math.ceil(2000 / timeline.fps))) invalid();
     } catch { return invalid(); }
   }
@@ -591,26 +593,29 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/waveform-preview`, 'POST', body, signal);
       return checkedTimelineWaveform(raw, source, clipId, { novelId: projectId, branchId: branch });
     },
-    async timelinePlaybackPreview(source: StudioTimelineRow, signal?: AbortSignal): Promise<TimelinePlayback> {
+    async timelinePlaybackPreview(source: StudioTimelineRow, signal?: AbortSignal, resolution?: 'HALF'): Promise<TimelinePlayback> {
+      if (resolution !== undefined && resolution !== 'HALF') invalid();
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-preview`, 'POST', {
-        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest }, signal);
-      return checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch });
+        expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, ...(resolution ? { preview_resolution: resolution } : {}) }, signal);
+      return checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch }, resolution);
     },
     async timelinePlaybackBuild(source: StudioTimelineRow, preview: TimelinePlayback): Promise<TimelinePlayback> {
-      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch });
+      const resolution = timelinePlaybackResolution(preview);
+      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch }, resolution);
       const raw = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-build`, 'POST', {
         expected_version: source.version, reviewed_timeline_digest: source.timeline_digest,
-        reviewed_playback_digest: checked.playback_digest }, undefined, checked.request_id);
-      const result = checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch });
+        reviewed_playback_digest: checked.playback_digest, ...(resolution ? { preview_resolution: resolution } : {}) }, undefined, checked.request_id);
+      const result = checkedTimelinePlayback(raw, source, job, { novelId: projectId, branchId: branch }, resolution);
       if (result.cache_key !== checked.cache_key || result.playback_digest !== checked.playback_digest || !result.job) invalid();
       return result;
     },
     async timelinePlaybackAttestation(source: StudioTimelineRow, preview: TimelinePlayback) {
-      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch }), expected = checked.job;
+      const resolution = timelinePlaybackResolution(preview);
+      const checked = checkedTimelinePlayback(preview, source, job, { novelId: projectId, branchId: branch }, resolution), expected = checked.job;
       if (!expected?.output_candidate || !['SUCCEEDED', 'AWAITING_REVIEW', 'APPROVED'].includes(expected.status)) invalid();
       const proof = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/playback-attestation`, 'POST', {
         expected_version: source.version, reviewed_timeline_digest: source.timeline_digest, reviewed_playback_digest: checked.playback_digest,
-        expected_job_version: expected.version, expected_request_digest: expected.request_digest });
+        expected_job_version: expected.version, expected_request_digest: expected.request_digest, ...(resolution ? { preview_resolution: resolution } : {}) });
       if (!record(proof) || Object.keys(proof).some(key => !['contract', 'cache_key', 'playback_digest', 'job_id', 'job_version', 'request_digest',
         'asset_version', 'sha256', 'byte_count', 'media_type', 'product_acceptance'].includes(key))
         || proof.contract !== 'studio-timeline-playback-attestation/1' || proof.cache_key !== checked.cache_key || proof.playback_digest !== checked.playback_digest

@@ -471,6 +471,13 @@ def render_studio_timeline(timeline, *, source_guard, guard, max_bytes, export_p
         limiter = "alimiter=limit=0.95:level=0:latency=1" if audio_only else "alimiter=limit=0.95"
         filters.append("".join(f"[{label}]" for label in audio)
                        + f"amix=inputs={len(audio)}:duration=first:dropout_transition=0:normalize=0,{limiter}[aout]")
+        if not audio_only and "preview_scale" in compiled["profile"]:
+            from .studio_timeline_export import export_video_dimensions
+            width, height = export_video_dimensions(timeline, compiled["profile"])
+            # Composite/crop/captions retain authored pixels. Only the completed
+            # picture is downscaled under the immutable original export profile.
+            filters.append(f"[{video}]scale={width}:{height}:flags=bilinear,setsar=1[vpreview]")
+            video = "vpreview"
         output = directory / ("timeline." + compiled["extension"])
         command += ["-filter_complex_threads", "1", "-filter_complex", ";".join(filters)]
         if not audio_only:

@@ -3,7 +3,8 @@ import type { ProductionRecipe } from './studioProductionClient';
 import { checkedTimeline, timelineSources, type StudioTimelineRow, type StudioTimelineSource } from './studioTimelineTypes';
 
 export type TimelineExportPreset = 'REVIEW_MP4' | 'DELIVERY_H264_MP4' | 'DELIVERY_VP9_WEBM' | 'AUDIO_WAV_PCM16';
-export type TimelineExportProfile = { preset: TimelineExportPreset; video_bitrate_kbps?: number; audio_bitrate_kbps?: number; crf?: number };
+export const TIMELINE_HALF_PREVIEW_SCALE = 'HALF_EVEN_FLOOR_BILINEAR_V1' as const;
+export type TimelineExportProfile = { preview_scale?: typeof TIMELINE_HALF_PREVIEW_SCALE; preset: TimelineExportPreset; video_bitrate_kbps?: number; audio_bitrate_kbps?: number; crf?: number };
 export type TimelineExportInput = { expected_version: number; reviewed_timeline_digest: string; export_profile: TimelineExportProfile };
 export type TimelineExportPreview = { contract: 'studio-timeline-export-preview/1'; timeline_snapshot: { id: string; version: number; digest: string };
   export_profile: TimelineExportProfile; sources: StudioTimelineSource[]; execution_recipe: ProductionRecipe;
@@ -15,7 +16,8 @@ export const timelineExportPresets: TimelineExportPreset[] = ['REVIEW_MP4', 'DEL
 export function checkedTimelineExportProfile(value: unknown): TimelineExportProfile {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('请明确选择导出配置。');
   const row = value as Record<string, unknown>;
-  if (!timelineExportPresets.includes(row.preset as TimelineExportPreset) || Object.keys(row).some(key => !['preset', 'video_bitrate_kbps', 'audio_bitrate_kbps', 'crf'].includes(key))) throw new Error('导出配置字段无效。');
+  if (!timelineExportPresets.includes(row.preset as TimelineExportPreset) || Object.keys(row).some(key => !['preset', 'video_bitrate_kbps', 'audio_bitrate_kbps', 'crf', 'preview_scale'].includes(key))) throw new Error('导出配置字段无效。');
+  if ('preview_scale' in row && (row.preset !== 'DELIVERY_H264_MP4' || row.preview_scale !== TIMELINE_HALF_PREVIEW_SCALE)) throw new Error('预览缩放策略无效。');
   if (row.preset === 'REVIEW_MP4' || row.preset === 'AUDIO_WAV_PCM16') {
     if (Object.keys(row).some(key => key !== 'preset')) throw new Error('审核 MP4 使用原渲染配置，不接受交付编码参数。');
     return { preset: row.preset };
@@ -27,7 +29,16 @@ export function checkedTimelineExportProfile(value: unknown): TimelineExportProf
     return result;
   };
   return { preset: row.preset as TimelineExportPreset, video_bitrate_kbps: number('video_bitrate_kbps', vp9 ? 2000 : 4000, 100, 20000),
-    audio_bitrate_kbps: number('audio_bitrate_kbps', vp9 ? 128 : 192, 32, 320), crf: number('crf', vp9 ? 30 : 20, 0, vp9 ? 63 : 51) };
+    audio_bitrate_kbps: number('audio_bitrate_kbps', vp9 ? 128 : 192, 32, 320), crf: number('crf', vp9 ? 30 : 20, 0, vp9 ? 63 : 51),
+    ...('preview_scale' in row ? { preview_scale: TIMELINE_HALF_PREVIEW_SCALE } : {}) };
+}
+/** Fixed output-only policy, including deterministic yuv420 even-pixel alignment. */
+export function timelineExportDimensions(timeline: { width: number; height: number }, profile: TimelineExportProfile): [number, number] {
+  const half = checkedTimelineExportProfile(profile).preview_scale === TIMELINE_HALF_PREVIEW_SCALE;
+  const width = half ? Math.floor(timeline.width / 4) * 2 : timeline.width;
+  const height = half ? Math.floor(timeline.height / 4) * 2 : timeline.height;
+  if (half && (width < 16 || height < 16)) throw new Error('半分辨率预览至少需要 32×32 的原画布。');
+  return [width, height];
 }
 export const timelineExportKey = (profile: TimelineExportProfile) => JSON.stringify(checkedTimelineExportProfile(profile));
 export function checkedTimelineExportPreview(value: unknown, source: StudioTimelineRow, profile: TimelineExportProfile): TimelineExportPreview {

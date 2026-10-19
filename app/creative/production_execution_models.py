@@ -433,6 +433,21 @@ class TimelineRender(ExecutionModel):
 class TimelinePlaybackPreview(ExecutionModel):
     expected_version: int = Field(ge=1, le=2**53 - 1)
     reviewed_timeline_digest: Digest
+    preview_resolution: Literal["HALF"] | None = None
+
+    @field_validator("preview_resolution", mode="before")
+    @classmethod
+    def explicit_playback_resolution(cls, value):
+        if value != "HALF":
+            raise ValueError("STUDIO_PLAYBACK_RESOLUTION_INVALID")
+        return value
+
+    @model_serializer(mode="wrap")
+    def omit_default_resolution(self, handler):
+        value = handler(self)
+        if self.preview_resolution is None:
+            value.pop("preview_resolution", None)
+        return value
 
 
 class TimelinePlaybackBuild(TimelinePlaybackPreview):
@@ -483,6 +498,12 @@ class TimelineWaveformSource(TimelineAssetSnapshot):
 
 
 class TimelineWaveformPreview(TimelinePlaybackPreview):
+    @model_validator(mode="after")
+    def no_playback_resolution(self):
+        if "preview_resolution" in self.model_fields_set:
+            raise ValueError("STUDIO_WAVEFORM_PLAYBACK_RESOLUTION_UNSUPPORTED")
+        return self
+
     clip_id: Name
     source_snapshot: TimelineWaveformSource
 

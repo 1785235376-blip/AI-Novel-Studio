@@ -41,6 +41,7 @@ it('is mounted only for original visible verified media and never invokes genera
   const { waveformRow } = await import('./studioTimelineWaveform.testFixtures');
   const command = vi.fn(async () => {}), report = vi.fn();
   const controller: import('./useStudioTimelinePlayback').StudioTimelinePlaybackController = {
+    resolution:'ORIGINAL',changeResolution:vi.fn(),previewDimensions:undefined,canChooseResolution:false,
     available:true, preview:undefined, visible:{ key:'cache-a',url:'blob:review-a',bytes:12,digest:'a'.repeat(64),jobVersion:2,source:waveformRow(),durationMs:5000 },
     positionMs:0,pending:undefined,unknown:undefined,error:'',notice:'',locked:false,dirty:false,canOperate:true,confirmed:false,
     previewPlayback:command,buildPlayback:command,readOriginal:command,loadPlayback:command,cancelOriginal:command,

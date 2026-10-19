@@ -3,16 +3,21 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 import type { ProductionJob } from './studioProductionClient';
-import { timelinePlaybackMediaType, playbackJobMatches, type TimelinePlayback } from './studioTimelinePlaybackTypes';
-import { AUDIO_TIMELINE_MAX_WAV_DURATION_MS } from './studioTimelineExportTypes';
+import { timelinePlaybackMediaType, timelinePlaybackResolution, playbackJobMatches, type TimelinePlayback, type TimelinePlaybackResolution } from './studioTimelinePlaybackTypes';
+import { AUDIO_TIMELINE_MAX_WAV_DURATION_MS, timelineExportDimensions } from './studioTimelineExportTypes';
 import { timelineBinding, timelineSourcesCurrent, type StudioTimelineRow } from './studioTimelineTypes';
 
 type Options = { props: StudioTimelineEditorProps; source?: StudioTimelineRow; isReady: () => boolean;
   onGateChange: (value: boolean) => void; onAuthorityLost: () => void };
 type Entry = { mediaType?: 'audio/wav' | 'video/mp4'; key: string; url: string; bytes: number; digest: string; jobVersion: number; source: StudioTimelineRow; durationMs: number };
+type PreviewMethod = (source: StudioTimelineRow, signal?: AbortSignal, resolution?: TimelinePlaybackResolution) => Promise<TimelinePlayback>;
 type Attempt = { source: StudioTimelineRow; preview: TimelinePlayback };
 /** Private two-entry/50MiB encoded-file cache. Original exports remain their owner. */
 export function useStudioTimelinePlayback(options: Options) {
+  const [resolution, setResolution] = useState<'ORIGINAL' | 'HALF'>('ORIGINAL');
+  const resolutionRef = useRef<'ORIGINAL' | 'HALF'>('ORIGINAL'), resolutionEpoch = useRef(0);
+  const [resolutionRevision, setResolutionRevision] = useState(0);
+  const renderedResolutionEpoch = resolutionRevision;
   const [preview, setPreview] = useState<TimelinePlayback>(), [confirmed, setConfirmed] = useState(false);
   const [pending, setPending] = useState<'PREVIEW' | 'BUILD' | 'READ' | 'BLOB'>(), [unknown, setUnknown] = useState<Attempt>();
   const [visible, setVisible] = useState<Entry>(), [positionMs, setPositionMs] = useState(0);
@@ -30,7 +35,7 @@ export function useStudioTimelinePlayback(options: Options) {
   const available = !!options.props.client.timelinePlaybackPreview && !!options.props.client.timelinePlaybackBuild && !!options.props.client.timelinePlaybackAttestation;
   function clearVisible() { view.current = undefined; setVisible(undefined); setPositionMs(0); }
   function dropCache() { cache.current.forEach(entry => URL.revokeObjectURL(entry.url)); cache.current.clear(); clearVisible(); }
-  function reset() { epoch.current++; reading.current?.abort(); reading.current = undefined; busy.current = false;
+  function reset() { resolutionEpoch.current++; setResolutionRevision(resolutionEpoch.current); resolutionRef.current = 'ORIGINAL'; setResolution('ORIGINAL'); epoch.current++; reading.current?.abort(); reading.current = undefined; busy.current = false;
     attempt.current = undefined; consent.current = ''; proof.current = undefined; dropCache(); setPending(undefined); setUnknown(undefined);
     versions.current.clear(); auxiliaryBusy.current = false; setAuxiliary(undefined);
     setPreview(undefined); setConfirmed(false); setError(''); setNotice(''); latest.current.onGateChange(false); }
@@ -46,12 +51,12 @@ export function useStudioTimelinePlayback(options: Options) {
     for (const [key, entry] of cache.current) if (!timelineSourcesCurrent(entry.source.timeline, options.props.assets)) {
       URL.revokeObjectURL(entry.url); cache.current.delete(key); if (view.current?.key === key) clearVisible();
     }
-    if (!options.props.canMutate || !owns) { epoch.current++; reading.current?.abort(); busy.current = false; setPending(undefined);
+    if (!options.props.canMutate || !owns) { resolutionEpoch.current++; setResolutionRevision(resolutionEpoch.current); epoch.current++; reading.current?.abort(); busy.current = false; setPending(undefined);
       auxiliaryBusy.current = false; setAuxiliary(undefined);
       latest.current.onGateChange(!!attempt.current); dropCache(); consent.current = ''; proof.current = undefined; setPreview(undefined); setConfirmed(false); }
   }, [options.props.assets, options.props.canMutate, owns]);
   function begin(kind: NonNullable<typeof pending>, recovering = false) {
-    if (!current() || busy.current || auxiliaryBusy.current || !available || !recovering && (!latest.current.isReady() || attempt.current)) return;
+    if (renderedResolutionEpoch !== resolutionEpoch.current || !current() || !latest.current.props.canMutate || busy.current || auxiliaryBusy.current || !available || !recovering && (!latest.current.isReady() || attempt.current)) return;
     busy.current = true; latest.current.onGateChange(true); setPending(kind); setError(''); setNotice('');
     return { token: ++epoch.current, client: owner.current };
   }
@@ -66,19 +71,23 @@ export function useStudioTimelinePlayback(options: Options) {
     dropCache(); consent.current = ''; proof.current = undefined; setPreview(undefined); setConfirmed(false);
     setError(apiErrorView(reason, '播放缓存操作失败，请读取原任务核对，勿重复生成。').message);
     if (reason instanceof ApiError && [404, 410, 501].includes(reason.status)) latest.current.props.onUnavailable(); }
+  const requestedResolution = (): TimelinePlaybackResolution | undefined => latest.current.source?.timeline.schema_version !== 3 && resolutionRef.current === 'HALF' ? 'HALF' : undefined;
   function adoptProof(value: TimelinePlayback) {
+    if (timelinePlaybackResolution(value) !== requestedResolution()) throw new Error('播放回执未证明所选预览分辨率，请重新核对；不会自动降级。');
     if (value.job) { const prior = versions.current.get(value.job.id) ?? 0;
       if (value.job.version < prior) throw new Error('晚到回执低于已观察的原任务版本，请重新读取。');
       versions.current.set(value.job.id, value.job.version); }
     proof.current = value; setPreview(value); consent.current = ''; setConfirmed(false);
   }
   async function previewPlayback() {
-    const source = latest.current.source, method = latest.current.props.client.timelinePlaybackPreview;
+    const source = latest.current.source;
+    const method: PreviewMethod | undefined = latest.current.props.client.timelinePlaybackPreview;
     if (!source || !method) return;
     if (source.timeline.schema_version === 3 && source.timeline.duration_ms > AUDIO_TIMELINE_MAX_WAV_DURATION_MS) { setError('当前音频时间线超出固定 WAV 的 25 MiB 上限，请缩短至 136533 毫秒以内并保存。'); return; }
+    const resolution = requestedResolution();
     const request = begin('PREVIEW'); if (!request) return;
     const abort = new AbortController(); reading.current = abort; clearVisible();
-    try { const value = await latest.current.props.mutate(() => latest.current.props.read(() => method(source, abort.signal)));
+    try { const value = await latest.current.props.mutate(() => latest.current.props.read(() => resolution ? method(source, abort.signal, resolution) : method(source, abort.signal)));
       if (!active(request) || !sourceCurrent(source)) return; adoptProof(value);
       setNotice(value.job ? '已读取同一原缓存任务；不会重新编码。核对后可载入已存在的候选。' : value.export_preview.export_profile.preset === 'AUDIO_WAV_PCM16' ? '尚无原缓存任务。确认后才执行一次本地 PCM16 WAV 渲染。' : '尚无原缓存任务。确认后才执行一次本地 H.264/AAC 渲染。');
     } catch (reason) { if (active(request)) fail(reason); }
@@ -98,7 +107,7 @@ export function useStudioTimelinePlayback(options: Options) {
   }
   async function readOriginal() {
     const saved = attempt.current, source = saved?.source ?? latest.current.source;
-    const method = latest.current.props.client.timelinePlaybackPreview; if (!source || !method) return;
+    const method: PreviewMethod | undefined = latest.current.props.client.timelinePlaybackPreview; if (!source || !method) return;
     if (saved) {
       if (!current() || auxiliaryBusy.current) return;
       auxiliaryBusy.current = true; latest.current.onGateChange(true); setAuxiliary('READ'); const client = owner.current, token = epoch.current;
@@ -115,9 +124,10 @@ export function useStudioTimelinePlayback(options: Options) {
         latest.current.onGateChange(busy.current || !!attempt.current); } }
       return;
     }
+    const resolution = requestedResolution();
     const request = begin('READ', true); if (!request) return;
     const abort = new AbortController(); reading.current = abort;
-    try { const result = await latest.current.props.read(() => method(source, abort.signal));
+    try { const result = await latest.current.props.read(() => resolution ? method(source, abort.signal, resolution) : method(source, abort.signal));
       if (!active(request) || !sourceCurrent(source)) return;
       if (result.job) { attempt.current = undefined; setUnknown(undefined); latest.current.props.onJob(result.job); }
       adoptProof(result); setNotice('只读取原任务，没有编码、重试或自动核对候选。');
@@ -187,8 +197,21 @@ export function useStudioTimelinePlayback(options: Options) {
     finally { if (owner.current === client && epoch.current === token) { auxiliaryBusy.current = false; setAuxiliary(undefined);
       latest.current.onGateChange(busy.current || !!attempt.current); } }
   }
+  function changeResolution(value: string) {
+    if (!['ORIGINAL', 'HALF'].includes(value) || renderedResolutionEpoch !== resolutionEpoch.current || !current()
+      || !latest.current.props.canMutate || !latest.current.isReady() || busy.current || auxiliaryBusy.current || attempt.current
+      || latest.current.source?.timeline.schema_version === 3 || value === resolutionRef.current) return;
+    resolutionEpoch.current++; setResolutionRevision(resolutionEpoch.current); epoch.current++; reading.current?.abort();
+    resolutionRef.current = value as 'ORIGINAL' | 'HALF'; setResolution(value as 'ORIGINAL' | 'HALF');
+    clearVisible(); consent.current = ''; proof.current = undefined; setPreview(undefined); setConfirmed(false); setError('');
+    setNotice('已更改预览分辨率，请重新读取并核对方案后明确生成。'); latest.current.onGateChange(false);
+  }
+  const previewDimensions = preview && options.source && options.source.timeline.schema_version !== 3
+    ? timelineExportDimensions(options.source.timeline, preview.export_preview.export_profile) : undefined;
   const visibleCurrent = owns && options.props.canMutate && visible && sourceCurrent(visible.source) ? visible : undefined;
-  return { available, preview: owns && options.props.canMutate ? preview : undefined, visible: visibleCurrent, positionMs: visibleCurrent ? positionMs : 0,
+  return { available, resolution: options.source?.timeline.schema_version === 3 ? 'ORIGINAL' as const : resolution, changeResolution, previewDimensions,
+    canChooseResolution: owns && available && options.props.canMutate && options.isReady() && !busy.current && !auxiliaryBusy.current && !unknown && options.source?.timeline.schema_version !== 3,
+    preview: owns && options.props.canMutate ? preview : undefined, visible: visibleCurrent, positionMs: visibleCurrent ? positionMs : 0,
     pending, unknown: owns ? unknown : undefined, error: owns ? error : '', notice: owns ? notice : '',
     locked: busy.current || auxiliaryBusy.current || !!unknown, dirty: owns && (!!pending || !!unknown || !!auxiliary || confirmed),
     canOperate: owns && available && !busy.current && !auxiliaryBusy.current && !unknown && options.isReady(), confirmed,
@@ -196,7 +219,7 @@ export function useStudioTimelinePlayback(options: Options) {
     canReadDuringBuild: owns && !!unknown && !auxiliaryBusy.current,
     canCancel: owns && options.props.canMutate && !auxiliaryBusy.current && !!(proof.current ?? attempt.current?.preview)
       && (!preview?.job || ['QUEUED', 'RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(preview.job.status)),
-    setConfirmed: (value: boolean) => { if (!current() || busy.current || auxiliaryBusy.current || attempt.current || !proof.current) return;
+    setConfirmed: (value: boolean) => { if (renderedResolutionEpoch !== resolutionEpoch.current || !current() || busy.current || auxiliaryBusy.current || attempt.current || !proof.current) return;
       consent.current = value ? proof.current.playback_digest : ''; setConfirmed(value); },
     reportPosition: (key: string, seconds: number) => { if (!current() || view.current?.key !== key || !sourceCurrent(view.current.source)
       || !Number.isFinite(seconds)) return; setPositionMs(Math.min(view.current.durationMs, Math.max(0, Math.round(seconds * 1000)))); },

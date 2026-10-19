@@ -17,13 +17,17 @@ import time
 
 from ..media_files import MediaValidationError
 
+PREVIEW_SCALE = "HALF_EVEN_FLOOR_BILINEAR_V1"
+
 EXPORT_PRESETS = ("REVIEW_MP4", "DELIVERY_H264_MP4", "DELIVERY_VP9_WEBM", "AUDIO_WAV_PCM16")
 
 
 def normalize_export_profile(value):
-    if not isinstance(value, dict) or set(value) - {"preset", "video_bitrate_kbps", "audio_bitrate_kbps", "crf"}:
+    if not isinstance(value, dict) or set(value) - {"preset", "video_bitrate_kbps", "audio_bitrate_kbps", "crf", "preview_scale"}:
         raise ValueError("STUDIO_TIMELINE_EXPORT_PROFILE_INVALID")
     preset = value.get("preset")
+    if "preview_scale" in value and (preset != "DELIVERY_H264_MP4" or value["preview_scale"] != PREVIEW_SCALE):
+        raise ValueError("STUDIO_TIMELINE_PREVIEW_SCALE_INVALID")
     if preset not in EXPORT_PRESETS:
         raise ValueError("STUDIO_TIMELINE_EXPORT_PRESET_INVALID")
     if preset in {"REVIEW_MP4", "AUDIO_WAV_PCM16"}:
@@ -36,7 +40,21 @@ def normalize_export_profile(value):
     if (type(video) is not int or not 100 <= video <= 20_000 or type(audio) is not int or not 32 <= audio <= 320
             or type(crf) is not int or not 0 <= crf <= (51 if preset == "DELIVERY_H264_MP4" else 63)):
         raise ValueError("STUDIO_TIMELINE_EXPORT_QUALITY_INVALID")
-    return {"preset": preset, "video_bitrate_kbps": video, "audio_bitrate_kbps": audio, "crf": crf}
+    result = {"preset": preset, "video_bitrate_kbps": video, "audio_bitrate_kbps": audio, "crf": crf}
+    if "preview_scale" in value:
+        result["preview_scale"] = PREVIEW_SCALE
+    return result
+
+
+def export_video_dimensions(timeline, profile):
+    """One fixed output-only preview policy; author coordinates stay unchanged."""
+    profile = normalize_export_profile(profile)
+    width, height = timeline["width"], timeline["height"]
+    if "preview_scale" in profile:
+        width, height = width // 4 * 2, height // 4 * 2
+        if width < 16 or height < 16:
+            raise ValueError("STUDIO_TIMELINE_PREVIEW_DIMENSIONS_UNSUPPORTED")
+    return width, height
 
 
 def export_profile_digest(profile):
@@ -117,6 +135,8 @@ def validate_export_admission(timeline, profile, max_bytes):
         raise ValueError("STUDIO_TIMELINE_EXPORT_CAPACITY_INVALID")
     if (timeline.get("schema_version") == 3) != (export_profile_kind(profile) == "audio"):
         raise ValueError("STUDIO_TIMELINE_EXPORT_MEDIA_KIND_MISMATCH")
+    if timeline.get("schema_version") != 3:
+        export_video_dimensions(timeline, profile)
     compiled = compiler_profile(profile, duration_ms=timeline["duration_ms"], max_bytes=max_bytes)
     return {key: compiled[key] for key in ("profile", "extension", "mime", "estimated_max_bytes")}
 
@@ -335,9 +355,10 @@ def prove_output(path, timeline, compiled, *, guard):
         raise MediaValidationError("STUDIO_TIMELINE_OUTPUT_PROBE_INVALID") from error
     formats = set(str(result["format"].get("format_name", "")).split(","))
     expected_format = "mp4" if compiled["extension"] == "mp4" else "webm"
+    width, height = export_video_dimensions(timeline, compiled["profile"])
     if (expected_format not in formats or video.get("codec_name") != compiled["video_codec"]
-            or audio.get("codec_name") != compiled["audio_codec"] or video.get("width") != timeline["width"]
-            or video.get("height") != timeline["height"] or video.get("pix_fmt") != "yuv420p"
+            or audio.get("codec_name") != compiled["audio_codec"] or video.get("width") != width
+            or video.get("height") != height or video.get("pix_fmt") != "yuv420p"
             or not math.isfinite(fps) or abs(fps - timeline["fps"]) > 0.001 or rate != 48000 or channels != 2
             or not math.isfinite(measured_duration)
             or abs(measured_duration - timeline["duration_ms"]) > max(100, math.ceil(2000 / timeline["fps"]))):

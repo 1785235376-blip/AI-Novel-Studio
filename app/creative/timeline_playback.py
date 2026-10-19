@@ -66,15 +66,24 @@ class TimelinePlayback:
         if (row["version"], row["timeline_digest"]) != (body.expected_version, body.reviewed_timeline_digest):
             raise StaleSourceError("STUDIO_TIMELINE_CHANGED")
         # H.264/AAC is the explicit browser-playback profile. Capacity is planned
-        # beforehand; dimensions and the authored timeline remain unchanged.
+        # beforehand; only an explicit proxy profile may scale the final picture.
+        # The original authored timeline and ordinary delivery profiles stay intact.
         seconds = row["timeline"]["duration_ms"] / 1000
         budget = service.workspace.assets.MAX_BYTES
         video = min(1500, max(100, int((budget - 128000) * 8 / (seconds * 1.10) / 1000) - 97))
         profile = {"preset": "DELIVERY_H264_MP4", "video_bitrate_kbps": video, "audio_bitrate_kbps": 96, "crf": 28}
+        resolution = getattr(body, "preview_resolution", None)
         if row["timeline"].get("schema_version") == 3:
+            if resolution is not None:
+                raise ValueError("STUDIO_PLAYBACK_VIDEO_RESOLUTION_REQUIRED")
             profile = {"preset": "AUDIO_WAV_PCM16"}
+        elif resolution is not None:
+            if resolution != "HALF":
+                raise ValueError("STUDIO_PLAYBACK_RESOLUTION_INVALID")
+            from ..services.studio_timeline_export import PREVIEW_SCALE
+            profile["preview_scale"] = PREVIEW_SCALE
         preview = service.timeline_export_preview(nid, scope, actor, tid,
-            {**body.model_dump(), "export_profile": profile}, guard)
+            {**body.model_dump(exclude={"preview_resolution"}), "export_profile": profile}, guard)
         engines = _engines()
         key = _digest(["studio-timeline-playback-cache/1", context, preview["preview_digest"],
             [{"name": item["name"], "sha256": item["sha256"]} for item in engines]])
