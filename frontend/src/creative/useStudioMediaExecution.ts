@@ -1,3 +1,4 @@
+import { sameCompositeCommand } from './studioImageCompositeContract';
 import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { sameComicImageCommand } from './studioComicImageContract';
 import { CUTOUT_WEBP_PROFILE } from './studioCutoutContract';
@@ -35,7 +36,7 @@ export const GRAPH_IMAGE_OPERATION_LABELS: Record<GraphImageOperation, string> =
   'm5.image.t2i': '文字生成图片', 'm5.image.i2i': '参考图片生成图片',
   'm5.image.reference': '多参考图生成图片', 'm5.image.inpaint': '图片局部重绘',
 };
-export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = { ...GRAPH_MEDIA_OPERATION_LABELS, ...GRAPH_IMAGE_OPERATION_LABELS, 'm5.image.upscale': '本地模型图片超分', 'm5.image.cutout': '本地二值遮罩抠图' };
+export const MEDIA_OPERATION_LABELS: Record<MediaOperation, string> = { ...GRAPH_MEDIA_OPERATION_LABELS, ...GRAPH_IMAGE_OPERATION_LABELS, 'm5.image.upscale': '本地模型图片超分', 'm5.image.cutout': '本地二值遮罩抠图', 'm5.image.composite': '本地双层 PNG 合成' };
 export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
   QUEUED: '已入队，尚未执行', RUNNING: '正在执行', SEND_RESERVED: '已记录分派意图', REMOTE_RUNNING: '远端处理中',
   RESULT_READY: '已有结果，等待本地核对', AWAITING_REVIEW: '等待人工审核', SUCCEEDED: '处理完成，需核对审核',
@@ -43,8 +44,9 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
 };
 export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs' | 'target_lufs' | 'denoise_profile' | 'cutout_output';
 type MediaRoute = 'local' | 'cloud';
-const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale'].includes(operation);
+const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale', 'm5.image.composite'].includes(operation);
 type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
+  layerSettings?: Record<string, { visible: boolean; opacity: string }>;
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose'] };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
@@ -57,7 +59,7 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
   'm5.image.reference': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
   'm5.image.inpaint': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength'],
-  'm5.image.cutout': ['cutout_output'], 'm5.image.upscale': ['scale'],
+  'm5.image.composite': [], 'm5.image.cutout': ['cutout_output'], 'm5.image.upscale': ['scale'],
   'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
@@ -75,7 +77,7 @@ const reviewIdentity = (job?: ProductionJob) => job?.output_candidate
 const uncertainFailure = (error: unknown) => !(error instanceof ApiError) || error.status === 0 || error.status >= 500 || [408, 409, 425, 429].includes(error.status) || error.problem.code === 'STUDIO_RESPONSE_INVALID';
 const invalid = (message: string) => new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message });
 function sourceKind(operation: MediaOperation): 'image' | 'video' | 'audio' | undefined {
-  return ({ 'm5.image.i2i': 'image', 'm5.image.reference': 'image', 'm5.image.inpaint': 'image', 'm5.image.upscale': 'image', 'm5.image.cutout': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
+  return ({ 'm5.image.i2i': 'image', 'm5.image.reference': 'image', 'm5.image.inpaint': 'image', 'm5.image.upscale': 'image', 'm5.image.cutout': 'image', 'm5.image.composite': 'image', 'm7.video.i2v': 'image', 'm7.video.v2v': 'video', 'm8.audio.trim': 'audio' } as Partial<Record<MediaOperation, 'image' | 'video' | 'audio'>>)[operation];
 }
 function usableAsset(row: StudioAsset, kind: string) {
   return row.kind === kind && !row.deleted_at && Number.isSafeInteger(row.version) && row.version >= 1 && /^[a-f0-9]{64}$/.test(row.sha256);
@@ -163,7 +165,7 @@ function parameters(draft: Draft): MediaCommand['parameters'] {
   return result;
 }
 function commandFor(draft: Draft, providers: ProductionProvider[], assets: StudioAsset[], requestId: string): MediaCommand {
-  const cutout = draft.operation === 'm5.image.cutout', localTrim = draft.operation === 'm8.audio.trim' || cutout;
+  const cutout = draft.operation === 'm5.image.cutout', localTrim = draft.operation === 'm8.audio.trim' || cutout || draft.operation === 'm5.image.composite';
   const provider = providers.find(row => mediaProviderKey(row) === draft.providerKey && row.operation_id === draft.operation);
   if (provider && routeSelectable(draft.operation) && provider.local !== (draft.route === 'local')) throw new Error('请在所选本地或云端路线中明确选择配置。');
   if (!localTrim && !provider) throw new Error('请选择当前配置中的服务商和模型。');
@@ -177,7 +179,7 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
   if (!sourcesCurrent(sources, assets, draft.operation)) throw new Error('来源素材版本已变化，请重新选取当前版本。');
   const rich = upscale || draft.operation === 'm5.image.reference' || draft.operation === 'm5.image.inpaint' || draft.imageSource !== undefined || draft.imageReferences.length > 0;
   if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5
-    : draft.operation === 'm5.image.reference' ? sources.length > 5 : sources.length !== (cutout || draft.operation === 'm5.image.inpaint' ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
+    : draft.operation === 'm5.image.reference' ? sources.length > 5 : sources.length !== (cutout || draft.operation === 'm5.image.composite' || draft.operation === 'm5.image.inpaint' ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
   if (!kind && sources.length) throw new Error('本操作不接收素材参考。');
   if (draft.licenseNote.length > 2000) throw new Error('来源与授权说明超过长度限制。');
   let image: { image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource } = {};
@@ -197,6 +199,13 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
   return { operation_id: draft.operation, request_id: requestId, provider_id: localTrim ? null : provider!.provider_id,
     model_id: localTrim ? null : provider!.model_id, prompt: localTrim || upscale ? '' : draft.prompt, parameters: chosenParameters,
     ...(draft.operation === 'm8.audio.trim' && chosenParameters.output_format === 'MP3' ? { audio_profile: AUDIO_MP3_PROFILE } : {}),
+    ...(draft.operation === 'm5.image.composite' ? { image_layers: sources.map(source => {
+      const control = draft.layerSettings?.[source.id] ?? { visible: true, opacity: '255' };
+      if (!/^\d+$/.test(control.opacity) || !Number.isSafeInteger(Number(control.opacity)) || Number(control.opacity) > 255) throw new Error('层透明度须为 0–255 整数。');
+      const asset = assets.find(row => row.id === source.id);
+      if (!asset || !usableCutoutSource(asset)) throw new Error('叠层仅接受每张不超过 8 MiB 的已保存 PNG。');
+      return { source: { ...source }, visible: control.visible, opacity: Number(control.opacity) };
+    }) } : {}),
     source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim || upscale ? false : draft.allowCloud, license_note: draft.licenseNote, ...image, ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
 }
 
@@ -323,6 +332,17 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     else { if (typeof value !== 'string') return; next[field] = value; if (field === 'prompt' && (next.imageSource || next.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(next.operation))) next.allowCloud = false; }
     edit(next);
   }
+  function changeLayer(id: string, field: 'visible' | 'opacity', value: boolean | string) {
+    const old = draftRef.current;
+    if (old.operation !== 'm5.image.composite' || !old.sources.some(source => source.id === id)
+      || (field === 'visible' ? typeof value !== 'boolean' : typeof value !== 'string')) return;
+    const entry = old.layerSettings?.[id] ?? { visible: true, opacity: '255' };
+    edit({ ...old, layerSettings: { ...old.layerSettings, [id]: { ...entry, [field]: value } } });
+  }
+  function swapLayers() {
+    const old = draftRef.current;
+    if (old.operation === 'm5.image.composite' && old.sources.length === 2) edit({ ...old, sources: [...old.sources].reverse() });
+  }
   function changeParameter(name: MediaParameter, value: string) { if (parameterNames.includes(name)) edit({ ...draftRef.current, parameters: { ...draftRef.current.parameters, [name]: value } }); }
   function clearUnsupportedParameters() {
     const old = draftRef.current, selectedProvider = providersRef.current.find(row => mediaProviderKey(row) === old.providerKey && row.operation_id === old.operation);
@@ -407,8 +427,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (checked && !row) { setError('来源不可用，请重新读取素材。'); return; }
     let sources = old.sources.filter(source => source.id !== id);
     if (checked && row) {
-      if (old.operation !== 'm5.image.i2i') sources = [];
-      if (sources.length >= 5) { setError('最多选取五张参考图片。'); return; }
+      if (!['m5.image.i2i', 'm5.image.composite'].includes(old.operation)) sources = [];
+      if (sources.length >= (old.operation === 'm5.image.composite' ? 2 : 5)) { setError('最多选取五张参考图片。'); return; }
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
     }
     edit({ ...old, sources });
@@ -492,7 +512,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       const result = await latest.current.read(() => value.client.preview(command));
       if (!live(value) || captured !== inputKey(draftRef.current) || !sourcesCurrent(command.source_snapshots, latest.current.assets, command.operation_id)) return;
       const chosen = providersRef.current.find(row => latest.current.preparedCommand ? row.operation_id === command.operation_id && row.provider_id === command.provider_id && row.model_id === command.model_id : mediaProviderKey(row) === draftRef.current.providerKey);
-      if (!['m8.audio.trim', 'm5.image.cutout'].includes(command.operation_id) && (!chosen || !result.provider || result.provider.route_digest !== chosen.route_digest || result.provider.local !== chosen.local)) throw invalid('服务商路线已变化，请重新读取配置并预览。');
+      if (command.operation_id === 'm5.image.composite' && !sameCompositeCommand(command, result.command)) throw invalid('叠层配方或来源已变化。');
+      if (!['m8.audio.trim', 'm5.image.cutout', 'm5.image.composite'].includes(command.operation_id) && (!chosen || !result.provider || result.provider.route_digest !== chosen.route_digest || result.provider.local !== chosen.local)) throw invalid('服务商路线已变化，请重新读取配置并预览。');
       const next = { value: result, command, input: captured }; previewRef.current = next; setPreview(next);
       setNotice('预览已读取；尚未创建任务，也未执行媒体处理。');
     } catch (reason) { if (live(value)) failure(reason, '制作预览未完成。'); } finally { finish(value); }
@@ -550,10 +571,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!latest.current.canMutate) return false;
     if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh;
     if (kind === 'refresh') return job.owner === 'video' && ['REMOTE_RUNNING', 'RESULT_READY', 'UNKNOWN'].includes(job.status);
-    if (kind === 'reconcile') return job.operation_id === 'm5.image.cutout' && job.status === 'CANCELLED' ? !!job.processing_proof && !job.output_candidate : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
+    if (kind === 'reconcile') return ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && job.status === 'CANCELLED' ? !!job.processing_proof && !job.output_candidate : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
       : job.owner === 'video' ? ['RUNNING', 'SEND_RESERVED', 'UNKNOWN', 'RESULT_READY', 'REVIEWING'].includes(job.status)
       : ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status);
-    return job.operation_id === 'm5.image.cutout' ? ['QUEUED', 'RUNNING', 'UNKNOWN', 'AWAITING_REVIEW'].includes(job.status)
+    return ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) ? ['QUEUED', 'RUNNING', 'UNKNOWN', 'AWAITING_REVIEW'].includes(job.status)
       : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)
       : ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
   }
@@ -561,7 +582,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!canAction(kind)) return; const job = selectedRef.current!;
     const value = begin(kind); if (!value) return; clearCandidate();
     const sentKey = actionIdentity(job, kind); sentActions.current.add(sentKey);
-    const localExecution = kind === 'execute' && job.operation_id === 'm5.image.cutout' && latest.current.cutoutExecution;
+    const localExecution = kind === 'execute' && ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && latest.current.cutoutExecution;
     if (localExecution) executingCutout.current = job;
     const responseFence = controlFence.current;
     try {
@@ -574,7 +595,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       adoptJob(result); markUncertain(false);
       setNotice(kind === 'cancel' ? result.owner === 'timeline'
         ? result.cancellation_mode === 'LOCAL_RENDER_PROCESS_STOP_REQUESTED' ? '已记录停止本地渲染进程的请求；请重新读取原任务核对。已有回执与候选保留，不能继续采用。' : '已取消此未审核时间线结果的采用权限，原回执与候选保留。'
-        : result.operation_id === 'm5.image.cutout' ? '已记录本地取消并撤销候选采用权限；请读取原任务核对。不会自动重试。' : '已丢弃本地结果的采用权限；远端计算可能继续。'
+        : ['m5.image.cutout', 'm5.image.composite'].includes(result.operation_id) ? '已记录本地取消并撤销候选采用权限；请读取原任务核对。不会自动重试。' : '已丢弃本地结果的采用权限；远端计算可能继续。'
         : kind === 'review' ? '已保存审核回执，请核对当前素材库。' : kind === 'reconcile' ? '已核对本地中断状态，未重新提交媒体生成。' : '已收到任务回执，请核对状态与候选结果。');
       if (kind === 'review' && result.status === 'APPROVED') {
         const approved = jobIdentity(result);
@@ -588,7 +609,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const original = executingCutout.current, active = slot.current, method = latest.current.cutoutExecution?.control;
     if (!current() || !latest.current.canMutate || !original || !active || active.kind !== 'execute' || !method || runningControlRef.current) return;
     const expected = selectedRef.current;
-    if (!expected || expected.id !== original.id || expected.request_digest !== original.request_digest || expected.operation_id !== 'm5.image.cutout') return;
+    if (!expected || expected.id !== original.id || expected.request_digest !== original.request_digest || expected.operation_id !== original.operation_id || !['m5.image.cutout', 'm5.image.composite'].includes(expected.operation_id)) return;
     if (kind === 'cancel' && (uncertainRef.current || sentActions.current.has(actionIdentity(expected, 'cancel')))) return;
     if (kind === 'cancel') sentActions.current.add(actionIdentity(expected, 'cancel'));
     const fence = ++controlFence.current; runningControlRef.current = kind; setRunningControl(kind); clearCandidate();
@@ -616,7 +637,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!blob.size || blob.size > 25 * 1024 * 1024 || !blob.type.startsWith(job.output_candidate.kind + '/')) throw invalid('候选媒体类型或大小不正确，请读取任务核对。');
       const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer())), byte => byte.toString(16).padStart(2, '0')).join('');
       if (!stillBound()) return;
-      if (job.operation_id === 'm5.image.cutout' && (blob.type !== (job.command?.parameters.cutout_output === CUTOUT_WEBP_PROFILE ? 'image/webp' : 'image/png') || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
+      if (['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && (blob.type !== (job.command?.parameters.cutout_output === CUTOUT_WEBP_PROFILE ? 'image/webp' : 'image/png') || blob.size !== job.processing_proof?.output_bytes)) throw invalid('本地抠图候选与处理证明不一致，不可审核。');
       if (job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16'
         && (job.output_candidate.kind !== 'audio' || blob.type !== 'audio/wav' || blob.size !== job.media_measurement?.byte_count))
         throw invalid('音频时间线 WAV 候选与绑定的输出配置或实际测量不一致，不可审核。');
@@ -683,7 +704,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function cancelHandoff() {
     handoffRevision.current++; handoffConsumed.current = latest.current.assetHandoff; setHandoffAsset(undefined); setHandoffNotice('已取消素材交接；草稿未改变。');
   }
-  return { cancelHandoff, canHandoff: canClosePrepared && !providerLoading && !props.preparedCommand && handoffOperation(draft.operation), handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
+  return { changeLayer, swapLayers, cancelHandoff, canHandoff: canClosePrepared && !providerLoading && !props.preparedCommand && handoffOperation(draft.operation), handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
     runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? providers : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,

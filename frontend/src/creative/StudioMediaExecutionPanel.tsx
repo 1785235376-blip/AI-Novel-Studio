@@ -24,8 +24,9 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     .sort((left, right) => Number(right.local) - Number(left.local));
   const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
+  const composite = draft.operation === 'm5.image.composite';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
-  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
+  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!composite || usableCutoutSource(asset)) && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   function parameter(name: MediaParameter) {
     const value = draft.parameters[name];
@@ -66,7 +67,17 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
       {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
-      {!trim && !cutout && <>
+      {composite && <fieldset disabled={!state.canEdit}><legend>双层 PNG · 从底到顶</legend>
+        <p>选择两张同尺寸已保存 PNG（64–1024，宽高为 8 的倍数，每张最多 8 MiB）。使用编码色值上的 straight-alpha source-over；最终整数舍入，输出全透明像素清零 RGB。不进行颜色配置转换或模型调用。隐藏层仍核对原来源权限与版本。</p>
+        {draft.sources.map((source, index) => <div key={source.id}>
+          <p>{index === 0 ? '底层' : '顶层'}：{props.assets.find(asset => asset.id === source.id)?.filename || source.id} · v{source.version}</p>
+          <label><input type="checkbox" checked={draft.layerSettings?.[source.id]?.visible ?? true} onChange={event => state.changeLayer(source.id, 'visible', event.target.checked)} />显示第 {index + 1} 层</label>
+          <label>第 {index + 1} 层透明度（0–255）<input type="number" min={0} max={255} step={1} value={draft.layerSettings?.[source.id]?.opacity ?? '255'} onChange={event => state.changeLayer(source.id, 'opacity', event.target.value)} /></label>
+        </div>)}
+        <Button disabled={!state.canEdit || draft.sources.length !== 2} onClick={state.swapLayers}>交换上下层</Button>
+        <p>只创建原 Job 的合成配方。明确执行后生成私有 PNG 候选，核对并审核后才保存正式版本。</p>
+      </fieldset>}
+      {!trim && !cutout && !composite && <>
         {state.routeSelectable && <><label>制作路线<select disabled={!state.canEdit || state.providerLoading} value={draft.route} onChange={event => state.changeRoute(event.target.value as 'local' | 'cloud')}><option value="local">本地</option><option value="cloud">云端</option></select></label><p>{crossRouteReferences ? '参考图配置按本地优先列出，也明确标注云端项。选择配置会同步切换制作路线，并清除旧许可；云端发送仍须单独确认。' : '默认先查看本地配置；可自行切换云端或返回本地。切换不发送输入、不执行模型，也不自动选择服务商。'}</p></>}
         <label>服务商与模型<select disabled={!state.canEdit || state.providerLoading} value={draft.providerKey} onChange={event => state.changeField('providerKey', event.target.value)}>
           <option value="">明确选择当前配置</option>{providers.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id} · {row.local ? '本地' : '云端'}</option>)}
@@ -77,7 +88,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
         {state.provider && !state.provider.local && <label><input type="checkbox" disabled={!state.canEdit} checked={draft.allowCloud} onChange={event => state.changeField('allowCloud', event.target.checked)} />确认本次允许将提示词及选中的参考素材发送到该云端服务，可能产生费用</label>}
       </>}
-      {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : '选取 1 个'}</legend>
+      {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : composite ? '选取 2 张' : '选取 1 个'}</legend>
         {!sourceAssets.length && <p>当前素材库没有对应类型的可用来源。</p>}
         {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={cutout ? draft.sources[0]?.id === asset.id : state.imageInputs ? draft.imageSource?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
         {!!draft.sources.length && <><ul>{draft.sources.map(source => <li key={source.id}>已绑定来源 {props.assets.find(row => row.id === source.id)?.filename || source.id} · v{source.version}</li>)}</ul>
@@ -102,8 +113,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {draft.operation === 'm7.video.v2v' && <label>参考视频用途<select value={draft.videoReferencePurpose || ''} disabled={!state.canEdit} onChange={event => state.changeField('videoReferencePurpose', event.target.value)}><option value="">普通视频来源</option><option value="style">风格参考</option><option value="action">动作参考</option><option value="camera">摄影机参考</option></select></label>}
       {state.provider?.video_capabilities && <p>本地视频配方 {state.provider.video_capabilities.recipe_id}：已核对节点结构，真实推理尚未验证。64–1024、宽高为 32 的倍数，1–10 秒、1–30 fps；输出按模型帧步长取整后的 VP9 WebM。当前本地路线不执行参考视频。</p>}
       {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
-      {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
-      {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'MP3' ? '本地截取输出有损 MP3，片段为 10 毫秒至 120 秒。需已安装的 libmp3lame；32000–48000 Hz 固定 128 kb/s，更低支持采样率固定 64 kb/s。支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；留空为 48000 Hz、双声道。解码 S16 不代表无损。' : draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{trim && <p>淡入与淡出采用线性音量变化，相对截取后的片段起点与终点；两者时长之和不能超过片段时长。留空保持原请求，明确填写 0 表示不淡入或不淡出。先应用增益，再淡入淡出，最后转换采样率与声道。</p>}{trim && <p>采样峰值归一化仅支持 PCM16 WAV 来源与输出，采样率和声道须与来源相同；毫秒起止点须恰好对应完整采样帧。只测所选片段，目标位于手动增益与淡入淡出之前；修正范围 -60 至 +12 dB，静音及超范围请求会拒绝。目标加手动增益不得高于 -1 dBFS，淡入淡出可进一步降低实际峰值。不是响度 LUFS 或真峰值处理。留空保持原行为。</p>}{trim && <p>综合响度匹配：至少 3 秒、同采样率与声道的 PCM16 WAV；与峰值目标、非零手动增益和淡入淡出互斥。先实测所选片段，再施加 -60 至 +12 dB 固定增益并复测；误差须不超过 0.2 LU，真峰值须保留 -1 dBTP 余量。无法安全达到目标时拒绝处理，不使用限幅器。留空保持原行为。</p>}{trim && <p>平稳底噪降噪：至少 1 秒、同采样率同声道的 PCM16 WAV。固定 FFT 配方处理所选片段，不调用模型；不能同时转换格式、归一化或施加非零增益、淡入淡出。可能影响细节，请试听候选后审核；测量值不代表听感改善。</p>}{state.parameterNames.map(parameter)}
+      {!composite && draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
+      {!cutout && !composite && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'MP3' ? '本地截取输出有损 MP3，片段为 10 毫秒至 120 秒。需已安装的 libmp3lame；32000–48000 Hz 固定 128 kb/s，更低支持采样率固定 64 kb/s。支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；留空为 48000 Hz、双声道。解码 S16 不代表无损。' : draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{trim && <p>淡入与淡出采用线性音量变化，相对截取后的片段起点与终点；两者时长之和不能超过片段时长。留空保持原请求，明确填写 0 表示不淡入或不淡出。先应用增益，再淡入淡出，最后转换采样率与声道。</p>}{trim && <p>采样峰值归一化仅支持 PCM16 WAV 来源与输出，采样率和声道须与来源相同；毫秒起止点须恰好对应完整采样帧。只测所选片段，目标位于手动增益与淡入淡出之前；修正范围 -60 至 +12 dB，静音及超范围请求会拒绝。目标加手动增益不得高于 -1 dBFS，淡入淡出可进一步降低实际峰值。不是响度 LUFS 或真峰值处理。留空保持原行为。</p>}{trim && <p>综合响度匹配：至少 3 秒、同采样率与声道的 PCM16 WAV；与峰值目标、非零手动增益和淡入淡出互斥。先实测所选片段，再施加 -60 至 +12 dB 固定增益并复测；误差须不超过 0.2 LU，真峰值须保留 -1 dBTP 余量。无法安全达到目标时拒绝处理，不使用限幅器。留空保持原行为。</p>}{trim && <p>平稳底噪降噪：至少 1 秒、同采样率同声道的 PCM16 WAV。固定 FFT 配方处理所选片段，不调用模型；不能同时转换格式、归一化或施加非零增益、淡入淡出。可能影响细节，请试听候选后审核；测量值不代表听感改善。</p>}{state.parameterNames.map(parameter)}
         {trim && <StudioAudioTrimTimecodes key={JSON.stringify([draft.sources, draft.parameters.in_ms, draft.parameters.out_ms])} start={draft.parameters.in_ms} end={draft.parameters.out_ms} disabled={!state.canEdit}
           onApply={(start, end) => { state.changeParameter('in_ms', start); state.changeParameter('out_ms', end); }} />}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
@@ -112,7 +123,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
     </>}
-      {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
+      {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.composite' ? '本地 CPU 双层 PNG 合成' : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
         <p>预览绑定当前输入、来源版本与处理接口。创建仅保存任务，尚不执行。</p>
         <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表处理已成功执行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>
         <label><input type="checkbox" disabled={state.locked || !props.canMutate} checked={state.previewReviewed} onChange={event => state.confirmPreview(event.target.checked)} />已核对本次输入、来源和处理边界</label>
@@ -128,8 +139,9 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <details><summary>本任务已确认的输入与处理记录</summary>
           <p>这里显示刚读取的服务端公共回执，不会替换当前制作输入，也不代表本机能力验收已通过。</p>
           {job.command ? <>
+            {job.operation_id === 'm5.image.composite' && <p>原任务为本地 CPU 双层 PNG 合成。原层顺序、显隐和透明度保留在下方确认配方中；不调用模型或云端。</p>}
             {job.operation_id === 'm5.image.cutout' && <p>原任务为本地 CPU 二值遮罩抠图，无服务商、模型、提示词或云端发送。来源顺序：原图片，然后是手绘遮罩。</p>}
-            {job.operation_id !== 'm5.image.cutout' && <label>原提示词<textarea readOnly rows={4} value={job.command.prompt} aria-label="原任务已确认的提示词" /></label>}
+            {!['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && <label>原提示词<textarea readOnly rows={4} value={job.command.prompt} aria-label="原任务已确认的提示词" /></label>}
             <h4>原任务参数</h4>
             {Object.keys(job.command.parameters).length ? <dl>{Object.entries(job.command.parameters).map(([name, value]) => <div key={name}>
               <dt>{labels[name as MediaParameter] || name}</dt><dd>{value === null ? '未显式指定' : String(value)}</dd>
@@ -167,6 +179,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         </section> : <p>尚未读取到已核对的{missingAudioMeasurementLabel(job)}输出测量；原请求参数与执行配方不代表实际输出。</p>)}
         {job.processing_proof?.contract === 'studio-image-upscale-proof/1' && <details><summary>图片超分尺寸与摘要证明</summary><p>{job.processing_proof.source_width} × {job.processing_proof.source_height} → {job.processing_proof.output_width} × {job.processing_proof.output_height} · {job.processing_proof.scale} 倍 · PNG {job.processing_proof.output_bytes} 字节</p><code>{job.processing_proof.output_sha256}</code></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout/1' && <details><summary>本地 CPU 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · PNG {job.processing_proof.output_bytes} 字节</p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
+        {job.processing_proof?.contract === 'cpu-two-layer-composite/1' && <details><summary>双层 PNG 合成证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · PNG {job.processing_proof.output_bytes} 字节 · 全透明像素 RGB 已清零</p><p>解码 RGBA 摘要：<code>{job.processing_proof.rgba_sha256}</code></p><p>图层配方摘要：<code>{job.processing_proof.layers_digest}</code></p></details>}
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout-webp/1' && <details><summary>本地无损 WebP 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · WebP {job.processing_proof.output_bytes} 字节</p><p>解码 RGBA 摘要：<code>{job.processing_proof.rgba_sha256}</code></p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
@@ -175,17 +188,17 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {job.error_code && <details><summary>任务回执细节</summary><p>{job.error_code}</p></details>}
         <Button disabled={!state.canRead} loading={state.pending === 'GET'} onClick={() => void state.openJob(job)}>读取当前任务核对</Button>
         <Button disabled={!state.canRead} onClick={state.downloadReceipt}>下载当前已读回执（JSON）</Button>
-        {state.pending === 'execute' && job.operation_id === 'm5.image.cutout' && props.cutoutExecution && <section aria-label="正在执行的本地抠图控制"><p>本地执行请求尚未返回。可读取同一原任务，或明确取消；其它制作修改保持锁定。</p>
+        {state.pending === 'execute' && ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && props.cutoutExecution && <section aria-label={job.operation_id === 'm5.image.composite' ? '正在执行的本地合成控制' : '正在执行的本地抠图控制'}><p>本地执行请求尚未返回。可读取同一原任务，或明确取消；其它制作修改保持锁定。</p>
           <Button disabled={!state.canControlRunning} loading={state.runningControl === 'read'} onClick={() => void state.controlRunningCutout('read')}>读取运行中的原抠图任务</Button>
           <Button variant="danger" disabled={!state.canControlRunning || !state.canCancelRunning || job.status === 'CANCELLED'} loading={state.runningControl === 'cancel'} onClick={() => void state.controlRunningCutout('cancel')}>明确取消运行中的原抠图任务</Button>
         </section>}
         <div className="studio-graph-actions">
           <Button disabled={!state.canAction('execute')} loading={state.pending === 'execute'} onClick={() => void state.action('execute')}>明确执行当前入队任务</Button>
           {job.owner === 'video' && <Button disabled={!state.canAction('refresh')} loading={state.pending === 'refresh'} onClick={() => void state.action('refresh')}>核对已有远端进度</Button>}
-          {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.command?.source_snapshots.some(source => source.kind === 'COMIC_PANEL') && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.operation_id === 'm8.audio.trim' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.operation_id === 'm5.image.cutout' && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
-          {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.operation_id === 'm5.image.cutout' ? '明确取消本地抠图或丢弃候选' : job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
+          {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.command?.source_snapshots.some(source => source.kind === 'COMIC_PANEL') && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.operation_id === 'm8.audio.trim' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
+          {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.operation_id === 'm5.image.composite' ? '明确取消本地合成或丢弃候选' : job.operation_id === 'm5.image.cutout' ? '明确取消本地抠图或丢弃候选' : job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
         </div>
-        <p>{job.operation_id === 'm5.image.cutout' ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>
+        <p>{['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>
         {job.output_candidate && <section aria-label="媒体候选预览与审核"><h4>候选结果</h4><p>{kindLabels[job.output_candidate.kind]}候选 · v{job.output_candidate.version}</p>
           <Button disabled={!state.canLoadCandidate} loading={state.pending === 'CANDIDATE'} onClick={() => void state.loadCandidate()}>读取并核对候选媒体</Button>
           {state.candidate?.kind === 'image' && <img src={state.candidate.url} style={{ maxWidth: '100%', maxHeight: 'var(--layout-inspector-width)' }} alt="本任务经摘要核对的图片候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}

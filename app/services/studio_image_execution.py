@@ -21,8 +21,8 @@ CONTRACT = "studio-image-execution/1"
 MAX_BYTES = 25 * 1024 * 1024
 MAX_VERSION = 2**53 - 1
 STATES = {"QUEUED", "RUNNING", "FAILED", "UNKNOWN", "AWAITING_REVIEW", "REVIEWING", "APPROVED", "CANCELLED"}
-OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
-IMAGE_RUNTIME_FIELDS = {"image_source", "image_references", "mask_source"}
+OPERATIONS = {"m5.image.t2i", "m5.image.i2i", "m5.image.cutout", "m5.image.composite", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
+IMAGE_RUNTIME_FIELDS = {"image_source", "image_references", "mask_source", "image_layers"}
 IDENTITY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$")
 DIGEST = re.compile(r"^[a-f0-9]{64}$")
 
@@ -72,10 +72,17 @@ def _payload(body):
             or set(body) - required - IMAGE_RUNTIME_FIELDS or body["operation_id"] not in OPERATIONS):
         raise ValueError("STUDIO_IMAGE_REQUEST_INVALID")
     for key in IMAGE_RUNTIME_FIELDS.intersection(body):
+        if key == 'image_layers':
+            from .studio_image_composite import layers
+            layers(body[key]); continue
         item = body[key]
         if (key == "image_references" and (not isinstance(item, list) or not 1 <= len(item) <= 5)
                 or key != "image_references" and not isinstance(item, dict)):
             raise ValueError("STUDIO_IMAGE_RUNTIME_INPUT_INVALID")
+    if body['operation_id'] == 'm5.image.composite':
+        if body.get('provider_id') is not None or body.get('model_id') is not None or body.get('prompt') != '' or body.get('parameters') != {} or 'image_layers' not in body:
+            raise ValueError('STUDIO_IMAGE_COMPOSITE_LOCAL_INPUT_REQUIRED')
+        return copy.deepcopy(body)
     if body["operation_id"] == "m5.image.cutout":
         from .studio_image_cutout_webp import parameters_valid
         if body["provider_id"] is not None or body["model_id"] is not None or body["prompt"] != "" or (body["parameters"] != {} and not parameters_valid(body["parameters"])):
@@ -160,7 +167,7 @@ def _context(value, body, actor):
     images = [source for source in sources if source.get("asset_kind") == "image"]
     if body["operation_id"] == "m5.image.i2i" and not 1 <= len(images) <= 5:
         raise ValueError("STUDIO_IMAGE_REFERENCE_COUNT_INVALID")
-    if body["operation_id"] == "m5.image.cutout":
+    if body["operation_id"] in {"m5.image.cutout", "m5.image.composite"}:
         if (value["provider_binding"] is not None or "graph_binding" in value or len(sources) != 2 or len(images) != 2):
             raise ValueError("STUDIO_IMAGE_CUTOUT_INPUT_REQUIRED")
         if not isinstance(value.get("command"), dict) or value["command"].get("allow_cloud") is not False:
@@ -209,6 +216,9 @@ def _context(value, body, actor):
         if PARAMETER in body["parameters"] or any(isinstance(captured, dict) and isinstance(captured.get("parameters"), dict) and PARAMETER in captured["parameters"]
                 for captured in (value.get("command"), value.get("execution_recipe"))):
             validate_context(body, value)
+    if body['operation_id'] == 'm5.image.composite':
+        from .studio_image_composite import validate_context
+        validate_context(body, value)
     _no_secrets(value)
     if len(_canonical(value).encode("utf-8")) > 128 * 1024:
         raise ValueError("STUDIO_IMAGE_CONTEXT_LIMIT")
@@ -284,6 +294,9 @@ def _owned(service, row, nid, branch, actor):
     if row["request_digest"] != context["request_digest"]:
         raise ValueError("STUDIO_IMAGE_REQUEST_BINDING_CHANGED")
     if body["operation_id"] == "m5.image.cutout": _cutout_proof(row)
+    if body['operation_id'] == 'm5.image.composite':
+        from .studio_image_composite import validate_proof
+        validate_proof(row)
     if body["operation_id"] == "m5.image.upscale": _upscale_proof(row)
     if row.get("status") not in STATES or row.get("binding_digest") != _binding(row):
         raise ValueError("STUDIO_IMAGE_JOB_BINDING_CHANGED")
@@ -352,7 +365,7 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
         row["binding_digest"] = _binding(row)
         rows.append(row)
         return copy.deepcopy(row)
-    if (body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale"}
+    if (body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale", "m5.image.composite"}
             or any(source["kind"] == "COMIC_PANEL" for source in context["sources"])):
         if not callable(source_phase):
             raise ValueError("STUDIO_IMAGE_UPSCALE_SOURCE_PHASE_REQUIRED" if body["operation_id"] == "m5.image.upscale"
@@ -413,7 +426,7 @@ def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_re
         _cas(row, expected_version, expected_request_digest)
         if row["status"] == "CANCELLED":
             return copy.deepcopy(row)
-        cpu = row["body"]["operation_id"] == "m5.image.cutout"
+        cpu = row["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"}
         if row["status"] not in ({"QUEUED", "RUNNING", "AWAITING_REVIEW", "UNKNOWN"} if cpu else {"QUEUED", "AWAITING_REVIEW", "UNKNOWN"}):
             raise ValueError("STUDIO_IMAGE_NOT_CANCELLABLE")
         return copy.deepcopy(_advance(row, status="CANCELLED", local_result_discarded=True,
@@ -437,7 +450,7 @@ def reconcile(service, nid, branch, actor, job_id, *, expected_version, expected
             value = _reconcile_review(service, nid, branch, actor, job_id, captured, recover_review)
             guard()
             return value
-        cancelled_cpu = (captured["status"] == "CANCELLED" and captured["body"]["operation_id"] == "m5.image.cutout"
+        cancelled_cpu = (captured["status"] == "CANCELLED" and captured["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"}
             and isinstance(captured.get("publication_ready"), dict) and not captured.get("output_asset_id"))
         if captured["status"] not in {"RUNNING", "UNKNOWN"} and not cancelled_cpu:
             raise ValueError("STUDIO_IMAGE_NOT_RECONCILABLE")
@@ -610,7 +623,7 @@ def _receipt(job):
         "candidate_asset_id": job["output_asset_id"], "candidate_asset_version": job["candidate_asset_version"],
         "output_digest": job["output_digest"], "product_acceptance": "LOCAL_REQUIRED",
         **({"processing_proof": copy.deepcopy(job.get("processing_proof"))}
-           if job["body"]["operation_id"] in {"m5.image.cutout", "m5.image.upscale"} else {})}
+           if job["body"]["operation_id"] in {"m5.image.cutout", "m5.image.upscale", "m5.image.composite"} else {})}
 
 
 def execute(service, nid, branch, actor, job_id, registry, *, expected_version, expected_request_digest,
@@ -658,7 +671,7 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 job = service._mutate(nid, branch, intent)
                 sent = True
         try:
-            cpu = job["body"]["operation_id"] == "m5.image.cutout"
+            cpu = job["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"}
             proof = None
             if cpu:
                 from .studio_image_cutout import render_cutout
@@ -677,7 +690,11 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                     if checkpoints % 16 == 0:
                         guard(); current()
                 checkpoint(); guard(); current()
-                data, proof = render_cutout(*values, checkpoint=checkpoint)
+                if job['body']['operation_id'] == 'm5.image.composite':
+                    from .studio_image_composite import render
+                    data, proof = render(values, job['body']['image_layers'], checkpoint)
+                else:
+                    data, proof = render_cutout(*values, checkpoint=checkpoint)
                 from .studio_image_cutout_webp import parameters_valid, encode
                 webp = parameters_valid(job["body"]["parameters"])
                 if webp:
@@ -752,7 +769,12 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                     raise ValueError("STUDIO_IMAGE_ATTEMPT_CHANGED")
                 fields = {"publication_ready": {"kind": "image", "output_digest": hashlib.sha256(data).hexdigest(),
                     "output_bytes": len(data), "media_type": measured["media_type"]}, **({"processing_proof": proof} if proof is not None else {})}
-                if cpu: _cutout_proof({**row, **fields})
+                if cpu:
+                    if job['body']['operation_id'] == 'm5.image.composite':
+                        from .studio_image_composite import validate_proof
+                        validate_proof({**row, **fields})
+                    else:
+                        _cutout_proof({**row, **fields})
                 if row["body"]["operation_id"] == "m5.image.upscale": _upscale_proof({**row, **fields})
                 return copy.deepcopy(_advance(row, **fields))
             job = service._mutate(nid, branch, publication_ready)
@@ -772,7 +794,7 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                 return copy.deepcopy(row)
             return service._mutate(nid, branch, finish)
         except Exception as exc:
-            code = str(exc) if isinstance(exc, ValueError) and re.fullmatch(r"(?:STUDIO_IMAGE_|IMAGE_MASK_|IMAGE_CUTOUT_)[A-Z0-9_]{1,100}", str(exc)) else ("STUDIO_IMAGE_CUTOUT_FAILED" if job["body"]["operation_id"] == "m5.image.cutout" else "STUDIO_IMAGE_PROVIDER_REQUEST_FAILED")
+            code = str(exc) if isinstance(exc, ValueError) and re.fullmatch(r"(?:STUDIO_IMAGE_|IMAGE_MASK_|IMAGE_CUTOUT_)[A-Z0-9_]{1,100}", str(exc)) else ("STUDIO_IMAGE_CUTOUT_FAILED" if job["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"} else "STUDIO_IMAGE_PROVIDER_REQUEST_FAILED")
             def fail(rows):
                 row = _owned(service, service._find(rows, job_id), nid, branch, actor)
                 if row["status"] == "RUNNING" and row.get("execution_token") == job["execution_token"]:
@@ -786,7 +808,7 @@ def execute(service, nid, branch, actor, job_id, registry, *, expected_version, 
                     _advance(row, status="UNKNOWN" if sent or invoked else "FAILED", error_code=code, **fields)
                     if candidate is not None:
                         row["receipt_digest"] = _digest(_receipt(row))
-                elif (row["status"] == "CANCELLED" and row["body"]["operation_id"] == "m5.image.cutout"
+                elif (row["status"] == "CANCELLED" and row["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"}
                         and row.get("execution_token") == job["execution_token"] and candidate is not None
                         and row.get("output_asset_id") is None):
                     # The cancellation remains terminal. Retain an already

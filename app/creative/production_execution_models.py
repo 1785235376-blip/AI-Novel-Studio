@@ -9,7 +9,7 @@ GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m
     "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
 
 ImageRuntimeOperation = Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
-MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
+MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale", "m5.image.composite"]
 
 
 class ExecutionModel(BaseModel):
@@ -164,6 +164,17 @@ class StoryboardSpeechPin(StoryboardShotPin):
     dialogue_index: int = Field(ge=0, le=199, strict=True)
 
 
+class ImageCompositeLayer(ExecutionModel):
+    source: ProductionSourceSnapshot
+    visible: bool
+    opacity: int = Field(ge=0, le=255)
+
+    @model_serializer(mode="wrap")
+    def canonical_source(self, handler):
+        value = handler(self); value['source'] = image_snapshot(self.source)
+        return value
+
+
 class _MediaCommandShape(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
@@ -181,6 +192,13 @@ class _MediaCommandShape(ExecutionModel):
     storyboard_shot: StoryboardShotPin | None = None
     storyboard_speech: StoryboardSpeechPin | None = None
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
+    image_layers: list[ImageCompositeLayer] | None = Field(default=None, min_length=2, max_length=2)
+
+    @field_validator('image_layers', mode='before')
+    @classmethod
+    def explicit_composite_layers(cls, value):
+        if value is None: raise ValueError('STUDIO_IMAGE_COMPOSITE_TWO_LAYERS_REQUIRED')
+        return value
 
     @field_validator("audio_profile", mode="before")
     @classmethod
@@ -193,13 +211,15 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "storyboard_speech", "audio_profile"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if self.image_layers is not None and self.operation_id != 'm5.image.composite':
+            raise ValueError('STUDIO_IMAGE_COMPOSITE_OPERATION_REQUIRED')
         if self.audio_profile is not None and (self.operation_id != "m8.audio.trim" or self.parameters.output_format != "MP3"):
             raise ValueError("STUDIO_AUDIO_PROFILE_INVALID")
         if self.storyboard_shot is not None:
@@ -227,6 +247,7 @@ class _MediaCommandShape(ExecutionModel):
         allowed = {
             "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
             "m5.image.cutout": {"cutout_output"},
+            "m5.image.composite": set(),
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
             "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
             "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
@@ -254,7 +275,13 @@ class _MediaCommandShape(ExecutionModel):
             or self.parameters.denoising_strength is not None)
         if advanced or self.operation_id in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}:
             self._image_runtime_inputs()
-        if self.operation_id == "m5.image.cutout":
+        if self.operation_id == 'm5.image.composite':
+            from ..services.studio_image_composite import layers
+            checked_layers = layers(self.image_layers)
+            if (self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or p
+                    or [image_snapshot(s) for s in self.source_snapshots] != [item['source'] for item in checked_layers]):
+                raise ValueError('STUDIO_IMAGE_COMPOSITE_LOCAL_INPUT_REQUIRED')
+        elif self.operation_id == "m5.image.cutout":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt or set(p) - {"cutout_output"}:
                 raise ValueError("STUDIO_IMAGE_CUTOUT_LOCAL_ONLY")
             if (len(self.source_snapshots) != 2 or any(s.kind != "ASSET" or s.asset_kind != "image" for s in self.source_snapshots)):
@@ -312,7 +339,7 @@ class _MediaCommandShape(ExecutionModel):
                 raise ValueError("STUDIO_VIDEO_REFERENCE_SNAPSHOT_MISMATCH")
         if self.operation_id == "m5.image.i2i" and len(assets) > 5:
             raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
-        if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout"} and assets:
+        if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"} and assets:
             raise ValueError("STUDIO_OPERATION_UNUSED_ASSET_REFERENCE")
         if any(s.kind not in {"ASSET", "CREATIVE_DOCUMENT", "COMIC_PANEL"} for s in self.source_snapshots):
             raise ValueError("STUDIO_OPERATION_SOURCE_OWNER_UNSUPPORTED")

@@ -273,12 +273,12 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   }, [graphMutation, current]);
   // This exception belongs to the original workspace semaphore, not to a second
   // mutation owner: only the same executing cutout's read/CAS cancel may overlap.
-  const sameCutout = (expected: ProductionJob, value: ProductionJob) => value.operation_id === 'm5.image.cutout' && value.owner === 'image'
+  const sameCutout = (expected: ProductionJob, value: ProductionJob) => ['m5.image.cutout', 'm5.image.composite'].includes(value.operation_id) && value.operation_id === expected.operation_id && value.owner === 'image'
     && value.id === expected.id && value.novel_id === expected.novel_id && value.branch_id === expected.branch_id
     && value.request_id === expected.request_id && value.request_digest === expected.request_digest && value.version >= expected.version;
   const cutoutExecution = {
     execute: (job: ProductionJob) => graphMutation(async () => {
-      if (!writable || job.operation_id !== 'm5.image.cutout' || job.owner !== 'image' || job.status !== 'QUEUED') throw new Error('当前不能执行此本地任务。');
+      if (!writable || !['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) || job.owner !== 'image' || job.status !== 'QUEUED') throw new Error('当前不能执行此本地任务。');
       const lease = { job } as NonNullable<typeof cutoutLease.current>; cutoutLease.current = lease;
       try { return await productionClient.execute(job); }
       finally {

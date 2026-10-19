@@ -244,7 +244,7 @@ class IndependentWorkspaceService:
 
     @staticmethod
     def _production_origin(origin):
-        return "DERIVED_PROCESSING" if origin["operation_id"] in {"m5.image.cutout", "m8.audio.trim", "m9.timeline.multitrack"} else "GENERATED_RESULT"
+        return "DERIVED_PROCESSING" if origin["operation_id"] in {"m5.image.cutout", "m5.image.composite", "m8.audio.trim", "m9.timeline.multitrack"} else "GENERATED_RESULT"
 
     @staticmethod
     def _production_asset_ids(origin):

@@ -269,11 +269,11 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     @router.post("/projects/{nid}/studio/production/preview")
     def preview(nid: str, request: Request, body: MediaCommand, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.preview(nid, scope, actor, body, guard)[0], model=body.operation_id not in {"m8.audio.trim", "m5.image.cutout"})
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.preview(nid, scope, actor, body, guard)[0], model=body.operation_id not in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"})
 
     @router.post("/projects/{nid}/studio/production/jobs", status_code=201)
     def create(nid: str, request: Request, body: MediaCreate, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.create(nid, scope, actor, body, guard), model=body.command.operation_id not in {"m8.audio.trim", "m5.image.cutout"})
+        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.create(nid, scope, actor, body, guard), model=body.command.operation_id not in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"})
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

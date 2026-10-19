@@ -229,6 +229,13 @@ class ProductionExecutionService:
                 data = self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
                 evidence.append({"row": row, "data": data, "snapshot": copy.deepcopy(snapshot)})
             source, mask = evidence
+            if context['operation_id'] == 'm5.image.composite':
+                from ..services.studio_image_composite import validate_inputs
+                width, height, _ = validate_inputs([item['data'] for item in evidence], guard)
+                for item in evidence:
+                    item['measured'] = {'media_type': 'image/png', 'extension': 'png', 'width': width, 'height': height, 'validation': 'DECODED'}
+                guard(); require_flag('asset_lineage_v2')
+                return evidence
             origin = self.workspace.assets._manual_record(mask["row"])
             if (origin["source"] != {"id": sources[0]["id"], "version": sources[0]["version"], "sha256": sources[0]["digest"]}
                     or origin["scope_key"] != context["scope_key"] or origin["incarnation"] != context["incarnation"]):
@@ -253,6 +260,13 @@ class ProductionExecutionService:
 
     @staticmethod
     def _cutout_result_proof(row, inputs):
+        if row['context']['operation_id'] == 'm5.image.composite':
+            from ..services.studio_image_composite import validate_proof
+            validate_proof(row)
+            proof = row['processing_proof']
+            if any((item['measured']['width'], item['measured']['height']) != (proof['width'], proof['height']) for item in inputs):
+                raise ValueError('STUDIO_IMAGE_COMPOSITE_PROOF_CHANGED')
+            return
         proof = row.get("processing_proof")
         mask_proof = inputs[1]["mask_proof"]
         if not isinstance(proof, dict) or any(proof.get(key) != mask_proof[key]
@@ -276,7 +290,7 @@ class ProductionExecutionService:
             row = self.workspace.creative.get(nid, scope, pin["document_snapshot"]["id"])
             validate_shot_pin(row, pin)
             guard()
-        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}:
             images = self._cutout_inputs(nid, scope, context, guard)
             by_id = {item["snapshot"]["id"]: item for item in images}
             return [by_id[source["id"]] if source["kind"] == "ASSET" else self.source(nid, scope, source, guard)
@@ -296,7 +310,7 @@ class ProductionExecutionService:
             or command.operation_id in {"m5.image.reference", "m5.image.inpaint"})
 
     def _binding(self, command):
-        if command.operation_id in {"m8.audio.trim", "m5.image.cutout"}: return None
+        if command.operation_id in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"}: return None
         pid, mid, operation = command.provider_id, command.model_id, command.operation_id
         if operation.startswith("m5."):
             from ..asset_provider_config import load
@@ -453,6 +467,7 @@ class ProductionExecutionService:
             visit(snapshot.model_dump(exclude_none=True), 0)
 
     def _parameters(self, command):
+        if command.operation_id == 'm5.image.composite': return []
         if command.operation_id == "m5.image.cutout": return ["cutout_output"]
         if command.operation_id.startswith("m5."):
             provider = self.image_registry.get(command.provider_id)
@@ -492,7 +507,7 @@ class ProductionExecutionService:
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
                 and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
-        if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
+        if command.operation_id in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: guard = self._cutout_guard(guard)
         with (self.store.existing_owner_only() if any(source.kind == "COMIC_PANEL" for source in command.source_snapshots) else nullcontext()):
             context = self._base(nid, scope, actor, guard)
         if benchmark_binding is not None:
@@ -517,7 +532,7 @@ class ProductionExecutionService:
             from .graph_media_binding import validate_graph_binding
             context["graph_binding"] = validate_graph_binding(graph_binding, context)
         sources = [s.model_dump(exclude={"reference_only"}, exclude_none=True) for s in command.source_snapshots]
-        if command.operation_id == "m5.image.cutout" and graph_binding is not None:
+        if command.operation_id in {"m5.image.cutout", "m5.image.composite"} and graph_binding is not None:
             raise ValueError("STUDIO_IMAGE_CUTOUT_STANDALONE_ONLY")
         evidence = [{"snapshot": source["snapshot"], "measured": source.get("measured")}
             for source in self._sources_current(nid, scope, {**context, "command": command.model_dump(), "sources": sources, "operation_id": command.operation_id}, guard)]
@@ -532,7 +547,7 @@ class ProductionExecutionService:
             command = command.model_copy(update={"parameters": command.parameters.model_copy(update={"speech_rate": 1.0})})
         self._egress(nid, scope, command, binding, guard)
         body = command.model_dump()
-        if command.operation_id == "m5.image.cutout": body["parameters"] = command.parameters.model_dump(exclude_none=True)
+        if command.operation_id in {"m5.image.cutout", "m5.image.composite"}: body["parameters"] = command.parameters.model_dump(exclude_none=True)
         source_dimensions = ({key: evidence[0]["measured"][key] for key in ("width", "height")}
             if command.operation_id == "m5.image.upscale" else None)
         recipe = self._recipe(command, source_dimensions=source_dimensions)
@@ -550,6 +565,9 @@ class ProductionExecutionService:
         return preview, context, command
 
     def _recipe(self, command, *, source_dimensions=None):
+        if command.operation_id == 'm5.image.composite':
+            from ..services.studio_image_composite import recipe
+            return recipe(command.image_layers)
         parameters = command.parameters.model_dump(exclude_none=True)
         recipe = {"contract": "studio-execution-recipe/1", "operation_id": command.operation_id,
             "adapter": "ORIGINAL_HTTP_PROVIDER", "parameters": parameters, "automatic_fallback": False}
@@ -636,7 +654,7 @@ class ProductionExecutionService:
             candidate = {"id": row["output_asset_id"], "version": row.get("candidate_asset_version", row.get("output_asset_version")), "digest": row.get("output_digest"),
                 "kind": "image" if owner == "image" else "audio"}
         return {"contract": "studio-production-job/1", "owner": owner,
-            **({"processing_proof": copy.deepcopy(row.get("processing_proof"))} if context.get("operation_id") in {"m5.image.cutout", "m5.image.upscale"} else {}),
+            **({"processing_proof": copy.deepcopy(row.get("processing_proof"))} if context.get("operation_id") in {"m5.image.cutout", "m5.image.upscale", "m5.image.composite"} else {}),
             **{key: copy.deepcopy(row.get(key)) for key in ("id", "novel_id", "branch_id", "version", "status", "request_digest", "receipt_digest", "attempt", "created_at", "updated_at", "error_code", "review_state", "cancellation_mode", "needs_reconciliation", "execution_state")},
             "operation_id": row.get("context", {}).get("operation_id"), "output_candidate": candidate,
             "timeline_snapshot": copy.deepcopy(row.get("context", {}).get("timeline_snapshot")),
@@ -663,13 +681,13 @@ class ProductionExecutionService:
         payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id"})
         payload["parameters"] = command.parameters.model_dump(exclude_none=True)
         # Keep the exact reviewed command for later egress and route rechecks.
-        context["command"] = copy.deepcopy(preview["command"]) if command.operation_id == "m5.image.cutout" else command.model_dump()
+        context["command"] = copy.deepcopy(preview["command"]) if command.operation_id in {"m5.image.cutout", "m5.image.composite"} else command.model_dump()
         branch = scope.get("branch_id")
         if command.operation_id.startswith("m5."):
             if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._comic_owner().queue_phase(nid, scope, context, guard))
-            elif command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
+            elif command.operation_id in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}:
                 guard = self._cutout_guard(guard)
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._cutout_queue_phase(nid, scope, context, guard))
@@ -880,7 +898,7 @@ class ProductionExecutionService:
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding)
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
             raise CapabilityVersionConflict(self.view(row, owner))
-        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: guard = self._cutout_guard(guard)
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: guard = self._cutout_guard(guard)
         branch = scope.get("branch_id")
         recover = lambda captured: self._recover_media_candidate(nid, scope, actor, captured, context, guard,
             graph_source_guard=graph_source_guard)
@@ -981,7 +999,7 @@ class ProductionExecutionService:
                 if graph_asset_guard is not None: graph_asset_guard()
                 if self.store.incarnation(nid) != context["incarnation"]:
                     raise StaleSourceError("STUDIO_OWNER_CHANGED")
-                if context["operation_id"] == "m5.image.cutout":
+                if context["operation_id"] in {"m5.image.cutout", "m5.image.composite"}:
                     inputs = self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     self._cutout_result_proof(captured, inputs)
                 elif context["operation_id"] == "m5.image.inpaint":
@@ -1062,9 +1080,9 @@ class ProductionExecutionService:
             with self.video_owner.studio_review_phase(jid):
                 return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
                     graph_source_guard=graph_source_guard)
-        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}:
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}:
             guard = self._cutout_guard(guard)
-        if context["operation_id"] == "m5.image.cutout":
+        if context["operation_id"] in {"m5.image.cutout", "m5.image.composite"}:
             self._cutout_result_proof(row, self._cutout_inputs(nid, scope, context, guard))
         _, promote = self._callbacks(nid, scope, actor, context, guard, graph_source_guard=graph_source_guard)
         sources = self._source_guard(nid, scope, guard)
@@ -1327,7 +1345,7 @@ class ProductionExecutionService:
                 with self._publication_asset_phase(nid, scope, actor, context, guard):
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
-                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
+                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     for source in context["sources"]:
                         if source["kind"] == "ASSET":
                             row = self.workspace._row(nid, scope, source["id"])
@@ -1367,7 +1385,7 @@ class ProductionExecutionService:
                 with asset_phase:
                     if self.store.incarnation(nid) != context["incarnation"]: raise StaleSourceError("STUDIO_OWNER_CHANGED")
                     if graph_asset_guard is not None: graph_asset_guard()
-                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
+                    if context["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
                     for source in context["sources"]:
                         if source["kind"] == "ASSET":
                             row = self.workspace._row(nid, scope, source["id"])
@@ -1489,10 +1507,10 @@ class ProductionExecutionService:
         host_guard = guard
         def guard():
             host_guard()
-            if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"}:
+            if command.operation_id in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}:
                 from ..experimental.flags import require_flag
                 require_flag("asset_lineage_v2")
-            if command.operation_id not in {"m5.image.cutout", "m8.audio.trim"}:
+            if command.operation_id not in {"m5.image.cutout", "m8.audio.trim", "m5.image.composite"}:
                 from .ai_execution import require_execution
                 require_execution()
                 binding = context.get("provider_binding")
@@ -1525,7 +1543,7 @@ class ProductionExecutionService:
                 expected_version=action.expected_version, expected_request_digest=action.expected_request_digest,
                 guard=guard, source_guard=lambda: self._sources_current(nid, scope, context, guard), dispatch_guard=before_send,
                 read_images=lambda: ([item["data"] for item in self._cutout_inputs(nid, scope, context, guard)]
-                    if command.operation_id in {"m5.image.cutout", "m5.image.inpaint"} else [source_guard(s)["data"] for s in context["sources"] if s["kind"] == "ASSET" and s["asset_kind"] == "image"]), publish=publish)
+                    if command.operation_id in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"} else [source_guard(s)["data"] for s in context["sources"] if s["kind"] == "ASSET" and s["asset_kind"] == "image"]), publish=publish)
         elif owner == "video":
             def resolve(binding):
                 if self._binding(command) != binding: raise StaleSourceError("STUDIO_PROVIDER_ROUTE_CHANGED")
