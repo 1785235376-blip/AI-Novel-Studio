@@ -1,48 +1,48 @@
 # Studio V2 current continuation checkpoint
 
-Updated 2026-10-18 20:50 UTC. This document inventories bounded additions, not a
-replacement for the frozen feature matrix or a V2 percentage/Release declaration.
-The source pin below identifies the latest bounded implementation; archive and product heads remain distinct.
+Updated 2026-10-19 00:22 UTC. This inventories bounded additions and does not
+replace frozen requirements or declare a V2 release.
 
-## Source and publication
+## Current source and publication
 
-Current checkpoint: 2026-10-18 20:50 UTC. Working branch:
-work/dot-recovered-20261018. Latest committed product source is
-79fbb1e5d80574e513cd51c09b54118b12c80d90 (guarded IMAGE/ORA UI and font closure).
-Latest byte-verified public archive is
-b6e00c9d5601140760fc97c98d99569ed7242afa on
-archive/verified-studio-v2-20261017-5a6f697. Archive HEAD and product HEAD are
-different identities; the archive stores prerequisite-bound incremental bundles.
-The restored local source contains the integrated working product, whereas the
-archive branch's ordinary source tree is not the current product tree.
+Working branch: work/dot-recovered-20261018.
+Latest integrated runtime product: b81b3aad9b28f3f20ee7ef73005b998fe926aa82.
+Latest archived source/report checkpoint: 3313a7b662c8661da7ca09881c7c6a0aa3ff2b2e.
+Later local ledger-only reconciliation: 01e84594; not in that archive.
+Latest verified public archive: 8d3ae719ffbf512e23105f6be383f5011caea5e5,
+parent 78f7cc006015a6a34d5d8747dd553c874a92f421,
+on archive/verified-studio-v2-20261017-5a6f697.
+All 14 changed files / 5,304,287 bytes were anonymously verified by exact parent,
+paths, bytes, SHA256 and Git blob identities. Source and archive HEADs differ:
+archive delivery is prerequisite-bound Git bundles, not updated PR source trees.
 
-Anonymous remote ref inspection at 18:20 UTC confirmed:
-- main fed2404c8e30b44061b7139dced45b7f3301601c
-- PR #47 head a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
-- PR #48 head 58bbaad11360330d51f49fc2bb78a955a26469f0
-- archive 0e5cd80918e8022bee1f94f9295b22c206e0ac77
+Latest runtime slice: saved Comic IMAGE-panel LOCAL T2I request through original
+Image candidate/review and separate explicit DRAFT adoption. File80, PG80 with
+exact 14-table cleanup, PUBLIC6, pinnedCJK2, rootUI119 plus TS/Vite/token pass.
+Actual mounted API capture is decoded by original clients. Synthetic provider;
+live model quality/browser/Windows/full-V2 acceptance remains open.
+See docs/delivery/v2-development/comic-image-integration-20261019.md.
 
-The new GAP-BACKLOG-2026-10-19-r2 was fully read: 1326 lines, 134744 bytes,
-SHA256 0fa7530806476c6a8e4e53e207e468ea6c6ed93b55f3a155796c8fde694b0fd8.
-Its appendix B includes SPEC-2026.10.19-r1. DIF-01..12 and
-IMAGE-COMIC-01..20 join the same formal V2 gate alongside the original frozen
-requirements. Old grouped gap counts and percentages are historical and cannot
-measure this expanded release scope. The fixed-ID reconciliation is recorded in
-docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json and its companion scope report.
-Its 425 linked IDs are an index, not equally weighted features or a percentage denominator.
-No new requirement is accepted merely because it has a similarly named owner.
+Fresh read-only upstream observation at 2026-10-18 23:56–23:57 UTC:
+- main: fed2404c8e30b44061b7139dced45b7f3301601c
+- PR47 / feature/v2-narrative-platform: a072cf907f574ae7cfebcc8f413e2f1a7fa4a6e3
+- PR48 / work/dot-usability-20261015: 58bbaad11360330d51f49fc2bb78a955a26469f0
+Both PRs remain open drafts, unmerged. No main merge, force push, Release,
+paid API/quota or user Windows/GPU work.
 
-Camera and video benchmark work is committed after targeted File/PostgreSQL,
-193 combined UI tests, TypeScript, production build and six PUBLIC artifact checks;
-3036 checked source paths match the committed source. It is not expanded into
-further P5 work. Next priority is the existing Story/Impact and
-Graph/Director owners, followed by standalone model-free Comic editing inside
-Image Studio. Actual target-software and final release acceptance remain separate.
+Current independent work, not yet integrated or accepted:
+1. Source-free IMAGE-only Comic authorization and actual Image/Comic bootstrap,
+   preserving NOVEL compatibility and restricting source-derived material.
+2. Read-only exact Story fact→shot→asset→saved Graph/Timeline use inspection.
+Neither is full semantic rebuild or full Comic completion.
 
-These archive uploads do not update the PR source branches. No main merge,
-force push, formal Release, paid API, new quota or user Windows/GPU work occurred.
-Publishing a new public integration branch remains distinct from local integration
-and existing archive uploads; no new branch was pushed in this checkpoint.
+Frozen requirements remain the original Roadmap, Oct16 anchor and r2 gap backlog.
+The r2 full source is 1326 lines / 134744 bytes, SHA256
+0fa7530806476c6a8e4e53e207e468ea6c6ed93b55f3a155796c8fde694b0fd8.
+The 425 linked IDs in docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json are an index,
+not equal-weight feature counts or a percentage denominator.
+Detailed earlier checkpoints below are historical evidence; later dated entries
+supersede earlier current/next wording.
 
 ## Evidence since the earlier checkpoint
 
