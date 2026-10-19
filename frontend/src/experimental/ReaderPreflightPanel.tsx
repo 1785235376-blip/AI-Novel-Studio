@@ -6,6 +6,8 @@ import { Field, ResourceState, useAction, useResource } from './shared';
 import { readerPreflightClient, type ReaderSettings, type ReadAnchor, type DraftStatus, type PreflightResult } from './readerPreflightClient';
 import './readerPreflight.css';
 export type ReaderPreflightProps = { client: ExperimentalClient; localDraftState?: DraftStatus[]; onNavigate?: (value: WorkspaceNavigation) => void };
+type PreflightSeverityFilter = 'ALL' | 'BLOCKER' | 'WARNING' | 'INFO';
+const severityLabels: Record<PreflightSeverityFilter, string> = { ALL: '全部', BLOCKER: '阻塞', WARNING: '警告', INFO: '提示' };
 let sequence = 0;
 export function ReaderPreflightPanel(props: ReaderPreflightProps) {
   const identity = useMemo(() => ++sequence, [props.client]);
@@ -24,6 +26,11 @@ function ReaderBody({ client, localDraftState = [], onNavigate }: ReaderPrefligh
   const [find, setFind] = useState(''), [replacement, setReplacement] = useState(''), [kind, setKind] = useState<'naming' | 'replacement'>('naming');
   const [format, setFormat] = useState('docx'), [report, setReport] = useState<PreflightResult>();
   const [reportState, setReportState] = useState('');
+  const [severityFilter, setSeverityFilter] = useState<PreflightSeverityFilter>('ALL');
+  const allFindings = report?.findings || [];
+  const severityCounts: Record<'BLOCKER' | 'WARNING' | 'INFO', number> = { BLOCKER: 0, WARNING: 0, INFO: 0 };
+  for (const finding of allFindings) if (finding.severity === 'BLOCKER' || finding.severity === 'WARNING' || finding.severity === 'INFO') severityCounts[finding.severity] += 1;
+  const visibleFindings = severityFilter === 'ALL' ? allFindings : allFindings.filter(finding => finding.severity === severityFilter);
   const alive = useRef(true), initialized = useRef(false), epoch = useRef(0), noteEpoch = useRef(0);
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (settings.data) { setSaved(settings.data); if (!initialized.current) { initialized.current = true; setEditing(settings.data); } } }, [settings.data]);
@@ -82,7 +89,7 @@ function ReaderBody({ client, localDraftState = [], onNavigate }: ReaderPrefligh
       <p>只读检查不会保存正文、接受草稿、创建导出或调用模型。实际导出仍由原导出中心捕获自己的不可变快照。未覆盖来源会明确标为 UNKNOWN。</p>
       <Button disabled={action.busy || reading.loading || !!reading.error} onClick={() => action.run(async () => { const result = await api.check(format, localDraftState); if (alive.current) { setReport(result); setReportState(draftKey); } }, '只读检查已完成。请检查覆盖范围与来源版本。')}>运行发布预检</Button>
       {stale && <StatusMessage tone="warning">输入状态或已读取来源已变化，请重新预检。关闭面板后的检查结果不会继续生效。</StatusMessage>}
-      {report && <><p>{report.has_integrity_blockers ? '存在文件完整性阻塞' : '已检查范围内未发现文件完整性阻塞'}。空章节、待审草稿和规则建议不强制禁止导出。</p><ul>{report.coverage.map(c => <li key={c.area}>{c.area}：{c.state}</li>)}</ul>{report.findings.map((f, index) => <article key={index} className="experimental-record"><Badge tone={f.severity === 'BLOCKER' ? 'error' : f.severity === 'WARNING' ? 'warning' : 'neutral'}>{f.severity}</Badge> {f.message}<Button disabled={!onNavigate} onClick={() => onNavigate?.(f.chapter_id ? { kind: 'chapter', id: f.chapter_id, anchor: { offset: 0, scroll: 0 } } : { kind: 'feature', id: f.feature, feature: f.feature })}>打开问题入口 {index + 1}</Button></article>)}</>}
+      {report && <><p>{report.has_integrity_blockers ? '存在文件完整性阻塞' : '已检查范围内未发现文件完整性阻塞'}。空章节、待审草稿和规则建议不强制禁止导出。</p><ul>{report.coverage.map(c => <li key={c.area}>{c.area}：{c.state}</li>)}</ul><div className="experimental-grid"><Field label="问题等级筛选"><select value={severityFilter} onChange={e => setSeverityFilter(e.target.value as PreflightSeverityFilter)}><option value="ALL">全部</option><option value="BLOCKER">阻塞</option><option value="WARNING">警告</option><option value="INFO">提示</option></select></Field><div className="experimental-actions"><Badge tone="error">BLOCKER：{severityCounts.BLOCKER}</Badge><Badge tone="warning">WARNING：{severityCounts.WARNING}</Badge><Badge>INFO：{severityCounts.INFO}</Badge></div></div>{visibleFindings.map(finding => { const originalIndex = allFindings.indexOf(finding); return <article key={originalIndex} className="experimental-record"><Badge tone={finding.severity === 'BLOCKER' ? 'error' : finding.severity === 'WARNING' ? 'warning' : 'neutral'}>{finding.severity}</Badge> {finding.message}<Button disabled={!onNavigate} onClick={() => onNavigate?.(finding.chapter_id ? { kind: 'chapter', id: finding.chapter_id, anchor: { offset: 0, scroll: 0 } } : { kind: 'feature', id: finding.feature, feature: finding.feature })}>打开问题入口 {originalIndex + 1}</Button></article>; })}{visibleFindings.length === 0 && <StatusMessage>{allFindings.length === 0 ? '本次预检结果没有记录问题；零问题不代表完整发布验收通过。' : '当前筛选（' + severityLabels[severityFilter] + '）没有对应等级的问题；筛选不改变全量阻塞结论，零匹配也不代表预检通过。'}</StatusMessage>}</>}
       <Button disabled={!onNavigate} onClick={() => onNavigate?.({ kind: 'feature', id: 'exports', feature: 'exports' })}>打开原导出中心</Button>
     </Panel>
     {action.feedback}
