@@ -1,12 +1,13 @@
 import { productionGraphDefinitions } from './studioProductionGraphContract';
 import type { StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphEdge, StudioGraphNode } from './studioGraphTypes';
+import { GRAPH_LOCAL_SUBGRAPH_PARENT_IDS } from './studioGraphTypes';
 
 export const graphId = (prefix = 'node') => `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`;
 export const blankGraph = (): StudioGraphDefinition => ({ schema_version: 1, title: '独立创作图', nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
 export const imageGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'image_reference', 'image_prompt', 'image_generate', 'media_review', ...productionGraphDefinitions] as const;
 export const videoGraphDefinitions = ['text_input', 'text_reference', 'asset_reference', 'director_plan', 'storyboard_plan', 'storyboard_shot', 'video_generate', 'media_review', 'timeline_export'] as const;
 export const graphCatalogForSchema = (catalog: readonly StudioGraphCatalogDefinition[], schema: number): StudioGraphCatalogDefinition[] => catalog
-  .filter(row => schema === 5 ? videoGraphDefinitions.some(kind => kind === row.id) : schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(row.id)).map(row =>
+  .filter(row => schema === 6 ? GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(kind => kind === row.id) : row.id !== 'local_subgraph' && (schema === 5 ? videoGraphDefinitions.some(kind => kind === row.id) : schema === 4 ? imageGraphDefinitions.some(kind => kind === row.id) : !['image_reference', 'image_prompt', 'image_generate', ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(row.id))).map(row =>
   row.id === 'media_review' && schema === 5 ? { ...row, inputs: [{ id: 'candidate', type: 'VIDEO_CANDIDATE', required: true, multiple: false }] } : row.id === 'timeline_export' && schema === 5 ? { ...row, outputs: [{ id: 'candidate', type: 'VIDEO_CANDIDATE', required: false, multiple: false }] } : row.id === 'human_review' && schema !== 3 ? { ...row, outputs: [] } : row);
 
 /** Local authoring feedback mirrors the typed contract; server validation stays authoritative. */

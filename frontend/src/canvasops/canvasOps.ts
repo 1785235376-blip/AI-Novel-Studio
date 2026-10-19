@@ -86,7 +86,7 @@ const CANVAS_DEFINITION_ID_SET = new Set<string>(CANVAS_DEFINITION_IDS);
  */
 export const CANVAS_NODE_ROLE: Record<StudioGraphDefinitionId, CanvasNodeCategory> = {
   text_input: 'TEXT', text_reference: 'TEXT', draft_prepare: 'TEXT', manual_transform: 'TEXT',
-  director_note: 'TEXT', human_review: 'TEXT', text_generate: 'TEXT',
+  director_note: 'TEXT', human_review: 'TEXT', text_generate: 'TEXT', local_subgraph: 'TEXT',
   asset_reference: 'ASSET',
   media_generate: 'MEDIA', media_review: 'MEDIA', timeline_export: 'MEDIA',
   image_reference: 'IMAGE', image_prompt: 'IMAGE', image_generate: 'IMAGE', image_style: 'IMAGE', image_upscale: 'IMAGE',

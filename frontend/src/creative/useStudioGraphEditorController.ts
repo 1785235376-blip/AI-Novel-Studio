@@ -1,6 +1,8 @@
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { uniqueGraphProviders } from './graphProviderChoices';
 import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
+import { useGraphLocalSubgraphParent } from './useGraphLocalSubgraphParent';
+import { retainsLocalSubgraphTopology } from './graphLocalSubgraph';
 import { buildStoryboardVideoBranches } from './graphStoryboardStarterHelpers';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
@@ -260,7 +262,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       } catch { setError('素材引用与目标图格式或容量不匹配，未改动原图。'); return false; }
     },
   };
-  const dirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
+  const graphDirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
   const independentKey = JSON.stringify([identity, base?.id, base?.version, draft]);
   const independentConfirmed = independentConsent !== '' && independentConsent === independentKey;
   const historyFull = !!base?.capacity && base.capacity.history_used >= base.capacity.history_limit
@@ -335,6 +337,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }, [client, current, read]);
   useEffect(() => { if (active && !denied && !catalog) void load(); }, [active, denied, catalog, load]);
   async function loadImageCatalog() {
+    if (draftRef.current.schema_version === 6) return;
     if (!current() || locked() || externalDirty || executionDirty || !client.graphs.imageCatalog) return;
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
     const getCatalog = client.graphs.imageCatalog;
@@ -345,6 +348,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
 
   async function loadProductionCatalog() {
+    if (draftRef.current.schema_version === 6) return;
     if (!current() || locked() || externalDirty || executionDirty || !client.graphs.productionCatalog) return;
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
     try { const value = await read(() => client.graphs.productionCatalog!()); if (current() && epoch === catalogEpoch.current) { schemaCatalogs.current.set(4, value); setCatalog(value); setNotice('已读取视觉制作节点目录；没有升级图格式、绑定文档或执行模型。'); } }
@@ -360,6 +364,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   const choosePlanningDocument = (value: string) => { if (editable && current() && !locked()) setPlanningChoice(value); };
   async function graphCatalogForRecord(value: StudioGraphRecord, signal?: AbortSignal) {
+    if (value.definition.schema_version === 6) { if (!client.graphs.localSubgraphCatalog) throw new Error('受限子调用目录当前不可用。'); return client.graphs.localSubgraphCatalog(signal); }
     if (value.definition.schema_version === 5) { if (!client.graphs.videoCatalog) throw new Error('视频图目录当前不可用。'); return client.graphs.videoCatalog(signal); }
     if (value.definition.schema_version !== 4) return schemaCatalogs.current.get(value.definition.schema_version) || client.graphs.catalog(signal);
     const production = value.definition.nodes.some(node => productionGraphDefinitions.includes(node.definition_id as typeof productionGraphDefinitions[number]));
@@ -367,6 +372,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     return get(signal);
   }
   async function loadVideoCatalog() {
+    if (draftRef.current.schema_version === 6) return;
     if (!current() || locked() || externalDirty || executionDirty || !client.graphs.videoCatalog) return; const epoch = ++catalogEpoch.current; setLoading(true);
     try { const value = await read(() => client.graphs.videoCatalog!()); if (current() && epoch === catalogEpoch.current) { schemaCatalogs.current.set(5, value); if (draftRef.current.schema_version === 5) setCatalog(value); else setPendingVideoCatalog(value); setNotice('已读取视频图节点目录；旧图未升级，未执行媒体。'); } } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '视频图目录读取失败。').message); } finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }
@@ -379,11 +385,27 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   function chooseShot(value: string) { if (editable && current() && !locked()) setShotChoice(value); }
   const change = useCallback((next: StudioGraphDefinition, record = true) => {
     if (!editable || !current() || saving.current || isBusy?.()) return;
+    if (!retainsLocalSubgraphTopology(draftRef.current, next)) { setError('本首片保持 schema 6 的节点、连接与 pin 不变；请通过新建空图重新明确生成受限父草稿。'); return; }
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
     if (same(draftRef.current, next)) return;
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
     bindingMutationEpoch.current++; crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
   }, [editable, current, isBusy, invalidateCandidate]);
+  const localSubgraph = useGraphLocalSubgraphParent({ client: client.graphs, identity, scope: verificationScope,
+    readable: active && !denied && canMutate && !externalDirty && !executionDirty && !blocked && current(),
+    blank: !base && draft.schema_version === 1 && !draft.nodes.length && !draft.edges.length && !graphDirty,
+    current: () => isVerificationCurrent(), locked, read,
+    onRecords: rows => { if (isVerificationCurrent()) setRecords(rows); },
+    onCatalog: value => { if (isVerificationCurrent()) schemaCatalogs.current.set(6, value); },
+    apply: (next, value, scope) => {
+      if (scope !== reviewedVerificationFence.current.token || !isVerificationCurrent() || !insertionCurrent(insertionScope)
+        || locked() || checking || timelineEditor.formDirty || baseRef.current || draftRef.current.schema_version !== 1
+        || draftRef.current.nodes.length || draftRef.current.edges.length || graphDirty || imageSelectionFence.current?.()) return false;
+      change(next); if (draftRef.current !== next) return false;
+      schemaCatalogs.current.set(6, value); setCatalog(value); setSelected([next.nodes[0].id]);
+      setNotice('受限父草稿已生成，尚未保存或执行。请明确 Save、重新打开，再使用原预检、执行与人工审核。'); return true;
+    } });
+  const dirty = graphDirty || localSubgraph.formDirty;
   const bindingDraftEpoch = bindingMutationEpoch.current;
   const selectedVideoBinding = useGraphSelectedVideoBinding({ definition: draft, selected, catalog, source: providerSource,
     scope: verificationScope, generation: bindingDraftEpoch, current: () => isVerificationCurrent() && bindingDraftEpoch === bindingMutationEpoch.current && !imageSelectionFence.current?.(),
@@ -554,6 +576,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   function addNode(request?: PositionedNodeRequest) { insertNode(kind, request); }
   function insertNode(kind: StudioGraphDefinitionId, request?: PositionedNodeRequest, reviewedPin?: PlanningSnapshot) {
+    if (kind === 'local_subgraph' || draftRef.current.schema_version === 6) { setError('受限首片只通过明确预览生成固定父链，不从通用面板添加节点。'); return; }
     if (reviewedPin && (!insertionCurrent(insertionScope) || !catalog
       || !graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === kind))) return;
     if (request && (request !== insertionRef.current || !insertionCurrent(request.scope)
@@ -695,6 +718,9 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
     if (redo) { setPast(rows => [...rows.slice(-49), structuredClone(draft)]); setFuture(rows => rows.slice(1)); }
     else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
+    if (draft.schema_version === 6 || value.schema_version === 6) {
+      const schema = schemaCatalogs.current.get(value.schema_version); if (schema) setCatalog(schema);
+    }
     crossCopyEpoch.current++; invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
   }
   const downloadPreviewAsset = useCallback((asset: Asset) => read(() => client.download(asset.id)), [read, client]);
@@ -836,6 +862,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }) : [];
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
+    localSubgraph,
     retired, retainedText, retainedTitle,
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,

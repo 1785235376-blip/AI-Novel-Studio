@@ -13,12 +13,16 @@ export type GraphImageOperation = typeof GRAPH_IMAGE_OPERATIONS[number];
 export const GRAPH_VIDEO_OPERATIONS = ['m7.video.t2v', 'm7.video.i2v', 'm7.video.v2v'] as const;
 export const GRAPH_LOCAL_DEPENDENCY_REUSE_MODE = 'OPT_IN_REVIEWED_SCHEMA1_LOCAL_DEPENDENCIES_V1';
 export const GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review'] as const;
+export const GRAPH_LOCAL_SUBGRAPH_CONTRACT = 'creative-graph-local-subgraph/1';
+export const GRAPH_LOCAL_SUBGRAPH_CACHE = 'DISABLED_LOCAL_SUBGRAPH_V1';
+export const GRAPH_LOCAL_SUBGRAPH_CHILD_IDS = ['text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note'] as const;
+export const GRAPH_LOCAL_SUBGRAPH_PARENT_IDS = [...GRAPH_LOCAL_SUBGRAPH_CHILD_IDS, 'human_review', 'local_subgraph'] as const;
 export type GraphVideoOperation = typeof GRAPH_VIDEO_OPERATIONS[number];
 export type GraphUpscaleOperation = 'm5.image.upscale';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
   | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate' | 'media_generate' | 'media_review' | 'timeline_export'
-  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt' | 'storyboard_shot' | 'video_generate';
+  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt' | 'storyboard_shot' | 'video_generate' | 'local_subgraph';
 export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF' | 'MEDIA_CANDIDATE' | 'IMAGE_REFERENCES' | 'IMAGE_PROMPT' | 'DIRECTOR_PLAN' | 'STORYBOARD_DATA' | 'STORYBOARD_SHOT' | 'VIDEO_CANDIDATE';
 export type StudioGraphPort = { id: string; type: StudioGraphPortType; required: boolean; multiple: false };
 export type StudioGraphPosition = { x: number; y: number };
@@ -28,6 +32,8 @@ export type StudioGraphParameters = {
   text?: string;
   result?: string;
   note?: string;
+  graph_id?: string; expected_version?: number; definition_digest?: string; execution_digest?: string;
+  input_node_id?: string; input_port?: 'text'; output_node_id?: string; output_port?: 'draft';
   instruction?: string;
   max_output_tokens?: number;
   asset_id?: string;
@@ -64,7 +70,7 @@ export type StudioGraphEdge = {
   target_port: string;
 };
 export type StudioGraphDefinition = {
-  schema_version: 1 | 2 | 3 | 4 | 5;
+  schema_version: 1 | 2 | 3 | 4 | 5 | 6;
   title: string;
   nodes: StudioGraphNode[];
   edges: StudioGraphEdge[];
@@ -101,7 +107,7 @@ export type StudioGraphParameterSchema = {
     minimum?: number;
     maximum?: number;
     pattern?: string;
-    const?: true;
+    const?: true | string;
     enum?: string[];
   }>;
   required?: string[];
@@ -120,7 +126,7 @@ export type StudioGraphCatalogDefinition = {
 };
 export type StudioGraphCatalog = {
   definitions: StudioGraphCatalogDefinition[];
-  limits: { nodes: 16; edges: 40; definition_bytes: 96000; output_bytes: 64000; graphs: 25; runs: 100; history: 20; runtime_timeout_seconds: 3600; node_timeout_seconds: 5 };
+  limits: { nodes: 16 | 24; edges: 40; definition_bytes: 96000; output_bytes: 64000; graphs: 25; runs: 100; history: 20; runtime_timeout_seconds: 3600; node_timeout_seconds: 5 };
   media_limits?: { nodes: 24; generators: 4; history: 80 };
   capabilities: {
     local_execution: true;
@@ -145,7 +151,10 @@ export type StudioGraphCatalog = {
     parallel_execution: false;
     automatic_retry: false;
     actor_private: true;
-    cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY';
+    cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_SUBGRAPH_CACHE;
+    local_subgraph_contract?: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT; local_subgraph_schema_version?: 6;
+    local_subgraph_depth?: 1; local_subgraph_child_nodes?: 16; local_subgraph_total_nodes?: 24;
+    local_subgraph_cache?: false; local_subgraph_frontend_entry?: false;
     local_dependency_reuse?: typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE;
   };
 };
@@ -168,6 +177,8 @@ export type StudioGraphRecord = StudioGraphOwner & {
 };
 export type StudioGraphIssue = { code: string; node_id?: string };
 export type StudioGraphPreflight = StudioGraphOwner & {
+  graph_schema_version?: 6; local_subgraph_contract?: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT;
+  local_subgraph_bindings?: Record<string, StudioGraphSubgraphBinding>; source_check?: 'CURRENT_PIN_SCOPE_TRANSACTION';
   graph_id: string;
   valid: true;
   executable: boolean;
@@ -212,7 +223,9 @@ export type StudioGraphRun = StudioGraphOwner & {
   current_node_id: string | null;
   node_states: Record<string, StudioGraphNodeState>;
   review: { node_id: string; output_digest: string; draft: StudioGraphDraft } | null;
-  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE };
+  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE | typeof GRAPH_LOCAL_SUBGRAPH_CACHE };
+  local_subgraph_runtime?: { contract: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT; cache_enabled: false;
+    bindings: Record<string, StudioGraphSubgraphBinding>; receipts: Record<string, StudioGraphSubgraphReceipt> };
   created_at: string;
   updated_at: string;
   model_called: boolean;
@@ -226,6 +239,17 @@ export type StudioGraphRun = StudioGraphOwner & {
   timeout_seconds: 3600;
   deadline_at: string;
 };
+
+/** Read-only server evidence. These fields are never included in graph/run inputs. */
+export type StudioGraphSubgraphBinding = StudioGraphOwner & {
+  contract: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT; project_incarnation: string; actor: string; call_node_id: string;
+  source: { id: string; version: number; definition_digest: string; execution_digest: string };
+  interface: { input: { id: 'text'; type: 'TEXT'; node_id: string; port: 'text' };
+    output: { id: 'draft'; type: 'DRAFT'; node_id: string; port: 'draft' } };
+  node_count: number; closure_digest: string; binding_digest: string;
+};
+export type StudioGraphSubgraphReceipt = { contract: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT;
+  binding_digest: string; input_digest: string; output_digest: string; steps: number };
 
 export type StudioGraphModelRoute = {
   route_id: string; provider_id: string; model_id: string; display_name: string;

@@ -5,7 +5,8 @@ import { videoGraphDefinitions } from './graphDraft';
 import { checkedPlanningSnapshot, checkedPlanningDocument, checkedPlanningProjection, productionGraphDefinitions, type PlanningDocument, type PlanningSnapshot } from './studioProductionGraphContract';
 import { createDirectorWorkspaceClient } from '../director/directorWorkspaceClient';
 import { ApiError, type CollaborationContext } from '../api';
-import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, GRAPH_LOCAL_DEPENDENCY_REUSE_MODE, GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS } from './studioGraphTypes';
+import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, GRAPH_LOCAL_DEPENDENCY_REUSE_MODE, GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS,
+  GRAPH_LOCAL_SUBGRAPH_CONTRACT, GRAPH_LOCAL_SUBGRAPH_CACHE, GRAPH_LOCAL_SUBGRAPH_PARENT_IDS } from './studioGraphTypes';
 import { checkedImageUpscaleProof, checkedImageReferenceMetadata, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs } from './studioImageRuntimeContract';
 import type {
   RecordedGraphMediaCommand, GraphImageOperation, GraphMediaOperation, StudioGraphAction, StudioGraphActionInput, StudioGraphCatalogDefinition, StudioGraphDefinition,
@@ -18,7 +19,7 @@ import type {
   StudioGraphAssetRef, StudioGraphMediaCandidate, StudioGraphMediaRuntime, StudioGraphMediaPreviewInput,
   StudioGraphMediaDispatchInput, StudioGraphMediaJobInput, StudioGraphMediaReviewInput,
   StudioGraphMediaPreview, StudioGraphMediaJob, StudioGraphMediaExecution,
-  GraphTimelineProductionPreview,
+  GraphTimelineProductionPreview, StudioGraphSubgraphBinding, StudioGraphSubgraphReceipt,
 } from './studioGraphTypes';
 import type { ProductionJob, ProductionPreview, RecordedProductionSource, ProductionRecipe } from './studioProductionClient';
 import { graphModelCapabilities, graphModelRuntime } from './studioGraphModelContract';
@@ -39,12 +40,13 @@ const modelDefinitionIds: readonly StudioGraphDefinitionId[] = [...localDefiniti
 const mediaDefinitionIds: readonly StudioGraphDefinitionId[] = ['media_generate', 'media_review'];
 const imageDefinitionIds: readonly StudioGraphDefinitionId[] = ['image_reference', 'image_prompt', 'image_generate'];
 const imageSchemaDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'asset_reference', ...imageDefinitionIds, ...productionGraphDefinitions, 'media_review'];
-const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export', ...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export', ...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate', 'local_subgraph'];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
 const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF', 'MEDIA_CANDIDATE', 'IMAGE_REFERENCES', 'IMAGE_PROMPT', 'DIRECTOR_PLAN', 'STORYBOARD_DATA', 'STORYBOARD_SHOT', 'VIDEO_CANDIDATE'] as const;
 const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
+  local_subgraph: ['graph_id', 'expected_version', 'definition_digest', 'execution_digest', 'input_node_id', 'input_port', 'output_node_id', 'output_port'],
   text_input: ['text'], text_reference: [], draft_prepare: [], manual_transform: ['result'],
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
   text_generate: ['instruction', 'max_output_tokens'],
@@ -57,6 +59,7 @@ const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   image_generate: ['operation_id', 'provider_id', 'model_id', 'parameters', 'allow_cloud', 'license_note'],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
+  local_subgraph: { inputs: { text: 'TEXT' }, outputs: { draft: 'DRAFT' } },
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
   text_reference: { inputs: { text: 'TEXT' }, outputs: { text: 'TEXT' } },
   draft_prepare: { inputs: { text: 'TEXT', direction: 'DIRECTOR_NOTES' }, outputs: { draft: 'DRAFT' } },
@@ -207,7 +210,16 @@ function mediaParameterValues(value: unknown, operation: GraphMediaOperation | G
 function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false, unavailable = false): StudioGraphParameters {
   const row = record(value, input);
   // Redacted references never expose identifiers even if a malformed response includes them.
-  if (unavailable && ['asset_reference', 'director_plan', 'storyboard_plan'].includes(kind)) return {};
+  if (unavailable && ['asset_reference', 'director_plan', 'storyboard_plan', 'local_subgraph'].includes(kind)) return {};
+  if (kind === 'local_subgraph') {
+    if (Object.keys(row).some(key => !parameterKeys.local_subgraph.includes(key))
+      || row.input_port !== undefined && row.input_port !== 'text' || row.output_port !== undefined && row.output_port !== 'draft') invalid(input);
+    const graphId = resourceId(row.graph_id, input);
+    if (!/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}$/.test(graphId)) invalid(input);
+    return { graph_id: graphId, expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, input),
+      definition_digest: digest(row.definition_digest, input), execution_digest: digest(row.execution_digest, input),
+      input_node_id: id(row.input_node_id, input), input_port: 'text', output_node_id: id(row.output_node_id, input), output_port: 'draft' };
+  }
   if ([...imageDefinitionIds, ...productionGraphDefinitions].includes(kind) && Object.keys(row).some(key => !parameterKeys[kind].includes(key))) invalid(input);
   if (kind === 'director_plan' || kind === 'storyboard_plan') return { document_snapshot: checkedPlanningSnapshot(row.document_snapshot, input) };
   if (kind === 'storyboard_shot') { if (Object.keys(row).some(key => !parameterKeys[kind].includes(key))) invalid(input); return { shot_id: resourceId(row.shot_id, input), shot_version: integer(row.shot_version, 1, Number.MAX_SAFE_INTEGER, input), shot_digest: digest(row.shot_digest, input) }; }
@@ -266,11 +278,11 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
 }
 function definition(value: unknown, input = false, unavailable = new Set<string>()): StudioGraphDefinition {
   const row = record(value, input);
-  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3 && row.schema_version !== 4 && row.schema_version !== 5) invalid(input);
+  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3 && row.schema_version !== 4 && row.schema_version !== 5 && row.schema_version !== 6) invalid(input);
   const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version >= 3 ? 24 : 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
-    if (row.schema_version === 5 ? !videoGraphDefinitions.includes(kind as typeof videoGraphDefinitions[number]) : row.schema_version === 4 ? !imageSchemaDefinitionIds.includes(kind) || ['storyboard_shot', 'video_generate'].includes(kind)
-      : [...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(kind) || kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3) invalid(input);
+    if (row.schema_version === 6 ? !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(value => value === kind) : kind === 'local_subgraph' || (row.schema_version === 5 ? !videoGraphDefinitions.includes(kind as typeof videoGraphDefinitions[number]) : row.schema_version === 4 ? !imageSchemaDefinitionIds.includes(kind) || ['storyboard_shot', 'video_generate'].includes(kind)
+      : [...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(kind) || kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3)) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
       position: position(node.position, input), parameters: parameters(node.parameters, kind, input, unavailable.has(nodeId)) };
@@ -295,6 +307,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     return result;
   });
   if (row.schema_version === 5 && nodes.filter(node => ['video_generate', 'timeline_export'].includes(node.definition_id)).length > 4) invalid(input);
+  if (row.schema_version === 6 && nodes.filter(node => node.definition_id === 'local_subgraph').length > 1) invalid(input);
   if (row.schema_version === 4) {
     if (nodes.filter(node => ['image_generate', 'image_upscale'].includes(node.definition_id)).length > 4) invalid(input);
     for (const node of nodes) {
@@ -396,6 +409,17 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
 function schema(value: unknown, kind: StudioGraphDefinitionId): StudioGraphParameterSchema {
   const row = record(value), properties = record(row.properties);
   if (row.type !== 'object' || row.additionalProperties !== false) invalid();
+  if (kind === 'local_subgraph') {
+    if (Object.keys(properties).length !== 8 || parameterKeys[kind].some(key => !Object.hasOwn(properties, key))) invalid();
+    const required = ['graph_id', 'expected_version', 'definition_digest', 'execution_digest', 'input_node_id', 'output_node_id'];
+    const requiredSource = list(row.required, 6).map(value => text(value, 64));
+    if (requiredSource.length !== required.length || required.some(key => !requiredSource.includes(key))) invalid();
+    if (record(properties.input_port).const !== 'text' || record(properties.output_port).const !== 'draft') invalid();
+    return { type: 'object', additionalProperties: false, properties: { graph_id: { type: 'string', maxLength: 240 },
+      expected_version: { type: 'integer', minimum: 1 }, definition_digest: { type: 'string' }, execution_digest: { type: 'string' },
+      input_node_id: { type: 'string' }, input_port: { type: 'string', const: 'text' },
+      output_node_id: { type: 'string' }, output_port: { type: 'string', const: 'draft' } }, required };
+  }
   if (kind === 'timeline_export') {
     if (JSON.stringify(row).length > 128000 || Object.keys(properties).length !== 4 || Object.keys(properties).some(key => !parameterKeys[kind].includes(key))) invalid();
     return { type: 'object', additionalProperties: false, properties: { timeline_snapshot: { type: 'object' }, edit_operations: { type: 'array' },
@@ -485,10 +509,10 @@ function catalogDefinition(value: unknown, mediaEnabled = false, videoSchema = f
     if (new Set(result.map(port => port.id)).size !== Object.keys(expected).length || result.length !== Object.keys(expected).length) invalid();
     return result;
   }
-  if (['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate'].includes(kind) && row.default_parameters !== null) invalid();
+  if (['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate', 'local_subgraph'].includes(kind) && row.default_parameters !== null) invalid();
   return { id: kind, version: 1, inputs: checkedPorts(row.inputs, 'inputs'), outputs: checkedPorts(row.outputs, 'outputs'),
     parameters_schema: schema(row.parameters_schema, kind),
-    default_parameters: ['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate'].includes(kind) ? null : parameters(row.default_parameters, kind),
+    default_parameters: ['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate', 'local_subgraph'].includes(kind) ? null : parameters(row.default_parameters, kind),
     executable, model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
 
@@ -743,6 +767,22 @@ function runStatus(value: unknown): StudioGraphRunStatus {
 
 function catalog(value: unknown): StudioGraphCatalog {
   const row = record(value), limits = record(row.limits), capabilities = record(row.capabilities);
+  if (capabilities.local_subgraph_contract !== undefined) {
+    const expectedLimits: StudioGraphCatalog['limits'] = { nodes: 24, edges: 40, definition_bytes: 96000, output_bytes: 64000,
+      graphs: 25, runs: 100, history: 20, runtime_timeout_seconds: 3600, node_timeout_seconds: 5 };
+    const expectedCapabilities: StudioGraphCatalog['capabilities'] = { local_execution: true, chapter_required: false,
+      model_execution: false, external_reference_execution: false, external_reference_detach: false, binary_cache: false,
+      parallel_execution: false, automatic_retry: false, actor_private: true, cache_mode: GRAPH_LOCAL_SUBGRAPH_CACHE,
+      local_subgraph_contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT, local_subgraph_schema_version: 6, local_subgraph_depth: 1,
+      local_subgraph_child_nodes: 16, local_subgraph_total_nodes: 24, local_subgraph_cache: false, local_subgraph_frontend_entry: false };
+    closed(capabilities, Object.keys(expectedCapabilities)); closed(limits, Object.keys(expectedLimits));
+    if (row.media_limits !== undefined || Object.entries(expectedCapabilities).some(([key, value]) => capabilities[key] !== value)
+      || Object.entries(expectedLimits).some(([key, value]) => limits[key] !== value)) invalid();
+    const definitions = list(row.definitions, 7).map(item => catalogDefinition(item));
+    if (definitions.length !== 7 || new Set(definitions.map(item => item.id)).size !== 7
+      || definitions.some(item => !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(kind => kind === item.id))) invalid();
+    return { definitions, limits: expectedLimits, capabilities: expectedCapabilities };
+  }
   const expectedLimits: StudioGraphCatalog['limits'] = { nodes: 16, edges: 40, definition_bytes: 96000, output_bytes: 64000, graphs: 25, runs: 100, history: 20, runtime_timeout_seconds: 3600, node_timeout_seconds: 5 };
   const expectedCapabilities: StudioGraphCatalog['capabilities'] = {
     local_execution: true, chapter_required: false, model_execution: false, external_reference_execution: false,
@@ -815,7 +855,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
   const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string;
-    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
+    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; localPins: Record<string, StudioGraphParameters>; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
   const observedRuns = new Map<string, string>();
   const observedReviewRecoveries = new Map<string, { version: number; workflow: string;
     nodes: Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
@@ -840,6 +880,41 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     }
     return { project_id: projectId, scope };
   }
+  function subgraphBindings(value: unknown): Record<string, StudioGraphSubgraphBinding> {
+    const rows = record(value); if (Object.keys(rows).length > 1) invalid();
+    return Object.fromEntries(Object.entries(rows).map(([key, value]) => {
+      const row = record(value), call = id(key), ownership = owner(row);
+      closed(row, ['contract', 'project_id', 'project_incarnation', 'scope', 'actor', 'call_node_id', 'source', 'interface', 'node_count', 'closure_digest', 'binding_digest']);
+      if (row.contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT || row.call_node_id !== call || new TextEncoder().encode(JSON.stringify(row)).length > 4096) invalid();
+      const source = record(row.source), boundary = record(row.interface), entry = record(boundary.input), exit = record(boundary.output);
+      closed(source, ['id', 'version', 'definition_digest', 'execution_digest']); closed(boundary, ['input', 'output']);
+      closed(entry, ['id', 'type', 'node_id', 'port']); closed(exit, ['id', 'type', 'node_id', 'port']);
+      if (entry.id !== 'text' || entry.type !== 'TEXT' || entry.port !== 'text' || exit.id !== 'draft' || exit.type !== 'DRAFT' || exit.port !== 'draft') invalid();
+      const binding: StudioGraphSubgraphBinding = { ...ownership, contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT,
+        project_incarnation: text(row.project_incarnation, 256), actor: text(row.actor, 240), call_node_id: call,
+        source: { id: resourceId(source.id), version: integer(source.version, 1), definition_digest: digest(source.definition_digest), execution_digest: digest(source.execution_digest) },
+        interface: { input: { id: 'text', type: 'TEXT', node_id: id(entry.node_id), port: 'text' }, output: { id: 'draft', type: 'DRAFT', node_id: id(exit.node_id), port: 'draft' } },
+        node_count: integer(row.node_count, 1, 16), closure_digest: digest(row.closure_digest), binding_digest: digest(row.binding_digest) };
+      return [call, binding];
+    }));
+  }
+  function subgraphRuntime(value: unknown, hidden: boolean): NonNullable<StudioGraphRun['local_subgraph_runtime']> {
+    const row = record(value); closed(row, ['contract', 'cache_enabled', 'bindings', 'receipts']);
+    if (row.contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT || row.cache_enabled !== false) invalid();
+    // A masked response never revives private binding or receipt material.
+    if (hidden) return { contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT, cache_enabled: false, bindings: {}, receipts: {} };
+    const bindings = subgraphBindings(row.bindings), rawReceipts = record(row.receipts);
+    if (Object.keys(rawReceipts).length > 1) invalid();
+    const receipts = Object.fromEntries(Object.entries(rawReceipts).map(([key, value]) => {
+      const row = record(value), binding = bindings[id(key)];
+      closed(row, ['contract', 'binding_digest', 'input_digest', 'output_digest', 'steps']);
+      if (!binding || row.contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT || row.binding_digest !== binding.binding_digest || row.steps !== binding.node_count) invalid();
+      const receipt: StudioGraphSubgraphReceipt = { contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT, binding_digest: digest(row.binding_digest),
+        input_digest: digest(row.input_digest), output_digest: digest(row.output_digest), steps: integer(row.steps, 1, 16) };
+      return [key, receipt];
+    }));
+    return { contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT, cache_enabled: false, bindings, receipts };
+  }
   function checkedGraph(value: unknown, expectedId?: string): StudioGraphRecord {
     const row = record(value), ownership = owner(row), graphId = resourceId(row.id);
     if (expectedId !== undefined && expectedId !== graphId) mismatch();
@@ -851,7 +926,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (new Set(referenceStates.map(item => item.node_id)).size !== referenceStates.length) invalid();
     const unavailable = new Set(referenceStates.filter(item => item.state === 'UNAVAILABLE').map(item => item.node_id));
     const checkedDefinition = definition(row.definition, false, unavailable);
-    const assetNodes = checkedDefinition.nodes.filter(node => ['asset_reference', 'director_plan', 'storyboard_plan'].includes(node.definition_id));
+    const assetNodes = checkedDefinition.nodes.filter(node => ['asset_reference', 'director_plan', 'storyboard_plan', 'local_subgraph'].includes(node.definition_id));
     if (assetNodes.length !== referenceStates.length || referenceStates.some(item => !assetNodes.some(node => node.id === item.node_id))) invalid();
     const canEdit = bool(row.can_edit);
     // Even a misconfigured server cannot turn an incomplete public projection into a writable graph.
@@ -860,7 +935,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), can_edit: canEdit && unavailable.size === 0,
       reference_states: referenceStates };
     if (row.capacity !== undefined) {
-      const capacity = record(row.capacity), limit = checkedDefinition.schema_version >= 3 ? 80 : 20;
+      const capacity = record(row.capacity), limit = [3, 4, 5].includes(checkedDefinition.schema_version) ? 80 : 20;
       if (Object.keys(capacity).length !== 4 || Object.keys(capacity).some(key => !['history_used', 'history_limit', 'record_bytes', 'record_limit_bytes'].includes(key))
         || capacity.history_limit !== limit || capacity.record_limit_bytes !== 2000000) invalid();
       const checked = { history_used: integer(capacity.history_used, 0, limit), history_limit: limit as 20 | 80,
@@ -874,6 +949,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (!previous || previous.version <= value.version) observedGraphs.set(value.id, {
       version: value.version, can_edit: value.can_edit, enabledIds: value.definition.nodes.filter(node => node.enabled).map(node => node.id),
       definition_digest: value.definition_digest,
+      localPins: Object.fromEntries(value.definition.nodes.filter(node => node.definition_id === 'local_subgraph').map(node => [node.id, { ...node.parameters }])),
       schemaVersion: value.definition.schema_version, planningSnapshots: Object.fromEntries(value.definition.nodes.filter(node => node.parameters.document_snapshot).map(node => [node.id, node.parameters.document_snapshot])), nodes: Object.fromEntries(value.definition.nodes.map(node => [node.id, node.definition_id])),
       shotPins: Object.fromEntries(value.definition.nodes.filter(node => node.definition_id === 'storyboard_shot').map(node => { const edge = value.definition.edges.find(edge => edge.target_node_id === node.id && edge.target_port === 'storyboard'); const source = value.definition.nodes.find(source => source.id === edge?.source_node_id); return [node.id, { shot_id: node.parameters.shot_id, shot_version: node.parameters.shot_version, shot_digest: node.parameters.shot_digest, document_snapshot: source?.parameters.document_snapshot }]; })),
     });
@@ -898,7 +974,14 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (executable !== (issues.length === 0) || executionOrder.length !== closure.length
       || executionOrder.some((nodeId, index) => nodeId !== closure[index]) || targetIds.some(nodeId => !closure.includes(nodeId))
       || (observed?.version === expectedVersion && observed.definition_digest !== definitionDigest)) invalid();
-    return { ...ownership, graph_id: graphId, valid: true, executable, issues,
+    let local: Pick<StudioGraphPreflight, 'graph_schema_version' | 'local_subgraph_contract' | 'local_subgraph_bindings' | 'source_check'> = {};
+    if (observed?.schemaVersion === 6 || row.graph_schema_version === 6) {
+      if (row.graph_schema_version !== 6 || row.local_subgraph_contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT
+        || row.source_check !== 'CURRENT_PIN_SCOPE_TRANSACTION' || observed && observed.schemaVersion !== 6) invalid();
+      local = { graph_schema_version: 6, local_subgraph_contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT,
+        source_check: 'CURRENT_PIN_SCOPE_TRANSACTION', local_subgraph_bindings: subgraphBindings(row.local_subgraph_bindings) };
+    }
+    return { ...ownership, ...local, graph_id: graphId, valid: true, executable, issues,
       execution_order: executionOrder, selected_closure: closure,
       definition_digest: definitionDigest, preflight_digest: digest(row.preflight_digest),
       expected_version: expectedVersion, target_node_ids: targetIds, model_called: false, external_calls: 0 };
@@ -908,6 +991,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if ((expectedId !== undefined && expectedId !== runId) || (expectedGraphId !== undefined && expectedGraphId !== graphId)) mismatch();
     if (row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
     const stale = bool(row.stale), status = runStatus(row.status), hideOutputs = stale || ['CANCELLED', 'REJECTED', 'FAILED'].includes(status);
+    const localMode = row.local_subgraph_runtime !== undefined;
     const model = row.model_runtime === undefined ? undefined : graphModelRuntime(row.model_runtime, hideOutputs);
     const media = row.media_runtime === undefined ? undefined : graphMediaRuntime(row.media_runtime, projectId, capturedScope?.branchId ?? null,
       hideOutputs);
@@ -923,6 +1007,11 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
         output: hideOutputs ? null : output(state.output, modelOutput, state.status === 'SUCCEEDED' && (!knownGraph
           || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review'), knownGraph && [4, 5].includes(knownGraph.schemaVersion) ? knownGraph.nodes[nodeId] : undefined), error: state.error === null ? null : { code: code(record(state.error).code) } };
+      if (localMode && nodeState.output) {
+        const kind = knownGraph?.nodes[nodeId];
+        if (kind && !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(value => value === kind)) invalid();
+        closed(record(state.output), kind ? Object.keys(ports[kind].outputs) : ['text', 'direction', 'draft']);
+      }
       const planning = nodeState.output?.storyboard || (nodeState.output?.direction && 'content' in nodeState.output.direction ? nodeState.output.direction : undefined);
       if (knownGraph && planning && JSON.stringify(planning.document_snapshot) !== JSON.stringify(knownGraph.planningSnapshots[nodeId])) invalid();
       if (knownGraph && nodeState.output?.shot) { const pin = knownGraph.shotPins[nodeId], shot = nodeState.output.shot; if (!pin || shot.shot_id !== pin.shot_id || shot.shot_version !== pin.shot_version || shot.shot_digest !== pin.shot_digest || JSON.stringify(shot.document_snapshot) !== JSON.stringify(pin.document_snapshot)) invalid(); }
@@ -949,7 +1038,21 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       review = { node_id: nodeId, output_digest: digest(source.output_digest), draft: draft(source.draft, modelOutput) };
     }
     const cache = record(row.cache);
-    if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' && cache.mode !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE) invalid();
+    if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' && cache.mode !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && cache.mode !== GRAPH_LOCAL_SUBGRAPH_CACHE) invalid();
+    if (localMode !== (cache.mode === GRAPH_LOCAL_SUBGRAPH_CACHE) || localMode && (model || media || modelCalled || row.asset_output !== undefined
+      || cache.hits !== 0 || knownGraph && knownGraph.schemaVersion !== 6) || knownGraph?.schemaVersion === 6 && !localMode) invalid();
+    const local = localMode ? subgraphRuntime(row.local_subgraph_runtime, hideOutputs) : undefined;
+    if (local && !hideOutputs && knownGraph) {
+      const calls = Object.keys(knownGraph.localPins);
+      if (Object.keys(local.bindings).length !== calls.length || Object.keys(local.bindings).some(key => !calls.includes(key))) invalid();
+      for (const key of calls) {
+        const binding = local.bindings[key], pin = knownGraph.localPins[key];
+        if (!binding || binding.source.id !== pin.graph_id || binding.source.version !== pin.expected_version
+          || binding.source.definition_digest !== pin.definition_digest || binding.source.execution_digest !== pin.execution_digest
+          || binding.interface.input.node_id !== pin.input_node_id || binding.interface.output.node_id !== pin.output_node_id
+          || (nodeStates[key]?.status === 'SUCCEEDED') !== Object.hasOwn(local.receipts, key)) invalid();
+      }
+    }
     if (cache.mode === GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && (model || media || modelCalled || knownGraph
       && (knownGraph.schemaVersion !== 1 || Object.values(knownGraph.nodes).some(kind => !GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS.some(local => local === kind))))) invalid();
     const result: StudioGraphRun = { ...ownership, id: runId, version: integer(row.version, 1), graph_id: graphId, graph_version: integer(row.graph_version, 1),
@@ -958,6 +1061,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       created_at: text(row.created_at, 64), updated_at: text(row.updated_at, 64), model_called: modelCalled, external_calls: 0,
       ...(model ? { model_runtime: model } : {}),
       ...(media ? { media_runtime: media } : {}),
+      ...(local ? { local_subgraph_runtime: local } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
     if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
     if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
@@ -1039,6 +1143,14 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       return transport.json(`${base}/production/timelines/${encodeURIComponent(snapshotId)}`, 'GET', undefined, signal).then(value => checkedTimelineRow(value, timelineId));
     },
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
+    localSubgraphCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_local_subgraph=true`, 'GET', undefined, signal).then(value => {
+      const result = catalog(value); if (result.capabilities.local_subgraph_contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT) invalid(); return result;
+    }),
+    localSubgraphList: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs?include_local_subgraph=true`, 'GET', undefined, signal).then(value => {
+      const items = list(record(value).items, 25).map(item => checkedGraph(item));
+      if (new Set(items.map(item => item.id)).size !== items.length) invalid();
+      return { items: items.map(rememberGraph) };
+    }),
     imageCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_image=true`, 'GET', undefined, signal).then(catalog),
     videoCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_video=true`, 'GET', undefined, signal).then(catalog),
     videoStoryboard: (documentId: string, signal?: AbortSignal) => transport.json(`/api/novels/${encodeURIComponent(projectId)}/experimental/creative/documents/${encodeURIComponent(resourceId(documentId, true))}/storyboard`, 'GET', undefined, signal).then(value => checkedStoryboardReceipt(value, documentId)),
@@ -1192,6 +1304,6 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
-type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews'>;
+type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews' | 'localSubgraphCatalog' | 'localSubgraphList'>;
 export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient>
   & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient>;
