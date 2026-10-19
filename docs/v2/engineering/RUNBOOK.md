@@ -154,6 +154,17 @@ python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$profile\pytes
 CI splits this suite into two deterministic node-ID shards (`--ci-shard-index`/`--ci-shard-count`
 consumed by `.github/ci/suite_coverage.py`). Sharding is a capacity measure, not an exclusion.
 
+**Round-2 D-07 update (2026-10-19).** The hang was reproduced with a watchdog stack dump: a
+synchronous `psycopg.connect` without a deadline ran inside an async streaming guard while
+the repository layer opened a new PostgreSQL connection per call (1,210 connections in one
+local-interop test). On Windows each connect costs ~0.1 s, so the event loop stalled and the peer
+transport timed out (HTTP 504); the same connection churn is what triggered the backend-start
+`error code 487`. Fix: repository connections are borrowed from the existing SQLAlchemy pool
+(`app/repositories/postgres/connection.py::pooled_connection`), and every direct connect is
+bounded (`POSTGRES_CONNECT_TIMEOUT_SECONDS`, `POSTGRES_CONNECT_ATTEMPTS`). The previously
+failing node now passes on real PostgreSQL; the full PG suite still needs its own long run bound to
+a SHA.
+
 Windows note (this host): the disposable PostgreSQL 16 cluster intermittently logs
 `could not reserve shared memory region ... error code 487` when a new backend starts
 (address-space/ASLR class of Windows failure). Clients then wait in `psycopg.connect`.

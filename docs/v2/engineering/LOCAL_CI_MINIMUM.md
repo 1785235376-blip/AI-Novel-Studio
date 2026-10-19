@@ -22,6 +22,12 @@
 - 不因为本地 PASS 就把任何需求行提升为 `ACCEPTED`；发布门禁见
   [RELEASE_GATES.md](RELEASE_GATES.md)。
 
+## 1.1 Skip 与覆盖清单
+
+LOCAL-02 是代表性快检，会产生受控 skip。skip 分类、覆盖矩阵与 PostgreSQL-only 审计见
+[LOCAL_CI_COVERAGE_20261019.md](LOCAL_CI_COVERAGE_20261019.md)；审计脚本：
+@python scripts/audit_local_ci_skips.py --junit <LOCAL-02-junit.xml> --fail-on-pg-only@。
+
 ## 2. 结果词表（与需求状态分开）
 
 | 结果 | 含义 |
@@ -111,3 +117,21 @@ python scripts/run_local_ci.py --all --label 20261019-a
 本文件只覆盖开发者快检。正式 V2 发布仍必须满足
 [RELEASE_GATES.md](RELEASE_GATES.md) 的 G1–G12（含完整 File/PostgreSQL、真实浏览器、媒体、
 模型、Windows 安装与用户验收）；本地 `PASS` 不能替代任何一条。
+
+## 10. 可选：真实 PostgreSQL 最小子集（附加，不改变 LOCAL_CI_PASS 定义）
+
+有可处置的真实 PostgreSQL 集群时（例如 `.runtime/@ 下由仓库脚本管理的便携集群），
+可额外执行同一批契约的 PostgreSQL 变体。它不替代完整 PG 套件，也不把 LOCAL CI 变成 PG 门禁：
+
+@@@powershell
+python scripts/run_v2_postgres_checks.py --pg-bin <PostgreSQL bin> --data <owned .runtime cluster> @@
+  --port 55432 --database v2_local_ci_pg --fresh-database local-ci-pg -- @@
+  python -m pytest -q tests/test_v2_creative_project_lifecycle.py tests/test_structured_record_cas.py @@
+  tests/test_surface_pending_canon_review.py tests/test_shared_project_route_authority.py
+@@@
+
+连接建立超时与重试可通过 `POSTGRES_CONNECT_TIMEOUT_SECONDS@（默认 10，2–120 秒）与
+`POSTGRES_CONNECT_ATTEMPTS@（默认 3，1–5 次）调整；仓库连接在 PostgreSQL 后端复用 SQLAlchemy 池。
+Windows 上 PostgreSQL 子进程偶发 `error code 487@（共享内存地址保留失败）属已知环境类问题，
+有界连接会把无限阻塞变成可观测的失败/重试；若持续出现，重启一次性测试集群并记录
+`BLOCKED_ENVIRONMENT@，不要弱化断言。
