@@ -18,6 +18,9 @@ export function useStudioTimelinePlayback(options: Options) {
   const resolutionRef = useRef<'ORIGINAL' | 'HALF'>('ORIGINAL'), resolutionEpoch = useRef(0);
   const [resolutionRevision, setResolutionRevision] = useState(0);
   const renderedResolutionEpoch = resolutionRevision;
+  const binding = options.source ? timelineBinding(options.source) : '', sourceBinding = useRef(binding);
+  // Retire callbacks before effects, including a switch away and back to equal saved JSON.
+  if (sourceBinding.current !== binding) { sourceBinding.current = binding; resolutionEpoch.current++; }
   const [preview, setPreview] = useState<TimelinePlayback>(), [confirmed, setConfirmed] = useState(false);
   const [pending, setPending] = useState<'PREVIEW' | 'BUILD' | 'READ' | 'BLOB'>(), [unknown, setUnknown] = useState<Attempt>();
   const [visible, setVisible] = useState<Entry>(), [positionMs, setPositionMs] = useState(0);
@@ -43,8 +46,7 @@ export function useStudioTimelinePlayback(options: Options) {
     cache.current.forEach(entry => URL.revokeObjectURL(entry.url)); cache.current.clear(); latest.current.onGateChange(false); }; }, []);
   useEffect(() => { owner.current = options.props.client; reset(); }, [options.props.client]);
   useEffect(() => { if (!owns) reset(); }, [owns]);
-  const binding = options.source ? timelineBinding(options.source) : '';
-  useEffect(() => { clearVisible(); consent.current = ''; proof.current = undefined; setConfirmed(false); setPreview(undefined);
+  useEffect(() => { setResolutionRevision(resolutionEpoch.current); clearVisible(); consent.current = ''; proof.current = undefined; setConfirmed(false); setPreview(undefined);
     if (busy.current || auxiliaryBusy.current || attempt.current) return;
     epoch.current++; reading.current?.abort(); }, [binding]);
   useEffect(() => {
@@ -58,13 +60,15 @@ export function useStudioTimelinePlayback(options: Options) {
   function begin(kind: NonNullable<typeof pending>, recovering = false) {
     if (renderedResolutionEpoch !== resolutionEpoch.current || !current() || !latest.current.props.canMutate || busy.current || auxiliaryBusy.current || !available || !recovering && (!latest.current.isReady() || attempt.current)) return;
     busy.current = true; latest.current.onGateChange(true); setPending(kind); setError(''); setNotice('');
-    return { token: ++epoch.current, client: owner.current };
+    return { token: ++epoch.current, client: owner.current, resolutionEpoch: resolutionEpoch.current };
   }
-  const active = (request: { token: number; client: typeof owner.current }) => current() && request.token === epoch.current && request.client === owner.current;
+  const active = (request: { token: number; client: typeof owner.current; resolutionEpoch: number }) => current()
+    && request.token === epoch.current && request.client === owner.current && request.resolutionEpoch === resolutionEpoch.current;
   function sourceCurrent(source: StudioTimelineRow) { return current() && latest.current.props.canMutate && !!latest.current.source
     && timelineBinding(latest.current.source) === timelineBinding(source) && timelineSourcesCurrent(source.timeline, latest.current.props.assets); }
   function finish(request: { token: number; client: typeof owner.current }) { if (request.token !== epoch.current) return;
-    busy.current = false; latest.current.onGateChange(auxiliaryBusy.current || !!attempt.current); if (active(request)) setPending(undefined); }
+    busy.current = false; latest.current.onGateChange(auxiliaryBusy.current || !!attempt.current);
+    if (current() && owner.current === request.client) setPending(undefined); }
   function fail(reason: unknown) { if (reason instanceof ApiError && [401, 403].includes(reason.status)) { leaveGuard?.capture(); reset(); latest.current.onAuthorityLost(); return; }
     // A failed source/candidate check cannot leave previously readable bytes
     // on screen. Keep the original in-flight identity and UNKNOWN for recovery.
@@ -73,7 +77,11 @@ export function useStudioTimelinePlayback(options: Options) {
     if (reason instanceof ApiError && [404, 410, 501].includes(reason.status)) latest.current.props.onUnavailable(); }
   const requestedResolution = (): TimelinePlaybackResolution | undefined => latest.current.source?.timeline.schema_version !== 3 && resolutionRef.current === 'HALF' ? 'HALF' : undefined;
   function adoptProof(value: TimelinePlayback) {
+    const source = latest.current.source, snapshot = value.export_preview.timeline_snapshot;
+    if (!source || snapshot.id !== source.id || snapshot.version !== source.version || snapshot.digest !== source.timeline_digest)
+      throw new Error('播放回执与当前保存版本不一致，请重新读取核对。');
     if (timelinePlaybackResolution(value) !== requestedResolution()) throw new Error('播放回执未证明所选预览分辨率，请重新核对；不会自动降级。');
+    if (source.timeline.schema_version !== 3) timelineExportDimensions(source.timeline, value.export_preview.export_profile);
     if (value.job) { const prior = versions.current.get(value.job.id) ?? 0;
       if (value.job.version < prior) throw new Error('晚到回执低于已观察的原任务版本，请重新读取。');
       versions.current.set(value.job.id, value.job.version); }
@@ -106,13 +114,14 @@ export function useStudioTimelinePlayback(options: Options) {
     finally { finish(request); }
   }
   async function readOriginal() {
+    if (renderedResolutionEpoch !== resolutionEpoch.current) return;
     const saved = attempt.current, source = saved?.source ?? latest.current.source;
     const method: PreviewMethod | undefined = latest.current.props.client.timelinePlaybackPreview; if (!source || !method) return;
     if (saved) {
       if (!current() || auxiliaryBusy.current) return;
       auxiliaryBusy.current = true; latest.current.onGateChange(true); setAuxiliary('READ'); const client = owner.current, token = epoch.current;
       try { const job = await client.get('timeline', saved.preview.job_id);
-        if (!current() || owner.current !== client || epoch.current !== token) return;
+        if (!current() || owner.current !== client || epoch.current !== token || renderedResolutionEpoch !== resolutionEpoch.current) return;
         if (!playbackJobMatches(job, saved.preview)) throw new Error('读取未证明本次请求的原任务，继续保留 UNKNOWN。');
         const observed = { ...saved.preview, job, cache_state: 'RECORDED' as const };
         if (sourceCurrent(source)) adoptProof(observed);
@@ -178,15 +187,16 @@ export function useStudioTimelinePlayback(options: Options) {
     finally { finish(request); }
   }
   async function cancelOriginal() {
+    if (renderedResolutionEpoch !== resolutionEpoch.current) return;
     const value = proof.current ?? attempt.current?.preview;
     if (!value || !current() || !latest.current.props.canMutate || auxiliaryBusy.current) return;
     auxiliaryBusy.current = true; latest.current.onGateChange(true); setAuxiliary('CANCEL'); const client = owner.current, token = epoch.current;
     try { const job = await client.get('timeline', value.job_id);
-      if (!current() || client !== owner.current || epoch.current !== token) return;
+      if (!current() || client !== owner.current || epoch.current !== token || renderedResolutionEpoch !== resolutionEpoch.current) return;
       if (!playbackJobMatches(job, value) || !['QUEUED', 'RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status))
         throw new Error('原任务状态已改变，不能按旧状态取消。');
       const cancelled = await client.cancel(job);
-      if (!current() || client !== owner.current || epoch.current !== token) return;
+      if (!current() || client !== owner.current || epoch.current !== token || renderedResolutionEpoch !== resolutionEpoch.current) return;
       if (!playbackJobMatches(cancelled, value) || cancelled.status !== 'CANCELLED' || cancelled.version <= job.version)
         throw new Error('取消回执未证明原任务已进入取消状态，请读取核对。');
       const source = attempt.current?.source ?? latest.current.source;
@@ -206,15 +216,18 @@ export function useStudioTimelinePlayback(options: Options) {
     clearVisible(); consent.current = ''; proof.current = undefined; setPreview(undefined); setConfirmed(false); setError('');
     setNotice('已更改预览分辨率，请重新读取并核对方案后明确生成。'); latest.current.onGateChange(false);
   }
-  const previewDimensions = preview && options.source && options.source.timeline.schema_version !== 3
-    ? timelineExportDimensions(options.source.timeline, preview.export_preview.export_profile) : undefined;
+  const snapshot = preview?.export_preview.timeline_snapshot, source = options.source;
+  const previewCurrent = owns && options.props.canMutate && renderedResolutionEpoch === resolutionEpoch.current && source && snapshot
+    && snapshot.id === source.id && snapshot.version === source.version && snapshot.digest === source.timeline_digest ? preview : undefined;
+  const previewDimensions = previewCurrent && source && source.timeline.schema_version !== 3
+    ? timelineExportDimensions(source.timeline, previewCurrent.export_preview.export_profile) : undefined;
   const visibleCurrent = owns && options.props.canMutate && visible && sourceCurrent(visible.source) ? visible : undefined;
   return { available, resolution: options.source?.timeline.schema_version === 3 ? 'ORIGINAL' as const : resolution, changeResolution, previewDimensions,
     canChooseResolution: owns && available && options.props.canMutate && options.isReady() && !busy.current && !auxiliaryBusy.current && !unknown && options.source?.timeline.schema_version !== 3,
-    preview: owns && options.props.canMutate ? preview : undefined, visible: visibleCurrent, positionMs: visibleCurrent ? positionMs : 0,
+    preview: previewCurrent, visible: visibleCurrent, positionMs: visibleCurrent ? positionMs : 0,
     pending, unknown: owns ? unknown : undefined, error: owns ? error : '', notice: owns ? notice : '',
     locked: busy.current || auxiliaryBusy.current || !!unknown, dirty: owns && (!!pending || !!unknown || !!auxiliary || confirmed),
-    canOperate: owns && available && !busy.current && !auxiliaryBusy.current && !unknown && options.isReady(), confirmed,
+    canOperate: owns && available && !busy.current && !auxiliaryBusy.current && !unknown && options.isReady(), confirmed: !!previewCurrent && confirmed,
     previewPlayback, buildPlayback, readOriginal, loadPlayback, cancelOriginal, auxiliary,
     canReadDuringBuild: owns && !!unknown && !auxiliaryBusy.current,
     canCancel: owns && options.props.canMutate && !auxiliaryBusy.current && !!(proof.current ?? attempt.current?.preview)
