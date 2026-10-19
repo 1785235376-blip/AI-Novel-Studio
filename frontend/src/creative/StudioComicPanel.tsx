@@ -1,3 +1,5 @@
+import { StudioComicTimelineHandoff } from './StudioComicTimelineHandoff';
+import { studioComicHandoffClient } from './studioComicHandoffClient';
 import { useMemo, useState } from 'react';
 import { StudioComicImageGeneration } from './StudioComicImageGeneration';
 import { studioComicImageClient } from './studioComicImageClient';
@@ -16,6 +18,7 @@ export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange,
 }) {
   const production = useMemo(() => studioProductionClient(projectId, context), [projectId, context]);
   const imageClient = useMemo(() => studioComicImageClient(projectId, context), [projectId, context]);
+  const handoff = useMemo(() => studioComicHandoffClient(projectId, context), [projectId, context]);
   const [denied, setDenied] = useState(false);
   const client = useMemo<ExperimentalClient>(() => {
     const transport = studioTransport(context);
@@ -41,5 +44,5 @@ export function StudioComicPanel({ projectId, context, isCurrent, onDirtyChange,
   }, [projectId, context, isCurrent]);
   if (denied) return <StatusMessage tone="error">当前身份或分支没有漫画访问权限。图片模块导航不会授予权限；请核对原项目授权后重新打开。</StatusMessage>;
   return <><p>{sourceFree ? '独立漫画沿用原项目与漫画记录，可创建空白页、编辑文字和组织书册。小说来源与图片生成需另行核对原入口权限。' : '漫画制作沿用原项目与漫画记录。此入口仍需已启用的漫画、资产来源和导演能力，以及原项目授权；不会自动启用功能或调用模型。'}</p>
-    <ComicLayoutsPanel renderImageGeneration={sourceFree ? undefined : host => <StudioComicImageGeneration {...host} client={imageClient} production={production} canMutate={canMutate} canReview={canReview} />} client={client} isOwnerCurrent={isCurrent} onDirtyChange={onDirtyChange} onBusyChange={onBusyChange} /></>;
+    <ComicLayoutsPanel renderTimelineHandoff={sourceFree ? undefined : host => <StudioComicTimelineHandoff {...host} client={handoff} canMutate={canMutate} onDenied={() => setDenied(true)} />} renderImageGeneration={sourceFree ? undefined : host => <StudioComicImageGeneration {...host} client={imageClient} production={production} canMutate={canMutate} canReview={canReview} />} client={client} isOwnerCurrent={isCurrent} onDirtyChange={onDirtyChange} onBusyChange={onBusyChange} /></>;
 }
