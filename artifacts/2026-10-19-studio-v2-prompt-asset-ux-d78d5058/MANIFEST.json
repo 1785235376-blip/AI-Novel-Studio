@@ -1,0 +1,107 @@
+{
+  "kind": "studio-v2-limited-prompt-asset-ux-increment",
+  "archive_parent": "0c0ac1019244d3b7ad6913e46b33cee8155357ef",
+  "unique_archive_path": "artifacts/2026-10-19-studio-v2-prompt-asset-ux-d78d5058",
+  "prerequisite": "8c1b4b197e57ce7ae070f0e4f7d4e36c805a360f",
+  "head": "d78d50589a07f1ff428fbc9e93453f32876648d2",
+  "tree": "503f5126fd335ae65b975483661b106bc09b9bec",
+  "bundle_ref": "refs/heads/work/v2-ux-combined-20261019",
+  "commits": [
+    {
+      "original": "87d517fc346c748f76b2f06ba5838a600cec470b",
+      "combined": "5ca580e9651ef1001f49f05bc4402f3e776b6df9",
+      "stable_patch_id": "58c884412259bd994bebdd81af3de0874fbd10ee",
+      "files": [
+        "frontend/src/prompt/PromptRevisionDiff.test.tsx",
+        "frontend/src/prompt/PromptRevisionDiff.tsx"
+      ],
+      "conflicts": false
+    },
+    {
+      "original": "c39bf18cb2bfb26f8713f16c6dfe745ccf2c6c56",
+      "combined": "d019605bc128e96b503700e717812f3b5e720c9d",
+      "stable_patch_id": "10eb38008c906cd9704f502958a39487de3d1035",
+      "files": [
+        "frontend/src/novel/AssetLibraryPanel.browse.test.tsx",
+        "frontend/src/novel/AssetLibraryPanel.tsx",
+        "frontend/src/novel/assetLibraryView.test.ts",
+        "frontend/src/novel/assetLibraryView.ts"
+      ],
+      "conflicts": false
+    },
+    {
+      "original": "368e86cbe1106438bc8544ee2db2850e03449c3d",
+      "combined": "d78d50589a07f1ff428fbc9e93453f32876648d2",
+      "stable_patch_id": "4f2281583741f55bbe5368341399c36f320d7792",
+      "files": [
+        "frontend/src/novel/AssetLibraryPanel.navigation.test.tsx",
+        "frontend/src/novel/AssetLibraryPanel.tsx"
+      ],
+      "conflicts": false
+    }
+  ],
+  "final_files": {
+    "frontend/src/prompt/PromptRevisionDiff.test.tsx": {
+      "last_original": "87d517fc346c748f76b2f06ba5838a600cec470b",
+      "blob": "123346cfe7e09814a3e91d71ee4ac1469cf3b433",
+      "sha256": "5fe428681856daf1f05d74019ccea826dddc0e5e3231f18fcb002502463c9262"
+    },
+    "frontend/src/prompt/PromptRevisionDiff.tsx": {
+      "last_original": "87d517fc346c748f76b2f06ba5838a600cec470b",
+      "blob": "5978ed3c434918830f8c36b32fb68e3f7acf6699",
+      "sha256": "334f447c92799f10ff403bf918b70a12d828c6962a859fb9c31da87a1839aadf"
+    },
+    "frontend/src/novel/AssetLibraryPanel.browse.test.tsx": {
+      "last_original": "c39bf18cb2bfb26f8713f16c6dfe745ccf2c6c56",
+      "blob": "191d1a0fdae5542d1b0a212952d18fea3dee6b6a",
+      "sha256": "09d2a1049edb308d825a836ffc81d0415b9488c1cbf46020c3dce495579ec874"
+    },
+    "frontend/src/novel/AssetLibraryPanel.tsx": {
+      "last_original": "368e86cbe1106438bc8544ee2db2850e03449c3d",
+      "blob": "a3ccdffb65d459e9daac5d49003f34a902861820",
+      "sha256": "24e534d2156742ce03111844910fad58e6d0c485b57531328a8e817936683138"
+    },
+    "frontend/src/novel/assetLibraryView.test.ts": {
+      "last_original": "c39bf18cb2bfb26f8713f16c6dfe745ccf2c6c56",
+      "blob": "c1d3fb84d9c94ef4a3d073f6f24465829388014c",
+      "sha256": "680e3c0687e96d47e171a31bc5138284a7c7baefa14b3611255bebc38bf670f5"
+    },
+    "frontend/src/novel/assetLibraryView.ts": {
+      "last_original": "c39bf18cb2bfb26f8713f16c6dfe745ccf2c6c56",
+      "blob": "66966ab04a8a28b616f1e2b9aed010ac905ddf9a",
+      "sha256": "2bf8495de43bedf94d4980ee6cdd62faedda02cc4cb6cf1dd0e4eea419224560"
+    },
+    "frontend/src/novel/AssetLibraryPanel.navigation.test.tsx": {
+      "last_original": "368e86cbe1106438bc8544ee2db2850e03449c3d",
+      "blob": "81ec1412b773be20f0642936781774e74f5edbd9",
+      "sha256": "1713f766566f2daee813a959f22baabe87d2726f69a60c8433ea2bf62665d909"
+    }
+  },
+  "all_other_base_files_unchanged": true,
+  "privacy_scan": {
+    "delta_blob_and_commit_objects_checked": 11,
+    "known_synthetic_secret_values_checked": 3,
+    "secret_literal_hits": 0,
+    "sensitive_raw_trace_or_private_data_included": false
+  },
+  "publication_tests_rerun": false,
+  "full_E2E": "DEFERRED",
+  "payloads": {
+    "evidence-sanitized.zip": {
+      "bytes": 7474,
+      "sha256": "c93a884f68e2a7eb0712700c2675d385219f8c224c0559ab81717651905a93c0"
+    },
+    "REPORT.md": {
+      "bytes": 2253,
+      "sha256": "e39496b5a8ef512ced478e895629486ed0f016eca9420b14296751810f53c4c7"
+    },
+    "RESTORE.md": {
+      "bytes": 1104,
+      "sha256": "8d056c6d2618ce05caf043518055fe8ba02acbe860b5f9def262282c2088bccf"
+    },
+    "studio-v2-ux-8c1b4b19-to-d78d5058.bundle": {
+      "bytes": 9769,
+      "sha256": "d0d69495288299f0fcaab4183d81b7150a44a404b38cd7276070ee798e6d7753"
+    }
+  }
+}
