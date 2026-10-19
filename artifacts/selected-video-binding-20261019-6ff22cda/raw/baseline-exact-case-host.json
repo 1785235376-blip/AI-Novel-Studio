@@ -1,0 +1,8 @@
+{
+  "label": "baseline-exact-case-host",
+  "baseline": true,
+  "exact_case_host": true,
+  "root_files": 1401,
+  "errors": 0,
+  "diagnostics": []
+}

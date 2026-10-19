@@ -1,0 +1,31 @@
+{
+  "source": "Parent coordination message; independent raw output not supplied to this executor",
+  "review_task": "01a15271-62aa-7030-b25d-e2e634e4f022",
+  "status": "REPORTED_NO_NEW_FUNCTION_BLOCKER",
+  "frozen_commit": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "source_hashes": "All 11 matched per reviewer",
+  "final_functional_tests": {
+    "passed": 50,
+    "failed": 0
+  },
+  "strict_alternative_host": {
+    "same_tsconfig": true,
+    "root_files": 1409,
+    "total_files": 1984,
+    "unfiltered_diagnostics": 0,
+    "options_not_weakened": true
+  },
+  "native_windows_tsc": {
+    "exit_code": 2,
+    "diagnostics": 63,
+    "status": "BLOCKED_NOT_PASS"
+  },
+  "browser_geometry_scope": "NOVEL shell only, not the new batch-binding panel",
+  "test_timeline": [
+    "144 earlier tests",
+    "pure-test revisions",
+    "synchronous IMAGE pending guard revision",
+    "47 affected cases rerun"
+  ],
+  "recorded_utc": "2026-10-19T04:47:07.998395+00:00"
+}

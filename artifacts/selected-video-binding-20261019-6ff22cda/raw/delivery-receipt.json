@@ -1,0 +1,104 @@
+{
+  "timestamp_utc": "2026-10-19T04:33:58.087931+00:00",
+  "status": "IMPLEMENTED_LOCAL_COMMIT",
+  "repository": "D:\\codex数据\\2026-10-19\\task\\studio-v2-selected-video-binding",
+  "branch": "work/v2-selected-video-local-binding-20261019",
+  "base": "c1638908168cfdcea0b63cef9388b88cf66a91f3",
+  "commit": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "tree": "fba602755e92a03e06ea29eb7df6102673063eb0",
+  "working_tree": "CLEAN",
+  "files": {
+    "frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx": "4e083f9842f76c8084d7ebd4030fbb766db5dd6b72b2d040fd465261454e2631",
+    "frontend/src/creative/GraphSelectedVideoBindingPanel.tsx": "0e52e76e92d014cd8fedba795e3682c05982bca20ef29b5ca2bf2e2ad33eacf7",
+    "frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx": "cff0682798ab2552d8463cba561ca73fe66034483ab51ae2a671ca032c93effc",
+    "frontend/src/creative/graphProviderChoices.ts": "51d8a0f5c92a4f5869b62c76fcfb7ac9fb06af3fab589352b4ba1c1560ca86bb",
+    "frontend/src/creative/graphSelectedVideoBinding.test.ts": "8ae0c453ce343040efa7c809b40ef6310e1ab72c70e437cc6ac05a8e17f44086",
+    "frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts": "f24834b9501313bced9fdad9e9ce5ec0b0502deefa1838cb5cf52190bcd71ce4",
+    "frontend/src/creative/graphSelectedVideoBinding.ts": "ed4dd4d5e796fc95e612b8559939250992b4bd884e0382d3424e76afcef80003",
+    "frontend/src/creative/studioGraphClient.ts": "57f77c78578e963baec54ceb025d78bbeaeba158d78f7ff8931e120422f908ae",
+    "frontend/src/creative/studioGraphEditorView.tsx": "2006a17c86e0de07ebd9cf29f53f5c9e404852c5d0e5065e239ce4922e67f19a",
+    "frontend/src/creative/useGraphSelectedVideoBinding.ts": "804e1b8112c71d8aacc010f3190f2eb7dcbf3aa7b0cae1efe45b29a5c0bed2ec",
+    "frontend/src/creative/useStudioGraphEditorController.ts": "c7a6bb66dfdd7600290b4197314afc278f4ee75ef3bb3974febd57fa64d0b989"
+  },
+  "commit_identity": "Existing original Studio repository user.name/user.email reused for this command only; no Git/account/global configuration written",
+  "behavior": {
+    "selection": "1-4 same-operation v5 video_generate nodes",
+    "writes_only": [
+      "provider_id",
+      "model_id",
+      "allow_cloud=false"
+    ],
+    "unsupported_preserved_parameter": "REJECT_BATCH_WITH_NODE_AND_FIELD",
+    "save_execute_or_model_call": "NONE",
+    "history": "ORIGINAL_CHANGE_SINGLE_UNDO_REDO",
+    "discovery": "CONFIGURED_NOT_VERIFIED",
+    "unselected_empty_binding_drafts": "ALLOWED; full original Save validation unchanged"
+  },
+  "validation": {
+    "focused_suite": {
+      "passed": 144,
+      "failed": 0,
+      "adapter": "exact Git filename resolver; default Windows resolver retains pre-existing baseline failures",
+      "note": "Final synchronous pending-image lock amendment subsequently retested in affected 47 cases"
+    },
+    "final_affected_regression": {
+      "passed": 47,
+      "failed": 0
+    },
+    "pure_final_after_byte_equality_and_type_annotation": {
+      "passed": 22
+    },
+    "typecheck": {
+      "root_files": 1409,
+      "errors": 0,
+      "strict_options_unchanged": true,
+      "host": "exact-case compiler host"
+    },
+    "native_windows_tsc": "BLOCKED_BASELINE_CASE_INSENSITIVE_MODULE_RESOLUTION; not claimed PASS",
+    "native_baseline_comparison": "baseline-native-host.json and baseline-exact-case-host.json (0 exact-case errors)",
+    "browser_shell_geometry": {
+      "passed": 4,
+      "viewports": [
+        "1024x768",
+        "1366x768",
+        "1440x900",
+        "1920x1080"
+      ],
+      "browser": "Existing Edge, headless; no desktop input automation"
+    },
+    "tokens": "PASS",
+    "git_diff_check": "PASS",
+    "live_models_GPU_backend_end_to_end_new_panel_browser_visuals": "NOT_RUN"
+  },
+  "failure_evidence_preserved": [
+    "../selected-video-binding-materialization-failure.json",
+    "focused-initial.log",
+    "focused-r2.json",
+    "controller-r3.json",
+    "empty-branch-debug.log",
+    "typecheck-initial.log",
+    "current-exact-case-host.json",
+    "typecheck-final.log",
+    "browser-geometry.log",
+    "browser-geometry-r2.log",
+    "local-commit-first-failure.json"
+  ],
+  "delivery": {
+    "bundle": {
+      "path": "D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\selected-video-binding.bundle",
+      "bytes": 16051,
+      "sha256": "fb942719668d374e8775bbb9c69535d50dc0b72abcd79bc2384a989dd71dee10",
+      "prerequisite": "c1638908168cfdcea0b63cef9388b88cf66a91f3",
+      "verify": "PASS"
+    },
+    "patch": {
+      "path": "D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\selected-video-binding.patch",
+      "sha256": "f4a04ebdec09f1578e5fef76dcdb54aa3c900059c55abafb8a30be64de9bbd53"
+    }
+  },
+  "cloud_unverified_zip": "NOT_RECEIVED_OR_USED; independently implemented from verified base per latest instruction",
+  "remote_pushes": 0,
+  "main_merge_release_tag": "NONE",
+  "original_workspaces_modified": false,
+  "owned_test_port_5188": "STOPPED"
+}

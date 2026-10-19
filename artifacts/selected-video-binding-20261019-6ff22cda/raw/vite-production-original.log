@@ -1,0 +1,25 @@
+vite v6.4.3 building for production...
+transforming...
+✓ 2455 modules transformed.
+✗ Build failed in 2.39s
+error during build:
+src/creative/CreativeCanvas.tsx (4:9): "DirectorCameraReuse" is not exported by "src/creative/directorCameraReuse.ts", imported by "src/creative/CreativeCanvas.tsx".
+file: D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CreativeCanvas.tsx:4:9
+
+2: import {CreativeShotNavigator} from './CreativeShotNavigator';
+3: import {CreativeSceneNavigator} from './CreativeSceneNavigator';
+4: import { DirectorCameraReuse } from './DirectorCameraReuse';
+            ^
+5: import {DirectorNoteActions} from './DirectorNoteActions';
+6: import type { StoryboardShot } from './studioStoryboardContract';
+
+    at getRollupError (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/parseAst.js:317:41)
+    at error (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/parseAst.js:313:42)
+    at Module.error (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:17154:16)
+    at Module.traceVariable (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:17587:29)
+    at ModuleScope.findVariable (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:15177:39)
+    at FunctionScope.findVariable (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:5397:38)
+    at FunctionBodyScope.findVariable (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:5397:38)
+    at Identifier.bind (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:5164:40)
+    at CallExpression.bind (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:2542:28)
+    at CallExpression.bind (file:///D:/codex%E6%95%B0%E6%8D%AE/2026-10-19/task/studio-v2-selected-video-binding/frontend/node_modules/.pnpm/rollup@4.62.4/node_modules/rollup/dist/es/shared/node-entry.js:12286:15)

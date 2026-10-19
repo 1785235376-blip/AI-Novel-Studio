@@ -1,0 +1,437 @@
+{
+  "status": "BOUNDED_SCAN_PASS",
+  "frozen_code_commit": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+  "bundle_object_scope": [
+    {
+      "oid": "6ff22cdadcf830ed5ec6343ea20966f8a74649c5",
+      "type": "commit",
+      "path": ""
+    },
+    {
+      "oid": "fba602755e92a03e06ea29eb7df6102673063eb0",
+      "type": "tree",
+      "path": ""
+    },
+    {
+      "oid": "18d2b1d57bccb941d5f87a4d31ecfe9cfa03fae5",
+      "type": "tree",
+      "path": "frontend"
+    },
+    {
+      "oid": "eae3b02be03d09919c591287d7627f732ae8b41c",
+      "type": "tree",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "6126e960270159f5b8cb4fb9245a960fad145fe8",
+      "type": "tree",
+      "path": "frontend/src/creative"
+    },
+    {
+      "oid": "ff82cef0b04a21bb39862c26a0b6be8f6e520e85",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx",
+      "bytes": 18846,
+      "sha256": "4e083f9842f76c8084d7ebd4030fbb766db5dd6b72b2d040fd465261454e2631"
+    },
+    {
+      "oid": "5914a046c5c693405deeadf25139f8426400adbd",
+      "type": "blob",
+      "path": "frontend/src/creative/GraphSelectedVideoBindingPanel.tsx",
+      "bytes": 2589,
+      "sha256": "0e52e76e92d014cd8fedba795e3682c05982bca20ef29b5ca2bf2e2ad33eacf7"
+    },
+    {
+      "oid": "3389e5dce92ad6130670f06c2e28482de0256091",
+      "type": "blob",
+      "path": "frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx",
+      "bytes": 3446,
+      "sha256": "cff0682798ab2552d8463cba561ca73fe66034483ab51ae2a671ca032c93effc"
+    },
+    {
+      "oid": "77291e12107c0658b96c3e2eef2b99768ec78021",
+      "type": "blob",
+      "path": "frontend/src/creative/graphProviderChoices.ts",
+      "bytes": 530,
+      "sha256": "51d8a0f5c92a4f5869b62c76fcfb7ac9fb06af3fab589352b4ba1c1560ca86bb"
+    },
+    {
+      "oid": "e8e1d25622f60844a1e3a6280754dc445f8e2d3f",
+      "type": "blob",
+      "path": "frontend/src/creative/graphSelectedVideoBinding.test.ts",
+      "bytes": 7414,
+      "sha256": "8ae0c453ce343040efa7c809b40ef6310e1ab72c70e437cc6ac05a8e17f44086"
+    },
+    {
+      "oid": "dc9d9ee8e10da14b9c3cfdb0d05d422ae19d5daa",
+      "type": "blob",
+      "path": "frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts",
+      "bytes": 1648,
+      "sha256": "f24834b9501313bced9fdad9e9ce5ec0b0502deefa1838cb5cf52190bcd71ce4"
+    },
+    {
+      "oid": "d82509ffbb23769bb003ff64f23d3d6f0d366b1b",
+      "type": "blob",
+      "path": "frontend/src/creative/graphSelectedVideoBinding.ts",
+      "bytes": 4456,
+      "sha256": "ed4dd4d5e796fc95e612b8559939250992b4bd884e0382d3424e76afcef80003"
+    },
+    {
+      "oid": "1a1488f5f6f95dc6d1141f3cb96c056c8ac008e3",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "bytes": 108994,
+      "sha256": "57f77c78578e963baec54ceb025d78bbeaeba158d78f7ff8931e120422f908ae"
+    },
+    {
+      "oid": "9bc1bd06b2e3d5d9c2648ffa4e8b02f49def85c2",
+      "type": "blob",
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "bytes": 57899,
+      "sha256": "2006a17c86e0de07ebd9cf29f53f5c9e404852c5d0e5065e239ce4922e67f19a"
+    },
+    {
+      "oid": "6f1ec9b57823d9c9286dfc2372e3e11c722ae1a6",
+      "type": "blob",
+      "path": "frontend/src/creative/useGraphSelectedVideoBinding.ts",
+      "bytes": 8608,
+      "sha256": "804e1b8112c71d8aacc010f3190f2eb7dcbf3aa7b0cae1efe45b29a5c0bed2ec"
+    },
+    {
+      "oid": "a2a2bc8c9dd38ee1c050018c1a5228c63ac35f96",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "bytes": 88273,
+      "sha256": "c7a6bb66dfdd7600290b4197314afc278f4ee75ef3bb3974febd57fa64d0b989"
+    }
+  ],
+  "exact_public_repository_owner_metadata_only": true,
+  "github_noreply_only": true,
+  "known_framework_documentation_links_classified": "14 React framework documentation links in the first failing run; no private endpoint",
+  "private_identity_or_environment_values_printed": false,
+  "credentials_or_unclassified_endpoint_hits": 0,
+  "patterns": [
+    "private_key",
+    "aws_access_id",
+    "github_token",
+    "openai_key",
+    "literal_bearer",
+    "jwt",
+    "email",
+    "private_user_profile_path",
+    "machine_account_hint",
+    "signed_transfer_url"
+  ],
+  "raw_evidence_decisions": [
+    {
+      "source": "selected-video-binding-evidence/baseline-exact-case-host.json",
+      "sha256": "ea95f2031275624a979e190fd3caac9fbe224ad3d2ee5475d41f5ad80097c430",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/baseline-native-host.json",
+      "sha256": "360f6029b3cb13526cfd7aef39a6ffcad663f126b172cca6d7d7b450c9cfec01",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry-r2.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry-r2.log",
+      "sha256": "10c1fd7811164d2679dc3de0b38c50ea99ca9ee72841beece39a77c56c028683",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry-r3.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry-r3.log",
+      "sha256": "bc8021f3463d03835aaf51bb8fa1497f29dfca91737dce8bb331ed0c20aabbc9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry.json",
+      "sha256": "605b08c1f0f3d1c42cb60d7e23cdf076d72bc31624d3af52cb620810a212b776",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/browser-geometry.log",
+      "sha256": "ed3cdd624813dfc7f9a0ceaeb38deb478e0a7f9542fcf54cc106e603eb93a4a3",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/bundle-verify.log",
+      "sha256": "7814ae406e0d0d9c7f55b07cb6c28eb62541cfef63cb74416635a2783389fb84",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/case-exact-regression-initial.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/case-exact-regression-initial.json",
+      "sha256": "a6d410780d5fca0b683be7dff78b7bddbce110be456692d4f7a6c91ee74c6475",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/case-exact-regression-initial.log",
+      "sha256": "f636d1b6cb819b1150bcb3f23c8ace8eec1be3c88902579bf925527d4e824c88",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/controller-r3.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/controller-r3.json",
+      "sha256": "1642298b07857d2bbaeaf23b433281c1fa3a9731b303776aa7d7179131275df9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/controller-r3.log",
+      "sha256": "c3eacef55d183feac7af281182a33a629507eb14988b0b9f8913d14c9b461d02",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/current-exact-case-host-final.json",
+      "sha256": "2f05e4eb3fda9ef52701417a23600bece0f628b14560df26fbdbee1ecf396417",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/current-exact-case-host.json",
+      "sha256": "9c2e432d15f349c6999930bb09f75035140577b03e357573ba16ad450eb8546e",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/current-native-host.json",
+      "sha256": "c5365d07007789b276ccfa68aff13ddc935fdad9f2b67ece972edd9089399adb",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/delivery-receipt.json",
+      "sha256": "496d9115dd58d19da1afed0cbc7563b0a0bdd0625f82abf447b3d9ca93c0f552",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/empty-branch-debug.log",
+      "sha256": "ae8a238c1a5d6deea8fbb4eb04388b0955f9ab3f460651dd9c918c07173b3d01",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-final.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-final.json",
+      "sha256": "8b74116cfbdf33fe083a12c74a20732bae1fd047bfac3c086aeca424ba1813f4",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-final.log",
+      "sha256": "8b6e01b4dc61fbc6f86c4db3fbe0313b6001899bd0f2389d50b82d6ee529f916",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-initial.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-initial.log",
+      "sha256": "6fa3136ba02c0d6ccec049eab6f61bdb73f34ab6da378ceb885b496db1ea5135",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-r2.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-r2.json",
+      "sha256": "61b0bb9237692d70a21e9c48807a84cbe37950250963c5f04f9edb6717a609f0",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/focused-r2.log",
+      "sha256": "b960ea7fddd59eabf1a2307f7fab474d3333230e72adff3e65a42a85b17b3165",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/git-commit.log",
+      "sha256": "fb21e189ef3fc9979f5bcaf2592a2c7b7c493db6b34f1f5350948c50bfa2b58f",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/independent-review-coordination.json",
+      "sha256": "f5f408bfc9a73953f774bbd3e7e305e1e4abc7e69ed10997feaaf605c0ab97e2",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/last-authority-regression.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/last-authority-regression.json",
+      "sha256": "4c21eb18fd5f39cc13cf28b34e4bb9003c7696355444bca5416d371f7d68a34a",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/last-authority-regression.log",
+      "sha256": "b5b431e4dc8c7cfb5b65a3f1b12f74133b41762a4f3d6db8119feb6f568db0bc",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/local-commit-first-failure.json",
+      "sha256": "b346d90a6f926957476e7cefce498b2c38d4a5266970efdab47200574c179e96",
+      "public_form": "SANITIZED_COPY",
+      "redaction_categories": [
+        "email",
+        "machine_account_hint"
+      ]
+    },
+    {
+      "source": "selected-video-binding-evidence/local-handoff-first-attempt-failure.json",
+      "sha256": "5b290589d1df1564ccbdb827ebfc497a09331ce5c142802853a4d0b9241e0294",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/playwright.geometry.config.mts",
+      "sha256": "539d43ec19e3bde03d38c7563ce90cf55f2780603df254251f715f7133c891b8",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/pure-final.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/pure-final.log",
+      "sha256": "2ab16ea77a55dcd350525887c2e32ea3f3b6d25445baeda257871418f482e231",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/pure-initial.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/pure-initial.log",
+      "sha256": "59aceefe0e4c3f262166215a26e882988deb3fc2141dc75486288d776c008a5d",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/staged-diff-stat.txt",
+      "sha256": "8556538303b56ab28a5d0de5d7368319b172fb763c663f3f2f10d79b9b505d69",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/targeted-r4.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/targeted-r4.json",
+      "sha256": "70bf8506f780bf27497541fc7a7fc8c729f41da920298404773b63e06281b98f",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/targeted-r4.log",
+      "sha256": "28addc0ce45fe3978c58e655be5f6fe590348a70f9d08c46815cf18e9a16c23f",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/tokens-final.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/tokens-final.log",
+      "sha256": "c8e85c4dfb8c66b70fdf6b47be7598983dfb1aca53b577dd13c2f3a3a8907368",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-case-evidence.cjs",
+      "sha256": "e03b2be0d7dfe28c1e9861012b15312d452566efbaf5c44fbe51e369c0480a9a",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-commit.log",
+      "sha256": "0d2edb459efe8634878d3da6c187d682abff452fc463bd9b70b10e79435ccbc1",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-comparison.json",
+      "sha256": "4431aaa078715d5b1f8177b630e6dba080b56e1fabf1195fd611f2e522b9b55c",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-comparison.log",
+      "sha256": "8570d95adab5c078db1afd5a869a88c2adf4fa643e647855eaf9237d80389d9b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-final-r2.log",
+      "sha256": "0d2edb459efe8634878d3da6c187d682abff452fc463bd9b70b10e79435ccbc1",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-final.json",
+      "sha256": "07fd27b44dc9cef499f3c3e7afe7114fa799eb5300c1665a53b3059bf09e42b8",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-final.log",
+      "sha256": "cbb102e2999ce0643ecabab86e3f975845b8af69936aa4387f5ce9bbe7ca2a3b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-initial.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/typecheck-initial.log",
+      "sha256": "a1c769c925f5a5c1cbe26db56e58156f8fd1fecdf8671b1a16108394c566c39b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/vite-production-original.exit.txt",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/vite-production-original.log",
+      "sha256": "b4a30618ec7c7da4b352e995a38b561679bac1757b210be5abf89b031fc302be",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-evidence/vite.case-exact.config.mjs",
+      "sha256": "646c70f9caacfc6c17514f5dc73ff973b5dad5c25be8e81407d6628243e684bf",
+      "public_form": "UNCHANGED_RAW_BYTES"
+    },
+    {
+      "source": "selected-video-binding-materialization-failure.json",
+      "sha256": "e65f056961655cb7b409c031b14813ca1c7835fda70b17d357ab02a4bfc2d6c9",
+      "public_form": "SANITIZED_COPY",
+      "redaction_categories": [
+        "unrelated_private_download_metadata"
+      ]
+    }
+  ],
+  "private_backend_or_runtime_payloads_included": false,
+  "model_database_cache_env_key_files_included": false,
+  "no_absolute_secret_absence_claim": true
+}

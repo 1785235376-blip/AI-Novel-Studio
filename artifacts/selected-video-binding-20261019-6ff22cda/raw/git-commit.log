@@ -1,0 +1,10 @@
+[work/v2-selected-video-local-binding-20261019 6ff22cda] feat(graph): preview bounded local video model bindings
+ 11 files changed, 538 insertions(+), 5 deletions(-)
+ create mode 100644 frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx
+ create mode 100644 frontend/src/creative/GraphSelectedVideoBindingPanel.tsx
+ create mode 100644 frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx
+ create mode 100644 frontend/src/creative/graphProviderChoices.ts
+ create mode 100644 frontend/src/creative/graphSelectedVideoBinding.test.ts
+ create mode 100644 frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts
+ create mode 100644 frontend/src/creative/graphSelectedVideoBinding.ts
+ create mode 100644 frontend/src/creative/useGraphSelectedVideoBinding.ts

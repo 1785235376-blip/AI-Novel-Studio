@@ -1,0 +1,14 @@
+{
+  "head": "c1638908168cfdcea0b63cef9388b88cf66a91f3",
+  "staged_count": 11,
+  "author_ident_exit": 128,
+  "author_ident_error": "Author identity unknown\n\n*** Please tell me who you are.\n\nRun\n\n  git config --global user.email \"<EMAIL_LITERAL_REDACTED>\"\n  git config --global user.name \"Your Name\"\n\nto set your account's default identity.\nOmit --global to set the identity only in this repository.\n\nfatal: unable to auto-detect email address (got '<LOCAL_MACHINE_ACCOUNT>')\n",
+  "isolated_identity_configured": {
+    "user.name": false,
+    "user.email": false
+  },
+  "original_repository_identity_configured": {
+    "user.name": true,
+    "user.email": true
+  }
+}

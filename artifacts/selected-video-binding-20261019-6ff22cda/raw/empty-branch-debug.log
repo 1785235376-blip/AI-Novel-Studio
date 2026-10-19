@@ -1,0 +1,50 @@
+
+ RUN  v2.1.9 D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend
+
+ ❯ src/creative/GraphSelectedVideoBindingPanel.test.tsx (19 tests | 1 failed | 18 skipped) 100ms
+   × selected-video authoring through original controller and history > keeps an unselected empty-model branch and rejects a later no-change preview 99ms
+     → expected [] to deep equally contain { operation_id: 'm7.video.t2v', …(7) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphSelectedVideoBindingPanel.test.tsx > selected-video authoring through original controller and history > keeps an unselected empty-model branch and rejects a later no-change preview
+AssertionError: expected [] to deep equally contain { operation_id: 'm7.video.t2v', …(7) }
+
+- Expected: 
+Object {
+  "capability": "MEDIA",
+  "local": true,
+  "model_id": "model-local-one",
+  "operation_id": "m7.video.t2v",
+  "provider_id": "local-one",
+  "readiness": "CONFIGURED_NOT_VERIFIED",
+  "route_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "supported_parameters": Array [
+    "width",
+    "height",
+    "seed",
+    "negative_prompt",
+    "duration_seconds",
+    "frame_rate",
+  ],
+}
+
++ Received: 
+Array []
+
+ ❯ preview src/creative/GraphSelectedVideoBindingPanel.test.tsx:31:56
+     29|   expect(api.result.current.selectedVideoBinding.canRead).toBe(true);
+     30|   await act(() => api.result.current.selectedVideoBinding.load());
+     31|   expect(api.result.current.selectedVideoBinding.rows).toContainEqual(…
+       |                                                        ^
+     32|   act(() => api.result.current.selectedVideoBinding.choose(mediaProvid…
+     33|   expect(api.result.current.selectedVideoBinding.choice).toBe(mediaPro…
+ ❯ src/creative/GraphSelectedVideoBindingPanel.test.tsx:55:51
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 18 skipped (19)
+   Start at  12:20:50
+   Duration  1.47s (transform 406ms, setup 12ms, collect 691ms, tests 100ms, environment 461ms, prepare 62ms)
+

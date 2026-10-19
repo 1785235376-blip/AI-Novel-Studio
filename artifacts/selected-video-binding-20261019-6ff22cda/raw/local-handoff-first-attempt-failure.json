@@ -1,0 +1,8 @@
+{
+  "stage": "bounded privacy scan before creating ZIP",
+  "error": "Email-pattern hit in sanitized copy of local-commit-first-failure.json line 5",
+  "interpretation": "Git generated example email hint; now redact every email literal in evidence copies",
+  "original_files_modified": false,
+  "product_modified": false,
+  "zip_created": false
+}

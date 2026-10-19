@@ -1,0 +1,12 @@
+ .../GraphSelectedVideoBindingPanel.test.tsx        | 191 +++++++++++++++++++++
+ .../creative/GraphSelectedVideoBindingPanel.tsx    |  28 +++
+ ...oGraphSelectedVideoBinding.integration.test.tsx |  35 ++++
+ frontend/src/creative/graphProviderChoices.ts      |   9 +
+ .../src/creative/graphSelectedVideoBinding.test.ts |  80 +++++++++
+ .../graphSelectedVideoBinding.testFixtures.ts      |  16 ++
+ frontend/src/creative/graphSelectedVideoBinding.ts |  51 ++++++
+ frontend/src/creative/studioGraphClient.ts         |   2 +
+ frontend/src/creative/studioGraphEditorView.tsx    |   2 +
+ .../src/creative/useGraphSelectedVideoBinding.ts   | 113 ++++++++++++
+ .../src/creative/useStudioGraphEditorController.ts |  16 +-
+ 11 files changed, 538 insertions(+), 5 deletions(-)

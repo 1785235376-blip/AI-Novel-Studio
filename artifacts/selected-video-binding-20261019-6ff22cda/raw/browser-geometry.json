@@ -1,0 +1,227 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\codex数据\\2026-10-19\\task\\studio-v2-selected-video-binding\\frontend\\node_modules\\.pnpm\\@playwright+test@1.62.1\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\playwright.geometry.config.mts",
+      "--grep",
+      "shell geometry"
+    ],
+    "configFile": "D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\playwright.geometry.config.mts",
+    "rootDir": "D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tests/visual",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/codex数据/2026-10-19/task/selected-video-binding-evidence/browser-geometry-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tests/visual",
+        "testIgnore": [],
+        "testMatch": [
+          "/(?:design-system|local-ai-discovery)\\.spec\\.ts/"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\browser-geometry.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": {
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vite/bin/vite.js --config \"D:\\codex数据\\2026-10-19\\task\\selected-video-binding-evidence\\vite.case-exact.config.mjs\" --host 127.0.0.1 --port 5188 --strictPort",
+      "cwd": "D:\\codex数据\\2026-10-19\\task\\studio-v2-selected-video-binding\\frontend",
+      "url": "http://127.0.0.1:5188/ui-fixture",
+      "timeout": 60000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "design-system.spec.ts",
+      "file": "design-system.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "shell geometry 1024x768",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 417,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T04:29:17.894Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb9959aea8a42eda7d1c-9eff8eac8656ca69ce95",
+          "file": "design-system.spec.ts",
+          "line": 14,
+          "column": 124
+        },
+        {
+          "title": "shell geometry 1366x768",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T04:29:18.598Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb9959aea8a42eda7d1c-51bcdc0402be22936a52",
+          "file": "design-system.spec.ts",
+          "line": 14,
+          "column": 124
+        },
+        {
+          "title": "shell geometry 1440x900",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 290,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T04:29:18.899Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb9959aea8a42eda7d1c-011623dcdec417d1d3fb",
+          "file": "design-system.spec.ts",
+          "line": 14,
+          "column": 124
+        },
+        {
+          "title": "shell geometry 1920x1080",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T04:29:19.195Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cb9959aea8a42eda7d1c-f9f51b4654bc111e27f6",
+          "file": "design-system.spec.ts",
+          "line": 14,
+          "column": 124
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-19T04:29:16.762Z",
+    "duration": 3608.11,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

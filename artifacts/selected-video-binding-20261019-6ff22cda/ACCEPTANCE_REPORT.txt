@@ -1,0 +1,66 @@
+所选视频节点本地模型批量绑定：冻结切片验收摘要
+
+状态：本地切片冻结，独立复核已报告无新增功能阻断；不是生产验收或正式发布。
+产品代码冻结提交：6ff22cdadcf830ed5ec6343ea20966f8a74649c5
+直接前置提交：c1638908168cfdcea0b63cef9388b88cf66a91f3
+产品 tree：fba602755e92a03e06ea29eb7df6102673063eb0
+分支：work/v2-selected-video-local-binding-20261019
+范围：仅 11 个 frontend/src/creative 文件。
+
+行为：明确选择 1–4 个相同 operation 的 v5 video_generate 节点，读取已有本地配置，
+逐节点预览 provider_id/model_id 及 allow_cloud=false，经一次确认通过原 change/history
+原子应用，并使用原撤销/重做。其余参数与来源保持；不支持的保留参数整批拒绝并指出节点/字段。
+未选中空绑定分支仍可留作本地草稿，完整校验由原 Save 完成。Discovery 仅 CONFIGURED_NOT_VERIFIED。
+没有自动保存、任务准入、执行、模型调用；云端四文件未取得、未复制，本实现独立完成。
+
+验证边界（这些数字不可相加）：
+1. 较早的限定集：144/144 通过，日志 focused-final.json，时间 04:24 UTC。
+   使用仅验证的精确文件名 resolver。发生在最后同步图像脏表单锁修订之前，不能称为最终提交完整重跑。
+2. 最后权限修订：47/47 通过，last-authority-regression.json，时间 04:30 UTC。
+   覆盖批量控制器/挂载交互、原视图、原单节点 picker；包含最后的同步图像脏表单锁。
+   这是上项中受影响部分的重测，既不是另加 47 个独立功能，也不是全套 144 项最后重跑。
+3. 纯函数最后修订：22/22 通过，pure-final.log；包含字节一致性断言与测试类型注解。
+4. 严格类型：最后 1409 个根文件，0 错误，current-exact-case-host-final.json 和 typecheck-commit.log。
+   使用原 strict 等编译选项、完整大小写精确文件列表与精确文件名 compiler host。
+   这是验证适配，不是原生 Windows tsc PASS；产品配置与系统大小写设置未改。
+5. 原生 Windows 类型检查：仍 BLOCKED。typecheck-initial.log 原始失败保留。
+   对照中的 baseline-native-host 有 75 个诊断，baseline-exact-case-host 为 0；
+   该对照 native baseline 用显式 Git 根文件列表，较早 current-native 用原配置发现列表，根数不同。
+   因而不能把 75 与 66 的数量差称为减少了错误，也不能把精确 host 结果替代原生构建验收。
+   最后 current exact host 重新按精确大小写发现完整 1409 根文件；早期 1391 根文件、3 个新增测试类型错误的结果仍保留。
+6. 原 NOVEL shell 浏览器几何：4/4 通过（1024×768、1366×768、1440×900、1920×1080），现有 Edge 无界面模式。
+   这不是新批量绑定面板的真实浏览器视觉/端到端验收；原测试断言未修改。
+7. Token guard 与 Git 差异空白检查通过。原始失败、配置加载失败与首次本地提交标识失败均保留。
+
+独立复核（父任务已回报，原始独立日志未传入本执行器）：最终三个功能测试 50/50；
+11 文件哈希匹配；同一 tsconfig、1409 根文件、1984 总文件、0 未过滤诊断，未弱化类型选项。
+独立原生 Windows tsc 退出 2、63 项诊断，仍不能标为通过。数字与本任务早期不同命令/根列表不能混算。
+
+未改配置的原 Vite 生产命令 pnpm exec vite build：退出 1。
+2455 模块变换后因 CreativeCanvas.tsx 导入 DirectorCameraReuse 时解析到小写 directorCameraReuse.ts 而失败。
+完整失败输出 vite-production-original.log 保留；该错误引用的源码及原 Vite 配置不在本切片改动中。
+没有使用验证 resolver 来伪造生产打包通过，也没有将 Vite 结果替代原生 TypeScript 检查。
+
+未运行：真实本地 provider 配置与模型、GPU、后端端到端、新面板真实浏览器视觉验收、完整 V2 验收。
+没有 CI、Release、Tag、生产或原生 Windows 完整 PASS 声明。
+
+交付身份：增量 bundle 已核对唯一前置为上述 BASE，公开头为上述 HEAD，verify 通过。
+bundle 原字节 16051，SHA256 fb942719668d374e8775bbb9c69535d50dc0b72abcd79bc2384a989dd71dee10。
+精确补丁 SHA256 f4a04ebdec09f1578e5fef76dcdb54aa3c900059c55abafb8a30be64de9bbd53，已用独立临时 Git index 在 BASE 上应用，write-tree 精确得到上述 TREE。
+没有修改产品工作树或分支来做此验证。
+
+隐私与归档：原始 bundle 包含 Git 固有作者/提交者账户元数据，完整保留本机、不纳入本无个人数据 ZIP。
+包内为无作者头的补丁、11 个原样源码文件、脱敏证据副本、验证辅助程序及 SHA256 清单。
+原始日志与回执未覆盖；清单记录原始字节 SHA256，同时记录包内脱敏副本 SHA256。
+本机路径、Git 身份、机器账户标记和潜在环境字段在证据副本中删除，不在报告回显具体值。
+源码/补丁未脱敏改写。有界扫描未发现实际凭据或未处理身份字面量；不作绝对无秘密保证。
+
+独立复核任务 01a15271-62aa-7030-b25d-e2e634e4f022 已完成并由父任务回报；未来修复或整合由父任务协调。
+本包可用于本地审查和移交，不包含正式发布授权。
+
+公开归档附记：
+本目录作为既有 archive 分支的追加快照，不是产品开发分支更新、main 合并、Tag 或 Release。
+continuation.bundle 保留用户明确指定的公开 GitHub owner 及 GitHub noreply 固有元数据；没有私有邮箱或其他个人资料。
+本目录的 raw/ 文件逐字节保持原始输出；redacted/ 文件明确为脱敏副本，原始 SHA256 与原因另有清单。
+本地 review ZIP 为更小隐私范围版本而不含 bundle；公开归档另按用户明示授权附带精确 bundle。
+原始源码提交仍冻结，所有复核/构建限制保持。CI 在归档提交中明确跳过，不记为通过。

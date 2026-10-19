@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-10-19T04:02:56.718265+00:00",
+  "status": "BLOCKED_SUPPORTED_MATERIALIZATION_FAILED",
+  "library_file_id": "<OMITTED_UNRELATED_DOWNLOAD_METADATA>",
+  "file_id": "<OMITTED_UNRELATED_DOWNLOAD_METADATA>",
+  "target": "<TASK_ROOT>\\selected-video-binding-handoff\\selected-video-binding-unverified.zip",
+  "exists": false,
+  "expected_size": 70709,
+  "expected_sha256": "be45aa8d81f14ed814d0bdb941e9277a97393e21187b4b2c72ccf098f96c1acd",
+  "raw_error": "AttributeError: module 'os' has no attribute 'setxattr'",
+  "failure_stage": "Current unmodified official library_file_transfer.py materialize -> apply_xattrs -> os.setxattr",
+  "helper_exit_code": 1,
+  "file_applied_to_repository": false,
+  "product_changes": false,
+  "further_retry": "Not attempted: supported helper is incompatible with Windows Python xattr API; changing destination does not fix this error.",
+  "readable": false,
+  "size": null,
+  "sha256": null,
+  "hash_matches": false,
+  "directory_members": []
+}

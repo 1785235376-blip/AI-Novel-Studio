@@ -1,0 +1,658 @@
+diff --git a/frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx b/frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..ff82cef0b04a21bb39862c26a0b6be8f6e520e85
+--- /dev/null
++++ b/frontend/src/creative/GraphSelectedVideoBindingPanel.test.tsx
+@@ -0,0 +1,191 @@
++// @vitest-environment jsdom
++import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
++import { afterEach, describe, expect, it, vi } from 'vitest';
++import { GraphSelectedVideoBindingPanel } from './GraphSelectedVideoBindingPanel';
++import { useStudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';
++import type { StudioClient } from './studioClient';
++import type { ProductionProvider } from './studioProductionClient';
++import { mediaProviderKey } from './useStudioMediaExecution';
++import { imageGraphRecord } from './studioImageGraph.testFixtures';
++import { videoBindingCatalog, videoBindingGraph, videoBindingProvider } from './graphSelectedVideoBinding.testFixtures';
++
++afterEach(cleanup);
++const deferred = <T,>() => { let resolve!: (value: T) => void, reject!: (value: unknown) => void;
++  const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; };
++async function setup(rows = [videoBindingProvider(), videoBindingProvider('local-two')]) {
++  const providers = vi.fn<(signal?: AbortSignal) => Promise<ProductionProvider[]>>().mockResolvedValue(rows);
++  const writes = { create: vi.fn(), save: vi.fn(), createRun: vi.fn(), preflight: vi.fn(), previewMedia: vi.fn(), dispatchMedia: vi.fn(), executeMedia: vi.fn(), reviewMedia: vi.fn(), previewModel: vi.fn(), dispatchModel: vi.fn() };
++  const client = { graphs: { catalog: vi.fn().mockResolvedValue(videoBindingCatalog()), videoCatalog: vi.fn().mockImplementation(async () => videoBindingCatalog()),
++    list: vi.fn().mockResolvedValue({ items: [] }), ...writes } } as unknown as StudioClient;
++  const props: StudioGraphEditorProps = { identity: 'original-actor', active: true, denied: false, canMutate: true, canReview: true,
++    client, providerSource: { providers }, busy: false, externalDirty: false, isCurrent: () => true, read: work => work(), mutate: work => work() };
++  const hook = renderHook(value => useStudioGraphEditorController(value), { initialProps: props });
++  await waitFor(() => expect(hook.result.current.editable).toBe(true));
++  act(() => { hook.result.current.change(videoBindingGraph()); hook.result.current.setSelected(['video-1', 'video-3']); });
++  const noWrites = () => Object.values(writes).forEach(fn => expect(fn).not.toHaveBeenCalled());
++  return { ...hook, props, providers, writes, noWrites };
++}
++type API = Awaited<ReturnType<typeof setup>>;
++async function preview(api: API, provider = videoBindingProvider()) {
++  expect(api.result.current.selectedVideoBinding.canRead).toBe(true);
++  await act(() => api.result.current.selectedVideoBinding.load());
++  expect(api.result.current.selectedVideoBinding.rows).toContainEqual(provider);
++  act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey(provider)));
++  expect(api.result.current.selectedVideoBinding.choice).toBe(mediaProviderKey(provider));
++  act(() => api.result.current.selectedVideoBinding.prepare());
++  expect(api.result.current.selectedVideoBinding.error).toBe('');
++  expect(api.result.current.selectedVideoBinding.preview?.changes).toHaveLength(2);
++}
++
++describe('selected-video authoring through original controller and history', () => {
++  it('does nothing automatically; previews exact old/new tuples and applies once with one undo/redo', async () => {
++    const api = await setup(); expect(api.providers).not.toHaveBeenCalled(); const before = structuredClone(api.result.current.draft), history = api.result.current.past.length;
++    await preview(api); expect(api.result.current.draft).toEqual(before); expect(api.result.current.past).toHaveLength(history);
++    expect(api.result.current.selectedVideoBinding.preview!.changes[0]).toEqual({ nodeId: 'video-1', before: { provider_id: 'old-video-1', model_id: 'model-video-1', allow_cloud: true }, after: { provider_id: 'local-one', model_id: 'model-local-one', allow_cloud: false } });
++    const apply = api.result.current.selectedVideoBinding.apply;
++    act(() => { expect(apply()).toBe(true); expect(apply()).toBe(false); });
++    const after = structuredClone(api.result.current.draft); expect(api.result.current.past).toHaveLength(history + 1);
++    expect(after.nodes[1]).toEqual(before.nodes[1]); expect(after.nodes[3]).toEqual(before.nodes[3]);
++    act(() => api.result.current.travel(false)); expect(api.result.current.draft).toEqual(before);
++    act(() => { expect(apply()).toBe(false); }); expect(api.result.current.draft).toEqual(before);
++    act(() => api.result.current.travel(true)); expect(api.result.current.draft).toEqual(after); api.noWrites();
++  });
++  it('keeps an unselected empty-model branch and rejects a later no-change preview', async () => {
++    const api = await setup(), source = structuredClone(api.result.current.draft);
++    source.nodes[1].parameters.provider_id = ''; source.nodes[1].parameters.model_id = '';
++    act(() => api.result.current.change(source)); await preview(api); act(() => api.result.current.selectedVideoBinding.apply());
++    expect(api.result.current.draft.nodes[1].parameters.model_id).toBe('');
++    const history = api.result.current.past.length;
++    await act(() => api.result.current.selectedVideoBinding.load()); act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey(videoBindingProvider())));
++    act(() => api.result.current.selectedVideoBinding.prepare()); expect(api.result.current.selectedVideoBinding.error).toContain('没有可应用');
++    expect(api.result.current.past).toHaveLength(history); api.noWrites();
++  });
++  it('rejects selection A → B → A and retained load/choice/preview/apply callbacks', async () => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding, before = structuredClone(api.result.current.draft);
++    act(() => { api.result.current.setSelected(['video-2']); api.result.current.setSelected(['video-1', 'video-3']); expect(stale.apply()).toBe(false); });
++    act(() => { stale.choose(mediaProviderKey(videoBindingProvider('local-two'))); stale.prepare(); }); await act(() => stale.load());
++    expect(api.providers).toHaveBeenCalledTimes(1); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined(); expect(api.result.current.draft).toEqual(before); api.noWrites();
++  });
++  it('rejects draft A → B → A even when the original object returns within one React event', async () => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding.apply, original = api.result.current.draft;
++    act(() => { api.result.current.change({ ...original, title: 'temporary B' }); api.result.current.change(original); expect(stale()).toBe(false); });
++    expect(api.result.current.draft).toEqual(original); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined(); api.noWrites();
++  });
++  it('retires a preview after the saved graph version goes 1 → 2 → 1', async () => {
++    const api = await setup(), record = imageGraphRecord(); record.definition = videoBindingGraph();
++    const get = vi.fn().mockResolvedValue(record); Object.assign(api.props.client.graphs, { get });
++    await act(() => api.result.current.open(record.id)); act(() => api.result.current.setSelected(['video-1', 'video-3'])); await preview(api);
++    const stale = api.result.current.selectedVideoBinding.apply;
++    get.mockResolvedValueOnce({ ...record, version: record.version + 1 }); await act(() => api.result.current.open(record.id));
++    get.mockResolvedValueOnce(record); await act(() => api.result.current.open(record.id));
++    act(() => expect(stale()).toBe(false)); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined();
++    expect(api.result.current.draft).toEqual(record.definition); api.noWrites();
++  });
++  it('retires an old callback when the discovery method changes on the same source object', async () => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding.apply;
++    api.props.providerSource!.providers = vi.fn().mockResolvedValue([]); api.rerender({ ...api.props });
++    act(() => expect(stale()).toBe(false)); expect(api.result.current.selectedVideoBinding.rows).toEqual([]); api.noWrites();
++  });
++  it('rejects provider A → B → A and refreshes with changed route/capability data', async () => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding.apply;
++    act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey(videoBindingProvider('local-two'))));
++    act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey(videoBindingProvider())));
++    act(() => expect(stale()).toBe(false)); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined();
++    act(() => api.result.current.selectedVideoBinding.prepare()); const prior = api.result.current.selectedVideoBinding.apply;
++    api.providers.mockResolvedValueOnce([{ ...videoBindingProvider(), route_digest: 'b'.repeat(64), supported_parameters: [] }]);
++    await act(() => api.result.current.selectedVideoBinding.load()); act(() => expect(prior()).toBe(false));
++    act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey({ ...videoBindingProvider(), route_digest: 'b'.repeat(64) })));
++    act(() => api.result.current.selectedVideoBinding.prepare()); expect(api.result.current.selectedVideoBinding.error).toMatch(/video-1.*parameters.seed/); api.noWrites();
++  });
++  it.each(['identity', 'client', 'providerSource', 'canMutate', 'busy', 'externalDirty', 'active', 'draftOwner'] as const)('retires preview after %s A → B → A', async key => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding.apply, history = api.result.current.past.length;
++    const replacement = key === 'identity' ? 'other-actor' : key === 'client' ? { ...api.props.client } : key === 'providerSource' ? { providers: vi.fn().mockResolvedValue([]) }
++      : key === 'draftOwner' ? { projectId: 'other', incarnation: 'file:other', actorId: 'other-actor', actorWorkspaceId: '', mode: 'local' as const, workspaceId: '', storylineId: '', branchId: '' }
++      : !api.props[key];
++    api.rerender({ ...api.props, [key]: replacement }); api.rerender(api.props);
++    act(() => expect(stale()).toBe(false)); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined();
++    expect(api.result.current.past).toHaveLength(history); api.noWrites();
++  });
++  it('honors synchronous busy, pending image form and current revocation', async () => {
++    const api = await setup(); let busy = false, current = true, pendingImage = false;
++    api.rerender({ ...api.props, isBusy: () => busy, isCurrent: () => current, isDirectorImagePending: () => pendingImage }); await preview(api);
++    const before = structuredClone(api.result.current.draft), apply = api.result.current.selectedVideoBinding.apply;
++    busy = true; act(() => expect(apply()).toBe(false)); busy = false;
++    pendingImage = true; act(() => expect(apply()).toBe(false)); pendingImage = false;
++    current = false; act(() => expect(apply()).toBe(false));
++    expect(api.result.current.draft).toEqual(before); api.noWrites();
++  });
++  it('retires previews when execution form is dirty or permission is denied', async () => {
++    const api = await setup(); await preview(api); const stale = api.result.current.selectedVideoBinding.apply;
++    act(() => api.result.current.setExecutionDirty(true)); act(() => api.result.current.setExecutionDirty(false));
++    act(() => expect(stale()).toBe(false)); expect(api.result.current.selectedVideoBinding.preview).toBeUndefined();
++    await preview(api); const prior = api.result.current.selectedVideoBinding.apply;
++    api.rerender({ ...api.props, denied: true }); api.rerender(api.props); act(() => expect(prior()).toBe(false)); api.noWrites();
++  });
++  it('preserves the original dirty timeline form and refuses discovery or binding across it', async () => {
++    const api = await setup(), graph = structuredClone(api.result.current.draft);
++    graph.nodes[3] = { id: 'timeline', definition_id: 'timeline_export', definition_version: 1, enabled: true, position: { x: 0, y: 0 }, parameters: {} };
++    act(() => { api.result.current.change(graph); api.result.current.setSelected(['timeline']); });
++    act(() => api.result.current.timelineEditor.changeForm('in_ms', '77'));
++    expect(api.result.current.timelineEditor.formDirty).toBe(true);
++    act(() => api.result.current.setSelected(['video-1', 'video-3']));
++    const before = structuredClone(api.result.current.draft), form = structuredClone(api.result.current.timelineEditor.form);
++    expect(api.result.current.selectedVideoBinding.canRead).toBe(false); await act(() => api.result.current.selectedVideoBinding.load());
++    act(() => { api.result.current.selectedVideoBinding.choose(mediaProviderKey(videoBindingProvider())); api.result.current.selectedVideoBinding.prepare(); expect(api.result.current.selectedVideoBinding.apply()).toBe(false); });
++    expect(api.providers).not.toHaveBeenCalled(); expect(api.result.current.draft).toEqual(before); expect(api.result.current.timelineEditor.form).toEqual(form); api.noWrites();
++  });
++  it.each(['identity', 'client', 'providerSource', 'canMutate', 'externalDirty'] as const)('ignores late discovery after %s A → B → A', async key => {
++    const api = await setup(), late = deferred<ProductionProvider[]>(); api.providers.mockReturnValueOnce(late.promise);
++    let work!: Promise<void>; act(() => { work = api.result.current.selectedVideoBinding.load(); });
++    const replacement = key === 'identity' ? 'other-actor' : key === 'client' ? { ...api.props.client } : key === 'providerSource' ? { providers: vi.fn().mockResolvedValue([]) } : !api.props[key];
++    api.rerender({ ...api.props, [key]: replacement }); api.rerender(api.props);
++    await act(async () => { late.resolve([videoBindingProvider()]); await work; });
++    expect(api.result.current.selectedVideoBinding.rows).toEqual([]); expect(api.result.current.selectedVideoBinding.loading).toBe(false); api.noWrites();
++  });
++  it('discards late results and stale finally/error while a newer request is loading', async () => {
++    const api = await setup(), first = deferred<ProductionProvider[]>(), second = deferred<ProductionProvider[]>();
++    api.providers.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
++    let one!: Promise<void>, two!: Promise<void>;
++    act(() => { one = api.result.current.selectedVideoBinding.load(); });
++    act(() => api.result.current.setSelected(['video-2'])); act(() => api.result.current.setSelected(['video-1', 'video-3']));
++    act(() => { two = api.result.current.selectedVideoBinding.load(); });
++    await act(async () => { first.reject(new Error('old error')); await one; });
++    expect(api.result.current.selectedVideoBinding.loading).toBe(true); expect(api.result.current.selectedVideoBinding.error).toBe('');
++    await act(async () => { second.resolve([videoBindingProvider()]); await two; });
++    expect(api.result.current.selectedVideoBinding.rows).toEqual([videoBindingProvider()]); api.noWrites();
++  });
++  it('rejects late discovery after actor/client/catalog replacement and aborts on unmount', async () => {
++    const api = await setup(), late = deferred<ProductionProvider[]>(); api.providers.mockReturnValueOnce(late.promise);
++    let work!: Promise<void>; act(() => { work = api.result.current.selectedVideoBinding.load(); });
++    await act(() => api.result.current.loadVideoCatalog());
++    await act(async () => { late.resolve([videoBindingProvider()]); await work; }); expect(api.result.current.selectedVideoBinding.rows).toEqual([]);
++    const final = deferred<ProductionProvider[]>(); api.providers.mockReturnValueOnce(final.promise);
++    act(() => { work = api.result.current.selectedVideoBinding.load(); }); const signal = api.providers.mock.calls.at(-1)![0]!;
++    api.unmount(); expect(signal.aborted).toBe(true); await act(async () => { final.resolve([videoBindingProvider()]); await work; }); api.noWrites();
++  });
++  it('hides duplicate/cloud/wrong-operation options, and never replaces or clears unsupported values', async () => {
++    const provider = videoBindingProvider(), cloud = { ...videoBindingProvider('cloud'), local: false }, wrong = { ...videoBindingProvider('wrong'), operation_id: 'm7.video.i2v' as const };
++    const api = await setup([provider, { ...provider }, cloud, wrong]); const before = structuredClone(api.result.current.draft);
++    await act(() => api.result.current.selectedVideoBinding.load()); expect(api.result.current.selectedVideoBinding.rows).toEqual([]); expect(api.result.current.selectedVideoBinding.error).toContain('含糊');
++    act(() => api.result.current.selectedVideoBinding.choose(mediaProviderKey(cloud))); act(() => api.result.current.selectedVideoBinding.prepare());
++    expect(api.result.current.draft).toEqual(before); api.noWrites();
++  });
++});
++
++describe('mounted selected-video binding controls', () => {
++  it('requires explicit preview and confirmation and detects DOM option drift', async () => {
++    const api = await setup();
++    const panel = render(<GraphSelectedVideoBindingPanel binding={api.result.current.selectedVideoBinding} />);
++    const refresh = () => panel.rerender(<GraphSelectedVideoBindingPanel binding={api.result.current.selectedVideoBinding} />);
++    expect(screen.queryByLabelText('所选视频节点绑定预览')).toBeNull();
++    await act(() => api.result.current.selectedVideoBinding.load()); refresh();
++    fireEvent.change(screen.getByLabelText('批量绑定本地服务商与模型'), { target: { value: mediaProviderKey(videoBindingProvider()) } }); refresh();
++    const before = structuredClone(api.result.current.draft); fireEvent.click(screen.getByRole('button', { name: '预览所选视频节点绑定' })); refresh();
++    expect(screen.getByLabelText('所选视频节点绑定预览').textContent).toContain('old-video-1 → local-one'); expect(api.result.current.draft).toEqual(before);
++    (screen.getByLabelText('批量绑定本地服务商与模型') as HTMLSelectElement).value = mediaProviderKey(videoBindingProvider('local-two'));
++    fireEvent.click(screen.getByRole('button', { name: '确认应用所选视频节点本地绑定' })); refresh(); expect(api.result.current.draft).toEqual(before); expect(screen.queryByLabelText('所选视频节点绑定预览')).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: '预览所选视频节点绑定' })); refresh();
++    fireEvent.click(screen.getByRole('button', { name: '确认应用所选视频节点本地绑定' })); refresh();
++    expect(api.result.current.draft.nodes[0].parameters.allow_cloud).toBe(false); expect(screen.getByText(/CONFIGURED_NOT_VERIFIED/)).toBeTruthy(); api.noWrites();
++  });
++});
+diff --git a/frontend/src/creative/GraphSelectedVideoBindingPanel.tsx b/frontend/src/creative/GraphSelectedVideoBindingPanel.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..5914a046c5c693405deeadf25139f8426400adbd
+--- /dev/null
++++ b/frontend/src/creative/GraphSelectedVideoBindingPanel.tsx
+@@ -0,0 +1,28 @@
++import { Button, StatusMessage } from '../ui/primitives';
++import { useRef } from 'react';
++import { mediaProviderKey } from './useStudioMediaExecution';
++import type { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
++
++export function GraphSelectedVideoBindingPanel({ binding }: { binding: ReturnType<typeof useGraphSelectedVideoBinding> }) {
++  const choiceInput = useRef<HTMLSelectElement>(null);
++  const withCurrentChoice = (work: () => void) => { if (choiceInput.current?.value === binding.choice) work(); else binding.cancel(); };
++  return <section aria-label="所选视频节点本地批量绑定">
++    <h3>所选视频节点 · 本地模型绑定</h3>
++    <p>明确选择 1–4 个同一操作的视频生成节点。只更新服务商、模型和 allow_cloud=false；其他参数与来源保持。保存与执行仍需另行操作。</p>
++    {binding.selectionError && <p>{binding.selectionError}</p>}
++    <Button disabled={!binding.canRead || binding.loading} loading={binding.loading} onClick={() => void binding.load()}>读取批量绑定本地配置</Button>
++    <label>批量绑定本地服务商与模型<select ref={choiceInput} disabled={!binding.canChoose} value={binding.choice} onChange={event => binding.choose(event.target.value)}>
++      <option value="">明确选择本地配置</option>
++      {binding.rows.map(row => <option key={mediaProviderKey(row)} value={mediaProviderKey(row)}>{row.provider_id} · {row.model_id}</option>)}
++    </select></label>
++    <p>CONFIGURED_NOT_VERIFIED：仅发现已有本地配置，尚未验证推理。</p>
++    <Button disabled={!binding.canChoose || !binding.choice} onClick={() => withCurrentChoice(binding.prepare)}>预览所选视频节点绑定</Button>
++    {binding.error && <StatusMessage tone="warning">{binding.error}</StatusMessage>}
++    {binding.preview && <div aria-label="所选视频节点绑定预览" role="status">
++      <ul>{binding.preview.changes.map(row => <li key={row.nodeId}>{row.nodeId}：provider_id {row.before.provider_id || '空'} → {row.after.provider_id}；model_id {row.before.model_id || '空'} → {row.after.model_id}；allow_cloud {String(row.before.allow_cloud ?? false)} → false</li>)}</ul>
++      <p>确认将以上绑定一次应用到本地草稿，可一次撤销或重做；不会保存或启动任务。</p>
++      <Button disabled={!binding.canChoose} onClick={() => withCurrentChoice(() => { binding.apply(); })}>确认应用所选视频节点本地绑定</Button>
++      <Button onClick={binding.cancel}>取消视频绑定预览</Button>
++    </div>}
++  </section>;
++}
+diff --git a/frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx b/frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..3389e5dce92ad6130670f06c2e28482de0256091
+--- /dev/null
++++ b/frontend/src/creative/StudioGraphSelectedVideoBinding.integration.test.tsx
+@@ -0,0 +1,35 @@
++// @vitest-environment jsdom
++import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
++import { afterEach, expect, it, vi } from 'vitest';
++import { studioGraphEditorView } from './studioGraphEditorView';
++import { useStudioGraphEditorController, type StudioGraphEditorController, type StudioGraphEditorProps } from './useStudioGraphEditorController';
++import type { StudioClient } from './studioClient';
++import { videoBindingCatalog, videoBindingGraph, videoBindingProvider } from './graphSelectedVideoBinding.testFixtures';
++import { mediaProviderKey } from './useStudioMediaExecution';
++
++afterEach(cleanup);
++it('mounts in the original v5 view and uses original undo/redo without saving or admitting any task', async () => {
++  const provider = videoBindingProvider(), providers = vi.fn().mockResolvedValue([provider]);
++  const writes = { create: vi.fn(), save: vi.fn(), createRun: vi.fn(), preflight: vi.fn(), previewMedia: vi.fn(), dispatchMedia: vi.fn(), executeMedia: vi.fn(), reviewMedia: vi.fn(), previewModel: vi.fn(), dispatchModel: vi.fn() };
++  const client = { graphs: { catalog: vi.fn().mockResolvedValue(videoBindingCatalog()), list: vi.fn().mockResolvedValue({ items: [] }), ...writes } } as unknown as StudioClient;
++  const props: StudioGraphEditorProps = { active: true, denied: false, canMutate: true, canReview: true, identity: 'original-author', client,
++    providerSource: { providers }, busy: false, externalDirty: false, isCurrent: () => true, read: work => work(), mutate: work => work() };
++  let controller!: StudioGraphEditorController;
++  function Harness() { controller = useStudioGraphEditorController(props); const view = studioGraphEditorView(controller, props); return <>{view.content}{view.inspector}</>; }
++  render(<Harness />); await waitFor(() => expect(controller.editable).toBe(true));
++  act(() => { controller.change(videoBindingGraph()); controller.setSelected(['video-1', 'video-3']); });
++  const before = structuredClone(controller.draft), history = controller.past.length;
++  expect(providers).not.toHaveBeenCalled(); expect(screen.getByLabelText('所选视频节点本地批量绑定')).toBeTruthy();
++  fireEvent.click(screen.getByRole('button', { name: '读取批量绑定本地配置' }));
++  await waitFor(() => expect(controller.selectedVideoBinding.rows).toHaveLength(1));
++  fireEvent.change(screen.getByLabelText('批量绑定本地服务商与模型'), { target: { value: mediaProviderKey(provider) } });
++  fireEvent.click(screen.getByRole('button', { name: '预览所选视频节点绑定' }));
++  expect(controller.draft).toEqual(before); expect(controller.past).toHaveLength(history);
++  expect(screen.getByLabelText('所选视频节点绑定预览').textContent).toContain('video-3');
++  fireEvent.click(screen.getByRole('button', { name: '确认应用所选视频节点本地绑定' }));
++  const after = structuredClone(controller.draft); expect(controller.past).toHaveLength(history + 1);
++  expect(after.nodes[0].parameters.provider_id).toBe('local-one'); expect(after.nodes[1]).toEqual(before.nodes[1]);
++  fireEvent.click(screen.getByRole('button', { name: '撤销图编辑' })); expect(controller.draft).toEqual(before);
++  fireEvent.click(screen.getByRole('button', { name: '重做图编辑' })); expect(controller.draft).toEqual(after);
++  expect(providers).toHaveBeenCalledTimes(1); Object.values(writes).forEach(write => expect(write).not.toHaveBeenCalled());
++});
+diff --git a/frontend/src/creative/graphProviderChoices.ts b/frontend/src/creative/graphProviderChoices.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..77291e12107c0658b96c3e2eef2b99768ec78021
+--- /dev/null
++++ b/frontend/src/creative/graphProviderChoices.ts
+@@ -0,0 +1,9 @@
++import type { ProductionProvider } from './studioProductionClient';
++
++/** A saved graph stores only this tuple, so even identical duplicates are ambiguous. */
++export function uniqueGraphProviders(values: ProductionProvider[]) {
++  const tuple = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id]);
++  const counts = new Map<string, number>();
++  values.forEach(row => counts.set(tuple(row), (counts.get(tuple(row)) || 0) + 1));
++  return values.filter(row => counts.get(tuple(row)) === 1);
++}
+diff --git a/frontend/src/creative/graphSelectedVideoBinding.test.ts b/frontend/src/creative/graphSelectedVideoBinding.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8e1d25622f60844a1e3a6280754dc445f8e2d3f
+--- /dev/null
++++ b/frontend/src/creative/graphSelectedVideoBinding.test.ts
+@@ -0,0 +1,80 @@
++import { describe, expect, it } from 'vitest';
++import { graphSelectedVideoBinding, selectedVideoBindingNodes } from './graphSelectedVideoBinding';
++import { uniqueGraphProviders } from './graphProviderChoices';
++import { checkedStudioGraphDraft } from './studioGraphClient';
++import { videoBindingCatalog, videoBindingGraph, videoBindingNode, videoBindingProvider } from './graphSelectedVideoBinding.testFixtures';
++import type { StudioGraphParameters } from './studioGraphTypes';
++
++describe('bounded selected video binding: preserve authored content', () => {
++  it('changes exactly three fields per selected node, retaining different parameters, sources and edges', () => {
++    const source = videoBindingGraph(), provider = videoBindingProvider();
++    source.nodes.push({ id: 'shot', definition_id: 'storyboard_shot', definition_version: 1, enabled: true, position: { x: 0, y: 0 },
++      parameters: { shot_id: 'original-shot', shot_version: 9, shot_digest: 'f'.repeat(64) } });
++    source.edges.push({ id: 'shot-edge', source_node_id: 'shot', source_port: 'shot', target_node_id: 'video-1', target_port: 'shot' });
++    const before = structuredClone(source), expected = structuredClone(source);
++    for (const node of expected.nodes.filter(node => ['video-1', 'video-3'].includes(node.id))) Object.assign(node.parameters, { provider_id: provider.provider_id, model_id: provider.model_id, allow_cloud: false });
++    const result = graphSelectedVideoBinding(source, ['video-3', 'video-1'], videoBindingCatalog(), provider);
++    expect(result.definition).toEqual(expected); expect(source).toEqual(before);
++    expect(JSON.stringify(result.definition)).toBe(JSON.stringify(expected));
++    expect(result.changes.map(row => row.nodeId)).toEqual(['video-3', 'video-1']);
++    expect(result.definition.nodes[1]).toBe(source.nodes[1]); expect(result.definition.edges).toBe(source.edges);
++  });
++  it('binds one branch while other empty bindings remain local drafts and full Save still rejects them', () => {
++    const source = videoBindingGraph(); source.nodes.forEach(node => Object.assign(node.parameters, { provider_id: '', model_id: '', allow_cloud: false }));
++    const next = graphSelectedVideoBinding(source, ['video-1'], videoBindingCatalog(), videoBindingProvider()).definition;
++    expect(next.nodes[1].parameters.provider_id).toBe(''); expect(() => checkedStudioGraphDraft(next)).toThrow();
++  });
++  it.each([1, 2, 3, 4])('permits exactly %i selected video nodes', count => {
++    const graph = videoBindingGraph(); expect(graphSelectedVideoBinding(graph, graph.nodes.slice(0, count).map(n => n.id), videoBindingCatalog(), videoBindingProvider()).changes).toHaveLength(count);
++  });
++  it.each([[], ['video-1', 'video-1'], ['missing'], ['video-1', 'video-2', 'video-3', 'video-4', 'video-5']].map(selected => ({ selected })))('rejects invalid selection $selected', ({ selected }) => {
++    expect(() => selectedVideoBindingNodes(videoBindingGraph(), selected)).toThrow();
++  });
++  it('rejects mixed definitions, duplicate source IDs, schema and operations', () => {
++    const graph = videoBindingGraph(); graph.nodes[1].definition_id = 'media_review'; expect(() => selectedVideoBindingNodes(graph, ['video-1', 'video-2'])).toThrow(/video-2/);
++    graph.nodes[1] = videoBindingNode('video-1'); expect(() => selectedVideoBindingNodes(graph, ['video-1'])).toThrow();
++    graph.nodes[1] = videoBindingNode('video-2'); graph.nodes[1].parameters.operation_id = 'm7.video.i2v'; expect(() => selectedVideoBindingNodes(graph, ['video-1', 'video-2'])).toThrow(/operation/);
++    graph.schema_version = 4; expect(() => selectedVideoBindingNodes(graph, ['video-1'])).toThrow();
++  });
++  it('rejects cloud/wrong-operation providers and ambiguous tuples, including identical duplicates', () => {
++    const provider = videoBindingProvider(), second = videoBindingProvider('second');
++    expect(uniqueGraphProviders([provider, { ...provider }, second])).toEqual([second]);
++    expect(uniqueGraphProviders([provider, { ...provider, route_digest: 'b'.repeat(64) }])).toEqual([]);
++    for (const row of [{ ...provider, local: false }, { ...provider, operation_id: 'm7.video.i2v' as const }])
++      expect(() => graphSelectedVideoBinding(videoBindingGraph(), ['video-1'], videoBindingCatalog(), row)).toThrow();
++  });
++  it('names the node and unsupported field, preserves every value, and rejects the whole batch', () => {
++    const source = videoBindingGraph(), before = structuredClone(source), provider = videoBindingProvider();
++    provider.supported_parameters = provider.supported_parameters.filter(name => name !== 'duration_seconds');
++    expect(() => graphSelectedVideoBinding(source, ['video-2', 'video-1'], videoBindingCatalog(), provider)).toThrow(/video-2.*parameters.duration_seconds/);
++    expect(source).toEqual(before);
++  });
++  it.each<NonNullable<StudioGraphParameters['parameters']>>([{ seed: -1 }, { frame_rate: 61 }, { duration_seconds: 601 }, { width: 512 }, { width: 512.5, height: 512 }])('reuses typed Save rules for %j', parameters => {
++    const source = videoBindingGraph(); source.nodes[0].parameters.parameters = parameters;
++    expect(() => graphSelectedVideoBinding(source, ['video-1'], videoBindingCatalog(), videoBindingProvider())).toThrow(/video-1.*原保存规则/);
++  });
++  it('does not normalize nulls or omitted author fields', () => {
++    const graph = videoBindingGraph(); delete graph.nodes[0].parameters.prompt; graph.nodes[0].parameters.parameters = { seed: null };
++    const next = graphSelectedVideoBinding(graph, ['video-1'], videoBindingCatalog(), videoBindingProvider()).definition;
++    expect(next.nodes[0].parameters).not.toHaveProperty('prompt'); expect(next.nodes[0].parameters.parameters).toEqual({ seed: null });
++  });
++  it('rejects no-change applications without creating an alternate draft', () => {
++    const source = videoBindingGraph(), provider = videoBindingProvider();
++    source.nodes.forEach(node => Object.assign(node.parameters, { provider_id: provider.provider_id, model_id: provider.model_id, allow_cloud: false }));
++    expect(() => graphSelectedVideoBinding(source, ['video-1', 'video-2'], videoBindingCatalog(), provider)).toThrow(/没有可应用/);
++  });
++  it('enforces generator, node and edge limits without full-graph parameter validation', () => {
++    for (const kind of ['generator', 'node', 'edge']) {
++      const graph = videoBindingGraph();
++      if (kind === 'generator') graph.nodes.push(videoBindingNode('fifth'));
++      if (kind === 'node') while (graph.nodes.length < 25) graph.nodes.push({ ...videoBindingNode(`note-${graph.nodes.length}`), definition_id: 'director_note', parameters: { note: '' } });
++      if (kind === 'edge') graph.edges = Array.from({ length: 41 }, (_, i) => ({ id: `e-${i}`, source_node_id: 'video-1', source_port: 'candidate', target_node_id: 'video-2', target_port: 'shot' }));
++      expect(() => graphSelectedVideoBinding(graph, ['video-1'], videoBindingCatalog(), videoBindingProvider())).toThrow(/容量/);
++    }
++  });
++  it('measures UTF-8 bytes, including unchanged Chinese author content', () => {
++    const graph = videoBindingGraph(); graph.nodes.forEach(node => { node.parameters.prompt = '中'.repeat(8000); });
++    expect(JSON.stringify(graph).length).toBeLessThan(96_000);
++    expect(() => graphSelectedVideoBinding(graph, ['video-1'], videoBindingCatalog(), videoBindingProvider())).toThrow(/字节容量/);
++  });
++});
+diff --git a/frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts b/frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..dc9d9ee8e10da14b9c3cfdb0d05d422ae19d5daa
+--- /dev/null
++++ b/frontend/src/creative/graphSelectedVideoBinding.testFixtures.ts
+@@ -0,0 +1,16 @@
++import catalog from './fixtures/phase4.video-catalog.json';
++import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphNode } from './studioGraphTypes';
++import type { ProductionProvider } from './studioProductionClient';
++export const videoBindingCatalog = () => structuredClone(catalog) as unknown as StudioGraphCatalog;
++export const videoBindingProvider = (id = 'local-one'): ProductionProvider => ({ operation_id: 'm7.video.t2v', provider_id: id,
++  model_id: `model-${id}`, local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA',
++  supported_parameters: ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], readiness: 'CONFIGURED_NOT_VERIFIED' });
++export const videoBindingNode = (id: string, index = 0): StudioGraphNode => ({ id, definition_id: 'video_generate', definition_version: 1,
++  enabled: index !== 1, position: { x: index * 160, y: index * -100 }, parameters: { operation_id: 'm7.video.t2v',
++    provider_id: `old-${id}`, model_id: `model-${id}`, allow_cloud: true, bind_shot: true,
++    prompt: `镜头 ${id} 的独立提示词`, license_note: `授权 ${id}`, parameters: { seed: index + 1, duration_seconds: index + 2, frame_rate: 24, negative_prompt: `独立排除 ${id}` } } });
++export function videoBindingGraph(count = 4): StudioGraphDefinition {
++  return { schema_version: 5, title: '已有视频草稿', nodes: Array.from({ length: count }, (_, i) => videoBindingNode(`video-${i + 1}`, i)),
++    edges: [], viewport: { x: 30, y: -20, zoom: 0.8 }, presentation: { comment: '原作者备注',
++      notes: [{ id: 'note', text: '保留中文注释', position: { x: 12, y: 24 } }] } };
++}
+diff --git a/frontend/src/creative/graphSelectedVideoBinding.ts b/frontend/src/creative/graphSelectedVideoBinding.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d82509ffbb23769bb003ff64f23d3d6f0d366b1b
+--- /dev/null
++++ b/frontend/src/creative/graphSelectedVideoBinding.ts
+@@ -0,0 +1,51 @@
++import { checkedStudioGraphVideoParameters } from './studioGraphClient';
++import { GRAPH_VIDEO_OPERATIONS, type StudioGraphCatalog, type StudioGraphDefinition } from './studioGraphTypes';
++import type { ProductionProvider } from './studioProductionClient';
++
++export function selectedVideoBindingNodes(definition: StudioGraphDefinition, selected: readonly string[]) {
++  if (definition.schema_version !== 5 || selected.length < 1 || selected.length > 4 || new Set(selected).size !== selected.length)
++    throw new Error('请明确选择 1–4 个同一操作的视频生成节点。');
++  const nodes = selected.map(id => {
++    const matches = definition.nodes.filter(node => node.id === id);
++    if (matches.length !== 1 || matches[0].definition_id !== 'video_generate') throw new Error(`节点 ${id}：请选择当前图中的视频生成节点。`);
++    return matches[0];
++  });
++  const operation = nodes[0].parameters.operation_id;
++  if (!GRAPH_VIDEO_OPERATIONS.includes(operation as typeof GRAPH_VIDEO_OPERATIONS[number]) || nodes.some(node => node.parameters.operation_id !== operation))
++    throw new Error('所选视频节点必须使用同一 operation；未修改任何节点。');
++  return nodes;
++}
++
++/** Check only selected parameters; other unfinished branches remain valid local drafts. */
++export function graphSelectedVideoBinding(definition: StudioGraphDefinition, selected: readonly string[], catalog: StudioGraphCatalog, provider: ProductionProvider) {
++  const nodes = selectedVideoBindingNodes(definition, selected), operation = nodes[0].parameters.operation_id;
++  if (provider.local !== true || provider.readiness !== 'CONFIGURED_NOT_VERIFIED' || provider.operation_id !== operation)
++    throw new Error('请选择当前操作的本地服务配置；配置发现不代表推理已验证。');
++  if (!catalog.capabilities.video_graph || nodes.some(node => !catalog.definitions.some(spec => spec.id === node.definition_id && spec.version === node.definition_version)))
++    throw new Error('当前目录不支持所选视频节点，请重新读取原目录。');
++  const generators = new Set(['media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'video_generate']);
++  if (definition.nodes.length > (catalog.media_limits?.nodes ?? 24) || definition.edges.length > catalog.limits.edges
++    || definition.nodes.filter(node => generators.has(node.definition_id)).length > (catalog.media_limits?.generators ?? 4))
++    throw new Error('当前草稿超过原图节点、连接或生成节点容量；未修改任何绑定。');
++  const ids = new Set(selected);
++  for (const node of nodes) {
++    for (const [field, value] of Object.entries(node.parameters.parameters ?? {})) {
++      if (value != null && !provider.supported_parameters.includes(field))
++        throw new Error(`节点 ${node.id}：所选配置不支持 parameters.${field}；原值保留，请明确处理后重新预览。`);
++    }
++    // Reuse the exact Save decoder without normalizing or copying its output back.
++    try { checkedStudioGraphVideoParameters({ ...node.parameters, provider_id: provider.provider_id, model_id: provider.model_id, allow_cloud: false }); }
++    catch { throw new Error(`节点 ${node.id}：视频参数不符合原保存规则；原参数保留，请在节点中核对。`); }
++  }
++  const changes = nodes.map(node => ({ nodeId: node.id,
++    before: { provider_id: node.parameters.provider_id ?? '', model_id: node.parameters.model_id ?? '', allow_cloud: node.parameters.allow_cloud },
++    after: { provider_id: provider.provider_id, model_id: provider.model_id, allow_cloud: false as const } }));
++  if (!changes.some(row => row.before.provider_id !== row.after.provider_id || row.before.model_id !== row.after.model_id || row.before.allow_cloud !== false))
++    throw new Error('所选节点已使用该本地绑定且 allow_cloud=false；没有可应用的变化。');
++  const next = { ...definition, nodes: definition.nodes.map(node => ids.has(node.id)
++    ? { ...node, parameters: { ...node.parameters, provider_id: provider.provider_id, model_id: provider.model_id, allow_cloud: false } } : node) };
++  if (new TextEncoder().encode(JSON.stringify(next)).length > Math.min(catalog.limits.definition_bytes, 96_000))
++    throw new Error('绑定将超过原图定义字节容量；未修改任何节点。');
++  return { definition: next, changes };
++}
++export type SelectedVideoBindingPreview = ReturnType<typeof graphSelectedVideoBinding>;
+diff --git a/frontend/src/creative/studioGraphClient.ts b/frontend/src/creative/studioGraphClient.ts
+index f8ad2d79c4b9d235728ecfdd9e78b51f6138a19c..1a1488f5f6f95dc6d1141f3cb96c056c8ac008e3 100644
+--- a/frontend/src/creative/studioGraphClient.ts
++++ b/frontend/src/creative/studioGraphClient.ts
+@@ -798,6 +798,8 @@ function catalog(value: unknown): StudioGraphCatalog {
+ 
+ /** Reuse the canonical input decoder for local draft recovery; grants no authority. */
+ export function checkedStudioGraphDraft(value: unknown): StudioGraphDefinition { return definition(value, true); }
++/** Original typed video rules, exposed for bounded local authoring before full Save. */
++export function checkedStudioGraphVideoParameters(value: unknown): StudioGraphParameters { return parameters(value, 'video_generate', true); }
+ 
+ export function createStudioGraphClient(projectId: string, context: Pick<CollaborationContext, 'scope'>, transport: StudioGraphTransport) {
+   const capturedScope = context.scope ? { ...context.scope } : undefined;
+diff --git a/frontend/src/creative/studioGraphEditorView.tsx b/frontend/src/creative/studioGraphEditorView.tsx
+index 298ef0a2daf0f392a00e81ad5b2b6fa32fc4c204..9bc1bd06b2e3d5d9c2648ffa4e8b02f49def85c2 100644
+--- a/frontend/src/creative/studioGraphEditorView.tsx
++++ b/frontend/src/creative/studioGraphEditorView.tsx
+@@ -12,6 +12,7 @@ import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './stud
+ import { AssetInspector } from '../novel/AssetInspector';
+ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
+ import { GraphCanvas } from './GraphCanvas';
++import { GraphSelectedVideoBindingPanel } from './GraphSelectedVideoBindingPanel';
+ import { GraphRunPanel } from './GraphRunPanel';
+ import { GRAPH_NODE_LABELS } from './studioGraphLabels';
+ import type { StudioGraphCatalog, StudioGraphCatalogDefinition, StudioGraphDefinition, StudioGraphDefinitionId } from './studioGraphTypes';
+@@ -213,6 +214,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
+       </section>
+       <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
+       <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!editable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
++      {videoGraph && <GraphSelectedVideoBindingPanel binding={controller.selectedVideoBinding} />}
+       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
+         removalDefinitions={catalog.definitions} removalOwner={controller.insertionScope} removalDisabled={timelineEditor.formDirty}
+         isRemovalCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
+diff --git a/frontend/src/creative/useGraphSelectedVideoBinding.ts b/frontend/src/creative/useGraphSelectedVideoBinding.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..6f1ec9b57823d9c9286dfc2372e3e11c722ae1a6
+--- /dev/null
++++ b/frontend/src/creative/useGraphSelectedVideoBinding.ts
+@@ -0,0 +1,113 @@
++import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
++import { uniqueGraphProviders } from './graphProviderChoices';
++import { graphSelectedVideoBinding, selectedVideoBindingNodes, type SelectedVideoBindingPreview } from './graphSelectedVideoBinding';
++import type { StudioGraphCatalog, StudioGraphDefinition } from './studioGraphTypes';
++import type { ProductionProvider, StudioProductionClient } from './studioProductionClient';
++import { mediaProviderKey } from './useStudioMediaExecution';
++
++type Props = {
++  definition: StudioGraphDefinition; selected: string[]; catalog?: StudioGraphCatalog;
++  source?: Pick<StudioProductionClient, 'providers'>; scope: object; generation: number;
++  editable: boolean; current: () => boolean; locked: () => boolean;
++  read: <T>(work: () => Promise<T>) => Promise<T>;
++  apply: (definition: StudioGraphDefinition) => boolean;
++};
++type Preview = { result: SelectedVideoBindingPreview; generation: number; authority: object;
++  source: string; provider: string; next: string };
++
++/** Authoring only; never delegates consent to the single-node picker. */
++export function useGraphSelectedVideoBinding(props: Props) {
++  const latest = useRef(props); latest.current = props;
++  const reader = props.source?.providers;
++  const values = [props.scope, props.source, reader, props.generation];
++  const lifetime = useRef({ values, token: {} });
++  if (values.some((value, index) => !Object.is(value, lifetime.current.values[index]))) lifetime.current = { values, token: {} };
++  const token = lifetime.current.token;
++  const authorityValues = [token, props.editable, props.locked()];
++  const authority = useRef({ values: authorityValues, token: {} });
++  if (authorityValues.some((value, index) => !Object.is(value, authority.current.values[index]))) authority.current = { values: authorityValues, token: {} };
++  const authorityToken = authority.current.token;
++  const alive = useRef(true), actionEpoch = useRef(0), readEpoch = useRef(0), request = useRef<AbortController>();
++  const [, setRevision] = useState(0);
++  const [catalog, setCatalog] = useState<{ token: object; rows: ProductionProvider[] }>();
++  const catalogRef = useRef(catalog); catalogRef.current = catalog;
++  const [choice, setChoice] = useState(''), choiceRef = useRef('');
++  const [preview, setPreview] = useState<Preview>(), previewRef = useRef<Preview>();
++  const [loading, setLoading] = useState(false), [error, setError] = useState('');
++  const reset = useCallback(() => {
++    actionEpoch.current++; setRevision(actionEpoch.current); readEpoch.current++; request.current?.abort(); request.current = undefined;
++    catalogRef.current = undefined; setCatalog(undefined); choiceRef.current = ''; setChoice('');
++    previewRef.current = undefined; setPreview(undefined); setLoading(false); setError('');
++  }, []);
++  useLayoutEffect(reset, [token, reset]);
++  useEffect(() => { alive.current = true; return () => { alive.current = false; readEpoch.current++; request.current?.abort(); }; }, []);
++  const inScope = () => alive.current && token === lifetime.current.token && reader === latest.current.source?.providers && latest.current.current();
++  let selectionError = '';
++  try { selectedVideoBindingNodes(props.definition, props.selected); }
++  catch (reason) { selectionError = reason instanceof Error ? reason.message : '请选择视频生成节点。'; }
++  const usable = () => inScope() && latest.current.editable && !latest.current.locked();
++  const canRead = usable() && !selectionError && !!props.source && !!props.catalog?.capabilities.video_graph;
++  const visibleCatalog = inScope() && catalog?.token === token ? catalog : undefined;
++  const operation = props.definition.nodes.find(node => node.id === props.selected[0])?.parameters.operation_id;
++  const rows = visibleCatalog?.rows.filter(row => row.local === true && row.readiness === 'CONFIGURED_NOT_VERIFIED' && row.operation_id === operation) ?? [];
++  const acceptedProvider = () => catalogRef.current?.token === token
++    ? catalogRef.current.rows.find(row => mediaProviderKey(row) === choiceRef.current && row.local === true
++      && row.readiness === 'CONFIGURED_NOT_VERIFIED' && row.operation_id === operation) : undefined;
++  const capturedEpoch = actionEpoch.current;
++  const interactionCurrent = () => capturedEpoch === actionEpoch.current && inScope() && authorityToken === authority.current.token;
++  async function load() {
++    if (!interactionCurrent() || !canRead || !usable() || request.current) return;
++    actionEpoch.current++; const id = ++readEpoch.current, controller = new AbortController(), captured = latest.current;
++    request.current = controller; catalogRef.current = undefined; setCatalog(undefined);
++    choiceRef.current = ''; setChoice(''); previewRef.current = undefined; setPreview(undefined); setLoading(true); setError('');
++    // The read envelope may toggle busy; owner/selection/draft/permission transitions still retire it.
++    const valid = () => inScope() && id === readEpoch.current && !controller.signal.aborted;
++    try {
++      const values = await captured.read(() => captured.source!.providers(controller.signal));
++      if (!valid()) return;
++      const unique = uniqueGraphProviders(values), accepted = { token, rows: structuredClone(unique) };
++      catalogRef.current = accepted; setCatalog(accepted);
++      if (unique.length !== values.length) setError('重复或含糊的服务配置已隐藏；请核对原服务配置。');
++    } catch (reason) { if (valid()) setError(reason instanceof Error ? reason.message : '本地服务配置读取失败。'); }
++    finally { if (valid()) { request.current = undefined; setLoading(false); } }
++  }
++  function choose(key: string) {
++    if (!interactionCurrent() || !usable() || request.current || !visibleCatalog) return;
++    if (key && !rows.some(row => mediaProviderKey(row) === key)) return;
++    if (key === choiceRef.current) return;
++    actionEpoch.current++; choiceRef.current = key; setChoice(key); previewRef.current = undefined; setPreview(undefined); setError('');
++  }
++  function prepare() {
++    if (!interactionCurrent() || !usable() || request.current || !props.catalog) return;
++    const provider = acceptedProvider(); if (!provider) return;
++    try {
++      const result = graphSelectedVideoBinding(props.definition, props.selected, props.catalog, provider);
++      const value = { result, generation: ++actionEpoch.current, authority: authorityToken,
++        source: JSON.stringify(props.definition), provider: JSON.stringify(provider), next: JSON.stringify(result.definition) };
++      previewRef.current = value; setPreview(value); setError('');
++    } catch (reason) { previewRef.current = undefined; setPreview(undefined); setError(reason instanceof Error ? reason.message : '批量绑定预览失败。'); }
++  }
++  function apply() {
++    const value = previewRef.current, provider = acceptedProvider();
++    if (!interactionCurrent() || !usable() || request.current || !value || value !== preview || !provider || !props.catalog
++      || value.generation !== actionEpoch.current || value.authority !== authority.current.token
++      || value.source !== JSON.stringify(props.definition) || value.provider !== JSON.stringify(provider)) return false;
++    try {
++      const result = graphSelectedVideoBinding(props.definition, props.selected, props.catalog, provider);
++      if (JSON.stringify(result.definition) !== value.next) return false;
++      // Consume synchronously, before change(), including duplicate callbacks in one event.
++      actionEpoch.current++; previewRef.current = undefined; setPreview(undefined);
++      if (!latest.current.apply(result.definition)) { setError('当前草稿已改变，绑定未应用；请重新预览。'); return false; }
++      setError(''); return true;
++    } catch (reason) { previewRef.current = undefined; setPreview(undefined); setError(reason instanceof Error ? reason.message : '绑定未应用。'); return false; }
++  }
++  const visiblePreview = usable() && preview && preview === previewRef.current && preview.generation === actionEpoch.current
++    && preview.authority === authority.current.token ? preview.result : undefined;
++  function cancel() {
++    if (!interactionCurrent()) return;
++    actionEpoch.current++; setRevision(actionEpoch.current); previewRef.current = undefined; setPreview(undefined);
++  }
++  return { rows, choice: visibleCatalog ? choice : '', loading: inScope() && loading, error: inScope() ? error : '',
++    selectionError, canRead, canChoose: canRead && !!visibleCatalog && !request.current,
++    preview: visiblePreview, load, choose, prepare, apply, cancel };
++}
+diff --git a/frontend/src/creative/useStudioGraphEditorController.ts b/frontend/src/creative/useStudioGraphEditorController.ts
+index 8566df16318911e722f6d3ffd7b99cac32aff701..a2a2bc8c9dd38ee1c050018c1a5228c63ac35f96 100644
+--- a/frontend/src/creative/useStudioGraphEditorController.ts
++++ b/frontend/src/creative/useStudioGraphEditorController.ts
+@@ -1,4 +1,6 @@
+ import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
++import { uniqueGraphProviders } from './graphProviderChoices';
++import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
+ import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
+ import { checkedStoryboardReceipt } from './studioStoryboardContract';
+ import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
+@@ -58,6 +60,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
+   const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
+   const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+   const copySourceEpoch = useRef(0), crossCopyEpoch = useRef(0);
++  const bindingMutationEpoch = useRef(0);
+   const [independentConsent, setIndependentConsent] = useState('');
+   const planningForkConsumed = useRef<object>();
+   const [independentOrigin, setIndependentOrigin] = useState<{ identity: string; client: StudioClient; id: string; title: string; version: number; references: StudioGraphRecord['reference_states'] }>();
+@@ -376,8 +379,13 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
+     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
+     if (same(draftRef.current, next)) return;
+     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
+-    crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
++    bindingMutationEpoch.current++; crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
+   }, [editable, current, isBusy, invalidateCandidate]);
++  const bindingDraftEpoch = bindingMutationEpoch.current;
++  const selectedVideoBinding = useGraphSelectedVideoBinding({ definition: draft, selected, catalog, source: providerSource,
++    scope: verificationScope, generation: bindingDraftEpoch, current: () => isVerificationCurrent() && bindingDraftEpoch === bindingMutationEpoch.current && !imageSelectionFence.current?.(),
++    editable: active && editable && !timelineEditor.formDirty && !checking && !imageSelectionFence.current?.(),
++    locked, read, apply: next => { change(next); return draftRef.current === next; } });
+   function applyStarterGraph(kind: GraphStarterKind, text: string, scope: object): boolean {
+     if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope)
+       || insertionRef.current || !catalog || draftRef.current.nodes.length || draftRef.current.edges.length) return false;
+@@ -792,7 +800,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
+     retired, retainedText, retainedTitle,
+     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
+     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
+-    providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
++    selectedVideoBinding, providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
+     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true as const, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true as const, automatic_video_dispatch: false as const } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
+     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
+     starterScope: verificationScope, applyStarterGraph, readStarterStoryboard, applyStoryboardStarter,
+@@ -856,9 +864,7 @@ function useGraphProviderPicker(props: {
+       const values = await captured.read(() => captured.source!.providers(controller.signal));
+       if (!valid()) return;
+       // Even identical duplicates are ambiguous: this unchanged graph schema stores only the tuple.
+-      const counts = new Map<string, number>(), tuple = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id]);
+-      values.forEach(row => counts.set(tuple(row), (counts.get(tuple(row)) || 0) + 1));
+-      const unique = values.filter(row => counts.get(tuple(row)) === 1);
++      const unique = uniqueGraphProviders(values);
+       const next = { source: captured.source, client: captured.client, identity: captured.identity, scope: captured.scope, rows: unique };
+       catalogRef.current = next; setCatalog(next);
+       if (unique.length !== values.length) setError('重复或含糊的服务配置已隐藏；原节点标识保持，请核对原服务配置。');

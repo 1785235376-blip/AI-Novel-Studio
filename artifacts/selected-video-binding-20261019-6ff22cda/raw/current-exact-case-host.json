@@ -1,0 +1,27 @@
+{
+  "label": "current-exact-case-host",
+  "baseline": false,
+  "exact_case_host": true,
+  "root_files": 1391,
+  "errors": 3,
+  "diagnostics": [
+    {
+      "code": 2345,
+      "file": "frontend/src/creative/graphSelectedVideoBinding.test.ts",
+      "line": 28,
+      "message": "Argument of type '(selected: string | undefined) => void' is not assignable to parameter of type '(...args: [] | [string, string] | [string] | [string, string, string, string, string]) => Awaitable<void>'.\n  Types of parameters 'selected' and 'args' are incompatible.\n    Type '[] | [string, string] | [string] | [string, string, string, string, string]' is not assignable to type '[selected: string | undefined]'.\n      Type '[]' is not assignable to type '[selected: string | undefined]'.\n        Source has 0 element(s) but target requires 1."
+    },
+    {
+      "code": 2345,
+      "file": "frontend/src/creative/graphSelectedVideoBinding.test.ts",
+      "line": 29,
+      "message": "Argument of type 'string | undefined' is not assignable to parameter of type 'readonly string[]'.\n  Type 'undefined' is not assignable to type 'readonly string[]'."
+    },
+    {
+      "code": 2322,
+      "file": "frontend/src/creative/graphSelectedVideoBinding.test.ts",
+      "line": 51,
+      "message": "Type '{ seed: number; frame_rate?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; } | { frame_rate: number; seed?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; } | { ...; } | { ...; } | { ...; }' is not assignable to type 'Record<string, string | number | null> | undefined'.\n  Type '{ seed: number; frame_rate?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; }' is not assignable to type 'Record<string, string | number | null>'.\n    Property 'frame_rate' is incompatible with index signature.\n      Type 'undefined' is not assignable to type 'string | number | null'."
+    }
+  ]
+}

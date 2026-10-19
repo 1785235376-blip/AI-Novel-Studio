@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend
+
+ ✓ src/creative/graphSelectedVideoBinding.test.ts (22 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  22 passed (22)
+   Start at  12:28:16
+   Duration  475ms (transform 185ms, setup 10ms, collect 244ms, tests 11ms, environment 0ms, prepare 58ms)
+

@@ -1,0 +1,305 @@
+src/creative/CameraGrammarEditor.additive.test.tsx(8,38): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorDraftComparison.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDirectorConsole.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CameraGrammarEditor.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorIntentConstraints.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/CreativeCanvas.tsx(4,10): error TS2305: Module '"./DirectorCameraReuse"' has no exported member 'DirectorCameraReuse'.
+src/creative/CreativeCanvas.tsx(4,37): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorCameraReuse.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CreativeCanvas.tsx'
+    Imported via './DirectorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.test.tsx'
+    Imported via './directorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/DirectorCameraReuse.test.tsx(6,10): error TS2305: Module '"./DirectorCameraReuse"' has no exported member 'DirectorCameraReuse'.
+src/creative/DirectorCameraReuse.test.tsx(7,70): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorCameraReuse.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CreativeCanvas.tsx'
+    Imported via './DirectorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.test.tsx'
+    Imported via './directorCameraReuse' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorCameraReuse.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/DirectorCameraReuse.test.tsx(113,133): error TS7006: Parameter 'next' implicitly has an 'any' type.
+src/creative/DirectorDraftComparison.additive.test.tsx(4,38): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorDraftComparison.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDirectorConsole.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CameraGrammarEditor.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorIntentConstraints.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/DirectorDraftComparison.additive.test.tsx(5,10): error TS2305: Module '"./directorDraftComparison"' has no exported member 'DirectorDraftComparison'.
+src/creative/DirectorIntentConstraints.test.tsx(7,38): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorDraftComparison.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDirectorConsole.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CameraGrammarEditor.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorIntentConstraints.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphCanvas.tsx(18,10): error TS2305: Module '"./GraphCanvasNotes"' has no exported member 'GraphNoteEditor'.
+src/creative/GraphCanvas.tsx(18,27): error TS2305: Module '"./GraphCanvasNotes"' has no exported member 'GraphNoteCards'.
+src/creative/GraphCanvas.tsx(18,49): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvasNotes.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.ts' only in casing.
+  The file is in the program because:
+    Imported via './GraphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvas.tsx'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasLargeNotes.test.ts'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/graphCanvasLargeNotes.test.ts(3,110): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvasNotes.ts' only in casing.
+  The file is in the program because:
+    Imported via './GraphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvas.tsx'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasLargeNotes.test.ts'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/graphCanvasNotes.test.ts(2,100): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvasNotes.ts' only in casing.
+  The file is in the program because:
+    Imported via './GraphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphCanvas.tsx'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasLargeNotes.test.ts'
+    Imported via './graphCanvasNotes' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphCanvasNotes.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphDirectorConsole.tsx(19,10): error TS2305: Module '"./DirectorDraftComparison"' has no exported member 'DirectorDraftComparison'.
+src/creative/GraphDirectorConsole.tsx(19,41): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/directorDraftComparison.ts' only in casing.
+  The file is in the program because:
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDirectorConsole.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CameraGrammarEditor.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './DirectorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorDraftComparison.additive.test.tsx'
+    Imported via './directorDraftComparison' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/DirectorIntentConstraints.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphDraftChecklist.additive.test.tsx(4,37): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphDraftChecklist.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.ts' only in casing.
+  The file is in the program because:
+    Imported via './GraphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.additive.test.tsx'
+    Imported via './GraphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphDraftChecklist.additive.test.tsx(5,10): error TS2724: '"./graphDraftChecklist"' has no exported member named 'GraphDraftChecklist'. Did you mean 'graphDraftChecklist'?
+src/creative/GraphPlanningFork.multiple.additive.test.tsx(4,10): error TS2305: Module '"./GraphPlanningFork"' has no exported member 'GraphPlanningFork'.
+src/creative/GraphPlanningFork.multiple.additive.test.tsx(4,35): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphPlanningFork.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphPlanningFork.test.tsx(4,10): error TS2305: Module '"./GraphPlanningFork"' has no exported member 'GraphPlanningFork'.
+src/creative/GraphPlanningFork.test.tsx(4,35): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphPlanningFork.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/graphSelectedVideoBinding.test.ts(28,143): error TS2345: Argument of type '(selected: string | undefined) => void' is not assignable to parameter of type '(...args: [] | [string, string] | [string] | [string, string, string, string, string]) => Awaitable<void>'.
+  Types of parameters 'selected' and 'args' are incompatible.
+    Type '[] | [string, string] | [string] | [string, string, string, string, string]' is not assignable to type '[selected: string | undefined]'.
+      Type '[]' is not assignable to type '[selected: string | undefined]'.
+        Source has 0 element(s) but target requires 1.
+src/creative/graphSelectedVideoBinding.test.ts(29,65): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'readonly string[]'.
+  Type 'undefined' is not assignable to type 'readonly string[]'.
+src/creative/graphSelectedVideoBinding.test.ts(51,41): error TS2322: Type '{ seed: number; frame_rate?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; } | { frame_rate: number; seed?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; } | { ...; } | { ...; } | { ...; }' is not assignable to type 'Record<string, string | number | null> | undefined'.
+  Type '{ seed: number; frame_rate?: undefined; duration_seconds?: undefined; width?: undefined; height?: undefined; }' is not assignable to type 'Record<string, string | number | null>'.
+    Property 'frame_rate' is incompatible with index signature.
+      Type 'undefined' is not assignable to type 'string | number | null'.
+src/creative/GraphStoryboardStarter.additive.test.tsx(8,10): error TS2305: Module '"./graphStoryboardStarter"' has no exported member 'GraphStoryboardStarter'.
+src/creative/GraphStoryboardStarter.additive.test.tsx(8,40): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphStoryboardStarter.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/GraphStoryboardStarter.multishot.test.tsx(11,10): error TS2305: Module '"./graphStoryboardStarter"' has no exported member 'GraphStoryboardStarter'.
+src/creative/GraphStoryboardStarter.multishot.test.tsx(11,40): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphStoryboardStarter.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/MediaCanvasGraphHandoff.additive.test.tsx(4,10): error TS2305: Module '"./MediaCanvasGraphHandoff"' has no exported member 'MediaCanvasGraphHandoff'.
+src/creative/MediaCanvasGraphHandoff.additive.test.tsx(5,63): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/mediaCanvasGraphHandoff.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.ts' only in casing.
+  The file is in the program because:
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/MediaCanvasViewPanel.tsx(3,10): error TS2305: Module '"./MediaCanvasGraphHandoff"' has no exported member 'MediaCanvasGraphHandoff'.
+src/creative/MediaCanvasViewPanel.tsx(3,41): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/mediaCanvasGraphHandoff.ts' only in casing.
+  The file is in the program because:
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/MediaCanvasViewPanel.tsx(4,46): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/mediaCanvasGraphHandoff.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.ts' only in casing.
+  The file is in the program because:
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/MediaCanvasViewPanel.tsx(9,10): error TS2724: '"./CanvasAssetPreview"' has no exported member named 'CanvasAssetPreview'. Did you mean 'loadCanvasAssetPreview'?
+src/creative/MediaCanvasViewPanel.tsx(9,36): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/CanvasAssetPreview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/canvasAssetPreview.ts' only in casing.
+  The file is in the program because:
+    Imported via './canvasAssetPreview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/storyboardImagePreview.ts'
+    Imported via './CanvasAssetPreview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './canvasAssetPreview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/canvasAssetPreview.additive.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/studioGraphEditorView.tsx(8,10): error TS2724: '"./GraphDraftChecklist"' has no exported member named 'GraphDraftChecklist'. Did you mean 'graphDraftChecklist'?
+src/creative/studioGraphEditorView.tsx(8,37): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphDraftChecklist.ts' only in casing.
+  The file is in the program because:
+    Imported via './GraphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.additive.test.tsx'
+    Imported via './GraphDraftChecklist' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphDraftChecklist.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/studioGraphEditorView.tsx(9,10): error TS2305: Module '"./GraphStoryboardStarter"' has no exported member 'GraphStoryboardStarter'.
+src/creative/studioGraphEditorView.tsx(9,40): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphStoryboardStarter.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.additive.test.tsx'
+    Imported via './graphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Imported via './GraphStoryboardStarter' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/studioGraphEditorView.tsx(15,10): error TS2724: '"./GraphSelectedVideoBinding"' has no exported member named 'GraphSelectedVideoBinding'. Did you mean 'graphSelectedVideoBinding'?
+src/creative/studioGraphEditorView.tsx(15,43): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphSelectedVideoBinding.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphSelectedVideoBinding.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphSelectedVideoBinding' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useGraphSelectedVideoBinding.ts'
+    Imported via './GraphSelectedVideoBinding' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './graphSelectedVideoBinding' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphSelectedVideoBinding.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/studioGraphEditorView.tsx(27,10): error TS2305: Module '"./GraphPlanningFork"' has no exported member 'GraphPlanningFork'.
+src/creative/studioGraphEditorView.tsx(27,35): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/graphPlanningFork.ts' only in casing.
+  The file is in the program because:
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/studioGraphEditorView.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.multiple.additive.test.tsx'
+    Imported via './GraphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Imported via './graphPlanningFork' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/GraphPlanningFork.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/StudioTimelineTransferPanel.tsx(1,10): error TS2305: Module '"./TimelineTransferReview"' has no exported member 'TimelineTransferReview'.
+src/creative/StudioTimelineTransferPanel.tsx(1,40): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/timelineTransferReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './timelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/StudioTimelineEditor.tsx'
+    Imported via './TimelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/StudioTimelineTransferPanel.tsx'
+    Imported via './TimelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.test.tsx'
+    Imported via './timelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/TimelineTransferReview.test.tsx(5,10): error TS2305: Module '"./TimelineTransferReview"' has no exported member 'TimelineTransferReview'.
+src/creative/TimelineTransferReview.test.tsx(5,40): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/timelineTransferReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './timelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/StudioTimelineEditor.tsx'
+    Imported via './TimelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/StudioTimelineTransferPanel.tsx'
+    Imported via './TimelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.test.tsx'
+    Imported via './timelineTransferReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/TimelineTransferReview.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/creative/useStudioGraphEditorController.ts(1,69): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/mediaCanvasGraphHandoff.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.ts' only in casing.
+  The file is in the program because:
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasViewPanel.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/useStudioGraphEditorController.ts'
+    Imported via './MediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Imported via './mediaCanvasGraphHandoff' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/creative/MediaCanvasGraphHandoff.additive.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/BranchComparisonReview.test.tsx(4,10): error TS2724: '"./BranchComparisonReview"' has no exported member named 'BranchComparisonReview'. Did you mean 'BranchComparison'?
+src/experimental/BranchComparisonReview.test.tsx(5,59): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/branchComparisonReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/BranchManuscriptPanel.tsx(6,10): error TS2724: '"./BranchComparisonReview"' has no exported member named 'BranchComparisonReview'. Did you mean 'BranchComparison'?
+src/experimental/BranchManuscriptPanel.tsx(6,40): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/branchComparisonReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/BranchManuscriptPanel.tsx(7,50): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/branchComparisonReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchManuscriptPanel.tsx'
+    Imported via './BranchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Imported via './branchComparisonReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/BranchComparisonReview.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/pristineReplayNavigation.test.tsx(6,36): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/productionReceiptReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/pristineReplayNavigation.tsx(3,10): error TS2305: Module '"./ProductionReceiptReview"' has no exported member 'ReceiptNavigation'.
+src/experimental/ProductionLineagePanel.tsx(7,10): error TS2305: Module '"./ProductionReceiptReview"' has no exported member 'ProductionReceiptReview'.
+src/experimental/ProductionLineagePanel.tsx(7,35): error TS2305: Module '"./ProductionReceiptReview"' has no exported member 'ReceiptNavigation'.
+src/experimental/ProductionLineagePanel.tsx(7,60): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/productionReceiptReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/ProductionLineagePanel.tsx(9,81): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/productionReceiptReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/ProductionReceiptReview.test.tsx(4,10): error TS2305: Module '"./ProductionReceiptReview"' has no exported member 'ProductionReceiptReview'.
+src/experimental/ProductionReceiptReview.test.tsx(4,35): error TS2305: Module '"./ProductionReceiptReview"' has no exported member 'ReceiptNavigation'.
+src/experimental/ProductionReceiptReview.test.tsx(5,120): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/productionReceiptReview.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.ts' only in casing.
+  The file is in the program because:
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionLineagePanel.tsx'
+    Imported via './ProductionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/ProductionReceiptReview.test.tsx'
+    Imported via './productionReceiptReview' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/pristineReplayNavigation.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/SubtitleTimelinePanel.textReplace.test.tsx(6,47): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/captionTextReplace.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/CaptionTextReplace.ts' only in casing.
+  The file is in the program because:
+    Imported via './CaptionTextReplace' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/SubtitleTimelinePanel.tsx'
+    Imported via './captionTextReplace' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/experimental/SubtitleTimelinePanel.tsx(5,10): error TS2724: '"./CaptionTextReplace"' has no exported member named 'CaptionTextReplace'. Did you mean 'CaptionTextReplacement'?
+src/experimental/SubtitleTimelinePanel.tsx(5,36): error TS1261: Already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/CaptionTextReplace.ts' differs from file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/captionTextReplace.ts' only in casing.
+  The file is in the program because:
+    Imported via './CaptionTextReplace' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/SubtitleTimelinePanel.tsx'
+    Imported via './captionTextReplace' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/experimental/SubtitleTimelinePanel.textReplace.test.tsx'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+src/taskcenter/TaskList.tsx(1,10): error TS2724: '"./TaskCostReceipt"' has no exported member named 'TaskCostReceiptView'. Did you mean 'taskCostReceipt'?
+src/taskcenter/TaskList.tsx(1,37): error TS1149: File name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/TaskCostReceipt.ts' differs from already included file name 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/taskCostReceipt.ts' only in casing.
+  The file is in the program because:
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/taskCostReceiptClient.ts'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/useTaskCostReceipt.ts'
+    Imported via './TaskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/TaskList.tsx'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/TaskList.tsx'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/TaskCenter.additive.test.tsx'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/TaskCenter.additive.test.tsx'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/taskCostReceipt.test.ts'
+    Matched by include pattern 'src' in 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/tsconfig.json'
+    Imported via './taskCostReceipt' from file 'D:/codex数据/2026-10-19/task/studio-v2-selected-video-binding/frontend/src/taskcenter/useTaskCostReceipt.test.ts'
