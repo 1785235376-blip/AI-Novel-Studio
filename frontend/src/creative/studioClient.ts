@@ -23,6 +23,12 @@ export type StudioProject = { id: string; title: string };
 export type StudioCreatedProject = StudioProject & { studio_ready: boolean; requires_scope_selection: boolean };
 export type StudioPreferencesInput = { intents: CreativeIntent[]; preset: WorkspacePreset; custom_intent: string };
 export type StudioPreferences = StudioPreferencesInput & { version: number };
+export type StudioComicWorkspace = {
+  contract: 'studio-comic-workspace/1';
+  project: StudioProject;
+  source_free: boolean;
+  capabilities: { can_mutate: boolean; can_review: boolean };
+};
 export type StudioOverview = {
   project: StudioProject & { entry_kind: 'NEUTRAL_STUDIO' | 'LEGACY'; incarnation?: string };
   preferences: StudioPreferences;
@@ -406,6 +412,15 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     checkedProject(value);
     return { ...value, preferences: checkedStudioPreferences(value.preferences) };
   }
+  function checkedComicWorkspace(value: StudioComicWorkspace): StudioComicWorkspace {
+    checkedProject(value);
+    if (value.contract !== 'studio-comic-workspace/1' || typeof value.project.title !== 'string'
+      || typeof value.source_free !== 'boolean' || !value.capabilities
+      || typeof value.capabilities.can_mutate !== 'boolean' || typeof value.capabilities.can_review !== 'boolean') mismatch();
+    // This projection never supplies generic workspace preferences or permissions.
+    return { contract: value.contract, project: { id: projectId, title: value.project.title }, source_free: value.source_free,
+      capabilities: { can_mutate: value.capabilities.can_mutate, can_review: value.capabilities.can_review } };
+  }
   function checkedActivation(value: unknown): StudioActivation {
     // Activation needs its exact project acknowledgement, not workspace state.
     // Do not fabricate preference versions or treat response capabilities as grants.
@@ -423,6 +438,7 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     graphs: createStudioGraphClient(projectId, { scope }, transport),
     productionContracts: createStudioWorkspaceOperationClient(projectId, transport, scope).read,
     overview: (signal?: AbortSignal) => transport.json<StudioOverview>(base, 'GET', undefined, signal).then(checkedOverview),
+    comicWorkspace: (signal?: AbortSignal) => transport.json<StudioComicWorkspace>(`${base}/comic-workspace`, 'GET', undefined, signal).then(checkedComicWorkspace),
     activate: () => transport.json<unknown>(`${base}/activate`, 'POST').then(checkedActivation),
     preferences: (signal?: AbortSignal) => transport.json<StudioPreferences>(`${base}/preferences`, 'GET', undefined, signal).then(checkedStudioPreferences),
     savePreferences: (value: StudioPreferencesInput, expectedVersion: number) => transport.json<StudioPreferences>(`${base}/preferences`, 'PUT', {

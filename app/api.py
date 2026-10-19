@@ -1623,6 +1623,11 @@ def _authorize_novel_project(
     branch_id: str | None = None,
     conceal: bool = False,
 ):
+    return _authorize_project_domain(novel_id, session_token, permission, ModalityDomain.NOVEL,
+                                     branch_id=branch_id, conceal=conceal)
+
+
+def _authorize_project_domain(novel_id, session_token, permission, domain, *, branch_id=None, conceal=False):
     actor = _shared_actor(session_token)
     try:
         workspace_id = collaboration_scope_service.repository.project_workspace(novel_id)
@@ -1644,7 +1649,7 @@ def _authorize_novel_project(
         # The original authority validates the declared scope level while
         # checking current membership and grants. The collaboration validator
         # requires a complete branch and would reject a valid PROJECT scope.
-        membership_authorization_service.require(actor, permission, ModalityDomain.NOVEL, scope)
+        membership_authorization_service.require(actor, permission, domain, scope)
         return actor, scope
     except (KeyError, ValueError, PermissionError) as exc:
         if conceal:
@@ -3680,6 +3685,23 @@ def _workbench_authorize(nid, token, branch, permission):
             "storyline_id": scope.storyline_id, "branch_id": scope.branch_id}
     guard(novel_service.get,nid)
     return "local-author", CreationWorkbenchService.local_scope(nid)
+
+
+def _comic_authorize(nid, token, branch, permission):
+    """Bounded Comic admission; never widens generic Studio/Director authority.
+
+    The returned policy is ephemeral and does not alter persisted scope keys.
+    A mixed grant cannot use NOVEL read to authorize an IMAGE write on sources.
+    """
+    try:
+        actor, scope = _workbench_authorize(nid, token, branch, permission)
+        return actor, scope, False
+    except HTTPException as exc:
+        if exc.status_code != 403 or not settings.enable_collaboration_runtime:
+            raise
+    actor, scope = _authorize_project_domain(nid, token, permission, ModalityDomain.IMAGE, branch_id=branch)
+    return actor.actor_id, {"mode": "collaboration", "novel_id": nid, "workspace_id": scope.workspace_id,
+        "storyline_id": scope.storyline_id, "branch_id": scope.branch_id}, True
 
 
 @contextmanager

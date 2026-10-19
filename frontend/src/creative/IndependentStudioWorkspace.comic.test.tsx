@@ -13,18 +13,20 @@ const id = 'blank-comic-project', base = `/api/projects/${id}/studio`, comics = 
 const preset = { width: 800, height: 1120, safe_area: 24, segment_height: 1120 };
 const catalog = { screenplays: [], characters: [], assets: [], presets: { PAGE: preset, WEBTOON: { ...preset, height: 2400, segment_height: 1200 } }, renderer: { available: false }, font: { available: false } };
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => structuredClone(body) });
-let record: ComicRecord | undefined, fetcher: ReturnType<typeof vi.fn>, denied: boolean;
-function mount() {
+let record: ComicRecord | undefined, fetcher: ReturnType<typeof vi.fn>, denied: boolean, genericDenied: boolean;
+function mount(module: 'IMAGE' | 'VIDEO' = 'IMAGE') {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} module="IMAGE" actor="作者"
+  return render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} module={module} actor="作者"
     scope={{ workspace: '本机作品', project: '独立项目', storyline: '默认故事线', branch: '主线' }} onModuleChange={vi.fn()} onProjectChoice={vi.fn()} /></QueryClientProvider>);
 }
 beforeEach(() => {
   URL.createObjectURL = vi.fn(() => 'blob:comic'); URL.revokeObjectURL = vi.fn();
-  localStorage.clear(); record = undefined; denied = false;
+  localStorage.clear(); record = undefined; denied = false; genericDenied = false;
   useStudio.setState({ novelId: id, chapterId: '', sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: 'original-host', actorId: 'local-author' });
   fetcher = vi.fn(async (url: string, init: RequestInit = {}) => {
+    if (url === base && genericDenied) return response({ detail: { code: 'MODULE_DISABLED' } }, 403);
+    if (url === `${base}/comic-workspace`) return response({ contract: 'studio-comic-workspace/1', project: { id, title: '独立项目' }, source_free: genericDenied, capabilities: { can_mutate: true, can_review: true } });
     if (url === base) return response({ project: { id, title: '独立项目', entry_kind: 'NEUTRAL_STUDIO' }, preferences: { version: 1, intents: [], preset: 'BLANK', custom_intent: '' }, capabilities: { can_mutate: true, manual_import: true, manual_export: true, model_required: false, chapter_required: false, intent_is_permission: false, media_validator_configured: false, asset_kinds: ['image'] } });
     if (url.startsWith(`${base}/assets`)) return response({ items: [] });
     if (url === `${base}/prompts`) return response({ ...emptyPromptLibrary, project_id: id, scope: { mode: 'local', novel_id: id } });
@@ -120,4 +122,50 @@ it('same-batch retained host Close observes synchronous ORA dirty before React r
   const select = props<{ onChange: (event: { target: { files: File[]; value: string } }) => void }>(screen.getByLabelText('选择 ORA 文件')).onChange;
   act(() => { select({ target: { files: [new File(['x'.repeat(30)], 'same-batch.ora')], value: '' } }); close(); });
   expect(screen.getByLabelText('确认放弃未保存输入')).toBeTruthy(); expect(screen.getByText(/same-batch.ora/)).toBeTruthy();
+});
+
+it('IMAGE enters the real Comic editor after generic NOVEL denial without granting generic workspace access', async () => {
+  genericDenied = true; const view = mount(); await open();
+  expect(screen.queryByRole('button', { name: '创作开始' })).toBeNull();
+  expect(screen.queryByRole('button', { name: '素材工作区' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '新建空白漫画页' }));
+  fireEvent.click(screen.getByRole('button', { name: '添加格框（手工定位）' }));
+  fireEvent.click(screen.getByRole('button', { name: '添加格框 1 气泡' }));
+  fireEvent.change(screen.getByLabelText('格框 1 气泡 1 文字'), { target: { value: '独立漫画' } });
+  fireEvent.click(screen.getByRole('button', { name: '保存漫画布局草稿' }));
+  await waitFor(() => expect(record?.version).toBe(1));
+  expect(record?.document).toMatchObject({ source_mode: 'INDEPENDENT', screenplay_id: null, panels: [{ shot_id: null, bubbles: [{ text: '独立漫画' }] }] });
+  expect(screen.queryByText('为已保存格框生成图片')).toBeNull();
+  view.unmount(); mount(); await open(); fireEvent.click(await screen.findByRole('button', { name: '打开布局 空白漫画页' }));
+  expect((screen.getByLabelText('格框 1 气泡 1 文字') as HTMLTextAreaElement).value).toBe('独立漫画');
+  expect(fetcher.mock.calls.filter(([url]) => url.startsWith(base)).map(([url]) => url)).toEqual([base, `${base}/comic-workspace`, base, `${base}/comic-workspace`]);
+  expect(fetcher.mock.calls.every(([, init]) => (init.headers as Record<string, string>)['X-Session-Token'] === 'original-host')).toBe(true);
+});
+it('Comic bootstrap denial does not mount private Comic data after generic workspace denial', async () => {
+  genericDenied = true; const original = fetcher.getMockImplementation()!;
+  fetcher.mockImplementation(async (url: string, init: RequestInit = {}) => url === `${base}/comic-workspace` ? response({ detail: { code: 'FORBIDDEN' } }, 403) : original(url, init));
+  mount(); await screen.findByText('当前会话无权访问此项目');
+  expect(screen.queryByRole('button', { name: '打开漫画制作' })).toBeNull();
+  expect(fetcher.mock.calls.some(([url]) => url.startsWith(comics))).toBe(false);
+});
+it('a malformed cross-project Comic bootstrap never mounts Comic or generic content', async () => {
+  genericDenied = true; const original = fetcher.getMockImplementation()!;
+  fetcher.mockImplementation(async (url: string, init: RequestInit = {}) => url === `${base}/comic-workspace` ? response({ contract: 'studio-comic-workspace/1', project: { id: 'other', title: 'Wrong project' }, source_free: true, capabilities: { can_mutate: true, can_review: true } }) : original(url, init));
+  mount(); await screen.findByText('当前会话无权访问此项目');
+  expect(screen.queryByText('Wrong project')).toBeNull();
+  expect(fetcher.mock.calls.some(([url]) => url.startsWith(comics))).toBe(false);
+});
+it('VIDEO does not borrow the IMAGE Comic bootstrap after generic denial', async () => {
+  genericDenied = true; mount('VIDEO'); await screen.findByText('当前会话无权访问此项目');
+  expect(fetcher.mock.calls.map(([url]) => url)).toEqual([base]);
+});
+it('restricted Comic uses the existing dirty-close guard and retires on a host identity change', async () => {
+  genericDenied = true; mount(); await open();
+  fireEvent.click(screen.getByRole('button', { name: '新建空白漫画页' }));
+  fireEvent.click(screen.getByRole('button', { name: '关闭漫画制作' }));
+  expect(screen.getByLabelText('确认放弃未保存输入')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+  act(() => useLocalHostSession.setState({ token: 'replacement-host', actorId: 'other-author' }));
+  expect(screen.queryByLabelText('漫画布局名称')).toBeNull();
+  expect(fetcher.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
 });

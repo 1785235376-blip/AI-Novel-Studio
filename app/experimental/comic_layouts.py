@@ -11,6 +11,7 @@ import json
 import math
 import zipfile
 from contextlib import contextmanager, ExitStack, nullcontext
+from contextvars import ContextVar
 from typing import Literal
 from pydantic import Field, model_serializer, model_validator
 from .comic_collections import ComicCollectionsMixin
@@ -374,6 +375,39 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         super().__init__(store, novels, chapters)
         self.screenplays, self.assets, self.lineage = screenplays, assets, lineage
         self.independent_store = independent_store
+        # Request-local admission only: the original persisted scope/owner is unchanged.
+        self._source_free_access = ContextVar('comic_source_free_access', default=False)
+
+    @contextmanager
+    def access_policy(self, source_free):
+        token = self._source_free_access.set(source_free)
+        try: yield
+        finally: self._source_free_access.reset(token)
+
+    def _admit_document(self, document):
+        if not self._source_free_access.get(): return
+        if (document.get('source_mode') != 'INDEPENDENT'
+                or document.get('screenplay_id') is not None
+                or document.get('expected_screenplay_version') is not None
+                or any(p.get('shot_id') is not None or p.get('character_ids')
+                       or p.get('asset_id') is not None or p.get('expected_asset_version') is not None
+                       or p.get('appearance_references') or p.get('artwork_mode') != 'BLANK'
+                       or any(b.get('character_id') is not None for b in p.get('bubbles', []))
+                       for p in document.get('panels', []))
+                or any(i.get('kind') == 'RASTER' for i in document.get('layer_stack', {}).get('items', []))):
+            raise FileNotFoundError('comic page unavailable')
+
+    def _admit_row(self, row):
+        if not self._source_free_access.get(): return
+        # Conservative whole-record admission also conceals history version IDs.
+        # A later source-free edit must not expose a previously adapted history.
+        for snapshot in [row, *row.get('history', [])]:
+            self._admit_document(snapshot['document'])
+            if (snapshot.get('character_sources') or snapshot.get('asset_sources')
+                    or snapshot.get('screenplay_version') is not None
+                    or any(value is not None for value in snapshot.get('scene_ids', {}).values())
+                    or snapshot.get('source_evidence') != {'sources': {}, 'privacy': {}}):
+                raise FileNotFoundError('comic page unavailable')
 
     @staticmethod
     def _independent(row):
@@ -551,6 +585,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         return not any(asset.get(key) for key in ('source_job_id', 'provider_id', 'model_id', 'source_asset_ids', '_origin_provenance', '_required_features'))
 
     def approve_image(self, nid, scope, actor, aid, expected_version, guard=lambda: None):
+        if self._source_free_access.get(): raise FileNotFoundError('comic source unavailable')
         # Original upload review only. Never approve a model proposal here.
         with self.assets._lock, workspace_mutation(self.assets.root, 'asset-library'):
             asset, _ = self._asset(nid, scope, actor, aid, approved=False)
@@ -562,12 +597,18 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
             return {'id': result['id'], 'version': result['version'], 'approved': True}
 
     def image_preview(self, nid, scope, actor, aid):
+        if self._source_free_access.get(): raise FileNotFoundError('comic source unavailable')
         _, data = self._asset(nid, scope, actor, aid, approved=False)
         if not renderer_status()['available']: raise ValueError('COMIC_RENDERER_UNAVAILABLE')
         image = _image(data); image.thumbnail((800, 800)); stream = io.BytesIO(); image.save(stream, format='PNG')
         return stream.getvalue()
 
     def catalog(self, nid, scope, actor):
+        if self._source_free_access.get():
+            return {'screenplays': [], 'characters': [], 'assets': [], 'presets': PRESETS,
+                    'renderer': renderer_status(), 'font': font_status(), 'privacy_level': 'LOCAL_ONLY',
+                    'automatic_generation': False, 'appearance_reference_policy': 'UNAVAILABLE_SOURCE_FREE',
+                    'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
         base = self._director().catalog(nid, scope, actor); assets = []
         candidates = self.assets.list(nid, branch_id=scope.get('branch_id'), actor_id=actor)
         if self.independent_store is not None:
@@ -589,7 +630,9 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
 
     def _payload(self, nid, scope, actor, value, *, bind_independent=True):
-        body = LayoutIn.model_validate(value); document = body.model_dump(); director = self._director()
+        body = LayoutIn.model_validate(value); document = body.model_dump()
+        director = None if self._source_free_access.get() else self._director()
+        self._admit_document(document)
         self.novels.get(nid)
         independent = body.source_mode == 'INDEPENDENT'
         source = None if independent else director.screenplay(nid, scope, body.screenplay_id)
@@ -597,7 +640,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         shots = {shot['id']: shot for shot in source.get('shots', [])} if source is not None else {}
         if not independent and any(p.shot_id not in shots for p in body.panels): raise ValueError('COMIC_UNKNOWN_SHOT')
         characters = {cid for p in body.panels for cid in p.character_ids} | {b.character_id for p in body.panels for b in p.bubbles if b.character_id}
-        character_sources = director._character_sources(nid, scope, characters)
+        character_sources = {} if self._source_free_access.get() else director._character_sources(nid, scope, characters)
         assets = {}
         pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if body.layer_stack is not None else None
         def bind(aid, version, code):
@@ -624,9 +667,10 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 'scene_ids': {p.id: shots[p.shot_id].get('scene_id') if p.shot_id in shots else None for p in body.panels}, 'status': 'DRAFT', 'approval': None}
 
     def _current(self, nid, scope, actor, row):
+        self._admit_row(row)
         self.novels.get(nid)
         self._check_independent_identity(nid, row)
-        director = self._director()
+        director = None if self._source_free_access.get() else self._director()
         if row['document'].get('source_mode', 'SCREENPLAY') != 'INDEPENDENT':
             source = director.screenplay(nid, scope, row['document']['screenplay_id'])
             if source['edit_version'] != row['screenplay_version'] or director.evidence(nid, scope, source) != row['source_evidence']:
@@ -635,7 +679,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
               or row['screenplay_version'] is not None or row['source_evidence'] != {'sources': {}, 'privacy': {}}
               or any(p.get('shot_id') is not None for p in row['document']['panels'])):
             raise StaleSourceError('COMIC_INDEPENDENT_SOURCE_CONFLICT')
-        if director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
+        if not self._source_free_access.get() and director._character_sources(nid, scope, row['character_sources']) != row['character_sources']:
             raise StaleSourceError('COMIC_SOURCE_CHANGED')
         images = {}
         pixel_budget = [MAX_LAYER_SOURCE_PIXELS] if 'layer_stack' in row['document'] else None
@@ -659,6 +703,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
     def _row(self, nid, scope, actor, rid):
         row = self.get(nid, scope, self.RECORDS, rid)
         if row['created_by'] != actor: raise FileNotFoundError(rid)
+        self._admit_row(row)
         self._check_independent_identity(nid, row)
         return row
 
@@ -673,7 +718,9 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         items = []
         for row in self.list(nid, scope, self.RECORDS):
             if row['created_by'] != actor: continue
-            try: self._check_independent_identity(nid, row)
+            try:
+                self._admit_row(row)
+                self._check_independent_identity(nid, row)
             except (FileNotFoundError, ValueError): continue
             items.append(self._view(nid, scope, actor, row))
         return {'items': items}
@@ -817,6 +864,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         return stream.getvalue()
 
     def export_ora(self, nid, scope, actor, rid, expected_version, guard=lambda: None):
+        if self._source_free_access.get(): raise FileNotFoundError('comic source unavailable')
         with ora_decode_budget():
             return self._export_ora(nid, scope, actor, rid, expected_version, guard)
 

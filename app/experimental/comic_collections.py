@@ -74,6 +74,10 @@ class ComicCollectionsMixin:
         if row is None or row.get('novel_id') != nid or row.get('scope') != scope or row.get('created_by') != actor:
             raise FileNotFoundError('comic book unavailable')
         self._book_identity(nid, row)
+        if self._source_free_access.get():
+            for snapshot in [row, *row.get('history', [])]:
+                for pid in self._book_pages(snapshot['document']):
+                    self._book_page(nid, scope, actor, pid, state)
         return row
 
     def _book_page(self, nid, scope, actor, rid, state=None):

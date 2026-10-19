@@ -123,16 +123,31 @@ def test_legacy_field_omission_and_required_source_contract():
         with pytest.raises(ValidationError): LayoutIn.model_validate({**raw, **patch})
 
 
-def test_image_only_role_does_not_bypass_original_novel_authority(mounted, monkeypatch):
+def test_image_only_role_admits_source_free_without_novel_sources(mounted, monkeypatch):
     e = scoped(mounted, monkeypatch)
     e.authorization.revoke_role(e.role, e.lead)
     scope = AuthorizationScope(ScopeKind.BRANCH, e.workspace, e.nid, e.storyline, e.branch)
     e.authorization.assign_role(DomainRoleAssignment('image-' + e.role, e.lead, DomainRole.DOMAIN_LEAD,
                                                     ModalityDomain.IMAGE, scope, e.lead))
-    for method, suffix, body in [('get', '/catalog', None), ('get', '/records', None), ('post', '/records', blank())]:
-        response = getattr(e.client, method)(e.base + '/comic-layouts' + suffix, headers=e.headers, **({'json': body} if body else {}))
-        assert response.status_code == 403
-    assert not e.store.read(e.nid, e.scope)['collections'].get('comic_layouts_v2')
+    base = e.base + '/comic-layouts'
+    # Even an empty character lookup traverses private NOVEL data. It must not run.
+    def forbidden(*args, **kwargs): raise AssertionError('NOVEL source resolution')
+    monkeypatch.setattr(e.experimental.comic_layouts_service, '_director', forbidden)
+    catalog = checked(e.client.get(base + '/catalog', headers=e.headers))
+    assert catalog['screenplays'] == catalog['characters'] == catalog['assets'] == []
+    created = checked(e.client.post(base + '/records', headers=e.headers, json=blank()), 201)
+    changed = checked(e.client.put(base + '/records/' + created['id'], headers=e.headers,
+                                  json={**blank(), 'panels': [panel()], 'expected_version': 1}))
+    assert changed['version'] == 2 and changed['document']['panels'][0]['bubbles'][0]['text'].startswith('Hello')
+    assert checked(e.client.get(base + '/records', headers=e.headers))['items'] == [changed]
+    restored = checked(e.client.post(base + '/records/' + created['id'] + '/restore', headers=e.headers,
+                                     json={'expected_version': 2, 'target_version': 1}))
+    assert restored['version'] == 3 and restored['document']['panels'] == []
+    for suffix in ['/images/private', '/records/' + created['id'] + '/export-ora?expected_version=3']:
+        assert e.client.get(base + suffix, headers=e.headers).status_code == 404
+    assert e.client.get(e.base + '/director/catalog', headers=e.headers).status_code == 403
+    e.authorization.revoke_role('image-' + e.role, e.lead)
+    assert e.client.get(base + '/records', headers=e.headers).status_code == 403
 
 
 @pytest.mark.parametrize('invalid', ['binding', 'duplicate_panel', 'duplicate_bubble', 'oversized_bubble', 'pixel_limit'])
@@ -293,3 +308,157 @@ def test_original_asset_lock_precedes_project_and_outlives_comic_commit(mounted,
     report = service.preflight(e.nid, e.scope, 'local-author', row['id'], row['version'])
     service.approve(e.nid, e.scope, 'local-author', row['id'], row['version'], report['review_digest'], True)
     assert len(commits) == 3
+
+
+def image_scope(e, *, permissions=None):
+    from app.authorization import PermissionAssignment
+    scope = AuthorizationScope(ScopeKind.BRANCH, e.workspace, e.nid, e.storyline, e.branch)
+    e.authorization.revoke_role(e.role, e.lead)
+    for permission in permissions or ['domain.read', 'domain.write', 'domain.review']:
+        e.authorization.assign_permission(PermissionAssignment('image-' + permission + e.role, e.lead,
+            permission, ModalityDomain.IMAGE, scope, e.lead))
+    return scope
+
+
+def test_image_policy_hides_adapted_refs_history_and_mixed_books_before_resolution(mounted, monkeypatch):
+    e = scoped(mounted, monkeypatch); base = e.base + '/comic-layouts'
+    original = checked(e.client.post(base + '/records', headers=e.headers, json=blank()), 201)
+    service = e.experimental.comic_layouts_service
+    # Represent retained legacy/mixed rows in the ORIGINAL owner; no second store.
+    with e.store.transaction(e.nid, e.scope) as state:
+        source = copy.deepcopy(state['collections'][service.RECORDS][original['id']])
+        variants = []
+        for kind in ['adapted', 'character', 'bubble', 'asset', 'appearance', 'raster', 'history']:
+            row = copy.deepcopy(source); row['id'] = 'private-' + kind
+            row['document']['title'] = 'PRIVATE-' + kind
+            row['document']['panels'] = [panel()]
+            p = row['document']['panels'][0]
+            if kind == 'adapted': row['document'].update(source_mode='SCREENPLAY', screenplay_id='PRIVATE-SCREENPLAY')
+            elif kind == 'character': p['character_ids'] = ['PRIVATE-CHARACTER']
+            elif kind == 'bubble': p['bubbles'][0]['character_id'] = 'PRIVATE-CHARACTER'
+            elif kind == 'asset': p.update(artwork_mode='IMAGE', asset_id='PRIVATE-ASSET', expected_asset_version=1)
+            elif kind == 'appearance': p['appearance_references'] = [{'asset_id': 'PRIVATE-ASSET'}]
+            elif kind == 'raster': row['document']['layer_stack'] = {'items': [{'kind': 'RASTER', 'target_id': 'PRIVATE-ASSET'}]}
+            else:
+                historical = copy.deepcopy(source); historical['document']['screenplay_id'] = 'PRIVATE-HISTORY'
+                row['history'] = [historical]
+            state['collections'][service.RECORDS][row['id']] = row; variants.append(row['id'])
+    book = checked(e.client.post(base + '/books', headers=e.headers,
+        json={'title': 'Safe book', 'chapters': [{'id': 'chapter', 'title': 'Chapter', 'pages': []}]}), 201)
+    with e.store.transaction(e.nid, e.scope) as state:
+        bad_book = copy.deepcopy(state['collections'][service.BOOKS][book['id']]); bad_book['id'] = 'private-book'
+        bad_book['document']['title'] = 'PRIVATE-BOOK'; bad_book['document']['chapters'][0]['pages'] = variants
+        state['collections'][service.BOOKS][bad_book['id']] = bad_book
+    image_scope(e)
+    def forbidden(*args, **kwargs): raise AssertionError('Unauthorized source traversed')
+    monkeypatch.setattr(service, '_director', forbidden)
+    monkeypatch.setattr(service, '_asset', forbidden)
+    assert [r['id'] for r in checked(e.client.get(base + '/records', headers=e.headers))['items']] == [original['id']]
+    assert [b['id'] for b in checked(e.client.get(base + '/books', headers=e.headers))['items']] == [book['id']]
+    for rid in variants:
+        path = base + '/records/' + rid
+        responses = [e.client.post(path + '/preflight', headers=e.headers, json={'expected_version': 1}),
+            e.client.put(path, headers=e.headers, json={**blank(), 'expected_version': 1}),
+            e.client.post(path + '/restore', headers=e.headers, json={'expected_version': 1, 'target_version': 1}),
+            e.client.get(path + '/segments/0?expected_version=1', headers=e.headers),
+            e.client.get(path + '/export?expected_version=1', headers=e.headers),
+            e.client.post(base + '/books/' + book['id'] + '/pages', headers=e.headers,
+                json={'expected_version': 1, 'chapter_id': 'chapter', 'source_layout_id': rid, 'expected_source_version': 1})]
+        assert all(r.status_code == 404 and 'PRIVATE-' not in r.text for r in responses)
+    for suffix, body in [('restore', {'expected_version': 1, 'target_version': 1}),
+                         ('publication-preflight', {'expected_version': 1, 'reading_direction': 'LTR'})]:
+        response = e.client.post(base + '/books/private-book/' + suffix, headers=e.headers, json=body)
+        assert response.status_code == 404 and 'PRIVATE-' not in response.text
+    # New references are rejected before any original source owner is invoked.
+    for patch in [{'character_ids': ['PRIVATE-CHARACTER']}, {'bubbles': [{**panel()['bubbles'][0], 'character_id': 'PRIVATE'}]}]:
+        response = e.client.post(base + '/records', headers=e.headers, json={**blank(), 'panels': [{**panel(), **patch}]})
+        assert response.status_code == 404 and 'PRIVATE' not in response.text
+
+
+@pytest.mark.parametrize('permissions', [[], ['domain.read'], ['domain.write'], ['domain.review']])
+def test_image_permissions_are_separate_and_actor_branch_fenced(mounted, monkeypatch, permissions):
+    e = scoped(mounted, monkeypatch); base = e.base + '/comic-layouts'
+    created = checked(e.client.post(base + '/records', headers=e.headers, json={**blank(), 'panels': [{**panel(), 'bubbles': []}]}), 201)
+    report = checked(e.client.post(base + '/records/' + created['id'] + '/preflight', headers=e.headers, json={'expected_version': 1}))
+    image_scope(e, permissions=permissions or ['unused.permission'])
+    assert e.client.get(base + '/records', headers=e.headers).status_code == (200 if 'domain.read' in permissions else 403)
+    assert e.client.post(base + '/records', headers=e.headers, json=blank()).status_code == (201 if 'domain.write' in permissions else 403)
+    response = e.client.post(base + '/records/' + created['id'] + '/approve', headers=e.headers,
+        json={'expected_version': 1, 'review_digest': report['review_digest'], 'acknowledge_warnings': True})
+    assert response.status_code == (200 if 'domain.review' in permissions else 403)
+    assert e.client.get(base + '/records', headers={**e.headers, 'X-Branch-ID': e.other_branch}).status_code == 403
+    assert e.client.get(base + '/records', headers={'X-Branch-ID': e.branch, 'X-Session-Token': 'wrong'}).status_code == 401
+
+
+def test_mixed_novel_read_image_write_cannot_mutate_source_page(mounted, monkeypatch):
+    from app.authorization import PermissionAssignment
+    e = scoped(mounted, monkeypatch); base = e.base + '/comic-layouts'
+    page = checked(e.client.post(base + '/records', headers=e.headers, json=blank()), 201)
+    service = e.experimental.comic_layouts_service
+    with e.store.transaction(e.nid, e.scope) as state:
+        state['collections'][service.RECORDS][page['id']]['document']['panels'] = [{**panel(), 'character_ids': ['PRIVATE']}]
+    scope = image_scope(e, permissions=['domain.write'])
+    e.authorization.assign_permission(PermissionAssignment('novel-read-' + e.role, e.lead, 'domain.read', ModalityDomain.NOVEL, scope, e.lead))
+    assert e.client.put(base + '/records/' + page['id'], headers=e.headers, json={**blank(), 'expected_version': 1}).status_code == 404
+    assert e.client.post(base + '/records', headers=e.headers, json=blank()).status_code == 201
+
+
+def test_image_membership_wrong_project_and_recreated_owner_are_denied(mounted, monkeypatch):
+    from app.identity import IdentityStatus
+    from app.authorization import PermissionAssignment
+    e = scoped(mounted, monkeypatch); auth_scope = image_scope(e)
+    base = e.base + '/comic-layouts'
+    created = checked(e.client.post(base + '/records', headers=e.headers, json=blank()), 201)
+    e.authorization.assign_permission(PermissionAssignment('viewer-image-' + e.role, e.viewer, 'domain.read', ModalityDomain.IMAGE, auth_scope, e.lead))
+    # The viewer retains NOVEL read, but has no ownership of the author's rows.
+    assert checked(e.client.get(base + '/records', headers=e.viewer_headers)) == {'items': []}
+    assert e.client.post(base + '/records/' + created['id'] + '/preflight', headers=e.viewer_headers, json={'expected_version': 1}).status_code == 404
+    wrong = e.novels.create({'id': 'comic-other-' + uuid.uuid4().hex, 'title': 'Other'})['id']
+    e.comic_test_projects.append(wrong)
+    assert e.client.get(e.prefix + f'/novels/{wrong}/experimental/comic-layouts/records', headers=e.headers).status_code == 403
+    e.identity.set_membership_status(e.lead, e.workspace, IdentityStatus.INACTIVE)
+    assert e.client.get(base + '/records', headers=e.headers).status_code == 403
+    e.identity.set_membership_status(e.lead, e.workspace, IdentityStatus.ACTIVE)
+    archived = e.store.read(e.nid, e.scope)
+    e.novels.delete(e.nid); e.novels.create({'id': e.nid, 'title': 'Recreated'})
+    with e.store.transaction(e.nid, e.scope) as state: state.update(copy.deepcopy(archived))
+    assert e.client.get(base + '/records', headers=e.headers).status_code == 403
+    service = e.experimental.comic_layouts_service
+    with service.access_policy(True):
+        assert service.records(e.nid, e.scope, e.lead) == {'items': []}
+        with pytest.raises(FileNotFoundError): service.preflight(e.nid, e.scope, e.lead, created['id'], 1)
+    path = base + '/records/' + created['id']
+    for response in [e.client.post(path + '/preflight', headers=e.headers, json={'expected_version': 1}),
+                     e.client.post(path + '/restore', headers=e.headers, json={'expected_version': 1, 'target_version': 1})]:
+        assert response.status_code == 403
+    if e.backend == 'file': assert not (e.root / 'novels' / e.nid / 'creative_project_v2.json').exists()
+
+
+def test_image_source_free_book_copy_restore_layers_review_and_publication(mounted, monkeypatch):
+    import zipfile
+    e = scoped(mounted, monkeypatch); image_scope(e)
+    base = e.base + '/comic-layouts'
+    body = {**blank(), 'panels': [{**panel(), 'bubbles': []}],
+        'layer_stack': {'schema_version': 1, 'items': [{'id': 'layer_art', 'kind': 'PANEL_ART', 'target_id': 'panel', 'name': 'Art'}, {'id': 'layer_frame', 'kind': 'PANEL_FRAME', 'target_id': 'panel', 'name': 'Frame'}]}}
+    # Opted-in layer schema is the original schema, not an IMAGE-specific DTO.
+    page = checked(e.client.post(base + '/records', headers=e.headers, json=body), 201)
+    path = base + '/records/' + page['id']
+    preflight = checked(e.client.post(path + '/preflight', headers=e.headers, json={'expected_version': 1}))
+    page = checked(e.client.post(path + '/approve', headers=e.headers,
+        json={'expected_version': 1, 'review_digest': preflight['review_digest'], 'acknowledge_warnings': True}))
+    book = checked(e.client.post(base + '/books', headers=e.headers, json={'title': 'Book',
+        'chapters': [{'id': 'chapter', 'title': 'Chapter', 'pages': [page['id']]}],
+        'expected_page_versions': {page['id']: page['version']}}), 201)
+    book_path = base + '/books/' + book['id']
+    receipt = checked(e.client.post(book_path + '/publication-preflight', headers=e.headers,
+        json={'expected_version': 1, 'reading_direction': 'LTR'}))
+    exported = e.client.post(book_path + '/export-cbz', headers=e.headers,
+        json={'expected_version': 1, 'reading_direction': 'LTR', 'pages': receipt['pages'], 'publication_digest': receipt['publication_digest']})
+    assert exported.status_code == 200, exported.text
+    with zipfile.ZipFile(io.BytesIO(exported.content)) as archive: assert archive.testzip() is None
+    copied = checked(e.client.post(book_path + '/pages', headers=e.headers,
+        json={'expected_version': 1, 'chapter_id': 'chapter', 'source_layout_id': page['id'], 'expected_source_version': page['version']}), 201)
+    assert copied['page']['document']['panels'][0]['id'] != 'panel'
+    restored = checked(e.client.post(book_path + '/restore', headers=e.headers,
+        json={'expected_version': 2, 'target_version': 1}))
+    assert restored['version'] == 3 and restored['chapters'][0]['pages'] == [page['id']]

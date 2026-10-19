@@ -42,16 +42,23 @@ class RestoreIn(VersionIn):
     target_version: int = Field(ge=1, strict=True)
 
 
-def create_comic_layouts_router(service, authorize, require_flag):
+def create_comic_layouts_router(service, authorize, require_flag, *, comic_authorize=None, authority_lease=None):
     router = APIRouter(prefix='/novels/{nid}/experimental/comic-layouts', tags=['Experimental comic layouts'], route_class=ComicPrivateRoute)
     def invoke(nid, token, branch, permission, callback):
         def access():
             require_flag('comic_layouts_v2'); require_flag('asset_lineage_v2'); require_flag('ai_director_v2')
-            return authorize(nid, token, branch, permission)
-        actor, scope = access()
+            if comic_authorize is not None:
+                return comic_authorize(nid, token, branch, permission)
+            actor, scope = authorize(nid, token, branch, permission)
+            return actor, scope, False
+        actor, scope, source_free = access()
         def guard():
-            if access() != (actor, scope): raise HTTPException(403, {'code': 'COMIC_AUTHORITY_CHANGED'})
-        result = api_call(callback, actor, scope, guard); guard(); return result
+            if access() != (actor, scope, source_free): raise HTTPException(403, {'code': 'COMIC_AUTHORITY_CHANGED'})
+        from contextlib import nullcontext
+        lease = authority_lease(nid, token, actor, scope) if authority_lease else nullcontext()
+        with lease, service.access_policy(source_free):
+            guard()
+            result = api_call(callback, actor, scope, guard); guard(); return result
 
     @router.get('/books')
     def books(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

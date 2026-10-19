@@ -19,7 +19,7 @@ def is_independent_studio_route(method, normalized_path):
     """Exact method/path admission; each handler still resolves full authority."""
     root = r"/api/projects/[^/]+/studio"
     patterns = {
-        "GET": root + r"(?:/(?:preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
+        "GET": root + r"(?:/(?:comic-workspace|preferences|storage|references|relationships|production-contracts|bible|prompts(?:/[^/]+(?:/revisions/[^/]+/body)?)?|documents/[^/]+/prompt-adoption|assets(?:/[^/]+(?:/(?:download|model-reference(?:/(?:mesh-preview|scene-preview|materials|cameras))?))?)?|director/workspace/[^/]+))?",
         "POST": r"(?:/api/experimental/projects|" + root + r"/(?:activate|prompts(?:/[^/]+/revisions(?:/[^/]+/approve)?)?|documents/[^/]+/shots/[^/]+/prompt-adoption|assets(?:/model-reference|/[^/]+/(?:restore|relationships|mask|model-reference/(?:depth-export|clay-export|clay-save|camera-export)|video-reference/(?:preview|save)))?))",
         "PUT": root + r"/(?:preferences|assets/[^/]+/lineage)",
         "DELETE": root + r"/assets/[^/]+(?:/relationships/[^/]+)?",
@@ -164,7 +164,7 @@ class VideoReferenceRoute(PrivateProductionRoute):
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
                                     graph_service=None, require_host_session=None, model_host_authority=None, production_service=None,
                                     bible_service=None, prompt_service=None, prompt_authoring_service=None,
-                                    prompt_adoption_service=None, authority_lease=None):
+                                    prompt_adoption_service=None, authority_lease=None, comic_authorize=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -258,6 +258,47 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                 result["capabilities"][key] = allowed
             return result
         return invoke(nid, x_session_token, x_branch_id, "domain.read", view)
+
+    @router.get("/projects/{nid}/studio/comic-workspace")
+    def comic_workspace(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        # A narrow bootstrap for IMAGE-authorized, source-free Comic. This is
+        # deliberately not a generic Studio overview or preference activation.
+        def operation():
+            def access_comic(permission):
+                require_flag(FLAG)
+                for flag in ("comic_layouts_v2", "asset_lineage_v2", "ai_director_v2"):
+                    require_flag(flag)
+                if comic_authorize is None:
+                    raise HTTPException(404, {"code": "COMIC_WORKSPACE_UNAVAILABLE"})
+                actor, scope, source_free = comic_authorize(nid, x_session_token, x_branch_id, permission)
+                service.store.key(nid, scope)
+                if not isinstance(actor, str) or not actor or type(source_free) is not bool:
+                    raise HTTPException(403, {"code": "COMIC_AUTHORITY_INVALID"})
+                return actor, scope, source_free
+            authority = access_comic("domain.read")
+            actor, scope, source_free = authority
+            def guard():
+                if access_comic("domain.read") != authority:
+                    raise HTTPException(403, {"code": "COMIC_AUTHORITY_CHANGED"})
+            # The existing project/session lease preserves project lifetime; do
+            # not call service.project/incarnation, which may create a File V2
+            # marker on a fresh project. This read must not initialize anything.
+            lease = authority_lease(nid, x_session_token, actor, scope) if authority_lease else nullcontext()
+            with lease:
+                guard()
+                project = service.novels.get(nid)
+                capabilities = {}
+                for name, permission in (("can_mutate", "domain.write"), ("can_review", "domain.review")):
+                    try:
+                        capabilities[name] = access_comic(permission)[:2] == authority[:2]
+                    except HTTPException as exc:
+                        if exc.status_code != 403:
+                            raise
+                        capabilities[name] = False
+                guard()
+                return {"contract": "studio-comic-workspace/1", "project": {"id": project["id"], "title": project["title"]},
+                        "source_free": source_free, "capabilities": capabilities}
+        return api_call(operation)
 
     @router.post("/projects/{nid}/studio/activate")
     def activate(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

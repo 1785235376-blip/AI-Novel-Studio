@@ -25,7 +25,7 @@ import { DeliveryCenterPanel } from '../delivery/DeliveryCenterPanel';
 import { AssetInspector } from '../novel/AssetInspector';
 import type { LineageAsset } from '../experimental/ProductionLineagePanel';
 import { StudioAssetDeclarationForm } from './StudioAssetDeclarationForm';
-import { studioClient, studioTransport, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage } from './studioClient';
+import { studioClient, studioTransport, type StudioAsset, type StudioOverview, type StudioComicWorkspace, type StudioPreferences, type StudioStorage } from './studioClient';
 import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type LocalStudioModule } from '../workspaceSelection';
 import { creativeClient } from './client';
 import { useStudioGraphEditor } from './useStudioGraphEditor';
@@ -98,6 +98,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const cutoutLease = useRef<{ job: ProductionJob; control?: Promise<ProductionJob> }>();
   const [cacheKey] = useState(() => `independent-studio-${++studioObserver}`);
   const [overview, setOverview] = useState<StudioOverview>(), [rows, setRows] = useState<StudioAsset[]>([]);
+  const [comicWorkspace, setComicWorkspace] = useState<StudioComicWorkspace>();
+  const comicOnly = module === 'IMAGE' && !!comicWorkspace && !overview;
   const [selected, setSelected] = useState<Asset>(), [loading, setLoading] = useState(true), [error, setError] = useState(''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false), [busy, setBusy] = useState(false), [readingAsset, setReadingAsset] = useState(false), [storageLoading, setStorageLoading] = useState(false);
   const [relationshipReviewEpoch, setRelationshipReviewEpoch] = useState<number>();
   const [pendingDeclaration, setPendingDeclaration] = useState<StudioAsset>(), [lineageDirty, setLineageDirty] = useState(false), [relationshipDirty, setRelationshipDirty] = useState(false), [formRevision, setFormRevision] = useState(0), [storage, setStorage] = useState<StudioStorage>();
@@ -112,7 +114,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   useEffect(() => { if (workspaceView !== 'TASKS') setTaskTarget(undefined); }, [workspaceView]);
   const [storyboardHandoff, setStoryboardHandoff] = useState<TimelineAssetHandoff & { selectionEpoch: number }>();
   const [storyboardDirty, setStoryboardDirty] = useState(false), storyboardDirtyRef = useRef(false);
-  const [comicOpen, setComicOpen] = useState(false), [comicDirty, setComicDirty] = useState(false);
+  const [comicOpen, setComicOpen] = useState(false), [comicDirty, setComicDirty] = useState(false), [comicError, setComicError] = useState('');
   const comicDirtyRef = useRef(false), comicBusyRef = useRef(false);
   const comicDraftChanged = useCallback((value: boolean) => { comicDirtyRef.current = value; setComicDirty(value); }, []);
   const comicBusyChanged = useCallback((value: boolean) => { comicBusyRef.current = value; }, []);
@@ -183,12 +185,12 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
+  const deny = useCallback(() => { revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
   const retireIdentity = useCallback(() => {
     authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
-    setSelected(undefined); setRows([]); setOverview(undefined); setStorage(undefined); setProductionJob(undefined);
+    setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined);
     setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setError(''); setNotice(''); setLoading(false);
   }, []);
   useEffect(() => {
@@ -216,6 +218,16 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       throw reason;
     }
   }, [current, deny]);
+  useEffect(() => {
+    if (!comicOpen || comicWorkspace || !overview || module !== 'IMAGE' || !current()) return;
+    const abort = new AbortController(); setComicError(''); comicBusyChanged(true);
+    void client.comicWorkspace(abort.signal).then(value => {
+      if (!abort.signal.aborted && current()) setComicWorkspace(value);
+    }).catch(reason => {
+      if (!abort.signal.aborted && current()) setComicError(apiErrorView(reason, '漫画权限读取失败，请关闭后重新打开。').message);
+    }).finally(() => { if (!abort.signal.aborted && current()) comicBusyChanged(false); });
+    return () => { abort.abort(); comicBusyChanged(false); };
+  }, [comicOpen, comicWorkspace, overview, module, client, current, comicBusyChanged]);
   const writable = overview?.capabilities.can_mutate === true && !denied && !identityRetired;
   cutoutPermission.current = writable;
   const graphMutation = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
@@ -311,13 +323,29 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     const epoch = ++overviewEpoch.current;
     setLoading(true); setError('');
     try {
-      const value = await guarded(() => client.overview(abort.signal));
+      const result = await guarded(async () => {
+        try { return { overview: await client.overview(abort.signal) }; }
+        catch (reason) {
+          // A different, bounded owner may authorize Comic after the generic
+          // NOVEL workspace refuses access. Never use a malformed scope response,
+          // cancelled read, or retired identity as a reason to try another owner.
+          if (module !== 'IMAGE' || !(reason instanceof ApiError) || reason.status !== 403
+            || reason.problem.code === 'STUDIO_RESPONSE_SCOPE_MISMATCH' || abort.signal.aborted || !current()) throw reason;
+          setOverview(undefined); setComicWorkspace(undefined); setSelected(undefined); setRows([]); setStorage(undefined);
+          return { comic: await client.comicWorkspace(abort.signal) };
+        }
+      }, abort.signal);
+      if ('comic' in result) {
+        if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) { setComicWorkspace(result.comic); verifiedCallback.current?.(projectId); }
+        return;
+      }
+      const value = result.overview;
       if (value.project.id !== projectId || value.project.entry_kind !== 'NEUTRAL_STUDIO') throw new Error('当前项目尚未启用独立工作区，请返回项目列表重新选择。');
       if (!value.capabilities || !value.preferences || !Number.isSafeInteger(value.preferences.version) || !Array.isArray(value.preferences.intents)) throw new Error('项目能力或偏好数据不可用，请重新读取。');
-      if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) { setOverview(value); verifiedCallback.current?.(projectId); }
+      if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) { setComicWorkspace(undefined); setOverview(value); verifiedCallback.current?.(projectId); }
     } catch (reason) { if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) setError(apiErrorView(reason, '项目读取失败。').message); }
     finally { if (current() && epoch === overviewEpoch.current) setLoading(false); }
-  }, [client, current, guarded, projectId]);
+  }, [client, current, guarded, projectId, module]);
   useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current) { event.preventDefault(); event.returnValue = ''; } };
@@ -490,7 +518,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     const action = pendingNavigation; setPendingNavigation(undefined); setDiscard(false);
     discardNavigationDrafts(); action();
   };
-  const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
+  const sidebar = comicOnly ? <div className="independent-studio-sidebar"><h2>独立漫画</h2><p>空白漫画页和书册沿用原项目保存，无需小说来源。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button></div> : <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={storyboardDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty} />
     <details onToggle={event => { if (event.currentTarget.open && !storage && overview) void loadStorage(); }}><summary>项目存储</summary>{storageLoading && <StatusMessage>正在核对项目存储…</StatusMessage>}{storage ? <><p>有效资产 {storage.assets.count} 项 · {storage.assets.bytes} 字节</p><p>回收站 {storage.trash.count} 项 · {storage.trash.bytes} 字节</p>
       {storage.admission?.state === 'READY' && <p>当前可导入容量估算：{storage.admission.available_import_bytes} 字节；已扣除安全预留空间和项目配额。</p>}
@@ -503,13 +531,14 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const relationshipReview = relationshipReviewEpoch !== undefined && relationshipReviewEpoch === selectionEpoch.current;
   const main = <div className="independent-studio">
     {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={workspaceView === 'START'} onClick={() => navigate(() => setWorkspaceView('START'))}>创作开始</Button><Button aria-pressed={workspaceView === 'TASKS'} onClick={() => navigate(() => setWorkspaceView('TASKS'))}>任务中心</Button><Button aria-pressed={workspaceView === 'ASSETS'} onClick={() => navigate(() => setWorkspaceView('ASSETS'))}>素材工作区</Button>{interfaceMode === 'PROFESSIONAL' && <Button aria-pressed={graphView} onClick={() => navigate(() => setWorkspaceView('GRAPH'))}>创作图</Button>}<Button aria-pressed={productionView} onClick={() => navigate(() => setWorkspaceView('PRODUCTION'))}>制作操作</Button><InterfaceModeSwitch mode={interfaceMode} onChange={changeInterfaceMode} /></div>}
-    {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && !identityRetired && <Panel title="漫画制作 Comic">
+    {module === 'IMAGE' && (workspaceView === 'ASSETS' || comicOnly) && (overview || comicWorkspace) && !denied && !identityRetired && <Panel title="漫画制作 Comic">
       <Button aria-expanded={comicOpen} onClick={() => navigate(() => setComicOpen(!comicOpen))}>{comicOpen ? '关闭漫画制作' : '打开漫画制作'}</Button>
-      {comicOpen && <StudioComicPanel canMutate={writable} canReview={overview?.capabilities.can_review === true && !denied} projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
+      {comicOpen && !comicWorkspace && <StatusMessage tone={comicError ? 'error' : undefined}>{comicError || '正在核对漫画权限…'}</StatusMessage>}
+      {comicOpen && comicWorkspace && <StudioComicPanel sourceFree={comicWorkspace.source_free} canMutate={comicWorkspace.capabilities.can_mutate} canReview={comicWorkspace.capabilities.can_review && !denied} projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
     </Panel>}
-    {workspaceView === 'TASKS' && !denied && <TaskCenterPanel projectId={projectId}
+    {workspaceView === 'TASKS' && overview && !denied && <TaskCenterPanel projectId={projectId}
       transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
-      scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && !denied && !identityRetired}
+      scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && overview && !denied && !identityRetired}
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
       onNavigate={target => {
         if (!current() || busyRef.current) return;
@@ -517,9 +546,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         navigate(() => { if (current() && epoch === selectionEpoch.current && !busyRef.current) setTaskTarget(previous => previous && JSON.stringify(previous.target) === JSON.stringify(target) ? previous : { id: crypto.randomUUID(), target: structuredClone(target) }); });
       }}
       onUnavailable={deny} />}
-    {workspaceView === 'TASKS' && !denied && !identityRetired && <StudioProductionTasksPanel
+    {workspaceView === 'TASKS' && overview && !denied && !identityRetired && <StudioProductionTasksPanel
       projectId={projectId} branchId={context.scope?.branchId ?? null} identity={cacheKey} client={productionClient}
-      active={workspaceView === 'TASKS' && !denied && !identityRetired} denied={denied || identityRetired}
+      active={workspaceView === 'TASKS' && overview && !denied && !identityRetired} denied={denied || identityRetired}
       busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} onUnavailable={deny}
       onOpen={(job, isSelectionCurrent) => {
         if (!isSelectionCurrent() || !current() || busyRef.current) return;
@@ -530,7 +559,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
           setProductionJob({ client: productionClient, job }); setWorkspaceView('PRODUCTION');
         });
       }} />}
-    {workspaceView === 'TASKS' && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
+    {workspaceView === 'TASKS' && overview && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
       projectId={projectId} scope={context.scope} identity={cacheKey} target={taskTarget.target} transport={taskTransport}
       busy={busy} isCurrent={current} read={guarded} onClose={() => setTaskTarget(undefined)} />}
     {startVisible && <StudioStartPanel controller={entry} onOpenProject={id => {
@@ -550,7 +579,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         denied={denied || identityRetired}
         onDirtyChange={promptDraftChanged} />
     )}
-    {workspaceView === 'ASSETS' && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
+    {workspaceView === 'ASSETS' && overview && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {module === 'VIDEO' && workspaceView === 'ASSETS' && overview && !denied && <StudioVideoReferencePanel scope={client} assets={rows}
       blocked={busy || dirty} canSave={writable} isCurrent={current}
       onPreview={(asset, window, signal) => guarded(() => client.previewVideoReference(asset, window, signal), signal)}
@@ -612,7 +641,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         } finally {busyRef.current=false;if(current()){setBusy(false);invalidateStorage();}}
       }} />}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
-    {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
+    {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !comicWorkspace && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
     {pendingNavigation && !denied && <section className="creative-navigation-confirm" role="alert"><p>{storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" disabled={busy || !!preferenceController.pending} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard || busy || !!preferenceController.pending} onClick={confirmNavigation}>确认离开</Button><Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); }}>继续编辑</Button></section>}
     {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
@@ -664,7 +693,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         });
       }}
       onUnavailable={deny} />}
-    {productionView && !denied && !storyboardHandoff && <>
+    {productionView && overview && !denied && !storyboardHandoff && <>
       <Button aria-expanded={guideOpen} onClick={() => setGuideOpen(true)}>按需打开项目提示助手</Button>
       {guideOpen && <ProjectGuidePanel projectId={projectId} identity={cacheKey} active denied={denied} workflow={overview}
         onNavigate={target => { if (target === 'STORYBOARD') { setNotice('分镜工作区在创作模块的导演/分镜检查器旁按需打开。'); return; } navigate(() => setWorkspaceView(target as StudioWorkspaceView)); }}
@@ -708,7 +737,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       isCurrent: () => current() && editorTicket.current === editorSession.ticket && editorLocation.current === editorSession.module }}
     onExit={() => { editorTicket.current++; setEditorSession(undefined); setNotice('已返回独立创作图；分镜沿原文档保存，图绑定未改变。'); }}
     onModuleChange={next => { editorTicket.current++; setEditorSession(undefined); onModuleChange(next); }} />;
-  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
-    inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel>{!storyboardHandoff && <ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/>}</> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
-    status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
+  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || comicWorkspace?.project.title || scope.project }} projectNoun={comicOnly || overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
+    inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : comicOnly ? <EmptyState title="漫画制作" detail="页面和书册权限由原漫画入口核对。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel>{!storyboardHandoff && <ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/>}</> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
+    status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {comicOnly ? '独立漫画' : productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
 }

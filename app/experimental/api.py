@@ -513,7 +513,8 @@ from .comic_layouts import ComicLayoutsService
 from .comic_layouts_api import create_comic_layouts_router
 comic_layouts_service = ComicLayoutsService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy_api.screenplay_service, legacy_api.asset_library_service, lineage=production_lineage_service)
-router.include_router(create_comic_layouts_router(comic_layouts_service, authorize, require_flag))
+router.include_router(create_comic_layouts_router(comic_layouts_service, authorize, require_flag,
+    comic_authorize=legacy_api._comic_authorize, authority_lease=legacy_api._workbench_authority_lease))
 
 from .project_forks import ProjectForksService
 from .project_forks_api import create_project_forks_router
@@ -733,6 +734,7 @@ studio_prompt_authoring_service = PromptAuthoringService(independent_workspace_s
 from ..creative.prompt_adoption import PromptAdoptionService
 studio_prompt_adoption_service = PromptAdoptionService(independent_workspace_service, studio_prompt_service)
 router.include_router(create_independent_workspace_router(independent_workspace_service, authorize, require_flag,
+    comic_authorize=legacy_api._comic_authorize,
     create_project=lambda body, token: legacy_api.create_novel(
         legacy_api.NovelIn(**body.model_dump(exclude_none=True)), token),
     workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service,
