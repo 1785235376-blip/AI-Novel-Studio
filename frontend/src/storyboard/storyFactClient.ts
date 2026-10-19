@@ -24,7 +24,8 @@ export function checkedImpact(value: unknown, documentId: string): FactUse[] {
   if (!object(value) || value.contract !== 'creative-fact-impact/1'
     || value.coverage !== 'EXPLICIT_CONFIRMED_FACT_USES_AND_CURRENT_SHOT_ASSET_BINDINGS'
     || value.unrecorded_dependencies !== 'UNKNOWN' || value.automatic_regeneration !== false || value.model_called !== false
-    || !Array.isArray(value.items)) invalid();
+    || !Array.isArray(value.items) || value.items.length > 200) invalid();
+  const ids = new Set<string>();
   for (const row of value.items) {
     if (!object(row) || !text(row.id) || !version(row.version) || !pin(row.fact) || !pin(row.current_fact)
       || !object(row.current_fact) || typeof row.current_fact.title !== 'string' || !text(row.current_fact.status)
@@ -34,6 +35,10 @@ export function checkedImpact(value: unknown, documentId: string): FactUse[] {
       || !digest(row.target.document_digest) || !text(row.target.scene_id) || !text(row.target.shot_id)
       || !version(row.target.shot_version) || !digest(row.target.shot_digest) || !Array.isArray(row.assets)
       || !row.assets.every(a => object(a) && text(a.asset_id) && version(a.version) && digest(a.digest) && ['image', 'video'].includes(String(a.kind)))) invalid();
+  }
+  for (const row of value.items as FactUse[]) {
+    if (ids.has(row.id) || row.assets.length > 2 || new Set(row.assets.map(asset => asset.asset_id)).size !== row.assets.length) invalid();
+    ids.add(row.id);
   }
   return value.items as FactUse[];
 }

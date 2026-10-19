@@ -30,7 +30,7 @@ describe('story fact usage', () => {
     expect(screen.getByText(/当前原项目世代中新建并明确批准/)).toBeTruthy();
     expect(screen.getByText(/旧版或未绑定的记录仍可在原 Story Graph 阅读/)).toBeTruthy();
     expect(screen.getByText(/复制或新建候选并审核批准，不会静默迁移/)).toBeTruthy();
-    expect(screen.getByText(/未评估时间推理、间接 Graph \/ Timeline \/ Export 影响或预计资源成本；成本未知/)).toBeTruthy();
+    expect(screen.getByText(/未评估时间推理、语义因果或 Export 影响；成本未知/)).toBeTruthy();
     expect(props.json).not.toHaveBeenCalled();
   });
   it('does not read automatically or when host is unavailable', () => {
