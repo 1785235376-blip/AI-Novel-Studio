@@ -1,3 +1,4 @@
+import { StudioProductionLeaveContext, type StudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 // @vitest-environment jsdom
 import { useState } from 'react';
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
@@ -43,6 +44,9 @@ const videoAsset = (): StudioAsset => ({ id: jobFixture.output_candidate.id, nov
 const unknown = () => new ApiError({ status: 503, code: 'SYNTHETIC_UNKNOWN', message: 'Synthetic receipt unavailable' });
 
 function setup(options: { initial?: StoryboardReceipt; current?: () => boolean; panel?: boolean } = {}) {
+  const leaveReaders = new Set<() => StudioProductionLeaveRisk>();
+  const boundary = { register: (read: () => StudioProductionLeaveRisk) => { leaveReaders.add(read); return () => { leaveReaders.delete(read); }; }, capture: vi.fn() };
+  const Boundary = ({ children }: { children: import('react').ReactNode }) => <StudioProductionLeaveContext.Provider value={boundary}>{children}</StudioProductionLeaveContext.Provider>;
   const initial = options.initial ?? original(), onDenied = vi.fn(), onDirtyChange = vi.fn(), onDocument = vi.fn();
   const creative = { storyboardGet: vi.fn().mockResolvedValue(initial), storyboardApprove: vi.fn(), storyboardBindImage: vi.fn(), storyboardImageRequest: vi.fn(),
     storyboardVideoRequest: vi.fn(), storyboardBindVideo: vi.fn(), storyboardTimelineCreate: vi.fn(), storyboardTimelineCreation: vi.fn(), storyboardAdoptVideo: vi.fn(), get: vi.fn() };
@@ -57,8 +61,8 @@ function setup(options: { initial?: StoryboardReceipt; current?: () => boolean; 
     return useStoryboardProductionController({ ...props, document, onDocument: value => { onDocument(value); setDocument(value); } }); }
   function Harness() { const [document, setDocument] = useState(documentFor(initial)); change = setDocument;
     return <StoryboardProductionPanel {...props} document={document} onDocument={value => { onDocument(value); setDocument(value); }} />; }
-  const hook = options.panel ? undefined : renderHook(useHarness), view = options.panel ? render(<Harness />) : undefined;
-  return { initial, creative, studio, production, onDenied, onDirtyChange, onDocument, hook, view, change: (value: StoryboardReceipt) => change(documentFor(value)) };
+  const hook = options.panel ? undefined : renderHook(useHarness, { wrapper: Boundary }), view = options.panel ? render(<Boundary><Harness /></Boundary>) : undefined;
+  return { leaveRisks: () => [...leaveReaders].map(read => read()), initial, creative, studio, production, onDenied, onDirtyChange, onDocument, hook, view, change: (value: StoryboardReceipt) => change(documentFor(value)) };
 }
 async function read(state: ReturnType<typeof setup>) { act(() => state.hook!.result.current.read()); await waitFor(() => expect(state.hook!.result.current.receipt).toBeTruthy()); }
 async function createTimeline(state: ReturnType<typeof setup>) { state.creative.storyboardTimelineCreate.mockResolvedValue(await created()); await read(state);
@@ -109,9 +113,11 @@ describe('Phase 5 separate original Timeline ownership and UNKNOWN recovery', ()
     const state = setup(); await read(state); state.creative.storyboardTimelineCreate.mockRejectedValue(status === 503 ? unknown() : new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: 'Synthetic invalid receipt' }));
     act(() => { state.hook!.result.current.confirm(true); state.hook!.result.current.chooseTimelineShot('shot-1', true); }); act(() => state.hook!.result.current.makeTimeline());
     await waitFor(() => expect(state.hook!.result.current.timelineUnknown).toBe(true)); const savedBody = state.creative.storyboardTimelineCreate.mock.calls[0][1];
+    expect(state.leaveRisks().some(risk => risk.unknown && risk.requests.some(request => request.requestId === savedBody.request_id))).toBe(true);
     await read(state); act(() => state.hook!.result.current.confirm(true)); act(() => state.hook!.result.current.makeTimeline()); expect(state.creative.storyboardTimelineCreate).toHaveBeenCalledOnce();
     state.creative.storyboardTimelineCreation.mockResolvedValue(await recovered()); act(() => state.hook!.result.current.inspectTimelineRecovery()); await waitFor(() => expect(state.hook!.result.current.timelineUnknown).toBe(false));
     expect(state.creative.storyboardTimelineCreation).toHaveBeenCalledWith(state.initial, savedBody); expect(state.hook!.result.current.creation?.creation_receipt.creation_snapshot.version).toBe(1);
+    expect(state.leaveRisks().some(risk => risk.unknown)).toBe(false);
     expect(state.hook!.result.current.creation?.timeline.version).toBe(2); expect(state.creative.storyboardTimelineCreate).toHaveBeenCalledOnce(); expect(state.production.timelineList).not.toHaveBeenCalled();
   });
   it('adopts only a reviewed video into the mapped original clip and keeps initial creation evidence', async () => {
@@ -131,6 +137,7 @@ describe('Phase 5 separate original Timeline ownership and UNKNOWN recovery', ()
   it('clears unknown adoption only for the exact current full request receipt, without another write', async () => {
     const state = setup(); await adoptionReady(state); vi.mocked(crypto.randomUUID).mockReturnValue(adoptedFixture.adoption_receipt.request.request_id as `${string}-${string}-${string}-${string}-${string}`);
     state.creative.storyboardAdoptVideo.mockRejectedValue(unknown()); act(() => state.hook!.result.current.adoptVideo()); await waitFor(() => expect(state.hook!.result.current.adoptionUnknown).toBe(true));
+    expect(state.leaveRisks().some(risk => risk.unknown && risk.requests.some(request => request.requestId === state.creative.storyboardAdoptVideo.mock.calls[0][3].request_id))).toBe(true);
     state.creative.storyboardTimelineCreation.mockResolvedValue(await recovered()); act(() => state.hook!.result.current.inspectTimelineRecovery()); await waitFor(() => expect(state.hook!.result.current.adoptionUnknown).toBe(false));
     expect(state.hook!.result.current.creation?.timeline.version).toBe(2); expect(state.creative.storyboardAdoptVideo).toHaveBeenCalledOnce(); expect(state.onDirtyChange).toHaveBeenLastCalledWith(false);
   });

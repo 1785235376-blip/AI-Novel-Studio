@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { sameComicImageCommand } from './studioComicImageContract';
 import { sameStoryboardSpeech } from './studioStoryboardSpeechContract';
 import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
@@ -12,6 +13,7 @@ import type { GraphImageOperation, GraphMediaOperation } from './studioGraphType
 import type { MediaCommand, RecordedMediaCommand, MediaOperation, ProductionJob, ProductionPreview, ProductionProvider, ProductionSource, StudioProductionClient } from './studioProductionClient';
 
 export type StudioMediaExecutionProps = {
+  leaveGuard?: StudioProductionLeaveGuard;
   assetHandoff?: TimelineAssetHandoff & { target?: 'IMAGE' | 'VIDEO' };
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; canReview: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
@@ -239,12 +241,23 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const canClosePrepared = canEdit && (!selected || !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selected.status));
   let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check'); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
 
+  const leaveGuard = useStudioProductionLeaveRisk(props.leaveGuard, () => {
+    const attempt = creation.current, job = selectedRef.current;
+    const unknown = !!attempt?.uncertain || uncertainRef.current || job?.status === 'UNKNOWN'
+      || !!slot.current && ['CREATE', 'execute', 'refresh', 'reconcile', 'cancel', 'review'].includes(slot.current.kind);
+    return { unknown, requests: !unknown ? [] : [
+      ...(attempt?.uncertain ? [{ requestId: attempt.requestId, owner: attempt.operation.startsWith('m5.') ? 'image' : attempt.operation.startsWith('m7.') ? 'video' : 'audio', operationId: attempt.operation }] : []),
+      ...(job ? [{ requestId: job.request_id, owner: job.owner, operationId: job.operation_id }] : []),
+    ] };
+  });
+
   function clearReceiptDownload() { if (receiptTimer.current !== undefined) clearTimeout(receiptTimer.current); receiptTimer.current = undefined;
     if (receiptDownload.current) URL.revokeObjectURL(receiptDownload.current); receiptDownload.current = undefined; }
   function clearCandidate() { clearReceiptDownload(); if (candidateRef.current) URL.revokeObjectURL(candidateRef.current.url); candidateRef.current = undefined; setCandidate(undefined); reviewConsentRef.current = ''; setReviewConsent(''); }
   function clearPreview() { previewRef.current = undefined; previewConsentRef.current = ''; setPreview(undefined); setPreviewConsent(''); }
   function markUncertain(value: boolean) { handoffRevision.current++; uncertainRef.current = value; setUncertain(value); }
   function unavailable() {
+    leaveGuard?.capture();
     if (!alive.current) return;
     revoked.current = true; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
     clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); providerHandoffLoading.current = false; setProviderLoading(false);

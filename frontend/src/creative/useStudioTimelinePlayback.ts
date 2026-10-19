@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
@@ -24,6 +25,8 @@ export function useStudioTimelinePlayback(options: Options) {
   const auxiliaryBusy = useRef(false), versions = useRef(new Map<string, number>());
   const current = () => alive.current && owner.current === latest.current.props.client && latest.current.props.isCurrent();
   const owns = owner.current === options.props.client && options.props.isCurrent();
+  const leaveGuard = useStudioProductionLeaveRisk(options.props.leaveGuard, () => ({ unknown: !!attempt.current || proof.current?.job?.status === 'UNKNOWN',
+    requests: !!attempt.current || proof.current?.job?.status === 'UNKNOWN' ? [{ requestId: attempt.current?.preview.request_id ?? proof.current!.request_id, owner: 'timeline', operationId: 'm9.timeline.multitrack' }] : [] }));
   const available = !!options.props.client.timelinePlaybackPreview && !!options.props.client.timelinePlaybackBuild && !!options.props.client.timelinePlaybackAttestation;
   function clearVisible() { view.current = undefined; setVisible(undefined); setPositionMs(0); }
   function dropCache() { cache.current.forEach(entry => URL.revokeObjectURL(entry.url)); cache.current.clear(); clearVisible(); }
@@ -57,7 +60,7 @@ export function useStudioTimelinePlayback(options: Options) {
     && timelineBinding(latest.current.source) === timelineBinding(source) && timelineSourcesCurrent(source.timeline, latest.current.props.assets); }
   function finish(request: { token: number; client: typeof owner.current }) { if (request.token !== epoch.current) return;
     busy.current = false; latest.current.onGateChange(auxiliaryBusy.current || !!attempt.current); if (active(request)) setPending(undefined); }
-  function fail(reason: unknown) { if (reason instanceof ApiError && [401, 403].includes(reason.status)) { reset(); latest.current.onAuthorityLost(); return; }
+  function fail(reason: unknown) { if (reason instanceof ApiError && [401, 403].includes(reason.status)) { leaveGuard?.capture(); reset(); latest.current.onAuthorityLost(); return; }
     // A failed source/candidate check cannot leave previously readable bytes
     // on screen. Keep the original in-flight identity and UNKNOWN for recovery.
     dropCache(); consent.current = ''; proof.current = undefined; setPreview(undefined); setConfirmed(false);

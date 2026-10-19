@@ -1,3 +1,5 @@
+import { StudioProductionLeaveContext } from './studioProductionLeaveRisk';
+import type { StudioProductionLeaveGuard, StudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 import { StudioComicPanel } from './StudioComicPanel';
 import { StudioVideoReferencePanel } from './StudioVideoReferencePanel';
 import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
@@ -87,6 +89,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; if (editorSession) setEditorSession(undefined); }
 
   const capturedHost = useRef({ ...useLocalHostSession.getState() });
+  const productionLeaveScope = useRef(`项目 ${projectId} · 分支 ${context.scope?.branchId ?? 'local'}${context.scope ? ` · 工作区 ${context.scope.workspaceId} · 协作项目 ${context.scope.projectId} · 故事线 ${context.scope.storylineId}` : ''} · 操作者 ${context.actor?.id || capturedHost.current.actorId || actor}`).current;
   const watchHost = !context.sessionToken && !context.scope && !context.actor;
   const origin = useRef(signature(projectId, context));
   const alive = useRef(true), revoked = useRef(false), authorityLost = useRef(false), busyRef = useRef(false);
@@ -94,8 +97,16 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   // Retirement closes private controllers permanently. Only the existing Novel
   // navigation may leave for the original Host verification; it grants no authority.
   const navigationEpoch = useRef(0), studioRetired = useRef(false), novelExitCommitted = useRef(false), draftSeen = useRef(false), pendingWrites = useRef(0);
-  const leaveRisk = useRef({ dirty: false, unknown: false, comicInFlight: false, requestIds: [] as string[] });
+  const leaveRisk = useRef({ dirty: false, unknown: false, comicInFlight: false, requestIds: [] as string[], productionRequests: [] as string[] });
   const captureLeaveRisk = useRef<() => void>(() => {});
+  const productionRiskReaders = useRef(new Set<() => StudioProductionLeaveRisk>());
+  const leaveGuard = useMemo<StudioProductionLeaveGuard>(() => ({
+    register: read => {
+      productionRiskReaders.current.add(read);
+      return () => { captureLeaveRisk.current(); productionRiskReaders.current.delete(read); };
+    },
+    capture: () => captureLeaveRisk.current(),
+  }), []);
   const [, redrawLeaveGuard] = useState(0);
   const [acknowledgeUnknown, setAcknowledgeUnknown] = useState(false);
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
@@ -345,6 +356,16 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current;
     risk.unknown ||= pendingWrites.current > 0 || (busyRef.current && draftSeen.current) || preferenceController.blocked || graph.directorPending
       || !!lastImport.current?.unknown || !!lastVideoReferenceSave.current?.unknown || !!lastClaySave.current?.unknown;
+    // Read original controller refs before denial, hiding or cleanup clears them.
+    // Scope is captured here explicitly; origin/cacheKey contain credentials.
+    for (const read of productionRiskReaders.current) {
+      const snapshot = read(); risk.unknown ||= snapshot.unknown;
+      if (snapshot.unknown) for (const request of snapshot.requests) {
+        risk.requestIds = [...new Set([...risk.requestIds, request.requestId])];
+        const identity = `${request.owner} · ${request.operationId} · ${productionLeaveScope}`;
+        risk.productionRequests = [...new Set([...risk.productionRequests, `${request.requestId} · ${identity}`])];
+      }
+    }
     // This child only reports a boolean and reports false again during unmount.
     // A cleanup is not a settlement receipt for an operation already in flight.
     risk.comicInFlight ||= comicBusyRef.current;
@@ -705,7 +726,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {pendingNavigation && (!denied || retiredExitPending) && <section className="creative-navigation-confirm" role="alert">
       <p>{retiredExitPending ? '授权失效前的未保存输入与待核对请求仍受保护。返回小说仅用于原入口重新验证；离开不会保存、取消或重复提交。' : storyboardDirty ? '分镜图片接收输入或保存结果仍待核对。离开只放弃本地接收状态，不会取消已经发出的保存；返回后须核对原文档。' : mediaDirty || timelineDirty ? '制作输入尚未保存，或请求结果仍待核对。离开只放弃本地输入，不会取消远端任务；重新打开后先读取原任务回执。' : graph.directorPending ? '有未保存的创作图／导演输入。放弃只移除本地草稿，不代表远端写入失败；若保存回执未知，返回后先核对原文档目录，避免重复创建。' : graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : preferenceController.blocked ? '偏好保存结果尚待核对。离开不代表请求失败，再次操作前仍需读取服务端版本。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p>
       {(!retiredExitPending || leaveRisk.current.dirty) && <label><input type="checkbox" disabled={navigationBusy(retiredExitPending)} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label>}
-      {retiredExitPending && leaveRisk.current.unknown && <><p>原请求结果仍待核对。{leaveRisk.current.requestIds.length > 0 && `原请求标识：${leaveRisk.current.requestIds.join('、')}`}</p><label><input type="checkbox" disabled={navigationBusy(true)} checked={acknowledgeUnknown} onChange={event => setAcknowledgeUnknown(event.target.checked)} />确认保留原请求待核对后离开</label></>}
+      {retiredExitPending && leaveRisk.current.unknown && <><p>原请求结果仍待核对。原范围：{productionLeaveScope}。{leaveRisk.current.requestIds.length > 0 && `原请求标识：${leaveRisk.current.requestIds.join('、')}`}</p>{leaveRisk.current.productionRequests.map(request => <p key={request}>原请求归属：{request}</p>)}<label><input type="checkbox" disabled={navigationBusy(true)} checked={acknowledgeUnknown} onChange={event => setAcknowledgeUnknown(event.target.checked)} />确认保留原请求待核对后离开</label></>}
       <Button disabled={navigationBusy(retiredExitPending) || (retiredExitPending ? (leaveRisk.current.dirty && !discard) || (leaveRisk.current.unknown && !acknowledgeUnknown) : !discard)} onClick={confirmNavigation}>确认离开</Button>
       <Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false); }}>{retiredExitPending ? '留在当前页' : '继续编辑'}</Button>
     </section>}
@@ -723,11 +744,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     </Panel>}
     {productionView && overview && !denied && !storyboardHandoff && <>
       <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>
-      <StudioMediaExecutionPanel key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
+      <StudioMediaExecutionPanel leaveGuard={leaveGuard} key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
-      <StudioTimelineEditor key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
+      <StudioTimelineEditor leaveGuard={leaveGuard} key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
         isCurrent={current} read={guarded} mutate={graphMutation} onDirtyChange={timelineDraftChanged} onUnavailable={deny}
         onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />
@@ -775,7 +796,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         scope={context.scope} identity={cacheKey} active denied={denied} busy={busy} isCurrent={current}
         read={guarded} mutate={graphMutation} onUnavailable={deny} />}
     </>}
-    {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && selected && <StudioManualMaskPanel
+    {module === 'IMAGE' && workspaceView === 'ASSETS' && overview && !denied && selected && <StudioManualMaskPanel leaveGuard={leaveGuard}
       key={`mask:${cacheKey}:${maskEpoch}:${selected.id}:${selected.version}:${selected.sha256}:${formRevision}`} asset={selected} client={client}
       canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
       isCurrent={current} isSourceCurrent={() => selectionEpoch.current === maskEpoch} watchHost={watchHost} read={guarded} mutate={graphMutation}
@@ -797,13 +818,13 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     }} />
   </>;
   const retiredNotice = <EmptyState title="身份已改变" detail="原范围的服务端信息已关闭。请重新核对身份与项目后打开工作区。" />;
-  if (editorSession && editorSession.module === module && editorSession.ticket === editorTicket.current && !denied && !identityRetired) return <CreativeWorkspace enabled novelId={projectId} context={context} scope={scope} actor={actor}
+  if (editorSession && editorSession.module === module && editorSession.ticket === editorTicket.current && !denied && !identityRetired) return <StudioProductionLeaveContext.Provider value={leaveGuard}><CreativeWorkspace enabled novelId={projectId} context={context} scope={scope} actor={actor}
     chapterCount={0} manuscriptReady={false} novelMain={null} novelSidebar={null} novelInspector={null} novelStatus={null} commonStatus={status}
     storyboardHost={{ module: editorSession.module, prepared: editorSession.prepared, returnLabel: '返回独立创作图',
       isCurrent: () => current() && editorTicket.current === editorSession.ticket && editorLocation.current === editorSession.module }}
     onExit={() => { editorTicket.current++; setEditorSession(undefined); setNotice('已返回独立创作图；分镜沿原文档保存，图绑定未改变。'); }}
-    onModuleChange={next => { editorTicket.current++; setEditorSession(undefined); onModuleChange(next); }} />;
-  return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next), next === 'NOVEL')} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || comicWorkspace?.project.title || scope.project }} projectNoun={comicOnly || overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
+    onModuleChange={next => { editorTicket.current++; setEditorSession(undefined); onModuleChange(next); }} /></StudioProductionLeaveContext.Provider>;
+  return <StudioProductionLeaveContext.Provider value={leaveGuard}><AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next), next === 'NOVEL')} scope={identityRetired ? { workspace: '待核对', project: '待核对', storyline: '待核对', branch: '待核对' } : { ...scope, project: overview?.project.title || comicWorkspace?.project.title || scope.project }} projectNoun={comicOnly || overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={identityRetired ? '身份待核对' : actor} sidebar={identityRetired ? retiredNotice : sidebar} main={identityRetired ? graphView ? graph.content : retiredNotice : main}
     inspector={identityRetired ? graphView ? graph.inspector : retiredNotice : denied ? <EmptyState title="权限失效" detail="重新核对身份与项目范围后再打开。" /> : comicOnly ? <EmptyState title="漫画制作" detail="页面和书册权限由原漫画入口核对。" /> : graphView ? graph.inspector : productionView ? <><Panel title="制作操作"><p>当前阶段：{productionStage}</p><p>在主工作区核对输入、版本、来源和审核要求。实际任务的权限、状态与回执由原执行入口确认。</p></Panel>{!storyboardHandoff && <ProductionInspectorPanel controller={workflow} selectedModuleId={workflowModule} selectedKind={workflowAssetKind} onSelectKind={setWorkflowAssetKind} modelSource={modelSource}/>}</> : <AssetInspector asset={selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
-    status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {comicOnly ? '独立漫画' : productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} />;
+    status={<>{identityRetired ? '身份已改变' : denied ? '权限失效' : loading ? '正在核对' : error ? '读取失败' : busy ? readingAsset || preferenceController.pending === 'READ' ? '读取中' : '操作中' : dirty || pendingDeclaration ? '未保存或待核对' : '已保存'} · {comicOnly ? '独立漫画' : productionView ? '制作操作' : graphView ? '创作图' : '独立素材'} · 模型调用记录见运行回执{!identityRetired && status}</>} /></StudioProductionLeaveContext.Provider>;
 }

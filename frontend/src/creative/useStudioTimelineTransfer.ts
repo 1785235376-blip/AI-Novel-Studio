@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
@@ -22,6 +23,8 @@ export function useStudioTimelineTransfer(options: Options) {
   form.current = { direction, format, content, mappings, preview, acknowledged, confirmed };
   const owner = useRef(options.props.client), epoch = useRef(0), alive = useRef(true), busy = useRef(false), attempt = useRef<TransferAttempt>();
   const reading = useRef<AbortController>(), url = useRef<string>();
+  const leaveGuard = useStudioProductionLeaveRisk(options.props.leaveGuard, () => ({ unknown: !!attempt.current,
+    requests: !!attempt.current ? [{ requestId: attempt.current.requestId, owner: 'timeline', operationId: 'm9.timeline.multitrack' }] : [] }));
   const available = !!options.props.client.timelineTransferPreview && !!options.props.client.timelineTransferImport && !!options.props.client.timelineTransferAttachment;
   const current = () => alive.current && owner.current === latest.current.props.client && latest.current.props.isCurrent();
   const owns = owner.current === options.props.client && options.props.isCurrent();
@@ -82,7 +85,7 @@ export function useStudioTimelineTransfer(options: Options) {
     busy.current = false; latest.current.onGateChange(!!attempt.current); if (active(request)) setPending(undefined);
   }
   function failed(reason: unknown, fallback: string) {
-    if (reason instanceof ApiError && [401, 403].includes(reason.status)) { reset(); latest.current.onAuthorityLost(); return; }
+    if (reason instanceof ApiError && [401, 403].includes(reason.status)) { leaveGuard?.capture(); reset(); latest.current.onAuthorityLost(); return; }
     setError(apiErrorView(reason, fallback).message);
     if (reason instanceof ApiError && [404, 410, 501].includes(reason.status)) latest.current.props.onUnavailable();
   }

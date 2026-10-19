@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
 import type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
@@ -18,6 +19,8 @@ export function useStudioTimelineSourceEdit(options: Options) {
   const form = useRef({ intent, prepared, confirmed }); form.current = { intent, prepared, confirmed }; const attempt = useRef<Attempt>();
   const current = () => alive.current && owner.current === latest.current.props.client && latest.current.props.isCurrent();
   const owns = owner.current === options.props.client && options.props.isCurrent();
+  const leaveGuard = useStudioProductionLeaveRisk(options.props.leaveGuard, () => ({ unknown: !!attempt.current,
+    requests: !!attempt.current ? [{ requestId: attempt.current.body.request_id, owner: 'timeline', operationId: 'm9.timeline.multitrack' }] : [] }));
   const available = typeof options.props.client.timelineEdit === 'function';
   const assetKey = () => JSON.stringify(latest.current.props.assets.filter(asset => !asset.deleted_at).map(asset => [asset.id, asset.version, asset.sha256, asset.kind]));
   const fresh = !!prepared && !!options.source && timelineBinding(prepared.source) === timelineBinding(options.source) && prepared.assetKey === assetKey() && prepared.intentKey === JSON.stringify(intent);
@@ -40,7 +43,7 @@ export function useStudioTimelineSourceEdit(options: Options) {
     busy.current = true; latest.current.onGateChange(true); const token = ++epoch.current; setPending(kind); setError(''); setNotice(''); return { token, client: owner.current }; }
   function active(request: { token: number; client: typeof owner.current }) { return current() && epoch.current === request.token && request.client === owner.current; }
   function finish(request: { token: number; client: typeof owner.current }) { if (epoch.current !== request.token) return; busy.current = false; latest.current.onGateChange(!!attempt.current); if (active(request)) setPending(undefined); }
-  function failed(reason: unknown) { if (reason instanceof ApiError && [401, 403].includes(reason.status)) { reset(); latest.current.onAuthorityLost(); return; }
+  function failed(reason: unknown) { if (reason instanceof ApiError && [401, 403].includes(reason.status)) { leaveGuard?.capture(); reset(); latest.current.onAuthorityLost(); return; }
     setError(apiErrorView(reason, '原编辑回执尚未确认，请只读取原时间线核对。').message); }
   async function execute() {
     const value = form.current.prepared, source = latest.current.source;

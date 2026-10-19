@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView, type Asset } from '../api';
 import { useStudio } from '../store';
@@ -7,6 +8,7 @@ import { BinaryMaskDraft } from './studioBinaryMask';
 import { maskDimension, maskSha256, type StudioMaskInput, type StudioMaskResult } from './studioManualMaskContract';
 
 export type StudioManualMaskProps = {
+  leaveGuard?: StudioProductionLeaveGuard;
   asset: Asset; client: Pick<StudioClient, 'asset' | 'download' | 'createMask'>;
   canMutate: boolean; busy: boolean; isBusy: () => boolean; isCurrent: () => boolean; isSourceCurrent?: () => boolean; watchHost?: boolean;
   read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
@@ -53,12 +55,14 @@ export function useStudioManualMask(props: StudioManualMaskProps) {
   const authorityCurrent = () => live.current.isCurrent() && (!origin.watchHost || hostIdentity() === origin.host);
   const current = () => alive.current && !revoked.current && live.current.client === origin.client
     && tuple(live.current.asset) === origin.source && authorityCurrent() && (live.current.isSourceCurrent?.() ?? true);
+  const leaveGuard = useStudioProductionLeaveRisk(props.leaveGuard, () => ({ unknown: !!attemptRef.current && (!!operation.current || attemptRef.current.uncertain),
+    requests: attemptRef.current && (operation.current || attemptRef.current.uncertain) ? [{ requestId: attemptRef.current.body.idempotency_key, owner: 'image', operationId: 'manual-binary-mask/1' }] : [] }));
   function clearEditor() {
     editorRef.current?.mask.dispose(); if (editorRef.current?.url) URL.revokeObjectURL(editorRef.current.url);
     editorRef.current = undefined; consentRef.current = undefined; setEditor(undefined); setConsent(false);
   }
   function revoke(notify = true) {
-    if (revoked.current) return; revoked.current = true; ticket.current++; operation.current?.abort(); clearEditor();
+    if (revoked.current) return; leaveGuard?.capture(); revoked.current = true; ticket.current++; operation.current?.abort(); clearEditor();
     attemptRef.current = undefined; setAttempt(undefined); setResult(undefined); setMessage(''); setPending(undefined); setUnavailable(true);
     live.current.onDirtyChange(false); if (notify) live.current.onUnavailable();
   }

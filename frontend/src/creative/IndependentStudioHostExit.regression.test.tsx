@@ -6,6 +6,9 @@ import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import type { StudioOverview } from './studioClient';
+import timelineCapture from './fixtures/phase6.capture.editing-pipeline.json';
+import { audioAssets, audioPreview, audioJob } from './studioAudioWav.testFixtures';
+import type { MediaCommand } from './studioProductionClient';
 import emptyPrompts from '../prompt/__fixtures__/empty-library.json';
 import type { ComponentProps } from 'react';
 
@@ -178,4 +181,85 @@ it('retains an already unknown import ID when a later Host loss opens the safe e
   loseHost();novel();const checkbox=await screen.findByLabelText('确认保留原请求待核对后离开');
   expect(screen.getByRole('alert').textContent).toContain(body.idempotency_key);fireEvent.click(checkbox);fireEvent.click(confirm());
   expect(props.onModuleChange).toHaveBeenCalledWith('NOVEL');expect(fetcher.mock.calls.filter(([,init])=>init.method!=='GET')).toHaveLength(1);
+});
+
+it.each(['create-503', 'read-401', 'returned-unknown'] as const)('retains original production UNKNOWN identity and separate consent after %s', async mode => {
+  let sent: MediaCommand | undefined, refuseRead = false;
+  server((url, init) => {
+    if (refuseRead && url === base + '/production/jobs' && init.method === 'GET') return reply({ detail: { code: 'SESSION_REQUIRED' } }, 401);
+    if (url.includes('/assets?')) return reply({ items: audioAssets().map(row => ({ ...row, novel_id: id })) });
+    if (url === base + '/production/jobs' && init.method === 'GET' && sent) return reply({ items: [{ ...audioJob('UNKNOWN', 2, sent), novel_id: id }] });
+    if (url === base + '/production/preview') {
+      const command = JSON.parse(String(init.body)) as MediaCommand;
+      return reply({ ...audioPreview(command), novel_id: id });
+    }
+    if (url === base + '/production/jobs' && init.method === 'POST') {
+      sent = JSON.parse(String(init.body)).command;
+      return mode === 'returned-unknown' ? reply({ ...audioJob('QUEUED', 1, sent), novel_id: id }) : reply({ detail: { code: 'UNAVAILABLE' } }, 503);
+    }
+    return undefined;
+  });
+  const { props } = mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '制作操作' }));
+  await waitFor(() => expect((screen.getByLabelText('操作') as HTMLSelectElement).disabled).toBe(false));
+  fireEvent.change(screen.getByLabelText('操作'), { target: { value: 'm8.audio.trim' } });
+  fireEvent.click(await screen.findByLabelText('source.wav · v2'));
+  fireEvent.change(screen.getByLabelText('来源起点（毫秒）'), { target: { value: '100' } });
+  fireEvent.change(screen.getByLabelText('来源终点（毫秒）'), { target: { value: '600' } });
+  fireEvent.click(screen.getByRole('button', { name: '读取制作预览' }));
+  await screen.findByRole('region', { name: '制作预览确认' });
+  fireEvent.click(screen.getByLabelText('已核对本次输入、来源和处理边界'));
+  fireEvent.click(screen.getByRole('button', { name: '仅创建任务并入队' }));
+  if (mode === 'returned-unknown') {
+    await screen.findByText('任务已保存入队。执行仍需单独点击。');
+    fireEvent.click(within(screen.getByRole('region', { name: '原媒体任务记录' })).getByRole('button', { name: '读取任务列表' }));
+    await waitFor(() => expect(screen.getByRole('region', { name: '当前媒体任务' }).textContent).toContain('分派结果不确定'));
+  }
+  else await screen.findByText(/待核对的原请求/);
+  expect(sent?.request_id).toBeTruthy();
+  if (mode === 'read-401') { refuseRead = true; fireEvent.click(within(screen.getByRole('region', { name: '原媒体任务记录' })).getByRole('button', { name: '读取任务列表' })); await screen.findByText('当前会话无权访问此项目', { exact: true }); }
+  else loseHost();
+  const count = fetcher.mock.calls.length; novel();
+  const dirtyConsent = screen.queryByLabelText('确认放弃未保存输入');
+  if (dirtyConsent) fireEvent.click(dirtyConsent);
+  expect((confirm() as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.getByRole('alert').textContent).toContain(sent!.request_id);
+  expect(screen.getByRole('alert').textContent).toContain('m8.audio.trim');
+  expect(screen.getByRole('alert').textContent).toContain(id);
+  fireEvent.click(screen.getByLabelText('确认保留原请求待核对后离开'));
+  fireEvent.click(confirm()); expect(props.onModuleChange).toHaveBeenCalledTimes(1); expect(props.onModuleChange).toHaveBeenCalledWith('NOVEL');
+  expect(fetcher.mock.calls).toHaveLength(count);
+  expect(fetcher.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(2);
+  console.info('UNKNOWN_EXIT_OBSERVATION', JSON.stringify({ mode, requestId: sent!.request_id, projectId: id, branchId: null, owner: 'audio', operation: sent!.operation_id, requestCount: count, writes: 2, implicitExitBlocked: true, networkCallsAfterExit: fetcher.mock.calls.length - count }));
+  expect(JSON.stringify([Object.values(localStorage), Object.values(sessionStorage)])).not.toContain('task-host-secret');
+});
+
+it('preserves a settled original Timeline render UNKNOWN across Host retirement and resets both exit consents after cancel', async () => {
+  const row = { ...timelineCapture.created, novel_id: id };
+  let requestId = '';
+  server((url, init) => {
+    if (url.includes('/assets?')) return reply({ items: [{ ...timelineCapture.video_source, novel_id: id }] });
+    if (url === base + '/production/timelines') return reply({ items: [row] });
+    if (url === base + '/production/timelines/' + row.id) return reply(row);
+    if (url.endsWith('/render') && init.method === 'POST') { requestId = JSON.parse(String(init.body)).request_id; return reply({ detail: { code: 'UNAVAILABLE' } }, 503); }
+    return undefined;
+  });
+  const { props } = mount(); await ready(); fireEvent.click(screen.getByRole('button', { name: '制作操作' }));
+  await screen.findByRole('option', { name: row.title + ' · v1' });
+  fireEvent.change(screen.getByLabelText('读取已保存时间线'), { target: { value: row.id } });
+  fireEvent.click(await screen.findByLabelText('已核对服务端内容与本地输入，确认以下选择'));
+  fireEvent.click(screen.getByRole('button', { name: '采用服务端时间线' }));
+  fireEvent.click(screen.getByLabelText('已核对当前版本、摘要、裁剪、叠放、音量和字幕，确认生成私有渲染候选'));
+  fireEvent.click(screen.getByRole('button', { name: '明确渲染此保存版本' }));
+  await screen.findByText(/渲染或导出结果仍需核对/); expect(requestId).toBeTruthy();
+  const count = fetcher.mock.calls.length; loseHost(); novel();
+  const alert = screen.getByRole('alert'); expect(alert.textContent).toContain(requestId); expect(alert.textContent).toContain('timeline · m9.timeline.multitrack');
+  fireEvent.click(screen.getByLabelText('确认放弃未保存输入'));
+  expect((confirm() as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('确认保留原请求待核对后离开'));
+  fireEvent.click(within(alert).getByRole('button', { name: '留在当前页' })); novel();
+  for (const label of ['确认放弃未保存输入', '确认保留原请求待核对后离开']) expect((screen.getByLabelText(label) as HTMLInputElement).checked).toBe(false);
+  fireEvent.click(screen.getByLabelText('确认保留原请求待核对后离开')); expect((confirm() as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('确认放弃未保存输入')); fireEvent.click(confirm());
+  expect(props.onModuleChange).toHaveBeenCalledTimes(1); expect(props.onModuleChange).toHaveBeenCalledWith('NOVEL');
+  expect(fetcher.mock.calls).toHaveLength(count); expect(fetcher.mock.calls.filter(([,init])=>init.method!=='GET')).toHaveLength(1);
 });

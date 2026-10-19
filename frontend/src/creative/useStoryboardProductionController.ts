@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk } from './studioProductionLeaveRisk';
 import { checkedSpeechChoices, type StoryboardAudioRequest } from './studioStoryboardSpeechContract';
 import { exactHandoffAsset, type TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -44,6 +45,14 @@ export function useStoryboardProductionController(props: StoryboardProductionPro
   const speechRenderGeneration = speechEpoch.current;
 
   const latest = useRef(props); latest.current = props; const owner = useRef(props.client), alive = useRef(true), slot = useRef(false), epoch = useRef(0), receiptRef = useRef(receipt); receiptRef.current = receipt;
+  const leaveGuard = useStudioProductionLeaveRisk(undefined, () => ({
+    unknown: timelineUnknown || adoptionUnknown || uncertain && !!exactAttempt.current && !exactDone
+      || slot.current && (!!creationAttempt.current && !creation || !!adoptionAttempt.current || !!exactAttempt.current && !exactDone),
+    requests: [
+      ...(creationAttempt.current && (timelineUnknown || slot.current && !creation) ? [{ requestId: creationAttempt.current.body.request_id, owner: 'timeline', operationId: 'storyboard.timeline.create' }] : []),
+      ...(adoptionAttempt.current ? [{ requestId: adoptionAttempt.current.body.request_id, owner: 'timeline', operationId: 'storyboard.video.adopt' }] : []),
+    ],
+  }));
   const current = () => alive.current && latest.current.active && owner.current === latest.current.client && latest.current.isCurrent();
   const stamp = () => JSON.stringify([latest.current.document.id, latest.current.document.version]);
   const fresh = !!receipt && receipt.document_snapshot.id === props.document.id && receipt.document_snapshot.version === props.document.version;
@@ -63,7 +72,7 @@ export function useStoryboardProductionController(props: StoryboardProductionPro
     try { const value = await latest.current.perform(work); if (current() && stillOwned() && epoch.current === ticket && captured === stamp()) accept(value); }
     catch (reason) { if (current() && stillOwned() && epoch.current === ticket && captured === stamp()) { setError(apiErrorView(reason, '操作未完成，请读取原版本核对。').message); setConfirmation('');
       if (kind === 'read' || ['preview', 'request', 'speech-request'].includes(kind) && reason instanceof ApiError && (reason.status === 409 || reason.status === 200 && reason.problem.code === 'STUDIO_RESPONSE_INVALID')) { setReceipt(undefined); setAdvice(undefined); setPreview(undefined); setPrepared(undefined); setTimeline(undefined); setUncertain(true); }
-      if (reason instanceof ApiError && [401, 403].includes(reason.status)) latest.current.onDenied(); else if (mutation && (!(reason instanceof ApiError) || reason.problem.code === 'STUDIO_RESPONSE_INVALID' || reason.status === 0 || reason.status >= 500 || [408, 409, 425, 429].includes(reason.status))) { setUncertain(true); if (kind === 'timeline') setTimelineUnknown(true); if (kind === 'adoption') setAdoptionUnknown(true); }
+      if (reason instanceof ApiError && [401, 403].includes(reason.status)) { leaveGuard?.capture(); latest.current.onDenied(); } else if (mutation && (!(reason instanceof ApiError) || reason.problem.code === 'STUDIO_RESPONSE_INVALID' || reason.status === 0 || reason.status >= 500 || [408, 409, 425, 429].includes(reason.status))) { setUncertain(true); if (kind === 'timeline') setTimelineUnknown(true); if (kind === 'adoption') setAdoptionUnknown(true); }
       else if (mutation && reason instanceof ApiError && reason.status >= 400 && reason.status < 500) { if (kind === 'timeline') creationAttempt.current = undefined; if (kind === 'adoption') adoptionAttempt.current = undefined; }
     } }
     finally { slot.current = false; if (alive.current && epoch.current === ticket) setLoading(''); }

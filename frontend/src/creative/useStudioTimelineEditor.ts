@@ -1,3 +1,4 @@
+import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { applySelectionSplit, selectionSplitPreview, type SelectionSplitIds } from '../nle/timelineSelectionSplit';
 import { changedRangeBeyondMeasurement, measuredBoundFromWaveform, measuredBoundKey, type TimelineMeasuredBound } from './timelineMeasuredBounds';
 import type { TimelineWaveform } from './studioTimelineWaveformTypes';
@@ -17,6 +18,7 @@ import { useStudioTimelineSourceEdit } from './useStudioTimelineSourceEdit';
 
 export type StudioTimelineJob = Awaited<ReturnType<StudioProductionClient['timelineRender']>>;
 export type StudioTimelineEditorProps = {
+  leaveGuard?: StudioProductionLeaveGuard;
   client: StudioProductionClient; assets: StudioAsset[]; canMutate: boolean; busy: boolean; isBusy?: () => boolean;
   isCurrent: () => boolean; read: <T>(work: () => Promise<T>) => Promise<T>; mutate: <T>(work: () => Promise<T>) => Promise<T>;
   onDirtyChange: (dirty: boolean) => void; onJob: (job: StudioTimelineJob) => void; onUnavailable: () => void;
@@ -65,6 +67,14 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   const consent = useRef({ render: '', adopt: '', discard: '' });
   const draftRef = useRef(draft), baseRef = useRef(base), candidateRef = useRef(candidate), failureRef = useRef(failure), attemptRef = useRef(attempt);
   draftRef.current = draft; baseRef.current = base; candidateRef.current = candidate; failureRef.current = failure; attemptRef.current = attempt;
+  const editRequestId = useRef<string>();
+  const leaveGuard = useStudioProductionLeaveRisk(props.leaveGuard, () => ({
+    unknown: failureRef.current === 'UNKNOWN' || attemptRef.current?.state === 'UNKNOWN' || slot.current?.operation === 'SAVE' || slot.current?.operation === 'TRACK_LOCK',
+    requests: [
+      ...(attemptRef.current?.state === 'UNKNOWN' ? [{ requestId: attemptRef.current.requestId, owner: 'timeline', operationId: 'm9.timeline.multitrack' }] : []),
+      ...((failureRef.current === 'UNKNOWN' || slot.current?.operation === 'TRACK_LOCK') && editRequestId.current ? [{ requestId: editRequestId.current, owner: 'timeline', operationId: 'm9.timeline.multitrack' }] : []),
+    ],
+  }));
   const baseline = useRef(timelineInputKey(newTimelineDraft(latest.current.mediaKind)));
   const current = () => alive.current && !deniedRef.current && owner.current === latest.current.client && modeOwner.current === (latest.current.mediaKind ?? 'VIDEO') && latest.current.isCurrent();
   const blocked = () => !!slot.current || transferGate.current || playbackGate.current || sourceEditGate.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
@@ -122,6 +132,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
   }, [props.client, props.busy, mode]);
 
   function loseAuthority() {
+    leaveGuard?.capture();
     deniedRef.current = true; epoch.current++; reading.current?.abort(); slot.current = undefined;
     baseRef.current = undefined; candidateRef.current = undefined; failureRef.current = undefined; attemptRef.current = undefined;
     draftRef.current = newTimelineDraft(latest.current.mediaKind); baseline.current = timelineInputKey(draftRef.current);
@@ -419,6 +430,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     catch (reason) { setError(reason instanceof Error ? reason.message : '时间线输入无效。'); return; }
     if (!timelineSourcesCurrent(input.timeline, latest.current.assets)) { setError('有素材版本已变化或不可用，请重新选择对应素材；不会采用旧快照。'); return; }
     const source = baseRef.current, request = begin('SAVE'); if (!request) return;
+    editRequestId.current = undefined;
     setConfirmed(''); candidateRef.current = undefined; setCandidate(undefined);
     try {
       const saved = checkedTimelineRow(await latest.current.mutate(() => request.client.timelineSave(source?.id, { ...input, expected_version: source?.version ?? 0 })), source?.id);
@@ -437,6 +449,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     if (!track || (track.locked ?? false) === locked) return;
     const expected = cloneTimeline(source.timeline), target = expected.tracks.find(row => row.id === trackId)!; target.locked = locked;
     const requestId = crypto.randomUUID(), request = begin('TRACK_LOCK'); if (!request) return;
+    editRequestId.current = requestId;
     try {
       const row = checkedTimelineRow(await latest.current.mutate(() => method(source, trackId, locked, requestId)), source.id);
       if (row.version !== source.version + 1 || row.title !== source.title
