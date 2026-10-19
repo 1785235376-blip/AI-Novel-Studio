@@ -39,3 +39,11 @@ V1.0 Windows DesktopHost 正在开发验收中，尚未发布。当前已有内�
 ## 测试
 
 安装 Python 3.11+ 后执行 `python -m pip install -e .[dev]` 与 `python -m pytest`。详见 `docs/test_report.md`。
+
+## 开源许可
+
+本项目自有源码以 **Apache License 2.0**（SPDX: `Apache-2.0`）发布，见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。第三方依赖、字体、模型权重与用户作品的边界见 [LICENSING_AND_THIRD_PARTY.md](LICENSING_AND_THIRD_PARTY.md)：用户小说（`novel_data/`，未被 Git 跟踪）不属于本许可证授权范围，模型权重与字体二进制不随仓库分发。
+
+## 早期 Alpha 源码锚点（v0.1.0-alpha）
+
+Git 注释标签 `v0.1.0-alpha` 是本项目早期公开工程源码快照的锚点，**不是 V1.X RC1、不是 V2 正式版，也不是产品验收 PASS**。该快照只包含 main 上已存在的 V0.7.0 Engineering Edition 源码与许可文件，V2 功能仍在独立分支开发；内部版本号（`release/version.json`、`pyproject.toml`、`frontend/package.json`）保持 `0.7.0`，不以 Tag 冒充正式发布版本。详见 [ALPHA_BASELINE_NOTES.md](ALPHA_BASELINE_NOTES.md)。
