@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全漏洞（私下报告）
+    url: https://github.com/1785235376-blip
+    about: 请勿在公开 Issue 中披露安全漏洞、凭据或用户数据；请私下联系仓库所有者。
+  - name: 贡献指南（环境、分支、测试与许可）
+    url: https://github.com/1785235376-blip/AI-Novel-Studio/blob/main/CONTRIBUTING.md
+    about: 提交前请阅读 CONTRIBUTING.md（含 Windows/Linux/macOS 分步环境与最小测试要求）。
+  - name: 本地最小 CI 与证据
+    url: https://github.com/1785235376-blip/AI-Novel-Studio/blob/main/docs/v2/engineering/LOCAL_CI_MINIMUM.md
+    about: 如何在本地真实执行 LOCAL-01～05 并保留与 SHA 绑定的结果。

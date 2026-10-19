@@ -1,0 +1,8 @@
+PG_START_EXIT 0
+DB_CREATED v2_d24_1792386146
+MIGRATIONS_APPLIED 20
+PYTEST_CMD [repo]\.venv\Scripts\python.exe -m pytest -q -s -p no:cacheprovider -p d24_probe --basetemp [repo]\.runtime\d24-instrumented\pytest -x tests/test_local_interop_cross_process_host.py::test_real_host_api_metadata_guidance_diagnostics_verifier_and_revocation[postgres]
+PYTEST_PID 119520
+PYTEST_EXIT 0 SECONDS 8.5
+PG_STOP_EXIT 0
+DONE v2_d24_1792386146

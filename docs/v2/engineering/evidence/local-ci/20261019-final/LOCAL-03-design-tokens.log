@@ -1,0 +1,7 @@
+$ C:\Program Files\nodejs\pnpm.CMD run lint
+
+
+> ai-novel-studio-ui@0.7.0 lint [repo]\frontend
+> node ../scripts/check_ui_design_tokens.mjs
+
+UI token guard PASS (52 files)

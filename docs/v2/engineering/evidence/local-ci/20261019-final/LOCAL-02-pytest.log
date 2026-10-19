@@ -1,0 +1,30 @@
+$ [repo]\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp=[repo]\.runtime\local-ci\20261019-final\LOCAL-02\pytest --junitxml=[repo]\docs\v2\engineering\evidence\local-ci\20261019-final\LOCAL-02-junit.xml --durations=5 tests/test_v2_creative_project_lifecycle.py tests/test_structured_record_cas.py tests/test_surface_pending_canon_review.py tests/test_shared_project_route_authority.py
+
+.s.s.s.s.s.s.s.s.....s...sss.s.s..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss [  7%]
+..ss..ss..ss..ss....ssss................................................ [ 15%]
+........................ssssssssssssssssssssssssssssssssssssssssssssssss [ 22%]
+ssssssssssssssssssssssss................................................ [ 30%]
+........................ssssssssssssssssssssssssssssssssssssssssssssssss [ 38%]
+ssssssssssssssssssssssss....................................ssssssssssss [ 45%]
+ssssssssssssssssssssssss............ssssssssssss............ssssssssssss [ 53%]
+............ssssssssssss............ssssssssssss..ss.................... [ 61%]
+.....................................................sssssssssssssssssss [ 68%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssss............sssssss [ 76%]
+sssss....................................sssssssssssssssssssssssssssssss [ 84%]
+sssss............ssssssssssss........................................... [ 91%]
+.....ssssssssssssssssssssssssssssssssssssssssssssssss............sssssss [ 99%]
+sssss                                                                    [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  [repo]\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: [repo]\docs\v2\engineering\evidence\local-ci\20261019-final\LOCAL-02-junit.xml -
+============================= slowest 5 durations =============================
+2.44s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]
+1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]
+0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]
+0.75s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-v1-/api-owner]
+0.71s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-off-/api/v1-owner]
+473 passed, 468 skipped, 1 warning in 220.21s (0:03:40)

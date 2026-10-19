@@ -1,0 +1,108 @@
+name: Bug report
+description: 报告可复现的缺陷（请勿包含密钥、凭据、真实小说或个人绝对路径）
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢报告。请先阅读 `CONTRIBUTING.md` 并搜索已有 Issue。
+        本模板要求最小复现与真实信息；缺少关键信息的报告无法进入修复队列。
+        安全问题请勿使用本模板，按 CONTRIBUTING.md 第 7 节私下报告。
+
+  - type: input
+    id: commit_sha
+    attributes:
+      label: 提交 SHA / 构建标识
+      description: 解压源码时请给出 `git rev-parse HEAD` 的完整 SHA；安装包请给出 SHA256。
+      placeholder: "例：b0917977b7dd0e1ba092e3c6ec11b98fed0a4005"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating_system
+    attributes:
+      label: 操作系统
+      options:
+        - Windows 11
+        - Windows 10
+        - Ubuntu 24.04
+        - 其他 Linux
+        - macOS（Apple Silicon）
+        - macOS（Intel）
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: toolchain
+    attributes:
+      label: 工具链版本
+      description: Python / Node / pnpm / PostgreSQL / 浏览器版本（按实际使用填写）
+      placeholder: "Python 3.11.9, Node 22.14.0, pnpm 10.6.5, PostgreSQL 16.15, Edge 152"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: 最小复现步骤
+      description: 从干净状态开始的 1/2/3 步骤；包含启动方式、输入、点击路径与命令。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_result
+    attributes:
+      label: 实际结果
+      description: 实际看到的错误/状态码/文件变化；可附脱敏日志片段。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_result
+    attributes:
+      label: 预期结果
+      description: 期望的行为与依据（需求/契约/既有测试）。
+      render: markdown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: data_impact
+    attributes:
+      label: 是否涉及数据损坏、丢失、越权或隐私风险？
+      description: 这决定缺陷优先级；不要为了降低优先级而选择"否"。
+      options:
+        - 否：仅界面/提示/性能问题
+        - 未知：需要维护者判断
+        - 是：数据损坏或不一致
+        - 是：数据丢失或无法恢复
+        - 是：越权/权限绕过/隐私泄露
+        - 是：云端出站或计费未授权
+    validations:
+      required: true
+
+  - type: textarea
+    id: redacted_logs
+    attributes:
+      label: 脱敏日志 / 截图 / 证据
+      description: 必须去除 API Key、token、DATABASE_URL、真实小说正文、个人绝对路径、主机名。
+      render: markdown
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已在当前 HEAD/构建上复现，并给出准确 SHA 或 SHA256。
+          required: true
+        - label: 已脱敏，不包含密钥、凭据、真实作品、个人绝对路径。
+          required: true
+        - label: 我已搜索现有 Issue 与 `docs/v2/engineering/DEFECTS_20261019_r1.md`，不是已知条目。
+          required: true

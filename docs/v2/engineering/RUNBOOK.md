@@ -4,6 +4,14 @@ Version: `ENG-2026.10.19-r1`. Every command below is expected to run from a **cl
 checkout/worktree**, never from the user's production checkout, RC1 tree or another agent's
 workspace.
 
+## 0. Local minimum CI (fast developer entry)
+
+For a fast, SHA-bound developer check before a PR, run the five documented steps in
+[LOCAL_CI_MINIMUM.md](LOCAL_CI_MINIMUM.md) (`scripts/run_local_ci.py`). It is a test-only
+command set: it starts an isolated backend/browser only for the duration of a test and never installs
+dependencies, downloads models, or acts as a one-click launcher. The full layers below remain the
+authoritative acceptance entries.
+
 ## 1. Supported host and minimum dependencies
 
 | Item | Requirement | Verified on this host (2026-10-19) |
@@ -145,6 +153,20 @@ python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$profile\pytes
 
 CI splits this suite into two deterministic node-ID shards (`--ci-shard-index`/`--ci-shard-count`
 consumed by `.github/ci/suite_coverage.py`). Sharding is a capacity measure, not an exclusion.
+
+**Round-2/3 D-07 update (2026-10-19).** The hang was reproduced with a watchdog stack dump: a
+synchronous `psycopg.connect` without a deadline ran inside an async streaming guard while the
+repository layer opened a new PostgreSQL connection per call. Timing instrumentation counted
+**1,210 cumulative `psycopg.connect` attempts** in one local-interop test (attempts, not peak
+concurrency; the instrumentation log was not archived, so round 3 replaces this with same-metric
+measurements). On Windows each connect costs ~0.1 s, so the event loop stalled and the peer
+transport timed out (HTTP 504); the same connection churn triggered the backend-start
+`error code 487`. Fix: repository **and experimental-store** connections borrow from bounded
+SQLAlchemy pools (`pooled_connection`; the store uses `engine_for_url()`), and the `connect()`
+helper bounds/retries only connection establishment (no current production entry point uses that
+helper). Round-3 same-metric evidence: unpooled replay 466 direct attempts / 16.0 s FAIL vs
+pooled 0 attempts / 2 physical connections / 3.94 s PASS for the D-24 node. The previously failing
+nodes pass on real PostgreSQL; the complete PG suite still needs its own long run bound to a SHA.
 
 Windows note (this host): the disposable PostgreSQL 16 cluster intermittently logs
 `could not reserve shared memory region ... error code 487` when a new backend starts

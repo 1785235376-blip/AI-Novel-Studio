@@ -1,0 +1,5 @@
+sssss                                                                    [100%]
+- generated xml file: [engineering-runs]\pool-regression-file.xml -
+5 skipped in 0.16s
+
+{"receipt": "docs/delivery/v2-development/pool-regression-file.json", "status": "PASS"}

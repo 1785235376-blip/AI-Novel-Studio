@@ -1,5 +1,8 @@
 # Verification hashes describe exact bytes, including captured log line endings.
 docs/delivery/v2-development/** -text
+# Local CI receipts/logs are byte-bound to the SHA256 values recorded in
+# docs/v2/engineering/LOCAL_CI_RESULTS_20261019.md; keep their bytes untouched.
+docs/v2/engineering/evidence/local-ci/** -text
 docs/delivery/v2-retirement-canvas-20261016/** -text
 docs/delivery/v2-r3-prompt-20261016/** -text
 docs/delivery/v2-r3-adoption-ui-20261017/** -text

@@ -1,0 +1,85 @@
+[
+  {
+    "label": "closeout-pool-regression-pg",
+    "postgres": true,
+    "exit_code": 0,
+    "summary": "6 passed (contract metrics captured)",
+    "status": "PASS",
+    "junit": "junit-pool-regression-pg-closeout.xml",
+    "console": "console-pool-regression-pg-closeout.log",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-pool-regression-file",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "6 skipped",
+    "status": "SKIPPED_NOT_APPLICABLE",
+    "skipped": 6,
+    "failed": 0,
+    "status_detail": "PostgreSQL-only test file; every case skipped by the postgres_backend_only marker in the File profile. Exit code 0 is recorded separately and is not a pool-behaviour PASS.",
+    "junit": "junit-pool-regression-file-closeout.xml",
+    "console": "console-pool-regression-file-closeout.log",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "closeout-unit-tests",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "42 passed, 1 skipped (required engineering unit set; symlink case skipped)",
+    "status": "PASS",
+    "junit": null,
+    "console": "console-unit-tests.log",
+    "head": "7c88f50f43cd105db288f33c2f9cc14f1b5d921a",
+    "status_detail": "Refreshed by the XML fixture/statistics patch; the previous value (29 passed at execution SHA 5e278819) described the earlier narrower set."
+  },
+  {
+    "label": "closeout-evidence-index",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "4 receipts (2 verification-summary.json + 2 LOCAL_CI_RESULTS.json), 35 declared paths, 0 missing, 0 out-of-root; XML: 11 declared XML paths checked, 13 distinct archived XML files checked, 13 distinct XML files overall, 0 invalid XML - PASS",
+    "status": "PASS",
+    "junit": null,
+    "console": "evidence-index-console.log",
+    "receipt": "evidence-index.json",
+    "head": "7c88f50f43cd105db288f33c2f9cc14f1b5d921a",
+    "index_stats": {
+      "receipt_files_scanned": 4,
+      "receipt_types": {
+        "verification-summary.json": 2,
+        "LOCAL_CI_RESULTS.json": 2
+      },
+      "checked_paths": 35,
+      "declared_xml_paths_checked": 11,
+      "archived_xml_files_checked": 13,
+      "xml_files_checked_distinct": 13,
+      "xml_checked": 11,
+      "status": "PASS"
+    },
+    "status_detail": "Refreshed by the XML fixture/statistics patch (execution SHA 7c88f50f43cd105db288f33c2f9cc14f1b5d921a). XML statistics now separate declared path entries from distinct archived files; the previous '11 XML checked' value was the old undifferentiated counter.",
+    "xml_stats_definition": "declared_xml_paths_checked counts declared XML path entries parsed successfully (duplicates allowed); archived_xml_files_checked counts distinct archived XML files parsed; xml_files_checked_distinct is the distinct union; xml_checked is a compatibility alias for declared_xml_paths_checked, NOT a distinct archived-file count."
+  },
+  {
+    "label": "closeout-skip-audit-historical",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "467/467 historical pairs, 0 PostgreSQL-only",
+    "status": "PASS",
+    "junit": null,
+    "console": "skip-audit-historical-console.log",
+    "receipt": "skip-audit-historical.json",
+    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+  },
+  {
+    "label": "historical-round3-pool-regression-file",
+    "postgres": false,
+    "exit_code": 0,
+    "summary": "5 skipped in 0.16s (recovered original round-3 run)",
+    "status": "SKIPPED_NOT_APPLICABLE",
+    "skipped": 5,
+    "failed": 0,
+    "junit": "historical-pool-regression-file.xml",
+    "console": "historical-pool-regression-file.log",
+    "head": "415cbcc2"
+  }
+]

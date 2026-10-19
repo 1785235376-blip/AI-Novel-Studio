@@ -1,0 +1,24 @@
+{
+  "root": "docs/v2/engineering/evidence/local-ci",
+  "resolution_bases": {
+    "verification-summary.json": "receipt directory",
+    "LOCAL_CI_RESULTS.json": "repository root"
+  },
+  "receipt_files_scanned": 4,
+  "receipts": 4,
+  "receipt_types": {
+    "verification-summary.json": 2,
+    "LOCAL_CI_RESULTS.json": 2
+  },
+  "checked_paths": 35,
+  "missing": [],
+  "out_of_root": [],
+  "xml_invalid": [],
+  "declared_xml_paths_checked": 11,
+  "archived_xml_files_checked": 13,
+  "xml_files_checked_distinct": 13,
+  "xml_checked": 11,
+  "xml_checked_meaning": "declared XML path entries parsed successfully; alias of declared_xml_paths_checked, NOT a distinct archived XML file count",
+  "notes": [],
+  "status": "PASS"
+}

@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { serverPython, withReceiptLog } from './local-ci-server-command';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,7 +9,7 @@ const root = path.resolve(frontend, '..');
 const runId = process.env.V2_LIVE_RUN_ID || `${Date.now()}-${process.pid}`;
 const runtime = path.join(root, '.runtime', 'v2-live-browser', runId);
 const receipts = process.env.CI_RECEIPTS || path.join(root, 'docs', 'delivery', 'v2-development', 'cloud-v2-independent-browser');
-const python = process.env.V2_PYTHON || path.join(root, '.venv', 'bin', 'python');
+const python = serverPython(root);
 fs.mkdirSync(receipts, { recursive: true });
 
 function servers(name: string, apiPort: number, port: number, enabled: boolean, acceptance = false) {
@@ -27,9 +28,9 @@ function servers(name: string, apiPort: number, port: number, enabled: boolean, 
     FRONTEND_ORIGIN: `http://127.0.0.1:${port}`,
   };
   return [
-    { command: `"${python}" -m uvicorn app.main:app --host 127.0.0.1 --port ${apiPort} 2>&1 | tee "${path.join(receipts, `${name}-backend.log`)}"`, cwd: root,
+    { command: withReceiptLog(`"${python}" -m uvicorn app.main:app --host 127.0.0.1 --port ${apiPort}`, path.join(receipts, `${name}-backend.log`)), cwd: root,
       url: `http://127.0.0.1:${apiPort}/api/health`, timeout: 90000, reuseExistingServer: false, env },
-    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} 2>&1 | tee "${path.join(receipts, `${name}-vite.log`)}"`, cwd: frontend,
+    { command: withReceiptLog(`"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port}`, path.join(receipts, `${name}-vite.log`)), cwd: frontend,
       url: `http://127.0.0.1:${port}`, timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: `http://127.0.0.1:${apiPort}` } },
   ];
 }
@@ -53,9 +54,9 @@ function m3Servers(name: string, apiPort: number, port: number, enabled: boolean
     FRONTEND_ORIGIN: `http://127.0.0.1:${port}`, HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
   };
   return [
-    { command: `"${python}" tests/v2_discovery_browser_server.py --port ${apiPort} 2>&1 | tee "${path.join(receipts, `${name}-backend.log`)}"`, cwd: root,
+    { command: withReceiptLog(`"${python}" tests/v2_discovery_browser_server.py --port ${apiPort}`, path.join(receipts, `${name}-backend.log`)), cwd: root,
       url: `http://127.0.0.1:${apiPort}/api/health`, timeout: 90000, reuseExistingServer: false, env },
-    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} 2>&1 | tee "${path.join(receipts, `${name}-vite.log`)}"`, cwd: frontend,
+    { command: withReceiptLog(`"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port}`, path.join(receipts, `${name}-vite.log`)), cwd: frontend,
       url: `http://127.0.0.1:${port}`, timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: `http://127.0.0.1:${apiPort}` } },
   ];
 }
@@ -77,9 +78,9 @@ function m4Servers() {
     FRONTEND_ORIGIN: 'http://127.0.0.1:5190', HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
   };
   return [
-    { command: `"${python}" tests/v2_ai_execution_browser_server.py --port 8030 2>&1 | tee "${path.join(receipts, 'm4-enabled-backend.log')}"`, cwd: root,
+    { command: withReceiptLog(`"${python}" tests/v2_ai_execution_browser_server.py --port 8030`, path.join(receipts, 'm4-enabled-backend.log')), cwd: root,
       url: 'http://127.0.0.1:8030/api/experimental/features', timeout: 90000, reuseExistingServer: false, env },
-    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5190 2>&1 | tee "${path.join(receipts, 'm4-enabled-vite.log')}"`, cwd: frontend,
+    { command: withReceiptLog(`"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5190`, path.join(receipts, 'm4-enabled-vite.log')), cwd: frontend,
       url: 'http://127.0.0.1:5190', timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: 'http://127.0.0.1:8030' } },
   ];
 }
@@ -102,9 +103,9 @@ function m4bServers() {
     FRONTEND_ORIGIN: 'http://127.0.0.1:5191', HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1',
   };
   return [
-    { command: `"${python}" tests/v2_model_assets_browser_server.py --port 8031 2>&1 | tee "${path.join(receipts, 'm4b-model-assets-backend.log')}"`, cwd: root,
+    { command: withReceiptLog(`"${python}" tests/v2_model_assets_browser_server.py --port 8031`, path.join(receipts, 'm4b-model-assets-backend.log')), cwd: root,
       url: 'http://127.0.0.1:8031/api/experimental/features', timeout: 90000, reuseExistingServer: false, env },
-    { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5191 2>&1 | tee "${path.join(receipts, 'm4b-model-assets-vite.log')}"`, cwd: frontend,
+    { command: withReceiptLog(`"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5191`, path.join(receipts, 'm4b-model-assets-vite.log')), cwd: frontend,
       url: 'http://127.0.0.1:5191', timeout: 60000, reuseExistingServer: false, env: { ...env, V061_API_URL: 'http://127.0.0.1:8031' } },
   ];
 }

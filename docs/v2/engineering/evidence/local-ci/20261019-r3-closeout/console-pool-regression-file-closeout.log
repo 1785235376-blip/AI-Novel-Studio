@@ -1,0 +1,5 @@
+ssssss                                                                   [100%]
+- generated xml file: [engineering-runs]\junit-pool-regression-file-closeout.xml -
+6 skipped in 0.17s
+
+{"receipt": "docs/delivery/v2-development/closeout-pool-file.json", "status": "PASS"}

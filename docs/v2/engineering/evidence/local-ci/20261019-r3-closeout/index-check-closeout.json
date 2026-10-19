@@ -1,0 +1,24 @@
+{
+  "root": "docs/v2/engineering/evidence/local-ci/20261019-r3-closeout",
+  "resolution_bases": {
+    "verification-summary.json": "receipt directory",
+    "LOCAL_CI_RESULTS.json": "repository root"
+  },
+  "receipt_files_scanned": 1,
+  "receipts": 1,
+  "receipt_types": {
+    "verification-summary.json": 1,
+    "LOCAL_CI_RESULTS.json": 0
+  },
+  "checked_paths": 11,
+  "missing": [],
+  "out_of_root": [],
+  "xml_invalid": [],
+  "declared_xml_paths_checked": 3,
+  "archived_xml_files_checked": 3,
+  "xml_files_checked_distinct": 3,
+  "xml_checked": 3,
+  "xml_checked_meaning": "declared XML path entries parsed successfully; alias of declared_xml_paths_checked, NOT a distinct archived XML file count",
+  "notes": [],
+  "status": "PASS"
+}

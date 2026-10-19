@@ -222,12 +222,13 @@ def verify_backup(backup: Path) -> dict:
 def _restore_database(backup: Path, database_url: str) -> None:
     import psycopg
     from psycopg import sql
+    from .repositories.postgres.connection import connect_timeout
     conn = _connection(database_url)
     database_name = conn["dbname"]
     if database_name in {"postgres", "template0", "template1"}:
         raise BackupError("Restore requires a new, dedicated database name")
     try:
-        with psycopg.connect(**{**conn, "dbname":"postgres"}, autocommit=True) as admin:
+        with psycopg.connect(**{**conn, "dbname":"postgres", "connect_timeout":connect_timeout()}, autocommit=True) as admin:
             if admin.execute("SELECT 1 FROM pg_database WHERE datname=%s", (database_name,)).fetchone():
                 raise BackupError("Restore database already exists; refusing to overwrite it")
             admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE template0").format(sql.Identifier(database_name)))

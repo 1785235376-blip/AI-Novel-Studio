@@ -57,6 +57,25 @@ def generated_fixture_state(name: str, tracked: set[str] | None) -> bool:
     return ".workspace-mutation-locks" in parts or parts[-1] == "chapter_identity.json"
 
 
+def _print_captured(output: str) -> None:
+    """Print captured child output without ever crashing the runner on encoding.
+
+    Windows consoles/redirects may be cp936 while child output contains bytes that
+    are not representable there (for example a replacement character in a fixture
+    name). The result must still be recorded and reported: fall back to UTF-8 bytes
+    instead of raising UnicodeEncodeError after the checks already ran (D-22).
+    """
+    try:
+        print(output)
+    except UnicodeEncodeError:
+        buffer = getattr(sys.stdout, "buffer", None)
+        if buffer is not None:
+            buffer.write(output.encode("utf-8", errors="replace") + b"\n")
+            buffer.flush()
+        else:
+            print(output.encode("utf-8", errors="replace").decode("ascii", errors="replace"))
+
+
 def source_snapshot(root: Path) -> dict[str, str]:
     """Bind receipts to backend, frontend, test, and runner sources, not one module."""
     files = set()
@@ -140,7 +159,7 @@ def main() -> int:
                "log": log.relative_to(root).as_posix(),
                "log_sha256": hashlib.sha256(log.read_bytes()).hexdigest()}
     (evidence / f"{args.label}.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(output)
+    _print_captured(output)
     print(json.dumps({"receipt": f"docs/delivery/v2-development/{args.label}.json", "status": receipt["status"]}, ensure_ascii=False))
     return result.returncode
 

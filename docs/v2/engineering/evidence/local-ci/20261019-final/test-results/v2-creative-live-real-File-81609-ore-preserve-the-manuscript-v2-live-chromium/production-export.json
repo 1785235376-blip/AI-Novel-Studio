@@ -1,0 +1,225 @@
+{
+  "boundary": "Structured draft/planning JSON; accepted proposals retain generation provenance. No media rendering.",
+  "document": {
+    "created_at": "2026-10-19T02:03:27.578848+00:00",
+    "created_by": "local-author",
+    "director_notes": [
+      {
+        "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 5,
+        "emotion": "",
+        "id": "44822337-4ae5-4c3c-b06a-dee3df760f56",
+        "note": "待审建议：先核对场景目的与人物关系，再选择景别和机位。",
+        "number": 1,
+        "pacing": "待审建议：对白后保留反应停顿；时长由表演与剪辑试排确定。",
+        "performance": "人工确认：停顿后看向窗外。",
+        "scene_id": "7fdecd35-de7a-4ef8-9775-62919049ef63",
+        "shot_size": "MEDIUM"
+      },
+      {
+        "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "duration_seconds": 5,
+        "emotion": "",
+        "id": "cda4d8de-52e6-4a33-8e0f-9a643d089e5c",
+        "note": "待审建议：先核对场景目的与人物关系，再选择景别和机位。",
+        "number": 2,
+        "pacing": "待审建议：对白后保留反应停顿；时长由表演与剪辑试排确定。",
+        "performance": "",
+        "scene_id": "14d690a1-19b2-4991-9c97-288a79fe2a3b",
+        "shot_size": "MEDIUM"
+      }
+    ],
+    "id": "fb74d9a0-4569-4f92-8e82-19f2fc30ae07",
+    "mode": "PRODUCTION",
+    "novel_id": "v2-1792375400925",
+    "privacy_level": "LOCAL_ONLY",
+    "project_incarnation": "file:e7c67fdb-1ae6-438d-91e7-b279063a5d28",
+    "provenance": {
+      "input_digest": "3cff98673fa6102c54e2d019daf9065e16b1b2a7334d9b144742a0aa1d839a6c",
+      "method": "STRUCTURED_DERIVATION",
+      "model_called": false,
+      "parameters": {
+        "rule_version": "creative-stage-copy-v1"
+      },
+      "quality_verification": "HUMAN_REVIEW_REQUIRED",
+      "source_document_id": "c2d8f2e6-f941-443d-a9cb-5b176d8cf81a",
+      "source_mode": "STORYBOARD",
+      "source_version": 2
+    },
+    "restored_from_version": 1,
+    "scenes": [
+      {
+        "action": "# 合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\n\n",
+        "characters": [],
+        "dialogue": [
+          {
+            "delivery": "",
+            "speaker": "林默",
+            "text": "下一幕由我们自己决定。"
+          }
+        ],
+        "director_notes": [],
+        "emotion": "",
+        "heading": "EXT. 云港 · 清晨",
+        "id": "7fdecd35-de7a-4ef8-9775-62919049ef63",
+        "location": "云港码头",
+        "sequence": 1,
+        "source_chapter_id": "v2-1792375400925:1",
+        "time": ""
+      },
+      {
+        "action": "她在窗边整理航海图。",
+        "characters": [],
+        "dialogue": [],
+        "director_notes": [],
+        "emotion": "",
+        "heading": "INT. 灯塔 · 日",
+        "id": "14d690a1-19b2-4991-9c97-288a79fe2a3b",
+        "location": "",
+        "sequence": 2,
+        "source_chapter_id": "v2-1792375400925:1",
+        "time": ""
+      }
+    ],
+    "schema_version": 1,
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-1792375400925"
+    },
+    "script": null,
+    "shots": [
+      {
+        "action": "她在窗边整理航海图。",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "color": "",
+        "composition": "",
+        "dialogue": [],
+        "director_notes": [
+          {
+            "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "emotion": "",
+            "id": "cda4d8de-52e6-4a33-8e0f-9a643d089e5c",
+            "note": "待审建议：先核对场景目的与人物关系，再选择景别和机位。",
+            "pacing": "待审建议：对白后保留反应停顿；时长由表演与剪辑试排确定。",
+            "performance": "",
+            "shot_size": "MEDIUM"
+          }
+        ],
+        "duration_seconds": 5,
+        "environment": "",
+        "frame_prompt": "海港窗框里的人工镜头构图",
+        "id": "b497d629-d03c-4e20-bd11-5acc14d86d31",
+        "lens": "50mm",
+        "lighting": "",
+        "number": 1,
+        "scene_id": "14d690a1-19b2-4991-9c97-288a79fe2a3b",
+        "shot_size": "MEDIUM",
+        "sound": "",
+        "sound_effect": ""
+      },
+      {
+        "action": "# 合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”\n\n",
+        "camera_angle": "EYE_LEVEL",
+        "camera_motion": "STATIC",
+        "color": "",
+        "composition": "",
+        "dialogue": [
+          {
+            "delivery": "",
+            "speaker": "林默",
+            "text": "下一幕由我们自己决定。"
+          }
+        ],
+        "director_notes": [
+          {
+            "blocking": "待人工确认人物位置、视线和出入方向；文字不足以确定实际空间。",
+            "camera_angle": "EYE_LEVEL",
+            "camera_motion": "STATIC",
+            "duration_seconds": 5,
+            "emotion": "",
+            "id": "44822337-4ae5-4c3c-b06a-dee3df760f56",
+            "note": "待审建议：先核对场景目的与人物关系，再选择景别和机位。",
+            "pacing": "待审建议：对白后保留反应停顿；时长由表演与剪辑试排确定。",
+            "performance": "人工确认：停顿后看向窗外。",
+            "shot_size": "MEDIUM"
+          }
+        ],
+        "duration_seconds": 5,
+        "environment": "云港码头",
+        "frame_prompt": "",
+        "id": "46ef80e5-9b7f-4731-8b42-17dde2f845ba",
+        "lens": "",
+        "lighting": "",
+        "number": 2,
+        "scene_id": "7fdecd35-de7a-4ef8-9775-62919049ef63",
+        "shot_size": "MEDIUM",
+        "sound": "",
+        "sound_effect": ""
+      }
+    ],
+    "source_chapter_ids": [
+      "v2-1792375400925:1"
+    ],
+    "source_documents": {
+      "c2d8f2e6-f941-443d-a9cb-5b176d8cf81a": {
+        "digest": "3cff98673fa6102c54e2d019daf9065e16b1b2a7334d9b144742a0aa1d839a6c",
+        "version": 2
+      }
+    },
+    "source_evidence": {
+      "v2-1792375400925:1": {
+        "digest": "8b9b45ec9f90945852808bd401e71fb1d8031b469c149fd84e99670c9948fd69",
+        "version": 2
+      }
+    },
+    "source_independent": false,
+    "source_privacy": {
+      "v2-1792375400925:1": {
+        "branch_id": null,
+        "chapter_id": "v2-1792375400925:1",
+        "chapter_version": 2,
+        "content_sha256": "8b9b45ec9f90945852808bd401e71fb1d8031b469c149fd84e99670c9948fd69",
+        "novel_id": "v2-1792375400925",
+        "privacy_level": "LOCAL_ONLY",
+        "reviewed": false,
+        "reviewed_at": null,
+        "reviewed_by": null,
+        "stale": false
+      }
+    },
+    "status": "DRAFT",
+    "title": "云港 · 人工审核导演稿 · 分镜 · 制作",
+    "updated_at": "2026-10-19T02:03:28.660685+00:00",
+    "updated_by": "local-author",
+    "version": 3,
+    "video_plan": {
+      "frame_rate": 24,
+      "height": 1080,
+      "notes": "",
+      "segments": [
+        {
+          "duration_seconds": 5,
+          "note": "",
+          "shot_id": "b497d629-d03c-4e20-bd11-5acc14d86d31"
+        },
+        {
+          "duration_seconds": 5,
+          "note": "",
+          "shot_id": "46ef80e5-9b7f-4731-8b42-17dde2f845ba"
+        }
+      ],
+      "width": 1920
+    }
+  },
+  "document_digest": "33320201588797df7ef4a4e8e48fadda2b4ec012443b3b83dee192bb22b4260a",
+  "format": "ai-novel-creative-document",
+  "format_version": 1
+}

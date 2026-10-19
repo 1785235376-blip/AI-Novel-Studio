@@ -2,6 +2,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from sqlalchemy import create_engine,text
 from sqlalchemy.orm import sessionmaker,Session
+from .connection import connect_timeout
 
 class Database:
     def __init__(self,url:str):
@@ -10,7 +11,7 @@ class Database:
         # PostgreSQL renders timestamptz values in the session timezone.  Keep
         # repository serialization backend-neutral by always reading UTC, as
         # the File backend and public Pydantic contracts do.
-        self.engine=create_engine(normalized,pool_pre_ping=True,future=True,connect_args={"options":"-c timezone=UTC"})
+        self.engine=create_engine(normalized,pool_pre_ping=True,future=True,connect_args={"options":"-c timezone=UTC","connect_timeout":connect_timeout()})
         self.session_factory=sessionmaker(self.engine,expire_on_commit=False,class_=Session)
     def health_check(self)->bool:
         try:

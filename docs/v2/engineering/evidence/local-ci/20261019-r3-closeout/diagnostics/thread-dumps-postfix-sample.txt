@@ -1,0 +1,8 @@
+# Post-fix watchdog thread-dump sample (surviving round-3 log)
+# Source: Engineering-Runs/local-ci-round3-20261019/d24-postfix-pytest.log
+# The pre-fix D-24 timeout thread dump is NOT recoverable: the same log path was
+# reused by later runs and overwritten. This sample only shows the post-fix run
+# (worker thread state while the test was executing), not the timeout moment.
+
+[D24    3.02s d24-watchdog] THREAD_DUMP threads=3
+[D24    3.02s d24-watchdog] THREAD MainThread daemon=False alive=True stack=test_v2_ai_execution_runtime.py:178:wait_job <- test_v2_graph_text_assets.py:21:dispatch_asset <- test_v2_text_execution_receipts.py:62:test_receipt_preserves_exact_request_original_identity_and_terminal_time <- python.py:157:pytest_pyfunc_call <- _callers.py:121:_multicall <- _manager.py:120:_hookexec <- _hooks.py:512:__call__ <- python.py:1671:runtest <- runner.py:178:pytest_runtest_call <- _callers.py:121:_multicall <- _manager.py:120:_hookexec <- _hooks.py:512:__call__ <- runner.py:246:<lambda> <- runner.py:344:from_call <- runner.py:245:call_and_report <- runner.py:136:runtestprotocol <- runner.py:117:pytest_runtest_protocol <- _callers.py:121:_multicall
