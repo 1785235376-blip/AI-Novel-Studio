@@ -7,7 +7,7 @@ import { buildStoryboardVideoBranches } from './graphStoryboardStarterHelpers';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
 import type { PlanningCanvasHandoff } from './directorCanvasHandoff';
-import { planningSourceFork, planningSourceReferences } from './graphPlanningForkHelpers';
+import { planningSourceFork, planningSourceReferences, planningStoryboardShotReferences, planningStoryboardSourceFork } from './graphPlanningForkHelpers';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
@@ -285,12 +285,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     setError(''); setNotice(message);
   }
   const planningForkReferences = (() => { try { return node ? planningSourceReferences(draft, node.id) : []; } catch { return []; } })();
-  function preparePlanningGraphFork(document: PlanningDocument, scope: object, nodeIds?: readonly string[]): boolean {
+  function preparePlanningGraphFork(document: PlanningDocument, scope: object, nodeIds?: readonly string[], receipt?: StoryboardReceipt): boolean {
     if (scope !== verificationScope || planningForkConsumed.current === scope || !isVerificationCurrent()
       || !connectionSelectionCurrent(connectionScope) || !base || !node || checking || timelineEditor.formDirty
       || base.reference_states.find(value => value.node_id === node.id)?.state !== 'STALE') return false;
     try {
-      const value = planningSourceFork(draftRef.current, node.id, document, nodeIds);
+      const coupled = planningStoryboardShotReferences(draftRef.current, node.id).length > 0;
+      if (coupled && !receipt) throw new Error('更新 v5 分镜来源时须核对原镜头回执，不能只更新文档 pin。');
+      const value = coupled ? planningStoryboardSourceFork(draftRef.current, node.id, document, receipt!, nodeIds || [node.id]).definition
+        : planningSourceFork(draftRef.current, node.id, document, nodeIds);
       planningForkConsumed.current = scope;
       stageIndependentGraph(value, base, '已准备使用所选更新来源的独立草稿，尚未保存。原图、历史及其他引用保持不变；请核对依赖后明确保存。');
       return true;

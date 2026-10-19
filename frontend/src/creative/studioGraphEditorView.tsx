@@ -255,6 +255,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     {['director_plan', 'storyboard_plan'].includes(node.definition_id) && <><p>原文档引用状态：{referenceState || '待保存核对'}</p>{node.parameters.document_snapshot ? <><p>绑定 {node.parameters.document_snapshot.id} · v{node.parameters.document_snapshot.version}</p><code>{node.parameters.document_snapshot.digest}</code></> : <StatusMessage tone="warning">当前文档来源不可查看，原绑定信息已隐藏。</StatusMessage>}<p>节点读取已保存作者内容。导演输出供分镜节点核对；不会覆盖分镜，也不会修改来源。保存后的文档绑定不能自动移除或重绑，可禁用节点。</p></>}
     {base && referenceState === 'STALE' && ['director_plan', 'storyboard_plan'].includes(node.definition_id) && node.parameters.document_snapshot &&
       <GraphPlanningFork client={client.graphs} pin={node.parameters.document_snapshot}
+        definition={draft.schema_version === 5 ? draft : undefined} nodeId={node.id}
         mode={node.definition_id === 'director_plan' ? 'DIRECTOR' : 'STORYBOARD'} scope={controller.planningForkScope}
         disabled={!editable || checking || timelineEditor.formDirty} isCurrent={controller.isPlanningForkCurrent}
         read={read} prepare={controller.preparePlanningGraphFork} references={controller.planningForkReferences} />}
