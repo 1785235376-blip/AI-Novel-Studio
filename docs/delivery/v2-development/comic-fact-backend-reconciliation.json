@@ -1,0 +1,20 @@
+{
+  "comic-authority-integration-postgres": {
+    "status": "PASS",
+    "head": "ebcbf7395b702e09957b23823afeb6a529926e0d",
+    "app_paths": 542,
+    "changed_app_paths": []
+  },
+  "comic-authority-integration-public": {
+    "status": "PASS",
+    "head": "ebcbf7395b702e09957b23823afeb6a529926e0d",
+    "app_paths": 542,
+    "changed_app_paths": []
+  },
+  "comic-authority-integration-cjk": {
+    "status": "PASS",
+    "head": "ebcbf7395b702e09957b23823afeb6a529926e0d",
+    "app_paths": 542,
+    "changed_app_paths": []
+  }
+}

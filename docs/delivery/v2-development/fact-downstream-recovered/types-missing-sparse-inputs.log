@@ -1,0 +1,12 @@
+src/Editor.a43-rich.test.tsx(6,21): error TS2307: Cannot find module '../../tests/fixtures/a43_rich_document_coordinates.json' or its corresponding type declarations.
+src/experimental/ComicGeometryEditor.test.tsx(6,21): error TS2307: Cannot find module '../../../tests/fixtures/comic_panel_duplicate.json' or its corresponding type declarations.
+src/experimental/ComicLayoutsPanel.duplicate.test.tsx(6,21): error TS2307: Cannot find module '../../../tests/fixtures/comic_panel_duplicate.json' or its corresponding type declarations.
+src/experimental/ComicLayoutsPanel.layers.test.tsx(9,21): error TS2307: Cannot find module '../../../tests/fixtures/comic_panel_duplicate.json' or its corresponding type declarations.
+src/experimental/comicGeometry.test.ts(4,21): error TS2307: Cannot find module '../../../tests/fixtures/comic_panel_duplicate.json' or its corresponding type declarations.
+src/interop/LocalTutorIntegration.tsx(9,67): error TS2307: Cannot find module '../../../contracts/local-interop/v1/protocol' or its corresponding type declarations.
+src/interop/LocalTutorIntegration.tsx(501,43): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/interop/LocalTutorIntegration.tsx(502,97): error TS7006: Parameter 'warning' implicitly has an 'any' type.
+src/interop/LocalTutorIntegration.tsx(502,106): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/interop/LocalTutorIntegration.tsx(503,113): error TS7006: Parameter 'reference' implicitly has an 'any' type.
+src/interop/LocalTutorIntegration.tsx(503,124): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/interop/client.ts(7,8): error TS2307: Cannot find module '../../../contracts/local-interop/v1/protocol' or its corresponding type declarations.

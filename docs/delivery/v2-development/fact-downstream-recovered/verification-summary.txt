@@ -1,0 +1,10 @@
+Recovered base: ab289bd0c0f45d172c8e241e7f9ef255bf2d4ffb
+Fix: 3eaf9bf5a5ba227e6fc407c61fd31b4fb93ecf8d
+baseline tests: 112 passed
+new regression red: 3 failed, 20 passed (expected before fix)
+final tests: 115 passed
+final tsc -b: exit 0
+UI token guard: exit 0
+git diff --check: exit 0
+No combined build/browser visual/backend run claimed.
+Final retained-selection review: 119 tests passed; tsc -b exit 0; UI token guard exit 0; git diff --check exit 0.

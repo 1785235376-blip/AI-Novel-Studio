@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-19T00:15:00Z",
+  "updated_at_utc": "2026-10-19T01:15:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -1162,29 +1162,38 @@
   ],
   "latest_bounded_wave": {
     "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
-    "product_sha": "b81b3aad9b28f3f20ee7ef73005b998fe926aa82",
-    "report": "docs/delivery/v2-development/comic-image-integration-20261019.md",
+    "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
+    "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+    "items": [
+      {
+        "area": "Source-free IMAGE-only Comic access",
+        "maps_to": [
+          "IMAGE-COMIC-01"
+        ],
+        "boundary": "Original source-free pages/books and narrow bootstrap; source-bound assets, ORA, archive and generation not admitted through IMAGE fallback."
+      },
+      {
+        "area": "Exact fact downstream use inspection",
+        "maps_to": [
+          "DIF-02"
+        ],
+        "boundary": "Read-only bounded fact-shot-asset-Graph/Timeline observation, no semantic rebuild/execution."
+      }
+    ],
     "reported_evidence": {
-      "file_tests": 80,
-      "postgres_tests": 80,
+      "file_tests": 58,
+      "postgres_tests": 54,
+      "postgres_file_specific_skips": 6,
       "exact_14_table_cleanup": true,
-      "ui_tests": 119,
-      "ui_suites": 12,
+      "ui_tests": 194,
+      "ui_suites": 11,
       "typescript_vite_token": true,
       "public_tests": 6,
       "pinned_cjk_tests": 2,
-      "recorded_source_paths": 3203,
-      "real_model_inference": "NOT_RUN"
+      "source_paths": 3210,
+      "pg_bootstrap": "NOT_RUN",
+      "browser": "NOT_RUN"
     },
-    "items": [
-      {
-        "area": "Source-bound Comic panel generation, original Image review and explicit draft adoption",
-        "maps_to": [
-          "IMAGE-COMIC-05"
-        ],
-        "boundary": "LOCAL T2I saved IMAGE panel only; synthetic provider, no appearance references, live model quality or full Comic acceptance."
-      }
-    ],
     "formal_acceptance": false
   },
   "release_gate": {
@@ -20663,6 +20672,12 @@
           "summary": "Read-only fact-use impact reports exact current/stale shot and verified formal asset evidence; no regeneration.",
           "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
           "formal_acceptance": false
+        },
+        {
+          "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
+          "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+          "summary": "Read-only bounded fact-shot-asset-Graph/Timeline observation, no semantic rebuild/execution.",
+          "formal_acceptance": false
         }
       ]
     },
@@ -21062,14 +21077,20 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Full workflow integration and IMAGE-only role compatibility remain; current original NOVEL grant is still required.",
-      "next_action": "Complete IMAGE-only role compatibility and end-to-end independent Comic acceptance using the existing Image entry and original-owner blank-page creation; preserve legacy adapted-source requirements.",
+      "gap": "Source-free independent IMAGE-only pages/books and narrow real Image Studio bootstrap are integrated. Broader authorized image/source workflows and full independent Comic acceptance remain open.",
+      "next_action": "Extend authorized reviewed asset workflows without blanket NOVEL privilege fallback; retain source-bound denials and original owners.",
       "evidence_scope": "Bounded integration evidence at exact product SHA; full requirement is not accepted.",
       "bounded_evidence": [
         {
           "product_sha": "e66c53138989de1aff021994110c2083900f0aec",
           "summary": "Image contains a source-free blank Comic entry using the original owner, persisted page edits and reopen.",
           "report": "docs/delivery/v2-development/story-comic-director-integration-20261018.md",
+          "formal_acceptance": false
+        },
+        {
+          "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
+          "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+          "summary": "Original source-free pages/books and narrow bootstrap; source-bound assets, ORA, archive and generation not admitted through IMAGE fallback.",
           "formal_acceptance": false
         }
       ]
@@ -22377,12 +22398,39 @@
         }
       ],
       "formal_acceptance": false
+    },
+    {
+      "status": "COMMITTED_PARTIAL_REQUIREMENT_REUSE_NOT_FULL_NEW_ID_CLOSURE",
+      "product_sha": "b81b3aad9b28f3f20ee7ef73005b998fe926aa82",
+      "report": "docs/delivery/v2-development/comic-image-integration-20261019.md",
+      "reported_evidence": {
+        "file_tests": 80,
+        "postgres_tests": 80,
+        "exact_14_table_cleanup": true,
+        "ui_tests": 119,
+        "ui_suites": 12,
+        "typescript_vite_token": true,
+        "public_tests": 6,
+        "pinned_cjk_tests": 2,
+        "recorded_source_paths": 3203,
+        "real_model_inference": "NOT_RUN"
+      },
+      "items": [
+        {
+          "area": "Source-bound Comic panel generation, original Image review and explicit draft adoption",
+          "maps_to": [
+            "IMAGE-COMIC-05"
+          ],
+          "boundary": "LOCAL T2I saved IMAGE panel only; synthetic provider, no appearance references, live model quality or full Comic acceptance."
+        }
+      ],
+      "formal_acceptance": false
     }
   ],
   "current_checkpoint": {
-    "product_sha": "b81b3aad9b28f3f20ee7ef73005b998fe926aa82",
-    "report": "docs/delivery/v2-development/comic-image-integration-20261019.md",
-    "archive_before_this_wave": "78f7cc006015a6a34d5d8747dd553c874a92f421",
+    "product_sha": "31337a9df5df7290bc9476f84923b0acd48ff519",
+    "report": "docs/delivery/v2-development/comic-fact-integration-20261019.md",
+    "archive_before_this_wave": "8d3ae719ffbf512e23105f6be383f5011caea5e5",
     "release": "HOLD"
   },
   "historical_initial_bounded_wave": {

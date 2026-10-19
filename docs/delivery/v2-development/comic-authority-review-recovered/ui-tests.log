@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-image-independent/frontend
+
+ ✓ src/creative/studioComicBootstrap.capture.test.tsx (8 tests) 356ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (12 tests) 6825ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 2055ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 460ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 650ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1493ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 1071ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 401ms
+   ✓ IMAGE enters the real Comic editor after generic NOVEL denial without granting generic workspace access 400ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  10:06:37
+   Duration  11.86s (transform 3.53s, setup 69ms, collect 8.54s, tests 7.18s, environment 859ms, prepare 134ms)
+

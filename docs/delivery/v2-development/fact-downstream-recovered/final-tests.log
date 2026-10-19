@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/fact-downstream-recovered/frontend
+
+ ✓ src/storyboard/StoryFactUsagePanel.test.tsx (9 tests) 359ms
+ ✓ src/storyboard/StoryFactDownstreamImpact.test.tsx (23 tests) 721ms
+ ✓ src/experimental/StudioUsagesPanel.integration.test.tsx (6 tests) 526ms
+ ✓ src/experimental/StudioUsagesPanel.test.tsx (53 tests) 1229ms
+   ✓ StudioUsagesPanel exact read-only bounded coverage > labels bounded truncation and never follows it with extra requests 489ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 1034ms
+
+ Test Files  5 passed (5)
+      Tests  115 passed (115)
+   Start at  10:07:54
+   Duration  2.68s (transform 1.12s, setup 106ms, collect 2.22s, tests 3.87s, environment 1.89s, prepare 344ms)
+

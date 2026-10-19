@@ -1,0 +1,75 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/StudioUsagesPanel.integration.test.tsx (6 tests) 558ms
+ ✓ src/storyboard/StoryFactDownstreamImpact.test.tsx (27 tests) 809ms
+ ✓ src/experimental/StudioUsagesPanel.test.tsx (53 tests) 1049ms
+   ✓ StudioUsagesPanel exact read-only bounded coverage > labels bounded truncation and never follows it with extra requests 428ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1522ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 422ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 325ms
+ ✓ src/storyboard/StoryFactUsagePanel.test.tsx (9 tests) 489ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 1321ms
+ ✓ src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx (3 tests) 544ms
+   ✓ locks manual page edits and navigation synchronously while generation input owns the saved page 330ms
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 2224ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 486ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 969ms
+ ✓ src/creative/studioComicBootstrap.capture.test.tsx (8 tests) 344ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 8614ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1160ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 743ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 593ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 301ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 586ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 381ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 383ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 343ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 350ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 337ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 350ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 313ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 356ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 318ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 311ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (12 tests) 6638ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 2094ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 499ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 633ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1301ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 961ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 413ms
+   ✓ IMAGE enters the real Comic editor after generic NOVEL denial without granting generic workspace access 412ms
+
+ Test Files  11 passed (11)
+      Tests  194 passed (194)
+   Start at  10:13:56
+   Duration  12.79s (transform 5.65s, setup 265ms, collect 15.21s, tests 24.11s, environment 5.00s, prepare 792ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2465 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-B-sblpo2.css                      220.74 kB │ gzip:  27.90 kB
+dist/assets/Health-BNfmiTd7.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-DOPVfUDw.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-C0vTVghV.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-By4A-NR7.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-NZicbpxH.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-Ddv1H_NX.js                     2,958.01 kB │ gzip: 888.47 kB
+✓ built in 7.56s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

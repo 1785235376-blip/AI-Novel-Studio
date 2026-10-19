@@ -445,3 +445,7 @@ Prior source41a3c14d verified at archivec7572d018c931d92f474e6bfe83d7f860811b25d
 ## 2026-10-19 00:12 UTC Comic panel original Image generation
 
 Product b81b3aad9b28f3f20ee7ef73005b998fe926aa82 integrates saved-panel LOCAL T2I preparation, original private Image candidate/review and separate explicit DRAFT adoption. File80, realPG80 with exact14-table cleanup, PUBLIC6, pinnedCJK2, rootUI119/12 suites plus TS/Vite/token pass; actual mounted API capture decoded by original clients. Independent UI168 overlaps. Retained IME failure fixed and raw failure preserved. Synthetic provider only; live model/browser/full V2 unaccepted. See docs/delivery/v2-development/comic-image-integration-20261019.md. Previous source4430ce30 archived as78f7cc006015a6a34d5d8747dd553c874a92f421, parentc7572d01,14files/5,570,991bytes.
+
+## 2026-10-19 01:15 UTC recovered independent Comic / fact impact integration
+
+Product 31337a9df5df7290bc9476f84923b0acd48ff519. Resource-aware source-free IMAGE-only Comic entry and read-only exact fact→shot→asset→Graph/Timeline inspection integrated. Root PG54 plus6intentionalFile-onlyskips with exact14tablecleanup; PUBLIC6,CJK2,UI194/11suites+TS/Vite/token pass. 3210 finalsourcepaths match. Modelcapacity interrupted work; recovery and rechecks completed, no uninterruptedwork claim. See docs/delivery/v2-development/comic-fact-integration-20261019.md. Previous verifiedarchive8d3ae719, source3313a7b6. FullV2/browser/model/PGbootstrap still open.

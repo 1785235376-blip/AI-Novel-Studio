@@ -1,0 +1,457 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/fact-downstream-recovered/frontend
+
+ ✓ src/storyboard/StoryFactUsagePanel.test.tsx (9 tests) 341ms
+ ✓ src/experimental/StudioUsagesPanel.integration.test.tsx (6 tests) 441ms
+ ✓ src/experimental/StudioUsagesPanel.test.tsx (53 tests) 934ms
+   ✓ StudioUsagesPanel exact read-only bounded coverage > labels bounded truncation and never follows it with extra requests 372ms
+ ✓ src/storyboard/StoryboardWorkspacePanel.test.tsx (24 tests) 898ms
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx (25 tests | 2 failed) 2671ms
+   × mounted read-only fact downstream inspection > fences delayed A→B→A selection transitions without automatic reinspection 1015ms
+     → Unable to find an element with the text: saved-graph. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × mounted read-only fact downstream inspection > rejects a retained selected-A click after selection ABA 1008ms
+     → Unable to find an element with the text: saved-graph. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > fences delayed A→B→A selection transitions without automatic reinspection
+TestingLibraryElementError: Unable to find an element with the text: saved-graph. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:105:80
+    103|     await act(async () => { late.resolve(impact()); await late.promise…
+    104|     expect(screen.queryByText('saved-graph')).toBeNull(); expect(props…
+    105|     props.json.mockImplementation(original); select(); inspect(); awai…
+       |                                                                                ^
+    106|   });
+    107|   it('does not revive a late successful sibling after denial and a new…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > rejects a retained selected-A click after selection ABA
+TestingLibraryElementError: Unable to find an element with the text: saved-graph. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"事实下游使用检查（只读）"[39m
+    [36m>[39m
+      [36m<h3>[39m
+        [0m事实 → 镜头 → 正式素材 → 已保存使用方[0m
+      [36m</h3>[39m
+      [36m<p>[39m
+        [0m明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。[0m
+      [36m</p>[39m
+      [36m<p>[39m
+        [0m这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。[0m
+      [36m</p>[39m
+      [36m<label>[39m
+        [0m检查的事实镜头素材[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0m选择一个已核实素材[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"[\"use\",1,[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],[\"fact\",2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"],\"APPROVED\",\"CURRENT\",[],\"CAUSAL_CONTEXT\",\"Author reason\",\"doc\",2,\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"scene\",\"shot\",3,\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",{\"kind\":\"ASSET\",\"id\":\"asset/1\",\"version\":4,\"digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"asset_kind\":\"image\"}]"[39m
+          [36m>[39m
+            [0mfact[0m
+            [0m → [0m
+            [0mshot[0m
+            [0m → [0m
+            [0masset/1[0m
+            [0m v[0m
+            [0m4[0m
+            [0m ([0m
+            [0mimage[0m
+            [0m)[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"ui-button ui-button--secondary"[39m
+      [36m>[39m
+        [0m检查下游使用（只读）[0m
+      [36m</button>[39m
+      [36m<p>[39m
+        [0m尚未检查，Graph / Timeline 下游覆盖未知。[0m
+      [36m</p>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:130:39
+    128|     expect(props.json).not.toHaveBeenCalled();
+    129|     expect(screen.queryByText('saved-graph')).toBeNull();
+    130|     select(); inspect(); await screen.findByText('saved-graph');
+       |                                       ^
+    131|   });
+    132|   it.each([1, 2, 4])('does not dispatch obsolete reads when host gate …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 115 passed (117)
+   Start at  10:11:30
+   Duration  3.52s (transform 901ms, setup 60ms, collect 1.84s, tests 5.28s, environment 1.65s, prepare 341ms)
+

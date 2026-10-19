@@ -1,0 +1,119 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/fact-downstream-recovered/frontend
+
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx (25 tests | 2 failed) 531ms
+   × mounted read-only fact downstream inspection > rejects a retained selected-A click after selection B 13ms
+     → expected "gate" to not be called at all, but actually been called 4 times
+
+Received: 
+
+  1st gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  2nd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  3rd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  4th gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+
+Number of calls: 4
+
+   × mounted read-only fact downstream inspection > rejects a retained selected-A click after selection ABA 12ms
+     → expected "gate" to not be called at all, but actually been called 4 times
+
+Received: 
+
+  1st gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  2nd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  3rd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  4th gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+
+Number of calls: 4
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > rejects a retained selected-A click after selection B
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > rejects a retained selected-A click after selection ABA
+AssertionError: expected "gate" to not be called at all, but actually been called 4 times
+
+Received: 
+
+  1st gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  2nd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  3rd gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+  4th gate call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+
+Number of calls: 4
+
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:127:28
+    125|     if (transition === 'ABA') select();
+    126|     await act(async () => { retained(); });
+    127|     expect(props.read).not.toHaveBeenCalled();
+       |                            ^
+    128|     expect(props.json).not.toHaveBeenCalled();
+    129|     expect(screen.queryByText('saved-graph')).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 passed (25)
+   Start at  10:11:17
+   Duration  1.26s (transform 100ms, setup 16ms, collect 172ms, tests 531ms, environment 292ms, prepare 76ms)
+

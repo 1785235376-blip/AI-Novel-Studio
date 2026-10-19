@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/fact-downstream-recovered/frontend
+
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx (23 tests | 3 failed) 562ms
+   × mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 1 resumes after selection ABA 12ms
+     → expected "spy" to be called +0 times, but got 1 times
+   × mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 2 resumes after selection ABA 60ms
+     → expected "spy" to be called 2 times, but got 3 times
+   × mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 4 resumes after selection ABA 58ms
+     → expected "spy" to be called 3 times, but got 4 times
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 1 resumes after selection ABA
+AssertionError: expected "spy" to be called +0 times, but got 1 times
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:131:24
+    129|     fireEvent.change(screen.getByLabelText('检查的事实镜头素材'), { ta…
+    130|     await act(async () => { held.resolve(undefined); await held.promis…
+    131|     expect(props.json).toHaveBeenCalledTimes(dispatched);
+       |                        ^
+    132|     expect(screen.queryByText('saved-graph')).toBeNull();
+    133|     expect(screen.queryByText('saved-timeline')).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 2 resumes after selection ABA
+AssertionError: expected "spy" to be called 2 times, but got 3 times
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:131:24
+    129|     fireEvent.change(screen.getByLabelText('检查的事实镜头素材'), { ta…
+    130|     await act(async () => { held.resolve(undefined); await held.promis…
+    131|     expect(props.json).toHaveBeenCalledTimes(dispatched);
+       |                        ^
+    132|     expect(screen.queryByText('saved-graph')).toBeNull();
+    133|     expect(screen.queryByText('saved-timeline')).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/storyboard/StoryFactDownstreamImpact.test.tsx > mounted read-only fact downstream inspection > does not dispatch obsolete reads when host gate 4 resumes after selection ABA
+AssertionError: expected "spy" to be called 3 times, but got 4 times
+ ❯ src/storyboard/StoryFactDownstreamImpact.test.tsx:131:24
+    129|     fireEvent.change(screen.getByLabelText('检查的事实镜头素材'), { ta…
+    130|     await act(async () => { held.resolve(undefined); await held.promis…
+    131|     expect(props.json).toHaveBeenCalledTimes(dispatched);
+       |                        ^
+    132|     expect(screen.queryByText('saved-graph')).toBeNull();
+    133|     expect(screen.queryByText('saved-timeline')).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 20 passed (23)
+   Start at  10:07:36
+   Duration  1.27s (transform 94ms, setup 15ms, collect 159ms, tests 562ms, environment 279ms, prepare 55ms)
+

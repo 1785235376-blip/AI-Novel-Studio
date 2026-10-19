@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-image-independent/frontend
+
+ ✓ src/experimental/comicGeometry.test.ts (10 tests) 7ms
+ ✓ src/creative/studioComicImageClient.test.ts (11 tests) 10ms
+ ✓ src/experimental/ComicGeometryEditor.test.tsx (10 tests) 233ms
+ ✓ src/creative/studioComicImageContract.test.ts (32 tests) 44ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1773ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1772ms
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 1977ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 365ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 930ms
+
+ Test Files  6 passed (6)
+      Tests  83 passed (83)
+   Start at  10:08:26
+   Duration  4.07s (transform 1.90s, setup 93ms, collect 3.46s, tests 4.04s, environment 1.35s, prepare 572ms)
+
