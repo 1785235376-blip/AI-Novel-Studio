@@ -10,6 +10,30 @@ const catalog = { screenplays: [source], characters: [], assets: [], presets: { 
 const reply = (value: unknown) => new Response(JSON.stringify(value));
 const client = (id = 'novel') => experimentalClient(id, { sessionToken: 'trusted' });
 const field = (axis: '水平' | '垂直') => screen.getByLabelText(`格框 1 裁切${axis}位置 (%)`) as HTMLInputElement;
+it('uses thumbnail keyboard framing through original undo and versioned save without generation or approval', async () => {
+  const art = { id: 'art', filename: 'art.png', version: 2, approved: true, manual_review_available: false };
+  const document = comicPreset(source, 'PAGE', preset); Object.assign(document.panels[0], { fit: 'COVER', asset_id: art.id, expected_asset_version: art.version });
+  let row = { id: 'image-framing-layout', version: 1, status: 'DRAFT', stale: false, document };
+  const bytes = Buffer.alloc(33); Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes); bytes.writeUInt32BE(13,8); bytes.write('IHDR',12); bytes.writeUInt32BE(800,16); bytes.writeUInt32BE(100,20);
+  const fetch = vi.fn(async (url: string, init: RequestInit) => {
+    if (url.endsWith('/catalog')) return reply({ ...catalog, assets: [art] });
+    if (url.endsWith('/images/art')) return new Response(new Uint8Array(bytes), { headers: { 'Content-Type': 'image/png' } });
+    if (init.method === 'PUT') { const { expected_version, ...saved } = JSON.parse(String(init.body)); row = { ...row, version: expected_version + 1, document: saved }; return reply(row); }
+    return reply({ items: [row] });
+  }); vi.stubGlobal('fetch', fetch); render(<ComicLayoutsPanel client={client()} />);
+  fireEvent.click(await screen.findByRole('button', { name: /打开布局/ }));
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/images/art'))).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: '读取并核对取景图片' })); const image = await screen.findByRole('img', { name: '当前格框图片取景示意' });
+  Object.defineProperties(image, { naturalWidth: { configurable: true, value: 800 }, naturalHeight: { configurable: true, value: 100 } }); fireEvent.load(image);
+  fireEvent.keyDown(screen.getByRole('button', { name: '拖动格内图片取景' }), { key: 'ArrowRight', shiftKey: true });
+  expect(field('水平').value).toBe('40'); expect(field('垂直').value).toBe('50'); expect(fetch.mock.calls.every(([,init]) => init.method === 'GET')).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '撤销本地排版' })); expect(field('水平').value).toBe('50');
+  fireEvent.click(screen.getByRole('button', { name: '重做本地排版' })); expect(field('水平').value).toBe('40');
+  fireEvent.click(screen.getByRole('button', { name: '保存漫画布局草稿' })); await waitFor(() => expect(row.version).toBe(2));
+  const saved = JSON.parse(String(fetch.mock.calls.find(([,init]) => init.method === 'PUT')![1].body));
+  expect(saved).toMatchObject({ expected_version: 1, panels: [{ asset_id: 'art', expected_asset_version: 2, cover_x_percent: 40 }] }); expect(saved.panels[0]).not.toHaveProperty('cover_y_percent');
+  expect(fetch.mock.calls.some(([url]) => /approve|generate|execute/.test(url))).toBe(false);
+});
 function harness(fit: 'CONTAIN' | 'COVER' = 'COVER', intercept?: (url: string, init: RequestInit) => Response | Promise<Response> | undefined) {
   const document = comicPreset(source, 'PAGE', preset); document.panels[0].fit = fit;
   let row = { id: 'layout', version: 1, status: 'DRAFT', stale: false, document, history_versions: [] as number[] };

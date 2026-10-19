@@ -1,4 +1,5 @@
 import { ComicGeometryEditor } from './ComicGeometryEditor';
+import { ComicImageFramingEditor } from './ComicImageFramingEditor';
 import { ComicOraImportPanel } from './ComicOraImportPanel';
 import { ComicLayersPanel } from './ComicLayersPanel';
 import { comicLayersError, reconcileComicLayers } from './comicLayers';
@@ -231,6 +232,8 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
             <Field label={`格框 ${index + 1} 裁切垂直位置 (%)`}><input type="number" min={0} max={100} step={1} disabled={panel.fit !== 'COVER'} value={panel.cover_y_percent ?? 50} onChange={e => { const value = e.target.valueAsNumber; if (Number.isInteger(value) && value >= 0 && value <= 100) patchPanel(panel.id, { cover_y_percent: value }); }} /></Field>
           </div>
           <p>裁切位置：0 靠左 / 靠上，50 居中，100 靠右 / 靠下；仅调整超出格框部分的裁切范围，不识别画面主体。完整显示时保留位置但不生效。保存后须重新预检并核对像素。</p>
+          {panel.fit === 'COVER' && panel.asset_id && <ComicImageFramingEditor panel={panel} asset={catalog.data!.assets.find(asset => asset.id === panel.asset_id)} api={api}
+            disabled={busy || sourceChanged || !!row && !savedCurrent} getRevision={() => editorGeneration.current} isCurrent={() => currentEditor() && !composing.current && !sourceChanged && !savedStale} onApply={patch => patchPanel(panel.id, patch)} />}
           <RectFields label={`格框 ${index + 1}`} value={panel} onChange={patch => patchPanel(panel.id, patch)} />
             <Field label={`格框 ${index + 1} 关联人物`}><select multiple value={panel.character_ids} onChange={e => patchPanel(panel.id, { character_ids: Array.from(e.target.selectedOptions, o => o.value), appearance_references: (panel.appearance_references || []).filter(ref => Array.from(e.target.selectedOptions, o => o.value).includes(ref.character_id)) })}>{catalog.data!.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
             <p>场景引用：{source?.shots.find(shot => shot.id === panel.shot_id)?.scene_id || '未提供'}。镜头与场景版本沿用原剧本。</p>
