@@ -272,27 +272,63 @@ def playwright_chromium_present(frontend: Path) -> bool:
     return any(root.exists() and any(root.glob("chromium-*")) for root in roots)
 
 
-def owned_processes(run_id: str) -> list[str]:
-    """Return command lines of leaked processes that belong to this run only."""
+def _process_table() -> dict[int, tuple[int, str]]:
+    """Return {pid: (parent_pid, command_line)} for the current host."""
     if os.name == "nt":
-        script = (
-            "Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | "
-            "Where-Object { $_.CommandLine -and $_.CommandLine -like '*" + run_id + "*' } | "
-            "ForEach-Object { \"$($_.ProcessId) $($_.CommandLine)\" }"
-        )
+        script = ("Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | "
+                  "Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress")
         try:
             result = subprocess.run(["powershell", "-NoProfile", "-Command", script],
                                     capture_output=True, text=True, encoding="utf-8",
-                                    errors="replace", timeout=90)
-        except (OSError, subprocess.SubprocessError):
-            return []
-        return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+                                    errors="replace", timeout=120)
+            payload = json.loads(result.stdout or "null")
+        except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
+            return {}
+        rows = payload if isinstance(payload, list) else [payload] if payload else []
+        table: dict[int, tuple[int, str]] = {}
+        for row in rows:
+            try:
+                table[int(row["ProcessId"])] = (int(row.get("ParentProcessId") or 0),
+                                                str(row.get("CommandLine") or ""))
+            except (KeyError, TypeError, ValueError):
+                continue
+        return table
     try:
-        result = subprocess.run(["ps", "-eo", "pid,args"], capture_output=True, text=True,
+        result = subprocess.run(["ps", "-eo", "pid,ppid,args"], capture_output=True, text=True,
                                 encoding="utf-8", errors="replace", timeout=60)
     except (OSError, subprocess.SubprocessError):
+        return {}
+    table = {}
+    for line in result.stdout.splitlines()[1:]:
+        parts = line.strip().split(None, 2)
+        if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit():
+            table[int(parts[0])] = (int(parts[1]), parts[2])
+    return table
+
+
+def owned_processes(run_id: str) -> list[str]:
+    """Return leaked command lines owned by this run.
+
+    The runner itself, its ancestors and its own short-lived probe helpers
+    naturally contain the run id in their command lines; they are not leaks.
+    """
+    table = _process_table()
+    if not table:
         return []
-    return [line.strip() for line in result.stdout.splitlines() if run_id in line and "ps -eo" not in line]
+    excluded: set[int] = set()
+    pid = os.getpid()
+    while pid and pid not in excluded and pid in table:
+        excluded.add(pid)
+        pid = table[pid][0]
+    changed = True
+    while changed:
+        changed = False
+        for candidate, (parent, _command) in table.items():
+            if candidate not in excluded and parent in excluded:
+                excluded.add(candidate)
+                changed = True
+    return [f"{candidate} {command}" for candidate, (_parent, command) in sorted(table.items())
+            if candidate not in excluded and run_id in command and command.strip()]
 
 
 # --------------------------------------------------------------------------- #
