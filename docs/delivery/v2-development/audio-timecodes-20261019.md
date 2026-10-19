@@ -20,3 +20,17 @@ Verification:
 Browser evidence and temporary reproducible harness are retained outside the checkout at `D:/codex数据/2026-10-19/task-10/audio-timecode-evidence/`. `browser-results.json` records fixture scope, requests and geometry per viewport. The initial browser-fixture selector failure is retained separately; correcting that selector required no product change. This is frontend unit and mounted-browser evidence, **not full E2E, native codec, real-model, acoustic-quality, live authorization or full V2 acceptance**.
 
 Normal sandbox commands failed before process creation with `helper_unknown_error: setup refresh had errors`; the formal `require_escalated` reviewer path succeeded. No sandbox/OS/security setting changed. Initial checkout failed on archived screenshot path lengths and Git removed it; command-local `-c core.longpaths=true` succeeded. Graphflow skill was read, but `graphflow_context` was not exposed; no result or savings is claimed. Existing local dependencies were reused without installation. No model/paid API, push or release operation occurred.
+
+## P2 follow-up: retire stale Apply callbacks
+
+Independent review of `ec80560e3f88be76c05363cea4e07932b9e51cc3` found that retaining an old Apply callback could replace a newer range or apply an old interval after changing sources. The original red evidence remains at `D:/codex数据/2026-10-19/task-5/parallel-media-cross-review/audio/review-handoff.json`. The exact independent `audio3` counterexample was copied into a focused regression and reproduced before fixing: `200–800` became `125–625`, and source B also received the old range. No HTTP writes occurred. Local reproduction receipt: `D:/codex数据/2026-10-19/task-10/audio-timecode-evidence/p2-before.json` (1 failed, 2 skipped).
+
+The helper now grants Apply to its current committed render only. Layout-effect cleanup retires callbacks on rerender/unmount, and invoking the current valid callback consumes that grant before forwarding to the original controller. This fences source/range keyed remounts, scratch-input changes, disabled/owner changes and ABA renders while preserving current valid input and StrictMode setup. No original controller, permission, persistence or UI geometry changes were needed.
+
+Bounded follow-up verification only:
+
+- `studioAudioTrimTimecodes.review.test.tsx`: the three original independent probes plus three lifecycle/current-input checks **6 passed**, recorded in `p2-after.json`.
+- One additional same-event-batch source/range check **1 passed, 6 skipped**, recorded in `p2-batch-boundary.json`.
+- `git diff --check`: passed. The original 90-test run, TS/build and browser suite were not rerun for this repair.
+
+The first follow-up run used an unsupported Vitest matcher in three new assertions; its failure receipt is preserved as `p2-after-matcher-failure.json`. Replacing it with the existing equivalent call-count and argument assertions produced the passing run. All follow-up evidence is local synthetic component/controller validation, not independent repair acceptance or full E2E. Original implementation commit and red evidence are preserved.
