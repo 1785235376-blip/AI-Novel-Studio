@@ -553,3 +553,34 @@ def test_caller_exception_preserved_and_all_native_handles_closed(asset, native)
             raise RuntimeError('synthetic caller cancellation')
     assert native['reads'] == []
     assert native['active'] == set()
+
+
+def test_guard_revoked_after_real_final_close_prevents_return(asset, native, monkeypatch):
+    close = native['api'].close
+    state = {'revoked': False, 'real_final_close_succeeded': False}
+    def closing(handle):
+        result = close(handle)  # Real CloseHandle, with owned-handle tracking.
+        main = next((item['handle'] for item in native['opens']
+                     if item['access'] == 0x80000000), None)
+        if result and handle == main:
+            assert not native['active']
+            state['real_final_close_succeeded'] = True
+            state['revoked'] = True
+        return result
+    def guard():
+        if state['revoked']:
+            raise PermissionError('authority revoked after native close')
+    monkeypatch.setattr(native['api'], 'close', closing)
+    options = arguments(asset); options['guard'] = guard
+    rejected, returned_bytes = False, None
+    try:
+        data = reader.read_windows_bounded_asset(asset[1], **options)
+    except PermissionError as error:
+        assert str(error) == 'authority revoked after native close'
+        rejected = True
+    else:
+        returned_bytes = len(data)
+    assert state == {'revoked': True, 'real_final_close_succeeded': True}
+    assert not native['active']
+    assert rejected, f'returned {returned_bytes} verified bytes after real final close revoked authority'
+    assert returned_bytes is None

@@ -261,8 +261,9 @@ class WindowsAssetReadLease:
         self.verify_current()
         if total != self._size or not hmac.compare_digest(checksum.hexdigest(), self._digest):
             _fail(INVALID, self._guard)
+        data = b"".join(parts)
         self._guard()
-        return b"".join(parts)
+        return data
 
     def _close(self, *, suppress=False):
         handle, self._handle = self._handle, None
@@ -300,6 +301,8 @@ def open_windows_bounded_asset(path, *, trusted_root, expected_size, max_bytes,
 
 
 def read_windows_bounded_asset(path, **kwargs):
-    """Convenience entry point returning only fully verified bounded bytes."""
+    """Return verified bytes only after native close and the final authority fence."""
     with open_windows_bounded_asset(path, **kwargs) as lease:
-        return lease.read_all()
+        data = lease.read_all()
+    kwargs["guard"]()
+    return data
