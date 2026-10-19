@@ -1,5 +1,6 @@
 import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
+import { checkedClipLinks } from './studioTimelineClipLinks';
 
 export type StudioTimelineSource = { id: string; kind: 'ASSET'; asset_kind: 'image' | 'video' | 'audio'; version: number; digest: string };
 export type StudioTimelineColorAdjustment = { brightness: number; contrast: number; saturation: number };
@@ -12,8 +13,9 @@ export type StudioTimelineTrack = { id: string; kind: 'VIDEO' | 'AUDIO'; order: 
   role?: 'PRIMARY' | 'OVERLAY' | 'DIALOGUE' | 'MUSIC' | 'EFFECTS'; locked?: boolean; clips: StudioTimelineClip[] };
 export type StudioTimelineCaption = { start_ms: number; end_ms: number; text: string };
 export type StudioTimelineCaptionStyle = { font_size: number; primary_color: string; alignment: 'TOP_CENTER' | 'BOTTOM_CENTER'; outline_width: number };
-export type StudioVideoTimeline = { schema_version?: 2; media_kind?: never; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[]; caption_style?: StudioTimelineCaptionStyle };
-export type StudioAudioTimeline = { schema_version: 3; media_kind: 'AUDIO'; duration_ms: number; tracks: StudioTimelineTrack[]; width?: never; height?: never; fps?: never; captions?: never; caption_style?: never };
+export type StudioTimelineClipLink = { video_clip_id: string; audio_clip_id: string; offset_ms: number };
+export type StudioVideoTimeline = { schema_version?: 2; media_kind?: never; duration_ms: number; width: number; height: number; fps: number; tracks: StudioTimelineTrack[]; captions: StudioTimelineCaption[]; caption_style?: StudioTimelineCaptionStyle; clip_links?: StudioTimelineClipLink[] };
+export type StudioAudioTimeline = { schema_version: 3; media_kind: 'AUDIO'; duration_ms: number; tracks: StudioTimelineTrack[]; width?: never; height?: never; fps?: never; captions?: never; caption_style?: never; clip_links?: never };
 export type StudioTimeline = StudioVideoTimeline | StudioAudioTimeline;
 export const isAudioTimeline = (timeline: StudioTimeline): timeline is StudioAudioTimeline => timeline.schema_version === 3;
 export type StudioTimelineDraft = { title: string; timeline: StudioTimeline };
@@ -72,7 +74,7 @@ export function checkedTimelineCaptionStyle(value: unknown): StudioTimelineCapti
 /** Pure closed DTO validation for the form; the original server remains authoritative. */
 export function checkedTimeline(value: unknown): StudioTimeline {
   const raw = object(value), audioOnly = raw.schema_version === 3;
-  const row = object(value, audioOnly ? ['schema_version', 'media_kind', 'duration_ms', 'tracks'] : ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions', ...(raw.schema_version === 2 ? ['caption_style'] : [])]);
+  const row = object(value, audioOnly ? ['schema_version', 'media_kind', 'duration_ms', 'tracks'] : ['schema_version', 'duration_ms', 'width', 'height', 'fps', 'tracks', 'captions', ...(raw.schema_version === 2 ? ['caption_style', 'clip_links'] : [])]);
   const extended = row.schema_version === 2 || audioOnly;
   if ('schema_version' in row && !extended || audioOnly && row.media_kind !== 'AUDIO') throw new Error('时间线版本或媒体类型无效；音频时间线必须明确使用版本 3 与 AUDIO。');
   const duration = integer(row.duration_ms, 1, TIMELINE_LIMITS.duration);
@@ -178,7 +180,8 @@ export function checkedTimeline(value: unknown): StudioTimeline {
     return { start_ms: start, end_ms: end, text };
   }).sort((left, right) => left.start_ms - right.start_ms || left.end_ms - right.end_ms || compareText(left.text, right.text));
   return { ...(extended ? { schema_version: 2 as const } : {}), duration_ms: duration, width: width!, height: height!, fps: fps!, tracks, captions,
-    ...('caption_style' in row ? { caption_style: checkedTimelineCaptionStyle(row.caption_style) } : {}) };
+    ...('caption_style' in row ? { caption_style: checkedTimelineCaptionStyle(row.caption_style) } : {}),
+    ...('clip_links' in row ? { clip_links: checkedClipLinks(row.clip_links, tracks) } : {}) };
 }
 
 export function checkedTimelineDraft(value: StudioTimelineDraft): StudioTimelineDraft {

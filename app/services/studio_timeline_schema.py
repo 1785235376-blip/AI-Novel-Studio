@@ -19,7 +19,7 @@ def normalize_timeline_v2(value, *, audio_only=False):
         if row["media_kind"] != "AUDIO":
             raise ValueError("STUDIO_TIMELINE_AUDIO_KIND_REQUIRED")
     else:
-        row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions", "caption_style"),
+        row = _object(value, ("schema_version", "duration_ms", "width", "height", "fps", "tracks", "captions", "caption_style", "clip_links"),
                       ("schema_version", "duration_ms", "tracks"))
     if type(row["schema_version"]) is not int or row["schema_version"] != (3 if audio_only else 2):
         raise ValueError("STUDIO_TIMELINE_SCHEMA_INVALID")
@@ -201,4 +201,7 @@ def normalize_timeline_v2(value, *, audio_only=False):
     if "caption_style" in row:
         from .studio_timeline_caption_style import normalize_caption_style
         result["caption_style"] = normalize_caption_style(row["caption_style"])
+    if "clip_links" in row:
+        from .studio_timeline_links import normalize_clip_links
+        result["clip_links"] = normalize_clip_links(row["clip_links"], result["tracks"])
     return result

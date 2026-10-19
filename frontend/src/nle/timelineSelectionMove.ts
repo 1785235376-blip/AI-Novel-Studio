@@ -1,5 +1,6 @@
 import { checkedTimeline, timelineClipDuration } from '../creative/studioTimelineTypes';
 import { NLE_OWNER_LIMITS, type NleOwnerOperation } from './timelineOpsTypes';
+import { clipLink } from '../creative/studioTimelineClipLinks';
 
 export type SelectionMoveOperation = Extract<NleOwnerOperation, { op: 'clip.move' }>;
 
@@ -11,7 +12,13 @@ export function selectionMoveOperations(timeline: unknown, clipIds: readonly str
   }
   if (!Number.isSafeInteger(offsetMs)) throw new Error('整体移动需要整数毫秒增量，可为负。');
   const source = checkedTimeline(timeline);
-  const operations = clipIds.map(id => {
+  // Expand each pair once. Selecting both members never applies the delta twice.
+  const expanded = new Set(clipIds);
+  for (const id of clipIds) {
+    const pair = clipLink(source, id);
+    if (pair) { expanded.add(pair.video_clip_id); expanded.add(pair.audio_clip_id); }
+  }
+  const operations = [...expanded].map(id => {
     const track = source.tracks.find(row => row.clips.some(clip => clip.id === id));
     const clip = track?.clips.find(row => row.id === id);
     if (!track || !clip) throw new Error('找不到所选原片段，请重新选择。');

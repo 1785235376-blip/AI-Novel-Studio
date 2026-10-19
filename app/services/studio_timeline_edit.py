@@ -6,6 +6,7 @@ import re
 import json
 
 from .studio_timeline_render import normalize_studio_timeline
+from .studio_timeline_links import clip_link, require_clip_link_preservation
 
 
 def _fields(value, required, optional=()):
@@ -46,6 +47,7 @@ def require_timeline_lock_preservation(current, replacement):
     """
     before = normalize_studio_timeline(current)
     after = normalize_studio_timeline(replacement)
+    require_clip_link_preservation(before, after)
     locked = [row for row in before["tracks"] if row.get("locked") is True]
     if not locked:
         return after
@@ -99,7 +101,34 @@ def apply_timeline_edits(timeline, operations):
         operation = raw.get("op")
         if not isinstance(operation, str):
             raise ValueError("STUDIO_TIMELINE_EDIT_OPERATION_UNSUPPORTED")
-        if operation == "canvas.update":
+        if clip_link(result, raw.get('clip_id')) is not None and (
+                operation in {'clip.trim', 'clip.split', 'clip.slip', 'clip.remove', 'clip.duplicate'}
+                or operation == 'clip.update' and isinstance(raw.get('changes'), dict)
+                and set(raw['changes']) & {'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'speed_num', 'speed_den'}):
+            raise ValueError('STUDIO_TIMELINE_LINK_EDIT_UNSUPPORTED_UNLINK_FIRST')
+        if operation == 'clip.link':
+            body = _fields(raw, ('op', 'video_clip_id', 'audio_clip_id'))
+            if result.get('schema_version') != 2:
+                raise ValueError('STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED')
+            video_track, video = locate(body['video_clip_id'])
+            audio_track, audio = locate(body['audio_clip_id'])
+            editable(video_track); editable(audio_track)
+            if (video_track['kind'] != 'VIDEO' or audio_track['kind'] != 'AUDIO'
+                    or clip_link(result, video['id']) or clip_link(result, audio['id'])):
+                raise ValueError('STUDIO_TIMELINE_LINK_PAIR_INVALID')
+            result.setdefault('clip_links', []).append({'video_clip_id': video['id'], 'audio_clip_id': audio['id'],
+                                                       'offset_ms': audio['start_ms'] - video['start_ms']})
+        elif operation == 'clip.unlink':
+            body = _fields(raw, ('op', 'clip_id'))
+            pair = clip_link(result, _id(body['clip_id']))
+            if pair is None:
+                raise ValueError('STUDIO_TIMELINE_LINK_NOT_FOUND')
+            for identity in (pair['video_clip_id'], pair['audio_clip_id']):
+                editable(locate(identity)[0])
+            result['clip_links'].remove(pair)
+            if not result['clip_links']:
+                result.pop('clip_links')
+        elif operation == "canvas.update":
             body = _fields(raw, ("op", "changes"))
             changes = _fields(body["changes"], (), ("duration_ms", "width", "height", "fps", "schema_version", "caption_style"))
             if not changes:
@@ -209,8 +238,15 @@ def apply_timeline_edits(timeline, operations):
             editable(row); editable(target)
             if target["kind"] != row["kind"]:
                 raise ValueError("STUDIO_TIMELINE_EDIT_MOVE_KIND_INVALID")
+            start = _integer(body['start_ms'])
+            pair = clip_link(result, clip['id'])
+            if pair:
+                partner_id = pair['audio_clip_id'] if pair['video_clip_id'] == clip['id'] else pair['video_clip_id']
+                partner_track, partner = locate(partner_id)
+                editable(partner_track)
+                partner['start_ms'] += start - clip['start_ms']
             row["clips"].remove(clip)
-            clip["start_ms"] = _integer(body["start_ms"])
+            clip["start_ms"] = start
             target["clips"].append(clip)
         elif operation == "clip.duplicate":
             body = _fields(raw, ("op", "clip_id", "new_clip_id", "track_id", "start_ms"))
