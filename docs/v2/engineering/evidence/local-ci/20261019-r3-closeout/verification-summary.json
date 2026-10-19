@@ -36,12 +36,23 @@
     "label": "closeout-evidence-index",
     "postgres": false,
     "exit_code": 0,
-    "summary": "evidence index check PASS",
+    "summary": "4 receipts (2 verification-summary.json + 2 LOCAL_CI_RESULTS.json), 35 declared paths, 0 missing, 0 out-of-root, 11 XML checked, 0 invalid XML, PASS",
     "status": "PASS",
     "junit": null,
     "console": "evidence-index-console.log",
     "receipt": "evidence-index.json",
-    "head": "5e27881967fd4dde2dcd7b6ab11c35f7ec1d12b0"
+    "head": "1a042b284a640740f84011e2b7f1f5e149e7b9b8",
+    "index_stats": {
+      "receipt_files_scanned": 4,
+      "receipt_types": {
+        "verification-summary.json": 2,
+        "LOCAL_CI_RESULTS.json": 2
+      },
+      "checked_paths": 35,
+      "xml_checked": 11,
+      "status": "PASS"
+    },
+    "status_detail": "Final-closeout checker now scans both verification-summary.json and LOCAL_CI_RESULTS.json. The earlier value ('evidence index check PASS', execution SHA 5e278819) came from a checker that only walked verification-summary.json files; it is superseded by this measured result."
   },
   {
     "label": "closeout-skip-audit-historical",

@@ -1,0 +1,20 @@
+{
+  "root": "docs/v2/engineering/evidence/local-ci/20261019-r3-closeout",
+  "resolution_bases": {
+    "verification-summary.json": "receipt directory",
+    "LOCAL_CI_RESULTS.json": "repository root"
+  },
+  "receipt_files_scanned": 1,
+  "receipts": 1,
+  "receipt_types": {
+    "verification-summary.json": 1,
+    "LOCAL_CI_RESULTS.json": 0
+  },
+  "checked_paths": 11,
+  "missing": [],
+  "out_of_root": [],
+  "xml_invalid": [],
+  "xml_checked": 3,
+  "notes": [],
+  "status": "PASS"
+}

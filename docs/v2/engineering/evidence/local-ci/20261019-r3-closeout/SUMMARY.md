@@ -77,7 +77,7 @@ trailing parameter) and must **not** pair with `[file]` (no trailing parameter).
 | Real-PG pool regression file, fresh database | **6 passed** (contract metrics above recorded in console log) |
 | Same file, File profile | **6 skipped** - every case skipped by `postgres_backend_only`; exit 0 recorded separately, **not** a pool PASS |
 | Unit/regression suite (audit, connection bounds, evidence index, runner output, redaction) | **29 passed** |
-| Evidence index check over committed evidence | **PASS** - 8 declared paths exist, 0 missing, 0 invalid XML |
+| Evidence index check over committed evidence | **PASS** - 4 receipts (2 verification-summary.json + 2 LOCAL_CI_RESULTS.json), 35 declared paths, 0 missing, 0 out-of-root, 11 XML checked, 0 invalid XML |
 | Historical LOCAL-02 JUnit re-audit | **467/467** pairs, 0 PostgreSQL-only, 0 unknown skips |
 
 ## 5. Evidence corrections from round 3
@@ -93,6 +93,15 @@ trailing parameter) and must **not** pair with `[file]` (no trailing parameter).
 - New `scripts/check_local_ci_evidence_index.py` (with regression test
   `tests/test_local_ci_evidence_index.py`) fails when a receipt declares a file that does not
   exist; it is run in this closeout (`evidence-index.json`).
+
+- **Final closeout patch (execution SHA `1a042b28`)**: the checker previously only walked
+  `verification-summary.json` files, so `LOCAL_CI_RESULTS.json` paths were not checked. It now parses
+  both receipt formats explicitly (summary rows resolved against the receipt directory; run-receipt
+  steps resolved against the repository root), rejects relative/absolute/symlink paths escaping the
+  evidence root, and parses declared XML. Measured result on the committed evidence:
+  **4 receipts (2 + 2), 35 declared paths, 0 missing, 0 out-of-root, 11 XML checked, 0 invalid, PASS**.
+  The earlier "8 declared paths" closeout number came from the verification-summary-only checker and is
+  superseded; see `evidence-index.json` and the per-directory reports `index-check-*.json`.
 
 ## 6. Diagnostics provenance and limitations
 
@@ -134,6 +143,7 @@ post-fix watchdog thread-dump sample and re-read connection counts. Counter defi
 
 | File | Bytes | SHA256 |
 | --- | ---: | --- |
+| console-final-closeout-unit-tests.log | 112 | a4e13584391de06326374aa17f68df30d175bc401456c62a63c4d5ac09882b5a |
 | console-pool-regression-file-closeout.log | 274 | 70d66338cb09e65875d87d488d6ce05fc6879a7180c8ebe6a1d52a72d883ce21 |
 | console-pool-regression-pg-closeout.log | 18,112 | 38ead846e7798099a46e5b3a13b4acd201f86c79eab1f3a3d30e5d810bbd01e8 |
 | console-unit-tests.log | 101 | d601df29d4b25f65f611b2f7a385c1d16c3696bf9ba5644948fcac62c8fea678 |
@@ -145,15 +155,19 @@ post-fix watchdog thread-dump sample and re-read connection counts. Counter defi
 | diagnostics/metrics-unpooled-replay-d24.json | 276 | 777620219e38ae8eb085cfdc7a00f63cb9dc50e54e936026e39a53f322fd046c |
 | diagnostics/README.md | 4,833 | 3afc671c362bf804a19120a8ca5961e5651c0340fb1ab487f95af2dcdfb4215b |
 | diagnostics/thread-dumps-postfix-sample.txt | 1,172 | 2150688a74ad1f3e1e71f747096a262c029959b31d4df9a621d6538f66ddd51b |
-| evidence-index-console.log | 182 | a3439fc49dd30b7374b674d252bd054938596324d952bfc6cc3ce22c93c998f2 |
-| evidence-index.json | 173 | f9afce834dd865c2cbac58c9f7186ed64d6db2d95b00ab2fd08ea6b1cd2289d0 |
+| evidence-index-console.log | 482 | 49578505371a7506686e04918c055026f1798d3ef107cb75d494d2efa33ba51d |
+| evidence-index.json | 462 | e675a89bb3f7ddb2a4631fa8d90e62ada023a4a9eaed74783107d60fe8c18c52 |
 | historical-pool-regression-file.log | 261 | 92c71518c06d1c6cd4a717fa04b89f8f64fbbddd786cbd44c194bcb7103ec6cd |
 | historical-pool-regression-file.xml | 2,318 | bb1a36d5676924ec5255139bfa14c549d115f241e6287260927a926d6dbf5cfa |
+| index-check-closeout.json | 482 | c35e9f9f9616e97a3c319459e5f6a5abde154ae3a4d5f73b2b3ab8107ade04b8 |
+| index-check-r1-final.json | 475 | 5df0032733b1fa4ddc4c5bda1ad1a2647f301fc47c545c61a8e293315dbb188e |
+| index-check-r2.json | 472 | b7977a198beb0dcbd10391c3bef2b5ddd00791bda13373230a97d57ab78ba8f2 |
+| index-check-r3-d24.json | 476 | 4021b681c528d8dd2af225052ed7f2f1a6781cbc0ba2f75fff9aac7f0c176262 |
 | junit-pool-regression-file-closeout.xml | 2,743 | 5335eb6e0832e78f62e9da05b843fc7eb464b91376c8b69b02e0cf669177a256 |
 | junit-pool-regression-pg-closeout.xml | 1,101 | f719cebc29f7432a1b574fbef83b98ce6113f9a671582013a253756fab182ba3 |
 | skip-audit-historical-console.log | 823 | 3ebb7f2372608f5829ca095478298285ef6b5c5205115811bc3cdef922f5927d |
 | skip-audit-historical.json | 5,570 | 0803d94c45782a92d35f9cdd0cb5d8eaa9014027f393721af86928e7c5e9bdd3 |
-| verification-summary.json | 2,213 | 43517208b0b4a943597c0740925a54583766b8e05e5eba177b7c0812f9e74c2c |
+| verification-summary.json | 2,881 | 141f93ed71a71df212762bb90b415c595114985ad2e1824915cd438273732e80 |
 
 XML validity after redaction:
 
@@ -165,3 +179,33 @@ XML validity after redaction:
 
 The closeout evidence directory is validated by `scripts/check_local_ci_evidence_index.py`;
 `verification-summary.json` here points only at files that exist in this directory.
+
+
+## 10. Final closeout patch (2026-10-19 - evidence index checker coverage)
+
+Execution SHA `1a042b28` (delivery commit adds docs/evidence only). The checker was fixed to validate
+**all** promised receipt types instead of only `verification-summary.json`:
+
+- `verification-summary.json`: JSON list (or object) rows; `junit`/`console`/`log`/`receipt` paths are
+  resolved against the receipt directory.
+- `LOCAL_CI_RESULTS.json` (`poemseed-local-ci/1`): `steps[*].log`, `steps[*].checks.junit` (only when it is a
+  string; on LOCAL-04 `checks.junit` is a counts object) and `steps[*].checks.commands.*.log` are resolved
+  against the repository root.
+- Non-empty paths must be relative, resolve inside the evidence root (rejects `../`, absolute paths and
+  symlink escapes), exist on disk, and parse as XML when `.xml`. Optional `null`/empty values are ignored.
+- XML scan covers declared files plus all archived XML.
+
+Measured on the committed evidence root:
+
+| Check | Receipts | Declared paths | Missing | Out-of-root | XML checked | Status |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Full evidence root | 4 (2 + 2) | 35 | 0 | 0 | 11 | PASS |
+| `20261019-r3-d24/` | 1 | 8 | 0 | 0 | 6 | PASS |
+| `20261019-r3-closeout/` | 1 | 11 | 0 | 0 | 3 | PASS |
+| `20261019-r2/` (dir view) | 1 | 16 | 0 | 0 | 5 | PASS |
+| `20261019-final/` (dir view) | 1 | 16 | 0 | 0 | 5 | PASS |
+
+Reports: `evidence-index.json` (full root), `evidence-index-console.log`, `index-check-r3-d24.json`,
+`index-check-closeout.json`, `index-check-r2.json`, `index-check-r1-final.json`. The previous closeout
+statement of "8 declared paths / 2 receipts" was produced by the verification-summary-only checker and is
+superseded by this measured output; no historical test result was changed.

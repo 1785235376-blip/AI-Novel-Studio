@@ -89,6 +89,18 @@ LOCAL-02 的 468 个 skip 已逐项分类：467 个 PostgreSQL 实现契约（PG
 ## 8. Round-3 closeout 证据更正（2026-10-19）
 
 - 旧证据 `20261019-r3-d24/verification-summary.json` 的 `junit`/`console` 已改为指向真实归档文件名（无归档的 console 置 null），原因见该目录 `CORRECTIONS.md`；`pool-regression-file` 由错误的 PASS 更正为 **SKIPPED_NOT_APPLICABLE**（原始恢复：5 skipped / 0 failed / exit 0）。
-- 新增 `scripts/check_local_ci_evidence_index.py` 与回归测试，证据回执声明的文件缺失即失败；closeout 检查 **PASS**（8 路径 / 0 缺失 / XML 全部良构）。
+
+- 新增 `scripts/check_local_ci_evidence_index.py` 与回归测试：证据回执声明的文件缺失/越界/XML 损坏即失败。最终补丁同时检查 `verification-summary.json` 与 `LOCAL_CI_RESULTS.json` 两种回执；实测 **4 份回执（2+2）、35 条声明路径、0 缺失、0 越界、11 个 XML 全部良构、PASS**。此前“8 路径”来自仅扫描 verification-summary 的旧版本，已更正。
+
 - 诊断源码/指标/存活的 post-fix 线程栈样例已归档到 [evidence/local-ci/20261019-r3-closeout/](evidence/local-ci/20261019-r3-closeout/)；**修复前超时线程栈无法恢复**（同一日志路径被后续运行覆盖），限制已在 `diagnostics/README.md` 说明。
 - 本轮 execution SHA `5e278819`；交付提交仅追加文档/证据。
+
+
+## 9. Round-3 Final Closeout（2026-10-19）
+
+- 本轮仅修证据索引检查器：执行 SHA `1a042b28`，交付提交仅追加文档/证据。
+- 检查器现在显式解析两种回执格式并校验：存在性、相对路径、证据根目录边界（拒绝 `../`、绝对路径、符号链接逃逸）、声明的与归档的 XML 良构性；合法历史回执（Round 1 与 Round 2 的 `LOCAL_CI_RESULTS.json`）兼容通过。
+- 实测统计：全证据根 **4 份回执（2 verification-summary + 2 LOCAL_CI_RESULTS）/ 35 路径 / 0 缺失 / 0 越界 / 11 XML / PASS**；分目录报告 `r3-d24`（8 路径/6 XML）、`r3-closeout`（11/3）、`r2`（16/5）、`final`（16/5）均存在且通过。
+- 测试：`tests/test_local_ci_evidence_index.py` 11 passed、1 skipped（Windows 无 symlink 特权）；本轮相关单测共 **39 passed / 1 skipped**。
+- 旧“8 路径/2 份回执”的说法由仅扫描 verification-summary 的旧检查器产生，已在机器回执、SUMMARY 与缺陷表中明确更正；未改动历史测试结果。
+- Round 3 工程质量专项到此结束；D-24 保持已修复，D-20/D-17/完整套件/Linux/宿主 CI 门槛继续保留，V2 仍 NOT RELEASE_READY。
