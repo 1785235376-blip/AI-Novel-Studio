@@ -116,6 +116,23 @@ describe('mounted read-only fact downstream inspection', () => {
     await act(async () => { late.resolve(response('CREATIVE_GRAPH', [{ ...graphItem, id: 'retired-graph' }])); await late.promise; });
     expect(screen.queryByText('retired-graph')).toBeNull(); expect(screen.getByText('saved-graph')).toBeTruthy();
   });
+  it.each(['deselected', 'deselected-ABA', 'asset-B', 'asset-B-ABA'])('rejects a retained selected-A click after selection %s', async transition => {
+    const props = setup();
+    const otherAsset = { ...asset, asset_id: 'asset/2', kind: 'video' as const };
+    props.uses = [{ ...row, assets: [asset, otherAsset] }];
+    render(<StoryFactDownstreamImpact {...props} />); select();
+    const button = screen.getByRole('button', { name: '检查下游使用（只读）' });
+    const reactKey = Object.keys(button).find(key => key.startsWith('__reactProps'))!;
+    const retained = (button as unknown as Record<string, { onClick: () => void }>)[reactKey].onClick;
+    const next = transition.startsWith('asset-B') ? factPathKey(row, otherAsset) : '';
+    fireEvent.change(screen.getByLabelText('检查的事实镜头素材'), { target: { value: next } });
+    if (transition.endsWith('ABA')) select();
+    await act(async () => { retained(); });
+    expect(props.read).not.toHaveBeenCalled();
+    expect(props.json).not.toHaveBeenCalled();
+    expect(screen.queryByText('saved-graph')).toBeNull();
+    select(); inspect(); await screen.findByText('saved-graph');
+  });
   it.each([1, 2, 4])('does not dispatch obsolete reads when host gate %s resumes after selection ABA', async gateNumber => {
     const props = setup(), held = pending(); let gates = 0;
     props.read.mockImplementation(async work => {

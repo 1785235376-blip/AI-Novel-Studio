@@ -110,3 +110,27 @@ Evidence: `/workspace/scratch/20a0022d2b33/fact-downstream-recovered-evidence/`.
 The bounded cross-owner observation and UNKNOWN/empty/truncation limits above
 remain unchanged. This is dispatch/publication lifecycle hardening, not an
 atomic cross-owner snapshot or completion of DIF-02.
+
+### Retained event-handler review
+
+A follow-on review reproduced a separate stale-click entry point: a retained
+selected-A button handler could start a new inspection after selection changed,
+even though in-flight requests were already fenced. Both deselection and its ABA
+return reproduced four obsolete reads (`retained-click-before-fix.log`).
+
+Selection now carries a monotonic epoch in both synchronous lifetime tracking and
+rendered state. The click entry guard and asynchronous request-current predicate
+both reject a retired epoch. Keeping the epoch in state also preserves explicit
+reinspection after repeated same-value selection events; the intermediate test
+failure that caught this is preserved in
+`selection-epoch-same-value-before-fix.log`.
+
+Four retained-click cases now cover deselection, a second formal asset, and both
+ABA returns. They assert zero host-gate calls and zero transport calls from the
+retired handler, followed by a successful current explicit inspection. All three
+deferred-gate regressions remain. The final five focused suites pass 119/119
+(`final-selection-epoch-tests.log`). This changes no visible content or owners.
+Final exact-source TypeScript and UI token checks also pass
+(`final-selection-epoch-types.log`, `final-selection-epoch-tokens.log`). The
+updated `source-sha256.txt` records the final source; the earlier manifest remains
+as `source-sha256-dispatch-only.txt`.

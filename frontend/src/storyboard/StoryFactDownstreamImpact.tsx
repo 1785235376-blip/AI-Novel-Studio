@@ -22,18 +22,20 @@ export function StoryFactDownstreamImpact(props: Props) {
   return <Inspection key={generation} {...props} isCurrent={() => lifetime.current.generation === generation && props.isCurrent()} />;
 }
 function Inspection(props: Props) {
-  const [selection, setSelection] = useState(''), [loading, setLoading] = useState(false);
+  const [selection, setSelection] = useState({ key: '', epoch: 0 }), [loading, setLoading] = useState(false);
   const [observation, setObservation] = useState<Observation | null>(null), [unavailable, setUnavailable] = useState(false);
   const active = useRef<AbortController>(), mounted = useRef(false), latest = useRef(props); latest.current = props;
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; active.current?.abort(); }; }, []);
   const options = props.uses.filter(row => sameTarget(row.target, props.target)).flatMap(row => row.assets.map(asset => ({ row, asset, key: factPathKey(row, asset) })));
-  const selected = options.find(option => option.key === selection);
+  // Retained event handlers must not revive an earlier selection, including ABA.
+  const selectionEpoch = useRef(0), epoch = selection.epoch;
+  const selected = options.find(option => option.key === selection.key);
   const clear = () => { active.current?.abort(); active.current = undefined; setObservation(null); setUnavailable(false); setLoading(false); };
   const inspect = async () => {
-    if (!selected || active.current || !props.enabled || props.busy || !props.isCurrent()) return;
+    if (selectionEpoch.current !== epoch || !selected || active.current || !props.enabled || props.busy || !props.isCurrent()) return;
     const controller = new AbortController(); active.current = controller;
     setObservation(null); setUnavailable(false); setLoading(true);
-    const current = () => mounted.current && active.current === controller && !controller.signal.aborted && latest.current.enabled && latest.current.isCurrent();
+    const current = () => mounted.current && selectionEpoch.current === epoch && active.current === controller && !controller.signal.aborted && latest.current.enabled && latest.current.isCurrent();
     const requireCurrent = () => { if (!current()) throw new Error('上下文已变化'); };
     // The host may defer work until admission completes. Fence dispatch as well
     // as publication so a retired selection cannot start a queued owner read.
@@ -71,7 +73,7 @@ function Inspection(props: Props) {
     <h3>事实 → 镜头 → 正式素材 → 已保存使用方</h3>
     <p>明确选择一个当前镜头素材后检查。每类原使用方最多 25 个文档、200 条引用；超过文档上限时覆盖不可用。只读，不自动重生成。</p>
     <p>这是跨原所有者的有界读取观察，不是原子快照或语义因果证明。Export、成本和未记录依赖仍为 UNKNOWN。</p>
-    <label>检查的事实镜头素材<select value={selection} disabled={!props.enabled || props.busy} onChange={e => { clear(); setSelection(e.target.value); }}>
+    <label>检查的事实镜头素材<select value={selection.key} disabled={!props.enabled || props.busy} onChange={e => { selectionEpoch.current++; clear(); setSelection({ key: e.target.value, epoch: selectionEpoch.current }); }}>
       <option value="">选择一个已核实素材</option>
       {options.map(option => <option key={option.key} value={option.key}>{option.row.fact.id} → {option.row.target.shot_id} → {option.asset.asset_id} v{option.asset.version} ({option.asset.kind})</option>)}
     </select></label>
