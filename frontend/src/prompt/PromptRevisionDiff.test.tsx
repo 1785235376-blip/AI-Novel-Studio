@@ -97,4 +97,75 @@ describe('Prompt revision comparison usability', () => {
     expect(screen.queryByRole('checkbox', { name: '仅显示差异行' })).toBeNull();
     expect(screen.queryByText('不完整正文')).toBeNull();
   });
+
+  it('jumps between sparse changed lines across pages and focuses the actual original row', () => {
+    const lines = Array.from({ length: 305 }, (_, index) => `正文 ${index + 1}`);
+    const changed = [...lines];
+    changed[101] += ' 修改';
+    changed[304] += ' 修改';
+    render(<RevisionDiff {...props(lines.join('\n'), changed.join('\n'))} />);
+    const previous = screen.getByRole('button', { name: '上一差异行' }) as HTMLButtonElement;
+    const next = screen.getByRole('button', { name: '下一差异行' }) as HTMLButtonElement;
+    expect(previous.disabled).toBe(true);
+    fireEvent.click(next);
+    expect(screen.getByText(/第 2 \/ 4 页/)).toBeTruthy();
+    expect(document.activeElement?.getAttribute('aria-current')).toBe('location');
+    expect(within(document.activeElement as HTMLElement).getByText('102')).toBeTruthy();
+    expect(screen.getByText(/已定位第 1 \/ 2 个差异行（原文第 102 行）/)).toBeTruthy();
+    fireEvent.click(next);
+    expect(screen.getByText(/第 4 \/ 4 页/)).toBeTruthy();
+    expect(within(document.activeElement as HTMLElement).getByText('305')).toBeTruthy();
+    expect(next.disabled).toBe(true);
+    fireEvent.click(previous);
+    expect(within(document.activeElement as HTMLElement).getByText('102')).toBeTruthy();
+    expect(previous.disabled).toBe(true);
+  });
+
+  it('locates original lines in filtered pages and starts from the current page after manual paging', () => {
+    const lines = Array.from({ length: 205 }, (_, index) => `正文 ${index + 1}`);
+    const changed = lines.map((line, index) => index % 2 ? line : `${line} 修改`);
+    render(<RevisionDiff {...props(lines.join('\n'), changed.join('\n'))} />);
+    fireEvent.click(screen.getByRole('checkbox', { name: '仅显示差异行' }));
+    fireEvent.click(screen.getByRole('button', { name: '下一页差异' }));
+    fireEvent.click(screen.getByRole('button', { name: '下一差异行' }));
+    expect(screen.getByText(/已定位第 101 \/ 103 个差异行（原文第 201 行）/)).toBeTruthy();
+    expect(within(document.activeElement as HTMLElement).getByText('201')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '上一差异行' }));
+    expect(screen.getByText(/第 1 \/ 2 页/)).toBeTruthy();
+    expect(within(document.activeElement as HTMLElement).getByText('199')).toBeTruthy();
+    fireEvent.click(screen.getByRole('checkbox', { name: '仅显示差异行' }));
+    expect(screen.queryByText(/已定位第/)).toBeNull();
+    expect(screen.getByText(/第 1 \/ 3 页/)).toBeTruthy();
+  });
+
+  it('can navigate back to a change before a manually selected page with no further differences', () => {
+    const lines = Array.from({ length: 205 }, (_, index) => `正文 ${index + 1}`);
+    render(<RevisionDiff {...props(lines.join('\n'), `修改\n${lines.slice(1).join('\n')}`)} />);
+    fireEvent.click(screen.getByRole('button', { name: '下一页差异' }));
+    expect((screen.getByRole('button', { name: '下一差异行' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '上一差异行' }));
+    expect(screen.getByText(/已定位第 1 \/ 1 个差异行（原文第 1 行）/)).toBeTruthy();
+    expect(within(document.activeElement as HTMLElement).getByText('1')).toBeTruthy();
+  });
+
+  it('clears navigation when immutable asset identities change even with identical text and revision numbers', () => {
+    const value = props('原文', '修改');
+    const view = render(<RevisionDiff {...value} from={{ ...value.from, assetId: 'family-a-old' }} />);
+    fireEvent.click(screen.getByRole('button', { name: '下一差异行' }));
+    expect(screen.getByText(/已定位第/)).toBeTruthy();
+    view.rerender(<RevisionDiff {...value} from={{ ...value.from, assetId: 'family-b-old' }} />);
+    expect(screen.queryByText(/已定位第/)).toBeNull();
+    expect(screen.getByRole('table').querySelector('[aria-current]')).toBeNull();
+    expect((screen.getByRole('button', { name: '下一差异行' }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('disables navigation for identical bodies and hides it when integrity is lost', () => {
+    const value = props('相同', '相同');
+    const view = render(<RevisionDiff {...value} />);
+    expect((screen.getByRole('button', { name: '上一差异行' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: '下一差异行' }) as HTMLButtonElement).disabled).toBe(true);
+    view.rerender(<RevisionDiff {...value} to={{ ...value.to, body: { ...value.to.body, verified: false } }} />);
+    expect(screen.queryByRole('button', { name: '下一差异行' })).toBeNull();
+    expect(screen.queryByRole('table')).toBeNull();
+  });
 });

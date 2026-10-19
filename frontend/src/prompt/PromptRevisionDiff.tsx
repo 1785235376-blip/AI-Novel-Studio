@@ -1,9 +1,10 @@
 /** Read-only, positional comparison of the existing verified revision bodies. */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { bodyStateLabel } from './PromptLibraryPanel';
 
 export type RevisionDiffSide = {
+  assetId?: string;
   revision: number;
   body: { state: string; value: string | null; verified: boolean; readComplete: boolean };
 };
@@ -35,6 +36,9 @@ export function RevisionDiff({ from, to, professional }: {
 }) {
   const [changesOnly, setChangesOnly] = useState(false);
   const [page, setPage] = useState(0);
+  const [activeLine, setActiveLine] = useState<number | null>(null);
+  const activeRow = useRef<HTMLTableRowElement>(null);
+  const focusRequested = useRef(false);
   const comparable = complete(from) && complete(to);
   const rows = useMemo(() => comparable ? lineRows(from.body.value ?? '', to.body.value ?? '') : [],
     [comparable, from.body.value, to.body.value]);
@@ -44,8 +48,40 @@ export function RevisionDiff({ from, to, professional }: {
   const currentPage = Math.min(page, pages - 1);
   const offset = currentPage * PAGE_SIZE;
   const pageRows = visibleRows.slice(offset, offset + PAGE_SIZE);
+  const activeIndex = changedRows.findIndex(row => row.line === activeLine);
+  const firstVisibleLine = pageRows[0]?.line ?? 1;
+  const firstVisibleChange = changedRows.findIndex(row => row.line >= firstVisibleLine);
+  const previousIndex = activeIndex >= 0 ? activeIndex - 1
+    : firstVisibleChange < 0 ? changedRows.length - 1 : firstVisibleChange - 1;
+  const nextIndex = activeIndex >= 0 ? activeIndex + 1
+    : firstVisibleChange;
 
-  useEffect(() => { setPage(0); }, [from.revision, to.revision, from.body.value, to.body.value, changesOnly]);
+  useEffect(() => {
+    setPage(0);
+    setActiveLine(null);
+    focusRequested.current = false;
+  }, [from.assetId, to.assetId, from.revision, to.revision,
+    from.body.value, to.body.value, changesOnly, comparable]);
+
+  useEffect(() => {
+    if (focusRequested.current && activeRow.current) {
+      activeRow.current.focus();
+      focusRequested.current = false;
+    }
+  }, [activeLine, currentPage]);
+
+  const goToChange = (index: number) => {
+    const target = changedRows[index];
+    if (!target) return;
+    focusRequested.current = true;
+    setActiveLine(target.line);
+    setPage(Math.floor((changesOnly ? index : target.line - 1) / PAGE_SIZE));
+  };
+  const goToPage = (value: number) => {
+    focusRequested.current = false;
+    setActiveLine(null);
+    setPage(value);
+  };
 
   // Keep the existing complete/verified/readComplete boundary. A preview or digest
   // never becomes comparison text, and pagination performs no additional read.
@@ -66,17 +102,25 @@ export function RevisionDiff({ from, to, professional }: {
       <div className="prompt-diff-controls">
         <label><input type="checkbox" checked={changesOnly}
           onChange={event => { setChangesOnly(event.target.checked); setPage(0); }} />仅显示差异行</label>
+        <Button disabled={previousIndex < 0} onClick={() => goToChange(previousIndex)}>上一差异行</Button>
+        <Button disabled={nextIndex < 0 || nextIndex >= changedRows.length}
+          onClick={() => goToChange(nextIndex)}>下一差异行</Button>
+        {activeIndex >= 0 && <span role="status">
+          已定位第 {activeIndex + 1} / {changedRows.length} 个差异行（原文第 {activeLine} 行）。
+        </span>}
       </div>
       {visibleRows.length === 0 ? <StatusMessage>两个修订没有正文行差异。</StatusMessage> : <>
         <nav className="prompt-diff-controls" aria-label="版本差异分页">
-          <Button disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>上一页差异</Button>
+          <Button disabled={currentPage === 0} onClick={() => goToPage(currentPage - 1)}>上一页差异</Button>
           <span role="status">第 {currentPage + 1} / {pages} 页，显示第 {offset + 1}–{offset + pageRows.length} 项（共 {visibleRows.length} 项）；每页最多 {PAGE_SIZE} 行。</span>
-          <Button disabled={currentPage === pages - 1} onClick={() => setPage(currentPage + 1)}>下一页差异</Button>
+          <Button disabled={currentPage === pages - 1} onClick={() => goToPage(currentPage + 1)}>下一页差异</Button>
         </nav>
         <table>
           <caption className="sr-only">两个修订的正文逐行差异</caption>
           <thead><tr><th scope="col">行</th><th scope="col">修订 {from.revision}</th><th scope="col">修订 {to.revision}</th></tr></thead>
-          <tbody>{pageRows.map(row => <tr key={row.line} className={row.changed ? 'prompt-diff-changed' : undefined}>
+          <tbody>{pageRows.map(row => <tr key={row.line} className={row.changed ? 'prompt-diff-changed' : undefined}
+            tabIndex={-1} ref={row.line === activeLine ? activeRow : undefined}
+            aria-current={row.line === activeLine ? 'location' : undefined}>
             <td>{row.line}</td><td><LineValue value={row.left} /></td><td><LineValue value={row.right} /></td>
           </tr>)}</tbody>
         </table>
