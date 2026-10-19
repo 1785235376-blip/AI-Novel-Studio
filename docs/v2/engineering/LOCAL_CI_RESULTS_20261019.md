@@ -104,3 +104,7 @@ LOCAL-02 的 468 个 skip 已逐项分类：467 个 PostgreSQL 实现契约（PG
 - 测试：`tests/test_local_ci_evidence_index.py` 11 passed、1 skipped（Windows 无 symlink 特权）；本轮相关单测共 **39 passed / 1 skipped**。
 - 旧“8 路径/2 份回执”的说法由仅扫描 verification-summary 的旧检查器产生，已在机器回执、SUMMARY 与缺陷表中明确更正；未改动历史测试结果。
 - Round 3 工程质量专项到此结束；D-24 保持已修复，D-20/D-17/完整套件/Linux/宿主 CI 门槛继续保留，V2 仍 NOT RELEASE_READY。
+
+
+- **XML fixture/statistics patch（执行 SHA `7c88f50f`）**：合法 XML 夹具改用显式 `write_xml()` 写入良构文档，坏 XML 负向测试保留；检查器新增 `declared_xml_paths_checked`（声明 XML 路径条目，重复计次）、`archived_xml_files_checked`（去重归档 XML 文件）、`xml_files_checked_distinct`（去重并集）、`xml_checked`（兼容别名，等于声明条目数，不是去重文件数）与去重后的 `xml_invalid` 来源。实测全证据根 **4 回执 / 35 路径 / 11 声明 XML 路径 / 13 去重归档 XML 文件 / 13 去重 XML / 0 无效 / PASS**；分目录 r3-d24 8 路径/6 XML、r3-closeout 11/3、r2 8/2、final 8/2。上一轮 §10 手填的“16 路径/5 XML”与未区分口径的“11 XML checked”已由实测值更正。
+- 测试：`tests/test_local_ci_evidence_index.py` 14 passed / 1 skipped（symlink 特权缺失记为 SKIPPED，不记 PASS）；相关工程单测合集 42 passed / 1 skipped。无产品代码、D-24、D-07、完整 PG/File 套件、D-20/D-17、Linux 或宿主 CI 状态变化。

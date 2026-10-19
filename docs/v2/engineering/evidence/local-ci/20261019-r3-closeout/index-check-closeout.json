@@ -14,7 +14,11 @@
   "missing": [],
   "out_of_root": [],
   "xml_invalid": [],
+  "declared_xml_paths_checked": 3,
+  "archived_xml_files_checked": 3,
+  "xml_files_checked_distinct": 3,
   "xml_checked": 3,
+  "xml_checked_meaning": "declared XML path entries parsed successfully; alias of declared_xml_paths_checked, NOT a distinct archived XML file count",
   "notes": [],
   "status": "PASS"
 }
