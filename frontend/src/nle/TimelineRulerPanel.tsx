@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
+import { clipBoundaryNavigation } from './clipBoundaryNavigation';
 import { Button, StatusMessage } from '../ui/primitives';
 import { NLE_DEFAULT_VIEW_WIDTH_PX, rulerTicks, validateMarks, validateTimebase, validateWindow } from './timelineOps';
 import type { NleMarks, NleTimebase, NleViewWindow } from './timelineOpsTypes';
@@ -15,12 +16,28 @@ export type TimelineRulerPanelProps = {
   marks: NleMarks;
   editable: boolean;
   widthPx?: number;
+  /** Only view context; isCurrent reuses the original owner's revision/readiness fence. */
+  navigation?: { timeline: unknown; contextKey: string; isCurrent?: () => boolean };
   onPlayhead: (ms: number) => void;
   onView: (next: { startMs: number; scale: number }) => void;
 };
 
 export function TimelineRulerPanel(props: TimelineRulerPanelProps) {
   const [draft, setDraft] = useState(() => String(Math.max(0, Math.round(props.playheadMs))));
+  const hintId = useId(), composing = useRef<HTMLElement | null>(null), alive = useRef(true);
+  const navigation = props.navigation ? clipBoundaryNavigation(props.navigation.timeline, props.playheadMs) : undefined;
+  const key = JSON.stringify([props.navigation?.contextKey, navigation?.ok ? navigation.timelineKey : null,
+    props.playheadMs, props.editable, props.timebase]);
+  const context = useRef({ key, isCurrent: props.navigation?.isCurrent, generation: 0 });
+  if (context.current.key !== key || context.current.isCurrent !== props.navigation?.isCurrent) {
+    context.current = { key, isCurrent: props.navigation?.isCurrent, generation: context.current.generation + 1 };
+  }
+  const generation = context.current.generation;
+  const latest = useRef(props); latest.current = props;
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; composing.current = null; }; }, []);
+  // A new revision retires callbacks, while an active DOM composition survives ordinary rerenders.
+  useLayoutEffect(() => { if (composing.current && !composing.current.isConnected) composing.current = null; });
+  useLayoutEffect(() => { setDraft(String(props.playheadMs)); }, [props.playheadMs, props.navigation?.contextKey]);
   const timebase = validateTimebase(props.timebase);
   if (!timebase.ok) return <StatusMessage tone="error">{timebase.message}</StatusMessage>;
   const view = validateWindow(props.view, timebase.value);
@@ -35,9 +52,32 @@ export function TimelineRulerPanel(props: TimelineRulerPanelProps) {
   const move = (deltaMs: number) => props.onView({ startMs: view.window.startMs + deltaMs, scale: view.window.scale });
   const zoom = (factor: number) => props.onView({ startMs: view.window.startMs, scale: view.window.scale * factor });
   const fitted = width / timebase.value.durationMs;
-  return <section className="nle-ruler" aria-label="时间线标尺"
+  const navigationValid = navigation?.ok && navigation.durationMs === timebase.value.durationMs;
+  const previousMs = navigationValid ? navigation.previousMs : null, nextMs = navigationValid ? navigation.nextMs : null;
+  const navigate = (direction: 'PREVIOUS' | 'NEXT'): boolean => {
+    if (!alive.current || !latest.current.editable || context.current.generation !== generation || composing.current
+      || latest.current.navigation?.isCurrent?.() === false) return false;
+    const ms = direction === 'PREVIOUS' ? previousMs : nextMs;
+    if (ms === null) return false;
+    latest.current.onPlayhead(ms); return true;
+  };
+  return <section key={props.navigation?.contextKey} className="nle-ruler" aria-label="时间线标尺"
     data-duration-ms={timebase.value.durationMs} data-window-start={ruler.range.startMs}
-    data-window-end={ruler.range.endMs} data-step-ms={ruler.stepMs} data-fps={timebase.value.fps}>
+    data-window-end={ruler.range.endMs} data-step-ms={ruler.stepMs} data-fps={timebase.value.fps} data-playhead-ms={props.playheadMs}
+    tabIndex={props.navigation ? 0 : undefined} aria-describedby={props.navigation ? hintId : undefined}
+    aria-keyshortcuts={props.navigation ? 'ArrowUp ArrowDown' : undefined}
+    onCompositionStartCapture={event => {
+      if (event.target instanceof HTMLElement && event.target.isConnected) composing.current = event.target;
+    }}
+    onCompositionEndCapture={event => { if (event.target === composing.current) composing.current = null; }}
+    onBlurCapture={event => { if (event.target === composing.current) composing.current = null; }}
+    onKeyDown={event => {
+      if (!props.navigation || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
+        || event.repeat || event.nativeEvent.isComposing || event.keyCode === 229 || composing.current) return;
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="spinbutton"], [role="combobox"]')) return;
+      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+      if (navigate(event.key === 'ArrowUp' ? 'PREVIOUS' : 'NEXT')) { event.preventDefault(); event.stopPropagation(); }
+    }}>
     <header className="nle-ruler__bar">
       <Button disabled={!props.editable} onClick={() => zoom(0.5)}>缩小</Button>
       <Button disabled={!props.editable} onClick={() => zoom(2)}>放大</Button>
@@ -55,6 +95,15 @@ export function TimelineRulerPanel(props: TimelineRulerPanelProps) {
         {tick.major ? <span className="nle-ruler__label">{tick.label}</span> : null}
       </li>)}
     </ol>
+    {props.navigation && <>
+      <div className="nle-ruler__bar" role="group" aria-label="剪切点导航">
+        <Button disabled={!props.editable || previousMs === null} onClick={() => navigate('PREVIOUS')}>上一个剪切点</Button>
+        <Button disabled={!props.editable || nextMs === null} onClick={() => navigate('NEXT')}>下一个剪切点</Button>
+      </div>
+      <p id={hintId} className="nle-ruler__note">标尺内按 ↑ / ↓ 跳到上一个 / 下一个剪切点。仅使用全部轨道片段的真实起止点，相同时间合并，首末不循环；输入文字或使用输入法时不触发。</p>
+      {navigation && !navigation.ok && <StatusMessage tone="error">{navigation.message}</StatusMessage>}
+      {navigation?.ok && !navigationValid && <StatusMessage tone="error">剪切点与当前时间线总长不一致，请重新核对。</StatusMessage>}
+    </>}
     <label className="nle-ruler__jump">播放头（毫秒）
       <input type="number" min={0} max={timebase.value.durationMs} step={1} value={draft}
         disabled={!props.editable} aria-label="播放头（毫秒）"

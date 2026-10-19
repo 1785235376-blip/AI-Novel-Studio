@@ -56,6 +56,7 @@ export function TimelineWorkspacePanel(props: TimelineWorkspacePanelProps) {
     {!view.ok
       ? <StatusMessage tone="error">{view.message}</StatusMessage>
       : <TimelineRulerPanel timebase={timebase} view={view.window} playheadMs={props.playheadMs} marks={marks}
+        navigation={{ timeline, contextKey: JSON.stringify([props.projectId, props.identity, props.documentId]), isCurrent: props.isSplitReviewCurrent }}
         editable={props.editable} onPlayhead={props.onPlayhead} onView={props.onView} />}
     <TrackHeaderPanel documentId={props.documentId} timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable}
       onSelectClips={props.onSelectClips} />
