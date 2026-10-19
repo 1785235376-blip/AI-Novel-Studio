@@ -2,6 +2,7 @@ import {SceneOrderActions} from './SceneOrderActions';
 import {CreativeShotNavigator} from './CreativeShotNavigator';
 import {CreativeSceneNavigator} from './CreativeSceneNavigator';
 import { DirectorCameraReuse } from './DirectorCameraReuse';
+import { StoryboardDirectorCameraAdoption } from './StoryboardDirectorCameraAdoption';
 import {DirectorNoteActions} from './DirectorNoteActions';
 import type { StoryboardShot } from './studioStoryboardContract';
 import { useId, useState, type ReactNode } from 'react';
@@ -70,6 +71,7 @@ export function CreativeCanvas({ draft, storyboardImages, productionShots, produ
         {directing && <DirectorCameraReuse draft={draft} sceneId={scene.id} version={version} dirty={dirty} canEdit={canEdit} busy={busy} onChange={onChange} />}
         {directing && <section aria-label="导演场面调度">{notes.map(note => <article className="creative-director-note" key={note.id}><h3>调度 {note.number}</h3><DirectorNoteActions draft={draft} noteId={note.id} disabled={!canEdit || busy} onChange={onChange}/><DirectorFields value={note} onChange={next => update({ director_notes: draft.director_notes.map(row => row.id === next.id ? next : row) })} /></article>)}{!notes.length && <p>当前场景尚未安排导演调度。手动添加，或在右侧从已保存剧本准备待审建议。</p>}</section>}
       </section>}
+      {draft.mode === 'STORYBOARD' && scene && <StoryboardDirectorCameraAdoption draft={draft} sceneId={scene.id} version={version} dirty={dirty} canEdit={canEdit} busy={busy} onChange={onChange} />}
       {(draft.mode === 'STORYBOARD' || directing) && <StoryboardTimingTools draft={draft} sceneId={scene?.id} disabled={!canEdit || busy} onChange={onChange} />}
 
       </>}
