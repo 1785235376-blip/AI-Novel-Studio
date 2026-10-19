@@ -51,6 +51,21 @@ class TextParameters(Strict):
     text: str = Field(default="", max_length=8_000)
 
 
+class BooleanCondition(Strict):
+    kind: Literal["boolean"]
+    value: bool
+
+
+class EnumCondition(Strict):
+    kind: Literal["enum"]
+    value: Literal["A", "B"]
+    equals: Literal["A", "B"]
+
+
+class ConditionParameters(Strict):
+    predicate: Annotated[BooleanCondition | EnumCondition, Field(discriminator="kind")]
+
+
 class EmptyParameters(Strict):
     pass
 
@@ -531,6 +546,10 @@ DEFINITIONS["local_subgraph"] = {"inputs": [port("text", "TEXT", True)],
     "outputs": [port("draft", "DRAFT")], "parameters": LocalSubgraphParameters}
 
 
+DEFINITIONS["local_condition"] = {"inputs": [port("text", "TEXT", True)],
+    "outputs": [port("when_true", "TEXT"), port("when_false", "TEXT")], "parameters": ConditionParameters}
+
+
 def definition_for(definition_id, *, schema_version=None):
     """Only schema 3 exposes a completed original human review's draft.
 
@@ -540,6 +559,10 @@ def definition_for(definition_id, *, schema_version=None):
     if (definition_id == "local_subgraph" and schema_version != 6
             or schema_version == 6 and definition_id not in LOCAL_SUBGRAPH_PARENT_IDS):
         raise ValueError("CREATIVE_GRAPH_LOCAL_SUBGRAPH_SCHEMA_REQUIRED")
+    from .graph_local_conditions import NODE_IDS
+    if (definition_id == "local_condition" and schema_version != 7
+            or schema_version == 7 and definition_id not in NODE_IDS):
+        raise ValueError("CREATIVE_GRAPH_CONDITION_SCHEMA_REQUIRED")
     definition = DEFINITIONS[definition_id]
     if schema_version == 5:
         if definition_id == "media_review":
@@ -814,16 +837,32 @@ class GraphLocalSubgraphInput(GraphInput):
         return self
 
 
+class ConditionalNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform", "human_review", "local_condition"]
+
+
+class GraphConditionalInput(GraphInput):
+    schema_version: Literal[7]
+    nodes: list[ConditionalNodeInstance] = Field(default_factory=list, max_length=MAX_NODES)
+
+    @model_validator(mode="after")
+    def closed_conditions(self):
+        from .graph_local_conditions import require_conditions, compile_plan
+        require_conditions()
+        compile_plan(self.model_dump())
+        return self
+
+
 def parse_graph(value):
     schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
-    model = GraphLocalSubgraphInput if schema == 6 else GraphVideoInput if schema == 5 else GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
+    model = GraphConditionalInput if schema == 7 else GraphLocalSubgraphInput if schema == 6 else GraphVideoInput if schema == 5 else GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
     return model.model_validate(value)
 
 
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput | GraphConditionalInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -841,7 +880,7 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput | GraphConditionalInput
 
 
 class GraphPreflight(Strict):
@@ -906,6 +945,7 @@ def catalog_definitions(*, include_model=False, include_media=False, include_ima
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
+        if key != "local_condition"
         if (key in LOCAL_SUBGRAPH_PARENT_IDS if include_local_subgraph else key != "local_subgraph")
         for value in [definition_for(key, schema_version=6 if include_local_subgraph else 5 if include_video else 3 if include_media else None)]
         if not include_video or key in VIDEO_SCHEMA_DEFINITION_IDS
@@ -919,10 +959,8 @@ def history_limit(row):
     return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4, 5} or row.get("definition", {}).get("schema_version") in {3, 4, 5} else MAX_HISTORY
 
 
-#: Schema versions the graph contract can validate. Schema6 is closed pure-local subgraph calling.
-#: `parse_graph` preserves schemas1..5:
-#: 5 -> GraphVideoInput, 4 -> GraphImageInput, 3 -> GraphMediaInput,
-#: 2 -> GraphModelInput, anything else -> the frozen GraphInput (v1).
+#: Unconditionally supported frozen versions. Schema7 is separately opt-in gated.
+#: `parse_graph` preserves schemas1..6 and selects GraphConditionalInput only for 7.
 SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4, 5, 6})
 
 #: The frozen pre-schema catalog. A missing version means v1, never "unknown".
@@ -945,8 +983,14 @@ def normalise_schema_version(value):
     """
     if value is None:
         return LEGACY_SCHEMA_VERSION
-    if type(value) is not int or value not in SUPPORTED_SCHEMA_VERSIONS:
+    if type(value) is not int or value not in SUPPORTED_SCHEMA_VERSIONS | {7}:
         raise ValueError("CREATIVE_GRAPH_SCHEMA_VERSION_INVALID")
+    if value == 7:
+        from .graph_local_conditions import require_conditions
+        try:
+            require_conditions()
+        except ValueError as error:
+            raise ValueError("CREATIVE_GRAPH_SCHEMA_VERSION_INVALID") from error
     return value
 
 
@@ -960,6 +1004,10 @@ def validate_output_ports(definition_id, value, *, schema_version=None):
     """
     schema_version = normalise_schema_version(schema_version)
     expected = definition_for(definition_id, schema_version=schema_version)["outputs"]
+    if definition_id == "local_condition" and schema_version == 7:
+        if not isinstance(value, dict) or len(value) != 1 or not set(value) <= {"when_true", "when_false"}:
+            raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
+        expected = [port for port in expected if port["id"] in value]
     if not isinstance(value, dict) or set(value) != {port["id"] for port in expected}:
         raise ValueError("CREATIVE_GRAPH_OUTPUT_SCHEMA_INVALID")
     result = {}

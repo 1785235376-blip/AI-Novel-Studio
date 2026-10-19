@@ -36,11 +36,14 @@ class _CacheRunStopped(Exception):
 
 class _LocalGraphAdapter:
     capabilities = AdapterCapabilities("builtin.creative-graph-local", ADAPTER_VERSION,
-        ("text_input", "text_reference", "draft_prepare", "manual_transform", "director_note"),
+        ("text_input", "text_reference", "draft_prepare", "manual_transform", "director_note", "local_condition"),
         max_input_bytes=32_000, max_output_bytes=MAX_OUTPUT_BYTES)
 
     def execute(self, request):
         parameters, ports = request.input["parameters"], request.input["ports"]
+        if request.node_type == "local_condition":
+            from .graph_local_conditions import evaluate
+            return evaluate(parameters, ports)
         if request.node_type == "text_input":
             return {"text": parameters["text"]}
         if request.node_type == "text_reference":
@@ -92,6 +95,12 @@ class CreativeGraphExecutor:
             with self.service.asset_inputs.phase(nid, scope, actor, guard) as document:
                 return self._current(nid, scope, actor, row, guard, document)
         guard()
+        if row.get("graph_schema_version") == 7:
+            from .graph_local_conditions import require_conditions
+            try:
+                require_conditions()
+            except ValueError as error:
+                raise StaleSourceError("CREATIVE_GRAPH_CONDITIONS_DISABLED") from error
         self._timing(row)
         graph = self.service._owned(nid, scope, actor, self.service.GRAPHS, row["graph_id"], state)
         if (graph["version"] != row["graph_version"] or graph["definition_digest"] != row["graph_digest"]
@@ -125,7 +134,7 @@ class CreativeGraphExecutor:
             raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_RUN_BINDING_CHANGED")
         preflight = self.service._preflight(graph, {"expected_version": graph["version"],
             "target_node_ids": selected}, actor, check_assets=False if schema in {3, 4, 5} else check_assets,
-            **({"guard": guard, "state": state} if schema == 6 else {}))
+            **({"guard": guard, "state": state} if schema in {6, 7} else {}))
         if schema == 6:
             if row.get("local_subgraph_bindings") != preflight["local_subgraph_bindings"]:
                 raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_RESOLUTION_CHANGED")
@@ -136,6 +145,11 @@ class CreativeGraphExecutor:
                     or not isinstance(row.get("local_subgraph_receipts"), dict)
                     or set(row["local_subgraph_receipts"]) != calls):
                 raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_OUTPUT_RECEIPT_CHANGED")
+        if schema == 7:
+            from .graph_local_conditions import validate_run
+            if state is None or row.get("graph_schema_version") != 7 or row.get("execution_digest") != graph["execution_digest"]:
+                raise StaleSourceError("CREATIVE_GRAPH_CONDITION_RUN_BINDING_CHANGED")
+            validate_run(row, preflight["conditional_plan"])
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in row["typed_edges"]))
         snapshot = {"title": graph["definition"]["title"],
             "nodes": [{"id": node["id"], "name": node["id"], "config": {},
@@ -171,6 +185,11 @@ class CreativeGraphExecutor:
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
                     or receipt.get("key") != self._key(row, actor, by_id[node_id], self._inputs(row, node_id, row["typed_outputs"]))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_RECEIPT_INVALID")
+            if schema == 7:
+                from .graph_local_conditions import evaluate
+                if receipt.get("cacheable") is not False or (by_id[node_id]["definition_id"] == "local_condition"
+                        and output != evaluate(by_id[node_id]["parameters"], self._inputs(row, node_id, row["typed_outputs"]))):
+                    raise StaleSourceError("CREATIVE_GRAPH_CONDITION_OUTPUT_RECEIPT_CHANGED")
             if schema == 6:
                 if receipt.get("cacheable") is not False:
                     raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_CACHE_FORBIDDEN")
@@ -291,6 +310,12 @@ class CreativeGraphExecutor:
                 payload.update(graph_schema_version=6, local_subgraph_contract=LOCAL_SUBGRAPH_CONTRACT,
                     local_subgraph_bindings=deepcopy(preflight["local_subgraph_bindings"]), local_subgraph_receipts={})
                 payload["cache"]["mode"] = SUBGRAPH_CACHE_MODE
+            if graph["definition"]["schema_version"] == 7:
+                from .graph_local_conditions import CACHE_MODE as CONDITIONAL_CACHE_MODE, SKIP_ERROR
+                payload.update(graph_schema_version=7, conditional_plan=deepcopy(preflight["conditional_plan"]))
+                payload["cache"]["mode"] = CONDITIONAL_CACHE_MODE
+                for key in payload["conditional_plan"]["skipped_node_ids"]:
+                    payload["node_states"][key] = {"status": "SKIPPED", "output": None, "error": deepcopy(SKIP_ERROR)}
             if source is not None:
                 payload.update(retry_of=source["id"], attempt=source["attempt"] + 1)
             if body.reuse_reviewed_local_dependencies:
@@ -351,8 +376,10 @@ class CreativeGraphExecutor:
             timeout_seconds=row["timeout_seconds"], deadline_at=self._timing(row),
             node_states={node_id: {"status": value["status"],
                 "reviewed": node_id in row.get("reviewed_nodes", []),
-                "output": None if stale or row["status"] in {"CANCELLED", "REJECTED", "FAILED"} else deepcopy(row["typed_outputs"].get(node_id)),
-                "error": {"code": "CREATIVE_GRAPH_NODE_FAILED"} if value.get("error") else None}
+                "output": None if stale or row["status"] in {"CANCELLED", "REJECTED", "FAILED"} or (row.get("graph_schema_version") == 7 and not row["reviewed"]) else deepcopy(row["typed_outputs"].get(node_id)),
+                "error": ({"code": "CREATIVE_GRAPH_BRANCH_NOT_SELECTED"}
+                    if row.get("graph_schema_version") == 7 and node_id in row["conditional_plan"]["skipped_node_ids"]
+                    else {"code": "CREATIVE_GRAPH_NODE_FAILED"}) if value.get("error") else None}
                 for node_id, value in row["node_states"].items()},
             review=None if stale else self._review(row), model_called=False, external_calls=0, applied=False)
         if any(node["definition_id"] == "text_generate" for node in row["typed_nodes"]):
@@ -378,6 +405,12 @@ class CreativeGraphExecutor:
             result["local_subgraph_runtime"] = {"contract": LOCAL_SUBGRAPH_CONTRACT, "cache_enabled": False,
                 "bindings": {} if hidden else deepcopy(row["local_subgraph_bindings"]),
                 "receipts": {} if hidden else deepcopy(row["local_subgraph_receipts"])}
+        if row.get("graph_schema_version") == 7:
+            from .graph_local_conditions import CONTRACT
+            hidden = result["stale"] or row["status"] in {"CANCELLED", "REJECTED", "FAILED"}
+            result["conditional_runtime"] = {"contract": CONTRACT, "cache_enabled": False,
+                "plan": None if hidden else deepcopy(row["conditional_plan"]),
+                "skipped_dispatches": None if hidden else 0, "skipped_outputs": None if hidden else 0}
         guard(); return result
 
     def _key(self, row, actor, node, inputs):
@@ -391,9 +424,9 @@ class CreativeGraphExecutor:
             node["definition_version"], node["parameters"], inputs])
 
     def _cached(self, row, actor, node_id, key, state, *, outputs=None, guard=lambda: None):
-        if row.get("graph_schema_version") == 6:
+        if row.get("graph_schema_version") in {6, 7}:
             guard()
-            return None  # No schema6 cache lookup or child-call reuse in the first contract.
+            return None  # Closed schema6/7 contracts never look up or reuse cache.
         if row.get("reuse_reviewed_local_dependencies") is True:
             from .graph_local_reuse import cached
             return cached(self, row, actor, node_id, state, outputs, guard)
@@ -420,7 +453,7 @@ class CreativeGraphExecutor:
         cache = deepcopy(row["cache"])
         subgraph_receipts = deepcopy(row.get("local_subgraph_receipts", {}))
         def execution_guard():
-            if row.get("graph_schema_version") != 6:
+            if row.get("graph_schema_version") not in {6, 7}:
                 return guard()
             try:
                 return guard()
@@ -500,7 +533,7 @@ class CreativeGraphExecutor:
                 break
             outputs[node_id] = deepcopy(output)
             cache_keys[node_id] = {"key": key, "output_digest": digest(output)}
-            if row.get("graph_schema_version") == 6:
+            if row.get("graph_schema_version") in {6, 7}:
                 cache_keys[node_id]["cacheable"] = False
             if row.get("reuse_reviewed_local_dependencies") is True:
                 from .graph_local_reuse import signature
@@ -520,7 +553,8 @@ class CreativeGraphExecutor:
         result.update(typed_outputs=outputs, cache_keys=cache_keys, cache=cache)
         if row.get("graph_schema_version") == 6:
             result["local_subgraph_receipts"] = subgraph_receipts
-        reviews = [node["id"] for node in row["typed_nodes"] if node["definition_id"] in {"human_review", "media_review"}]
+        reviews = [node["id"] for node in row["typed_nodes"] if node["definition_id"] in {"human_review", "media_review"}
+            and (row.get("graph_schema_version") != 7 or node["id"] in row["conditional_plan"]["active_node_ids"])]
         result["reviewed"] = bool(reviews) and all(result["node_states"][node_id]["status"] == "SUCCEEDED" for node_id in reviews)
         reviewed = {node_id for node_id in reviews if result["node_states"][node_id]["status"] == "SUCCEEDED"}
         queue = list(reviewed)
@@ -566,11 +600,15 @@ class CreativeGraphExecutor:
             if action == "execute":
                 if row["status"] != "QUEUED":
                     raise ValueError("CREATIVE_GRAPH_EXECUTE_REQUIRES_QUEUED")
-            host = _ScopedOriginalWorkflowHost(engine_row, fresh)
+            if row.get("graph_schema_version") == 7:
+                from .graph_local_conditions import ConditionalWorkflowHost
+                host = ConditionalWorkflowHost(engine_row, fresh)
+            else:
+                host = _ScopedOriginalWorkflowHost(engine_row, fresh)
             drive_row = row
             timed = host.get_workflow_run(rid)
             if timed["status"] == "FAILED" and timed.get("error", {}).get("code") == "WORKFLOW_TIMEOUT":
-                result = timed
+                result = deepcopy(host.row) if row.get("graph_schema_version") == 7 else timed
             else:
                 if action in {"approve", "reject"}:
                     if action == "approve" and row.get("model_execution_contract"):

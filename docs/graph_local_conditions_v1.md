@@ -1,0 +1,15 @@
+# GRAPH13 local conditional routing, first slice
+
+Schema 7 requires exact server opt-in `CREATIVE_GRAPH_CONDITIONS_V1=1` and the existing `narrative_production_v2` flag. V1 acceptance mode disables it. Schemas 1–6 and the default catalog retain their contracts. This slice has no frontend entry or discovery catalog; explicit saved schema7 definitions use the existing Graph service owner. HTTP authority wiring is pending coordination with the DIF-owned `graph_api.py`: classify schema7 alongside schema6 for source-read permission on create/save and saved Graph/Run actions. Keep the opt-in disabled until that wiring and its permission regressions are accepted. This commit does not claim HTTP acceptance.
+
+A `local_condition` takes TEXT and has two declared TEXT ports, `when_true` and `when_false`. Parameters are exactly `{"predicate":{"kind":"boolean","value":true}}` or `{"predicate":{"kind":"enum","value":"A","equals":"B"}}`. Enum values are A/B. Only the selected output exists at runtime. No script, variable lookup, truthiness conversion or model evaluation occurs.
+
+A graph has one saved inline `text_input`, one condition and two disjoint linear arms ending at existing `human_review` nodes. Arm nodes are `text_reference`, `draft_prepare` or `manual_transform`. The original typed ports, acyclicity, size limits and strict parameter validation apply. All nodes must be enabled and covered. Whole-graph execution is required. No joins, nested conditions, loops, subgraphs, external sources, models, media or caches are admitted.
+
+Preflight freezes the route plan with a digest of the complete normalized definition. Run creation binds the original graph ID/version/definition and execution digests, scope, actor, project incarnation, reviewed preflight and request ID. Same-key differing admission requests are rejected. There is no automatic retry or UNKNOWN-state recovery. Original compare-and-swap, permissions and transaction guards remain authoritative.
+
+The scoped host projects the selected nodes/states/edges into the original WorkflowRun methods. It does not implement advance, claim, completion, review, pause, resume or cancellation. The durable run retains the full graph and marks every unselected node SKIPPED with `CREATIVE_GRAPH_BRANCH_NOT_SELECTED`, null output, no dispatch and no output/cache receipt. Reads and actions validate this proof and reject altered plans. Original transition receipts retain all durable node statuses.
+
+Selected local outputs remain private until the selected original human review succeeds. Its exact digest-bound draft is available through the original explicit review preview. Stale, failed, rejected and cancelled runs expose no outputs or draft. Public routing proof is also hidden for those states. Disabling the gate prevents further execution while original cancellation remains available.
+
+Validation uses the original File project store and WorkflowRun owner with controlled local inputs. It does not establish PostgreSQL, browser/full E2E, GPU or provider acceptance. No new engine, queue or frontend is introduced.

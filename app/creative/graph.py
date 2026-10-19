@@ -66,6 +66,9 @@ class CreativeGraphService:
 
     @staticmethod
     def _model_authority(definition):
+        if definition.get("schema_version") == 7:
+            from .graph_local_conditions import require_conditions
+            require_conditions()
         if (definition.get("schema_version") == 2
                 or any(node["definition_id"] == "text_generate" or
                     node["definition_id"] in {"image_generate", "image_upscale", "video_generate"} or
@@ -134,6 +137,9 @@ class CreativeGraphService:
 
     def _reference_states(self, nid, scope, definition, guard, actor=None, state=None):
         """Legacy reads stay outside transactions; pure schema6 uses the original scope."""
+        if definition.get("schema_version") == 7:
+            guard()
+            return []  # Closed inline-only sources; no asset owner is consulted.
         if definition.get("schema_version") == 6:
             from .graph_local_subgraph import reference_states
             document = self.store.read(nid, scope) if state is None else state
@@ -167,7 +173,7 @@ class CreativeGraphService:
         return result
 
     def _view(self, nid, scope, row, guard, state=None):
-        if row["definition"]["schema_version"] == 6 and state is None:
+        if row["definition"]["schema_version"] in {6, 7} and state is None:
             guard()
             with self.store.transaction(nid, scope) as document:
                 live = self._owned(nid, scope, row["created_by"], GRAPHS, row["id"], document)
@@ -317,6 +323,7 @@ class CreativeGraphService:
         result = []
         for rid, row in state["collections"].get(GRAPHS, {}).items():
             if (isinstance(row, dict) and row.get("created_by") == actor
+                    and row.get("definition", {}).get("schema_version") != 7
                     and (include_local_subgraph or row.get("definition", {}).get("schema_version") != 6)):
                 # Keep legacy asset/owner lock ordering. Schema6 _view acquires
                 # its own original scope lease instead of wrapping mixed rows.
@@ -417,6 +424,13 @@ class CreativeGraphService:
                 if edge["source_node_id"] not in closure:
                     closure.add(edge["source_node_id"]); queue.append(edge["source_node_id"])
         issues = []
+        conditional_plan = None
+        if definition["schema_version"] == 7:
+            from .graph_local_conditions import require_conditions, compile_plan
+            require_conditions(); guard()
+            conditional_plan = compile_plan(definition)
+            if set(targets) != set(nodes):
+                issues.append({"code": "CREATIVE_GRAPH_CONDITION_WHOLE_GRAPH_REQUIRED"})
         if not closure:
             issues.append({"code": "CREATIVE_GRAPH_EMPTY_SELECTION"})
         order = V1CapabilityService._workflow_order([{"id": node["id"]} for node in definition["nodes"]],
@@ -556,6 +570,10 @@ class CreativeGraphService:
             result.update(graph_schema_version=6, local_subgraph_contract=LOCAL_SUBGRAPH_CONTRACT,
                 local_subgraph_bindings=bindings(subgraphs), source_check="CURRENT_PIN_SCOPE_TRANSACTION")
             guard()
+        if conditional_plan is not None:
+            result.update(graph_schema_version=7, conditional_plan=conditional_plan,
+                source_check="SAVED_INLINE_DEFINITION_PIN", cache_enabled=False)
+            guard()
         result["preflight_digest"] = digest([row["id"], row[BINDING], row["scope"], actor, result])
         return result
 
@@ -571,7 +589,7 @@ class CreativeGraphService:
                 row = self._owned(nid, scope, actor, GRAPHS, rid, state)
                 check_version(row, body.expected_version)
                 result = self._preflight(row, body, actor, guard=current, state=state)
-        elif row["definition"]["schema_version"] == 6:
+        elif row["definition"]["schema_version"] in {6, 7}:
             with self.store.transaction(nid, scope) as state:
                 row = self._owned(nid, scope, actor, GRAPHS, rid, state)
                 check_version(row, body.expected_version)
@@ -587,7 +605,7 @@ class CreativeGraphService:
     def runs(self, nid, scope, actor, rid, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
         graph = self._owned(nid, scope, actor, GRAPHS, rid)
-        if graph["definition"]["schema_version"] == 6:
+        if graph["definition"]["schema_version"] in {6, 7}:
             with self.store.transaction(nid, scope) as state:
                 self._owned(nid, scope, actor, GRAPHS, rid, state)
                 result = {"items": [self.executor.view(nid, scope, actor, row, current, state)
@@ -606,7 +624,7 @@ class CreativeGraphService:
     def get_run(self, nid, scope, actor, rid, guard=lambda: None, *, reconcile=True):
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, RUNS, rid)
-        if row.get("graph_schema_version") == 6:
+        if row.get("graph_schema_version") in {6, 7}:
             with self.store.transaction(nid, scope) as state:
                 row = self._owned(nid, scope, actor, RUNS, rid, state)
                 result = self.executor.view(nid, scope, actor, row, current, state)
