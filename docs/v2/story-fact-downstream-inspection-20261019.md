@@ -71,3 +71,42 @@ resource cost, unrecorded dependencies, unsaved edits, inferred dependencies,
 and recursive downstream impact remain unknown. Empty results never establish
 that the fact has no impact. Owner limits can make coverage unavailable; row
 truncation is displayed separately from empty and unavailable states.
+
+## Recovery review (2026-10-19)
+
+Recovered source commit `ab289bd0c0f45d172c8e241e7f9ef255bf2d4ffb` into
+`/workspace/scratch/20a0022d2b33/fact-downstream-recovered`. The original
+worktree was absent. Primary checkout remained at
+`4816fcf863a38ab7f8060d5f2cfddc2106ffa0f1` during review; no primary edits,
+reset, prune, backend changes, dependency installs, or external calls were made.
+
+Review identified one concrete asynchronous dispatch gap: a host read gate can
+hold its callback until after the chosen path has been retired. The original
+publication guards prevented old results from appearing, but the deferred
+callback could still dispatch an obsolete GET. All three inspection read stages
+now check request lifetime inside the gated callback before dispatch. This adds
+no endpoints, mutations, automatic reads, or UI changes.
+
+Evidence: `/workspace/scratch/20a0022d2b33/fact-downstream-recovered-evidence/`.
+
+- Original five focused suites: 112/112 passed (`baseline-tests.log`).
+- Three new delayed-gate selection A→B→A regressions failed against original
+  source, covering pre-fact, owner, and post-fact reads
+  (`regression-before-fix.log`).
+- Final same five suites: 115/115 passed (`final-tests.log`), including pure
+  pin/validator coverage, mounted lifecycle coverage, original asset usage panel,
+  its integration tests, Story fact panel, and Storyboard workspace.
+- UI design-token guard passed (`tokens.log`); `git diff --check` passed.
+- The first type check lacked fixture/contracts files in sparse checkout.
+  Its diagnostics remain in `types-missing-sparse-inputs.log`; the existing
+  repository inputs were then included without source edits. Final TypeScript
+  `tsc -b` passed (`types.log`, empty successful output).
+- Initial evidence directory creation under `/workspace/shared` failed because
+  that mount is read-only; `setup-failure.log` preserves the failure.
+- `source-sha256.txt` identifies reviewed source/test bytes; `backend-diff.log`
+  confirms zero backend changes. No backend, browser/visual, or combined build
+  success is claimed by this recovery review; parent owns combined build/archive.
+
+The bounded cross-owner observation and UNKNOWN/empty/truncation limits above
+remain unchanged. This is dispatch/publication lifecycle hardening, not an
+atomic cross-owner snapshot or completion of DIF-02.

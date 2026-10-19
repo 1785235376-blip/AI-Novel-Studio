@@ -116,6 +116,22 @@ describe('mounted read-only fact downstream inspection', () => {
     await act(async () => { late.resolve(response('CREATIVE_GRAPH', [{ ...graphItem, id: 'retired-graph' }])); await late.promise; });
     expect(screen.queryByText('retired-graph')).toBeNull(); expect(screen.getByText('saved-graph')).toBeTruthy();
   });
+  it.each([1, 2, 4])('does not dispatch obsolete reads when host gate %s resumes after selection ABA', async gateNumber => {
+    const props = setup(), held = pending(); let gates = 0;
+    props.read.mockImplementation(async work => {
+      gates++;
+      if (gates === gateNumber) await held.promise;
+      return work();
+    });
+    render(<StoryFactDownstreamImpact {...props} />); select(); inspect();
+    await waitFor(() => expect(gates).toBeGreaterThanOrEqual(gateNumber));
+    const dispatched = props.json.mock.calls.length;
+    fireEvent.change(screen.getByLabelText('检查的事实镜头素材'), { target: { value: '' } }); select();
+    await act(async () => { held.resolve(undefined); await held.promise; });
+    expect(props.json).toHaveBeenCalledTimes(dispatched);
+    expect(screen.queryByText('saved-graph')).toBeNull();
+    expect(screen.queryByText('saved-timeline')).toBeNull();
+  });
   it('discards late callbacks after unmount', async () => {
     const props = setup(), late = pending(); props.json.mockImplementationOnce(() => late.promise);
     const { unmount } = render(<StoryFactDownstreamImpact {...props} />); select(); inspect(); unmount();

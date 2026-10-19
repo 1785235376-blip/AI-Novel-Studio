@@ -35,14 +35,17 @@ function Inspection(props: Props) {
     setObservation(null); setUnavailable(false); setLoading(true);
     const current = () => mounted.current && active.current === controller && !controller.signal.aborted && latest.current.enabled && latest.current.isCurrent();
     const requireCurrent = () => { if (!current()) throw new Error('上下文已变化'); };
+    // The host may defer work until admission completes. Fence dispatch as well
+    // as publication so a retired selection cannot start a queued owner read.
+    const read = <T,>(work: () => Promise<T>) => props.read(async () => { requireCurrent(); return work(); });
     const { row, asset } = selected;
     const client = createStoryFactClient(props.projectId, props.transport);
     try {
-      const before = await props.read(() => client.impact(props.target.document_id));
+      const before = await read(() => client.impact(props.target.document_id));
       requireCurrent(); revalidateFactPath(before, row, asset, props.target);
       const responses = await Promise.all(owners.map(async ({ owner, path }) => {
         requireCurrent();
-        const value = await props.read(() => props.transport.json<unknown>(
+        const value = await read(() => props.transport.json<unknown>(
           `/api/novels/${encodeURIComponent(props.projectId)}/experimental/production/assets/${encodeURIComponent(asset.asset_id)}/${path}`,
           'GET', undefined, controller.signal));
         requireCurrent();
@@ -51,7 +54,7 @@ function Inspection(props: Props) {
         return result;
       }));
       requireCurrent();
-      const after = await props.read(() => client.impact(props.target.document_id));
+      const after = await read(() => client.impact(props.target.document_id));
       requireCurrent();
       const verified = revalidateFactPath(after, row, asset, props.target);
       setObservation({ row: verified, asset, responses });
