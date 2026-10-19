@@ -33,9 +33,9 @@
 ### 2.3 本地最小 CI（独立分支 / Draft PR #49）
 
 - 入口：[LOCAL_CI_MINIMUM.md](LOCAL_CI_MINIMUM.md) + `scripts/run_local_ci.py`（LOCAL-01～05，分步命令；非一键安装/启动/部署）
-- 实际结果：**LOCAL_CI_PASS**，运行时 HEAD `d73423c79a4c0a5fe5c8bf9e696c5ae91565197a`，总耗时 **346.8 s ≈ 5 分 47 秒**
+- 实际结果：**LOCAL_CI_PASS**，运行时 HEAD `6afae9cae82430f09c547257528adccdf945dc0c`，总耗时 **346.9 s ≈ 5 分 47 秒**
 - 明细与证据：[LOCAL_CI_RESULTS_20261019.md](LOCAL_CI_RESULTS_20261019.md)；证据目录 `docs/v2/engineering/evidence/local-ci/20261019-final/`（JUnit/logs/真实浏览器截图，绝对主机路径已脱敏）
-- 覆盖：真实 uvicorn + `/health`（8.8 s）；pytest 941 tests / 473 passed / 0 failed（225.3 s）；Vitest 4307 passed + `tsc -b && vite build` + 设计 token（68.0 s）；真实 uvicorn+File+Vite+系统 Edge 的 2 个保存/重读旅程（32.5 s）；清理与残留检查（12.2 s，无残留端口/进程）
+- 覆盖：真实 uvicorn + `/health`（8.8 s）；pytest 941 tests / 473 passed / 0 failed（222.5 s）；Vitest 4307 passed + `tsc -b && vite build` + 设计 token（71.0 s）；真实 uvicorn+File+Vite+系统 Edge 的 2 个保存/重读旅程（33.7 s）；清理与残留检查（10.9 s，无残留端口/进程、删除本轮 runtime 55,093,742 B）
 
 ### 2.4 缺陷修复 D-21（真实、可复现）
 
@@ -59,7 +59,7 @@
 
 ## 3. 独立分支与人工审核
 
-- 分支：`work/v2-local-ci-community-20261019`（基于 `origin/work/v2-eng-baseline-20261019`，6 commits：`4e130e5e`、`38835e78`、`a93ad4b1`、`154d5c36`、`d73423c7`、`602744c7`）
+- 分支：`work/v2-local-ci-community-20261019`（基于 `origin/work/v2-eng-baseline-20261019`，8 commits：`4e130e5e`、`38835e78`、`a93ad4b1`、`154d5c36`、`d73423c7`、`602744c7`、`1e83a2ca`、`6afae9ca`）
 - Draft PR：**#49** <https://github.com/1785235376-blip/AI-Novel-Studio/pull/49>（base `work/v2-eng-baseline-20261019`，draft，未合并）
 - 未做：未合并 `main`、未删除分支、未修改 required checks/CI 政策、未创建 Release、未发布 V2、未新增 Docker Compose/一键启动/一键部署
 
@@ -109,6 +109,6 @@ python scripts/validate_issue_templates.py
 
 ## 7. 清理与磁盘
 
-- LOCAL-05 已删除本轮 runtime 数据 51,056,527 B；证据保留 1,721,483 B（脱敏后提交 1,699,426 B）
+- LOCAL-05 已删除本轮 runtime 数据 55,093,742 B；证据保留 1,723,073 B（脱敏后提交 1,702,277 B）
 - 仅删除本轮自建、路径受控的目录；未删除用户数据、模型、RC1、历史证据或其他 worktree
 - 保留的独立工作目录（`<workspace>/Worktrees/`）：工程基线、许可证/main、本分支，以及本轮之前已存在的其他 worktree

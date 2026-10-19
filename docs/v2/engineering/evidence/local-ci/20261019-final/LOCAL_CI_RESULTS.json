@@ -1,10 +1,10 @@
 {
   "schema": "poemseed-local-ci/1",
   "run_id": "20261019-final",
-  "head": "d73423c79a4c0a5fe5c8bf9e696c5ae91565197a",
+  "head": "6afae9cae82430f09c547257528adccdf945dc0c",
   "branch": "work/v2-local-ci-community-20261019",
-  "started_utc": "2026-10-19T01:47:54+00:00",
-  "finished_utc": "2026-10-19T01:53:32+00:00",
+  "started_utc": "2026-10-19T01:58:07+00:00",
+  "finished_utc": "2026-10-19T02:03:45+00:00",
   "host": {
     "os": "Windows-10-10.0.26100-SP0",
     "windows": true,
@@ -12,7 +12,7 @@
     "python_executable": "<repo>\\.venv\\Scripts\\python.exe",
     "node": "v22.14.0",
     "pnpm": "10.6.5",
-    "git_head": "d73423c79a4c0a5fe5c8bf9e696c5ae91565197a",
+    "git_head": "6afae9cae82430f09c547257528adccdf945dc0c",
     "git_branch": "work/v2-local-ci-community-20261019",
     "project_root": "<repo>"
   },
@@ -20,12 +20,12 @@
     {
       "step": "LOCAL-01",
       "status": "PASS",
-      "started_utc": "2026-10-19T01:47:45+00:00",
-      "finished_utc": "2026-10-19T01:47:54+00:00",
+      "started_utc": "2026-10-19T01:57:58+00:00",
+      "finished_utc": "2026-10-19T01:58:07+00:00",
       "duration_s": 8.8,
       "checks": {
-        "command": "<repo>\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 55206 --log-level warning",
-        "port": 55206,
+        "command": "<repo>\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 54525 --log-level warning",
+        "port": 54525,
         "boot_error": null,
         "health_http_status": 200,
         "health_body": {
@@ -48,9 +48,9 @@
     {
       "step": "LOCAL-02",
       "status": "PASS",
-      "started_utc": "2026-10-19T01:47:54+00:00",
-      "finished_utc": "2026-10-19T01:51:39+00:00",
-      "duration_s": 225.3,
+      "started_utc": "2026-10-19T01:58:07+00:00",
+      "finished_utc": "2026-10-19T02:01:50+00:00",
+      "duration_s": 222.5,
       "checks": {
         "command": "<repo>\\.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider --basetemp=<repo>\\.runtime\\local-ci\\20261019-final\\LOCAL-02\\pytest --junitxml=<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml --durations=5 tests/test_v2_creative_project_lifecycle.py tests/test_structured_record_cas.py tests/test_surface_pending_canon_review.py tests/test_shared_project_route_authority.py",
         "exit_code": 0,
@@ -63,16 +63,16 @@
           "skipped": 468
         },
         "scope_note": "Focused correctness slice (not a full regression): project lifecycle, CAS, pending-canon review promotion fence, shared route authority. The complete File/PostgreSQL suites remain independent acceptance layers.",
-        "tail": "  <repo>\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: <repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml -\n============================= slowest 5 durations =============================\n2.42s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]\n1.09s setup    tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-v1-/api/v1-cross_workspace]\n0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n0.82s setup    tests/test_shared_project_route_authority.py::test_original_writes_fail_without_changes_and_preserve_valid_writers[file-collaboration-v1-/api-member]\n473 passed, 468 skipped, 1 warning in 222.92s (0:03:42)"
+        "tail": "  <repo>\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: <repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml -\n============================= slowest 5 durations =============================\n2.44s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]\n0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n0.75s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-v1-/api-owner]\n0.71s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-off-/api/v1-owner]\n473 passed, 468 skipped, 1 warning in 220.21s (0:03:40)"
       },
       "log": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-02-pytest.log"
     },
     {
       "step": "LOCAL-03",
       "status": "PASS",
-      "started_utc": "2026-10-19T01:51:39+00:00",
-      "finished_utc": "2026-10-19T01:52:47+00:00",
-      "duration_s": 68.0,
+      "started_utc": "2026-10-19T02:01:50+00:00",
+      "finished_utc": "2026-10-19T02:03:01+00:00",
+      "duration_s": 71.0,
       "checks": {
         "pnpm": "C:\\Program Files\\nodejs\\pnpm.CMD",
         "pnpm_version": "10.6.5",
@@ -80,13 +80,13 @@
           "vitest": {
             "exit_code": 0,
             "timed_out": false,
-            "duration_s": 45.3,
+            "duration_s": 46.0,
             "log": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-03-vitest.log"
           },
           "build": {
             "exit_code": 0,
             "timed_out": false,
-            "duration_s": 22.1,
+            "duration_s": 24.5,
             "log": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-03-build.log"
           },
           "design-tokens": {
@@ -104,9 +104,9 @@
     {
       "step": "LOCAL-04",
       "status": "PASS",
-      "started_utc": "2026-10-19T01:52:47+00:00",
-      "finished_utc": "2026-10-19T01:53:20+00:00",
-      "duration_s": 32.5,
+      "started_utc": "2026-10-19T02:03:01+00:00",
+      "finished_utc": "2026-10-19T02:03:34+00:00",
+      "duration_s": 33.7,
       "checks": {
         "command": "C:\\Program Files\\nodejs\\pnpm.CMD exec playwright test --config playwright.v2-live.config.ts --project v2-live-chromium --grep real File V2 authoring|real HTTP File V2 lifecycle",
         "browser_executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
@@ -126,28 +126,29 @@
           "skipped": 0
         },
         "scope_note": "Real uvicorn + real File persistence + Vite + system browser; synthetic fixture only, no model calls and no paid APIs.",
-        "tail": "! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz\n\nRunning 2 tests using 1 worker\n\n(node:132804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:132804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n  ok 1 [v2-live-chromium] › tests\\e2e\\v2-creative-live.spec.ts:113:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript (9.7s)\n  ok 2 [v2-live-chromium] › tests\\e2e\\v2-creative-live.spec.ts:284:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (1.5s)\n\n  2 passed (30.3s)"
+        "tail": "! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz\n\nRunning 2 tests using 1 worker\n\n(node:129504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:129504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n  ok 1 [v2-live-chromium] › tests\\e2e\\v2-creative-live.spec.ts:113:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript (9.6s)\n  ok 2 [v2-live-chromium] › tests\\e2e\\v2-creative-live.spec.ts:284:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (1.4s)\n\n  2 passed (31.4s)"
       },
       "log": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-04-playwright.log"
     },
     {
       "step": "LOCAL-05",
       "status": "PASS",
-      "started_utc": "2026-10-19T01:53:20+00:00",
-      "finished_utc": "2026-10-19T01:53:32+00:00",
-      "duration_s": 12.2,
+      "started_utc": "2026-10-19T02:03:34+00:00",
+      "finished_utc": "2026-10-19T02:03:45+00:00",
+      "duration_s": 10.9,
       "checks": {
         "tracked_ports": [
           5177,
           5178,
           8017,
           8018,
-          55206
+          54525
         ],
         "stale_ports": [],
         "leaked_processes": [],
-        "runtime_bytes_before": 51056527,
-        "evidence_bytes_retained": 1721483,
+        "runtime_bytes_before": 51056447,
+        "browser_runtime_bytes_before": 4037295,
+        "evidence_bytes_retained": 1723073,
         "runtime_removed": true,
         "evidence_files": [
           "LOCAL-01-backend.log",
@@ -165,7 +166,7 @@
           "junit.xml",
           "results.json"
         ],
-        "scope_note": "Removed only .runtime/local-ci/<run-id> created by this run; logs/JUnit/hashes in the evidence directory are retained."
+        "scope_note": "Removed only this run's .runtime/local-ci/<run-id> and .runtime/v2-live-browser/<run-id> directories; logs/JUnit/hashes in the evidence directory are retained."
       }
     }
   ],

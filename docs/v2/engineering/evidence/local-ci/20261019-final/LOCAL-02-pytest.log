@@ -22,9 +22,9 @@ sssss                                                                    [100%]
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: <repo>\docs\v2\engineering\evidence\local-ci\20261019-final\LOCAL-02-junit.xml -
 ============================= slowest 5 durations =============================
-2.42s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]
+2.44s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]
 1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]
-1.09s setup    tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-v1-/api/v1-cross_workspace]
 0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]
-0.82s setup    tests/test_shared_project_route_authority.py::test_original_writes_fail_without_changes_and_preserve_valid_writers[file-collaboration-v1-/api-member]
-473 passed, 468 skipped, 1 warning in 222.92s (0:03:42)
+0.75s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-v1-/api-owner]
+0.71s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-off-/api/v1-owner]
+473 passed, 468 skipped, 1 warning in 220.21s (0:03:40)

@@ -29,4 +29,4 @@ dist/assets/App-DV-g2bJ-.js                     2,081.66 kB │ gzip: 615.46 kB
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 4.20s
+✓ built in 4.47s

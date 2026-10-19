@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="30.267541">
-<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-19T01:53:05.381Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="0" time="11.173" errors="0">
-<testcase name="real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript" classname="v2-creative-live.spec.ts" time="9.702">
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="31.447478">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-19T02:03:19.953Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="0" time="11.023" errors="0">
+<testcase name="real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript" classname="v2-creative-live.spec.ts" time="9.592">
 <properties>
 <property name="verification" value="Real uvicorn + File persistence + Vite + Chromium; synthetic manuscript; rule-assisted direction; no model inference or paid provider calls.">
 </property>
@@ -21,7 +21,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts" time="1.471">
+<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts" time="1.431">
 <properties>
 <property name="verification" value="Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference.">
 </property>
