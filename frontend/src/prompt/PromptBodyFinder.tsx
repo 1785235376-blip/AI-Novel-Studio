@@ -12,6 +12,9 @@ export function PromptBodyFinder({ text, target, disabled }: {
   const [composing, setComposing] = useState(false);
   const composingRef = useRef(false);
   const alive = useRef(true);
+  const ownedSelection = useRef<{
+    input: HTMLTextAreaElement; value: string; start: number; end: number; direction: string;
+  } | null>(null);
   const current = useRef({ text, query, disabled });
   current.current = { text, query, disabled };
   const [active, setActive] = useState<{ text: string; query: string; index: number } | null>(null);
@@ -30,8 +33,33 @@ export function PromptBodyFinder({ text, target, disabled }: {
   useEffect(() => { setActive(null); }, [text, query]);
   useEffect(() => {
     alive.current = true;
-    return () => { alive.current = false; };
-  }, []);
+    const input = target.current;
+    const release = () => { ownedSelection.current = null; };
+    const unchanged = () => {
+      const held = ownedSelection.current;
+      return held && input && held.input === input && input.value === held.value
+        && input.selectionStart === held.start && input.selectionEnd === held.end
+        && input.selectionDirection === held.direction;
+    };
+    const releaseMovedSelection = () => { if (!unchanged()) release(); };
+    // Manual interaction owns the selection even if its final offsets happen to
+    // equal the last match. Native select events from our own navigation may be
+    // queued, so only a changed native range releases ownership on that event.
+    const interactions = ['pointerdown', 'keydown', 'beforeinput', 'input', 'compositionstart'];
+    interactions.forEach(event => input?.addEventListener(event, release));
+    input?.addEventListener('select', releaseMovedSelection);
+    return () => {
+      alive.current = false;
+      interactions.forEach(event => input?.removeEventListener(event, release));
+      input?.removeEventListener('select', releaseMovedSelection);
+      // A keyed source change remounts the finder but can reuse the textarea.
+      // Retire only our untouched range; never focus or rewrite the draft.
+      if (input && target.current === input && unchanged()) {
+        input.setSelectionRange(input.selectionEnd, input.selectionEnd);
+      }
+      release();
+    };
+  }, [target]);
 
   const locate = (direction: 1 | -1) => {
     const input = target.current;
@@ -42,6 +70,8 @@ export function PromptBodyFinder({ text, target, disabled }: {
       : (activeIndex + direction + matches.length) % matches.length;
     input.focus();
     input.setSelectionRange(matches[index], matches[index] + query.length);
+    ownedSelection.current = { input, value: input.value, start: input.selectionStart,
+      end: input.selectionEnd, direction: input.selectionDirection };
     setActive({ text, query, index });
   };
 

@@ -83,6 +83,8 @@ it('recounts edited text without keeping a stale result or moving focus', () => 
 it.each(['scope', 'key', 'family', 'asset', 'revision'])('clears private search state after %s identity changes with identical body text', identity => {
   const p = props(); const view = render(<PromptEditorPanel {...p} />);
   search('🙂'); fireEvent.click(action('下一个匹配'));
+  const originalBody = body();
+  const matchEnd = originalBody.selectionEnd;
   const draft = { ...p.draft };
   if (identity === 'key') draft.key = 'draft-b';
   if (identity === 'family') draft.familyId = 'family-b';
@@ -92,9 +94,52 @@ it.each(['scope', 'key', 'family', 'asset', 'revision'])('clears private search 
     copyScopeKey={identity === 'scope' ? 'project-b:actor-b' : p.copyScopeKey} />);
   expect(query().value).toBe('');
   expect(finder().queryByText(/处匹配/)).toBeNull();
+  expect(body()).toBe(originalBody);
+  expect([body().selectionStart, body().selectionEnd]).toEqual([matchEnd, matchEnd]);
   expect(body().value).toBe(p.draft.content.text);
   expect(p.onEdit).not.toHaveBeenCalled();
   expect(p.onSave).not.toHaveBeenCalled();
+});
+
+it.each(['range', 'caret', 'same-range-user-intent'])(
+  'selection ownership: preserves a newer user %s through source retirement and an old callback', kind => {
+    const p = props('source 🙂 tail 🙂');
+    const view = render(<PromptEditorPanel {...p} />);
+    search('🙂'); fireEvent.click(action('下一个匹配'));
+    const button = action('下一个匹配');
+    const retained = (button as any)[Object.keys(button).find(key => key.startsWith('__reactProps$'))!]
+      .onClick as () => void;
+    if (kind === 'range') body().setSelectionRange(0, 6);
+    if (kind === 'caret') body().setSelectionRange(2, 2);
+    if (kind === 'same-range-user-intent') fireEvent.pointerDown(body());
+    const userSelection = [body().selectionStart, body().selectionEnd];
+    const seed = screen.getByLabelText('Seed'); seed.focus();
+    view.rerender(<PromptEditorPanel {...p}
+      draft={{ ...p.draft, familyId: 'family-b', baseAssetId: 'asset-b', baseRevision: 2 }} />);
+    expect([body().selectionStart, body().selectionEnd]).toEqual(userSelection);
+    expect(document.activeElement).toBe(seed);
+    retained();
+    expect([body().selectionStart, body().selectionEnd]).toEqual(userSelection);
+    expect(document.activeElement).toBe(seed);
+    expect(body().value).toBe(p.draft.content.text);
+    for (const callback of [p.onEdit, p.onSave, p.onRetry, p.onRebase, p.onDiscard]) {
+      expect(callback).not.toHaveBeenCalled();
+    }
+  });
+
+it('selection ownership: ordinary query edits and clearing preserve the native range until its source retires', () => {
+  const p = props(); const view = render(<PromptEditorPanel {...p} />);
+  search('🙂'); fireEvent.click(action('下一个匹配'));
+  const match = [body().selectionStart, body().selectionEnd];
+  query().focus(); search('[.]');
+  expect([body().selectionStart, body().selectionEnd]).toEqual(match);
+  fireEvent.click(action('清除查找'));
+  expect([body().selectionStart, body().selectionEnd]).toEqual(match);
+  const seed = screen.getByLabelText('Seed'); seed.focus();
+  view.rerender(<PromptEditorPanel {...p} draft={{ ...p.draft, baseRevision: 2 }} />);
+  expect([body().selectionStart, body().selectionEnd]).toEqual([match[1], match[1]]);
+  expect(document.activeElement).toBe(seed);
+  expect(p.onEdit).not.toHaveBeenCalled(); expect(p.onSave).not.toHaveBeenCalled();
 });
 
 it('uses Enter and Shift+Enter only after search-field IME composition has finished', () => {
