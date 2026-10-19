@@ -1,0 +1,444 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_INCREMENT_NOT_FULL_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "11de2c3b8f5e07ea67377aa90c38f66bb2b99b33",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-graph-groups-budget-recovery-comic-framing-04fd0fa4",
+  "product_base": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+  "product_tip": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+  "product_tree": "c8f98275af6e00f7382aa118707e5d10716f75ed",
+  "bundle_ref": "refs/heads/work/v2-graph-budget-comic-d6-combined-20261019",
+  "bundle_filename": "studio-v2-d6d1259d-to-04fd0fa4.bundle",
+  "unique_external_prerequisite": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+  "source_commit_count": 3,
+  "patch_mapping": [
+    {
+      "original": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "stable_patch_id": "f1c74d86823885cd350284e895cf6e3f496b0119"
+    },
+    {
+      "original": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "stable_patch_id": "8143346627dd42fd3cf407b152c033c006692b05"
+    },
+    {
+      "original": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "stable_patch_id": "ab6cbcf5fcb5dd9c56a5c46d9ed14204632de594"
+    }
+  ],
+  "adoption_stage_file_mapping": [
+    {
+      "path": "frontend/src/creative/GraphVisualGroupCopy.test.tsx",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "a6bd676c37b4d74af1e12d986f3a83b782b54478",
+      "combined_blob": "a6bd676c37b4d74af1e12d986f3a83b782b54478"
+    },
+    {
+      "path": "frontend/src/creative/graphVisualGroupCopy.ts",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "4503103688063c1b2d4b58dceabec061306450af",
+      "combined_blob": "4503103688063c1b2d4b58dceabec061306450af"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "6cd1d4d6ea6f71a146f9cbb9f65e74566d2076e6",
+      "combined_blob": "6cd1d4d6ea6f71a146f9cbb9f65e74566d2076e6"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "a28242573457e7b62a279ac84b3533ec975f8ec0",
+      "combined_blob": "a28242573457e7b62a279ac84b3533ec975f8ec0"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerBudgetRecovery.additive.test.tsx",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "2f48e66d889373b630098a9aec476c6e81ee1605",
+      "combined_blob": "2f48e66d889373b630098a9aec476c6e81ee1605"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "c7e5dc73e8695f18baae49f9b23cee8a1aafe350",
+      "combined_blob": "c7e5dc73e8695f18baae49f9b23cee8a1aafe350"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerBudgetRecovery.css",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "fd5ab33a6e579554b113f797b2a3910279bd33ac",
+      "combined_blob": "fd5ab33a6e579554b113f797b2a3910279bd33ac"
+    },
+    {
+      "path": "frontend/src/experimental/ComicImageFramingEditor.test.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "6809d913a7692df49c188036d9eca0053f7dbc01",
+      "combined_blob": "6809d913a7692df49c188036d9eca0053f7dbc01"
+    },
+    {
+      "path": "frontend/src/experimental/ComicImageFramingEditor.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "033b7d8bc68b659acd2df9a5160b5fc2fa9a9263",
+      "combined_blob": "033b7d8bc68b659acd2df9a5160b5fc2fa9a9263"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "725738b84be42dc7f862c9d6701b88272ffe82ce",
+      "combined_blob": "725738b84be42dc7f862c9d6701b88272ffe82ce"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "505ab86f0d358506e496cd00960157337878d262",
+      "combined_blob": "505ab86f0d358506e496cd00960157337878d262"
+    },
+    {
+      "path": "frontend/src/experimental/comicImageFraming.test.ts",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "483c55df95755cf97271921eec54deaa83c85882",
+      "combined_blob": "483c55df95755cf97271921eec54deaa83c85882"
+    },
+    {
+      "path": "frontend/src/experimental/comicImageFraming.ts",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "f27296e7a88f9e8d49408e245d5413ccd7a7b620",
+      "combined_blob": "f27296e7a88f9e8d49408e245d5413ccd7a7b620"
+    },
+    {
+      "path": "frontend/src/experimental/comicLayouts.css",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "03b76ae61753862f27475bcc58d5840f3d9c93a2",
+      "combined_blob": "03b76ae61753862f27475bcc58d5840f3d9c93a2"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "frontend/src/creative/GraphVisualGroupCopy.test.tsx",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "a6bd676c37b4d74af1e12d986f3a83b782b54478",
+      "combined_blob": "a6bd676c37b4d74af1e12d986f3a83b782b54478"
+    },
+    {
+      "path": "frontend/src/creative/graphVisualGroupCopy.ts",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "4503103688063c1b2d4b58dceabec061306450af",
+      "combined_blob": "4503103688063c1b2d4b58dceabec061306450af"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "6cd1d4d6ea6f71a146f9cbb9f65e74566d2076e6",
+      "combined_blob": "6cd1d4d6ea6f71a146f9cbb9f65e74566d2076e6"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "original_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "combined_commit": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "source_blob": "a28242573457e7b62a279ac84b3533ec975f8ec0",
+      "combined_blob": "a28242573457e7b62a279ac84b3533ec975f8ec0"
+    },
+    {
+      "path": "frontend/src/experimental/ComicImageFramingEditor.test.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "6809d913a7692df49c188036d9eca0053f7dbc01",
+      "combined_blob": "6809d913a7692df49c188036d9eca0053f7dbc01"
+    },
+    {
+      "path": "frontend/src/experimental/ComicImageFramingEditor.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "033b7d8bc68b659acd2df9a5160b5fc2fa9a9263",
+      "combined_blob": "033b7d8bc68b659acd2df9a5160b5fc2fa9a9263"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.framing.test.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "725738b84be42dc7f862c9d6701b88272ffe82ce",
+      "combined_blob": "725738b84be42dc7f862c9d6701b88272ffe82ce"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "505ab86f0d358506e496cd00960157337878d262",
+      "combined_blob": "505ab86f0d358506e496cd00960157337878d262"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerBudgetRecovery.additive.test.tsx",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "2f48e66d889373b630098a9aec476c6e81ee1605",
+      "combined_blob": "2f48e66d889373b630098a9aec476c6e81ee1605"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "c7e5dc73e8695f18baae49f9b23cee8a1aafe350",
+      "combined_blob": "c7e5dc73e8695f18baae49f9b23cee8a1aafe350"
+    },
+    {
+      "path": "frontend/src/experimental/comicImageFraming.test.ts",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "483c55df95755cf97271921eec54deaa83c85882",
+      "combined_blob": "483c55df95755cf97271921eec54deaa83c85882"
+    },
+    {
+      "path": "frontend/src/experimental/comicImageFraming.ts",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "f27296e7a88f9e8d49408e245d5413ccd7a7b620",
+      "combined_blob": "f27296e7a88f9e8d49408e245d5413ccd7a7b620"
+    },
+    {
+      "path": "frontend/src/experimental/comicLayouts.css",
+      "original_commit": "73796d6e770bb4aa05c46e463291076a163d506c",
+      "combined_commit": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "source_blob": "03b76ae61753862f27475bcc58d5840f3d9c93a2",
+      "combined_blob": "03b76ae61753862f27475bcc58d5840f3d9c93a2"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerBudgetRecovery.css",
+      "original_commit": "80787f92d55456e860cef028f51cb1784fcc99a5",
+      "combined_commit": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "source_blob": "fd5ab33a6e579554b113f797b2a3910279bd33ac",
+      "combined_blob": "fd5ab33a6e579554b113f797b2a3910279bd33ac"
+    }
+  ],
+  "all_other_d6_source_entries_identical": true,
+  "introduced_objects": [
+    {
+      "oid": "04fd0fa47a8349510aaf0fcbebbc776d60ac21b7",
+      "type": "commit",
+      "bytes": 291,
+      "sha256": "f8b99b5aa2e120acd0fd264620a75e46838db1e6c8b33d355775fc90ff25167b"
+    },
+    {
+      "oid": "7dbc587dc5505447f0432cf634fee45c9055d1a1",
+      "type": "commit",
+      "bytes": 310,
+      "sha256": "fa27bfc806256ea27762dcc8cd0a3a89c6544c7d00511cd1e5cde13abcb9e315"
+    },
+    {
+      "oid": "d0e06ce959166e39b00eeca214d73e64f924f3a1",
+      "type": "commit",
+      "bytes": 357,
+      "sha256": "d9fc980dd2f1d96c31fb7080a5130d2f24b6eebb5079230cabc4fe037e3edf89"
+    },
+    {
+      "oid": "c8f98275af6e00f7382aa118707e5d10716f75ed",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "96b9f52db0cbb230c6ac72b0e90acd99ce9acdceeddb82962151608d7cef945d"
+    },
+    {
+      "oid": "35a33384a06a46fe8e127f0ac0e2de27c8d356f3",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "0073ac7e920a6619157da84d7312973ea316bba8c3565a4dc98ab2f63c4e2121"
+    },
+    {
+      "oid": "18307cde17829af220f973099a8574b0a25a89b1",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "57a258d9117552ba3e867c18f86554d875d5efc5b1ce8f46a0aa2c3e6ade3a9e"
+    },
+    {
+      "oid": "905ed2900a806361fc2511248599888cbc9c3c84",
+      "type": "tree",
+      "bytes": 34331,
+      "sha256": "129f88a4dfaa7145e582a27e114af4003a2cdaf418f786a27ad6d5fc2c916f50"
+    },
+    {
+      "oid": "a6bd676c37b4d74af1e12d986f3a83b782b54478",
+      "type": "blob",
+      "bytes": 12998,
+      "sha256": "479203d7e09fce361bb2aa8f0d6458af3e7728edd361dcf8f27dfd2df265641e"
+    },
+    {
+      "oid": "4503103688063c1b2d4b58dceabec061306450af",
+      "type": "blob",
+      "bytes": 4274,
+      "sha256": "4ae6466ff9e027000e8b2d767e6a57a2469ec2c6d26fafad52b64edee4e20d45"
+    },
+    {
+      "oid": "6cd1d4d6ea6f71a146f9cbb9f65e74566d2076e6",
+      "type": "blob",
+      "bytes": 59427,
+      "sha256": "443756383806273e187695354e2966c230f7403bd29291a507deab8275eaa0b3"
+    },
+    {
+      "oid": "a28242573457e7b62a279ac84b3533ec975f8ec0",
+      "type": "blob",
+      "bytes": 92029,
+      "sha256": "e91bdb170dc188a17afa85cacf456036be9175259cda4a717b83ef9eb21be7c4"
+    },
+    {
+      "oid": "aec3567f001cd03275b94d1ab846a1e6b2994336",
+      "type": "tree",
+      "bytes": 18303,
+      "sha256": "5ef072156daa2d47fbb2e77cc8e9c32635e2678ead577263a577236d85625ada"
+    },
+    {
+      "oid": "6809d913a7692df49c188036d9eca0053f7dbc01",
+      "type": "blob",
+      "bytes": 6965,
+      "sha256": "df718fb5bc8b3bdda0b735ba6bb6bc2f8e7c74e67a80fcb8b2c4ee505d9d1368"
+    },
+    {
+      "oid": "033b7d8bc68b659acd2df9a5160b5fc2fa9a9263",
+      "type": "blob",
+      "bytes": 9461,
+      "sha256": "9a3d49dc542809161c96c3c8340566b1aed844b18aefc8c2a9e3db179e4f611e"
+    },
+    {
+      "oid": "725738b84be42dc7f862c9d6701b88272ffe82ce",
+      "type": "blob",
+      "bytes": 11900,
+      "sha256": "9c847a8a4e0a4552f7dd59ff756f986bc42e427cda6882fa64d06ae4ed799287"
+    },
+    {
+      "oid": "505ab86f0d358506e496cd00960157337878d262",
+      "type": "blob",
+      "bytes": 49595,
+      "sha256": "fc624febae94657a75be14f9affa7bd4f3a7c64e6381c974f3e8e55ca5cadbd3"
+    },
+    {
+      "oid": "2f48e66d889373b630098a9aec476c6e81ee1605",
+      "type": "blob",
+      "bytes": 6790,
+      "sha256": "faf145fc743d9081b3a930615845f0d5c548b989dec6b4387fd76f3fe92c9fa6"
+    },
+    {
+      "oid": "c7e5dc73e8695f18baae49f9b23cee8a1aafe350",
+      "type": "blob",
+      "bytes": 36298,
+      "sha256": "9b23f256efc7fd111351fd6d6374a7d78faf404068810776643980d3867d6090"
+    },
+    {
+      "oid": "483c55df95755cf97271921eec54deaa83c85882",
+      "type": "blob",
+      "bytes": 3061,
+      "sha256": "b557c8afb230e9cee71a298b1fd5489da91ffc60960499e914054d1e7f69d609"
+    },
+    {
+      "oid": "f27296e7a88f9e8d49408e245d5413ccd7a7b620",
+      "type": "blob",
+      "bytes": 2975,
+      "sha256": "b1e69591c9f551f80f1af9d221375440943c44c24c1d59a72b699e6c3205242c"
+    },
+    {
+      "oid": "03b76ae61753862f27475bcc58d5840f3d9c93a2",
+      "type": "blob",
+      "bytes": 1691,
+      "sha256": "7135607fef101e3a374afe0f29e8ffff2e421f35066494a71ca8d2f7c60c68d6"
+    },
+    {
+      "oid": "fd5ab33a6e579554b113f797b2a3910279bd33ac",
+      "type": "blob",
+      "bytes": 266,
+      "sha256": "573c5279f6574ef6c27ab8ba5538de05e16ecd576f484fb9ee6b898055de43da"
+    },
+    {
+      "oid": "2780946c1e141522299d2bdcf6aeb752f637a087",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "329baf813c0f19010e6738adda63fbbf3757f892c02f5ed2d6caf4ce333ac0f4"
+    },
+    {
+      "oid": "c334cbb343e608b0a7360d44ea960524ff8ad41e",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "2f0552013e7b411d0ce791162c67b8df90b42e3467a8305e817b9f490eac30f9"
+    },
+    {
+      "oid": "26877332b00869360cd6152895ddcd6adebfe5d1",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "66c9d7bf2da009ef24a380cb46fa02429384a32750eed20f296b564de5fd3c07"
+    },
+    {
+      "oid": "974b7499854bf106257f155424296d8398216983",
+      "type": "tree",
+      "bytes": 18087,
+      "sha256": "1dbdcb9a199521341aa8dfbe32908f82d5ea93337bfef11e760bebf687f3b335"
+    },
+    {
+      "oid": "c475e2fa1b4b5344be7f0fecf5d7849011287a22",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "50bb680cca9f64acfa9a1c9476f24d36ea6400e04088c461d49e90baf2142bd3"
+    },
+    {
+      "oid": "468376f4e52149e239f0e349441c0072cb4523c3",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "062c596326eb995178376bb9bafbd2bd76b8bb738ecbbc611aa132c7d7a6c197"
+    },
+    {
+      "oid": "e900426a4fc4535aaf40d7b5560c65f146428cba",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "8c9d67eea57449f37e4fd7b803ed0331396db4f3bf234b84dc73b35e3508912d"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_pattern_findings": 0,
+    "runtime_profile_or_raw_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 303467,
+      "sha256": "dd0c074d967c564bd09717a3449169f34de0756c40d7d69b29dcd09f85103d64",
+      "git_blob": "a614c797cc0b4dacc26154f71259013d3f889372"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3175,
+      "sha256": "614589aea234820001f8b75af76fb421fe73a5bd7a7cc49e1610450e1991b627",
+      "git_blob": "c908f4a0e85697f88d88803002ce0068fd2bb22d"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1446,
+      "sha256": "98d9c2d36dfd2a1defb8c1ce502366d0286435632567cf097885fb0f4ef93afe",
+      "git_blob": "074568e814086a14e95744406bb69ab7e7e9273a"
+    },
+    {
+      "path": "studio-v2-d6d1259d-to-04fd0fa4.bundle",
+      "bytes": 22395,
+      "sha256": "c366cce76a5fda0fc03442fe1c431aa3aa081374c32345658cd05627d1689883",
+      "git_blob": "950b22befd6c0d8ad9320893cb118a8b44cefc9f"
+    }
+  ]
+}
