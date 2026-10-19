@@ -74,6 +74,8 @@ LOCAL_02_SCOPE_NOTE = (
     "File/PostgreSQL suites remain independent acceptance layers."
 )
 LOCAL_04_GREP = "real File V2 authoring|real HTTP File V2 lifecycle"
+# Ports owned by frontend/playwright.v2-live.config.ts (two server pairs).
+WEB_SERVER_PORTS = (8017, 8018, 5177, 5178)
 
 SECRET_SUFFIXES = ("_API_KEY", "_TOKEN", "_SECRET")
 SECRET_KEYS = {
@@ -566,6 +568,7 @@ class LocalCi:
         checks = {
             "command": " ".join(command),
             "browser_executable": browser,
+            "web_server_ports": sorted(WEB_SERVER_PORTS),
             "playwright_chromium_present": chromium,
             "exit_code": result["exit_code"],
             "timed_out": result["timed_out"],
@@ -591,6 +594,9 @@ class LocalCi:
                 ports.add(checks["api_port"])
             if isinstance(checks.get("web_port"), int):
                 ports.add(checks["web_port"])
+            for port in checks.get("web_server_ports") or []:
+                if isinstance(port, int):
+                    ports.add(port)
         stale_ports = sorted(port for port in ports if port_open(port))
         leaked = owned_processes(self.run_id)
         runtime_bytes_before = size_tree(self.runtime)
