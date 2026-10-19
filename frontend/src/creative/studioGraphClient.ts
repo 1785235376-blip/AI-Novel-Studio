@@ -855,7 +855,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
   const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string;
-    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; localPins: Record<string, StudioGraphParameters>; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
+    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; localPins: Record<string, StudioGraphParameters>; localEdges: StudioGraphDefinition['edges']; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
   const observedRuns = new Map<string, string>();
   const observedReviewRecoveries = new Map<string, { version: number; workflow: string;
     nodes: Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
@@ -915,6 +915,31 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     }));
     return { contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT, cache_enabled: false, bindings, receipts };
   }
+  function checkSubgraphPins(bindings: Record<string, StudioGraphSubgraphBinding>, pins: Record<string, StudioGraphParameters>) {
+    const calls = Object.keys(pins);
+    if (Object.keys(bindings).length !== calls.length || Object.keys(bindings).some(key => !calls.includes(key))) invalid();
+    for (const key of calls) {
+      const binding = bindings[key], pin = pins[key];
+      if (!binding || binding.source.id !== pin.graph_id || binding.source.version !== pin.expected_version
+        || binding.source.definition_digest !== pin.definition_digest || binding.source.execution_digest !== pin.execution_digest
+        || binding.interface.input.node_id !== pin.input_node_id || binding.interface.output.node_id !== pin.output_node_id
+        || binding.interface.input.port !== pin.input_port || binding.interface.output.port !== pin.output_port) invalid();
+    }
+  }
+  // Frozen store.canonical semantics for decoded pure ports: ASCII contract keys,
+  // strings, booleans and integer plan sequences; no arbitrary numeric JSON data.
+  function localCanonical(value: unknown): string {
+    if (Array.isArray(value)) return `[${value.map(localCanonical).join(',')}]`;
+    if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key =>
+      `${JSON.stringify(key)}:${localCanonical((value as Record<string, unknown>)[key])}`).join(',')}}`;
+    if (value !== null && !['string', 'boolean'].includes(typeof value) && !(typeof value === 'number' && Number.isSafeInteger(value))) invalid();
+    return JSON.stringify(value);
+  }
+  async function localValueDigest(value: unknown): Promise<string> {
+    const bytes = new TextEncoder().encode(localCanonical(value));
+    if (bytes.length > 64_000 || !globalThis.crypto?.subtle) invalid();
+    return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), byte => byte.toString(16).padStart(2, '0')).join('');
+  }
   function checkedGraph(value: unknown, expectedId?: string): StudioGraphRecord {
     const row = record(value), ownership = owner(row), graphId = resourceId(row.id);
     if (expectedId !== undefined && expectedId !== graphId) mismatch();
@@ -950,6 +975,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       version: value.version, can_edit: value.can_edit, enabledIds: value.definition.nodes.filter(node => node.enabled).map(node => node.id),
       definition_digest: value.definition_digest,
       localPins: Object.fromEntries(value.definition.nodes.filter(node => node.definition_id === 'local_subgraph').map(node => [node.id, { ...node.parameters }])),
+      localEdges: value.definition.schema_version === 6 ? value.definition.edges.map(edge => ({ ...edge })) : [],
       schemaVersion: value.definition.schema_version, planningSnapshots: Object.fromEntries(value.definition.nodes.filter(node => node.parameters.document_snapshot).map(node => [node.id, node.parameters.document_snapshot])), nodes: Object.fromEntries(value.definition.nodes.map(node => [node.id, node.definition_id])),
       shotPins: Object.fromEntries(value.definition.nodes.filter(node => node.definition_id === 'storyboard_shot').map(node => { const edge = value.definition.edges.find(edge => edge.target_node_id === node.id && edge.target_port === 'storyboard'); const source = value.definition.nodes.find(source => source.id === edge?.source_node_id); return [node.id, { shot_id: node.parameters.shot_id, shot_version: node.parameters.shot_version, shot_digest: node.parameters.shot_digest, document_snapshot: source?.parameters.document_snapshot }]; })),
     });
@@ -980,13 +1006,14 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
         || row.source_check !== 'CURRENT_PIN_SCOPE_TRANSACTION' || observed && observed.schemaVersion !== 6) invalid();
       local = { graph_schema_version: 6, local_subgraph_contract: GRAPH_LOCAL_SUBGRAPH_CONTRACT,
         source_check: 'CURRENT_PIN_SCOPE_TRANSACTION', local_subgraph_bindings: subgraphBindings(row.local_subgraph_bindings) };
+      if (observed?.version === expectedVersion) checkSubgraphPins(local.local_subgraph_bindings!, observed.localPins);
     }
     return { ...ownership, ...local, graph_id: graphId, valid: true, executable, issues,
       execution_order: executionOrder, selected_closure: closure,
       definition_digest: definitionDigest, preflight_digest: digest(row.preflight_digest),
       expected_version: expectedVersion, target_node_ids: targetIds, model_called: false, external_calls: 0 };
   }
-  function checkedRun(value: unknown, expectedId?: string, expectedGraphId?: string): StudioGraphRun {
+  function checkedRun(value: unknown, expectedId?: string, expectedGraphId?: string, remember = true): StudioGraphRun {
     const row = record(value), ownership = owner(row), runId = resourceId(row.id), graphId = resourceId(row.graph_id);
     if ((expectedId !== undefined && expectedId !== runId) || (expectedGraphId !== undefined && expectedGraphId !== graphId)) mismatch();
     if (row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
@@ -1043,15 +1070,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       || cache.hits !== 0 || knownGraph && knownGraph.schemaVersion !== 6) || knownGraph?.schemaVersion === 6 && !localMode) invalid();
     const local = localMode ? subgraphRuntime(row.local_subgraph_runtime, hideOutputs) : undefined;
     if (local && !hideOutputs && knownGraph) {
-      const calls = Object.keys(knownGraph.localPins);
-      if (Object.keys(local.bindings).length !== calls.length || Object.keys(local.bindings).some(key => !calls.includes(key))) invalid();
-      for (const key of calls) {
-        const binding = local.bindings[key], pin = knownGraph.localPins[key];
-        if (!binding || binding.source.id !== pin.graph_id || binding.source.version !== pin.expected_version
-          || binding.source.definition_digest !== pin.definition_digest || binding.source.execution_digest !== pin.execution_digest
-          || binding.interface.input.node_id !== pin.input_node_id || binding.interface.output.node_id !== pin.output_node_id
-          || (nodeStates[key]?.status === 'SUCCEEDED') !== Object.hasOwn(local.receipts, key)) invalid();
-      }
+      checkSubgraphPins(local.bindings, knownGraph.localPins);
+      if (Object.keys(knownGraph.localPins).some(key => (nodeStates[key]?.status === 'SUCCEEDED') !== Object.hasOwn(local.receipts, key))) invalid();
     }
     if (cache.mode === GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && (model || media || modelCalled || knownGraph
       && (knownGraph.schemaVersion !== 1 || Object.values(knownGraph.nodes).some(kind => !GRAPH_LOCAL_DEPENDENCY_DEFINITION_IDS.some(local => local === kind))))) invalid();
@@ -1064,6 +1084,10 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       ...(local ? { local_subgraph_runtime: local } : {}),
       applied: false, stale, reviewed: bool(row.reviewed), timeout_seconds: 3600, deadline_at: deadline(row.deadline_at) };
     if (row.asset_output !== undefined) result.asset_output = graphTextAssetOutput(row.asset_output, result, observedGraphs.get(graphId));
+    return remember ? rememberRun(result) : result;
+  }
+  function rememberRun(result: StudioGraphRun): StudioGraphRun {
+    const runId = result.id, graphId = result.graph_id;
     if (observedRuns.has(runId) && observedRuns.get(runId) !== graphId) mismatch();
     observedRuns.set(runId, graphId);
     const recoveryNodes = new Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
@@ -1077,6 +1101,29 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       { version: result.version, workflow: recoveryWorkflow(result), nodes: recoveryNodes });
     else observedReviewRecoveries.delete(runId);
     return result;
+  }
+  async function checkedRunResponse(value: unknown, expectedId?: string, expectedGraphId?: string): Promise<StudioGraphRun> {
+    const row = record(value);
+    if (row.local_subgraph_runtime === undefined) return checkedRun(value, expectedId, expectedGraphId);
+    const observed = observedGraphs.get(resourceId(row.graph_id));
+    const result = checkedRun(value, expectedId, expectedGraphId, false), runtime = result.local_subgraph_runtime!;
+    const known = observed?.version === result.graph_version ? observed : undefined;
+    // Redaction precedes hashing: never examine or revive masked wire receipts.
+    if (!result.stale && !['CANCELLED', 'REJECTED', 'FAILED'].includes(result.status)) {
+      await Promise.all(Object.entries(runtime.receipts).map(async ([key, receipt]) => {
+        const state = result.node_states[key];
+        if (state?.status !== 'SUCCEEDED' || !state.output?.draft || await localValueDigest(state.output) !== receipt.output_digest) invalid();
+        if (known) {
+          const incoming = known.localEdges.filter(edge => edge.target_node_id === key);
+          const edge = incoming[0], source = edge && result.node_states[edge.source_node_id];
+          if (incoming.length !== 1 || edge.target_port !== 'text' || edge.source_port !== 'text'
+            || source?.status !== 'SUCCEEDED' || typeof source.output?.text !== 'string'
+            || await localValueDigest({ text: source.output.text }) !== receipt.input_digest) invalid();
+        }
+      }));
+      if (observedGraphs.get(result.graph_id) !== observed) invalid();
+    }
+    return rememberRun(result);
   }
   function checkedModelRun(value: unknown, runId: string): StudioGraphRun {
     const result = checkedRun(value, runId, observedRuns.get(runId));
@@ -1211,8 +1258,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       const payload: StudioGraphPreflightInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true), target_node_ids: uniqueIds(row.target_node_ids, true) };
       return transport.json(`${url}/preflight`, 'POST', payload, signal).then(value => checkedPreflight(value, graphId, payload));
     },
-    runs: (graphId: string, signal?: AbortSignal): Promise<{ items: StudioGraphRun[] }> => transport.json(`${graphUrl(graphId)}/runs`, 'GET', undefined, signal).then(value => {
-      const items = list(record(value).items, 100).map(item => checkedRun(item, undefined, graphId));
+    runs: (graphId: string, signal?: AbortSignal): Promise<{ items: StudioGraphRun[] }> => transport.json(`${graphUrl(graphId)}/runs`, 'GET', undefined, signal).then(async value => {
+      const items = await Promise.all(list(record(value).items, 100).map(item => checkedRunResponse(item, undefined, graphId)));
       if (new Set(items.map(item => item.id)).size !== items.length) invalid();
       return { items };
     }),
@@ -1222,9 +1269,9 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
         reviewed_preflight_digest: digest(row.reviewed_preflight_digest, true), target_node_ids: uniqueIds(row.target_node_ids, true), request_id: id(row.request_id, true) };
       // False and omission retain the legacy request bytes and idempotency contract.
       if (row.reuse_reviewed_local_dependencies !== undefined && bool(row.reuse_reviewed_local_dependencies, true)) payload.reuse_reviewed_local_dependencies = true;
-      return transport.json(`${url}/runs`, 'POST', payload, undefined, payload.request_id).then(value => checkedRun(value, undefined, graphId));
+      return transport.json(`${url}/runs`, 'POST', payload, undefined, payload.request_id).then(value => checkedRunResponse(value, undefined, graphId));
     },
-    getRun: (runId: string, signal?: AbortSignal): Promise<StudioGraphRun> => transport.json(runUrl(runId), 'GET', undefined, signal).then(value => checkedRun(value, runId)),
+    getRun: (runId: string, signal?: AbortSignal): Promise<StudioGraphRun> => transport.json(runUrl(runId), 'GET', undefined, signal).then(value => checkedRunResponse(value, runId)),
     previewModel: (runId: string, value: StudioGraphModelPreviewInput): Promise<StudioGraphRun> => {
       const url = runUrl(runId), row = record(value, true);
       const payload: StudioGraphModelPreviewInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true),
@@ -1297,7 +1344,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
         ...(row.reviewed_output_digest === undefined ? {} : { reviewed_output_digest: digest(row.reviewed_output_digest, true) }) };
       if ((action === 'approve' || action === 'reject') && (!payload.node_id || !payload.reviewed_output_digest)) invalid(true);
       if (action !== 'approve' && action !== 'reject' && (payload.node_id !== undefined || payload.reviewed_output_digest !== undefined)) invalid(true);
-      return transport.json(`${url}/${action}`, 'POST', payload).then(value => checkedRun(value, runId));
+      return transport.json(`${url}/${action}`, 'POST', payload).then(value => checkedRunResponse(value, runId));
     },
   };
 }
