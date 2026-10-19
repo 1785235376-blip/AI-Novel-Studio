@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_LOSSLESS_WEBP_CUTOUT",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "ac64639a13a4888b7449bd84fe325b2e3c0c0703",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-cutout-webp-reviewed-6b9be9c8",
+  "product_base": "9d95cabbd111718e55063ef61f4b9249410a2432",
+  "product_tip": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+  "product_tree": "359e9261ee0813997d977baaef34ef7adfb19387",
+  "bundle_ref": "refs/heads/work/v2-local-media-capability-20261019-night5",
+  "bundle_filename": "studio-v2-9d95cabb-to-6b9be9c8.bundle",
+  "unique_external_prerequisite": "9d95cabbd111718e55063ef61f4b9249410a2432",
+  "bundle_commit_count": 1,
+  "cherry_pick_performed": false,
+  "unreviewed_519a_included": false,
+  "file_mapping": [
+    {
+      "path": "app/creative/production_execution.py",
+      "mode": "100644",
+      "blob": "3f20288013b68552e626f0c08d961b7c7c63e15b",
+      "bytes": 127189,
+      "sha256": "dda6ee15ba9e2a543c37785c302c114c39c0e681f34e70ca2a8a0dbae8c03326"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "mode": "100644",
+      "blob": "7b961394f9dd8f6b700b1b9dcbb51a6487cd4503",
+      "bytes": 24791,
+      "sha256": "f723b10e245996291fae3a3342cbe83a86cc1dd6a59ed7aba3700d2327abba20"
+    },
+    {
+      "path": "app/services/studio_image_cutout_webp.py",
+      "mode": "100644",
+      "blob": "adf881e6d8938c97a5f08cd28b7a84b67e74b553",
+      "bytes": 5628,
+      "sha256": "feb198ca03ccaf56e493fcc69a676876e661d688c6c90f0c0826292e057efaec"
+    },
+    {
+      "path": "app/services/studio_image_execution.py",
+      "mode": "100644",
+      "blob": "54936ecdd61af09289cc73295e217a182dbeed1c",
+      "bytes": 54564,
+      "sha256": "42453fc3d96c52310cd3a7584cf47d2d262b1d17844b130f3e6753893b736438"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "mode": "100644",
+      "blob": "e9a84e5c4da504e993ca0428d1ab615c15a623c3",
+      "bytes": 42547,
+      "sha256": "f87bd385e2e765c02a232f7298b744cfd8c23dc4ea780985a2d253afb4edb43f"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/cpuCutoutWebp.actual.json",
+      "mode": "100644",
+      "blob": "e35f74b7e7c6d8abaf96d6d1796c3d9d4eaa98a9",
+      "bytes": 19384,
+      "sha256": "7728daccd7d1c696f0e6aabadc9fc42f8fcab5284ec3371f15377077ab324f55"
+    },
+    {
+      "path": "frontend/src/creative/studioCpuCutoutWebp.additive.test.tsx",
+      "mode": "100644",
+      "blob": "624cbd407b5cbffd9349ecb9c2fd253607b13cfc",
+      "bytes": 6345,
+      "sha256": "92fa73a2d8f41c067af5ae5fdebc16a08a4c760bb848378e40d16233800d14b0"
+    },
+    {
+      "path": "frontend/src/creative/studioCutoutContract.ts",
+      "mode": "100644",
+      "blob": "afb19393c00f98e55494ad9f3849f63ba5765fe0",
+      "bytes": 5013,
+      "sha256": "d02c4af9527cbc0f71675a4f106a2ce29a950ec3f725ec7ea941b90dfcc2ae6a"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "mode": "100644",
+      "blob": "9afb915ddbfd71e0b4e8b7414084ce33dcb05e0a",
+      "bytes": 72679,
+      "sha256": "2400d039528f4a2b401700d6ee2f007a00da29aae25966b9c8873838774053ea"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "mode": "100644",
+      "blob": "c55a9a4e8eec713a9bb65771a1c27ee358604b86",
+      "bytes": 74825,
+      "sha256": "9dbcce12604a06c79a9d831f8cf8db01fe7f8eb7f0841105a8ec7a80dcad6713"
+    },
+    {
+      "path": "tests/test_v2_cpu_cutout_webp.py",
+      "mode": "100644",
+      "blob": "59ff62757729bda7a5e1e04529a58006a0233311",
+      "bytes": 7230,
+      "sha256": "a41822924694d7c42d5637b7fa5f9b32ce327ce55a413b70ea5937009e464cba"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+      "type": "commit",
+      "path": "",
+      "bytes": 258,
+      "sha256": "c3fd1c1a88a6128497ef3e73d5874e8442e87ba6573679c0063d675a563897bd"
+    },
+    {
+      "oid": "359e9261ee0813997d977baaef34ef7adfb19387",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "07d7b5b40165a9ea7753782fb0c413d93628a578269a54d548f536df8ee7f99c"
+    },
+    {
+      "oid": "02e25486b75575084d73eb40618dfd297b0cc8ad",
+      "type": "tree",
+      "path": "app",
+      "bytes": 5958,
+      "sha256": "42f88d0aa14aaca5df7ad7ea34eca7975bb97b824db46f87076465b0ce86fa7e"
+    },
+    {
+      "oid": "d10fdeadab60005fc65e41e2642250ad8de902de",
+      "type": "tree",
+      "path": "app/creative",
+      "bytes": 4636,
+      "sha256": "33e58f84494856c9c331dbf1a23874eadce933bff5f616c681e651c4da437980"
+    },
+    {
+      "oid": "3f20288013b68552e626f0c08d961b7c7c63e15b",
+      "type": "blob",
+      "path": "app/creative/production_execution.py",
+      "bytes": 127189,
+      "sha256": "dda6ee15ba9e2a543c37785c302c114c39c0e681f34e70ca2a8a0dbae8c03326"
+    },
+    {
+      "oid": "7b961394f9dd8f6b700b1b9dcbb51a6487cd4503",
+      "type": "blob",
+      "path": "app/creative/production_execution_models.py",
+      "bytes": 24791,
+      "sha256": "f723b10e245996291fae3a3342cbe83a86cc1dd6a59ed7aba3700d2327abba20"
+    },
+    {
+      "oid": "81f9ca94135d7e6ec147318f70b7dee47872300c",
+      "type": "tree",
+      "path": "app/services",
+      "bytes": 3864,
+      "sha256": "36a4650a137a26dd3620d673dbda931f656182f0b059353face39288174a6d1e"
+    },
+    {
+      "oid": "adf881e6d8938c97a5f08cd28b7a84b67e74b553",
+      "type": "blob",
+      "path": "app/services/studio_image_cutout_webp.py",
+      "bytes": 5628,
+      "sha256": "feb198ca03ccaf56e493fcc69a676876e661d688c6c90f0c0826292e057efaec"
+    },
+    {
+      "oid": "54936ecdd61af09289cc73295e217a182dbeed1c",
+      "type": "blob",
+      "path": "app/services/studio_image_execution.py",
+      "bytes": 54564,
+      "sha256": "42453fc3d96c52310cd3a7584cf47d2d262b1d17844b130f3e6753893b736438"
+    },
+    {
+      "oid": "94c26ba02e6150223af1cd5708720438b031c339",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "b9b179d0a0694b32022304c913b0831511c2919912c109cc86b12bfc06fe9ec1"
+    },
+    {
+      "oid": "d16170425fac071532dbdd50c196a3f5352f7f3d",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "7c9bca484e7e1362d86de5605b45cf4552b92f81375a46990380ac12e94d2794"
+    },
+    {
+      "oid": "457d76c6ccf60fc9b853f0121ef0b0fca11915ca",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 35265,
+      "sha256": "66c1f389ba228df2535217990c084a794af0d396a7398a4ad06adf1e9d32419d"
+    },
+    {
+      "oid": "e9a84e5c4da504e993ca0428d1ab615c15a623c3",
+      "type": "blob",
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "bytes": 42547,
+      "sha256": "f87bd385e2e765c02a232f7298b744cfd8c23dc4ea780985a2d253afb4edb43f"
+    },
+    {
+      "oid": "8b37ed523f85bb7cab6403321fe330bd0d69ddc9",
+      "type": "tree",
+      "path": "frontend/src/creative/fixtures",
+      "bytes": 2222,
+      "sha256": "6bb805a4fc41ff839842c5b072773b82e5d4e51f690c3cc4eb17bf036806cf91"
+    },
+    {
+      "oid": "e35f74b7e7c6d8abaf96d6d1796c3d9d4eaa98a9",
+      "type": "blob",
+      "path": "frontend/src/creative/fixtures/cpuCutoutWebp.actual.json",
+      "bytes": 19384,
+      "sha256": "7728daccd7d1c696f0e6aabadc9fc42f8fcab5284ec3371f15377077ab324f55"
+    },
+    {
+      "oid": "624cbd407b5cbffd9349ecb9c2fd253607b13cfc",
+      "type": "blob",
+      "path": "frontend/src/creative/studioCpuCutoutWebp.additive.test.tsx",
+      "bytes": 6345,
+      "sha256": "92fa73a2d8f41c067af5ae5fdebc16a08a4c760bb848378e40d16233800d14b0"
+    },
+    {
+      "oid": "afb19393c00f98e55494ad9f3849f63ba5765fe0",
+      "type": "blob",
+      "path": "frontend/src/creative/studioCutoutContract.ts",
+      "bytes": 5013,
+      "sha256": "d02c4af9527cbc0f71675a4f106a2ce29a950ec3f725ec7ea941b90dfcc2ae6a"
+    },
+    {
+      "oid": "9afb915ddbfd71e0b4e8b7414084ce33dcb05e0a",
+      "type": "blob",
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "bytes": 72679,
+      "sha256": "2400d039528f4a2b401700d6ee2f007a00da29aae25966b9c8873838774053ea"
+    },
+    {
+      "oid": "c55a9a4e8eec713a9bb65771a1c27ee358604b86",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "bytes": 74825,
+      "sha256": "9dbcce12604a06c79a9d831f8cf8db01fe7f8eb7f0841105a8ec7a80dcad6713"
+    },
+    {
+      "oid": "855fd8b6ba6f9e1d2b4f5382e8ff8d6ae4e6deb2",
+      "type": "tree",
+      "path": "tests",
+      "bytes": 49269,
+      "sha256": "20ecfaa4fe13b3f9e0cdb090387114d8572d1ab64f8e900e479c9ff6f234fd46"
+    },
+    {
+      "oid": "59ff62757729bda7a5e1e04529a58006a0233311",
+      "type": "blob",
+      "path": "tests/test_v2_cpu_cutout_webp.py",
+      "bytes": 7230,
+      "sha256": "a41822924694d7c42d5637b7fa5f9b32ce327ce55a413b70ea5937009e464cba"
+    }
+  ],
+  "validation": {
+    "product_tip": "6b9be9c852f4ac68509f56f64c2abc2df95ae02c",
+    "product_base": "9d95cabbd111718e55063ef61f4b9249410a2432",
+    "smoke": {
+      "selected": 2,
+      "passed": 2,
+      "skipped": 13,
+      "kind": "original cutout UI default PNG/explicit WebP queue + actual File receipt decoder; synthetic transport"
+    },
+    "typescript": {
+      "runs": 1,
+      "exit": 0,
+      "original_configuration": true,
+      "incremental_disabled_to_preserve_author_buildinfo": true
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "out_dir": "<workspace>\\webp-archive-evidence\\.runtime\\dist"
+    },
+    "source_and_author_dist_buildinfo_unchanged": true,
+    "independent_three_cases_retained_not_rerun": true,
+    "full_suites_not_rerun": true,
+    "browser_not_rerun": true,
+    "IMAGE_17": "PARTIAL",
+    "PG": "BLOCKED_NOT_ACCEPTED",
+    "full_E2E": "NOT_ACCEPTED",
+    "checked_at": "2026-10-19T20:44:22.482876+00:00"
+  },
+  "independent_review": {
+    "decision": "LIMITED_WEBP_CUTOUT_INTEGRATION_ACCEPTED",
+    "P1": [],
+    "P2": [],
+    "unique_passed": 3,
+    "initial": "2pass/1harness-fail; exact execute failure envelope corrected",
+    "retry": "case3 only passed",
+    "source_unchanged": true
+  },
+  "actual_File_output": {
+    "bytes": 46,
+    "sha256": "fdd3040507aa07d50d984e93fcab73b066a7e13c1e08577041a8c57dca811dc1",
+    "segmented_from_browser_synthetic_HTTP": true
+  },
+  "IMAGE_17": "PARTIAL",
+  "PG": "BLOCKED_NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "privacy_scan": {
+    "high_risk_credential_findings": 0,
+    "only_reviewed_new_blob_paths": true,
+    "profiles_configs_traces_dependencies_dist_real_user_data_packaged": false
+  },
+  "restoration": "Reuse independent prerequisite Git objects; no full source/history export",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "cutout-webp-tests-evidence-sanitized.zip",
+      "bytes": 161767,
+      "sha256": "59afdf62df3dffd9a5de2860e236a8af435e835dc3b90a29dbf82e796fdd7af5",
+      "git_blob": "8951c903209292c389e47523ef35fc169aa81428"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 4437,
+      "sha256": "10d327c2115fd22c5f2c3f567e991753293699011c0190b73346dd6cfce26432",
+      "git_blob": "8f05838f2497076fd2f0d0310b19b391962f7432"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1213,
+      "sha256": "684355a73a53801e1bc53a0c485c1a9753c99ee8a0c26e6329ffdb2a1a49856f",
+      "git_blob": "28223671fe4982485d25089854060458bda22f67"
+    },
+    {
+      "path": "studio-v2-9d95cabb-to-6b9be9c8.bundle",
+      "bytes": 13405,
+      "sha256": "d15ffdf4677291a43b63e962aea291188e05e01248109c16541be446f608ec79",
+      "git_blob": "a02acb765faf9c49d894831122432b0e5c2b2659"
+    }
+  ]
+}
