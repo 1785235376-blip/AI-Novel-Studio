@@ -1,80 +1,74 @@
-# 本地最小 CI 执行结果（LOCAL-01～05）
+# 本地最小 CI 执行结果（LOCAL-01～05，round 2）
 
 结果：**LOCAL_CI_PASS**（五步全部真实执行且 PASS；运行器 exit code 0）。
+本轮在**干净环境**中重建依赖后复跑，作为权威证据。
 
 | 项 | 值 |
 | --- | --- |
-| 运行标识 | `20261019-final` |
-| 运行时间（UTC） | `2026-10-19T01:58:07+00:00` → `2026-10-19T02:03:45+00:00` |
-| 运行时 Git HEAD | `6afae9cae82430f09c547257528adccdf945dc0c` |
+| 运行标识 | `20261019-r2` |
+| 运行时间（UTC） | `2026-10-19T03:55:43+00:00` → `2026-10-19T04:01:26+00:00` |
+| 运行时 Git HEAD | `7e1ea003c975f585a26201e007f8e4a7872c7ee2` |
 | 分支 | `work/v2-local-ci-community-20261019` |
-| 总耗时 | 346.9 s（约 5 分 47 秒），不含一次性环境准备 |
-| 证据目录 | `docs/v2/engineering/evidence/local-ci/20261019-final/`（1,702,277 B，绝对主机路径已脱敏） |
-| 命令集/边界 | [LOCAL_CI_MINIMUM.md](LOCAL_CI_MINIMUM.md) |
+| 总耗时（五步） | 351.9 s（约 5 分 52 秒） |
+| 环境准备 | 31.5 s（重建 `frontend/node_modules` from lockfile + 新建 `.venv-repro` from constraints） |
+| 证据目录 | `docs/v2/engineering/evidence/local-ci/20261019-r2/`（1,695,622 B，绝对主机路径已脱敏） |
+| 命令集/边界 | [LOCAL_CI_MINIMUM.md](LOCAL_CI_MINIMUM.md) · [LOCAL_CI_COVERAGE_20261019.md](LOCAL_CI_COVERAGE_20261019.md) |
 
-环境：Windows 11 24H2（`10-10.0.26100-SP0`）· Python `3.11.9`，使用仓库 `.github/ci/python-constraints.txt` 固定依赖的独立 `.venv`（fastapi 0.142.2 / pytest 8.4.2 / sqlalchemy 2.1.3 / reportlab 4.5.1 / fonttools 4.59.1 / opentimelineio 0.18.1 / Pillow 12.3.0，`pip check` 通过）· Node `v22.14.0` · pnpm `10.6.5`（corepack，`frontend/package.json` 的 packageManager）· 系统 Edge（Playwright `PLAYWRIGHT_CHROMIUM_EXECUTABLE`）· 无模型（`MOCK_PROVIDER=true`）· 云端关闭 · File 后端 · 隔离 profile 位于 `<repo>/.runtime/local-ci/20261019-final`。
+环境：Windows 11 24H2（`Windows-10-10.0.26100-SP0`）· Python `3.11.9`（clean venv），依赖按 `.github/ci/python-constraints.txt` 安装（PIP_CHECK_EXIT=0 No broken requirements found.）· Node `v22.14.0` · pnpm `10.6.5` · 系统 Edge（Playwright `PLAYWRIGHT_CHROMIUM_EXECUTABLE`）· 无模型（`MOCK_PROVIDER=true`）· 云端关闭 · File 后端。安装日志：PNPM_INSTALL_EXIT=0 Done in 1.8s using pnpm v10.6.5。
 
 ## 1. 分步结果
 
 | 步骤 | 结果 | 耗时 | 真实执行的判定证据 |
 | --- | --- | --- | --- |
-| LOCAL-01 后端真实启动 | PASS | 8.8 s | `uvicorn app.main:app` 真实进程；`GET /health` → HTTP 200，`{"status": "ok", "version": "0.7.0", "profile": "HYBRID"}`；`version` 与 `release/version.json` 一致；进程退出、端口释放（`port_released=True`） |
-| LOCAL-02 关键正确性 | PASS | 222.5 s | pytest JUnit：`tests=941`，`passed=473`，`skipped=468`，`failures=0`，`errors=0`（4 个代表文件：项目生命周期 / 结构化记录 CAS / pending-canon 审核候选不得静默提升 / 共享路由权限） |
-| LOCAL-03 前端构建 | PASS | 71.0 s | Vitest 全量 `4307 passed`；`tsc -b && vite build` 退出 0；设计 token lint 退出 0 |
-| LOCAL-04 真连通冒烟 | PASS | 33.7 s | 真实 uvicorn + File 持久化 + Vite + 系统 Edge；Playwright JUnit `tests=2`、`failures=0`、`errors=0`（`real File V2 authoring` 保存/重读/恢复旅程；`real HTTP File V2 lifecycle`） |
-| LOCAL-05 清理恢复 | PASS | 10.9 s | `stale_ports=[]`、`leaked_processes=[]`、`runtime_removed=true`；删除本轮 runtime 共 55,093,742 B（local-ci 51,056,447 B + 浏览器旅程 4,037,295 B）；保留证据 1,723,073 B |
+| LOCAL-01 后端真实启动 | PASS | 9.2 s | `uvicorn app.main:app` 真实进程；`GET /health` → HTTP 200，`{"status": "ok", "version": "0.7.0", "profile": "HYBRID"}`；进程退出、端口释放 |
+| LOCAL-02 关键正确性 | PASS | 228.9 s | pytest JUnit：`tests=941`，`passed=473`，`skipped=468`，`failures=0`，`errors=0` |
+| LOCAL-03 前端构建 | PASS | 68.1 s | Vitest 全量 `4307 passed`；`tsc -b && vite build`；设计 token lint |
+| LOCAL-04 真连通冒烟 | PASS | 35.8 s | 真实 uvicorn + File 持久化 + Vite + 系统 Edge；Playwright JUnit `tests=2`、`failures=0`、`errors=0` |
+| LOCAL-05 清理恢复 | PASS | 9.9 s | `stale_ports=[]`、`leaked_processes=[]`、`runtime_removed=true`；删除本轮 runtime 55,093,758 B；保留证据 1,717,589 B |
 
-合计 346.9 s。原始回执与 JUnit/logs/screenshots 见证据目录；回执自身记录 `head`、主机与工具链版本、每步退出码/耗时/判定字段。
+## 2. 干净环境可复现性（round 2）
 
-## 2. 失败/边界标注（不要误读）
+1. 删除并按提交的 `frontend/pnpm-lock.yaml` 重建 `frontend/node_modules`（`pnpm install --frozen-lockfile`，PNPM_INSTALL_EXIT=0 Done in 1.8s using pnpm v10.6.5）。
+2. 新建 `.venv-repro` 并按 `.github/ci/python-constraints.txt` 安装 `-e .[dev]`（`pip check` 通过：PIP_CHECK_EXIT=0 No broken requirements found.）。
+3. 用干净环境的解释器执行 `python scripts/run_local_ci.py --all --label 20261019-r2`，结果即上表。
 
-| 项 | 状态 | 说明 |
+Linux 状态：**NOT_RUN / BLOCKED_ENVIRONMENT**。本机存在 WSL Ubuntu-24.04（Python 3.12.3、git 2.43），但缺少 Node、且缺少 `python3-venv` 而安装需要 sudo 密码；因此没有伪造 Linux 结果，也未用 Windows 结果冒充 Linux。
+
+## 3. 附加：真实 PostgreSQL 最小子集（D-07 修复验证）
+
+| 用例 | 结果 | 证据 |
 | --- | --- | --- |
-| 完整 File 后端套件 | 未包含于 LOCAL CI | 历史完整 File 运行约 1.5 万条；本快检是代表性切片，不代表完整回归通过 |
-| 完整真实 PostgreSQL 套件 | `BLOCKED_ENVIRONMENT` | D-07：本 Windows 主机 PG 环境阻塞；只有历史代表性真实 PG 子集通过。LOCAL CI 不包含 PG |
-| 真实媒体（FFmpeg）/ GPU / 本地模型 | `NOT_RUN` / `LOCAL_REQUIRED` | 本轮未调用模型与收费 API，未下载模型；Mock 不证明 AI 质量 |
-| 真实浏览器全量 | PARTIAL | 仅执行 2 个真实旅程；`creative` 全量、visual/geometry、其他 live 族未在本轮执行 |
-| Windows 安装/升级验收 | `NOT_RUN` | 属独立完整验收层（RELEASE_GATES G9） |
-| 宿主 CI | `HOSTED_BLOCKED_NO_RUNNER` | GitHub Actions 历史上 runner 未真实启动；保留原 workflow，本地 PASS 不冒充宿主 CI |
+| 此前阻塞节点 ×3 个全新数据库 | 1 passed in 7.39s / 1 passed in 7.44s / 1 passed in 7.32s | Engineering-Runs/local-ci-round2-20261019/d07-node-1792379853-1..3.log |
+| 整个 cross-process host 文件 | 1 passed, 1 skipped in 7.55s | d07-interop-file-1792379853.log |
+| 连接数（同一节点） | 1,210 → **5** authorized backends | PG log（log_connections=on） |
+| 24 文件 curated PG 子集 | （27 个失败均为既有 D-24，非本次连接修复回归） | d07-curated-1792379853.log |
 
-补充说明：
+完整真实 PostgreSQL 套件（约 4.8k 条）本轮未整体重跑，仍是独立长跑门禁；D-24 保持 OPEN。
 
-- 健康路由以源码为准：权威路由是 `app/main.py` 的 `GET /health`；`/api/health` 不存在，结果中记为 null，不伪造。
-- LOCAL-04 使用系统 Edge（本机未下载 Playwright Chromium）；corepack 按 `packageManager` 解析 pnpm，属于工具链解析，不是资源下载。
-- 运行器早期的 LOCAL-05 自匹配/浏览器 runtime 清理缺陷在 `d73423c7` 与 `6afae9ca` 修复；本文件报告的是修复后的权威运行。此前试跑证据归档于 `Engineering-Runs/local-ci-20261019/`。
-- 另有一次使用主机预装 Python 环境的完整 PASS 运行（依赖与 constraints 存在漂移），仅作对照，本文件报告的是约束固定 `.venv` 的权威运行。
+## 4. Skip 审计（round 2）
 
-## 3. 证据索引（SHA256，脱敏后提交副本）
+LOCAL-02 的 468 个 skip 已逐项分类：467 个 PostgreSQL 实现契约（PG-only 函数 = 0）与 1 个 Windows symlink 权限；无未知 skip。详见 [LOCAL_CI_COVERAGE_20261019.md](LOCAL_CI_COVERAGE_20261019.md)，可用 `python scripts/audit_local_ci_skips.py --junit <LOCAL-02-junit.xml> --fail-on-pg-only` 复现。
+
+## 5. 证据索引（SHA256，脱敏后提交副本）
 
 | 文件 | 字节 | SHA256 |
 | --- | ---: | --- |
-| LOCAL_CI_RESULTS.json | 8,868 | `3c325d4341af32be72beac385271bca7a9822a35a9ac2d833b7f91c15027d956` |
-| LOCAL-02-junit.xml | 296,842 | `937df0bfd736ced0f2a598c88d4e98687ed725484da3f826856e21796382cd18` |
-| LOCAL-02-pytest.log | 2,949 | `048448a048a0ab416ed1043d66eb10536cb23e19475d6e432f769d1d27fc6b9f` |
-| LOCAL-03-vitest.log | 52,027 | `be82ad95cdb2147a96f724dc6c6412a70e10ec68f1caca6a9fca7cb9b2ab5442` |
-| LOCAL-03-build.log | 1,801 | `f005febf7c06d1cc7164943236bcc32e5025cee143fa0afa0dfd718a4c29b25d` |
-| LOCAL-04-playwright.log | 1,049 | `d1d27405df51e0d8b0107ae657fe6b2dde9e186ead8cb3db79fd40e887382a25` |
-| junit.xml | 2,230 | `8b1b4b5b414fe681ed71b71e45b1c7abce545f409f2a93271930b93ce71ea8bc` |
+| LOCAL_CI_RESULTS.json | 8,854 | `1309ea7a8c88a45726ae9f7a66c6f3f2f7ce5e57cd6ecc7076b43cf667af21d3` |
+| LOCAL-02-junit.xml | 296,842 | `d5db9a070f1c09bf61d17ac6cb5d521531684efc04907ee17b57a1bd4b50e6c6` |
+| LOCAL-02-pytest.log | 2,957 | `957edcd4bfecc1f4ee57da27431e725a0fd1de91c14f1674ad4fbc5d4df51a14` |
+| LOCAL-03-vitest.log | 46,293 | `add1764e9c4b45f4054a023aae3a1cb1e9ce6e6cda182394949f28a38f675e91` |
+| LOCAL-04-playwright.log | 1,049 | `4c43705ea44a9d50f8e5e8005cdeaafcc8f880c92e7ceb9d5cd6488aa8de991e` |
+| junit.xml | 2,230 | `084f4199687bd57d7478743db0db590f722280614ee88e76810b635938c3f6c2` |
 
-其余文件（Playwright `results.json`、`test-results/**.png` 真实浏览器截图、`.last-run.json` 等）一并提交；
-逐文件哈希与脱敏前后前缀见 `REDACTION.md` 与下表：
+其余文件（Playwright `results.json`、真实浏览器截图等）一并提交；逐文件脱敏前后哈希见 `REDACTION.md`。
 
-证据文件总数：28（含 test-results 截图与浏览器结果 JSON）。
+## 6. 结论
 
-## 4. 如何复跑
+对 HEAD `7e1ea003c975f585a26201e007f8e4a7872c7ee2`：**LOCAL_CI_PASS**（File/前端/浏览器最小切片），附加真实 PG 验证显示 D-07 连接阻塞已修复。
+该结论不改变 [RELEASE_GATES.md](RELEASE_GATES.md)：V2 仍是 **NOT RELEASE_READY**，宿主 CI 仍是 `HOSTED_BLOCKED_NO_RUNNER`，需求矩阵没有因本地快检被提升为 `ACCEPTED`。
 
-在已准备依赖的机器上（见 [CONTRIBUTING.md](../../../CONTRIBUTING.md)）：
-
-```powershell
-python scripts/run_local_ci.py --step LOCAL-01
-python scripts/run_local_ci.py --step LOCAL-02
-python scripts/run_local_ci.py --step LOCAL-03
-python scripts/run_local_ci.py --step LOCAL-04
-python scripts/run_local_ci.py --step LOCAL-05
-```
-
-## 5. 结论
-
-对 HEAD `6afae9cae82430f09c547257528adccdf945dc0c`：**LOCAL_CI_PASS**。
-该结论不改变 [RELEASE_GATES.md](RELEASE_GATES.md) 的任何状态：V2 仍是 **NOT RELEASE_READY**，
-宿主 CI 仍是 `HOSTED_BLOCKED_NO_RUNNER`，需求矩阵没有任何一行因本地快检被提升为 `ACCEPTED`。
+> **Round-2 修复说明（2026-10-19）**：本文件下表记录的是 round-1 原始证据副本的 SHA256。
+> round-1 的 `LOCAL-02-junit.xml` 曾因脱敏占位符 `<repo>` 破坏 XML 良构性（D-22）。
+> round-2 已将旧证据中的 `<repo>` 原位替换为 XML 安全的 `[repo]`（内容等价，仅占位符与哈希变化），
+> 修复后 XML 全部可解析；新证据全部使用修复后的 `scripts/redact_local_ci_evidence.py` 生成。
+> 因此下表中的旧哈希不再对应当前提交副本；数量、断言与退出码不受影响。

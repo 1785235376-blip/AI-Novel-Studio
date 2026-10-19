@@ -2,11 +2,11 @@ $ C:\Program Files\nodejs\pnpm.CMD run test
 
 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz
 
-> ai-novel-studio-ui@0.7.0 test <repo>\frontend
+> ai-novel-studio-ui@0.7.0 test [repo]\frontend
 > vitest run
 
 
- RUN  v2.1.9 <repo>/frontend
+ RUN  v2.1.9 [repo]/frontend
 
  ✓ src/nle/timelineOps.test.ts (52 tests) 52ms
  ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 353ms

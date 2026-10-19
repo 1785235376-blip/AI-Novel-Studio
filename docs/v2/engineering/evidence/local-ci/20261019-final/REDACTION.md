@@ -5,7 +5,7 @@ This directory retains the local minimum CI evidence for run `20261019-final`
 
 The committed copies had absolute host paths replaced before commit:
 
-- repository worktree path -> `<repo>`
+- repository worktree path -> `[repo]`
 - workspace root -> `<workspace>`
 - user profile path -> `%USERPROFILE%`
 - interpreter path -> `python`

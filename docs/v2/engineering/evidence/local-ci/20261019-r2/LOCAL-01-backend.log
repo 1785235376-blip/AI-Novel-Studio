@@ -1,0 +1,2 @@
+$ [repo]\.venv-repro\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 64270 --log-level warning
+

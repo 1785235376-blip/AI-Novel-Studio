@@ -2,7 +2,7 @@
   "config": {
     "argv": [
       "C:\\Program Files\\nodejs\\node.exe",
-      "<repo>\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "[repo]\\frontend\\node_modules\\@playwright\\test\\cli.js",
       "test",
       "--config",
       "playwright.v2-live.config.ts",
@@ -11,8 +11,8 @@
       "--grep",
       "real File V2 authoring|real HTTP File V2 lifecycle"
     ],
-    "configFile": "<repo>\\frontend\\playwright.v2-live.config.ts",
-    "rootDir": "<repo>/frontend/tests/e2e",
+    "configFile": "[repo]\\frontend\\playwright.v2-live.config.ts",
+    "rootDir": "[repo]/frontend/tests/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -23,24 +23,24 @@
     "grepInvert": null,
     "maxFailures": 0,
     "metadata": {
-      "v2LiveRuntime": "<repo>\\.runtime\\v2-live-browser\\20261019-final",
+      "v2LiveRuntime": "[repo]\\.runtime\\v2-live-browser\\20261019-final",
       "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
       "actualWorkers": 1
     },
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "<repo>/docs/v2/engineering/evidence/local-ci/20261019-final/test-results",
+        "outputDir": "[repo]/docs/v2/engineering/evidence/local-ci/20261019-final/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "v2LiveRuntime": "<repo>\\.runtime\\v2-live-browser\\20261019-final",
+          "v2LiveRuntime": "[repo]\\.runtime\\v2-live-browser\\20261019-final",
           "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
           "actualWorkers": 1
         },
         "id": "v2-live-chromium",
         "name": "v2-live-chromium",
-        "testDir": "<repo>/frontend/tests/e2e",
+        "testDir": "[repo]/frontend/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "/v2-creative-live\\.spec\\.ts/"
@@ -48,17 +48,17 @@
         "timeout": 180000
       },
       {
-        "outputDir": "<repo>/docs/v2/engineering/evidence/local-ci/20261019-final/test-results",
+        "outputDir": "[repo]/docs/v2/engineering/evidence/local-ci/20261019-final/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "v2LiveRuntime": "<repo>\\.runtime\\v2-live-browser\\20261019-final",
+          "v2LiveRuntime": "[repo]\\.runtime\\v2-live-browser\\20261019-final",
           "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
           "actualWorkers": 1
         },
         "id": "v1-chromium",
         "name": "v1-chromium",
-        "testDir": "<repo>/frontend/tests/e2e",
+        "testDir": "[repo]/frontend/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "/v2-creative-live\\.spec\\.ts/"
@@ -75,13 +75,13 @@
       [
         "junit",
         {
-          "outputFile": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\junit.xml"
+          "outputFile": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\junit.xml"
         }
       ],
       [
         "json",
         {
-          "outputFile": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\results.json"
+          "outputFile": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\results.json"
         }
       ]
     ],
@@ -141,32 +141,32 @@
                     {
                       "name": "screenplay-saved",
                       "contentType": "image/png",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\screenplay-saved-d4508affd41900d57d2e40b2a469565153c4c7ff.png"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\screenplay-saved-d4508affd41900d57d2e40b2a469565153c4c7ff.png"
                     },
                     {
                       "name": "director-human-reviewed",
                       "contentType": "image/png",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\director-human-reviewed-0436097b58c007e1cf2d05f02b75e2cd62ca8747.png"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\director-human-reviewed-0436097b58c007e1cf2d05f02b75e2cd62ca8747.png"
                     },
                     {
                       "name": "production-1366x768",
                       "contentType": "image/png",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1366x768-a5555b4a536fdee4d5af961d19d053026b0e6c42.png"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1366x768-a5555b4a536fdee4d5af961d19d053026b0e6c42.png"
                     },
                     {
                       "name": "production-1440x900",
                       "contentType": "image/png",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1440x900-f186d9138a98e0ce624a6b57f4cd89e7036b4f06.png"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1440x900-f186d9138a98e0ce624a6b57f4cd89e7036b4f06.png"
                     },
                     {
                       "name": "production-1920x1080",
                       "contentType": "image/png",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1920x1080-a1c761ff90479ec157261fd8068a71522f7c4702.png"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-1920x1080-a1c761ff90479ec157261fd8068a71522f7c4702.png"
                     },
                     {
                       "name": "production-export",
                       "contentType": "application/json",
-                      "path": "<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-export-9e208e1fe5472bcaf2b5b28bee7247e9c9c539ae.json"
+                      "path": "[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\test-results\\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\\attachments\\production-export-9e208e1fe5472bcaf2b5b28bee7247e9c9c539ae.json"
                     },
                     {
                       "name": "real-file-receipt",

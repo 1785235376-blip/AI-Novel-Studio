@@ -9,12 +9,12 @@
     "os": "Windows-10-10.0.26100-SP0",
     "windows": true,
     "python": "3.11.9",
-    "python_executable": "<repo>\\.venv\\Scripts\\python.exe",
+    "python_executable": "[repo]\\.venv\\Scripts\\python.exe",
     "node": "v22.14.0",
     "pnpm": "10.6.5",
     "git_head": "6afae9cae82430f09c547257528adccdf945dc0c",
     "git_branch": "work/v2-local-ci-community-20261019",
-    "project_root": "<repo>"
+    "project_root": "[repo]"
   },
   "steps": [
     {
@@ -24,7 +24,7 @@
       "finished_utc": "2026-10-19T01:58:07+00:00",
       "duration_s": 8.8,
       "checks": {
-        "command": "<repo>\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 54525 --log-level warning",
+        "command": "[repo]\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 54525 --log-level warning",
         "port": 54525,
         "boot_error": null,
         "health_http_status": 200,
@@ -52,7 +52,7 @@
       "finished_utc": "2026-10-19T02:01:50+00:00",
       "duration_s": 222.5,
       "checks": {
-        "command": "<repo>\\.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider --basetemp=<repo>\\.runtime\\local-ci\\20261019-final\\LOCAL-02\\pytest --junitxml=<repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml --durations=5 tests/test_v2_creative_project_lifecycle.py tests/test_structured_record_cas.py tests/test_surface_pending_canon_review.py tests/test_shared_project_route_authority.py",
+        "command": "[repo]\\.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider --basetemp=[repo]\\.runtime\\local-ci\\20261019-final\\LOCAL-02\\pytest --junitxml=[repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml --durations=5 tests/test_v2_creative_project_lifecycle.py tests/test_structured_record_cas.py tests/test_surface_pending_canon_review.py tests/test_shared_project_route_authority.py",
         "exit_code": 0,
         "timed_out": false,
         "junit": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-02-junit.xml",
@@ -63,7 +63,7 @@
           "skipped": 468
         },
         "scope_note": "Focused correctness slice (not a full regression): project lifecycle, CAS, pending-canon review promotion fence, shared route authority. The complete File/PostgreSQL suites remain independent acceptance layers.",
-        "tail": "  <repo>\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: <repo>\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml -\n============================= slowest 5 durations =============================\n2.44s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]\n0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n0.75s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-v1-/api-owner]\n0.71s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-off-/api/v1-owner]\n473 passed, 468 skipped, 1 warning in 220.21s (0:03:40)"
+        "tail": "  [repo]\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: [repo]\\docs\\v2\\engineering\\evidence\\local-ci\\20261019-final\\LOCAL-02-junit.xml -\n============================= slowest 5 durations =============================\n2.44s setup    tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n1.57s call     tests/test_shared_project_route_authority.py::test_global_lists_filter_before_counts_and_pagination[file-packaged-off-/api]\n0.87s call     tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]\n0.75s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-v1-/api-owner]\n0.71s call     tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-collaboration-off-/api/v1-owner]\n473 passed, 468 skipped, 1 warning in 220.21s (0:03:40)"
       },
       "log": "docs/v2/engineering/evidence/local-ci/20261019-final/LOCAL-02-pytest.log"
     },

@@ -1,7 +1,7 @@
 $ C:\Program Files\nodejs\pnpm.CMD run build
 
 
-> ai-novel-studio-ui@0.7.0 build <repo>\frontend
+> ai-novel-studio-ui@0.7.0 build [repo]\frontend
 > tsc -b && vite build
 
 vite v6.4.3 building for production...
