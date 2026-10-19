@@ -164,7 +164,7 @@ def _media_inspection_directory():
         _cleanup_media_directory(temporary, identity)
 
 
-def inspect_media(data: bytes, kind: str, *, guard=None) -> dict:
+def inspect_media(data: bytes, kind: str, *, guard=None, include_video_dimensions=False) -> dict:
     """Verify actual local bytes, return measured duration and container MIME.
 
     WAV requires no optional program. Other codecs need the installed ffprobe
@@ -263,7 +263,8 @@ def inspect_media(data: bytes, kind: str, *, guard=None) -> dict:
         # Never expose private paths, argv or captured native diagnostics.
         raise MediaValidationError("media decoding failed") from None
     mime = f"{kind}/{extension}" if extension != "mp3" else "audio/mpeg"
-    return {"media_type": mime, "extension": extension, "duration_ms": round(duration * 1000), "validation": "DECODED", "codec": streams[0].get("codec_name")}
+    return {"media_type": mime, "extension": extension, "duration_ms": round(duration * 1000), "validation": "DECODED", "codec": streams[0].get("codec_name"),
+            **({"width": width, "height": height} if kind == "video" and include_video_dimensions else {})}
 
 
 def concatenate_wav(parts: list[bytes], pause_ms: int = 0, *, pauses_ms: list[int] | None = None) -> tuple[bytes, list[dict]]:

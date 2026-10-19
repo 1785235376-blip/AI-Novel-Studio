@@ -1,4 +1,5 @@
 import { checkedStoryboardAudioRequest, checkedStoryboardSpeechSelection, checkedSpeechChoices } from './studioStoryboardSpeechContract';
+import { createStoryboardVideoTimelineClient } from './storyboardVideoTimelineClient';
 import { checkedDirectorAdvice, checkedStoryboardImageRequest, checkedStoryboardVideoRequest, checkedStoryboardReceipt, checkedStoryboardTimeline, storyboardInvalid,
   storyboardResource, storyboardText, type StoryboardReceipt, type StoryboardShot, type StoryboardImage, type ShotPin, type StoryboardVideoAsset, type VideoJobPin } from './studioStoryboardContract';
 import type { MediaCommand } from './studioProductionClient';
@@ -14,6 +15,7 @@ export function createStoryboardClient(projectId: string, base: string, branchId
     if (result.timeline.version === 1) { let start = 0; result.timeline.timeline.tracks.flatMap(track => track.clips).forEach((clip, index) => { const image = selected[index].image_asset, duration = selected[index].shot.duration_seconds * 1000; if (!image || clip.source_snapshot.asset_kind !== 'image' || clip.source_snapshot.id !== image.asset_id || clip.source_snapshot.version !== image.version || clip.source_snapshot.digest !== image.digest || clip.start_ms !== start || clip.in_ms !== 0 || clip.out_ms !== duration || clip.include_audio !== false) storyboardInvalid(); start += duration; }); }
     return result; };
   return {
+    ...createStoryboardVideoTimelineClient(projectId, base, branchId, request),
     storyboardGet: (id: string, signal?: AbortSignal) => request(`${url(id)}/storyboard`, 'GET', undefined, signal).then(value => checkedStoryboardReceipt(value, id)),
     directorAdvice: (id: string, signal?: AbortSignal) => request(`${url(id)}/director-advice`, 'GET', undefined, signal).then(value => checkedDirectorAdvice(value, id)),
     storyboardApprove: (receipt: StoryboardReceipt) => request(`${url(receipt.document_snapshot.id)}/storyboard/approve`, 'POST', { expected_version: receipt.document_snapshot.version, reviewed_content_digest: receipt.content_digest }).then(value => { const next = advance(value, receipt); if (!next.approved || next.content_digest !== receipt.content_digest || JSON.stringify(next.shots) !== JSON.stringify(receipt.shots)) storyboardInvalid(); return next; }),

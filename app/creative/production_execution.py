@@ -137,7 +137,7 @@ class ProductionExecutionService:
         store = self.audio_store.for_branch(scope.get("branch_id")).for_actor(actor)
         return StudioAudioExecution(AudiobookService(store, self.workspace.assets, branch_id=scope.get("branch_id")))
 
-    def source(self, nid, scope, snapshot, guard, *, inspection_guard=None):
+    def source(self, nid, scope, snapshot, guard, *, inspection_guard=None, include_video_dimensions=False):
         guard()
         if snapshot["kind"] == "COMIC_PANEL":
             return self._comic_owner().source(nid, scope, snapshot, guard)
@@ -161,7 +161,8 @@ class ProductionExecutionService:
             # The inspection-only fence also must not call source() recursively.
             if inspection_guard is not None:
                 inspection_guard()
-        measured = inspect_image(data) if row["kind"] == "image" else inspect_media(data, row["kind"], guard=inspect_current)
+        measured = inspect_image(data) if row["kind"] == "image" else inspect_media(data, row["kind"], guard=inspect_current,
+            **({"include_video_dimensions": True} if include_video_dimensions else {}))
         guard()
         return {"data": data, "measured": measured, "snapshot": copy.deepcopy(snapshot), "row": row}
 
@@ -1272,6 +1273,9 @@ class ProductionExecutionService:
         if 'storyboard_create_receipt' in row:
             from .storyboard import validate_creation_receipt
             result['creation_receipt'] = validate_creation_receipt(row, history=history)
+        if 'storyboard_video_create_receipt' in row:
+            from .storyboard_video_timeline import validate_video_creation_receipt
+            result['video_creation_receipt'] = validate_video_creation_receipt(row, history=history)
         if 'storyboard_video_adoption' in row:
             from .storyboard import validate_adoption_receipt
             receipt = validate_adoption_receipt(row, history=history)

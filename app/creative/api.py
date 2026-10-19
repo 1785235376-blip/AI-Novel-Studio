@@ -14,6 +14,7 @@ from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
 from .storyboard_model import DirectorStoryboardModelPreview, DirectorStoryboardModelDispatch
 from .storyboard import (StoryboardApproval, ShotImageBinding, ShotImageRequest, StoryboardTimelineDraft,
     ShotAudioRequest, ShotVideoRequest, ShotVideoBinding, StoryboardTimelineCreate, StoryboardVideoAdoption)
+from .storyboard_video_timeline import VideoTimelineInput, VideoTimelineCreate
 
 FLAG = "narrative_production_v2"
 
@@ -185,6 +186,21 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     def storyboard_timeline_create(nid: str, rid: str, request: Request, body: StoryboardTimelineCreate, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return storyboard_call(request, nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.storyboards.timeline_create(nid, scope, actor, rid, body, guard))
+
+    @router.post('/documents/{rid}/storyboard/video-timeline/preview')
+    def video_timeline_preview(nid: str, rid: str, request: Request, body: VideoTimelineInput, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, 'domain.read',
+            lambda actor, scope, guard: service.storyboards.video_timeline_preview(nid, scope, actor, rid, body, guard))
+
+    @router.post('/documents/{rid}/storyboard/video-timeline/create', status_code=201)
+    def video_timeline_create(nid: str, rid: str, request: Request, body: VideoTimelineCreate, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, 'domain.write',
+            lambda actor, scope, guard: service.storyboards.video_timeline_create(nid, scope, actor, rid, body, guard))
+
+    @router.get('/documents/{rid}/storyboard/video-timeline/creations/{request_id}')
+    def video_timeline_creation(nid: str, rid: str, request_id: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return storyboard_call(request, nid, x_session_token, x_branch_id, 'domain.read',
+            lambda actor, scope, guard: service.storyboards.video_timeline_creation(nid, scope, actor, rid, request_id, guard))
 
     @router.get("/documents/{rid}/storyboard/timeline-creations/{request_id}")
     def storyboard_timeline_creation(nid: str, rid: str, request_id: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

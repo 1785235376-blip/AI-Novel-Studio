@@ -411,6 +411,18 @@ def validate_storyboard_timeline_origin(row, *, history=None):
 
 
 class StoryboardWorkspace:
+    def video_timeline_preview(self, *args, **kwargs):
+        from .storyboard_video_timeline import preview
+        return preview(self, *args, **kwargs)
+
+    def video_timeline_create(self, *args, **kwargs):
+        from .storyboard_video_timeline import create
+        return create(self, *args, **kwargs)
+
+    def video_timeline_creation(self, *args, **kwargs):
+        from .storyboard_video_timeline import recover
+        return recover(self, *args, **kwargs)
+
     def __init__(self, creative):
         self.creative = creative
         self.production = None

@@ -1,5 +1,6 @@
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { AssetInspector } from '../novel/AssetInspector';
+import { StoryboardVideoTimeline } from './StoryboardVideoTimeline';
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
 import { mediaProviderKey } from './useStudioMediaExecution';
 import { useStoryboardProductionController, type StoryboardProductionProps } from './useStoryboardProductionController';
@@ -58,5 +59,6 @@ export function StoryboardProductionPanel(props: StoryboardProductionProps) {
     {shot?.image_asset && <Button disabled={state.locked || !!state.prepared} onClick={state.loadPreview}>明确读取绑定图片预览</Button>}{shot?.video_result && <Button disabled={state.locked || !!state.prepared} onClick={state.loadVideoPreview}>明确读取绑定视频预览</Button>}{state.preview && <AssetInspector asset={state.preview} downloadAsset={state.previewDownload} isCurrent={state.previewCurrent} showReferences={false} />}
     {state.prepared && <StudioMediaExecutionPanel key={state.prepared.command.request_id} client={props.production} assets={state.assets} canMutate={props.editable} canReview={props.editable} busy={props.busy} isBusy={props.isBusy} isCurrent={state.preparedCurrent} read={props.perform} mutate={props.perform} onDirtyChange={state.setMediaDirty} onUnavailable={props.onDenied} preparedCommand={state.prepared.command} preparedIsCurrent={state.preparedCurrent} onPreparedClose={state.closePrepared} onApproved={state.loadResources} onJob={state.observeJob} />}
     {state.timeline && <section aria-label="已建立的分镜时间线底稿"><h3>{state.timeline.timeline.title}</h3><p>原时间线 {state.timeline.timeline.id} · v{state.timeline.timeline.version}</p><p>{state.timeline.storyboard_origin.shots.length} 个原镜头；尚未渲染。可在制作工作区或视频图读取此时间线。</p><details><summary>时间线校验信息</summary><code>{state.timeline.timeline.timeline_digest}</code></details></section>}
+    {state.receipt && !state.prepared && typeof props.client.storyboardVideoTimelinePreview === 'function' && <StoryboardVideoTimeline owner={props} receipt={state.receipt} blocked={state.locked} onDirty={state.setVideoTimelineDirty} />}
   </Panel>;
 }
