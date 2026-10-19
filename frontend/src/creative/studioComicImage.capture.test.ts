@@ -1,0 +1,48 @@
+import { beforeEach, expect, it, vi } from 'vitest';
+import captured from './studioComicImageWire.testFixture.json';
+import { studioComicImageClient, comicImageJobMatches } from './studioComicImageClient';
+import { studioProductionClient, type MediaCommand } from './studioProductionClient';
+import type { ComicRecord } from '../experimental/comicLayoutsClient';
+const transport = vi.hoisted(() => ({ json: vi.fn(), blob: vi.fn() }));
+vi.mock('./studioClient', () => ({ studioTransport: () => transport }));
+const copy = <T,>(value: T): T => structuredClone(value);
+beforeEach(() => { transport.json.mockReset(); transport.blob.mockReset(); });
+
+it('decodes actual mounted request/provider/private job/review/adoption wire through original clients', async () => {
+  expect(captured.capture_contract).toBe('actual-mounted-comic-image-wire/1');
+  expect(captured.synthetic_provider).toBe(true); expect(captured.live_inference).toBe(false);
+  const context = { sessionToken: 'test-only-not-transmitted' };
+  const comic = studioComicImageClient(captured.project_id, context);
+  const production = studioProductionClient(captured.project_id, context);
+  transport.json.mockResolvedValueOnce(copy(captured.providers));
+  const providers = await production.providers();
+  expect(providers.some(row => row.operation_id === 'm5.image.t2i' && row.local
+    && row.provider_id === captured.request_body.provider_id && row.model_id === captured.request_body.model_id)).toBe(true);
+  const page = copy(captured.page) as unknown as ComicRecord;
+  const { expected_version: _version, ...options } = captured.request_body;
+  transport.json.mockResolvedValueOnce(copy(captured.prepared));
+  const prepared = await comic.request(page, captured.panel_id, options);
+  expect(prepared.product_acceptance).toBe('LOCAL_REQUIRED');
+  expect(prepared.command.parameters.seed).toBe(options.parameters.seed);
+  const command = prepared.command as unknown as MediaCommand;
+  transport.json.mockResolvedValueOnce(copy(captured.preview));
+  const preview = await production.preview(command);
+  transport.json.mockResolvedValueOnce(copy(captured.queued));
+  const queued = await production.create(command, preview.preview_digest);
+  expect(comicImageJobMatches(prepared, queued)).toBe(true);
+  transport.json.mockResolvedValueOnce(copy(captured.candidate));
+  const candidate = await production.execute(queued);
+  expect(candidate.status).toBe('AWAITING_REVIEW');
+  const calls = transport.json.mock.calls.length;
+  await expect(comic.adopt(page, captured.panel_id, prepared, candidate)).rejects.toBeTruthy();
+  expect(transport.json).toHaveBeenCalledTimes(calls);
+  transport.json.mockResolvedValueOnce(copy(captured.candidate));
+  expect(await production.get('image', candidate.id)).toEqual(candidate);
+  transport.json.mockResolvedValueOnce(copy(captured.approved));
+  const approved = await production.review(candidate);
+  expect(approved.status).toBe('APPROVED'); expect(comicImageJobMatches(prepared, approved)).toBe(true);
+  transport.json.mockResolvedValueOnce(copy(captured.adopted));
+  expect(await comic.adopt(page, captured.panel_id, prepared, approved)).toEqual(captured.adopted);
+  expect(transport.json).toHaveBeenLastCalledWith(expect.stringContaining('/adopt-image'), 'POST', captured.adoption_body);
+  expect(captured.adopted.status).toBe('DRAFT');
+});

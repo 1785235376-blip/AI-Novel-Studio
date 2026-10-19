@@ -101,7 +101,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
     if (result.can_render) { const blobs = await Promise.all(result.segments.map(segment => api.segment(row, segment.index))); if (isCurrent() && ticket === epoch.current) setSegments(blobs.map(blob => URL.createObjectURL(blob))); }
   });
   const oraReady = !!document?.layer_stack && !layerError && !!row && row.status === 'APPROVED' && available && savedCurrent && !sourceChanged && !dirty && !busy && !!report?.can_render && report.version === row.version && !!segments.length && !previewFailed && loadedSegments.length === segments.length;
-  return <section className="experimental-section" aria-label="漫画与 Webtoon 排版" onCompositionStartCapture={() => { composing.current = true; setIsComposing(true); cancelDuplicate(); }} onCompositionEndCapture={() => { composing.current = false; setIsComposing(false); }}>
+  return <section className="experimental-section" aria-label="漫画与 Webtoon 排版" onCompositionStartCapture={event => { if ((event?.target as HTMLElement | undefined)?.closest?.('[data-comic-image-generation]')) return; composing.current = true; setIsComposing(true); cancelDuplicate(); }} onCompositionEndCapture={event => { if ((event?.target as HTMLElement | undefined)?.closest?.('[data-comic-image-generation]')) return; composing.current = false; setIsComposing(false); }}>
     <div className="experimental-actions"><h3>漫画与 Webtoon 排版</h3><Badge>草稿 · 本地栅格渲染</Badge><Button disabled={busy || navigationBlocked || catalog.loading || records.loading} onClick={refresh}>刷新漫画来源与记录</Button></div>
     <p>复用原剧本镜头、人物与资产库。生成图片和排版分开；空白页和纯文字格可独立编辑保存；需要图片的格框缺图时仍阻止预览与导出。</p>
     <ResourceState loading={catalog.loading} error={catalog.error} />{!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
@@ -125,7 +125,7 @@ function ComicLayoutsContent({ client, onDirtyChange, onBusyChange, isOwnerCurre
       onDirtyChange={value => { oraDirtyRef.current = value; storeOraDirty(value); onDirtyChange?.(value || pageDirtyRef.current || treeDirtyRef.current || imageDirtyRef.current); }}
       onBusyChange={value => { oraBusyRef.current = value; setOraBusy(value); onBusyChange?.(value || actionPending.current || treeBusyRef.current || imageBusyRef.current); }}
       onAttached={page => { if (!arrangementAlive.current || !(isOwnerCurrent?.() ?? true)) return; commitLoad(page); records.reload(); catalog.reload(); }} />
-    {renderImageGeneration && row && document && <section key={`${row.id}:${row.version}:${renderedGeneration}`}>
+    {renderImageGeneration && row && document && <section data-comic-image-generation key={`${row.id}:${row.version}:${renderedGeneration}`}>
       {renderImageGeneration({ page: row, disabled: !available || !savedCurrent || sourceChanged || dirty || treeDirty || oraDirty || action.busy || treeBusy || oraBusy || isComposing,
         isCurrent: () => arrangementAlive.current && (isOwnerCurrent?.() ?? true) && renderedGeneration === editorGeneration.current
           && !pageDirtyRef.current && !treeDirtyRef.current && !oraDirtyRef.current && !actionPending.current && !treeBusyRef.current && !oraBusyRef.current && !composing.current,

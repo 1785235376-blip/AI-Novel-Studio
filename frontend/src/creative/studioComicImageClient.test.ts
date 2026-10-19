@@ -9,11 +9,11 @@ const page = { id: 'page', version: 3, status: 'DRAFT', stale: false, document: 
 const source = { id: 'page', kind: 'COMIC_PANEL', version: 3, digest: hash, reference_only: true, comic_panel: { panel_id: 'panel', panel_digest: hash, brief_digest: hash, actor: 'author', scope_key: hash, incarnation: 'file:12345678-1234-1234-1234-123456789012' } };
 const options = { request_id: 'request', provider_id: 'local', model_id: 'model', parameters: { width: 512, height: 512, seed: 1 } };
 const command = { ...options, operation_id: 'm5.image.t2i', prompt: '  saved brief  ', source_snapshots: [source], allow_cloud: false, license_note: '' };
-const response = { contract: 'studio-comic-image-request/1', source_snapshot: source, command, automatic_dispatch: false, model_called: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
+const response = { contract: 'studio-comic-image-request/1', source_snapshot: source, command, product_acceptance: 'LOCAL_REQUIRED', automatic_dispatch: false, model_called: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 const api = () => studioComicImageClient('project', { sessionToken: 'fixture' });
 beforeEach(() => transport.json.mockReset());
 it('prepares only the exact saved panel and normalizes nullable source metadata', async () => {
-  transport.json.mockResolvedValue({ ...response, source_snapshot: { ...source, asset_kind: null }, command: { ...command, source_snapshots: [{ ...source, asset_kind: null }] } });
+  transport.json.mockResolvedValue({ ...response, source_snapshot: { ...source, asset_kind: null }, command: { ...command, parameters: { steps: null, negative_prompt: null, size: null, quality: null, duration_seconds: null, frame_rate: null, voice_id: null, speech_rate: null, in_ms: null, out_ms: null, ...options.parameters }, source_snapshots: [{ ...source, asset_kind: null }] } });
   expect((await api().request(page, 'panel', options)).source_snapshot).toEqual(source);
   expect(transport.json).toHaveBeenCalledWith('/api/projects/project/studio/production/comic-pages/page/panels/panel/image-request', 'POST', { expected_version: 3, ...options });
 });
@@ -38,4 +38,8 @@ it('requires original approved Image provenance and writes exact optimistic vers
 it('rejects appearance references before transport rather than silently dropping them', async () => {
   const p = structuredClone(page); p.document!.panels[0].appearance_references = [{ character_id: 'c', asset_id: 'a', expected_asset_version: 1, note: '' }];
   await expect(api().request(p, 'panel', options)).rejects.toBeTruthy(); expect(transport.json).not.toHaveBeenCalled();
+});
+it.each([undefined, 'VERIFIED', null])('requires the exact backend LOCAL_REQUIRED acceptance flag (%s)', async product_acceptance => {
+  transport.json.mockResolvedValue({ ...response, product_acceptance });
+  await expect(api().request(page, 'panel', options)).rejects.toBeTruthy();
 });

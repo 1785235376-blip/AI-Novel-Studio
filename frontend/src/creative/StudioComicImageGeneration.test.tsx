@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { StrictMode } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
@@ -12,8 +13,8 @@ import type { ComicImageRequest, StudioComicImageClient } from './studioComicIma
 import type { ComicRecord } from '../experimental/comicLayoutsClient';
 const digest = 'a'.repeat(64);
 const page: ComicRecord = { id: 'page', version: 1, status: 'DRAFT', stale: false, document: { title: 'Test', source_mode: 'INDEPENDENT', screenplay_id: null, expected_screenplay_version: null, preset: 'PAGE', font_family: 'NOTO_SANS_SC_OFL', width: 800, height: 1120, safe_area: 24, segment_height: 1120, panels: [1, 2].map(i => ({ id: `panel-${i}`, shot_id: null, artwork_mode: 'IMAGE', order: i, x: 24, y: i * 200, width: 512, height: 180, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: `Brief ${i}`, appearance_references: [] })) } };
-const provider: ProductionProvider = { operation_id: 'm5.image.t2i', provider_id: 'local', model_id: 'fixture', local: true, route_digest: digest, capability: 'IMAGE', supported_parameters: ['width', 'height', 'seed'], readiness: 'CONFIGURED_NOT_VERIFIED' };
-const request: ComicImageRequest = { contract: 'studio-comic-image-request/1', automatic_dispatch: false, model_called: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW', source_snapshot: { id: 'page', kind: 'COMIC_PANEL', version: 1, digest, reference_only: true, comic_panel: { panel_id: 'panel-1', panel_digest: digest, brief_digest: digest, actor: 'local-author', scope_key: digest, incarnation: 'file:12345678-1234-1234-1234-123456789012' } }, command: {} as ComicImageRequest['command'] };
+const provider: ProductionProvider = { operation_id: 'm5.image.t2i', provider_id: 'local', model_id: 'fixture', local: true, route_digest: digest, capability: 'TEXT_TO_IMAGE', supported_parameters: ['width', 'height', 'seed'], readiness: 'CONFIGURED_NOT_VERIFIED' };
+const request: ComicImageRequest = { contract: 'studio-comic-image-request/1', product_acceptance: 'LOCAL_REQUIRED', automatic_dispatch: false, model_called: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW', source_snapshot: { id: 'page', kind: 'COMIC_PANEL', version: 1, digest, reference_only: true, comic_panel: { panel_id: 'panel-1', panel_digest: digest, brief_digest: digest, actor: 'local-author', scope_key: digest, incarnation: 'file:12345678-1234-1234-1234-123456789012' } }, command: {} as ComicImageRequest['command'] };
 request.command = { operation_id: 'm5.image.t2i', request_id: 'comic-request', provider_id: 'local', model_id: 'fixture', prompt: 'Brief 1', parameters: { width: 512, height: 512, seed: 1 }, source_snapshots: [request.source_snapshot], allow_cloud: false, license_note: '' };
 const queued: ProductionJob = { contract: 'studio-production-job/1', owner: 'image', id: 'job', novel_id: 'project', branch_id: null, version: 1, operation_id: 'm5.image.t2i', request_id: request.command.request_id, status: 'QUEUED', request_digest: digest, receipt_digest: null, output_candidate: null, product_acceptance: 'LOCAL_REQUIRED', automatic_replay: false, remote_compute_may_continue: false, timeline_snapshot: null, sources: [request.source_snapshot], command: request.command, provider, execution_recipe: { contract: 'studio-execution-recipe/1', operation_id: 'm5.image.t2i', adapter: 'ORIGINAL_HTTP_PROVIDER', recipe_digest: digest, automatic_fallback: false }, approved_asset_version: null, created_at: '', updated_at: '' };
 const preview: ProductionPreview = { contract: 'studio-production-preview/1', novel_id: 'project', branch_id: null, request_id: request.command.request_id, operation_id: 'm5.image.t2i', preview_digest: digest, request_digest: digest, command: request.command, provider, execution_recipe: queued.execution_recipe, product_acceptance: 'LOCAL_REQUIRED', execution_available: true, automatic_dispatch: false, output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
@@ -120,6 +121,8 @@ it('mounted Comic editor retains its generation session while locking edits, the
   const dirty = vi.fn();
   render(<ComicLayoutsPanel client={experimental} onDirtyChange={dirty} renderImageGeneration={host => <StudioComicImageGeneration {...host} client={client} production={production} canMutate canReview />} />);
   fireEvent.click(await screen.findByRole('button', { name: '打开布局 Test' }));
+  const recoveryInput = screen.getByLabelText('漫画格框原图片任务 ID');
+  fireEvent.compositionStart(recoveryInput); expect(recoveryInput.closest('fieldset')?.disabled).toBe(false); fireEvent.compositionEnd(recoveryInput);
   await recoverApproved();
   expect((screen.getByLabelText('漫画布局名称') as HTMLInputElement).closest('fieldset')?.disabled).toBe(true);
   expect(dirty).toHaveBeenLastCalledWith(true);
@@ -128,4 +131,41 @@ it('mounted Comic editor retains its generation session while locking edits, the
   expect(saved.version).toBe(2); expect(saved.status).toBe('DRAFT'); expect(saved.document!.panels[1]).toEqual(page.document!.panels[1]);
   await waitFor(() => expect(dirty).toHaveBeenLastCalledWith(false));
   expect(experimental.put).not.toHaveBeenCalled(); expect(experimental.post).not.toHaveBeenCalled();
+});
+function retainedClick(element: HTMLElement): () => void {
+  const key = Object.keys(element).find(name => name.startsWith('__reactProps$'))!;
+  return (element as unknown as Record<string, { onClick: () => void }>)[key].onClick;
+}
+it.each(['panel', 'provider', 'parameter', 'authority', 'page', 'client', 'production'])('retained prepare cannot dispatch after %s A→B→A', async kind => {
+  const p = props(), view = render(<StudioComicImageGeneration {...p} />); await configure();
+  const retained = retainedClick(button('明确准备此格框图片请求'));
+  if (kind === 'panel') { for (const value of ['panel-2', 'panel-1']) fireEvent.change(screen.getByLabelText('生成图片的漫画格框'), { target: { value } }); }
+  if (kind === 'provider') { for (const value of ['', mediaProviderKey(provider)]) fireEvent.change(screen.getByLabelText('漫画图片本地服务商与模型'), { target: { value } }); }
+  if (kind === 'parameter') { for (const value of ['768', '512']) fireEvent.change(screen.getByLabelText('漫画图片宽度'), { target: { value } }); }
+  if (kind === 'authority') { view.rerender(<StudioComicImageGeneration {...p} canMutate={false} />); view.rerender(<StudioComicImageGeneration {...p} />); }
+  if (kind === 'page') { view.rerender(<StudioComicImageGeneration {...p} page={{ ...page, version: 2 }} />); view.rerender(<StudioComicImageGeneration {...p} />); }
+  if (kind === 'client') { view.rerender(<StudioComicImageGeneration {...p} client={{ ...client }} />); view.rerender(<StudioComicImageGeneration {...p} />); }
+  if (kind === 'production') { view.rerender(<StudioComicImageGeneration {...p} production={{ ...production }} />); view.rerender(<StudioComicImageGeneration {...p} />); }
+  await act(async () => retained());
+  expect(client.request).not.toHaveBeenCalled(); expect(production.create).not.toHaveBeenCalled();
+});
+it('retained adopt cannot dispatch after authority A→B→A or after a newer original job receipt', async () => {
+  const p = props(), view = render(<StudioComicImageGeneration {...p} />); await recoverApproved();
+  const oldAuthority = retainedClick(button('明确采用已审核图片到此格框草稿'));
+  view.rerender(<StudioComicImageGeneration {...p} canMutate={false} />); view.rerender(<StudioComicImageGeneration {...p} />);
+  await act(async () => oldAuthority()); expect(client.adopt).not.toHaveBeenCalled(); expect(button('明确采用已审核图片到此格框草稿').disabled).toBe(false);
+  const oldJob = retainedClick(button('明确采用已审核图片到此格框草稿'));
+  production.get = vi.fn(async () => ({ ...approved, version: 4 }));
+  fireEvent.click(button('读取当前任务核对')); await screen.findByText('任务 job · v4');
+  await act(async () => oldJob()); expect(client.adopt).not.toHaveBeenCalled();
+});
+it('retained prepare cannot dispatch after unmount', async () => {
+  const view = render(<StudioComicImageGeneration {...props()} />); await configure();
+  const retained = retainedClick(button('明确准备此格框图片请求')); view.unmount(); await act(async () => retained());
+  expect(client.request).not.toHaveBeenCalled();
+});
+
+it('remains usable through React StrictMode effect cleanup replay', async () => {
+  render(<StrictMode><StudioComicImageGeneration {...props()} /></StrictMode>); await prepare();
+  expect(client.request).toHaveBeenCalledTimes(1); expect(production.create).not.toHaveBeenCalled();
 });

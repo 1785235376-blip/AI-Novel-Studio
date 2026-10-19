@@ -6,7 +6,7 @@ import type { ProductionJob, RecordedMediaCommand } from './studioProductionClie
 
 export type ComicImageOptions = { request_id: string; provider_id: string; model_id: string; parameters: Record<string, string | number> };
 export type ComicImageRequest = { contract: 'studio-comic-image-request/1'; source_snapshot: ReturnType<typeof checkedComicImageSource>; command: RecordedMediaCommand;
-  automatic_dispatch: false; model_called: false; output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
+  product_acceptance: 'LOCAL_REQUIRED'; automatic_dispatch: false; model_called: false; output_policy: 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW' };
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '漫画图片回执与当前格框不一致。请重新读取原页面和任务核对，不要重复发送。' }); }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const canonical = (v: unknown): string => JSON.stringify(v, (_key, value) => object(value) ? Object.fromEntries(Object.keys(value).sort().map(key => [key, value[key]])) : value);
@@ -26,8 +26,8 @@ export function studioComicImageClient(projectId: string, context: Collaboration
   return {
     async request(page: ComicRecord, panelId: string, options: ComicImageOptions): Promise<ComicImageRequest> {
       const value = await transport.json<unknown>(path(page, panelId) + '/image-request', 'POST', { expected_version: page.version, ...options });
-      if (!object(value) || Object.keys(value).some(key => !['contract', 'source_snapshot', 'command', 'automatic_dispatch', 'model_called', 'output_policy'].includes(key))
-        || value.contract !== 'studio-comic-image-request/1' || value.automatic_dispatch !== false || value.model_called !== false || value.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW') invalid();
+      if (!object(value) || Object.keys(value).some(key => !['contract', 'source_snapshot', 'command', 'automatic_dispatch', 'model_called', 'output_policy', 'product_acceptance'].includes(key))
+        || value.contract !== 'studio-comic-image-request/1' || value.product_acceptance !== 'LOCAL_REQUIRED' || value.automatic_dispatch !== false || value.model_called !== false || value.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW') invalid();
       const source = checkedComicImageSource(value.source_snapshot), command = checkedComicImageCommand(value.command);
       if (source.id !== page.id || source.version !== page.version || source.comic_panel.panel_id !== panelId
         || canonical(source) !== canonical(command.source_snapshots[0]) || command.request_id !== options.request_id
