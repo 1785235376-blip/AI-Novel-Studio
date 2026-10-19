@@ -86,6 +86,7 @@ def connect(url: str, *, options: str = "-c timezone=UTC") -> psycopg.Connection
     assert last_error is not None
     raise last_error
 
+
 @contextmanager
 def pooled_connection(engine):
     """Borrow a pooled DBAPI connection for one repository operation.
@@ -94,12 +95,32 @@ def pooled_connection(engine):
     connection for every call. A single local-interop test opened more than 1200
     connections; each Windows connection costs about 0.1 s, so synchronous
     authorization inside an async streaming guard blocked the event loop and the
-    peer transport timed out (D-07). Reuse the existing SQLAlchemy pool instead:
-    connections are recycled, pre-pinged by the engine and always returned to the
-    pool (with a rollback of any uncommitted work) even when the operation raises.
+    peer transport timed out (D-07). Reuse the existing SQLAlchemy pool instead.
+
+    Transaction semantics match the psycopg connection context manager the
+    repository layer used before pooling: a clean block commits, a raised block
+    rolls back. Preserving that is required because original write paths relied on
+    the implicit commit-on-exit; returning the connection without committing would
+    silently discard those writes. The connection is always returned to the pool.
     """
     fairy = engine.raw_connection()
+    connection = fairy.driver_connection
     try:
-        yield fairy.driver_connection
+        yield connection
+    except BaseException:
+        try:
+            connection.rollback()
+        except Exception:
+            connection.close()
+        raise
+    else:
+        try:
+            connection.commit()
+        except Exception:
+            try:
+                connection.rollback()
+            except Exception:
+                pass
+            raise
     finally:
         fairy.close()

@@ -151,6 +151,22 @@ def test_repository_factory_uses_pooled_connections():
     assert "psycopg.connect(" not in store
 
 
+class _FakeConnection:
+    def __init__(self):
+        self.commits = 0
+        self.rollbacks = 0
+        self.closed = False
+
+    def commit(self):
+        self.commits += 1
+
+    def rollback(self):
+        self.rollbacks += 1
+
+    def close(self):
+        self.closed = True
+
+
 class _FakeFairy:
     def __init__(self, connection):
         self.driver_connection = connection
@@ -162,24 +178,29 @@ class _FakeFairy:
 
 class _FakeEngine:
     def __init__(self):
-        self.connection = object()
+        self.connection = _FakeConnection()
         self.fairy = _FakeFairy(self.connection)
 
     def raw_connection(self):
         return self.fairy
 
 
-def test_pooled_connection_borrows_and_returns_to_the_pool():
+def test_pooled_connection_commits_clean_work_and_returns_to_the_pool():
     engine = _FakeEngine()
     with pooled_connection(engine) as connection:
         assert connection is engine.connection
         assert engine.fairy.closed is False
+        assert engine.connection.commits == 0
+    assert engine.connection.commits == 1
+    assert engine.connection.rollbacks == 0
     assert engine.fairy.closed is True
 
 
-def test_pooled_connection_returns_to_the_pool_on_error():
+def test_pooled_connection_rolls_back_and_returns_to_the_pool_on_error():
     engine = _FakeEngine()
     with pytest.raises(RuntimeError):
         with pooled_connection(engine):
             raise RuntimeError("repository failure")
+    assert engine.connection.commits == 0
+    assert engine.connection.rollbacks == 1
     assert engine.fairy.closed is True
