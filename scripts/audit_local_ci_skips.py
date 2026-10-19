@@ -67,23 +67,30 @@ def split_node(node: str) -> tuple[str, str, str | None]:
     return owner, name, params
 
 
-def backend_and_rest(params: str | None) -> tuple[str | None, str | None]:
-    """Split a parameter string into its leading backend token and the rest."""
+def backend_and_suffix(params: str | None) -> tuple[str | None, str]:
+    """Split a parameter string into its leading backend token and the exact suffix.
+
+    The suffix is the original string after the backend token, including the
+    separator and any trailing empty parameter: "[postgres-]" has suffix "-" and
+    therefore maps to "[file-]", while "[postgres]" maps to "[file]". Keeping the
+    raw suffix instead of rebuilding it distinguishes "one empty trailing
+    parameter" from "no additional parameter" (D-25 closeout fix).
+    """
     if not params:
-        return None, None
-    token, separator, rest = params.partition("-")
+        return None, ""
+    token, _separator, _rest = params.partition("-")
     if token not in BACKEND_TOKENS:
         return None, params
-    return ("postgres" if token == "postgresql" else token), (rest if separator else "")
+    backend = "postgres" if token == "postgresql" else token
+    return backend, params[len(token):]
 
 
 def file_control(owner: str, name: str, params: str | None) -> str | None:
     """Return the exact File-control node id for a PostgreSQL node, if any."""
-    backend, rest = backend_and_rest(params)
+    backend, suffix = backend_and_suffix(params)
     if backend != "postgres":
         return None
-    control_params = "file" + (("-" + rest) if rest else "")
-    control_name = name + "[" + control_params + "]"
+    control_name = name + "[file" + suffix + "]"
     return (owner + "::" if owner else "") + control_name
 
 

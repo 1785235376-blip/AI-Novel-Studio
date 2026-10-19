@@ -110,3 +110,42 @@ def test_symlink_privilege_skip_is_allowed(tmp_path):
 def test_failed_case_still_fails_the_audit(tmp_path):
     cases = [("tests.test_alpha", "test_scope[file]", "failed")]
     assert run(tmp_path, cases) == 1
+
+
+def test_empty_trailing_parameter_is_preserved_in_the_file_control(tmp_path):
+    cases = [
+        ("tests.test_gamma", "test_empty[postgres-]", "skipped_pg"),
+        ("tests.test_gamma", "test_empty[file-]", "passed"),
+    ]
+    assert run(tmp_path, cases, "--fail-on-pg-only") == 0
+    report = audit.inspect(write_junit(tmp_path, cases))
+    assert report["postgres_contracts_matched"] == 1
+    assert report["postgres_only_functions"] == []
+    assert report["postgres_pairing_examples"] == [
+        {"skipped": "tests.test_gamma::test_empty[postgres-]",
+         "control": "tests.test_gamma::test_empty[file-]"},
+    ]
+
+
+def test_empty_trailing_parameter_does_not_pair_with_a_bare_file_control(tmp_path):
+    cases = [
+        ("tests.test_gamma", "test_empty[postgres-]", "skipped_pg"),
+        ("tests.test_gamma", "test_empty[file]", "passed"),
+    ]
+    assert run(tmp_path, cases, "--fail-on-pg-only") == 1
+    report = audit.inspect(write_junit(tmp_path, cases))
+    assert report["postgres_contracts_matched"] == 0
+    assert report["postgres_only_functions"] == ["tests.test_gamma::test_empty[postgres-]"]
+
+
+def test_bare_postgres_parameter_still_pairs_with_bare_file_control(tmp_path):
+    cases = [
+        ("tests.test_gamma", "test_plain[postgres]", "skipped_pg"),
+        ("tests.test_gamma", "test_plain[file]", "passed"),
+    ]
+    assert run(tmp_path, cases, "--fail-on-pg-only") == 0
+    report = audit.inspect(write_junit(tmp_path, cases))
+    assert report["postgres_pairing_examples"] == [
+        {"skipped": "tests.test_gamma::test_plain[postgres]",
+         "control": "tests.test_gamma::test_plain[file]"},
+    ]

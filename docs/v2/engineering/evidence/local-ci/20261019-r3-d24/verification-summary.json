@@ -7,9 +7,11 @@
     "summary": "28 passed, 27 skipped in 44.93s",
     "status": "PASS",
     "database": null,
-    "junit": "d24-full-file-pg.xml",
-    "console": "d24-full-file-pg.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-d24-full-file-pg.xml",
+    "console": "console-d24-full-file-pg.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": null,
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "d24-node-a-pg",
@@ -19,9 +21,11 @@
     "summary": "1 passed in 4.66s",
     "status": "PASS",
     "database": null,
-    "junit": "d24-node-a-pg.xml",
-    "console": "d24-node-a-pg.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-d24-node-a-pg.xml",
+    "console": null,
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": "files archived under this evidence directory; console not archived",
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "d24-node-b-pg",
@@ -31,9 +35,11 @@
     "summary": "1 passed in 4.85s",
     "status": "PASS",
     "database": null,
-    "junit": "d24-node-b-pg.xml",
-    "console": "d24-node-b-pg.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-d24-node-b-pg.xml",
+    "console": null,
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": "files archived under this evidence directory; console not archived",
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "d07-storm-node-pg",
@@ -43,9 +49,11 @@
     "summary": "1 passed in 6.42s",
     "status": "PASS",
     "database": null,
-    "junit": "d07-storm-node-pg.xml",
-    "console": "d07-storm-node-pg.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-d07-storm-node-pg.xml",
+    "console": null,
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": "files archived under this evidence directory; console not archived",
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "pool-regression-pg",
@@ -55,9 +63,11 @@
     "summary": "5 passed in 2.49s",
     "status": "PASS",
     "database": null,
-    "junit": "pool-regression-pg.xml",
-    "console": "pool-regression-pg.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-pool-regression-pg.xml",
+    "console": null,
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": "files archived under this evidence directory; console not archived",
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "d24-full-file-file",
@@ -67,20 +77,27 @@
     "summary": "28 passed, 27 skipped in 59.39s",
     "status": "PASS",
     "database": null,
-    "junit": "d24-full-file-file.xml",
-    "console": "d24-full-file-file.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": "junit-d24-full-file-file.xml",
+    "console": "console-d24-full-file-file.log",
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": null,
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   },
   {
     "label": "pool-regression-file",
     "postgres": false,
     "exit_code": 0,
     "seconds": 1.0,
-    "summary": "",
-    "status": "PASS",
+    "summary": "5 skipped in 0.16s",
+    "status": "SKIPPED_NOT_APPLICABLE",
     "database": null,
-    "junit": "pool-regression-file.xml",
-    "console": "pool-regression-file.console.log",
-    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2"
+    "junit": null,
+    "console": null,
+    "head": "415cbcc20958409c3aca94312e3961ac7766a2e2",
+    "evidence_note": "original run outputs recovered from Engineering-Runs/local-ci-round3-20261019; see historical-pool-regression-file.xml in 20261019-r3-closeout",
+    "status_detail": "PostgreSQL-only test file; all 5 cases skipped by the postgres_backend_only marker in the File profile. Exit code 0 is recorded separately and is not a pool-behaviour PASS.",
+    "skipped": 5,
+    "failed": 0,
+    "head_note": "runs executed on working tree at execution SHA 415cbcc2"
   }
 ]
