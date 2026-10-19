@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_CPU_FILE_DENOISE_NOT_FULL_ACCEPTANCE",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "17a0be28014f8e46af9447ba1bea2544e64e8ec5",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-audio-denoise-reviewed-a9974f24",
+  "product_base": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+  "product_tip": "a9974f24e7c556e3379f750f50d621be1255a05f",
+  "product_tree": "b397cca10b3f8e0c0dcdeecd5218ced25ba1e3d3",
+  "bundle_ref": "refs/heads/work/v2-audio-denoise-8e17-combined-20261019",
+  "bundle_filename": "studio-v2-8e17abe2-to-a9974f24.bundle",
+  "unique_external_prerequisite": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+  "bundle_commit_count": 2,
+  "patch_mapping": [
+    {
+      "source": "58ba6f0e58d6d685bfbd868eb55f117ef65939bd",
+      "source_parent": "494cf355a4057a977e736fee4bb39130881cd089",
+      "combined": "cad2f2dfe5228567e4436d167b9e6547fc9a7c4f",
+      "combined_parent": "8e17abe2262333459bcfd8d59da4b1998ff3d5f7",
+      "stable_patch_id": "d149cddd66c6475f8e1ae915be56b901688f9a49",
+      "exact_patch_bytes_equal": true,
+      "stage_file_blobs_equal": true,
+      "files": [
+        "app/creative/production_execution.py",
+        "app/creative/production_execution_models.py",
+        "app/services/studio_audio_denoise.py",
+        "app/services/studio_audio_execution.py",
+        "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+        "frontend/src/creative/fixtures/studioAudioDenoise.actual.json",
+        "frontend/src/creative/studioAudioDenoise.additive.test.tsx",
+        "frontend/src/creative/studioAudioDenoiseContract.ts",
+        "frontend/src/creative/studioProductionClient.ts",
+        "frontend/src/creative/useStudioMediaExecution.ts",
+        "tests/test_v2_audio_denoise.py"
+      ]
+    },
+    {
+      "source": "10100dadab9e25d2e2c0759f093b3e51bed54ac3",
+      "source_parent": "58ba6f0e58d6d685bfbd868eb55f117ef65939bd",
+      "combined": "a9974f24e7c556e3379f750f50d621be1255a05f",
+      "combined_parent": "cad2f2dfe5228567e4436d167b9e6547fc9a7c4f",
+      "stable_patch_id": "a646679c64686afa499e0eeef04b24d699ae41ea",
+      "exact_patch_bytes_equal": true,
+      "stage_file_blobs_equal": true,
+      "files": [
+        "app/services/studio_audio_execution.py",
+        "tests/test_v2_audio_denoise_binding.py"
+      ]
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/production_execution.py",
+      "mode": "100644",
+      "blob": "ca1a1c1fe1cd6a64fee628c5c42ded0816d60346",
+      "bytes": 127044,
+      "sha256": "366c815330f2581b291b2014349fe70f4ac8c0364c34f887e8abda92272aed8f"
+    },
+    {
+      "path": "app/creative/production_execution_models.py",
+      "mode": "100644",
+      "blob": "bedaade4a32a364f6518f9ba7afa79dcbf6d1a13",
+      "bytes": 24436,
+      "sha256": "f870d0a8fc06874aecd037727f338158c95c1180babebf4453a389f024ac55f9"
+    },
+    {
+      "path": "app/services/studio_audio_denoise.py",
+      "mode": "100644",
+      "blob": "b11b3bcb45d9fb86bc507b32c95ac413943d5c6d",
+      "bytes": 6442,
+      "sha256": "f514608cacf2272c95cfdd7b31be8cc51dd7e82620231a182f903bc352049371"
+    },
+    {
+      "path": "app/services/studio_audio_execution.py",
+      "mode": "100644",
+      "blob": "ca954160ce48fac10940fe331225a918a61a25ac",
+      "bytes": 90070,
+      "sha256": "54cc5870b8c1fd4abdb89d8bebd67517da1786ad464ed1a59d0e08f8ddb0334a"
+    },
+    {
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "mode": "100644",
+      "blob": "dd629378bc36a65f843b24a3786d632a351a6370",
+      "bytes": 41492,
+      "sha256": "d89b4566999e28896e3dcdad2a2c2ac0794c7b4b3bb0773ff4971ff02366da49"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/studioAudioDenoise.actual.json",
+      "mode": "100644",
+      "blob": "c6adcac7c87f0d06d3e5891852d1f0d9a70fe813",
+      "bytes": 17075,
+      "sha256": "1e07ead418659b695f050423154076924bf12d777b01bfd36139147806f7c801"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioDenoise.additive.test.tsx",
+      "mode": "100644",
+      "blob": "ecd6cf06d4951ab22d6ea2f0ff644e3cea530d00",
+      "bytes": 6462,
+      "sha256": "e1f6c86a18ae8c55ca73d3b7e2ca2333abd09ac3e4b4844d90b1e8f0266aa343"
+    },
+    {
+      "path": "frontend/src/creative/studioAudioDenoiseContract.ts",
+      "mode": "100644",
+      "blob": "1458bdeab95dcb0f03033e55a1c7283d09348a41",
+      "bytes": 3297,
+      "sha256": "f19e17004b46fe86d889837fbf0d7f9af22f72afd7fa2de20237e7847aa9c2f5"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "mode": "100644",
+      "blob": "dd8aeb56190135f9eb2a54c51038727720589cf2",
+      "bytes": 71882,
+      "sha256": "3849323c8ac780d1469967f15d9f17410770da15ba611cf8365ed011bd07f9da"
+    },
+    {
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "mode": "100644",
+      "blob": "a12d86cb26f79515956884150ed4c37ec7e8a4ec",
+      "bytes": 74472,
+      "sha256": "ca90e7c8e34310c13608d53e5ad18665902d62c93991dba3c5b6a03a75e9b086"
+    },
+    {
+      "path": "tests/test_v2_audio_denoise.py",
+      "mode": "100644",
+      "blob": "39ace24193811ad9451a932936771d8b5070bdf4",
+      "bytes": 8165,
+      "sha256": "d02271e6523f6aa8c319d3cdd6e68c8e2e43be974e409ce1a4f031736a759439"
+    },
+    {
+      "path": "tests/test_v2_audio_denoise_binding.py",
+      "mode": "100644",
+      "blob": "a32f049f7c72d014e330e75ab0bf3b252878d95f",
+      "bytes": 3817,
+      "sha256": "98a232eb4d5b7c7c895aa1efba2118ee5bdb0026e9e75cab6edb079d15229389"
+    }
+  ],
+  "remaining_base_entries_unchanged": 16290,
+  "old_source_ancestors_not_imported": true,
+  "validation": {
+    "product_tip": "a9974f24e7c556e3379f750f50d621be1255a05f",
+    "backend": {
+      "unique_selected_cases": 2,
+      "passed": 2,
+      "deselected": 8,
+      "initial_harness_failure": "Missing unchanged sparse local_interop_desktop import before any test executed; log retained; exact two selected cases retried after materialization.",
+      "native_CPU_File": true
+    },
+    "frontend": {
+      "selected": 2,
+      "passed": 2,
+      "unselected": 20,
+      "scope": "denoise actual CPU/File receipt and existing subgraph actual File receipt codecs"
+    },
+    "typescript": {
+      "runs": 1,
+      "exit": 0
+    },
+    "vite_build": {
+      "runs": 1,
+      "exit": 0,
+      "existing_chunk_warning": true
+    },
+    "author_full_suites_rerun": false,
+    "models_paid_APIs_GPU_used": false,
+    "live_demo_ports_touched": false,
+    "PG": "BLOCKED_NO_CONTROLLED_ENVIRONMENT",
+    "real_speech_quality": "NOT_ACCEPTED",
+    "full_E2E": "NOT_ACCEPTED"
+  },
+  "independent_P2_closure": "4/4 PASS; initial red evidence retained separately",
+  "PG": "BLOCKED",
+  "real_speech_quality": "NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "object_inventory": [
+    {
+      "oid": "a9974f24e7c556e3379f750f50d621be1255a05f",
+      "type": "commit",
+      "path": "",
+      "bytes": 262,
+      "sha256": "fde9eccfa8ee3f4f1074ee91d05cf221a18980753f8b2d4022d7ff77dcb39f3b"
+    },
+    {
+      "oid": "cad2f2dfe5228567e4436d167b9e6547fc9a7c4f",
+      "type": "commit",
+      "path": "",
+      "bytes": 261,
+      "sha256": "769583d77974c31f1ded639639773a76722c297d9a6c76467222907af044fe2e"
+    },
+    {
+      "oid": "b397cca10b3f8e0c0dcdeecd5218ced25ba1e3d3",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "401d7ad844504b2147f5c23ea136fc5cd0e7517b58b16c87392e6aa02c5fa246"
+    },
+    {
+      "oid": "7ae08fdd9249a5d17c10eaf55cd238ff7b7f2edd",
+      "type": "tree",
+      "path": "app",
+      "bytes": 5958,
+      "sha256": "5fbfab10abf13585f2a066250f3a1765632dba622116aab3321fffbb31a35740"
+    },
+    {
+      "oid": "36216f5ab38bf73df43bb9cad2458fb2bc23fead",
+      "type": "tree",
+      "path": "app/creative",
+      "bytes": 4636,
+      "sha256": "9402205f326e5eeb49292fd7f786dd349c8807ec975b750f80f376bf02976f44"
+    },
+    {
+      "oid": "ca1a1c1fe1cd6a64fee628c5c42ded0816d60346",
+      "type": "blob",
+      "path": "app/creative/production_execution.py",
+      "bytes": 127044,
+      "sha256": "366c815330f2581b291b2014349fe70f4ac8c0364c34f887e8abda92272aed8f"
+    },
+    {
+      "oid": "bedaade4a32a364f6518f9ba7afa79dcbf6d1a13",
+      "type": "blob",
+      "path": "app/creative/production_execution_models.py",
+      "bytes": 24436,
+      "sha256": "f870d0a8fc06874aecd037727f338158c95c1180babebf4453a389f024ac55f9"
+    },
+    {
+      "oid": "de7ee9674ce8847676e9c786be32c91c7dd6a3ef",
+      "type": "tree",
+      "path": "app/services",
+      "bytes": 3809,
+      "sha256": "3c2bf6aeefcb50956b9c1164d869b0d88f185eb786b1f92eecd57ee6c8953b35"
+    },
+    {
+      "oid": "b11b3bcb45d9fb86bc507b32c95ac413943d5c6d",
+      "type": "blob",
+      "path": "app/services/studio_audio_denoise.py",
+      "bytes": 6442,
+      "sha256": "f514608cacf2272c95cfdd7b31be8cc51dd7e82620231a182f903bc352049371"
+    },
+    {
+      "oid": "ca954160ce48fac10940fe331225a918a61a25ac",
+      "type": "blob",
+      "path": "app/services/studio_audio_execution.py",
+      "bytes": 90070,
+      "sha256": "54cc5870b8c1fd4abdb89d8bebd67517da1786ad464ed1a59d0e08f8ddb0334a"
+    },
+    {
+      "oid": "73e3e954accd95adb86ff4b40df57bccee24886c",
+      "type": "tree",
+      "path": "frontend",
+      "bytes": 2377,
+      "sha256": "89551d057062400ebe2188b31a0d0beb6bbdeb680d577c72e369b5a1a13ae173"
+    },
+    {
+      "oid": "5f8174478ab0173a266e92932aadb115a1429dae",
+      "type": "tree",
+      "path": "frontend/src",
+      "bytes": 4970,
+      "sha256": "e2bb44b3e0277bce7ef91fd4ae607b8deee0fee49951f92949decca3e1636c8d"
+    },
+    {
+      "oid": "8c1502692c6a3d17c8d17b4d052d53f42218613e",
+      "type": "tree",
+      "path": "frontend/src/creative",
+      "bytes": 34997,
+      "sha256": "a5d48c8e1967b2fe818c9a496ddf83331fd9fab3a4e5bfd115f5951eedb34e25"
+    },
+    {
+      "oid": "dd629378bc36a65f843b24a3786d632a351a6370",
+      "type": "blob",
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "bytes": 41492,
+      "sha256": "d89b4566999e28896e3dcdad2a2c2ac0794c7b4b3bb0773ff4971ff02366da49"
+    },
+    {
+      "oid": "19c3d30740cd9f15e0dbaf2c0b5c6f731f960840",
+      "type": "tree",
+      "path": "frontend/src/creative/fixtures",
+      "bytes": 2169,
+      "sha256": "916bde30f3c4aad3f2df0e25d8641404062084a306a120fea832d0a883aa7394"
+    },
+    {
+      "oid": "c6adcac7c87f0d06d3e5891852d1f0d9a70fe813",
+      "type": "blob",
+      "path": "frontend/src/creative/fixtures/studioAudioDenoise.actual.json",
+      "bytes": 17075,
+      "sha256": "1e07ead418659b695f050423154076924bf12d777b01bfd36139147806f7c801"
+    },
+    {
+      "oid": "ecd6cf06d4951ab22d6ea2f0ff644e3cea530d00",
+      "type": "blob",
+      "path": "frontend/src/creative/studioAudioDenoise.additive.test.tsx",
+      "bytes": 6462,
+      "sha256": "e1f6c86a18ae8c55ca73d3b7e2ca2333abd09ac3e4b4844d90b1e8f0266aa343"
+    },
+    {
+      "oid": "1458bdeab95dcb0f03033e55a1c7283d09348a41",
+      "type": "blob",
+      "path": "frontend/src/creative/studioAudioDenoiseContract.ts",
+      "bytes": 3297,
+      "sha256": "f19e17004b46fe86d889837fbf0d7f9af22f72afd7fa2de20237e7847aa9c2f5"
+    },
+    {
+      "oid": "dd8aeb56190135f9eb2a54c51038727720589cf2",
+      "type": "blob",
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "bytes": 71882,
+      "sha256": "3849323c8ac780d1469967f15d9f17410770da15ba611cf8365ed011bd07f9da"
+    },
+    {
+      "oid": "a12d86cb26f79515956884150ed4c37ec7e8a4ec",
+      "type": "blob",
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "bytes": 74472,
+      "sha256": "ca90e7c8e34310c13608d53e5ad18665902d62c93991dba3c5b6a03a75e9b086"
+    },
+    {
+      "oid": "31430606a8e0a01023336ddc0c159b96bca5d289",
+      "type": "tree",
+      "path": "tests",
+      "bytes": 49215,
+      "sha256": "c7b492b2ce15ed131d1d947a806e94e85057f71afb2af6273a044609cb65259a"
+    },
+    {
+      "oid": "39ace24193811ad9451a932936771d8b5070bdf4",
+      "type": "blob",
+      "path": "tests/test_v2_audio_denoise.py",
+      "bytes": 8165,
+      "sha256": "d02271e6523f6aa8c319d3cdd6e68c8e2e43be974e409ce1a4f031736a759439"
+    },
+    {
+      "oid": "a32f049f7c72d014e330e75ab0bf3b252878d95f",
+      "type": "blob",
+      "path": "tests/test_v2_audio_denoise_binding.py",
+      "bytes": 3817,
+      "sha256": "98a232eb4d5b7c7c895aa1efba2118ee5bdb0026e9e75cab6edb079d15229389"
+    },
+    {
+      "oid": "33a5c9b0dc7eb20b084d8455a15348845f6e1bbf",
+      "type": "tree",
+      "path": "",
+      "bytes": 10538,
+      "sha256": "a85165950ab59f68fdb04fda60c29d1d2f9711f0bc4ac056a35dd1df2de940dc"
+    },
+    {
+      "oid": "0e698e39bc42302b50331c872e71fa0f6f59cf2d",
+      "type": "tree",
+      "path": "app",
+      "bytes": 5958,
+      "sha256": "c6fa9535705797e81bf709a6620b1ec566600b42e99d0fd73e4ae1b55be46600"
+    },
+    {
+      "oid": "d1f35aa78d3d17c1b101b9ff1b79f6e993385646",
+      "type": "tree",
+      "path": "app/services",
+      "bytes": 3809,
+      "sha256": "eee03afd6cb0367e3b5d5984f0e419a2beb26d913eec818446c2dd052f8a8c51"
+    },
+    {
+      "oid": "df33324ec653c23e31c1d4d2c9ca402901161924",
+      "type": "blob",
+      "path": "app/services/studio_audio_execution.py",
+      "bytes": 89524,
+      "sha256": "979b2692a5d08cf0880946c1731f186c6593c63c94ec2ed93fccd946968209f6"
+    },
+    {
+      "oid": "6721f9f3daad6196044dd58221c5e7466d819eec",
+      "type": "tree",
+      "path": "tests",
+      "bytes": 49155,
+      "sha256": "7d06f303d0a66d9a3e81a3f6a73058edb64124d939788b991733476d2aba9fd7"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_findings": 0,
+    "new_blob_paths_exactly_reviewed_scope": true,
+    "user_configs_raw_traces_other_source_copies_included": false
+  },
+  "restoration": "Reuse retained isolated Git objects; no new full history/source export",
+  "cleanup": "After verified public restoration, remove only this task temporary sources/dependencies/runtime/dist and duplicate staging; retain refs/objects and unique evidence/downloads.",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "denoise-tests-evidence-sanitized.zip",
+      "bytes": 1277987,
+      "sha256": "8fdaa1a8a770abaa533aab8d1f0b7f6f1b361082d561c9d0858c43d2071014c2",
+      "git_blob": "a4e27e9c16fd7c1fdd623197f8d787e46907d7b3"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3212,
+      "sha256": "9cd4fb868b6f594a33a4bd8fc2aa686047f7c268c5139a2492e001eb8c7778ec",
+      "git_blob": "8b074bdbf4a7c90b06540d0fea4051911e5cce7b"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1280,
+      "sha256": "b5dcf1ee89c62d01dab74c98e13e34da5c66e4a8c9562cf84480d90718897bc2",
+      "git_blob": "62134a9dae8def57da667c8c87491e56c3028111"
+    },
+    {
+      "path": "studio-v2-8e17abe2-to-a9974f24.bundle",
+      "bytes": 37430,
+      "sha256": "f765c543d4ad9aa720e00a6376c19975c027f20c74c0ecaacffb06679a293090",
+      "git_blob": "0a2b6ba7bc4da1fd01d068aa55da26bf70bcf483"
+    }
+  ]
+}
