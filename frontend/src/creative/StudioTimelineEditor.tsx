@@ -8,6 +8,7 @@ import { applyNleCaptionCommand } from './nleCaptionEditing';
 import { nleSourceReplacementIntent } from './nleSourceReplacement';
 import { selectionDuplicateOperations, sameSelectionDuplicateDescriptors } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
+import { selectionRemovePreview, sameSelectionRemoveDescriptors } from '../nle/timelineSelectionRemove';
 import { StudioTimelineAssetPicker } from './StudioTimelineAssetPicker';
 import { appendTimelineAsset, StudioTimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -314,6 +315,24 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         tracks_per_kind: TIMELINE_LIMITS.kindTracks, clips: TIMELINE_LIMITS.clips, ...(audioOnly ? {} : { captions: TIMELINE_LIMITS.captions, caption_characters: TIMELINE_LIMITS.captionCharacters }) }}
       waveform={{ ...waveform, source: c.base, onRequest: () => void waveform.request() }}
       onEdit={command => {
+        if (command.kind === 'clip.remove' && Array.isArray(command.payload)) {
+          const live = latestReview.current;
+          if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+            || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+            || !live.c.canEdit || live.props.busy || live.props.isBusy?.()
+            || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+          try {
+            const preview = selectionRemovePreview(draft.timeline, nleClips);
+            if (!sameSelectionRemoveDescriptors(command.payload, preview.operations)) {
+              throw new Error('删除必须完整对应当前选择，且每项均为保留间隙的原 clip.remove 指令。');
+            }
+            const applied = live.c.change(input => { input.timeline = preview.timeline; });
+            if (applied) selectClips([]);
+            setNleNotice(applied ? '所选片段已删除并保留间隙；一次撤销可恢复，明确保存前不会写入服务端。'
+              : '所选删除未应用，请重新核对当前编辑状态。');
+          } catch (reason) { setNleNotice(reason instanceof Error ? reason.message : '所选删除未应用。'); }
+          return;
+        }
         if (['caption.insert', 'caption.update', 'caption.remove'].includes(command.kind)) {
           if (audioOnly) return;
           const live = latestReview.current;

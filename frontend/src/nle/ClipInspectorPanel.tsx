@@ -2,6 +2,7 @@ import { selectionSplitPreview, selectionSplitOperations } from './timelineSelec
 import { ClipColorPanel } from './ClipColorPanel';
 import { selectionDuplicateOperations, selectionDuplicateTargets } from './timelineSelectionDuplicate';
 import { selectionMoveOperations } from './timelineSelectionMove';
+import { SelectionRemovePanel } from './SelectionRemovePanel';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { editCommand, safeTimeline, selectedClipFacts, snapCandidates, snapClipStart } from './timelineOps';
@@ -180,7 +181,9 @@ export function ClipInspectorPanel(props: ClipInspectorPanelProps) {
       </dl>
       {first.trackKind === 'VIDEO' && <ClipColorPanel key={JSON.stringify([contextKey, props.editable])}
         timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable} onEdit={props.onEdit} />}
-      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；下方播放头拆分、整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      {facts.length > 1 && <Badge tone="info">已选择 {facts.length} 个片段；所选删除、播放头拆分、整体移动与整体复制作用于全部选择，其他动作仍针对第一个片段</Badge>}
+      <SelectionRemovePanel timeline={timeline} selectedClipIds={props.selectedClipIds} editable={props.editable}
+        isReviewCurrent={props.isSplitReviewCurrent} onEdit={props.onEdit} />
       <section aria-label="播放头拆分预览">
         <p>在播放头 {props.playheadMs} 毫秒拆分所选片段，不吸附。仅范围内部穿过播放头的片段会拆分。</p>
         <ul>{props.selectedClipIds.map((id, index) => {
