@@ -24,3 +24,19 @@ export function transformComicGeometry(document: ComicDocument, target: ComicGeo
   if (['x', 'y', 'width', 'height'].every(key => rect[key as keyof ComicRect] === patch[key as keyof ComicRect])) return document;
   return { ...document, panels: document.panels.map(p => p !== panel ? p : target.bubbleId ? { ...p, bubbles: p.bubbles.map(b => b.id === target.bubbleId ? { ...b, ...patch } : b) } : { ...p, ...patch, bubbles: p.bubbles.map(b => ({ ...b, x: b.x + patch.x - p.x, y: b.y + patch.y - p.y })) }) };
 }
+
+/** One shared translation keeps the selected panels' spacing and child geometry. */
+export function translateComicPanels(document: ComicDocument, ids: readonly string[], dx: number, dy: number): ComicDocument {
+  if (!ids.length || ids.length > 24 || new Set(ids).size !== ids.length || ![dx, dy].every(Number.isFinite)
+    || ![document.width, document.height, document.safe_area].every(Number.isSafeInteger)
+    || document.width < 320 || document.width > 1600 || document.height < 320 || document.height > 12000 || document.safe_area < 0 || document.safe_area > 128) return document;
+  const panels = document.panels.filter(panel => ids.includes(panel.id));
+  if (panels.length !== ids.length || new Set(panels.map(panel => panel.id)).size !== ids.length) return document;
+  const bounds = { x: document.safe_area, y: document.safe_area, width: document.width - 2 * document.safe_area, height: document.height - 2 * document.safe_area };
+  if (!valid(bounds) || panels.some(panel => !inside(panel, bounds) || panel.bubbles.some(bubble => !inside(bubble, { x: panel.x + 8, y: panel.y + 8, width: panel.width - 16, height: panel.height - 16 })))) return document;
+  const x = clamp(dx, Math.max(...panels.map(panel => bounds.x - panel.x)), Math.min(...panels.map(panel => bounds.x + bounds.width - panel.x - panel.width)));
+  const y = clamp(dy, Math.max(...panels.map(panel => bounds.y - panel.y)), Math.min(...panels.map(panel => bounds.y + bounds.height - panel.y - panel.height)));
+  if (!x && !y) return document;
+  return { ...document, panels: document.panels.map(panel => panels.includes(panel) ? { ...panel, x: panel.x + x, y: panel.y + y,
+    bubbles: panel.bubbles.map(bubble => ({ ...bubble, x: bubble.x + x, y: bubble.y + y })) } : panel) };
+}

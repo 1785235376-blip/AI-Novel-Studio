@@ -50,3 +50,35 @@ it.each(['revision', 'document', 'disabled', 'owner', 'unmount'])('retires point
   if (reason === 'unmount') view.unmount();
   act(() => retained({ pointerId: 1, clientX: 20, clientY: 20 })); expect(onApply).not.toHaveBeenCalled();
 });
+
+const groupDocument = () => ({ ...structuredClone(document), panels: [structuredClone(document.panels[0]), structuredClone(fixture.expectedPanel)] }) as ComicDocument;
+const selectGroup = () => { fireEvent.click(screen.getByLabelText('整体移动格框 1')); fireEvent.click(screen.getByLabelText('整体移动格框 2')); };
+const groupRight = () => screen.getByRole('button', { name: '所选格框右移' });
+const retainedGroupMove = () => {
+  const button = groupRight(), key = Object.keys(button).find(value => value.startsWith('__reactProps'))!;
+  return (button as unknown as Record<string, { onClick: () => void }>)[key].onClick;
+};
+it('moves a selected group once per action and keeps selection for subsequent current edits', () => {
+  const onApply = vi.fn(), props = { document: groupDocument(), getRevision, isCurrent, onApply, disabled: false };
+  const view = render(<ComicGeometryEditor {...props} />); selectGroup();
+  const retained = retainedGroupMove(); act(() => { retained(); retained(); }); expect(onApply).toHaveBeenCalledTimes(1);
+  expect(onApply.mock.calls[0][0].panels.map((panel: ComicDocument['panels'][number]) => panel.x)).toEqual([26, 170]);
+  view.rerender(<ComicGeometryEditor {...props} document={onApply.mock.calls[0][0]} />);
+  expect((screen.getByLabelText('整体移动格框 1') as HTMLInputElement).checked).toBe(true);
+  fireEvent.click(groupRight()); expect(onApply).toHaveBeenCalledTimes(2);
+  expect(onApply.mock.calls[1][0].panels.map((panel: ComicDocument['panels'][number]) => panel.x)).toEqual([36, 180]);
+});
+it.each(['revision', 'document', 'disabled', 'owner', 'unmount', 'selection-ABA', 'step-ABA'])('rejects retired group callbacks after %s without losing valid current input', reason => {
+  const onApply = vi.fn(); let revision = 1, current = true;
+  const props = { document: groupDocument(), getRevision: () => revision, isCurrent: () => current, onApply, disabled: false };
+  const view = render(<ComicGeometryEditor {...props} />); selectGroup(); const retained = retainedGroupMove();
+  if (reason === 'revision') revision++;
+  if (reason === 'owner') current = false;
+  if (reason === 'document') view.rerender(<ComicGeometryEditor {...props} document={structuredClone(props.document)} />);
+  if (reason === 'disabled') view.rerender(<ComicGeometryEditor {...props} disabled />);
+  if (reason === 'unmount') view.unmount();
+  if (reason === 'selection-ABA') { fireEvent.click(screen.getByLabelText('整体移动格框 1')); fireEvent.click(screen.getByLabelText('整体移动格框 1')); }
+  if (reason === 'step-ABA') { fireEvent.change(screen.getByLabelText('整体平移步长'), { target: { value: '1' } }); fireEvent.change(screen.getByLabelText('整体平移步长'), { target: { value: '10' } }); }
+  act(() => retained()); expect(onApply).not.toHaveBeenCalled();
+  if (reason.endsWith('ABA')) { fireEvent.click(groupRight()); expect(onApply).toHaveBeenCalledTimes(1); }
+});
