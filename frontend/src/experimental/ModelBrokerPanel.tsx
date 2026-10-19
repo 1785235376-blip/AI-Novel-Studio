@@ -164,22 +164,47 @@ function BudgetSettings({ api, status, stale, onSaved }: { api: BrokerApi; statu
   const [loadedExpiry, setLoadedExpiry] = useState<{display:string;source:string}>();
   const existingPrice = status.prices.find(row => row.route_id === routeId);
   const existingDraft = modelBrokerPriceDraft(existingPrice, route);
+  const priceAlive = useRef(true);
+  useEffect(() => { priceAlive.current = true; return () => { priceAlive.current = false; }; }, []);
+  const [, refreshPriceIntent] = useState(0);
+  const priceKey = JSON.stringify([routeId, route?.fingerprint, existingPrice?.version, priceVersion, estimate, source, expiry, inputRate, outputRate, loadedExpiry, stale, action.busy]);
+  const priceOwner = useRef({ key: priceKey, status, token: {} });
+  if (priceOwner.current.key !== priceKey || priceOwner.current.status !== status) priceOwner.current = { key: priceKey, status, token: {} };
+  const priceToken = priceOwner.current.token;
+  const currentPriceIntent = () => priceAlive.current && priceOwner.current.token === priceToken && !action.busy && !stale;
+  const retirePriceIntent = () => { priceOwner.current = { ...priceOwner.current, token: {} }; refreshPriceIntent(value => value + 1); };
+  const priceTarget = useRef({ status, routeId, fingerprint: route?.fingerprint, version: priceVersion });
+  priceTarget.current = { status, routeId, fingerprint: route?.fingerprint, version: priceVersion };
+  const editPrice = (set: (value:string) => void, value:string) => { if (currentPriceIntent()) { retirePriceIntent(); set(value); } };
+
   const selectPriceRoute = (id:string) => {
-    if (action.busy || stale) return;
+    if (!currentPriceIntent()) return;
+    retirePriceIntent();
     setRouteId(id); setPriceVersion(status.prices.find(row => row.route_id === id)?.version || 0);
     setEstimate(''); setSource(''); setExpiry(''); setInputRate(''); setOutputRate(''); setLoadedExpiry(undefined);
   };
   const loadPrice = () => {
-    if (action.busy || stale || !existingDraft) return;
+    if (!currentPriceIntent() || !existingDraft) return;
+    retirePriceIntent();
     setPriceVersion(existingDraft.expectedVersion); setEstimate(existingDraft.estimate); setSource(existingDraft.source);
     setExpiry(existingDraft.expiry); setInputRate(existingDraft.inputRate); setOutputRate(existingDraft.outputRate);
     setLoadedExpiry({display:existingDraft.expiry,source:existingDraft.sourceExpiry});
+  };
+  const savePrice = () => {
+    if (!currentPriceIntent() || !route || !source.trim() || !expiry || estimate === '') return;
+    const target = { status, routeId, fingerprint: route.fingerprint, version: priceVersion };
+    retirePriceIntent();
+    void action.run(async () => {
+      const result = await api.price({ route_id: target.routeId, route_fingerprint: target.fingerprint, expected_version: target.version, currency: 'USD', reserve_microusd: Number(estimate), source, as_of: new Date().toISOString(), expires_at: loadedExpiry?.display === expiry ? loadedExpiry.source : new Date(expiry).toISOString(), applicability: 'per_request', input_per_million_microusd: inputRate ? Number(inputRate) : null, output_per_million_microusd: outputRate ? Number(outputRate) : null });
+      const latest = priceTarget.current;
+      if (priceAlive.current && latest.status === target.status && latest.routeId === target.routeId && latest.fingerprint === target.fingerprint && latest.version === target.version) setPriceVersion(result.version);
+    }, '当前路线的费用估计已保存。');
   };
   return <Panel title="项目预算与价格来源"><p>所有作者共享当前项目分支的费用上限；已占用 {cost(status.budget.committed_microusd)}，进行中 {status.budget.inflight}，上游未知 {status.budget.unknown_count}。金额单位 µUSD（1 USD = 1,000,000 µUSD）。</p>
     <div className="experimental-grid"><Field label="累计预占上限（µUSD；留空不设金额上限）"><input type="number" min="0" value={limit} onChange={e => setLimit(e.target.value)} /></Field><Field label="最多并发任务"><input type="number" min="1" max="8" value={concurrency} onChange={e => setConcurrency(Number(e.target.value))} /></Field></div>
     <label className="experimental-check"><input type="checkbox" checked={known} onChange={e => setKnown(e.target.checked)} />要求已配置费用估计；严格金额上限始终要求估计</label>
     <div className="experimental-actions"><Button disabled={action.busy || stale} onClick={() => void action.run(async () => { const result = await api.budget({ expected_version: expectedVersion, limit_microusd: limit ? Number(limit) : null, max_inflight: concurrency, require_known_estimate: known }); setExpectedVersion(result.version); }, '项目预算已保存，旧路线预览失效。')}>保存版本化项目预算</Button>{expectedVersion !== status.budget.version && <Button disabled={action.busy || stale} onClick={() => setExpectedVersion(status.budget.version)}>已核对最新预算 v{status.budget.version}，保留输入继续编辑</Button>}</div>
-    <details><summary>配置明确路线的费用估计</summary><div className="experimental-form"><Field label="价格适用路线"><select value={routeId} disabled={action.busy || stale} onChange={e => selectPriceRoute(e.target.value)}><option value="">请选择</option>{status.candidates.filter(r => !r.synthetic).map(r => <option key={r.route_id} value={r.route_id}>{r.display_name} · {r.provider_id}</option>)}</select></Field><Button disabled={action.busy || stale || !existingDraft} onClick={loadPrice}>载入此路线已有价格依据</Button>{existingDraft && <p>已保存价格记录 v{existingDraft.expectedVersion}。载入会替换下方本地价格输入；请重新核对报价与有效期，再另行保存。</p>}{existingPrice && route && existingPrice.route_fingerprint !== route.fingerprint && <StatusMessage tone="warning">已有价格记录与当前路线指纹不一致，未载入旧依据；请根据当前路线重新填写。</StatusMessage>}<Field label="每请求保守预占（µUSD）"><input type="number" min="0" value={estimate} onChange={e => setEstimate(e.target.value)} /></Field><Field label="价格依据（来源或报价说明）"><input maxLength={240} value={source} onChange={e => setSource(e.target.value)} /></Field><Field label="价格有效至"><input type="datetime-local" step="0.001" value={expiry} onChange={e => setExpiry(e.target.value)} /></Field><Field label="输入费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={inputRate} onChange={e => setInputRate(e.target.value)} /></Field><Field label="输出费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={outputRate} onChange={e => setOutputRate(e.target.value)} /></Field><p>估计绑定当前模型、Runtime 和 Adapter 指纹。没有使用量费率时，实际费用保持未知；此配置不冒充免费或供应商硬上限。</p><Button disabled={action.busy || stale || !route || !source.trim() || !expiry || estimate === ''} onClick={() => void action.run(async () => { const result = await api.price({ route_id: route!.route_id, route_fingerprint: route!.fingerprint, expected_version: priceVersion, currency: 'USD', reserve_microusd: Number(estimate), source, as_of: new Date().toISOString(), expires_at: loadedExpiry?.display === expiry ? loadedExpiry.source : new Date(expiry).toISOString(), applicability: 'per_request', input_per_million_microusd: inputRate ? Number(inputRate) : null, output_per_million_microusd: outputRate ? Number(outputRate) : null }); setPriceVersion(result.version); }, '当前路线的费用估计已保存。')}>保存路线价格依据</Button></div></details>{action.feedback}
+    <details><summary>配置明确路线的费用估计</summary><div className="experimental-form"><Field label="价格适用路线"><select value={routeId} disabled={action.busy || stale} onChange={e => selectPriceRoute(e.target.value)}><option value="">请选择</option>{status.candidates.filter(r => !r.synthetic).map(r => <option key={r.route_id} value={r.route_id}>{r.display_name} · {r.provider_id}</option>)}</select></Field><Button disabled={action.busy || stale || !existingDraft} onClick={loadPrice}>载入此路线已有价格依据</Button>{existingDraft && <p>已保存价格记录 v{existingDraft.expectedVersion}。载入会替换下方本地价格输入；请重新核对报价与有效期，再另行保存。</p>}{existingPrice && route && existingPrice.route_fingerprint !== route.fingerprint && <StatusMessage tone="warning">已有价格记录与当前路线指纹不一致，未载入旧依据；请根据当前路线重新填写。</StatusMessage>}<Field label="每请求保守预占（µUSD）"><input type="number" min="0" value={estimate} onChange={e => editPrice(setEstimate, e.target.value)} /></Field><Field label="价格依据（来源或报价说明）"><input maxLength={240} value={source} onChange={e => editPrice(setSource, e.target.value)} /></Field><Field label="价格有效至"><input type="datetime-local" step="0.001" value={expiry} onChange={e => editPrice(setExpiry, e.target.value)} /></Field><Field label="输入费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={inputRate} onChange={e => editPrice(setInputRate, e.target.value)} /></Field><Field label="输出费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={outputRate} onChange={e => editPrice(setOutputRate, e.target.value)} /></Field><p>估计绑定当前模型、Runtime 和 Adapter 指纹。没有使用量费率时，实际费用保持未知；此配置不冒充免费或供应商硬上限。</p><Button disabled={action.busy || stale || !route || !source.trim() || !expiry || estimate === ''} onClick={savePrice}>保存路线价格依据</Button></div></details>{action.feedback}
   </Panel>;
 }
 
