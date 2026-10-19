@@ -1,0 +1,492 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_INCREMENT_NOT_FULL_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "be2d22425fae339c34a0754a0784b8889534e155",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-graph-reconnect-comic-group-model-price-d6d1259d",
+  "product_base": "cfc4264be11cdbc2811ffc8f38f688c866150e1c",
+  "product_tip": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+  "product_tree": "78e4f6a50ace1bef19c96bd478ab94a42bbea807",
+  "bundle_ref": "refs/heads/work/v2-graph-comic-model-cfc-combined-20261019",
+  "bundle_filename": "studio-v2-cfc4264b-to-d6d1259d.bundle",
+  "unique_external_prerequisite": "cfc4264be11cdbc2811ffc8f38f688c866150e1c",
+  "source_commit_count": 4,
+  "patch_mapping": [
+    {
+      "original": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "stable_patch_id": "c2d584454f4b9134107506c089a7f17c242ba53e"
+    },
+    {
+      "original": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "stable_patch_id": "b3b3ac023008ebfe4f89e97030fabb58d1710980"
+    },
+    {
+      "original": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "stable_patch_id": "21cf7ce729a08bbff924aedaa7d3195a39b1c7f1"
+    },
+    {
+      "original": "c68cdc2e9fbf52439ac197057243c4e1a7b3e0cc",
+      "combined": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "stable_patch_id": "f83e65eb24fd44abd77e5d35a0a24beefb88503c"
+    }
+  ],
+  "adoption_stage_file_mapping": [
+    {
+      "path": "frontend/src/creative/GraphConnectionReplacement.test.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "4f2fbc5271565c73eb76edcc5bb35038ce7a133c",
+      "combined_blob": "4f2fbc5271565c73eb76edcc5bb35038ce7a133c"
+    },
+    {
+      "path": "frontend/src/creative/GraphConnectionReplacement.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "aa5559ce7539ebdcf4b658e38462dd9c885f9dbb",
+      "combined_blob": "aa5559ce7539ebdcf4b658e38462dd9c885f9dbb"
+    },
+    {
+      "path": "frontend/src/creative/graphConnectionReplacementHelpers.ts",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "8d33866b2cf65a95466ccb2d26ea31a3a9d65290",
+      "combined_blob": "8d33866b2cf65a95466ccb2d26ea31a3a9d65290"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "e3cf779fd3ea48be93922b1cde4de2214d0a75ac",
+      "combined_blob": "e3cf779fd3ea48be93922b1cde4de2214d0a75ac"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "b206aab7554ca1b0a79285f98b7615569e413eed",
+      "combined_blob": "b206aab7554ca1b0a79285f98b7615569e413eed"
+    },
+    {
+      "path": "frontend/src/experimental/ComicGeometryEditor.test.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "99d054c6af2b7d6e692b2c01fb28a4dc807f0f6f",
+      "combined_blob": "99d054c6af2b7d6e692b2c01fb28a4dc807f0f6f"
+    },
+    {
+      "path": "frontend/src/experimental/ComicGeometryEditor.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "2c57d8d6b0fbe25f978458f728598b541e73f6db",
+      "combined_blob": "2c57d8d6b0fbe25f978458f728598b541e73f6db"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.geometry.test.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "db74d5aabca1240653fe29211d654ade81ba17f6",
+      "combined_blob": "db74d5aabca1240653fe29211d654ade81ba17f6"
+    },
+    {
+      "path": "frontend/src/experimental/comicGeometry.test.ts",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "7712d7dd7d0536555f0d762ddc380b2dc73829d2",
+      "combined_blob": "7712d7dd7d0536555f0d762ddc380b2dc73829d2"
+    },
+    {
+      "path": "frontend/src/experimental/comicGeometry.ts",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "ac5b33639da1b34707eb14886d7716afbd0628ef",
+      "combined_blob": "ac5b33639da1b34707eb14886d7716afbd0628ef"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "original_commit": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined_commit": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "source_blob": "0935d4c97e7c57fff83994e8b7b6fbc459be5cd4",
+      "combined_blob": "0935d4c97e7c57fff83994e8b7b6fbc459be5cd4"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPriceEditing.additive.test.tsx",
+      "original_commit": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined_commit": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "source_blob": "607865b98483c7e6de0b090fa9a6a40e15ebcae1",
+      "combined_blob": "607865b98483c7e6de0b090fa9a6a40e15ebcae1"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerPriceDraft.ts",
+      "original_commit": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined_commit": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "source_blob": "95deda6f9cc4c9a14f420134efcc637c302de02e",
+      "combined_blob": "95deda6f9cc4c9a14f420134efcc637c302de02e"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "original_commit": "c68cdc2e9fbf52439ac197057243c4e1a7b3e0cc",
+      "combined_commit": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "source_blob": "dc29bdd82a105b2c5cfb53e000eb537d081994e4",
+      "combined_blob": "dc29bdd82a105b2c5cfb53e000eb537d081994e4"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPriceCallbacks.additive.test.tsx",
+      "original_commit": "c68cdc2e9fbf52439ac197057243c4e1a7b3e0cc",
+      "combined_commit": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "source_blob": "852c1917ac16950ce4a736710f4ac77e1ab0f653",
+      "combined_blob": "852c1917ac16950ce4a736710f4ac77e1ab0f653"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "frontend/src/creative/GraphConnectionReplacement.test.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "4f2fbc5271565c73eb76edcc5bb35038ce7a133c",
+      "combined_blob": "4f2fbc5271565c73eb76edcc5bb35038ce7a133c"
+    },
+    {
+      "path": "frontend/src/creative/GraphConnectionReplacement.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "aa5559ce7539ebdcf4b658e38462dd9c885f9dbb",
+      "combined_blob": "aa5559ce7539ebdcf4b658e38462dd9c885f9dbb"
+    },
+    {
+      "path": "frontend/src/creative/graphConnectionReplacementHelpers.ts",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "8d33866b2cf65a95466ccb2d26ea31a3a9d65290",
+      "combined_blob": "8d33866b2cf65a95466ccb2d26ea31a3a9d65290"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "e3cf779fd3ea48be93922b1cde4de2214d0a75ac",
+      "combined_blob": "e3cf779fd3ea48be93922b1cde4de2214d0a75ac"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "original_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "combined_commit": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "source_blob": "b206aab7554ca1b0a79285f98b7615569e413eed",
+      "combined_blob": "b206aab7554ca1b0a79285f98b7615569e413eed"
+    },
+    {
+      "path": "frontend/src/experimental/ComicGeometryEditor.test.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "99d054c6af2b7d6e692b2c01fb28a4dc807f0f6f",
+      "combined_blob": "99d054c6af2b7d6e692b2c01fb28a4dc807f0f6f"
+    },
+    {
+      "path": "frontend/src/experimental/ComicGeometryEditor.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "2c57d8d6b0fbe25f978458f728598b541e73f6db",
+      "combined_blob": "2c57d8d6b0fbe25f978458f728598b541e73f6db"
+    },
+    {
+      "path": "frontend/src/experimental/ComicLayoutsPanel.geometry.test.tsx",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "db74d5aabca1240653fe29211d654ade81ba17f6",
+      "combined_blob": "db74d5aabca1240653fe29211d654ade81ba17f6"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "original_commit": "c68cdc2e9fbf52439ac197057243c4e1a7b3e0cc",
+      "combined_commit": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "source_blob": "dc29bdd82a105b2c5cfb53e000eb537d081994e4",
+      "combined_blob": "dc29bdd82a105b2c5cfb53e000eb537d081994e4"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPriceCallbacks.additive.test.tsx",
+      "original_commit": "c68cdc2e9fbf52439ac197057243c4e1a7b3e0cc",
+      "combined_commit": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "source_blob": "852c1917ac16950ce4a736710f4ac77e1ab0f653",
+      "combined_blob": "852c1917ac16950ce4a736710f4ac77e1ab0f653"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPriceEditing.additive.test.tsx",
+      "original_commit": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined_commit": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "source_blob": "607865b98483c7e6de0b090fa9a6a40e15ebcae1",
+      "combined_blob": "607865b98483c7e6de0b090fa9a6a40e15ebcae1"
+    },
+    {
+      "path": "frontend/src/experimental/comicGeometry.test.ts",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "7712d7dd7d0536555f0d762ddc380b2dc73829d2",
+      "combined_blob": "7712d7dd7d0536555f0d762ddc380b2dc73829d2"
+    },
+    {
+      "path": "frontend/src/experimental/comicGeometry.ts",
+      "original_commit": "d28e8d8cd06794142e65f456ed64a089289830ba",
+      "combined_commit": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "source_blob": "ac5b33639da1b34707eb14886d7716afbd0628ef",
+      "combined_blob": "ac5b33639da1b34707eb14886d7716afbd0628ef"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerPriceDraft.ts",
+      "original_commit": "350576a1a42db3ed4ed3e2dc1d448f655d305f3f",
+      "combined_commit": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "source_blob": "95deda6f9cc4c9a14f420134efcc637c302de02e",
+      "combined_blob": "95deda6f9cc4c9a14f420134efcc637c302de02e"
+    }
+  ],
+  "all_other_cfc_source_entries_identical": true,
+  "introduced_objects": [
+    {
+      "oid": "d6d1259d95cbd95335f38d98deb12f443d4f1d08",
+      "type": "commit",
+      "bytes": 292,
+      "sha256": "ca7d89ecf217e5f9eacd16e778d3a4a3f0a17bc0c861d601bdc5b1c6f9b16b12"
+    },
+    {
+      "oid": "0020ea1614ec91ff5ed1286dc9b6e803efbf9a5c",
+      "type": "commit",
+      "bytes": 302,
+      "sha256": "638749f1c8c4465bcb26c7936679cf29390d5e407bb6f19948043dc2c8228215"
+    },
+    {
+      "oid": "baa70236d7745d6c2f1ae8a8cedde4794e790dc7",
+      "type": "commit",
+      "bytes": 298,
+      "sha256": "0ea8282cd6090f8ddbc141dd89a278b444a4a3ff051634a0a2b7a9545d5f6112"
+    },
+    {
+      "oid": "61bbc679cce3121b25052e236c193fb0becf2b0e",
+      "type": "commit",
+      "bytes": 355,
+      "sha256": "663b29f38849667320171b2a7da7f2248af235eab5767d54c5d8421d2242a511"
+    },
+    {
+      "oid": "78e4f6a50ace1bef19c96bd478ab94a42bbea807",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "c41fb52e04b4d34160f3586992c70140e9ace3196441517402bb08b3bff88192"
+    },
+    {
+      "oid": "3c25f46b4d294832068874b37e67b6ade1cd29b2",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "5da28cefe78954561bdaf432a3c7d143d2383bfcdb9fcfd87672af3db3a12d25"
+    },
+    {
+      "oid": "6b18054f1bb4c421de2d4f71929136edbdfd9396",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "f8de971d37962b4bcc4cdb71b529ce88319d35ef706e0ed44ccf515840578472"
+    },
+    {
+      "oid": "e3563defe4da667a15c165763510e2993eac38e0",
+      "type": "tree",
+      "bytes": 34223,
+      "sha256": "dcbf437f1077f165e2597faa0386aeffd007f7c72ee6579a98d538fca6e104c2"
+    },
+    {
+      "oid": "4f2fbc5271565c73eb76edcc5bb35038ce7a133c",
+      "type": "blob",
+      "bytes": 12265,
+      "sha256": "025a63f2694766a43670e5db7c83238fefc2893f2fc4c69256889bf0984f339c"
+    },
+    {
+      "oid": "aa5559ce7539ebdcf4b658e38462dd9c885f9dbb",
+      "type": "blob",
+      "bytes": 6392,
+      "sha256": "b977ce78525254244039c4078f92fd561c68c8dd9f430c0787c44a7dd2fc3abc"
+    },
+    {
+      "oid": "8d33866b2cf65a95466ccb2d26ea31a3a9d65290",
+      "type": "blob",
+      "bytes": 2545,
+      "sha256": "888c1091e933856ca91ae8a0d6b71562ee9b107a460c49f0b5be64ad35bd74d2"
+    },
+    {
+      "oid": "e3cf779fd3ea48be93922b1cde4de2214d0a75ac",
+      "type": "blob",
+      "bytes": 58496,
+      "sha256": "ff67ed25edbcb20df75b62f73c80ab6111bd273885f0540c797c0e499ec86be0"
+    },
+    {
+      "oid": "b206aab7554ca1b0a79285f98b7615569e413eed",
+      "type": "blob",
+      "bytes": 89951,
+      "sha256": "d43831dab81833fcb822d7f10a62a70e89088ccf5b462b459212823d4917a444"
+    },
+    {
+      "oid": "a63ddc8563a523a6bb15613f9efde786f852c6cf",
+      "type": "tree",
+      "bytes": 17959,
+      "sha256": "533d3b1f3581b0978194c2f23edab33301ead1d497d3532cd2db77cee017fe67"
+    },
+    {
+      "oid": "99d054c6af2b7d6e692b2c01fb28a4dc807f0f6f",
+      "type": "blob",
+      "bytes": 7173,
+      "sha256": "04e743ba9cb6dcfa5549977e20b5c2e515abd6f2f183d9101869b5bc7627cf36"
+    },
+    {
+      "oid": "2c57d8d6b0fbe25f978458f728598b541e73f6db",
+      "type": "blob",
+      "bytes": 9323,
+      "sha256": "19ab7e936a3a0786d158c484ea79756b747af9a1a67708dca4d40a1ce92d51ae"
+    },
+    {
+      "oid": "db74d5aabca1240653fe29211d654ade81ba17f6",
+      "type": "blob",
+      "bytes": 6781,
+      "sha256": "ca4665ce43c874c74f7e2c926d26d0eac6b390dd12365872cfa8a22273c574d6"
+    },
+    {
+      "oid": "dc29bdd82a105b2c5cfb53e000eb537d081994e4",
+      "type": "blob",
+      "bytes": 32887,
+      "sha256": "871bcd588126ac47f199f8e082ab8942b8d866a6bb3c2db6db648c086700c444"
+    },
+    {
+      "oid": "852c1917ac16950ce4a736710f4ac77e1ab0f653",
+      "type": "blob",
+      "bytes": 9390,
+      "sha256": "0c4fbd2d9dc3bf891ce0acfdfc50e3ecfe10a4b91ed2dd1888c9b5271b13e05a"
+    },
+    {
+      "oid": "607865b98483c7e6de0b090fa9a6a40e15ebcae1",
+      "type": "blob",
+      "bytes": 7452,
+      "sha256": "0a4ccdab4156f7308edb3e15418de9e3a39a2de7ccc6007bfea79853b8ffd53b"
+    },
+    {
+      "oid": "7712d7dd7d0536555f0d762ddc380b2dc73829d2",
+      "type": "blob",
+      "bytes": 4987,
+      "sha256": "2ebfd2fec43ce5f7d158750cf36934ce16cd91174725410f58d5df81bc50386c"
+    },
+    {
+      "oid": "ac5b33639da1b34707eb14886d7716afbd0628ef",
+      "type": "blob",
+      "bytes": 4687,
+      "sha256": "b1ef993430a095066a0a558ab23007097714fd2a7650e49bc31d822b667c14ae"
+    },
+    {
+      "oid": "95deda6f9cc4c9a14f420134efcc637c302de02e",
+      "type": "blob",
+      "bytes": 1616,
+      "sha256": "6a12d8d68159d4e06d6ba66aeceed78b0386829e9c05dcf39d0e91863bc6d3ff"
+    },
+    {
+      "oid": "df3d03c7a919b661039ec321cf04f97a71013afe",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "1d75477131305d928c217ead70379d7dc9c0500aa639507a10288a9ed6641c3d"
+    },
+    {
+      "oid": "3a33877ee1db24209c7a3b25ec55d6416bbe1e9d",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "090384e2fe3a808781341818a474a78c8d37d146971f0fef3fce07c29692282d"
+    },
+    {
+      "oid": "6a97d12ba46a4ca4f8e12f1fabed76c2f5a61589",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "ebe9c0f827e5632d4a6e6e77835e4c88032901fd6134adca74c0a5bc29647018"
+    },
+    {
+      "oid": "2e075a05ad8c9da1e730dbe63e2517e083c332a4",
+      "type": "tree",
+      "bytes": 17888,
+      "sha256": "87ac1dad27b5133e5dc03764b51338f957541ce079300cd41af6dc8da145a022"
+    },
+    {
+      "oid": "0935d4c97e7c57fff83994e8b7b6fbc459be5cd4",
+      "type": "blob",
+      "bytes": 31053,
+      "sha256": "71c37db2f4b2af8cef5a43fdf7fc2060c9c3102e4cad9ed3dccc1817e8defc76"
+    },
+    {
+      "oid": "8450e27b8562fa62b898a2f29cc5150c0ef51a40",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "96543339c5f83f98c0cec73a350367263aaa7c6d76a4e1fba4b83b5cbff2a408"
+    },
+    {
+      "oid": "3d2af07754c49a533f09477892415180d20b441d",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "cdc8bb13b1091000f65aff7405d0d9dd3d30f4066b80f0b5e78cd472489ac2ef"
+    },
+    {
+      "oid": "de7b97b72adef63ac344dfd718d870022752fa2e",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "3ef13447ffeb8da5c7b119e74f7c1531d5ae716a1752fe0fbdc97ae421b3df80"
+    },
+    {
+      "oid": "c715785a225c412aa3e129b38279451831eddeb5",
+      "type": "tree",
+      "bytes": 17767,
+      "sha256": "bb9881972be500b4e6265aca534572b37b41f838ad6eaa747e89e733b0683fd8"
+    },
+    {
+      "oid": "f563bd7e7e5a286c7d8c6d1d2beef0ca34fc7beb",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "5665bb3ece244f4718f8e89e4c05c5349070cc158aec54b98a4719d2698dcb0e"
+    },
+    {
+      "oid": "af9b79dec302f8e3c7b5f9f59ca412156d11036e",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "d9c4130e3f0e3d119cd37e43412ee206fdc7e9873d383ca5a50ec8d59c66f83b"
+    },
+    {
+      "oid": "46e8d5a41536151dfd4e6e3bc604da26f339e3dc",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "6e9169064e1f260b2e00cc4fe05eaea9c440eb2014204bb6410c2e6407f3ca35"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_pattern_findings": 0,
+    "runtime_profile_or_raw_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 165665,
+      "sha256": "b475ead977bbac29bc76dcc4c2122c5a557487abcb21f68053d6dfcd4e1cf866",
+      "git_blob": "6630fa5307458713d53d6f7737e00205f7e01f38"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 2782,
+      "sha256": "e04804fee98a355ed00c46e176b7821419336f35e10493b865e303197170dd4b",
+      "git_blob": "c4ad179cfdf22b7ca5a53813a5c6c27d529a30ca"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1452,
+      "sha256": "24856c2d2d1437dc044254db5b0ad6863232deffed28d503fdc059f8c07f17c5",
+      "git_blob": "662d99ac94beb72c8bc3f368af52e949674d0fbb"
+    },
+    {
+      "path": "studio-v2-cfc4264b-to-d6d1259d.bundle",
+      "bytes": 22779,
+      "sha256": "e8d518003e6ff0ef55b1a0820f5d7e2cd68ea72ca10adcf53080502a14c56170",
+      "git_blob": "11f31fffd156560cf54252022d5ef0fdf144a6d5"
+    }
+  ]
+}
