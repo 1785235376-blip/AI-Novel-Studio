@@ -5,6 +5,7 @@ import type { MediaOperation } from './studioProductionClient';
 import { usableCutoutSource } from './studioCutoutContract';
 import { StudioTimelineMeasurement } from './StudioTimelineMeasurement';
 import { missingAudioMeasurementLabel } from './studioAudioReceiptContext';
+import { StudioAudioTrimTimecodes } from './StudioAudioTrimTimecodes';
 
 export type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 const labels: Record<MediaParameter, string> = { scale: '超分倍率', width: '宽度（64–2048）', height: '高度（64–2048）', steps: '采样步数（1–150）', seed: '种子（0–2147483647）',
@@ -100,6 +101,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {upscale && <p>原图片版本进入已启用的本地超分模型，再统一到所选倍率的 PNG 尺寸。输出最大 4096×4096、25 MiB，仍需人工审核。不会下载或启动模型；模型质量与本机推理尚未验收。</p>}
       {draft.operation.startsWith('m5.image.') && <p>Depth / Pose / Edge / Mask / Layout 控制 Adapter 已保留边界，尚未提供执行能力。</p>}
       {!cutout && <fieldset disabled={!state.canEdit}><legend>处理参数</legend><p>{trim ? draft.parameters.output_format === 'MP3' ? '本地截取输出有损 MP3，片段为 10 毫秒至 120 秒。需已安装的 libmp3lame；32000–48000 Hz 固定 128 kb/s，更低支持采样率固定 64 kb/s。支持 8000、11025、12000、16000、22050、24000、32000、44100、48000 Hz；留空为 48000 Hz、双声道。解码 S16 不代表无损。' : draft.parameters.output_format === 'FLAC' ? '本地截取输出处理后的 S16 FLAC。片段最长 120 秒，起止点须在真实来源时长内；先按所选增益、采样率与声道处理，再无损压缩。' : '本地截取输出 PCM 16 位 WAV。片段最长 120 秒；起止点还须在真实来源时长内。可选项留空保持原行为：不加增益、48000 Hz、双声道。增益过高可能造成削波。' : state.provider ? '仅列所选配置支持的参数；可选项留空时使用原服务商默认值。' : '先选择服务商，再填写它支持的参数。'}</p>{trim && <p>淡入与淡出采用线性音量变化，相对截取后的片段起点与终点；两者时长之和不能超过片段时长。留空保持原请求，明确填写 0 表示不淡入或不淡出。先应用增益，再淡入淡出，最后转换采样率与声道。</p>}{trim && <p>采样峰值归一化仅支持 PCM16 WAV 来源与输出，采样率和声道须与来源相同；毫秒起止点须恰好对应完整采样帧。只测所选片段，目标位于手动增益与淡入淡出之前；修正范围 -60 至 +12 dB，静音及超范围请求会拒绝。目标加手动增益不得高于 -1 dBFS，淡入淡出可进一步降低实际峰值。不是响度 LUFS 或真峰值处理。留空保持原行为。</p>}{state.parameterNames.map(parameter)}
+        {trim && <StudioAudioTrimTimecodes key={JSON.stringify([draft.sources, draft.parameters.in_ms, draft.parameters.out_ms])} start={draft.parameters.in_ms} end={draft.parameters.out_ms} disabled={!state.canEdit}
+          onApply={(start, end) => { state.changeParameter('in_ms', start); state.changeParameter('out_ms', end); }} />}
         {!!state.unsupportedParameters.length && <><StatusMessage tone="warning">所选配置不支持已填写的参数：{state.unsupportedParameters.map(name => labels[name]).join('、')}。这些输入不会自动丢弃。</StatusMessage><Button disabled={!state.canEdit} onClick={state.clearUnsupportedParameters}>明确清空不支持的参数</Button></>}
       </fieldset>}
       <label>来源与授权说明<input maxLength={2000} disabled={!state.canEdit} value={draft.licenseNote} onChange={event => state.changeField('licenseNote', event.target.value)} /></label>

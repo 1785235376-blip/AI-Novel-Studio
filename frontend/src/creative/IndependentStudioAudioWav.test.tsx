@@ -78,6 +78,49 @@ async function queue(controls: Record<string, number> = {}) { await preview(cont
 async function execute(controls: Record<string, number> = {}) { await queue(controls); fireEvent.click(button('明确执行当前入队任务')); await waitFor(() => expect(button('读取并核对候选媒体').disabled).toBe(false)); }
 async function candidate() { await execute({ gain_db: -6, sample_rate: 22050, channels: 1 }); fireEvent.click(button('读取并核对候选媒体')); await screen.findByLabelText('本任务的音频候选'); }
 describe('WAV controls through the original mounted production workspace', () => {
+  it('fills exact timecode positions only on explicit apply and uses the original preview command', async () => {
+    mount(); await choose({ gain_db: -6 });
+    change('裁剪起点时间码', '0:00.125'); change('裁剪终点时间码', '00:00:00.625');
+    expect((screen.getByLabelText('来源起点（毫秒）') as HTMLInputElement).value).toBe('100');
+    expect((screen.getByLabelText('来源终点（毫秒）') as HTMLInputElement).value).toBe('600');
+    expect(calls('/preview')).toHaveLength(0); expect(calls('/jobs')).toHaveLength(0);
+    fireEvent.click(button('填入起止毫秒'));
+    expect((screen.getByLabelText('来源起点（毫秒）') as HTMLInputElement).value).toBe('125');
+    expect((screen.getByLabelText('来源终点（毫秒）') as HTMLInputElement).value).toBe('625');
+    fireEvent.click(button('读取制作预览')); await screen.findByRole('region', { name: '制作预览确认' });
+    const command = JSON.parse(calls('/preview')[0][1]!.body as string);
+    expect(command).toEqual({ ...audioCommand(command.request_id, { gain_db: -6 }), parameters: { in_ms: 125, out_ms: 625, gain_db: -6 } });
+    expect(calls('/jobs')).toHaveLength(0); expect(calls('/execute')).toHaveLength(0);
+  });
+  it('keeps malformed or reversed timecodes from replacing the current millisecond range', async () => {
+    mount(); await choose();
+    for (const [start, end] of [['0:60', '1:01'], ['0:00', '10:00.001'], ['0:01', '0:00.500'], ['0:01', '0:01']]) {
+      change('裁剪起点时间码', start); change('裁剪终点时间码', end);
+      expect(button('填入起止毫秒').disabled).toBe(true); fireEvent.click(button('填入起止毫秒'));
+      expect((screen.getByLabelText('来源起点（毫秒）') as HTMLInputElement).value).toBe('100');
+      expect((screen.getByLabelText('来源终点（毫秒）') as HTMLInputElement).value).toBe('600');
+    }
+    expect(calls('/preview')).toHaveLength(0);
+  });
+  it('retires preview consent when applying timecodes and preserves the original duration validation', async () => {
+    mount(); await preview(); fireEvent.click(screen.getByLabelText('已核对本次输入、来源和处理边界'));
+    change('裁剪起点时间码', '0:00'); change('裁剪终点时间码', '3:00'); fireEvent.click(button('填入起止毫秒'));
+    expect(screen.queryByRole('region', { name: '制作预览确认' })).toBeNull();
+    expect(button('读取制作预览').disabled).toBe(true); expect(calls('/preview')).toHaveLength(1);
+    expect(calls('/jobs')).toHaveLength(0);
+    change('裁剪起点时间码', '0:00.100'); change('裁剪终点时间码', '0:00.600'); fireEvent.click(button('填入起止毫秒'));
+    expect(button('读取制作预览').disabled).toBe(false);
+    expect(screen.queryByRole('button', { name: '仅创建任务并入队' })).toBeNull();
+  });
+  it('discards unapplied helper input after manual range edits or operation changes', async () => {
+    mount(); await choose(); change('裁剪起点时间码', '0:00.222');
+    change('来源起点（毫秒）', '200');
+    expect((screen.getByLabelText('裁剪起点时间码') as HTMLInputElement).value).toBe('0:00.200');
+    change('裁剪起点时间码', '0:00.333'); change('操作', 'm8.audio.speech');
+    expect(screen.queryByLabelText('裁剪起点时间码')).toBeNull(); change('操作', 'm8.audio.trim');
+    expect((screen.getByLabelText('裁剪起点时间码') as HTMLInputElement).value).toBe('');
+    expect(calls('/preview')).toHaveLength(0);
+  });
   it('keeps blank controls absent, original defaults explicit, and preview/queue/execute separate', async () => {
     mount(); await preview(); const command = JSON.parse(calls('/preview')[0][1]!.body as string);
     expect(command).toEqual(audioCommand(command.request_id)); expect(calls('/jobs')).toHaveLength(0); expect(calls('/execute')).toHaveLength(0);
@@ -133,6 +176,8 @@ describe('WAV controls through the original mounted production workspace', () =>
     const view = mount(); await queue({ gain_db: -6 }); executeResponse = deferred(); fireEvent.click(button('明确执行当前入队任务')); fireEvent.click(button('明确执行当前入队任务'));
     await waitFor(() => expect(calls('/execute')).toHaveLength(1)); expect(button('读取当前素材版本').disabled).toBe(true);
     expect((screen.getByLabelText(labels.gain_db) as HTMLInputElement).disabled).toBe(true);
+    expect(button('填入起止毫秒').disabled).toBe(true);
+    expect((screen.getByLabelText('裁剪起点时间码') as HTMLInputElement).disabled).toBe(true);
     fireEvent.click(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '视频' })); expect(view.leave).not.toHaveBeenCalled();
     await act(async () => executeResponse!.resolve(reply(audioJob('AWAITING_REVIEW', 3, currentJob!.command as MediaCommand))));
     await waitFor(() => expect(button('读取当前素材版本').disabled).toBe(false)); expect(calls('/execute')).toHaveLength(1);
