@@ -961,8 +961,8 @@ class AssetLibraryService:
     def _verified_bounded_content(self, meta, max_bytes, guard):
         """Opt-in guarded read; the established default reader is unchanged.
 
-        Platforms lacking safe nonblocking/no-follow opens are unavailable for
-        this bounded preview. Never emulate them with a racy ordinary open.
+        Windows uses the admitted native reader. Other platforms lacking safe
+        nonblocking/no-follow opens stay unavailable; there is no ordinary fallback.
         The original owner's root/ancestor directories remain trusted; the
         no-follow flag protects the asset's final path component only.
         """
@@ -970,6 +970,25 @@ class AssetLibraryService:
             raise ValueError("ASSET_BOUNDED_READ_LIMIT_INVALID")
         if type(meta.get("size")) is not int or not 0 < meta["size"] <= max_bytes:
             raise ValueError("ASSET_BOUNDED_READ_LIMIT")
+        if os.name == "nt":
+            from .asset_bounded_file_windows import (
+                WindowsBoundedAssetError, read_windows_bounded_asset,
+                windows_bounded_read_supported,
+            )
+            if not windows_bounded_read_supported():
+                raise ValueError("ASSET_BOUNDED_READ_UNSUPPORTED")
+            guard()
+            try:
+                return read_windows_bounded_asset(
+                    self._bin_path(meta["id"]), trusted_root=self.root,
+                    expected_size=meta["size"], max_bytes=max_bytes,
+                    expected_sha256=meta["sha256"], guard=guard,
+                )
+            except WindowsBoundedAssetError as error:
+                guard()
+                if error.code in {"ASSET_BOUNDED_CONTENT_INVALID", "ASSET_BOUNDED_CONTENT_UNAVAILABLE"}:
+                    raise AssetIntegrityError(error.code) from None
+                raise ValueError(error.code) from None
         if not getattr(os, "O_NOFOLLOW", 0) or not getattr(os, "O_NONBLOCK", 0):
             raise ValueError("ASSET_BOUNDED_READ_UNSUPPORTED")
         guard()

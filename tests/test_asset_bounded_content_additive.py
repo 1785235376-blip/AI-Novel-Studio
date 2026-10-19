@@ -50,7 +50,11 @@ def test_oversize_rejected_before_path_or_binary_read(content, monkeypatch):
 @pytest.mark.parametrize("flag", ["O_NOFOLLOW", "O_NONBLOCK"])
 def test_unavailable_primitives_fail_closed_without_default_fallback(content, monkeypatch, flag):
     owner, _, meta, data = content
-    monkeypatch.setattr(os, flag, 0, raising=False)
+    if os.name == "nt":
+        from app.services import asset_bounded_file_windows
+        monkeypatch.setattr(asset_bounded_file_windows, "windows_bounded_read_supported", lambda: False)
+    else:
+        monkeypatch.setattr(os, flag, 0, raising=False)
     with pytest.raises(ValueError, match="ASSET_BOUNDED_READ_UNSUPPORTED"):
         owner._verified_content(meta, max_bytes=len(data))
     assert owner._verified_content(meta) == data
