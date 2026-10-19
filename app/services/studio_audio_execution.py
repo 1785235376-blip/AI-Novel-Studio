@@ -35,7 +35,8 @@ _ACTIVE_LOCK = threading.RLock()
 FADE_CONTROLS = {"fade_in_ms", "fade_out_ms"}
 PEAK_CONTROL = "target_peak_dbfs"
 LOUDNESS_CONTROL = "target_lufs"
-TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL, LOUDNESS_CONTROL} | FADE_CONTROLS
+from .studio_audio_denoise import CONTROL as DENOISE_CONTROL
+TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL, LOUDNESS_CONTROL, DENOISE_CONTROL} | FADE_CONTROLS
 AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
@@ -170,6 +171,7 @@ def _trim_measurement(value, parameters):
               "audio_codec", "profile_validation", "output_sha256"}
     if PEAK_CONTROL in parameters: fields.add("peak_normalization")
     if LOUDNESS_CONTROL in parameters: fields.add("loudness_matching")
+    if DENOISE_CONTROL in parameters: fields.add("noise_reduction")
     if (not isinstance(value, dict) or set(value) != fields
             or any(type(value.get(key)) is not int for key in ("duration_ms", "byte_count", "sample_rate", "channels", "sample_width"))
             or not 0 < value["byte_count"] <= 25 * 1024 * 1024 or value["duration_ms"] < 1
@@ -184,6 +186,9 @@ def _trim_measurement(value, parameters):
     if LOUDNESS_CONTROL in parameters:
         from .studio_audio_loudness import validate_proof
         validate_proof(value["loudness_matching"], parameters, value["output_sha256"])
+    if DENOISE_CONTROL in parameters:
+        from .studio_audio_denoise import validate_proof
+        validate_proof(value["noise_reduction"], parameters, value["output_sha256"])
     return value
 
 
@@ -288,6 +293,9 @@ def _body_shape(value):
                 raise _error("STUDIO_AUDIO_PEAK_HEADROOM_INVALID", "目标峰值加手动增益须不高于 -1 dBFS", 400)
         if LOUDNESS_CONTROL in parameters:
             from .studio_audio_loudness import validate_parameters
+            validate_parameters(parameters)
+        if DENOISE_CONTROL in parameters:
+            from .studio_audio_denoise import validate_parameters
             validate_parameters(parameters)
         trim_output_profile(parameters)
         if prompt:
@@ -542,6 +550,9 @@ class StudioAudioExecution:
             if LOUDNESS_CONTROL in body["parameters"]:
                 from .studio_audio_loudness import validate_proof
                 validate_proof(measured["loudness_matching"], body["parameters"], measured["output_sha256"], binding["sources"][0])
+            if DENOISE_CONTROL in body["parameters"]:
+                from .studio_audio_denoise import validate_proof
+                validate_proof(measured["noise_reduction"], body["parameters"], measured["output_sha256"], binding["sources"][0])
             ready = row.get("publication_ready")
             receipt = copy.deepcopy(row); self._receipt(receipt)
             if (not isinstance(ready, dict) or ready.get("output_digest") != measured["output_sha256"]
@@ -774,6 +785,8 @@ class StudioAudioExecution:
                     proof["peak_normalization"] = measured["peak_normalization"]
                 if LOUDNESS_CONTROL in body["parameters"]:
                     proof["loudness_matching"] = measured["loudness_matching"]
+                if DENOISE_CONTROL in body["parameters"]:
+                    proof["noise_reduction"] = measured["noise_reduction"]
                 output_proof["measured"] = _trim_measurement(proof, body["parameters"])
             # Persist uncertainty before crossing from the audio owner to the
             # original source/asset owners. Never acquire those leases while
@@ -868,7 +881,12 @@ class StudioAudioExecution:
             raise _error("STUDIO_AUDIO_TRIM_SOURCE_CHANGED", "原音频资产或字节已变化", 409)
         measured = inspect_media(data, "audio", guard=inspection_current)
         if parameters["out_ms"] > measured["duration_ms"]: raise _error("STUDIO_AUDIO_TRIM_RANGE_INVALID", "裁剪终点超过原音频时长", 400)
-        peak_source, normalization_gain = None, None
+        peak_source, normalization_gain, denoise_source = None, None, None
+        if DENOISE_CONTROL in parameters:
+            from .studio_audio_denoise import measure
+            if measured.get("media_type") != "audio/wav" or measured.get("validation") != "PCM_DECODED":
+                raise _error("STUDIO_AUDIO_DENOISE_PCM_REQUIRED", "降噪仅支持已核对的 PCM16 WAV 来源", 400)
+            denoise_source = measure(data, parameters, inspection_current, selected=True)
         if PEAK_CONTROL in parameters:
             if measured.get("media_type") != "audio/wav" or measured.get("validation") != "PCM_DECODED":
                 raise _error("STUDIO_AUDIO_PEAK_PCM_PROFILE_REQUIRED", "峰值归一化仅支持已核对的 PCM16 WAV 来源", 400)
@@ -909,6 +927,11 @@ class StudioAudioExecution:
                 first = peak_source["first_frame"]
                 filters = ["-af", f"atrim=start_sample={first}:end_sample={first + peak_source['frames']},asetpts=PTS-STARTPTS," + filters[1]]
                 seek, length = [], []
+            if denoise_source is not None:
+                from .studio_audio_denoise import FILTER
+                first = denoise_source["first_frame"]
+                filters = ["-af", f"atrim=start_sample={first}:end_sample={first + denoise_source['frames']},asetpts=PTS-STARTPTS," + FILTER]
+                seek, length = [], []
             codec = ["-c:a", "flac", "-sample_fmt", "s16", "-compression_level", "5"] if flac else ["-c:a", "pcm_s16le"]
             if mp3:
                 from .studio_audio_mp3_profile import bit_rate
@@ -945,6 +968,10 @@ class StudioAudioExecution:
             raise MediaValidationError("trim output does not match the reviewed PCM WAV profile")
         if loudness_proof is not None:
             result["loudness_matching"] = loudness_proof
+        if denoise_source is not None:
+            from .studio_audio_denoise import measure, proof
+            result["noise_reduction"] = proof(source, parameters, denoise_source,
+                measure(output, parameters, inspection_current, selected=False), output)
         if peak_source is not None:
             actual = _peak_pcm(output, parameters, inspection_current, selected=False)
             result["peak_normalization"] = _peak_proof({

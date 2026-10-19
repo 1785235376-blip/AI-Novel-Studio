@@ -6,6 +6,7 @@ import type { ShotPin } from './studioStoryboardContract';
 import { checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
 import { checkedImageUpscaleProof, type ImageUpscaleProof, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
 import { maskDimension } from './studioManualMaskContract';
+import { AUDIO_DENOISE_PROFILE, validDenoiseParameters, validDenoiseProof, type AudioDenoiseProof } from './studioAudioDenoiseContract';
 import { ApiError, type CollaborationContext } from '../api';
 import { studioTransport } from './studioClient';
 import { checkedTimeline, checkedTimelineRow, timelineSources, type StudioTimeline, type StudioTimelineRow } from './studioTimelineTypes';
@@ -36,7 +37,7 @@ export type ProductionRecipe = { contract: 'studio-execution-recipe/1'; operatio
 export type TimelineMediaMeasurement = { duration_ms?: number; byte_count?: number; width?: number; height?: number; fps?: number;
   video_codec?: string; audio_codec?: string; sample_rate?: number; channels?: number; container?: 'mp4' | 'webm' | 'wav' | 'flac' | 'mp3';
   profile_validation?: 'NATIVE_FFPROBE_EXACT' | 'PCM_DECODED' | 'FLAC_STREAMINFO_PCM_VERIFIED' | 'MP3_GAPLESS_PCM_VERIFIED'; render_profile?: string; export_profile?: TimelineExportProfile;
-  sample_count?: number; bits_per_sample?: 16; sample_width?: 2; peak_normalization?: AudioPeakProof; loudness_matching?: AudioLoudnessProof; output_sha256?: string; total_samples?: number; decoded_pcm_bytes?: number; streaminfo_md5?: string; decoded_pcm_sha256?: string; bit_rate?: number; container_duration_ms?: number };
+  sample_count?: number; bits_per_sample?: 16; sample_width?: 2; peak_normalization?: AudioPeakProof; loudness_matching?: AudioLoudnessProof; noise_reduction?: AudioDenoiseProof; output_sha256?: string; total_samples?: number; decoded_pcm_bytes?: number; streaminfo_md5?: string; decoded_pcm_sha256?: string; bit_rate?: number; container_duration_ms?: number };
 export type AudioLoudnessProof = { contract: 'studio-audio-loudness-match/1'; method: 'FFMPEG_LOUDNORM_INPUT/1'; source_id: string; source_version: number; source_sha256: string;
   in_ms: number; out_ms: number; sample_rate: number; channels: number; target_lufs: number; input_lufs: number; output_lufs: number; input_true_peak_dbtp: number;
   output_true_peak_dbtp: number; applied_gain_db: number; true_peak_ceiling_dbtp: -1; tolerance_lu: 0.2; selected_pcm_sha256: string; selected_frames: number;
@@ -44,7 +45,7 @@ export type AudioLoudnessProof = { contract: 'studio-audio-loudness-match/1'; me
 export type AudioPeakProof = { contract: 'studio-audio-sample-peak/1'; source_sha256: string; selected_pcm_sha256: string; selected_frames: number;
   source_peak_s16: number; target_peak_dbfs: number; normalization_gain_db: number; manual_gain_db: number; output_peak_s16: number; output_frames: number; output_pcm_sha256: string };
 export type AudioWavMeasurement = { duration_ms: number; byte_count: number; sample_rate: number; channels: 1 | 2; sample_width: 2;
-  container: 'wav'; audio_codec: 'pcm_s16le'; profile_validation: 'PCM_DECODED'; output_sha256: string; peak_normalization?: AudioPeakProof; loudness_matching?: AudioLoudnessProof };
+  container: 'wav'; audio_codec: 'pcm_s16le'; profile_validation: 'PCM_DECODED'; output_sha256: string; peak_normalization?: AudioPeakProof; loudness_matching?: AudioLoudnessProof; noise_reduction?: AudioDenoiseProof };
 export type AudioFlacMeasurement = Omit<AudioWavMeasurement, 'container' | 'audio_codec' | 'profile_validation'> & { container: 'flac'; audio_codec: 'flac'; profile_validation: 'FLAC_STREAMINFO_PCM_VERIFIED';
   total_samples: number; decoded_pcm_bytes: number; streaminfo_md5: string; decoded_pcm_sha256: string };
 export type AudioMp3Measurement = Omit<AudioFlacMeasurement, 'container' | 'audio_codec' | 'profile_validation' | 'streaminfo_md5'> & {
@@ -68,8 +69,8 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs'];
-const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs'];
+const parameterKeys = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
+const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
@@ -110,7 +111,8 @@ function trimParameters(v: unknown, projected = false): TrimParameters {
   for (const [key, value] of Object.entries(v)) {
     // Original preview projections include known null defaults. Never treat
     // those placeholders as requested controls or synthesize default values.
-    if (projected && value === null && parameterKeys.includes(key) && !['fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs'].includes(key)) continue;
+    if (projected && value === null && parameterKeys.includes(key) && !['fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'].includes(key)) continue;
+    if (key === 'denoise_profile') { if (value !== AUDIO_DENOISE_PROFILE) invalid(); result[key] = value; continue; }
     if (key === 'output_format') { if (value !== 'FLAC' && value !== 'MP3') invalid(); result.output_format = value; continue; }
     if (!['in_ms', 'out_ms', ...trimControlKeys].includes(key) || typeof value !== 'number' || !Number.isFinite(value)) invalid();
     if (key === 'target_lufs' ? value < -30 || value > -14 : key === 'target_peak_dbfs' ? value < -24 || value > -1 : key === 'gain_db' ? value < -60 || value > 12 : !Number.isSafeInteger(value)) invalid();
@@ -124,6 +126,7 @@ function trimParameters(v: unknown, projected = false): TrimParameters {
   if (result.target_lufs !== undefined && (result.out_ms - result.in_ms < 3000 || result.target_peak_dbfs !== undefined
     || result.output_format !== undefined || ['gain_db', 'fade_in_ms', 'fade_out_ms'].some(key => Number(result[key] ?? 0) !== 0))) invalid();
   if ((result.fade_in_ms ?? 0) + (result.fade_out_ms ?? 0) > result.out_ms - result.in_ms) invalid();
+  if (result.denoise_profile !== undefined && !validDenoiseParameters(result)) invalid();
   if (result.output_format === 'MP3' && (!AUDIO_MP3_SAMPLE_RATES.includes(result.sample_rate ?? 48000) || result.out_ms - result.in_ms < 10)) invalid();
   return result;
 }
@@ -221,7 +224,7 @@ function audioLoudnessProof(v: unknown, parameters: TrimParameters, command: unk
 }
 function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command: unknown, candidate: unknown): AudioWavMeasurement | AudioFlacMeasurement | AudioMp3Measurement {
   const parameters = recordedTrimRecipe(executionRecipe, command), flac = parameters.output_format === 'FLAC', mp3 = parameters.output_format === 'MP3';
-  const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256', ...(flac || mp3 ? ['total_samples', 'decoded_pcm_bytes', 'decoded_pcm_sha256'] : []), ...(flac ? ['streaminfo_md5'] : mp3 ? ['bit_rate', 'container_duration_ms'] : []), ...(parameters.target_peak_dbfs !== undefined ? ['peak_normalization'] : []), ...(parameters.target_lufs !== undefined ? ['loudness_matching'] : [])];
+  const keys = ['duration_ms', 'byte_count', 'sample_rate', 'channels', 'sample_width', 'container', 'audio_codec', 'profile_validation', 'output_sha256', ...(flac || mp3 ? ['total_samples', 'decoded_pcm_bytes', 'decoded_pcm_sha256'] : []), ...(flac ? ['streaminfo_md5'] : mp3 ? ['bit_rate', 'container_duration_ms'] : []), ...(parameters.target_peak_dbfs !== undefined ? ['peak_normalization'] : []), ...(parameters.target_lufs !== undefined ? ['loudness_matching'] : []), ...(parameters.denoise_profile !== undefined ? ['noise_reduction'] : [])];
   if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key))
     || v.profile_validation !== (flac ? 'FLAC_STREAMINFO_PCM_VERIFIED' : mp3 ? 'MP3_GAPLESS_PCM_VERIFIED' : 'PCM_DECODED') || v.container !== (flac ? 'flac' : mp3 ? 'mp3' : 'wav') || v.audio_codec !== (flac ? 'flac' : mp3 ? 'mp3' : 'pcm_s16le') || v.sample_width !== 2
     || !hex(v.output_sha256)) invalid();
@@ -239,6 +242,8 @@ function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command
     || v.container_duration_ms - v.duration_ms < -1 || v.container_duration_ms - v.duration_ms > Math.ceil(3000 * (Number(v.sample_rate) >= 32000 ? 1152 : 576) / Number(v.sample_rate)) + 2)) invalid();
   if (parameters.target_peak_dbfs !== undefined) audioPeakProof(v.peak_normalization, parameters, command, Number(v.sample_rate));
   if (parameters.target_lufs !== undefined) audioLoudnessProof(v.loudness_matching, parameters, command, v.output_sha256);
+  if (parameters.denoise_profile !== undefined && (!record(command) || !Array.isArray(command.source_snapshots)
+    || command.source_snapshots.length !== 1 || !validDenoiseProof(v.noise_reduction, parameters, command.source_snapshots[0], v.output_sha256))) invalid();
   return v as AudioWavMeasurement | AudioFlacMeasurement | AudioMp3Measurement;
 }
 function recipe(v: unknown, operation: unknown): ProductionRecipe {

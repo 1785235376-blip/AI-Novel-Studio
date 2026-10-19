@@ -40,6 +40,7 @@ class MediaParameters(ExecutionModel):
 
 class MediaExecutionParameters(MediaParameters):
     """Standalone additions; the original Graph parameter schema stays closed."""
+    denoise_profile: Literal["STATIONARY_FFT_V1"] | None = None
     target_lufs: float | None = Field(default=None, ge=-30, le=-14)
     target_peak_dbfs: float | None = Field(default=None, ge=-24, le=-1)
     fade_in_ms: int | None = Field(default=None, ge=0, le=120000)
@@ -50,6 +51,13 @@ class MediaExecutionParameters(MediaParameters):
     output_format: Literal["FLAC", "MP3"] | None = None
     denoising_strength: float | None = Field(default=None, gt=0, le=1)
     scale: Literal[2, 4] | None = None
+
+    @field_validator("denoise_profile", mode="before")
+    @classmethod
+    def exact_denoise(cls, value):
+        if value != "STATIONARY_FFT_V1":
+            raise ValueError("STUDIO_AUDIO_DENOISE_PROFILE_INVALID")
+        return value
 
     @field_validator("target_lufs", mode="before")
     @classmethod
@@ -85,7 +93,7 @@ class MediaExecutionParameters(MediaParameters):
         # Original preview and job identities include the old null fields.
         # Omit only the new unset controls, including in nested model_dump().
         value = handler(self)
-        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs"):
+        for key in ("gain_db", "sample_rate", "channels", "output_format", "denoising_strength", "scale", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile"):
             if value.get(key) is None:
                 value.pop(key, None)
         return value
@@ -221,7 +229,7 @@ class _MediaCommandShape(ExecutionModel):
             "m8.audio.speech": {"voice_id", "speech_rate"},
             "m8.audio.music": {"duration_seconds", "seed"},
             "m8.audio.effects": {"duration_seconds", "seed"},
-            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs"},
+            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile"},
         }[self.operation_id]
         if set(p) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
@@ -265,6 +273,13 @@ class _MediaCommandShape(ExecutionModel):
                 from ..services.audiobook_service import AudiobookError
                 try:
                     validate_parameters(p)
+                except AudiobookError as exc:
+                    raise ValueError(exc.code) from None
+            if self.parameters.denoise_profile is not None:
+                from ..services.studio_audio_denoise import validate_parameters
+                from ..services.audiobook_service import AudiobookError
+                try:
+                    validate_parameters(self.parameters.model_dump(exclude_none=True))
                 except AudiobookError as exc:
                     raise ValueError(exc.code) from None
             if self.parameters.target_peak_dbfs is not None:
