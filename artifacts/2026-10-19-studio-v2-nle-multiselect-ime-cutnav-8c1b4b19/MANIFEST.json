@@ -1,0 +1,183 @@
+{
+  "kind": "studio-v2-limited-nle-increment",
+  "archive_parent": "14a7779e126565e74ca73679e8d71ecee9393281",
+  "unique_archive_path": "artifacts/2026-10-19-studio-v2-nle-multiselect-ime-cutnav-8c1b4b19",
+  "prerequisite": "333f384a125068a4e7714b347f687f5dc2034123",
+  "head": "8c1b4b197e57ce7ae070f0e4f7d4e36c805a360f",
+  "tree": "af0e1ab8d6cb9feccc3dc8e4a1b0f1202a0f7fd0",
+  "commits": [
+    {
+      "original": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "combined_commit": "935832d27ea1ffcb4db084bc8ef96e30fffc3d81",
+      "stable_patch_id": "0ed74ae139dffa989b600c6171506e307bf3ce48",
+      "files": [
+        "frontend/playwright.nle-selection-live.config.ts",
+        "frontend/src/creative/StudioTimelineEditor.tsx",
+        "frontend/src/nle/TimelineWorkspacePanel.tsx",
+        "frontend/src/nle/TrackHeaderPanel.tsx",
+        "frontend/src/nle/TrackHeaderSelection.additive.test.tsx",
+        "frontend/src/nle/TrackHeaderSelectionLifecycle.additive.test.tsx",
+        "frontend/src/nle/clipSelection.additive.test.ts",
+        "frontend/src/nle/clipSelection.ts",
+        "frontend/src/nle/timelineWorkspace.css",
+        "frontend/tests/visual/nle-selection-live.spec.ts"
+      ],
+      "conflicts": false
+    },
+    {
+      "original": "10f3770b4c93643883eb0460e0d94201ca977000",
+      "combined_commit": "43a204a035c94a68341a215d339a34d102b2e819",
+      "stable_patch_id": "75ed9fbf919c0bd959a08679d71e928b61b6b792",
+      "files": [
+        "frontend/src/nle/TrackHeaderCompositionContext.additive.test.tsx",
+        "frontend/src/nle/TrackHeaderPanel.tsx"
+      ],
+      "conflicts": false
+    },
+    {
+      "original": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "combined_commit": "8c1b4b197e57ce7ae070f0e4f7d4e36c805a360f",
+      "stable_patch_id": "0fbd2b39997b38c1dbd390eca6d0c7a65e2b5768",
+      "files": [
+        "frontend/playwright.nle-cut-navigation-live.config.ts",
+        "frontend/src/nle/TimelineCutNavigation.additive.test.tsx",
+        "frontend/src/nle/TimelineCutNavigationLifecycle.additive.test.tsx",
+        "frontend/src/nle/TimelineRulerPanel.tsx",
+        "frontend/src/nle/TimelineWorkspacePanel.tsx",
+        "frontend/src/nle/clipBoundaryNavigation.additive.test.ts",
+        "frontend/src/nle/clipBoundaryNavigation.ts",
+        "frontend/tests/visual/nle-cut-navigation-live.spec.ts"
+      ],
+      "conflicts": false
+    }
+  ],
+  "final_files": {
+    "frontend/playwright.nle-selection-live.config.ts": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "9d62cbfded0a52328a084cf4e88959e592965515",
+      "sha256": "777ccaf72c019ae677163285df2bd0d5b451e8e3be94cd47c84742582648fd5f"
+    },
+    "frontend/src/creative/StudioTimelineEditor.tsx": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "1f25812c7f218be8d2544234fff0d380d5a8111d",
+      "sha256": "850835b10069dff3b999716f62e71ca811086f469681c48af1d8cbda210189b2"
+    },
+    "frontend/src/nle/TimelineWorkspacePanel.tsx": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "4071c6dcbba74896a941cf88d7de130e50d3b4d9",
+      "sha256": "d13a453b5e3e5c933b9e3fa44b14a0eaaf8466c8ef1ac1f24a2f5d0e088524b8"
+    },
+    "frontend/src/nle/TrackHeaderPanel.tsx": {
+      "last_original_commit": "10f3770b4c93643883eb0460e0d94201ca977000",
+      "blob": "2dd7e554de859269b7a9af2480213d5f0bf8b4d0",
+      "sha256": "ea60a9b08eb8c4ae0ba1c14cc731e61039336712fd1f8e61a62a5cd64a609357"
+    },
+    "frontend/src/nle/TrackHeaderSelection.additive.test.tsx": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "4459e886a7e1b67a84a4fed82739d6da30a302f3",
+      "sha256": "3115b33c0ca3f4f196ee6d48d9cea33151fe9d9007807550f015b2b695a9256b"
+    },
+    "frontend/src/nle/TrackHeaderSelectionLifecycle.additive.test.tsx": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "85f7799683475cc143360ffe66ecf331d206bde1",
+      "sha256": "473f6b9e1acb58a9d04449a0e66c2f0295a77b569e696ab204ccbefaf0e63e64"
+    },
+    "frontend/src/nle/clipSelection.additive.test.ts": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "83979cbc1676ab24e8b496d58a8d98bbdff1b6f4",
+      "sha256": "3684ead172c15aabf9f1b5ea20b62bed611f3cec5e3bbe21273e4ab3c388318d"
+    },
+    "frontend/src/nle/clipSelection.ts": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "d2a2a2b7da976a90a956f83bae34570ddce23e97",
+      "sha256": "4ef9d8d590fe0e5020e9af827100461ff963d82b8b35e1c2683abe67a550156e"
+    },
+    "frontend/src/nle/timelineWorkspace.css": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "ec09060dd62bf4db4c13e67fb07eb0bc2d37dd5b",
+      "sha256": "31ff6d11047d804624eadba3efddde37497b4b9b1b8e3a360d448e00d4733d64"
+    },
+    "frontend/tests/visual/nle-selection-live.spec.ts": {
+      "last_original_commit": "cb93855f067575595a3ee3845b6e05670e831e1f",
+      "blob": "3a0883b5fcbcd9537e209d456d054846608bf3f2",
+      "sha256": "437ae6e8acf718d2910dc87d977f40c32fe9e5afcc46dcdad4254c4edc53eac8"
+    },
+    "frontend/src/nle/TrackHeaderCompositionContext.additive.test.tsx": {
+      "last_original_commit": "10f3770b4c93643883eb0460e0d94201ca977000",
+      "blob": "8e9d4a5b8292d5591b3082e28f856589b32bc2f9",
+      "sha256": "f6e6943e503d66cd4408ef5acd3469de0432bae9ef48d5c70821def48af313a3"
+    },
+    "frontend/playwright.nle-cut-navigation-live.config.ts": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "244af6e7481fe965fec7d90fd501446bb112107b",
+      "sha256": "a45501399bd533b7215e182f263b15815ac90178cf42640438756b7a97f45b3a"
+    },
+    "frontend/src/nle/TimelineCutNavigation.additive.test.tsx": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "fa02c58b74e54a54d5ff0b7247909c71ba8edb80",
+      "sha256": "fc09f67e07bfc75c1d27d101175f12196318e046cb80d1c7ddf637c09598b958"
+    },
+    "frontend/src/nle/TimelineCutNavigationLifecycle.additive.test.tsx": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "d7a15c2d0fef6df3acd9147cecdb4d4473425fed",
+      "sha256": "3fbed9be5037c78d899db4cd69ee623552cecadd43ee820a316e4e9461278660"
+    },
+    "frontend/src/nle/TimelineRulerPanel.tsx": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "6e4924218d4bf875b6391d005da8c3077296f4c7",
+      "sha256": "f72e16f231bda330d3afaed2770b9283d88ee718a41f35c2db02cccc6f2b5a18"
+    },
+    "frontend/src/nle/clipBoundaryNavigation.additive.test.ts": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "d249cdc7d6ef72ade422c00db28d2d623439ea3d",
+      "sha256": "fc070b2e4a6244916816dfd78c59e3adc7eae31f408ecc0a4230c447d4d0a594"
+    },
+    "frontend/src/nle/clipBoundaryNavigation.ts": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "2470605b371a0350da3a3340867236b48b36f804",
+      "sha256": "aac7bb9fc250ae6e3669f79faeac4692c1f9d530c631e2cb2beba3759823b2f5"
+    },
+    "frontend/tests/visual/nle-cut-navigation-live.spec.ts": {
+      "last_original_commit": "64bbe5c240cfd67a2a4b41a94387c6cb9fa3038e",
+      "blob": "72e2f99fafffc5721a3120603eaabe621e90d916",
+      "sha256": "9b4b328db68035fc266c93a0a163dba1e0eca9454fbbfbf5704c125c4a46baed"
+    }
+  },
+  "Host333_files_preserved": [
+    "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StoryboardVideoPipeline.phase5.test.tsx",
+    "frontend/src/creative/StudioProductionLeaveRisk.regression.test.tsx",
+    "frontend/src/creative/studioProductionLeaveRisk.ts",
+    "frontend/src/creative/useStoryboardProductionController.ts",
+    "frontend/src/creative/useStudioManualMask.ts",
+    "frontend/src/creative/useStudioMediaExecution.ts",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/creative/useStudioTimelinePlayback.ts",
+    "frontend/src/creative/useStudioTimelineSourceEdit.ts",
+    "frontend/src/creative/useStudioTimelineTransfer.ts"
+  ],
+  "source_blob_and_commit_objects_scanned": 23,
+  "synthetic_secret_values_checked": 3,
+  "literal_credential_pattern_hits": 0,
+  "sensitive_raw_traces_published": false,
+  "tests_rerun_for_publication": false,
+  "payloads": {
+    "evidence-sanitized.zip": {
+      "bytes": 21031,
+      "sha256": "7cbf1f1cd5cadacc6b78a7ca2cd14bd21c9ca6b0580a8c8deab54796819b1024"
+    },
+    "REPORT.md": {
+      "bytes": 2494,
+      "sha256": "2c66eb4728e5908a80d248ccbcdbf6b41d8df1c49326a0aebe3e573e9a607386"
+    },
+    "RESTORE.md": {
+      "bytes": 1519,
+      "sha256": "7a0be37d527d0d24f07735cc35a2adb766713a274ac8ff5dcb8bc9d112fd2a10"
+    },
+    "studio-v2-nle-333f-to-8c1b4b19.bundle": {
+      "bytes": 29573,
+      "sha256": "7d86f90134a1bde28c70a652d02fd95ab6f86a69504bba6b2ec4a9416e4be0d5"
+    }
+  }
+}
