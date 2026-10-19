@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import capture from './__fixtures__/comicHandoffHttp.json';
-import { checkedHandoffRequest, handoffCanonical, handoffHash, studioComicHandoffClient } from './studioComicHandoffClient';
+import { checkedHandoffConfirm, checkedHandoffReceipt, checkedHandoffRequest, handoffCanonical, handoffHash, studioComicHandoffClient } from './studioComicHandoffClient';
 import { clearComicHandoffAttempt, readComicHandoffAttempt, saveComicHandoffAttempt } from './comicHandoffAttempt';
 
 const copy = <T,>(v: T): T => structuredClone(v);
@@ -114,4 +114,67 @@ it('stores only bounded immutable confirmation, rejects overwrites, and clears o
   expect(() => saveComicHandoffAttempt(client.ownerKey, { ...confirm, request_id: 'new-nonce' })).toThrow();
   expect(() => clearComicHandoffAttempt(client.ownerKey, 'other')).toThrow();
   clearComicHandoffAttempt(client.ownerKey, confirm.request_id); expect(readComicHandoffAttempt(client.ownerKey)).toBeUndefined();
+});
+
+const collaboration = () => ({ sessionToken: 'resolved-actor-token',
+  scope: { projectId: capture.original_timeline.novel_id, workspaceId: 'handoff-workspace', storylineId: 'handoff-storyline', branchId: 'handoff-branch' },
+  actor: { id: 'handoff-actor', displayName: 'Handoff actor', workspaceId: 'handoff-workspace' } });
+
+it.each(['missing-actor', 'empty-actor', 'blank-actor', 'oversize-actor', 'control-actor', 'wrong-workspace', 'empty-branch', 'wrong-project'])
+('rejects unresolved or incoherent collaboration identity %s before requests or recovery storage', change => {
+  const value: import('../api').CollaborationContext = collaboration();
+  if (change === 'missing-actor') delete value.actor;
+  else if (change === 'empty-actor') value.actor!.id = '';
+  else if (change === 'blank-actor') value.actor!.id = '   ';
+  else if (change === 'oversize-actor') value.actor!.id = 'a'.repeat(241);
+  else if (change === 'control-actor') value.actor!.id = 'actor\nother';
+  else if (change === 'wrong-workspace') value.actor!.workspaceId = 'another-workspace';
+  else if (change === 'empty-branch') value.scope!.branchId = '';
+  else value.scope!.projectId = 'another-project';
+  const storage = { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() };
+  vi.stubGlobal('sessionStorage', storage);
+  for (const token of ['unresolved-first-token', 'unresolved-second-token']) {
+    expect(() => studioComicHandoffClient(capture.original_timeline.novel_id, { ...value, sessionToken: token })).toThrow();
+  }
+  expect(fetcher).not.toHaveBeenCalled();
+  for (const operation of Object.values(storage)) expect(operation).not.toHaveBeenCalled();
+});
+it('binds recovery slots to resolved actor and branch while keeping a same-actor token refresh stable', () => {
+  const context = collaboration(), project = capture.original_timeline.novel_id;
+  const first = studioComicHandoffClient(project, context);
+  expect(first.ownerKey).toBe(studioComicHandoffClient(project, { ...context, sessionToken: 'rotated-token' }).ownerKey);
+  expect(first.ownerKey).not.toBe(studioComicHandoffClient(project, { ...context, actor: { ...context.actor, id: 'other-actor' } }).ownerKey);
+  expect(first.ownerKey).not.toBe(studioComicHandoffClient(project, { ...context, scope: { ...context.scope, branchId: 'other-branch' } }).ownerKey);
+  expect(first.ownerKey).not.toContain(context.sessionToken);
+});
+it('checks the resolved collaboration actor even when an alternate actor preview has a coherent digest', async () => {
+  const context = collaboration(), value = copy(capture.preview_response), project = capture.original_timeline.novel_id;
+  value.preview.scope_key = await handoffHash(handoffCanonical([project, { mode: 'collaboration', novel_id: project,
+    workspace_id: context.scope.workspaceId, storyline_id: context.scope.storylineId, branch_id: context.scope.branchId }]));
+  async function reportFor(actor: string) {
+    value.preview.actor = actor;
+    const { preview_digest: _old, ...proof } = value.preview;
+    value.preview.preview_digest = await handoffHash(handoffCanonical(proof));
+    return reply(value);
+  }
+  const client = studioComicHandoffClient(project, context);
+  fetcher.mockResolvedValueOnce(await reportFor('a-different-actor'));
+  await expect(client.preview(capture.request)).rejects.toBeTruthy();
+  fetcher.mockResolvedValueOnce(await reportFor(context.actor.id));
+  expect((await client.preview(capture.request)).report.actor).toBe(context.actor.id);
+});
+it.each([1, 2])('retains a copied checked origin for native Timeline version %s without projecting unknown raw fields', async version => {
+  const value = copy(capture.created);
+  value.timeline.version = version;
+  if (version === 2) value.timeline_state = 'MODIFIED_AFTER_CREATION';
+  Object.assign(value.timeline, { private_unrepresented_field: 'must-not-enter-projection' });
+  const expected = copy(value.timeline.comic_handoff_origin);
+  const result = await checkedHandoffReceipt(value, { scopeKey: value.preview.scope_key, actor: 'local-author',
+    projectId: value.timeline.novel_id, branch: null }, value.request_id, checkedHandoffConfirm(capture.confirm));
+  expect(result.timeline?.comic_handoff_origin).toEqual(expected);
+  expect(result.timeline).not.toHaveProperty('private_unrepresented_field');
+  expect(result.timeline?.comic_handoff_origin).not.toBe(value.timeline.comic_handoff_origin);
+  expect(result.timeline?.comic_handoff_origin.creation_snapshot).not.toBe(value.timeline.comic_handoff_origin.creation_snapshot);
+  value.timeline.comic_handoff_origin.creation_snapshot.digest = '0'.repeat(64);
+  expect(result.timeline?.comic_handoff_origin).toEqual(expected);
 });

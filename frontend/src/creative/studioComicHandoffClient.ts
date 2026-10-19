@@ -13,10 +13,13 @@ export type HandoffReport = { contract: typeof COMIC_HANDOFF; scope_key: string;
   request: HandoffRequest; request_digest: string; pages: HandoffPage[]; duration_ms: number; losses: string[];
   automatic_dispatch: false; model_called: false; video_rendered: false; approval_inherited: false; preview_digest: string };
 export type HandoffConfirm = { request_id: string; request: HandoffRequest; reviewed_preview_digest: string; acknowledge_losses: true };
+export type HandoffOrigin = { contract: typeof COMIC_HANDOFF; receipt_id: string; request_id: string; preview_digest: string;
+  creation_snapshot: { id: string; version: 1; digest: string } };
+export type HandoffTimelineRow = StudioTimelineRow & { comic_handoff_origin: HandoffOrigin };
 export type HandoffReceipt = { id: string; request_id: string; version: number; status: 'PLANNED' | 'DRAFT_CREATED' | 'CANCELLED';
   steps: { asset_id: string; asset_version: 1 | null; state: 'PENDING' | 'READY'; observed_state: string }[];
   preview: HandoffReport; timeline_snapshot: { id: string; version: 1; digest: string } | null;
-  timeline?: StudioTimelineRow; timeline_state?: 'CREATION_SNAPSHOT' | 'MODIFIED_AFTER_CREATION';
+  timeline?: HandoffTimelineRow; timeline_state?: 'CREATION_SNAPSHOT' | 'MODIFIED_AFTER_CREATION';
   automatic_dispatch: false; model_called: false; video_rendered: false; approval_inherited: false; source_current_checked: false };
 const id = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, requestId = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/;
 const hex = /^[a-f0-9]{64}$/, incarnation = /^(file|postgres):[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/;
@@ -55,12 +58,12 @@ export function checkedHandoffConfirm(value: unknown): HandoffConfirm {
 function falseFlags(row: Record<string, unknown>) {
   if (['automatic_dispatch', 'model_called', 'video_rendered', 'approval_inherited'].some(k => row[k] !== false)) invalid();
 }
-export async function checkedHandoffReport(value: unknown, owner: { scopeKey: string; actor?: string }, expected?: HandoffRequest): Promise<HandoffReport> {
+export async function checkedHandoffReport(value: unknown, owner: { scopeKey: string; actor: string }, expected?: HandoffRequest): Promise<HandoffReport> {
   const row = fields(value, ['contract', 'scope_key', 'incarnation', 'actor', 'request', 'request_digest', 'pages', 'duration_ms', 'losses',
     'automatic_dispatch', 'model_called', 'video_rendered', 'approval_inherited', 'preview_digest']);
   falseFlags(row);
   if (row.contract !== COMIC_HANDOFF || row.scope_key !== owner.scopeKey || typeof row.actor !== 'string' || !row.actor || row.actor.length > 240
-    || owner.actor !== undefined && row.actor !== owner.actor || handoffCanonical(row.losses) !== handoffCanonical(HANDOFF_LOSSES)) invalid();
+    || row.actor !== owner.actor || handoffCanonical(row.losses) !== handoffCanonical(HANDOFF_LOSSES)) invalid();
   text(row.incarnation, incarnation);
   const request = checkedHandoffRequest(row.request);
   if (handoffCanonical(request) !== handoffCanonical(row.request) || expected && handoffCanonical(request) !== handoffCanonical(expected)
@@ -82,7 +85,7 @@ export async function checkedHandoffReport(value: unknown, owner: { scopeKey: st
   if (await handoffHash(handoffCanonical(proof)) !== text(preview_digest, hex)) invalid();
   return { ...row, request, pages } as HandoffReport;
 }
-export async function checkedHandoffReceipt(value: unknown, owner: { scopeKey: string; actor?: string; projectId: string; branch: string | null }, expectedId: string, expected?: HandoffConfirm): Promise<HandoffReceipt> {
+export async function checkedHandoffReceipt(value: unknown, owner: { scopeKey: string; actor: string; projectId: string; branch: string | null }, expectedId: string, expected?: HandoffConfirm): Promise<HandoffReceipt> {
   const row = fields(value, ['id', 'request_id', 'version', 'status', 'steps', 'preview', 'timeline_snapshot', 'automatic_dispatch', 'model_called',
     'video_rendered', 'approval_inherited', 'source_current_checked'], ['timeline', 'timeline_state']);
   falseFlags(row); text(row.id, id);
@@ -102,14 +105,17 @@ export async function checkedHandoffReceipt(value: unknown, owner: { scopeKey: s
     return step as unknown as HandoffReceipt['steps'][number];
   });
   if (new Set(steps.map(s => s.asset_id)).size !== steps.length || row.version !== 1 + ready + (row.status === 'PLANNED' ? 0 : 1)) invalid();
-  let timeline: StudioTimelineRow | undefined;
+  let timeline: HandoffTimelineRow | undefined;
   if (row.status === 'DRAFT_CREATED') {
     const pin = fields(row.timeline_snapshot, ['id', 'version', 'digest']); text(pin.id, id); text(pin.digest, hex);
     const raw = object(row.timeline), origin = fields(raw.comic_handoff_origin, ['contract', 'receipt_id', 'request_id', 'preview_digest', 'creation_snapshot']);
     if (pending || pin.version !== 1 || raw.novel_id !== owner.projectId || raw.branch_id !== owner.branch
       || origin.contract !== COMIC_HANDOFF || origin.receipt_id !== row.id || origin.request_id !== row.request_id || origin.preview_digest !== preview.preview_digest
       || handoffCanonical(origin.creation_snapshot) !== handoffCanonical(pin)) invalid();
-    timeline = checkedTimelineRow(raw, pin.id as string);
+    timeline = { ...checkedTimelineRow(raw, pin.id as string), comic_handoff_origin: {
+      contract: COMIC_HANDOFF, receipt_id: row.id as string, request_id: expectedId, preview_digest: preview.preview_digest,
+      creation_snapshot: { id: pin.id as string, version: 1, digest: pin.digest as string },
+    } };
     const creation = timeline.version === 1 && timeline.timeline_digest === pin.digest;
     if (row.timeline_state !== (creation ? 'CREATION_SNAPSHOT' : 'MODIFIED_AFTER_CREATION')) invalid();
     if (creation) {
@@ -131,11 +137,17 @@ export async function checkedHandoffReceipt(value: unknown, owner: { scopeKey: s
 
 /** Original transport/owners only. No credential or active global scope is stored. */
 export function studioComicHandoffClient(projectId: string, context: CollaborationContext) {
-  const scope = context.scope ? { mode: 'collaboration', novel_id: projectId, workspace_id: context.scope.workspaceId,
-    storyline_id: context.scope.storylineId, branch_id: context.scope.branchId } : { mode: 'local', novel_id: projectId };
-  if (context.scope && context.scope.projectId !== projectId) invalid();
-  const actor = context.scope ? context.actor?.id : 'local-author', branch = context.scope?.branchId ?? null;
-  const ownerKey = handoffCanonical([projectId, scope, actor ?? null]);
+  const selected = context.scope, resolved = context.actor;
+  const identity = (value: unknown): value is string => typeof value === 'string' && !!value && value.length <= 240
+    && value.trim() === value && !/[\u0000-\u001f\u007f\ud800-\udfff]/u.test(value);
+  if (selected && (!resolved || ![resolved.id, resolved.workspaceId, selected.workspaceId, selected.projectId,
+    selected.storylineId, selected.branchId].every(identity) || selected.projectId !== projectId || resolved.workspaceId !== selected.workspaceId)) {
+    throw new ApiError({ status: 409, code: 'COMIC_HANDOFF_IDENTITY_NOT_READY', message: '交接身份尚未就绪。请核对原项目、工作区与会话后重新打开。' });
+  }
+  const scope = selected ? { mode: 'collaboration', novel_id: projectId, workspace_id: selected.workspaceId,
+    storyline_id: selected.storylineId, branch_id: selected.branchId } : { mode: 'local', novel_id: projectId };
+  const actor = selected ? resolved!.id : 'local-author', branch = selected?.branchId ?? null;
+  const ownerKey = handoffCanonical([projectId, scope, actor]);
   const owner = async () => ({ projectId, branch, actor, scopeKey: await handoffHash(handoffCanonical([projectId, scope])) });
   const transport = studioTransport(context), base = `/api/projects/${encodeURIComponent(projectId)}/studio/production/comic-handoffs`;
   async function json(path: string, method: 'GET' | 'POST', body?: unknown): Promise<unknown> {
