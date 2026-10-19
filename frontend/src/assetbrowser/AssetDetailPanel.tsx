@@ -27,12 +27,17 @@ function ProvenanceBlock({ asset }: { asset: AssetBrowserAsset }) {
     <h4>来源与许可</h4>
     <dl className="asset-browser__facts">
       <div><dt>来源</dt><dd>{provenance.origin ?? ASSET_BROWSER_NOTICES.unverified}</dd></div>
+      <div><dt>提供方记录</dt><dd>{provenance.producer?.provider_id?.trim()
+        ? provenance.producer.provider_id : ASSET_BROWSER_NOTICES.unverified}</dd></div>
+      <div><dt>模型记录</dt><dd>{provenance.producer?.model_id?.trim()
+        ? provenance.producer.model_id : ASSET_BROWSER_NOTICES.unverified}</dd></div>
       <div><dt>完整性</dt><dd>{provenance.integrity === null
         ? ASSET_BROWSER_NOTICES.unverified : ASSET_BROWSER_INTEGRITY_LABELS[provenance.integrity]}</dd></div>
       <div><dt>来源状态</dt><dd>{provenance.stale === null
         ? ASSET_BROWSER_NOTICES.unverified : provenance.stale ? '来源已变化或不可用' : '来源当前'}</dd></div>
       <div><dt>处理操作</dt><dd>{provenance.operation ?? ASSET_BROWSER_NOTICES.unverified}</dd></div>
     </dl>
+    <p className="asset-browser__note">提供方与模型为原资产来源记录，当前可用性未核实。</p>
     <p className="asset-browser__note">
       作者许可声明：{provenance.license_label ?? '未声明'}
       {provenance.license_source && ` · 来源：${provenance.license_source}`}。

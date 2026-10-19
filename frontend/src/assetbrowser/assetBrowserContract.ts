@@ -227,6 +227,17 @@ const PROVENANCE_KEYS = [
 const PARENT_KEYS = ['id', 'label', 'version', 'digest', 'state'] as const;
 const LICENSE_KEYS = ['label', 'source', 'note'] as const;
 
+function producerView(value: unknown, refuse: () => never): AssetBrowserProvenanceView['producer'] {
+  if (value === null || value === undefined) return null;
+  const row = object(value, ['declared_by', 'provider_id', 'model_id'], refuse);
+  // The original owner exposes these IDs. Actor and arbitrary metadata are not
+  // part of this browser projection; never infer an ID from generation/parameters.
+  return {
+    provider_id: optionalText(row.provider_id, ASSET_BROWSER_BOUNDS.producer_id, refuse, true),
+    model_id: optionalText(row.model_id, ASSET_BROWSER_BOUNDS.producer_id, refuse, true),
+  };
+}
+
 function provenance(value: unknown, refuse: () => never): AssetBrowserProvenanceView | null {
   if (value === null || value === undefined) return null;
   const row = object(value, PROVENANCE_KEYS, refuse);
@@ -241,6 +252,7 @@ function provenance(value: unknown, refuse: () => never): AssetBrowserProvenance
     // `origin` / `operation` 在真实投影里可以是空字符串，`label` 也可以是空串；
     // "空" 与 "没有披露" 都由 `null` 与 `''` 分别表达，绝不互相顶替。
     origin: optionalText(row.origin, ASSET_BROWSER_BOUNDS.origin, refuse, true),
+    producer: producerView(row.producer, refuse),
     integrity: optionalEnumerated<AssetBrowserIntegrity>(row.integrity, ASSET_BROWSER_INTEGRITY_STATES, refuse),
     stale: row.stale === undefined || row.stale === null ? null : bool(row.stale, refuse),
     license_label: license.license_label,

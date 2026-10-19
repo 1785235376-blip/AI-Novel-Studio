@@ -220,6 +220,8 @@ export type AssetBrowserProvenanceSource = {
  */
 export type AssetBrowserProvenanceView = {
   origin: string | null;
+  /** Saved owner disclosure only; neither a current route nor execution authority. */
+  producer: { provider_id: string | null; model_id: string | null } | null;
   integrity: AssetBrowserIntegrity | null;
   stale: boolean | null;
   /** 作者自己的许可声明文案（`license.label`）。永远配 `author declaration` 说明。 */
@@ -589,6 +591,7 @@ export const ASSET_BROWSER_BOUNDS = Object.freeze({
   media_type: 160,
   kind: 40,
   origin: 40,
+  producer_id: 240,
   label: 4096,
   digest: 64,
   timestamp: 64,
