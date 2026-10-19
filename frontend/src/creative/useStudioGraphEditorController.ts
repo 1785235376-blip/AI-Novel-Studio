@@ -9,6 +9,7 @@ import { planningSourceFork, planningSourceReferences } from './graphPlanningFor
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { checkedStudioGraphDraft } from './studioGraphClient';
 import { graphSelectionCopy, type GraphSelectionCopy } from './graphSelectionCopy';
+import { graphVisualGroupCopy, type GraphVisualGroupCopy } from './graphVisualGroupCopy';
 import { autoLayout } from '../canvasops/canvasOps';
 import { clampGraphPosition } from './graphCanvasGeometry';
 import type { GraphDirectorSource } from './GraphDirectorConsole';
@@ -56,7 +57,8 @@ const candidateKey = (value?: StudioGraphRecord) => value && JSON.stringify([val
 export function useStudioGraphEditorController({ active, denied, identity, client, providerSource, canMutate, busy, externalDirty, isCurrent, read, mutate, requestedGraphId, onSelectionChange, isBusy, draftOwner, isDirectorImagePending }: StudioGraphEditorProps) {
   const [catalog, setCatalog] = useState<StudioGraphCatalog>(), [records, setRecords] = useState<StudioGraphRecord[]>([]), [base, setBase] = useState<StudioGraphRecord>();
   const [draft, setDraft] = useState<StudioGraphDefinition>(blankGraph), [selected, setSelectedState] = useState<string[]>([]);
-  const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
+  const [copyPreview, setCopyPreview] = useState<{ identity: string; client: StudioClient; graph: string | undefined; epoch: number; source: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy | GraphVisualGroupCopy; groupAuthority?: { verification: object; insertion: object; request: number; epoch: number } }>();
+  const groupCopyEpoch = useRef(0);
   // Session-local source snapshot owned by this controller, never persisted or transported.
   const [copySource, setCopySource] = useState<{ identity: string; client: StudioClient; record: StudioGraphRecord; selected: string[]; sourceEpoch: number }>();
   const [crossPreview, setCrossPreview] = useState<{ source: NonNullable<typeof copySource>; target: StudioGraphRecord; epoch: number; previewEpoch: number; draft: string; catalog: StudioGraphCatalog; result: GraphSelectionCopy }>();
@@ -418,19 +420,39 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       setSelected([next.nodes[2].id]); setNotice('原分镜视频链已加入本地空图；请明确配置视频模型后保存。没有执行视频任务。'); return true;
     } catch (value) { setError(value instanceof Error ? value.message : '分镜视频链未应用。'); return false; }
   }
-  const currentCopy = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
-    && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable ? copyPreview.result : undefined;
+  const groupCopyRequest = candidateEpoch.current;
+  function groupCopyCurrent(authority: { verification: object; insertion: object; request: number; epoch: number }) {
+    return authority.verification === reviewedVerificationFence.current.token && authority.insertion === insertionFence.current.token
+      && authority.request === candidateEpoch.current && authority.epoch === groupCopyEpoch.current
+      && isVerificationCurrent() && insertionCurrent(insertionScope) && !checking && !insertionRef.current
+      && !(candidateRequest.current && !candidateRequest.current.signal.aborted) && !imageSelectionFence.current?.();
+  }
+  const currentCopy: (GraphSelectionCopy & { groupCopy?: GraphVisualGroupCopy['groupCopy'] }) | undefined = active && copyPreview && copyPreview.identity === identity && copyPreview.client === client && copyPreview.graph === base?.id
+    && copyPreview.epoch === selectedEpoch.current && copyPreview.catalog === catalog && copyPreview.source === JSON.stringify(draft) && editable
+    && (!copyPreview.groupAuthority || groupCopyCurrent(copyPreview.groupAuthority)) ? copyPreview.result : undefined;
   useEffect(() => { setCopyPreview(undefined); }, [identity, client, base?.id, denied, canMutate, externalDirty, executionDirty, active, draft, catalog]);
+  function previewGroupedSelectionCopy() {
+    const authority = { verification: verificationScope, insertion: insertionScope, request: groupCopyRequest, epoch: groupCopyEpoch.current };
+    if (!catalog || !groupCopyCurrent(authority)) return;
+    authority.epoch = ++groupCopyEpoch.current; setCopyPreview(undefined);
+    try {
+      const result = graphVisualGroupCopy(draftRef.current, selected, catalog);
+      setCopyPreview({ identity, client, graph: baseRef.current?.id, epoch: selectedEpoch.current, source: JSON.stringify(draftRef.current), catalog, result, groupAuthority: authority }); setError('');
+    } catch (reason) { setError(reason instanceof Error ? reason.message : '完整视觉分组未复制。'); }
+  }
   function previewSelectionCopy() {
     if (!active || !editable || !current() || locked() || timelineEditor.formDirty || !catalog) return;
-    setCopyPreview(undefined);
+    groupCopyEpoch.current++; setCopyPreview(undefined);
     try { const result = graphSelectionCopy(draftRef.current, selected, { ...catalog, definitions: graphCatalogForSchema(catalog.definitions, draftRef.current.schema_version) });
       setCopyPreview({ identity, client, graph: baseRef.current?.id, epoch: selectedEpoch.current, source: JSON.stringify(draftRef.current), catalog, result }); setError('');
     } catch (value) { setError(value instanceof Error ? value.message : '复制预览失败。'); }
   }
   function pasteSelectionCopy() {
     if (!currentCopy || !editable || !current() || locked() || timelineEditor.formDirty || copyPreview?.source !== JSON.stringify(draftRef.current)) return;
-    change(currentCopy.definition); setSelected(currentCopy.selected); setCopyPreview(undefined);
+    if (copyPreview?.groupAuthority && !groupCopyCurrent(copyPreview.groupAuthority)) return;
+    if (copyPreview?.groupAuthority) groupCopyEpoch.current++;
+    change(currentCopy.definition); if (draftRef.current !== currentCopy.definition) return;
+    setSelected(currentCopy.selected); setCopyPreview(undefined);
   }
   const copyScopeMatches = !copySource || !base || base.project_id === copySource.record.project_id && same(base.scope, copySource.record.scope);
   const sourceCopy = active && current() && !denied && canMutate && base?.can_edit !== false && copyScopeMatches && copySource?.identity === identity && copySource.client === client && copySource.sourceEpoch === copySourceEpoch.current ? copySource : undefined;
@@ -817,7 +839,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     retired, retainedText, retainedTitle,
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
     draftStorageNotice, draftSavedAt, draftOwnerCurrent, draftRecoverable, canRecoverDraft, recoverLocalDraft, discardLocalRecovery,
-    selectedVideoBinding, providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => setCopyPreview(undefined),
+    selectedVideoBinding, providerPicker, sourceCopy, currentCrossCopy, captureSelectionForGraph, previewCrossGraphCopy, pasteCrossGraphCopy, clearGraphCopy: () => { copySourceEpoch.current++; crossCopyEpoch.current++; setCopySource(undefined); setCrossPreview(undefined); }, currentCopy, previewSelectionCopy, previewGroupedSelectionCopy, pasteSelectionCopy, cancelSelectionCopy: () => { groupCopyEpoch.current++; setCopyPreview(undefined); },
     catalog: catalog ? { ...catalog, ...(pendingVideoCatalog ? { capabilities: { ...catalog.capabilities, video_graph: true as const, video_graph_schema_version: 5 as const, video_graph_evidence: 'LOCAL_REQUIRED' as const, storyboard_video_approval_required: true as const, automatic_video_dispatch: false as const } } : {}), definitions: graphCatalogForSchema(catalog.definitions, draft.schema_version) } : undefined,
     independentConfirmed, confirmIndependentGraph, prepareIndependentGraph, independentOrigin: visibleIndependentOrigin, historyFull,
     starterScope: verificationScope, applyStarterGraph, readStarterStoryboard, applyStoryboardStarter,

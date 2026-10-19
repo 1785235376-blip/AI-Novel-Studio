@@ -82,6 +82,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
   } = controller;
+  const groupCopy = controller.currentCopy && 'groupCopy' in controller.currentCopy ? controller.currentCopy.groupCopy : undefined;
   const mediaEnabled = catalog?.capabilities.media_execution === true && catalog.capabilities.media_execution_contract === 'creative-graph-media/1';
   const videoGraph = draft.schema_version === 5;
   const imageGraph = draft.schema_version === 4;
@@ -206,8 +207,11 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         </section>}
         <p>同图复制可直接预览当前草稿中的所选节点；来源版本与摘要保持，保存仍由原来源权限校验。</p>
         <Button disabled={!editable || !selected.length || timelineEditor.formDirty} onClick={controller.previewSelectionCopy}>预览复制所选节点</Button>
+        <Button disabled={!editable || !selected.length || timelineEditor.formDirty || checking || !!controller.positionedInsertion} onClick={controller.previewGroupedSelectionCopy}>预览复制完整视觉组</Button>
         {controller.currentCopy && <div role="status">
-          <p>新增 {controller.currentCopy.nodeCount} 个节点、{controller.currentCopy.edgeCount} 条内部连接；排除 {controller.currentCopy.excludedEdges} 条外部连接。缺少输入时需重新连接；不复制分组或运行结果。</p>
+          <p>新增 {controller.currentCopy.nodeCount} 个节点、{controller.currentCopy.edgeCount} 条内部连接；排除 {controller.currentCopy.excludedEdges} 条外部连接。缺少输入时需重新连接；不复制运行结果。</p>
+          {groupCopy ? <div aria-label="完整视觉组复制预览"><p>同时复制 {groupCopy.groups.length} 个完整视觉组，保留 {groupCopy.nested} 个父子关系；{groupCopy.promoted} 个单独复制的子组将成为顶层组。视觉组不构成运行子工作流。</p>
+            <ul>{groupCopy.groups.map(group => <li key={group.id}>{group.parent_id ? `${groupCopy.groups.find(parent => parent.id === group.parent_id)?.name} / ` : ''}{group.name} · {group.node_ids.length} 个直属节点</li>)}</ul></div> : <p>本预览仅复制节点，不复制视觉分组。</p>}
           <p>统一偏移：{controller.currentCopy.delta.x}, {controller.currentCopy.delta.y}。粘贴仅修改本地草稿，可一次撤销；未保存、未执行。</p>
           <Button disabled={!editable || timelineEditor.formDirty} onClick={controller.pasteSelectionCopy}>粘贴到当前图</Button>
           <Button onClick={controller.cancelSelectionCopy}>取消复制预览</Button>
