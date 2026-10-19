@@ -1,0 +1,481 @@
+{
+  "hits": [],
+  "scanned": [
+    {
+      "blob": "d2ef08f63d01bb1bc7ee6df9f5a9cfc34a88fe4d",
+      "path": "API_CATALOG.json",
+      "bytes": 1554460,
+      "sha256": "a081e0d2b938910097216e82c478e8fc947a4aeb4267968d4880c92796088352"
+    },
+    {
+      "blob": "5cc3dacdb36b654aa2ee00a2e4275f6d804e4fb7",
+      "path": "API_CATALOG.md",
+      "bytes": 416706,
+      "sha256": "5d513f3eb4258f0c7370b35ac469cf5bbc373db6818f733d141a07fd4b8f2052"
+    },
+    {
+      "blob": "101cb4a7415f5cdeb0c689a2c56899cf9e4cc194",
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "bytes": 642857,
+      "sha256": "a79d39474121cae4790c07b0a50084eb472a3c046b300cc45f172e3bee985291"
+    },
+    {
+      "blob": "c7d4dbf8bdd1c3e4440d37f5de54b746c143eef4",
+      "path": "API_OPENAPI.json.gz",
+      "bytes": 138931,
+      "sha256": "b43d403fee836a174f20d3ffbfe1022708f2877bef03cbc9847215a4f299edbd"
+    },
+    {
+      "blob": "15d9af6e6bbaf6eef9dc2916966c92b08ae8e414",
+      "path": "app/creative/comic_image_generation.py",
+      "bytes": 10555,
+      "sha256": "bb1d38194ef1cb8b8e2072333179d1cb3b48abd273fed5b1411a01aaf2fa1461"
+    },
+    {
+      "blob": "409abc208edd3fdab6c71e09b753ed6e715c52ce",
+      "path": "app/creative/production_contracts.py",
+      "bytes": 59457,
+      "sha256": "a6e48474dbd18700028aa07a3c1ed7c4cee76fa1b4dbb9ca485e3b52a89ebd06"
+    },
+    {
+      "blob": "d40449771775ec04ee5df63b23e52acf43527795",
+      "path": "app/creative/production_execution.py",
+      "bytes": 125475,
+      "sha256": "f1cf9fb68175f0ea103b1f134e1173f716e792d0e046b3ae36a764a7a3aedaa8"
+    },
+    {
+      "blob": "8881392e1891d5edd7cc8ad1906a2674fa053ae2",
+      "path": "app/creative/production_execution_api.py",
+      "bytes": 19463,
+      "sha256": "1d4f090bf8e583a1152943b35602b0bc32a6525b6cf665e7ee86fdcad2e99014"
+    },
+    {
+      "blob": "b0fc7d78cf7c89ed9d7d2422c6f6cdab053aa709",
+      "path": "app/creative/production_execution_models.py",
+      "bytes": 22959,
+      "sha256": "b99e74b20a00174af1aa8d2b5517307d7cafc0e4f14cbf88fdd80c5e36b5c533"
+    },
+    {
+      "blob": "1286e6f3b94eb1c3a0fa7f01e331f54465718ec5",
+      "path": "app/creative/workspace.py",
+      "bytes": 48470,
+      "sha256": "d6f692a0e9f2f8bf75c34ff4d4a1de9da38b37323e4427e8c02c111b5c128f4c"
+    },
+    {
+      "blob": "8bf0cafff4386de3d79a059c4d041c9cf95e6ea9",
+      "path": "app/experimental/api.py",
+      "bytes": 43184,
+      "sha256": "315b71a84e213a840a732c50b0eabebada8c9f76dce92f7f952350e28c483f6c"
+    },
+    {
+      "blob": "1ad9443e4f8a243130bdc674d98c175ee5d96a51",
+      "path": "app/experimental/comic_layouts.py",
+      "bytes": 52768,
+      "sha256": "708dc4d4ac4f3afe49183c2c460771bc886fa942d2507371983250dcf70632ff"
+    },
+    {
+      "blob": "2b42e15c7c0512285288f8d769602f452e3d5af9",
+      "path": "app/services/studio_image_execution.py",
+      "bytes": 53589,
+      "sha256": "cf782d466cd352eac349165a6c8fc24aba834cf49509c3bf2324b002ba795f04"
+    },
+    {
+      "blob": "5e3858e301dc0e467e8ab6c57f89be334f6bb61e",
+      "path": "contracts/comic-panel-image-generation-v1.md",
+      "bytes": 4281,
+      "sha256": "2c329756a53fe159e8b37b1c734d380fbd058a4ef5f50eb98e2b4610088c3427"
+    },
+    {
+      "blob": "23a67c5782206f411d92ec0d0900e22819f31eae",
+      "path": "docs/V2_CONTINUATION_20261018.md",
+      "bytes": 46322,
+      "sha256": "1a3c5a9586585b18c1cc024face5c4a576d46264641c5f931e35b7853ded4818"
+    },
+    {
+      "blob": "f97ca1aa88d087403e0c8daea2c2a8b4f568cf88",
+      "path": "docs/delivery/v2-development/comic-authority-focused.log",
+      "bytes": 1159,
+      "sha256": "85f85e108a987bde57ec28fcbcc39fb0ddcd970a52e783f824f032851297e192"
+    },
+    {
+      "blob": "83b0e097b3d4fbacda06631dac8dea5feb72dd8a",
+      "path": "docs/delivery/v2-development/comic-image-actual-wire-ui.json",
+      "bytes": 766435,
+      "sha256": "094f2cfa5463e56dbd1171dfa75b4ebf34521ce018be8ba556f52f3102aac012"
+    },
+    {
+      "blob": "a88bd8c8f0d2cd4d0c15a89edf97ac11c8217da3",
+      "path": "docs/delivery/v2-development/comic-image-actual-wire-ui.log",
+      "bytes": 325,
+      "sha256": "ce9619613bdfa921ee218e52b89455829bb19db1c0642e5816883982d05c307a"
+    },
+    {
+      "blob": "b1e4c2b3fa8b06432a78bd11f2c1f93b90402536",
+      "path": "docs/delivery/v2-development/comic-image-all.json",
+      "bytes": 765777,
+      "sha256": "34186efd1c1ee24587c673e443cc2f7f5d2aaface7d075350816989ce90f8a34"
+    },
+    {
+      "blob": "59156f0819e4991e537079357980333f3194bc2e",
+      "path": "docs/delivery/v2-development/comic-image-all.log",
+      "bytes": 1159,
+      "sha256": "72a3178421543d7bd6bf19099fc2384a53e75a4696b89e8057277f052ace5c11"
+    },
+    {
+      "blob": "96c84faded65d413f57a663a92cc49fd04d8bf9f",
+      "path": "docs/delivery/v2-development/comic-image-api.json",
+      "bytes": 765034,
+      "sha256": "e66733036f99d581d35fe6601b467528132d787f135d68ec23f73d5e04d36499"
+    },
+    {
+      "blob": "0db41958d04292d823093317401b415aa2436c26",
+      "path": "docs/delivery/v2-development/comic-image-api.log",
+      "bytes": 4658,
+      "sha256": "e462fb240998e13b7fb59f0dff759f30fc72598690a4a95cc275270c6e644ae8"
+    },
+    {
+      "blob": "ecff844de932e294cad62322de863c642cae643f",
+      "path": "docs/delivery/v2-development/comic-image-backend-source-reconciliation.json",
+      "bytes": 536,
+      "sha256": "505156106c6eef1f49fe88485a8f52526e84431353e5c2fcc1ec506bd59786f4"
+    },
+    {
+      "blob": "2febd07ba866d38dc8a27d781ec3d47a0bb67eee",
+      "path": "docs/delivery/v2-development/comic-image-final-source-reconciliation.json",
+      "bytes": 375,
+      "sha256": "dba6143fbb87e5f7c5a3b6a96a5329cf1674f94dd47707abed0d5a9834f44708"
+    },
+    {
+      "blob": "cb2f185e0e5ff07a4a474a274215caced7a71994",
+      "path": "docs/delivery/v2-development/comic-image-happy.json",
+      "bytes": 764976,
+      "sha256": "117d2e8ced230151e80b53aad9d76c4d16c46410d3a3a6b256e06e05ee8f88f8"
+    },
+    {
+      "blob": "e7acecd24f6a3ea5cdd13b95d8e6e46af091c9f3",
+      "path": "docs/delivery/v2-development/comic-image-happy.log",
+      "bytes": 4859,
+      "sha256": "c5fac780c94d1449cea962921ddae3614ffa0c08760bf59be83af4da6c6d25d2"
+    },
+    {
+      "blob": "6cf1bae482bfd85bd67661e2283f11becadb77eb",
+      "path": "docs/delivery/v2-development/comic-image-integration-20261019.md",
+      "bytes": 4035,
+      "sha256": "845f4a252cda9829b0d133c2f1fe360c3e2204c3627266fcc04112fc7ab16e4d"
+    },
+    {
+      "blob": "5a3e28b65ee63a826b25bd7e0a8240de2945d57e",
+      "path": "docs/delivery/v2-development/comic-image-integration-cjk.json",
+      "bytes": 764691,
+      "sha256": "f87d77f8fdf51b9106888e4b669141f66b786b34af76ade20590ded4493068d8"
+    },
+    {
+      "blob": "b1379232f5731a21b72c7347e3d0a788878336f6",
+      "path": "docs/delivery/v2-development/comic-image-integration-cjk.log",
+      "bytes": 603,
+      "sha256": "e24ec643b12fcfe616d921f535b957b246da035a8893a4915950dee8bd3cd78f"
+    },
+    {
+      "blob": "50420ac79d67f3e8bd37aec2090aaa81ea0b8484",
+      "path": "docs/delivery/v2-development/comic-image-integration-postgres-cleanup.json",
+      "bytes": 307614,
+      "sha256": "def59d7868f8be2e6bbab21f7a493e8566aef6e582ed9fc54347abb94d6a2840"
+    },
+    {
+      "blob": "01be99bec584d405abd4a5ffe0d44ba414f9fd20",
+      "path": "docs/delivery/v2-development/comic-image-integration-postgres-postgres-runtime.json",
+      "bytes": 1473,
+      "sha256": "33197ecb60984b12c9d8c79471f58d20327a11e5d433d5e783d246a88b571f97"
+    },
+    {
+      "blob": "a947d2a097192836bf208de1c892d39dc111f850",
+      "path": "docs/delivery/v2-development/comic-image-integration-postgres.json",
+      "bytes": 764032,
+      "sha256": "050a2e338084dc877af6cbaf88a6b16ca42a11c07459b9b855626e419637a4ce"
+    },
+    {
+      "blob": "47fe1217363728497c5cbeb0387b9acedb34c822",
+      "path": "docs/delivery/v2-development/comic-image-integration-postgres.log",
+      "bytes": 1186,
+      "sha256": "0b5625c78e3777d4736661017e54f3c3b6ee8b89073ff730b3bab08db4118bb8"
+    },
+    {
+      "blob": "bfe73f4184d364022fa66d38543bbb6dc6dd9efd",
+      "path": "docs/delivery/v2-development/comic-image-integration-public.json",
+      "bytes": 764288,
+      "sha256": "1c66eec68b9703b30284ad522bad98b9d4d45b66ae7558bcfa829403869582c4"
+    },
+    {
+      "blob": "b0838b80c2a27c587b1b31aef65fdffdd8c66dfe",
+      "path": "docs/delivery/v2-development/comic-image-integration-public.log",
+      "bytes": 634,
+      "sha256": "9a9cd49fcd3cb09376924e507e786ba476896265664c9f33e40fd32152a1435f"
+    },
+    {
+      "blob": "3bd915036dbd9368666e1a5ec01ce1838edf4fa0",
+      "path": "docs/delivery/v2-development/comic-image-integration-ui.json",
+      "bytes": 767139,
+      "sha256": "b6eb260f250fdb9c47db3db0ecb883307d7b044dc7f10f991a227d702c3f950a"
+    },
+    {
+      "blob": "5820f7f8c0431d16710d7420e13de4e36317b712",
+      "path": "docs/delivery/v2-development/comic-image-integration-ui.log",
+      "bytes": 6906,
+      "sha256": "4e4b953b325f6a18cf3241d4bde13789def9a59cb87e2e09e36d901449e8fc4f"
+    },
+    {
+      "blob": "db147f47d9d87afd4e29455edf0a750b857155f8",
+      "path": "docs/delivery/v2-development/comic-image-legacy-comic.json",
+      "bytes": 765992,
+      "sha256": "366f5825b1588ada13fef2251edb294b265aa541111aa2b14fc9236a3024de80"
+    },
+    {
+      "blob": "bf7160d21277976bcf13a2e1fb2b6270d50f6e8d",
+      "path": "docs/delivery/v2-development/comic-image-legacy-comic.log",
+      "bytes": 1172,
+      "sha256": "fce58984b00628f54bf7dcf3a639713492d0e4244f7dbee8611349951118c97c"
+    },
+    {
+      "blob": "32d6f46fc9163efdf29b2ddaf58f8a9b4080f188",
+      "path": "docs/delivery/v2-development/comic-image-original-regression.json",
+      "bytes": 765996,
+      "sha256": "5179446fc0ef6ced1d06a79207187da7887fe76178f043a2435002ff16979d20"
+    },
+    {
+      "blob": "dbc92dbb169b58096fd7970a9a2028c58bb1e323",
+      "path": "docs/delivery/v2-development/comic-image-original-regression.log",
+      "bytes": 1171,
+      "sha256": "99d0f6ed4d4e68e11081adb06cf7c3ec8bca413ea53e910059425a698a1e61fb"
+    },
+    {
+      "blob": "972035bd9efeaf0efacada0495a884e41dbfd343",
+      "path": "docs/delivery/v2-development/comic-image-owner.json",
+      "bytes": 764936,
+      "sha256": "3b9fe68ad6120b8e7a50ae8cea468d663aa6f12c376c9400c0a6ea38d1e34557"
+    },
+    {
+      "blob": "69a2c655e51affb5702db32613a9ba8065e09394",
+      "path": "docs/delivery/v2-development/comic-image-owner.log",
+      "bytes": 4459,
+      "sha256": "85eccea71019cd64853fc1f882403afa1960cff0e927f490793626f69eafd7e0"
+    },
+    {
+      "blob": "b1ad882e4719c7ec0de66c2596944c0e40708dc1",
+      "path": "docs/delivery/v2-development/comic-image-races.json",
+      "bytes": 765136,
+      "sha256": "8eac422df8552f6a5cc40fd085d44ddb44d4c83aa7458146a7840ed6feae8863"
+    },
+    {
+      "blob": "e7843dea3abb3a22f8fdb9057d25acbe3f60e60d",
+      "path": "docs/delivery/v2-development/comic-image-races.log",
+      "bytes": 5782,
+      "sha256": "97e18e4ac17232ab4137a1ba5ce7ea1d50b577b0d43e29f52153e84618269ea0"
+    },
+    {
+      "blob": "6c89ba0c81ee5ac2a0e3987bc56e34f8f34cc78d",
+      "path": "docs/delivery/v2-development/comic-image-ui-final-focused.json",
+      "bytes": 767098,
+      "sha256": "a68e5338213ef4501f342b667f7f660b1fdc0c1bcd4247609163719e10e7ffa0"
+    },
+    {
+      "blob": "72ae6a1126258076613e669a22cfdcad178fa6dd",
+      "path": "docs/delivery/v2-development/comic-image-ui-final-focused.log",
+      "bytes": 6405,
+      "sha256": "6da101513f2c219a4189c859c849cb2d125a3f936dc9c478b57f5cfa637d1861"
+    },
+    {
+      "blob": "011e641afdf3bedf734cf354368269be5a005b03",
+      "path": "docs/delivery/v2-development/comic-image-wire-capture.json",
+      "bytes": 766064,
+      "sha256": "e15b3b07b8761ffeace132722677d463d1d731776c3f6adf39b5679c1f503d97"
+    },
+    {
+      "blob": "a009df46f87c6435aa5869db5d41098fc93c998c",
+      "path": "docs/delivery/v2-development/comic-image-wire-capture.log",
+      "bytes": 1158,
+      "sha256": "ab8b5fafc17e0882cf21a90d26b95b27b5f03d65786cf448e5a679a614fa7721"
+    },
+    {
+      "blob": "ccec71affa4c901273cad09bc30a283d58fd5e92",
+      "path": "docs/delivery/v2-development/comic-ui-independent-review-final.log",
+      "bytes": 6346,
+      "sha256": "20598c09a5009802b91c2033107402ace535ab80f51573ced1ac8c4ccef68201"
+    },
+    {
+      "blob": "e133187579c2d452c62723cc9abf34df89f307ce",
+      "path": "docs/delivery/v2-development/comic-ui-independent-review.log",
+      "bytes": 7362,
+      "sha256": "977936fb617e77f56de8755b4291f93a5ad210c686217315c7e01097b684c485"
+    },
+    {
+      "blob": "fecb964d1a85876d616074f89f3a23c4cf4753b2",
+      "path": "docs/delivery/v2-development/comic-ui-independent-runtime.sha256",
+      "bytes": 957,
+      "sha256": "dee613a6a6ec32f2caebc1dfd4820b682424486a5832614bdc48eda67eb73390"
+    },
+    {
+      "blob": "23259099ed21be0fbcb32b97b8f6e0511072824f",
+      "path": "docs/delivery/v2-development/style-vision-integration/verify_comic_image_postgres.py",
+      "bytes": 1765,
+      "sha256": "300d2fb5801061501a95c5bf0398da0ed63153d4328d8b2059a44e31e1c78262"
+    },
+    {
+      "blob": "b2628ad274750b0c037ce0e6013fb25a27b7dbbc",
+      "path": "docs/v2/V2_REQUIREMENTS_LEDGER_20261019_R2.json",
+      "bytes": 799007,
+      "sha256": "7e510daf3eb94b8de99aaebfe66d97c06e56fbbcfce35f673a47e1527b026cd9"
+    },
+    {
+      "blob": "7ea9c61d3d2794ea5ffa9581c6e5cadc372111a3",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "bytes": 74561,
+      "sha256": "a563bffc609e1661d52e23da250722f61ce284ffb63eab1379629805abc1f677"
+    },
+    {
+      "blob": "b27bc91475db3be15751f63557b06336a117e1c1",
+      "path": "frontend/src/creative/StudioComicImageGeneration.test.tsx",
+      "bytes": 19089,
+      "sha256": "e09a80f292d7959d08d301852d15e9864e6af16d2aa6ec3332f3fd3d21913559"
+    },
+    {
+      "blob": "c53b11167707680b37e85abb22f807a0a83fad0c",
+      "path": "frontend/src/creative/StudioComicImageGeneration.tsx",
+      "bytes": 14446,
+      "sha256": "5ace8d394675a3ef7bc67e56c53f915b7be992940d90213624081a873eb0e231"
+    },
+    {
+      "blob": "d83ce8d04fe7c1aab2b9b871e722c95cfd656e5d",
+      "path": "frontend/src/creative/StudioComicPanel.tsx",
+      "bytes": 3474,
+      "sha256": "d3e449b6006191062a460ad9849d0defaf7c65d21a69ef74358378e0797f489b"
+    },
+    {
+      "blob": "5c9172aa8be66f6ec2c32683cb6153f27d1932f0",
+      "path": "frontend/src/creative/StudioMediaExecutionPanel.tsx",
+      "bytes": 37841,
+      "sha256": "a5e64fa49ff7fbd4cbde621dc3993b3855712c024ff6acf75880d286b9802585"
+    },
+    {
+      "blob": "762e6ba5232ad82a373242813c155bea3aba46a4",
+      "path": "frontend/src/creative/studioComicImage.capture.test.ts",
+      "bytes": 3341,
+      "sha256": "0c93de984368ab916c6db01ed4b681635e739f9c2e129a7cb2ddac8d27420017"
+    },
+    {
+      "blob": "d233aefe291d357ffc935d064baf2c51918aa75f",
+      "path": "frontend/src/creative/studioComicImageClient.test.ts",
+      "bytes": 5370,
+      "sha256": "e11a5f03db6b68926444f7376e4b101495548545bc51250eeeb64b224af57b91"
+    },
+    {
+      "blob": "0c7a1b8f4b8c8f8843f103c7f8213f4c513a5a7d",
+      "path": "frontend/src/creative/studioComicImageClient.ts",
+      "bytes": 5204,
+      "sha256": "8526bf289cb4c0820053c4824b7eb4cbd404da8250c56297f96f4ef2b575999f"
+    },
+    {
+      "blob": "73eea7e29af11a22209b6fb436eb96bb104fd412",
+      "path": "frontend/src/creative/studioComicImageContract.test.ts",
+      "bytes": 8293,
+      "sha256": "3ed5db69986300613339395a621332acaba3fd037924f85113cc07f38e273b77"
+    },
+    {
+      "blob": "71071f1e1fdd770fc641a0d43d78231f680a0b37",
+      "path": "frontend/src/creative/studioComicImageContract.ts",
+      "bytes": 6039,
+      "sha256": "cfe1d9b38bce63834c1308af61b5d47c8d4d0aa89fe05d642c409944acf68ee9"
+    },
+    {
+      "blob": "dcc8cb47aff24202f33cf612d8ae9773e44c84d4",
+      "path": "frontend/src/creative/studioComicImageWire.testFixture.json",
+      "bytes": 27987,
+      "sha256": "3b55e60c89e38ba5d0d2653bed7d0d12659d789d8acd20f18e9ace002988cf10"
+    },
+    {
+      "blob": "4d6813f223d5effe6e981ae45f3f4a2153b281a2",
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "bytes": 66833,
+      "sha256": "d579682fef97bb6c7f73db43d5f6a7ff0a34725831b260608a4cad26c8afa6c6"
+    },
+    {
+      "blob": "15fb739ab33d6277fd9ca3bac1bedc1d351be442",
+      "path": "frontend/src/creative/useStudioMediaExecution.ts",
+      "bytes": 72291,
+      "sha256": "ed4d109bd02ac64d46bdc8767ff16f5b7a32afcdc67527f3b7a12150e00cd961"
+    },
+    {
+      "blob": "fbd05761b34d43bcf8f9875d9e265cd463f4c4ba",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx",
+      "bytes": 4158,
+      "sha256": "514c9e5ed58de121ba98aa6e0de1e8f9a55364bbacb557fb21ed42ff07ca5b39"
+    },
+    {
+      "blob": "a4255ecc6e32b3e10b8f3e900ab5878c71db967b",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 45065,
+      "sha256": "f8c00340ca8c4fedbf376e5ecf7e72d778a4f39f28547c0a2040f08d50f6abf9"
+    },
+    {
+      "blob": "f20021282b670cf18fc100e8159bce65664d20cf",
+      "path": "packaging/public-build.json",
+      "bytes": 26374,
+      "sha256": "9528e2acda6083fcf16c7841aeb6a6eea664b918bce94fe766f17aff4740fed3"
+    },
+    {
+      "blob": "88cf90bed45bfb36a6712f249d3f6a9c3fb76445",
+      "path": "tests/test_v2_comic_image_generation.py",
+      "bytes": 20567,
+      "sha256": "78c4455d9a249b9a22373ca2ef3c1a100b46a3a06e2c9a14a473d97c6572bf2f"
+    },
+    {
+      "blob": "d87ca9c7751478a3bb0e78e30ebbedab2e155a5e",
+      "path": "tests/test_v2_comic_image_generation_api.py",
+      "bytes": 7042,
+      "sha256": "4ba376ddea543bdd2ef87c8fd93f55f3864775fe91d3627ea0c01b4572463c27"
+    },
+    {
+      "blob": "cfd8a97c1770fa8a129ff568bcba63304fba210d",
+      "path": "tests/test_v2_comic_image_wire_capture.py",
+      "bytes": 2731,
+      "sha256": "cd87825cda445d147751ed79199bf4c2c841644ae5f49bf95f7fb92d765a65f9"
+    },
+    {
+      "blob": "0d235bc6af1a2a41306ec59ed03f95cdffd2b10b",
+      "path": "frontend/src/creative/StudioComicImageGeneration.test.tsx",
+      "bytes": 15330,
+      "sha256": "cd74d85b30b9f3c58b20f83d33177701ca41b5b9fc1157de3203a3e536855e1a"
+    },
+    {
+      "blob": "8f8e2c93eda2bedaf6946971fa59f33f51c09f8a",
+      "path": "frontend/src/creative/StudioComicImageGeneration.tsx",
+      "bytes": 13182,
+      "sha256": "4f1bf3cc2ae58f1752de0c88b386779102db632bc5d1fe3145790415593e6273"
+    },
+    {
+      "blob": "6c1dbe11e12b5d5c8175cbd7c9faca252835ec7c",
+      "path": "frontend/src/creative/studioComicImageClient.test.ts",
+      "bytes": 4838,
+      "sha256": "41c0e76668a8c500196e42ad33713b4753f3303a60f3cc2248ea9410db02a705"
+    },
+    {
+      "blob": "848849ed79b89c7950435b15c151d3fde36a99da",
+      "path": "frontend/src/creative/studioComicImageClient.ts",
+      "bytes": 5095,
+      "sha256": "7c394903609311a4f2648164457cd1b1cbc5bcb834c81854f5d965c26df32654"
+    },
+    {
+      "blob": "b4eb7797ef12e978a536a3732e888fcfb7e0a0b2",
+      "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+      "bytes": 44831,
+      "sha256": "528189c305c8aebe42f619b804524c394cb7567873103a86accdbb12ccd6c6e8"
+    }
+  ],
+  "patterns": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "openai_key",
+    "aws_access_key"
+  ],
+  "absolute_secret_absence_guaranteed": false
+}
