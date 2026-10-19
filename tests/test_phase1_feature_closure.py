@@ -25,7 +25,12 @@ def test_overview_exposes_real_counts_and_writing_goal():
     novel = client.post("/api/novels", json={"title": f"Overview {uuid4()}"}).json()
     nid = novel["id"]
     client.post(f"/api/novels/{nid}/chapters", json={"title": "第一章", "content": "迷雾封锁港口。" * 20})
-    client.put(f"/api/novels/{nid}/writing-goal", json={"target_words": 1000, "target_chapters": 10})
+    goal_response = client.put(f"/api/novels/{nid}/writing-goal", json={"target_words": 1000, "target_chapters": 10, "deadline": "2027-01-01"})
+    assert goal_response.status_code == 200
+    assert goal_response.json()["target_words"] == 1000
+    persisted_goal = client.get(f"/api/novels/{nid}/writing-goal").json()
+    assert persisted_goal["target_words"] == 1000 and persisted_goal["target_chapters"] == 10
+    assert persisted_goal["deadline"] == "2027-01-01"
     created = client.post(
         f"/api/novels/{nid}/research",
         json={"title": "Phase1 Desktop 验收资料", "source_type": "NOTE", "status": "ACTIVE", "tags": ["phase1-desktop"]},

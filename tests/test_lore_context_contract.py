@@ -146,6 +146,7 @@ def test_agent_adapter_only_exposes_lore_to_writer():
     assert "lore_memory" not in runner.build_prompt("editor", context, "edit")
 
 
+@pytest.mark.postgres_backend_only
 def test_file_and_postgres_lore_context_match(tmp_path):
     url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
     if not url or not Database(url).health_check():
@@ -284,6 +285,7 @@ def _same_name_novel_views(bundle, prefix: str, tmp_path=None):
     return views
 
 
+@pytest.mark.postgres_backend_only
 def test_same_name_character_lore_isolated_by_novel_in_file_and_postgres(tmp_path):
     url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
     if not url or not Database(url).health_check():

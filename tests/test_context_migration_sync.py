@@ -29,6 +29,7 @@ def write_json(path: Path, value) -> None:
 
 
 @pytest.mark.skipif(not DATABASE_URL, reason="NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is not configured")
+@pytest.mark.postgres_backend_only
 def test_context_migration_sync_is_complete_updatable_and_idempotent(tmp_path):
     database = Database(DATABASE_URL)
     if not database.health_check(): pytest.skip("NOT VERIFIED: PostgreSQL is unavailable")

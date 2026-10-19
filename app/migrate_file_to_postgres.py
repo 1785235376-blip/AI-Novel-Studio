@@ -61,6 +61,17 @@ def _privacy(item: dict, default: str = "CLOUD_ALLOWED") -> str:
     return str(item.get("privacy_level", default))
 
 
+def _secret_source_mapping(item: dict, order: int) -> dict:
+    mapping = {"id": str(item["id"]), "order": order}
+    if "title" not in item:
+        mapping["title_present"] = False
+    columns = {"id", "title", "content", "earliest_reveal_chapter", "status", "privacy_level"}
+    extensions = {key: value for key, value in item.items() if key not in columns}
+    if extensions:
+        mapping["extensions"] = extensions
+    return mapping
+
+
 def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> NovelModel:
     novel_id = source["id"]
     root = repo.novels / novel_id
@@ -68,7 +79,7 @@ def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> No
     style_profile = read_json(root / "style/profile.json", {})
     secrets = read_json(root / "secrets.json", [])
     secret_mapping = {
-        str(stable_source_uuid(SECRET_NAMESPACE, novel_id, str(item["id"]))): {"id": str(item["id"]), "order": order}
+        str(stable_source_uuid(SECRET_NAMESPACE, novel_id, str(item["id"]))): _secret_source_mapping(item, order)
         for order, item in enumerate(secrets) if item.get("id") is not None
     }
     desired_metadata = {key: value for key, value in file_meta.items() if key not in {"id", "title", "created_at", "updated_at"}}
@@ -102,7 +113,7 @@ def _sync_locations(session, root: Path, novel: NovelModel, report: dict) -> dic
         if not source_id:
             _record(report, "conflicts", "locations", f"index:{order}", reason="source id is missing"); continue
         facts = {key: value for key, value in item.items() if key not in {"id", "name", "privacy_level"}}
-        facts["_source_order"] = order
+        facts["_source_order"] = order; facts["_source_privacy_present"] = "privacy_level" in item
         model = session.scalar(select(LocationModel).where(LocationModel.novel_id == novel.id, LocationModel.slug == source_id))
         values = (str(item.get("name", source_id)), facts, _privacy(item))
         if model is None:
@@ -124,7 +135,7 @@ def _sync_characters(session, root: Path, novel: NovelModel, locations: dict[str
         location_slug = item.get("current_location") or item.get("current_location_id")
         if location_slug and str(location_slug) not in locations:
             _record(report, "conflicts", "characters", source_id, reason=f"location {location_slug!r} was not resolved"); continue
-        facts = {key: value for key, value in item.items() if key not in reserved}; facts["_source_order"] = order
+        facts = {key: value for key, value in item.items() if key not in reserved}; facts["_source_order"] = order; facts["_source_privacy_present"] = "privacy_level" in item
         location_id = locations[str(location_slug)].id if location_slug else None
         expected = {"name": str(item.get("name", source_id)), "age": item.get("age"), "life_status": str(item.get("status", item.get("life_status", "ALIVE"))), "current_location_id": location_id, "facts": facts, "privacy": _privacy(item)}
         model = session.scalar(select(CharacterModel).where(CharacterModel.novel_id == novel.id, CharacterModel.slug == source_id))
@@ -159,7 +170,7 @@ def _sync_secrets(session, root: Path, novel: NovelModel, report: dict) -> None:
     mapping = dict((novel.metadata_json or {}).get("context_source_ids", {}).get("secrets", {}))
     for order, item in enumerate(read_json(root / "secrets.json", [])):
         source_id = str(item.get("id", f"index-{order}")); target_id = stable_source_uuid(SECRET_NAMESPACE, novel.slug, source_id)
-        expected_mapping = {"id": source_id, "order": order}
+        expected_mapping = _secret_source_mapping({**item, "id": source_id}, order)
         if not canonical_json_compare(mapping.get(str(target_id)), expected_mapping):
             _record(report, "conflicts", "secrets", source_id, target_id, "novel metadata mapping is inconsistent"); continue
         expected = {"novel_id": novel.id, "title": str(item.get("title", source_id)), "content": str(item.get("content", "")), "earliest_reveal_chapter": int(item.get("earliest_reveal_chapter", 0)), "status": str(item.get("status", "ACTIVE")), "privacy": _privacy(item, "LOCAL_ONLY")}

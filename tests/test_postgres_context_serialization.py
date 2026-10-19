@@ -93,3 +93,101 @@ def test_split_internal_fields_is_pure_and_handles_invalid_order():
     public, source_id, order = split_internal_fields(original)
     assert public == {"role": "lead"} and source_id == "source" and order > 1_000_000
     assert original == {"role": "lead", "_source_id": "source", "_source_order": "bad"}
+
+
+def test_migrated_missing_privacy_shape_never_hides_restrictive_policy():
+    for serializer, values in (
+        (serialize_character, {"age": 31, "life_status": "ALIVE"}),
+        (serialize_location, {}),
+    ):
+        item = model(slug="legacy", name="Legacy", privacy="CLOUD_ALLOWED",
+                     facts={"_source_privacy_present": False}, **values)
+        assert "privacy_level" not in serializer(item)
+        assert "_source_privacy_present" not in serializer(item)
+        for privacy in ("LOCAL_ONLY", "REDACT_BEFORE_CLOUD"):
+            item.privacy = privacy
+            assert serializer(item)["privacy_level"] == privacy
+        item.facts = {"_source_privacy_present": True, "privacy_level": "CLOUD_ALLOWED"}
+        assert serializer(item)["privacy_level"] == "REDACT_BEFORE_CLOUD"
+
+
+def test_location_status_survives_without_unmasking_reserved_fields():
+    item = model(slug="port", name="Port", privacy="LOCAL_ONLY",
+                 facts={"status": "INACCESSIBLE", "id": "forged", "name": "forged",
+                        "privacy_level": "CLOUD_ALLOWED", "_source_id": "forged"})
+    assert serialize_location(item) == {
+        "id": "port", "name": "Port", "status": "INACCESSIBLE", "privacy_level": "LOCAL_ONLY"}
+
+
+def test_migrated_secret_preserves_type_and_absent_title_without_overriding_columns():
+    item = model(id=uuid.uuid4(), title="legacy", content="secret", earliest_reveal_chapter=99,
+                 status="ACTIVE", privacy="LOCAL_ONLY")
+    mapping = {str(item.id): {"id": "legacy", "order": 0, "title_present": False,
+        "extensions": {"type": "secret", "id": "forged", "content": "forged",
+                       "privacy_level": "CLOUD_ALLOWED", "status": "CORRUPT"}}}
+    assert serialize_secret(item, mapping) == {
+        "id": "legacy", "type": "secret", "content": "secret", "earliest_reveal_chapter": 99,
+        "status": "ACTIVE", "privacy_level": "LOCAL_ONLY"}
+    public = serialize_secret(item, mapping, public=True)
+    assert public["content"] is None and public["visibility"] == "LOCAL_ONLY"
+
+
+def test_writing_goal_update_and_read_keep_only_allowed_metadata(monkeypatch):
+    from contextlib import contextmanager
+    from datetime import datetime, timezone
+    from app.repositories.postgres import novel as repository_module
+
+    stamp = datetime.now(timezone.utc)
+    record = model(slug="novel", title="Novel", created_at=stamp, updated_at=stamp,
+                   metadata_json={"genre": "Mystery", "style_profile": {"pov": "first"}})
+    class Session:
+        def flush(self):
+            pass
+    class Database:
+        @contextmanager
+        def session(self):
+            yield Session()
+    monkeypatch.setattr(repository_module, "novel_or_raise", lambda session, nid: record)
+    repository = repository_module.PostgresNovelRepository(Database())
+    goal = {"target_words": 1000, "target_chapters": 10, "deadline": "2027-01-01"}
+    updated = repository.update("novel", {"writing_goal": goal, "id": "forged", "owner_id": "forged"})
+    assert updated["writing_goal"] == goal
+    assert repository.get("novel")["writing_goal"] == goal
+    assert updated["id"] == "novel" and "owner_id" not in updated
+    assert record.metadata_json == {"genre": "Mystery", "style_profile": {"pov": "first"}, "writing_goal": goal}
+
+
+def test_sample_migration_preserves_raw_context_shape(tmp_path):
+    from app.migrate_file_to_postgres import _sync_novel, _sync_characters, _sync_locations, _sync_secrets
+    from app.repository import FileRepository, read_json
+    from app.repositories.postgres.models import CharacterModel, LocationModel, SecretModel
+    from sample_novel_fixture import install_sample_novel
+
+    root = install_sample_novel(tmp_path)
+    class Session:
+        def __init__(self):
+            self.rows = []
+        def scalar(self, query):
+            return None
+        def get(self, kind, key):
+            return None
+        def add(self, item):
+            if item.id is None:
+                item.id = uuid.uuid4()
+            self.rows.append(item)
+        def flush(self):
+            pass
+    session = Session()
+    report = {key: [] for key in ("imported", "updated", "skipped", "conflicts", "failed")}
+    novel = _sync_novel(session, FileRepository(tmp_path), {"id": "sample_novel"}, report)
+    locations = _sync_locations(session, root, novel, report)
+    _sync_characters(session, root, novel, locations, report)
+    _sync_secrets(session, root, novel, report)
+    mapping = novel.metadata_json["context_source_ids"]["secrets"]
+    for kind, serializer, source in (
+        (CharacterModel, serialize_character, "characters/characters.json"),
+        (LocationModel, serialize_location, "locations/locations.json"),
+        (SecretModel, lambda row: serialize_secret(row, mapping), "secrets.json"),
+    ):
+        assert [serializer(row) for row in session.rows if isinstance(row, kind)] == read_json(root / source, [])
+    assert not report["conflicts"] and not report["failed"]

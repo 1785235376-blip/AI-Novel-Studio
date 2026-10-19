@@ -8,7 +8,7 @@ MAX_SOURCE_ORDER = 2**31 - 1
 RESERVED_FIELDS = frozenset({
     "id", "name", "age", "status", "privacy_level", "facts", "details",
 })
-INTERNAL_FIELDS = frozenset({"_source_id", "_source_order"})
+INTERNAL_FIELDS = frozenset({"_source_id", "_source_order", "_source_privacy_present"})
 
 
 def split_internal_fields(payload: Mapping[str, Any] | None) -> tuple[dict[str, Any], str | None, int]:
@@ -28,6 +28,14 @@ def character_order(model: Any) -> int:
     return split_internal_fields(model.facts)[2]
 
 
+def _privacy_fields(model: Any) -> dict[str, Any]:
+    # Migrated legacy File records may omit the default. Never hide a stricter
+    # current database policy, even if the original File record lacked a field.
+    if (model.facts or {}).get("_source_privacy_present") is False and model.privacy == "CLOUD_ALLOWED":
+        return {}
+    return {"privacy_level": model.privacy}
+
+
 def serialize_character(model: Any) -> dict[str, Any]:
     public, _, _ = split_internal_fields(model.facts)
     return {
@@ -36,7 +44,7 @@ def serialize_character(model: Any) -> dict[str, Any]:
         "age": model.age,
         "status": model.life_status,
         **public,
-        "privacy_level": model.privacy,
+        **_privacy_fields(model),
     }
 
 
@@ -50,7 +58,8 @@ def serialize_location(model: Any) -> dict[str, Any]:
         "id": model.slug,
         "name": model.name,
         **public,
-        "privacy_level": model.privacy,
+        **({"status": model.facts["status"]} if "status" in (model.facts or {}) else {}),
+        **_privacy_fields(model),
     }
 
 
@@ -95,6 +104,11 @@ def serialize_secret(model: Any, id_mapping: Mapping[str, Any] | None, *, public
         "status": model.status,
         "privacy_level": model.privacy,
     }
+    # Retain migration-only extension fields and absence of a source title.
+    # Canonical columns always win, particularly content and privacy policy.
+    output = {**dict(mapping.get("extensions") or {}), **output}
+    if mapping.get("title_present") is False:
+        output.pop("title")
     if public:
         output["visibility"] = model.privacy
     return output

@@ -31,13 +31,18 @@ def test_adaptation_proposal_requires_supported_target_and_single_approval():
 
 def test_approved_adaptation_materializes_independent_version_once():
     client=TestClient(app);novel=setup_novel(client);url=f"/api/novels/{novel['id']}/adaptations"
+    before=client.get(f"/api/novels/{novel['id']}/chapters").json()
+    source_document=client.get(f"/api/chapters/{before[0]['id']}").json()['document']
     created=client.post(url,json={'target':'LITERARY','title':'文学改编版'}).json()
     assert client.post(f"{url}/{created['id']}/materialize").status_code==400
     client.post(f"{url}/{created['id']}/approve")
     first=client.post(f"{url}/{created['id']}/materialize").json();second=client.post(f"{url}/{created['id']}/materialize").json()
     assert first['id']==second['id'] and first['id']!=novel['id']
     copied=client.get(f"/api/novels/{first['id']}/chapters").json();original=client.get(f"/api/novels/{novel['id']}/chapters").json()
-    assert len(copied)==1 and copied[0]['content'].endswith('原始正文') and original[0]['content'].endswith('原始正文')
+    assert len(copied)==1 and original==before
+    assert copied[0]['content']==before[0]['content']
+    assert client.get(f"/api/chapters/{copied[0]['id']}").json()['document']==source_document
+    assert source_document['content'][-1]['content']==[{'type':'text','text':'原始正文'}]
     assert copied[0]['content'].count('# 第一章')==1
     stored=client.get(url).json()[0]
     assert stored['execution_status']=='PENDING_REWRITE' and stored['execution_manifest'][0]['status']=='PENDING_REWRITE'

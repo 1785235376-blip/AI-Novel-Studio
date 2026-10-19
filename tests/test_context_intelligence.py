@@ -167,6 +167,7 @@ def test_file_context_snapshot_is_persisted(tmp_path):
     assert len(files) == 1
 
 
+@pytest.mark.postgres_backend_only
 def test_postgres_context_snapshot_is_idempotently_persisted():
     url = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
     if not url or not Database(url).health_check():
