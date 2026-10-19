@@ -2,7 +2,7 @@
   "schema_version": 1,
   "document_kind": "CANONICAL_LINKED_V2_REQUIREMENT_RECONCILIATION",
   "scope_version": "GAP-BACKLOG-2026-10-19-r2 / SPEC-2026.10.19-r1",
-  "updated_at_utc": "2026-10-19T00:12:00Z",
+  "updated_at_utc": "2026-10-19T00:15:00Z",
   "authority": "Single current reconciliation index linked from the original matrices. Original frozen requirements and exact source-specific evidence remain authoritative; historical matrices are preserved, not reclassified.",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "source_identity": {
@@ -21238,11 +21238,19 @@
         "B06",
         "CORE_IMAGES"
       ],
-      "code_status": "NOT_REASSESSED",
+      "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Existing Comic briefs explicitly do not generate; complete original Image Job per-panel task/compare/approve integration needs mapping.",
-      "next_action": "Bind only supported T2I/I2I/reference tasks to exact panel sources; keep failed/unapproved candidates local to the panel.",
-      "evidence_scope": "Existing B06 capabilities only satisfy bounded parts; no new Comic requirement is accepted by this mapping."
+      "gap": "Saved IMAGE-panel LOCAL T2I preparation, original Image candidate/review and explicit same-page DRAFT adoption are integrated. I2I/reference-supported generation, broader candidate comparison and actual model/browser acceptance remain open.",
+      "next_action": "Extend only supported original Image reference operations with exact per-panel source bindings and explicit review; preserve existing LOCAL T2I path and original owners.",
+      "evidence_scope": "Synthetic local-provider File/PostgreSQL and mounted-client/UI/build evidence for the bounded path; full requirement remains NOT_ACCEPTED.",
+      "bounded_evidence": [
+        {
+          "product_sha": "b81b3aad9b28f3f20ee7ef73005b998fe926aa82",
+          "report": "docs/delivery/v2-development/comic-image-integration-20261019.md",
+          "summary": "Original source-bound LOCAL T2I generation, private candidate review and separate selected-panel DRAFT adoption; no live-model quality claim.",
+          "formal_acceptance": false
+        }
+      ]
     },
     {
       "id": "IMAGE-COMIC-06",
@@ -21738,7 +21746,7 @@
       ],
       "code_status": "PARTIAL",
       "acceptance_status": "NOT_ACCEPTED",
-      "gap": "Bounded ordered PNG CBZ, raster PDF, JPEG/WebP ZIP and fixed-layout raster EPUB implemented. Native editable portable roundtrip remains missing; assetless author-only slice is independent work. Capacity bounds, EPUBCheck/actual readers and target/platform/print acceptance remain open.",
+      "gap": "Bounded ordered PNG CBZ, raster PDF, JPEG/WebP ZIP and fixed-layout raster EPUB implemented. Assetless independent PAGE author archive preserves editable native text, geometry and layers in fresh drafts. Full media/source/WEBTOON portable restoration, EPUBCheck/actual readers and target/platform/print acceptance remain open.",
       "next_action": "Complete native editable import under original owner/review semantics and independent reading-system/platform acceptance; no print or full conformance claim.",
       "evidence_scope": "Bounded reading-copy formats only; see docs/delivery/v2-development/comic-epub-integration-20261018.md",
       "bounded_evidence": [
