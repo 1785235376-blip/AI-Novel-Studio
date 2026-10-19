@@ -23,7 +23,7 @@ const agent = entry(pkg('delta-agent', 'Gamma Agent', 'agent', 'Tool declaration
 const instance: TemplateInstance = { id: 'instance-one', version: 1, package_id: outline.id, package_version: '1.0.0', manifest: outline.package.manifest, content: { sections: [] }, edited: false, linked_target: null };
 
 function transport(entries: CatalogEntry[], extended: CatalogEntry[] = [], copies: TemplateInstance[] = []) {
-  return vi.fn(async (url: string) => {
+  return vi.fn(async (url: string, _init?: RequestInit) => {
     if (url.endsWith('/template-library')) return reply({ items: entries, types: [...new Set(entries.map(row => row.package.manifest.type))], extended_items: extended, extended_types: [...new Set(extended.map(row => row.package.manifest.type))], ...remote });
     if (url.endsWith('/instances')) return reply({ items: copies });
     throw new Error('Unhandled ' + url);
@@ -164,7 +164,7 @@ it('never overwrites an unsaved project copy draft while searching or clearing',
   fireEvent.click(screen.getByRole('button', { name: '清空搜索' }));
   expect((screen.getByLabelText('项目副本内容 JSON') as HTMLTextAreaElement).value).toBe(custom);
   expect((screen.getByLabelText('选择项目模板副本') as HTMLSelectElement).value).toBe(instance.id);
-  expect(fetch.mock.calls.some(([, init]) => (init as RequestInit | undefined)?.method && (init as RequestInit).method !== 'GET')).toBe(false);
+  expect(fetch.mock.calls.some(([, init]) => !!init?.method && init.method !== 'GET')).toBe(false);
 });
 
 it('performs local filtering without adding any network request', async () => {
@@ -177,5 +177,5 @@ it('performs local filtering without adding any network request', async () => {
   fireEvent.change(searchInput(), { target: { value: 'beats' } });
   fireEvent.click(screen.getByRole('button', { name: '清空搜索' }));
   expect(fetch.mock.calls.length).toBe(initialCalls);
-  expect(fetch.mock.calls.every(([, init]) => !(init as RequestInit | undefined)?.method || (init as RequestInit).method === 'GET')).toBe(true);
+  expect(fetch.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true);
 });
