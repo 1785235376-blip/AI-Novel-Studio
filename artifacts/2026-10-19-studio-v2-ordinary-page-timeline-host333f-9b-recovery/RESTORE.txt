@@ -1,0 +1,54 @@
+VERIFIED LIMITED-SCOPE RECOVERY — ORDINARY IMAGE PAGE/TIMELINE + HOST EXIT
+
+Exact candidate: 333f384a125068a4e7714b347f687f5dc2034123
+Candidate tree: 89e5548014d64063cfa77bfe2e08c4a101dd6c3f
+Only external Git prerequisite: 9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35
+Optional preserved backend tip: 65f05d069c03c114f6f8545c0dbd66e8359014b8
+Unreviewed NLE cb93855f067575595a3ee3845b6e05670e831e1f is EXCLUDED.
+
+This local package is not a Release, Tag, main merge, upload, full V2 acceptance
+or authorization to publish. It contains committed delta Git objects, metadata
+and explicitly scrubbed synthetic evidence. It contains no runtime profile,
+node_modules, real Host credential, raw session response, raw trace or withdrawn
+owner-copy experiment. The older archive branch tree is not product source.
+
+Recover only in a NEW, empty directory. Preserve existing user checkouts.
+Never reset, clean, overwrite an existing directory or force-push.
+1. Verify FILES_SHA256.json and the bundle SHA in RESTORE_VERIFICATION.json.
+2. git init <new-directory>
+3. git -C <new-directory> fetch --no-tags <repository-containing-public-9b> 9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35:refs/heads/public-base-9b
+4. git -C <new-directory> bundle verify <absolute-path>/STUDIO_V2_9b_to_333f.bundle
+5. git -C <new-directory> fetch --no-tags <absolute-path>/STUDIO_V2_9b_to_333f.bundle refs/heads/recovery/studio-v2-333f:refs/heads/recovered-studio-v2-333f refs/heads/recovery/backend-65:refs/heads/recovered-backend-65
+6. Confirm recovered-studio-v2-333f resolves to the exact candidate SHA above.
+7. In that NEW repository only: git -c core.longpaths=true -C <new-directory> switch --detach recovered-studio-v2-333f
+8. python verify_source_map.py --repo <new-directory> --candidate
+9. git -C <new-directory> fsck --full --strict
+Stop on any mismatch; keep the new directory for diagnosis. Do not repair by
+changing an existing user checkout. No application startup or model call is
+part of this restoration.
+
+Independent local restoration already seeded only public9b, proved333f absent,
+verified the unique prerequisite, fetched the bundle with no alternates, checked
+strict fsck, exact source trees and all introduced objects, and materialized and
+blob-verified all16224 tracked files. No355/full suite was rerun during recovery.
+
+BACKEND_RESTORE_9b_to_65.patch is the preserved13-commit backend-only mailbox.
+It restores backend code with equivalent patches/tree; git am does not promise
+original commit identity. Use the bundle for exact333f/65 Git object identities.
+Original source aliases are mapped with stable patch IDs in SOURCE_MAP.json;
+those separate alias branches/ancestors are not included in the bundle.
+
+Evidence: evidence/real-browser-333f contains the unchanged committed browser
+journey's sanitized107-call proof,3Host verifications,1handoff creation, same-ID
+recovery,2native Timeline opens,6screenshots, source/build hashes and before/after
+fresh-backend file/byte proofs. Only synthetic ordinary approved unbound images
+and PAGE records were used. No model/video dispatch or inherited approval.
+Host UNKNOWN red/green and exact baseline failure comparison remain separately
+recorded in HOST_UNKNOWN_VALIDATION.json; no paid audio task was needed.
+
+Remaining limits are explicit in FAILURES_SKIPS_AND_LIMITS.json: historical
+Windows symlink1314 blockers,11platform skips, old Windows waveform failures,
+18historical adjacent baseline failures and the17exact afad storyboard-editor
+baseline failures in the Host slice. PG/full V2/model/GPU/external-editor and
+unsupported Studio/ORA/private/lineage source families are not newly accepted.
+Original reviewer closed the Host UNKNOWN P2 on333f. This does not accept full V2, NLE, model/GPU, PG or additional source families.

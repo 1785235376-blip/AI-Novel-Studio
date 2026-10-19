@@ -1,0 +1,166 @@
+{
+  "status": "P2_CLOSED_ON_FIXED_333F_NO_NEW_BLOCKER_WITHIN_LIMITED_SCOPE",
+  "commit": "333f384a125068a4e7714b347f687f5dc2034123",
+  "base": "afadce662a36972e46d60286a9e43fbce31fb6fa",
+  "changed_files": [
+    "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StoryboardVideoPipeline.phase5.test.tsx",
+    "frontend/src/creative/useStoryboardProductionController.ts",
+    "frontend/src/creative/useStudioManualMask.ts",
+    "frontend/src/creative/useStudioMediaExecution.ts",
+    "frontend/src/creative/useStudioTimelineEditor.ts",
+    "frontend/src/creative/useStudioTimelinePlayback.ts",
+    "frontend/src/creative/useStudioTimelineSourceEdit.ts",
+    "frontend/src/creative/useStudioTimelineTransfer.ts",
+    "frontend/src/creative/StudioProductionLeaveRisk.regression.test.tsx",
+    "frontend/src/creative/studioProductionLeaveRisk.ts"
+  ],
+  "unknown_inventory": {
+    "media": "original creation/uncertain refs, selected UNKNOWN row and original pending mutations; IMAGE/VIDEO/AUDIO operations including nested prepared commands",
+    "timeline": "original render/export attempt UNKNOWN; CAS Save UNKNOWN without fabricated ID; track-lock original ID retained",
+    "timeline_children": "original playback build/cache, exchange import and source-edit attempt refs",
+    "manual_mask": "original uncertain/pending mask save idempotency_key",
+    "storyboard": "original Timeline creation/adoption IDs and exact-image uncertain state; native prepared media inherits same boundary",
+    "other_root_owners": "Existing import, video reference, clay, preferences, director and Comic in-flight fences retained"
+  },
+  "validation": {
+    "original_red": {
+      "file": "red.xml",
+      "failed": 1,
+      "reason": "Dirty consent alone enabled exit after settled Audio create 503 UNKNOWN"
+    },
+    "final_targeted": {
+      "file": "final-targeted.xml",
+      "passed": 25
+    },
+    "adjacent": {
+      "file": "adjacent.xml",
+      "passed": 220
+    },
+    "expanded_boundaries": {
+      "file": "final-boundaries.xml",
+      "passed": 135,
+      "failed": 17
+    },
+    "distinct_passing_cases_across_adjacent_and_expanded": 355,
+    "baseline": {
+      "file": "afad-baseline-editor.xml",
+      "passed": 6,
+      "failed": 17,
+      "same_case_names_and_failure_messages": true,
+      "comparison": "baseline-failure-comparison.json"
+    },
+    "typescript": {
+      "file": "final-types.json",
+      "exit_code": 0,
+      "original_config": "frontend/tsconfig.json"
+    },
+    "browser": {
+      "file": "browser.json",
+      "kind": "bounded fetch fixture; original mounted product UI; not real backend acceptance",
+      "viewports": [
+        1440,
+        1280
+      ],
+      "geometry": "PASS_NO_ALERT_OVERFLOW",
+      "extra_calls_after_retirement": 0,
+      "page_errors": 0,
+      "server_and_browser_processes_closed": true
+    },
+    "raw_intermediate_failures_retained": [
+      "green-initial.xml (unsupported matcher corrected without weakening)",
+      "green-host.xml (fixture locator/state expectation corrected)",
+      "green-timeline.xml (exact original UI text locator corrected)",
+      "browser-initial.json (Windows ESM harness)",
+      "browser-r1.json (exact label locator harness)"
+    ],
+    "not_run": [
+      "No backend 144 File suite or real ordinary-image 136-call browser rerun; prior independently accepted evidence preserved",
+      "No GPU, real model, newly paid API, full V2/product acceptance, PostgreSQL or cross-platform acceptance"
+    ]
+  },
+  "baseline_comparison": {
+    "base": "afadce662a36972e46d60286a9e43fbce31fb6fa",
+    "baseline_failures": 17,
+    "candidate_failures": 17,
+    "same_case_names": true,
+    "same_failure_messages": true,
+    "names": [
+      "mounted graph → exact original storyboard editor navigation > cancels dirty graph navigation before any final read or discard",
+      "mounted graph → exact original storyboard editor navigation > ignores a late final export after cancel without discarding the graph",
+      "mounted graph → exact original storyboard editor navigation > ignores a late final export after module ABA without discarding the graph",
+      "mounted graph → exact original storyboard editor navigation > keeps the graph and director mounted until both admission reads finish, then consumes the receipt without a second admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final 503 admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final digest admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final network admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note performances admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note planning admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final revoked capability admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot characters admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot continuity admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot emotion admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot note IDs admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final source binding admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final version admission",
+      "mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final visual references admission"
+    ]
+  },
+  "original_unknown_probe_observations": {
+    "kind": "original-mounted-workspace-real-controller-and-client-with-bounded-HTTP-responses",
+    "observations": [
+      {
+        "mode": "create-503",
+        "requestId": "d29b5f98-d693-41bf-ad1e-a58659b7428d",
+        "projectId": "host-exit-project",
+        "branchId": null,
+        "owner": "audio",
+        "operation": "m8.audio.trim",
+        "requestCount": 10,
+        "writes": 2,
+        "implicitExitBlocked": true,
+        "networkCallsAfterExit": 0
+      },
+      {
+        "mode": "read-401",
+        "requestId": "e8cbc408-624b-48b8-abde-6ff871d6bb45",
+        "projectId": "host-exit-project",
+        "branchId": null,
+        "owner": "audio",
+        "operation": "m8.audio.trim",
+        "requestCount": 11,
+        "writes": 2,
+        "implicitExitBlocked": true,
+        "networkCallsAfterExit": 0
+      },
+      {
+        "mode": "returned-unknown",
+        "requestId": "5ec893fb-354b-4d47-943d-498b97c9a3cb",
+        "projectId": "host-exit-project",
+        "branchId": null,
+        "owner": "audio",
+        "operation": "m8.audio.trim",
+        "requestCount": 11,
+        "writes": 2,
+        "implicitExitBlocked": true,
+        "networkCallsAfterExit": 0
+      }
+    ],
+    "original_red": "red.xml",
+    "no_model_or_real_provider_execution": true
+  },
+  "raw_evidence_hashes": {
+    "red.xml": "e5ff4ce704bbbc2f9a784b83e8625029d04fa80a9d28a499852f8f84e5827c8f",
+    "final-targeted.xml": "df5c9c1a2c83c273b2509c0ee528e9eaeae1a638797726c03e37f9bb2c3882d1",
+    "adjacent.xml": "b1202ff903cd8eb6324cf7952f055131dabbd88deadfcd4ae863078db7ca8fcf",
+    "final-boundaries.xml": "db51132ccd314e1b40dfc9660912e30fc18c7b5f25af484caee67aef129e17e6",
+    "afad-baseline-editor.xml": "aa8d75e19f09492286cdbbe7468a211216a8304c23e92e0e3dea71db166ce447",
+    "final-types.json": "8010bf0624c23fc2aa693d41136902e4580fe972d742df56742f993607609166",
+    "source-fingerprints.json": "4d3be261d17e3ed137e9a5b1fd9c1b3ecef5b8974efabefe58fc940154089b7f"
+  },
+  "raw_logs_or_real_host_values_included": false,
+  "independent_review": "INDEPENDENT_HOST_REVIEW.json",
+  "independent_original_counterexample_verbatim_green": true,
+  "historicalValidationStage": "Host-unit slice before the separate real107-call backend/browser retest",
+  "subsequentRealRetest": "evidence/real-browser-333f/REAL_BROWSER_RESULT.json"
+}

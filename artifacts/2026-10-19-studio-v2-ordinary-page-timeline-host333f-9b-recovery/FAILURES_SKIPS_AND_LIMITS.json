@@ -1,0 +1,213 @@
+[
+  {
+    "id": "native-final-close",
+    "status": "FIXED",
+    "resolvedBy": "3dc13453f1b45519ba62593179b5ab462a64d978",
+    "diagnostics": [
+      "producer.windows-native/final-close-red.xml"
+    ],
+    "finalEvidence": [
+      "producer.windows-native/after-close-final.xml",
+      "review.windows-close/review-handoff.json"
+    ]
+  },
+  {
+    "id": "native-symlinks",
+    "status": "BLOCKED_NOT_PASSED",
+    "code": "WINERROR_1314",
+    "cases": 2,
+    "evidence": [
+      "producer.windows-native/after-close-final.xml",
+      "review.windows-close/review-handoff.json"
+    ],
+    "policy": "No privilege/security setting change; not included in final helper241 selection."
+  },
+  {
+    "id": "posix-capability",
+    "status": "SKIPPED_NOT_PASSED",
+    "cases": 11,
+    "evidence": [
+      "producer.source-helper/contract-freeze.xml"
+    ],
+    "policy": "Original platform-only cases; same11 retained by independent reviewer."
+  },
+  {
+    "id": "posix-fifo",
+    "status": "SKIPPED_NOT_PASSED",
+    "cases": 1,
+    "evidence": [
+      "producer.ora-classification/service-final.xml"
+    ],
+    "policy": "Separate older ORA service scope, not an additional skip inside helper241."
+  },
+  {
+    "id": "windows-owner-unavailable",
+    "status": "FIXED",
+    "resolvedBy": "82cee4cc7fef8b00d4b4a32c86dcf48a23e46dad",
+    "diagnostics": [
+      "producer.windows-owner/owner-image-red.xml"
+    ]
+  },
+  {
+    "id": "ora-reader-classification",
+    "status": "FIXED",
+    "resolvedBy": "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1",
+    "diagnostics": [
+      "producer.ora-classification/original-red.xml",
+      "producer.ora-classification/classifier-red.xml"
+    ]
+  },
+  {
+    "id": "receipt-identity-progress",
+    "status": "FIXED",
+    "resolvedBy": "ccd9a7a2037a900e5ae1b2e66b13d0975b3643cd",
+    "evidence": [
+      "review.comic-receipts/review-handoff.json"
+    ]
+  },
+  {
+    "id": "malformed-retained-marker",
+    "status": "FIXED",
+    "resolvedBy": "d3212e32eb0a66d852ba490c3e23b8e113847526",
+    "evidence": [
+      "review.comic-marker/review-handoff.json"
+    ]
+  },
+  {
+    "id": "unbound-page-confirm",
+    "status": "FIXED_UNDER_EXPLICIT_ACTUAL_AUTHORITY",
+    "resolvedBy": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "diagnostics": [
+      "producer.combined-red/combined-focus-final.xml"
+    ],
+    "finalEvidence": [
+      "producer.source-helper/helper-freeze.xml",
+      "producer.source-helper/service-freeze.xml",
+      "review.source-helper/review-handoff.json"
+    ]
+  },
+  {
+    "id": "withdrawn-owner-copy-binding-clearing",
+    "status": "WITHDRAWN_NOT_ACCEPTANCE",
+    "diagnosticsGroup": "withdrawn.owner-copy-experiment",
+    "policy": "No experiment code/raw copied-owner snapshots/patches admitted; passing experimental logs do not establish acceptance."
+  },
+  {
+    "id": "helper-old-fixture-prerequisite",
+    "status": "TEST_PREREQUISITE_CORRECTED",
+    "resolvedBy": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "diagnostics": [
+      "producer.source-helper/legacy-service-prerequisite.xml",
+      "producer.source-helper/legacy-trusted-source.xml"
+    ],
+    "policy": "Original4+13+3 assertion ASTs retained; actual Host/NOVEL/canonical owners and correctly paired backends required."
+  },
+  {
+    "id": "http404-became503",
+    "status": "FIXED",
+    "resolvedBy": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "diagnostics": [
+      "producer.source-helper/http-limits-r2.xml"
+    ],
+    "finalEvidence": [
+      "producer.source-helper/http-freeze.xml"
+    ]
+  },
+  {
+    "id": "late-callback",
+    "status": "FIXED",
+    "resolvedBy": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "diagnostics": [
+      "producer.source-helper/late-callback-before-fix.xml"
+    ],
+    "finalEvidence": [
+      "producer.source-helper/helper-freeze.xml"
+    ]
+  },
+  {
+    "id": "old-http180",
+    "status": "INCOMPLETE_NOT_PASSED",
+    "diagnostics": [
+      "producer.source-helper/http-regression-timeout.txt"
+    ],
+    "resolution": "Final same-source HTTP51 completed under bounded600s. Earlier partial count discarded, never claimed."
+  },
+  {
+    "id": "old-http-worker-stop",
+    "status": "CONTROLLED_STOP_NOT_PASSED",
+    "diagnostics": [
+      "producer.source-helper/http-original-r2.json",
+      "producer.source-helper/http-original-r2-stopped.txt"
+    ]
+  },
+  {
+    "id": "windows-waveform-baseline",
+    "status": "KNOWN_UNACCEPTED_BASELINE_FAILURE",
+    "cases": 20,
+    "evidence": [
+      "review.comic-http/review-handoff.json",
+      "review.comic-http/parent-waveform.xml"
+    ],
+    "code": "STUDIO_WAVEFORM_PLATFORM_UNSUPPORTED",
+    "policy": "Same20 failures on exact parent; no fix or whole-product green claimed."
+  },
+  {
+    "id": "postgres",
+    "status": "NOT_RUN",
+    "latestDeselections": {
+      "http": 50,
+      "service": 63
+    },
+    "policy": "Deselections are not passes/skips; existing PG requirements unchanged."
+  },
+  {
+    "id": "backend-types",
+    "status": "NOT_RUN",
+    "policy": "No configured/installed backend static checker; syntax compilation only."
+  },
+  {
+    "id": "full-ui-browser-combination",
+    "status": "ORDINARY_LEAF_PAGE_LOCAL_TERMINAL_PASS_PENDING_FINAL_REVIEW",
+    "candidate": "333f384a125068a4e7714b347f687f5dc2034123",
+    "evidence": "Sanitized terminal handoff projection; producer browser1/File144/Host14, not fullV2 acceptance."
+  },
+  {
+    "id": "host-safe-exit",
+    "status": "C009_SUPERSEDED_BY_333F_UNKNOWN_FIX_INDEPENDENT_REVIEW_PENDING",
+    "candidate": "333f384a125068a4e7714b347f687f5dc2034123",
+    "originalRedCandidate": "afadce662a36972e46d60286a9e43fbce31fb6fa"
+  },
+  {
+    "id": "frontend-adjacent-baseline",
+    "status": "KNOWN_UNACCEPTED_BASELINE_FAILURE",
+    "passed": 224,
+    "failed": 18,
+    "policy": "Producer reports exact same18 names as b341; retained separately from the older20 waveform failures."
+  },
+  {
+    "id": "unsupported-source-families",
+    "status": "EXPLICITLY_REFUSED",
+    "families": [
+      "Studio",
+      "ORA",
+      "private origins",
+      "lineage",
+      "ancestry",
+      "source layer-stack expansion"
+    ]
+  },
+  {
+    "id": "live-model-gpu-video-external-editor",
+    "status": "NOT_RUN_NOT_AUTHORIZED_IN_THIS_SLICE"
+  },
+  {
+    "id": "host-unknown-exit-333f",
+    "status": "LOCAL_FIX_AND_REAL_ORDINARY_PAGE_RETEST_PASS_INDEPENDENT_REVIEW_PENDING",
+    "commit": "333f384a125068a4e7714b347f687f5dc2034123",
+    "distinctPassingHostAdjacentCases": 355,
+    "unchangedAfadBaselineFailures": 17,
+    "baselineFailureNamesAndMessagesExactlyEqual": true,
+    "rawTraceExcluded": true,
+    "unreviewedNLEExcluded": true
+  }
+]

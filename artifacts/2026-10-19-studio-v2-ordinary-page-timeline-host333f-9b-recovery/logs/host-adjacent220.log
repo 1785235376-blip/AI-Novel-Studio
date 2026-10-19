@@ -1,0 +1,49 @@
+
+ RUN  v2.1.9 D:/codex数据/2026-10-19/task/studio-v2-host-unknown-exit-p2/frontend
+
+ ✓ src/creative/StudioManualMaskAuthoring.test.tsx (39 tests) 439ms
+ ✓ src/creative/StudioMediaRouteChoice.test.tsx (9 tests) 446ms
+ ✓ src/creative/StudioTimelineAssetHandoff.test.tsx (20 tests) 893ms
+ ✓ src/creative/TimelineSourceEditing.phase6.test.tsx (21 tests) 834ms
+ ✓ src/creative/studioAudioTimeline.additive.test.tsx (34 tests) 836ms
+ ✓ src/creative/TimelineTransferReview.test.tsx (20 tests) 1966ms
+   ✓ locates the exact original mounted clip without saving, granting consent or discarding local controls 345ms
+ ✓ src/creative/StudioTimelineTrim.test.tsx (29 tests) 3029ms
+   ✓ mounted original inspector trim > routes trim without start/at position, supports one-step undo/redo and explicit Save 843ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3039ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 348ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 595ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 412ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 411ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 411ms
+ ✓ src/creative/IndependentStudioManualMask.test.tsx (11 tests) 4779ms
+   ✓ manual mask in the original Image workspace > loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection 712ms
+   ✓ manual mask in the original Image workspace > uses the original shared semaphore to block imports and navigation until POST settles 509ms
+   ✓ manual mask in the original Image workspace > uses original discard confirmation for local dirty pixels 438ms
+   ✓ manual mask in the original Image workspace > latches host ABA before a late save response, with no Asset merge or selection 394ms
+   ✓ manual mask in the original Image workspace > latches host-rebind ABA before a late save response, with no Asset merge or selection 399ms
+   ✓ manual mask in the original Image workspace > latches project ABA before a late save response, with no Asset merge or selection 397ms
+   ✓ manual mask in the original Image workspace > latches actor ABA before a late save response, with no Asset merge or selection 397ms
+   ✓ manual mask in the original Image workspace > latches branch ABA before a late save response, with no Asset merge or selection 385ms
+   ✓ manual mask in the original Image workspace > latches session ABA before a late save response, with no Asset merge or selection 403ms
+   ✓ manual mask in the original Image workspace > keeps lost-save uncertainty after stale retry and provides an original list read 522ms
+ ✓ src/creative/IndependentStudioAudioWav.test.tsx (28 tests) 8540ms
+   ✓ WAV controls through the original mounted production workspace > keeps blank controls absent, original defaults explicit, and preview/queue/execute separate 451ms
+   ✓ WAV controls through the original mounted production workspace > executes explicit controls, shows only measured WAV output, byte-checks privately and requires explicit review 556ms
+   ✓ WAV controls through the original mounted production workspace > keeps the shared workspace locked while executing and never submits a duplicate execution 369ms
+   ✓ WAV controls through the original mounted production workspace > cancels the queued task with exact CAS while preserving its selected controls 322ms
+   ✓ WAV controls through the original mounted production workspace > rejects private candidate size outside the verified output measurement 388ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host ABA 427ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches host-rebind ABA 426ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches project ABA 433ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches actor ABA 432ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches branch ABA 418ms
+   ✓ WAV controls through the original mounted production workspace > redacts private candidate and latches session ABA 419ms
+   ✓ WAV controls through the original mounted production workspace > ignores a candidate response arriving after project identity ABA 386ms
+
+ Test Files  10 passed (10)
+      Tests  220 passed (220)
+   Start at  18:52:06
+   Duration  13.32s (transform 3.88s, setup 133ms, collect 17.10s, tests 24.80s, environment 6.16s, prepare 1.03s)
+
+JUNIT report written to D:/codex数据/2026-10-19/task/host-unknown-exit-p2-evidence-20261019/adjacent.xml

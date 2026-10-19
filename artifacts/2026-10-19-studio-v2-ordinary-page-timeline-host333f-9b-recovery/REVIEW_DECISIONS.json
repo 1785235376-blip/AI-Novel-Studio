@@ -1,0 +1,185 @@
+[
+  {
+    "evidence": "review.source-contract/review-handoff.json",
+    "status": "NO_BLOCKING_FINDINGS_IN_FROZEN_MINIMAL_SOURCE_READ_CONTRACT",
+    "commit": "82956b90f9d43711ebeac740fa62df6694525c9f",
+    "parent": "fa705d8af4926ccd3e02b211e2d04c2e265f32e5",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "evidence": "review.windows-close/review-handoff.json",
+    "status": "REPORTED_P2_CLOSED_HELPER_MAY_ENTER_CONTROLLED_OWNER_WIRING",
+    "commit": "3dc13453f1b45519ba62593179b5ab462a64d978",
+    "parent": "54e33e7d5c216d2f0be94b5923f4da336a433f95",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "95ccbe75f20a5f5c0a6ce641f8b628b9f0b3436415ac196875c076e5a0b587c7"
+  },
+  {
+    "evidence": "review.windows-owner/review-handoff.json",
+    "status": "OWNER_CAPABILITY_ACCEPTED_CLASSIFICATION_BLOCKS_FULL_ORA_UNTIL_1ED_REVIEW",
+    "commit": "9545c8b7ee2171082d35708915a670f08535aac3",
+    "parent": null,
+    "findingsCount": 0,
+    "resultNumbers": {
+      "native-owner.total": 107,
+      "native-owner.passed": 96,
+      "native-owner.failed": 0,
+      "native-owner.errors": 0,
+      "native-owner.skipped": 11,
+      "ora-services.total": 33,
+      "ora-services.passed": 31,
+      "ora-services.failed": 1,
+      "ora-services.errors": 0,
+      "ora-services.skipped": 1,
+      "pre-owner-ora.total": 1,
+      "pre-owner-ora.passed": 0,
+      "pre-owner-ora.failed": 1,
+      "pre-owner-ora.errors": 0,
+      "pre-owner-ora.skipped": 0,
+      "pre-owner-png-jpeg.total": 2,
+      "pre-owner-png-jpeg.passed": 0,
+      "pre-owner-png-jpeg.failed": 2,
+      "pre-owner-png-jpeg.errors": 0,
+      "pre-owner-png-jpeg.skipped": 0
+    },
+    "originalResultProjectionSha256": "e7b90acddd11f272318e8a9eb9d005a7f4e6eb5d7beab5012244d4f2cb5c3eb8"
+  },
+  {
+    "evidence": "review.ora-classification/review-handoff.json",
+    "status": "WINDOWS_OWNER_PLUS_CLASSIFICATION_SLICE_READY_FOR_COMPOSITION_ACCEPTANCE",
+    "commit": "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1",
+    "parent": "9545c8b7ee2171082d35708915a670f08535aac3",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "evidence": "review.comic-preview/review-receipt.json",
+    "status": null,
+    "commit": "f8882f3575873c129e886792b24e035f212f0bac",
+    "parent": null,
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "evidence": "review.comic-recovery/review-handoff.json",
+    "status": "BLOCKING_P2_RECEIPT_INCARNATION_CORRUPTION_CAN_DUPLICATE_EFFECTS",
+    "commit": null,
+    "parent": null,
+    "findingsCount": 1,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "evidence": "review.comic-receipts/review-handoff.json",
+    "status": "ORIGINAL_FINDINGS_FIXED_BUT_ONE_REMAINING_P2_MALFORMED_CREATION_MARKER",
+    "commit": null,
+    "parent": "58e8edebc7f8e553bc167b077581e57f74c2f07c",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "evidence": "review.comic-marker/review-handoff.json",
+    "status": "MARKER_P2_CLOSED_BACKEND_SLICE_MAY_ENTER_HTTP_WIRING_ACCEPTANCE",
+    "commit": "612a104e3107bb5658aba3d94ae7f0c6e11008f9",
+    "parent": "efe165a24cb3e2dcdbf2f3206c54546c43bb826a",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "3a9741f863b312bbbc37affa6aced27d17956e02348b070210d74a287eb91293"
+  },
+  {
+    "evidence": "review.comic-http/review-handoff.json",
+    "status": "HTTP_SLICE_NO_NEW_BLOCKER_READY_FOR_PARENT_COMPOSITION",
+    "commit": "608f629b218d1b299ee25d551957b0397fe2a2e5",
+    "parent": "612a104e3107bb5658aba3d94ae7f0c6e11008f9",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "515ebb8cc2e28285940ca41c8a7ffc25c521b7444bd951cf455139456040e700"
+  },
+  {
+    "evidence": "review.source-helper/review-handoff.json",
+    "status": "NO_NEW_BLOCKER_HELPER_SLICE_READY_FOR_REAL_BROWSER_COMPOSITION",
+    "commit": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "parent": "82956b90f9d43711ebeac740fa62df6694525c9f",
+    "findingsCount": 0,
+    "resultNumbers": {
+      "contract-final.total": 120,
+      "contract-final.passed": 109,
+      "contract-final.failed": 0,
+      "contract-final.errors": 0,
+      "contract-final.skipped": 11,
+      "helper-final.total": 14,
+      "helper-final.passed": 14,
+      "helper-final.failed": 0,
+      "helper-final.errors": 0,
+      "helper-final.skipped": 0,
+      "http-final.total": 51,
+      "http-final.passed": 51,
+      "http-final.failed": 0,
+      "http-final.errors": 0,
+      "http-final.skipped": 0,
+      "service-final.total": 67,
+      "service-final.passed": 67,
+      "service-final.failed": 0,
+      "service-final.errors": 0,
+      "service-final.skipped": 0,
+      "borrowed-isolation.total": 3,
+      "borrowed-isolation.passed": 3,
+      "borrowed-isolation.failed": 0,
+      "borrowed-isolation.errors": 0,
+      "borrowed-isolation.skipped": 0
+    },
+    "originalResultProjectionSha256": "017fb03af7b63db71bef7ff10e1dbd59a56df9d4e75837cb1ab6003969d25374"
+  },
+  {
+    "evidence": "review.ui-client/review-handoff.json",
+    "status": "CLIENT_SLICE_BLOCKED_TWO_REPRODUCIBLE_CONTRACT_FINDINGS",
+    "commit": "cc4eed66d59050a2f5ad83fa76148eb264508bc7",
+    "parent": "608f629b218d1b299ee25d551957b0397fe2a2e5",
+    "findingsCount": 2,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "dc3a6be75e48850b9a50a1f6d980520128ca0e86d5ec0591ed2cda02c2d2c6c2"
+  },
+  {
+    "evidence": "review.ui-identity/review-handoff.json",
+    "status": "BOTH_CLIENT_P2_FINDINGS_CLOSED",
+    "commit": "350ba499e7fe00128dedba45a647f3d6e5907837",
+    "parent": "cc4eed66d59050a2f5ad83fa76148eb264508bc7",
+    "findingsCount": 0,
+    "resultNumbers": {
+      "all_client_tests.total": 42,
+      "all_client_tests.passed": 42,
+      "all_client_tests.failed": 0,
+      "all_client_tests.pending": 0,
+      "original_unchanged_counterexamples.total": 7,
+      "original_unchanged_counterexamples.passed": 2,
+      "original_unchanged_counterexamples.failed": 0,
+      "original_unchanged_counterexamples.pending": 5,
+      "native_windows_tsc_exit": 0
+    },
+    "originalResultProjectionSha256": "38de411c43b0a7ae3b83b9b896897384202093b2ee20bc843df8fb68950ef888"
+  },
+  {
+    "evidence": "review.ui-panel/review-handoff.json",
+    "status": "PANEL_SLICE_NO_NEW_BLOCKER_READY_FOR_REAL_HTTP_UI_COMPOSITION",
+    "commit": "fccb09ed7bb7f1b42eb074e7841b22ce8d018e80",
+    "parent": "350ba499e7fe00128dedba45a647f3d6e5907837",
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "0487b94e5b2e74e1a02bc209e9667c5ed24c2a700f882e2222bff39e4370faf5"
+  },
+  {
+    "evidence": "review.host-exit/review-handoff.json",
+    "status": "P2_SAFE_EXIT_NAVIGATION_BLOCK_CONFIRMED_BY_FIXED_SOURCE_AND_RETAINED_GET_ONLY_EVIDENCE",
+    "commit": "775b6de8fe6aa3c9eee53e7d926e4554cc255c81",
+    "parent": null,
+    "findingsCount": 0,
+    "resultNumbers": {},
+    "originalResultProjectionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  }
+]

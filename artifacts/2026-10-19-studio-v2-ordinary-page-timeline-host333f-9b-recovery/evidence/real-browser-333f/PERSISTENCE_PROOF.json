@@ -1,0 +1,1354 @@
+{
+  "before_restart": {
+    "project": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+    "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+    "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+    "timeline_id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+    "sources": [
+      {
+        "id": "83b0b10f-ab6d-4a77-9b88-c485a9180d3a",
+        "metadata": "task-private/83b0b10f-ab6d-4a77-9b88-c485a9180d3a.json",
+        "version": 2,
+        "approved_at": "2026-10-19T11:09:24.390046+00:00",
+        "sha256": "bda54e0848c87a54eaa0b7ccaa29ba98e90ade60a655a92bc8b55e0dc07f0945",
+        "unbound": true,
+        "no_private_origins_or_lineage": true,
+        "original_http_download_matches_disk": true
+      },
+      {
+        "id": "981d23c8-9d45-495e-876d-37b649e46da9",
+        "metadata": "task-private/981d23c8-9d45-495e-876d-37b649e46da9.json",
+        "version": 2,
+        "approved_at": "2026-10-19T11:09:25.218998+00:00",
+        "sha256": "5751e027cc43cf9595d457afbeee1933f12b9c04f6aaf805510e1d84a09a6ace",
+        "unbound": true,
+        "no_private_origins_or_lineage": true,
+        "original_http_download_matches_disk": true
+      }
+    ],
+    "derived_assets": [
+      {
+        "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+        "metadata": "task-private/30333a0d-dde6-462a-bbe9-35979b3432d6.json",
+        "bytes": 6354,
+        "sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+        "version": 1,
+        "approval_inherited": false,
+        "origin": {
+          "contract": "studio-comic-page-asset/1",
+          "actor": "local-author",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+          "index": 0,
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "source": {
+            "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+            "version": 2,
+            "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+            "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a"
+          },
+          "width": 320,
+          "height": 640,
+          "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        },
+        "preview_bytes_equal_disk_and_original_download": true,
+        "source_pixel_160_260": [
+          17,
+          34,
+          51
+        ]
+      },
+      {
+        "id": "36540331-f5cc-4469-b056-631156b87abf",
+        "metadata": "task-private/36540331-f5cc-4469-b056-631156b87abf.json",
+        "bytes": 6713,
+        "sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+        "version": 1,
+        "approval_inherited": false,
+        "origin": {
+          "contract": "studio-comic-page-asset/1",
+          "actor": "local-author",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+          "index": 1,
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "source": {
+            "id": "bc555897-2693-4115-91e0-e59c42382e40",
+            "version": 2,
+            "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+            "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828"
+          },
+          "width": 320,
+          "height": 640,
+          "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        },
+        "preview_bytes_equal_disk_and_original_download": true,
+        "source_pixel_160_260": [
+          51,
+          102,
+          153
+        ]
+      }
+    ],
+    "pages": [
+      {
+        "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+        "version": 2,
+        "status": "APPROVED",
+        "document_unchanged_from_approved_seed": true,
+        "original_http_row_unchanged": true
+      },
+      {
+        "id": "bc555897-2693-4115-91e0-e59c42382e40",
+        "version": 2,
+        "status": "APPROVED",
+        "document_unchanged_from_approved_seed": true,
+        "original_http_row_unchanged": true
+      }
+    ],
+    "timeline_file": {
+      "path": "task-private/ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513.json",
+      "sha256": "dc051a2c3e150bd4270d82c40bf5696c2e9bfa77ac4d7daa3cc598ec8d363e4a",
+      "row": {
+        "comic_handoff_origin": {
+          "contract": "studio-comic-timeline-handoff/1",
+          "creation_snapshot": {
+            "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+            "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+            "version": 1
+          },
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+        },
+        "created_at": "2026-10-19T11:10:47.015827+00:00",
+        "created_by": "local-author",
+        "history": [],
+        "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+        "scope": {
+          "mode": "local",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae"
+        },
+        "status": "DRAFT",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 20000,
+          "fps": 24,
+          "height": 360,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-1",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                    "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-2",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                    "id": "36540331-f5cc-4469-b056-631156b87abf",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 10000,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "comic-pages-video",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 640
+        },
+        "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+        "title": "SYNTHETIC Browser Leaf Image Draft",
+        "updated_at": "2026-10-19T11:10:47.015827+00:00",
+        "updated_by": "local-author",
+        "version": 1
+      },
+      "receipt_row": {
+        "actor": "local-author",
+        "confirm": {
+          "acknowledge_losses": true,
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+          "reviewed_preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324"
+        },
+        "contract": "studio-comic-timeline-handoff/1",
+        "created_at": "2026-10-19T11:10:22.553748+00:00",
+        "id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+        "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "preview": {
+          "actor": "local-author",
+          "approval_inherited": false,
+          "automatic_dispatch": false,
+          "contract": "studio-comic-timeline-handoff/1",
+          "duration_ms": 20000,
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "losses": [
+            "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+            "NO_PANEL_MOTION_OR_AUDIO",
+            "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+            "ORIGINAL_COMIC_PAGES_UNCHANGED"
+          ],
+          "model_called": false,
+          "pages": [
+            {
+              "bytes": 6354,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a",
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              "width": 320
+            },
+            {
+              "bytes": 6713,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828",
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              },
+              "width": 320
+            }
+          ],
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "video_rendered": false
+        },
+        "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+        "scope": {
+          "mode": "local",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae"
+        },
+        "status": "DRAFT_CREATED",
+        "steps": [
+          {
+            "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+            "asset_version": 1,
+            "state": "READY"
+          },
+          {
+            "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+            "asset_version": 1,
+            "state": "READY"
+          }
+        ],
+        "timeline_snapshot": {
+          "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "version": 1
+        },
+        "version": 4
+      },
+      "original_http_timeline": {
+        "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "title": "SYNTHETIC Browser Leaf Image Draft",
+        "version": 1,
+        "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 20000,
+          "fps": 24,
+          "height": 360,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-1",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                    "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-2",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                    "id": "36540331-f5cc-4469-b056-631156b87abf",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 10000,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "comic-pages-video",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 640
+        },
+        "created_at": "2026-10-19T11:10:47.015827+00:00",
+        "updated_at": "2026-10-19T11:10:47.015827+00:00",
+        "branch_id": null,
+        "comic_handoff_origin": {
+          "contract": "studio-comic-timeline-handoff/1",
+          "creation_snapshot": {
+            "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+            "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+            "version": 1
+          },
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+        }
+      },
+      "original_request_id_readback": {
+        "id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+        "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+        "version": 4,
+        "status": "DRAFT_CREATED",
+        "steps": [
+          {
+            "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+            "asset_version": 1,
+            "state": "READY",
+            "observed_state": "READY"
+          },
+          {
+            "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+            "asset_version": 1,
+            "state": "READY",
+            "observed_state": "READY"
+          }
+        ],
+        "preview": {
+          "actor": "local-author",
+          "approval_inherited": false,
+          "automatic_dispatch": false,
+          "contract": "studio-comic-timeline-handoff/1",
+          "duration_ms": 20000,
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "losses": [
+            "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+            "NO_PANEL_MOTION_OR_AUDIO",
+            "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+            "ORIGINAL_COMIC_PAGES_UNCHANGED"
+          ],
+          "model_called": false,
+          "pages": [
+            {
+              "bytes": 6354,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a",
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              "width": 320
+            },
+            {
+              "bytes": 6713,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828",
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              },
+              "width": 320
+            }
+          ],
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "video_rendered": false
+        },
+        "timeline_snapshot": {
+          "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "version": 1
+        },
+        "automatic_dispatch": false,
+        "model_called": false,
+        "video_rendered": false,
+        "approval_inherited": false,
+        "source_current_checked": false,
+        "timeline": {
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+          "title": "SYNTHETIC Browser Leaf Image Draft",
+          "version": 1,
+          "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "timeline": {
+            "captions": [],
+            "duration_ms": 20000,
+            "fps": 24,
+            "height": 360,
+            "schema_version": 2,
+            "tracks": [
+              {
+                "clips": [
+                  {
+                    "fade_in_ms": 0,
+                    "fade_out_ms": 0,
+                    "gain_db": 0.0,
+                    "height": 360,
+                    "id": "comic-page-1",
+                    "in_ms": 0,
+                    "include_audio": false,
+                    "muted": false,
+                    "opacity": 1.0,
+                    "out_ms": 10000,
+                    "source_snapshot": {
+                      "asset_kind": "image",
+                      "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                      "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                      "kind": "ASSET",
+                      "version": 1
+                    },
+                    "speed_den": 1,
+                    "speed_num": 1,
+                    "start_ms": 0,
+                    "width": 640,
+                    "x": 0,
+                    "y": 0
+                  },
+                  {
+                    "fade_in_ms": 0,
+                    "fade_out_ms": 0,
+                    "gain_db": 0.0,
+                    "height": 360,
+                    "id": "comic-page-2",
+                    "in_ms": 0,
+                    "include_audio": false,
+                    "muted": false,
+                    "opacity": 1.0,
+                    "out_ms": 10000,
+                    "source_snapshot": {
+                      "asset_kind": "image",
+                      "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                      "id": "36540331-f5cc-4469-b056-631156b87abf",
+                      "kind": "ASSET",
+                      "version": 1
+                    },
+                    "speed_den": 1,
+                    "speed_num": 1,
+                    "start_ms": 10000,
+                    "width": 640,
+                    "x": 0,
+                    "y": 0
+                  }
+                ],
+                "gain_db": 0.0,
+                "id": "comic-pages-video",
+                "kind": "VIDEO",
+                "muted": false,
+                "order": 0,
+                "role": "PRIMARY"
+              }
+            ],
+            "width": 640
+          },
+          "created_at": "2026-10-19T11:10:47.015827+00:00",
+          "updated_at": "2026-10-19T11:10:47.015827+00:00",
+          "branch_id": null,
+          "comic_handoff_origin": {
+            "contract": "studio-comic-timeline-handoff/1",
+            "creation_snapshot": {
+              "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+              "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+              "version": 1
+            },
+            "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+            "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+            "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+          }
+        },
+        "timeline_state": "CREATION_SNAPSHOT"
+      }
+    },
+    "status": "PASS",
+    "video_rendered": false,
+    "model_called": false,
+    "automatic_dispatch": false,
+    "http": [
+      {
+        "method": "GET",
+        "path": "/api/novels/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/experimental/comic-layouts/records",
+        "status": 200,
+        "sha256": "9adc81dfd14ee498671e1226fd8c8edaa8100d08591e1a486142d5a83a0c1f51"
+      },
+      {
+        "method": "GET",
+        "path": "/api/assets/83b0b10f-ab6d-4a77-9b88-c485a9180d3a/download?novel_id=comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "status": 200,
+        "sha256": "bda54e0848c87a54eaa0b7ccaa29ba98e90ade60a655a92bc8b55e0dc07f0945"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/assets/30333a0d-dde6-462a-bbe9-35979b3432d6/download",
+        "status": 200,
+        "sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106"
+      },
+      {
+        "method": "GET",
+        "path": "/api/assets/981d23c8-9d45-495e-876d-37b649e46da9/download?novel_id=comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "status": 200,
+        "sha256": "5751e027cc43cf9595d457afbeee1933f12b9c04f6aaf805510e1d84a09a6ace"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/assets/36540331-f5cc-4469-b056-631156b87abf/download",
+        "status": 200,
+        "sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/production/timelines/45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "status": 200,
+        "sha256": "4afe2c9fb25d3130d518f6faebc40610fb7ab3ace8fe71737f65a8b9b842a6eb"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/production/comic-handoffs/23d483af-860f-4904-8e25-da40657f4622",
+        "status": 200,
+        "sha256": "21c4310c1eb15b1eba617492837d097ffc3ce46bb857b8869a7e481737e97c28"
+      }
+    ]
+  },
+  "after_restart": {
+    "project": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+    "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+    "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+    "timeline_id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+    "sources": [
+      {
+        "id": "83b0b10f-ab6d-4a77-9b88-c485a9180d3a",
+        "metadata": "task-private/83b0b10f-ab6d-4a77-9b88-c485a9180d3a.json",
+        "version": 2,
+        "approved_at": "2026-10-19T11:09:24.390046+00:00",
+        "sha256": "bda54e0848c87a54eaa0b7ccaa29ba98e90ade60a655a92bc8b55e0dc07f0945",
+        "unbound": true,
+        "no_private_origins_or_lineage": true,
+        "original_http_download_matches_disk": true
+      },
+      {
+        "id": "981d23c8-9d45-495e-876d-37b649e46da9",
+        "metadata": "task-private/981d23c8-9d45-495e-876d-37b649e46da9.json",
+        "version": 2,
+        "approved_at": "2026-10-19T11:09:25.218998+00:00",
+        "sha256": "5751e027cc43cf9595d457afbeee1933f12b9c04f6aaf805510e1d84a09a6ace",
+        "unbound": true,
+        "no_private_origins_or_lineage": true,
+        "original_http_download_matches_disk": true
+      }
+    ],
+    "derived_assets": [
+      {
+        "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+        "metadata": "task-private/30333a0d-dde6-462a-bbe9-35979b3432d6.json",
+        "bytes": 6354,
+        "sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+        "version": 1,
+        "approval_inherited": false,
+        "origin": {
+          "contract": "studio-comic-page-asset/1",
+          "actor": "local-author",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+          "index": 0,
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "source": {
+            "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+            "version": 2,
+            "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+            "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a"
+          },
+          "width": 320,
+          "height": 640,
+          "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        },
+        "preview_bytes_equal_disk_and_original_download": true,
+        "source_pixel_160_260": [
+          17,
+          34,
+          51
+        ]
+      },
+      {
+        "id": "36540331-f5cc-4469-b056-631156b87abf",
+        "metadata": "task-private/36540331-f5cc-4469-b056-631156b87abf.json",
+        "bytes": 6713,
+        "sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+        "version": 1,
+        "approval_inherited": false,
+        "origin": {
+          "contract": "studio-comic-page-asset/1",
+          "actor": "local-author",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+          "index": 1,
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "source": {
+            "id": "bc555897-2693-4115-91e0-e59c42382e40",
+            "version": 2,
+            "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+            "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828"
+          },
+          "width": 320,
+          "height": 640,
+          "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        },
+        "preview_bytes_equal_disk_and_original_download": true,
+        "source_pixel_160_260": [
+          51,
+          102,
+          153
+        ]
+      }
+    ],
+    "pages": [
+      {
+        "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+        "version": 2,
+        "status": "APPROVED",
+        "document_unchanged_from_approved_seed": true,
+        "original_http_row_unchanged": true
+      },
+      {
+        "id": "bc555897-2693-4115-91e0-e59c42382e40",
+        "version": 2,
+        "status": "APPROVED",
+        "document_unchanged_from_approved_seed": true,
+        "original_http_row_unchanged": true
+      }
+    ],
+    "timeline_file": {
+      "path": "task-private/ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513.json",
+      "sha256": "dc051a2c3e150bd4270d82c40bf5696c2e9bfa77ac4d7daa3cc598ec8d363e4a",
+      "row": {
+        "comic_handoff_origin": {
+          "contract": "studio-comic-timeline-handoff/1",
+          "creation_snapshot": {
+            "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+            "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+            "version": 1
+          },
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+        },
+        "created_at": "2026-10-19T11:10:47.015827+00:00",
+        "created_by": "local-author",
+        "history": [],
+        "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "privacy_level": "LOCAL_ONLY",
+        "project_incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+        "scope": {
+          "mode": "local",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae"
+        },
+        "status": "DRAFT",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 20000,
+          "fps": 24,
+          "height": 360,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-1",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                    "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-2",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                    "id": "36540331-f5cc-4469-b056-631156b87abf",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 10000,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "comic-pages-video",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 640
+        },
+        "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+        "title": "SYNTHETIC Browser Leaf Image Draft",
+        "updated_at": "2026-10-19T11:10:47.015827+00:00",
+        "updated_by": "local-author",
+        "version": 1
+      },
+      "receipt_row": {
+        "actor": "local-author",
+        "confirm": {
+          "acknowledge_losses": true,
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+          "reviewed_preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324"
+        },
+        "contract": "studio-comic-timeline-handoff/1",
+        "created_at": "2026-10-19T11:10:22.553748+00:00",
+        "id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+        "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "preview": {
+          "actor": "local-author",
+          "approval_inherited": false,
+          "automatic_dispatch": false,
+          "contract": "studio-comic-timeline-handoff/1",
+          "duration_ms": 20000,
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "losses": [
+            "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+            "NO_PANEL_MOTION_OR_AUDIO",
+            "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+            "ORIGINAL_COMIC_PAGES_UNCHANGED"
+          ],
+          "model_called": false,
+          "pages": [
+            {
+              "bytes": 6354,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a",
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              "width": 320
+            },
+            {
+              "bytes": 6713,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828",
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              },
+              "width": 320
+            }
+          ],
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "video_rendered": false
+        },
+        "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+        "scope": {
+          "mode": "local",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae"
+        },
+        "status": "DRAFT_CREATED",
+        "steps": [
+          {
+            "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+            "asset_version": 1,
+            "state": "READY"
+          },
+          {
+            "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+            "asset_version": 1,
+            "state": "READY"
+          }
+        ],
+        "timeline_snapshot": {
+          "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "version": 1
+        },
+        "version": 4
+      },
+      "original_http_timeline": {
+        "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "title": "SYNTHETIC Browser Leaf Image Draft",
+        "version": 1,
+        "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 20000,
+          "fps": 24,
+          "height": 360,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-1",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                    "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 360,
+                  "id": "comic-page-2",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 10000,
+                  "source_snapshot": {
+                    "asset_kind": "image",
+                    "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                    "id": "36540331-f5cc-4469-b056-631156b87abf",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 10000,
+                  "width": 640,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "comic-pages-video",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 640
+        },
+        "created_at": "2026-10-19T11:10:47.015827+00:00",
+        "updated_at": "2026-10-19T11:10:47.015827+00:00",
+        "branch_id": null,
+        "comic_handoff_origin": {
+          "contract": "studio-comic-timeline-handoff/1",
+          "creation_snapshot": {
+            "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+            "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+            "version": 1
+          },
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+          "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+        }
+      },
+      "original_request_id_readback": {
+        "id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+        "request_id": "23d483af-860f-4904-8e25-da40657f4622",
+        "version": 4,
+        "status": "DRAFT_CREATED",
+        "steps": [
+          {
+            "asset_id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+            "asset_version": 1,
+            "state": "READY",
+            "observed_state": "READY"
+          },
+          {
+            "asset_id": "36540331-f5cc-4469-b056-631156b87abf",
+            "asset_version": 1,
+            "state": "READY",
+            "observed_state": "READY"
+          }
+        ],
+        "preview": {
+          "actor": "local-author",
+          "approval_inherited": false,
+          "automatic_dispatch": false,
+          "contract": "studio-comic-timeline-handoff/1",
+          "duration_ms": 20000,
+          "incarnation": "file:99b4f035-29fe-4322-a664-2968662d4678",
+          "losses": [
+            "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+            "NO_PANEL_MOTION_OR_AUDIO",
+            "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+            "ORIGINAL_COMIC_PAGES_UNCHANGED"
+          ],
+          "model_called": false,
+          "pages": [
+            {
+              "bytes": 6354,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "7a34d41c3f2a3c8c372572fc11b34e912005395b11f4fa50ad798757a056d13a",
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              "width": 320
+            },
+            {
+              "bytes": 6713,
+              "duration_ms": 10000,
+              "height": 640,
+              "png_sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+              "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+              "source": {
+                "document_digest": "0a8fce0c57fd4f45c86b7f5bd6f17c5bb59413b46d56527297416a0c8010e828",
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              },
+              "width": 320
+            }
+          ],
+          "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+          "request": {
+            "fps": 24,
+            "height": 360,
+            "pages": [
+              {
+                "duration_ms": 10000,
+                "id": "d12c3c47-4e79-4069-a186-bb8f148c4d27",
+                "review_digest": "b2901e0e7fd631b2fafd7c4dc75a2aabfdd2835cc85023100f95ec020e70e85e",
+                "version": 2
+              },
+              {
+                "duration_ms": 10000,
+                "id": "bc555897-2693-4115-91e0-e59c42382e40",
+                "review_digest": "7798fd3616c0202a47ce1d42d6a9b177a85d8a1744cecb66596a51ab3f3d664c",
+                "version": 2
+              }
+            ],
+            "title": "SYNTHETIC Browser Leaf Image Draft",
+            "width": 640
+          },
+          "request_digest": "ed15b4cb5257e7aad6765f7d207c7c2fdf293a8830a23c13e179384ba55d7399",
+          "scope_key": "ba1dea2b0934d23bf768154ccd6ded0ddd0c661a2829893bf66c89c3623f9513",
+          "video_rendered": false
+        },
+        "timeline_snapshot": {
+          "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "version": 1
+        },
+        "automatic_dispatch": false,
+        "model_called": false,
+        "video_rendered": false,
+        "approval_inherited": false,
+        "source_current_checked": false,
+        "timeline": {
+          "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+          "novel_id": "comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+          "title": "SYNTHETIC Browser Leaf Image Draft",
+          "version": 1,
+          "timeline_digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+          "timeline": {
+            "captions": [],
+            "duration_ms": 20000,
+            "fps": 24,
+            "height": 360,
+            "schema_version": 2,
+            "tracks": [
+              {
+                "clips": [
+                  {
+                    "fade_in_ms": 0,
+                    "fade_out_ms": 0,
+                    "gain_db": 0.0,
+                    "height": 360,
+                    "id": "comic-page-1",
+                    "in_ms": 0,
+                    "include_audio": false,
+                    "muted": false,
+                    "opacity": 1.0,
+                    "out_ms": 10000,
+                    "source_snapshot": {
+                      "asset_kind": "image",
+                      "digest": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106",
+                      "id": "30333a0d-dde6-462a-bbe9-35979b3432d6",
+                      "kind": "ASSET",
+                      "version": 1
+                    },
+                    "speed_den": 1,
+                    "speed_num": 1,
+                    "start_ms": 0,
+                    "width": 640,
+                    "x": 0,
+                    "y": 0
+                  },
+                  {
+                    "fade_in_ms": 0,
+                    "fade_out_ms": 0,
+                    "gain_db": 0.0,
+                    "height": 360,
+                    "id": "comic-page-2",
+                    "in_ms": 0,
+                    "include_audio": false,
+                    "muted": false,
+                    "opacity": 1.0,
+                    "out_ms": 10000,
+                    "source_snapshot": {
+                      "asset_kind": "image",
+                      "digest": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8",
+                      "id": "36540331-f5cc-4469-b056-631156b87abf",
+                      "kind": "ASSET",
+                      "version": 1
+                    },
+                    "speed_den": 1,
+                    "speed_num": 1,
+                    "start_ms": 10000,
+                    "width": 640,
+                    "x": 0,
+                    "y": 0
+                  }
+                ],
+                "gain_db": 0.0,
+                "id": "comic-pages-video",
+                "kind": "VIDEO",
+                "muted": false,
+                "order": 0,
+                "role": "PRIMARY"
+              }
+            ],
+            "width": 640
+          },
+          "created_at": "2026-10-19T11:10:47.015827+00:00",
+          "updated_at": "2026-10-19T11:10:47.015827+00:00",
+          "branch_id": null,
+          "comic_handoff_origin": {
+            "contract": "studio-comic-timeline-handoff/1",
+            "creation_snapshot": {
+              "digest": "1351a5ac3c49f2f81bba60362b320b2c3d75cb48d73f38814973352d05832540",
+              "id": "45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+              "version": 1
+            },
+            "preview_digest": "f3b0c1fc8aa80e1635816748f49b502db2fef5c61c1808266fb64047287f5324",
+            "receipt_id": "6ff100c3-eeb8-48dc-89e7-b8f11a0a2346",
+            "request_id": "23d483af-860f-4904-8e25-da40657f4622"
+          }
+        },
+        "timeline_state": "CREATION_SNAPSHOT"
+      }
+    },
+    "status": "PASS",
+    "video_rendered": false,
+    "model_called": false,
+    "automatic_dispatch": false,
+    "http": [
+      {
+        "method": "GET",
+        "path": "/api/novels/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/experimental/comic-layouts/records",
+        "status": 200,
+        "sha256": "9adc81dfd14ee498671e1226fd8c8edaa8100d08591e1a486142d5a83a0c1f51"
+      },
+      {
+        "method": "GET",
+        "path": "/api/assets/83b0b10f-ab6d-4a77-9b88-c485a9180d3a/download?novel_id=comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "status": 200,
+        "sha256": "bda54e0848c87a54eaa0b7ccaa29ba98e90ade60a655a92bc8b55e0dc07f0945"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/assets/30333a0d-dde6-462a-bbe9-35979b3432d6/download",
+        "status": 200,
+        "sha256": "14acfc9ce5e6c04a9396503452cb3d160b7e4f1185057186a357408200090106"
+      },
+      {
+        "method": "GET",
+        "path": "/api/assets/981d23c8-9d45-495e-876d-37b649e46da9/download?novel_id=comic-333f-62d4db425eb44ce18c8df1b99e0c41ae",
+        "status": 200,
+        "sha256": "5751e027cc43cf9595d457afbeee1933f12b9c04f6aaf805510e1d84a09a6ace"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/assets/36540331-f5cc-4469-b056-631156b87abf/download",
+        "status": 200,
+        "sha256": "0bb4d24bcbc151124667d4cd2ecb9dab926e3188ca227d8e699584381417e9d8"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/production/timelines/45c4e0a3-ac13-404e-9da3-1f4b5de9ef55",
+        "status": 200,
+        "sha256": "4afe2c9fb25d3130d518f6faebc40610fb7ab3ace8fe71737f65a8b9b842a6eb"
+      },
+      {
+        "method": "GET",
+        "path": "/api/projects/comic-333f-62d4db425eb44ce18c8df1b99e0c41ae/studio/production/comic-handoffs/23d483af-860f-4904-8e25-da40657f4622",
+        "status": 200,
+        "sha256": "21c4310c1eb15b1eba617492837d097ffc3ce46bb857b8869a7e481737e97c28"
+      }
+    ]
+  }
+}

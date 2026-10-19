@@ -1,0 +1,177 @@
+[
+  {
+    "status": "M",
+    "path": "app/creative/production_execution.py",
+    "blob": "af1e6879290af790b3f3adebbdb2c86544391c29",
+    "sha256": "388977da69a92b5acdfb365df1d943f23204f5e1ccabe859937ce768ae6471ee",
+    "bytes": 126976
+  },
+  {
+    "status": "M",
+    "path": "app/creative/production_execution_api.py",
+    "blob": "f9af3656d0f770a6762e3e7bf3e49a3f3698ebf4",
+    "sha256": "f9ba27f05fafec90812defdadf6c77bc7ec5327d4b9d4b8b798e09acb88b2ac0",
+    "bytes": 27654
+  },
+  {
+    "status": "M",
+    "path": "app/creative/workspace.py",
+    "blob": "834e2582affaea5dad11a44a814ddd37801654d5",
+    "sha256": "4f06f7974ed5468dc18f9c587d79b13e234128265348770836e7f85b8f83f354",
+    "bytes": 50011
+  },
+  {
+    "status": "M",
+    "path": "app/creative/workspace_api.py",
+    "blob": "04b98a95526dc41ffa51171e905190afed455c57",
+    "sha256": "71fa39a8e8cdd13bd796b37b7f394d8943dfce97fc8a837effba1e3f20956254",
+    "bytes": 34326
+  },
+  {
+    "status": "M",
+    "path": "app/experimental/comic_layouts.py",
+    "blob": "b3c4423c388e5dc92d726f4ca671287f2ff29983",
+    "sha256": "a360e189c1567f8fd913ec7fa2d4c4b26c53d04ce215b0172611e2f0e7ae9341",
+    "bytes": 63844
+  },
+  {
+    "status": "A",
+    "path": "app/experimental/comic_timeline_handoff.py",
+    "blob": "4f630861c334bee40a91e9874aa09a17d2ededfa",
+    "sha256": "14bce29eb43bab7cc7c81159d4e959707ba47d530d8d5f86ce9d0f31412bdb1d",
+    "bytes": 40750
+  },
+  {
+    "status": "A",
+    "path": "app/services/asset_bounded_file_windows.py",
+    "blob": "b1a44c550f54dc83b93699915e7994aeee961d47",
+    "sha256": "3e3d9d10b002bb9f012314cf016c2693342fbf12644cc2d7125c79d94c114103",
+    "bytes": 12284
+  },
+  {
+    "status": "M",
+    "path": "app/services/asset_library_service.py",
+    "blob": "2b277bc130c2f9885361d7f09bdb0db080dc7275",
+    "sha256": "0b85ca227046e950bdf1b3a758e023bf54eb63f0ebb7640f47a9ae11004699a4",
+    "bytes": 85058
+  },
+  {
+    "status": "A",
+    "path": "app/services/comic_page_origin.py",
+    "blob": "b592506040079e199f35d633798e7c496d841ec2",
+    "sha256": "1a1f07a07bc10c1fe070646428c80b7c0fb1929a77777c012ecafb117addda8a",
+    "bytes": 4707
+  },
+  {
+    "status": "A",
+    "path": "app/services/comic_page_source_reads.py",
+    "blob": "2c9c5be98ac497b89fded3b0fe6c6144d1e243b8",
+    "sha256": "de5bd6c7341c46a5daf5069c36f483f1eb1ba1d57590d04d9820af728ad98942",
+    "bytes": 14982
+  },
+  {
+    "status": "M",
+    "path": "frontend/src/experimental/ComicLayoutsPanel.layers.test.tsx",
+    "blob": "317ab3e9ecf0346436e36eebe12364eaeac7aa16",
+    "sha256": "7ce7e7bc29aae184baee3cf098ad0f24dda065e3d0e4587a611ea63a3573ab67",
+    "bytes": 16048
+  },
+  {
+    "status": "M",
+    "path": "tests/test_asset_bounded_content_additive.py",
+    "blob": "107e57e78d23a52926d65a67b0de05697fad73f6",
+    "sha256": "0964fd63a5530d2ccb97876430999e48bcc94bb7b037dee46f262a40557167ab",
+    "bytes": 7929
+  },
+  {
+    "status": "A",
+    "path": "tests/test_asset_bounded_content_windows.py",
+    "blob": "012fb05c949db258a06ea24af3001807b36c8883",
+    "sha256": "410f90076cd60205afe38d25fed471167a80725f31ced2065629027cfbce3934",
+    "bytes": 27545
+  },
+  {
+    "status": "A",
+    "path": "tests/test_asset_bounded_owner_windows.py",
+    "blob": "5b758a6e0540f53877c2f3ffdc13244b155fcddb",
+    "sha256": "0c5704812949937907488b9c263aad261b92759ba99ac8a9746b4fc5aee7830e",
+    "bytes": 8573
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_handoff_creation_marker.py",
+    "blob": "36acdd8e08972f9e9713e6739870cfe0960500b5",
+    "sha256": "fe6b0228a0ed983492e0b5b59dbebe86a750a1fdf082173a2429fbbb5c5d9e1d",
+    "bytes": 3694
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_handoff_receipt_identity.py",
+    "blob": "ec9a3008498180c30d2d3e8ec81265ff41a4d87f",
+    "sha256": "3696098ad0c66de5bca8735067eb03dab7cfab35e9b14aa98bbbcdb3a2c90b65",
+    "bytes": 9348
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_handoff_receipt_progress.py",
+    "blob": "17dc0f7fa468345c80f0d12f87367b503ac8c670",
+    "sha256": "b900c3706b2223f9246d482f949599ebc97e42212443921f8384e9d0d2b9f2d6",
+    "bytes": 7836
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_handoff_source_integration.py",
+    "blob": "fa74579882907c5a0baeb32d2ade68d41d4fa42c",
+    "sha256": "b6e622b7fde16be9d0a01616632cd6024e25b3b0a6ed166d42f5545be83c4eb8",
+    "bytes": 18750
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_ora_asset_classification.py",
+    "blob": "23127b237b96c8505f01e0a95d686462fd6f489a",
+    "sha256": "f49f14b95933917355a4114581c56abf82905b7f66538a7e1247fddb9e1a1842",
+    "bytes": 6270
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_page_source_contract.py",
+    "blob": "e6ca523f5f6b695c94f3e1c48c6fba7df941fbee",
+    "sha256": "58d00885f00d028c4372c67f892dc6334423f07417bd903be007d936565edf10",
+    "bytes": 27856
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_timeline_handoff.py",
+    "blob": "1820d66b21964471d5ae868afb11616e43f69be7",
+    "sha256": "e0df2972f86aa5c88d9e054ca31c358e51cd40bccffdba7122c548406c17e99d",
+    "bytes": 16506
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_timeline_handoff_http.py",
+    "blob": "cb77310c221dc5b3dc6a79f07156c0b1f4b5c9ae",
+    "sha256": "f9c0bce4d25945c0fd01adaff8750cdffe03ca789ee96cb1baf1e54ab27941e5",
+    "bytes": 23828
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_timeline_handoff_http_limits.py",
+    "blob": "88c30d58812641b029d97b7687d31f9f0ab530e8",
+    "sha256": "256b89e52cf541fa2c7e11fe8dc7f629fb02a5b7152083379b59390131c2798a",
+    "bytes": 9184
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_timeline_handoff_recovery.py",
+    "blob": "6609dcf58b00d9f77d5054184a1c68881d40e79d",
+    "sha256": "585476912e308a21e172061aa05c008b27c7aa46c3d2352253edf60d8b50d659",
+    "bytes": 20136
+  },
+  {
+    "status": "A",
+    "path": "tests/test_comic_windows_handoff_integration.py",
+    "blob": "0a87ef7540d7b86c128d6d057aee4dfec4066dc1",
+    "sha256": "7616dc05003c60ed819cdce8c1849a92343b38e47dd0ab72d2a50e6455f2ec34",
+    "bytes": 8130
+  }
+]

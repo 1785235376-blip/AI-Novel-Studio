@@ -1,0 +1,2748 @@
+[
+  {
+    "evidence": "producer.windows-native/after-close-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 62,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_real_file_symlink_never_opens_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_leaf_swap_to_symlink_after_lstat_never_reads_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/existing-owner-baseline.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/final-close-green.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/final-close-red.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_guard_revoked_after_real_final_close_prevents_return",
+        "type": null,
+        "messageSha256": "9fb1b51ec4faf28cca6147ba5c547f3e9da0c7a42652e956b33110756b7eb11f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/native-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 61,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_real_file_symlink_never_opens_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_leaf_swap_to_symlink_after_lstat_never_reads_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/native-r1.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 46,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_real_file_symlink_never_opens_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_leaf_swap_to_symlink_after_lstat_never_reads_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-native/native-r2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 54,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_real_file_symlink_never_opens_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_leaf_swap_to_symlink_after_lstat_never_reads_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-owner/native-owner-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 96,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 13
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_real_file_symlink_never_opens_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_windows::test_leaf_swap_to_symlink_after_lstat_never_reads_target",
+        "reasonCode": "WINERROR_1314",
+        "reason": "BLOCKED: file-symlink creation denied, winerror=1314; no privilege change",
+        "reasonSha256": "112345327d71b1700db25a270c54301b0b8341dda41c32807f39c562f14ac3bf"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-owner/ora-service-r1.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 31,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 1
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_ora_review_attach::test_review_attach_render_reedit_exact_replay_and_legacy_reads[file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      }
+    ],
+    "skipped": [
+      {
+        "test": "tests.test_comic_ora_staging::test_orphan_special_file_rejected_without_opening[file]",
+        "reasonCode": "POSIX_FIFO_UNAVAILABLE",
+        "reason": "FIFO fixture unavailable on this platform",
+        "reasonSha256": "e4f1bad3c144e4b536c1b13e4e99b3a7e87300870273b07efb2b802cd4ef560d"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-owner/owner-image-green.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-owner/owner-image-red.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_reads_real_png_and_jpeg_without_metadata_changes[PNG-file]",
+        "type": null,
+        "messageSha256": "cb4b8a73c60cbdf22ba906d4b4d4e7996b71b8b9b79d301e72929512f8a3941f"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_reads_real_png_and_jpeg_without_metadata_changes[JPEG-file]",
+        "type": null,
+        "messageSha256": "cb4b8a73c60cbdf22ba906d4b4d4e7996b71b8b9b79d301e72929512f8a3941f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.windows-owner/owner-negative-r1.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 24,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.ora-classification/classifier-green.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 18,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.ora-classification/classifier-red.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 13,
+      "failed": 4,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[private-stage-project-fallback-file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[private-stage-bound-scope-file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[reviewed-project-fallback-file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[reviewed-bound-scope-file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.ora-classification/original-red.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_ora_review_attach::test_review_attach_render_reedit_exact_replay_and_legacy_reads[file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.ora-classification/service-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 58,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_comic_ora_staging::test_orphan_special_file_rejected_without_opening[file]",
+        "reasonCode": "POSIX_FIFO_UNAVAILABLE",
+        "reason": "FIFO fixture unavailable on this platform",
+        "reasonSha256": "e4f1bad3c144e4b536c1b13e4e99b3a7e87300870273b07efb2b802cd4ef560d"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.combined-red/combined-focus-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 21,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_windows_handoff_integration::test_external_artwork_full_page_then_save_and_real_reopen[file]",
+        "type": null,
+        "messageSha256": "d850fa21ef74e60cf6deb9f91f229ce0a8db324d6424f9086ec1bca5919f426e"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.combined-red/native-combo-r1.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 5,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_windows_handoff_integration::test_external_artwork_full_page_then_save_and_real_reopen[file]",
+        "type": null,
+        "messageSha256": "b3401824aad1005b28c4337d3c1738a6ddc4b1bab549b94c326c32f985d4078b"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.combined-red/original-windows-gates.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_timeline_handoff::test_original_uploaded_artwork_preserves_native_bounded_read_boundary[file]",
+        "type": null,
+        "messageSha256": "fb0b9c31a8ebca5968b5aa4ee45fbe5671ce8c1508dd865c43d9e98b6841e984"
+      },
+      {
+        "test": "tests.test_comic_timeline_handoff_recovery::test_unindexed_native_png_keeps_original_no_follow_boundary[file]",
+        "type": null,
+        "messageSha256": "fb0b9c31a8ebca5968b5aa4ee45fbe5671ce8c1508dd865c43d9e98b6841e984"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/http-image-first.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/http-image-r2.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_windows_handoff_http::test_real_file_http_source_confirm_save_reopen_and_uncertain_readback[file-/api-normal-image]",
+        "type": null,
+        "messageSha256": "f1d9316745c5c80dcae76bd1088e2cdee8345e27fb6bb6954936fd0a86f1c2be"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/scoped-view-green.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-bridge-green.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-bridge-red.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_windows_handoff_integration::test_external_artwork_full_page_then_save_and_real_reopen[file]",
+        "type": null,
+        "messageSha256": "b6527f07c2e2e475d527fa304f5c12330a78cde697f6a6aac33f6b6cd3f72266"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-scope-r1.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 9,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[project-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[branch-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[old-incarnation-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-view-final.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 11,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[project-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[branch-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[old-incarnation-file]",
+        "type": null,
+        "messageSha256": "bdc6e1682fd1e943369971dc0f843a4d1c25bfc25b697f91a648370bd1cd062f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-view-isolation-final.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "withdrawn.owner-copy-experiment/source-view-scope-r1.xml",
+    "classification": "WITHDRAWN_NOT_ACCEPTANCE",
+    "counts": {
+      "passed": 10,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[project-file]",
+        "type": null,
+        "messageSha256": "bd99e185b1d82d909fc17a6d383e7885f382d42fdf808ee1c21267dc9367cf3e"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[branch-file]",
+        "type": null,
+        "messageSha256": "9be5b75af86ce47d08c090dcd0ffd2fee1b7eef6fa32d6c9c41deac0c2226b32"
+      },
+      {
+        "test": "tests.test_comic_handoff_source_scope::test_preview_and_confirm_reject_foreign_or_retired_sources_before_bytes[old-incarnation-file]",
+        "type": null,
+        "messageSha256": "9940218deaffd41af9c3426ec04c6767359bdbd0b630780841bfe4a07ca4ca4f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-contract/contract-expanded.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 55,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_page_source_contract::test_four_authoritative_leaf_ids_are_readable_without_other_ids[file-/api]",
+        "type": null,
+        "messageSha256": "7f742d69daea2a188683ac6b314bd06d35678675ff325b57e062782d89c3c4c9"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[five-ids-file-/api]",
+        "type": null,
+        "messageSha256": "7f742d69daea2a188683ac6b314bd06d35678675ff325b57e062782d89c3c4c9"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-contract/contract-phase-safe.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 58,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-contract/contract-safety-first.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 31,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_page_source_contract::test_image_authority_and_novel_write_do_not_replace_novel_source_read[file-/api]",
+        "type": null,
+        "messageSha256": "dab76830400db5072bbe60cec47a4f379b5365cf832d5840ff8dff6ba14e2969"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-contract/final-targeted.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 109,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-contract/leaf-first.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/contract-freeze.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 109,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/contract-regression.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 109,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-api-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 13,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-first.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-freeze.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-recovery.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/helper-revocations.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/http-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 51,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/http-freeze.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 51,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/http-limits-r2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 15,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_timeline_handoff_http_limits::test_observation_and_confirm_do_not_activate_missing_project_identity[file-/api]",
+        "type": null,
+        "messageSha256": "7730ffd96c059a4214b632e86fb0b315a9c16808c7caa09fdd53040953d0c4e4"
+      },
+      {
+        "test": "tests.test_comic_timeline_handoff_http_limits::test_observation_and_confirm_do_not_activate_missing_project_identity[file-/api/v1]",
+        "type": null,
+        "messageSha256": "7730ffd96c059a4214b632e86fb0b315a9c16808c7caa09fdd53040953d0c4e4"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/late-callback-before-fix.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_handoff_source_integration::test_old_asset_commit_callback_cannot_borrow_a_new_phase_or_request[file-/api]",
+        "type": null,
+        "messageSha256": "fb0b9c31a8ebca5968b5aa4ee45fbe5671ce8c1508dd865c43d9e98b6841e984"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/late-callback-fixed.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/legacy-service-prerequisite.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_timeline_handoff::test_original_uploaded_artwork_preserves_native_bounded_read_boundary[file]",
+        "type": null,
+        "messageSha256": "6db1091eff2e736d81872d4cb5b38d2bcc642a1eda243718907e100a2448e312"
+      },
+      {
+        "test": "tests.test_comic_windows_handoff_integration::test_external_artwork_full_page_then_save_and_real_reopen[file]",
+        "type": null,
+        "messageSha256": "6db1091eff2e736d81872d4cb5b38d2bcc642a1eda243718907e100a2448e312"
+      },
+      {
+        "test": "tests.test_comic_windows_handoff_integration::test_missing_native_capability_refuses_full_page_without_effects[file]",
+        "type": null,
+        "messageSha256": "e76efc8d049d197e02e9af5bba4c6e9247f4f4a3423ee0b10b156565260c752d"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/legacy-trusted-source-r2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/legacy-trusted-source.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/service-freeze.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 67,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "producer.source-helper/service-recovery-regression.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 67,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-contract/independent-r2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-contract/independent.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-contract/original-r2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 109,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-contract/original.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "errors": 120,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_page_source_contract::test_actual_owner_leaf_grant_reads_under_target_binding_without_changing_it[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_handles_cannot_be_constructed_copied_serialized_or_replaced_by_data[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_grant_rejects_other_request_thread_copied_context_and_owner[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_grant_cannot_move_between_async_tasks[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_expiry_exception_and_authority_handles_never_become_read_grants[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[missing-token-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[unknown-token-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[remote-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[forwarded-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_host_session_is_required_before_mint[not-request-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_image_authority_and_novel_write_do_not_replace_novel_source_read[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_exact_allowlist_and_native_byte_limits[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[approval-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[version-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[digest-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[project-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[branch-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[private-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[lineage-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[parent-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_every_read_rechecks_actual_metadata_and_closed_leaf_profile[deleted-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_corrupt_content_is_rejected_by_original_native_reader[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[version-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[document-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[review-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[actor-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[epoch-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_rechecks_page_and_rolls_back_any_scope_mutation[unrelated-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_exit_rechecks_real_session_aba_and_features[revoke-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_exit_rechecks_real_session_aba_and_features[same-binding-aba-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_phase_exit_rechecks_real_session_aba_and_features[feature-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_four_authoritative_leaf_ids_are_readable_without_other_ids[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_only_original_mounted_receivers_can_mint[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_actual_binding_order_and_foreign_binding_are_not_bypassed[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_studio_result_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_comic_ora_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_comic_page_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_manual_mask_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_model_reference_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_video_reference_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_text_result_origin-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_owner_actor_id-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[_project_binding-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[lineage-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_refuses_private_or_derived_source_families_even_with_falsey_markers[ancestors-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[version-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[boolean-version-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[review-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[unapproved-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[hidden-id-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[five-ids-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_mint_requires_exact_reviewed_page_and_dependency_capacity[zero-ids-file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_missing_original_project_marker_is_never_created[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_handle_capacity_uses_real_registered_frames_and_releases_all[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_novel_read_revocation_and_original_leases_cover_phase_exit[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_foreign_phase_exit_is_rejected_without_closing_the_original_phase[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_page_source_contract::test_original_native_final_close_rechecks_current_host[file-/api]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_reads_real_png_and_jpeg_without_metadata_changes[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_reads_real_png_and_jpeg_without_metadata_changes[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[PNG-digest-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[PNG-truncate-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[PNG-extend-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[PNG-missing-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[JPEG-digest-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[JPEG-truncate-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[JPEG-extend-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_corrupt_image_preserves_integrity_error_and_metadata[JPEG-missing-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_capability_missing_never_opens_or_falls_back[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_capability_missing_never_opens_or_falls_back[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_native_failure_projects_fixed_integrity_error[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_native_failure_projects_fixed_integrity_error[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_guard_denied_before_binary_path[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_guard_denied_before_binary_path[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_same_bytes_identity_retarget_is_invalid[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_same_bytes_identity_retarget_is_invalid[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_final_real_close_revocation_returns_no_bytes[PNG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_owner_final_real_close_revocation_returns_no_bytes[JPEG-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_original_private_ora_staging_bounded_read[none-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_original_private_ora_staging_bounded_read[corrupt-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_original_private_ora_staging_bounded_read[identity-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_owner_windows::test_original_private_ora_staging_bounded_read[revoked-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[True]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[False]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[0]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[-1]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[10]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[1.0]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_invalid_opt_in_limit_rejected_before_path_access[27262976]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_oversize_rejected_before_path_or_binary_read",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_unavailable_primitives_fail_closed_without_default_fallback[O_NOFOLLOW]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_unavailable_primitives_fail_closed_without_default_fallback[O_NONBLOCK]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[private-stage-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[private-stage-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[reviewed-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_generic_ora_refusal_is_not_found_before_bytes[reviewed-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_reviewed_ora_keeps_original_raster_pin_reader[project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_reviewed_ora_keeps_original_raster_pin_reader[bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_ordinary_upload_keeps_original_manual_review_and_generic_read[file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_studio_image_keeps_original_review_and_generic_read[project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_studio_image_keeps_original_review_and_generic_read[bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[null-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[null-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[string-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[string-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[unknown-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[unknown-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[other-version-project-fallback-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      },
+      {
+        "test": "tests.test_comic_ora_asset_classification::test_classifier_does_not_relabel_unknown_marker_as_ora[other-version-bound-scope-file]",
+        "type": null,
+        "messageSha256": "fc0153c2fd94e9a4075c1c8939bdc1feab77a61b58f3a9f7da1756617e207c06"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-close/original-probe-and-finalization.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-close/regression.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 62,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-owner/native-owner.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 96,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-owner/ora-services.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 31,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 1
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_ora_review_attach::test_review_attach_render_reedit_exact_replay_and_legacy_reads[file]",
+        "type": null,
+        "messageSha256": "46a94188f3d425509989a3e030acdb09c58aa3125c33cc76b5bf19c874e200a4"
+      }
+    ],
+    "skipped": [
+      {
+        "test": "tests.test_comic_ora_staging::test_orphan_special_file_rejected_without_opening[file]",
+        "reasonCode": "POSIX_FIFO_UNAVAILABLE",
+        "reason": "FIFO fixture unavailable on this platform",
+        "reasonSha256": "e4f1bad3c144e4b536c1b13e4e99b3a7e87300870273b07efb2b802cd4ef560d"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-owner/pre-owner-ora.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_ora_review_attach::test_review_attach_render_reedit_exact_replay_and_legacy_reads[file]",
+        "type": null,
+        "messageSha256": "cb4b8a73c60cbdf22ba906d4b4d4e7996b71b8b9b79d301e72929512f8a3941f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.windows-owner/pre-owner-png-jpeg.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "::test_owner_reads_real_png_and_jpeg_without_metadata_changes[PNG-file]",
+        "type": null,
+        "messageSha256": "cb4b8a73c60cbdf22ba906d4b4d4e7996b71b8b9b79d301e72929512f8a3941f"
+      },
+      {
+        "test": "::test_owner_reads_real_png_and_jpeg_without_metadata_changes[JPEG-file]",
+        "type": null,
+        "messageSha256": "cb4b8a73c60cbdf22ba906d4b4d4e7996b71b8b9b79d301e72929512f8a3941f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.ora-classification/classification-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 58,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_comic_ora_staging::test_orphan_special_file_rejected_without_opening[file]",
+        "reasonCode": "POSIX_FIFO_UNAVAILABLE",
+        "reason": "FIFO fixture unavailable on this platform",
+        "reasonSha256": "e4f1bad3c144e4b536c1b13e4e99b3a7e87300870273b07efb2b802cd4ef560d"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-recovery/adjacent-tests.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 65,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-recovery/handoff-tests-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 62,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-recovery/handoff-tests.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 61,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_comic_timeline_handoff_recovery::test_two_real_page_png_assets_and_original_twenty_second_draft[file]",
+        "type": null,
+        "messageSha256": "10e13d9fae9091dcad81db49ff32624ea2715088c3ab8f12a28a51276a50a856"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-recovery/integration-probes.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-receipts/malformed-proof.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "::test_missing_receipt_and_retained_null_creation_marker_cannot_duplicate[file]",
+        "type": null,
+        "messageSha256": "c70518077506d2e583566633140f74d480416c433392d38a3df129072fb3302f"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-receipts/new-56.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 56,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-receipts/original-127.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 127,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-marker/marker-and-prior-81.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 81,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-marker/original-127.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 127,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-marker/unchanged-null-and-integration.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-http/adjacent-and-lease.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 163,
+      "failed": 20,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_mounted_route_measures_without_ai_flag_or_product_writes[/api-file]",
+        "type": null,
+        "messageSha256": "902f31af545efee70e134b75429c657128c5d45724e9130654e2705891bb61f0"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_mounted_route_measures_without_ai_flag_or_product_writes[/api/v1-file]",
+        "type": null,
+        "messageSha256": "f3dd49cf00183ab69c9a616f0d2f025e29b182e8c6eda08e00de1204bfc3c265"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-revoke-file]",
+        "type": null,
+        "messageSha256": "8d3efb2a80704e6e8d7a8b5e62f88dd71feb8eec8e24eb2b7b697cfd90730f5b"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-aba-file]",
+        "type": null,
+        "messageSha256": "d5d75b067d69a799489e0013091e607f86c282d50cbb9e5b3d884e16dffc19dc"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-actor-file]",
+        "type": null,
+        "messageSha256": "8561bd73da5beb16c004d3bda099e54ea2c64456b9ccdf7e7e6c69b9dd8344d2"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-feature-file]",
+        "type": null,
+        "messageSha256": "8f70cb2c335f5c94cc09adb6d89618fc64e8f41e317a0518b15642ec9fa3a81b"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-revoke-file]",
+        "type": null,
+        "messageSha256": "67286e154ea96808fa397fca1cb87ef22353ba6c2ee73947793c69e32dda1e55"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-aba-file]",
+        "type": null,
+        "messageSha256": "05a4469757f65fca04bea866788df3a1b3e73b59cdfde24558a557698e36b14a"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-actor-file]",
+        "type": null,
+        "messageSha256": "700868acc5c132c6cbd29ed6447c02d0835122784a52fd19f946371de409777b"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-feature-file]",
+        "type": null,
+        "messageSha256": "54377cc81efebddb269677b44be364d7035a97f71a93a3b9478900629378db51"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-revoke-file]",
+        "type": null,
+        "messageSha256": "ef5d748cf94d9920577e0050b103e9dd535380465f4e4f98e5d9f795dc20512c"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-aba-file]",
+        "type": null,
+        "messageSha256": "c5475161ed253cde7b8ee530f34c8b835fa16712deeb13bc425c6853a88f1b1d"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-feature-file]",
+        "type": null,
+        "messageSha256": "d993820e608bf542586ae7e6e54afadf662775d731d872d7257d3fe25ea50b0c"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-revoke-file]",
+        "type": null,
+        "messageSha256": "7dab3f8e6c1a33fcd6c809f432a84ad36d55a0c883c8ba07501d73058154647e"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-aba-file]",
+        "type": null,
+        "messageSha256": "1ebbcc22700090b0e37c27aceee19d1f9c282728167b39187927d5e2ff8a3cd7"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-feature-file]",
+        "type": null,
+        "messageSha256": "98d35db17a431d92a2fb10e90a823d07244027b4e195fd079931fa66ff9b0494"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api-new-host-session-file]",
+        "type": null,
+        "messageSha256": "f49426fe29922b0b7953314a45872708c93de280111b5e4136378715cc718ceb"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api-branch-header-file]",
+        "type": null,
+        "messageSha256": "759a8c41cd8108a514eefce4ecd832d48ac70413ee806f18bfadeb419a6a01bd"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api/v1-new-host-session-file]",
+        "type": null,
+        "messageSha256": "6a7982c90be52a249cd3c38922a6b525808c5ddf49749a5c50b2def65a7f33b0"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api/v1-branch-header-file]",
+        "type": null,
+        "messageSha256": "a9882bab9634780c9cf183b0a8d6e9266e54cea437bcc46262d1bf3ceef33e50"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-http/http-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 51,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-http/independent-proof-and-boundary-v2.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-http/independent-proof-and-boundary.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 2,
+      "failed": 6,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api-bytes]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      },
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api-dimensions]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      },
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api-count]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      },
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api/v1-bytes]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      },
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api/v1-dimensions]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      },
+      {
+        "test": "::test_real_preview_transport_proof_fails_closed[file-/api/v1-count]",
+        "type": null,
+        "messageSha256": "d1c243988463d04d7e399e4496301df32100ede44c4069d286685d5be5d7f8fd"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.comic-http/parent-waveform.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 44,
+      "failed": 20,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_mounted_route_measures_without_ai_flag_or_product_writes[/api-file]",
+        "type": null,
+        "messageSha256": "b662c3953360282c8733bfa2576f3c9a166eca00154b3070472d7b37cabf2f78"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_mounted_route_measures_without_ai_flag_or_product_writes[/api/v1-file]",
+        "type": null,
+        "messageSha256": "01eaf255dc07ffb492fb0d3126e535bfc884073765b1031be8a77a5e83032843"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-revoke-file]",
+        "type": null,
+        "messageSha256": "e5067abd8674990a763262f9f0d485aa1621aef558faa9699feb54f5f9d6cba3"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-aba-file]",
+        "type": null,
+        "messageSha256": "7b3f2a6c217c1b856835827bcd58bfe16180c5cb19fa20f042402fe5acba6c0d"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-actor-file]",
+        "type": null,
+        "messageSha256": "a58f0204f44afed00f52ffda329067f52ed33d68f3c87b1b0c3e3b5c061c67d0"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api-feature-file]",
+        "type": null,
+        "messageSha256": "a6e519552ff944e151531de4af80e1e11d907b776b2e80ab0264422e8dc193e1"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-revoke-file]",
+        "type": null,
+        "messageSha256": "1675ef6df4062d2b224cdb0bbe2243b16da11f7c556e501493f8e372e2bca4d8"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-aba-file]",
+        "type": null,
+        "messageSha256": "619aa2791b456c1f58d11896b07d7d52696af194294c448eec84be5c12592b64"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-actor-file]",
+        "type": null,
+        "messageSha256": "d15fb91ea9b182aec39801cdb31ca1e8f58029b164ca09fc51b5c09b28fcb47c"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_authority_change_during_original_bounded_read_suppresses_peaks[/api/v1-feature-file]",
+        "type": null,
+        "messageSha256": "bdbc5a31a903a295eb956c4dbc307b998d37a4088431f616a1eaab94180fb7e1"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-revoke-file]",
+        "type": null,
+        "messageSha256": "31c521ad161f8949f2f7a12149d766b69969b4201fa387b020d71f9c296893a7"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-aba-file]",
+        "type": null,
+        "messageSha256": "e3ec95495840edb695dfc8304ee8297733d9e05a4688c2319702c81ac8768f4d"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api-feature-file]",
+        "type": null,
+        "messageSha256": "3cccca34a42b88a9d4bb8a11f503e40014c9d8874c4ab8c0cac1f0f4acc1bee5"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-revoke-file]",
+        "type": null,
+        "messageSha256": "def15cec88de2c47e470b2fb3de387af972c6593df8905b0fa9e74943d9e78bd"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-aba-file]",
+        "type": null,
+        "messageSha256": "dee46a91b86b27a0124362fc6513ed46a2dc981d814447eee6929ac6d2833fff"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_current_authority_at_pcm_checkpoint_suppresses_result[/api/v1-feature-file]",
+        "type": null,
+        "messageSha256": "0e22e6644759cc87615ab2e6dffef38d2a578707dd90c4f6a38cdffe8bbc6c84"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api-new-host-session-file]",
+        "type": null,
+        "messageSha256": "f2791ea5e3acc5939d002e4754d88a13f2f7fe762f583e62cbedbba054acd0a4"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api-branch-header-file]",
+        "type": null,
+        "messageSha256": "da1a1f0b91530570e9cbb4b724f099e66ddd28b959b4a7c409d4572eaf5a0271"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api/v1-new-host-session-file]",
+        "type": null,
+        "messageSha256": "4e4537fbaa8876096a12d13efec11ab12c563cc82e7a3b378743fcd36f842268"
+      },
+      {
+        "test": "tests.test_v2_timeline_waveform_preview_api::test_original_local_author_scope_remains_local_for_a_fresh_request[/api/v1-branch-header-file]",
+        "type": null,
+        "messageSha256": "eb9acd64842b58c1798200c3e5c531198fab8344dbc1ddd364ae393f946e5db1"
+      }
+    ],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-helper/borrowed-isolation.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-helper/contract-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 109,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 11
+    },
+    "failures": [],
+    "skipped": [
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_bounded_reader_matches_default_and_guards_chunks",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_observed_symlink_never_opens_target",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_is_rejected_before_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_swap_to_symlink_between_stat_and_open_is_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_growth_during_guarded_read_fails_integrity",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_same_bytes_replacement_between_stat_and_open_rejected",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fifo_replacement_after_stat_uses_nonblocking_open",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_validation_after_open_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_fd_closed_if_fdopen_fails",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_open_fd_closed_on_mid_read_authority_revocation",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      },
+      {
+        "test": "tests.test_asset_bounded_content_additive::test_authority_error_preserved",
+        "reasonCode": "ORIGINAL_PLATFORM_CAPABILITY",
+        "reason": "bounded original-owner read unsupported on this platform",
+        "reasonSha256": "117355f924ca42397a056d05adc1e58f388495b06fc5192258c8e6af75e740d4"
+      }
+    ],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-helper/helper-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 14,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-helper/http-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 51,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  },
+  {
+    "evidence": "review.source-helper/service-final.xml",
+    "classification": "HISTORICAL_OR_FINAL_EVIDENCE",
+    "counts": {
+      "passed": 67,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "skipped": [],
+    "acceptanceNotInferredFromOldPass": true
+  }
+]

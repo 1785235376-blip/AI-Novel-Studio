@@ -1,0 +1,13 @@
+{
+  "status": "PUBLIC_WHITELIST_VERIFIED",
+  "scope": "Actual credential values, their base64/hex forms and raw auth responses/traces excluded; test-code mock credential literals are fixtures only.",
+  "original_hashes": "ORIGINAL_AND_SANITIZED_HASHES.json",
+  "known_host_value_matches": 0,
+  "encoded_known_host_value_matches": 0,
+  "rawTraceIncluded": false,
+  "withdrawnWIPIncluded": false,
+  "NLE_cb93855fIncluded": false,
+  "source_snapshot": "333f384a125068a4e7714b347f687f5dc2034123",
+  "independent_host_review": "P2_CLOSED",
+  "claimLimit": "Specific known task credential plus static path/key patterns; not a universal security audit."
+}

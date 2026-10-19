@@ -1,0 +1,526 @@
+{
+  "schema": "poemseed-archive-source-map/1",
+  "state": "VERIFIED_LIMITED_ORDINARY_PAGE_TIMELINE_AND_HOST_EXIT_333F_ARCHIVABLE",
+  "uniqueExternalPrerequisite": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "baselinePublicStatus": "Explicitly supplied by parent; no remote requery this preparation.",
+  "backendTip": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+  "backendTree": "255b681a281f4bfa4ec65d0c4079d425287840ee",
+  "backendCommits": [
+    {
+      "commit": "54e33e7d5c216d2f0be94b5923f4da336a433f95",
+      "parents": [
+        "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35"
+      ],
+      "tree": "c7136050dda5da6417edb47a1edd885abf8292d9",
+      "role": "windows_native_reader",
+      "subject": "Add isolated native Windows bounded asset reader and real file tests",
+      "stablePatchId": "64ab91201cc6e8ea4500487fad161d513c7482bf",
+      "changedPaths": [
+        "app/services/asset_bounded_file_windows.py",
+        "tests/test_asset_bounded_content_windows.py"
+      ],
+      "scopeNote": "Historical initial helper; final-close finding fixed by3dc.",
+      "evidenceRefs": [
+        "producer.windows-native/delivery-receipt.json",
+        "producer.windows-native/final-close-red.xml"
+      ]
+    },
+    {
+      "commit": "3dc13453f1b45519ba62593179b5ab462a64d978",
+      "parents": [
+        "54e33e7d5c216d2f0be94b5923f4da336a433f95"
+      ],
+      "tree": "4035e73090d82d9cf038bc1317f3523f9772bddf",
+      "role": "windows_final_close_authority_fix",
+      "subject": "Fence Windows asset return after native close and authority recheck",
+      "stablePatchId": "1b34db0e9a55a0ea520f848d794f7ea98e9d744f",
+      "changedPaths": [
+        "app/services/asset_bounded_file_windows.py",
+        "tests/test_asset_bounded_content_windows.py"
+      ],
+      "scopeNote": "Independent P2 fix accepted; two symlink probes BLOCKED1314.",
+      "evidenceRefs": [
+        "producer.windows-native/final-close-fix-receipt.json",
+        "review.windows-close/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "82cee4cc7fef8b00d4b4a32c86dcf48a23e46dad",
+      "parents": [
+        "3dc13453f1b45519ba62593179b5ab462a64d978"
+      ],
+      "tree": "809bd96073eaf6fdc53ef7a3e0d0b58a276fbcfa",
+      "role": "original_asset_owner_windows_wiring",
+      "subject": "Wire guarded Windows bounded reads into original asset owner",
+      "stablePatchId": "82df3ca8dfecbd97f452a2d5719fc3f82bcec546",
+      "changedPaths": [
+        "app/services/asset_library_service.py",
+        "tests/test_asset_bounded_content_additive.py",
+        "tests/test_asset_bounded_owner_windows.py"
+      ],
+      "scopeNote": "Narrow owner accepted; newly reachable ORA classification fixed by1ed.",
+      "evidenceRefs": [
+        "producer.windows-owner/delivery-receipt.json",
+        "review.windows-owner/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "9545c8b7ee2171082d35708915a670f08535aac3",
+      "parents": [
+        "82cee4cc7fef8b00d4b4a32c86dcf48a23e46dad"
+      ],
+      "tree": "a70f82e78e41d864d06bee8b027b34c87c6e2376",
+      "role": "ora_frontend_fixture_test_only",
+      "subject": "Fix Comic ORA binary test fixtures and exact download assertions",
+      "stablePatchId": "20937b0e6bb0570a6424b3e5e41ba27d52bb5e09",
+      "changedPaths": [
+        "frontend/src/experimental/ComicLayoutsPanel.layers.test.tsx"
+      ],
+      "originalSourceCommit": "fdf1a60945dad60a5041a9b1ac4c3c28f850336a",
+      "originalStablePatchId": "20937b0e6bb0570a6424b3e5e41ba27d52bb5e09",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Exact reviewed test patch; no UI product feature acceptance implied.",
+      "evidenceRefs": [
+        "producer.windows-owner/frontend-receipt.json",
+        "review.windows-owner/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1",
+      "parents": [
+        "9545c8b7ee2171082d35708915a670f08535aac3"
+      ],
+      "tree": "f5880f86ceed4cf48f74af2beb7eb1a514bd0dda",
+      "role": "comic_ora_generic_reader_classification",
+      "subject": "Keep reviewed ORA assets out of generic Comic image routing",
+      "stablePatchId": "c89eb5775ba0ca184490b7c16e12b8827dde5561",
+      "changedPaths": [
+        "app/experimental/comic_layouts.py",
+        "tests/test_comic_ora_asset_classification.py"
+      ],
+      "scopeNote": "Independent File classification slice accepted.",
+      "evidenceRefs": [
+        "producer.ora-classification/delivery-receipt.json",
+        "review.ora-classification/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "0fed911e22a7e67777530da99ef12b0e63e6cf52",
+      "parents": [
+        "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1"
+      ],
+      "tree": "4733745a3bd5234f11579d465cf17309b4e7a754",
+      "role": "comic_handoff_preview",
+      "subject": "Add read-only Comic handoff preview and strict page origin contract",
+      "stablePatchId": "dd21540552c708e5eeaa5fd3d6c71727ae23e838",
+      "changedPaths": [
+        "app/experimental/comic_timeline_handoff.py",
+        "app/services/comic_page_origin.py",
+        "tests/test_comic_timeline_handoff.py"
+      ],
+      "originalSourceCommit": "f8882f3575873c129e886792b24e035f212f0bac",
+      "originalStablePatchId": "dd21540552c708e5eeaa5fd3d6c71727ae23e838",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Mapped original preview slice; whole chain accepted after follow-up fixes.",
+      "evidenceRefs": [
+        "review.comic-preview/review-receipt.json"
+      ]
+    },
+    {
+      "commit": "0491127ab4972b9a0bb44f6fe13b9d04516a3e14",
+      "parents": [
+        "0fed911e22a7e67777530da99ef12b0e63e6cf52"
+      ],
+      "tree": "402a4fe3df319a5ff6ade64763aa9b07aa731e5e",
+      "role": "comic_asset_timeline_recovery",
+      "subject": "Add explicit Comic page Asset and Timeline draft recovery",
+      "stablePatchId": "e7c865ce698b6b43cc5a9ac446cf39c12fca300f",
+      "changedPaths": [
+        "app/creative/production_execution.py",
+        "app/creative/workspace.py",
+        "app/experimental/comic_timeline_handoff.py",
+        "app/services/asset_library_service.py",
+        "tests/test_comic_timeline_handoff.py",
+        "tests/test_comic_timeline_handoff_recovery.py"
+      ],
+      "originalSourceCommit": "58e8edebc7f8e553bc167b077581e57f74c2f07c",
+      "originalStablePatchId": "e7c865ce698b6b43cc5a9ac446cf39c12fca300f",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Mapped original recovery slice; receipt repairs follow.",
+      "evidenceRefs": [
+        "review.comic-recovery/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "ccd9a7a2037a900e5ae1b2e66b13d0975b3643cd",
+      "parents": [
+        "0491127ab4972b9a0bb44f6fe13b9d04516a3e14"
+      ],
+      "tree": "90edcf6e9da3893f58d35736a3141886106e9da7",
+      "role": "comic_receipt_identity_progress_repair",
+      "subject": "Reject inconsistent Comic handoff receipt identity and progress",
+      "stablePatchId": "400fa78f2c6fe3a8b1a39c1d4129a171fdbd77d5",
+      "changedPaths": [
+        "app/experimental/comic_timeline_handoff.py",
+        "tests/test_comic_handoff_receipt_identity.py",
+        "tests/test_comic_handoff_receipt_progress.py"
+      ],
+      "originalSourceCommit": "efe165a24cb3e2dcdbf2f3206c54546c43bb826a",
+      "originalStablePatchId": "400fa78f2c6fe3a8b1a39c1d4129a171fdbd77d5",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Mapped repair; malformed reserved marker repair follows.",
+      "evidenceRefs": [
+        "review.comic-receipts/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "d3212e32eb0a66d852ba490c3e23b8e113847526",
+      "parents": [
+        "ccd9a7a2037a900e5ae1b2e66b13d0975b3643cd"
+      ],
+      "tree": "7f5429de2758f1f59c2e42b2ad97170a532b5b28",
+      "role": "comic_reserved_marker_repair",
+      "subject": "fix(comic): reject malformed retained creation markers",
+      "stablePatchId": "349deea3eb3450b947b5cba66627c4261a89cd70",
+      "changedPaths": [
+        "app/experimental/comic_timeline_handoff.py",
+        "tests/test_comic_handoff_creation_marker.py"
+      ],
+      "originalSourceCommit": "612a104e3107bb5658aba3d94ae7f0c6e11008f9",
+      "originalStablePatchId": "349deea3eb3450b947b5cba66627c4261a89cd70",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Independent original208 plus11 oracle checks; original marker red fixed.",
+      "evidenceRefs": [
+        "review.comic-marker/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "302af7ea75579736aafa6df1c1d6f14ac6229f67",
+      "parents": [
+        "d3212e32eb0a66d852ba490c3e23b8e113847526"
+      ],
+      "tree": "597365363f3da36c6baf9a1f881681eb407b6aed",
+      "role": "windows_combination_tests",
+      "subject": "Add Windows Comic handoff combination checks and native capability gates",
+      "stablePatchId": "f2c984e1ffafd7bc206dfc886cb2b6eb4a782bd7",
+      "changedPaths": [
+        "tests/test_comic_timeline_handoff.py",
+        "tests/test_comic_timeline_handoff_recovery.py",
+        "tests/test_comic_windows_handoff_integration.py"
+      ],
+      "scopeNote": "Capability predicates retain assertions; unbound confirm red later closed by65.",
+      "evidenceRefs": [
+        "producer.combined-red/delivery-receipt.json",
+        "producer.combined-red/combined-focus-final.xml"
+      ]
+    },
+    {
+      "commit": "fa705d8af4926ccd3e02b211e2d04c2e265f32e5",
+      "parents": [
+        "302af7ea75579736aafa6df1c1d6f14ac6229f67"
+      ],
+      "tree": "d0f4cf0e2ae2594817dbfc9374a8e9ebbbad1603",
+      "role": "comic_mounted_http",
+      "subject": "feat(comic): expose explicit timeline handoff HTTP contracts",
+      "stablePatchId": "20c95b1af1b4d6205c203ccdb7c7834bc32a06ad",
+      "changedPaths": [
+        "app/creative/production_execution_api.py",
+        "app/creative/workspace_api.py",
+        "tests/test_comic_timeline_handoff_http.py",
+        "tests/test_comic_timeline_handoff_http_limits.py"
+      ],
+      "originalSourceCommit": "608f629b218d1b299ee25d551957b0397fe2a2e5",
+      "originalStablePatchId": "20c95b1af1b4d6205c203ccdb7c7834bc32a06ad",
+      "originalPatchEquivalent": true,
+      "scopeNote": "Exact reviewed HTTP patch; standalone Windows waveform baseline failures retained.",
+      "evidenceRefs": [
+        "review.comic-http/review-handoff.json",
+        "withdrawn.owner-copy-experiment/http-fixed-bundle-receipt.json"
+      ]
+    },
+    {
+      "commit": "82956b90f9d43711ebeac740fa62df6694525c9f",
+      "parents": [
+        "fa705d8af4926ccd3e02b211e2d04c2e265f32e5"
+      ],
+      "tree": "bb5305bcf22c29f476fe1693bfb2367cfbda1906",
+      "role": "original_owner_page_source_contract",
+      "subject": "Add phase-local approved Comic leaf source reads on original asset owner",
+      "stablePatchId": "20a4590931ac147ac4331f6d41e22a5f7e520852",
+      "changedPaths": [
+        "app/experimental/comic_layouts.py",
+        "app/services/asset_library_service.py",
+        "app/services/comic_page_source_reads.py",
+        "tests/test_comic_page_source_contract.py"
+      ],
+      "scopeNote": "Independent109+4; no helper/Graph integration claimed at this point.",
+      "evidenceRefs": [
+        "producer.source-contract/delivery.json",
+        "review.source-contract/review-handoff.json"
+      ]
+    },
+    {
+      "commit": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+      "parents": [
+        "82956b90f9d43711ebeac740fa62df6694525c9f"
+      ],
+      "tree": "255b681a281f4bfa4ec65d0c4079d425287840ee",
+      "role": "page_source_helper_integration",
+      "subject": "Wire approved leaf source phases through Comic handoff and Timeline Save",
+      "stablePatchId": "8da4171566c6a7bcd9880189cd92b9e1f1a7ac15",
+      "changedPaths": [
+        "app/creative/production_execution.py",
+        "app/creative/production_execution_api.py",
+        "app/experimental/comic_layouts.py",
+        "app/experimental/comic_timeline_handoff.py",
+        "app/services/asset_library_service.py",
+        "app/services/comic_page_source_reads.py",
+        "tests/test_comic_handoff_source_integration.py",
+        "tests/test_comic_timeline_handoff.py",
+        "tests/test_comic_windows_handoff_integration.py"
+      ],
+      "scopeNote": "Independent241 original reruns +3 probes,11 platform skips; browser combination pending.",
+      "evidenceRefs": [
+        "producer.source-helper/delivery.json",
+        "review.source-helper/review-handoff.json"
+      ]
+    }
+  ],
+  "candidateCombination": {
+    "tip": "333f384a125068a4e7714b347f687f5dc2034123",
+    "tree": "89e5548014d64063cfa77bfe2e08c4a101dd6c3f",
+    "commits": [
+      {
+        "commit": "3313c7d8f39061e08d1e35169eeb5f23b25c8c87",
+        "parents": [
+          "82956b90f9d43711ebeac740fa62df6694525c9f"
+        ],
+        "tree": "726e80c41d9382d071b669774889a2e45609107d",
+        "role": "ui_client",
+        "subject": "feat(comic): validate timeline handoff client contracts",
+        "stablePatchId": "4f4bc53c1f38b44cf06681dc59a2e5ad80a072c3",
+        "changedPaths": [
+          "frontend/src/creative/__fixtures__/comicHandoffHttp.json",
+          "frontend/src/creative/comicHandoffAttempt.ts",
+          "frontend/src/creative/studioComicHandoffClient.test.ts",
+          "frontend/src/creative/studioComicHandoffClient.ts"
+        ],
+        "originalSourceCommit": "cc4eed66d59050a2f5ad83fa76148eb264508bc7",
+        "originalStablePatchId": "4f4bc53c1f38b44cf06681dc59a2e5ad80a072c3",
+        "originalPatchEquivalent": true,
+        "evidenceRefs": [
+          "review.ui-client/review-handoff.json"
+        ]
+      },
+      {
+        "commit": "50daee92616c4876866fe31733df887ea5199e54",
+        "parents": [
+          "3313c7d8f39061e08d1e35169eeb5f23b25c8c87"
+        ],
+        "tree": "80a3bf75dde789d962d743d69f78156e357712b3",
+        "role": "ui_identity_p2",
+        "subject": "fix(comic): bind handoff identity and retain checked origin",
+        "stablePatchId": "8490c0a28a495a5a731ba713e544627b1fae4bfb",
+        "changedPaths": [
+          "frontend/src/creative/studioComicHandoffClient.test.ts",
+          "frontend/src/creative/studioComicHandoffClient.ts"
+        ],
+        "originalSourceCommit": "350ba499e7fe00128dedba45a647f3d6e5907837",
+        "originalStablePatchId": "8490c0a28a495a5a731ba713e544627b1fae4bfb",
+        "originalPatchEquivalent": true,
+        "evidenceRefs": [
+          "review.ui-identity/review-handoff.json"
+        ]
+      },
+      {
+        "commit": "775b6de8fe6aa3c9eee53e7d926e4554cc255c81",
+        "parents": [
+          "50daee92616c4876866fe31733df887ea5199e54"
+        ],
+        "tree": "75b786bc1b694392ecb091638fd9157e1e77bdfb",
+        "role": "ui_panel",
+        "subject": "feat(comic): wire explicit whole-page timeline handoff UI",
+        "stablePatchId": "7679c3f8a3e249cd6a2b9f46182592b99b002d9f",
+        "changedPaths": [
+          "frontend/playwright.comic-handoff.config.ts",
+          "frontend/src/creative/StudioComicPanel.tsx",
+          "frontend/src/creative/StudioComicTimelineHandoff.test.tsx",
+          "frontend/src/creative/StudioComicTimelineHandoff.tsx",
+          "frontend/src/experimental/ComicLayoutsPanel.tsx",
+          "frontend/tests/visual/comic-handoff.spec.ts"
+        ],
+        "originalSourceCommit": "fccb09ed7bb7f1b42eb074e7841b22ce8d018e80",
+        "originalStablePatchId": "7679c3f8a3e249cd6a2b9f46182592b99b002d9f",
+        "originalPatchEquivalent": true,
+        "evidenceRefs": [
+          "review.ui-panel/review-handoff.json"
+        ]
+      },
+      {
+        "commit": "b341574ab68f1c5c0db5440de6182673f12ad4ae",
+        "parents": [
+          "775b6de8fe6aa3c9eee53e7d926e4554cc255c81"
+        ],
+        "tree": "07ab1dcbeac770a3bc0b9dc80abb3505d85e3963",
+        "role": "live_http_acceptance_scripts",
+        "subject": "test(comic): add live HTTP handoff acceptance journey",
+        "stablePatchId": "f5c17fbd691bb547172deb0a98ef64a000651303",
+        "changedPaths": [
+          "frontend/playwright.comic-live.config.ts",
+          "frontend/tests/visual/comic-handoff-live.spec.ts"
+        ],
+        "evidenceRefs": []
+      },
+      {
+        "commit": "c0091e39451f5b7a2d488acb6d626a62066ff79e",
+        "parents": [
+          "b341574ab68f1c5c0db5440de6182673f12ad4ae"
+        ],
+        "tree": "b071a2de86e2efc34c0ae7c4848d1dde2fa2553d",
+        "role": "host_safe_exit",
+        "subject": "Keep original Host revalidation reachable after Studio authorization loss",
+        "stablePatchId": "6855844ace0832a53ed79f437ff4af6d5fcc71dc",
+        "changedPaths": [
+          "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+          "frontend/src/creative/IndependentStudioWorkspace.tsx"
+        ],
+        "evidenceRefs": []
+      },
+      {
+        "commit": "0448ffc4b7e4e9cf1a65e40d5a4b65fb0ae00bd3",
+        "parents": [
+          "c0091e39451f5b7a2d488acb6d626a62066ff79e"
+        ],
+        "tree": "5c20d0f305e68350cd03d99d8d1e9831bc3a2f0c",
+        "role": "mapped_page_source_helper",
+        "subject": "Wire approved leaf source phases through Comic handoff and Timeline Save",
+        "stablePatchId": "8da4171566c6a7bcd9880189cd92b9e1f1a7ac15",
+        "changedPaths": [
+          "app/creative/production_execution.py",
+          "app/creative/production_execution_api.py",
+          "app/experimental/comic_layouts.py",
+          "app/experimental/comic_timeline_handoff.py",
+          "app/services/asset_library_service.py",
+          "app/services/comic_page_source_reads.py",
+          "tests/test_comic_handoff_source_integration.py",
+          "tests/test_comic_timeline_handoff.py",
+          "tests/test_comic_windows_handoff_integration.py"
+        ],
+        "originalSourceCommit": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+        "originalStablePatchId": "8da4171566c6a7bcd9880189cd92b9e1f1a7ac15",
+        "originalPatchEquivalent": true,
+        "evidenceRefs": [
+          "review.source-helper/review-handoff.json"
+        ]
+      },
+      {
+        "commit": "afadce662a36972e46d60286a9e43fbce31fb6fa",
+        "parents": [
+          "0448ffc4b7e4e9cf1a65e40d5a4b65fb0ae00bd3"
+        ],
+        "tree": "dac2a169e5bd298560c40bb1cc6a13d033f1d1db",
+        "role": "ordinary_leaf_browser_test",
+        "subject": "Exercise ordinary leaf image pages in real Comic handoff browser test",
+        "stablePatchId": "a88606af79a490cce2727281ddb96f476cc6d0af",
+        "changedPaths": [
+          "frontend/tests/visual/comic-handoff-live.spec.ts"
+        ],
+        "evidenceRefs": []
+      },
+      {
+        "commit": "333f384a125068a4e7714b347f687f5dc2034123",
+        "parents": [
+          "afadce662a36972e46d60286a9e43fbce31fb6fa"
+        ],
+        "tree": "89e5548014d64063cfa77bfe2e08c4a101dd6c3f",
+        "role": "host_unknown_exit_original_controller_snapshot",
+        "subject": "Preserve production UNKNOWN identity across retired Host exit",
+        "stablePatchId": "342caea75b19e4d339e54a4affd89006dd7f2b24",
+        "changedPaths": [
+          "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+          "frontend/src/creative/IndependentStudioWorkspace.tsx",
+          "frontend/src/creative/StoryboardVideoPipeline.phase5.test.tsx",
+          "frontend/src/creative/StudioProductionLeaveRisk.regression.test.tsx",
+          "frontend/src/creative/studioProductionLeaveRisk.ts",
+          "frontend/src/creative/useStoryboardProductionController.ts",
+          "frontend/src/creative/useStudioManualMask.ts",
+          "frontend/src/creative/useStudioMediaExecution.ts",
+          "frontend/src/creative/useStudioTimelineEditor.ts",
+          "frontend/src/creative/useStudioTimelinePlayback.ts",
+          "frontend/src/creative/useStudioTimelineSourceEdit.ts",
+          "frontend/src/creative/useStudioTimelineTransfer.ts"
+        ],
+        "evidenceRefs": []
+      }
+    ],
+    "helperNineFilesByteEqualTo65": true,
+    "hostReview": "P2_CLOSED_BY_ORIGINAL_INDEPENDENT_REVIEW_LIMITED_SCOPE",
+    "realImageBrowserFileTerminalChecks": "PRODUCER_TERMINAL_PASS_ORDINARY_LEAF_PAGE_ONLY",
+    "finalSourceMayChange": false,
+    "notAnUploadAuthorization": true,
+    "hostUnknownFix": {
+      "commit": "333f384a125068a4e7714b347f687f5dc2034123",
+      "status": "P2_CLOSED_ON_FIXED_333F_NO_NEW_BLOCKER_WITHIN_LIMITED_SCOPE",
+      "review": "INDEPENDENT_HOST_REVIEW.json",
+      "originalReportSha256": "7c2a5f7cf052ee742559a855e709eeaac0406e789a3009f2302cdea37fe25613"
+    },
+    "realBrowser333f": {
+      "status": "REAL_BACKEND_FILE_SYNTHETIC_PASS",
+      "apiCalls": 107,
+      "hostVerifications": 3,
+      "explicitHandoffCreates": 1,
+      "sameIdRecovery": true,
+      "freshBackendPersistence": true,
+      "rawHostResponsesIncluded": false
+    }
+  },
+  "evidenceRules": {
+    "originalFilesHashedNotCopied": true,
+    "noRuntimeDirectoriesCopied": true,
+    "noWithdrawnCodeCopied": true,
+    "noSecretMaterialCopied": true,
+    "noNsfwSpecificBackendIntroduced": true,
+    "crossVersionPassCountsMustNotBeSummed": true,
+    "localSourceLocationsFileExcludedFromPortable": true
+  },
+  "backendLatestVerification": {
+    "producerOriginalPassed": 241,
+    "independentOriginalReplayPassed": 241,
+    "independentAdditionalProbes": 3,
+    "platformSkipped": 11,
+    "evidence": "review.source-helper/review-handoff.json",
+    "upstream829Additional4NotCountedAgain": true
+  },
+  "restoration": {
+    "patch": "BACKEND_RESTORE_9b_to_65.patch",
+    "patchSha256": "80535c8f2869a14316b658f0686d78a37ac7bc9cc2335bc3f2d92f6e0d5e7133",
+    "commits": 13,
+    "restoreInFreshBaseCheckoutOnly": true,
+    "noResetOrOverwriteExistingWorkspace": true,
+    "futureFinalBundle": "LOCAL_CANDIDATE_AUTHORIZED; exclude only public9b ancestry, upload still prohibited",
+    "candidateBundle": {
+      "file": "STUDIO_V2_9b_to_333f.bundle",
+      "sha256": "6f94a19751cf2ac5f7c4f151f17ed9febe547fbe619a43b775c335bf19688ffc",
+      "bytes": 143949,
+      "uniquePrerequisite": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+      "exactObjectRestoreVerified": true
+    }
+  },
+  "files": "BACKEND_FINAL_FILES.json",
+  "objects": "OBJECT_INVENTORY.json",
+  "evidence": "EVIDENCE_INDEX.json",
+  "reviews": "REVIEW_DECISIONS.json",
+  "failures": "FAILURES_SKIPS_AND_LIMITS.json",
+  "rawRunIndex": "RECORDED_RUNS.json",
+  "noTestsOrRuntimeLaunched": true,
+  "noProductGitRefsOrSourcesModified": true,
+  "noPush": true,
+  "excludedUnreviewedNLE": "cb93855f067575595a3ee3845b6e05670e831e1f",
+  "scope": "Approved ordinary unbound non-lineage image PAGE -> original Timeline DRAFT plus retired Host UNKNOWN-safe exit; not full V2",
+  "publication": {
+    "authorizedBranch": "archive/verified-studio-v2-20261017-5a6f697",
+    "verifiedParent": "9a2b7349b516da348964ed464f30824396889020",
+    "onlyNewDirectory": "artifacts/2026-10-19-studio-v2-ordinary-page-timeline-host333f-9b-recovery",
+    "mainSourcePRTagReleaseUnchanged": true
+  }
+}

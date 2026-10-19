@@ -1,0 +1,37 @@
+{
+  "status": "P2_CLOSED_ON_FIXED_333F_NO_NEW_BLOCKER_WITHIN_LIMITED_SCOPE",
+  "commit": "333f384a125068a4e7714b347f687f5dc2034123",
+  "parent": "afadce662a36972e46d60286a9e43fbce31fb6fa",
+  "findings": [],
+  "conclusion": "Original Host UNKNOWN P2 is closed on333f. Fixed commit can lift that blocker for the limited ordinary-leaf Comic/Timeline slice; old afad itself remains unfixed. Any later merge/cherry-pick conflict, especially useStudioTimelineEditor, needs fixed-result targeted review. No broad V2 acceptance.",
+  "original_report_sha256": "7c2a5f7cf052ee742559a855e709eeaac0406e789a3009f2302cdea37fe25613",
+  "exact_original_counterexample": {
+    "source_sha256": "5a17697ef768263e4a7bdbeb7aa3252667341d37cecfda83756efc06c6922b1b",
+    "passed": 1,
+    "old_artifact_restored": true
+  },
+  "native_tsc": {
+    "Windows_original_tsconfig": true,
+    "original_src_files_in_program": 1420,
+    "program_files": 1992,
+    "exit": 0,
+    "strict_options_unchanged": true
+  },
+  "production_build_exit": 0,
+  "scope_review": {
+    "nine_product_files_and_three_test_files": true,
+    "only_readonly_owner_risk_snapshots_and_context_wiring": true,
+    "root12_auth_busy_navigation_function_ASTs_unchanged": true,
+    "original116_assertion_sequence_unchanged": true,
+    "original50_direct_client_calls_and_arguments_unchanged": true
+  },
+  "remaining_limits": [
+    "Original overview403 identity test still fails on the fixed commit, as recorded on the earlier baseline. Independent run29pass/1knownfail includes all11 prior busy/ABA probes passing. It lies outside the builder355/17 selection; do not report an18th old failure as fixed or all adjacent tests green.",
+    "Comic busy true at retirement remains fenced without an actual settlement receipt; child cleanup false cannot release it.",
+    "No PostgreSQL/packaged Host/cloud/shared production/GPU/real provider/full V2 acceptance.",
+    "New snapshots preserve identity for explicit reconciliation; no new token/request persistence or automatic readback.",
+    "Parent may now resume limited archival only with333f included and any later conflict integration verified; no packaging/push performed here.",
+    "This independent pass did not rerun real backend. Supplementary333f receipt reports107realAPI calls,3Host verifications,single create,same-ID recovery,2Timeline opens and fresh-process persistence; receipt recorded separately. Recovery ZIP/bundle restoration was reported by parent, not independently repeated here."
+  ],
+  "raw_report_included": false
+}

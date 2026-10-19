@@ -1,0 +1,1839 @@
+{
+  "accepted_backend": {
+    "tip": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+    "excludeReachableFrom": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+    "objects": [
+      {
+        "oid": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+        "type": "commit",
+        "bytes": 357
+      },
+      {
+        "oid": "82956b90f9d43711ebeac740fa62df6694525c9f",
+        "type": "commit",
+        "bytes": 357
+      },
+      {
+        "oid": "fa705d8af4926ccd3e02b211e2d04c2e265f32e5",
+        "type": "commit",
+        "bytes": 371
+      },
+      {
+        "oid": "302af7ea75579736aafa6df1c1d6f14ac6229f67",
+        "type": "commit",
+        "bytes": 469
+      },
+      {
+        "oid": "d3212e32eb0a66d852ba490c3e23b8e113847526",
+        "type": "commit",
+        "bytes": 365
+      },
+      {
+        "oid": "ccd9a7a2037a900e5ae1b2e66b13d0975b3643cd",
+        "type": "commit",
+        "bytes": 374
+      },
+      {
+        "oid": "0491127ab4972b9a0bb44f6fe13b9d04516a3e14",
+        "type": "commit",
+        "bytes": 368
+      },
+      {
+        "oid": "0fed911e22a7e67777530da99ef12b0e63e6cf52",
+        "type": "commit",
+        "bytes": 378
+      },
+      {
+        "oid": "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1",
+        "type": "commit",
+        "bytes": 344
+      },
+      {
+        "oid": "9545c8b7ee2171082d35708915a670f08535aac3",
+        "type": "commit",
+        "bytes": 378
+      },
+      {
+        "oid": "82cee4cc7fef8b00d4b4a32c86dcf48a23e46dad",
+        "type": "commit",
+        "bytes": 345
+      },
+      {
+        "oid": "3dc13453f1b45519ba62593179b5ab462a64d978",
+        "type": "commit",
+        "bytes": 352
+      },
+      {
+        "oid": "54e33e7d5c216d2f0be94b5923f4da336a433f95",
+        "type": "commit",
+        "bytes": 353
+      },
+      {
+        "oid": "255b681a281f4bfa4ec65d0c4079d425287840ee",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "af43223d0c3b4e0780d0707ea9e2d33015778531",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "6f316ab994c6f0b0ad3e7506d209235a10cbc577",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "af1e6879290af790b3f3adebbdb2c86544391c29",
+        "type": "blob",
+        "bytes": 126976,
+        "path": "app/creative/production_execution.py",
+        "sha256": "388977da69a92b5acdfb365df1d943f23204f5e1ccabe859937ce768ae6471ee"
+      },
+      {
+        "oid": "f9af3656d0f770a6762e3e7bf3e49a3f3698ebf4",
+        "type": "blob",
+        "bytes": 27654,
+        "path": "app/creative/production_execution_api.py",
+        "sha256": "f9ba27f05fafec90812defdadf6c77bc7ec5327d4b9d4b8b798e09acb88b2ac0"
+      },
+      {
+        "oid": "834e2582affaea5dad11a44a814ddd37801654d5",
+        "type": "blob",
+        "bytes": 50011,
+        "path": "app/creative/workspace.py",
+        "sha256": "4f06f7974ed5468dc18f9c587d79b13e234128265348770836e7f85b8f83f354"
+      },
+      {
+        "oid": "04b98a95526dc41ffa51171e905190afed455c57",
+        "type": "blob",
+        "bytes": 34326,
+        "path": "app/creative/workspace_api.py",
+        "sha256": "71fa39a8e8cdd13bd796b37b7f394d8943dfce97fc8a837effba1e3f20956254"
+      },
+      {
+        "oid": "321ef583a941c39a72298b84b51297296617b7d4",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "b3c4423c388e5dc92d726f4ca671287f2ff29983",
+        "type": "blob",
+        "bytes": 63844,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "a360e189c1567f8fd913ec7fa2d4c4b26c53d04ce215b0172611e2f0e7ae9341"
+      },
+      {
+        "oid": "4f630861c334bee40a91e9874aa09a17d2ededfa",
+        "type": "blob",
+        "bytes": 40750,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "14bce29eb43bab7cc7c81159d4e959707ba47d530d8d5f86ce9d0f31412bdb1d"
+      },
+      {
+        "oid": "3d44dcbbeceae983b5b1a48329da1557e6851919",
+        "type": "tree",
+        "bytes": 3706,
+        "path": "app/services"
+      },
+      {
+        "oid": "b1a44c550f54dc83b93699915e7994aeee961d47",
+        "type": "blob",
+        "bytes": 12284,
+        "path": "app/services/asset_bounded_file_windows.py",
+        "sha256": "3e3d9d10b002bb9f012314cf016c2693342fbf12644cc2d7125c79d94c114103"
+      },
+      {
+        "oid": "2b277bc130c2f9885361d7f09bdb0db080dc7275",
+        "type": "blob",
+        "bytes": 85058,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "0b85ca227046e950bdf1b3a758e023bf54eb63f0ebb7640f47a9ae11004699a4"
+      },
+      {
+        "oid": "b592506040079e199f35d633798e7c496d841ec2",
+        "type": "blob",
+        "bytes": 4707,
+        "path": "app/services/comic_page_origin.py",
+        "sha256": "1a1f07a07bc10c1fe070646428c80b7c0fb1929a77777c012ecafb117addda8a"
+      },
+      {
+        "oid": "2c9c5be98ac497b89fded3b0fe6c6144d1e243b8",
+        "type": "blob",
+        "bytes": 14982,
+        "path": "app/services/comic_page_source_reads.py",
+        "sha256": "de5bd6c7341c46a5daf5069c36f483f1eb1ba1d57590d04d9820af728ad98942"
+      },
+      {
+        "oid": "1882c3d694e4e35f551d88a082daf05f233ccc5e",
+        "type": "tree",
+        "bytes": 2117,
+        "path": "frontend"
+      },
+      {
+        "oid": "c24a961b7359cc69c11a685bc5606ae6d8797027",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "e9486d4a66c06ed38b7411cafcc784097bfc9412",
+        "type": "tree",
+        "bytes": 17767,
+        "path": "frontend/src/experimental"
+      },
+      {
+        "oid": "317ab3e9ecf0346436e36eebe12364eaeac7aa16",
+        "type": "blob",
+        "bytes": 16048,
+        "path": "frontend/src/experimental/ComicLayoutsPanel.layers.test.tsx",
+        "sha256": "7ce7e7bc29aae184baee3cf098ad0f24dda065e3d0e4587a611ea63a3573ab67"
+      },
+      {
+        "oid": "0622b64eb9fdb6d66cb8b09775a6a75c7c28994d",
+        "type": "tree",
+        "bytes": 48817,
+        "path": "tests"
+      },
+      {
+        "oid": "107e57e78d23a52926d65a67b0de05697fad73f6",
+        "type": "blob",
+        "bytes": 7929,
+        "path": "tests/test_asset_bounded_content_additive.py",
+        "sha256": "0964fd63a5530d2ccb97876430999e48bcc94bb7b037dee46f262a40557167ab"
+      },
+      {
+        "oid": "012fb05c949db258a06ea24af3001807b36c8883",
+        "type": "blob",
+        "bytes": 27545,
+        "path": "tests/test_asset_bounded_content_windows.py",
+        "sha256": "410f90076cd60205afe38d25fed471167a80725f31ced2065629027cfbce3934"
+      },
+      {
+        "oid": "5b758a6e0540f53877c2f3ffdc13244b155fcddb",
+        "type": "blob",
+        "bytes": 8573,
+        "path": "tests/test_asset_bounded_owner_windows.py",
+        "sha256": "0c5704812949937907488b9c263aad261b92759ba99ac8a9746b4fc5aee7830e"
+      },
+      {
+        "oid": "36acdd8e08972f9e9713e6739870cfe0960500b5",
+        "type": "blob",
+        "bytes": 3694,
+        "path": "tests/test_comic_handoff_creation_marker.py",
+        "sha256": "fe6b0228a0ed983492e0b5b59dbebe86a750a1fdf082173a2429fbbb5c5d9e1d"
+      },
+      {
+        "oid": "ec9a3008498180c30d2d3e8ec81265ff41a4d87f",
+        "type": "blob",
+        "bytes": 9348,
+        "path": "tests/test_comic_handoff_receipt_identity.py",
+        "sha256": "3696098ad0c66de5bca8735067eb03dab7cfab35e9b14aa98bbbcdb3a2c90b65"
+      },
+      {
+        "oid": "17dc0f7fa468345c80f0d12f87367b503ac8c670",
+        "type": "blob",
+        "bytes": 7836,
+        "path": "tests/test_comic_handoff_receipt_progress.py",
+        "sha256": "b900c3706b2223f9246d482f949599ebc97e42212443921f8384e9d0d2b9f2d6"
+      },
+      {
+        "oid": "fa74579882907c5a0baeb32d2ade68d41d4fa42c",
+        "type": "blob",
+        "bytes": 18750,
+        "path": "tests/test_comic_handoff_source_integration.py",
+        "sha256": "b6e622b7fde16be9d0a01616632cd6024e25b3b0a6ed166d42f5545be83c4eb8"
+      },
+      {
+        "oid": "23127b237b96c8505f01e0a95d686462fd6f489a",
+        "type": "blob",
+        "bytes": 6270,
+        "path": "tests/test_comic_ora_asset_classification.py",
+        "sha256": "f49f14b95933917355a4114581c56abf82905b7f66538a7e1247fddb9e1a1842"
+      },
+      {
+        "oid": "e6ca523f5f6b695c94f3e1c48c6fba7df941fbee",
+        "type": "blob",
+        "bytes": 27856,
+        "path": "tests/test_comic_page_source_contract.py",
+        "sha256": "58d00885f00d028c4372c67f892dc6334423f07417bd903be007d936565edf10"
+      },
+      {
+        "oid": "1820d66b21964471d5ae868afb11616e43f69be7",
+        "type": "blob",
+        "bytes": 16506,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "e0df2972f86aa5c88d9e054ca31c358e51cd40bccffdba7122c548406c17e99d"
+      },
+      {
+        "oid": "cb77310c221dc5b3dc6a79f07156c0b1f4b5c9ae",
+        "type": "blob",
+        "bytes": 23828,
+        "path": "tests/test_comic_timeline_handoff_http.py",
+        "sha256": "f9c0bce4d25945c0fd01adaff8750cdffe03ca789ee96cb1baf1e54ab27941e5"
+      },
+      {
+        "oid": "88c30d58812641b029d97b7687d31f9f0ab530e8",
+        "type": "blob",
+        "bytes": 9184,
+        "path": "tests/test_comic_timeline_handoff_http_limits.py",
+        "sha256": "256b89e52cf541fa2c7e11fe8dc7f629fb02a5b7152083379b59390131c2798a"
+      },
+      {
+        "oid": "6609dcf58b00d9f77d5054184a1c68881d40e79d",
+        "type": "blob",
+        "bytes": 20136,
+        "path": "tests/test_comic_timeline_handoff_recovery.py",
+        "sha256": "585476912e308a21e172061aa05c008b27c7aa46c3d2352253edf60d8b50d659"
+      },
+      {
+        "oid": "0a87ef7540d7b86c128d6d057aee4dfec4066dc1",
+        "type": "blob",
+        "bytes": 8130,
+        "path": "tests/test_comic_windows_handoff_integration.py",
+        "sha256": "7616dc05003c60ed819cdce8c1849a92343b38e47dd0ab72d2a50e6455f2ec34"
+      },
+      {
+        "oid": "bb5305bcf22c29f476fe1693bfb2367cfbda1906",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "22f04cb93f5166118c3cdbd97a73779d978e9734",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f9623036a1e9fd36f178f48189a5e6aab85b6d69",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "62a041d0981be0bb2edb67e16a5108de5e295054",
+        "type": "blob",
+        "bytes": 126233,
+        "path": "app/creative/production_execution.py",
+        "sha256": "1366f81323627c52e4c8ef29061031b4683c61f3cd80c5a5e265cb18270f6f36"
+      },
+      {
+        "oid": "75fe2df3d62c30db732fee0cbddab3d0c175541a",
+        "type": "blob",
+        "bytes": 27144,
+        "path": "app/creative/production_execution_api.py",
+        "sha256": "07570a870100ea39b2b7deeae361da334cb798afc21ff68addc5535090d10627"
+      },
+      {
+        "oid": "d8eeba6cbd903a45a00470e9ecb44a463f95c14c",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "053f6dedf8f7ed4ecd51f82017a7542315b421e0",
+        "type": "blob",
+        "bytes": 62845,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "b5b56cd110c2ed7497d65bc46e2686621d8ad2223ef2f1ea677a55118057b706"
+      },
+      {
+        "oid": "5ab742a9c5adb444a21d9057f04e7f8f8f4a3c8b",
+        "type": "blob",
+        "bytes": 37097,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "ba5675421c3a19180e03232883eae35cb4148a44434bea4993ee71d17721fd4d"
+      },
+      {
+        "oid": "7f2f9cd6cad9dfa464c18060454c8e2398d73cbc",
+        "type": "tree",
+        "bytes": 3706,
+        "path": "app/services"
+      },
+      {
+        "oid": "e0fcc9683f47a357d35ff36f5c5a9950cad7c5d2",
+        "type": "blob",
+        "bytes": 84431,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "a8b97ad32425508dc4a54c6e821e6fddfab0ffdf1b980a90d65cac2a8efbd555"
+      },
+      {
+        "oid": "52ece11c1c29244a50a3e39e72a41d37db1bc384",
+        "type": "blob",
+        "bytes": 10627,
+        "path": "app/services/comic_page_source_reads.py",
+        "sha256": "0337e271f413a28bdd3d0a346215dbed35890cfba1670c0e337d0b7d059398b8"
+      },
+      {
+        "oid": "cb37c6cb73f71cc0bebc4c705402b9cd7dc35c06",
+        "type": "tree",
+        "bytes": 48749,
+        "path": "tests"
+      },
+      {
+        "oid": "6ec272b9fef4b773e2677da1222df10b787e8331",
+        "type": "blob",
+        "bytes": 16116,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "61be1be2a9afa98fdf7d6de07bd01557273ee8d5f413be3a6442802870a0d899"
+      },
+      {
+        "oid": "de084e27877a0fe843a81fd81e54078e725cc681",
+        "type": "blob",
+        "bytes": 7644,
+        "path": "tests/test_comic_windows_handoff_integration.py",
+        "sha256": "978eafc901025a4765a152a545981ee8ebba284e25fab57374dd8e452d13648e"
+      },
+      {
+        "oid": "d0f4cf0e2ae2594817dbfc9374a8e9ebbbad1603",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "5bd77c6971ccc7b23b3cf5b2f468922a377aa6e8",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "bc9645383bc51429176da4ceb2d8d4d6c200075b",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "7a2811ade2ecff048fbfc4835e9883011b6eee61",
+        "type": "blob",
+        "bytes": 57262,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "a0685e3e2b1ef2681ef4d341a90c0886b426f354db3c03773a8122ccbcfa32da"
+      },
+      {
+        "oid": "0fc8ae69afc398386586b9040c1d15b13c2a33fd",
+        "type": "tree",
+        "bytes": 3652,
+        "path": "app/services"
+      },
+      {
+        "oid": "ab3b04d422a3592b3ced7e1464a0d67fda03fb85",
+        "type": "blob",
+        "bytes": 83132,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "740307adc37627c0e22e97f253b1ca1f3b5da8d3f4e123581a49ca2434debcc0"
+      },
+      {
+        "oid": "7d35becde22615c9e5a115c904d516b1c3ed298d",
+        "type": "tree",
+        "bytes": 48687,
+        "path": "tests"
+      },
+      {
+        "oid": "597365363f3da36c6baf9a1f881681eb407b6aed",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "9dae5f1d7ab44ebb02d1fe90989c7784f3d2dcf7",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "776d53eb82e38b0a967ee929e53c320305fd7451",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "edc3a0353cb855a3309b955e85449e39b828a677",
+        "type": "tree",
+        "bytes": 48554,
+        "path": "tests"
+      },
+      {
+        "oid": "7f5429de2758f1f59c2e42b2ad97170a532b5b28",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "8d1a0129fccccae093ea75a33a08ad12897db453",
+        "type": "tree",
+        "bytes": 48485,
+        "path": "tests"
+      },
+      {
+        "oid": "78f29998b557d87b8588dcb3191e1c4ad601e03f",
+        "type": "blob",
+        "bytes": 15953,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "b225c251bc39bb0369063d03671e930a53dfd7fbd629512a166c97748b2c674a"
+      },
+      {
+        "oid": "fa6e32372296ecd5c79236b16bc5fdb133b59e64",
+        "type": "blob",
+        "bytes": 20164,
+        "path": "tests/test_comic_timeline_handoff_recovery.py",
+        "sha256": "354d9f9ac97c2aefe7641f36b296fab564745638e04eda64a15ed8d4a1afe23b"
+      },
+      {
+        "oid": "90edcf6e9da3893f58d35736a3141886106e9da7",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "d0d0c8b84fb3bad90c03024df03f1225bded9bb7",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f7e85cec31b2a3551607241c76a80eb92d68e960",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "76194cfb6f8f39fbdfb14e1009441b8bc4c20043",
+        "type": "blob",
+        "bytes": 36822,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "b319a202218591c6cac955db0da8c86407e5a70cda196d9ae2c859a3d7465469"
+      },
+      {
+        "oid": "b1cab66930999d1270542c277c84f3a92a00dcbd",
+        "type": "tree",
+        "bytes": 48420,
+        "path": "tests"
+      },
+      {
+        "oid": "402a4fe3df319a5ff6ade64763aa9b07aa731e5e",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "2aefe6935b596a0015f99dc1b457890b07c58cae",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "017709cccb14d3e2c277a36eb2afa580f8cbefcb",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "8f9636227fececf8c4abfc163147261dc13a276a",
+        "type": "blob",
+        "bytes": 31967,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "f0de12c3ccbc785de530dc16970b2b2555c40acb10ec25c93cb9af4d1f5e2452"
+      },
+      {
+        "oid": "d4d22ea84a70a886f1acb9ad4175909529519ee2",
+        "type": "tree",
+        "bytes": 48288,
+        "path": "tests"
+      },
+      {
+        "oid": "4733745a3bd5234f11579d465cf17309b4e7a754",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "170dbac50f17f0bf1b73df618f36ea8f0b0d98d5",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "264abeb4ee5e1d33da0e962a6d4de5d15a407678",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "c78b158574df6ca71168496c26e546a46cc4eb5a",
+        "type": "blob",
+        "bytes": 8735,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "90418b6789c3c417cfdc77eb32937b6397ae45395beaf2e54093e4ecc1200022"
+      },
+      {
+        "oid": "4bbe7d36be455b9e074448d7a07dd190e69ad428",
+        "type": "tree",
+        "bytes": 3652,
+        "path": "app/services"
+      },
+      {
+        "oid": "6c577ac8b438800ec6663dea1a4f9ac0e8142bd2",
+        "type": "blob",
+        "bytes": 79651,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "fc5e08c535fc962a316f5ef88e4cc4a4022812f90cf2e3ede652726150b6935c"
+      },
+      {
+        "oid": "ca5d786ea0d59bc5b37bb21e8c490aed4a3011bb",
+        "type": "tree",
+        "bytes": 48221,
+        "path": "tests"
+      },
+      {
+        "oid": "529ab0c3cc78aa148dcfa5debfda6aadb77eb33b",
+        "type": "blob",
+        "bytes": 15922,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "47649cd5e94887ae5b55e1f4a9fb32c69fd15d99a96b417e6270cbf68c0cc8c7"
+      },
+      {
+        "oid": "f5880f86ceed4cf48f74af2beb7eb1a514bd0dda",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "4b9cb4863ae8a94fe1e0d32253907d3526bd953e",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "70d7b64da9dc7af09ac87ad57a0a164a9d875ae2",
+        "type": "tree",
+        "bytes": 6890,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "746de7de4794557013eb7c1a811b5f14e7dbdfdc",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "591ab54b9a9254e02891029e1e2d0bac39e26783",
+        "type": "tree",
+        "bytes": 48163,
+        "path": "tests"
+      },
+      {
+        "oid": "a70f82e78e41d864d06bee8b027b34c87c6e2376",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "98d0dcfb9590ee3842a48c37e6b230140917d4d2",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f35102353f4e183a5af2dfac8bc780caf9633a81",
+        "type": "tree",
+        "bytes": 48097,
+        "path": "tests"
+      },
+      {
+        "oid": "809bd96073eaf6fdc53ef7a3e0d0b58a276fbcfa",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "4035e73090d82d9cf038bc1317f3523f9772bddf",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "a478b74f942135eed76811cbf9f4ae9eb62aeb17",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "c5caef8b43dfcd5cb692d6bdf688258096a42e71",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "8d53218c20e9e13a6548f82f68f40003eed3a7b4",
+        "type": "tree",
+        "bytes": 48034,
+        "path": "tests"
+      },
+      {
+        "oid": "c7136050dda5da6417edb47a1edd885abf8292d9",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "0ddaefd854d2ac2053972ab252882e85b2feb02b",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "0bceff273dd5ece94199acc4ae7b836330aa9167",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "f54e9cf90abc692f649845d47fdd5dc863f858d4",
+        "type": "blob",
+        "bytes": 12218,
+        "path": "app/services/asset_bounded_file_windows.py",
+        "sha256": "5334372bbdfeae56fcf88878c17b474dbd8dec9fa91abee9d489d7f73933eeca"
+      },
+      {
+        "oid": "ec6821e405ba21c99468f4d3698b44b3d270322c",
+        "type": "tree",
+        "bytes": 48034,
+        "path": "tests"
+      },
+      {
+        "oid": "794001b321f956e0c3639ce4eccb29b1da0216ff",
+        "type": "blob",
+        "bytes": 26155,
+        "path": "tests/test_asset_bounded_content_windows.py",
+        "sha256": "8ea617882fe750a043389b42114b4cbcdf45f75e1b072be5e480458737de9800"
+      }
+    ],
+    "forbiddenPathMatches": [],
+    "privateKeyTokenPatternMatches": [],
+    "withdrawnExactSnapshotMatches": [],
+    "withdrawnOwnerCopyClassInProductMatches": [],
+    "note": "Closed committed object range only. Pattern check is not a universal secret-proof claim."
+  },
+  "pending_combination": {
+    "tip": "333f384a125068a4e7714b347f687f5dc2034123",
+    "excludeReachableFrom": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+    "objects": [
+      {
+        "oid": "333f384a125068a4e7714b347f687f5dc2034123",
+        "type": "commit",
+        "bytes": 1184
+      },
+      {
+        "oid": "afadce662a36972e46d60286a9e43fbce31fb6fa",
+        "type": "commit",
+        "bytes": 266
+      },
+      {
+        "oid": "0448ffc4b7e4e9cf1a65e40d5a4b65fb0ae00bd3",
+        "type": "commit",
+        "bytes": 313
+      },
+      {
+        "oid": "c0091e39451f5b7a2d488acb6d626a62066ff79e",
+        "type": "commit",
+        "bytes": 270
+      },
+      {
+        "oid": "b341574ab68f1c5c0db5440de6182673f12ad4ae",
+        "type": "commit",
+        "bytes": 250
+      },
+      {
+        "oid": "775b6de8fe6aa3c9eee53e7d926e4554cc255c81",
+        "type": "commit",
+        "bytes": 254
+      },
+      {
+        "oid": "50daee92616c4876866fe31733df887ea5199e54",
+        "type": "commit",
+        "bytes": 256
+      },
+      {
+        "oid": "3313c7d8f39061e08d1e35169eeb5f23b25c8c87",
+        "type": "commit",
+        "bytes": 252
+      },
+      {
+        "oid": "82956b90f9d43711ebeac740fa62df6694525c9f",
+        "type": "commit",
+        "bytes": 357
+      },
+      {
+        "oid": "fa705d8af4926ccd3e02b211e2d04c2e265f32e5",
+        "type": "commit",
+        "bytes": 371
+      },
+      {
+        "oid": "302af7ea75579736aafa6df1c1d6f14ac6229f67",
+        "type": "commit",
+        "bytes": 469
+      },
+      {
+        "oid": "d3212e32eb0a66d852ba490c3e23b8e113847526",
+        "type": "commit",
+        "bytes": 365
+      },
+      {
+        "oid": "ccd9a7a2037a900e5ae1b2e66b13d0975b3643cd",
+        "type": "commit",
+        "bytes": 374
+      },
+      {
+        "oid": "0491127ab4972b9a0bb44f6fe13b9d04516a3e14",
+        "type": "commit",
+        "bytes": 368
+      },
+      {
+        "oid": "0fed911e22a7e67777530da99ef12b0e63e6cf52",
+        "type": "commit",
+        "bytes": 378
+      },
+      {
+        "oid": "1ed84d8f445efb5a9a9bfb484ad54a336b7e76f1",
+        "type": "commit",
+        "bytes": 344
+      },
+      {
+        "oid": "9545c8b7ee2171082d35708915a670f08535aac3",
+        "type": "commit",
+        "bytes": 378
+      },
+      {
+        "oid": "82cee4cc7fef8b00d4b4a32c86dcf48a23e46dad",
+        "type": "commit",
+        "bytes": 345
+      },
+      {
+        "oid": "3dc13453f1b45519ba62593179b5ab462a64d978",
+        "type": "commit",
+        "bytes": 352
+      },
+      {
+        "oid": "54e33e7d5c216d2f0be94b5923f4da336a433f95",
+        "type": "commit",
+        "bytes": 353
+      },
+      {
+        "oid": "89e5548014d64063cfa77bfe2e08c4a101dd6c3f",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "af43223d0c3b4e0780d0707ea9e2d33015778531",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "6f316ab994c6f0b0ad3e7506d209235a10cbc577",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "af1e6879290af790b3f3adebbdb2c86544391c29",
+        "type": "blob",
+        "bytes": 126976,
+        "path": "app/creative/production_execution.py",
+        "sha256": "388977da69a92b5acdfb365df1d943f23204f5e1ccabe859937ce768ae6471ee"
+      },
+      {
+        "oid": "f9af3656d0f770a6762e3e7bf3e49a3f3698ebf4",
+        "type": "blob",
+        "bytes": 27654,
+        "path": "app/creative/production_execution_api.py",
+        "sha256": "f9ba27f05fafec90812defdadf6c77bc7ec5327d4b9d4b8b798e09acb88b2ac0"
+      },
+      {
+        "oid": "834e2582affaea5dad11a44a814ddd37801654d5",
+        "type": "blob",
+        "bytes": 50011,
+        "path": "app/creative/workspace.py",
+        "sha256": "4f06f7974ed5468dc18f9c587d79b13e234128265348770836e7f85b8f83f354"
+      },
+      {
+        "oid": "04b98a95526dc41ffa51171e905190afed455c57",
+        "type": "blob",
+        "bytes": 34326,
+        "path": "app/creative/workspace_api.py",
+        "sha256": "71fa39a8e8cdd13bd796b37b7f394d8943dfce97fc8a837effba1e3f20956254"
+      },
+      {
+        "oid": "321ef583a941c39a72298b84b51297296617b7d4",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "b3c4423c388e5dc92d726f4ca671287f2ff29983",
+        "type": "blob",
+        "bytes": 63844,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "a360e189c1567f8fd913ec7fa2d4c4b26c53d04ce215b0172611e2f0e7ae9341"
+      },
+      {
+        "oid": "4f630861c334bee40a91e9874aa09a17d2ededfa",
+        "type": "blob",
+        "bytes": 40750,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "14bce29eb43bab7cc7c81159d4e959707ba47d530d8d5f86ce9d0f31412bdb1d"
+      },
+      {
+        "oid": "3d44dcbbeceae983b5b1a48329da1557e6851919",
+        "type": "tree",
+        "bytes": 3706,
+        "path": "app/services"
+      },
+      {
+        "oid": "b1a44c550f54dc83b93699915e7994aeee961d47",
+        "type": "blob",
+        "bytes": 12284,
+        "path": "app/services/asset_bounded_file_windows.py",
+        "sha256": "3e3d9d10b002bb9f012314cf016c2693342fbf12644cc2d7125c79d94c114103"
+      },
+      {
+        "oid": "2b277bc130c2f9885361d7f09bdb0db080dc7275",
+        "type": "blob",
+        "bytes": 85058,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "0b85ca227046e950bdf1b3a758e023bf54eb63f0ebb7640f47a9ae11004699a4"
+      },
+      {
+        "oid": "b592506040079e199f35d633798e7c496d841ec2",
+        "type": "blob",
+        "bytes": 4707,
+        "path": "app/services/comic_page_origin.py",
+        "sha256": "1a1f07a07bc10c1fe070646428c80b7c0fb1929a77777c012ecafb117addda8a"
+      },
+      {
+        "oid": "2c9c5be98ac497b89fded3b0fe6c6144d1e243b8",
+        "type": "blob",
+        "bytes": 14982,
+        "path": "app/services/comic_page_source_reads.py",
+        "sha256": "de5bd6c7341c46a5daf5069c36f483f1eb1ba1d57590d04d9820af728ad98942"
+      },
+      {
+        "oid": "d9054f27ca417bf7220d8d70540f4de238289bf7",
+        "type": "tree",
+        "bytes": 2238,
+        "path": "frontend"
+      },
+      {
+        "oid": "9d67cd20210b43d28f5764d2d382cddc37bae5a2",
+        "type": "blob",
+        "bytes": 509,
+        "path": "frontend/playwright.comic-handoff.config.ts",
+        "sha256": "7778ef8db53a3965fb2c5e2fc0c134b5cc1279212b341c545d4bbe36d1fa9acf"
+      },
+      {
+        "oid": "c840d086d72ba66062872498fdc04b06d49f374d",
+        "type": "blob",
+        "bytes": 405,
+        "path": "frontend/playwright.comic-live.config.ts",
+        "sha256": "e024cda8ec507c4f602fba914a4bef0b687dfe300e769c69144be2e1cfc1539e"
+      },
+      {
+        "oid": "f66522ef1192694385cecaf108896de68c9e74dd",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "4db474a38c85e87aa77c5308827ced2674bfe8a1",
+        "type": "tree",
+        "bytes": 33278,
+        "path": "frontend/src/creative"
+      },
+      {
+        "oid": "30245d5fd0ab32e2cd8abad8bb57c336977a2127",
+        "type": "blob",
+        "bytes": 22347,
+        "path": "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+        "sha256": "36d2607d3cd87225f10df30a6e8996fed9a23bea816fb210f54cc47490e15f3b"
+      },
+      {
+        "oid": "9c7469997d478c90eff1442d6fd622ddd532f49e",
+        "type": "blob",
+        "bytes": 85674,
+        "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+        "sha256": "369672861cd4b7eb76a3566004e0fdd396d6eceac3a180c26dfe65815bf44456"
+      },
+      {
+        "oid": "165258ba49e083d888702c369ffea8f2ade9f396",
+        "type": "blob",
+        "bytes": 22148,
+        "path": "frontend/src/creative/StoryboardVideoPipeline.phase5.test.tsx",
+        "sha256": "7779d44c9d2552f43796686bd672bbe0a4038f27b1e4a4a09f174d02c13ccf37"
+      },
+      {
+        "oid": "295e463aec395548780187ece45f9ae48082fa2e",
+        "type": "blob",
+        "bytes": 4136,
+        "path": "frontend/src/creative/StudioComicPanel.tsx",
+        "sha256": "4f3b62b17d36b474a868f42d163e6c7f81953e404471f96971f0d9d021e9ef9c"
+      },
+      {
+        "oid": "12c12931948e55628cf4f28669d294c3976aeab9",
+        "type": "blob",
+        "bytes": 19996,
+        "path": "frontend/src/creative/StudioComicTimelineHandoff.test.tsx",
+        "sha256": "d3d1f1fb88948b3dd86601054b55e0e99dcb887def516b5adf7eddd5bf9d255a"
+      },
+      {
+        "oid": "34f6b729fb92564516eaa713754a013a261f3936",
+        "type": "blob",
+        "bytes": 22273,
+        "path": "frontend/src/creative/StudioComicTimelineHandoff.tsx",
+        "sha256": "f06f3963c4108c00ca4cce48ec5d1e465ae4679625b0e61b1cba962ca54c1792"
+      },
+      {
+        "oid": "79da149359bdc1a715025cfe5a0723cfa947e840",
+        "type": "blob",
+        "bytes": 9916,
+        "path": "frontend/src/creative/StudioProductionLeaveRisk.regression.test.tsx",
+        "sha256": "85d401aae1fca186909e121acc28f6de2a50f74dafac43bc0ff6279bcc41705e"
+      },
+      {
+        "oid": "913d0c3faf6d626b48abf78217eb2199a9459247",
+        "type": "tree",
+        "bytes": 49,
+        "path": "frontend/src/creative/__fixtures__"
+      },
+      {
+        "oid": "dbfc4acceb681f450cd4b39cc99d6ec9c3fe6793",
+        "type": "blob",
+        "bytes": 32535,
+        "path": "frontend/src/creative/__fixtures__/comicHandoffHttp.json",
+        "sha256": "eaab34783964f2cddad244ef952fa8bd61f1b72c9eccd588067539e6a3ee0259"
+      },
+      {
+        "oid": "1c6ca4a5384e006dbc715868145ab034663c523f",
+        "type": "blob",
+        "bytes": 1572,
+        "path": "frontend/src/creative/comicHandoffAttempt.ts",
+        "sha256": "d54c03804f01a7ffafcc9283e17f7c50de0a2fbec5126d92c2fca90e03135c5b"
+      },
+      {
+        "oid": "52f09d609c7e11ba897c54e345cd20f36851a5b6",
+        "type": "blob",
+        "bytes": 13521,
+        "path": "frontend/src/creative/studioComicHandoffClient.test.ts",
+        "sha256": "caf00b45355310c55358800f129afbc40b6f45037c2eb04cf92133a17bd0da03"
+      },
+      {
+        "oid": "51f85dacd735ecaf1b125c1ca1c5729f2c15fd49",
+        "type": "blob",
+        "bytes": 16845,
+        "path": "frontend/src/creative/studioComicHandoffClient.ts",
+        "sha256": "1c7a03d887156777413699adcddfbc9a6bdfff0843c63377aeaef60c27ece959"
+      },
+      {
+        "oid": "d038992c1e005a52bb61cf97fbf2c20489c72733",
+        "type": "blob",
+        "bytes": 1075,
+        "path": "frontend/src/creative/studioProductionLeaveRisk.ts",
+        "sha256": "7345aa5607d053e6a4b8e4ca66d37f630a4122a4368e011a4fae6d9214bee15b"
+      },
+      {
+        "oid": "a6c4578e0c92ecc7abf3d41fb3daca6561e8750d",
+        "type": "blob",
+        "bytes": 36909,
+        "path": "frontend/src/creative/useStoryboardProductionController.ts",
+        "sha256": "4f32b9986a4722b940bba70ec7042f043403cad242194b0138d0495773857449"
+      },
+      {
+        "oid": "4e67495c6e2dab1ed1bd39dc3822da7a601cf587",
+        "type": "blob",
+        "bytes": 14000,
+        "path": "frontend/src/creative/useStudioManualMask.ts",
+        "sha256": "c838be5696fbe2c58b80a86ba69ae5b99507dc89f5ed04a0c13ab869c3e9d967"
+      },
+      {
+        "oid": "2a88bd9063e3b41507ebc600099ece4750d4315e",
+        "type": "blob",
+        "bytes": 73214,
+        "path": "frontend/src/creative/useStudioMediaExecution.ts",
+        "sha256": "2ef79e86fd9d310d5c6af921bb5a5cbf55117ab79806d0ca504afe0d33822dea"
+      },
+      {
+        "oid": "4b7bcc4aeac2ed4194c0614211676fd9d735f675",
+        "type": "blob",
+        "bytes": 54974,
+        "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+        "sha256": "c4a6cdfca8a39364f25857b977e28a5d42f7952f0a8d7eeab621a24b52d1df0d"
+      },
+      {
+        "oid": "109d689452b2fd9c2ee2594e1b70fc2c23c71e0b",
+        "type": "blob",
+        "bytes": 18865,
+        "path": "frontend/src/creative/useStudioTimelinePlayback.ts",
+        "sha256": "bf3c463407d8e3a76f5c2ab0b4b73c5bd33ec1f094b84078ac0692979f6e3623"
+      },
+      {
+        "oid": "204934f00dd290738a882599c6130fda9ec9a703",
+        "type": "blob",
+        "bytes": 10586,
+        "path": "frontend/src/creative/useStudioTimelineSourceEdit.ts",
+        "sha256": "95327727f8d2dce0965e6f7ff4c5cf6a3b1387b37195b2128a4365b149197c39"
+      },
+      {
+        "oid": "ec7ffdba72daf8210ec6e630bfa18c4c1b63c9de",
+        "type": "blob",
+        "bytes": 19145,
+        "path": "frontend/src/creative/useStudioTimelineTransfer.ts",
+        "sha256": "8f1645a0af12e457684fd020140b2d8e1c17d2fb197fd1f84bca4d5c954509e6"
+      },
+      {
+        "oid": "c4701e396b872ecae15efa4cbeb3586ba91031d3",
+        "type": "tree",
+        "bytes": 17767,
+        "path": "frontend/src/experimental"
+      },
+      {
+        "oid": "317ab3e9ecf0346436e36eebe12364eaeac7aa16",
+        "type": "blob",
+        "bytes": 16048,
+        "path": "frontend/src/experimental/ComicLayoutsPanel.layers.test.tsx",
+        "sha256": "7ce7e7bc29aae184baee3cf098ad0f24dda065e3d0e4587a611ea63a3573ab67"
+      },
+      {
+        "oid": "00997c89a4bc517b86ad689e74ace8c774ddb57d",
+        "type": "blob",
+        "bytes": 49095,
+        "path": "frontend/src/experimental/ComicLayoutsPanel.tsx",
+        "sha256": "166c2b28c288eb58d104c87d522fe6e6d4d342b8398915ae748f2c3dcf43bf75"
+      },
+      {
+        "oid": "8dabfdd64604935a82cf0433eea02a0b64c46b6e",
+        "type": "tree",
+        "bytes": 419,
+        "path": "frontend/tests"
+      },
+      {
+        "oid": "462d01287d6e91d6b23bda04f83723fd68cd3865",
+        "type": "tree",
+        "bytes": 418,
+        "path": "frontend/tests/visual"
+      },
+      {
+        "oid": "d47c48d8226a98fde458c3dfd24137d8aa2f8b0c",
+        "type": "blob",
+        "bytes": 10477,
+        "path": "frontend/tests/visual/comic-handoff-live.spec.ts",
+        "sha256": "d0f36963d90a9e12d7e83eef0b6330611eccfdf2225b847fd8146501e2f1b117"
+      },
+      {
+        "oid": "6e14175ac90140e98175a8bfc2fb3cb6a212f24b",
+        "type": "blob",
+        "bytes": 9025,
+        "path": "frontend/tests/visual/comic-handoff.spec.ts",
+        "sha256": "6282defa66bdfdc900bdcc43cb0a294c7f70362b1f575687acd169f61f374528"
+      },
+      {
+        "oid": "0622b64eb9fdb6d66cb8b09775a6a75c7c28994d",
+        "type": "tree",
+        "bytes": 48817,
+        "path": "tests"
+      },
+      {
+        "oid": "107e57e78d23a52926d65a67b0de05697fad73f6",
+        "type": "blob",
+        "bytes": 7929,
+        "path": "tests/test_asset_bounded_content_additive.py",
+        "sha256": "0964fd63a5530d2ccb97876430999e48bcc94bb7b037dee46f262a40557167ab"
+      },
+      {
+        "oid": "012fb05c949db258a06ea24af3001807b36c8883",
+        "type": "blob",
+        "bytes": 27545,
+        "path": "tests/test_asset_bounded_content_windows.py",
+        "sha256": "410f90076cd60205afe38d25fed471167a80725f31ced2065629027cfbce3934"
+      },
+      {
+        "oid": "5b758a6e0540f53877c2f3ffdc13244b155fcddb",
+        "type": "blob",
+        "bytes": 8573,
+        "path": "tests/test_asset_bounded_owner_windows.py",
+        "sha256": "0c5704812949937907488b9c263aad261b92759ba99ac8a9746b4fc5aee7830e"
+      },
+      {
+        "oid": "36acdd8e08972f9e9713e6739870cfe0960500b5",
+        "type": "blob",
+        "bytes": 3694,
+        "path": "tests/test_comic_handoff_creation_marker.py",
+        "sha256": "fe6b0228a0ed983492e0b5b59dbebe86a750a1fdf082173a2429fbbb5c5d9e1d"
+      },
+      {
+        "oid": "ec9a3008498180c30d2d3e8ec81265ff41a4d87f",
+        "type": "blob",
+        "bytes": 9348,
+        "path": "tests/test_comic_handoff_receipt_identity.py",
+        "sha256": "3696098ad0c66de5bca8735067eb03dab7cfab35e9b14aa98bbbcdb3a2c90b65"
+      },
+      {
+        "oid": "17dc0f7fa468345c80f0d12f87367b503ac8c670",
+        "type": "blob",
+        "bytes": 7836,
+        "path": "tests/test_comic_handoff_receipt_progress.py",
+        "sha256": "b900c3706b2223f9246d482f949599ebc97e42212443921f8384e9d0d2b9f2d6"
+      },
+      {
+        "oid": "fa74579882907c5a0baeb32d2ade68d41d4fa42c",
+        "type": "blob",
+        "bytes": 18750,
+        "path": "tests/test_comic_handoff_source_integration.py",
+        "sha256": "b6e622b7fde16be9d0a01616632cd6024e25b3b0a6ed166d42f5545be83c4eb8"
+      },
+      {
+        "oid": "23127b237b96c8505f01e0a95d686462fd6f489a",
+        "type": "blob",
+        "bytes": 6270,
+        "path": "tests/test_comic_ora_asset_classification.py",
+        "sha256": "f49f14b95933917355a4114581c56abf82905b7f66538a7e1247fddb9e1a1842"
+      },
+      {
+        "oid": "e6ca523f5f6b695c94f3e1c48c6fba7df941fbee",
+        "type": "blob",
+        "bytes": 27856,
+        "path": "tests/test_comic_page_source_contract.py",
+        "sha256": "58d00885f00d028c4372c67f892dc6334423f07417bd903be007d936565edf10"
+      },
+      {
+        "oid": "1820d66b21964471d5ae868afb11616e43f69be7",
+        "type": "blob",
+        "bytes": 16506,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "e0df2972f86aa5c88d9e054ca31c358e51cd40bccffdba7122c548406c17e99d"
+      },
+      {
+        "oid": "cb77310c221dc5b3dc6a79f07156c0b1f4b5c9ae",
+        "type": "blob",
+        "bytes": 23828,
+        "path": "tests/test_comic_timeline_handoff_http.py",
+        "sha256": "f9c0bce4d25945c0fd01adaff8750cdffe03ca789ee96cb1baf1e54ab27941e5"
+      },
+      {
+        "oid": "88c30d58812641b029d97b7687d31f9f0ab530e8",
+        "type": "blob",
+        "bytes": 9184,
+        "path": "tests/test_comic_timeline_handoff_http_limits.py",
+        "sha256": "256b89e52cf541fa2c7e11fe8dc7f629fb02a5b7152083379b59390131c2798a"
+      },
+      {
+        "oid": "6609dcf58b00d9f77d5054184a1c68881d40e79d",
+        "type": "blob",
+        "bytes": 20136,
+        "path": "tests/test_comic_timeline_handoff_recovery.py",
+        "sha256": "585476912e308a21e172061aa05c008b27c7aa46c3d2352253edf60d8b50d659"
+      },
+      {
+        "oid": "0a87ef7540d7b86c128d6d057aee4dfec4066dc1",
+        "type": "blob",
+        "bytes": 8130,
+        "path": "tests/test_comic_windows_handoff_integration.py",
+        "sha256": "7616dc05003c60ed819cdce8c1849a92343b38e47dd0ab72d2a50e6455f2ec34"
+      },
+      {
+        "oid": "dac2a169e5bd298560c40bb1cc6a13d033f1d1db",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "e9d8f2ff05e11fe52a3f18b87e76bf9aff643c3f",
+        "type": "tree",
+        "bytes": 2238,
+        "path": "frontend"
+      },
+      {
+        "oid": "c8295b93e9c00737ed5fbe9c2c9067505ed9d941",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "cbb0500686f9889d2f1c1f40f1cdd520e2a50352",
+        "type": "tree",
+        "bytes": 33149,
+        "path": "frontend/src/creative"
+      },
+      {
+        "oid": "cbc4f9b0e1910ebf15bf2408ce4a34945bf962aa",
+        "type": "blob",
+        "bytes": 15260,
+        "path": "frontend/src/creative/IndependentStudioHostExit.regression.test.tsx",
+        "sha256": "f446425cdf52146b353bce4d4e4bdddc770f1304a9ae0f9233cc829507bfaa59"
+      },
+      {
+        "oid": "7e594c6bacf4530207783b63a4e606ff55bd1004",
+        "type": "blob",
+        "bytes": 83655,
+        "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+        "sha256": "7e861735ef5e144e756efa3d78223ddf687dcebe1a8d757c199531b8992000bd"
+      },
+      {
+        "oid": "5c20d0f305e68350cd03d99d8d1e9831bc3a2f0c",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "2eeabec31fe1ebc8d2c49e98cbd791d2ee4cbe32",
+        "type": "tree",
+        "bytes": 2238,
+        "path": "frontend"
+      },
+      {
+        "oid": "c090e444f1f6629516dcb6e54ed42fdf008eabc2",
+        "type": "tree",
+        "bytes": 419,
+        "path": "frontend/tests"
+      },
+      {
+        "oid": "da98d10c4a2e8cad566a0f1d5727054d997c8e80",
+        "type": "tree",
+        "bytes": 418,
+        "path": "frontend/tests/visual"
+      },
+      {
+        "oid": "74a1f393498441c3d7c9c7148527e509411c2723",
+        "type": "blob",
+        "bytes": 10042,
+        "path": "frontend/tests/visual/comic-handoff-live.spec.ts",
+        "sha256": "c9c3db3684432b2383aba8f531eefa0384a49b619865ed5c7729b2eb88bd78c1"
+      },
+      {
+        "oid": "b071a2de86e2efc34c0ae7c4848d1dde2fa2553d",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "22f04cb93f5166118c3cdbd97a73779d978e9734",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f9623036a1e9fd36f178f48189a5e6aab85b6d69",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "62a041d0981be0bb2edb67e16a5108de5e295054",
+        "type": "blob",
+        "bytes": 126233,
+        "path": "app/creative/production_execution.py",
+        "sha256": "1366f81323627c52e4c8ef29061031b4683c61f3cd80c5a5e265cb18270f6f36"
+      },
+      {
+        "oid": "75fe2df3d62c30db732fee0cbddab3d0c175541a",
+        "type": "blob",
+        "bytes": 27144,
+        "path": "app/creative/production_execution_api.py",
+        "sha256": "07570a870100ea39b2b7deeae361da334cb798afc21ff68addc5535090d10627"
+      },
+      {
+        "oid": "d8eeba6cbd903a45a00470e9ecb44a463f95c14c",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "053f6dedf8f7ed4ecd51f82017a7542315b421e0",
+        "type": "blob",
+        "bytes": 62845,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "b5b56cd110c2ed7497d65bc46e2686621d8ad2223ef2f1ea677a55118057b706"
+      },
+      {
+        "oid": "5ab742a9c5adb444a21d9057f04e7f8f8f4a3c8b",
+        "type": "blob",
+        "bytes": 37097,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "ba5675421c3a19180e03232883eae35cb4148a44434bea4993ee71d17721fd4d"
+      },
+      {
+        "oid": "7f2f9cd6cad9dfa464c18060454c8e2398d73cbc",
+        "type": "tree",
+        "bytes": 3706,
+        "path": "app/services"
+      },
+      {
+        "oid": "e0fcc9683f47a357d35ff36f5c5a9950cad7c5d2",
+        "type": "blob",
+        "bytes": 84431,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "a8b97ad32425508dc4a54c6e821e6fddfab0ffdf1b980a90d65cac2a8efbd555"
+      },
+      {
+        "oid": "52ece11c1c29244a50a3e39e72a41d37db1bc384",
+        "type": "blob",
+        "bytes": 10627,
+        "path": "app/services/comic_page_source_reads.py",
+        "sha256": "0337e271f413a28bdd3d0a346215dbed35890cfba1670c0e337d0b7d059398b8"
+      },
+      {
+        "oid": "cb37c6cb73f71cc0bebc4c705402b9cd7dc35c06",
+        "type": "tree",
+        "bytes": 48749,
+        "path": "tests"
+      },
+      {
+        "oid": "6ec272b9fef4b773e2677da1222df10b787e8331",
+        "type": "blob",
+        "bytes": 16116,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "61be1be2a9afa98fdf7d6de07bd01557273ee8d5f413be3a6442802870a0d899"
+      },
+      {
+        "oid": "de084e27877a0fe843a81fd81e54078e725cc681",
+        "type": "blob",
+        "bytes": 7644,
+        "path": "tests/test_comic_windows_handoff_integration.py",
+        "sha256": "978eafc901025a4765a152a545981ee8ebba284e25fab57374dd8e452d13648e"
+      },
+      {
+        "oid": "07ab1dcbeac770a3bc0b9dc80abb3505d85e3963",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "bbd88eb4da910efe0a3a2d2a0c4f8f3e4318ca16",
+        "type": "tree",
+        "bytes": 2238,
+        "path": "frontend"
+      },
+      {
+        "oid": "8410f8ecda5adce258476b079c248a0e5bf50d70",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "689eb999ea1d64d53fc82e92281785139de5f830",
+        "type": "tree",
+        "bytes": 33076,
+        "path": "frontend/src/creative"
+      },
+      {
+        "oid": "75b786bc1b694392ecb091638fd9157e1e77bdfb",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "bd3870d5478264a89f4275427aec0e8a0eedacbd",
+        "type": "tree",
+        "bytes": 2179,
+        "path": "frontend"
+      },
+      {
+        "oid": "6688a81b1dc8380c55e516f4b3bb654d4d91aefd",
+        "type": "tree",
+        "bytes": 419,
+        "path": "frontend/tests"
+      },
+      {
+        "oid": "b13e5ebdd97e36d4321d5968b98a3d88c0c3ea49",
+        "type": "tree",
+        "bytes": 364,
+        "path": "frontend/tests/visual"
+      },
+      {
+        "oid": "80a3bf75dde789d962d743d69f78156e357712b3",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "5287fbd44d99b2be07f5e5ec12da43372c706d02",
+        "type": "tree",
+        "bytes": 2117,
+        "path": "frontend"
+      },
+      {
+        "oid": "293b72f92f5b5e3a102ee5121af39614bc643342",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "7aff44203f56ea58d0e1cd16b3a84a12b76018c2",
+        "type": "tree",
+        "bytes": 32955,
+        "path": "frontend/src/creative"
+      },
+      {
+        "oid": "e9486d4a66c06ed38b7411cafcc784097bfc9412",
+        "type": "tree",
+        "bytes": 17767,
+        "path": "frontend/src/experimental"
+      },
+      {
+        "oid": "726e80c41d9382d071b669774889a2e45609107d",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "46fe77be00ab0b78cd4baa6e43946766b21b7d0f",
+        "type": "tree",
+        "bytes": 2117,
+        "path": "frontend"
+      },
+      {
+        "oid": "e6adbe976d1ff132c6cfde2cf0da85ae15d6f519",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "90a6d5f5483455132e3ebd6cf86f254cb42b17a4",
+        "type": "tree",
+        "bytes": 32955,
+        "path": "frontend/src/creative"
+      },
+      {
+        "oid": "c2505f1ce5725358766f1066a631242a7aa9dea9",
+        "type": "blob",
+        "bytes": 8806,
+        "path": "frontend/src/creative/studioComicHandoffClient.test.ts",
+        "sha256": "3501a7e6eb0e3f145c01fb67cd48d23751a137d5eba38473665223ef4a11ee0b"
+      },
+      {
+        "oid": "d8881dbd5a46d47bd819228e9420b0e8c31c3f58",
+        "type": "blob",
+        "bytes": 15741,
+        "path": "frontend/src/creative/studioComicHandoffClient.ts",
+        "sha256": "4337fedd4e7b88387797fcf4db522c43515a8522bb00599ce8fcfbf54694d31e"
+      },
+      {
+        "oid": "bb5305bcf22c29f476fe1693bfb2367cfbda1906",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "1882c3d694e4e35f551d88a082daf05f233ccc5e",
+        "type": "tree",
+        "bytes": 2117,
+        "path": "frontend"
+      },
+      {
+        "oid": "c24a961b7359cc69c11a685bc5606ae6d8797027",
+        "type": "tree",
+        "bytes": 4970,
+        "path": "frontend/src"
+      },
+      {
+        "oid": "d0f4cf0e2ae2594817dbfc9374a8e9ebbbad1603",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "5bd77c6971ccc7b23b3cf5b2f468922a377aa6e8",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "bc9645383bc51429176da4ceb2d8d4d6c200075b",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "7a2811ade2ecff048fbfc4835e9883011b6eee61",
+        "type": "blob",
+        "bytes": 57262,
+        "path": "app/experimental/comic_layouts.py",
+        "sha256": "a0685e3e2b1ef2681ef4d341a90c0886b426f354db3c03773a8122ccbcfa32da"
+      },
+      {
+        "oid": "0fc8ae69afc398386586b9040c1d15b13c2a33fd",
+        "type": "tree",
+        "bytes": 3652,
+        "path": "app/services"
+      },
+      {
+        "oid": "ab3b04d422a3592b3ced7e1464a0d67fda03fb85",
+        "type": "blob",
+        "bytes": 83132,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "740307adc37627c0e22e97f253b1ca1f3b5da8d3f4e123581a49ca2434debcc0"
+      },
+      {
+        "oid": "7d35becde22615c9e5a115c904d516b1c3ed298d",
+        "type": "tree",
+        "bytes": 48687,
+        "path": "tests"
+      },
+      {
+        "oid": "597365363f3da36c6baf9a1f881681eb407b6aed",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "9dae5f1d7ab44ebb02d1fe90989c7784f3d2dcf7",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "776d53eb82e38b0a967ee929e53c320305fd7451",
+        "type": "tree",
+        "bytes": 4585,
+        "path": "app/creative"
+      },
+      {
+        "oid": "edc3a0353cb855a3309b955e85449e39b828a677",
+        "type": "tree",
+        "bytes": 48554,
+        "path": "tests"
+      },
+      {
+        "oid": "7f5429de2758f1f59c2e42b2ad97170a532b5b28",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "8d1a0129fccccae093ea75a33a08ad12897db453",
+        "type": "tree",
+        "bytes": 48485,
+        "path": "tests"
+      },
+      {
+        "oid": "78f29998b557d87b8588dcb3191e1c4ad601e03f",
+        "type": "blob",
+        "bytes": 15953,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "b225c251bc39bb0369063d03671e930a53dfd7fbd629512a166c97748b2c674a"
+      },
+      {
+        "oid": "fa6e32372296ecd5c79236b16bc5fdb133b59e64",
+        "type": "blob",
+        "bytes": 20164,
+        "path": "tests/test_comic_timeline_handoff_recovery.py",
+        "sha256": "354d9f9ac97c2aefe7641f36b296fab564745638e04eda64a15ed8d4a1afe23b"
+      },
+      {
+        "oid": "90edcf6e9da3893f58d35736a3141886106e9da7",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "d0d0c8b84fb3bad90c03024df03f1225bded9bb7",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f7e85cec31b2a3551607241c76a80eb92d68e960",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "76194cfb6f8f39fbdfb14e1009441b8bc4c20043",
+        "type": "blob",
+        "bytes": 36822,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "b319a202218591c6cac955db0da8c86407e5a70cda196d9ae2c859a3d7465469"
+      },
+      {
+        "oid": "b1cab66930999d1270542c277c84f3a92a00dcbd",
+        "type": "tree",
+        "bytes": 48420,
+        "path": "tests"
+      },
+      {
+        "oid": "402a4fe3df319a5ff6ade64763aa9b07aa731e5e",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "2aefe6935b596a0015f99dc1b457890b07c58cae",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "017709cccb14d3e2c277a36eb2afa580f8cbefcb",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "8f9636227fececf8c4abfc163147261dc13a276a",
+        "type": "blob",
+        "bytes": 31967,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "f0de12c3ccbc785de530dc16970b2b2555c40acb10ec25c93cb9af4d1f5e2452"
+      },
+      {
+        "oid": "d4d22ea84a70a886f1acb9ad4175909529519ee2",
+        "type": "tree",
+        "bytes": 48288,
+        "path": "tests"
+      },
+      {
+        "oid": "4733745a3bd5234f11579d465cf17309b4e7a754",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "170dbac50f17f0bf1b73df618f36ea8f0b0d98d5",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "264abeb4ee5e1d33da0e962a6d4de5d15a407678",
+        "type": "tree",
+        "bytes": 6943,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "c78b158574df6ca71168496c26e546a46cc4eb5a",
+        "type": "blob",
+        "bytes": 8735,
+        "path": "app/experimental/comic_timeline_handoff.py",
+        "sha256": "90418b6789c3c417cfdc77eb32937b6397ae45395beaf2e54093e4ecc1200022"
+      },
+      {
+        "oid": "4bbe7d36be455b9e074448d7a07dd190e69ad428",
+        "type": "tree",
+        "bytes": 3652,
+        "path": "app/services"
+      },
+      {
+        "oid": "6c577ac8b438800ec6663dea1a4f9ac0e8142bd2",
+        "type": "blob",
+        "bytes": 79651,
+        "path": "app/services/asset_library_service.py",
+        "sha256": "fc5e08c535fc962a316f5ef88e4cc4a4022812f90cf2e3ede652726150b6935c"
+      },
+      {
+        "oid": "ca5d786ea0d59bc5b37bb21e8c490aed4a3011bb",
+        "type": "tree",
+        "bytes": 48221,
+        "path": "tests"
+      },
+      {
+        "oid": "529ab0c3cc78aa148dcfa5debfda6aadb77eb33b",
+        "type": "blob",
+        "bytes": 15922,
+        "path": "tests/test_comic_timeline_handoff.py",
+        "sha256": "47649cd5e94887ae5b55e1f4a9fb32c69fd15d99a96b417e6270cbf68c0cc8c7"
+      },
+      {
+        "oid": "f5880f86ceed4cf48f74af2beb7eb1a514bd0dda",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "4b9cb4863ae8a94fe1e0d32253907d3526bd953e",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "70d7b64da9dc7af09ac87ad57a0a164a9d875ae2",
+        "type": "tree",
+        "bytes": 6890,
+        "path": "app/experimental"
+      },
+      {
+        "oid": "746de7de4794557013eb7c1a811b5f14e7dbdfdc",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "591ab54b9a9254e02891029e1e2d0bac39e26783",
+        "type": "tree",
+        "bytes": 48163,
+        "path": "tests"
+      },
+      {
+        "oid": "a70f82e78e41d864d06bee8b027b34c87c6e2376",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "98d0dcfb9590ee3842a48c37e6b230140917d4d2",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "f35102353f4e183a5af2dfac8bc780caf9633a81",
+        "type": "tree",
+        "bytes": 48097,
+        "path": "tests"
+      },
+      {
+        "oid": "809bd96073eaf6fdc53ef7a3e0d0b58a276fbcfa",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "4035e73090d82d9cf038bc1317f3523f9772bddf",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "a478b74f942135eed76811cbf9f4ae9eb62aeb17",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "c5caef8b43dfcd5cb692d6bdf688258096a42e71",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "8d53218c20e9e13a6548f82f68f40003eed3a7b4",
+        "type": "tree",
+        "bytes": 48034,
+        "path": "tests"
+      },
+      {
+        "oid": "c7136050dda5da6417edb47a1edd885abf8292d9",
+        "type": "tree",
+        "bytes": 10538
+      },
+      {
+        "oid": "0ddaefd854d2ac2053972ab252882e85b2feb02b",
+        "type": "tree",
+        "bytes": 5958,
+        "path": "app"
+      },
+      {
+        "oid": "0bceff273dd5ece94199acc4ae7b836330aa9167",
+        "type": "tree",
+        "bytes": 3604,
+        "path": "app/services"
+      },
+      {
+        "oid": "f54e9cf90abc692f649845d47fdd5dc863f858d4",
+        "type": "blob",
+        "bytes": 12218,
+        "path": "app/services/asset_bounded_file_windows.py",
+        "sha256": "5334372bbdfeae56fcf88878c17b474dbd8dec9fa91abee9d489d7f73933eeca"
+      },
+      {
+        "oid": "ec6821e405ba21c99468f4d3698b44b3d270322c",
+        "type": "tree",
+        "bytes": 48034,
+        "path": "tests"
+      },
+      {
+        "oid": "794001b321f956e0c3639ce4eccb29b1da0216ff",
+        "type": "blob",
+        "bytes": 26155,
+        "path": "tests/test_asset_bounded_content_windows.py",
+        "sha256": "8ea617882fe750a043389b42114b4cbcdf45f75e1b072be5e480458737de9800"
+      }
+    ],
+    "forbiddenPathMatches": [],
+    "privateKeyTokenPatternMatches": [],
+    "withdrawnExactSnapshotMatches": [],
+    "withdrawnOwnerCopyClassInProductMatches": [],
+    "note": "Closed committed object range only. Pattern check is not a universal secret-proof claim."
+  }
+}

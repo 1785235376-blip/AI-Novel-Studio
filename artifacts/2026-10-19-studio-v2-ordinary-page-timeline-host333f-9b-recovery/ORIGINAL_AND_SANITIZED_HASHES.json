@@ -1,0 +1,130 @@
+{
+  "policy": "Original sensitive records remain local; published log copies are explicitly sanitized, never represented as byte-identical raw originals. Unit fixtures may contain mock credential literals; no actual Host/session value is published.",
+  "records": [
+    {
+      "public_file": "logs/host-original-red.log",
+      "original_logical_source": "red.log",
+      "original_bytes": 1666,
+      "original_sha256": "39c6a17dfd6f90c5a700f0f416ec073223975896d54533ef17ff574c12e6e2e6",
+      "published_bytes": 1666,
+      "published_sha256": "39c6a17dfd6f90c5a700f0f416ec073223975896d54533ef17ff574c12e6e2e6",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/host-targeted25.log",
+      "original_logical_source": "final-targeted.log",
+      "original_bytes": 1990,
+      "original_sha256": "654e39829a133e9a69f5601eb1a6c2e1fc7934ce3ac40e372b005c8a3b2bc9ff",
+      "published_bytes": 1990,
+      "published_sha256": "654e39829a133e9a69f5601eb1a6c2e1fc7934ce3ac40e372b005c8a3b2bc9ff",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/host-adjacent220.log",
+      "original_logical_source": "adjacent.log",
+      "original_bytes": 5365,
+      "original_sha256": "51686814a5824290105266426755c3bf46333c9bce3901a273eb8611fa371051",
+      "published_bytes": 5365,
+      "published_sha256": "51686814a5824290105266426755c3bf46333c9bce3901a273eb8611fa371051",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/host-expanded-boundaries135-pass17-baseline.log",
+      "original_logical_source": "final-boundaries.log",
+      "original_bytes": 2752865,
+      "original_sha256": "c1fcd6d4c46aaed8b6e29d31ccd181ea3521484b7f6d98703188ddbefaa9179d",
+      "published_bytes": 2749025,
+      "published_sha256": "628b883f1d6da2472f9c375ea512ed6849ea6cd359c81caad5ee184d4c10e91c",
+      "changed_by_redaction_or_path_normalization": true,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/afad-exact17-baseline.log",
+      "original_logical_source": "afad-baseline-editor.log",
+      "original_bytes": 2750674,
+      "original_sha256": "c1c792f520e6a25917a668f7e67ae8b528907dd3860a5b4e9bc95005147727e8",
+      "published_bytes": 2746834,
+      "published_sha256": "f424f010f6427455f5eaac8ca3d535439034c6d1a42e0b327fd22f8fb55b6139",
+      "changed_by_redaction_or_path_normalization": true,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/host-native-tsc.log",
+      "original_logical_source": "final-types.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 0,
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/333f-production-build.log",
+      "original_logical_source": "real-live-build.log",
+      "original_bytes": 2005,
+      "original_sha256": "56a2df710e676d3897d98b22aa61fec81291527c4497a9ccc80f3e6c6b89ebe3",
+      "published_bytes": 2005,
+      "published_sha256": "56a2df710e676d3897d98b22aa61fec81291527c4497a9ccc80f3e6c6b89ebe3",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/333f-real-browser.log",
+      "original_logical_source": "playwright-raw.log",
+      "original_bytes": 600,
+      "original_sha256": "d83d6778e6f316013b90d8cdc8adc67216061f252e769988e63f66d23b88c284",
+      "published_bytes": 600,
+      "published_sha256": "d83d6778e6f316013b90d8cdc8adc67216061f252e769988e63f66d23b88c284",
+      "changed_by_redaction_or_path_normalization": false,
+      "raw_original_public": false
+    },
+    {
+      "public_file": "logs/333f-real-backend-http.log",
+      "original_logical_source": "backend.log",
+      "original_bytes": 18734,
+      "original_sha256": "34d6e93680b4b8c247ad8f87b6a3809cd4f46e81f28a61ec358b187d4d6e9967",
+      "published_bytes": 18654,
+      "published_sha256": "3060e3471535094171803b7968cfb970def3e9743095d885032dc7b5bcca1158",
+      "changed_by_redaction_or_path_normalization": true,
+      "raw_original_public": false
+    },
+    {
+      "public_file": null,
+      "original_logical_source": "live-result.json",
+      "original_bytes": 83929,
+      "original_sha256": "f82286d693d437868071921392253db952d7adeff225b6e1cd0cafcd546482d9",
+      "reason_not_published": "Raw Host/session response or diagnostic input; safe semantic projection only"
+    },
+    {
+      "public_file": null,
+      "original_logical_source": "live-network-attempt.json",
+      "original_bytes": 76906,
+      "original_sha256": "cb55fc2dc3a6543845956d1f34c2a4667e5286f48880663b322070b072ba1982",
+      "reason_not_published": "Raw Host/session response or diagnostic input; safe semantic projection only"
+    },
+    {
+      "public_file": null,
+      "original_logical_source": "browser-result.json",
+      "original_bytes": 3391,
+      "original_sha256": "fc3179451aec6782dafa83c670cd7eb4890ea21d2bd38cb12f310b67b473352c",
+      "reason_not_published": "Raw Host/session response or diagnostic input; safe semantic projection only"
+    },
+    {
+      "public_file": null,
+      "original_logical_source": "seed-http.json",
+      "original_bytes": 16722,
+      "original_sha256": "8aa401032a1043e9983965d4708190bb89b74bf8444b149a225a282069b79106",
+      "reason_not_published": "Raw Host/session response or diagnostic input; safe semantic projection only"
+    },
+    {
+      "public_file": null,
+      "original_logical_source": "review-handoff.json",
+      "original_bytes": 8721,
+      "original_sha256": "7c2a5f7cf052ee742559a855e709eeaac0406e789a3009f2302cdea37fe25613",
+      "reason_not_published": "Raw Host/session response or diagnostic input; safe semantic projection only"
+    }
+  ]
+}

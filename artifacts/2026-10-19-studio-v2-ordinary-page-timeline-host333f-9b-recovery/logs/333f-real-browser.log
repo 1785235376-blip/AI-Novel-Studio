@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:137840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:137840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\visual\comic-handoff-live.spec.ts:12:1 › real approved whole pages and supported leaf images -> real HTTP Assets and Timeline -> refresh recovery -> native Timeline open (50.7s)
+
+  1 passed (51.6s)

@@ -1,0 +1,30 @@
+{
+  "status": "LOCAL_RECOVERY_OBJECT_AND_TREE_VERIFIED_PENDING_INDEPENDENT_PRODUCT_REVIEW",
+  "base": "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35",
+  "candidate": "333f384a125068a4e7714b347f687f5dc2034123",
+  "candidateTree": "89e5548014d64063cfa77bfe2e08c4a101dd6c3f",
+  "backend": "65f05d069c03c114f6f8545c0dbd66e8359014b8",
+  "prerequisites": [
+    "9b6809ea76ccd7915ecb2fe52a4f41bf179d2b35"
+  ],
+  "advertisedHeads": [
+    "333f384a125068a4e7714b347f687f5dc2034123 refs/heads/recovery/studio-v2-333f",
+    "65f05d069c03c114f6f8545c0dbd66e8359014b8 refs/heads/recovery/backend-65"
+  ],
+  "bundleBytes": 143949,
+  "bundleSha256": "6f94a19751cf2ac5f7c4f151f17ed9febe547fbe619a43b775c335bf19688ffc",
+  "baseOnlySeedFinalObjectInitiallyAbsent": true,
+  "alternates": false,
+  "strictFsckExit": 0,
+  "introducedObjectsVerified": 183,
+  "introducedBlobsVerified": 73,
+  "knownSyntheticHostCredentialInIntroducedBlobs": false,
+  "completeSourceTreeMaterializedWithoutFilters": true,
+  "changedFinalFilesByteEqual": 49,
+  "testsRerun": false,
+  "pushed": false,
+  "allTrackedFilesMaterializedAndBlobVerified": 16224,
+  "exactIntroducedObjectSetNoExtras": true,
+  "excludedUnreviewedNLE": "cb93855f067575595a3ee3845b6e05670e831e1f",
+  "excludedNLEObjectAbsent": true
+}

@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 D:/codex数据/2026-10-19/task/studio-v2-host-unknown-exit-p2/frontend
+
+ ✓ src/creative/StudioProductionLeaveRisk.regression.test.tsx (7 tests) 326ms
+stdout | src/creative/IndependentStudioHostExit.regression.test.tsx > retains original production UNKNOWN identity and separate consent after create-503
+UNKNOWN_EXIT_OBSERVATION {"mode":"create-503","requestId":"6d358930-1e76-4d4c-b22c-814855c2b571","projectId":"host-exit-project","branchId":null,"owner":"audio","operation":"m8.audio.trim","requestCount":10,"writes":2,"implicitExitBlocked":true,"networkCallsAfterExit":0}
+
+stdout | src/creative/IndependentStudioHostExit.regression.test.tsx > retains original production UNKNOWN identity and separate consent after read-401
+UNKNOWN_EXIT_OBSERVATION {"mode":"read-401","requestId":"371f958d-b5e2-4900-8ada-75ea896be6b2","projectId":"host-exit-project","branchId":null,"owner":"audio","operation":"m8.audio.trim","requestCount":11,"writes":2,"implicitExitBlocked":true,"networkCallsAfterExit":0}
+
+stdout | src/creative/IndependentStudioHostExit.regression.test.tsx > retains original production UNKNOWN identity and separate consent after returned-unknown
+UNKNOWN_EXIT_OBSERVATION {"mode":"returned-unknown","requestId":"0fc212df-ac45-4c23-a275-0670aae43386","projectId":"host-exit-project","branchId":null,"owner":"audio","operation":"m8.audio.trim","requestCount":11,"writes":2,"implicitExitBlocked":true,"networkCallsAfterExit":0}
+
+ ✓ src/creative/IndependentStudioHostExit.regression.test.tsx (18 tests) 3121ms
+   ✓ preserves a settled original Timeline render UNKNOWN across Host retirement and resets both exit consents after cancel 374ms
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  18:58:47
+   Duration  7.21s (transform 2.30s, setup 24ms, collect 3.91s, tests 3.45s, environment 1.01s, prepare 165ms)
+
+JUNIT report written to D:/codex数据/2026-10-19/task/host-unknown-exit-p2-evidence-20261019/final-targeted.xml

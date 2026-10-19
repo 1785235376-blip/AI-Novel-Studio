@@ -1,0 +1,34 @@
+
+ RUN  v2.1.9 D:/codex数据/2026-10-19/task/studio-v2-host-unknown-exit-p2/frontend
+
+ ❯ src/creative/IndependentStudioHostExit.regression.test.tsx (15 tests | 1 failed | 14 skipped) 460ms
+   × requires independent UNKNOWN consent and retains an original native-audio create request after its response settled without a receipt 460ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/IndependentStudioHostExit.regression.test.tsx > requires independent UNKNOWN consent and retains an original native-audio create request after its response settled without a receipt
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/creative/IndependentStudioHostExit.regression.test.tsx:212:53
+    210|   loseHost(); novel();
+    211|   fireEvent.click(screen.getByLabelText('确认放弃未保存输入'));
+    212|   expect((confirm() as HTMLButtonElement).disabled).toBe(true);
+       |                                                     ^
+    213|   expect(screen.getByRole('alert').textContent).toContain(sent!.reques…
+    214|   expect(screen.getByRole('alert').textContent).toContain('m8.audio.tr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 skipped (15)
+   Start at  18:43:16
+   Duration  4.50s (transform 2.08s, setup 11ms, collect 3.29s, tests 460ms, environment 460ms, prepare 75ms)
+
+JUNIT report written to D:/codex数据/2026-10-19/task/host-unknown-exit-p2-evidence-20261019/red.xml

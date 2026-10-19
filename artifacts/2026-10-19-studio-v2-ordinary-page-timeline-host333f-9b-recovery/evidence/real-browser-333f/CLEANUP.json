@@ -1,0 +1,11 @@
+{
+  "other_processes_stopped": false,
+  "stopped_frontend_pid": 132268,
+  "status": "PASS",
+  "stopped_backend_pids": [
+    120588,
+    138940
+  ],
+  "task_validation_processes_remaining": [],
+  "owned_ports_closed": true
+}

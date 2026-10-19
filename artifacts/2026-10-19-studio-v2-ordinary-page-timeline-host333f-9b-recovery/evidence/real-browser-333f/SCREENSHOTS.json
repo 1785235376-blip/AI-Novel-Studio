@@ -1,0 +1,32 @@
+[
+  {
+    "name": "01-host-verified-original-shell.png",
+    "bytes": 44592,
+    "sha256": "0fcf277285881747c9ccd3d971702d4ebca4624c39ecc72e967b56b057067ffc"
+  },
+  {
+    "name": "02-actual-native-page-preview.png",
+    "bytes": 71242,
+    "sha256": "32d25a297dc93999769ac3453a27485228b17baed87ebe74f53d7581464740f3"
+  },
+  {
+    "name": "03-real-http-draft-created.png",
+    "bytes": 112260,
+    "sha256": "9a8b448132471e60a59339cc7898755064f5f8309284a1a34ad6d9dd089e8c2d"
+  },
+  {
+    "name": "04-refresh-same-id-explicit-readback.png",
+    "bytes": 105035,
+    "sha256": "bd1f15e02cc3dcfa7337801ce3d5f94d20759df940d644d9917070c38ab317fc"
+  },
+  {
+    "name": "05-original-timeline-list-adopted.png",
+    "bytes": 136125,
+    "sha256": "56f6b6e65512edefa3f80b2b08645ce7df68e7c137786e1969bfbae747cec4c4"
+  },
+  {
+    "name": "06-refresh-native-timeline-reopened.png",
+    "bytes": 136121,
+    "sha256": "f634e1f177328d14bd9cef22c4e43dc93663ea7923325c1e02a4783afe9214af"
+  }
+]
