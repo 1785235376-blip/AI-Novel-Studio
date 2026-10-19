@@ -1,3 +1,4 @@
+import type { SceneDirectorCanvasReceipt } from './directorCanvasHandoff';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { directorSceneScopeBody } from './directorSceneScope';
@@ -5,7 +6,7 @@ import type { CreativeDocument } from './types';
 import type { PlanningSnapshot } from './studioProductionGraphContract';
 type Props={source:CreativeDocument;snapshot:PlanningSnapshot;available:boolean;busy:boolean;isCurrent:()=>boolean;
   request:(source:CreativeDocument,snapshot:PlanningSnapshot,responsibility:string,scenes:string[])=>Promise<CreativeDocument>;
-  mutate:<T>(work:()=>Promise<T>)=>Promise<T>;onPending:(value:boolean)=>void;onOpen:(id:string)=>void};
+  mutate:<T>(work:()=>Promise<T>)=>Promise<T>;onPending:(value:boolean)=>void;onOpen:(id:string)=>void;onCreated?:(receipt:SceneDirectorCanvasReceipt)=>void};
 export function DirectorSceneScopePanel(props:Props){
   return <ScopeSession key={JSON.stringify([props.source.id,props.source.version,props.snapshot])} {...props}/>;
 }
@@ -31,6 +32,7 @@ function ScopeSession(props:Props){
     consumedForm.current=formToken;consentLive.current=false;lock.current=true;setWorking(true);setUncertain(true);setConfirmed(false);setError('');setCreated(undefined);props.onPending(true);
     try{const result=await props.mutate(()=>props.request(props.source,props.snapshot,label,ids));
       if(!current()||form.current.token!==formToken)return;setCreated(result);setUncertain(false);setResponsibility('');setSelected([]);
+      live.current.onCreated?.({document:structuredClone(result),source:structuredClone(props.source),snapshot:{...props.snapshot},responsibility:label,sceneIds:ids});
     }catch{if(current())setError('创建结果未确认，请先读取原导演目录核对，不能自动重复创建。');}
     finally{lock.current=false;if(alive.current)setWorking(false);}
   }

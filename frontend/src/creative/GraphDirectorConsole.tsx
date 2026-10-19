@@ -6,7 +6,7 @@ import { DirectorSceneScopePanel } from './DirectorSceneScopePanel';
 import {DirectorSheetExportPanel} from './DirectorSheetExportPanel';
 import {directorDraftBackup} from './directorDraftBackup';
 import {downloadPortableBlob} from '../experimental/portableProjectsClient';
-import { reviewedDirectorSnapshot, type ReviewedDirectorReceipt, type ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
+import { checkedSceneDirectorSource, sceneDirectorSnapshot, type SceneDirectorCanvasReceipt, reviewedDirectorSnapshot, type ReviewedDirectorReceipt, type ReviewedDirectorCanvasHandoff } from './directorCanvasHandoff';
 import type { OpenStoryboardEditor } from './storyboardEditorHandoff';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GraphDirectorProposalReview, hasDirectorProposalReview, type GraphDirectorReviewSource } from './GraphDirectorProposalReview';
@@ -46,6 +46,8 @@ type Props = {
   onOpenBroker?: () => void;
   onOpenStoryboard?: OpenStoryboardEditor;
 };
+type SceneDirectorOrigin = { receipt: SceneDirectorCanvasReceipt; source: CreativeDocument; snapshot: PlanningSnapshot; authored: number; selected: number; generation: number };
+type SceneDirectorProof = { origin: SceneDirectorOrigin; pin: PlanningSnapshot; targetScope: object; verificationScope: object; canvasGeneration: number; environment: object; ticket: number; isCanvasCurrent: () => boolean; consumed: boolean };
 const empty = (): CreativeInput => ({ ...newDocument('DIRECTOR'), source_independent: true });
 const samePin = (a: PlanningSnapshot, b: PlanningSnapshot) => a.id === b.id && a.version === b.version && a.digest === b.digest;
 
@@ -238,6 +240,66 @@ export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRec
     } catch (reason) { if (owns(generation) && ticket === epoch.current) fail(reason); }
     finally { lock.current = false; if (alive.current) setWorking(false); }
   }
+  const [sceneDirector, setSceneDirector] = useState<SceneDirectorOrigin>();
+  const sceneDirectorRef = useRef(sceneDirector); sceneDirectorRef.current = sceneDirector;
+  const [sceneProof, setSceneProof] = useState<SceneDirectorProof>();
+  const sceneProofRef = useRef<SceneDirectorProof>(), sceneConsent = useRef<SceneDirectorProof>();
+  const [sceneConfirmed, setSceneConfirmed] = useState(false);
+  const sceneSource = useRef({ base, snapshot }); sceneSource.current = { base, snapshot };
+  // Observe both directions of permission/busy/target changes, including ABA.
+  const sceneValues = [canMutate, busy, pending, base, snapshot, isCurrent(), canvasHandoff?.scope, canvasHandoff?.verificationScope, canvasHandoff?.available];
+  const sceneEnvironment = useRef({ values: sceneValues, token: {} });
+  if (sceneValues.some((value, index) => value !== sceneEnvironment.current.values[index])) sceneEnvironment.current = { values: sceneValues, token: {} };
+  const sceneToken = sceneEnvironment.current.token;
+  function sceneOriginCurrent(origin: SceneDirectorOrigin) {
+    return origin === sceneDirectorRef.current && current() && owns(origin.generation)
+      && origin.authored === authorEpoch.current && origin.selected === selection.current.generation
+      && origin.source === sceneSource.current.base && origin.snapshot === sceneSource.current.snapshot;
+  }
+  function sceneProofCurrent(proof: SceneDirectorProof) {
+    return proof === sceneProofRef.current && !proof.consumed && sceneOriginCurrent(proof.origin) && !composing.current
+      && proof.environment === sceneEnvironment.current.token && proof.ticket === epoch.current
+      && proof.canvasGeneration === canvasLifetime.current.generation && proof.isCanvasCurrent()
+      && proof.targetScope === canvasRef.current?.scope && proof.verificationScope === canvasRef.current?.verificationScope;
+  }
+  function receiveSceneDirector(receipt: SceneDirectorCanvasReceipt) {
+    if (!current() || !base || !snapshot || !samePin(receipt.snapshot, snapshot) || composing.current) return;
+    // Keep the exact saved parent in the author form; no implicit read/adoption.
+    authorEpoch.current++; verifiedIntent.current = undefined; setReviewedPin(undefined);
+    const origin = { receipt, source: base, snapshot, authored: authorEpoch.current, selected: selection.current.generation, generation: scope.current.generation };
+    sceneDirectorRef.current = origin; setSceneDirector(origin); sceneProofRef.current = undefined; setSceneProof(undefined);
+    sceneConsent.current = undefined; setSceneConfirmed(false);
+  }
+  async function verifySceneDirector(origin: SceneDirectorOrigin, environment: object) {
+    if (!sceneOriginCurrent(origin) || environment !== sceneEnvironment.current.token || !editing || pending || dirty || lock.current || !canvasRef.current?.available) return;
+    const target = canvasRef.current, ticket = ++epoch.current, generation = canvasLifetime.current.generation;
+    const valid = () => sceneOriginCurrent(origin) && environment === sceneEnvironment.current.token && ticket === epoch.current
+      && generation === canvasLifetime.current.generation && target.verificationScope === canvasRef.current?.verificationScope && target.isVerificationCurrent() && !composing.current;
+    lock.current = true; setWorking(true); setError(''); sceneProofRef.current = undefined; setSceneProof(undefined); sceneConsent.current = undefined; setSceneConfirmed(false);
+    try {
+      const value = await read(async () => {
+        const parent = await client.export(origin.receipt.snapshot.id);
+        if (!valid()) return undefined;
+        checkedSceneDirectorSource(origin.receipt, parent.document, parent.document_digest);
+        const child = await client.export(origin.receipt.document.id);
+        if (!valid()) return undefined;
+        return sceneDirectorSnapshot(origin.receipt, child.document, child.document_digest);
+      });
+      if (!value || !valid()) return;
+      const proof = { origin, pin: value, targetScope: target.scope, verificationScope: target.verificationScope, canvasGeneration: generation,
+        environment, ticket, isCanvasCurrent: target.isVerificationCurrent, consumed: false };
+      sceneProofRef.current = proof; setSceneProof(proof);
+    } catch (reason) { if (valid()) fail(reason); }
+    finally { lock.current = false; if (alive.current) setWorking(false); }
+  }
+  function placeSceneDirector(proof: SceneDirectorProof) {
+    if (!editing || pending || dirty || lock.current || sceneConsent.current !== proof || !sceneProofCurrent(proof) || !canvasRef.current?.available) return;
+    lock.current = true; proof.consumed = true; sceneConsent.current = undefined; setSceneConfirmed(false);
+    try {
+      if (!canvasRef.current.insert({ ...proof.pin }, proof.targetScope)) { setError('目标画布或容量已变化；子导演原文档保留，请重新核对后再添加。'); return; }
+      setNotice('子导演精确版本已加入当前画布草稿。请明确保存创作图；未自动连线、执行或继承父审核。');
+    } finally { lock.current = false; }
+  }
   function proofCurrent() {
     const proof = verifiedIntent.current;
     return !!proof && !proof.consumed && proof.receipt === reviewedRef.current && proof.receipt.id === proof.pin.id && proof.receipt.version === proof.pin.version
@@ -318,7 +380,23 @@ export function GraphDirectorConsole({ draftOwner, verifyDraftOwner, registerRec
         }} />}
       {base && snapshot && client.deriveDirectorScope && <DirectorSceneScopePanel source={base} snapshot={snapshot} request={client.deriveDirectorScope}
         available={authorized && active && canMutate && !dirty && !blocked && !handoffPending && !proposalPending && !imagePending && !working}
-        busy={busy || working} isCurrent={current} mutate={mutate} onPending={setScopePending} onOpen={id => { if (current() && !pending) void inspect(id); }} />}
+        busy={busy || working} isCurrent={current} mutate={mutate} onPending={setScopePending} onCreated={receiveSceneDirector} onOpen={id => { if (current() && !pending) void inspect(id); }} />}
+      {sceneDirector && sceneOriginCurrent(sceneDirector) && canvasHandoff && <section aria-label="子导演画布交接">
+        <h4>将已保存子导演交接到当前画布</h4>
+        <p>当前画布须支持导演节点且可编辑。请先明确读取导演、分镜与视觉制作节点目录；这里不会升级或替换当前图。</p>
+        <p>{sceneDirector.receipt.document.title} · {sceneDirector.receipt.document.id} · v{sceneDirector.receipt.document.version} · DRAFT，不继承父审核。</p>
+        <p>原来源：{sceneDirector.receipt.snapshot.id} · v{sceneDirector.receipt.snapshot.version} · {sceneDirector.receipt.snapshot.digest}</p>
+        <Button disabled={!editing || pending || dirty || !canvasHandoff.available} onClick={() => void verifySceneDirector(sceneDirector, sceneToken)}>重读并核对子导演与来源</Button>
+        {sceneProof && sceneProofCurrent(sceneProof) && <>
+          <p>核对子导演绑定：{sceneProof.pin.id} · v{sceneProof.pin.version} · {sceneProof.pin.digest}。目标为当前画布草稿，最多添加一个导演节点。</p>
+          <label><input type="checkbox" checked={sceneConfirmed && sceneConsent.current === sceneProof} disabled={!editing || pending || dirty} onChange={event => {
+            if (!editing || pending || dirty || lock.current || !sceneProofCurrent(sceneProof)) return;
+            sceneConsent.current = event.target.checked ? sceneProof : undefined; setSceneConfirmed(event.target.checked);
+          }} />已核对子导演版本、来源与当前画布，确认只添加一个导演节点</label>
+          <Button disabled={!editing || pending || dirty || sceneConsent.current !== sceneProof || !sceneConfirmed || !canvasHandoff.available}
+            onClick={() => placeSceneDirector(sceneProof)}>将子导演添加到当前画布草稿</Button>
+        </>}
+      </section>}
       {base && client.directorSheetExport && <DirectorSheetExportPanel document={base} available={authorized && active && !pending && !busy && !working} isCurrent={current} request={client.directorSheetExport} onDenied={() => fail(new ApiError({status:403,code:'PROJECT_SCOPE_FORBIDDEN',message:'当前导演文档不可导出。'}))}/>}
       {base && <GraphDirectorStoryboardHandoff canvasHandoff={storyboardCanvasHandoff}
         sourceScope={JSON.stringify([renderedAuthorEpoch, renderedSelection, renderedScope])}

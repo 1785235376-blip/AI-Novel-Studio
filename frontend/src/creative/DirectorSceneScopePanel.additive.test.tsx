@@ -30,6 +30,14 @@ it('validates exact selected-scene result and rejects inherited approval or broa
  expect(directorSceneScopeBody(source,snapshot,'Opening',['a']).director_scope.scene_ids).toEqual(['a']);expect(checkedDirectorSceneScopeResult(result(),source,snapshot,'Opening',['a']).id).toBe('child');
  for(const value of [{...result(),scenes:source.scenes},{...result(),status:'APPROVED'},{...result(),source_documents:{}},{...result(),provenance:{...result().provenance,parameters:{...result().provenance.parameters,copied_approval:true}}}])expect(()=>checkedDirectorSceneScopeResult(value,source,snapshot,'Opening',['a'])).toThrow();
 });
+it('accepts original HTTP JSON with reordered object keys while preserving exact selected values and array order',()=>{
+ const reorder=(value:any):any=>Array.isArray(value)?value.map(reorder):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).reverse().map(key=>[key,reorder(value[key])])):value;
+ expect(checkedDirectorSceneScopeResult(reorder(result()),source,snapshot,'Opening',['a']).id).toBe('child');
+ const changed=reorder(result());changed.scenes[0].action='Changed';expect(()=>checkedDirectorSceneScopeResult(changed,source,snapshot,'Opening',['a'])).toThrow();
+ const two={...result(),scenes:source.scenes,provenance:{...result().provenance,parameters:{...result().provenance.parameters,scene_ids:['a','b']}}};
+ expect(checkedDirectorSceneScopeResult(reorder(two),source,snapshot,'Opening',['b','a']).scenes.map(scene=>scene.id)).toEqual(['a','b']);
+ expect(()=>checkedDirectorSceneScopeResult({...two,scenes:[...two.scenes].reverse()},source,snapshot,'Opening',['a','b'])).toThrow();
+});
 it('uses the original captured Creative transport and validates the returned scope',async()=>{
  const {creativeClient}=await import('./client');const fetch=vi.fn(async()=>new Response(JSON.stringify(result()),{status:201}));vi.stubGlobal('fetch',fetch);
  try{const api=creativeClient('project',{sessionToken:'trusted-session'});expect((await api.deriveDirectorScope(source,snapshot,'Opening',['a'])).id).toBe('child');
