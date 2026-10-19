@@ -392,6 +392,11 @@ def _binding(value, body):
         for captured in (value.get("command"), value.get("execution_recipe")))
     if loudness_bound and ("command" not in value or "execution_recipe" not in value):
         raise _error("STUDIO_AUDIO_LOUDNESS_BINDING_REQUIRED", "Loudness matching requires original command and recipe", 403)
+    denoise_bound = DENOISE_CONTROL in body["parameters"] or any(
+        isinstance(captured, dict) and isinstance(captured.get("parameters"), dict) and DENOISE_CONTROL in captured["parameters"]
+        for captured in (value.get("command"), value.get("execution_recipe")))
+    if denoise_bound and ("command" not in value or "execution_recipe" not in value):
+        raise _error("STUDIO_AUDIO_DENOISE_BINDING_REQUIRED", "降噪缺少原命令或配方绑定", 403)
     speech_bound = "storyboard_speech" in body or "storyboard_speech" in value or (
         isinstance(value.get("command"), dict) and "storyboard_speech" in value["command"])
     if speech_bound and ("command" not in value or "execution_recipe" not in value
@@ -399,7 +404,7 @@ def _binding(value, body):
             or body.get("storyboard_speech") != value.get("storyboard_speech")
             or body.get("storyboard_speech") != value.get("command", {}).get("storyboard_speech")):
         raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED", "分镜对白绑定已变化", 409)
-    if "audio_profile" in body or fade_bound or peak_bound or loudness_bound or speech_bound:
+    if "audio_profile" in body or fade_bound or peak_bound or loudness_bound or denoise_bound or speech_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
@@ -414,7 +419,7 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_LOUDNESS_BINDING_CHANGED" if loudness_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_LOUDNESS_BINDING_CHANGED" if loudness_bound else "STUDIO_AUDIO_DENOISE_BINDING_CHANGED" if denoise_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
                 "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
