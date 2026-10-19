@@ -22,7 +22,7 @@ from .common import StaleSourceError, check_version, now
 from .comic_layers import ora_decode_budget
 from .comic_publication import _render_page
 from .comic_publication_budget import publication_budget, MAX_PAGE_PIXELS, MAX_ARCHIVE_BYTES
-from ..services.comic_page_origin import CONTRACT as ASSET_CONTRACT, FIELD, FEATURES, ID, DIGEST, record, marker, ComicPagePin
+from ..services.comic_page_origin import CONTRACT as ASSET_CONTRACT, FIELD, FEATURES, ID, DIGEST, record, marker, ComicPagePin, INCARNATION
 
 CONTRACT = 'studio-comic-timeline-handoff/1'
 COLLECTION = 'comic_timeline_handoffs_v1'
@@ -260,31 +260,82 @@ class ComicTimelineHandoff:
         if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}', value):
             raise ValueError('COMIC_HANDOFF_REQUEST_ID_INVALID')
 
+    def _checked_receipts(self, state, nid, scope):
+        # Identity is checked before actor/request/incarnation selection. A
+        # damaged current receipt must never masquerade as an absent or retired
+        # request and permit a second set of durable effects.
+        rows = state['collections'].get(COLLECTION, {})
+        if not isinstance(rows, dict):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        # Reuse the already active raw scope lease. Its retained Timeline
+        # metadata can validate historical creation proofs without adopting or
+        # reading old-incarnation Asset bytes under the current project binding.
+        from ..creative.production_execution import TIMELINES
+        retained = self.store.read(nid, scope)['collections'].get(TIMELINES, {})
+        live = state['collections'].get(TIMELINES, {})
+        pages = state['collections'].get(self.comic.RECORDS, {})
+        if any(not isinstance(value, dict) for value in (retained, live, pages)):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        creations = {}
+        for timeline in {**retained, **live}.values():
+            if isinstance(timeline, dict) and isinstance(timeline.get('comic_handoff_origin'), dict):
+                receipt_id = timeline['comic_handoff_origin'].get('receipt_id')
+                if not isinstance(receipt_id, str) or receipt_id not in rows:
+                    raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+                creations.setdefault(receipt_id, []).append(timeline)
+        checked, identities = [], set()
+        for key, row in rows.items():
+            try:
+                self._validate_receipt(rows, key, row, nid, scope)
+            except (ValueError, TypeError, KeyError, AttributeError):
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT') from None
+            try:
+                self._validate_receipt_owners(row, nid, scope, pages, creations.get(key, []))
+            except (ValueError, TypeError, KeyError, AttributeError) as error:
+                # Retain the existing public creation-readback mismatch code.
+                if str(error) == 'COMIC_HANDOFF_TIMELINE_RECEIPT_CHANGED':
+                    raise
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT') from None
+            identity = (row['incarnation'], row['actor'], row['request_id'])
+            if identity in identities:
+                raise ValueError('COMIC_HANDOFF_RECEIPT_AMBIGUOUS')
+            identities.add(identity)
+            checked.append(row)
+        return checked
+
     def _receipt(self, state, nid, scope, actor, request_id, context):
         self._request_id(request_id)
-        rows = state['collections'].get(COLLECTION, {})
-        matches = [r for r in rows.values() if isinstance(r, dict) and r.get('actor') == actor
-                   and r.get('request_id') == request_id and r.get('incarnation') == context['incarnation']]
+        matches = [row for row in self._checked_receipts(state, nid, scope)
+                   if (row['actor'], row['request_id'], row['incarnation']) ==
+                      (actor, request_id, context['incarnation'])]
         if not matches:
             raise FileNotFoundError(request_id)
         if len(matches) != 1:
             raise ValueError('COMIC_HANDOFF_RECEIPT_AMBIGUOUS')
-        row = matches[0]
+        return matches[0]
+
+    def _validate_receipt(self, rows, key, row, nid, scope):
+        if not isinstance(row, dict):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
         if (row.get('contract') != CONTRACT or row.get('novel_id') != nid or row.get('scope') != scope
-                or rows.get(row.get('id')) is not row or type(row.get('version')) is not int
+                or type(key) is not str or key != row.get('id') or rows.get(key) is not row
+                or type(row.get('version')) is not int
                 or set(row) != {'id', 'contract', 'novel_id', 'scope', 'actor', 'incarnation', 'request_id',
                     'version', 'status', 'created_at', 'confirm', 'preview', 'steps', 'timeline_snapshot'}
                 or not 1 <= row['version'] <= 8 or row.get('status') not in {'PLANNED', 'DRAFT_CREATED', 'CANCELLED'}):
             raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        self._request_id(row['request_id'])
+        if type(row['incarnation']) is not str or not re.fullmatch(INCARNATION, row['incarnation']):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
         request = HandoffConfirm.model_validate(row.get('confirm')).model_dump()
         report = row.get('preview')
         validate_preview(report)
-        if (request['request_id'] != request_id or not isinstance(report, dict)
+        if (request['request_id'] != row['request_id'] or not isinstance(report, dict)
                 or digest({k: v for k, v in report.items() if k != 'preview_digest'}) != report.get('preview_digest')
                 or request['reviewed_preview_digest'] != report['preview_digest']
                 or request['request'] != report.get('request') or report.get('request_digest') != digest(request['request'])
                 or (report.get('actor'), report.get('scope_key'), report.get('incarnation')) !=
-                   (actor, context['scope_key'], context['incarnation'])
+                   (row['actor'], self.store.key(nid, scope), row['incarnation'])
                 or not isinstance(row.get('steps'), list) or len(row['steps']) != len(request['request']['pages'])
                 or len({step.get('asset_id') for step in row['steps']}) != len(row['steps'])):
             raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
@@ -295,6 +346,11 @@ class ComicTimelineHandoff:
             if ((step['state'] == 'PENDING' and step['asset_version'] is not None)
                     or (step['state'] == 'READY' and (type(step['asset_version']) is not int or step['asset_version'] != 1))):
                 raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        ready = sum(step['state'] == 'READY' for step in row['steps'])
+        if (any(step['state'] != ('READY' if index < ready else 'PENDING')
+                for index, step in enumerate(row['steps']))
+                or row['version'] != 1 + ready + (row['status'] != 'PLANNED')):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
         snapshot = row.get('timeline_snapshot')
         if row['status'] == 'DRAFT_CREATED':
             if (not isinstance(snapshot, dict) or set(snapshot) != {'id', 'version', 'digest'}
@@ -308,6 +364,31 @@ class ComicTimelineHandoff:
         elif snapshot is not None:
             raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
         return row
+
+    def _validate_receipt_owners(self, row, nid, scope, pages, creations):
+        from ..creative.project_store import BINDING
+        expected_owner = (nid, scope, row['actor'], row['incarnation'])
+        for page in row['preview']['pages']:
+            source = pages.get(page['source']['id'])
+            # Source version/content may legitimately have changed. Immutable
+            # owner identity, when retained, cannot belong to another lifetime.
+            if source is not None and (not isinstance(source, dict) or
+                    (source.get('novel_id'), source.get('scope'), source.get('created_by'), source.get(BINDING)) != expected_owner):
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        if row['status'] != 'DRAFT_CREATED':
+            if creations:
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+            return
+        if len(creations) != 1:
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        timeline = creations[0]
+        if ((timeline.get('novel_id'), timeline.get('scope'), timeline.get('created_by'), timeline.get(BINDING)) != expected_owner
+                or type(timeline.get('version')) is not int or timeline['version'] < 1):
+            raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+        origin = validate_timeline_origin(timeline)
+        if (origin['request_id'] != row['request_id'] or origin['preview_digest'] != row['preview']['preview_digest']
+                or origin['creation_snapshot'] != row['timeline_snapshot']):
+            raise ValueError('COMIC_HANDOFF_TIMELINE_RECEIPT_CHANGED')
 
     def _origin(self, row, step, index):
         page = row['preview']['pages'][index]
@@ -377,7 +458,7 @@ class ComicTimelineHandoff:
             if body.reviewed_preview_digest != report['preview_digest']:
                 raise StaleSourceError('COMIC_HANDOFF_PREVIEW_CHANGED')
             rows = state['collections'].setdefault(COLLECTION, {})
-            if sum(r.get('incarnation') == context['incarnation'] for r in rows.values()) >= MAX_RECEIPTS:
+            if sum(r['incarnation'] == context['incarnation'] for r in self._checked_receipts(state, nid, scope)) >= MAX_RECEIPTS:
                 raise ValueError('COMIC_HANDOFF_RECEIPT_LIMIT')
             usage, _ = self._usage(state, nid, scope, context, guard)
             if (usage['count'] + len(images) > self.workspace.MAX_ASSETS
@@ -395,13 +476,12 @@ class ComicTimelineHandoff:
     def _usage(self, state, nid, scope, context, guard):
         usage = self.assets.project_usage(nid, branch_id=scope.get('branch_id'))
         orphan_bytes = {}
-        rows = [r for r in state['collections'].get(COLLECTION, {}).values()
-                if r.get('incarnation') == context['incarnation']]
+        rows = [row for row in self._checked_receipts(state, nid, scope)
+                if row['incarnation'] == context['incarnation']]
         if len(rows) > MAX_RECEIPTS:
             raise ValueError('COMIC_HANDOFF_RECEIPT_LIMIT')
         seen = set()
-        for candidate in rows:
-            row = self._receipt(state, nid, scope, candidate['actor'], candidate['request_id'], context)
+        for row in rows:
             for index, step in enumerate(row['steps']):
                 aid = step['asset_id']
                 if aid in seen: raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
