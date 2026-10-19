@@ -1,5 +1,5 @@
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoff';
-import { buildStoryboardVideoStarter } from './graphStoryboardStarter';
+import { buildStoryboardVideoBranches } from './graphStoryboardStarter';
 import { checkedStoryboardReceipt } from './studioStoryboardContract';
 import { buildGraphStarter, type GraphStarterKind } from './graphStarter';
 import type { PlanningCanvasHandoff } from './directorCanvasHandoff';
@@ -400,11 +400,11 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       throw new Error('分镜版本已变化或尚未审核，请在原分镜工作区核对。');
     return receipt;
   }
-  function applyStoryboardStarter(receipt: StoryboardReceipt, shotId: string, scope: object): boolean {
+  function applyStoryboardStarter(receipt: StoryboardReceipt, shotId: string | string[], scope: object): boolean {
     if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope) || insertionRef.current || !catalog) return false;
     const source = planningDocuments.find(row => row.mode === 'STORYBOARD' && row.id === receipt.document_snapshot.id);
     if (!source || source.version !== receipt.document_snapshot.version || source.digest !== receipt.document_snapshot.digest) return false;
-    try { const next = buildStoryboardVideoStarter(draftRef.current, catalog, receipt, shotId); change(next);
+    try { const next = buildStoryboardVideoBranches(draftRef.current, catalog, receipt, typeof shotId === 'string' ? [shotId] : shotId); change(next);
       if (draftRef.current !== next) return false;
       setSelected([next.nodes[2].id]); setNotice('原分镜视频链已加入本地空图；请明确配置视频模型后保存。没有执行视频任务。'); return true;
     } catch (value) { setError(value instanceof Error ? value.message : '分镜视频链未应用。'); return false; }

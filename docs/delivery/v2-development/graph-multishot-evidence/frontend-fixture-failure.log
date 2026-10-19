@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-graph-multishot/frontend
+
+ ❯ src/creative/GraphStoryboardStarter.multishot.test.tsx (0 test)
+ ✓ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests) 646ms
+   ✓ assembles through the original controller with one undo and no automatic write or execution 442ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStoryboardStarter.multishot.test.tsx [ src/creative/GraphStoryboardStarter.multishot.test.tsx ]
+Error: 分镜回执或版本绑定不完整，请读取原文档核对。
+ ❯ storyboardInvalid src/creative/studioStoryboardContract.ts:28:52
+     26|   automatic_dispatch: false; model_called: false; rendered: false; pro…
+     27| export const storyboardRecord = (v: unknown): Record<string, unknown> …
+     28| export function storyboardInvalid(): never { throw new ApiError({ stat…
+       |                                                    ^
+     29| export function storyboardClosed(v: Record<string, unknown>, keys: str…
+     30| export function storyboardText(v: unknown, maximum = 240, empty = fals…
+ ❯ storyboardClosed src/creative/studioStoryboardContract.ts:29:167
+ ❯ checkedStoryboardShot src/creative/studioStoryboardContract.ts:42:100
+ ❯ Module.checkedStoryboardReceipt src/creative/studioStoryboardContract.ts:50:47
+ ❯ src/creative/GraphStoryboardStarter.multishot.test.tsx:16:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  9 passed (9)
+   Start at  12:24:35
+   Duration  2.64s (transform 1.07s, setup 31ms, collect 1.41s, tests 646ms, environment 611ms, prepare 129ms)
+

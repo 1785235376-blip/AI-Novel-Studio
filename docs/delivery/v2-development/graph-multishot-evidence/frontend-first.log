@@ -1,0 +1,31 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-graph-multishot/frontend
+
+ ❯ src/creative/GraphStoryboardStarter.multishot.test.tsx (0 test)
+ ✓ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests) 843ms
+   ✓ assembles through the original controller with one undo and no automatic write or execution 599ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/creative/GraphStoryboardStarter.multishot.test.tsx [ src/creative/GraphStoryboardStarter.multishot.test.tsx ]
+Error: 导演或分镜数据不完整，请核对原文档版本。
+ ❯ invalid src/creative/studioProductionGraphContract.ts:14:48
+     12|   lighting: 4000, environment: 4000, sound: 4000, sound_effect: 4000, …
+     13|   character: 240, expression: 2000, state: 2000, style: 2000, atmosphe…
+     14| function invalid(input = false): never { throw new ApiError({ status: …
+       |                                                ^
+     15| function row(value: unknown, input = false): Record<string, unknown> {…
+     16| function closed(value: Record<string, unknown>, required: string[], op…
+ ❯ closed src/creative/studioProductionGraphContract.ts:17:143
+ ❯ Module.checkedCreativeShot src/creative/studioProductionGraphContract.ts:93:77
+ ❯ checkedStoryboardShot src/creative/studioStoryboardContract.ts:43:16
+ ❯ Module.checkedStoryboardReceipt src/creative/studioStoryboardContract.ts:50:47
+ ❯ src/creative/GraphStoryboardStarter.multishot.test.tsx:13:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  9 passed (9)
+   Start at  12:23:43
+   Duration  3.52s (transform 1.33s, setup 42ms, collect 1.88s, tests 843ms, environment 967ms, prepare 141ms)
+

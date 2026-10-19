@@ -1,0 +1,1 @@
+frontend/src/creative/GraphStoryboardStarter.multishot.test.tsx(40,114): error TS2345: Argument of type 'string' is not assignable to parameter of type 'readonly string[]'.

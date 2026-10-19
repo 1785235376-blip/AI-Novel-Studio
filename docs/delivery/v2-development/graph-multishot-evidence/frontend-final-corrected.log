@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-graph-multishot/frontend
+
+ ✓ src/creative/GraphStoryboardStarter.additive.test.tsx (9 tests) 683ms
+   ✓ assembles through the original controller with one undo and no automatic write or execution 481ms
+ ✓ src/creative/GraphStoryboardStarter.multishot.test.tsx (18 tests) 1245ms
+   ✓ assembles 2 branches through the original controller in one undo/redo without automatic writes 548ms
+   ✓ assembles 4 branches through the original controller in one undo/redo without automatic writes 423ms
+
+ Test Files  2 passed (2)
+      Tests  27 passed (27)
+   Start at  12:26:48
+   Duration  3.11s (transform 953ms, setup 30ms, collect 2.54s, tests 1.93s, environment 635ms, prepare 122ms)
+
