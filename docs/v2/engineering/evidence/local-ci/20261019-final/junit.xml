@@ -1,0 +1,31 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="30.267541">
+<testsuite name="v2-creative-live.spec.ts" timestamp="2026-10-19T01:53:05.381Z" hostname="v2-live-chromium" tests="2" failures="0" skipped="0" time="11.173" errors="0">
+<testcase name="real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript" classname="v2-creative-live.spec.ts" time="9.702">
+<properties>
+<property name="verification" value="Real uvicorn + File persistence + Vite + Chromium; synthetic manuscript; rule-assisted direction; no model inference or paid provider calls.">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\screenplay-saved-d4508affd41900d57d2e40b2a469565153c4c7ff.png]]
+
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\director-human-reviewed-0436097b58c007e1cf2d05f02b75e2cd62ca8747.png]]
+
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\production-1366x768-a5555b4a536fdee4d5af961d19d053026b0e6c42.png]]
+
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\production-1440x900-f186d9138a98e0ce624a6b57f4cd89e7036b4f06.png]]
+
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\production-1920x1080-a1c761ff90479ec157261fd8068a71522f7c4702.png]]
+
+[[ATTACHMENT|test-results\v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium\attachments\production-export-9e208e1fe5472bcaf2b5b28bee7247e9c9c539ae.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript" classname="v2-creative-live.spec.ts" time="1.471">
+<properties>
+<property name="verification" value="Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference.">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

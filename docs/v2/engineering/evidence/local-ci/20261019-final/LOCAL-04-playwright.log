@@ -1,0 +1,14 @@
+$ C:\Program Files\nodejs\pnpm.CMD exec playwright test --config playwright.v2-live.config.ts --project v2-live-chromium --grep real File V2 authoring|real HTTP File V2 lifecycle
+
+! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.6.5.tgz
+
+Running 2 tests using 1 worker
+
+(node:132804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:132804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [v2-live-chromium] › tests\e2e\v2-creative-live.spec.ts:113:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript (9.7s)
+  ok 2 [v2-live-chromium] › tests\e2e\v2-creative-live.spec.ts:284:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript (1.5s)
+
+  2 passed (30.3s)
