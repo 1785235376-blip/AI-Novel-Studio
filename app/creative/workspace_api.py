@@ -35,6 +35,12 @@ def is_independent_studio_route(method, normalized_path):
     }
     if method in production_patterns and re.fullmatch(production_patterns[method], normalized_path) is not None:
         return True
+    handoff_patterns = {
+        'GET': production + r'/comic-handoffs/[A-Za-z0-9][A-Za-z0-9_-]{0,79}',
+        'POST': production + r'/comic-handoffs(?:/preview|/[A-Za-z0-9][A-Za-z0-9_-]{0,79}/(?:resume|cancel))?',
+    }
+    if method in handoff_patterns and re.fullmatch(handoff_patterns[method], normalized_path) is not None:
+        return True
     canvas_patterns = {
         "GET": root + r"/canvas-views(?:/[^/]+)?",
         "POST": root + r"/canvas-views",
@@ -202,6 +208,22 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         # Only bounded Prompt and metadata lifecycle operations use this lease.
         # Production/model routes retain their original non-blocking invoker.
         return invoke(nid, token, branch, permission, callback, commit=True)
+
+    def handoff_invoke(nid, token, branch, permission, callback):
+        # Source read and destination write reuse the original NOVEL/Studio
+        # resolver. The Comic IMAGE-only fallback never authorizes this path.
+        def target(actor, scope, target_guard):
+            def source(source_actor, source_scope, source_guard):
+                if (source_actor, source_scope) != (actor, scope):
+                    raise HTTPException(403, {'code': 'COMIC_HANDOFF_AUTHORITY_CHANGED'})
+                def current():
+                    target_guard(); source_guard()
+                current()
+                result = callback(actor, scope, current)
+                current()
+                return result
+            return invoke(nid, token, branch, 'domain.read', source)
+        return invoke(nid, token, branch, permission, target, commit=permission == 'domain.write')
 
     from .production_execution_api import create_production_invoker
     mask_call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
@@ -548,7 +570,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     if production_service is not None:
         from .production_execution_api import create_production_execution_router
         router.include_router(create_production_execution_router(production_service, invoke,
-            require_host_session=require_host_session, model_host_authority=model_host_authority))
+            require_host_session=require_host_session, model_host_authority=model_host_authority,
+            handoff_invoke=handoff_invoke))
 
     if graph_service is not None:
         from .graph_api import create_creative_graph_router

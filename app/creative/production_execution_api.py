@@ -75,10 +75,144 @@ def create_production_invoker(invoke, *, require_host_session, model_host_author
     return call
 
 
-def create_production_execution_router(service, invoke, *, require_host_session, model_host_authority):
+class ComicHandoffRoute(PrivateProductionRoute):
+    """Closed handoff JSON only; no uploaded images, executable data or paths."""
+    MAX_BODY = 16 * 1024
+    MAX_RESPONSE = 12 * 1024 * 1024
+    MAX_PNG = 8 * 1024 * 1024
+
+    def get_route_handler(self):
+        import json
+        from fastapi.responses import JSONResponse
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
+            def pairs(items):
+                result = {}
+                for key, value in items:
+                    if key in result: raise ValueError('duplicate field')
+                    result[key] = value
+                return result
+            def constant(value): raise ValueError('nonfinite JSON')
+            try:
+                payload = bytearray()
+                async for part in request.stream():
+                    if len(payload) + len(part) > self.MAX_BODY:
+                        raise HTTPException(413, {'code': 'COMIC_HANDOFF_REQUEST_LIMIT'})
+                    payload.extend(part)
+                request._body = bytes(payload)
+                if request.method == 'GET':
+                    if payload: raise ValueError('GET body')
+                else:
+                    if request.headers.get('content-type', '').split(';')[0].strip().lower() != 'application/json':
+                        raise HTTPException(415, {'code': 'COMIC_HANDOFF_JSON_REQUIRED'})
+                    request._json = json.loads(request._body, object_pairs_hook=pairs, parse_constant=constant)
+                response = await handler(request)
+                if len(response.body) > self.MAX_RESPONSE:
+                    raise HTTPException(413, {'code': 'COMIC_HANDOFF_RESPONSE_LIMIT'})
+                return response
+            except (RequestValidationError, ValueError, UnicodeError, RecursionError):
+                return JSONResponse({'detail': {'code': 'COMIC_HANDOFF_REQUEST_INVALID'}}, status_code=422, headers=headers)
+            except HTTPException as error:
+                # Original domain errors can contain raw owner exception text.
+                # This new HTTP contract exposes codes and bounded CAS only.
+                import re
+                raw = error.detail if isinstance(error.detail, dict) else {}
+                code = raw.get('code')
+                if not isinstance(code, str) or not re.fullmatch(r'[A-Z][A-Z0-9_]{0,95}', code):
+                    code = 'COMIC_HANDOFF_REQUEST_REJECTED'
+                detail = {'code': code}
+                version = raw.get('current_version')
+                if (code == 'STUDIO_PRODUCTION_VERSION_CONFLICT'
+                        and type(version) is int and 1 <= version <= 8):
+                    detail['current_version'] = version
+                return JSONResponse({'detail': detail}, status_code=error.status_code, headers=headers)
+            except Exception:
+                # A lost write acknowledgement is not a failed/rolled-back
+                # operation. The caller must inspect its exact request ID.
+                return JSONResponse({'detail': {'code': 'COMIC_HANDOFF_OUTCOME_UNKNOWN'}}, status_code=503, headers=headers)
+        return checked
+
+
+def create_comic_handoff_routes(service, invoke, *, require_host_session, model_host_authority):
+    import base64
+    import hashlib
+    import struct
+    from pydantic import Field
+    from ..experimental.media import StrictModel
+    from ..experimental.comic_timeline_handoff import HandoffRequest, HandoffConfirm
+    from ..services.comic_page_origin import FEATURES
+
+    class ReceiptVersion(StrictModel):
+        expected_version: int = Field(ge=1, le=8, strict=True)
+
+    router = APIRouter(route_class=ComicHandoffRoute)
+    root = '/projects/{nid}/studio/production/comic-handoffs'
+    call = create_production_invoker(invoke, require_host_session=require_host_session,
+                                    model_host_authority=model_host_authority) if invoke else None
+
+    def perform(request, nid, token, branch, permission, operation):
+        from ..experimental.flags import require_flag
+        for flag in sorted(FEATURES): require_flag(flag)
+        if call is None or service.comic_handoff is None:
+            raise HTTPException(404, {'code': 'COMIC_HANDOFF_UNAVAILABLE'})
+        with service.store.existing_owner_only():
+            return call(request, nid, token, branch, permission,
+                        lambda actor, scope, guard: operation(service.comic_handoff, actor, scope, guard))
+
+    @router.post(root + '/preview')
+    def preview(nid: str, request: Request, body: HandoffRequest,
+                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def operation(handoff, actor, scope, guard):
+            report, images = handoff.preview(nid, scope, actor, body, guard)
+            if len(images) != len(report['pages']):
+                raise ValueError('COMIC_HANDOFF_PREVIEW_PROOF_INVALID')
+            if sum(map(len, images)) > ComicHandoffRoute.MAX_PNG:
+                raise HTTPException(413, {'code': 'COMIC_HANDOFF_PREVIEW_PNG_LIMIT'})
+            pages = []
+            for index, (data, pin) in enumerate(zip(images, report['pages'])):
+                if (not isinstance(data, bytes) or len(data) < 24 or data[:8] != b'\x89PNG\r\n\x1a\n'
+                        or hashlib.sha256(data).hexdigest() != pin['png_sha256']
+                        or struct.unpack('>II', data[16:24]) != (pin['width'], pin['height'])):
+                    raise ValueError('COMIC_HANDOFF_PREVIEW_PROOF_INVALID')
+                pages.append({'index': index, 'png_base64': base64.b64encode(data).decode('ascii')})
+            guard()
+            return {'preview': report, 'pages': pages}
+        return perform(request, nid, x_session_token, x_branch_id, 'domain.read', operation)
+
+    @router.post(root)
+    def confirm(nid: str, request: Request, body: HandoffConfirm,
+                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return perform(request, nid, x_session_token, x_branch_id, 'domain.write',
+                       lambda h, a, s, g: h.confirm(nid, s, a, body.model_dump(), g))
+
+    @router.get(root + '/{request_id}')
+    def status(nid: str, request_id: str, request: Request,
+               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return perform(request, nid, x_session_token, x_branch_id, 'domain.read',
+                       lambda h, a, s, g: h.status(nid, s, a, request_id, g))
+
+    @router.post(root + '/{request_id}/resume')
+    def resume(nid: str, request_id: str, request: Request, body: ReceiptVersion,
+               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return perform(request, nid, x_session_token, x_branch_id, 'domain.write',
+                       lambda h, a, s, g: h.resume(nid, s, a, request_id, body.expected_version, g))
+
+    @router.post(root + '/{request_id}/cancel')
+    def cancel(nid: str, request_id: str, request: Request, body: ReceiptVersion,
+               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return perform(request, nid, x_session_token, x_branch_id, 'domain.write',
+                       lambda h, a, s, g: h.cancel(nid, s, a, request_id, body.expected_version, g))
+    return router
+
+
+def create_production_execution_router(service, invoke, *, require_host_session, model_host_authority, handoff_invoke=None):
     router = APIRouter(tags=["Studio Production Execution V2"], route_class=PrivateProductionRoute)
 
     call = create_production_invoker(invoke, require_host_session=require_host_session, model_host_authority=model_host_authority)
+
+    router.include_router(create_comic_handoff_routes(service, handoff_invoke,
+        require_host_session=require_host_session, model_host_authority=model_host_authority))
 
     from .comic_image_generation import ComicImageRequest, ComicImageAdopt
 
