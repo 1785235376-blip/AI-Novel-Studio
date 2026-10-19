@@ -49,7 +49,10 @@ export function AssetLibraryPanel({
     state.scope?.workspaceId, state.scope?.projectId, state.scope?.storylineId, state.scope?.branchId]));
   // A targeted source read must not reuse an older session/branch's in-flight
   // list. Only this opaque observer enters React Query; credentials stay local.
-  const observer = useMemo(() => ++requestedAssetSequence, [authority, novelId, requestedAssetId]);
+  const observer = useMemo(() => ++requestedAssetSequence,
+    [authority, novelId, characterId, sceneId, adapter?.cacheKey, requestedAssetId]);
+  const navigationOwner = useRef(adapter);
+  navigationOwner.current = adapter;
   const client = useQueryClient(),
     input = useRef<HTMLInputElement>(null),
     searchInput = useRef<HTMLInputElement>(null),
@@ -70,7 +73,12 @@ export function AssetLibraryPanel({
     enabled: !!novelId,
     refetchOnMount: requestedAssetId ? 'always' : true,
   });
-  useEffect(() => { setKind(''); setSearch(''); setShowTrash(false); }, [requestedAssetId]);
+  // Reveal a target once for its complete navigation identity. Refetch results
+  // and callback rerenders must not erase filters entered while browsing.
+  useEffect(() => {
+    if (!requestedAssetId || navigationOwner.current && !navigationOwner.current.isCurrent()) return;
+    setKind(''); setSearch(''); setShowTrash(false);
+  }, [observer, requestedAssetId]);
   const visibleAssets = useMemo(() => assetLibraryView(assets.data ?? [], search, sort), [assets.data, search, sort]);
   const selectionHidden = !!selectedAssetId && assets.data?.some(asset => asset.id === selectedAssetId)
     && !visibleAssets.some(asset => asset.id === selectedAssetId);
