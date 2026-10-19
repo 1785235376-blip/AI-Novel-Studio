@@ -91,3 +91,5 @@
 .nle-delivery__table tr[data-near='true'] > th { color: var(--color-status-warning); }
 .nle-delivery__table tr[data-reached='true'] > th { color: var(--color-status-error); }
 .nle-delivery__advice { margin: 0; color: var(--color-text-secondary); }
+
+.nle-track__clips button[aria-pressed='true'] { background: var(--color-selection-bg); border-color: var(--color-selection-border); }

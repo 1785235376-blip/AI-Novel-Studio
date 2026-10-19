@@ -299,7 +299,7 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
       {sourceBounds.preview&&<StatusMessage tone={sourceBounds.preview.within_source?'info':'warning'}>源文件 {sourceBounds.preview.frame_count} 帧 / {sourceBounds.preview.sample_rate} Hz；整数毫秒出点最多 {sourceBounds.preview.maximum_out_ms} ms。{sourceBounds.preview.within_source?'当前源入出范围在实测长度内。':'当前保存的源入出范围越界，请手动调整后重新保存。'} 此结果只说明源时长，不代表全时间线验收。</StatusMessage>}
       {sourceBounds.preview&&c.base&&<StudioTimelineSourceBoundsRepair scope={props.client} source={c.base} draft={draft} observation={sourceBounds.preview} disabled={!sourceBounds.canRequest} isCurrent={props.isCurrent} getRevision={c.getHandoffRevision} onApply={next=>{const applied=c.change(input=>{input.timeline=next.timeline;});if(applied)setNleNotice('已按实测长度收短本地草稿出点，可撤销；尚未保存或渲染。');return applied;}}/>}
     </section>
-    <TimelineWorkspacePanel projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
+    <TimelineWorkspacePanel documentId={c.base?.id} projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
       editable={c.canEdit} onSelectClips={selectClips} onPlayhead={selectPlayhead}
       isSplitReviewCurrent={() => {

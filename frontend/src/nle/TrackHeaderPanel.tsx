@@ -1,6 +1,8 @@
+import { useId, useLayoutEffect, useRef } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { safeTimeline, trackHeaderState } from './timelineOps';
 import type { NleTrackHeaderState } from './timelineOpsTypes';
+import { normalizeClipSelection, sameClipSelection, toggleClipSelection } from './clipSelection';
 import './timelineWorkspace.css';
 
 const KIND_LABEL = { VIDEO: '视频', AUDIO: '音频' } as const;
@@ -11,6 +13,7 @@ const ROLE_LABEL: Record<string, string> = {
 /** 轨道头面板：锁、静音、增益与片段计数全部来自给定时间线，不推断任何状态。 */
 export type TrackHeaderPanelProps = {
   timeline: unknown;
+  documentId?: string;
   selectedClipIds: string[];
   editable: boolean;
   onSelectClips: (ids: string[]) => void;
@@ -18,6 +21,33 @@ export type TrackHeaderPanelProps = {
 
 export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
   const parsed = safeTimeline(props.timeline);
+  const clipOrder = parsed.ok ? parsed.timeline.tracks.flatMap(track => track.clips.map(clip => clip.id)) : [];
+  const previousDocument = useRef(props.documentId);
+  const documentChanged = previousDocument.current !== props.documentId;
+  const selectedIds = documentChanged ? [] : normalizeClipSelection(props.selectedClipIds, clipOrder);
+  const hintId = useId(), alive = useRef(true), composing = useRef(false);
+  const selectionKey = Array.isArray(props.selectedClipIds) ? props.selectedClipIds.filter(id => typeof id === 'string') : [];
+  const contextKey = JSON.stringify([props.documentId, parsed.ok ? parsed.timeline : null, props.editable, selectionKey]);
+  const context = useRef({ key: contextKey, generation: 0 });
+  if (context.current.key !== contextKey) {
+    context.current = { key: contextKey, generation: context.current.generation + 1 };
+    composing.current = false;
+  }
+  const generation = context.current.generation;
+  const latest = useRef(props); latest.current = props;
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  useLayoutEffect(() => {
+    previousDocument.current = props.documentId;
+    // Clear a changed document and remove disappeared IDs before the Inspector can use the old selection.
+    // Reordering/deduplication changes view state only; it never edits a timeline.
+    if (!sameClipSelection(props.selectedClipIds, selectedIds)) props.onSelectClips(selectedIds);
+  }, [contextKey, props.onSelectClips]);
+  const select = (ids: string[], toggle = false) => {
+    if (!alive.current || !latest.current.editable || context.current.generation !== generation || composing.current) return;
+    const next = toggle ? toggleClipSelection(latest.current.selectedClipIds, ids[0], clipOrder)
+      : normalizeClipSelection(ids, clipOrder);
+    latest.current.onSelectClips(next);
+  };
   if (!parsed.ok) {
     return <section className="nle-tracks" aria-label="轨道头"><StatusMessage tone="error">{parsed.message}</StatusMessage>
       <EmptyState title="轨道头不可用" detail="需要一份通过原时间线契约校验的时间线。" /></section>;
@@ -26,10 +56,22 @@ export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
     const checked = trackHeaderState(track);
     return checked.ok ? { header: checked.header } : { failure: checked.message };
   });
-  const selected = new Set(props.selectedClipIds);
-  return <section className="nle-tracks" aria-label="轨道头" data-track-count={rows.length}>
+  const selected = new Set(selectedIds);
+  return <section className="nle-tracks" aria-label="轨道头" data-track-count={rows.length}
+    onCompositionStartCapture={() => { composing.current = true; }}
+    onCompositionEndCapture={() => { composing.current = false; }}
+    onBlurCapture={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) composing.current = false; }}
+    onKeyDownCapture={event => {
+      if (event.nativeEvent.isComposing || event.keyCode === 229 || composing.current) {
+        if (event.key === 'Enter' || event.key === ' ' || event.keyCode === 229) event.preventDefault();
+      }
+    }}>
     <h3>轨道头</h3>
     <p className="nle-tracks__note">锁定与解锁、静音与增益都由原编辑服务保存；这里只显示已保存的事实。音量范围 −60 至 12 dB，视频轨道固定 0 dB。</p>
+    <p id={hintId} className="nle-tracks__note">点击单选；按住 Ctrl（Mac 为 ⌘）点击可切换多选，支持跨轨道。键盘可按 Ctrl/⌘ + Enter 或 Ctrl/⌘ + 空格切换。
+      <span role="status" aria-live="polite">已选 {selectedIds.length} 个片段。</span>
+    </p>
+    <Button disabled={!props.editable || !selectedIds.length} onClick={() => select([])}>清除片段选择</Button>
     <ul className="nle-tracks__list">
       {rows.map((row, index) => 'failure' in row
         ? <li key={`failure-${index}`}><StatusMessage tone="error">{row.failure}</StatusMessage></li>
@@ -47,11 +89,17 @@ export function TrackHeaderPanel(props: TrackHeaderPanelProps) {
             <div><dt>片段</dt><dd>{row.header.clipCount} 个</dd></div>
           </dl>
           <Button disabled={!props.editable || !row.header.clipIds.length}
-            onClick={() => props.onSelectClips([...row.header.clipIds])}>选择整条轨道的片段</Button>
+            onClick={() => select([...row.header.clipIds])}>选择整条轨道的片段</Button>
           <ul className="nle-track__clips">
             {row.header.clipIds.map(clipId => <li key={clipId}>
-              <Button aria-pressed={selected.has(clipId)} disabled={!props.editable}
-                onClick={() => props.onSelectClips([clipId])}>{clipId}</Button>
+              <Button aria-pressed={selected.has(clipId)} aria-describedby={hintId} disabled={!props.editable}
+                onKeyDown={event => {
+                  if (!(event.ctrlKey || event.metaKey) || event.altKey || !['Enter', ' '].includes(event.key)) return;
+                  event.preventDefault(); event.stopPropagation();
+                  if (event.repeat || event.nativeEvent.isComposing || event.keyCode === 229 || composing.current) return;
+                  select([clipId], true);
+                }}
+                onClick={event => { if (event.button === 0) select([clipId], event.ctrlKey || event.metaKey); }}>{clipId}</Button>
             </li>)}
           </ul>
         </li>)}
