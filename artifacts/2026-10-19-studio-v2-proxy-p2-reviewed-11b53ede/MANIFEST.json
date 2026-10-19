@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_HALF_PROXY_P2_CLOSED_SEPARATE_BATCH",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "28c5bb2ef10fd17b2dac75acf141b00ef9abea58",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-proxy-p2-reviewed-11b53ede",
+  "product_base": "d109b9cd857415265b7acecfb19cf89143641cdc",
+  "product_tip": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+  "product_tree": "6809bcd13d9d739228e05a5abf2e6c1a21086401",
+  "bundle_ref": "refs/heads/work/v2-proxy-after-dif-graph7-20261019",
+  "bundle_filename": "studio-v2-d109b9cd-to-11b53ede.bundle",
+  "bundle_commit_count": 2,
+  "unique_external_prerequisite": "d109b9cd857415265b7acecfb19cf89143641cdc",
+  "commit_mappings": [
+    {
+      "source": "4f46c3287f3a0ed458c2928f89d880a8d13adf30",
+      "source_parent": "bec46a1f912291627efb5c6b3c7d362a9c2158ec",
+      "adopted": "e3ccad067fb82c1f18a8718d2cae7965a0fcb079",
+      "adopted_parent": "d109b9cd857415265b7acecfb19cf89143641cdc",
+      "patch_bytes_equal": true,
+      "stable_patch_id": "8db66474f9e40ca43fba0464205c9d4966d54e52"
+    },
+    {
+      "source": "609f85d1ce0941150b87135789240da4b48f8dd4",
+      "source_parent": "4f46c3287f3a0ed458c2928f89d880a8d13adf30",
+      "adopted": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+      "adopted_parent": "e3ccad067fb82c1f18a8718d2cae7965a0fcb079",
+      "patch_bytes_equal": true,
+      "stable_patch_id": "749ef7ec8d349f3f34f6b079ca4e5f109648a313"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/production_execution_models.py",
+      "mode": "100644",
+      "blob": "749b39e7eb31492dd22ba862c8279d55004aa6bf",
+      "bytes": 26946,
+      "sha256": "962ddfc058c8a7418a0d5c2c5834ef7a6e0cef09282a89fc63ffdd4796a93b24",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "app/creative/timeline_playback.py",
+      "mode": "100644",
+      "blob": "5bc2e4ccf6ced4714e70896eaa89fcec42aeac8a",
+      "bytes": 9055,
+      "sha256": "8040e37039d5329ef7f18693128b4d11907a2592140522ae6a5140384295f0db",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "app/services/studio_timeline_export.py",
+      "mode": "100644",
+      "blob": "99e741521ebdcd73db328efb2d662b3815345a95",
+      "bytes": 18844,
+      "sha256": "9da23d50e318f8f0c031a93bd1d5c1cd7eb38a58a04f4eb58d94a5b07744b636",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "app/services/studio_timeline_render.py",
+      "mode": "100644",
+      "blob": "bd20ae784ea5c7c4be2d5238963e5ff7411c0bad",
+      "bytes": 31018,
+      "sha256": "07737bf212355c99cf44bb279f536891b522a604ebfe87f0fee912250130a14e",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelinePlaybackOptions.additive.test.tsx",
+      "mode": "100644",
+      "blob": "89dddf64790ed9174de1e67dc129f269939b1783",
+      "bytes": 4690,
+      "sha256": "32f2e3961bb77a75831f15eb2d3ed8abc43fcfb66315740d8ef49bd5a15f152e",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelinePlaybackPanel.tsx",
+      "mode": "100644",
+      "blob": "e716ae6667c1dced4f48b158f7bd9cb2b19b472c",
+      "bytes": 6258,
+      "sha256": "70c2941099c9e1c5fc87a71045b886dcd0cefe24a9674ea5ecd8531d93332417",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelinePreviewResolution.additive.test.tsx",
+      "mode": "100644",
+      "blob": "0f7904fc9115bacc8f2f5333ad865a69c43a2aa1",
+      "bytes": 9322,
+      "sha256": "969f683cf3914ea9f5cff18f7a1a9fc09d39b387124c799638c7d4799b949ae8",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelinePreviewSourceSwitch.additive.test.tsx",
+      "mode": "100644",
+      "blob": "633d457674b451160583054887567ed7f77c5a75",
+      "bytes": 8016,
+      "sha256": "1636c2e21d5a4e78ef53f5cc7729775020794e78c3a041c9d67a3c7572fe7bd1",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/timelinePreviewProxy.actual.json",
+      "mode": "100644",
+      "blob": "2054f7584caede5ca1f6ba6253ce0c8a83a2758a",
+      "bytes": 37111,
+      "sha256": "aca36af266e2f15c7d8c2b2ae48acc0e8148655a23633fd418437b61894264c8",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/timelinePreviewSourceSwitch.actual.json",
+      "mode": "100644",
+      "blob": "290a4de12cbff0f89915bd82884f8f33d27ab83f",
+      "bytes": 5786,
+      "sha256": "9380aa5453743913be4f5349d34ab10c9879f351f9b39ed9af422fa80e82093c",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/studioProductionClient.ts",
+      "mode": "100644",
+      "blob": "15f5e795e5fbaede2a7deb360be4f388c9419c03",
+      "bytes": 75428,
+      "sha256": "40f8ff9aa41fbb9902a672e5fab61671ac821e767c092ad9dbb5f27de58a6b65",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineExportTypes.ts",
+      "mode": "100644",
+      "blob": "e813528c8fcbb6021bbc558096050c24b3f0a8db",
+      "bytes": 7629,
+      "sha256": "9732e8789dfef0e93593dff6d8588e089be7caa934e1443a215406b37bb5c638",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelinePlaybackTypes.ts",
+      "mode": "100644",
+      "blob": "c1b6bc76a361b293763090b30e0b46ef43945af7",
+      "bytes": 4965,
+      "sha256": "ce0276d940358214810c93026d80d8bdfed4ff63b7567b72748f3a04365e90ac",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelinePlayback.ts",
+      "mode": "100644",
+      "blob": "f5d707e2b8980d419b41052306efe9ae1e885d42",
+      "bytes": 23331,
+      "sha256": "a90060d2b6651cb326aca3297689e4a30aebc9e174ba61a9ae5dedca20a51974",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    },
+    {
+      "path": "tests/test_v2_timeline_preview_proxy.py",
+      "mode": "100644",
+      "blob": "d0796f03cb4f60d3b2fd1ba603647f8e85119549",
+      "bytes": 19433,
+      "sha256": "0bb46343663560b118f02c49c19d7da9a933ae1fdc5033236c1008e21ea76c18",
+      "source_final": "609f85d1ce0941150b87135789240da4b48f8dd4"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+      "type": "commit",
+      "size": 267,
+      "cat_file_sha256": "aa2026e38c1a8dacb57ca22faed2dbb97171a4c85e3f6ffbc0bc162767d61a6d"
+    },
+    {
+      "oid": "e3ccad067fb82c1f18a8718d2cae7965a0fcb079",
+      "type": "commit",
+      "size": 262,
+      "cat_file_sha256": "31abb0998a8dc79ab71552a67d9fc26960282b6a0304f91bfcf3ad0b8679513e"
+    },
+    {
+      "oid": "6809bcd13d9d739228e05a5abf2e6c1a21086401",
+      "type": "tree",
+      "size": 10538,
+      "cat_file_sha256": "4cccd7a28b103a527608b6b018eec0e75e30ce501d89a76285dadaf80fca62ed"
+    },
+    {
+      "oid": "360f51c67c8b29a303eb403a196d87208dfe2660",
+      "type": "tree",
+      "size": 5958,
+      "cat_file_sha256": "4db8318fbb3e2e7c21a90463be53b0f29c98698dec26cdc038f79c01326ed103"
+    },
+    {
+      "oid": "fe5822cbb5726342a100cf9853034d761f74b979",
+      "type": "tree",
+      "size": 4837,
+      "cat_file_sha256": "9da2fb27ae089460d9d096aa66a55437632a98de4d98f817d239cf645581aa14"
+    },
+    {
+      "oid": "749b39e7eb31492dd22ba862c8279d55004aa6bf",
+      "type": "blob",
+      "size": 26946,
+      "cat_file_sha256": "962ddfc058c8a7418a0d5c2c5834ef7a6e0cef09282a89fc63ffdd4796a93b24"
+    },
+    {
+      "oid": "5bc2e4ccf6ced4714e70896eaa89fcec42aeac8a",
+      "type": "blob",
+      "size": 9055,
+      "cat_file_sha256": "8040e37039d5329ef7f18693128b4d11907a2592140522ae6a5140384295f0db"
+    },
+    {
+      "oid": "661da007a64afa05fed7388a9a996db4e0c47494",
+      "type": "tree",
+      "size": 3969,
+      "cat_file_sha256": "fca2402e93279bbec357c793cfabc08740a21bde28485af2a6a15b99436ccc43"
+    },
+    {
+      "oid": "99e741521ebdcd73db328efb2d662b3815345a95",
+      "type": "blob",
+      "size": 18844,
+      "cat_file_sha256": "9da23d50e318f8f0c031a93bd1d5c1cd7eb38a58a04f4eb58d94a5b07744b636"
+    },
+    {
+      "oid": "bd20ae784ea5c7c4be2d5238963e5ff7411c0bad",
+      "type": "blob",
+      "size": 31018,
+      "cat_file_sha256": "07737bf212355c99cf44bb279f536891b522a604ebfe87f0fee912250130a14e"
+    },
+    {
+      "oid": "581e397af36612212b9b816c593add0d49f7a767",
+      "type": "tree",
+      "size": 2377,
+      "cat_file_sha256": "413aff6af066fd6149b1680703dc4b8cb6149eb19a960c1c3bff41a4334ed308"
+    },
+    {
+      "oid": "7b28254e15bb44756a1657f07408542cd9945d54",
+      "type": "tree",
+      "size": 4970,
+      "cat_file_sha256": "e1854e820f92ffa12834840eb5f9c05f28836141cfdf754428e8cea6a66359e0"
+    },
+    {
+      "oid": "d7e58649a0a101dabfa4b159cd50985a38527e62",
+      "type": "tree",
+      "size": 36109,
+      "cat_file_sha256": "a8743d6eb9eb1c2c99a66d93ef750b292214a217695a5ab0cfa173520a219d90"
+    },
+    {
+      "oid": "89dddf64790ed9174de1e67dc129f269939b1783",
+      "type": "blob",
+      "size": 4690,
+      "cat_file_sha256": "32f2e3961bb77a75831f15eb2d3ed8abc43fcfb66315740d8ef49bd5a15f152e"
+    },
+    {
+      "oid": "e716ae6667c1dced4f48b158f7bd9cb2b19b472c",
+      "type": "blob",
+      "size": 6258,
+      "cat_file_sha256": "70c2941099c9e1c5fc87a71045b886dcd0cefe24a9674ea5ecd8531d93332417"
+    },
+    {
+      "oid": "0f7904fc9115bacc8f2f5333ad865a69c43a2aa1",
+      "type": "blob",
+      "size": 9322,
+      "cat_file_sha256": "969f683cf3914ea9f5cff18f7a1a9fc09d39b387124c799638c7d4799b949ae8"
+    },
+    {
+      "oid": "633d457674b451160583054887567ed7f77c5a75",
+      "type": "blob",
+      "size": 8016,
+      "cat_file_sha256": "1636c2e21d5a4e78ef53f5cc7729775020794e78c3a041c9d67a3c7572fe7bd1"
+    },
+    {
+      "oid": "caff3c22cd05ef52d7ed6ad9a69b9e6a6b7a690c",
+      "type": "tree",
+      "size": 2405,
+      "cat_file_sha256": "f941efb9b5f94dff50e68155bb3097b8552e278599cd14d23ab44a356ec07865"
+    },
+    {
+      "oid": "2054f7584caede5ca1f6ba6253ce0c8a83a2758a",
+      "type": "blob",
+      "size": 37111,
+      "cat_file_sha256": "aca36af266e2f15c7d8c2b2ae48acc0e8148655a23633fd418437b61894264c8"
+    },
+    {
+      "oid": "290a4de12cbff0f89915bd82884f8f33d27ab83f",
+      "type": "blob",
+      "size": 5786,
+      "cat_file_sha256": "9380aa5453743913be4f5349d34ab10c9879f351f9b39ed9af422fa80e82093c"
+    },
+    {
+      "oid": "15f5e795e5fbaede2a7deb360be4f388c9419c03",
+      "type": "blob",
+      "size": 75428,
+      "cat_file_sha256": "40f8ff9aa41fbb9902a672e5fab61671ac821e767c092ad9dbb5f27de58a6b65"
+    },
+    {
+      "oid": "e813528c8fcbb6021bbc558096050c24b3f0a8db",
+      "type": "blob",
+      "size": 7629,
+      "cat_file_sha256": "9732e8789dfef0e93593dff6d8588e089be7caa934e1443a215406b37bb5c638"
+    },
+    {
+      "oid": "c1b6bc76a361b293763090b30e0b46ef43945af7",
+      "type": "blob",
+      "size": 4965,
+      "cat_file_sha256": "ce0276d940358214810c93026d80d8bdfed4ff63b7567b72748f3a04365e90ac"
+    },
+    {
+      "oid": "f5d707e2b8980d419b41052306efe9ae1e885d42",
+      "type": "blob",
+      "size": 23331,
+      "cat_file_sha256": "a90060d2b6651cb326aca3297689e4a30aebc9e174ba61a9ae5dedca20a51974"
+    },
+    {
+      "oid": "c0202c9f32edf8d0608e488b36b412c2ad632e4f",
+      "type": "tree",
+      "size": 50182,
+      "cat_file_sha256": "e13f92b6d6b3c58ef232a154e83eed0c6aa5357dc7a5c92986ccf8dcc5a693d3"
+    },
+    {
+      "oid": "d0796f03cb4f60d3b2fd1ba603647f8e85119549",
+      "type": "blob",
+      "size": 19433,
+      "cat_file_sha256": "0bb46343663560b118f02c49c19d7da9a933ae1fdc5033236c1008e21ea76c18"
+    },
+    {
+      "oid": "e1d1e38af2d2ae729ad43522b0f4287f0901859f",
+      "type": "tree",
+      "size": 10538,
+      "cat_file_sha256": "ca1a32fd8bd21545dbf4670073cf517b2238aced33568065d8b95e569c2c5156"
+    },
+    {
+      "oid": "d2ef78b84c7a2996fabb74a94ca922b989d8d1b2",
+      "type": "tree",
+      "size": 2377,
+      "cat_file_sha256": "903cd312cd1d28fa68e1fd06418f41d9006bb4b419fcf6f74cbc04cea6f9fe7f"
+    },
+    {
+      "oid": "8100d011eb5427fed0c021a4834219bbe7bf609f",
+      "type": "tree",
+      "size": 4970,
+      "cat_file_sha256": "5c025dbcfe7129bedc08089c740097fd68bbe9d43eab2e39db46558a88282c5e"
+    },
+    {
+      "oid": "4e0a06f644265a17bb25022741061a2b206617b3",
+      "type": "tree",
+      "size": 36030,
+      "cat_file_sha256": "5f70d217412a04f0160ff7e852563c273aac3c88afc1784d3618e760cbc38580"
+    },
+    {
+      "oid": "a1e35b6e259020e77ed17dc6cf56ef0a5f720e8c",
+      "type": "tree",
+      "size": 2338,
+      "cat_file_sha256": "7b3ce8aa86039a73c641fa5e3bbeafba33a30a45ac28e7bf68418fa1975b0e20"
+    },
+    {
+      "oid": "868deaff7de0581e2f00e79af11f3ff2636be329",
+      "type": "blob",
+      "size": 21800,
+      "cat_file_sha256": "9420e6a0248332dceee0db3a97eb08ce2bc0ad27c537ca8cbd3a60110ccbecd7"
+    }
+  ],
+  "all15_blobs_equal_P2_fixed_source": true,
+  "all_other_d109_paths_unchanged": true,
+  "Image_dependency_not_replayed": true,
+  "other_models_AST_unchanged": true,
+  "P2_status": "CLOSED_BY609_IN_FINAL_TIP_ONLY",
+  "intermediate_first_step": "NOT_ACCEPTED_WITHOUT_P2_FIX",
+  "validation": {
+    "combined_cpu_file_passed": 3,
+    "backend_cases": [
+      "native HALF playback/cache/reopen/attestation and exact old default identity",
+      "native UNKNOWN publication/reconcile with no second render",
+      "strict optional resolution/waveform boundary"
+    ],
+    "combined_source_switch_UI_passed": 3,
+    "UI_cases": [
+      "genuine saved30px source switch plus controlled too-small refusal and fresh HALF read",
+      "late HALF response/source ABA retirement",
+      "UNKNOWN original request recovery without another build"
+    ],
+    "typescript_runs": 1,
+    "typescript_exit": 0,
+    "vite_build_runs": 1,
+    "vite_build_exit": 0,
+    "independent_original_CPU_File_passed_retained": 4,
+    "independent_P2_closure_distinct_passed_retained": 3,
+    "author_full_suites_not_rerun": true,
+    "UI_mode": "controlled hook/client, not full browser/backend E2E",
+    "schema7_default_gate": "OFF"
+  },
+  "restore": {
+    "bundle": "studio-v2-d109b9cd-to-11b53ede.bundle",
+    "bundle_sha256": "8b1fecd491cf3ead4372c33b936723c15fae8b37e562b737dfb3967672c8424d",
+    "restored_commit": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+    "tree": "6809bcd13d9d739228e05a5abf2e6c1a21086401",
+    "commits": 2,
+    "file_paths_verified": 15,
+    "new_objects_verified": 32,
+    "no_alternates": true,
+    "fsck": "PASS",
+    "restore_ref": "refs/heads/recovered-proxy-p2-11b53ede"
+  },
+  "schema7_default_gate": "OFF",
+  "prior_video_Image_DIF_schema7_links": "PRESERVED",
+  "Hostbrowser": "NOT_ACCEPTED",
+  "PG": "NOT_ACCEPTED",
+  "real_models_GPU_paid_execution": "NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "whole_EDIT07_08_NLE": "NOT_ACCEPTED",
+  "inherited_519a_browser": {
+    "status": "BLOCKED",
+    "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+    "target": "original isolated backend19128 / frontend5322",
+    "reason": "401 SESSION_REQUIRED; author services stopped; no confirmed existing valid same-backend Host session",
+    "preview": "NOT_RUN",
+    "Save": "NOT_RUN",
+    "fresh_reopen": "NOT_RUN",
+    "original_denial": "backend HTTP401, not tool/approval rejection",
+    "services_stopped_evidence_retained": true,
+    "new_services_started": false,
+    "credentials_searched_read_created": false,
+    "auth_bypassed_or_settings_changed": false,
+    "uncertain_feature_writes": false,
+    "source_evidence": {
+      "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+      "target": "isolated backend 19128 / frontend 5322",
+      "reason": "author401 SESSION_REQUIRED; both services now stopped; no confirmed existing valid same-backend Host authorization; original session state is page/process-memory only",
+      "status": "BLOCKED_PREREQUISITE; browser feature sequence NOT EXECUTED; no uncertain writes",
+      "original_denial": "author backend401 SESSION_REQUIRED, not a new tool/approval denial",
+      "completed": "read-only five-file diff and supported Host-session source flow; 3 independent controller/component/helper checks",
+      "user_action": "Coordinate an existing registered same-backend Host credential and bind through original 本机可信会话 panel; revalidate after refresh/new context; no credential should be pasted into chat; no new credential/security change authorized here"
+    }
+  },
+  "privacy_scan": {
+    "credential_shaped_values": 0,
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "zip_payloads": 52
+  },
+  "files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "proxy-p2-tests-evidence-sanitized.zip": {
+      "bytes": 197787,
+      "sha256": "27c7da0d4691f68e7286e43afdc7e4a8810c771bd14d7928933426f9bdae601d"
+    },
+    "REPORT.md": {
+      "bytes": 4069,
+      "sha256": "4de65370952300b560f263758f682a3c68761c108a50a547d70cc882d98038fa"
+    },
+    "RESTORE.md": {
+      "bytes": 1560,
+      "sha256": "6859a36fba4222433b31308935289bfa8cbd308f95af49d335d5ad483102cbd3"
+    },
+    "studio-v2-d109b9cd-to-11b53ede.bundle": {
+      "bytes": 23750,
+      "sha256": "8b1fecd491cf3ead4372c33b936723c15fae8b37e562b737dfb3967672c8424d"
+    }
+  },
+  "checked_at": "2026-10-19T23:50:30.307726+00:00"
+}
