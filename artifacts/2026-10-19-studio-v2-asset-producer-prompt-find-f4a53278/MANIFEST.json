@@ -1,0 +1,96 @@
+{
+  "kind": "studio-v2-asset-producer-prompt-find-increment",
+  "archive_parent": "787152a1e6db0c1a4c617a4f987df4bc90ee11cb",
+  "unique_archive_path": "artifacts/2026-10-19-studio-v2-asset-producer-prompt-find-f4a53278",
+  "prerequisite": "02a98cd3019e41cf80765cb1b0343c58daaf6a68",
+  "head": "f4a5327866007efa0a6bd3261086114216955a7b",
+  "tree": "ffc8ae9fc043c524d4c3f431bfd21bd6c258ada4",
+  "bundle_ref": "refs/heads/work/v2-asset-prompt-02-combined-20261019",
+  "bundle_filename": "studio-v2-02a98cd3-to-f4a53278.bundle",
+  "commits": [
+    {
+      "original": "f20ba05fe0173192a0de395c503e188a12766fd0",
+      "combined": "77720d1392aeaeb580657dcac3c866a8a9eda50d",
+      "original_patch_id": "2656229f3e19547d9380c212647b84744bceeb9a",
+      "combined_patch_id": "2656229f3e19547d9380c212647b84744bceeb9a"
+    },
+    {
+      "original": "c970b4fc2a8301ebf12ae0c99a6b442364fc4e99",
+      "combined": "4d5ffb361d4437ac948009c83cba8b218bde7e6d",
+      "original_patch_id": "be3dbf5f975727323ad2c49affd8a63a9de81b48",
+      "combined_patch_id": "be3dbf5f975727323ad2c49affd8a63a9de81b48"
+    },
+    {
+      "original": "357d6762a9c68ab29f0e4c6ab1cb98419eef545b",
+      "combined": "f4a5327866007efa0a6bd3261086114216955a7b",
+      "original_patch_id": "f890a3a9f2e1e4a1cb98dcc2904a52c81148d208",
+      "combined_patch_id": "f890a3a9f2e1e4a1cb98dcc2904a52c81148d208"
+    }
+  ],
+  "final_files": {
+    "frontend/src/assetbrowser/AssetDetailPanel.tsx": {
+      "blob": "96d8fb262b890d6dfacfda04a51c9f09f30d106b",
+      "sha256": "2fa70ff8f42d8000ba712ac70715c9617fb21f76e66a1bfd6dd42f53d0f8a05a",
+      "original": "f20ba05fe0173192a0de395c503e188a12766fd0"
+    },
+    "frontend/src/assetbrowser/assetBrowserContract.ts": {
+      "blob": "296e58908f8ea08cb45043035ca49e27b9b25543",
+      "sha256": "6c8520fbffc2a8eec0812e839f07f5b0c34cb802501c2932b664062ddbd95c19",
+      "original": "f20ba05fe0173192a0de395c503e188a12766fd0"
+    },
+    "frontend/src/assetbrowser/assetBrowserProducer.test.tsx": {
+      "blob": "b02a690e99f03fedfcf9c5c9b99e9050fe3484cc",
+      "sha256": "31e577aed1306f6a2245244b93f1896171cdc791e66b7167db75c875b5963746",
+      "original": "f20ba05fe0173192a0de395c503e188a12766fd0"
+    },
+    "frontend/src/assetbrowser/assetBrowserTypes.ts": {
+      "blob": "05791dca9fca2b4397531b91dfd9de6cfbee9ebc",
+      "sha256": "26a1e5ca1840a5fc65a7a8c79c2a669deadabdbac806c1203adbdf87f224074a",
+      "original": "f20ba05fe0173192a0de395c503e188a12766fd0"
+    },
+    "frontend/src/prompt/PromptBodyFinder.tsx": {
+      "blob": "ff9a7d159f6fae6963db8d03fd338806b21cf48d",
+      "sha256": "a33509f3c23246ff06250522b526981796c0f3448dcf1efecc551cea7269f639",
+      "original": "357d6762a9c68ab29f0e4c6ab1cb98419eef545b"
+    },
+    "frontend/src/prompt/PromptEditorPanel.find.test.tsx": {
+      "blob": "ceee9370c2755e2214a10640e8374acd9f38bebd",
+      "sha256": "0d07b4c881e1587d1b307216506b313b96dcf888036e1450d1028d60deccd90c",
+      "original": "357d6762a9c68ab29f0e4c6ab1cb98419eef545b"
+    },
+    "frontend/src/prompt/PromptEditorPanel.tsx": {
+      "blob": "37c7167f59d033820ef07dae6e307a957aa0432d",
+      "sha256": "8fed0c8b3914ed15d55f35bd6b2d84dd4cdbe4d6fdb04fb49933c48ec4e2af72",
+      "original": "c970b4fc2a8301ebf12ae0c99a6b442364fc4e99"
+    }
+  },
+  "all_other_base_files_unchanged": true,
+  "source_tree_entries_sha256": "292fa3e9ad3308ed93c474635e1356b6eb85de57b4caacef52bf83b4a6f8557f",
+  "source_blob_entries": 16247,
+  "privacy_scan": {
+    "delta_objects": 24,
+    "delta_blob_and_commit_objects_checked": 12,
+    "known_private_values_checked": 3,
+    "secret_literal_hits": 0,
+    "raw_private_traces_or_profiles_included": false
+  },
+  "publication_tests_rerun": false,
+  "payloads": {
+    "evidence-sanitized.zip": {
+      "bytes": 17861,
+      "sha256": "0ee1a6b3ca4d8929dbc72379bb51fe3a84806f7a1153ddec27a49c35cd00d0f8"
+    },
+    "REPORT.md": {
+      "bytes": 2434,
+      "sha256": "85543004a1601d317190135ac4fd14dcc8a7e002db351a23840eb04defb26bc1"
+    },
+    "RESTORE.md": {
+      "bytes": 1236,
+      "sha256": "2d2757374a2d78947b3498e40865cb3d8c112256a316234d5ca06a8b69aea7c4"
+    },
+    "studio-v2-02a98cd3-to-f4a53278.bundle": {
+      "bytes": 9746,
+      "sha256": "e4b7047413c9830383803878992ecd0fcd962fa7bcd2450771128e985d25d588"
+    }
+  }
+}
