@@ -12,11 +12,10 @@ def create_repository_bundle(config:Settings=settings,data_root:Path|None=None)-
     if backend=="postgres":
         from .postgres import Database,PostgresNovelRepository,PostgresChapterRepository,PostgresCanonRepository,PostgresGenerationRepository,PostgresLoreRepository
         database=Database(config.database_url);database.require_healthy()
-        import psycopg
+        from .postgres.connection import pooled_connection
         from .postgres.continuity import PostgresContinuityRepository
-        url=config.database_url.replace("postgresql+psycopg://","postgresql://")
         from .postgres.narrative import PostgresNarrativeRepository
-        connection=lambda:psycopg.connect(url, options="-c timezone=UTC")
+        connection=lambda:pooled_connection(database.engine)
         from .postgres.scope import PostgresScopeRepository
         from .postgres.scope import PostgresAuthorizationRepository
         from .postgres.identity import PostgresIdentityRepository

@@ -73,8 +73,8 @@ class ExperimentalStore:
     def _connect(self):
         if not self.database_url:
             raise ValueError("PostgreSQL experimental store requires DATABASE_URL")
-        import psycopg
-        return psycopg.connect(self.database_url, options="-c timezone=UTC")
+        from ..repositories.postgres.connection import connect as postgres_connect
+        return postgres_connect(self.database_url)
 
     def read(self, nid, scope):
         key = self.key(nid, scope)
