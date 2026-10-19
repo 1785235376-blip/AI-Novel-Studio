@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "0afe0bea69127c88ff104da4126a9b91fec6fbae6872332f5c13a6bab3f2c216",
+  "application_source_fingerprint_sha256": "b40be65f43319d999f1bca4b7a008bfff45492e6447e2cba9b19f7beda66111e",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -10,7 +10,7 @@
     "app/agent_catalog.py": "3372978dba5ef3c0752fa5cea7486b41cab1cc56e652dc766c8b9ee10080b599",
     "app/agents.py": "634a140d1f84d07400e47c9ba502cc6174b1cc5aa82cad480a314f2c7baa3687",
     "app/ai_planning_api.py": "1396e13bce5664317cd5d1d85b2f27e17eadc8ccb2147e422106843f73dd418c",
-    "app/api.py": "3160d732ef546ab1e1b547f87ead896a44fe96f14c7c4b75e90b0d5c63e44838",
+    "app/api.py": "d40dfa6f30bec3774b47183beb841bf9a580e07bb586840afc5acebb47f819c1",
     "app/application/audit_service.py": "ebaf8b5089dad466d4e165c58d027f254db6fa7a99d468ac200bb656454346a8",
     "app/application/collaboration_service.py": "836ed233d4bbfe2b9deb718509e0501ec023b95b3be9a972a911204bd21c78d2",
     "app/application/contracts.py": "52bf5a0312fc6e83d64f8347d33c25e3f332d133211c26b4f077e39064079e32",
@@ -141,7 +141,7 @@
     "app/creative/timeline_waveform.py": "f374eceb4104f6b810284a814b4f5d0b8cdbe935c770506a07c44950951afbcf",
     "app/creative/video_reference.py": "1ccb113fba2b010cb48f19c4e833d9de5c3fd09ec88f46edc38210beab8dbf92",
     "app/creative/workspace.py": "d6f692a0e9f2f8bf75c34ff4d4a1de9da38b37323e4427e8c02c111b5c128f4c",
-    "app/creative/workspace_api.py": "a458b518a07fb68ecfbaff6b71da6505126747322b2aef193e4cfa4caf7b5e94",
+    "app/creative/workspace_api.py": "c07c06967adebfd6807318e71892adf0fcfc7a7589eb2b84c4ed1ce1e6cc30f4",
     "app/creative/workspace_models.py": "3d06a937f859ac702e23852c2e51ecdc6bfe3996d0e936c716eea74ed1535724",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
     "app/credential_vault.py": "1ae84eab118b9b3317ddb1812bd544702dc96a93bd63b5314c7e9e46848c4a40",
@@ -151,7 +151,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "315b71a84e213a840a732c50b0eabebada8c9f76dce92f7f952350e28c483f6c",
+    "app/experimental/api.py": "c744bc6e996c8ca141e15c1dab385a5ab67ff99e8a3348ca8cb8e4df9459ff9f",
     "app/experimental/audience_review.py": "1ba78d647d62715830a346dfc368c506d0becb0d295d4283651b6595f7774b20",
     "app/experimental/audience_review_api.py": "bb9bfb116c682c6ecab43731baa96fb1e1d92d61d046fd91025190462ce5c14e",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
@@ -166,11 +166,11 @@
     "app/experimental/character_author_context.py": "8ab58d124a70f69c91b4b564703c1109d10671847e126e3264e5b03c1f77c5a3",
     "app/experimental/comic_author_archive.py": "b0246d1300ee65414b293cef35f7a418e1c62860f15971495149d2845aab294b",
     "app/experimental/comic_author_archive_api.py": "552943abda65f7a0a03e66caee37cb3cae6b53623f223175c1bae8881724c1d4",
-    "app/experimental/comic_collections.py": "a59462a099c7227489ff72222b3a79c81895d69ef2cf8dac8645166abba6cc54",
+    "app/experimental/comic_collections.py": "82e81509cbe409e1ae3a5ffc8fc46ebabb5e409add56a6b3aa9bfadb48db559b",
     "app/experimental/comic_epub_package.py": "dcef7ce40f74060844ab8f7a71e4729dffc1acc405e27adb70c99a2c7d8f234c",
     "app/experimental/comic_layers.py": "a3571681d406e4d077ac97384d7604eeb7b96305c60b92ffbb594ff35895412c",
-    "app/experimental/comic_layouts.py": "708dc4d4ac4f3afe49183c2c460771bc886fa942d2507371983250dcf70632ff",
-    "app/experimental/comic_layouts_api.py": "7ccbb13526200eb8c0fb4f6a089eed6bd392719b888b9a6de36e446eb010d926",
+    "app/experimental/comic_layouts.py": "51023ca7bc9b65544f8b9f414a4637fd3b8f10cf20afa4bffe6edfc2ccc74e0f",
+    "app/experimental/comic_layouts_api.py": "c574a15166c7a62f2e32059de42bafbb538bb19f8ec6f2fdf98823c9df106e89",
     "app/experimental/comic_ora.py": "fa96c64f31e62ac2a1f7e8bd23cface286b013f14bae3128560fefdec0dcb2a3",
     "app/experimental/comic_ora_api.py": "e698a697db1350c23d7453a1cd1e0ce0e6ace0ebe2f7c65e9190c3527d13a8f4",
     "app/experimental/comic_ora_import.py": "8ca8be11f383b181a9a109e213bf616a4ef21c6b2721aec1e4b439054221a964",
@@ -548,9 +548,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 692,
+    "added": 694,
     "changed_contract": 24,
-    "current_method_paths": 2525,
+    "current_method_paths": 2527,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -567,7 +567,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "a79d39474121cae4790c07b0a50084eb472a3c046b300cc45f172e3bee985291",
+    "sha256": "3755836bf6fc025d42f1984bca821f28acac670a8c86a5b2496e12d2026cdd62",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -6287,6 +6287,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a4caf7a95b4df9ff78aeead5d924c74133496cbb451f9ec9296e1107681c836e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/comic-workspace",
+      "operation_id": "comic_workspace_api_projects__nid__studio_comic_workspace_get",
+      "owner_ref": "05d4a5f24cb733f27fbb9f143408b85bc2b28f0dce60c03def11f757f02b853f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "37e2481514b0e797032547d10dce98c7f58e58622672f99d92cdc435a43d841a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -12120,6 +12131,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b179a61d6bc79f269ea5df495f63f74c63e2ca4cf4c07904b6aac949f5b86bac",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/comic-workspace",
+      "operation_id": "comic_workspace_api_v1_projects__nid__studio_comic_workspace_get",
+      "owner_ref": "05d4a5f24cb733f27fbb9f143408b85bc2b28f0dce60c03def11f757f02b853f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "27fae4e3845cd4f492c26f71d5c08cd99a67fe17c0ba18043492f1cd50110050",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -20141,7 +20163,8 @@
       "operation_id": "comic_image_adopt_api_projects__nid__studio_production_comic_pages__rid__panels__panel_id__adopt_image_post",
       "owner_ref": "bdbdb4fddac588265821f6ddabb3d04d48a2804c3b11c306c272f9bdc47c051c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bdc77176afa67509dbf33a14a6fc6270e01d66b7213fc34723265200da7217b7",
       "schema_graph_sha256": "96b4d65bc12159e9b5f9c0331d698b4a8badbeab7b2a5630f2fc9b2a137c5be5"
@@ -20152,7 +20175,8 @@
       "operation_id": "comic_image_request_api_projects__nid__studio_production_comic_pages__rid__panels__panel_id__image_request_post",
       "owner_ref": "13172a1e2527fb1b13d2f92f0b17867fadbedac4a30a2ef09a9680f53b8a8ca2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7aa0e56292e8c5a43cc1971d167a345d84d5b63797583a5a5999f8a5480911b3",
       "schema_graph_sha256": "a3d104b50ac4d0ed62dae0cbe4835c95d5f2da5eeeb79d673306c9bd0594f1fa"
@@ -27744,7 +27768,8 @@
       "operation_id": "comic_image_adopt_api_v1_projects__nid__studio_production_comic_pages__rid__panels__panel_id__adopt_image_post",
       "owner_ref": "bdbdb4fddac588265821f6ddabb3d04d48a2804c3b11c306c272f9bdc47c051c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "cc16c336f096a7a9da3253985c7b10da9d80e6fd7980949fe79fea2d40539e74",
       "schema_graph_sha256": "96b4d65bc12159e9b5f9c0331d698b4a8badbeab7b2a5630f2fc9b2a137c5be5"
@@ -27755,7 +27780,8 @@
       "operation_id": "comic_image_request_api_v1_projects__nid__studio_production_comic_pages__rid__panels__panel_id__image_request_post",
       "owner_ref": "13172a1e2527fb1b13d2f92f0b17867fadbedac4a30a2ef09a9680f53b8a8ca2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ad2b84049bbf6267efd0826c873e3c592fe494a180087a154da04be455e09f82",
       "schema_graph_sha256": "a3d104b50ac4d0ed62dae0cbe4835c95d5f2da5eeeb79d673306c9bd0594f1fa"
