@@ -845,6 +845,22 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
     def page_source_reader(self, authority, page_id, expected_version, review_digest):
         return self.assets.open_comic_page_sources(self, authority, page_id, expected_version, review_digest)
 
+    def page_source_reader_in_phase(self, authority, page_id, expected_version, review_digest):
+        return self.assets.open_comic_page_sources_in_phase(self, authority, page_id, expected_version, review_digest)
+
+    def _render_page_source_grant(self, grant, request, context, plan):
+        from .comic_publication import _render_work, _full_page
+        from .comic_publication_budget import consume
+        row = self._row(context['nid'], context['scope'], context['actor'], plan['page_id'])
+        images = {aid: self.assets.page_source_content(grant, request, aid, max_bytes=self.assets.MAX_BYTES)
+                  for aid in plan['assets']}
+        report, _ = compose(row['document'], images)
+        if not report['can_render']:
+            raise ValueError('COMIC_PREFLIGHT_BLOCKED')
+        consume('render', _render_work(row['document'], report))
+        report, segments = compose(row['document'], images, render=True)
+        return _full_page(row['document'], report, segments)
+
     @contextmanager
     def _page_source_authority(self, request, nid, token, branch):
         from fastapi import HTTPException, Request

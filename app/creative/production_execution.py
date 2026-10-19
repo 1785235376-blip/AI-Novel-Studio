@@ -1600,22 +1600,26 @@ class ProductionExecutionService:
             origin["graph_binding"] = copy.deepcopy(context["graph_binding"])
         return origin
 
-    def _timeline_sources_current(self, nid, scope, timeline, guard):
+    def _timeline_sources_current(self, nid, scope, timeline, guard, source_authority=None):
         """Only inside the existing raw scope -> asset -> project phase."""
         from ..services.studio_timeline_render import studio_sources
+        comic_sources = False
         for source in studio_sources(timeline):
             row = self.workspace._row(nid, scope, source["id"])
             if (row.get("_owner_actor_id") or (row["version"], row["sha256"], row["kind"]) !=
                     (source["version"], source["digest"], source["asset_kind"])):
                 raise StaleSourceError("STUDIO_TIMELINE_SOURCE_CHANGED")
             if '_comic_page_origin' in row:
+                comic_sources = True
                 if self.comic_handoff is None:
                     raise ValueError('COMIC_HANDOFF_ORIGINAL_OWNER_REQUIRED')
                 from ..services.comic_page_origin import record
                 origin = record(row)
-                self.comic_handoff.source_current(nid, scope, origin['actor'], row, guard)
+                self.comic_handoff.source_current(nid, scope, origin['actor'], row, guard,
+                    source_authority=source_authority)
             self.workspace.assets.content(row["id"], branch_id=scope.get("branch_id"))
         guard()
+        return comic_sources
 
     def timeline_save(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import normalize_studio_timeline, studio_sources
@@ -1623,8 +1627,16 @@ class ProductionExecutionService:
         body = TimelineSave.model_validate(value)
         context = self._base(nid, scope, actor, guard)
         timeline = normalize_studio_timeline(body.timeline)
-        with self.timeline_inputs.transaction(nid, scope, actor, guard) as document:
-            self._timeline_sources_current(nid, scope, timeline, guard)
+        source_authority = self.comic_handoff._source_authority(nid, scope, actor) if self.comic_handoff else None
+        comic_sources = False
+        def current():
+            guard()
+            if comic_sources and self.timeline_inputs.in_phase(nid, scope, actor):
+                if self.store._local.active.get(self.store.key(nid, scope)) is not document:
+                    raise ValueError('COMIC_HANDOFF_SOURCE_PHASE_EXPIRED')
+                self._timeline_sources_current(nid, scope, timeline, guard, source_authority)
+        with self.timeline_inputs.transaction(nid, scope, actor, current) as document:
+            comic_sources = self._timeline_sources_current(nid, scope, timeline, guard, source_authority)
             collection = document["collections"].setdefault(TIMELINES, {})
             if tid is None:
                 if body.expected_version != 0 or len(collection) >= 25: raise ValueError("STUDIO_TIMELINE_CREATE_LIMIT_OR_VERSION")

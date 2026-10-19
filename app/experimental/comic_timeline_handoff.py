@@ -172,26 +172,48 @@ class ComicTimelineHandoff:
     @contextmanager
     def _phase(self, nid, scope, actor, guard):
         self._authority(nid, scope, actor, guard)
+        source_authority = self._source_authority(nid, scope, actor)
         # Preserve Comic's existing unbound-upload and bound-result namespaces.
         # The original Comic transaction owns scope -> Asset -> project locks;
         # imposing a Timeline Asset binding here would hide legacy page images.
         with self.comic._independent_transaction(nid, scope) as state:
             context = self._authority(nid, scope, actor, guard)
+            context['source_authority'] = source_authority
             yield state, context
             self._authority(nid, scope, actor, guard)
 
-    def _page(self, nid, scope, actor, selected):
+    def _source_authority(self, nid, scope, actor):
+        if self.assets._page_source_request.get() is None:
+            return None
+        return self.assets.current_comic_source_authority(self.comic, nid, scope, actor)
+
+    def _page(self, nid, scope, actor, selected, *, render=False, source_authority=None):
         row = self.comic._row(nid, scope, actor, selected['id'])
         check_version(row, selected['version'])
         if not self.comic._independent(row) or row['document']['preset'] != 'PAGE':
             raise ValueError('COMIC_HANDOFF_INDEPENDENT_PAGE_REQUIRED')
-        report = self.comic.preflight(nid, scope, actor, row['id'], row['version'])
+        data = None
+        if row['asset_sources']:
+            if source_authority is None:
+                raise ValueError('COMIC_SOURCE_HANDLE_INVALID')
+            authority, request = source_authority
+            live, actual_request = self.assets.current_comic_source_authority(self.comic, nid, scope, actor)
+            if authority is not live or request is not actual_request:
+                raise ValueError('COMIC_SOURCE_HANDLE_INVALID')
+            with self.comic.page_source_reader_in_phase(authority, row['id'], row['version'], selected['review_digest']) as grant:
+                report = {**self.assets.revalidate_page_sources(grant, request), 'review_digest': selected['review_digest']}
+                if render:
+                    data = self.assets.render_comic_page_source(grant, request)
+        else:
+            report = self.comic.preflight(nid, scope, actor, row['id'], row['version'])
+            if render:
+                data = _render_page(self.comic, nid, scope, actor, row)
         if (row['status'] != 'APPROVED' or (row.get('approval') or {}).get('digest') != report['review_digest']
                 or selected['review_digest'] != report['review_digest']):
             raise StaleSourceError('COMIC_HANDOFF_CURRENT_APPROVAL_REQUIRED')
         if not report['can_render']:
             raise ValueError('COMIC_PREFLIGHT_BLOCKED')
-        return row, report
+        return (row, report, data) if render else (row, report)
 
     def _materialize(self, nid, scope, actor, body, context, guard):
         selected = [page.model_dump() for page in body.pages]
@@ -208,8 +230,8 @@ class ComicTimelineHandoff:
         with publication_budget(), ora_decode_budget():
             for page in selected:
                 guard()
-                row, _ = self._page(nid, scope, actor, page)
-                data = _render_page(self.comic, nid, scope, actor, row)
+                row, _, data = self._page(nid, scope, actor, page, render=True,
+                    source_authority=context.get('source_authority'))
                 if not 0 < len(data) <= self.assets.MAX_BYTES:
                     raise ValueError('COMIC_HANDOFF_ASSET_SIZE_LIMIT')
                 images.append(data)
@@ -222,7 +244,7 @@ class ComicTimelineHandoff:
                     'bytes': len(data), 'render_fingerprint': fingerprint})
             # Keep original authority/current source checks after all CPU work.
             for page in selected:
-                self._page(nid, scope, actor, page)
+                self._page(nid, scope, actor, page, source_authority=context.get('source_authority'))
             if fingerprint != rendering_fingerprint():
                 raise StaleSourceError('COMIC_HANDOFF_RENDERER_CHANGED')
         guard()
@@ -248,11 +270,42 @@ class ComicTimelineHandoff:
     @contextmanager
     def _write_phase(self, nid, scope, actor, guard, *, write=False):
         self._authority(nid, scope, actor, guard)
+        source_authority = self._source_authority(nid, scope, actor)
+        checked = []
+        def current():
+            guard()
+            if self.production.timeline_inputs.in_phase(nid, scope, actor):
+                for row in checked:
+                    self._require_sources(nid, scope, actor, row, guard, source_authority)
         with self.owner.existing_owner_only(), self.production.timeline_inputs.phase(
-                nid, scope, actor, guard, writable=write) as state:
+                nid, scope, actor, current, writable=write) as state:
+            before = {key: digest(row) for key, row in state['collections'].get(COLLECTION, {}).items()}
             context = self._authority(nid, scope, actor, guard)
+            context['source_authority'] = source_authority
             yield state, context
+            if write:
+                checked.extend(row for key, row in state['collections'].get(COLLECTION, {}).items()
+                    if row['status'] != 'CANCELLED' and before.get(key) != digest(row))
+                current()
             self._authority(nid, scope, actor, guard)
+
+    @contextmanager
+    def timeline_source_authority(self, request, nid, token, branch, scope, actor, timeline, guard):
+        """HTTP Save bridge; unrelated timelines retain their original authority."""
+        from ..services.studio_timeline_render import normalize_studio_timeline, studio_sources
+        needs_sources = False
+        with self.production.timeline_inputs.phase(nid, scope, actor, guard):
+            for pin in studio_sources(normalize_studio_timeline(timeline)):
+                meta = self.workspace._row(nid, scope, pin['id'])
+                if FIELD in meta:
+                    origin = record(meta)
+                    page = self.comic._row(nid, scope, actor, origin['source']['id'])
+                    needs_sources |= bool(page['asset_sources'])
+        if needs_sources:
+            with self.comic.page_source_authority(request, nid, token, branch):
+                yield
+        else:
+            yield
 
     @staticmethod
     def _request_id(value):
@@ -521,7 +574,7 @@ class ComicTimelineHandoff:
                 row = self._receipt(state, nid, scope, actor, request_id, context)
                 check_version(row, version)
                 if row['status'] != 'PLANNED': raise ValueError('COMIC_HANDOFF_NOT_RESUMABLE')
-                self._require_sources(nid, scope, actor, row, guard)
+                self._require_sources(nid, scope, actor, row, guard, context.get('source_authority'))
                 step = row['steps'][index]
                 if step['state'] == 'READY':
                     self._verify_asset(row, index, guard)
@@ -535,9 +588,12 @@ class ComicTimelineHandoff:
                             or usage['bytes'] - retained + len(data) > self.workspace.MAX_PROJECT_BYTES):
                         raise ValueError('CREATIVE_PROJECT_ASSET_QUOTA')
                     self.workspace.storage_admission.require(len(data))
-                    def before_commit():
+                    def before_commit(phase_state=state, source_proof=context.get('source_authority'), receipt=row):
+                        if (not self.production.timeline_inputs.in_phase(nid, scope, actor)
+                                or self.owner._local.active.get(self.store.key(nid, scope)) is not phase_state):
+                            raise ValueError('COMIC_HANDOFF_SOURCE_PHASE_EXPIRED')
                         self._authority(nid, scope, actor, guard)
-                        self._require_sources(nid, scope, actor, row, guard)
+                        self._require_sources(nid, scope, actor, receipt, guard, source_proof)
                         self.workspace.storage_admission.require(1)
                     meta = self.assets.create(nid, 'comic-page-' + str(index + 1) + '.png',
                         base64.b64encode(data).decode('ascii'), 'image/png', 'image',
@@ -554,7 +610,7 @@ class ComicTimelineHandoff:
             row = self._receipt(state, nid, scope, actor, request_id, context)
             check_version(row, version)
             if row['status'] != 'PLANNED': raise ValueError('COMIC_HANDOFF_NOT_RESUMABLE')
-            self._require_sources(nid, scope, actor, row, guard)
+            self._require_sources(nid, scope, actor, row, guard, context.get('source_authority'))
             clips, start = [], 0
             for index, (step, page) in enumerate(zip(row['steps'], row['preview']['pages'])):
                 meta = self._verify_asset(row, index, guard)
@@ -588,7 +644,7 @@ class ComicTimelineHandoff:
             # never an inferred rollback or an implicit destructive cleanup.
             return self._public(row, guard)
 
-    def source_current(self, nid, scope, actor, meta, guard=lambda: None):
+    def source_current(self, nid, scope, actor, meta, guard=lambda: None, *, source_authority=None):
         """Only call under the original raw scope -> Asset -> project phase."""
         if not self.production.timeline_inputs.in_phase(nid, scope, actor):
             raise ValueError('COMIC_HANDOFF_SOURCE_PHASE_REQUIRED')
@@ -602,7 +658,7 @@ class ComicTimelineHandoff:
                 or origin['index'] >= len(receipt['steps'])
                 or self._origin(receipt, receipt['steps'][origin['index']], origin['index']) != origin):
             raise StaleSourceError('COMIC_HANDOFF_SOURCE_CHANGED')
-        self._require_sources(nid, scope, actor, receipt, guard)
+        self._require_sources(nid, scope, actor, receipt, guard, source_authority)
         guard()
         return origin
 
@@ -614,9 +670,9 @@ class ComicTimelineHandoff:
             raise ValueError('COMIC_HANDOFF_RECEIPT_UNAVAILABLE')
         return row.get('request_id')
 
-    def _require_sources(self, nid, scope, actor, receipt, guard):
+    def _require_sources(self, nid, scope, actor, receipt, guard, source_authority=None):
         for page in receipt['preview']['pages']:
-            current, _ = self._page(nid, scope, actor, page['source'])
+            current, _ = self._page(nid, scope, actor, page['source'], source_authority=source_authority)
             if (digest(current['document']) != page['source']['document_digest']
                     or rendering_fingerprint() != page['render_fingerprint']):
                 raise StaleSourceError('COMIC_HANDOFF_SOURCE_CHANGED')

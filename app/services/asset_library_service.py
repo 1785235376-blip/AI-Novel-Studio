@@ -102,6 +102,18 @@ class AssetLibraryService:
         from .comic_page_source_reads import revalidate
         return revalidate(self, grant, request)
 
+    def current_comic_source_authority(self, comic, novel_id, scope, actor):
+        from .comic_page_source_reads import current_authority
+        return current_authority(self, comic, novel_id, scope, actor)
+
+    def open_comic_page_sources_in_phase(self, comic, authority, page_id, expected_version, review_digest):
+        from .comic_page_source_reads import open_in_phase
+        return open_in_phase(self, comic, authority, page_id, expected_version, review_digest)
+
+    def render_comic_page_source(self, grant, request):
+        from .comic_page_source_reads import render
+        return render(self, grant, request)
+
     @contextmanager
     def project_scope(self, novel_id: str, branch_id: str | None, owner_lease, *, scope_key: str):
         """Lease the existing owner for new, incarnation-bound studio assets.

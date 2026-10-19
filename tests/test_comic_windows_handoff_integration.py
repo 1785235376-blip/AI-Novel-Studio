@@ -13,6 +13,7 @@ from app.services.comic_page_origin import record
 from test_v2_independent_workspace import rig, png_bytes
 from test_comic_timeline_handoff import handoff, page, request, preview
 from test_comic_timeline_handoff_recovery import body, confirm, status, resume, restart, timelines
+from test_comic_handoff_source_integration import trusted_source_handoff, handoff_http, client, mounted, prefix
 
 pytestmark = [pytest.mark.skipif(os.name != 'nt', reason='Native Windows integration required'),
               pytest.mark.file_backend_only, pytest.mark.parametrize('rig', ['file'], indirect=True)]
@@ -54,7 +55,10 @@ def orphan_png(rig, handoff, monkeypatch):
     return aid, images[0]
 
 
-def test_external_artwork_full_page_then_save_and_real_reopen(rig, handoff, monkeypatch):
+@pytest.mark.parametrize('mounted', ['file'], indirect=True)
+@pytest.mark.parametrize('prefix', ['/api'], indirect=True)
+def test_external_artwork_full_page_then_save_and_real_reopen(rig, handoff, monkeypatch, trusted_source_handoff):
+    rig, handoff = trusted_source_handoff
     saved = external_page(rig, handoff)
     selected = request([saved], [6500])
     before = copy.deepcopy(rig.raw_store.read(rig.nid, rig.scope))
@@ -113,7 +117,10 @@ def test_unindexed_png_requires_explicit_resume_then_reopens_exact_bytes(rig, ha
     assert len(list(rig.assets.root.glob('*.bin'))) == len(timelines(rig)) == 1
 
 
-def test_missing_native_capability_refuses_full_page_without_effects(rig, handoff, monkeypatch):
+@pytest.mark.parametrize('mounted', ['file'], indirect=True)
+@pytest.mark.parametrize('prefix', ['/api'], indirect=True)
+def test_missing_native_capability_refuses_full_page_without_effects(rig, handoff, monkeypatch, trusted_source_handoff):
+    rig, handoff = trusted_source_handoff
     selected = request([external_page(rig, handoff)])
     before = copy.deepcopy(rig.raw_store.read(rig.nid, rig.scope))
     assets_before = {p.name: p.read_bytes() for p in rig.assets.root.iterdir() if p.is_file()}

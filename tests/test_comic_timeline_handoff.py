@@ -14,6 +14,7 @@ from app.experimental.media import digest
 from app.services.comic_page_origin import marker, record, validate_png, FIELD, FEATURES
 from test_v2_independent_workspace import rig, reopened
 from test_v2_discovered_image_production import owner
+from test_comic_handoff_source_integration import trusted_source_handoff, handoff_http, client, mounted, prefix
 
 
 @pytest.fixture
@@ -236,7 +237,11 @@ def test_passive_origin_contract_and_real_png(rig, handoff):
     with pytest.raises(ValueError): validate_png(images[0] + b'tamper', origin)
 
 
-def test_original_uploaded_artwork_preserves_native_bounded_read_boundary(rig, handoff):
+@pytest.mark.parametrize('rig,mounted', [
+    pytest.param('file', 'file', marks=pytest.mark.file_backend_only),
+    pytest.param('postgres', 'postgres', marks=pytest.mark.postgres_backend_only)], indirect=True)
+def test_original_uploaded_artwork_preserves_native_bounded_read_boundary(rig, handoff, trusted_source_handoff):
+    rig, handoff = trusted_source_handoff
     import base64
     from test_v2_independent_workspace import png_bytes
     original_png = png_bytes(b'\x11\x22\x33')

@@ -156,9 +156,11 @@ def create_comic_handoff_routes(service, invoke, *, require_host_session, model_
         for flag in sorted(FEATURES): require_flag(flag)
         if call is None or service.comic_handoff is None:
             raise HTTPException(404, {'code': 'COMIC_HANDOFF_UNAVAILABLE'})
+        def current(actor, scope, guard):
+            with service.comic_handoff.comic.page_source_authority(request, nid, token, branch):
+                return operation(service.comic_handoff, actor, scope, guard)
         with service.store.existing_owner_only():
-            return call(request, nid, token, branch, permission,
-                        lambda actor, scope, guard: operation(service.comic_handoff, actor, scope, guard))
+            return call(request, nid, token, branch, permission, current)
 
     @router.post(root + '/preview')
     def preview(nid: str, request: Request, body: HandoffRequest,
@@ -330,7 +332,16 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     @router.post("/projects/{nid}/studio/production/timelines", status_code=201)
     def create_timeline(nid: str, request: Request, body: TimelineSave, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_save(nid, scope, actor, None, body, guard))
+        return save_timeline_call(request, nid, x_session_token, x_branch_id, None, body)
+
+    def save_timeline_call(request, nid, token, branch, tid, body):
+        def operation(actor, scope, guard):
+            if service.comic_handoff is None:
+                return service.timeline_save(nid, scope, actor, tid, body, guard)
+            with service.comic_handoff.timeline_source_authority(request, nid, token, branch,
+                    scope, actor, body.timeline, guard):
+                return service.timeline_save(nid, scope, actor, tid, body, guard)
+        return call(request, nid, token, branch, 'domain.write', operation)
 
     @router.get("/projects/{nid}/studio/production/timelines/{tid}")
     def timeline(nid: str, tid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -338,7 +349,7 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     @router.put("/projects/{nid}/studio/production/timelines/{tid}")
     def save_timeline(nid: str, tid: str, request: Request, body: TimelineSave, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.timeline_save(nid, scope, actor, tid, body, guard))
+        return save_timeline_call(request, nid, x_session_token, x_branch_id, tid, body)
 
     @router.post("/projects/{nid}/studio/production/timelines/{tid}/render")
     def render(nid: str, tid: str, request: Request, body: TimelineRender, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
