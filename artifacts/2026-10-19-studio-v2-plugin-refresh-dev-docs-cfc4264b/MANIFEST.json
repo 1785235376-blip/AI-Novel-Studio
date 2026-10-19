@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_INCREMENT_NOT_FULL_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "757fcb9c16a1120f4e8dee0a971007e9f0269120",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-plugin-refresh-dev-docs-cfc4264b",
+  "product_base": "b484b528a1e3b66ab79947363914b5b75047a013",
+  "product_tip": "cfc4264be11cdbc2811ffc8f38f688c866150e1c",
+  "product_tree": "42940eb3d75320872ed0b57cb1097228612e76f4",
+  "bundle_ref": "refs/heads/work/v2-plugin-docs-b484-combined-20261019",
+  "bundle_filename": "studio-v2-b484b528-to-cfc4264b.bundle",
+  "unique_external_prerequisite": "b484b528a1e3b66ab79947363914b5b75047a013",
+  "patch_mapping": [
+    {
+      "original": "6753cc379589113c489e0e403ed6f6c7b3c4eb75",
+      "combined": "428613b7d9c1a38e13978591caf6a6b0a3a8dfd3",
+      "stable_patch_id": "f0da7415b7e9315ab97a54889d862f838ccef42d"
+    },
+    {
+      "original": "650d2eff2140d3508bc0c329bc1aabb682038865",
+      "combined": "cfc4264be11cdbc2811ffc8f38f688c866150e1c",
+      "stable_patch_id": "e86470664574a9ee8b975101acdf3fe3b1d53735"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "frontend/src/novel/PluginInspector.tsx",
+      "original_commit": "6753cc379589113c489e0e403ed6f6c7b3c4eb75",
+      "source_blob": "233f07a7bc70e4b3fef82fe669bfd0b92924b37f",
+      "combined_blob": "233f07a7bc70e4b3fef82fe669bfd0b92924b37f"
+    },
+    {
+      "path": "frontend/src/novel/PluginInspectorRefresh.additive.test.tsx",
+      "original_commit": "6753cc379589113c489e0e403ed6f6c7b3c4eb75",
+      "source_blob": "ed9cfaf26b49e61b18b8e27faba62ad1cb8c6319",
+      "combined_blob": "ed9cfaf26b49e61b18b8e27faba62ad1cb8c6319"
+    },
+    {
+      "path": "docs/development/README.md",
+      "original_commit": "650d2eff2140d3508bc0c329bc1aabb682038865",
+      "source_blob": "8670ef622ccc4258dcf53976445e1d195bffbbd4",
+      "combined_blob": "8670ef622ccc4258dcf53976445e1d195bffbbd4"
+    },
+    {
+      "path": "docs/development/contribution-review.md",
+      "original_commit": "650d2eff2140d3508bc0c329bc1aabb682038865",
+      "source_blob": "6ea76f8db4f42d1a699da9b32ae55423e5d468ed",
+      "combined_blob": "6ea76f8db4f42d1a699da9b32ae55423e5d468ed"
+    }
+  ],
+  "all_other_b484_source_entries_identical": true,
+  "introduced_objects": [
+    {
+      "oid": "cfc4264be11cdbc2811ffc8f38f688c866150e1c",
+      "type": "commit",
+      "bytes": 300,
+      "sha256": "48502c02379a0a4db6f0c63f28881b341f3a83eaaad54b7d283b6d4a21149ce7"
+    },
+    {
+      "oid": "428613b7d9c1a38e13978591caf6a6b0a3a8dfd3",
+      "type": "commit",
+      "bytes": 300,
+      "sha256": "4124898070de78895580d391f8d66f493a881360cc4112d9bb26ecabe7f05574"
+    },
+    {
+      "oid": "42940eb3d75320872ed0b57cb1097228612e76f4",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "6bb6ad12b2cc62b12eb1308ab8ad5d70a910668a8ff9374eeff366dc7f9a7814"
+    },
+    {
+      "oid": "7a234f863d5cec82049c9226d06d910be662c4ee",
+      "type": "tree",
+      "bytes": 16235,
+      "sha256": "893dc641377a118e37a3787bd531542b3c4dfbe1a5b16efb2386816c4cc44c5d"
+    },
+    {
+      "oid": "280383ee851335b1f3b4b30d34bc56ec2283c08b",
+      "type": "tree",
+      "bytes": 528,
+      "sha256": "8f77115c77a861f2105fd2436f033423e582a7b1dd369056e53400aafa69116c"
+    },
+    {
+      "oid": "8670ef622ccc4258dcf53976445e1d195bffbbd4",
+      "type": "blob",
+      "bytes": 18818,
+      "sha256": "0e34577f981bceb6d2d103a71cccf1b26ba99799b5fa549f1080a209bf084f25"
+    },
+    {
+      "oid": "6ea76f8db4f42d1a699da9b32ae55423e5d468ed",
+      "type": "blob",
+      "bytes": 16834,
+      "sha256": "01328a9d54ecb66dd9156ea945f066ee3ae40f101570bb973c8d87e87e4833fb"
+    },
+    {
+      "oid": "1f6ae912475f65573a4800b19399b870ebdcc4d6",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "c198a2f9cdf54756a11dcb3a213b0db8cef5f27049373bdf82af529269b50830"
+    },
+    {
+      "oid": "b3808f1525300ba731583f37a8fc1ec2d49afac6",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "9d68b97c6c776c7b891a41359c7cd53ea840152095c998a28379e16e273409dd"
+    },
+    {
+      "oid": "f8a3fcb80a29f28ba47f60a53fd7c20067c8d778",
+      "type": "tree",
+      "bytes": 11666,
+      "sha256": "595ea5b3f09fd89fad8ac4aa62018da18e38c3c4616d2cc61ce23bd0ba36b4cb"
+    },
+    {
+      "oid": "233f07a7bc70e4b3fef82fe669bfd0b92924b37f",
+      "type": "blob",
+      "bytes": 8498,
+      "sha256": "a31ee3e00543fefecd5208a9d54ce411b132716860d69c099ff9c7748d2c19e6"
+    },
+    {
+      "oid": "ed9cfaf26b49e61b18b8e27faba62ad1cb8c6319",
+      "type": "blob",
+      "bytes": 3530,
+      "sha256": "819b637223686ed1c18e540ffaf6fee43ddde0782f3405ddc640eccbd0984f38"
+    },
+    {
+      "oid": "bad3519ffc5ff43fd6fe0ebf2bc12ddcaf787a7f",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "1b0ff4142af741751e068f826b5ed1d8b2f3976ed364a20116d1438536340f13"
+    }
+  ],
+  "privacy_scan": {
+    "high_risk_credential_pattern_findings": 0,
+    "runtime_profile_or_raw_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 100841,
+      "sha256": "56497c2af1f99dd927059453da8742fdef1ac9e4a8d6b9a9305d05657c362800",
+      "git_blob": "3245fbde25cd94d2719f1de7c02968bd3c047b3f"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 2506,
+      "sha256": "5fec6403f2df5c11f3f976f8af443871d096a7fa488014ec493fac863a703549",
+      "git_blob": "8e44ae457b12581db885503fe893b8bb1dcf0b57"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1395,
+      "sha256": "fb5821fd12510f3a28260397f9f4fc3456d04f5f0009fcee7c9ef3f6d62eb8e0",
+      "git_blob": "fe65a60dd1c5493c8307382ab52de5b3ad0075a5"
+    },
+    {
+      "path": "studio-v2-b484b528-to-cfc4264b.bundle",
+      "bytes": 18689,
+      "sha256": "b6e6df1e9def7c1a97f14a2664651bba3fde7be184f5a1718b5c78d0e86f5d33",
+      "git_blob": "d37ef2d1ad7d792af0d1a1c9475d9d331098206c"
+    }
+  ]
+}
