@@ -1,0 +1,98 @@
+name: Feature request
+description: 提出新能力或改进（请说明用户场景、现状缺口与可验收标准）
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        功能提案会被纳入既有单一权威与发布门禁评估（见 `ARCHITECTURE.md`、
+        `docs/v2/engineering/RELEASE_GATES.md`）。
+        本项目当前**不是**一键部署项目；Docker/一键启动类提案在 V2 功能完成前不会被接受。
+
+  - type: textarea
+    id: user_scenario
+    attributes:
+      label: 用户场景
+      description: 谁在什么情况下要完成什么任务？没有具体场景的"加一个功能"不会被排期。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_gap
+    attributes:
+      label: 当前缺口
+      description: 现在为什么做不到？给出实际限制与相关源码/文档位置。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_capability
+    attributes:
+      label: 期望能力
+      description: 期望的行为边界，不要只写实现方式；说明不做什么同样重要。
+      render: markdown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected_modules
+    attributes:
+      label: 影响的一级模块
+      multiple: true
+      options:
+        - 项目 / 小说正文 / Writer
+        - 创作工作台（剧本 / Director / Storyboard / Production）
+        - World / Character / 知识
+        - Asset / Job / Review
+        - Graph / Timeline / 导出
+        - Image Studio
+        - Image Studio → 漫画子能力
+        - Model Center / Provider Runtime
+        - Local Interop / DesktopHost
+        - 工程 / 测试 / CI / 文档
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: 验收标准
+      description: 可执行、可判定的标准（含真实边界：无模型模式、权限、失败路径）。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: 兼容性
+      description: 是否影响 V1.X 冻结数据/契约、Project/Asset/Job/Review/Timeline/Model Center 权威、migrations、API/DTO？
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: resource_budget
+    attributes:
+      label: 资源预算
+      description: 预期依赖/模型/显存/内存/磁盘/耗时预算；是否需要联网或云端授权。
+      render: markdown
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已搜索现有 Issue / 需求矩阵，确认不是重复提案。
+          required: true
+        - label: 我理解该提案需要人工评估，且合并/发布由项目所有者决定。
+          required: true
+        - label: 该提案不包含一键部署/Docker Compose 类内容（本阶段不接受）。
+          required: true

@@ -2,6 +2,36 @@
 
 本地优先、可迁移的混合 AI 长篇小说生产系统。PostgreSQL 保存已批准事实，Markdown 保存正文，开放文件保存知识源；本地/云端模型只是可替换计算能力。Dify 是可选编排层，核心数据不依赖 Dify。
 
+## 社区与工程入口
+
+- **贡献指南**：[CONTRIBUTING.md](CONTRIBUTING.md) —— 分支/PR 策略、提交规范、最小复现与测试要求、
+  Windows / Linux / macOS 人工分步环境、隐私与素材提交规则。
+- **架构总览**：[ARCHITECTURE.md](ARCHITECTURE.md) —— 组件关系、单一数据权威、三类图语义、
+  版本/CAS/权限/云端授权、媒体流水线、Image Studio → 漫画子能力归属。
+- **Issue 模板**：[.github/ISSUE_TEMPLATE](.github/ISSUE_TEMPLATE) —— Bug 必填 SHA/OS/复现步骤/实际与预期/
+  数据影响/脱敏确认；Feature 必填用户场景/当前缺口/期望能力/影响模块/验收标准/兼容性/资源预算。
+- **本地最小 CI**：[docs/v2/engineering/LOCAL_CI_MINIMUM.md](docs/v2/engineering/LOCAL_CI_MINIMUM.md) ——
+  分步执行 LOCAL-01～05（真实 uvicorn + /health、pytest 正确性切片、Vitest/构建/设计 token、
+  真实浏览器保存重读旅程、清理），结果与 Git SHA 绑定；这是测试命令集合，**不是**一键安装或一键启动。
+- **工程规范与证据**：[docs/v2/engineering/README.md](docs/v2/engineering/README.md)、
+  [RUNBOOK.md](docs/v2/engineering/RUNBOOK.md)、[RELEASE_GATES.md](docs/v2/engineering/RELEASE_GATES.md)、
+  [DEFECTS_20261019_r1.md](docs/v2/engineering/DEFECTS_20261019_r1.md)、
+  [requirements-traceability.json](docs/v2/engineering/requirements-traceability.json)。
+- **开源许可**：[LICENSE](LICENSE)（Apache-2.0）、[NOTICE](NOTICE)、
+  [LICENSING_AND_THIRD_PARTY.md](LICENSING_AND_THIRD_PARTY.md) —— 用户作品、模型权重、
+  字体与第三方依赖的边界。
+
+### 已知限制（不要误读为发布就绪）
+
+- V2 尚未正式发布；Git 注释标签 `v0.1.0-alpha` 是早期**工程源码快照锚点**，
+  不是 V1.X RC1、不是 V2 正式版、也不是产品验收 PASS。
+- 本阶段不提供 Docker Compose 或任何一键安装 / 一键启动 / 一键部署方案。
+- 本机没有已授权的本地模型/GPU 推理证据；Mock 只证明非模型业务行为，不证明 AI 质量。
+- 完整真实 PostgreSQL 套件在当前 Windows 主机为 `BLOCKED_ENVIRONMENT`（D-07），
+  只有代表性真实 PG 子集通过。
+- 宿主 CI 为 `HOSTED_BLOCKED_NO_RUNNER`（历史 Actions runner 未真实启动）；
+  保留既有 workflow，不用本地结果冒充宿主 CI。
+
 ## 当前状态（V0.7.0）
 
 V0.1 数据与 Agent 架构保留。V0.2 增加 Runtime Registry、Mock/Ollama Streaming、完整 `/api`、Generation Job/SSE/Draft Accept；V0.3 增加 React + TypeScript + Vite + TipTap 三栏 Writer UI。当前机器未发现 Docker、Ollama 或 Cloud Key，真实 Runtime 仍为 PARTIAL。
