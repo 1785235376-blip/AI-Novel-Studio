@@ -1,6 +1,6 @@
 # Isolated Plugin Worker Runtime — Design Only
 
-Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** plus a supervisor prototype and bounded stdio IPC. A follow-up correction isolated the worker Python startup (`-I -S`, environment allowlist, Host-owned bootstrap) after independent review found inherited `PYTHONPATH` could execute attacker `sitecustomize`. That is not third-party plugin execution and not an OS sandbox.
+Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** plus a supervisor prototype and bounded stdio IPC. A follow-up correction isolated the worker Python startup (`-I -S`, environment allowlist, Host-owned bootstrap) after independent review found inherited `PYTHONPATH` could execute attacker `sitecustomize`. Phase 2B adds a **fail-closed Windows AppContainer prototype** around that Host-owned test worker; real Windows token proof is **REQUIRED / NOT RUN** on Linux. That is not third-party plugin execution and not `os_sandbox_ready=true`.
 
 | Claim | Value |
 |---|---|
@@ -11,7 +11,7 @@ Status: **design document** for the *plugin* worker. Phase 1 **execution contrac
 | `execution_supported` | `false` |
 | Isolation | `DENY_ALL` |
 | Sandbox | `NOT_CONFIGURED` |
-| AppContainer / LPAC | NOT IMPLEMENTED |
+| AppContainer / LPAC | Phase 2B ctypes AppContainer **prototype** (not production-ready; Windows token proof REQUIRED / NOT RUN). LPAC = NOT IMPLEMENTED. |
 | Marketplace | NOT IMPLEMENTED |
 | Plugin signatures | NOT IMPLEMENTED |
 | Provider plugins | NOT IMPLEMENTED |
@@ -335,9 +335,9 @@ None of those gates are open today.
 
 ## 18. Explicitly not implemented
 
-The following remain unimplemented for **plugin** execution after Phase 2A:
+The following remain unimplemented for **plugin** execution after Phase 2B:
 
-- Third-party plugin Worker (the host-owned **test** worker is a prototype only; see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md))
+- Third-party plugin Worker (the host-owned **test** worker is a prototype only; see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) and [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md))
 - Capability Broker **runtime** (the pure policy evaluator exists; it does not broker real capabilities)
 - Plugin signatures, publisher trust store, revocation
 - Marketplace, install, update, uninstall, online download
@@ -346,7 +346,7 @@ The following remain unimplemented for **plugin** execution after Phase 2A:
 - Blender plugins
 - Any third-party Python / JavaScript / Shell / PowerShell / native code execution
 - Automatic permission grant
-- AppContainer / LPAC / Job Object security isolation
+- Production-ready AppContainer / LPAC (`os_sandbox_ready` remains false; Job Object is not a security sandbox)
 - Changing `execution_supported` to `true`
 
 If a change to P1 / P1.5 would require `execution_supported = true`, that change is out of bounds and must be rejected.
@@ -363,7 +363,7 @@ Phase 2A **did** implement: host-owned test worker, supervisor prototype, bounde
 6. Allow a single host-written conformance plugin under test flags
 7. Only then consider reviewed third-party declarative-plus-code packages
 
-Each step is a separate review. The plugin worker described in this file is still blocked on steps 4–5 and on Windows AppContainer / LPAC (or an independently reviewed equivalent). Job Object is not that gate.
+Each step is a separate review. The plugin worker described in this file is still blocked on steps 4–5 and on a **proven** Windows AppContainer / LPAC (or an independently reviewed equivalent). Phase 2B landed a fail-closed AppContainer prototype; it is not that gate until a real Windows host proves `TokenIsAppContainer`. Job Object is not that gate.
 
 ## 20. Current host invariants (must not regress)
 

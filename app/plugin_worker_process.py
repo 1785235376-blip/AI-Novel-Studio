@@ -9,6 +9,10 @@ PYTHONPATH) let attacker-controlled `sitecustomize` / stdlib shadows execute
 in the child. This adapter now uses isolated interpreter flags (`-I -S`) and
 an explicit environment allowlist. That is Python startup isolation, not an
 OS sandbox.
+
+Phase 2B adds `spawn_sandboxed_host_test_worker()` for a Windows AppContainer
+prototype. That helper is fail-closed, takes no executable/args/env/cwd, and
+never falls back to this unsandboxed spawn.
 """
 
 from __future__ import annotations
@@ -18,8 +22,9 @@ import signal
 import subprocess
 import sys
 import threading
+from collections.abc import Mapping
 from pathlib import Path
-from typing import IO
+from typing import IO, Any
 
 from app.plugin_worker_protocol import MAX_STDERR_BYTES
 
@@ -90,7 +95,7 @@ def _copy_allowlisted(source: Mapping[str, str], names: tuple[str, ...]) -> dict
 class OwnedWorkerProcess:
     """Ownership-aware wrapper around one host-owned test worker Popen."""
 
-    def __init__(self, proc: subprocess.Popen[bytes]):
+    def __init__(self, proc: Any):
         self.proc = proc
         self.pid = int(proc.pid)
         with _OWNED_LOCK:
@@ -147,6 +152,26 @@ def spawn_host_test_worker() -> OwnedWorkerProcess:
     return OwnedWorkerProcess(proc)
 
 
+def spawn_sandboxed_host_test_worker() -> Any:
+    """Frozen Host-owned AppContainer spawn. No executable/args/env/cwd.
+
+    Fail-closed on non-Windows and on any sandbox setup failure. This function
+    never falls back to `spawn_host_test_worker()`.
+    """
+    from app.plugin_worker_sandbox_errors import (
+        REASON_WINDOWS_SANDBOX_UNAVAILABLE,
+        SandboxError,
+    )
+
+    if sys.platform != "win32":
+        raise SandboxError(REASON_WINDOWS_SANDBOX_UNAVAILABLE)
+    from app.plugin_worker_windows_sandbox import (
+        spawn_sandboxed_host_test_worker as _spawn_windows,
+    )
+
+    return _spawn_windows()
+
+
 def terminate_owned_worker(owned: OwnedWorkerProcess, *, grace_s: float = 0.4) -> None:
     proc = owned.proc
     if proc.poll() is None:
@@ -172,36 +197,50 @@ def drain_stderr_bounded(stream: IO[bytes], sink: bytearray, *, limit: int = MAX
         return
 
 
-def _terminate_tree(proc: subprocess.Popen[bytes], *, grace_s: float) -> None:
-    if os.name == "posix":
+def _terminate_tree(proc: Any, *, grace_s: float) -> None:
+    if os.name == "posix" and hasattr(os, "killpg") and hasattr(proc, "pid"):
         try:
             os.killpg(proc.pid, signal.SIGTERM)
         except ProcessLookupError:
             return
+        except OSError:
+            if hasattr(proc, "terminate"):
+                proc.terminate()
+            else:
+                return
         try:
             proc.wait(timeout=grace_s)
             return
         except subprocess.TimeoutExpired:
             pass
+        except Exception:
+            pass
         try:
             os.killpg(proc.pid, signal.SIGKILL)
         except ProcessLookupError:
             return
+        except OSError:
+            if hasattr(proc, "kill"):
+                proc.kill()
+            else:
+                return
         try:
             proc.wait(timeout=1.0)
-        except subprocess.TimeoutExpired:
+        except (subprocess.TimeoutExpired, Exception):
             return
         return
-    proc.terminate()
+    if hasattr(proc, "terminate"):
+        proc.terminate()
     try:
         proc.wait(timeout=grace_s)
         return
-    except subprocess.TimeoutExpired:
+    except (subprocess.TimeoutExpired, Exception):
         pass
-    proc.kill()
+    if hasattr(proc, "kill"):
+        proc.kill()
     try:
         proc.wait(timeout=1.0)
-    except subprocess.TimeoutExpired:
+    except (subprocess.TimeoutExpired, Exception):
         return
 
 

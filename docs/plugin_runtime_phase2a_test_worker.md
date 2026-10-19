@@ -19,8 +19,8 @@ Status: **host-owned test worker prototype**. This is not third-party plugin exe
 | `execution_supported` | `false` |
 | Isolation | `DENY_ALL` |
 | OS sandbox ready | `false` / `NOT_CONFIGURED` |
-| AppContainer / LPAC | NOT IMPLEMENTED |
-| Job Object security isolation | NOT IMPLEMENTED |
+| AppContainer / LPAC | Phase 2B ctypes prototype exists; **real Windows token proof REQUIRED / NOT RUN**. LPAC = NOT IMPLEMENTED. Not production-ready. See [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md) |
+| Job Object security isolation | Job Object is resource containment only. **Not a security sandbox.** |
 | Capability Broker runtime | NOT IMPLEMENTED |
 | Credential resolver | NOT IMPLEMENTED |
 | Signature verification | NOT IMPLEMENTED |
@@ -125,7 +125,8 @@ Every parent `PYTHON*` variable is dropped. `PATH` is not copied. The worker sti
 
 ### What this is not
 
-- Not AppContainer / LPAC / Job Object
+- Not a production AppContainer / LPAC / Job-Object-as-sandbox
+- Phase 2B ctypes AppContainer prototype: [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md). Real Windows token proof is **REQUIRED / NOT RUN** on this Linux isolation host.
 - Not `os_sandbox_ready=true`
 - Not third-party plugin execution
 - Windows real-process validation of this correction: **REQUIRED / NOT RUN** on this Linux isolation host
@@ -211,14 +212,14 @@ Job/worker state is **in-memory only**. No schema, no migrations, no durable exe
 ## Not implemented
 
 - Third-party plugin Worker or plugin package code loading
-- AppContainer, LPAC, Job Object security isolation, OS sandbox
+- Production-ready AppContainer / LPAC / OS sandbox (`os_sandbox_ready` remains false)
 - Capability Broker runtime, credential resolver, signature verification
 - Provider plugin, Blender plugin, ComfyUI plugin, marketplace
 - `POST /api/plugins/.../execute`, Run Plugin UI, Worker Console
-- OS enforcement of CPU / memory / file-count limits
+- OS enforcement of CPU / memory / file-count limits as a security boundary
 - Real virtual mounts
 
-A future Phase 2B / security gate is required before any third-party code runs. Job Object remains **not** a sandbox.
+A future Phase 3 / security gate is required before any third-party code runs. Job Object remains **not** a sandbox. Phase 2B is a fail-closed AppContainer **prototype** only; see [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md).
 
 ## Verification
 

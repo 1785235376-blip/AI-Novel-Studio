@@ -49,7 +49,7 @@ Catalog reads do not apply writing presets, execute workflow templates, or run e
 - Read Credential Vault secrets or novel body text
 - Fetch plugin URLs or inject UI into the WebView
 
-The isolated worker, capability broker runtime, signatures, and marketplace are **not implemented**. Phase 1 added fail-closed execution **contracts and pure policy** only. Phase 2A added a **host-owned test worker** (fixed Host-owned bootstrap, isolated interpreter `-I -S`, not a plugin) to exercise those contracts; `execution_supported` remains `false` and users still cannot run plugins. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
+The isolated worker, capability broker runtime, signatures, and marketplace are **not implemented**. Phase 1 added fail-closed execution **contracts and pure policy** only. Phase 2A added a **host-owned test worker** (fixed Host-owned bootstrap, isolated interpreter `-I -S`, not a plugin) to exercise those contracts. Phase 2B adds a fail-closed **Windows AppContainer prototype** around that test worker; it is not third-party execution and `os_sandbox_ready` remains false. `execution_supported` remains `false` and users still cannot run plugins. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
 
 ## Manifest fields
 

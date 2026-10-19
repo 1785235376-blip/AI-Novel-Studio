@@ -1,8 +1,12 @@
-"""Host-owned Test Worker supervisor prototype (Phase 2A).
+"""Host-owned Test Worker supervisor prototype (Phase 2A / 2B).
 
-Narrow API: start_test_worker / run_test_job / cancel_test_job /
-shutdown_test_worker. Not a command runner, not a plugin executor, not a
-Capability Broker. Production startup must not import or activate this module.
+Narrow API: start_test_worker / start_sandboxed_test_worker / run_test_job /
+cancel_test_job / shutdown_test_worker. Not a command runner, not a plugin
+executor, not a Capability Broker. Production startup must not import or
+activate this module.
+
+`start_sandboxed_test_worker` is the Phase 2B AppContainer path. It is
+fail-closed and never falls back to the unsandboxed spawn.
 
 Spawning this worker does not set execution_supported=true. Third-party plugin
 code execution remains disabled.
@@ -14,6 +18,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from queue import Empty, Queue
+from subprocess import TimeoutExpired
 from typing import Any, IO, Literal
 
 from app.plugin_capability_policy import REASON_ACCEPTED, begin_retry, evaluate_late_result
@@ -23,6 +28,7 @@ from app.plugin_worker_process import (
     drain_stderr_bounded,
     owned_alive_pids,
     spawn_host_test_worker,
+    spawn_sandboxed_host_test_worker,
     terminate_owned_worker,
 )
 from app.plugin_worker_protocol import (
@@ -104,6 +110,7 @@ class WorkerSession:
     lifecycle: ExecutionLifecycleState = ExecutionLifecycleState.CREATED
     stderr: bytearray = field(default_factory=bytearray)
     output_bytes: int = 0
+    sandbox: Any | None = None
     _events: Queue = field(default_factory=Queue)
     _closed: bool = False
     _lock: threading.Lock = field(default_factory=threading.Lock)
@@ -117,20 +124,32 @@ class HostTestWorkerSupervisor:
     """Prototype supervisor. Host-owned test worker only."""
 
     handshake_timeout_s: float = 2.0
+    sandbox_handshake_timeout_s: float = 30.0
+    crash_exit_observation_timeout_s: float = 0.25
 
     def start_test_worker(self) -> WorkerSession:
         owned = spawn_host_test_worker()
         session = WorkerSession(owned=owned, session_nonce=new_session_nonce(), state="HANDSHAKING")
-        threading.Thread(target=self._read_stdout, args=(session,), name=f"test-worker-stdout-{owned.pid}", daemon=True).start()
-        threading.Thread(
-            target=drain_stderr_bounded,
-            args=(owned.stderr, session.stderr),
-            kwargs={"limit": MAX_STDERR_BYTES},
-            name=f"test-worker-stderr-{owned.pid}",
-            daemon=True,
-        ).start()
+        self._start_io_threads(session)
         try:
             self._handshake(session)
+        except Exception:
+            self.shutdown_test_worker(session)
+            raise
+        return session
+
+    def start_sandboxed_test_worker(self) -> WorkerSession:
+        """AppContainer spawn. Fail-closed. Never falls back to unsandboxed spawn."""
+        launch = spawn_sandboxed_host_test_worker()
+        session = WorkerSession(
+            owned=launch.owned,
+            session_nonce=new_session_nonce(),
+            state="HANDSHAKING",
+            sandbox=launch,
+        )
+        self._start_io_threads(session)
+        try:
+            self._handshake(session, timeout_s=self.sandbox_handshake_timeout_s)
         except Exception:
             self.shutdown_test_worker(session)
             raise
@@ -169,6 +188,7 @@ class HostTestWorkerSupervisor:
     def shutdown_test_worker(self, session: WorkerSession) -> None:
         with session._lock:
             if session._closed:
+                self._close_sandbox(session)
                 return
             session._closed = True
         try:
@@ -179,12 +199,44 @@ class HostTestWorkerSupervisor:
                 except Exception:
                     pass
         finally:
-            terminate_owned_worker(session.owned)
+            self._release_session(session)
             with session._lock:
                 session.state = "SHUTDOWN"
 
     def retry_test_job(self, job: PluginExecutionJob) -> PluginExecutionJob:
         return begin_retry(job)
+
+    def _start_io_threads(self, session: WorkerSession) -> None:
+        threading.Thread(
+            target=self._read_stdout,
+            args=(session,),
+            name=f"test-worker-stdout-{session.owned.pid}",
+            daemon=True,
+        ).start()
+        threading.Thread(
+            target=drain_stderr_bounded,
+            args=(session.owned.stderr, session.stderr),
+            kwargs={"limit": MAX_STDERR_BYTES},
+            name=f"test-worker-stderr-{session.owned.pid}",
+            daemon=True,
+        ).start()
+
+    def _close_sandbox(self, session: WorkerSession) -> None:
+        sandbox = session.sandbox
+        if sandbox is None:
+            return
+        session.sandbox = None
+        close = getattr(sandbox, "close", None)
+        if close is None:
+            return
+        try:
+            close()
+        except Exception:
+            return
+
+    def _release_session(self, session: WorkerSession) -> None:
+        terminate_owned_worker(session.owned)
+        self._close_sandbox(session)
 
     def _wait_then_cancel(self, session: WorkerSession, cancel_after_ms: int) -> None:
         deadline = time.monotonic() + (cancel_after_ms / 1000.0)
@@ -197,13 +249,13 @@ class HostTestWorkerSupervisor:
         if session.owned.poll() is None and session._events.empty():
             self.cancel_test_job(session)
 
-    def _handshake(self, session: WorkerSession) -> None:
+    def _handshake(self, session: WorkerSession, *, timeout_s: float | None = None) -> None:
         hello = build_envelope(
             MESSAGE_HELLO,
             {"worker_identity": HOST_TEST_WORKER_IDENTITY, "session_nonce": session.session_nonce},
         )
         self._write(session, encode_frame(hello))
-        event = self._wait_event(session, timeout_s=self.handshake_timeout_s)
+        event = self._wait_event(session, timeout_s=timeout_s if timeout_s is not None else self.handshake_timeout_s)
         if event is None:
             raise ProtocolError(REASON_HANDSHAKE_TIMEOUT)
         kind, payload = event
@@ -302,13 +354,23 @@ class HostTestWorkerSupervisor:
         return self._outcome(session, accepted=False, reason=REASON_WORKER_TIMEOUT)
 
     def _on_crash(self, session: WorkerSession) -> HostTestJobOutcome:
-        exit_status = session.owned.poll()
+        exit_status = self._observe_exit_status(session.owned)
         with session._lock:
             session.lifecycle = ExecutionLifecycleState.FAILED
         self._kill(session)
         outcome = self._outcome(session, accepted=False, reason=REASON_WORKER_CRASH)
         outcome.worker_exit_status = exit_status
         return outcome
+
+    def _observe_exit_status(self, owned: OwnedWorkerProcess) -> int | None:
+        """Observe a natural child exit without delaying crash cleanup unboundedly."""
+        exit_status = owned.poll()
+        if exit_status is not None:
+            return exit_status
+        try:
+            return owned.wait(timeout=self.crash_exit_observation_timeout_s)
+        except TimeoutExpired:
+            return None
 
     def _fail(self, session: WorkerSession, reason: str, *, kill: bool) -> HostTestJobOutcome:
         with session._lock:
@@ -337,10 +399,10 @@ class HostTestWorkerSupervisor:
         return self._outcome(session, accepted=accepted, reason=reason, result=result)
 
     def _kill(self, session: WorkerSession) -> None:
-        terminate_owned_worker(session.owned)
         with session._lock:
             session._closed = True
             session.state = "SHUTDOWN"
+        self._release_session(session)
 
     def _require_ready(self, session: WorkerSession) -> None:
         if session.state != "READY" or session.owned.poll() is not None:
