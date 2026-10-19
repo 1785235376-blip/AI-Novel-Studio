@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { useAction } from './shared';
 import type { interactiveStoryClient, InteractiveStory, StoryPlay } from './interactiveStoryClient';
+import { deriveStoryPath, type StoryPathIssue, type StoryPathStep, type StoryPathView } from './interactiveStoryPath';
 export function InteractiveStoryPreview({ api, story, blocked }: { api: ReturnType<typeof interactiveStoryClient>; story: InteractiveStory; blocked: boolean }) {
   const [receipt, setReceipt] = useState<{ owner:object; ticket:number; value:StoryPlay }>();
   const alive = useRef(true), epoch = useRef(0), actionOwner = useRef<object>(); const action = useAction();
@@ -13,6 +14,7 @@ export function InteractiveStoryPreview({ api, story, blocked }: { api: ReturnTy
   const ownerCurrent=()=>alive.current&&owner.current.token===token&&!live.current.blocked
     &&!live.current.story.stale&&!live.current.story.content_withheld&&live.current.story.status!=='ARCHIVED';
   const play=receipt&&receipt.owner===token&&receipt.ticket===epoch.current&&ownerCurrent()?receipt.value:undefined;
+  const path = useMemo(() => deriveStoryPath(story.spec, play), [story.spec, play]);
   const advance = (choices: string[]) => {
     if(!ownerCurrent()||renderTicket!==epoch.current||action.busy)return;
     actionOwner.current = token;
@@ -36,6 +38,30 @@ export function InteractiveStoryPreview({ api, story, blocked }: { api: ReturnTy
         <Button disabled={action.busy} onClick={()=>advance(play.path.slice(0,-1))}>回退一步并重新核验</Button>
       </section>}
       {Object.entries(play.variables).map(([name, value]) => <p key={name}>{name} = {String(value)}</p>)}
-    </section>}{actionOwner.current===token&&action.feedback}
+    </section>}{!unavailable && story.spec && <StoryPathSection path={path} play={play} />}{actionOwner.current===token&&action.feedback}
   </Panel>;
+}
+function StoryPathSection({ path, play }: { path: StoryPathView; play?: StoryPlay }) {
+  return <section aria-label="互动故事步骤路径"><h3>步骤路径</h3>
+    <p>只读展示已保存的入口节点与现有播放选择记录；不重新计算变量或条件，也不推进故事。</p>
+    {path.steps.length > 0 && <ol>{path.steps.map(step => <li key={step.step}><StoryPathStepView step={step} /></li>)}</ol>}
+    {path.issues.map((issue, index) => <StatusMessage key={issue.code + ':' + index} tone={issue.code === 'NODE_TITLE_MISSING' || issue.code === 'CHOICE_LABEL_MISSING' ? 'info' : 'warning'}>{issue.message}</StatusMessage>)}
+    <PathRunState path={path} play={play} />
+  </section>;
+}
+function StoryPathStepView({ step }: { step: StoryPathStep }) {
+  return <article className="experimental-record" aria-label={'路径步骤 ' + step.step}>
+    <strong>步骤 {step.step}：{step.title ?? '未知节点标题'}</strong>
+    <p>节点 ID：{step.nodeId || '（节点 ID 缺失）'}</p>
+    {step.choice ? <><p>选择文案：{step.choice.label ?? '未知选择文案'}</p><p>Choice ID：{step.choice.id}</p></> : <p>选择：入口步骤（无前序选择）</p>}
+    {step.issues.map((issue: StoryPathIssue, index: number) => <StatusMessage key={issue.code + ':' + index} tone="info">{issue.message}</StatusMessage>)}
+  </article>;
+}
+function PathRunState({ path, play }: { path: StoryPathView; play?: StoryPlay }) {
+  if (!play) return <StatusMessage>尚未开始试玩：从已保存入口节点开始展示，尚无已记录选择。</StatusMessage>;
+  if (path.stoppedBy !== 'NONE') return null;
+  if (play.status === 'ENDING') return <StatusMessage tone="success">路径已正常结束（故事结局）。</StatusMessage>;
+  if (play.status === 'STEP_CAP_REACHED') return <StatusMessage tone="warning">已到达步数上限，路径在已记录选择处结束。</StatusMessage>;
+  if (play.status === 'NO_EXIT') return <StatusMessage tone="warning">当前节点没有可用出口；这是现有播放状态，不是路径解析失败。</StatusMessage>;
+  return <StatusMessage>{play.path.length > 0 ? '等待选择：当前节点正在等待下一次选择。' : '等待选择：当前路径尚未记录选择。'}</StatusMessage>;
 }
