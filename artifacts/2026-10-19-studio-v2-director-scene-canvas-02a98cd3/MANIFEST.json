@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "status": "REVIEWED_LIMITED_INCREMENT_NOT_FULL_V2",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "c8712d93220715e61561e733d788b6c3f7d28d17",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-director-scene-canvas-02a98cd3",
+  "product_base": "d78d50589a07f1ff428fbc9e93453f32876648d2",
+  "product_tip": "02a98cd3019e41cf80765cb1b0343c58daaf6a68",
+  "product_tree": "4854c3dcad801f5f6bff768a37faa79c8d28adb9",
+  "unique_external_prerequisite": "d78d50589a07f1ff428fbc9e93453f32876648d2",
+  "patch_mapping": [
+    {
+      "original": "72b60f4be4e5a4053118c49ba233bcd0f2223e49",
+      "combined": "dd8147fe28abad5751398c4b591359110f49e806",
+      "original_patch_id": "23d1b20eb099a95dddaa1386955a5b47e48d9d48",
+      "combined_patch_id": "23d1b20eb099a95dddaa1386955a5b47e48d9d48"
+    },
+    {
+      "original": "95e1f91591fac628c11fcc089249442fc8c3fa57",
+      "combined": "02a98cd3019e41cf80765cb1b0343c58daaf6a68",
+      "original_patch_id": "498c0d0df0ec346570564a8dbaafc5e75a068770",
+      "combined_patch_id": "498c0d0df0ec346570564a8dbaafc5e75a068770"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "frontend/src/creative/DirectorSceneCanvas.integration.test.tsx",
+      "original95_blob": "82901dd34417bc050ecd4cd39ec9a5fcec6bf0fa",
+      "combined_blob": "82901dd34417bc050ecd4cd39ec9a5fcec6bf0fa",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/DirectorSceneCanvasHandoff.additive.test.tsx",
+      "original95_blob": "18b6b0a37b6dcaf8fbad29eb25c7d1f33e3ea450",
+      "combined_blob": "18b6b0a37b6dcaf8fbad29eb25c7d1f33e3ea450",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/DirectorSceneScopePanel.additive.test.tsx",
+      "original95_blob": "2ab0717526e144f6b26f48f805d5756c95dca92a",
+      "combined_blob": "2ab0717526e144f6b26f48f805d5756c95dca92a",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/DirectorSceneScopePanel.tsx",
+      "original95_blob": "d46642b158b6ddf73d55681fb651771ed658e09c",
+      "combined_blob": "d46642b158b6ddf73d55681fb651771ed658e09c",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/GraphDirectorConsole.tsx",
+      "original95_blob": "c1d9c363f3e20b8c76c4e0ac7405abcd3b07a067",
+      "combined_blob": "c1d9c363f3e20b8c76c4e0ac7405abcd3b07a067",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphCatalogLoading.regression.test.tsx",
+      "original95_blob": "324eae866e36bf5aebac699a435edebcf5853c34",
+      "combined_blob": "324eae866e36bf5aebac699a435edebcf5853c34",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/directorCanvasHandoff.ts",
+      "original95_blob": "afc7c6d7c641dd2cd66fb0b654e91db6e6f3585a",
+      "combined_blob": "afc7c6d7c641dd2cd66fb0b654e91db6e6f3585a",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/directorSceneScope.ts",
+      "original95_blob": "e410d1a1079e5c3a817afcdf08ecb22dac26d010",
+      "combined_blob": "e410d1a1079e5c3a817afcdf08ecb22dac26d010",
+      "identical": true
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "original95_blob": "3920933c9907d7a71aae4235a37d35dc9497f368",
+      "combined_blob": "3920933c9907d7a71aae4235a37d35dc9497f368",
+      "identical": true
+    }
+  ],
+  "introduced_objects": [
+    {
+      "oid": "02a98cd3019e41cf80765cb1b0343c58daaf6a68",
+      "type": "commit",
+      "bytes": 344,
+      "sha256": "3e6bd5d46f3def11af60cdd1855d4d1feacd7b62865d2bef0946d680ab8e631f"
+    },
+    {
+      "oid": "dd8147fe28abad5751398c4b591359110f49e806",
+      "type": "commit",
+      "bytes": 346,
+      "sha256": "3500cfd5da38275493cb60ba5389b674807912cddc7a62d8fbffe20399193d09"
+    },
+    {
+      "oid": "4854c3dcad801f5f6bff768a37faa79c8d28adb9",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "88a13e47fcb816af3b379337e05f9bac9148718f45da9ccaa0fd2125270f3d5e"
+    },
+    {
+      "oid": "a5905b22f2272aede5e31e43448a543bd9b25880",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "2e104828e806c718715c0059fa68b817b6769208cb445fbd1920631dd2920bd7"
+    },
+    {
+      "oid": "5990e13a6a210535fa1c182e1be85dc05ffb4f10",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "3d196d73587b2c88b4f7d8b2fa78d9f70ffcc46d6546c7573c139f3071d5a8b8"
+    },
+    {
+      "oid": "25ff045884593f0d92f33ebc27d3b86b4f1e2c18",
+      "type": "tree",
+      "bytes": 33491,
+      "sha256": "74f5eaafe51d67ab37392def33ecb8dfa5b468b38486f46a1341b021a176b19e"
+    },
+    {
+      "oid": "82901dd34417bc050ecd4cd39ec9a5fcec6bf0fa",
+      "type": "blob",
+      "bytes": 6955,
+      "sha256": "5f745be32ecd5ef2401d127497ca1819075526c17c263cc6a2cc3eeaccad8d30"
+    },
+    {
+      "oid": "18b6b0a37b6dcaf8fbad29eb25c7d1f33e3ea450",
+      "type": "blob",
+      "bytes": 11057,
+      "sha256": "756c0a5124444e4104bfc2628932afe089e184b0eb1723e2cae2bd7b5a97f940"
+    },
+    {
+      "oid": "2ab0717526e144f6b26f48f805d5756c95dca92a",
+      "type": "blob",
+      "bytes": 8727,
+      "sha256": "cfcf870ae4b1161c181b98227735c3b04b237a1f10817b52e5d3a69dceee42b9"
+    },
+    {
+      "oid": "d46642b158b6ddf73d55681fb651771ed658e09c",
+      "type": "blob",
+      "bytes": 6112,
+      "sha256": "85c096ebaac3539871ade11af76390dbbb0eaa53d1577ac5e9c473d81e955d3c"
+    },
+    {
+      "oid": "c1d9c363f3e20b8c76c4e0ac7405abcd3b07a067",
+      "type": "blob",
+      "bytes": 40093,
+      "sha256": "b038cf13c681bee85770ef53a685bcd19085ac7689cd010842899de9dd4ba65a"
+    },
+    {
+      "oid": "324eae866e36bf5aebac699a435edebcf5853c34",
+      "type": "blob",
+      "bytes": 8167,
+      "sha256": "d2fdb367c2fd9554b032825dfb74f865f681ab2a48adcea3d50b671d89f7eff1"
+    },
+    {
+      "oid": "afc7c6d7c641dd2cd66fb0b654e91db6e6f3585a",
+      "type": "blob",
+      "bytes": 3109,
+      "sha256": "160f1521fad5613767c009f510c446db2e5743e00bf903caf800067b84d7410a"
+    },
+    {
+      "oid": "e410d1a1079e5c3a817afcdf08ecb22dac26d010",
+      "type": "blob",
+      "bytes": 3407,
+      "sha256": "527415c444786b517d4c65afd6e7e6f4d9b8c14df23b4e728c4858e2c37c5802"
+    },
+    {
+      "oid": "3920933c9907d7a71aae4235a37d35dc9497f368",
+      "type": "blob",
+      "bytes": 88332,
+      "sha256": "5a107c247ce446e5f1daf996f000a4fb304515f403deb90e4cbe97d8ecdd76fa"
+    },
+    {
+      "oid": "5319f2791a10a7a6975014cc32f6dc117facad0f",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "933a03dfcf059383272ee54685869c434f3c39cffa50bc350334ebd925bcd34b"
+    },
+    {
+      "oid": "0c9efb77f9b934de90c89c6cff9bc10343d06022",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "aefb1eae425d1cdac71f163553b19ca18fa8c696b526bc5152d30b33e120d2c9"
+    },
+    {
+      "oid": "e270908f2ba9d691235889c17dbe6d897815de78",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "2ae010d56582d2f52721ec87a6c4281847713ee1769fd97d1c43f6507c4d45d1"
+    },
+    {
+      "oid": "482ae8135f5d5a9d927c1b169c851b426322dd8b",
+      "type": "tree",
+      "bytes": 33418,
+      "sha256": "1c36050d1bdde6f44840123c63bf47bc3ec7f86861ebc5f57774d3f6b4180edc"
+    }
+  ],
+  "privacy_scan": {
+    "known_actual_host_credential_found": false,
+    "high_risk_patterns_found": false,
+    "actual_host_trace_included": false
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 24,
+      "sha256": "2b220206a8ec9d31c1934c8488589d46c4d1d1e1cf25cd35e16c5f25dfb6d452",
+      "git_blob": "86bbd99f33b9c0501c0013c06c731fce75e5449e"
+    },
+    {
+      "path": "evidence-sanitized.zip",
+      "bytes": 421871,
+      "sha256": "e304b3db21e6d6ee98d332a4207df26bc7d080c418aca41e5a77d88075264af7",
+      "git_blob": "211767893b2b0b4f5fb8a0ef274ec254c97d9d6f"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 4760,
+      "sha256": "49d468c4eb96db54edc38af1ac272cfabbc20742125d1a64f12df57920324f54",
+      "git_blob": "b35af26f10034ef3aa22f61d5d07fe2fef998d55"
+    },
+    {
+      "path": "studio-v2-director-d78d5058-to-02a98cd3.bundle",
+      "bytes": 16553,
+      "sha256": "40fbbc804740fb5de7cca6590a6c576b6e8ca05bde216561b831857c1c6d359b",
+      "git_blob": "5de18b472bdd09fe46d835234beec74e2d120355"
+    }
+  ]
+}
