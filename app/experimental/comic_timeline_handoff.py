@@ -278,11 +278,18 @@ class ComicTimelineHandoff:
             raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
         creations = {}
         for timeline in {**retained, **live}.values():
-            if isinstance(timeline, dict) and isinstance(timeline.get('comic_handoff_origin'), dict):
-                receipt_id = timeline['comic_handoff_origin'].get('receipt_id')
-                if not isinstance(receipt_id, str) or receipt_id not in rows:
-                    raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
-                creations.setdefault(receipt_id, []).append(timeline)
+            if not isinstance(timeline, dict) or 'comic_handoff_origin' not in timeline:
+                continue
+            # Presence reserves this record for the original handoff contract.
+            # A malformed marker must not erase creation evidence during lookup.
+            try:
+                origin = validate_timeline_origin(timeline)
+            except ValueError:
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT') from None
+            receipt_id = origin['receipt_id']
+            if receipt_id not in rows:
+                raise ValueError('COMIC_HANDOFF_RECEIPT_CORRUPT')
+            creations.setdefault(receipt_id, []).append(timeline)
         checked, identities = [], set()
         for key, row in rows.items():
             try:
