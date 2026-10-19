@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_TIMELINE_CLIP_LINKS_SEPARATE_BATCH",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "e49db23f9e7cdeb6ffb560d4d4a986133066221d",
+  "artifact_dir": "artifacts/2026-10-19-studio-v2-timeline-links-reviewed-638374a6",
+  "product_base": "a814ba30bfbd6d753267d6d0e07472f4302581ed",
+  "product_tip": "638374a689f9cc0c022b0d5603c1c1d8724111a3",
+  "product_tree": "0906c267813ac7f67a8da4f317f288005459cfd6",
+  "bundle_ref": "refs/heads/work/v2-video-image-links-reviewed-20261019",
+  "bundle_filename": "studio-v2-a814ba30-to-638374a6.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "a814ba30bfbd6d753267d6d0e07472f4302581ed",
+  "commit_mappings": [
+    {
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2",
+      "source_parent": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+      "adopted": "638374a689f9cc0c022b0d5603c1c1d8724111a3",
+      "adopted_parent": "a814ba30bfbd6d753267d6d0e07472f4302581ed",
+      "patch_bytes_equal": true,
+      "stable_patch_id": "78cba78c085bbca80dce21c16283822296c46cb4"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/services/studio_timeline_edit.py",
+      "mode": "100644",
+      "blob": "d18ca9c81db6790ce1aedf8346c677b8f5817cff",
+      "bytes": 18360,
+      "sha256": "d1185cf1342797e806286776c9a8551611876f36196473b7e98425eea7dba91a",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "app/services/studio_timeline_links.py",
+      "mode": "100644",
+      "blob": "ca3c91ab56dfd0fe9f3ab1b81599ea7717f0b34f",
+      "bytes": 3702,
+      "sha256": "fddcb8860addc823cec53002d22d78b75e4245b1c62cc2adbdc97b626ca0c0ba",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "app/services/studio_timeline_schema.py",
+      "mode": "100644",
+      "blob": "9ee1abe1b09f0c438a1d1f018527af7d77b71131",
+      "bytes": 13875,
+      "sha256": "484d5c78a2c4ce3fa3689d2bf5b3af93604faff792c6ea709191616ad083f748",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "docs/TIMELINE_CLIP_LINKS_HANDOFF.md",
+      "mode": "100644",
+      "blob": "5e3832ba1f9e17cb83dbd789306c05e31c6506d7",
+      "bytes": 4790,
+      "sha256": "c74c06047c93282c98949efa55284203512b7b115756951e0b5667c3806a35f3",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineClipLinks.additive.test.tsx",
+      "mode": "100644",
+      "blob": "b94fd8d00f9533e663a6f46f21f9d60deb006837",
+      "bytes": 9435,
+      "sha256": "342b7fb9d1f1e0cc015b4b605a38c950e287771b00788d1687f4d4bb0070979c",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "mode": "100644",
+      "blob": "4ff5924d6a97faaefd0cddf3be73452cb09f4cb6",
+      "bytes": 56664,
+      "sha256": "6502d87b4f23f3c117034ad3e09e5160c710fedcdfb76a15d7b8ae613ccda865",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineClipLinks.ts",
+      "mode": "100644",
+      "blob": "1fda1308a399216af1c187cbc99071db41ff758f",
+      "bytes": 6332,
+      "sha256": "bf857a42a24bd0d049a175461c223bfe233086dd15d0f0c3c8346b526f985343",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineTypes.ts",
+      "mode": "100644",
+      "blob": "e76385569d165e8f64577be6f383654f3636a372",
+      "bytes": 22887,
+      "sha256": "813e45184ab620377aa6c93803305849c8b799c17b08f6e034ccc8a72fea5d5f",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "mode": "100644",
+      "blob": "2f49a1d2023dadbe59ca9acb5b15b6774e3e5e91",
+      "bytes": 57741,
+      "sha256": "e6c151f5d5eace8ae76399386ce73da9cd74aafb2dfc8662b3c6ccb8dea5c0e2",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/nle/TimelineClipLinkPanel.tsx",
+      "mode": "100644",
+      "blob": "395ec872241b75b7d210257afc22260f49e64c0f",
+      "bytes": 1757,
+      "sha256": "03ef7f493d4211ba06822c45dbaf51632349062c7e7607019c9f5da6cb574b6f",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "frontend/src/nle/timelineSelectionMove.ts",
+      "mode": "100644",
+      "blob": "fa728045495db4f916370d2901845bc63ab320aa",
+      "bytes": 2260,
+      "sha256": "12dd07521bad3f9f394f0eb44481e4c189aa32c4f6a934b9eabd64e1203527cb",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    },
+    {
+      "path": "tests/test_timeline_clip_links_additive.py",
+      "mode": "100644",
+      "blob": "a0ea8ea0e05d8ec9f4d882bc734603b15f476393",
+      "bytes": 8931,
+      "sha256": "a072bcfbe98b1c718cc1c91887e1f417a34ccb2914883c98ec872dcfab7e3c4c",
+      "source": "a8d3030215a4975f07045ebdbb71c354dffb8ea2"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "638374a689f9cc0c022b0d5603c1c1d8724111a3",
+      "type": "commit",
+      "size": 257,
+      "cat_file_sha256": "d4e6bd7bc3964f1b9004aedfadbdb74c4bb2bb19e190d46a40970f4e6ff0b966"
+    },
+    {
+      "oid": "0906c267813ac7f67a8da4f317f288005459cfd6",
+      "type": "tree",
+      "size": 10538,
+      "cat_file_sha256": "446037195e28a72035eb185b023c0e1a121498fdc153eb2fc21bc0999ffb92b0"
+    },
+    {
+      "oid": "aadc10f7141a80cf4a101886549d9c9640c6b54d",
+      "type": "tree",
+      "size": 5958,
+      "cat_file_sha256": "c796f4e6799a731249fd5e542c3aa7e75905d685f376ce7de9617f35db0444c7"
+    },
+    {
+      "oid": "ac47c4269fcaf10bfd7b75ca074ca5a6dba5bced",
+      "type": "tree",
+      "size": 3969,
+      "cat_file_sha256": "51f3c83bb26e3cbcff2410cc0216501d683d7890be31eaaa9af13369a3e0e7f5"
+    },
+    {
+      "oid": "d18ca9c81db6790ce1aedf8346c677b8f5817cff",
+      "type": "blob",
+      "size": 18360,
+      "cat_file_sha256": "d1185cf1342797e806286776c9a8551611876f36196473b7e98425eea7dba91a"
+    },
+    {
+      "oid": "ca3c91ab56dfd0fe9f3ab1b81599ea7717f0b34f",
+      "type": "blob",
+      "size": 3702,
+      "cat_file_sha256": "fddcb8860addc823cec53002d22d78b75e4245b1c62cc2adbdc97b626ca0c0ba"
+    },
+    {
+      "oid": "9ee1abe1b09f0c438a1d1f018527af7d77b71131",
+      "type": "blob",
+      "size": 13875,
+      "cat_file_sha256": "484d5c78a2c4ce3fa3689d2bf5b3af93604faff792c6ea709191616ad083f748"
+    },
+    {
+      "oid": "b5bfb7a2518539ca7106ac589bba47a3a5b88ee2",
+      "type": "tree",
+      "size": 16293,
+      "cat_file_sha256": "565f7fa3c4a73a3fbf1fed22491b8a6fee9904f9ba270c860414594f2ffac31c"
+    },
+    {
+      "oid": "5e3832ba1f9e17cb83dbd789306c05e31c6506d7",
+      "type": "blob",
+      "size": 4790,
+      "cat_file_sha256": "c74c06047c93282c98949efa55284203512b7b115756951e0b5667c3806a35f3"
+    },
+    {
+      "oid": "56be4b939181f04aba59d48bda83bb30d9f39d2a",
+      "type": "tree",
+      "size": 2377,
+      "cat_file_sha256": "6f0a6b4cfb50d73aeaa13c57ca7392a22ca3ff3aefaf6fd53ef6d22f681fc535"
+    },
+    {
+      "oid": "1d5925860ef8ca68f1573791a8ce2c7429551717",
+      "type": "tree",
+      "size": 4970,
+      "cat_file_sha256": "b18bd567c8fcbc7c22d52ae5c77fcc199253cff7a616050b645d6a5e6f4fe4b4"
+    },
+    {
+      "oid": "6fa13a7fae52661b6e36e00268ca41608be64c71",
+      "type": "tree",
+      "size": 35953,
+      "cat_file_sha256": "6ba39d32697a71b48982a8aa16335fa14fde4f86e6050352070e810469c94783"
+    },
+    {
+      "oid": "b94fd8d00f9533e663a6f46f21f9d60deb006837",
+      "type": "blob",
+      "size": 9435,
+      "cat_file_sha256": "342b7fb9d1f1e0cc015b4b605a38c950e287771b00788d1687f4d4bb0070979c"
+    },
+    {
+      "oid": "4ff5924d6a97faaefd0cddf3be73452cb09f4cb6",
+      "type": "blob",
+      "size": 56664,
+      "cat_file_sha256": "6502d87b4f23f3c117034ad3e09e5160c710fedcdfb76a15d7b8ae613ccda865"
+    },
+    {
+      "oid": "1fda1308a399216af1c187cbc99071db41ff758f",
+      "type": "blob",
+      "size": 6332,
+      "cat_file_sha256": "bf857a42a24bd0d049a175461c223bfe233086dd15d0f0c3c8346b526f985343"
+    },
+    {
+      "oid": "e76385569d165e8f64577be6f383654f3636a372",
+      "type": "blob",
+      "size": 22887,
+      "cat_file_sha256": "813e45184ab620377aa6c93803305849c8b799c17b08f6e034ccc8a72fea5d5f"
+    },
+    {
+      "oid": "2f49a1d2023dadbe59ca9acb5b15b6774e3e5e91",
+      "type": "blob",
+      "size": 57741,
+      "cat_file_sha256": "e6c151f5d5eace8ae76399386ce73da9cd74aafb2dfc8662b3c6ccb8dea5c0e2"
+    },
+    {
+      "oid": "3ad8abd4575a6c2ed0beedf1b98c4d8cdc62219f",
+      "type": "tree",
+      "size": 2266,
+      "cat_file_sha256": "cd1cb5f62bad55dc5f9c1f45e46b293e8c21eb9893ca8ccccabf07df289bde35"
+    },
+    {
+      "oid": "395ec872241b75b7d210257afc22260f49e64c0f",
+      "type": "blob",
+      "size": 1757,
+      "cat_file_sha256": "03ef7f493d4211ba06822c45dbaf51632349062c7e7607019c9f5da6cb574b6f"
+    },
+    {
+      "oid": "fa728045495db4f916370d2901845bc63ab320aa",
+      "type": "blob",
+      "size": 2260,
+      "cat_file_sha256": "12dd07521bad3f9f394f0eb44481e4c189aa32c4f6a934b9eabd64e1203527cb"
+    },
+    {
+      "oid": "ce1962bcdc49415fef24cd824f256474c7ca4a4e",
+      "type": "tree",
+      "size": 49797,
+      "cat_file_sha256": "4e6b1f58e50bfe08301b24e51cefb4c4c6a3679d2916cce3d0842b6eb564cdc1"
+    },
+    {
+      "oid": "a0ea8ea0e05d8ec9f4d882bc734603b15f476393",
+      "type": "blob",
+      "size": 8931,
+      "cat_file_sha256": "a072bcfbe98b1c718cc1c91887e1f417a34ccb2914883c98ec872dcfab7e3c4c"
+    }
+  ],
+  "all12_final_blobs_source_exact": true,
+  "all_other_a814_paths_unchanged": true,
+  "validation": {
+    "combined_cpu_file_passed": 3,
+    "cases": [
+      "original File link/move/CAS/history/reopen/unlink",
+      "retained pair whole DTO range/offset bypass and legacy schema rejection",
+      "previous Video CPU order/trim/atomic creation/reopen/same-key receipt compatibility"
+    ],
+    "ui_smoke_passed": 1,
+    "ui_skipped": 4,
+    "typescript_runs": 1,
+    "typescript_exit": 0,
+    "vite_build_runs": 1,
+    "vite_build_exit": 0,
+    "independent_review_unique_passed": 3,
+    "author_13_backend_51_frontend_and_visual_retained_not_rerun": true
+  },
+  "restore": {
+    "bundle": "studio-v2-a814ba30-to-638374a6.bundle",
+    "bundle_sha256": "5cf444c40bb7425c970ff477b4704db4abe9d8b07ba5466910a0f8a039343e4c",
+    "restored_commit": "638374a689f9cc0c022b0d5603c1c1d8724111a3",
+    "tree": "0906c267813ac7f67a8da4f317f288005459cfd6",
+    "commits": 1,
+    "file_paths_verified": 12,
+    "new_objects_verified": 22,
+    "no_alternates": true,
+    "fsck": "PASS",
+    "restore_ref": "refs/heads/recovered-timeline-links-638374a6"
+  },
+  "excluded_new_patches": [
+    "condition5c5a",
+    "proxy4f46c328",
+    "DIF"
+  ],
+  "Hostbrowser": "NOT_ACCEPTED",
+  "PG": "NOT_ACCEPTED",
+  "real_models_GPU_paid_execution": "NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "whole_EDIT04_AUDIO09_V2": "NOT_ACCEPTED",
+  "inherited_519a_browser": {
+    "status": "BLOCKED",
+    "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+    "target": "original isolated backend19128 / frontend5322",
+    "reason": "401 SESSION_REQUIRED; author services stopped; no confirmed existing valid same-backend Host session",
+    "preview": "NOT_RUN",
+    "Save": "NOT_RUN",
+    "fresh_reopen": "NOT_RUN",
+    "original_denial": "backend HTTP401, not tool/approval rejection",
+    "services_stopped_evidence_retained": true,
+    "new_services_started": false,
+    "credentials_searched_read_created": false,
+    "auth_bypassed_or_settings_changed": false,
+    "uncertain_feature_writes": false,
+    "source_evidence": {
+      "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+      "target": "isolated backend 19128 / frontend 5322",
+      "reason": "author401 SESSION_REQUIRED; both services now stopped; no confirmed existing valid same-backend Host authorization; original session state is page/process-memory only",
+      "status": "BLOCKED_PREREQUISITE; browser feature sequence NOT EXECUTED; no uncertain writes",
+      "original_denial": "author backend401 SESSION_REQUIRED, not a new tool/approval denial",
+      "completed": "read-only five-file diff and supported Host-session source flow; 3 independent controller/component/helper checks",
+      "user_action": "Coordinate an existing registered same-backend Host credential and bind through original 本机可信会话 panel; revalidate after refresh/new context; no credential should be pasted into chat; no new credential/security change authorized here"
+    }
+  },
+  "author_cleanup_denied_directory": "PRESERVED_UNTOUCHED_NO_RETRY",
+  "privacy_scan": {
+    "credential_shaped_values": 0,
+    "local_paths_normalized": true,
+    "zip_payloads": 35
+  },
+  "files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "REPORT.md": {
+      "bytes": 3363,
+      "sha256": "951cfc92c5d1db9e246bf4dc503ffd32a0ccc616a530fa4a92a795b127c95c43"
+    },
+    "RESTORE.md": {
+      "bytes": 1445,
+      "sha256": "5c813c825aa722eee64ad4c29bc56928e69979d3c088db78f2006b747984cac1"
+    },
+    "studio-v2-a814ba30-to-638374a6.bundle": {
+      "bytes": 16243,
+      "sha256": "5cf444c40bb7425c970ff477b4704db4abe9d8b07ba5466910a0f8a039343e4c"
+    },
+    "timeline-links-tests-evidence-sanitized.zip": {
+      "bytes": 98058,
+      "sha256": "ab2b1df6eb15665e6112d8c5302d2a04ef734d669ac202f655433f5b556f0963"
+    }
+  },
+  "checked_at": "2026-10-19T23:24:17.157224+00:00"
+}
