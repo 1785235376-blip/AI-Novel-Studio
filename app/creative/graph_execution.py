@@ -17,12 +17,13 @@ from ..experimental.store import canonical
 from ..workflow_recipes import execute_local_recipe_node
 from .graph_models import (GraphAction, GraphRunCreate, GraphMediaRunCreate, parse_graph_run_create,
                           MAX_OUTPUT_BYTES, MAX_NODES, MAX_HISTORY, MAX_MEDIA_HISTORY,
-                          RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS, validate_output_ports)
+                          RUN_TIMEOUT_SECONDS, NODE_TIMEOUT_SECONDS, validate_output_ports, LOCAL_SUBGRAPH_CONTRACT)
 from .project_store import BINDING
 
 ADAPTER_VERSION = "creative-graph-local/1"
 CACHE_MODE = "SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY"
 DEPENDENCY_CACHE_MODE = "OPT_IN_REVIEWED_SCHEMA1_LOCAL_DEPENDENCIES_V1"
+SUBGRAPH_CACHE_MODE = "DISABLED_LOCAL_SUBGRAPH_V1"
 
 
 def digest(value):
@@ -58,6 +59,13 @@ class _LocalGraphAdapter:
             # not claim to interpret directions or generate different prose.
             draft["direction"] = deepcopy(ports["direction"])
         return {"draft": draft}
+
+
+class _SubgraphAuthorityFailure(RuntimeError):
+    """Preserve observed guard failures across the legacy node-error classifier."""
+    def __init__(self, error):
+        super().__init__("CREATIVE_GRAPH_SUBGRAPH_AUTHORITY_FAILED")
+        self.original = error
 
 
 class CreativeGraphExecutor:
@@ -110,8 +118,24 @@ class CreativeGraphExecutor:
         # Schema 3's static topology remains reviewed after an explicit timeline
         # edit advances its base. Original asset inputs are checked below; the
         # actual edited timeline snapshot is fenced by its original runtime.
+        if schema == 6 and (state is None or row.get("graph_schema_version") != 6
+                or row.get("local_subgraph_contract") != LOCAL_SUBGRAPH_CONTRACT
+                or row.get("cache", {}).get("mode") != SUBGRAPH_CACHE_MODE
+                or row.get("execution_digest") != graph["execution_digest"]):
+            raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_RUN_BINDING_CHANGED")
         preflight = self.service._preflight(graph, {"expected_version": graph["version"],
-            "target_node_ids": selected}, actor, check_assets=False if schema in {3, 4, 5} else check_assets)
+            "target_node_ids": selected}, actor, check_assets=False if schema in {3, 4, 5} else check_assets,
+            **({"guard": guard, "state": state} if schema == 6 else {}))
+        if schema == 6:
+            if row.get("local_subgraph_bindings") != preflight["local_subgraph_bindings"]:
+                raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_RESOLUTION_CHANGED")
+            successful = {node["id"] for node in expected if node["definition_id"] != "human_review"
+                and row["node_states"].get(node["id"], {}).get("status") == "SUCCEEDED"}
+            calls = {node["id"] for node in expected if node["definition_id"] == "local_subgraph" and node["id"] in successful}
+            if (set(row.get("typed_outputs", {})) != successful
+                    or not isinstance(row.get("local_subgraph_receipts"), dict)
+                    or set(row["local_subgraph_receipts"]) != calls):
+                raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_OUTPUT_RECEIPT_CHANGED")
         pairs = list(dict.fromkeys((edge["source_node_id"], edge["target_node_id"]) for edge in row["typed_edges"]))
         snapshot = {"title": graph["definition"]["title"],
             "nodes": [{"id": node["id"], "name": node["id"], "config": {},
@@ -147,6 +171,19 @@ class CreativeGraphExecutor:
             if (engine_output.get("ports") != output or receipt.get("output_digest") != digest(output)
                     or receipt.get("key") != self._key(row, actor, by_id[node_id], self._inputs(row, node_id, row["typed_outputs"]))):
                 raise ValueError("CREATIVE_GRAPH_OUTPUT_RECEIPT_INVALID")
+            if schema == 6:
+                if receipt.get("cacheable") is not False:
+                    raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_CACHE_FORBIDDEN")
+                if by_id[node_id]["definition_id"] == "local_subgraph":
+                    binding = row["local_subgraph_bindings"][node_id]
+                    evidence = {"contract": LOCAL_SUBGRAPH_CONTRACT, "binding_digest": binding["binding_digest"],
+                        "input_digest": digest(self._inputs(row, node_id, row["typed_outputs"])),
+                        "output_digest": digest(output), "steps": binding["node_count"]}
+                    if (row["local_subgraph_receipts"][node_id] != evidence
+                            or engine_output.get("provenance") != {"method": "LOCAL_SUBGRAPH",
+                                "adapter": ADAPTER_VERSION, "cache_hit": False,
+                                "contract": LOCAL_SUBGRAPH_CONTRACT, "binding_digest": binding["binding_digest"]}):
+                        raise StaleSourceError("CREATIVE_GRAPH_SUBGRAPH_OUTPUT_RECEIPT_CHANGED")
             if schema == 3 and by_id[node_id]["definition_id"] == "human_review":
                 approved = row["node_states"][node_id].get("output") or {}
                 if (output.get("reviewed_draft") != self._inputs(row, node_id, row["typed_outputs"])["draft"]
@@ -226,6 +263,10 @@ class CreativeGraphExecutor:
                 "steps_completed": 0, "attempt": 1, "retry_of": None, "trace": [], "dispatch_trace": [],
                 "reviewed": False, "reviewed_nodes": [], "external_ai_calls": False, "external_calls": 0, "model_called": False,
                 "applied": False, "execution_mode": "ORIGINAL_WORKFLOW_LOCAL_RULES"}
+            if graph["definition"]["schema_version"] == 6:
+                payload.update(graph_schema_version=6, local_subgraph_contract=LOCAL_SUBGRAPH_CONTRACT,
+                    local_subgraph_bindings=deepcopy(preflight["local_subgraph_bindings"]), local_subgraph_receipts={})
+                payload["cache"]["mode"] = SUBGRAPH_CACHE_MODE
             if body.reuse_reviewed_local_dependencies:
                 payload["reuse_reviewed_local_dependencies"] = True
                 payload["cache"]["mode"] = DEPENDENCY_CACHE_MODE
@@ -306,14 +347,27 @@ class CreativeGraphExecutor:
             if self.service.media_runtime is None:
                 raise ValueError("CREATIVE_GRAPH_MEDIA_RUNTIME_UNAVAILABLE")
             result["media_runtime"] = self.service.media_runtime.public(row, stale=result["stale"])
+        if row.get("graph_schema_version") == 6:
+            hidden = result["stale"] or row["status"] in {"CANCELLED", "REJECTED", "FAILED"}
+            result["local_subgraph_runtime"] = {"contract": LOCAL_SUBGRAPH_CONTRACT, "cache_enabled": False,
+                "bindings": {} if hidden else deepcopy(row["local_subgraph_bindings"]),
+                "receipts": {} if hidden else deepcopy(row["local_subgraph_receipts"])}
         guard(); return result
 
     def _key(self, row, actor, node, inputs):
+        if row.get("graph_schema_version") == 6:
+            return digest([LOCAL_SUBGRAPH_CONTRACT, row[BINDING], row["scope"], actor, row["graph_id"],
+                row["graph_version"], row["execution_digest"], ADAPTER_VERSION,
+                {key: node[key] for key in ("id", "definition_id", "definition_version", "enabled", "parameters")},
+                row["local_subgraph_bindings"], inputs])
         return digest([row[BINDING], row["scope"], actor, row["graph_id"], row["graph_version"],
             row["execution_digest"], ADAPTER_VERSION, node["id"], node["definition_id"],
             node["definition_version"], node["parameters"], inputs])
 
     def _cached(self, row, actor, node_id, key, state, *, outputs=None, guard=lambda: None):
+        if row.get("graph_schema_version") == 6:
+            guard()
+            return None  # No schema6 cache lookup or child-call reuse in the first contract.
         if row.get("reuse_reviewed_local_dependencies") is True:
             from .graph_local_reuse import cached
             return cached(self, row, actor, node_id, state, outputs, guard)
@@ -338,6 +392,14 @@ class CreativeGraphExecutor:
         outputs = deepcopy(row["typed_outputs"])
         cache_keys = deepcopy(row["cache_keys"])
         cache = deepcopy(row["cache"])
+        subgraph_receipts = deepcopy(row.get("local_subgraph_receipts", {}))
+        def execution_guard():
+            if row.get("graph_schema_version") != 6:
+                return guard()
+            try:
+                return guard()
+            except Exception as error:
+                raise _SubgraphAuthorityFailure(error) from error
         nodes = {node["id"]: node for node in row["typed_nodes"]}
         for _ in range(row["step_limit"] + 1):
             current = host.get_workflow_run(row["id"])
@@ -364,7 +426,25 @@ class CreativeGraphExecutor:
             hit = output is not None
             try:
                 if output is None:
-                    if node["definition_id"] == "asset_reference" and row.get("graph_schema_version") in {3, 4, 5}:
+                    if node["definition_id"] == "local_subgraph" and row.get("graph_schema_version") == 6:
+                        from .graph_local_subgraph import evaluate
+                        def child_guard():
+                            try:
+                                execution_guard()
+                                if host.get_workflow_run(row["id"])["status"] == "FAILED":
+                                    raise _CacheRunStopped()
+                            except (_SubgraphAuthorityFailure, _CacheRunStopped):
+                                raise
+                            except Exception as error:
+                                raise _SubgraphAuthorityFailure(error) from error
+                        try:
+                            output, subgraph_receipt = evaluate(self.service, row["novel_id"], row["scope"], actor,
+                                node, row["local_subgraph_bindings"][node_id], inputs, self.adapter, child_guard,
+                                state, row["id"] + ":" + node_id)
+                        except (StaleSourceError, FileNotFoundError) as error:
+                            raise _SubgraphAuthorityFailure(error) from error
+                        subgraph_receipts[node_id] = subgraph_receipt
+                    elif node["definition_id"] == "asset_reference" and row.get("graph_schema_version") in {3, 4, 5}:
                         output = self.service.asset_inputs.execute_reference(row["novel_id"], row["scope"], actor, node, guard)
                     elif node["definition_id"] in {"image_reference", "image_prompt", "image_style"} and row.get("graph_schema_version") == 4:
                         from .graph_image_nodes import execute_image_local
@@ -378,9 +458,13 @@ class CreativeGraphExecutor:
                         receipt = run_trusted_local(self.adapter, AdapterRequest(node["definition_id"],
                             {"parameters": deepcopy(node["parameters"]), "ports": inputs},
                             row["id"] + ":" + node_id, digest([row[BINDING], row["scope"], actor]),
-                            timeout_seconds=NODE_TIMEOUT_SECONDS), authorize=guard)
+                            timeout_seconds=NODE_TIMEOUT_SECONDS), authorize=execution_guard)
                         output = receipt.output
                 output = validate_output_ports(node["definition_id"], output, schema_version=row.get("graph_schema_version"))
+            except _SubgraphAuthorityFailure as error:
+                raise error.original
+            except _CacheRunStopped:
+                break
             except (ValueError, TimeoutError):
                 guard()
                 host.complete_agent_task(row["id"], node_id, "FAILED", error="CREATIVE_GRAPH_LOCAL_NODE_FAILED")
@@ -390,18 +474,26 @@ class CreativeGraphExecutor:
                 break
             outputs[node_id] = deepcopy(output)
             cache_keys[node_id] = {"key": key, "output_digest": digest(output)}
+            if row.get("graph_schema_version") == 6:
+                cache_keys[node_id]["cacheable"] = False
             if row.get("reuse_reviewed_local_dependencies") is True:
                 from .graph_local_reuse import signature
                 cache_keys[node_id]["dependency_signature"] = signature(row, actor, node_id, outputs)
             cache["hits" if hit else "misses"] += 1
             host.complete_agent_task(row["id"], node_id, "SUCCEEDED", output={"ports": output,
-                "provenance": {"method": "ORIGINAL_ASSET_REFERENCE" if node["definition_id"] == "asset_reference" else "LOCAL_RULES",
-                    "adapter": ADAPTER_VERSION, "cache_hit": hit},
+                "provenance": {"method": "LOCAL_SUBGRAPH" if node["definition_id"] == "local_subgraph" else
+                    "ORIGINAL_ASSET_REFERENCE" if node["definition_id"] == "asset_reference" else "LOCAL_RULES",
+                    "adapter": ADAPTER_VERSION, "cache_hit": hit,
+                    **({"contract": LOCAL_SUBGRAPH_CONTRACT,
+                        "binding_digest": row["local_subgraph_bindings"][node_id]["binding_digest"]}
+                        if node["definition_id"] == "local_subgraph" else {})},
                 "model_called": False, "applied": False})
         else:
             raise ValueError("CREATIVE_GRAPH_STEP_LIMIT")
         result = deepcopy(host.row)
         result.update(typed_outputs=outputs, cache_keys=cache_keys, cache=cache)
+        if row.get("graph_schema_version") == 6:
+            result["local_subgraph_receipts"] = subgraph_receipts
         reviews = [node["id"] for node in row["typed_nodes"] if node["definition_id"] in {"human_review", "media_review"}]
         result["reviewed"] = bool(reviews) and all(result["node_states"][node_id]["status"] == "SUCCEEDED" for node_id in reviews)
         reviewed = {node_id for node_id in reviews if result["node_states"][node_id]["status"] == "SUCCEEDED"}

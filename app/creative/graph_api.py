@@ -30,6 +30,9 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         authority.guard()
         return authority
 
+    # Closed schema6 is pure local orchestration: original domain.read/write/review
+    # guards apply, as for schema1. It grants no model/Host execution authority.
+    # Legacy schemas2-5 retain their exact protected-result and Host classification.
     def protected_result(value):
         if not isinstance(value, dict):
             return False
@@ -37,8 +40,17 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             return True
         return any(protected_result(item) for item in value.get("items", []))
 
-    def graph_invoke(nid, token, branch, permission, callback, request, *, model_input=False, target=None, inspection_host=False):
-        def checked(actor, scope, guard):
+    def graph_invoke(nid, token, branch, permission, callback, request, *, model_input=False, target=None,
+                     inspection_host=False, local_input=False, local_cleanup=False):
+        def source_read_required(actor, scope):
+            if local_input:
+                return True
+            if target is None or target[0] == "list":
+                return False
+            record = service._owned(nid, scope, actor, target[0], target[1])
+            return record.get("graph_schema_version") == 6 or record.get("definition", {}).get("schema_version") == 6
+
+        def checked_graph(actor, scope, guard, *, source_read_authorized=False):
             def host_required():
                 if model_input:
                     return True
@@ -54,6 +66,11 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             authority = capture_host(request, token) if inspection_host or host_required() else None
             def current():
                 guard()
+                if (permission != "domain.read" and not local_cleanup and not source_read_authorized
+                        and source_read_required(actor, scope)):
+                    # A concurrent schema1 -> schema6 upgrade cannot borrow a
+                    # write-only admission captured before it required source read.
+                    raise HTTPException(403, {"code": "CREATIVE_SUBGRAPH_SOURCE_READ_REQUIRED"})
                 if authority is not None:
                     if not inspection_host or host_required():
                         require_execution()
@@ -74,6 +91,21 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 (authority or capture_host(request, token)).guard()
             current()
             return value
+
+        def checked(actor, scope, target_guard):
+            if permission == "domain.read" or local_cleanup or not source_read_required(actor, scope):
+                return checked_graph(actor, scope, target_guard)
+
+            # Reuse the original invoker for both permissions, including its
+            # actor/scope/incarnation guards throughout the same transaction.
+            def source(source_actor, source_scope, source_guard):
+                if (source_actor, source_scope) != (actor, scope):
+                    raise HTTPException(403, {"code": "CREATIVE_SUBGRAPH_AUTHORITY_CHANGED"})
+                def current():
+                    target_guard(); source_guard()
+                current()
+                return checked_graph(actor, scope, current, source_read_authorized=True)
+            return invoke(nid, token, branch, "domain.read", source)
         return invoke(nid, token, branch, permission, checked)
 
     def model_call(request, nid, token, branch, permission, method, *args):
@@ -196,10 +228,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
 
     @router.get("/projects/{nid}/studio/graphs/catalog")
     def catalog(nid: str, request: Request, include_image: bool = False, include_production: bool = False, include_video: bool = False,
+                include_local_subgraph: bool = False,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.catalog(nid, scope, actor, guard=guard,
-                          include_image=include_image, include_production=include_production, include_video=include_video), request,
+                          include_image=include_image, include_production=include_production, include_video=include_video,
+                          include_local_subgraph=include_local_subgraph), request,
                           model_input=include_image or include_production or include_video)
 
     @router.get("/projects/{nid}/studio/graphs/planning-documents")
@@ -210,15 +244,18 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                       request, model_input=True)
 
     @router.get("/projects/{nid}/studio/graphs")
-    def graphs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    def graphs(nid: str, request: Request, include_local_subgraph: bool = False,
+               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: service.list(nid, scope, actor, guard=guard), request, target=("list", None))
+                      lambda actor, scope, guard: service.list(nid, scope, actor, guard=guard,
+                          include_local_subgraph=include_local_subgraph), request, target=("list", None))
 
     @router.post("/projects/{nid}/studio/graphs", status_code=201)
     def create(nid: str, request: Request, body: GraphCreate,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4, 5})
+                      lambda actor, scope, guard: service.create(nid, scope, actor, body, guard=guard), request,
+                      model_input=body.definition.schema_version in {2, 3, 4, 5}, local_input=body.definition.schema_version == 6)
 
     @router.get("/projects/{nid}/studio/graphs/{gid}")
     def graph(nid: str, gid: str, request: Request,
@@ -230,7 +267,9 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def save(nid: str, gid: str, request: Request, body: GraphSave,
              x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.write",
-                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request, model_input=body.definition.schema_version in {2, 3, 4, 5}, target=(service.GRAPHS, gid))
+                      lambda actor, scope, guard: service.save(nid, scope, actor, gid, body, guard=guard), request,
+                      model_input=body.definition.schema_version in {2, 3, 4, 5}, target=(service.GRAPHS, gid),
+                      local_input=body.definition.schema_version == 6)
 
     @router.post("/projects/{nid}/studio/graphs/{gid}/preflight")
     def preflight(nid: str, gid: str, request: Request, body: GraphPreflight | GraphMediaPreflight,
@@ -262,7 +301,8 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         def handle(nid: str, rid: str, request: Request, body: GraphAction,
                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
             return graph_invoke(nid, x_session_token, x_branch_id, permission,
-                          lambda actor, scope, guard: service.action(nid, scope, actor, rid, action, body, guard=guard), request, target=(service.RUNS, rid))
+                          lambda actor, scope, guard: service.action(nid, scope, actor, rid, action, body, guard=guard), request,
+                          target=(service.RUNS, rid), local_cleanup=action in {"cancel", "reject"})
 
         handle.__name__ = "creative_graph_" + action
         return handle

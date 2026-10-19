@@ -132,8 +132,12 @@ class CreativeGraphService:
         return {node["id"]: deepcopy(node["parameters"]) for node in definition["nodes"]
                 if node["definition_id"] in {"asset_reference", "director_plan", "storyboard_plan"}}
 
-    def _reference_states(self, nid, scope, definition, guard, actor=None):
-        """Legacy reads stay outside transactions; schema 3 uses its asset phase."""
+    def _reference_states(self, nid, scope, definition, guard, actor=None, state=None):
+        """Legacy reads stay outside transactions; pure schema6 uses the original scope."""
+        if definition.get("schema_version") == 6:
+            from .graph_local_subgraph import reference_states
+            document = self.store.read(nid, scope) if state is None else state
+            return reference_states(self, nid, scope, actor, definition, guard, document)
         if definition.get("schema_version") in {3, 4, 5}:
             if not isinstance(actor, str):
                 raise ValueError("CREATIVE_GRAPH_ACTOR_REQUIRED")
@@ -162,10 +166,16 @@ class CreativeGraphService:
         guard()
         return result
 
-    def _view(self, nid, scope, row, guard):
+    def _view(self, nid, scope, row, guard, state=None):
+        if row["definition"]["schema_version"] == 6 and state is None:
+            guard()
+            with self.store.transaction(nid, scope) as document:
+                live = self._owned(nid, scope, row["created_by"], GRAPHS, row["id"], document)
+                result = self._view(nid, scope, live, guard, document)
+                guard(); return result
         public = {key: deepcopy(row[key]) for key in ("id", "version", "definition", "definition_digest",
                   "execution_digest", "created_at", "updated_at")}
-        states = self._reference_states(nid, scope, row["definition"], guard, row["created_by"])
+        states = self._reference_states(nid, scope, row["definition"], guard, row["created_by"], state)
         denied = {item["node_id"] for item in states if item["state"] == "UNAVAILABLE"}
         for node in public["definition"]["nodes"]:
             if node["id"] in denied:
@@ -194,8 +204,26 @@ class CreativeGraphService:
         current()
         return result
 
-    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False):
+    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False, include_local_subgraph=False):
         _, current = self._context(nid, scope, actor, guard)
+        if include_local_subgraph:
+            if include_image or include_production or include_video:
+                raise ValueError("CREATIVE_GRAPH_SUBGRAPH_CATALOG_MODE_INVALID")
+            from .graph_models import LOCAL_SUBGRAPH_CONTRACT
+            result = {"definitions": catalog_definitions(include_local_subgraph=True),
+                "limits": {"nodes": 24, "edges": MAX_EDGES, "definition_bytes": MAX_DEFINITION_BYTES,
+                    "output_bytes": MAX_OUTPUT_BYTES, "graphs": MAX_GRAPHS, "runs": MAX_RUNS,
+                    "history": MAX_HISTORY, "runtime_timeout_seconds": RUN_TIMEOUT_SECONDS,
+                    "node_timeout_seconds": NODE_TIMEOUT_SECONDS},
+                "capabilities": {"local_execution": True, "chapter_required": False, "model_execution": False,
+                    "external_reference_execution": False, "external_reference_detach": False,
+                    "binary_cache": False, "parallel_execution": False, "automatic_retry": False,
+                    "actor_private": True, "cache_mode": "DISABLED_LOCAL_SUBGRAPH_V1",
+                    "local_subgraph_contract": LOCAL_SUBGRAPH_CONTRACT, "local_subgraph_schema_version": 6,
+                    "local_subgraph_depth": 1, "local_subgraph_child_nodes": 16,
+                    "local_subgraph_total_nodes": 24, "local_subgraph_cache": False,
+                    "local_subgraph_frontend_entry": False}}
+            current(); return result
         from .ai_execution import execution_enabled, CONTRACT
         models = self.model_runtime is not None and execution_enabled()
         media = self.media_runtime is not None
@@ -283,12 +311,15 @@ class CreativeGraphService:
                 document=state, source_kinds=kinds)
         guard()
 
-    def list(self, nid, scope, actor, guard=lambda: None):
+    def list(self, nid, scope, actor, guard=lambda: None, *, include_local_subgraph=False):
         _, current = self._context(nid, scope, actor, guard)
         state = self.store.read(nid, scope)
         result = []
         for rid, row in state["collections"].get(GRAPHS, {}).items():
-            if isinstance(row, dict) and row.get("created_by") == actor:
+            if (isinstance(row, dict) and row.get("created_by") == actor
+                    and (include_local_subgraph or row.get("definition", {}).get("schema_version") != 6)):
+                # Keep legacy asset/owner lock ordering. Schema6 _view acquires
+                # its own original scope lease instead of wrapping mixed rows.
                 result.append(self._view(nid, scope, self._owned(nid, scope, actor, GRAPHS, rid, state), current))
         current(); return {"items": sorted(result, key=lambda row: (row["created_at"], row["id"]))}
 
@@ -310,6 +341,10 @@ class CreativeGraphService:
             if definition.get("schema_version") in {3, 4, 5} and any(
                     row["state"] != "CURRENT" for row in self.asset_inputs.states(nid, scope, actor, definition, current)):
                 raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
+            server_fields = {}
+            if definition["schema_version"] == 6:
+                from .graph_local_subgraph import resolve_bindings, bindings
+                server_fields["local_subgraph_bindings"] = bindings(resolve_bindings(self, nid, scope, actor, definition, current, state))
             rows = state["collections"].setdefault(GRAPHS, {})
             found = next((row for row in rows.values() if row.get("created_by") == actor and row.get("request_id") == body.request_id), None)
             if found:
@@ -320,7 +355,7 @@ class CreativeGraphService:
                 self._timeline_definition_current(nid, scope, actor, definition, current, state)
                 row = new_row(nid, scope, actor, {BINDING: incarnation, "definition": definition,
                     "definition_digest": digest(definition), "execution_digest": digest(execution_definition(definition)),
-                    "request_id": body.request_id, "request_digest": request_digest})
+                    "request_id": body.request_id, "request_digest": request_digest, **server_fields})
                 rows[row["id"]] = row
             self._capacity(state); current(); saved = deepcopy(row)
         return self._view(nid, scope, saved, current)
@@ -349,13 +384,24 @@ class CreativeGraphService:
                     for item in self.asset_inputs.states(nid, scope, actor, definition, current)):
                 raise StaleSourceError("CREATIVE_GRAPH_EXTERNAL_REFERENCE_CHANGED")
             self._timeline_definition_current(nid, scope, actor, definition, current, state)
+            server_fields = {}
+            if definition["schema_version"] == 6:
+                from .graph_local_subgraph import resolve_bindings, bindings
+                server_fields["local_subgraph_bindings"] = bindings(resolve_bindings(self, nid, scope, actor, definition, current, state))
             change_row(row, actor, body.expected_version, lambda item: item.update(definition=definition,
-                definition_digest=digest(definition), execution_digest=digest(execution_definition(definition))))
+                definition_digest=digest(definition), execution_digest=digest(execution_definition(definition)), **server_fields))
+            if definition["schema_version"] != 6:
+                row.pop("local_subgraph_bindings", None)
             self._capacity(state); current(); saved = deepcopy(row)
         return self._view(nid, scope, saved, current)
 
     def _preflight(self, row, body, actor, *, check_assets=True, guard=lambda: None, state=None):
         definition = row["definition"]
+        subgraphs = None
+        if definition["schema_version"] == 6:
+            from .graph_local_subgraph import current_bindings, bindings
+            subgraphs = current_bindings(self, row["novel_id"], row["scope"], actor, definition,
+                row.get("local_subgraph_bindings"), guard, state)
         body = parse_graph_preflight(body, definition)
         nodes = {node["id"]: node for node in definition["nodes"]}
         targets = body.target_node_ids or [node["id"] for node in definition["nodes"] if node["enabled"]]
@@ -401,6 +447,14 @@ class CreativeGraphService:
                 if not downstream or any(edge["target_node_id"] not in closure or
                         nodes[edge["target_node_id"]]["definition_id"] != "human_review" for edge in downstream):
                     issues.append({"code": "CREATIVE_MODEL_HUMAN_REVIEW_REQUIRED", "node_id": model})
+        if definition["schema_version"] == 6:
+            for key in order:
+                if nodes[key]["definition_id"] != "local_subgraph":
+                    continue
+                downstream = [edge for edge in definition["edges"] if edge["source_node_id"] == key]
+                if (len(downstream) != 1 or downstream[0]["target_node_id"] not in closure
+                        or nodes[downstream[0]["target_node_id"]]["definition_id"] != "human_review"):
+                    issues.append({"code": "CREATIVE_GRAPH_SUBGRAPH_HUMAN_REVIEW_REQUIRED", "node_id": key})
         reference_states = []
         if definition["schema_version"] in {3, 4, 5}:
             selected_definition = {"nodes": [nodes[key] for key in order]}
@@ -497,6 +551,11 @@ class CreativeGraphService:
                 media_execution="EXPLICIT_PREVIEW_DISPATCH_REVIEW", media_evidence="LOCAL_REQUIRED")
             if not check_assets:
                 result["source_check"] = "DEFERRED_TO_LEASED_OWNER"
+        if definition["schema_version"] == 6:
+            from .graph_models import LOCAL_SUBGRAPH_CONTRACT
+            result.update(graph_schema_version=6, local_subgraph_contract=LOCAL_SUBGRAPH_CONTRACT,
+                local_subgraph_bindings=bindings(subgraphs), source_check="CURRENT_PIN_SCOPE_TRANSACTION")
+            guard()
         result["preflight_digest"] = digest([row["id"], row[BINDING], row["scope"], actor, result])
         return result
 
@@ -512,6 +571,12 @@ class CreativeGraphService:
                 row = self._owned(nid, scope, actor, GRAPHS, rid, state)
                 check_version(row, body.expected_version)
                 result = self._preflight(row, body, actor, guard=current, state=state)
+        elif row["definition"]["schema_version"] == 6:
+            with self.store.transaction(nid, scope) as state:
+                row = self._owned(nid, scope, actor, GRAPHS, rid, state)
+                check_version(row, body.expected_version)
+                result = self._preflight(row, body, actor, guard=current, state=state)
+                current()
         else:
             result = self._preflight(row, body, actor)
         current(); return result
@@ -521,7 +586,14 @@ class CreativeGraphService:
 
     def runs(self, nid, scope, actor, rid, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
-        self._owned(nid, scope, actor, GRAPHS, rid)
+        graph = self._owned(nid, scope, actor, GRAPHS, rid)
+        if graph["definition"]["schema_version"] == 6:
+            with self.store.transaction(nid, scope) as state:
+                self._owned(nid, scope, actor, GRAPHS, rid, state)
+                result = {"items": [self.executor.view(nid, scope, actor, row, current, state)
+                    for row in state["collections"].get(RUNS, {}).values()
+                    if row.get("created_by") == actor and row.get("graph_id") == rid]}
+                current(); return result
         state = self.store.read(nid, scope)
         rows = [row for row in state["collections"].get(RUNS, {}).values()
                 if row.get("created_by") == actor and row.get("graph_id") == rid]
@@ -534,6 +606,11 @@ class CreativeGraphService:
     def get_run(self, nid, scope, actor, rid, guard=lambda: None, *, reconcile=True):
         _, current = self._context(nid, scope, actor, guard)
         row = self._owned(nid, scope, actor, RUNS, rid)
+        if row.get("graph_schema_version") == 6:
+            with self.store.transaction(nid, scope) as state:
+                row = self._owned(nid, scope, actor, RUNS, rid, state)
+                result = self.executor.view(nid, scope, actor, row, current, state)
+                current(); return result
         archival = self.model_runtime is not None and self.model_runtime.text_assets.enabled(row)
         if archival:
             result = self.model_runtime.text_assets.read(nid, scope, actor, rid, current, reconcile=reconcile)

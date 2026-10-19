@@ -63,6 +63,25 @@ class DirectorParameters(Strict):
     note: str = Field(default="", max_length=4_000)
 
 
+LOCAL_SUBGRAPH_CONTRACT = "creative-graph-local-subgraph/1"
+LOCAL_SUBGRAPH_CHILD_IDS = frozenset({"text_input", "text_reference", "draft_prepare", "manual_transform", "director_note"})
+LOCAL_SUBGRAPH_PARENT_IDS = LOCAL_SUBGRAPH_CHILD_IDS | {"human_review", "local_subgraph"}
+MAX_SUBGRAPH_NODES = 16
+MAX_SUBGRAPH_TOTAL_NODES = 24
+MAX_SUBGRAPH_RECEIPT_BYTES = 4096
+
+
+class LocalSubgraphParameters(Strict):
+    graph_id: str = Field(min_length=1, max_length=240, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}$")
+    expected_version: int = Field(ge=1)
+    definition_digest: Digest
+    execution_digest: Digest
+    input_node_id: Id
+    input_port: Literal["text"] = "text"
+    output_node_id: Id
+    output_port: Literal["draft"] = "draft"
+
+
 class ModelTextParameters(Strict):
     instruction: str = Field(default="", max_length=4_000)
     max_output_tokens: int = Field(default=512, ge=1, le=2048)
@@ -508,12 +527,19 @@ DEFINITIONS["video_generate"] = {"inputs": [port("text", "TEXT"), port("shot", "
     "outputs": [port("candidate", "VIDEO_CANDIDATE")], "parameters": VideoNodeParameters}
 
 
+DEFINITIONS["local_subgraph"] = {"inputs": [port("text", "TEXT", True)],
+    "outputs": [port("draft", "DRAFT")], "parameters": LocalSubgraphParameters}
+
+
 def definition_for(definition_id, *, schema_version=None):
     """Only schema 3 exposes a completed original human review's draft.
 
     The frozen schema 1/2 catalog and their edge/output validators still use
     the original empty human-review output contract.
     """
+    if (definition_id == "local_subgraph" and schema_version != 6
+            or schema_version == 6 and definition_id not in LOCAL_SUBGRAPH_PARENT_IDS):
+        raise ValueError("CREATIVE_GRAPH_LOCAL_SUBGRAPH_SCHEMA_REQUIRED")
     definition = DEFINITIONS[definition_id]
     if schema_version == 5:
         if definition_id == "media_review":
@@ -772,16 +798,32 @@ class GraphVideoInput(GraphInput):
         return self
 
 
+class LocalSubgraphNodeInstance(NodeInstance):
+    definition_id: Literal["text_input", "text_reference", "draft_prepare", "manual_transform",
+        "director_note", "human_review", "local_subgraph"]
+
+
+class GraphLocalSubgraphInput(GraphInput):
+    schema_version: Literal[6]
+    nodes: list[LocalSubgraphNodeInstance] = Field(default_factory=list, max_length=MAX_SUBGRAPH_TOTAL_NODES)
+
+    @model_validator(mode="after")
+    def local_subgraph_capacity(self):
+        if sum(node.definition_id == "local_subgraph" for node in self.nodes) > 1:
+            raise ValueError("CREATIVE_GRAPH_LOCAL_SUBGRAPH_CALL_CAPACITY")
+        return self
+
+
 def parse_graph(value):
     schema = value.get("schema_version", 1) if isinstance(value, dict) else value.schema_version
-    model = GraphVideoInput if schema == 5 else GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
+    model = GraphLocalSubgraphInput if schema == 6 else GraphVideoInput if schema == 5 else GraphImageInput if schema == 4 else GraphMediaInput if schema == 3 else GraphModelInput if schema == 2 else GraphInput
     return model.model_validate(value)
 
 
 class GraphCreate(Strict):
     request_id: RequestId
     expected_version: Literal[0] = 0
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput
 
     @field_validator("expected_version", mode="before")
     @classmethod
@@ -799,7 +841,7 @@ class GraphCreate(Strict):
 
 class GraphSave(Strict):
     expected_version: int = Field(ge=1)
-    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput
+    definition: GraphInput | GraphModelInput | GraphMediaInput | GraphImageInput | GraphVideoInput | GraphLocalSubgraphInput
 
 
 class GraphPreflight(Strict):
@@ -832,14 +874,14 @@ class GraphMediaRunCreate(GraphRunCreate):
 
 
 def parse_graph_preflight(value, definition):
-    model = GraphMediaPreflight if definition["schema_version"] in {3, 4, 5} else GraphPreflight
+    model = GraphMediaPreflight if definition["schema_version"] in {3, 4, 5, 6} else GraphPreflight
     # Pydantic can trust subclass instances without revalidating their fields.
     # Revalidate the wire fields against the authoritative saved definition.
     return model.model_validate(value.model_dump() if isinstance(value, GraphPreflight) else value)
 
 
 def parse_graph_run_create(value, definition):
-    model = GraphMediaRunCreate if definition["schema_version"] in {3, 4, 5} else GraphRunCreate
+    model = GraphMediaRunCreate if definition["schema_version"] in {3, 4, 5, 6} else GraphRunCreate
     return model.model_validate(value.model_dump() if isinstance(value, GraphRunCreate) else value)
 
 
@@ -850,14 +892,15 @@ class GraphAction(Strict):
     note: str = Field(default="", max_length=1_000)
 
 
-def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False, include_video=False):
+def catalog_definitions(*, include_model=False, include_media=False, include_image=False, include_production=False, include_video=False, include_local_subgraph=False):
     return [{"id": key, "version": 1, "inputs": deepcopy(value["inputs"]),
         "outputs": deepcopy(value["outputs"]), "parameters_schema": value["parameters"].model_json_schema(),
-        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate", "image_upscale", "video_generate", "director_plan", "storyboard_plan", "storyboard_prompt", "storyboard_shot", "video_generate"} else None,
+        "default_parameters": value["parameters"]().model_dump() if key not in {"asset_reference", "media_generate", "timeline_export", "image_generate", "image_upscale", "video_generate", "director_plan", "storyboard_plan", "storyboard_prompt", "storyboard_shot", "video_generate", "local_subgraph"} else None,
         "executable": include_media or key != "asset_reference", "model_called": False,
         "blockers": ["CREATIVE_GRAPH_ATOMIC_INPUT_OWNER_ADAPTER_REQUIRED"] if key == "asset_reference" and not include_media else []}
         for key in DEFINITIONS
-        for value in [definition_for(key, schema_version=5 if include_video else 3 if include_media else None)]
+        if (key in LOCAL_SUBGRAPH_PARENT_IDS if include_local_subgraph else key != "local_subgraph")
+        for value in [definition_for(key, schema_version=6 if include_local_subgraph else 5 if include_video else 3 if include_media else None)]
         if not include_video or key in VIDEO_SCHEMA_DEFINITION_IDS
         if (include_model or key != "text_generate") and (include_media or key not in {"media_generate", "media_review", "timeline_export"})
         and (include_image or key not in NEW_IMAGE_DEFINITION_IDS)
@@ -869,10 +912,11 @@ def history_limit(row):
     return MAX_MEDIA_HISTORY if row.get("graph_schema_version") in {3, 4, 5} or row.get("definition", {}).get("schema_version") in {3, 4, 5} else MAX_HISTORY
 
 
-#: Schema versions the graph contract can validate. `parse_graph` maps 1..5:
+#: Schema versions the graph contract can validate. Schema6 is closed pure-local subgraph calling.
+#: `parse_graph` preserves schemas1..5:
 #: 5 -> GraphVideoInput, 4 -> GraphImageInput, 3 -> GraphMediaInput,
 #: 2 -> GraphModelInput, anything else -> the frozen GraphInput (v1).
-SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4, 5})
+SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4, 5, 6})
 
 #: The frozen pre-schema catalog. A missing version means v1, never "unknown".
 LEGACY_SCHEMA_VERSION = 1
