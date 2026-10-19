@@ -1,0 +1,11 @@
+.broker-budget-comparison table {
+  width: 100%;
+  border-collapse: collapse;
+  font: inherit;
+}
+.broker-budget-comparison th,
+.broker-budget-comparison td {
+  padding: var(--space-2) var(--space-3);
+  border-block-end: var(--border-default);
+  text-align: start;
+}

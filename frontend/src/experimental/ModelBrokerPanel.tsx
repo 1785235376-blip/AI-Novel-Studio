@@ -10,6 +10,7 @@ import { modelBrokerClient, type BrokerApi, type BrokerJob, type BrokerPreview, 
 import { brokerCost as cost, brokerReason, brokerVerification } from './modelBrokerPresentation';
 import { ModelBenchmarkPanel } from './ModelBenchmarkPanel';
 import { modelBrokerPriceDraft } from './modelBrokerPriceDraft';
+import './modelBrokerBudgetRecovery.css';
 
 let scopeSequence = 0;
 // Explicit owner rejections before reservation/start only. Never apply after a prior send with this ID.
@@ -200,10 +201,36 @@ function BudgetSettings({ api, status, stale, onSaved }: { api: BrokerApi; statu
       if (priceAlive.current && latest.status === target.status && latest.routeId === target.routeId && latest.fingerprint === target.fingerprint && latest.version === target.version) setPriceVersion(result.version);
     }, '当前路线的费用估计已保存。');
   };
+  const budgetAlive = useRef(true);
+  useEffect(() => { budgetAlive.current = true; return () => { budgetAlive.current = false; }; }, []);
+  const [, refreshBudgetIntent] = useState(0);
+  const serverLimit = status.budget.limit_microusd == null ? '' : String(status.budget.limit_microusd);
+  const budgetDifferent = expectedVersion !== status.budget.version || limit !== serverLimit || concurrency !== status.budget.max_inflight || known !== status.budget.require_known_estimate;
+  const budgetKey = JSON.stringify([expectedVersion, limit, concurrency, known, status.budget.version, stale, action.busy]);
+  const budgetOwner = useRef({ key: budgetKey, status, token: {} });
+  if (budgetOwner.current.key !== budgetKey || budgetOwner.current.status !== status) budgetOwner.current = { key: budgetKey, status, token: {} };
+  const budgetToken = budgetOwner.current.token;
+  const currentBudgetIntent = () => budgetAlive.current && budgetOwner.current.token === budgetToken && !action.busy && !stale;
+  const retireBudgetIntent = () => { budgetOwner.current = { ...budgetOwner.current, token: {} }; refreshBudgetIntent(value => value + 1); };
+  const changeBudget = (change: () => void) => { if (currentBudgetIntent()) { retireBudgetIntent(); change(); } };
+  const budgetTarget = useRef({ status, version: expectedVersion }); budgetTarget.current = { status, version: expectedVersion };
+  const loadBudget = () => changeBudget(() => { setLimit(serverLimit); setConcurrency(status.budget.max_inflight); setKnown(status.budget.require_known_estimate); setExpectedVersion(status.budget.version); });
+  const adoptBudgetVersion = () => changeBudget(() => setExpectedVersion(status.budget.version));
+  const saveBudget = () => {
+    if (!currentBudgetIntent()) return;
+    const target = { status, version: expectedVersion }; retireBudgetIntent();
+    void action.run(async () => {
+      const result = await api.budget({ expected_version: target.version, limit_microusd: limit ? Number(limit) : null, max_inflight: concurrency, require_known_estimate: known });
+      if (budgetAlive.current && budgetTarget.current.status === target.status && budgetTarget.current.version === target.version) setExpectedVersion(result.version);
+    }, '项目预算已保存，旧路线预览失效。');
+  };
   return <Panel title="项目预算与价格来源"><p>所有作者共享当前项目分支的费用上限；已占用 {cost(status.budget.committed_microusd)}，进行中 {status.budget.inflight}，上游未知 {status.budget.unknown_count}。金额单位 µUSD（1 USD = 1,000,000 µUSD）。</p>
-    <div className="experimental-grid"><Field label="累计预占上限（µUSD；留空不设金额上限）"><input type="number" min="0" value={limit} onChange={e => setLimit(e.target.value)} /></Field><Field label="最多并发任务"><input type="number" min="1" max="8" value={concurrency} onChange={e => setConcurrency(Number(e.target.value))} /></Field></div>
-    <label className="experimental-check"><input type="checkbox" checked={known} onChange={e => setKnown(e.target.checked)} />要求已配置费用估计；严格金额上限始终要求估计</label>
-    <div className="experimental-actions"><Button disabled={action.busy || stale} onClick={() => void action.run(async () => { const result = await api.budget({ expected_version: expectedVersion, limit_microusd: limit ? Number(limit) : null, max_inflight: concurrency, require_known_estimate: known }); setExpectedVersion(result.version); }, '项目预算已保存，旧路线预览失效。')}>保存版本化项目预算</Button>{expectedVersion !== status.budget.version && <Button disabled={action.busy || stale} onClick={() => setExpectedVersion(status.budget.version)}>已核对最新预算 v{status.budget.version}，保留输入继续编辑</Button>}</div>
+    <div className="experimental-grid"><Field label="累计预占上限（µUSD；留空不设金额上限）"><input type="number" min="0" value={limit} disabled={action.busy || stale} onChange={e => changeBudget(() => setLimit(e.target.value))} /></Field><Field label="最多并发任务"><input type="number" min="1" max="8" value={concurrency} disabled={action.busy || stale} onChange={e => changeBudget(() => setConcurrency(Number(e.target.value)))} /></Field></div>
+    <label className="experimental-check"><input type="checkbox" checked={known} disabled={action.busy || stale} onChange={e => changeBudget(() => setKnown(e.target.checked))} />要求已配置费用估计；严格金额上限始终要求估计</label>
+    {budgetDifferent && <section className="broker-budget-comparison" aria-label="项目预算版本对照"><p>本地编辑基于预算 v{expectedVersion}；下列服务器值来自最近一次成功读取。刷新状态会保留本地编辑，不会自动采用新版本或保存。</p><table><thead><tr><th scope="col">配置项</th><th scope="col">本地编辑</th><th scope="col">已读取预算 v{status.budget.version}</th></tr></thead><tbody><tr><th scope="row">累计预占上限</th><td>{limit === '' ? '不设金额上限' : `${limit} µUSD`}</td><td>{serverLimit === '' ? '不设金额上限' : `${serverLimit} µUSD`}</td></tr><tr><th scope="row">最多并发任务</th><td>{concurrency}</td><td>{status.budget.max_inflight}</td></tr><tr><th scope="row">要求费用估计</th><td>{known ? '是' : '否'}</td><td>{status.budget.require_known_estimate ? '是' : '否'}</td></tr></tbody></table></section>}
+    <p>可载入最近已读取的三项预算设置，替换本地编辑；载入不会提交预算。若要保留自己的输入，可先核对版本对照再继续编辑。</p>
+    <Button disabled={action.busy || stale || !budgetDifferent} onClick={loadBudget}>载入已读取的项目预算（替换本地编辑）</Button>
+    <div className="experimental-actions"><Button disabled={action.busy || stale} onClick={saveBudget}>保存版本化项目预算</Button>{expectedVersion !== status.budget.version && <Button disabled={action.busy || stale} onClick={adoptBudgetVersion}>已核对最新预算 v{status.budget.version}，保留输入继续编辑</Button>}</div>
     <details><summary>配置明确路线的费用估计</summary><div className="experimental-form"><Field label="价格适用路线"><select value={routeId} disabled={action.busy || stale} onChange={e => selectPriceRoute(e.target.value)}><option value="">请选择</option>{status.candidates.filter(r => !r.synthetic).map(r => <option key={r.route_id} value={r.route_id}>{r.display_name} · {r.provider_id}</option>)}</select></Field><Button disabled={action.busy || stale || !existingDraft} onClick={loadPrice}>载入此路线已有价格依据</Button>{existingDraft && <p>已保存价格记录 v{existingDraft.expectedVersion}。载入会替换下方本地价格输入；请重新核对报价与有效期，再另行保存。</p>}{existingPrice && route && existingPrice.route_fingerprint !== route.fingerprint && <StatusMessage tone="warning">已有价格记录与当前路线指纹不一致，未载入旧依据；请根据当前路线重新填写。</StatusMessage>}<Field label="每请求保守预占（µUSD）"><input type="number" min="0" value={estimate} onChange={e => editPrice(setEstimate, e.target.value)} /></Field><Field label="价格依据（来源或报价说明）"><input maxLength={240} value={source} onChange={e => editPrice(setSource, e.target.value)} /></Field><Field label="价格有效至"><input type="datetime-local" step="0.001" value={expiry} onChange={e => editPrice(setExpiry, e.target.value)} /></Field><Field label="输入费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={inputRate} onChange={e => editPrice(setInputRate, e.target.value)} /></Field><Field label="输出费率（每百万 Token 的 µUSD；可空）"><input type="number" min="0" value={outputRate} onChange={e => editPrice(setOutputRate, e.target.value)} /></Field><p>估计绑定当前模型、Runtime 和 Adapter 指纹。没有使用量费率时，实际费用保持未知；此配置不冒充免费或供应商硬上限。</p><Button disabled={action.busy || stale || !route || !source.trim() || !expiry || estimate === ''} onClick={savePrice}>保存路线价格依据</Button></div></details>{action.feedback}
   </Panel>;
 }
