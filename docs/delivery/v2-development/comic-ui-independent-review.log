@@ -1,0 +1,78 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-panel-generation/frontend
+
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 1907ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 326ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 912ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3406ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 458ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 727ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 429ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 460ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 447ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3407ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 589ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 708ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1286ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 341ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (7 tests) 5935ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 1971ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 467ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 649ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1365ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 972ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 389ms
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests | 1 failed) 7412ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 789ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 592ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 571ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 516ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 419ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 316ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 327ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 328ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 319ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 305ms
+   × final compositionEnd followed by onChange in one batch preserves committed IME text 90ms
+     → Cannot read properties of undefined (reading 'target')
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1125ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1975ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 407ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 410ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 353ms
+   ✓ retained apply cannot cross record, source or owner ABA 444ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 3752ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 419ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 778ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 573ms
+   ✓ ORA export needs approved loaded current pixels and admits a double click once 307ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1231ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1199ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1622ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1621ms
+ ✓ src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx (3 tests) 507ms
+   ✓ locks manual page edits and navigation synchronously while generation input owns the saved page 334ms
+ ✓ src/creative/studioComicImageContract.test.ts (32 tests) 21ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1479ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1478ms
+ ✓ src/creative/studioComicImageClient.test.ts (11 tests) 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicLayoutsPanel.duplicate.test.tsx > final compositionEnd followed by onChange in one batch preserves committed IME text
+TypeError: Cannot read properties of undefined (reading 'target')
+ ❯ onCompositionEndCapture src/experimental/ComicLayoutsPanel.tsx:104:319
+
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx:173:15
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:47:24
+ ❯ act ../../studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:2512:16
+ ❯ Proxy.<anonymous> ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:46:25
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx:173:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 14 passed (15)
+      Tests  1 failed | 166 passed (167)
+   Start at  09:00:42
+   Duration  26.05s (transform 3.97s, setup 108ms, collect 9.63s, tests 34.99s, environment 4.07s, prepare 709ms)
+

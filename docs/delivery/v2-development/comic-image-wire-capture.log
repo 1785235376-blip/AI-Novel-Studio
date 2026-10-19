@@ -1,0 +1,13 @@
+COMIC_WIRE_CAPTURE=/workspace/scratch/20a0022d2b33/comic-panel-generation/.runtime/v2-checks/comic-image-wire-capture/pytest/test_capture_original_comic_im0/comic-image-wire.json
+.
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_comic_image_wire_capture.py::test_capture_original_comic_image_http_wire[file-/api]
+  /workspace/scratch/20a0022d2b33/comic-panel-generation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 2 warnings in 7.17s

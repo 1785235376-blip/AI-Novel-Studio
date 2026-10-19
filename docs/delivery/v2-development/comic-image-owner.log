@@ -1,0 +1,63 @@
+.F......................................................                 [100%]
+=================================== FAILURES ===================================
+_ test_real_pixels_original_review_then_separate_same_page_draft_adoption[file] _
+
+comic_image = namespace(nid='v2-independent-f098fa30111448e7b144313d42b77406', scope={'mode': 'local', 'novel_id': 'v2-independent-f...th': 64, 'height': 64, 'seed': 3, 'override_settings': {'sd_model_checkpoint': 'SDXL.safetensors'}}, 'timeout': 180})])
+
+    def test_real_pixels_original_review_then_separate_same_page_draft_adoption(comic_image):
+        e = comic_image; before = raw_page(e)
+        command = request(e)['command']; queued = queue(e, command)
+        assert queue(e, command) == queued and e.posts == []
+        candidate = execute(e, queued)
+        assert candidate['status'] == 'AWAITING_REVIEW' and len(e.posts) == 1
+        assert e.posts[0][1]['json']['prompt'] == e.page['document']['panels'][0]['image_brief']
+        output = candidate['output_candidate']
+        assert output['digest'] == hashlib.sha256(e.pixels).hexdigest()
+        assert e.service.list_assets(e.nid, e.scope)['items'] == []
+        with pytest.raises(FileNotFoundError): e.service.asset(e.nid, e.scope, output['id'])
+        meta, actual = e.production.candidate(e.nid, e.scope, e.actor, 'image', queued['id'], lambda: None)
+        assert actual == e.pixels and meta['sha256'] == output['digest']
+        with pytest.raises(REJECTED): adopt(e, candidate)
+        assert raw_page(e) == before
+        approved = review(e, candidate)
+        assert approved['status'] == 'APPROVED'
+        assert raw_page(e) == before  # Original Image approval never attaches a Comic panel.
+        formal = e.service.asset(e.nid, e.scope, output['id'])
+        with pytest.raises(ValueError, match='ORIGINAL_GENERATION_REVIEW'):
+>           e.comic.approve_image(e.nid, e.scope, e.actor, output['id'], formal['version'])
+
+tests/test_v2_comic_image_generation.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/experimental/comic_layouts.py:498: in approve_image
+    asset, _ = self._asset(nid, scope, actor, aid, approved=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/experimental/comic_layouts.py:433: in _asset
+    asset = self.assets.get(aid, branch_id=scope.get('branch_id'), actor_id=actor)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x7f4e17d33950>
+asset_id = '36eca034-130c-496d-9661-23e7059e8ce6'
+
+    def get(self, asset_id: str, *, branch_id: str | None = None, include_deleted: bool = False, actor_id: str | None = None):
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        meta = self._load(asset_id)
+        if not self._in_scope(meta, branch_id, actor_id) or (meta.get("deleted_at") and not include_deleted):
+>           raise FileNotFoundError(asset_id)
+E           FileNotFoundError: 36eca034-130c-496d-9661-23e7059e8ce6
+
+app/services/asset_library_service.py:943: FileNotFoundError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_comic_image_generation.py::test_request_and_preview_are_exact_and_zero_side_effect[file]
+  /workspace/scratch/20a0022d2b33/comic-panel-generation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_comic_image_generation.py::test_real_pixels_original_review_then_separate_same_page_draft_adoption[file]
+1 failed, 55 passed, 56 deselected, 2 warnings in 13.96s

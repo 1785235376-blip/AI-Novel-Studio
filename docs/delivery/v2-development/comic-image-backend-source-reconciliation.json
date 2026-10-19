@@ -1,0 +1,20 @@
+{
+  "comic-image-integration-postgres": {
+    "status": "PASS",
+    "tested_head": "92d2855ae9bb9f02223b25768858eef2801da7fb",
+    "app_paths": 542,
+    "changed_app_paths": []
+  },
+  "comic-image-integration-public": {
+    "status": "PASS",
+    "tested_head": "92d2855ae9bb9f02223b25768858eef2801da7fb",
+    "app_paths": 542,
+    "changed_app_paths": []
+  },
+  "comic-image-integration-cjk": {
+    "status": "PASS",
+    "tested_head": "92d2855ae9bb9f02223b25768858eef2801da7fb",
+    "app_paths": 542,
+    "changed_app_paths": []
+  }
+}

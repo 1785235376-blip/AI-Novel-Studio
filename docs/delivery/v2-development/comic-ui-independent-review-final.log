@@ -1,0 +1,66 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-panel-generation/frontend
+
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 1946ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 312ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 956ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3480ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 638ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 727ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1268ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 328ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3602ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 462ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 762ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 469ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 475ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 519ms
+ ✓ src/creative/IndependentStudioWorkspace.comic.test.tsx (7 tests) 5971ms
+   ✓ Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer 2020ms
+   ✓ dirty comic blocks closing until the existing workspace discard confirmation 453ms
+   ✓ selected ORA File reaches the actual Image close guard and survives cancelled navigation 553ms
+   ✓ unsaved ORA license reaches the actual host guard and survives page save dirty cleanup 1401ms
+   ✓ standalone RASTER edits block New/Open/Source until explicit discard without book membership 1056ms
+   ✓ same-batch retained host Close observes synchronous ORA dirty before React rerenders 373ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 7773ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 768ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 588ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 467ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 528ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 347ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 323ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 316ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 386ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 334ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 335ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 310ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 416ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 302ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 339ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1209ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 349ms
+ ✓ src/experimental/ComicLayoutsPanel.additive.test.tsx (6 tests) 1879ms
+   ✓ explicit arrangement preview applies one undoable edit and saves only through original owner 398ms
+   ✓ cancel, edits, refresh and client replacement discard arrangement consent 413ms
+   ✓ retained arrangement apply is fenced after cancellation, edits and repeat invocation 306ms
+   ✓ retained apply cannot cross record, source or owner ABA 420ms
+ ✓ src/experimental/ComicLayoutsPanel.layers.test.tsx (11 tests) 3668ms
+   ✓ legacy save stays unlayered until explicit enable and never shows ORA export 398ms
+   ✓ explicit enable and layer edits preserve canonical dialogue, save through CAS and remain undoable 780ms
+   ✓ structural add/remove preserves unrelated layer settings and exact undo coverage 548ms
+ ✓ src/creative/StudioImageAssetHandoff.test.tsx (22 tests) 1225ms
+ ✓ src/experimental/ComicLayoutsPanel.framing.test.tsx (6 tests) 1141ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1516ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1515ms
+ ✓ src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx (3 tests) 459ms
+ ✓ src/creative/studioComicImageContract.test.ts (32 tests) 21ms
+ ✓ src/creative/studioComicImageClient.test.ts (11 tests) 9ms
+ ✓ src/experimental/ComicLayoutsPanel.geometry.test.tsx (1 test) 1556ms
+   ✓ blank two-panel text page geometry uses original undo, explicit save, reopen and authoritative preview 1555ms
+ ✓ src/creative/studioComicImage.capture.test.ts (1 test) 11ms
+
+ Test Files  16 passed (16)
+      Tests  168 passed (168)
+   Start at  09:09:51
+   Duration  26.24s (transform 4.02s, setup 98ms, collect 9.69s, tests 35.47s, environment 4.04s, prepare 838ms)
+

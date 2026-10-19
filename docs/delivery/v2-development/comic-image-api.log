@@ -1,0 +1,61 @@
+F
+=================================== FAILURES ===================================
+_ test_mounted_request_private_review_separate_adopt_and_stale_replay[file-/api] _
+
+comic_api = namespace(client=<starlette.testclient.TestClient object at 0x7f1191cc7440>, prefix='/api', base='/api/projects/r3-mou...953a791c7d9f9b51', 'model_id': 'local-4c3ffc28953a791c7d9f9b51', 'parameters': {'width': 64, 'height': 64, 'seed': 3}})
+
+    def test_mounted_request_private_review_separate_adopt_and_stale_replay(comic_api):
+        e = comic_api
+        response = e.client.post(e.panel_base + '/image-request', headers=e.headers, json=e.request_body)
+        request = checked(response)
+        assert response.headers['cache-control'] == 'no-store'
+        assert response.headers['x-content-type-options'] == 'nosniff'
+        assert request['contract'] == 'studio-comic-image-request/1' and not request['automatic_dispatch']
+        assert request['command']['prompt'] == e.page['document']['panels'][0]['image_brief']
+        assert not e.calls
+        preview = checked(e.client.post(e.base + '/preview', headers=e.headers, json=request['command']))
+        queued = checked(e.client.post(e.base + '/jobs', headers=e.headers,
+            json={'command': request['command'], 'reviewed_preview_digest': preview['preview_digest']}), 201)
+        assert not e.calls
+        path = e.base + '/jobs/image/' + queued['id']
+        candidate = checked(e.client.post(path + '/execute', headers=e.headers, json=exact_action(queued)))
+        assert candidate['status'] == 'AWAITING_REVIEW'
+        private = e.client.get(e.studio_base + '/assets/' + candidate['output_candidate']['id'], headers=e.headers)
+        assert private.status_code == 404
+        assert checked(e.client.get(e.comic_base, headers=e.headers))['items'][0]['version'] == 1
+        approved = checked(e.client.post(path + '/review', headers=e.headers, json={**exact_action(candidate),
+            'reviewed_output_digest': candidate['output_candidate']['digest']}))
+        assert approved['status'] == 'APPROVED'
+        assert checked(e.client.get(e.comic_base, headers=e.headers))['items'][0]['version'] == 1
+        body = {'expected_version': 1, 'job_id': approved['id'], 'expected_job_version': approved['version'],
+            'expected_request_digest': approved['request_digest'], 'expected_asset_version': approved['approved_asset_version'],
+            'expected_output_digest': approved['output_candidate']['digest']}
+>       adopted = checked(e.client.post(e.panel_base + '/adopt-image', headers=e.headers, json=body))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_comic_image_generation_api.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [404 Not Found]>, status = 200
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"7d6d8851-d068-474c-bec1-d660072b4a79"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+../studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-director-transport/.runtime/recovered-python-20261018/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_v2_comic_image_generation_api.py::test_mounted_request_private_review_separate_adopt_and_stale_replay[file-/api]
+  /workspace/scratch/20a0022d2b33/comic-panel-generation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_comic_image_generation_api.py::test_mounted_request_private_review_separate_adopt_and_stale_replay[file-/api]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 8 deselected, 2 warnings in 8.14s

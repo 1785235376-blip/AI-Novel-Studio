@@ -1,0 +1,79 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-director-transport/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx (3 tests) 592ms
+   ✓ locks manual page edits and navigation synchronously while generation input owns the saved page 372ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 332ms
+   ✓ Standalone upscale over original task and controller > requires an enabled route, exact source and explicit scale before preview; no prompt or automatic task 329ms
+ ✓ src/creative/studioComicImageClient.test.ts (11 tests) 19ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1582ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 408ms
+ ✓ src/creative/studioComicImage.capture.test.ts (1 test) 16ms
+ ✓ src/creative/studioComicImageContract.test.ts (32 tests) 35ms
+ ✓ src/creative/creativeProductionClient.test.ts (2 tests) 7ms
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 2258ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 490ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 967ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1593ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1592ms
+ ✓ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests) 8821ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1157ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 675ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 641ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 333ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 621ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 415ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 393ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 340ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 400ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 306ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 325ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 316ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 319ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 335ms
+   ✓ final compositionEnd followed by onChange in one batch preserves committed IME text 324ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3549ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 441ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 733ms
+   ✓ discovered Image routes through the original mounted production workspace > recovers a lost create using the exact original discovered request without replay 335ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 446ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 513ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 457ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3554ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 709ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 729ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1313ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 305ms
+
+ Test Files  12 passed (12)
+      Tests  119 passed (119)
+   Start at  09:10:50
+   Duration  10.80s (transform 6.59s, setup 294ms, collect 25.60s, tests 22.36s, environment 4.10s, prepare 927ms)
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2462 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.33 kB │ gzip:   0.19 kB
+dist/assets/LocalTutorIntegration-BRshkv99.css      3.63 kB │ gzip:   0.98 kB
+dist/assets/style-6MlQLGa4.css                      3.79 kB │ gzip:   1.39 kB
+dist/assets/ExperimentalWorkbench-cKwZaTd1.css      3.88 kB │ gzip:   1.02 kB
+dist/assets/index-Cj-tLRQ5.css                     32.29 kB │ gzip:   5.90 kB
+dist/assets/App-B-sblpo2.css                      220.74 kB │ gzip:  27.90 kB
+dist/assets/Health-Cw-fVwmp.js                      0.99 kB │ gzip:   0.57 kB
+dist/assets/index-BJBwVov3.js                      30.15 kB │ gzip:  10.01 kB
+dist/assets/style-CynFnLhj.js                      45.12 kB │ gzip:   8.40 kB
+dist/assets/query-vendor-CUnTvSIi.js               45.60 kB │ gzip:  13.56 kB
+dist/assets/LocalTutorIntegration-DC_PiBWK.js      47.64 kB │ gzip:  15.65 kB
+dist/assets/react-vendor-D3pO_op5.js              142.98 kB │ gzip:  45.80 kB
+dist/assets/editor-vendor-WoPbGn4i.js             307.09 kB │ gzip:  93.11 kB
+dist/assets/ExperimentalWorkbench-CkANOSyf.js     848.16 kB │ gzip: 254.11 kB
+dist/assets/App-DM-awpUX.js                     2,948.37 kB │ gzip: 885.61 kB
+✓ built in 7.82s
+UI token guard PASS (52 files)
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

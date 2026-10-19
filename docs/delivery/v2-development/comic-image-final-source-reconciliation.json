@@ -1,0 +1,8 @@
+{
+  "product_head": "b81b3aad9b28f3f20ee7ef73005b998fe926aa82",
+  "ui_status": "PASS",
+  "recorded_source_paths": 3203,
+  "changed_paths": [],
+  "backend_reconciliation": "comic-image-backend-source-reconciliation.json",
+  "qualification": "PG/PUBLIC/CJK ran before frontend-only and capture-test additions; 542 app paths unchanged. No claim of same whole-tree execution."
+}

@@ -1,0 +1,67 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/comic-panel-generation/frontend
+
+ ✓ src/experimental/ComicLayoutsPanel.imageGeneration.test.tsx (3 tests) 636ms
+   ✓ locks manual page edits and navigation synchronously while generation input owns the saved page 363ms
+ ✓ src/creative/StudioImageUpscaleProduction.test.tsx (2 tests) 254ms
+ ✓ src/creative/studioComicImageClient.test.ts (11 tests) 12ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1542ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 442ms
+   ✓ approved-review ticket clears when geometry changes; preview widths do not rerender geometry 302ms
+ ✓ src/creative/studioComicImage.capture.test.ts (1 test) 11ms
+ ✓ src/creative/studioComicImageContract.test.ts (32 tests) 29ms
+ ✓ src/creative/creativeProductionClient.test.ts (2 tests) 6ms
+ ✓ src/creative/StudioComicImageGeneration.test.tsx (19 tests) 2123ms
+   ✓ uses original Image preview, queue, execution, private candidate and review before a separate explicit Comic adoption 471ms
+   ✓ mounted Comic editor retains its generation session while locking edits, then adopts and reloads the same DRAFT page 935ms
+ ✓ src/creative/StudioImageRuntimeProduction.routeMigration.test.tsx (1 test) 1663ms
+   ✓ image runtime source roles through the mounted original workspace > migration: requires fresh cloud consent after reference weights change and never falls back or sends automatically 1662ms
+ ✓ src/creative/StudioImageRuntimeProduction.test.tsx (6 tests) 3518ms
+   ✓ image runtime source roles through the mounted original workspace > records weighted references without automatic queue, execution or review and invalidates old preview consent on weight edit 722ms
+   ✓ image runtime source roles through the mounted original workspace > binds base then mask, preserves explicit candidate byte verification and separate review 724ms
+   ✓ image runtime source roles through the mounted original workspace > requires fresh cloud consent after reference weights change and never falls back or sends automatically 1278ms
+   ✓ image runtime source roles through the mounted original workspace > retains exact request identity after lost create and recovers only by original read 330ms
+ ✓ src/creative/StudioDiscoveredImageProduction.test.tsx (9 tests) 3595ms
+   ✓ discovered Image routes through the original mounted production workspace > consumes exact passive discovered IDs without selecting, probing or dispatching automatically 521ms
+   ✓ discovered Image routes through the original mounted production workspace > preserves explicit preview, queue, execute, byte verification and review for the discovered route 756ms
+   ✓ discovered Image routes through the original mounted production workspace > recovers a lost create using the exact original discovered request without replay 301ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after host-rebind 478ms
+   ✓ discovered Image routes through the original mounted production workspace > redacts candidate bytes and review consent after project-aba 418ms
+   ✓ discovered Image routes through the original mounted production workspace > rejects candidate bytes with a different digest without enabling review 503ms
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx (25 tests | 1 failed) 8342ms
+   ✓ explicit preview discloses pins and applies one exact undoable copy through original CAS save 1105ms
+   ✓ invalid destination never consumes IDs or changes history and cancel discards preview 693ms
+   ✓ retained apply callbacks cannot survive edit, coordinate replacement, cancel, or repeat 584ms
+   ✓ IME start invalidates intent and prevents preview until composition ends 341ms
+   ✓ refresh, stale catalog pins, source ABA and client/scope replacement fence retained callbacks 590ms
+   ✓ ID collisions fail atomically and displayed pixels and consent disappear on successful copy 403ms
+   ✓ copy then retained edit in the same batch cannot resurrect or persist an old draft 412ms
+   ✓ copy then retained undo in the same batch cannot resurrect or persist an old draft 398ms
+   ✓ copy then retained redo in the same batch cannot resurrect or persist an old draft 356ms
+   ✓ copy then retained load in the same batch cannot resurrect or persist an old draft 309ms
+   ✓ copy then retained source in the same batch cannot resurrect or persist an old draft 397ms
+   ✓ copy then retained refresh in the same batch cannot resurrect or persist an old draft 333ms
+   ✓ copy then retained save in the same batch cannot resurrect or persist an old draft 317ms
+   ✓ copy then retained append in the same batch cannot resurrect or persist an old draft 364ms
+   × final compositionEnd followed by onChange in one batch preserves committed IME text 74ms
+     → Cannot read properties of undefined (reading 'target')
+
+ Test Files  1 failed | 11 passed (12)
+      Tests  1 failed | 118 passed (119)
+   Start at  09:05:14
+   Duration  9.95s (transform 5.54s, setup 278ms, collect 22.05s, tests 21.73s, environment 3.73s, prepare 839ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/experimental/ComicLayoutsPanel.duplicate.test.tsx > final compositionEnd followed by onChange in one batch preserves committed IME text
+TypeError: Cannot read properties of undefined (reading 'target')
+ ❯ onCompositionEndCapture src/experimental/ComicLayoutsPanel.tsx:104:319
+
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx:173:15
+ ❯ ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:47:24
+ ❯ act ../../studio-usability/frontend/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js:2512:16
+ ❯ Proxy.<anonymous> ../../studio-usability/frontend/node_modules/.pnpm/@testing-library+react@16.3.2_@testing-library+dom@10.4.1_@types+react-dom@18.3.7_@type_b0bbe147884ef4cbbf95e64a97c782e8/node_modules/@testing-library/react/dist/act-compat.js:46:25
+ ❯ src/experimental/ComicLayoutsPanel.duplicate.test.tsx:173:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
