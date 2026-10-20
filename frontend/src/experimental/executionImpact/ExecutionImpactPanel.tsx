@@ -14,6 +14,9 @@ export type ExecutionImpactPanelProps = {
   onConfirm: (confirmation: ExecutionImpactConfirmation) => void;
 };
 type Fingerprint = { token: object; value: string };
+const issuedTo = new WeakMap<ExecutionImpactConfirmation, object>();
+/** Local UI receipt provenance, not an authorization or backend signature. */
+export const isIssuedExecutionImpactConfirmation = (proof: ExecutionImpactConfirmation, owner: object) => issuedTo.get(proof) === owner;
 
 /** Advisory input review only. No transport, persistence, execution or template mutation. */
 export function ExecutionImpactPanel(props: ExecutionImpactPanelProps) {
@@ -53,7 +56,8 @@ export function ExecutionImpactPanel(props: ExecutionImpactPanelProps) {
     if (!canAcknowledge || !current() || live.current.busy || !visible || fingerprintRef.current !== visible
       || acknowledgementRef.current?.token !== token || acknowledgementRef.current.value !== visible.value || issuedRef.current === token) return;
     issuedRef.current = token; setIssued(token);
-    props.onConfirm(Object.freeze({ contract: 'studio-execution-impact-confirmation/1', inputFingerprint: visible.value, scope: 'TASK', isCurrent: current }));
+    const proof: ExecutionImpactConfirmation = Object.freeze({ contract: 'studio-execution-impact-confirmation/1', inputFingerprint: visible.value, scope: 'TASK', isCurrent: current });
+    issuedTo.set(proof, props.owner); props.onConfirm(proof);
   }
   if (!props.current) return <Panel title="本次任务修改影响"><StatusMessage tone="warning">原输入范围已失效，请从原任务入口重新读取。旧确认不会复用。</StatusMessage></Panel>;
   return <Panel title="本次任务修改影响" aria-label="本次任务修改影响">

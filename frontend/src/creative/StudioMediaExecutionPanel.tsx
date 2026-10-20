@@ -1,3 +1,4 @@
+import { ExecutionImpactPanel } from '../experimental/executionImpact/ExecutionImpactPanel';
 import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './studioImageRuntimeContract';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS, mediaProviderKey, useStudioMediaExecution, type MediaParameter, type StudioMediaExecutionProps } from './useStudioMediaExecution';
@@ -140,6 +141,13 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
     </>}
+      {state.impactRequired && !props.canvasImageTask?.returnBinding && <StatusMessage tone="warning">当前卡片任务缺少可核对的持久范围与存储代际，不能创建或执行。请从原已保存卡片重新进入。</StatusMessage>}
+      {state.impact && <section aria-label="原任务输入确认门">
+        <p>{state.impact.input.boundary.kind==='CREATE'?'入队前核对：只保存本次任务，不执行。':'执行前再次核对：使用原入队任务的实际命令、配方与版本。'} 原预览摘要 <code>{state.impact.input.preview.preview_digest}</code></p>
+        <ExecutionImpactPanel input={state.impact.input} owner={state.impact} current={state.impact.current()}
+          canConfirm={props.canMutate} busy={state.locked} isCurrent={state.impact.current}
+          onConfirm={proof=>void state.confirmImpact(state.impact!,proof)}/>
+      </section>}
       {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.composite' ? '本地 CPU 双层 PNG 合成' : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
         <p>预览绑定当前输入、来源版本与处理接口。创建仅保存任务，尚不执行。</p>
         <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表处理已成功执行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>
@@ -209,6 +217,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           <Button disabled={!state.canControlRunning} loading={state.runningControl === 'read'} onClick={() => void state.controlRunningCutout('read')}>读取运行中的原抠图任务</Button>
           <Button variant="danger" disabled={!state.canControlRunning || !state.canCancelRunning || job.status === 'CANCELLED'} loading={state.runningControl === 'cancel'} onClick={() => void state.controlRunningCutout('cancel')}>明确取消运行中的原抠图任务</Button>
         </section>}
+        {state.impactRequired && job.status==='QUEUED' && <><p>执行使用下方原 Job 已保存的命令；修改上方草稿不会覆盖它。重新核对将退役草稿预览，仍须明确确认，不能自动派发。</p><Button disabled={!state.canRead || !props.canMutate || state.uncertain} onClick={()=>void state.inspectExecution()}>读取原入队任务预览</Button></>}
         <div className="studio-graph-actions">
           <Button disabled={!state.canAction('execute')} loading={state.pending === 'execute'} onClick={() => void state.action('execute')}>明确执行当前入队任务</Button>
           {job.owner === 'video' && <Button disabled={!state.canAction('refresh')} loading={state.pending === 'refresh'} onClick={() => void state.action('refresh')}>核对已有远端进度</Button>}

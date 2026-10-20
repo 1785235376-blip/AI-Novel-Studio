@@ -73,10 +73,15 @@ async function startTask(){
  for(const [label,value] of [['采样步数（1–150）','33'],['种子（0–2147483647）','100'],['重绘强度（大于 0 至 1，可选）','0.6'],['来源与授权说明',fixture.command.license_note]])fireEvent.change(within(task).getByLabelText(label),{target:{value}});
  return {mounted,task};
 }
+async function confirmTaskImpact(task:HTMLElement){
+ const check=within(task).getByLabelText('已核对本次输入变化与影响范围');await waitFor(()=>expect((check as HTMLInputElement).disabled).toBe(false));
+ fireEvent.click(check);fireEvent.click(within(task).getByRole('button',{name:'确认本次输入核对'}));
+}
 async function approveTask(task:HTMLElement){
  fireEvent.click(within(task).getByRole('button',{name:'读取制作预览'}));await within(task).findByRole('region',{name:'制作预览确认'});
- fireEvent.click(within(task).getByLabelText('已核对本次输入、来源和处理边界'));fireEvent.click(within(task).getByRole('button',{name:'仅创建任务并入队'}));
- const execute=await within(task).findByRole('button',{name:'明确执行当前入队任务'});await waitFor(()=>expect((execute as HTMLButtonElement).disabled).toBe(false));fireEvent.click(execute);
+ fireEvent.click(within(task).getByLabelText('已核对本次输入、来源和处理边界'));await confirmTaskImpact(task);
+  const create=within(task).getByRole('button',{name:'仅创建任务并入队'});await waitFor(()=>expect((create as HTMLButtonElement).disabled).toBe(false));fireEvent.click(create);
+ const execute=await within(task).findByRole('button',{name:'明确执行当前入队任务'});await waitFor(()=>expect(within(task).getByText(/执行前再次核对/)).toBeTruthy());await confirmTaskImpact(task);await waitFor(()=>expect((execute as HTMLButtonElement).disabled).toBe(false));fireEvent.click(execute);
  const candidate=await within(task).findByRole('button',{name:'读取并核对候选媒体'});await waitFor(()=>expect((candidate as HTMLButtonElement).disabled).toBe(false));fireEvent.click(candidate);
  const check=within(task).getByLabelText('已查看本次候选，确认采用当前任务版本与输出摘要');await waitFor(()=>expect((check as HTMLInputElement).disabled).toBe(false));fireEvent.click(check);
  fireEvent.click(within(task).getByRole('button',{name:'明确审核并入素材库'}));await screen.findByRole('region',{name:'审核结果回到原作品位置'});

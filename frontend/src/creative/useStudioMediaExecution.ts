@@ -1,3 +1,5 @@
+import { canonicalExecutionImpact, type ExecutionImpactConfirmation } from '../experimental/executionImpact/executionImpact';
+import { studioExecutionImpactGate, sameExecutionPreview, type StudioExecutionImpactGate, type StudioExecutionImpactInput } from './studioExecutionImpactGate';
 import { sameCompositeCommand } from './studioImageCompositeContract';
 import { assertCanvasImageTaskCommand, canvasImageTaskJobMatches, type CanvasImageTaskBinding } from './canvasImageTask';
 import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
@@ -250,6 +252,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const previewConsentRef = useRef(previewConsent), reviewConsentRef = useRef(reviewConsent), providersRef = useRef(providers);
   const creation = useRef<Creation>(), baseline = useRef(inputKey(initialDraft(props.canvasImageTask)));
   const sentActions = useRef(new Set<string>()), consumedExternal = useRef('');
+  const impactState = useRef<{ stamp: string; client: StudioProductionClient; methods: unknown[]; canMutate: boolean; canReview: boolean; gate?: StudioExecutionImpactGate }>();
+  const impactReadRevision = useRef(0);
+  const executionPreview = useRef<{ jobId: string; preview: ProductionPreview }>();
+  const [, updateImpact] = useState(0);
   const receiptDownload = useRef<string>(), receiptTimer = useRef<ReturnType<typeof setTimeout>>();
   draftRef.current = draft; selectedRef.current = selected; previewRef.current = preview; uncertainRef.current = uncertain;
   previewConsentRef.current = previewConsent; reviewConsentRef.current = reviewConsent; providersRef.current = providers;
@@ -281,6 +287,57 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   const canClosePrepared = canEdit && (!selected || !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selected.status));
   let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check',props.canvasImageTask); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
+
+  // Additive confirmation for the original single-card image path only.
+  const impactRequired = () => !!latest.current.canvasImageTask || !!previewRef.current?.command.canvas_return || !!selectedRef.current?.command?.canvas_return;
+  function impactInput(): StudioExecutionImpactInput | undefined {
+    const task = latest.current.canvasImageTask, binding = task?.returnBinding, saved = previewRef.current, job = selectedRef.current;
+    if (!task || !binding) return;
+    const scope = { novel_id: binding.project_id, branch_id: binding.scope.mode === 'collaboration' ? binding.scope.branch_id : null, incarnation: binding.incarnation };
+    if (saved && saved.input === inputKey(draftRef.current)) return { scope, command: saved.command, recipe: saved.value.execution_recipe,
+      ...(job ? { previousJob: job } : {}), editScope: 'TASK', boundary: {kind:'CREATE'}, preview: saved.value };
+    const stored = executionPreview.current;
+    if (job?.status === 'QUEUED' && job.command && stored?.jobId === job.id && sameExecutionPreview(job, stored.preview)) return {
+      scope, command: job.command, recipe: job.execution_recipe, previousJob: job, editScope:'TASK',
+      boundary:{kind:'EXECUTE',job:{id:job.id,owner:job.owner,version:job.version,request_digest:job.request_digest}}, preview:stored.preview };
+  }
+  function impactStamp() {
+    return canonicalExecutionImpact({revision:impactReadRevision.current,input:impactInput() ?? null,draft:draftRef.current,task:latest.current.canvasImageTask?.returnBinding ?? null,
+      assets:latest.current.assets,providers:providersRef.current});
+  }
+  function impactAuthority() {
+    const task = latest.current.canvasImageTask;
+    return current() && latest.current.canMutate && !uncertainRef.current
+      && !['UNKNOWN','SEND_RESERVED','RUNNING','REMOTE_RUNNING','REVIEWING'].includes(selectedRef.current?.status ?? '') && !!task?.isCurrent()
+      && sourcesCurrent(draftRef.current.sources,latest.current.assets,draftRef.current.operation);
+  }
+  let stamp = ''; try { stamp = impactStamp(); } catch { /* Invalid inputs remain blocked. */ }
+  const impactMethods = () => [latest.current.client.preview,latest.current.client.create,latest.current.client.execute,latest.current.client.get];
+  const oldImpact = impactState.current;
+  if (!oldImpact || oldImpact.stamp !== stamp || oldImpact.client !== props.client || oldImpact.methods.some((v,i)=>v!==impactMethods()[i]) || oldImpact.canMutate !== props.canMutate || oldImpact.canReview !== props.canReview) {
+    oldImpact?.gate?.retire();
+    const value = {stamp,client:props.client,methods:impactMethods(),canMutate:props.canMutate,canReview:props.canReview,gate:undefined as StudioExecutionImpactGate|undefined};
+    impactState.current = value;
+    const target = impactInput();
+    if (target && stamp) value.gate = studioExecutionImpactGate(target,impactInput,()=> impactState.current===value
+      && latest.current.client===value.client && value.methods.every((v,i)=>v===impactMethods()[i]) && latest.current.canMutate===value.canMutate && latest.current.canReview===value.canReview
+      && impactAuthority() && impactStamp()===value.stamp);
+  }
+  const impact = impactState.current?.gate;
+  async function confirmImpact(gate: StudioExecutionImpactGate, proof: ExecutionImpactConfirmation) {
+    if (impactState.current?.gate !== gate || busy()) return;
+    if (await gate.confirm(proof)) { if (impactState.current?.gate===gate) updateImpact(v=>v+1); }
+  }
+  function impactReady(kind:'CREATE'|'EXECUTE') {
+    if (!impactRequired()) return true;
+    const gate = impactState.current?.gate; return gate?.input.boundary.kind===kind && gate.ready();
+  }
+  function consumeImpact(kind:'CREATE'|'EXECUTE',gate?:StudioExecutionImpactGate) {
+    if (!impactRequired() && !gate) return;
+    if (!impactRequired() || !gate || impactState.current?.gate!==gate || gate.input.boundary.kind!==kind || !gate.consume()) {
+      throw new ApiError({status:422,code:'STUDIO_EXECUTION_IMPACT_RETIRED',message:'本次输入核对已失效或已使用，请重新读取预览并明确确认；没有再次派发。'});
+    }
+  }
 
   const leaveGuard = useStudioProductionLeaveRisk(props.leaveGuard, () => {
     const attempt = creation.current, job = selectedRef.current;
@@ -563,6 +620,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       const chosen = providersRef.current.find(row => latest.current.preparedCommand ? row.operation_id === command.operation_id && row.provider_id === command.provider_id && row.model_id === command.model_id : mediaProviderKey(row) === draftRef.current.providerKey);
       if (command.operation_id === 'm5.image.composite' && !sameCompositeCommand(command, result.command)) throw invalid('叠层配方或来源已变化。');
       if (!['m8.audio.trim', 'm5.image.cutout', 'm5.image.composite'].includes(command.operation_id) && (!chosen || !result.provider || result.provider.route_digest !== chosen.route_digest || result.provider.local !== chosen.local)) throw invalid('服务商路线已变化，请重新读取配置并预览。');
+      impactReadRevision.current++;
       const next = { value: result, command, input: captured }; previewRef.current = next; setPreview(next);
       setNotice('预览已读取；尚未创建任务，也未执行媒体处理。');
     } catch (reason) { if (live(value)) failure(reason, '制作预览未完成。'); } finally { finish(value); }
@@ -570,15 +628,22 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function confirmPreview(checked: boolean) { if (!current() || busy()) return; const key = previewRef.current && previewRef.current.input === inputKey(draftRef.current) && sourcesCurrent(draftRef.current.sources, latest.current.assets, draftRef.current.operation)
     ? JSON.stringify([previewRef.current.input, previewRef.current.value.preview_digest, previewRef.current.value.request_digest]) : ''; previewConsentRef.current = checked ? key : ''; setPreviewConsent(previewConsentRef.current); }
   async function create() {
+    if (impactRequired() && !impactReady('CREATE')) return;
     const saved = previewRef.current;
     if (!current() || !latest.current.canMutate || uncertainRef.current || creation.current || !saved || saved.input !== inputKey(draftRef.current) || !sourcesCurrent(saved.command.source_snapshots, latest.current.assets, saved.command.operation_id)) return;
-    const binding = JSON.stringify([saved.input, saved.value.preview_digest, saved.value.request_digest]); if (previewConsentRef.current !== binding) return;
+    const binding = JSON.stringify([saved.input, saved.value.preview_digest, saved.value.request_digest]); if (previewConsentRef.current !== binding || !impactReady('CREATE')) return;
+    const impactGate = impactState.current?.gate;
     const value = begin('CREATE'); if (!value) return;
     creation.current = { requestId: saved.command.request_id, requestDigest: saved.value.request_digest, operation: saved.command.operation_id, input: saved.input, uncertain: true };
     try {
-      const result = await latest.current.mutate(() => value.client.create(saved.command, saved.value.preview_digest));
+      const result = await latest.current.mutate(() => {
+        if ((impactGate || impactRequired()) && (!live(value) || saved !== previewRef.current || previewConsentRef.current!==binding)) throw new ApiError({status:422,code:'STUDIO_EXECUTION_IMPACT_RETIRED',message:'原预览或任务范围已改变，未创建任务。'});
+        consumeImpact('CREATE',impactGate); return value.client.create(saved.command, saved.value.preview_digest);
+      });
       if (!live(value)) return;
       if (result.request_digest !== saved.value.request_digest || result.status !== 'QUEUED') throw invalid('入队回执与预览不一致，请读取任务核对。');
+      if (impactRequired() && !sameExecutionPreview(result,saved.value)) throw invalid('入队命令、路线或配方与原预览不一致，请读取核对，不能执行。');
+      executionPreview.current={jobId:result.id,preview:structuredClone(saved.value)};
       creation.current = { ...creation.current!, uncertain: false }; baseline.current = saved.input;
       adoptJob(result); clearPreview(); markUncertain(false); setNotice('任务已保存入队。执行仍需单独点击。');
     } catch (reason) { if (live(value)) { if (!uncertainFailure(reason)) creation.current = undefined; failure(reason, '任务入队未完成，请读取核对。', true); } } finally { finish(value); }
@@ -610,7 +675,22 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       adoptJob(result); if (!creation.current?.uncertain) markUncertain(false); setNotice('已读取当前任务版本；未重新执行。');
     } catch (reason) { if (live(value)) failure(reason, '任务读取失败。'); } finally { finish(value); }
   }
+  async function inspectExecution() {
+    const job = selectedRef.current;
+    if (!impactRequired() || !job?.command || job.status!=='QUEUED' || !latest.current.canMutate || uncertainRef.current
+      || !latest.current.canvasImageTask?.isCurrent() || !canvasImageTaskJobMatches(latest.current.canvasImageTask,job)
+      || !sourcesCurrent(job.sources,latest.current.assets,job.operation_id)) return;
+    const value=begin('PREVIEW');if(!value)return;clearPreview();
+    const captured=impactStamp(),identity=jobIdentity(job);
+    try {
+      const result=await latest.current.read(()=>value.client.preview(structuredClone(job.command!)));
+      if(!live(value)||jobIdentity(selectedRef.current)!==identity||impactStamp()!==captured)return;
+      if(!sameExecutionPreview(job,result))throw invalid('重新读取的预览与原入队命令、路线或配方不一致，不能执行。');
+      impactReadRevision.current++;executionPreview.current={jobId:job.id,preview:result};updateImpact(v=>v+1);setNotice('已核对原入队任务预览；仍需单独确认本次执行输入，没有派发。');
+    }catch(reason){if(live(value))failure(reason,'原入队任务预览核对失败。');}finally{finish(value);}
+  }
   function canAction(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
+    if (kind==='execute' && impactRequired() && !impactReady('EXECUTE')) return false;
     const task = latest.current.canvasImageTask, originalJob = selectedRef.current;
     if(task && (kind==='execute'||kind==='review') && (!originalJob||!canvasImageTaskJobMatches(task,originalJob)||kind==='execute'&&!task.isCurrent()))return false;
     const job = selectedRef.current;
@@ -620,7 +700,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (kind === 'review') return latest.current.canReview && fresh && ['AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING'].includes(job.status)
       && !!job.output_candidate && candidateRef.current?.binding === reviewIdentity(job) && reviewConsentRef.current === reviewIdentity(job);
     if (!latest.current.canMutate) return false;
-    if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh;
+    if (kind === 'execute') return job.owner !== 'timeline' && job.status === 'QUEUED' && fresh && impactReady('EXECUTE');
     if (kind === 'refresh') return job.owner === 'video' && ['REMOTE_RUNNING', 'RESULT_READY', 'UNKNOWN'].includes(job.status);
     if (kind === 'reconcile') return ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && job.status === 'CANCELLED' ? !!job.processing_proof && !job.output_candidate : job.owner === 'timeline' ? ['RUNNING', 'UNKNOWN', 'REVIEWING'].includes(job.status)
       : job.owner === 'video' ? ['RUNNING', 'SEND_RESERVED', 'UNKNOWN', 'RESULT_READY', 'REVIEWING'].includes(job.status)
@@ -630,14 +710,20 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       : ['QUEUED', 'AWAITING_REVIEW', 'UNKNOWN', 'REMOTE_RUNNING', 'RESULT_READY'].includes(job.status);
   }
   async function action(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
-    if (!canAction(kind)) return; const job = selectedRef.current!;
+    if (!canAction(kind)) return; const job = selectedRef.current!, impactGate=impactState.current?.gate;
     const value = begin(kind); if (!value) return; clearCandidate();
     const sentKey = actionIdentity(job, kind); sentActions.current.add(sentKey);
     const localExecution = kind === 'execute' && ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && latest.current.cutoutExecution;
     if (localExecution) executingCutout.current = job;
     const responseFence = controlFence.current;
     try {
-      const result = await (localExecution ? localExecution.execute(job) : latest.current.mutate(() => value.client[kind](job))); if (!live(value)) return;
+      const result = await (localExecution ? localExecution.execute(job) : latest.current.mutate(() => {
+        if(kind==='execute' && (impactGate || impactRequired())) {
+          if(!live(value)||jobIdentity(selectedRef.current)!==jobIdentity(job))throw new ApiError({status:422,code:'STUDIO_EXECUTION_IMPACT_RETIRED',message:'原任务范围或版本已改变，未派发执行。'});
+          consumeImpact('EXECUTE',impactGate);
+        }
+        return value.client[kind](job);
+      })); if (!live(value)) return;
       if (localExecution && responseFence !== controlFence.current) {
         if (runningControlRef.current || uncertainRef.current || selectedRef.current?.version && result.version <= selectedRef.current.version) return;
         if (selectedRef.current?.status === 'CANCELLED') return;
@@ -763,11 +849,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     parameterNames: !owns ? [] : draft.operation === 'm8.audio.trim' ? parametersByOperation[draft.operation] : provider ? parametersByOperation[draft.operation].filter(name => provider.supported_parameters.includes(name)) : [],
     unsupportedParameters: owns ? unsupportedParameters : [], creationUncertain: owns && !!creation.current?.uncertain,
     uncertainRequestId: owns && creation.current?.uncertain ? creation.current.requestId : undefined,
-    canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
+    canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding && impactReady('CREATE'),
     canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
     endFrameSource: draft.lastFrame, videoFrameCapabilities: provider?.video_frame_capabilities, selectEndFrame,
     routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    impact, confirmImpact, impactRequired:impactRequired(), inspectExecution,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;
