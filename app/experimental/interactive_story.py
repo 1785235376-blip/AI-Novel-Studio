@@ -927,7 +927,8 @@ class InteractiveStoryService(SourceFencedService):
         try:
             receipt = VerificationReceipt.model_validate(data.receipt)
         except Exception as exc:
-            raise ValueError('EXPORT_VERIFICATION_RECEIPT_INVALID: ' + str(exc).splitlines()[0][:240]) from None
+            detail = ' | '.join(line.strip() for line in str(exc).splitlines() if line.strip())[:1200]
+            raise ValueError('EXPORT_VERIFICATION_RECEIPT_INVALID: ' + detail) from None
         if receipt.story_id != sid:
             raise ValueError('EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT: receipt story does not match this adaptation')
         descriptor = next((item for item in all_target_descriptors() if item['target_id'] == receipt.target_id), None)
@@ -1018,13 +1019,14 @@ class InteractiveStoryService(SourceFencedService):
         # history state, not story authority. They must never change the
         # reproducible preview digest that binds this export request.
         stable = deepcopy(result)
+        volatile_keys = ('engine_probe', 'artifact_evidence', 'artifact_evidence_status', 'runtime_claim')
         for target in stable.get('targets', []):
-            for key in ('engine_probe', 'artifact_evidence', 'artifact_evidence_status'):
+            for key in volatile_keys:
                 target.pop(key, None)
         if isinstance(stable.get('selected_target'), dict):
-            for key in ('engine_probe', 'artifact_evidence', 'artifact_evidence_status'):
+            for key in volatile_keys:
                 stable['selected_target'].pop(key, None)
-        for key in ('artifact_evidence', 'artifact_evidence_status'):
+        for key in ('artifact_evidence', 'artifact_evidence_status', 'runtime_claim', 'target_runtime'):
             stable.pop(key, None)
         result['preview_digest'] = digest([self._receipt(row), stable]); self._current(nid, scope, row); reauthorize(); return result
 
