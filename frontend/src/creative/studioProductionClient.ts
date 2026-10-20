@@ -27,7 +27,7 @@ export type RecordedProductionSource = ProductionSource | ComicImageSource | { i
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
 export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities; video_frame_capabilities?: VideoFrameCapabilities;
   image_capabilities?: { recipe_id: string; reference_limit: number; reference_semantics: 'WEIGHTED_PIXEL_INITIALIZATION' | 'SINGLE_IMAGE_INITIALIZATION';
-    mask_semantics: 'WHITE_KEEP_BLACK_REPAINT' | null; structural_only: true; inference_verified: false; upscaling?: { scales: [2, 4]; output_format: 'PNG'; output_size_limit: 4096; output_pixel_limit: 16777216 } } };
+    mask_semantics: 'WHITE_KEEP_BLACK_REPAINT' | null; structural_only: true; inference_verified: false; cfg?: { min: number; max: number; default: 7 }; upscaling?: { scales: [2, 4]; output_format: 'PNG'; output_size_limit: 4096; output_pixel_limit: 16777216 } } };
 export type ProductionPreview = { contract: 'studio-production-preview/1'; novel_id: string; branch_id: string | null; request_id: string; operation_id: MediaOperation;
   preview_digest: string; request_digest: string; command: MediaCommand; provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   sources?: { snapshot: RecordedProductionSource; measured: Record<string, unknown> }[];
@@ -70,13 +70,17 @@ export type ProductionAction = { expected_version: number; expected_request_dige
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
 const states = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
-const parameterKeys = ['cutout_output', 'scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
+const parameterKeys = ['cutout_output', 'scale', 'width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
 const trimControlKeys = ['gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'];
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
 const revision = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1;
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务回执不完整。请重新读取核对，勿重复发送。' }); }
+function cfgParameter(parameters: Record<string, unknown>, operation: unknown) {
+  if (Object.hasOwn(parameters, 'cfg') && (operation !== 'm5.image.t2i' || typeof parameters.cfg !== 'number'
+    || !Number.isFinite(parameters.cfg) || parameters.cfg < 0 || parameters.cfg > 100)) invalid();
+}
 function sources(v: unknown, limit: number): asserts v is RecordedProductionSource[] {
   if (!Array.isArray(v) || v.length > limit) invalid();
   for (const s of v) {
@@ -169,6 +173,7 @@ function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCom
     { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
 }
 function commandScope(command: MediaCommand) {
+  cfgParameter(command.parameters, command.operation_id);
   if (command.operation_id === 'm5.image.composite') { checkedCompositeCommand(command); return; }
   if (command.image_layers !== undefined) invalid();
   checkedComicImageFields(command);
@@ -252,6 +257,12 @@ function audioMeasurement(v: unknown, executionRecipe: ProductionRecipe, command
   return v as AudioWavMeasurement | AudioFlacMeasurement | AudioMp3Measurement;
 }
 function recipe(v: unknown, operation: unknown): ProductionRecipe {
+  if (record(v) && record(v.parameters)) {
+    cfgParameter(v.parameters, operation);
+    if (Object.hasOwn(v.parameters, 'cfg') && (v.adapter !== 'COMFYUI_BUILTIN_IMAGE' || v.image_recipe_id !== 'comfy-sd-checkpoint-v1'
+      || !record(v.workflow) || !record(v.workflow['3']) || !record(v.workflow['3'].inputs)
+      || v.workflow['3'].class_type !== 'KSampler' || v.workflow['3'].inputs.cfg !== v.parameters.cfg)) invalid();
+  }
   if (operation === 'm5.image.composite') return checkedCompositeRecipe(v);
   if (operation === 'm5.image.cutout') {
     const keys = ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'output_profile', 'mask_policy'];
@@ -405,6 +416,8 @@ export function studioProductionClient(projectId: string, context: Collaboration
       }
       if (c.parameters.denoising_strength !== undefined && c.parameters.denoising_strength !== null && (!['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(String(c.operation_id))
         || typeof c.parameters.denoising_strength !== 'number' || !Number.isFinite(c.parameters.denoising_strength) || c.parameters.denoising_strength <= 0 || c.parameters.denoising_strength > 1)) invalid();
+      cfgParameter(c.parameters, c.operation_id);
+      if (Object.hasOwn(c.parameters, 'cfg') && (!record(executionRecipe.parameters) || executionRecipe.parameters.cfg !== c.parameters.cfg)) invalid();
       if (c.source_snapshots.length !== v.sources.length || c.source_snapshots.some((s, index) => ['id', 'kind', 'version', 'digest', 'asset_kind'].some(key =>
         ((s as Record<string, unknown>).kind === 'COMIC_PANEL' && key === 'asset_kind' ? ((s as Record<string, unknown>)[key] ?? null) !== ((v.sources as Array<Record<string, unknown>>)[index][key] ?? null) : (s as Record<string, unknown>)[key] !== (v.sources as Array<Record<string, unknown>>)[index][key])))) invalid();
       if (c.operation_id === 'm5.image.composite') {
@@ -470,16 +483,24 @@ export function studioProductionClient(projectId: string, context: Collaboration
         if (!record(row) || ['m5.image.cutout', 'm5.image.composite'].includes(String(row.operation_id)) || !operations.includes(row.operation_id as MediaOperation) || typeof row.provider_id !== 'string' || !row.provider_id || row.provider_id.length > 240
           || typeof row.model_id !== 'string' || !row.model_id || row.model_id.length > 240 || typeof row.local !== 'boolean' || !hex(row.route_digest) || row.readiness !== 'CONFIGURED_NOT_VERIFIED'
           || !Array.isArray(row.supported_parameters) || row.supported_parameters.length > 14 || row.supported_parameters.some(p => typeof p !== 'string'
-            || !['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'].includes(p))) invalid();
+            || !['scale', 'width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'].includes(p))) invalid();
         if (row.image_capabilities !== undefined) {
           const image = row.image_capabilities;
-          const keys = ['recipe_id', 'reference_limit', 'reference_semantics', 'mask_semantics', 'structural_only', 'inference_verified', ...(row.operation_id === 'm5.image.upscale' ? ['upscaling'] : [])];
+          const keys = ['recipe_id', 'reference_limit', 'reference_semantics', 'mask_semantics', 'structural_only', 'inference_verified', ...(row.operation_id === 'm5.image.upscale' ? ['upscaling'] : []), ...(record(image) && Object.hasOwn(image, 'cfg') ? ['cfg'] : [])];
           if (!String(row.operation_id).startsWith('m5.image.') || !record(image) || Object.keys(image).length !== keys.length || keys.some(key => !Object.hasOwn(image, key))
             || typeof image.recipe_id !== 'string' || !image.recipe_id.trim() || image.recipe_id.length > 240 || /[\x00-\x1f\x7f]/.test(image.recipe_id)
             || typeof image.reference_limit !== 'number' || !Number.isSafeInteger(image.reference_limit) || image.reference_limit < 0 || image.reference_limit > 5
             || !['WEIGHTED_PIXEL_INITIALIZATION', 'SINGLE_IMAGE_INITIALIZATION'].includes(String(image.reference_semantics))
             || image.mask_semantics !== null && image.mask_semantics !== 'WHITE_KEEP_BLACK_REPAINT' || image.structural_only !== true || image.inference_verified !== false) invalid();
+          if (Object.hasOwn(image, 'cfg')) {
+            const control = image.cfg;
+            if (row.local !== true || image.recipe_id !== 'comfy-sd-checkpoint-v1' || !record(control) || Object.keys(control).length !== 3
+              || !['min', 'max', 'default'].every(key => typeof control[key] === 'number' && Number.isFinite(control[key]))
+              || (control.min as number) < 0 || (control.min as number) > 7 || control.default !== 7 || (control.max as number) < 7 || (control.max as number) > 100) invalid();
+          }
         }
+        if (row.supported_parameters.includes('cfg') && (row.operation_id !== 'm5.image.t2i' || row.local !== true
+          || !record(row.image_capabilities) || row.image_capabilities.recipe_id !== 'comfy-sd-checkpoint-v1' || !record(row.image_capabilities.cfg))) invalid();
         if (row.operation_id === 'm5.image.upscale') {
           const capability = record(row.image_capabilities) ? row.image_capabilities : invalid(), upscaling = record(capability.upscaling) ? capability.upscaling : invalid();
           if (row.local !== true || capability.reference_limit !== 1 || capability.reference_semantics !== 'SINGLE_IMAGE_INITIALIZATION' || capability.mask_semantics !== null

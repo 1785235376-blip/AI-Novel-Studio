@@ -106,6 +106,17 @@ def validate_workflow(info, graph):
     return graph
 
 
+def cfg_control(recipe):
+    """Only an observed SD KSampler bound grants this closed T2I control."""
+    value = recipe.get('cfg_control')
+    if recipe.get('recipe_id') != 'comfy-sd-checkpoint-v1' or not isinstance(value, dict) or set(value) != {'min', 'max', 'default'}:
+        return None
+    if (any(type(v) not in {int, float} or not math.isfinite(v) for v in value.values())
+            or not 0 <= value['min'] <= value['default'] == 7 <= value['max'] <= 100):
+        return None
+    return copy.deepcopy(value)
+
+
 def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), weights=(), mask=None, source_dimensions=None):
     """Build one fixed graph; weights alter actual normalized pixel blending."""
     if operation not in recipe['operations']:
@@ -114,8 +125,13 @@ def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), w
         return build_upscale_workflow(recipe, prompt, parameters, uploads=uploads,
             weights=weights, mask=mask, source_dimensions=source_dimensions)
     p = dict(parameters)
-    if set(p) - {'width', 'height', 'steps', 'seed', 'negative_prompt', 'denoising_strength'}:
+    if set(p) - {'width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt', 'denoising_strength'}:
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
+    if 'cfg' in p:
+        control = cfg_control(recipe)
+        if (operation != 't2i' or control is None or type(p['cfg']) not in {int, float}
+                or not math.isfinite(p['cfg']) or not control['min'] <= p['cfg'] <= control['max']):
+            raise ValueError('IMAGE_CFG_UNSUPPORTED_OR_OUT_OF_RANGE')
     if operation != 't2i' and {'width', 'height'} & set(p):
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
     if 'denoising_strength' in p and (operation == 't2i' or type(p['denoising_strength']) not in {int, float}
@@ -174,7 +190,7 @@ def build_workflow(recipe, prompt, parameters, *, operation='t2i', uploads=(), w
     elif uploads or weights or mask:
         raise ValueError('IMAGE_RECIPE_T2I_INPUT_INVALID')
     graph['3'] = {'class_type': 'KSampler', 'inputs': {'seed': p.get('seed', 0), 'steps': p.get('steps', default_steps),
-        'cfg': cfg, 'sampler_name': 'euler', 'scheduler': 'normal', 'denoise': 1 if operation == 't2i' else p.get('denoising_strength', 0.6),
+        'cfg': p.get('cfg', cfg), 'sampler_name': 'euler', 'scheduler': 'normal', 'denoise': 1 if operation == 't2i' else p.get('denoising_strength', 0.6),
         'model': model, 'positive': positive, 'negative': ['7', 0], 'latent_image': ['5', 0]}}
     graph['8'] = {'class_type': 'VAEDecode', 'inputs': {'samples': ['3', 0], 'vae': vae}}
     output = ['8', 0]
@@ -207,6 +223,14 @@ def project_comfy_image_recipe(info, model_name, family):
             'reference_semantics': 'SINGLE_IMAGE_INITIALIZATION', 'mask_semantics': None,
             'structural_only': True, 'inference_verified': False}
         validate_workflow(info, build_workflow(recipe, 'structure validation', {}))
+        if family == 'STABLE_DIFFUSION':
+            schema = _fields(info, 'KSampler')[1].get('cfg')
+            options = schema[1] if isinstance(schema, (list, tuple)) and len(schema) > 1 else None
+            if (schema[0] == 'FLOAT' and isinstance(options, dict)
+                    and all(type(options.get(k)) in {int, float} and math.isfinite(options[k]) for k in ('min', 'max'))):
+                candidate = {**recipe, 'cfg_control': {'min': max(0, options['min']), 'max': min(100, options['max']), 'default': 7}}
+                if cfg_control(candidate) is not None:
+                    recipe['cfg_control'] = candidate['cfg_control']
         for operation in ('i2i', 'reference', 'inpaint'):
             probe = {**recipe, 'operations': [*recipe['operations'], operation], 'reference_limit': 5}
             try:
@@ -227,6 +251,8 @@ def project_comfy_image_recipe(info, model_name, family):
 def public_capabilities(recipe):
     result = {key: copy.deepcopy(recipe[key]) for key in ('recipe_id', 'reference_limit', 'reference_semantics',
         'mask_semantics', 'structural_only', 'inference_verified')}
+    control = cfg_control(recipe)
+    if control is not None: result['cfg'] = control
     if recipe['recipe_id'] == 'comfy-upscale-model-v1':
         result['upscaling'] = {'scales': [2, 4], 'output_format': 'PNG',
             'output_size_limit': 4096, 'output_pixel_limit': 16777216}

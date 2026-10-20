@@ -15,7 +15,7 @@ DEFAULT_IMAGE_ENDPOINTS={key:value["endpoint"] for key,value in IMAGE_PROVIDER_C
 DEFAULT_IMAGE_MODELS={key:value["default_model"] for key,value in IMAGE_PROVIDER_CATALOG.items()}
 
 def validate_image_parameters(parameters: dict, allowed=None) -> dict:
-    known={'size','quality','width','height','steps','seed','negative_prompt','denoising_strength'}
+    known={'size','quality','width','height','steps','seed','cfg','negative_prompt','denoising_strength'}
     if allowed is not None and 'scale' in allowed:known.add('scale')
     if set(parameters)-known or (allowed is not None and set(parameters)-set(allowed)):
         raise ValueError('IMAGE_PARAMETER_UNSUPPORTED')
@@ -23,6 +23,9 @@ def validate_image_parameters(parameters: dict, allowed=None) -> dict:
         if key in parameters and (not isinstance(parameters[key],int) or isinstance(parameters[key],bool) or not 64<=parameters[key]<=2048 or parameters[key]%8): raise ValueError('image dimensions must be multiples of 8 between 64 and 2048')
     if 'steps' in parameters and (not isinstance(parameters['steps'],int) or isinstance(parameters['steps'],bool) or not 1<=parameters['steps']<=150):raise ValueError('invalid image step count')
     if 'seed' in parameters and (not isinstance(parameters['seed'],int) or isinstance(parameters['seed'],bool) or not 0<=parameters['seed']<=2147483647):raise ValueError('invalid image seed')
+    if 'cfg' in parameters:
+        import math
+        if type(parameters['cfg']) not in {int,float} or not math.isfinite(parameters['cfg']) or not 0<=parameters['cfg']<=100:raise ValueError('invalid image cfg')
     if 'size' in parameters and parameters['size'] not in {'auto','1024x1024','1536x1024','1024x1536'}:raise ValueError('unsupported image size')
     if 'quality' in parameters and parameters['quality'] not in {'auto','low','medium','high','standard','hd'}:raise ValueError('unsupported image quality')
     if 'negative_prompt' in parameters and (not isinstance(parameters['negative_prompt'],str) or len(parameters['negative_prompt'])>10000):raise ValueError('invalid negative prompt')
@@ -331,6 +334,8 @@ class ComfyUIImageProvider:
         if not recipe or operation not in recipe['operations']:raise ValueError('IMAGE_RECIPE_OPERATION_NOT_CONFIGURED')
         if operation=='upscale':return ('scale',)
         parameters=self.supported_parameters if operation=='t2i' else self.edit_supported_parameters+('denoising_strength',)
+        from .services.studio_image_provider_recipes import cfg_control
+        if operation=='t2i' and cfg_control(recipe) is not None:parameters+=('cfg',)
         if recipe['recipe_id']=='comfy-flux1-v1':parameters=tuple(k for k in parameters if k!='negative_prompt')
         return parameters
     def image_recipe(self, request, *, operation, reference_weights=(), mask=False, source_dimensions=None):
@@ -359,6 +364,9 @@ class ComfyUIImageProvider:
             if request.dispatch_guard is not None:request.dispatch_guard()
             info=response.json()
             projected=project_comfy_image_recipe(info,request.model_id,family)
+            # Existing registrations omit the new optional control. Preserve
+            # their exact binding and default workflow until explicitly revalidated.
+            if projected is not None and 'cfg_control' not in descriptor:projected.pop('cfg_control',None)
             if projected!=descriptor:raise ValueError('IMAGE_RECIPE_CONFIGURATION_CHANGED')
             return info
         if sum(len(value) for value in [*images,*([mask] if mask is not None else [])] if isinstance(value,str))>36*1024*1024:

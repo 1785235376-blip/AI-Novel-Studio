@@ -6,11 +6,12 @@ import { studioGraphEditorView } from './studioGraphEditorView';
 import { imageGraphCatalog } from './studioImageGraph.testFixtures';
 import { samplingProvider, samplingRecord } from './studioGraphRecipeParameters.testFixtures';
 import type { StudioClient } from './studioClient';
+import type { ProductionProvider } from './studioProductionClient';
 import type { StudioGraphPreflight, StudioGraphPreflightInput, StudioGraphSaveInput } from './studioGraphTypes';
 afterEach(cleanup);
-function fixture() {
+function fixture(provider: ProductionProvider = samplingProvider()) {
   let saved = samplingRecord();
-  const providers = vi.fn().mockResolvedValue([samplingProvider()]);
+  const providers = vi.fn().mockResolvedValue([provider]);
   const noExecution = { createRun: vi.fn(), previewMedia: vi.fn(), dispatchMedia: vi.fn(), executeMedia: vi.fn() };
   const client = { graphs: { catalog: vi.fn().mockResolvedValue(imageGraphCatalog()), imageCatalog: vi.fn().mockResolvedValue(imageGraphCatalog()),
     list: vi.fn(async () => ({ items: [structuredClone(saved)] })), get: vi.fn(async () => structuredClone(saved)),
@@ -24,8 +25,8 @@ function fixture() {
     busy: false, externalDirty: false, isCurrent: () => true, read: work => work(), mutate: work => work() };
   return { client, props, providers, noExecution, saved: () => saved };
 }
-async function setup() {
-  const f = fixture(), hook = renderHook(props => useStudioGraphEditorController(props), { initialProps: f.props });
+async function setup(provider?: ProductionProvider) {
+  const f = fixture(provider), hook = renderHook(props => useStudioGraphEditorController(props), { initialProps: f.props });
   await waitFor(() => expect(hook.result.current.editable).toBe(true));
   await act(() => hook.result.current.open(f.saved().id));
   act(() => hook.result.current.setSelected(['generate']));
@@ -97,4 +98,27 @@ it('renders the new lower-flow form through the real owner/view and invalidates 
   fireEvent.click(screen.getByRole('button', { name: '应用采样参数到原图草稿' }));
   expect(controller.node!.parameters.parameters).toMatchObject({ steps: 37, seed: 424242 });
   expect(f.client.graphs.preflight).toHaveBeenCalledTimes(1); Object.values(f.noExecution).forEach(fn => expect(fn).not.toHaveBeenCalled());
+});
+
+const cfgProvider = () => { const p = samplingProvider(); p.supported_parameters.push('cfg'); p.image_capabilities!.cfg = { min: 0, max: 12, default: 7 }; return p; };
+it('applies real cfg zero once, retires retained preview intent, undoes/redoes and saves/reopens through the original owner', async () => {
+  const api = await setup(cfgProvider()), original = structuredClone(api.result.current.draft), current = api.result.current.runInputCurrent;
+  act(() => api.result.current.recipeParameters.edit('cfg', '0')); expect(current()).toBe(false);
+  expect(api.result.current.draft).toEqual(original); expect(api.result.current.recipeParameters.canApply).toBe(true);
+  const apply = api.result.current.recipeParameters.apply;
+  act(() => { apply(); apply(); }); expect(api.result.current.past).toHaveLength(1);
+  expect(api.result.current.node!.parameters.parameters?.cfg).toBe(0);
+  act(() => api.result.current.travel(false)); expect(api.result.current.draft).toEqual(original);
+  act(() => api.result.current.travel(true)); expect(api.result.current.node!.parameters.parameters?.cfg).toBe(0);
+  await act(() => api.result.current.save()); await act(() => api.result.current.open(api.saved().id));
+  expect(api.result.current.draft.nodes[1].parameters.parameters?.cfg).toBe(0);
+  Object.values(api.noExecution).forEach(fn => expect(fn).not.toHaveBeenCalled());
+});
+it('refuses cfg past observed bounds and stale Apply after provider capability changes', async () => {
+  const api = await setup(cfgProvider()); act(() => api.result.current.recipeParameters.edit('cfg', '12.1'));
+  expect(api.result.current.recipeParameters.canApply).toBe(false); expect(api.result.current.recipeParameters.error).toContain('0 至 12');
+  act(() => api.result.current.recipeParameters.edit('cfg', '7.25')); const retained = api.result.current.recipeParameters.apply;
+  api.providers.mockResolvedValue([samplingProvider()]); await act(() => api.result.current.providerPicker.load()); act(() => retained());
+  expect(api.result.current.node!.parameters.parameters?.cfg).toBeUndefined(); expect(api.result.current.recipeParameters.canApply).toBe(false);
+  Object.values(api.noExecution).forEach(fn => expect(fn).not.toHaveBeenCalled());
 });

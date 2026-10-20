@@ -27,6 +27,7 @@ class MediaParameters(ExecutionModel):
     height: int | None = Field(default=None, ge=64, le=2048)
     steps: int | None = Field(default=None, ge=1, le=150)
     seed: int | None = Field(default=None, ge=0, le=2**31 - 1)
+    cfg: float | None = Field(default=None, ge=0, le=100)
     negative_prompt: str | None = Field(default=None, max_length=8000)
     size: Literal["auto", "1024x1024", "1536x1024", "1024x1536"] | None = None
     quality: Literal["auto", "low", "medium", "high", "standard", "hd"] | None = None
@@ -36,6 +37,15 @@ class MediaParameters(ExecutionModel):
     speech_rate: float | None = Field(default=None, ge=0.5, le=2)
     in_ms: int | None = Field(default=None, ge=0, le=600000)
     out_ms: int | None = Field(default=None, ge=1, le=600000)
+
+    @field_validator('cfg', mode='before')
+    @classmethod
+    def exact_cfg(cls, value):
+        # Original commands round-trip all absent optional fields as None.
+        if value is None: return None
+        if type(value) not in {int, float}:
+            raise ValueError('STUDIO_IMAGE_CFG_INVALID')
+        return value
 
 
 class MediaExecutionParameters(MediaParameters):
@@ -263,7 +273,7 @@ class _MediaCommandShape(ExecutionModel):
             raise ValueError("STUDIO_COMIC_EXPLICIT_LOCAL_T2I_ONLY")
         p = self.parameters.model_dump(exclude_none=True)
         allowed = {
-            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.t2i": {"width", "height", "steps", "seed", "cfg", "negative_prompt", "size", "quality"},
             "m5.image.cutout": {"cutout_output"},
             "m5.image.composite": set(),
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},

@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { ProductionProvider } from './studioProductionClient';
 import type { StudioGraphNode } from './studioGraphTypes';
-import { checkedGraphRecipeParameters, graphRecipeParameterFields, graphRecipeParameterSupport, type GraphRecipeParameterFields } from './studioGraphRecipeParameters';
+import { checkedGraphRecipeParameters, graphRecipeCfgControl, graphRecipeParameterFields, graphRecipeParameterSupport, type GraphRecipeParameterFields } from './studioGraphRecipeParameters';
 
 type Props = { identity: string; scope: object; revision: number; node?: StudioGraphNode; provider?: ProductionProvider; readable: boolean; editable: boolean;
   current: () => boolean; apply: (fields: GraphRecipeParameterFields, scope: object) => boolean };
@@ -25,9 +25,10 @@ export function useStudioGraphRecipeParameters(props: Props) {
   const stale = !!visible && visible.owner !== owner;
   const fields = visible?.fields ?? (props.node ? graphRecipeParameterFields(props.node) : { steps: '', seed: '' });
   let validation = '';
-  try { checkedGraphRecipeParameters(fields); } catch (e) { validation = e instanceof Error ? e.message : '采样参数不可用。'; }
+  try { checkedGraphRecipeParameters(fields, props.provider); } catch (e) { validation = e instanceof Error ? e.message : '采样参数不可用。'; }
   function edit(key: keyof GraphRecipeParameterFields, value: string) {
     if (!live() || stale || !latest.current.node || value.length > 32) return;
+    if (key === 'cfg' && !graphRecipeCfgControl(latest.current.provider)) return;
     const previous = formRef.current;
     if (previous && previous.owner !== owner) return;
     const initial = previous?.initial ?? graphRecipeParameterFields(latest.current.node);
@@ -38,13 +39,13 @@ export function useStudioGraphRecipeParameters(props: Props) {
   function apply() {
     if (!live() || !form || formRef.current !== form || form.owner !== owner || form.nodeId !== latest.current.node?.id) return;
     try {
-      checkedGraphRecipeParameters(form.fields);
+      checkedGraphRecipeParameters(form.fields, latest.current.provider);
       if (!latest.current.apply({ ...form.fields }, props.scope)) throw new Error('原图、节点或写入权限已改变，采样参数未应用。');
       clear();
     } catch (e) { setError(e instanceof Error ? e.message : '采样参数未应用，原图保持不变。'); }
   }
   const pending = useCallback(() => !!formRef.current && JSON.stringify(formRef.current.fields) !== JSON.stringify(formRef.current.initial), []);
-  return { reason, fields, stale, error: error || validation, formDirty: pending(), pending, clear, edit, apply,
+  return { reason, fields, stale, cfgControl: graphRecipeCfgControl(props.provider), error: error || validation, formDirty: pending(), pending, clear, edit, apply,
     canEdit: props.readable && props.editable && !reason && !stale,
     canApply: props.readable && props.editable && !reason && !stale && !!form && pending() && !validation };
 }

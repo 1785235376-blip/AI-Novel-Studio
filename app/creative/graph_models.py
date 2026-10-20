@@ -279,7 +279,7 @@ class ImageNodeParameters(Strict):
     def image_only_parameters(self):
         values = self.parameters.model_dump(exclude_none=True)
         allowed = {
-            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.t2i": {"width", "height", "steps", "seed", "cfg", "negative_prompt", "size", "quality"},
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality", "denoising_strength"},
             "m5.image.reference": {"width", "height", "steps", "seed", "negative_prompt", "denoising_strength"},
             "m5.image.inpaint": {"steps", "seed", "negative_prompt", "denoising_strength"},
@@ -309,7 +309,7 @@ class MediaNodeParameters(Strict):
     def closed_operation(self):
         parameters = self.parameters.model_dump(exclude_none=True)
         allowed = {
-            "m5.image.t2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
+            "m5.image.t2i": {"width", "height", "steps", "seed", "cfg", "negative_prompt", "size", "quality"},
             "m5.image.i2i": {"width", "height", "steps", "seed", "negative_prompt", "size", "quality"},
             "m7.video.t2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
             "m7.video.i2v": {"width", "height", "seed", "negative_prompt", "duration_seconds", "frame_rate"},
