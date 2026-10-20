@@ -1,0 +1,1486 @@
+{
+  "schema": "poemseed-b07-e2e07-sample/1",
+  "sample_id": "A_basic_linear",
+  "version": 1,
+  "title": "A · 基础线性（3-4 节点、对白、单一路径、一个结局）",
+  "focus": [
+    "single_linear_path",
+    "dialogue",
+    "speaker",
+    "one_ending"
+  ],
+  "generated_at_utc": "2026-10-20T07:11:15+00:00",
+  "repo": {
+    "head_sha": "e46a634d1839fd273095df97ec5c791f59a5241e",
+    "branch": "work/v2-b07-e2e-20261020"
+  },
+  "planning": {
+    "graph_id": "e0822ef0-1302-4769-a1cd-c31e215b9547",
+    "graph_version": 1,
+    "root_node_id": "43735ad1-a098-4379-8cdd-8123e0f81360",
+    "volume": {
+      "id": "bca89f2c-bf46-4457-af02-a72ac6bc2841",
+      "version": 1
+    },
+    "chapter_node": {
+      "id": "8812b4c9-3ac2-4c41-b03b-58be8d47a0ff",
+      "version": 1
+    },
+    "chapter_id": "r3-mounted-25182d17e67d46f5a09b3a23fba6580c:1",
+    "scenes": [
+      {
+        "alias": "start",
+        "id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+        "version": 1,
+        "title": "场景 1 · 檐下",
+        "level": "SCENE"
+      },
+      {
+        "alias": "middle",
+        "id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+        "version": 1,
+        "title": "场景 2 · 灯下",
+        "level": "SCENE"
+      },
+      {
+        "alias": "late",
+        "id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+        "version": 1,
+        "title": "场景 3 · 信末",
+        "level": "SCENE"
+      },
+      {
+        "alias": "finale",
+        "id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+        "version": 1,
+        "title": "场景 4 · 结局",
+        "level": "SCENE"
+      }
+    ]
+  },
+  "story": {
+    "id": "94c8c9f3-bd8f-42ea-80d0-7b93537f000d",
+    "version": 3,
+    "status": "APPROVED",
+    "title": "A · 檐下灯火（基础线性样例）",
+    "entry_node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+    "node_count": 4,
+    "variable_count": 0,
+    "max_steps": 8,
+    "spec_digest": "7495b4fdcaca0878d9fa69ed10e6b279f68348491197f9dfcbb86ee055ea9c0d",
+    "source_digest": "0bc00489e61b98287a6bd8a1a840c87f5e3053203de6c84549c967adfa2868f8",
+    "review_preview_digest": "b13b229415b0c9d362f6a437cec9bd02009a1626649993ba4d39b7a6698bb8b4"
+  },
+  "spec": {
+    "title": "A · 檐下灯火（基础线性样例）",
+    "graph_id": "e0822ef0-1302-4769-a1cd-c31e215b9547",
+    "graph_version": 1,
+    "entry_node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+    "nodes": [
+      {
+        "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+        "node_version": 1,
+        "title": "第一幕 · 檐下",
+        "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
+        "character_id": "alice",
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "to_middle",
+            "label": "推门进去",
+            "target": "ed9599b9-818a-4470-a068-2a17128c1d12",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+        "node_version": 1,
+        "title": "第二幕 · 灯下",
+        "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "to_late",
+            "label": "读完那封信",
+            "target": "a489ddb3-687e-43a3-8c10-9131effb6918",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+        "node_version": 1,
+        "title": "第三幕 · 信末",
+        "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "to_finale",
+            "label": "吹灭灯",
+            "target": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+        "node_version": 1,
+        "title": "结局 · 灯火",
+        "dialogue": "屋里暗下来，雨声却暖了。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "灯火未熄",
+        "choices": []
+      }
+    ],
+    "variables": [],
+    "graph_record_ids": [],
+    "max_steps": 8
+  },
+  "analysis": {
+    "issues": [],
+    "warnings": [],
+    "endings": [
+      {
+        "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+        "ending": "灯火未熄",
+        "choices": [
+          "to_middle",
+          "to_late",
+          "to_finale"
+        ]
+      }
+    ],
+    "states_checked": 4,
+    "analysis_complete": true,
+    "state_limit_reached": false,
+    "step_limit_reached": false,
+    "max_steps": 8,
+    "can_review": true,
+    "method": "BOUNDED_TYPED_STATE_SEARCH_NOT_UNBOUNDED_PROOF"
+  },
+  "features": {
+    "node_count": 4,
+    "variable_count": 0,
+    "variable_types": [],
+    "max_steps": 8,
+    "ending_count": 1,
+    "ending_texts": [
+      "灯火未熄"
+    ],
+    "distinct_ending_nodes": 1,
+    "witness_count": 1,
+    "dialogue_nodes": 4,
+    "speaker_nodes": 1,
+    "conditional_choice_count": 0,
+    "assignment_choice_count": 0,
+    "max_choices_per_acting_node": 1,
+    "initial_enabled_choice_ids": [
+      "to_middle"
+    ],
+    "initial_disabled_choice_count": 0,
+    "condition_driven_divergence": [],
+    "assignment_cases": [],
+    "step_cap_cases": [],
+    "save_restore_cases": [],
+    "cycle_node_ids": [],
+    "special_characters": {
+      "square_brackets": false,
+      "braces": false,
+      "lenticular": false,
+      "percent": false,
+      "emoji": false,
+      "accented": false,
+      "fullwidth_colon": true,
+      "corner_quotes": true,
+      "newline": false
+    },
+    "analysis_issues": [],
+    "analysis_warnings": [],
+    "can_review": true,
+    "analysis_complete": true
+  },
+  "feature_checks": [
+    {
+      "id": "feature:single_linear_path",
+      "status": "PASS",
+      "detail": "single_linear_path"
+    },
+    {
+      "id": "feature:dialogue",
+      "status": "PASS",
+      "detail": "dialogue"
+    },
+    {
+      "id": "feature:speaker",
+      "status": "PASS",
+      "detail": "speaker"
+    },
+    {
+      "id": "feature:one_ending",
+      "status": "PASS",
+      "detail": "one_ending"
+    }
+  ],
+  "cases": [
+    {
+      "id": "initial",
+      "kind": "initial_state",
+      "description": "Initial server state; exposes choices disabled by initial variables.",
+      "choices": [],
+      "steps": 0,
+      "expected_states": [
+        {
+          "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+          "title": "第一幕 · 檐下",
+          "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {},
+          "choices": [
+            {
+              "id": "to_middle",
+              "label": "推门进去",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "to_middle"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        }
+      ]
+    },
+    {
+      "id": "ending-1-7fd52441-cfd3-45a6-baee-524a5a902c1e",
+      "kind": "ending_witness",
+      "description": "Reach ending '灯火未熄' via the authoritative witness path.",
+      "choices": [
+        "to_middle",
+        "to_late",
+        "to_finale"
+      ],
+      "steps": 3,
+      "expected_states": [
+        {
+          "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+          "title": "第一幕 · 檐下",
+          "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {},
+          "choices": [
+            {
+              "id": "to_middle",
+              "label": "推门进去",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "to_middle"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+          "title": "第二幕 · 灯下",
+          "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
+          "character_id": null,
+          "ending": "",
+          "variables": {},
+          "choices": [
+            {
+              "id": "to_late",
+              "label": "读完那封信",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "to_late"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "to_middle"
+          ]
+        },
+        {
+          "node_id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+          "title": "第三幕 · 信末",
+          "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
+          "character_id": null,
+          "ending": "",
+          "variables": {},
+          "choices": [
+            {
+              "id": "to_finale",
+              "label": "吹灭灯",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "to_finale"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "to_middle",
+            "to_late"
+          ]
+        },
+        {
+          "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+          "title": "结局 · 灯火",
+          "dialogue": "屋里暗下来，雨声却暖了。",
+          "character_id": null,
+          "ending": "灯火未熄",
+          "variables": {},
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "to_middle",
+            "to_late",
+            "to_finale"
+          ]
+        }
+      ]
+    }
+  ],
+  "draft_previews": [
+    {
+      "choices": [
+        "to_middle",
+        "to_late",
+        "to_finale"
+      ],
+      "server": {
+        "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {},
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {},
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    }
+  ],
+  "review": {
+    "preview_digest": "b13b229415b0c9d362f6a437cec9bd02009a1626649993ba4d39b7a6698bb8b4",
+    "can_approve": true,
+    "approved_version": 3,
+    "approved_status": "APPROVED"
+  },
+  "exports": {
+    "service_view": {
+      "schema": "poemseed-interactive-export-targets/1",
+      "contract_schema": "poemseed-interactive-export-contract/1",
+      "contract_version": 1,
+      "can_export_any": true,
+      "story": {
+        "title": "A · 檐下灯火（基础线性样例）",
+        "entry_node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+        "max_steps": 8,
+        "nodes": 4,
+        "variables": 0,
+        "endings": 1,
+        "spec_digest": "7495b4fdcaca0878d9fa69ed10e6b279f68348491197f9dfcbb86ee055ea9c0d",
+        "source_digest": "0bc00489e61b98287a6bd8a1a840c87f5e3053203de6c84549c967adfa2868f8"
+      },
+      "analysis": {
+        "can_review": true,
+        "analysis_complete": true,
+        "issues": [],
+        "warnings": [],
+        "states_checked": 4
+      },
+      "witness": [
+        {
+          "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+          "ending": "灯火未熄",
+          "choices": [
+            "to_middle",
+            "to_late",
+            "to_finale"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "target_id": "RENPY_8_5_4_TEXT_MENU_SUBSET",
+          "display_name": "Ren'Py 8.5.4 text/menu fragment (legacy)",
+          "kind": "LEGACY_FRAGMENT",
+          "format_version": "legacy-text-menu-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "PASS",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "PASS",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_INSTALLED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "Legacy fragment only; it is not a complete Ren'Py project.",
+            "declared": {
+              "name": "Ren'Py",
+              "minimum_version": "8.5.4",
+              "gui": true
+            }
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": true,
+              "note": "Cycles execute until the explicit step cap."
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Approved asset references are manifest-only; bytes are never embedded or played."
+            }
+          },
+          "losses": [
+            "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+            "FRAGMENT_ONLY_NOT_A_PROJECT",
+            "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+            "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED"
+          ],
+          "compatibility": {
+            "target_id": "RENPY_8_5_4_TEXT_MENU_SUBSET",
+            "can_export": true,
+            "losses": [
+              "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+              "FRAGMENT_ONLY_NOT_A_PROJECT",
+              "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+              "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        },
+        {
+          "target_id": "GODOT_4_DATA_ADAPTER",
+          "display_name": "Godot 4 typed data adapter (legacy)",
+          "kind": "DATA_ONLY_ADAPTER",
+          "format_version": "godot-data-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "PASS",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "PASS",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_INSTALLED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "Data only: the old target is not a plottable project and includes no runtime.",
+            "declared": {
+              "name": "Godot",
+              "minimum_version": "4.0",
+              "gui": false
+            }
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": true,
+              "note": "Runtime step cap is data; no runtime ships with this adapter."
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": true,
+              "note": "Declared as data; consuming integration must enforce it."
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Asset IDs only; no media bytes are packaged."
+            }
+          },
+          "losses": [
+            "DATA_ONLY_TARGET_IMPORTER_REQUIRED",
+            "NO_SAVE_OR_RESTORE",
+            "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED"
+          ],
+          "compatibility": {
+            "target_id": "GODOT_4_DATA_ADAPTER",
+            "can_export": true,
+            "losses": [
+              "DATA_ONLY_TARGET_IMPORTER_REQUIRED",
+              "NO_SAVE_OR_RESTORE",
+              "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        },
+        {
+          "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+          "display_name": "inkjs 2.3.2 typed text subset (legacy)",
+          "kind": "LEGACY_FRAGMENT",
+          "format_version": "ink-typed-subset-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "NOT_RUN",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "NOT_RUN",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_REQUIRED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "No external engine is required to generate this target.",
+            "declared": null
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": true,
+              "note": "Paragraph whitespace is normalized by the target."
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": true,
+              "note": "Ink string escaping is verified but target font rendering is not."
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Media references are not exported."
+            }
+          },
+          "losses": [
+            "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+            "INK_MEDIA_REFERENCES_NOT_PLAYED",
+            "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+            "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+            "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+          ],
+          "compatibility": {
+            "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+            "can_export": true,
+            "losses": [
+              "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+              "INK_MEDIA_REFERENCES_NOT_PLAYED",
+              "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+              "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+              "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        }
+      ]
+    },
+    "legacy": {
+      "status": "EXPORTED",
+      "target_id": null,
+      "filename": "interactive-story-94c8c9f3-bd8f-42ea-80d0-7b93537f000d-v3.zip",
+      "sha256": "ecd0dbb2af5166df7febf5d45826092bdf97fbd8f68c2b408290a34d5a672e03",
+      "file_count": 13,
+      "preview_digest": "3a3f19a4d8b20544618c4bc8495d117bfa67066115c5888ede883be65db0545b",
+      "can_export": true,
+      "losses": [
+        "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+        "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+        "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED",
+        "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+        "INK_MEDIA_REFERENCES_NOT_PLAYED",
+        "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+        "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+        "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+      ],
+      "available_targets": null,
+      "archive": {
+        "status": "PASS",
+        "prefix": "interactive-story-94c8c9f3-bd8f-42ea-80d0-7b93537f000d/",
+        "files": [
+          {
+            "path": "README.txt",
+            "bytes": 593,
+            "sha256": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4"
+          },
+          {
+            "path": "checksums.json",
+            "bytes": 1081,
+            "sha256": "b60c1e49b2d8a89128b782cd028f401e50d19154fb501ab014acc69c553c2868"
+          },
+          {
+            "path": "compatibility.json",
+            "bytes": 19039,
+            "sha256": "0e762c5c093cef218f049617f95a97f4449889fe21bdb6342f7039bc265902f8"
+          },
+          {
+            "path": "game/story.rpy",
+            "bytes": 1290,
+            "sha256": "08aa9aac913512eec6a95adc006692a506e3b2e2ebf53c4b4a9ee7bd977bda3a"
+          },
+          {
+            "path": "godot/README.txt",
+            "bytes": 380,
+            "sha256": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81"
+          },
+          {
+            "path": "godot/story.json",
+            "bytes": 2197,
+            "sha256": "5555ce594948590eef83920a448fe7d1f30241bf6f91be8a383d2952d0e79726"
+          },
+          {
+            "path": "godot/story.schema.json",
+            "bytes": 13421,
+            "sha256": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c"
+          },
+          {
+            "path": "ink/README.txt",
+            "bytes": 403,
+            "sha256": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d"
+          },
+          {
+            "path": "ink/story.ink",
+            "bytes": 1301,
+            "sha256": "b92ec49b8b461d453a89617f9911e4cbd42478323906daed06f34bc4db13f296"
+          },
+          {
+            "path": "ink/validation.json",
+            "bytes": 2175,
+            "sha256": "1ae7ca6c4b341cc3f4230f63a462b861699a1f8127989200223da2bff36de23d"
+          },
+          {
+            "path": "media-manifest.json",
+            "bytes": 2,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "path": "source-receipt.json",
+            "bytes": 409,
+            "sha256": "1b868d905a4012bd8796666846e4425eaa40b5a6f9d5d7f6608608161fb82f40"
+          },
+          {
+            "path": "story.json",
+            "bytes": 3133,
+            "sha256": "3ce439e279aa1af4f326e67731979096dffa033c8e83e05960b98736bb1de20a"
+          }
+        ],
+        "checks": [
+          {
+            "id": "single root folder",
+            "status": "PASS",
+            "detail": "interactive-story-94c8c9f3-bd8f-42ea-80d0-7b93537f000d"
+          },
+          {
+            "id": "legacy file set",
+            "status": "PASS",
+            "detail": "[]/[]"
+          },
+          {
+            "id": "legacy checksums.json binds every payload file",
+            "status": "PASS",
+            "detail": "[]"
+          },
+          {
+            "id": "legacy checksums excludes itself",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json adaptation id",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json adaptation version",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json spec equals approved spec",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility target runtime not run",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility can_export",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility keeps losses",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy media manifest present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt story id",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt story version",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt source digest",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt preview digest",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.game/story.rpy present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.label start",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.one label per story node",
+            "status": "PASS",
+            "detail": "labels=4 nodes=4"
+          },
+          {
+            "id": "renpy-legacy.initial jump",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.menu per acting node",
+            "status": "PASS",
+            "detail": "menus=3 acting=3"
+          },
+          {
+            "id": "renpy-legacy.step cap guard",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.return per ending and guards",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.speaker names rendered",
+            "status": "PASS",
+            "detail": "Alice"
+          },
+          {
+            "id": "renpy-legacy.no external engine/paths",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.no engine binary bundled",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot/story.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.typed story resource schema",
+            "status": "PASS",
+            "detail": "nodes=4"
+          },
+          {
+            "id": "godot-legacy.godot story.json matches product exporter",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.entry index",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.typed condition trees",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.runtime verification not claimed",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot/story.schema.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot schema parses as JSON",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.no engine bundled",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink/story.ink present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink source matches product exporter",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink/validation.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink validation schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink runtime not claimed",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink pin version 2.3.2",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink source map stable",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink witness states equal play()",
+            "status": "PASS",
+            "detail": "witnesses=1"
+          },
+          {
+            "id": "ink-legacy.ink script sha bound in validation",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.no ink runtime bundled",
+            "status": "PASS",
+            "detail": ""
+          }
+        ],
+        "checksums": {
+          "README.txt": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4",
+          "compatibility.json": "0e762c5c093cef218f049617f95a97f4449889fe21bdb6342f7039bc265902f8",
+          "game/story.rpy": "08aa9aac913512eec6a95adc006692a506e3b2e2ebf53c4b4a9ee7bd977bda3a",
+          "godot/README.txt": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81",
+          "godot/story.json": "5555ce594948590eef83920a448fe7d1f30241bf6f91be8a383d2952d0e79726",
+          "godot/story.schema.json": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c",
+          "ink/README.txt": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d",
+          "ink/story.ink": "b92ec49b8b461d453a89617f9911e4cbd42478323906daed06f34bc4db13f296",
+          "ink/validation.json": "1ae7ca6c4b341cc3f4230f63a462b861699a1f8127989200223da2bff36de23d",
+          "media-manifest.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "source-receipt.json": "1b868d905a4012bd8796666846e4425eaa40b5a6f9d5d7f6608608161fb82f40",
+          "story.json": "3ce439e279aa1af4f326e67731979096dffa033c8e83e05960b98736bb1de20a"
+        },
+        "ink_witness_alignment": {
+          "status": "PASS",
+          "witnesses": 1,
+          "reports": [
+            {
+              "scope": "ink-validation:0",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            }
+          ]
+        },
+        "renpy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "game/story.rpy present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "label start",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "one label per story node",
+              "status": "PASS",
+              "detail": "labels=4 nodes=4"
+            },
+            {
+              "id": "initial jump",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "menu per acting node",
+              "status": "PASS",
+              "detail": "menus=3 acting=3"
+            },
+            {
+              "id": "step cap guard",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "return per ending and guards",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "speaker names rendered",
+              "status": "PASS",
+              "detail": "Alice"
+            },
+            {
+              "id": "no external engine/paths",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no engine binary bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        },
+        "godot_legacy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "godot/story.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "typed story resource schema",
+              "status": "PASS",
+              "detail": "nodes=4"
+            },
+            {
+              "id": "godot story.json matches product exporter",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "entry index",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "typed condition trees",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "runtime verification not claimed",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "godot/story.schema.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "godot schema parses as JSON",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no engine bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        },
+        "ink_legacy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "ink/story.ink present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink source matches product exporter",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink/validation.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink validation schema",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink runtime not claimed",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink pin version 2.3.2",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink source map stable",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink witness states equal play()",
+              "status": "PASS",
+              "detail": "witnesses=1"
+            },
+            {
+              "id": "ink script sha bound in validation",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no ink runtime bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        }
+      },
+      "deterministic_repeat": {
+        "sha256_first": "ecd0dbb2af5166df7febf5d45826092bdf97fbd8f68c2b408290a34d5a672e03",
+        "sha256_second": "ecd0dbb2af5166df7febf5d45826092bdf97fbd8f68c2b408290a34d5a672e03",
+        "identical": true
+      },
+      "runtime": {
+        "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+        "status": "EXECUTED_AND_ALIGNED",
+        "harness": "scripts/verify_ink_runtime.cjs",
+        "vendor": {
+          "path": "D:\\PoemSeed\\Recovery\\b07-scratch\\e2e\\A_basic_linear\\legacy-ink\\vendor\\inkjs-2.3.2\\package",
+          "version": "2.3.2"
+        },
+        "engine": "C:\\Program Files\\nodejs\\node.EXE",
+        "cases": [
+          {
+            "id": "initial",
+            "choices": []
+          },
+          {
+            "id": "ending-1-7fd52441-cfd3-45a6-baee-524a5a902c1e",
+            "choices": [
+              "to_middle",
+              "to_late",
+              "to_finale"
+            ]
+          }
+        ],
+        "commands": [
+          {
+            "kind": "process",
+            "label": "legacy-ink-runtime",
+            "argv": [
+              "C:\\Program Files\\nodejs\\node.EXE",
+              "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_runtime.cjs"
+            ],
+            "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
+            "exit_code": 0,
+            "duration_ms": 93,
+            "stdout_tail": "[{\"snapshots\":[{\"output\":\"Alice\\n雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\\n\",\"choices\":[\"推门进去\"],\"values\":{},\"node\":0,\"steps\":0,\"status\":0}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\\n\",\"choices\":[\"推门进去\"],\"values\":{},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\\n\",\"choices\":[\"读完那封信\"],\"values\":{},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\\n\",\"choices\":[\"吹灭灯\"],\"values\":{},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"屋里暗下来，雨声却暖了。\\n灯火未熄\\n\",\"choices\":[],\"values\":{},\"node\":3,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"}]",
+            "stderr_tail": "",
+            "timed_out": false,
+            "stdin_bytes": 2493,
+            "stdout_full": "[{\"snapshots\":[{\"output\":\"Alice\\n雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\\n\",\"choices\":[\"推门进去\"],\"values\":{},\"node\":0,\"steps\":0,\"status\":0}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\\n\",\"choices\":[\"推门进去\"],\"values\":{},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\\n\",\"choices\":[\"读完那封信\"],\"values\":{},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\\n\",\"choices\":[\"吹灭灯\"],\"values\":{},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"屋里暗下来，雨声却暖了。\\n灯火未熄\\n\",\"choices\":[],\"values\":{},\"node\":3,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"}]"
+          }
+        ],
+        "alignment": {
+          "status": "PASS",
+          "cases": [
+            {
+              "scope": "initial",
+              "status": "PASS",
+              "states_expected": 1,
+              "states_actual": 1,
+              "states_matched": 1,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ending-1-7fd52441-cfd3-45a6-baee-524a5a902c1e",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            }
+          ]
+        },
+        "save_restore": {
+          "level": "PASS",
+          "detail": "The pinned harness serializes Story.state.ToJson()/LoadJson() at every step; fileCalls=0 and errors=[] prove restoration replays each expected state."
+        }
+      },
+      "delivery": {
+        "zip": "exports/legacy/interactive-story-94c8c9f3-bd8f-42ea-80d0-7b93537f000d-v3.zip",
+        "unpacked": "exports/legacy/unpacked"
+      }
+    },
+    "new_targets": {
+      "GODOT_4_RUNTIME_PROJECT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      },
+      "INK_2_3_2_CURRENT_ARTIFACT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      },
+      "RENPY_8_5_4_PROJECT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      }
+    }
+  },
+  "unmet": [
+    {
+      "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    },
+    {
+      "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    },
+    {
+      "target_id": "RENPY_8_5_4_PROJECT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    }
+  ],
+  "_delivery_sample_json": "A_basic_linear/sample.json"
+}

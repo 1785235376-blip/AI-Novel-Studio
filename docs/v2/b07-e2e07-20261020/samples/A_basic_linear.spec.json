@@ -1,0 +1,79 @@
+{
+  "title": "A · 檐下灯火（基础线性样例）",
+  "graph_id": "e0822ef0-1302-4769-a1cd-c31e215b9547",
+  "graph_version": 1,
+  "entry_node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+  "nodes": [
+    {
+      "node_id": "f9607476-fbcd-46d7-98ae-5c0fb77b7af6",
+      "node_version": 1,
+      "title": "第一幕 · 檐下",
+      "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
+      "character_id": "alice",
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "",
+      "choices": [
+        {
+          "id": "to_middle",
+          "label": "推门进去",
+          "target": "ed9599b9-818a-4470-a068-2a17128c1d12",
+          "condition": "",
+          "assignments": {}
+        }
+      ]
+    },
+    {
+      "node_id": "ed9599b9-818a-4470-a068-2a17128c1d12",
+      "node_version": 1,
+      "title": "第二幕 · 灯下",
+      "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "",
+      "choices": [
+        {
+          "id": "to_late",
+          "label": "读完那封信",
+          "target": "a489ddb3-687e-43a3-8c10-9131effb6918",
+          "condition": "",
+          "assignments": {}
+        }
+      ]
+    },
+    {
+      "node_id": "a489ddb3-687e-43a3-8c10-9131effb6918",
+      "node_version": 1,
+      "title": "第三幕 · 信末",
+      "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "",
+      "choices": [
+        {
+          "id": "to_finale",
+          "label": "吹灭灯",
+          "target": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+          "condition": "",
+          "assignments": {}
+        }
+      ]
+    },
+    {
+      "node_id": "7fd52441-cfd3-45a6-baee-524a5a902c1e",
+      "node_version": 1,
+      "title": "结局 · 灯火",
+      "dialogue": "屋里暗下来，雨声却暖了。",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "灯火未熄",
+      "choices": []
+    }
+  ],
+  "variables": [],
+  "graph_record_ids": [],
+  "max_steps": 8
+}

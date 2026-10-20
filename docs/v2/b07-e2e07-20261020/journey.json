@@ -1,0 +1,3719 @@
+{
+  "schema": "poemseed-b07-e2e07-journey/1",
+  "generated_at_utc": "2026-10-20T07:11:19+00:00",
+  "definition": {
+    "key": "journey",
+    "title": "Journey · E2E-07 集成旅程作品",
+    "focus": [
+      "conditions",
+      "assignments",
+      "cycle",
+      "step_cap",
+      "unicode_specials",
+      "three_endings"
+    ]
+  },
+  "planning": {
+    "graph_id": "3ec582fe-4759-47cc-a8bd-8781278ef50f",
+    "graph_version": 1,
+    "root_node_id": "38053f76-64cb-4186-b02b-347138e583bf",
+    "volume": {
+      "id": "9bfff656-17d8-495b-a50c-d17121eec6cb",
+      "version": 1
+    },
+    "chapter_node": {
+      "id": "de92824f-884b-4bdc-a8e3-41875cd1d88d",
+      "version": 1
+    },
+    "chapter_id": "r3-mounted-25182d17e67d46f5a09b3a23fba6580c:1",
+    "scenes": [
+      {
+        "alias": "market",
+        "id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+        "version": 1,
+        "title": "场景 1 · 集市",
+        "level": "SCENE"
+      },
+      {
+        "alias": "crossroads",
+        "id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "version": 1,
+        "title": "场景 2 · 岔路",
+        "level": "SCENE"
+      },
+      {
+        "alias": "night_road",
+        "id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+        "version": 1,
+        "title": "场景 3 · 夜路",
+        "level": "SCENE"
+      },
+      {
+        "alias": "loop_hub",
+        "id": "19ee1604-86f5-4864-b254-1b74bc375243",
+        "version": 1,
+        "title": "场景 4 · 回声厅",
+        "level": "SCENE"
+      },
+      {
+        "alias": "safe_home",
+        "id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "version": 1,
+        "title": "场景 5 · 结局甲",
+        "level": "SCENE"
+      },
+      {
+        "alias": "temple_rest",
+        "id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "version": 1,
+        "title": "场景 6 · 结局乙",
+        "level": "SCENE"
+      },
+      {
+        "alias": "mountain_dawn",
+        "id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "version": 1,
+        "title": "场景 7 · 结局丙",
+        "level": "SCENE"
+      }
+    ]
+  },
+  "story": {
+    "id": "08e85d46-1392-4806-b47b-4cdf44c127f5",
+    "revision": 4,
+    "status": "APPROVED",
+    "spec_digest": "92de1cb295a46b96a18ef39c81ac18ca0e6a192a488e1c5ee2899ed14391d55f",
+    "source_digest": "8680e6bd66f736a636ed777c727e6621d6f9689fe013b90b48d423a666637c65",
+    "review_preview_digest": "7791385e29cb0f8bb9a76041925f2b6ef99f307317c68a8343bacfe777bcfb49",
+    "node_count": 7,
+    "variable_count": 2,
+    "max_steps": 8
+  },
+  "versions": {
+    "draft_v1": 1,
+    "saved_v2": 2,
+    "review_v3": 3,
+    "approved_v4": 4
+  },
+  "spec_v1": {
+    "title": "Journey · 岔路回声（E2E-07 集成旅程作品）",
+    "graph_id": "3ec582fe-4759-47cc-a8bd-8781278ef50f",
+    "graph_version": 1,
+    "entry_node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+    "nodes": [
+      {
+        "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+        "node_version": 1,
+        "title": "集市 · 旅程起点",
+        "dialogue": "集市收摊了。她把灯挂在檐下，手里有两枚硬币。",
+        "character_id": "alice",
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "share",
+            "label": "分一块面包给朋友",
+            "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+            "condition": "",
+            "assignments": {
+              "trusted": true
+            }
+          },
+          {
+            "id": "keep",
+            "label": "悄悄收起两枚硬币",
+            "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+            "condition": "",
+            "assignments": {
+              "coins": 2
+            }
+          },
+          {
+            "id": "call",
+            "label": "请朋友同行",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+            "condition": "trusted",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "node_version": 1,
+        "title": "岔路 · 选择",
+        "dialogue": "一条路亮着灯，一条路只听得见风。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "buy",
+            "label": "买一盏灯",
+            "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+            "condition": "coins >= 1",
+            "assignments": {
+              "coins": 0
+            }
+          },
+          {
+            "id": "dark",
+            "label": "摸着黑走",
+            "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+            "condition": "",
+            "assignments": {}
+          },
+          {
+            "id": "beg",
+            "label": "向神庙求助",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+            "condition": "trusted",
+            "assignments": {}
+          },
+          {
+            "id": "turn",
+            "label": "折返回家",
+            "target": "5b54638c-bdab-4347-835d-9ee409e37c55",
+            "condition": "",
+            "assignments": {}
+          },
+          {
+            "id": "wander",
+            "label": "跟着风走",
+            "target": "19ee1604-86f5-4864-b254-1b74bc375243",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+        "node_version": 1,
+        "title": "夜路 · 分岔",
+        "dialogue": "风从山口下来，带着雪的味道。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "forge",
+            "label": "翻过山口",
+            "target": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+            "condition": "not trusted",
+            "assignments": {}
+          },
+          {
+            "id": "pray",
+            "label": "在路边祈祷",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+            "condition": "trusted",
+            "assignments": {}
+          },
+          {
+            "id": "retreat",
+            "label": "退回镇上",
+            "target": "5b54638c-bdab-4347-835d-9ee409e37c55",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+        "node_version": 1,
+        "title": "回声厅 · 循环",
+        "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "",
+        "choices": [
+          {
+            "id": "again",
+            "label": "再听一次 [回声] {继续} 〖…〗 % 🙂",
+            "target": "19ee1604-86f5-4864-b254-1b74bc375243",
+            "condition": "",
+            "assignments": {}
+          },
+          {
+            "id": "escape",
+            "label": "离开回声厅",
+            "target": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+            "condition": "",
+            "assignments": {}
+          }
+        ]
+      },
+      {
+        "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "node_version": 1,
+        "title": "结局 · 平安回家",
+        "dialogue": "门闩落下，雨声被关在门外。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "平安回家",
+        "choices": []
+      },
+      {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "node_version": 1,
+        "title": "结局 · 神庙的安眠",
+        "dialogue": "石阶很凉，香火很轻。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "神庙的安眠",
+        "choices": []
+      },
+      {
+        "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "node_version": 1,
+        "title": "结局 · 山口黎明",
+        "dialogue": "雪停了，天边有一线很薄的金。",
+        "character_id": null,
+        "background_asset_id": null,
+        "music_asset_id": null,
+        "ending": "山口黎明",
+        "choices": []
+      }
+    ],
+    "variables": [
+      {
+        "name": "trusted",
+        "type": "bool",
+        "initial": false,
+        "minimum": 0,
+        "maximum": 100
+      },
+      {
+        "name": "coins",
+        "type": "int",
+        "initial": 0,
+        "minimum": 0,
+        "maximum": 3
+      }
+    ],
+    "graph_record_ids": [],
+    "max_steps": 8
+  },
+  "spec_approved": {
+    "entry_node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+    "graph_id": "3ec582fe-4759-47cc-a8bd-8781278ef50f",
+    "graph_record_ids": [],
+    "graph_version": 1,
+    "max_steps": 8,
+    "nodes": [
+      {
+        "background_asset_id": null,
+        "character_id": "alice",
+        "choices": [
+          {
+            "assignments": {
+              "trusted": true
+            },
+            "condition": "",
+            "id": "share",
+            "label": "分一块面包给朋友",
+            "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d"
+          },
+          {
+            "assignments": {
+              "coins": 2
+            },
+            "condition": "",
+            "id": "keep",
+            "label": "悄悄收起两枚硬币",
+            "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d"
+          },
+          {
+            "assignments": {},
+            "condition": "trusted and coins >= 0",
+            "id": "call",
+            "label": "请朋友同行",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          }
+        ],
+        "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+        "ending": "",
+        "music_asset_id": null,
+        "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+        "node_version": 1,
+        "title": "集市 · 旅程起点"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [
+          {
+            "assignments": {
+              "coins": 0,
+              "trusted": false
+            },
+            "condition": "coins >= 1",
+            "id": "buy",
+            "label": "买一盏灯",
+            "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2"
+          },
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "dark",
+            "label": "摸着黑走（没有灯）",
+            "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2"
+          },
+          {
+            "assignments": {},
+            "condition": "trusted",
+            "id": "beg",
+            "label": "向神庙求助",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          },
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "turn",
+            "label": "折返回家",
+            "target": "5b54638c-bdab-4347-835d-9ee409e37c55"
+          },
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "wander",
+            "label": "跟着风走",
+            "target": "19ee1604-86f5-4864-b254-1b74bc375243"
+          }
+        ],
+        "dialogue": "一条路亮着灯，一条路只听得见风。",
+        "ending": "",
+        "music_asset_id": null,
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "node_version": 1,
+        "title": "岔路 · 选择"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [
+          {
+            "assignments": {},
+            "condition": "not trusted",
+            "id": "forge",
+            "label": "翻过山口",
+            "target": "08aa60ac-5577-4602-85fd-e40bf16928e5"
+          },
+          {
+            "assignments": {},
+            "condition": "trusted or coins == 0",
+            "id": "pray",
+            "label": "在路边祈祷",
+            "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          },
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "retreat",
+            "label": "退回镇上",
+            "target": "5b54638c-bdab-4347-835d-9ee409e37c55"
+          }
+        ],
+        "dialogue": "风从山口下来，带着雪的味道。",
+        "ending": "",
+        "music_asset_id": null,
+        "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+        "node_version": 1,
+        "title": "夜路 · 分岔"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "again",
+            "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+            "target": "19ee1604-86f5-4864-b254-1b74bc375243"
+          },
+          {
+            "assignments": {},
+            "condition": "",
+            "id": "escape",
+            "label": "离开回声厅",
+            "target": "08aa60ac-5577-4602-85fd-e40bf16928e5"
+          }
+        ],
+        "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+        "ending": "",
+        "music_asset_id": null,
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+        "node_version": 1,
+        "title": "回声厅 · 循环"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [],
+        "dialogue": "门闩落下，雨声被关在门外。",
+        "ending": "平安回家 · 已核验",
+        "music_asset_id": null,
+        "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "node_version": 1,
+        "title": "结局 · 平安回家"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [],
+        "dialogue": "石阶很凉，香火很轻。",
+        "ending": "神庙的安眠",
+        "music_asset_id": null,
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "node_version": 1,
+        "title": "结局 · 神庙的安眠"
+      },
+      {
+        "background_asset_id": null,
+        "character_id": null,
+        "choices": [],
+        "dialogue": "雪停了，天边有一线很薄的金。",
+        "ending": "山口黎明",
+        "music_asset_id": null,
+        "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "node_version": 1,
+        "title": "结局 · 山口黎明"
+      }
+    ],
+    "title": "Journey · 岔路回声（E2E-07 集成旅程作品）",
+    "variables": [
+      {
+        "initial": false,
+        "maximum": 100,
+        "minimum": 0,
+        "name": "trusted",
+        "type": "bool"
+      },
+      {
+        "initial": 0,
+        "maximum": 4,
+        "minimum": 0,
+        "name": "coins",
+        "type": "int"
+      }
+    ]
+  },
+  "edit_summary": {
+    "dialogue": "集市开场白改为含全角标点与 🙂 的文本",
+    "condition": "call 路线条件改为 trusted and coins >= 0；pray 条件改为 trusted or coins == 0",
+    "choice": "dark 标签改为「摸着黑走（没有灯）」；buy 赋值增加 trusted=False；again 标签编辑",
+    "variables": "coins maximum 3 -> 4",
+    "ending": "平安回家 -> 平安回家 · 已核验"
+  },
+  "analysis": {
+    "issues": [],
+    "warnings": [
+      {
+        "code": "CYCLE_STEP_CAP_REQUIRED",
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243"
+      }
+    ],
+    "endings": [
+      {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "ending": "神庙的安眠",
+        "choices": [
+          "share",
+          "beg"
+        ]
+      },
+      {
+        "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "ending": "平安回家 · 已核验",
+        "choices": [
+          "share",
+          "turn"
+        ]
+      },
+      {
+        "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "ending": "山口黎明",
+        "choices": [
+          "share",
+          "wander",
+          "escape"
+        ]
+      }
+    ],
+    "states_checked": 16,
+    "analysis_complete": true,
+    "state_limit_reached": false,
+    "step_limit_reached": false,
+    "max_steps": 8,
+    "can_review": true,
+    "method": "BOUNDED_TYPED_STATE_SEARCH_NOT_UNBOUNDED_PROOF"
+  },
+  "features": {
+    "node_count": 7,
+    "variable_count": 2,
+    "variable_types": [
+      "bool",
+      "int"
+    ],
+    "max_steps": 8,
+    "ending_count": 3,
+    "ending_texts": [
+      "山口黎明",
+      "平安回家 · 已核验",
+      "神庙的安眠"
+    ],
+    "distinct_ending_nodes": 3,
+    "witness_count": 3,
+    "dialogue_nodes": 7,
+    "speaker_nodes": 1,
+    "conditional_choice_count": 5,
+    "assignment_choice_count": 3,
+    "max_choices_per_acting_node": 5,
+    "initial_enabled_choice_ids": [
+      "share",
+      "keep"
+    ],
+    "initial_disabled_choice_count": 1,
+    "condition_driven_divergence": [
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "steps": 1,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 2
+        },
+        "enabled_a": [
+          "dark",
+          "beg",
+          "turn",
+          "wander"
+        ],
+        "enabled_b": [
+          "buy",
+          "dark",
+          "turn",
+          "wander"
+        ]
+      },
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "steps": 1,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 2
+        },
+        "enabled_a": [
+          "dark",
+          "beg",
+          "turn",
+          "wander"
+        ],
+        "enabled_b": [
+          "buy",
+          "dark",
+          "turn",
+          "wander"
+        ]
+      },
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "steps": 1,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 2
+        },
+        "enabled_a": [
+          "dark",
+          "beg",
+          "turn",
+          "wander"
+        ],
+        "enabled_b": [
+          "buy",
+          "dark",
+          "turn",
+          "wander"
+        ]
+      },
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "steps": 1,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 2
+        },
+        "enabled_a": [
+          "dark",
+          "beg",
+          "turn",
+          "wander"
+        ],
+        "enabled_b": [
+          "buy",
+          "dark",
+          "turn",
+          "wander"
+        ]
+      },
+      {
+        "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+        "steps": 1,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 2
+        },
+        "enabled_a": [
+          "dark",
+          "beg",
+          "turn",
+          "wander"
+        ],
+        "enabled_b": [
+          "buy",
+          "dark",
+          "turn",
+          "wander"
+        ]
+      },
+      {
+        "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+        "steps": 2,
+        "variables_a": {
+          "trusted": true,
+          "coins": 0
+        },
+        "variables_b": {
+          "trusted": false,
+          "coins": 0
+        },
+        "enabled_a": [
+          "pray",
+          "retreat"
+        ],
+        "enabled_b": [
+          "forge",
+          "pray",
+          "retreat"
+        ]
+      }
+    ],
+    "assignment_cases": [
+      "ending-1-9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+      "ending-2-5b54638c-bdab-4347-835d-9ee409e37c55",
+      "ending-3-08aa60ac-5577-4602-85fd-e40bf16928e5",
+      "step-cap-reached",
+      "save-restore-continue",
+      "assignment-effect-coins"
+    ],
+    "step_cap_cases": [
+      "step-cap-reached"
+    ],
+    "save_restore_cases": [
+      "save-restore-continue"
+    ],
+    "cycle_node_ids": [
+      "19ee1604-86f5-4864-b254-1b74bc375243"
+    ],
+    "special_characters": {
+      "square_brackets": true,
+      "braces": true,
+      "lenticular": true,
+      "percent": true,
+      "emoji": true,
+      "accented": true,
+      "fullwidth_colon": true,
+      "corner_quotes": true,
+      "newline": true
+    },
+    "analysis_issues": [],
+    "analysis_warnings": [
+      {
+        "code": "CYCLE_STEP_CAP_REQUIRED",
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243"
+      }
+    ],
+    "can_review": true,
+    "analysis_complete": true
+  },
+  "feature_checks": [
+    {
+      "id": "feature:conditions",
+      "status": "PASS",
+      "detail": "conditions"
+    },
+    {
+      "id": "feature:assignments",
+      "status": "PASS",
+      "detail": "assignments"
+    },
+    {
+      "id": "feature:cycle",
+      "status": "PASS",
+      "detail": "cycle"
+    },
+    {
+      "id": "feature:step_cap",
+      "status": "PASS",
+      "detail": "step_cap"
+    },
+    {
+      "id": "feature:unicode_specials",
+      "status": "PASS",
+      "detail": "unicode_specials"
+    },
+    {
+      "id": "feature:three_endings",
+      "status": "PASS",
+      "detail": "three_endings"
+    }
+  ],
+  "cases": [
+    {
+      "id": "initial",
+      "kind": "initial_state",
+      "description": "Initial server state; exposes choices disabled by initial variables.",
+      "choices": [],
+      "steps": 0,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        }
+      ]
+    },
+    {
+      "id": "ending-1-9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+      "kind": "ending_witness",
+      "description": "Reach ending '神庙的安眠' via the authoritative witness path.",
+      "choices": [
+        "share",
+        "beg"
+      ],
+      "steps": 2,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": false
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": true
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "dark",
+            "beg",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "buy"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share"
+          ]
+        },
+        {
+          "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+          "title": "结局 · 神庙的安眠",
+          "dialogue": "石阶很凉，香火很轻。",
+          "character_id": null,
+          "ending": "神庙的安眠",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "share",
+            "beg"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ending-2-5b54638c-bdab-4347-835d-9ee409e37c55",
+      "kind": "ending_witness",
+      "description": "Reach ending '平安回家 · 已核验' via the authoritative witness path.",
+      "choices": [
+        "share",
+        "turn"
+      ],
+      "steps": 2,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": false
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": true
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "dark",
+            "beg",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "buy"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share"
+          ]
+        },
+        {
+          "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+          "title": "结局 · 平安回家",
+          "dialogue": "门闩落下，雨声被关在门外。",
+          "character_id": null,
+          "ending": "平安回家 · 已核验",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "share",
+            "turn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ending-3-08aa60ac-5577-4602-85fd-e40bf16928e5",
+      "kind": "ending_witness",
+      "description": "Reach ending '山口黎明' via the authoritative witness path.",
+      "choices": [
+        "share",
+        "wander",
+        "escape"
+      ],
+      "steps": 3,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": false
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": true
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "dark",
+            "beg",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "buy"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander"
+          ]
+        },
+        {
+          "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+          "title": "结局 · 山口黎明",
+          "dialogue": "雪停了，天边有一线很薄的金。",
+          "character_id": null,
+          "ending": "山口黎明",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "share",
+            "wander",
+            "escape"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step-cap-reached",
+      "kind": "extra_path",
+      "description": "Eight steps (max_steps=8) on the cycle: status STEP_CAP_REACHED.",
+      "choices": [
+        "share",
+        "wander",
+        "again",
+        "again",
+        "again",
+        "again",
+        "again",
+        "again"
+      ],
+      "steps": 8,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": false
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": true
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "dark",
+            "beg",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "buy"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander",
+            "again"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 4,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander",
+            "again",
+            "again"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 5,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander",
+            "again",
+            "again",
+            "again"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 6,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander",
+            "again",
+            "again",
+            "again",
+            "again"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 7,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "wander",
+            "again",
+            "again",
+            "again",
+            "again",
+            "again"
+          ]
+        },
+        {
+          "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+          "title": "回声厅 · 循环",
+          "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "again",
+              "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
+              "enabled": true
+            },
+            {
+              "id": "escape",
+              "label": "离开回声厅",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "again",
+            "escape"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 8,
+          "max_steps": 8,
+          "status": "STEP_CAP_REACHED",
+          "path": [
+            "share",
+            "wander",
+            "again",
+            "again",
+            "again",
+            "again",
+            "again",
+            "again"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save-restore-continue",
+      "kind": "extra_path",
+      "description": "Save at the night road (step 2), restore, continue to the temple ending.",
+      "choices": [
+        "share",
+        "dark",
+        "pray"
+      ],
+      "steps": 3,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": false
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": true
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "dark",
+            "beg",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "buy"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share"
+          ]
+        },
+        {
+          "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+          "title": "夜路 · 分岔",
+          "dialogue": "风从山口下来，带着雪的味道。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "forge",
+              "label": "翻过山口",
+              "enabled": false
+            },
+            {
+              "id": "pray",
+              "label": "在路边祈祷",
+              "enabled": true
+            },
+            {
+              "id": "retreat",
+              "label": "退回镇上",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "pray",
+            "retreat"
+          ],
+          "disabled_choice_ids": [
+            "forge"
+          ],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "dark"
+          ]
+        },
+        {
+          "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+          "title": "结局 · 神庙的安眠",
+          "dialogue": "石阶很凉，香火很轻。",
+          "character_id": null,
+          "ending": "神庙的安眠",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "share",
+            "dark",
+            "pray"
+          ]
+        }
+      ],
+      "save_restore": {
+        "resume_at": 2,
+        "saved_state": {
+          "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+          "title": "夜路 · 分岔",
+          "dialogue": "风从山口下来，带着雪的味道。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "forge",
+              "label": "翻过山口",
+              "enabled": false
+            },
+            {
+              "id": "pray",
+              "label": "在路边祈祷",
+              "enabled": true
+            },
+            {
+              "id": "retreat",
+              "label": "退回镇上",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "pray",
+            "retreat"
+          ],
+          "disabled_choice_ids": [
+            "forge"
+          ],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "share",
+            "dark"
+          ]
+        },
+        "remaining_choices": [
+          "pray"
+        ],
+        "final_state": {
+          "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+          "title": "结局 · 神庙的安眠",
+          "dialogue": "石阶很凉，香火很轻。",
+          "character_id": null,
+          "ending": "神庙的安眠",
+          "variables": {
+            "trusted": true,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "share",
+            "dark",
+            "pray"
+          ]
+        }
+      }
+    },
+    {
+      "id": "assignment-effect-coins",
+      "kind": "extra_path",
+      "description": "coins assignment enables buy; buy resets coins to 0.",
+      "choices": [
+        "keep",
+        "buy",
+        "forge"
+      ],
+      "steps": 3,
+      "expected_states": [
+        {
+          "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+          "title": "集市 · 旅程起点",
+          "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
+          "character_id": "alice",
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "share",
+              "label": "分一块面包给朋友",
+              "enabled": true
+            },
+            {
+              "id": "keep",
+              "label": "悄悄收起两枚硬币",
+              "enabled": true
+            },
+            {
+              "id": "call",
+              "label": "请朋友同行",
+              "enabled": false
+            }
+          ],
+          "enabled_choice_ids": [
+            "share",
+            "keep"
+          ],
+          "disabled_choice_ids": [
+            "call"
+          ],
+          "steps": 0,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": []
+        },
+        {
+          "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+          "title": "岔路 · 选择",
+          "dialogue": "一条路亮着灯，一条路只听得见风。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 2
+          },
+          "choices": [
+            {
+              "id": "buy",
+              "label": "买一盏灯",
+              "enabled": true
+            },
+            {
+              "id": "dark",
+              "label": "摸着黑走（没有灯）",
+              "enabled": true
+            },
+            {
+              "id": "beg",
+              "label": "向神庙求助",
+              "enabled": false
+            },
+            {
+              "id": "turn",
+              "label": "折返回家",
+              "enabled": true
+            },
+            {
+              "id": "wander",
+              "label": "跟着风走",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "buy",
+            "dark",
+            "turn",
+            "wander"
+          ],
+          "disabled_choice_ids": [
+            "beg"
+          ],
+          "steps": 1,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "keep"
+          ]
+        },
+        {
+          "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+          "title": "夜路 · 分岔",
+          "dialogue": "风从山口下来，带着雪的味道。",
+          "character_id": null,
+          "ending": "",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [
+            {
+              "id": "forge",
+              "label": "翻过山口",
+              "enabled": true
+            },
+            {
+              "id": "pray",
+              "label": "在路边祈祷",
+              "enabled": true
+            },
+            {
+              "id": "retreat",
+              "label": "退回镇上",
+              "enabled": true
+            }
+          ],
+          "enabled_choice_ids": [
+            "forge",
+            "pray",
+            "retreat"
+          ],
+          "disabled_choice_ids": [],
+          "steps": 2,
+          "max_steps": 8,
+          "status": "PLAYING",
+          "path": [
+            "keep",
+            "buy"
+          ]
+        },
+        {
+          "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+          "title": "结局 · 山口黎明",
+          "dialogue": "雪停了，天边有一线很薄的金。",
+          "character_id": null,
+          "ending": "山口黎明",
+          "variables": {
+            "trusted": false,
+            "coins": 0
+          },
+          "choices": [],
+          "enabled_choice_ids": [],
+          "disabled_choice_ids": [],
+          "steps": 3,
+          "max_steps": 8,
+          "status": "ENDING",
+          "path": [
+            "keep",
+            "buy",
+            "forge"
+          ]
+        }
+      ]
+    }
+  ],
+  "draft_previews": [
+    {
+      "choices": [
+        "share",
+        "beg"
+      ],
+      "server": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    }
+  ],
+  "previews": [
+    {
+      "choices": [
+        "share",
+        "beg"
+      ],
+      "server": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    },
+    {
+      "choices": [
+        "share",
+        "turn"
+      ],
+      "server": {
+        "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+        "status": "ENDING",
+        "steps": 2,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    },
+    {
+      "choices": [
+        "share",
+        "wander",
+        "escape"
+      ],
+      "server": {
+        "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    },
+    {
+      "choices": [
+        "share",
+        "wander",
+        "again",
+        "again",
+        "again",
+        "again",
+        "again",
+        "again"
+      ],
+      "server": {
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+        "status": "STEP_CAP_REACHED",
+        "steps": 8,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [
+          "again",
+          "escape"
+        ],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+        "status": "STEP_CAP_REACHED",
+        "steps": 8,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [
+          "again",
+          "escape"
+        ],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    },
+    {
+      "choices": [
+        "share",
+        "dark",
+        "pray"
+      ],
+      "server": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "play": {
+        "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+        "status": "ENDING",
+        "steps": 3,
+        "variables": {
+          "trusted": true,
+          "coins": 0
+        },
+        "enabled_choice_ids": [],
+        "disabled_choice_ids": []
+      },
+      "match": true
+    }
+  ],
+  "approved_preview": {
+    "choices": [
+      "share",
+      "beg"
+    ],
+    "server": {
+      "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+      "status": "ENDING",
+      "steps": 2,
+      "variables": {
+        "trusted": true,
+        "coins": 0
+      },
+      "enabled_choice_ids": [],
+      "disabled_choice_ids": []
+    },
+    "play": {
+      "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+      "status": "ENDING",
+      "steps": 2,
+      "variables": {
+        "trusted": true,
+        "coins": 0
+      },
+      "enabled_choice_ids": [],
+      "disabled_choice_ids": []
+    },
+    "match": true
+  },
+  "review": {
+    "preview_digest": "7791385e29cb0f8bb9a76041925f2b6ef99f307317c68a8343bacfe777bcfb49",
+    "can_approve": true
+  },
+  "exports": {
+    "service_view": {
+      "schema": "poemseed-interactive-export-targets/1",
+      "contract_schema": "poemseed-interactive-export-contract/1",
+      "contract_version": 1,
+      "can_export_any": true,
+      "story": {
+        "title": "Journey · 岔路回声（E2E-07 集成旅程作品）",
+        "entry_node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+        "max_steps": 8,
+        "nodes": 7,
+        "variables": 2,
+        "endings": 3,
+        "spec_digest": "92de1cb295a46b96a18ef39c81ac18ca0e6a192a488e1c5ee2899ed14391d55f",
+        "source_digest": "8680e6bd66f736a636ed777c727e6621d6f9689fe013b90b48d423a666637c65"
+      },
+      "analysis": {
+        "can_review": true,
+        "analysis_complete": true,
+        "issues": [],
+        "warnings": [
+          {
+            "code": "CYCLE_STEP_CAP_REQUIRED",
+            "node_id": "19ee1604-86f5-4864-b254-1b74bc375243"
+          }
+        ],
+        "states_checked": 16
+      },
+      "witness": [
+        {
+          "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+          "ending": "神庙的安眠",
+          "choices": [
+            "share",
+            "beg"
+          ]
+        },
+        {
+          "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+          "ending": "平安回家 · 已核验",
+          "choices": [
+            "share",
+            "turn"
+          ]
+        },
+        {
+          "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+          "ending": "山口黎明",
+          "choices": [
+            "share",
+            "wander",
+            "escape"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "target_id": "RENPY_8_5_4_TEXT_MENU_SUBSET",
+          "display_name": "Ren'Py 8.5.4 text/menu fragment (legacy)",
+          "kind": "LEGACY_FRAGMENT",
+          "format_version": "legacy-text-menu-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "PASS",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "PASS",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_INSTALLED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "Legacy fragment only; it is not a complete Ren'Py project.",
+            "declared": {
+              "name": "Ren'Py",
+              "minimum_version": "8.5.4",
+              "gui": true
+            }
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": true,
+              "note": "Cycles execute until the explicit step cap."
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Approved asset references are manifest-only; bytes are never embedded or played."
+            }
+          },
+          "losses": [
+            "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+            "FRAGMENT_ONLY_NOT_A_PROJECT",
+            "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+            "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED"
+          ],
+          "compatibility": {
+            "target_id": "RENPY_8_5_4_TEXT_MENU_SUBSET",
+            "can_export": true,
+            "losses": [
+              "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+              "FRAGMENT_ONLY_NOT_A_PROJECT",
+              "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+              "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        },
+        {
+          "target_id": "GODOT_4_DATA_ADAPTER",
+          "display_name": "Godot 4 typed data adapter (legacy)",
+          "kind": "DATA_ONLY_ADAPTER",
+          "format_version": "godot-data-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "PASS",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "PASS",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_INSTALLED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "Data only: the old target is not a plottable project and includes no runtime.",
+            "declared": {
+              "name": "Godot",
+              "minimum_version": "4.0",
+              "gui": false
+            }
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": true,
+              "note": "Runtime step cap is data; no runtime ships with this adapter."
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": true,
+              "note": "Declared as data; consuming integration must enforce it."
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Asset IDs only; no media bytes are packaged."
+            }
+          },
+          "losses": [
+            "DATA_ONLY_TARGET_IMPORTER_REQUIRED",
+            "NO_SAVE_OR_RESTORE",
+            "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED"
+          ],
+          "compatibility": {
+            "target_id": "GODOT_4_DATA_ADAPTER",
+            "can_export": true,
+            "losses": [
+              "DATA_ONLY_TARGET_IMPORTER_REQUIRED",
+              "NO_SAVE_OR_RESTORE",
+              "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        },
+        {
+          "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+          "display_name": "inkjs 2.3.2 typed text subset (legacy)",
+          "kind": "LEGACY_FRAGMENT",
+          "format_version": "ink-typed-subset-1",
+          "adapter_revision": 1,
+          "export_ready": true,
+          "runtime_claim": "NOT_RUN",
+          "evidence": {
+            "SOURCE_IMPLEMENTED": "PASS",
+            "SCHEMA_VALIDATED": "NOT_RUN",
+            "FIXTURE_TESTED": "PASS",
+            "GENERATED_ARTIFACT_VALIDATED": "NOT_RUN",
+            "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+            "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+            "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+          },
+          "engine_probe": {
+            "status": "NOT_REQUIRED",
+            "detected": false,
+            "executable": null,
+            "version": null,
+            "version_ok": false,
+            "detail": "No external engine is required to generate this target.",
+            "declared": null
+          },
+          "capabilities": {
+            "conditions": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "bool_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "int_variables": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "assignment": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "dialogue": {
+              "supported": true,
+              "lossy": true,
+              "note": "Paragraph whitespace is normalized by the target."
+            },
+            "choices": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "endings": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "loops": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "step_cap": {
+              "supported": true,
+              "lossy": false,
+              "note": ""
+            },
+            "save": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "restore": {
+              "supported": false,
+              "lossy": false,
+              "note": ""
+            },
+            "unicode": {
+              "supported": true,
+              "lossy": true,
+              "note": "Ink string escaping is verified but target font rendering is not."
+            },
+            "media": {
+              "supported": false,
+              "lossy": true,
+              "note": "Media references are not exported."
+            }
+          },
+          "losses": [
+            "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+            "INK_MEDIA_REFERENCES_NOT_PLAYED",
+            "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+            "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+            "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+          ],
+          "compatibility": {
+            "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+            "can_export": true,
+            "losses": [
+              "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+              "INK_MEDIA_REFERENCES_NOT_PLAYED",
+              "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+              "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+              "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+            ],
+            "issues": [],
+            "notes": [
+              "LEGACY_TARGET_OUTPUT_SHAPE_PRESERVED"
+            ]
+          }
+        }
+      ]
+    },
+    "legacy": {
+      "status": "EXPORTED",
+      "target_id": null,
+      "filename": "interactive-story-08e85d46-1392-4806-b47b-4cdf44c127f5-v4.zip",
+      "sha256": "e867ea573af762735c772d735b470702e9b84c73289077932f1ad18e672b8a93",
+      "file_count": 13,
+      "preview_digest": "7244f6ff63288df96615302fa71132e1cef6ae19b8b3e03f303c48632eb21cc6",
+      "can_export": true,
+      "losses": [
+        "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
+        "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS",
+        "TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED",
+        "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+        "INK_MEDIA_REFERENCES_NOT_PLAYED",
+        "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+        "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+        "INK_CURRENT_ARTIFACT_TARGET_RUNTIME_NOT_RUN"
+      ],
+      "available_targets": null,
+      "archive": {
+        "status": "PASS",
+        "prefix": "interactive-story-08e85d46-1392-4806-b47b-4cdf44c127f5/",
+        "files": [
+          {
+            "path": "README.txt",
+            "bytes": 593,
+            "sha256": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4"
+          },
+          {
+            "path": "checksums.json",
+            "bytes": 1081,
+            "sha256": "2f0672df91c58c75fc71f963d3b6cd789381872d9089abe2a97884af48c1d25a"
+          },
+          {
+            "path": "compatibility.json",
+            "bytes": 19523,
+            "sha256": "62c9e3ec78d49042d360ef0420cda2f4e616fe35f1f2604c2e90ebca0603a52d"
+          },
+          {
+            "path": "game/story.rpy",
+            "bytes": 3277,
+            "sha256": "931802f9245eb323a679e0faa7341abc09f7b550381a9e48d3451b8b61cdd8e2"
+          },
+          {
+            "path": "godot/README.txt",
+            "bytes": 380,
+            "sha256": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81"
+          },
+          {
+            "path": "godot/story.json",
+            "bytes": 6972,
+            "sha256": "bd6dc064e67263d425bcb2a1a1a60b301e962ca73dc7bbb2a73de1ba8d77d678"
+          },
+          {
+            "path": "godot/story.schema.json",
+            "bytes": 13421,
+            "sha256": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c"
+          },
+          {
+            "path": "ink/README.txt",
+            "bytes": 403,
+            "sha256": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d"
+          },
+          {
+            "path": "ink/story.ink",
+            "bytes": 3556,
+            "sha256": "e577007a104c6e0dafbe858fba6258965545ef71d6c3cd7a6fd9aaea0f42c0ba"
+          },
+          {
+            "path": "ink/validation.json",
+            "bytes": 4465,
+            "sha256": "e18091227c175d3c57a5cd7bb09c572b91537d1bab872481b5df1adf0161121a"
+          },
+          {
+            "path": "media-manifest.json",
+            "bytes": 2,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          {
+            "path": "source-receipt.json",
+            "bytes": 409,
+            "sha256": "e020e5a0e65d239a69065c4c168ffbcad414fbe667adef9a4f53dcfe0437f06a"
+          },
+          {
+            "path": "story.json",
+            "bytes": 9182,
+            "sha256": "3fe9b9d3631eed740604e4cee7bb56e808da0935f9d31d851102b73ee988da94"
+          }
+        ],
+        "checks": [
+          {
+            "id": "single root folder",
+            "status": "PASS",
+            "detail": "interactive-story-08e85d46-1392-4806-b47b-4cdf44c127f5"
+          },
+          {
+            "id": "legacy file set",
+            "status": "PASS",
+            "detail": "[]/[]"
+          },
+          {
+            "id": "legacy checksums.json binds every payload file",
+            "status": "PASS",
+            "detail": "[]"
+          },
+          {
+            "id": "legacy checksums excludes itself",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json adaptation id",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json adaptation version",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy story.json spec equals approved spec",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility target runtime not run",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility can_export",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy compatibility keeps losses",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy media manifest present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt story id",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt story version",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt source digest",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "legacy source receipt preview digest",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.game/story.rpy present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.label start",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.one label per story node",
+            "status": "PASS",
+            "detail": "labels=7 nodes=7"
+          },
+          {
+            "id": "renpy-legacy.initial jump",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.menu per acting node",
+            "status": "PASS",
+            "detail": "menus=4 acting=4"
+          },
+          {
+            "id": "renpy-legacy.step cap guard",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.return per ending and guards",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.speaker names rendered",
+            "status": "PASS",
+            "detail": "Alice"
+          },
+          {
+            "id": "renpy-legacy.escaped square brackets",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.escaped braces",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.escaped percent",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.escaped lenticular",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.no external engine/paths",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "renpy-legacy.no engine binary bundled",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot/story.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.typed story resource schema",
+            "status": "PASS",
+            "detail": "nodes=7"
+          },
+          {
+            "id": "godot-legacy.godot story.json matches product exporter",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.entry index",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.typed condition trees",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.runtime verification not claimed",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot/story.schema.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.godot schema parses as JSON",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "godot-legacy.no engine bundled",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink/story.ink present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink source matches product exporter",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink/validation.json present",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink validation schema",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink runtime not claimed",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink pin version 2.3.2",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink source map stable",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.ink witness states equal play()",
+            "status": "PASS",
+            "detail": "witnesses=3"
+          },
+          {
+            "id": "ink-legacy.ink script sha bound in validation",
+            "status": "PASS",
+            "detail": ""
+          },
+          {
+            "id": "ink-legacy.no ink runtime bundled",
+            "status": "PASS",
+            "detail": ""
+          }
+        ],
+        "checksums": {
+          "README.txt": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4",
+          "compatibility.json": "62c9e3ec78d49042d360ef0420cda2f4e616fe35f1f2604c2e90ebca0603a52d",
+          "game/story.rpy": "931802f9245eb323a679e0faa7341abc09f7b550381a9e48d3451b8b61cdd8e2",
+          "godot/README.txt": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81",
+          "godot/story.json": "bd6dc064e67263d425bcb2a1a1a60b301e962ca73dc7bbb2a73de1ba8d77d678",
+          "godot/story.schema.json": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c",
+          "ink/README.txt": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d",
+          "ink/story.ink": "e577007a104c6e0dafbe858fba6258965545ef71d6c3cd7a6fd9aaea0f42c0ba",
+          "ink/validation.json": "e18091227c175d3c57a5cd7bb09c572b91537d1bab872481b5df1adf0161121a",
+          "media-manifest.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "source-receipt.json": "e020e5a0e65d239a69065c4c168ffbcad414fbe667adef9a4f53dcfe0437f06a",
+          "story.json": "3fe9b9d3631eed740604e4cee7bb56e808da0935f9d31d851102b73ee988da94"
+        },
+        "ink_witness_alignment": {
+          "status": "PASS",
+          "witnesses": 3,
+          "reports": [
+            {
+              "scope": "ink-validation:0",
+              "status": "PASS",
+              "states_expected": 3,
+              "states_actual": 3,
+              "states_matched": 3,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ink-validation:1",
+              "status": "PASS",
+              "states_expected": 3,
+              "states_actual": 3,
+              "states_matched": 3,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ink-validation:2",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            }
+          ]
+        },
+        "renpy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "game/story.rpy present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "label start",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "one label per story node",
+              "status": "PASS",
+              "detail": "labels=7 nodes=7"
+            },
+            {
+              "id": "initial jump",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "menu per acting node",
+              "status": "PASS",
+              "detail": "menus=4 acting=4"
+            },
+            {
+              "id": "step cap guard",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "return per ending and guards",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "speaker names rendered",
+              "status": "PASS",
+              "detail": "Alice"
+            },
+            {
+              "id": "escaped square brackets",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "escaped braces",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "escaped percent",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "escaped lenticular",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no external engine/paths",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no engine binary bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        },
+        "godot_legacy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "godot/story.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "typed story resource schema",
+              "status": "PASS",
+              "detail": "nodes=7"
+            },
+            {
+              "id": "godot story.json matches product exporter",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "entry index",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "typed condition trees",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "runtime verification not claimed",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "godot/story.schema.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "godot schema parses as JSON",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no engine bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        },
+        "ink_legacy_static": {
+          "status": "PASS",
+          "checks": [
+            {
+              "id": "ink/story.ink present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink source matches product exporter",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink/validation.json present",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink validation schema",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink runtime not claimed",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink pin version 2.3.2",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink source map stable",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "ink witness states equal play()",
+              "status": "PASS",
+              "detail": "witnesses=3"
+            },
+            {
+              "id": "ink script sha bound in validation",
+              "status": "PASS",
+              "detail": ""
+            },
+            {
+              "id": "no ink runtime bundled",
+              "status": "PASS",
+              "detail": ""
+            }
+          ]
+        }
+      },
+      "deterministic_repeat": {
+        "sha256_first": "e867ea573af762735c772d735b470702e9b84c73289077932f1ad18e672b8a93",
+        "sha256_second": "e867ea573af762735c772d735b470702e9b84c73289077932f1ad18e672b8a93",
+        "identical": true
+      },
+      "runtime": {
+        "target_id": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+        "status": "EXECUTED_AND_ALIGNED",
+        "harness": "scripts/verify_ink_runtime.cjs",
+        "vendor": {
+          "path": "D:\\PoemSeed\\Recovery\\b07-scratch\\e2e\\journey\\legacy-ink\\vendor\\inkjs-2.3.2\\package",
+          "version": "2.3.2"
+        },
+        "engine": "C:\\Program Files\\nodejs\\node.EXE",
+        "cases": [
+          {
+            "id": "initial",
+            "choices": []
+          },
+          {
+            "id": "ending-1-9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+            "choices": [
+              "share",
+              "beg"
+            ]
+          },
+          {
+            "id": "ending-2-5b54638c-bdab-4347-835d-9ee409e37c55",
+            "choices": [
+              "share",
+              "turn"
+            ]
+          },
+          {
+            "id": "ending-3-08aa60ac-5577-4602-85fd-e40bf16928e5",
+            "choices": [
+              "share",
+              "wander",
+              "escape"
+            ]
+          },
+          {
+            "id": "step-cap-reached",
+            "choices": [
+              "share",
+              "wander",
+              "again",
+              "again",
+              "again",
+              "again",
+              "again",
+              "again"
+            ]
+          },
+          {
+            "id": "save-restore-continue",
+            "choices": [
+              "share",
+              "dark",
+              "pray"
+            ]
+          },
+          {
+            "id": "assignment-effect-coins",
+            "choices": [
+              "keep",
+              "buy",
+              "forge"
+            ]
+          }
+        ],
+        "commands": [
+          {
+            "kind": "process",
+            "label": "legacy-ink-runtime",
+            "argv": [
+              "C:\\Program Files\\nodejs\\node.EXE",
+              "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_runtime.cjs"
+            ],
+            "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
+            "exit_code": 0,
+            "duration_ms": 202,
+            "stdout_tail": ",\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"门闩落下，雨声被关在门外。\\n平安回家 · 已核验\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":4,\"steps\":2,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":6,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":2,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":3,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":4,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":5,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":6,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":7,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":8,\"status\":2}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"在路边祈祷\",\"退回镇上\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"石阶很凉，香火很轻。\\n神庙的安眠\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":5,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"买一盏灯\",\"摸着黑走（没有灯）\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":2},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"翻过山口\",\"在路边祈祷\",\"退回镇上\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":6,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"}]",
+            "stderr_tail": "",
+            "timed_out": false,
+            "stdin_bytes": 23669,
+            "stdout_full": "[{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"石阶很凉，香火很轻。\\n神庙的安眠\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":5,\"steps\":2,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"门闩落下，雨声被关在门外。\\n平安回家 · 已核验\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":4,\"steps\":2,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":6,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":2,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":3,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":4,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":5,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":6,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[\"再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）\",\"离开回声厅\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":7,\"status\":0},{\"output\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\\n第三行：编辑后保存的对白。\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":8,\"status\":2}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走（没有灯）\",\"向神庙求助\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"在路边祈祷\",\"退回镇上\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"石阶很凉，香火很轻。\\n神庙的安眠\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":5,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"买一盏灯\",\"摸着黑走（没有灯）\",\"折返回家\",\"跟着风走\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":2},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"翻过山口\",\"在路边祈祷\",\"退回镇上\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":6,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"}]"
+          }
+        ],
+        "alignment": {
+          "status": "PASS",
+          "cases": [
+            {
+              "scope": "initial",
+              "status": "PASS",
+              "states_expected": 1,
+              "states_actual": 1,
+              "states_matched": 1,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ending-1-9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+              "status": "PASS",
+              "states_expected": 3,
+              "states_actual": 3,
+              "states_matched": 3,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ending-2-5b54638c-bdab-4347-835d-9ee409e37c55",
+              "status": "PASS",
+              "states_expected": 3,
+              "states_actual": 3,
+              "states_matched": 3,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "ending-3-08aa60ac-5577-4602-85fd-e40bf16928e5",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "step-cap-reached",
+              "status": "PASS",
+              "states_expected": 9,
+              "states_actual": 9,
+              "states_matched": 9,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 4,
+                  "steps": 4,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 5,
+                  "steps": 5,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 6,
+                  "steps": 6,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 7,
+                  "steps": 7,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 8,
+                  "steps": 8,
+                  "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "save-restore-continue",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            },
+            {
+              "scope": "assignment-effect-coins",
+              "status": "PASS",
+              "states_expected": 4,
+              "states_actual": 4,
+              "states_matched": 4,
+              "extra_states": 0,
+              "details": [
+                {
+                  "index": 0,
+                  "steps": 0,
+                  "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 1,
+                  "steps": 1,
+                  "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 2,
+                  "steps": 2,
+                  "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+                  "status": "PASS",
+                  "mismatches": []
+                },
+                {
+                  "index": 3,
+                  "steps": 3,
+                  "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+                  "status": "PASS",
+                  "mismatches": []
+                }
+              ]
+            }
+          ]
+        },
+        "save_restore": {
+          "level": "PASS",
+          "detail": "The pinned harness serializes Story.state.ToJson()/LoadJson() at every step; fileCalls=0 and errors=[] prove restoration replays each expected state."
+        }
+      },
+      "delivery": {
+        "zip": "exports/legacy/interactive-story-08e85d46-1392-4806-b47b-4cdf44c127f5-v4.zip",
+        "unpacked": "exports/legacy/unpacked"
+      }
+    },
+    "new_targets": {
+      "GODOT_4_RUNTIME_PROJECT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      },
+      "INK_2_3_2_CURRENT_ARTIFACT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      },
+      "RENPY_8_5_4_PROJECT_V1": {
+        "status": "TARGET_NOT_AVAILABLE",
+        "detail": "adapter module not landed / not registered"
+      }
+    }
+  },
+  "unmet": [
+    {
+      "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    },
+    {
+      "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    },
+    {
+      "target_id": "RENPY_8_5_4_PROJECT_V1",
+      "status": "TARGET_NOT_AVAILABLE",
+      "detail": "adapter module not landed / not registered"
+    }
+  ],
+  "_delivery_journey_json": "journey.json"
+}
