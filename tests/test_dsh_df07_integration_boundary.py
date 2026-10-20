@@ -51,10 +51,11 @@ print(json.dumps({'staged_imports':True,'ink_resources':True,'restore_context_re
 '''
     process_env = {**os.environ, 'PYTHONPATH': str(stage), 'PYTHONDONTWRITEBYTECODE': '1',
                    'PROJECT_ROOT': str(stage), 'NOVEL_DATA_PATH': str(tmp_path / 'runtime'),
-                   'LOCALAPPDATA': str(tmp_path / 'localapp'), 'STORAGE_BACKEND': 'file', 'ENABLE_CLOUD': 'false'}
+                   'LOCALAPPDATA': str(tmp_path / 'localapp'), 'STORAGE_BACKEND': 'file', 'ENABLE_CLOUD': 'false',
+                   'PYTHONIOENCODING': 'utf-8'}
     completed = subprocess.run([sys.executable, '-B', '-c', code, str(stage)], cwd=stage,
-                               env=process_env, capture_output=True, text=True, encoding='utf-8', timeout=30)
-    assert completed.returncode == 0, completed.stderr[-4000:]
+                               env=process_env, capture_output=True, timeout=30)
+    assert completed.returncode == 0, completed.stderr.decode('utf-8', errors='replace')[-4000:]
     assert json.loads(completed.stdout)['staged_imports']
     # The import must not alter the reviewed staged source payload.
     assert build.verify_stage(ROOT, stage, manifest, docker=True) == receipt_value
