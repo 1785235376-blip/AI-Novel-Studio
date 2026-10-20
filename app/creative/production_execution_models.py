@@ -40,7 +40,7 @@ class CanvasReturnBinding(ExecutionModel):
                 or self.scope.get('mode') not in {'local', 'collaboration'}
                 or any(v is not None and not 1 <= len(v) <= 240 for v in self.scope.values())
                 or self.scope['mode'] == 'collaboration' and any(not self.scope.get(k) for k in ('workspace_id', 'storyline_id', 'branch_id'))
-                or self.source.kind != 'ASSET' or self.source.asset_kind != 'image'):
+                or self.source.kind != 'ASSET' or self.source.asset_kind not in {'image', 'audio'}):
             raise ValueError('STUDIO_CANVAS_RETURN_BINDING_INVALID')
         return self
 
@@ -282,11 +282,22 @@ class _MediaCommandShape(ExecutionModel):
 
     @model_validator(mode="after")
     def operation_inputs(self):
-        if self.canvas_return is not None and (self.operation_id != 'm5.image.i2i' or self.allow_cloud
-                or len(self.source_snapshots) != 1 or self.image_source is None or self.image_references or self.mask_source is not None
-                or image_snapshot(self.canvas_return.source) != image_snapshot(self.source_snapshots[0])
-                or image_snapshot(self.canvas_return.source) != image_snapshot(self.image_source)):
-            raise ValueError('STUDIO_CANVAS_RETURN_COMMAND_INVALID')
+        if self.canvas_return is not None:
+            origin = self.canvas_return.source
+            if origin.asset_kind == 'image':
+                if (self.operation_id != 'm5.image.i2i' or self.allow_cloud
+                        or len(self.source_snapshots) != 1 or self.image_source is None or self.image_references or self.mask_source is not None
+                        or image_snapshot(origin) != image_snapshot(self.source_snapshots[0])
+                        or image_snapshot(origin) != image_snapshot(self.image_source)):
+                    raise ValueError('STUDIO_CANVAS_RETURN_COMMAND_INVALID')
+            elif (self.operation_id != 'm8.audio.trim' or self.allow_cloud or self.provider_id is not None
+                    or self.model_id is not None or self.prompt or len(self.source_snapshots) != 1
+                    or image_snapshot(origin) != image_snapshot(self.source_snapshots[0])
+                    or set(self.parameters.model_dump(exclude_none=True)) != {'in_ms', 'out_ms'}
+                    or self.image_source is not None or self.image_references or self.mask_source is not None
+                    or self.video_reference is not None or self.video_frames is not None or self.audio_profile is not None
+                    or self.storyboard_shot is not None or self.storyboard_speech is not None):
+                raise ValueError('STUDIO_CANVAS_RETURN_COMMAND_INVALID')
         if self.image_layers is not None and self.operation_id != 'm5.image.composite':
             raise ValueError('STUDIO_IMAGE_COMPOSITE_OPERATION_REQUIRED')
         if self.audio_profile is not None and (self.operation_id != "m8.audio.trim" or self.parameters.output_format != "MP3"):
