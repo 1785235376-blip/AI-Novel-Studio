@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { CAPABILITY_KEYS, capabilityLabel, compatibleIssueText, evidenceRows, formatDigest, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
-import type { StoryCapability, StoryExportTarget } from './interactiveStoryClient';
+import { CAPABILITY_KEYS, artifactEvidenceRows, artifactEvidenceStatusLabel, artifactEvidenceStatusTone, capabilityLabel, compatibleIssueText, evidenceRows, formatDigest, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
+import type { StoryArtifactEvidence, StoryCapability, StoryExportTarget } from './interactiveStoryClient';
 
 const caps = (overrides: Record<string, { supported: boolean; lossy?: boolean; note?: string }> = {}): Record<string, StoryCapability> => {
   const result: Record<string, StoryCapability> = {};
@@ -9,6 +9,11 @@ const caps = (overrides: Record<string, { supported: boolean; lossy?: boolean; n
   return result;
 };
 
+const artifactEvidence = (patch: Partial<StoryArtifactEvidence> = {}): StoryArtifactEvidence => ({
+  status: 'UNVERIFIED', levels: { GENERATED_ARTIFACT_VALIDATED: 'PASS', TARGET_RUNTIME_EXECUTED: 'NOT_RUN', SAVE_RESTORE_VERIFIED: 'NOT_RUN' },
+  binding: null, matched_receipt: null, stale_receipts: [], checked_receipts: 0,
+  policy: 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS', ...patch,
+});
 const target = (patch: Partial<StoryExportTarget> = {}): StoryExportTarget => ({
   target_id: 'GODOT_4_RUNTIME_PROJECT_V1', display_name: 'Godot 4 运行时项目', kind: 'RUNNABLE_PROJECT',
   format_version: 'godot-runtime-project-1', adapter_revision: 1,
@@ -16,7 +21,8 @@ const target = (patch: Partial<StoryExportTarget> = {}): StoryExportTarget => ({
   capabilities: caps(), losses: ['NO_SAVE_OR_RESTORE'], runtime_requirements: ['Godot 4 project'], launch_instructions: '使用 Godot 打开目录', integration_notes: [], evidence: {},
   compatibility: { target_id: 'GODOT_4_RUNTIME_PROJECT_V1', can_export: true, capabilities: caps(), losses: ['MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED'], issues: [], notes: [] },
   engine_probe: { status: 'READY', detected: true, executable: 'C:/godot.exe', version: '4.7.0', version_ok: true, detail: '', declared: { name: 'Godot', minimum_version: '4.0', gui: false } },
-  export_ready: true, runtime_claim: 'NOT_RUN', ...patch,
+  export_ready: true, historical_evidence: { SOURCE_IMPLEMENTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'PASS', SAVE_RESTORE_VERIFIED: 'PASS' },
+  artifact_evidence: artifactEvidence(), artifact_evidence_status: 'UNVERIFIED', runtime_claim: 'UNVERIFIED', ...patch,
 });
 
 describe('capability presentation', () => {
@@ -99,5 +105,28 @@ describe('formatting', () => {
     expect(targetKindLabel('RUNNABLE_PROJECT')).toBe('可运行项目');
     expect(targetKindLabel('UNKNOWN_KIND')).toBe('UNKNOWN_KIND');
     expect(compatibleIssueText({ code: 'UNSUPPORTED', node_id: 'gate', choice_id: 'home', character_id: 'alice', detail: '详情' })).toBe('UNSUPPORTED · 节点 gate · 选择 home · 角色 alice · 详情');
+  });
+});
+
+
+describe('current-artifact evidence presentation', () => {
+  it('labels every binding status without ever implying a pass for unverified work', () => {
+    expect(artifactEvidenceStatusLabel('PASS')).toContain('已通过匹配的运行时验证');
+    expect(artifactEvidenceStatusLabel('UNVERIFIED')).toContain('未验证');
+    expect(artifactEvidenceStatusLabel('NOT_EXPORTED')).toContain('尚未导出');
+    expect(artifactEvidenceStatusLabel('STALE_REVISION')).toContain('旧修订');
+    expect(artifactEvidenceStatusLabel('STALE_ARTIFACT')).toContain('旧产物摘要');
+    expect(artifactEvidenceStatusTone('PASS', { TARGET_RUNTIME_EXECUTED: 'PASS' })).toBe('success');
+    expect(artifactEvidenceStatusTone('UNVERIFIED', {})).toBe('neutral');
+    expect(artifactEvidenceStatusTone('STALE_REVISION', {})).toBe('warning');
+    expect(artifactEvidenceStatusTone('EVIDENCE_INVALID', {})).toBe('error');
+    expect(runtimeClaimText('UNVERIFIED').text).toContain('生成成功不等于运行成功');
+    expect(runtimeClaimText('UNVERIFIED').success).toBe(false);
+  });
+  it('shows only the current artifact levels in the artifact row set', () => {
+    const rows = artifactEvidenceRows({ TARGET_RUNTIME_EXECUTED: 'NOT_RUN', SAVE_RESTORE_VERIFIED: 'NOT_RUN', GENERATED_ARTIFACT_VALIDATED: 'PASS' });
+    expect(rows).toHaveLength(7);
+    expect(rows.find(row => row.level === 'TARGET_RUNTIME_EXECUTED')).toMatchObject({ status: 'NOT_RUN', tone: 'neutral' });
+    expect(rows.find(row => row.level === 'GENERATED_ARTIFACT_VALIDATED')).toMatchObject({ status: 'PASS', tone: 'success' });
   });
 });

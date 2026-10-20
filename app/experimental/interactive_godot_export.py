@@ -109,6 +109,7 @@ DESCRIPTOR = {
     'kind': 'RUNNABLE_PROJECT',
     'format_version': FORMAT_VERSION,
     'adapter_revision': ADAPTER_REVISION,
+    'verification_runtime': {'name': 'Godot', 'version': '4.0', 'version_mode': 'AT_LEAST', 'format': FORMAT_VERSION},
     'engine': {
         'name': 'Godot', 'minimum_version': '4.0',
         'executables': ['godot', 'godot.exe', 'Godot_v4.7-stable_win64_console.exe', 'Godot_v4.7-stable_win64.exe'],

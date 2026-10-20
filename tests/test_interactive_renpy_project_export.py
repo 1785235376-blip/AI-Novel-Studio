@@ -630,7 +630,7 @@ def test_descriptor_is_the_frozen_runnable_project_surface():
 
 def test_evidence_levels_are_honest_for_this_host():
     descriptor = contract.describe_target(TARGET)
-    evidence = contract.evidence_for(TARGET)
+    evidence = contract.historical_evidence_for(TARGET)
     probe = contract.probe_engine(descriptor.engine)
     assert probe['status'] in {'READY', 'NOT_INSTALLED', 'UNSUPPORTED_VERSION', 'PROBE_FAILED'}
     assert probe['declared']['minimum_version'] == '8.5.4'
@@ -640,7 +640,8 @@ def test_evidence_levels_are_honest_for_this_host():
     if probe['status'] != 'READY':
         assert evidence['TARGET_RUNTIME_EXECUTED'] == 'BLOCKED_ENVIRONMENT'
         assert evidence['SAVE_RESTORE_VERIFIED'] == 'BLOCKED_ENVIRONMENT'
-        assert InteractiveStoryService._runtime_claim(evidence) == 'BLOCKED_ENVIRONMENT'
+        # a historical BLOCKED level never becomes a current-artifact claim
+        assert InteractiveStoryService._runtime_claim({'levels': evidence}) == 'UNVERIFIED'
     assert evidence['WINDOWS_USABILITY_VERIFIED'] in {'NOT_RUN', 'PASS', 'PARTIAL'}
     for level, status in evidence.items():
         assert level in contract.EVIDENCE_LEVELS
@@ -1114,7 +1115,7 @@ def test_witness_is_bounded_declared_and_never_claims_runtime_execution():
     assert witness['truncated'] is False
     assert witness['coverage'] == 'ONE_WITNESS_PER_DISCOVERED_ENDING_WITH_PER_STEP_PLAY_STATES_NOT_ALL_PATHS'
     assert witness['expected_runtime_behavior'] and witness['how_to_use']
-    descriptor_evidence = contract.evidence_for(TARGET)
+    descriptor_evidence = contract.historical_evidence_for(TARGET)
     assert witness['runtime_evidence'] == {str(level): str(status)
                                            for level, status in sorted(descriptor_evidence.items())}
     assert witness['runtime_evidence']['TARGET_RUNTIME_EXECUTED'] in {'BLOCKED_ENVIRONMENT', 'PASS'}
@@ -1139,10 +1140,11 @@ def test_service_export_targets_reports_runnable_renpy_project(renpy_env):
     assert target['export_ready'] is True
     assert target['compatibility']['can_export'] is True
     assert set(target['capabilities']) == set(contract.CAPABILITY_KEYS)
-    assert target['runtime_claim'] == 'BLOCKED_ENVIRONMENT'
+    assert target['runtime_claim'] == 'UNVERIFIED'
+    assert target['artifact_evidence_status'] == 'NOT_EXPORTED'
     assert target['engine_probe']['status'] in {'NOT_INSTALLED', 'READY', 'UNSUPPORTED_VERSION', 'PROBE_FAILED'}
     assert target['engine_probe']['declared']['minimum_version'] == '8.5.4'
-    assert target['evidence']['TARGET_RUNTIME_EXECUTED'] in {'BLOCKED_ENVIRONMENT', 'PASS'}
+    assert target['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'BLOCKED_ENVIRONMENT'
     assert targets['can_export_any'] is True
     assert targets['witness']
     assert targets['story']['spec_digest'] == contract.digest(row['spec'])
@@ -1162,7 +1164,9 @@ def test_service_exports_complete_project_zip_with_bound_manifest_and_receipt(re
     assert exported['target_id'] == TARGET
     assert exported['target_format_version'] == RENPY_FORMAT_VERSION
     assert exported['adapter_revision'] == 1
-    assert exported['runtime_claim'] == 'BLOCKED_ENVIRONMENT'
+    assert exported['runtime_claim'] == 'UNVERIFIED'
+    assert exported['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert exported['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'BLOCKED_ENVIRONMENT'
     assert exported['published'] is False
     assert hashlib.sha256(content).hexdigest() == exported['sha256']
     assert set(files) == EXPECTED_PROJECT_FILES | RESERVED_INJECTED
@@ -1184,8 +1188,9 @@ def test_service_exports_complete_project_zip_with_bound_manifest_and_receipt(re
     for entry in manifest['files']:
         assert entry['bytes'] == len(payload[entry['path']])
         assert entry['sha256'] == hashlib.sha256(payload[entry['path']]).hexdigest()
-    assert manifest['runtime']['evidence'] == contract.evidence_for(TARGET)
-    assert manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'BLOCKED_ENVIRONMENT'
+    assert manifest['runtime']['historical_evidence'] == contract.historical_evidence_for(TARGET)
+    assert manifest['runtime']['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'BLOCKED_ENVIRONMENT'
+    assert manifest['runtime']['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
     assert manifest['generation']['wall_clock_included'] is False
     assert manifest['generation']['deterministic'] is True
     extra = manifest['extra']['renpy_project']

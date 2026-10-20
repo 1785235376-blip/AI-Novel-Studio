@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, expect, it, vi } from 'vitest';
 import { experimentalClient } from './api';
 import { InteractiveStoryPanel } from './InteractiveStoryPanel';
-import type { InteractiveStory, StoryCapability, StoryCatalog, StoryExportTarget, StoryExportTargets } from './interactiveStoryClient';
+import type { InteractiveStory, StoryArtifactEvidence, StoryCapability, StoryCatalog, StoryExportTarget, StoryExportTargets } from './interactiveStoryClient';
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 const client = (id = 'n') => experimentalClient(id, { sessionToken: 'session', scope: { branchId: 'branch' } as any });
 const reply = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
@@ -22,16 +22,23 @@ const caps = (overrides: Record<string, Partial<StoryCapability>> = {}): Record<
   for (const [key, value] of Object.entries(overrides)) result[key] = { supported: true, lossy: false, note: '', ...value };
   return result;
 };
+const artifactEvidence = (patch: Partial<StoryArtifactEvidence> = {}): StoryArtifactEvidence => ({
+  status: 'UNVERIFIED',
+  levels: { SOURCE_IMPLEMENTED: 'NOT_RUN', SCHEMA_VALIDATED: 'NOT_RUN', FIXTURE_TESTED: 'NOT_RUN', GENERATED_ARTIFACT_VALIDATED: 'PASS', TARGET_RUNTIME_EXECUTED: 'NOT_RUN', SAVE_RESTORE_VERIFIED: 'NOT_RUN', WINDOWS_USABILITY_VERIFIED: 'NOT_RUN' },
+  binding: null, matched_receipt: null, stale_receipts: [], checked_receipts: 0,
+  policy: 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+  reason: 'no verification receipt exists for this artifact', ...patch,
+});
 const godot = (): StoryExportTarget => ({
   target_id: 'GODOT_4_RUNTIME_PROJECT_V1', display_name: 'Godot 4 运行时项目', kind: 'RUNNABLE_PROJECT', format_version: 'godot-runtime-project-1', adapter_revision: 1,
   engine: { name: 'Godot', minimum_version: '4.0', executables: ['godot'], version_args: ['--version'], env_override: 'POEMSEED_GODOT_BIN', search_hints: [], gui: false, note: '' },
   capabilities: caps(), losses: [], runtime_requirements: ['Godot 4 项目'], launch_instructions: '解压后用 Godot 打开项目目录。', integration_notes: [], evidence: { SOURCE_IMPLEMENTED: 'PASS' },
   compatibility: { target_id: 'GODOT_4_RUNTIME_PROJECT_V1', can_export: true, capabilities: caps(), losses: ['NO_SAVE_OR_RESTORE'], issues: [], notes: [] },
   engine_probe: { status: 'READY', detected: true, executable: 'C:/godot.exe', version: '4.7.0', version_ok: true, detail: 'Godot 4.7.0 detected.', declared: { name: 'Godot', minimum_version: '4.0', gui: false } },
-  export_ready: true, runtime_claim: 'NOT_RUN',
+  export_ready: true, runtime_claim: 'UNVERIFIED', historical_evidence: { SOURCE_IMPLEMENTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'PASS', SAVE_RESTORE_VERIFIED: 'PASS' }, artifact_evidence: artifactEvidence(), artifact_evidence_status: 'UNVERIFIED',
 });
 const legacy = (): StoryExportTarget => ({ ...godot(), target_id: 'GODOT_4_DATA_ADAPTER', display_name: 'Godot 4 数据适配器（旧）', kind: 'DATA_ONLY_ADAPTER', format_version: 'godot-data-adapter-1', engine: null,
-  engine_probe: { status: 'NOT_REQUIRED', detected: false, executable: null, version: null, version_ok: false, detail: '无需外部引擎。', declared: null }, runtime_claim: 'NOT_RUN' });
+  engine_probe: { status: 'NOT_REQUIRED', detected: false, executable: null, version: null, version_ok: false, detail: '无需外部引擎。', declared: null }, runtime_claim: 'UNVERIFIED', historical_evidence: { SOURCE_IMPLEMENTED: 'PASS' }, artifact_evidence: artifactEvidence({ status: 'NOT_EXPORTED' }), artifact_evidence_status: 'NOT_EXPORTED' });
 const targetsData = (): StoryExportTargets => ({
   schema: 'poemseed-interactive-export-targets/1', contract_schema: 'poemseed-interactive-export-contract/1', contract_version: 1, contract: {},
   adaptation: { id: 'story', version: 1, status: 'APPROVED' },

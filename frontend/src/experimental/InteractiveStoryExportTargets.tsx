@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { Details, ErrorMessage, useAction } from './shared';
 import type { interactiveStoryClient, InteractiveStory, StoryExportPreview, StoryExportResult, StoryExportTarget, StoryExportTargets } from './interactiveStoryClient';
-import { capabilitySummaryText, compatibleIssueText, evidenceRows, formatDigest, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
+import { artifactEvidenceRows, artifactEvidenceStatusLabel, artifactEvidenceStatusTone, capabilitySummaryText, compatibleIssueText, evidenceMatchText, formatDigest, historicalEvidenceText, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
 
 type Api = ReturnType<typeof interactiveStoryClient>;
 type Receipt<T> = { owner: object; value: T };
@@ -43,8 +43,16 @@ function TargetSection({ target, selected, storyStatus, analysisCanReview, block
     {!readiness.exportReady && !!readiness.reasons.length && <section aria-label={`不可导出原因 ${target.target_id}`}><p>不可导出原因：</p><ul>{readiness.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul></section>}
     <section aria-label={`引擎探测 ${target.target_id}`}><h4>引擎探测（生成不要求引擎就绪）</h4><p><Badge tone={probe.tone}>{probe.headline}</Badge></p><p>{probe.detail}</p>
       {target.engine && <p>候选可执行文件：{target.engine.executables.length ? target.engine.executables.join('、') : '（未声明）'}{target.engine.env_override ? ` · 环境变量覆盖 ${target.engine.env_override}` : ''}{target.engine.gui ? ' · GUI 应用' : ''}{target.engine.note ? ' · ' + target.engine.note : ''}</p>}</section>
-    <section aria-label={`独立证据 ${target.target_id}`}><h4>独立证据等级</h4><p><Badge tone={claim.tone}>{claim.text}</Badge></p>
-      <ul>{evidenceRows(target.evidence).map(row => <li key={row.level}><Badge tone={row.tone}>{row.status}</Badge> {row.label}（{row.level}）</li>)}</ul></section>
+    <section aria-label={`当前产物验证 ${target.target_id}`}><h4>当前产物验证（仅绑定当前作品/修订/产物摘要）</h4><p><Badge tone={claim.tone}>{claim.text}</Badge></p>
+      <p><Badge tone={artifactEvidenceStatusTone(target.artifact_evidence_status, target.artifact_evidence?.levels)}>{artifactEvidenceStatusLabel(target.artifact_evidence_status)}</Badge></p>
+      {!!target.artifact_evidence?.reason && <p>{target.artifact_evidence.reason}</p>}
+      <ul>{artifactEvidenceRows(target.artifact_evidence?.levels).map(row => <li key={row.level}><Badge tone={row.tone}>{row.status}</Badge> {row.label}（{row.level}）</li>)}</ul>
+      {!!target.artifact_evidence?.matched_receipt && <p>{evidenceMatchText(target.artifact_evidence.matched_receipt)}</p>}
+      {!!target.artifact_evidence?.export_record && <p>最近导出产物：修订 v{String(target.artifact_evidence.export_record.revision)} · ZIP sha256 {formatDigest(String(target.artifact_evidence.export_record.artifact_sha256))} · 已记录验证回执 {target.artifact_evidence.checked_receipts} 条</p>}
+      {!!target.artifact_evidence?.stale_receipts?.length && <><p>被拒绝/过期的验证回执：</p><ul>{target.artifact_evidence.stale_receipts.map((item, index) => <li key={index}>{item.code}：{item.detail}</li>)}</ul></>}
+    </section>
+    <section aria-label={`历史验证 ${target.target_id}`}><h4>模板/适配器历史验证（不代表当前作品）</h4><p>{historicalEvidenceText(target.historical_evidence)}</p>
+      <ul>{artifactEvidenceRows(target.historical_evidence).map(row => <li key={row.level}><Badge tone={row.tone}>{row.status}</Badge> {row.label}（{row.level}）</li>)}</ul></section>
     <section aria-label={`能力与损失 ${target.target_id}`}><h4>能力与损失</h4><p>{capabilitySummaryText(target.compatibility.capabilities)}</p>
       {!!capabilities.unsupported.length && <><p>不支持能力：</p><ul>{capabilities.unsupported.map(row => <li key={row.key}>{row.label}（{row.key}）{row.note ? ' — ' + row.note : ''}</li>)}</ul></>}
       {!!capabilities.lossy.length && <><p>有损能力：</p><ul>{capabilities.lossy.map(row => <li key={row.key}>{row.label}（{row.key}）{row.note ? ' — ' + row.note : ''}</li>)}</ul></>}
@@ -152,12 +160,16 @@ export function InteractiveStoryExportTargets({ api, story, blocked }: { api: Ap
         <Button disabled={!confirmed || !activePreview.can_export || blocked || busy} onClick={generate}>生成所选目标包</Button>
         {actionOwners.current.export === token && exportAction.feedback}
       </section>}
+      {!!activePreview?.artifact_evidence && <p><Badge tone={artifactEvidenceStatusTone(activePreview.artifact_evidence.status, activePreview.artifact_evidence.levels)}>{artifactEvidenceStatusLabel(activePreview.artifact_evidence.status)}</Badge> 预检同时读取了当前产物验证状态；它只对已记录且绑定该产物摘要的验证回执生效。</p>}
       {activePreview && !currentArtifact && <p>下载状态：尚未生成。生成只会下载确定性 ZIP，不会安装或运行引擎，也不会上传作品。</p>}
       {currentArtifact && <section aria-label="所选目标下载状态"><StatusMessage tone="success">目标包已生成，可下载；生成不等于目标引擎运行验证。</StatusMessage>
         <a href={currentArtifact.url} download={currentArtifact.filename}>下载 {currentArtifact.filename}</a>
         <ul><li>target_id：{currentArtifact.result.target_id}</li><li>格式版本：{currentArtifact.result.target_format_version}</li><li>适配器修订：{currentArtifact.result.adapter_revision}</li><li>文件数：{currentArtifact.result.file_count}</li><li>ZIP sha256：{currentArtifact.result.sha256}</li><li>文件集合摘要：{currentArtifact.result.files_digest}</li></ul>
         <p><Badge tone={runtimeClaimText(currentArtifact.result.runtime_claim).tone}>{runtimeClaimText(currentArtifact.result.runtime_claim).text}</Badge></p>
-        <p>运行验证来自独立证据记录，不因生成成功而升级。</p></section>}
+        {!!currentArtifact.result.artifact_evidence && <p><Badge tone={artifactEvidenceStatusTone(currentArtifact.result.artifact_evidence_status, currentArtifact.result.artifact_evidence.levels)}>{artifactEvidenceStatusLabel(currentArtifact.result.artifact_evidence_status)}</Badge>{!!currentArtifact.result.artifact_evidence.reason && ' · ' + currentArtifact.result.artifact_evidence.reason}</p>}
+        {!!currentArtifact.result.artifact_evidence && <ul>{artifactEvidenceRows(currentArtifact.result.artifact_evidence.levels).map(row => <li key={row.level}><Badge tone={row.tone}>{row.status}</Badge> {row.label}（{row.level}）</li>)}</ul>}
+        {!!currentArtifact.result.verification && <Details label="如何记录该产物的运行时验证回执" value={currentArtifact.result.verification} />}
+        <p>运行验证来自独立证据记录，不因生成成功而升级；新作品、修改后的作品、旧摘要或错误目标/运行时的回执都不会让当前产物变成 PASS。</p></section>}
     </section>}
     {!view && <StatusMessage tone="info">尚未读取导出目标。读取只返回兼容性、引擎探测与证据；不会生成文件、安装引擎或运行目标。</StatusMessage>}
   </Panel>;

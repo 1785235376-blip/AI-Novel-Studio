@@ -1,4 +1,4 @@
-import type { StoryCapability, StoryEngineProbe, StoryExportTarget } from './interactiveStoryClient';
+import type { StoryArtifactEvidence, StoryCapability, StoryEngineProbe, StoryExportTarget } from './interactiveStoryClient';
 
 export const CAPABILITY_KEYS = [
   'conditions', 'bool_variables', 'int_variables', 'assignment', 'dialogue',
@@ -113,15 +113,62 @@ export function probeDescription(probe: StoryEngineProbe | undefined): ProbeDesc
 
 export type RuntimeClaim = { tone: Tone; text: string; success: boolean };
 
+export const ARTIFACT_EVIDENCE_STATUS_LABELS: Record<string, string> = {
+  PASS: '当前产物已通过匹配的运行时验证',
+  UNVERIFIED: '当前产物未验证（导出后尚未记录运行时验证回执）',
+  NOT_EXPORTED: '当前修订尚未导出到该目标',
+  EVIDENCE_INVALID: '验证回执无效，已拒绝',
+  TARGET_MISMATCH: '验证回执属于其他目标',
+  FORMAT_MISMATCH: '验证回执属于其他目标格式版本',
+  RUNTIME_MISMATCH: '验证回执的运行时身份/版本不匹配',
+  STALE_STORY: '验证回执属于其他作品',
+  STALE_REVISION: '验证回执属于旧修订，当前修订需重新运行验证',
+  STALE_SOURCE: '验证回执的来源摘要已过期',
+  STALE_ARTIFACT: '验证回执对应旧产物摘要，当前导出产物需重新验证',
+};
+
+export function artifactEvidenceStatusLabel(status: string | undefined): string {
+  return ARTIFACT_EVIDENCE_STATUS_LABELS[status ?? ''] ?? ('未知证据状态 ' + (status ?? 'NOT_RUN'));
+}
+
+export function artifactEvidenceStatusTone(status: string | undefined, levels: Record<string, string> | undefined): Tone {
+  if (status === 'PASS' && (levels?.TARGET_RUNTIME_EXECUTED === 'PASS' || levels?.SAVE_RESTORE_VERIFIED === 'PASS')) return 'success';
+  if (status === 'UNVERIFIED' || status === 'NOT_EXPORTED') return 'neutral';
+  if (status === 'EVIDENCE_INVALID') return 'error';
+  return 'warning';
+}
+
+export type ArtifactEvidenceRow = EvidenceRow & { currentArtifact: true };
+
+/** Current-artifact levels only; historical adapter evidence must not be shown here. */
+export function artifactEvidenceRows(levels: Record<string, string> | undefined): EvidenceRow[] {
+  return EVIDENCE_LEVELS.map(level => {
+    const status = levels?.[level] ?? 'NOT_RUN';
+    return { level, label: evidenceLabel(level), status, tone: evidenceTone(status) };
+  });
+}
+
+export function evidenceMatchText(matched: StoryArtifactEvidence['matched_receipt'] | undefined): string {
+  if (!matched) return '';
+  return '验证器 ' + matched.verifier + ' · ' + matched.verified_at + ' · 运行时 ' + matched.runtime.name + ' ' + matched.runtime.version + (matched.runtime.format ? '（' + matched.runtime.format + '）' : '');
+}
+
 /** Runtime claims are independent evidence records. Nothing here ever upgrades
  * generation success into a runtime success claim. */
 export function runtimeClaimText(claim: string | undefined): RuntimeClaim {
   if (claim === 'TARGET_RUNTIME_EXECUTED' || claim === 'SAVE_RESTORE_VERIFIED') {
-    return { tone: 'success', text: '运行验证：' + claim + ' 已记录（PASS）', success: true };
+    return { tone: 'success', text: '当前产物运行验证：' + claim + ' 已记录（PASS，绑定当前作品/修订/产物摘要）', success: true };
   }
   if (claim === 'BLOCKED_ENVIRONMENT') return { tone: 'warning', text: '运行验证：BLOCKED_ENVIRONMENT（未执行；缺少引擎/运行时）', success: false };
   if (claim === 'BLOCKED_AUTHORITY') return { tone: 'warning', text: '运行验证：BLOCKED_AUTHORITY（未执行；缺少授权）', success: false };
+  if (claim === 'UNVERIFIED') return { tone: 'neutral', text: '当前产物未验证：生成成功不等于运行成功；需在目标运行时实际执行后提交绑定该产物摘要的验证回执。', success: false };
   return { tone: 'neutral', text: '运行验证：' + (claim || 'NOT_RUN') + '（未执行；生成成功不等于运行成功）', success: false };
+}
+
+export function historicalEvidenceText(evidence: Record<string, string> | undefined): string {
+  const runtime = evidence?.TARGET_RUNTIME_EXECUTED ?? 'NOT_RUN';
+  const save = evidence?.SAVE_RESTORE_VERIFIED ?? 'NOT_RUN';
+  return '模板/适配器历史记录：TARGET_RUNTIME_EXECUTED=' + runtime + ' · SAVE_RESTORE_VERIFIED=' + save + '。历史记录不代表当前作品已运行。';
 }
 
 export type TargetReadiness = { exportReady: boolean; reasons: string[] };

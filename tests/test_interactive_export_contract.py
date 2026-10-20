@@ -122,15 +122,18 @@ def test_adapter_descriptor_is_normalized_and_strictly_validated(fake_target):
 
 
 def test_evidence_levels_default_to_not_run_and_never_upgrade(fake_target):
-    evidence = contract.evidence_for(fake_target)
+    evidence = contract.historical_evidence_for(fake_target)
     assert evidence['SOURCE_IMPLEMENTED'] == 'PASS' and evidence['FIXTURE_TESTED'] == 'PASS'
     assert evidence['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN' and evidence['SAVE_RESTORE_VERIFIED'] == 'NOT_RUN'
     assert evidence['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
     contract.EVIDENCE_OVERRIDES[FAKE_TARGET] = {'TARGET_RUNTIME_EXECUTED': 'PASS'}
-    assert contract.evidence_for(fake_target)['TARGET_RUNTIME_EXECUTED'] == 'PASS'
-    assert contract.evidence_for('NO_SUCH_TARGET')['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert contract.historical_evidence_for(fake_target)['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert contract.historical_evidence_for('NO_SUCH_TARGET')['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
     bundle = contract.build_export_bundle(fake_target, snapshot())
-    assert bundle.manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    manifest_runtime = bundle.manifest['runtime']
+    assert manifest_runtime['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert 'evidence' not in manifest_runtime
+    assert manifest_runtime['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
 
 
 # ---------------------------------------------------------------------------
@@ -289,12 +292,15 @@ def test_service_export_targets_and_target_bundle(interactive_env, fake_target):
     out = e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': fake_target, 'preview_digest': preview['preview_digest']})
     data = base64.b64decode(out['content_base64'])
     assert hashlib.sha256(data).hexdigest() == out['sha256'] and out['target_id'] == fake_target
-    assert out['runtime_claim'] == 'NOT_RUN' and out['target_runtime'] == 'NOT_RUN'
+    assert out['runtime_claim'] == 'UNVERIFIED' and out['target_runtime'] == 'UNVERIFIED'
+    assert out['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert out['historical_evidence'] == contract.historical_evidence_for(fake_target)
     files = contract.read_zip_safely(data, 'interactive-fake-runtime-project-v1-' + row['id'] + '/')
     assert {'manifest.json', 'source-receipt.json', 'project.godot', 'data/story.json', 'runtime/play.gd'} == set(files)
     manifest = json.loads(files['manifest.json'])
     assert manifest['target_kind'] == 'RUNNABLE_PROJECT' and manifest['contract_version'] == contract.CONTRACT_VERSION
-    assert manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert manifest['runtime']['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert manifest['runtime']['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
     assert json.loads(files['data/story.json'])['story_id'] == row['id']
     assert manifest['story']['spec_digest'] == hashlib.sha256(json.dumps(row['spec'], ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()
 

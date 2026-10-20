@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../api';
 import { InteractiveStoryExportTargets } from './InteractiveStoryExportTargets';
-import type { interactiveStoryClient, InteractiveStory, StoryCapability, StoryExportPreview, StoryExportResult, StoryExportTarget, StoryExportTargets } from './interactiveStoryClient';
+import type { interactiveStoryClient, InteractiveStory, StoryArtifactEvidence, StoryCapability, StoryExportPreview, StoryExportResult, StoryExportTarget, StoryExportTargets } from './interactiveStoryClient';
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 const caps = (overrides: Record<string, Partial<StoryCapability>> = {}): Record<string, StoryCapability> => {
@@ -12,25 +12,32 @@ const caps = (overrides: Record<string, Partial<StoryCapability>> = {}): Record<
   for (const [key, value] of Object.entries(overrides)) result[key] = { supported: true, lossy: false, note: '', ...value };
   return result;
 };
+const artifactEvidence = (patch: Partial<StoryArtifactEvidence> = {}): StoryArtifactEvidence => ({
+  status: 'UNVERIFIED',
+  levels: { SOURCE_IMPLEMENTED: 'NOT_RUN', SCHEMA_VALIDATED: 'NOT_RUN', FIXTURE_TESTED: 'NOT_RUN', GENERATED_ARTIFACT_VALIDATED: 'PASS', TARGET_RUNTIME_EXECUTED: 'NOT_RUN', SAVE_RESTORE_VERIFIED: 'NOT_RUN', WINDOWS_USABILITY_VERIFIED: 'NOT_RUN' },
+  binding: null, matched_receipt: null, stale_receipts: [], checked_receipts: 0,
+  policy: 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+  reason: 'no verification receipt exists for this artifact', ...patch,
+});
 const baseTarget = (patch: Partial<StoryExportTarget>): StoryExportTarget => ({
   target_id: 'GODOT_4_RUNTIME_PROJECT_V1', display_name: 'Godot 4 运行时项目', kind: 'RUNNABLE_PROJECT', format_version: 'godot-runtime-project-1', adapter_revision: 1,
   engine: { name: 'Godot', minimum_version: '4.0', executables: ['godot'], version_args: ['--version'], env_override: 'POEMSEED_GODOT_BIN', search_hints: [], gui: false, note: '' },
   capabilities: caps(), losses: ['NO_SAVE_OR_RESTORE'], runtime_requirements: ['Godot 4 项目'], launch_instructions: '解压后用 Godot 打开项目目录。', integration_notes: [], evidence: { SOURCE_IMPLEMENTED: 'PASS', FIXTURE_TESTED: 'PASS' },
   compatibility: { target_id: 'GODOT_4_RUNTIME_PROJECT_V1', can_export: true, capabilities: caps({ save: { supported: false, note: '无存档运行时' }, restore: { supported: false, note: '无读档运行时' } }), losses: [], issues: [], notes: [] },
   engine_probe: { status: 'READY', detected: true, executable: 'C:/godot.exe', version: '4.7.0', version_ok: true, detail: 'Godot 4.7.0 detected.', declared: { name: 'Godot', minimum_version: '4.0', gui: false } },
-  export_ready: true, runtime_claim: 'NOT_RUN', ...patch,
+  export_ready: true, runtime_claim: 'UNVERIFIED', historical_evidence: { SOURCE_IMPLEMENTED: 'PASS', FIXTURE_TESTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'PASS', SAVE_RESTORE_VERIFIED: 'PASS', WINDOWS_USABILITY_VERIFIED: 'NOT_RUN' }, artifact_evidence: artifactEvidence(), artifact_evidence_status: 'UNVERIFIED', ...patch,
 });
 const godotTarget = (patch: Partial<StoryExportTarget> = {}) => baseTarget(patch);
 const renpyTarget = (patch: Partial<StoryExportTarget> = {}) => baseTarget({
   target_id: 'RENPY_8_5_4_PROJECT_V1', display_name: 'Ren’Py 8.5.4 项目', format_version: 'renpy-project-1', adapter_revision: 2,
   engine: { name: 'Ren\'Py', minimum_version: '8.5.4', executables: ['renpy.exe'], version_args: ['--version'], env_override: 'POEMSEED_RENPY_BIN', search_hints: [], gui: true, note: '' },
   engine_probe: { status: 'NOT_INSTALLED', detected: false, executable: null, version: null, version_ok: false, detail: 'Ren’Py was not found on PATH.', declared: { name: 'Ren\'Py', minimum_version: '8.5.4', gui: true } },
-  evidence: { SOURCE_IMPLEMENTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'BLOCKED_ENVIRONMENT' }, runtime_claim: 'BLOCKED_ENVIRONMENT', ...patch,
+  evidence: { SOURCE_IMPLEMENTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'BLOCKED_ENVIRONMENT' }, historical_evidence: { SOURCE_IMPLEMENTED: 'PASS', TARGET_RUNTIME_EXECUTED: 'BLOCKED_ENVIRONMENT', SAVE_RESTORE_VERIFIED: 'BLOCKED_ENVIRONMENT', WINDOWS_USABILITY_VERIFIED: 'NOT_RUN' }, artifact_evidence: artifactEvidence({ status: 'NOT_EXPORTED' }), artifact_evidence_status: 'NOT_EXPORTED', runtime_claim: 'UNVERIFIED', ...patch,
 });
 const legacyTarget = (patch: Partial<StoryExportTarget> = {}) => baseTarget({
   target_id: 'GODOT_4_DATA_ADAPTER', display_name: 'Godot 4 数据适配器（旧）', kind: 'DATA_ONLY_ADAPTER', format_version: 'godot-data-adapter-1', engine: null,
   engine_probe: { status: 'NOT_REQUIRED', detected: false, executable: null, version: null, version_ok: false, detail: 'No external engine is required to generate this target.', declared: null },
-  evidence: { SOURCE_IMPLEMENTED: 'PASS' }, runtime_claim: 'NOT_RUN', ...patch,
+  evidence: { SOURCE_IMPLEMENTED: 'PASS' }, historical_evidence: { SOURCE_IMPLEMENTED: 'PASS' }, artifact_evidence: artifactEvidence({ status: 'NOT_EXPORTED' }), artifact_evidence_status: 'NOT_EXPORTED', runtime_claim: 'UNVERIFIED', ...patch,
 });
 const story: InteractiveStory = { id: 'story', version: 3, status: 'APPROVED', stale: false, content_withheld: false };
 const targetsResponse = (patch: Partial<StoryExportTargets> = {}): StoryExportTargets => ({
@@ -77,18 +84,23 @@ it('shows target format, capabilities, losses, engine probes and independent evi
   expect(godot.textContent).toContain('不支持能力');
   expect(godot.textContent).toContain('存档（save）');
   expect(within(screen.getByLabelText('引擎探测 GODOT_4_RUNTIME_PROJECT_V1')).getByText(/READY/)).toBeTruthy();
-  const godotEvidence = screen.getByLabelText('独立证据 GODOT_4_RUNTIME_PROJECT_V1');
+  const godotEvidence = screen.getByLabelText('当前产物验证 GODOT_4_RUNTIME_PROJECT_V1');
   expect(godotEvidence.textContent).toContain('生成成功不等于运行成功');
+  expect(godotEvidence.textContent).toContain('当前产物未验证');
   expect(godotEvidence.textContent).toContain('TARGET_RUNTIME_EXECUTED');
+  const godotHistorical = screen.getByLabelText('历史验证 GODOT_4_RUNTIME_PROJECT_V1');
+  expect(godotHistorical.textContent).toContain('历史记录不代表当前作品已运行');
+  expect(godotHistorical.textContent).toContain('TARGET_RUNTIME_EXECUTED=PASS');
   const renpy = screen.getByLabelText('导出目标 RENPY_8_5_4_PROJECT_V1');
   expect(screen.getByLabelText('引擎探测 RENPY_8_5_4_PROJECT_V1').textContent).toContain('NOT_INSTALLED');
   expect(screen.getByLabelText('引擎探测 RENPY_8_5_4_PROJECT_V1').textContent).toContain('安全生成/导出不受影响');
-  expect(screen.getByLabelText('独立证据 RENPY_8_5_4_PROJECT_V1').textContent).toContain('BLOCKED_ENVIRONMENT');
+  expect(screen.getByLabelText('当前产物验证 RENPY_8_5_4_PROJECT_V1').textContent).toContain('尚未导出');
+  expect(screen.getByLabelText('历史验证 RENPY_8_5_4_PROJECT_V1').textContent).toContain('BLOCKED_ENVIRONMENT');
   expect(renpy.textContent).toContain('导出后使用步骤');
   // A missing engine never blocks safe export: the target stays selectable.
   expect((screen.getByRole('button', { name: '选择目标 Ren’Py 8.5.4 项目' }) as HTMLButtonElement).disabled).toBe(false);
   expect(screen.queryByText(/运行验证：.*已记录（PASS）/)).toBeNull();
-  expect(screen.getByLabelText('独立证据 RENPY_8_5_4_PROJECT_V1').textContent).toContain('未执行');
+  expect(screen.getByLabelText('当前产物验证 RENPY_8_5_4_PROJECT_V1').textContent).toContain('未验证');
 });
 
 it('keeps legacy target ids as compatibility-only entries without a single-target download', async () => {

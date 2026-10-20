@@ -106,6 +106,7 @@ DESCRIPTOR = {
     'kind': 'RUNNABLE_PROJECT',
     'format_version': FORMAT_VERSION,
     'adapter_revision': ADAPTER_REVISION,
+    'verification_runtime': {'name': "Ren'Py", 'version': renpy_project.RENPY_MINIMUM_VERSION, 'version_mode': 'AT_LEAST', 'format': FORMAT_VERSION},
     'engine': {
         'name': 'Ren\'Py',
         'minimum_version': renpy_project.RENPY_MINIMUM_VERSION,

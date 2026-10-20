@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import ValidationError
 from .common import api_call
-from .interactive_story import FEATURE, CreateIn, SaveIn, VersionIn, ReviewIn, PlayIn, ExportIn, RestoreIn
+from .interactive_story import FEATURE, CreateIn, SaveIn, VersionIn, ReviewIn, PlayIn, ExportIn, ExportVerificationIn, RestoreIn
 
 
 def create_interactive_story_router(service, authorize, require_flag):
@@ -67,6 +67,7 @@ def create_interactive_story_router(service, authorize, require_flag):
     post_route('refresh-preview', service.refresh_preview, VersionIn, 'domain.write')
     post_route('refresh', service.refresh, ExportIn, 'domain.write')
     post_route('export-targets', service.export_targets, VersionIn, 'domain.review')
+    post_route('export-verification', service.record_export_verification, ExportVerificationIn, 'domain.review')
     post_route('export-preview', service.export_preview, ExportIn, 'domain.review')
     post_route('export', service.export, ExportIn, 'domain.review')
     post_route('history', service.revisions, VersionIn, 'domain.write')

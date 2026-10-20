@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, expect, it, vi } from 'vitest';
 import { experimentalClient } from './api';
 import { InteractiveStoryPanel } from './InteractiveStoryPanel';
-import type { InteractiveStory, StoryCatalog, StoryExportTarget, StoryExportTargets, StoryPlay } from './interactiveStoryClient';
+import type { InteractiveStory, StoryArtifactEvidence, StoryCatalog, StoryExportTarget, StoryExportTargets, StoryPlay } from './interactiveStoryClient';
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 const client = (id = 'n') => experimentalClient(id, { sessionToken: 'session', scope: { branchId: 'branch' } as any });
 const reply = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
@@ -17,12 +17,19 @@ function makeStory(status: InteractiveStory['status'] = 'APPROVED', version = 1)
 }
 const catalog: StoryCatalog = { graphs: [{ id: 'graph', version: 1, title: '原规划图', truncated: false, nodes: makeStory().spec!.nodes }], characters: [{ id: 'alice', name: 'Alice' }], assets: [], graph_records: [], target_runtime: 'NOT_RUN' };
 const caps = () => Object.fromEntries(['conditions', 'bool_variables', 'int_variables', 'assignment', 'dialogue', 'choices', 'endings', 'loops', 'step_cap', 'save', 'restore', 'unicode', 'media'].map(key => [key, { supported: true, lossy: false, note: '' }]));
+const artifactEvidence = (patch: Partial<StoryArtifactEvidence> = {}): StoryArtifactEvidence => ({
+  status: 'UNVERIFIED',
+  levels: { SOURCE_IMPLEMENTED: 'NOT_RUN', SCHEMA_VALIDATED: 'NOT_RUN', FIXTURE_TESTED: 'NOT_RUN', GENERATED_ARTIFACT_VALIDATED: 'PASS', TARGET_RUNTIME_EXECUTED: 'NOT_RUN', SAVE_RESTORE_VERIFIED: 'NOT_RUN', WINDOWS_USABILITY_VERIFIED: 'NOT_RUN' },
+  binding: null, matched_receipt: null, stale_receipts: [], checked_receipts: 0,
+  policy: 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+  reason: 'no verification receipt exists for this artifact', ...patch,
+});
 const target = (): StoryExportTarget => ({
   target_id: 'GODOT_4_RUNTIME_PROJECT_V1', display_name: 'Godot 4 运行时项目', kind: 'RUNNABLE_PROJECT', format_version: 'godot-runtime-project-1', adapter_revision: 1, engine: null,
   capabilities: caps(), losses: [], runtime_requirements: ['Godot 4 项目'], launch_instructions: '解压后用 Godot 打开项目目录。', integration_notes: [], evidence: { SOURCE_IMPLEMENTED: 'PASS' },
   compatibility: { target_id: 'GODOT_4_RUNTIME_PROJECT_V1', can_export: true, capabilities: caps(), losses: [], issues: [], notes: [] },
   engine_probe: { status: 'NOT_REQUIRED', detected: false, executable: null, version: null, version_ok: false, detail: '无需外部引擎。', declared: null },
-  export_ready: true, runtime_claim: 'NOT_RUN',
+  export_ready: true, runtime_claim: 'UNVERIFIED', historical_evidence: { SOURCE_IMPLEMENTED: 'PASS' }, artifact_evidence: artifactEvidence(), artifact_evidence_status: 'UNVERIFIED',
 });
 const targetsData = (): StoryExportTargets => ({
   schema: 'poemseed-interactive-export-targets/1', contract_schema: 'poemseed-interactive-export-contract/1', contract_version: 1, contract: {},

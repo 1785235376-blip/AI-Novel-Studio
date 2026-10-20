@@ -105,3 +105,52 @@ def test_mounted_rebind_is_explicit_and_reopens_review(mounted):
     fresh = checked(e.client.post(url + '/refresh', json={'expected_version': row['version'], 'preview_digest': p['preview_digest']}))
     assert fresh['status'] == 'DRAFT' and not fresh['stale']
     assert not checked(e.client.post(url + '/export-preview', json={'expected_version': fresh['version']}))['can_export']
+
+
+def _verification_receipt(row, exported, preview, **overrides):
+    manifest = exported['manifest']
+    receipt = {
+        'schema': 'poemseed-interactive-export-verification/1',
+        'target_id': exported['target_id'],
+        'target_format_version': exported['target_format_version'],
+        'story_id': row['id'],
+        'revision': row['version'],
+        'spec_digest': manifest['story']['spec_digest'],
+        'source_digest': manifest['story']['source_digest'],
+        'artifact_sha256': exported['sha256'],
+        'files_digest': exported['files_digest'],
+        'runtime': {'name': 'Godot', 'version': '4.7.0', 'format': exported['target_format_version']},
+        'checks': {'TARGET_RUNTIME_EXECUTED': 'PASS', 'SAVE_RESTORE_VERIFIED': 'PASS'},
+        'evidence': {'TARGET_RUNTIME_EXECUTED': 'PASS', 'SAVE_RESTORE_VERIFIED': 'PASS', 'WINDOWS_USABILITY_VERIFIED': 'NOT_RUN'},
+        'verifier': 'mounted-http-test',
+        'commands': [{'label': 'run', 'argv': ['godot', '--headless'], 'exit_code': 0}],
+        'log_sha256': 'f' * 64,
+        'verified_at': '2026-10-20T00:00:00Z',
+    }
+    receipt.update(overrides)
+    return receipt
+
+
+def test_mounted_export_verification_requires_exact_artifact_binding(mounted):
+    e = mounted; row, _ = create(e); row = approve(e, row); url = e.base + '/interactive-stories/' + row['id']
+    preview = checked(e.client.post(url + '/export-preview', json={'expected_version': row['version'], 'target_id': 'GODOT_4_RUNTIME_PROJECT_V1'}))
+    exported = checked(e.client.post(url + '/export', json={'expected_version': row['version'],
+                                                           'preview_digest': preview['preview_digest'],
+                                                           'target_id': 'GODOT_4_RUNTIME_PROJECT_V1'}))
+    assert exported['artifact_evidence_status'] == 'UNVERIFIED'
+    assert exported['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    recorded = checked(e.client.post(url + '/export-verification', json={
+        'expected_version': row['version'], 'receipt': _verification_receipt(row, exported, preview)}))
+    assert recorded['status'] == 'RECORDED'
+    assert recorded['artifact_evidence']['status'] == 'PASS'
+    assert recorded['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    current = checked(e.client.post(url + '/export-targets', json={'expected_version': row['version']}))
+    godot = next(item for item in current['targets'] if item['target_id'] == 'GODOT_4_RUNTIME_PROJECT_V1')
+    assert godot['artifact_evidence_status'] == 'PASS'
+    assert godot['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    # A receipt for a different artifact digest or a different story is rejected.
+    wrong_artifact = _verification_receipt(row, exported, preview, artifact_sha256='9' * 64)
+    assert e.client.post(url + '/export-verification', json={'expected_version': row['version'], 'receipt': wrong_artifact}).status_code == 422
+    other, _ = create(e); other = approve(e, other); other_url = e.base + '/interactive-stories/' + other['id']
+    assert e.client.post(other_url + '/export-verification', json={
+        'expected_version': other['version'], 'receipt': _verification_receipt(row, exported, preview)}).status_code == 422
