@@ -1,0 +1,19 @@
+diff --git a/frontend/src/creative/StudioCanvasImageTaskPanel.tsx b/frontend/src/creative/StudioCanvasImageTaskPanel.tsx
+--- a/frontend/src/creative/StudioCanvasImageTaskPanel.tsx
++++ b/frontend/src/creative/StudioCanvasImageTaskPanel.tsx
+@@ -3,3 +3,4 @@
+ import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
+ import { StudioExecutionRecipePanel } from './StudioExecutionRecipePanel';
++import { ExecutionProvenancePanel } from '../experimental/executionProvenance/ExecutionProvenancePanel';
+ import { canvasImageTaskSource, type CanvasImageTaskSession } from './canvasImageTask';
+@@ -19,4 +20,10 @@
+     <StudioMediaExecutionPanel {...props} canvasImageTask={binding} assets={[task.asset]} onJob={setJob}/>
+     {job&&<StudioExecutionRecipePanel recipe={job.execution_recipe} operationId={job.operation_id} current={props.isCurrent()}/>}
++    {job&&<ExecutionProvenancePanel
++      selection={{projectId:task.origin.projectId,branchId:job.branch_id,identity:task.id,
++        job:{owner:job.owner,id:job.id,version:job.version,request_id:job.request_id,request_digest:job.request_digest}}}
++      production={props.client} active={props.isCurrent()&&task.isOriginCurrent()} denied={false} busy={props.busy}
++      isCurrent={()=>props.isCurrent()&&task.isOriginCurrent()} read={props.read} origin={task.origin}
++      isOriginCurrent={task.isOriginCurrent} onUnavailable={props.onUnavailable}/>}
+   </section>;
+ }
