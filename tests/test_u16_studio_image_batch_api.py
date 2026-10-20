@@ -234,3 +234,26 @@ def test_neutral_studio_cutout_batch_requires_no_novel_chapters(images):
     done = checked(dispatch(e, confirm(e, row)))
     assert done['items'][0]['image_result']['status'] == 'AWAITING_REVIEW'
     assert e.chapters.list(e.nid) == []
+
+
+def test_two_cpu_items_dispatch_once_each_and_review_stays_individual(images):
+    import base64
+    e = images
+    other_mask = deepcopy(e.body)
+    other_mask['idempotency_key'] = 'u16-second-mask'
+    other_mask['bitplane_base64'] = base64.b64encode(bytes(b ^ 255 for b in base64.b64decode(other_mask['bitplane_base64']))).decode()
+    mask = checked(e.client.post(e.path, headers=e.headers, json=other_mask), 201)['asset']
+    second = deepcopy(e.item)
+    second['studio_image']['request_id'] = 'u16-cutout-two'
+    second['studio_image']['mask'] = {'id': mask['id'], 'version': mask['version'], 'digest': mask['sha256'], 'kind': 'ASSET', 'asset_kind': 'image'}
+    row = confirm(e, freeze(e, [e.item, second]))
+    first = checked(dispatch(e, row))
+    assert first['status'] == 'READY' and first['items'][1]['attempts'] == 0
+    done = checked(dispatch(e, first))
+    assert done['status'] == 'COMPLETED'
+    jobs = [item['image_result'] for item in done['items']]
+    assert len({j['id'] for j in jobs}) == 2 and all(i['attempts'] == 1 for i in done['items'])
+    approved = checked(post(e, '/' + row['id'] + '/approve-image', review_body(done)))
+    assert approved['items'][0]['image_result']['status'] == 'APPROVED'
+    assert approved['items'][1]['image_result']['status'] == 'AWAITING_REVIEW'
+    assert e.client.get(e.studio_base + '/assets/' + jobs[1]['output_candidate']['id'], headers=e.headers).status_code == 404
