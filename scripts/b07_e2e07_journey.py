@@ -1508,6 +1508,8 @@ def verify_target_export(recorder, data, *, story_row, characters, targets_respo
     check("single root folder", len(roots) == 1, ",".join(sorted(roots)))
     prefix = sorted(roots)[0] + "/" if roots else ""
     try:
+        # The scratch root is rebuildable and may have been cleaned; never assume it exists.
+        DEFAULT_SCRATCH.mkdir(parents=True, exist_ok=True)
         files, _ = unpack_entries(entries, prefix, Path(tempfile.mkdtemp(prefix="b07-e2e07-verify-",
                                                                       dir=str(DEFAULT_SCRATCH))))
     except ValueError as exc:
@@ -2516,7 +2518,12 @@ def build_artifact_verification_receipt(story_row, out, target_id, runtime_repor
 
 
 def record_artifact_verification(recorder, env, story_row, out, target_id, runtime_report, *, verifier_label):
-    """Record the receipt through the real mounted API, then prove the product bound it."""
+    """Submit the harness's own execution record as an EXTERNAL acceptance claim.
+
+    This journey really ran the target runtime, but the product cannot verify
+    that from an upload. The claim is stored with its source; the product must
+    keep runtime levels NOT_RUN and report EXTERNALLY_ASSERTED_PENDING.
+    """
     story_id, version = story_row["id"], story_row["version"]
     receipt = build_artifact_verification_receipt(story_row, out, target_id, runtime_report, verifier_label=verifier_label)
     recorded = http_call(recorder, env, "POST", story_url(env, story_id) + "/export-verification",
@@ -2524,9 +2531,20 @@ def record_artifact_verification(recorder, env, story_row, out, target_id, runti
                          label="interactive-stories.export-verification." + target_id)
     recorder.require(target_id + ":receipt-recorded", recorded.get("status") == "RECORDED",
                      json.dumps(recorded.get("artifact_evidence"), ensure_ascii=False)[:1200])
+    recorder.require(target_id + ":receipt-is-external-claim-only",
+                     recorded.get("origin") == "EXTERNAL_SUBMISSION"
+                     and recorded.get("trust") == "EXTERNAL_UNVERIFIED"
+                     and recorded.get("system_verification") == "NOT_PERFORMED",
+                     json.dumps({key: recorded.get(key) for key in
+                                 ("origin", "trust", "system_verification")}, ensure_ascii=False))
     recorder.require(target_id + ":receipt-bound-status",
-                     (recorded.get("artifact_evidence") or {}).get("status") == "PASS",
+                     (recorded.get("artifact_evidence") or {}).get("status") == "EXTERNALLY_ASSERTED_PENDING",
                      str((recorded.get("artifact_evidence") or {}).get("status")))
+    recorder.require(target_id + ":receipt-does-not-set-system-runtime",
+                     recorded.get("runtime_claim") == "UNVERIFIED"
+                     and (recorded.get("artifact_evidence") or {}).get("levels", {}).get("TARGET_RUNTIME_EXECUTED") == "NOT_RUN",
+                     json.dumps({"runtime_claim": recorded.get("runtime_claim"),
+                                 "levels": (recorded.get("artifact_evidence") or {}).get("levels")}, ensure_ascii=False)[:600])
     # A receipt whose target does not match the recorded artifact must be rejected.
     wrong = deepcopy(receipt)
     wrong["target_id"] = ("INK_2_3_2_CURRENT_ARTIFACT_V1" if target_id != "INK_2_3_2_CURRENT_ARTIFACT_V1"
@@ -2693,17 +2711,23 @@ def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delive
             refreshed_row = next((item for item in refreshed.get("targets") or []
                                   if item.get("target_id") == target_id), {})
             refreshed_evidence = refreshed_row.get("artifact_evidence") or {}
-            recorder.require(label + ":" + target_id + ":product-artifact-evidence-pass",
-                             refreshed_row.get("artifact_evidence_status") == "PASS",
+            recorder.require(label + ":" + target_id + ":product-external-claim-recorded",
+                             refreshed_row.get("artifact_evidence_status") == "EXTERNALLY_ASSERTED_PENDING",
                              str(refreshed_row.get("artifact_evidence_status")))
+            recorder.require(label + ":" + target_id + ":product-does-not-claim-system-runtime",
+                             refreshed_row.get("runtime_claim") == "UNVERIFIED"
+                             and (refreshed_evidence.get("levels") or {}).get("TARGET_RUNTIME_EXECUTED") == "NOT_RUN",
+                             json.dumps({"runtime_claim": refreshed_row.get("runtime_claim"),
+                                         "levels": refreshed_evidence.get("levels")}, ensure_ascii=False)[:600])
             recorder.require(label + ":" + target_id + ":product-artifact-evidence-bound",
                              (refreshed_evidence.get("export_record") or {}).get("artifact_sha256") == out.get("sha256"),
-                             "the product artifact evidence is not bound to this export digest")
+                             "the product external claim is not bound to this export digest")
             reexport = export_archive(recorder, env, story_id, version, preview["preview_digest"], target_id)
-            recorder.require(label + ":" + target_id + ":reexport-keeps-bound-pass",
+            recorder.require(label + ":" + target_id + ":reexport-keeps-external-claim",
                              reexport.get("sha256") == out.get("sha256")
-                             and reexport.get("artifact_evidence_status") == "PASS",
-                             "a re-export of the identical artifact must keep the bound PASS")
+                             and reexport.get("artifact_evidence_status") == "EXTERNALLY_ASSERTED_PENDING"
+                             and reexport.get("runtime_claim") == "UNVERIFIED",
+                             "a re-export of the identical artifact must keep the external claim without a system PASS")
             record["artifact_evidence"] = reexport.get("artifact_evidence")
             record["artifact_evidence_status"] = reexport.get("artifact_evidence_status")
             record["verification_reexport_sha256"] = reexport.get("sha256")
@@ -3091,7 +3115,7 @@ def build_evidence(run):
             "Ren'Py 8.5.4 is not installed on this host; Ren'Py runtime evidence is BLOCKED_ENVIRONMENT and only static project checks are claimed.",
             "The samples are real File-backend fixtures created through the mounted Studio API; they are not claims about the current author's manuscript.",
             "Historical adapter/template evidence and current-artifact evidence are separate: only a verification receipt bound to the exact story revision, target build and artifact digest may set TARGET_RUNTIME_EXECUTED/SAVE_RESTORE_VERIFIED in the product.",
-            "The product export response is re-read after each runtime run and must show artifact_evidence_status=PASS for the same artifact digest; a missing bound receipt is reported as PRODUCT_ARTIFACT_EVIDENCE rather than inherited from another story.",
+            "The product export response is re-read after each runtime run: it must show EXTERNALLY_ASSERTED_PENDING for the same artifact digest with runtime levels NOT_RUN. A product PASS is reported as PRODUCT_ARTIFACT_OVERCLAIM, not accepted.",
         ],
         "files": {},
         "error": run.get("error"),
@@ -3153,10 +3177,19 @@ def build_evidence(run):
                              "product_artifact_evidence": product_artifact_evidence,
                              "e2e07_independent": status, "notes": notes}
         if target_id in TARGET_ORDER and status["TARGET_RUNTIME_EXECUTED"] == "PASS":
-            if not any(item.get("status") == "PASS" for item in product_artifact_evidence):
+            if any(item.get("status") == "PASS" for item in product_artifact_evidence):
+                # The product must never promote an uploaded claim into a system
+                # runtime PASS; seeing one here is an overclaim, not a success.
+                unmet.append({"target_id": target_id, "item": "PRODUCT_ARTIFACT_OVERCLAIM",
+                              "status": "FAIL",
+                              "detail": "the Studio export response reported a system runtime PASS for an artifact whose only evidence is an uploaded external claim"})
+            elif not any(item.get("status") == "EXTERNALLY_ASSERTED_PENDING"
+                         and not any(level == "PASS" for level in (item.get("levels") or {}).values()
+                                     if level in ("TARGET_RUNTIME_EXECUTED", "SAVE_RESTORE_VERIFIED"))
+                         for item in product_artifact_evidence):
                 unmet.append({"target_id": target_id, "item": "PRODUCT_ARTIFACT_EVIDENCE",
                               "status": "UNVERIFIED",
-                              "detail": "the runtime ran, but the Studio export response does not show a verification receipt bound to this exact artifact"})
+                              "detail": "the runtime ran, but the Studio export response does not show a bound external acceptance claim for this exact artifact"})
         if target_id in TARGET_ORDER:
             if not row["present"]:
                 unmet.append({"target_id": target_id, "item": "TARGET_ADAPTER", "status": "NOT_LANDED",
@@ -3329,18 +3362,21 @@ def render_markdown(evidence):
     for target_id, values in (evidence.get("evidence_levels") or {}).items():
         ind = values["e2e07_independent"]
         product_statuses = [item.get("status") for item in (values.get("product_artifact_evidence") or [])]
-        product_bound = ("PASS" if product_statuses and all(status == "PASS" for status in product_statuses)
-                         else (product_statuses[0] if product_statuses else "UNVERIFIED"))
+        product_bound = ("OVERCLAIM" if "PASS" in product_statuses
+                         else ("EXTERNALLY_ASSERTED_PENDING (external claim, not system run)"
+                               if product_statuses and all(status == "EXTERNALLY_ASSERTED_PENDING" for status in product_statuses)
+                               else (product_statuses[0] if product_statuses else "UNVERIFIED")))
         historical = values.get("historical_evidence") or {}
         level_rows.append([target_id, "yes" if values["present"] else "no",
                            ind.get("GENERATED_ARTIFACT_VALIDATED"), ind.get("TARGET_RUNTIME_EXECUTED"),
                            ind.get("SAVE_RESTORE_VERIFIED"), product_bound,
                            historical.get("TARGET_RUNTIME_EXECUTED", "NOT_DECLARED")])
     lines += [_md_table(["target", "present", "artifact", "runtime (e2e)", "save/restore (e2e)",
-                         "product bound artifact", "historical adapter runtime"], level_rows), "",
-              "runtime/save-restore are accepted only after the real target ran THIS artifact. "
-              "product bound artifact is read back from Studio export-targets after recording a receipt bound to the exact "
-              "story revision and artifact digest; the historical adapter column is never used as a current claim.", ""]
+                         "product external acceptance claim", "historical adapter runtime"], level_rows), "",
+              "runtime/save-restore are accepted only from this journey's own execution of THIS artifact. "
+              "The product column is read back from Studio export-targets after recording an EXTERNAL claim bound to the exact "
+              "story revision and artifact digest; it is never a system PASS (the product has no execution runner), and the "
+              "historical adapter column is never used as a current claim.", ""]
     samples = evidence.get("samples") or {}
     if samples:
         lines += ["## Samples", ""]
