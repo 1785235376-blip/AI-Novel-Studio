@@ -1,0 +1,666 @@
+{
+  "artifact": {
+    "artifacts_dir": "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact",
+    "loop": {
+      "file_count": 7,
+      "filename": "ink-2-3-2-current-artifact-v1-995f2550-b9f8-4757-905e-b0a12acbc134-v3.zip",
+      "files": [
+        "acceptance/witness.json",
+        "ink/README.txt",
+        "ink/runtime-pin.json",
+        "ink/story.ink",
+        "ink/validation.json",
+        "manifest.json",
+        "source-receipt.json"
+      ],
+      "max_steps": 2,
+      "preview_digest": "6513f8ed36517976b3ce1024c766986d535a99e331dd838ac8d8db15416cffc7",
+      "revision": 3,
+      "script_sha256": "b79a36f3f2495dcc8805f981ba7e22728f73808975b01d6f23fb8f53ee14d4ab",
+      "story_id": "995f2550-b9f8-4757-905e-b0a12acbc134",
+      "witness_endings": [
+        [
+          "exit"
+        ]
+      ],
+      "witness_sha256": "cecb92a24fcda198e0f06c3dbc74002649f67c37c3f77331a13c9c5c479c2414",
+      "witness_step_cap_cases": [
+        [
+          "loop",
+          "loop"
+        ]
+      ],
+      "zip_sha256": "65c9c617317f26442f4b7b68b55edbca1e79482b3b87485fcf5b0cf696162dd8"
+    },
+    "main": {
+      "file_count": 7,
+      "filename": "ink-2-3-2-current-artifact-v1-fe67b92b-82da-4915-a421-20a0b61a2c9f-v3.zip",
+      "files": [
+        "acceptance/witness.json",
+        "ink/README.txt",
+        "ink/runtime-pin.json",
+        "ink/story.ink",
+        "ink/validation.json",
+        "manifest.json",
+        "source-receipt.json"
+      ],
+      "files_digest": "7987b346a67c95651b88a4cbe4d682bad94672c9f70ad242b8f19f39e189ec09",
+      "manifest_runtime_evidence": {
+        "FIXTURE_TESTED": "PASS",
+        "GENERATED_ARTIFACT_VALIDATED": "PASS",
+        "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+        "SCHEMA_VALIDATED": "PASS",
+        "SOURCE_IMPLEMENTED": "PASS",
+        "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+        "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+      },
+      "manifest_target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
+      "manifest_target_kind": "RUNNABLE_PROJECT",
+      "preview_digest": "54c64a93cdc20a9bae667472a20a68e33e74c2520e98618bf99fd686471c6ff4",
+      "receipt_payload_files_digest": "79b9554e041b384834b8bb4eb515c1afb071c0723d537edc8ec7781a6c8761a8",
+      "receipt_target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
+      "revision": 3,
+      "runtime_pin_sha256": "37a19de7dbcc0c04e31b8a661bfc9c3996ad5b1cc604560c67765cf746567e1e",
+      "script_sha256": "492a0a653979ab60cc521e9d9eddcca8213802a6d4be29da94225de915e1f60d",
+      "source_digest": "d562b276dba951e93248521783c70db07e7d4ec5eeafd3c26ce47ad2995bb580",
+      "spec_digest": "c33265bd03edd9f7e87596495c85cc60cec271b65e54d0801767f71f2c23c12f",
+      "story_id": "fe67b92b-82da-4915-a421-20a0b61a2c9f",
+      "witness_endings": [
+        [
+          "harbour"
+        ],
+        [
+          "mountain"
+        ]
+      ],
+      "witness_sha256": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
+      "witness_states": 4,
+      "witness_step_cap_cases": [],
+      "zip_file_sha256": {
+        "acceptance/witness.json": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
+        "ink/README.txt": "49f1dd8285005f53ad57c4c2f88dc45360409078899daa2665ecc660ad02d4bc",
+        "ink/runtime-pin.json": "37a19de7dbcc0c04e31b8a661bfc9c3996ad5b1cc604560c67765cf746567e1e",
+        "ink/story.ink": "492a0a653979ab60cc521e9d9eddcca8213802a6d4be29da94225de915e1f60d",
+        "ink/validation.json": "cd4d4d1bc45ae035dd20d09eda022bcf130b7a362c73bb0fbef05f629468ebd2",
+        "manifest.json": "4753546c42741a51f7ec47e44464deb5095092e07e26b7a66844d9e0dbe1d134",
+        "source-receipt.json": "a0facdd073cdc5c41b14de5b7b80847f2e66b956e4a8d2cb08afdfb58174a292"
+      },
+      "zip_sha256": "8ac07d91db79bf80ef1e15936c602c4c0aa30944475ca7151c9959f9743e6301"
+    },
+    "pytest_command": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_interactive_ink_current_artifact.py",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "pytest_exit_code": 0,
+    "pytest_summary": "11 passed, 5 skipped, 2 warnings in 7.20s",
+    "sha256_consistency": "zip/script/witness hashes recomputed from written files and matched the export record",
+    "source": "real File-service fixture create -> submit -> review -> approve -> POST export target ZIP"
+  },
+  "branch": "work/v2-b07-ink-20261020",
+  "commands": {
+    "npm_install": [
+      "npm",
+      "install",
+      "inkjs@2.3.2",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "pytest": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_interactive_ink_current_artifact.py",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "pytest_exit_code": 0,
+    "verifier_loop": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+      "--bundle",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact\\current-artifact-loop-bundle",
+      "--vendor",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+      "--report",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-loop.json"
+    ],
+    "verifier_loop_exit_code": 0,
+    "verifier_main": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+      "--bundle",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact\\current-artifact-main-bundle",
+      "--vendor",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+      "--report",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-main.json"
+    ],
+    "verifier_main_exit_code": 0,
+    "verifier_tampered": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+      "--bundle",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\tampered-bundle",
+      "--vendor",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+      "--report",
+      "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-tampered.json"
+    ],
+    "verifier_tampered_exit_code": 3
+  },
+  "commits": {
+    "contract_freeze": "e46a634d1839fd273095df97ec5c791f59a5241e",
+    "product_baseline": "b8371a48816b852176d45151eb9a0e3618a32c07",
+    "verified_code_head": "b8762588646d06debc9ca18b2c647d7fb67d0e01",
+    "worktree_dirty_after_run": ""
+  },
+  "environment": {
+    "node": "v22.14.0",
+    "npm": "10.9.2",
+    "platform": "win32",
+    "python": "3.11.9"
+  },
+  "evidence_distinctions": {
+    "generation_vs_runtime": "Bundle generation is product-side only (no compiler, no runtime). The pinned compiler parse (compile.success) and runtime consumption (runtime.artifact_consumed) are recorded independently in the verifier reports.",
+    "javascript_port_vs_native_csharp": "Only the community JavaScript port inkjs 2.3.2 was installed and executed. Native C# Ink runtime is NOT_RUN and never claimed.",
+    "legacy_fixture_vs_current_artifact": "Legacy fixture tests (tests/test_storyverse_ink_exchange.py) only freeze the old fragment target; the runtime acceptance above consumes the freshly exported current-work ZIP from the real File-service workflow (story ids recorded per artifact)."
+  },
+  "generated_at_utc": "2026-10-20T07:07:10.596930+00:00",
+  "legacy_byte_freeze": {
+    "exit_code": 0,
+    "golden_sha256": {
+      "fixture_story_ink": "13ba69b9fe5939c98cfdca42ccf98624460adbe6ca15cb2a7e87151e7ca4704c",
+      "fixture_validation_json": "c7daddaad4893cf9fdcf2b52d450c8d00ced51ef472478280575daa44d551fb8",
+      "golden_story_ink": "8f350324fcacb7bc5e18208b422e880aa15a4cc3e6e9055bb4dc45b48e1bb340",
+      "golden_validation_json": "99ab763dcd799882b51dab893aa2300d780b4d5d009a4e0c046a50d3334c97c6"
+    },
+    "legacy_runtime_evidence": "NOT_RUN (legacy target keeps its pinned COMMUNITY_JAVASCRIPT_PORT_NOT_NATIVE_CSHARP fragment claim)",
+    "reference_target": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
+    "summary": "10 passed, 19 skipped, 2 warnings in 7.57s",
+    "test_command": [
+      "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_interactive_ink_current_artifact.py::test_legacy_adapter_output_is_byte_frozen",
+      "tests/test_storyverse_ink_exchange.py",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ]
+  },
+  "limitations": [
+    "Native C# Ink runtime is NOT_RUN; only the pinned community JavaScript port is executed.",
+    "WINDOWS_USABILITY_VERIFIED is NOT_RUN: no graphical/end-user packaging check was attempted.",
+    "The inkjs runtime is not vendored into the bundle; the target environment must npm install the pinned package.",
+    "Media references remain manifest-only and are not packaged or played.",
+    "Blank lines/paragraph spacing normalize in Ink presentation; target font rendering is not verified.",
+    "The exported ZIPs and extracted bundles live under the scratch path recorded in artifact.artifacts_dir; only hashes are committed with this evidence."
+  ],
+  "line": "D line - Ink current-artifact delivery (B07/DIF-10/E2E-07)",
+  "log_file": "docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.log",
+  "pinned_runtime": {
+    "install_command": [
+      "npm",
+      "install",
+      "inkjs@2.3.2",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "install_dir": "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor",
+    "installed_package": "inkjs@2.3.2",
+    "integrity_matches_pin": true,
+    "lock_integrity": "sha512-iZjrY0lLeRiC+HtDzCfV9IEAP9ExCmBZUrxKkyLy1qIbbGbR1uTXNZ8LDIg8oVkMXZ9TeKKyEFQpQ/m5nQds8w==",
+    "lock_resolved": "https://registry.npmjs.org/inkjs/-/inkjs-2.3.2.tgz",
+    "node": "v22.14.0",
+    "npm": "10.9.2",
+    "npm_view": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\n  \"version\": \"2.3.2\",\n  \"dist.integrity\": \"sha512-iZjrY0lLeRiC+HtDzCfV9IEAP9ExCmBZUrxKkyLy1qIbbGbR1uTXNZ8LDIg8oVkMXZ9TeKKyEFQpQ/m5nQds8w==\",\n  \"dist.tarball\": \"https://registry.npmjs.org/inkjs/-/inkjs-2.3.2.tgz\"\n}"
+    },
+    "pin_integrity": "sha512-iZjrY0lLeRiC+HtDzCfV9IEAP9ExCmBZUrxKkyLy1qIbbGbR1uTXNZ8LDIg8oVkMXZ9TeKKyEFQpQ/m5nQds8w==",
+    "pin_runtime_entry_sha256": "4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef",
+    "registry_matches_pin": true,
+    "runtime_entry": "node_modules/inkjs/dist/ink-full.js",
+    "runtime_entry_matches_pin": true,
+    "runtime_entry_sha256": "4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef"
+  },
+  "runtime_state_save_restore_method": "story.state.ToJson() saved in the parent node process; a fresh node child process calls new Story(compiledArtifact) + story.state.LoadJson(savedState) and replays the remaining accepted choices to the final state.",
+  "save_restore": {
+    "cross_process_loop": {
+      "child_exit_code": 0,
+      "child_pid": 146228,
+      "detail": "save in parent process, resume to the ending in a fresh process",
+      "failures": [],
+      "fresh_process": true,
+      "parent_pid": 156272,
+      "passed": true,
+      "performed": true,
+      "remaining": [
+        0,
+        0
+      ],
+      "restored_state_matches": true,
+      "save_at_step": 0,
+      "snapshots": 3
+    },
+    "cross_process_main": {
+      "child_exit_code": 0,
+      "child_pid": 156632,
+      "detail": "save in parent process, resume to the ending in a fresh process",
+      "failures": [],
+      "fresh_process": true,
+      "parent_pid": 143740,
+      "passed": true,
+      "performed": true,
+      "remaining": [
+        0
+      ],
+      "restored_state_matches": true,
+      "save_at_step": 0,
+      "snapshots": 2
+    },
+    "in_memory_restore_checks": 5,
+    "verified": true
+  },
+  "schema": "poemseed-b07-ink-current-artifact-evidence/1",
+  "target": {
+    "adapter_revision": 1,
+    "capabilities": {
+      "assignment": {
+        "lossy": false,
+        "note": "Constant choice assignments only; bounds are validated before rendering.",
+        "supported": true
+      },
+      "bool_variables": {
+        "lossy": false,
+        "note": "Boolean variables map to Ink boolean VARs and runtime values are type-checked.",
+        "supported": true
+      },
+      "choices": {
+        "lossy": false,
+        "note": "Every enabled choice label is asserted against the runtime choice list, in order.",
+        "supported": true
+      },
+      "conditions": {
+        "lossy": false,
+        "note": "Bounded bool/int comparisons, and/or/not; rendered as Ink conditions and asserted per step.",
+        "supported": true
+      },
+      "dialogue": {
+        "lossy": true,
+        "note": "Each non-empty dialogue line is preserved; blank lines and paragraph spacing normalize in Ink text output.",
+        "supported": true
+      },
+      "endings": {
+        "lossy": false,
+        "note": "Every discovered ending witness plays to its ending state in the pinned runtime.",
+        "supported": true
+      },
+      "int_variables": {
+        "lossy": false,
+        "note": "Int variables are bounded to +/-10000 and stay exact in Ink integers and JS numbers.",
+        "supported": true
+      },
+      "loops": {
+        "lossy": true,
+        "note": "Cycles replay until the generated explicit step cap; the cap case is part of acceptance.",
+        "supported": true
+      },
+      "media": {
+        "lossy": true,
+        "note": "Approved asset references remain manifest-only; no media bytes are bundled or played.",
+        "supported": false
+      },
+      "restore": {
+        "lossy": false,
+        "note": "A fresh process restores the saved state with LoadJson and resumes to the ending.",
+        "supported": true
+      },
+      "save": {
+        "lossy": false,
+        "note": "story.state.ToJson() is captured at every acceptance step.",
+        "supported": true
+      },
+      "step_cap": {
+        "lossy": false,
+        "note": "The generated ans_steps branch ends the story at the exact max_steps cap.",
+        "supported": true
+      },
+      "unicode": {
+        "lossy": true,
+        "note": "UTF-8 dialogue/choice text including emoji and escapes is asserted exactly; target font rendering is not verified.",
+        "supported": true
+      }
+    },
+    "evidence": {
+      "FIXTURE_TESTED": "PASS",
+      "GENERATED_ARTIFACT_VALIDATED": "PASS",
+      "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+      "SCHEMA_VALIDATED": "PASS",
+      "SOURCE_IMPLEMENTED": "PASS",
+      "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+      "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+    },
+    "format_version": "ink-current-artifact-1",
+    "kind": "RUNNABLE_PROJECT",
+    "losses": [
+      "INKJS_COMMUNITY_PORT_NOT_NATIVE_CSHARP_RUNTIME",
+      "INK_MEDIA_REFERENCES_NOT_PLAYED",
+      "INK_TEXT_PARAGRAPH_WHITESPACE_NORMALIZED",
+      "INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT",
+      "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
+      "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
+    ],
+    "native_csharp_runtime": "NOT_RUN",
+    "runtime_basis": "INKJS_2_3_2_JAVASCRIPT_PORT",
+    "security": {
+      "dynamic_paths_allowed": false,
+      "external_functions_allowed": false,
+      "include_allowed": false,
+      "network_allowed": false,
+      "runtime_code_bundled": false,
+      "typed_subset_only": true,
+      "unbounded_loops_allowed": false,
+      "user_code_allowed": false
+    },
+    "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1"
+  },
+  "verification": {
+    "commands": [
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+          "--bundle",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact\\current-artifact-main-bundle",
+          "--vendor",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+          "--report",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-main.json"
+        ],
+        "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
+        "elapsed_seconds": 0.15,
+        "exit_code": 0,
+        "started_at_utc": "2026-10-20T07:07:01.153011+00:00",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+          "--bundle",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact\\current-artifact-loop-bundle",
+          "--vendor",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+          "--report",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-loop.json"
+        ],
+        "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
+        "elapsed_seconds": 0.16,
+        "exit_code": 0,
+        "started_at_utc": "2026-10-20T07:07:01.306930+00:00",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020\\scripts\\verify_ink_current_artifact.mjs",
+          "--bundle",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\tampered-bundle",
+          "--vendor",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs",
+          "--report",
+          "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-tampered.json"
+        ],
+        "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
+        "elapsed_seconds": 0.16,
+        "exit_code": 3,
+        "started_at_utc": "2026-10-20T07:07:01.469463+00:00",
+        "stderr": ""
+      }
+    ],
+    "loop": {
+      "assertions": {
+        "bundle_shape": "PASS",
+        "choices": "PASS",
+        "endings": "PASS",
+        "file_access_denied": "PASS",
+        "ink_state": "PASS",
+        "runtime_pin": "PASS",
+        "save_restore": "PASS",
+        "step_cap": "PASS",
+        "text": "PASS",
+        "variables": "PASS"
+      },
+      "bundle_files": [
+        "acceptance/witness.json",
+        "ink/README.txt",
+        "ink/runtime-pin.json",
+        "ink/story.ink",
+        "ink/validation.json",
+        "manifest.json",
+        "source-receipt.json"
+      ],
+      "compile": {
+        "artifact_bytes": 1736,
+        "artifact_sha256": "73b7fc2bc30f468fb6ab3dfb53ff1f4bb9cb06f1444323b9231fcf6abb3e4f4a",
+        "attempted": true,
+        "errors": [],
+        "file_calls": 0,
+        "success": true
+      },
+      "cross_process": {
+        "child_exit_code": 0,
+        "child_pid": 146228,
+        "detail": "save in parent process, resume to the ending in a fresh process",
+        "failures": [],
+        "fresh_process": true,
+        "parent_pid": 156272,
+        "passed": true,
+        "performed": true,
+        "remaining": [
+          0,
+          0
+        ],
+        "restored_state_matches": true,
+        "save_at_step": 0,
+        "snapshots": 3
+      },
+      "native_csharp_runtime": "NOT_RUN",
+      "report_sha256": "19ef107690478c1e1bf11c4e3dc7769802279188478acdcbe166972e9ef6fca4",
+      "result": "PASS",
+      "runtime": {
+        "artifact_consumed": true,
+        "artifact_sha256": "73b7fc2bc30f468fb6ab3dfb53ff1f4bb9cb06f1444323b9231fcf6abb3e4f4a",
+        "cases": [
+          {
+            "choices": [
+              "exit"
+            ],
+            "ending_node_id": "347eaa2c-56a8-4464-9a56-bc422f9e333a",
+            "failures": [],
+            "final_status": "ENDING",
+            "kind": "ENDING",
+            "passed": true,
+            "states_checked": 2,
+            "steps": 1
+          },
+          {
+            "choices": [
+              "loop",
+              "loop"
+            ],
+            "ending_node_id": null,
+            "failures": [],
+            "final_status": "STEP_CAP_REACHED",
+            "kind": "STEP_CAP",
+            "passed": true,
+            "states_checked": 3,
+            "steps": 2
+          }
+        ],
+        "ending_reached": true,
+        "file_calls": 0,
+        "in_memory_restore_checks": 3,
+        "states_compared": 5,
+        "step_cap_enforced": true
+      },
+      "runtime_basis": "COMMUNITY_JAVASCRIPT_PORT_INKJS_2_3_2",
+      "source": {
+        "bytes": 960,
+        "path": "ink\\story.ink",
+        "sha256": "b79a36f3f2495dcc8805f981ba7e22728f73808975b01d6f23fb8f53ee14d4ab"
+      },
+      "unicode_and_escape": "PASS",
+      "vendor": {
+        "package": "inkjs",
+        "package_json_sha256": "ea4e657ca2953b7f6e8b3d379cbe8f53868ff3708d491efed449c836c76655f4",
+        "runtime_entry": "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs\\dist\\ink-full.js",
+        "runtime_entry_bytes": 248693,
+        "runtime_entry_sha256": "4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef",
+        "version": "2.3.2"
+      },
+      "witness": {
+        "endings": 1,
+        "path": "acceptance\\witness.json",
+        "sha256": "cecb92a24fcda198e0f06c3dbc74002649f67c37c3f77331a13c9c5c479c2414",
+        "step_cap_cases": 1
+      }
+    },
+    "main": {
+      "assertions": {
+        "bundle_shape": "PASS",
+        "choices": "PASS",
+        "endings": "PASS",
+        "file_access_denied": "PASS",
+        "ink_state": "PASS",
+        "runtime_pin": "PASS",
+        "save_restore": "PASS",
+        "step_cap": "NOT_COVERED",
+        "text": "PASS",
+        "variables": "PASS"
+      },
+      "bundle_files": [
+        "acceptance/witness.json",
+        "ink/README.txt",
+        "ink/runtime-pin.json",
+        "ink/story.ink",
+        "ink/validation.json",
+        "manifest.json",
+        "source-receipt.json"
+      ],
+      "compile": {
+        "artifact_bytes": 2030,
+        "artifact_sha256": "2ed076c18b1e964b9dc8dcb69e0fce7a9105441c9f304bcdc0345afe7b6f0003",
+        "attempted": true,
+        "errors": [],
+        "file_calls": 0,
+        "success": true
+      },
+      "cross_process": {
+        "child_exit_code": 0,
+        "child_pid": 156632,
+        "detail": "save in parent process, resume to the ending in a fresh process",
+        "failures": [],
+        "fresh_process": true,
+        "parent_pid": 143740,
+        "passed": true,
+        "performed": true,
+        "remaining": [
+          0
+        ],
+        "restored_state_matches": true,
+        "save_at_step": 0,
+        "snapshots": 2
+      },
+      "native_csharp_runtime": "NOT_RUN",
+      "report_sha256": "dd5b52c693fa3eda62c4cb77600c18417c457224751bf8b7df666cfec7cda106",
+      "result": "PASS",
+      "runtime": {
+        "artifact_consumed": true,
+        "artifact_sha256": "2ed076c18b1e964b9dc8dcb69e0fce7a9105441c9f304bcdc0345afe7b6f0003",
+        "cases": [
+          {
+            "choices": [
+              "harbour"
+            ],
+            "ending_node_id": "40e0e9b3-9640-437d-8c2a-7c287d2ef78d",
+            "failures": [],
+            "final_status": "ENDING",
+            "kind": "ENDING",
+            "passed": true,
+            "states_checked": 2,
+            "steps": 1
+          },
+          {
+            "choices": [
+              "mountain"
+            ],
+            "ending_node_id": "15964ec5-213f-4283-9bb2-4cc6866306f4",
+            "failures": [],
+            "final_status": "ENDING",
+            "kind": "ENDING",
+            "passed": true,
+            "states_checked": 2,
+            "steps": 1
+          }
+        ],
+        "ending_reached": true,
+        "file_calls": 0,
+        "in_memory_restore_checks": 2,
+        "states_compared": 4,
+        "step_cap_enforced": false
+      },
+      "runtime_basis": "COMMUNITY_JAVASCRIPT_PORT_INKJS_2_3_2",
+      "source": {
+        "bytes": 1104,
+        "path": "ink\\story.ink",
+        "sha256": "492a0a653979ab60cc521e9d9eddcca8213802a6d4be29da94225de915e1f60d"
+      },
+      "unicode_and_escape": "PASS",
+      "vendor": {
+        "package": "inkjs",
+        "package_json_sha256": "ea4e657ca2953b7f6e8b3d379cbe8f53868ff3708d491efed449c836c76655f4",
+        "runtime_entry": "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-vendor\\node_modules\\inkjs\\dist\\ink-full.js",
+        "runtime_entry_bytes": 248693,
+        "runtime_entry_sha256": "4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef",
+        "version": "2.3.2"
+      },
+      "witness": {
+        "endings": 2,
+        "path": "acceptance\\witness.json",
+        "sha256": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
+        "step_cap_cases": 0
+      }
+    },
+    "script": "scripts/verify_ink_current_artifact.mjs",
+    "script_sha256": "e1e4a98c9334ac93bcbd49addb03a2962b3df2a460bfc56229160dcabf9eebaf",
+    "tamper_detection": {
+      "assertions": {
+        "bundle_shape": "PASS",
+        "choices": "PASS",
+        "endings": "FAIL",
+        "file_access_denied": "PASS",
+        "ink_state": "PASS",
+        "runtime_pin": "FAIL",
+        "save_restore": "FAIL",
+        "step_cap": "NOT_COVERED",
+        "text": "FAIL",
+        "variables": "PASS"
+      },
+      "detected": true,
+      "exit_code": 3,
+      "report_sha256": "2423c374c358faa72c20ef20f8cab77f547737ab485e35991f2efb101e29d6c4",
+      "result": "FAIL",
+      "tampered_change": "first dialogue marker Choose -> ChoosX in ink/story.ink"
+    }
+  },
+  "worktree": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020"
+}

@@ -172,8 +172,8 @@ def test_new_target_registered_with_honest_descriptor():
     for level in ('SOURCE_IMPLEMENTED', 'SCHEMA_VALIDATED', 'FIXTURE_TESTED', 'GENERATED_ARTIFACT_VALIDATED'):
         assert evidence[level] == 'PASS'
     assert evidence['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
-    assert evidence['TARGET_RUNTIME_EXECUTED'] in EVIDENCE_STATUSES
-    assert evidence['SAVE_RESTORE_VERIFIED'] in EVIDENCE_STATUSES
+    assert evidence['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert evidence['SAVE_RESTORE_VERIFIED'] == 'PASS'
     # Legacy public names stay frozen for the old target.
     assert LEGACY_TARGET == 'INKJS_2_3_2_TYPED_TEXT_SUBSET'
     assert LEGACY_PIN['version'] == '2.3.2' and LEGACY_PIN['implementation'] == 'COMMUNITY_JAVASCRIPT_PORT_NOT_NATIVE_CSHARP'
@@ -242,6 +242,8 @@ def test_current_artifact_bundle_shape_witness_and_determinism():
                                       'dynamic_paths_allowed': False, 'unbounded_loops_allowed': False,
                                       'network_allowed': False, 'runtime_code_bundled': False}
     assert validation['native_csharp_runtime'] == 'NOT_RUN'
+    assert validation['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert validation['evidence']['SAVE_RESTORE_VERIFIED'] == 'PASS'
     assert validation['source_map']['nodes'] == {'gate': 'ans_node_0', 'end': 'ans_node_1', 'side': 'ans_node_2'}
     manifest = json.loads(files['manifest.json'])
     assert manifest['target_id'] == TARGET and manifest['target_kind'] == 'RUNNABLE_PROJECT'

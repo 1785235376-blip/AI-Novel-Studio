@@ -49,8 +49,12 @@ EVIDENCE = {
     'SCHEMA_VALIDATED': 'PASS',
     'FIXTURE_TESTED': 'PASS',
     'GENERATED_ARTIFACT_VALIDATED': 'PASS',
-    'TARGET_RUNTIME_EXECUTED': 'NOT_RUN',
-    'SAVE_RESTORE_VERIFIED': 'NOT_RUN',
+    # Promoted only after the real current-artifact acceptance run recorded in
+    # docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json (pinned inkjs 2.3.2
+    # compiled the exported source, played every witness state to its ending and
+    # restored a saved state in a fresh process).
+    'TARGET_RUNTIME_EXECUTED': 'PASS',
+    'SAVE_RESTORE_VERIFIED': 'PASS',
     'WINDOWS_USABILITY_VERIFIED': 'NOT_RUN',
 }
 
