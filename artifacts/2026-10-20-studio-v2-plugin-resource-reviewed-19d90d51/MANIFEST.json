@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_READONLY_PLUGIN_RESOURCE_AND_DOCS",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "c6a263ff355c024dced9726592e8eda9187e470d",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-plugin-resource-reviewed-19d90d51",
+  "product_base": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+  "product_tip": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+  "product_tree": "27e7584a5f5603debc630e4a634342b0a1eb337c",
+  "bundle_ref": "refs/heads/work/v2-plugin-resource-docs-reviewed-20261020",
+  "bundle_filename": "studio-v2-a8ac7dff-to-19d90d51.bundle",
+  "bundle_commit_count": 2,
+  "unique_external_prerequisite": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+  "original_two_commits_retained": true,
+  "no_cherry_pick_or_merge": true,
+  "commit_mappings": [
+    {
+      "source": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "source_parent": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+      "adopted": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "adopted_parent": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+      "original_retained_directly": true,
+      "stable_patch_id": "1189782db95f717bc77be512ecdade6534abb0ca"
+    },
+    {
+      "source": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "source_parent": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "adopted": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "adopted_parent": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "original_retained_directly": true,
+      "stable_patch_id": "8f3c41b04518dc148fab724d9bb7299c958fac56"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "mode": "100644",
+      "blob": "23013e0f6d6d0f7f31e7d1c175fc703d2185a053",
+      "bytes": 1004,
+      "sha256": "71e6f84f3fe1569addaba9cc95b137ee090d24593fc46101297662da25dc5ed9",
+      "source_original": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "blob": "82694527a86314c5527676298f5317541fc5388c",
+      "bytes": 8270,
+      "sha256": "f86a11244c41bd160b98ef7454b69e0e0e7f69143120d90daafeb65e57f9fe5f",
+      "source_original": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/novel/PluginInspector.css",
+      "mode": "100644",
+      "blob": "a91994301765ec36e104f3a534a7bb9cce1cf619",
+      "bytes": 2553,
+      "sha256": "a3b47b73d7672a3c314d6bb7fab6e4befc6bdbbed34cdfaeac59bd295d94bcfb",
+      "source_original": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/novel/PluginInspector.tsx",
+      "mode": "100644",
+      "blob": "04522a205ac203a39a4ded5a85b8e0d2402a3cfe",
+      "bytes": 8962,
+      "sha256": "43ed59de23d1fe5c37b2a80d5eb34d185415827edd331c3b196e7aa91d9d93ad",
+      "source_original": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/novel/PluginResourceDetail.additive.test.tsx",
+      "mode": "100644",
+      "blob": "d8b6973de1360249954ff18063e3f7c1ddcdf589",
+      "bytes": 8647,
+      "sha256": "ade9fa783f8c52c9566b1d1ec57f995ac18424833056f9d2c1a1abee3a65c483",
+      "source_original": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/novel/PluginResourceDetail.tsx",
+      "mode": "100644",
+      "blob": "582c6c6a935eb03ea785556a33bbdd4b597221c0",
+      "bytes": 2719,
+      "sha256": "10b835ccad51b98329568ca7824d7f32797e43abab02d25800d5182489841350",
+      "source_original": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/novel/pluginResourceDetailContract.ts",
+      "mode": "100644",
+      "blob": "125dcab62c61b7a633ea960b6f46bf3ac345ae7e",
+      "bytes": 3490,
+      "sha256": "c233bd61fbebc852d77fb9e3665e38130592816c1ab39a5852d8aaf5f3fe62a0",
+      "source_original": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "type": "commit",
+      "bytes": 252,
+      "sha256": "42b65b6034dd7c388ff1f792a5ec50088ff9642c2d4e1da21d9176cf79f4f760",
+      "path": ""
+    },
+    {
+      "oid": "15a4b52c07621ed1919a899aa75c26f003f9bd59",
+      "type": "commit",
+      "bytes": 251,
+      "sha256": "3861390a28d13f7c11a44d554df20cbbaa39cfc8d4aac8e7e88dce11428c9537",
+      "path": ""
+    },
+    {
+      "oid": "27e7584a5f5603debc630e4a634342b0a1eb337c",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "0eecc823cbadf67da08e1557cd71f6f5a99b04286b11740d251038ce936ae034",
+      "path": ""
+    },
+    {
+      "oid": "3645dea62d38d54eccdf32b7a3ebba695287f170",
+      "type": "tree",
+      "bytes": 197,
+      "sha256": "2224dcbac18916b2b8c450935d2096cecccfcabb7cf53594ca6607205d1773d1",
+      "path": ".github"
+    },
+    {
+      "oid": "23013e0f6d6d0f7f31e7d1c175fc703d2185a053",
+      "type": "blob",
+      "bytes": 1004,
+      "sha256": "71e6f84f3fe1569addaba9cc95b137ee090d24593fc46101297662da25dc5ed9",
+      "path": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "oid": "82694527a86314c5527676298f5317541fc5388c",
+      "type": "blob",
+      "bytes": 8270,
+      "sha256": "f86a11244c41bd160b98ef7454b69e0e0e7f69143120d90daafeb65e57f9fe5f",
+      "path": "README.md"
+    },
+    {
+      "oid": "8064e7bb202e0fe4df1d5aeccaefd32313d98e12",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "e5b45c994ce2b4b1360e34b38e627973024f32d17be709123eb116b2f9938fe8",
+      "path": "frontend"
+    },
+    {
+      "oid": "28f19d6423dc6a178b26e67fe25be0f41dcc99d0",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "5ff328e3d2bd78c3bb1c86b2b188dd26288f0e53d0d236242482160032760d4a",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "8c548bf5248eb23aebd373ea1d8560b8f6c4191b",
+      "type": "tree",
+      "bytes": 17641,
+      "sha256": "d6d73af6839f526e9f98df575dda4f6a099b5169ca40f7c6b06b0ca992a49fc8",
+      "path": "frontend/src/novel"
+    },
+    {
+      "oid": "a91994301765ec36e104f3a534a7bb9cce1cf619",
+      "type": "blob",
+      "bytes": 2553,
+      "sha256": "a3b47b73d7672a3c314d6bb7fab6e4befc6bdbbed34cdfaeac59bd295d94bcfb",
+      "path": "frontend/src/novel/PluginInspector.css"
+    },
+    {
+      "oid": "04522a205ac203a39a4ded5a85b8e0d2402a3cfe",
+      "type": "blob",
+      "bytes": 8962,
+      "sha256": "43ed59de23d1fe5c37b2a80d5eb34d185415827edd331c3b196e7aa91d9d93ad",
+      "path": "frontend/src/novel/PluginInspector.tsx"
+    },
+    {
+      "oid": "d8b6973de1360249954ff18063e3f7c1ddcdf589",
+      "type": "blob",
+      "bytes": 8647,
+      "sha256": "ade9fa783f8c52c9566b1d1ec57f995ac18424833056f9d2c1a1abee3a65c483",
+      "path": "frontend/src/novel/PluginResourceDetail.additive.test.tsx"
+    },
+    {
+      "oid": "582c6c6a935eb03ea785556a33bbdd4b597221c0",
+      "type": "blob",
+      "bytes": 2719,
+      "sha256": "10b835ccad51b98329568ca7824d7f32797e43abab02d25800d5182489841350",
+      "path": "frontend/src/novel/PluginResourceDetail.tsx"
+    },
+    {
+      "oid": "125dcab62c61b7a633ea960b6f46bf3ac345ae7e",
+      "type": "blob",
+      "bytes": 3490,
+      "sha256": "c233bd61fbebc852d77fb9e3665e38130592816c1ab39a5852d8aaf5f3fe62a0",
+      "path": "frontend/src/novel/pluginResourceDetailContract.ts"
+    },
+    {
+      "oid": "d6fad6de4808e2d8a8ed482ca28c35ff631653c8",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "32e6668a713fc69c9f1f31a31dd99532b51a1be5a07a48b00081644af279ca33",
+      "path": ""
+    }
+  ],
+  "new_object_count": 15,
+  "no_extra_packed_objects": true,
+  "all_other_base_paths_unchanged": true,
+  "NLE_Graph_dependencies_replayed": false,
+  "author_evidence_hashes_verified": 24,
+  "independent_source_bindings_verified": 7,
+  "independent_test_hash_verified": true,
+  "independent_resource_groups_passed": 3,
+  "docs_static": "PASS_STATIC_ONLY;4 pinned Git-snapshot links; public HTTP availability not tested",
+  "combined_validation": {
+    "status": "PASS",
+    "combined": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+    "frontend_JSDOM_localStorage_Mock_passed": 3,
+    "other_cases_skipped": 30,
+    "typescript_runs": 1,
+    "vite_build_runs": 1,
+    "results": {
+      "docs-static": {
+        "exit": 0,
+        "seconds": 0.547,
+        "log": "docs-static.log"
+      },
+      "frontend": {
+        "exit": 0,
+        "seconds": 1.564,
+        "log": "frontend.log"
+      },
+      "typescript": {
+        "exit": 0,
+        "seconds": 20.73,
+        "log": "typescript.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.394,
+        "log": "build.log"
+      }
+    },
+    "real_File_API": false,
+    "real_Host": false,
+    "PostgreSQL": false,
+    "full_E2E": false,
+    "models_GPU": false,
+    "schema7_default": "OFF",
+    "docs_links": "PASS_STATIC_ONLY; 4 fixed Git snapshot links, not HTTP availability",
+    "plugin_execution_marketplace_full_ecosystem": false,
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-impact-decisions\\frontend\\node_modules"
+  },
+  "zip_payload_count": 56,
+  "zip_evidence_hashes": 55,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 7,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "acceptance_limits": [
+    "Readonly JSDOM/React Mock summary/detail APIs only",
+    "Installed desktop/plugin Host original summary -> explicit body read NOT_RUN",
+    "Backend/PG/liveHost/fullE2E NOT_ACCEPTED",
+    "Plugin execution/application/marketplace/activation/whole ecosystem NOT_ACCEPTED",
+    "Schema7 DEFAULT OFF"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-a8ac7dff-to-19d90d51.bundle",
+      "bytes": 8191,
+      "sha256": "a2e1470067bb162fb06871ac46b6da0b225a6e38539611dacce59f42fee6dd85"
+    },
+    {
+      "path": "studio-v2-plugin-resource-19d90d51-tests-evidence-sanitized.zip",
+      "bytes": 465589,
+      "sha256": "37614b182a33875b55f93d649c74323131386897a00692e0e2862f2332b49a57"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3428,
+      "sha256": "9433c83b695fb802ff1c75cde8859fcfb1d617d5e4d3e6acc179ed32d49b7794"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2051,
+      "sha256": "964fec0b6e2079d882883076a8ec82d3d10616ae371589b4d1fdbb2055cb62f0"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
