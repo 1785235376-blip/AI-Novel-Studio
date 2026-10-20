@@ -1276,9 +1276,10 @@ def default_main(args) -> int:
     package = contract.package_export_zip(first_bundle)
     (project.parent / 'project.zip').write_bytes(package['content'])
     with zipfile.ZipFile(project.parent / 'project.zip') as archive:
-        for name in archive.namelist():
+        for info in archive.infolist():
+            name = info.filename
             relative = name[len(package['prefix']):]
-            if not relative:
+            if info.is_dir() or not relative:
                 continue
             destination = project / relative
             destination.parent.mkdir(parents=True, exist_ok=True)

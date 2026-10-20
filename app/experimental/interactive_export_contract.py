@@ -48,6 +48,15 @@ EVIDENCE_LEVELS = (
 )
 EVIDENCE_STATUSES = ('PASS', 'FAIL', 'PARTIAL', 'BLOCKED_ENVIRONMENT', 'BLOCKED_AUTHORITY', 'NOT_RUN')
 TARGET_KINDS = ('RUNNABLE_PROJECT', 'DATA_ONLY_ADAPTER', 'LEGACY_FRAGMENT')
+# Levels a target runtime can only earn by actually executing the exact delivered
+# artifact. They are never inherited from an adapter/template's historical run.
+RUNTIME_EVIDENCE_LEVELS = ('TARGET_RUNTIME_EXECUTED', 'SAVE_RESTORE_VERIFIED')
+ARTIFACT_EVIDENCE_STATUSES = (
+    'PASS', 'UNVERIFIED', 'NOT_EXPORTED', 'EVIDENCE_INVALID',
+    'TARGET_MISMATCH', 'FORMAT_MISMATCH', 'RUNTIME_MISMATCH',
+    'STALE_STORY', 'STALE_REVISION', 'STALE_SOURCE', 'STALE_ARTIFACT',
+)
+VERIFICATION_SCHEMA = 'poemseed-interactive-export-verification/1'
 
 # Bundle limits: a workbook, a typed story and small runtime scripts, nothing more.
 MAX_FILES = 256
@@ -121,6 +130,14 @@ class EngineRequirement(Frozen):
     note: str = ''
 
 
+class RuntimeRequirement(Frozen):
+    """The runtime identity a verification receipt must bind for one target."""
+    name: str = Field(min_length=1, max_length=80)
+    version: str = Field(min_length=1, max_length=80)
+    version_mode: Literal['AT_LEAST', 'EXACT'] = 'AT_LEAST'
+    format: str = Field(default='', max_length=80)
+
+
 class TargetDescriptor(Frozen):
     target_id: str = Field(pattern=r'^[A-Z][A-Z0-9_]{2,80}$')
     display_name: str = Field(min_length=1, max_length=160)
@@ -128,6 +145,7 @@ class TargetDescriptor(Frozen):
     format_version: str = Field(min_length=1, max_length=40)
     adapter_revision: int = Field(ge=1, le=1000)
     engine: EngineRequirement | None = None
+    verification_runtime: RuntimeRequirement | None = None
     capabilities: dict[str, CapabilitySupport]
     losses: list[str] = Field(default_factory=list, max_length=64)
     runtime_requirements: list[str] = Field(default_factory=list, max_length=32)
@@ -176,6 +194,179 @@ class StorySnapshot(Frozen):
         for value in self.characters.values():
             if not isinstance(value, str) or len(value) > 2000: raise ValueError('character display name invalid')
         return self
+
+
+class VerificationRuntime(Frozen):
+    """Runtime identity recorded by whoever actually executed the artifact."""
+    name: str = Field(min_length=1, max_length=80)
+    version: str = Field(min_length=1, max_length=80)
+    format: str = Field(default='', max_length=80)
+    executable_sha256: str | None = Field(default=None, pattern=_DIGEST.pattern)
+
+
+class VerificationReceipt(Frozen):
+    """A runtime verification record bound to ONE exact delivered artifact.
+
+    It is produced by an external verifier after really executing the artifact and
+    is only trusted for the artifact digest it names. It can never raise the
+    evidence of a different story, revision, target build or runtime.
+    """
+    schema: Literal['poemseed-interactive-export-verification/1'] = 'poemseed-interactive-export-verification/1'
+    target_id: str = Field(pattern=r'^[A-Z][A-Z0-9_]{2,80}$')
+    target_format_version: str = Field(min_length=1, max_length=40)
+    story_id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
+    revision: int = Field(ge=1)
+    spec_digest: str = Field(pattern=_DIGEST.pattern)
+    source_digest: str = Field(pattern=_DIGEST.pattern)
+    artifact_sha256: str = Field(pattern=_DIGEST.pattern)
+    files_digest: str = Field(pattern=_DIGEST.pattern)
+    runtime: VerificationRuntime
+    checks: dict[str, str] = Field(default_factory=dict)
+    evidence: dict[str, str] = Field(default_factory=dict)
+    verifier: str = Field(min_length=1, max_length=200)
+    commands: list[dict] = Field(default_factory=list, max_length=128)
+    log_sha256: str | None = Field(default=None, pattern=_DIGEST.pattern)
+    verified_at: str = Field(min_length=1, max_length=64)
+
+    @model_validator(mode='after')
+    def records(self):
+        if self.checks:
+            for level, status in self.checks.items():
+                if level not in RUNTIME_EVIDENCE_LEVELS: raise ValueError('verification checks may only contain runtime levels: ' + level)
+                if status not in EVIDENCE_STATUSES: raise ValueError('invalid verification status: ' + level + '=' + status)
+        if not self.checks and not self.evidence: raise ValueError('verification receipt records no evidence')
+        for level, status in self.evidence.items():
+            if level not in EVIDENCE_LEVELS: raise ValueError('unknown evidence level in receipt: ' + level)
+            if status not in EVIDENCE_STATUSES: raise ValueError('invalid evidence status in receipt: ' + level + '=' + status)
+        if not any(self.checks.get(level) == 'PASS' for level in RUNTIME_EVIDENCE_LEVELS):
+            raise ValueError('verification receipt must record at least one passing runtime level')
+        if not self.runtime.name.strip() or not self.runtime.version.strip():
+            raise ValueError('verification receipt runtime identity is incomplete')
+        for command in self.commands:
+            if not isinstance(command, dict): raise ValueError('verification command record must be an object')
+        return self
+
+
+def _version_tuple(text: str) -> tuple[int, ...] | None:
+    match = re.search(r'(\d+)(?:\.(\d+))?(?:\.(\d+))?', text or '')
+    if not match: return None
+    return tuple(int(part or 0) for part in match.groups())
+
+
+def runtime_requirement_issues(runtime: VerificationRuntime, requirement: RuntimeRequirement | None) -> list[str]:
+    if requirement is None: return []
+    issues = []
+    if runtime.name.strip().lower() != requirement.name.strip().lower():
+        issues.append('runtime name is ' + repr(runtime.name) + ', expected ' + repr(requirement.name))
+    found, expected = _version_tuple(runtime.version), _version_tuple(requirement.version)
+    if found is None or expected is None:
+        issues.append('runtime version is not comparable: ' + repr(runtime.version) + ' vs required ' + repr(requirement.version))
+    elif requirement.version_mode == 'EXACT' and found != expected:
+        issues.append('runtime version ' + runtime.version + ' does not exactly match ' + requirement.version)
+    elif requirement.version_mode == 'AT_LEAST' and found < expected:
+        issues.append('runtime version ' + runtime.version + ' is below required ' + requirement.version)
+    if requirement.format and runtime.format and runtime.format != requirement.format:
+        issues.append('runtime format is ' + repr(runtime.format) + ', expected ' + repr(requirement.format))
+    return issues
+
+
+def receipt_binding_issues(receipt: VerificationReceipt, descriptor: TargetDescriptor, snapshot: dict,
+                           artifact_sha256: str, files_digest_value: str) -> list[tuple[str, str]]:
+    """Every reason this receipt cannot describe the current artifact."""
+    issues: list[tuple[str, str]] = []
+    if receipt.target_id != descriptor.target_id:
+        issues.append(('TARGET_MISMATCH', 'receipt target ' + receipt.target_id + ' != ' + descriptor.target_id))
+    if receipt.target_format_version != descriptor.format_version:
+        issues.append(('FORMAT_MISMATCH', 'receipt format version ' + receipt.target_format_version + ' != ' + descriptor.format_version))
+    for detail in runtime_requirement_issues(receipt.runtime, descriptor.verification_runtime):
+        issues.append(('RUNTIME_MISMATCH', detail))
+    if receipt.story_id != str(snapshot.get('story_id')):
+        issues.append(('STALE_STORY', 'receipt story ' + receipt.story_id + ' != ' + str(snapshot.get('story_id'))))
+    if receipt.revision != int(snapshot.get('revision', 0)):
+        issues.append(('STALE_REVISION', 'receipt revision ' + str(receipt.revision) + ' != ' + str(snapshot.get('revision'))))
+    if receipt.spec_digest != snapshot.get('spec_digest') or receipt.source_digest != snapshot.get('source_digest'):
+        issues.append(('STALE_SOURCE', 'receipt spec/source digest does not match the current story revision'))
+    if receipt.artifact_sha256 != artifact_sha256 or receipt.files_digest != files_digest_value:
+        issues.append(('STALE_ARTIFACT', 'receipt artifact digest does not match this exported artifact'))
+    return issues
+
+
+_STALE_PRIORITY = ('TARGET_MISMATCH', 'FORMAT_MISMATCH', 'RUNTIME_MISMATCH', 'EVIDENCE_INVALID',
+                   'STALE_STORY', 'STALE_REVISION', 'STALE_SOURCE', 'STALE_ARTIFACT')
+
+
+def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, files_digest_value: str,
+                      receipts) -> dict:
+    """Current-artifact evidence: only exact artifact-bound receipts may PASS.
+
+    Historical adapter/template verification lives in historical_evidence_for and
+    is intentionally not consulted here.
+    """
+    descriptor = describe_target(target_id)
+    levels = {level: 'NOT_RUN' for level in EVIDENCE_LEVELS}
+    levels['GENERATED_ARTIFACT_VALIDATED'] = 'PASS'
+    base = {
+        'target_id': target_id,
+        'levels': levels,
+        'binding': {
+            'target_id': descriptor.target_id,
+            'target_format_version': descriptor.format_version,
+            'story_id': str(snapshot.get('story_id')),
+            'revision': snapshot.get('revision'),
+            'spec_digest': snapshot.get('spec_digest'),
+            'source_digest': snapshot.get('source_digest'),
+            'artifact_sha256': artifact_sha256,
+            'files_digest': files_digest_value,
+            'verification_runtime': descriptor.verification_runtime.model_dump(mode='json') if descriptor.verification_runtime else None,
+        },
+        'matched_receipt': None,
+        'stale_receipts': [],
+        'checked_receipts': 0,
+        'policy': 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+    }
+    stale: list[tuple[list[tuple[str, str]], VerificationReceipt]] = []
+    invalid = 0
+    checked = 0
+    for raw in receipts or ():
+        checked += 1
+        try:
+            receipt = VerificationReceipt.model_validate(raw)
+        except Exception:
+            invalid += 1
+            continue
+        issues = receipt_binding_issues(receipt, descriptor, snapshot, artifact_sha256, files_digest_value)
+        if issues: stale.append((issues, receipt)); continue
+        recorded = dict(receipt.evidence)
+        recorded.update({level: status for level, status in receipt.checks.items()})
+        for level in RUNTIME_EVIDENCE_LEVELS:
+            if recorded.get(level) == 'PASS': levels[level] = 'PASS'
+        matched = {
+            'verifier': receipt.verifier, 'verified_at': receipt.verified_at,
+            'runtime': receipt.runtime.model_dump(mode='json'),
+            'commands': receipt.commands, 'log_sha256': receipt.log_sha256,
+            'checks': dict(receipt.checks),
+        }
+        base.update(status='PASS', matched_receipt=matched, checked_receipts=checked,
+                    reason='a verification receipt matches this exact story revision, target build and artifact digest')
+        return base
+    stale.sort(key=lambda item: min(_STALE_PRIORITY.index(code) if code in _STALE_PRIORITY else 99 for code, _ in item[0]))
+    if stale:
+        issues, receipt = stale[0]
+        code = min((code for code, _ in issues), key=lambda item: _STALE_PRIORITY.index(item) if item in _STALE_PRIORITY else 99)
+        detail = next(text for found, text in issues if found == code)
+        base.update(status=code, checked_receipts=checked,
+                    reason='verification evidence exists but is not valid for this artifact: ' + detail,
+                    stale_receipts=[{'code': found, 'detail': text, 'receipt_story': receipt.story_id,
+                                     'receipt_revision': receipt.revision, 'receipt_target': receipt.target_id,
+                                     'receipt_artifact_sha256': receipt.artifact_sha256}
+                                    for found, text in issues][:8])
+        for level in RUNTIME_EVIDENCE_LEVELS:
+            levels[level] = 'PARTIAL' if base['status'] == 'EVIDENCE_INVALID' else 'NOT_RUN'
+        return base
+    base.update(status='EVIDENCE_INVALID' if invalid and not stale else 'UNVERIFIED', checked_receipts=checked,
+                reason=('no verification receipt exists for this artifact' if not invalid
+                        else 'receipts exist but none is a valid verification record'))
+    return base
 
 
 class CompatibilityIssue(Frozen):
@@ -424,7 +615,13 @@ def all_target_descriptors() -> list[dict]:
     return [describe_target(target_id).model_dump(mode='json') for target_id in available_target_ids()]
 
 
-def evidence_for(target_id: str) -> dict[str, str]:
+def historical_evidence_for(target_id: str) -> dict[str, str]:
+    """What the adapter/template once proved, NOT what this artifact proved.
+
+    This is deliberately separate from artifact_evidence(): a fixed runtime
+    template having executed once must never make a brand-new story's export
+    look runtime-verified.
+    """
     base = {level: 'NOT_RUN' for level in EVIDENCE_LEVELS}
     declared: dict[str, str] = {}
     if target_id in LEGACY_TARGETS:
@@ -440,8 +637,8 @@ def evidence_for(target_id: str) -> dict[str, str]:
     return base
 
 
-def evidence_for_level(target_id: str, level: str) -> str:
-    return evidence_for(target_id).get(level, 'NOT_RUN')
+def historical_evidence_for_level(target_id: str, level: str) -> str:
+    return historical_evidence_for(target_id).get(level, 'NOT_RUN')
 
 
 # ---------------------------------------------------------------------------
@@ -595,7 +792,27 @@ def render_manifest(descriptor: TargetDescriptor, snapshot: StorySnapshot, compa
             'engine': descriptor.engine.model_dump(mode='json') if descriptor.engine else None,
             'requirements': list(descriptor.runtime_requirements),
             'launch_instructions': descriptor.launch_instructions,
-            'evidence': evidence_for(descriptor.target_id),
+            # Adapter/template history only. It is a different statement from
+            # "this artifact ran", so it is never placed in the runtime levels.
+            'historical_evidence': historical_evidence_for(descriptor.target_id),
+            'current_artifact_evidence': {
+                'status': 'UNVERIFIED_AT_GENERATION',
+                'policy': 'GENERATION_IS_NOT_RUNTIME',
+                'note': 'Runtime and save/restore levels for this artifact can only be set by a verification receipt bound to its exact artifact digest.',
+                'binding_requirements': {
+                    'schema': VERIFICATION_SCHEMA,
+                    'story_id': snapshot.story_id,
+                    'revision': snapshot.revision,
+                    'spec_digest': snapshot.spec_digest,
+                    'source_digest': snapshot.source_digest,
+                    'target_id': descriptor.target_id,
+                    'target_format_version': descriptor.format_version,
+                    'files_digest': files_digest(payload),
+                    'artifact_sha256': 'the deterministic ZIP SHA-256 returned by the export endpoint',
+                    'runtime': descriptor.verification_runtime.model_dump(mode='json') if descriptor.verification_runtime else None,
+                },
+                'record_with': 'POST /novels/{nid}/experimental/interactive-stories/{sid}/export-verification',
+            },
         },
         'generation': {
             'deterministic': True, 'wall_clock_included': False, 'options': options.model_dump(mode='json'),
@@ -626,6 +843,20 @@ def render_receipt(descriptor: TargetDescriptor, snapshot: StorySnapshot,
         'capabilities_unsupported': sorted(key for key, value in compatibility.capabilities.items() if not value.supported),
         'export_policy': 'APPROVED_REVISION_ONLY_PURE_CONVERSION_NO_EXTERNAL_WRITE',
         'reproduce': 'Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.',
+        'historical_evidence': historical_evidence_for(descriptor.target_id),
+        'verification_binding': {
+            'schema': VERIFICATION_SCHEMA,
+            'story_id': snapshot.story_id,
+            'revision': snapshot.revision,
+            'spec_digest': snapshot.spec_digest,
+            'source_digest': snapshot.source_digest,
+            'target_id': descriptor.target_id,
+            'target_format_version': descriptor.format_version,
+            'payload_files_digest': payload_digest,
+            'artifact_sha256': 'the deterministic ZIP SHA-256 returned by the export endpoint',
+            'runtime_requirement': descriptor.verification_runtime.model_dump(mode='json') if descriptor.verification_runtime else None,
+            'current_artifact_evidence': 'NOT_VERIFIED_BY_GENERATION',
+        },
     }
 
 
@@ -686,8 +917,20 @@ def package_export_zip(bundle: ExportBundle) -> dict:
     """Deterministic ZIP container: fixed timestamps, sorted entries, one root folder."""
     verify_bundle(bundle)
     prefix = 'interactive-' + _filename_slug(bundle.target_id) + '-' + bundle.story_id + '/'
-    buffer = __import__('io').BytesIO()
+    buffer = io.BytesIO()
+    directories = set()
+    for path in bundle.files:
+        parts = path.split('/')
+        for index in range(1, len(parts)):
+            directories.add('/'.join(parts[:index]) + '/')
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+        # Explicit directory records keep ordinary ZIP tools (bsdtar, unzip,
+        # Explorer) interoperable; they are deterministic like the file entries.
+        for directory in sorted(directories):
+            info = zipfile.ZipInfo(prefix + directory, date_time=(2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_STORED
+            info.external_attr = (0o40755 << 16) | 0x10
+            archive.writestr(info, b'')
         for path in sorted(bundle.files):
             info = zipfile.ZipInfo(prefix + path, date_time=(2026, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
@@ -794,7 +1037,16 @@ def contract_document() -> dict:
         'evidence_levels': list(EVIDENCE_LEVELS),
         'evidence_statuses': list(EVIDENCE_STATUSES),
         'target_kinds': list(TARGET_KINDS),
-        'records': {'manifest': MANIFEST_SCHEMA, 'receipt': RECEIPT_SCHEMA, 'targets': TARGETS_SCHEMA},
+        'records': {'manifest': MANIFEST_SCHEMA, 'receipt': RECEIPT_SCHEMA, 'targets': TARGETS_SCHEMA,
+                    'verification': VERIFICATION_SCHEMA},
+        'evidence_policy': {
+            'historical': 'ADAPTER_OR_FIXED_TEMPLATE_VERIFICATION_ONCE',
+            'current_artifact': 'RECEIPT_BOUND_TO_EXACT_STORY_REVISION_AND_ARTIFACT_DIGEST',
+            'runtime_levels': list(RUNTIME_EVIDENCE_LEVELS),
+            'artifact_evidence_statuses': list(ARTIFACT_EVIDENCE_STATUSES),
+            'generation_never_sets_runtime_levels': True,
+            'inheritance_forbidden': True,
+        },
         'limits': {'files': MAX_FILES, 'file_bytes': MAX_FILE_BYTES, 'total_bytes': MAX_TOTAL_BYTES,
                    'path_length': MAX_PATH_LENGTH, 'zip_compressed_bytes': MAX_TOTAL_BYTES + ZIP_OVERHEAD_BYTES,
                    'zip_read_chunk_bytes': ZIP_CHUNK_BYTES},

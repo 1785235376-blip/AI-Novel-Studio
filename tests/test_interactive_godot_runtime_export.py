@@ -148,7 +148,7 @@ def test_target_registered_as_runnable_project_and_legacy_id_preserved():
 
 
 def test_descriptor_evidence_is_honest_and_gui_is_never_claimed():
-    evidence = contract.evidence_for(TARGET_ID)
+    evidence = contract.historical_evidence_for(TARGET_ID)
     for level, status in evidence.items():
         assert status in contract.EVIDENCE_STATUSES, level
         if level in {'SOURCE_IMPLEMENTED', 'SCHEMA_VALIDATED', 'FIXTURE_TESTED',
@@ -257,8 +257,9 @@ def test_bundle_manifest_receipt_hashes_and_zip_are_deterministic():
     assert runtime['runtime_story_schema'] == godot_export.RUNTIME_STORY_SCHEMA
     assert runtime['main_scene'] == 'res://main.tscn'
     assert runtime['save_path_policy'].startswith('user://')
-    assert manifest['runtime']['evidence']['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
-    assert manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert manifest['runtime']['historical_evidence']['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
+    assert manifest['runtime']['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert manifest['runtime']['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
     project = payload['project.godot'].decode('utf-8')
     assert 'config_version=5' in project and 'run/main_scene="res://main.tscn"' in project
     assert 'config/name="PoemSeed Story b07-godot-pytest"' in project
@@ -405,8 +406,10 @@ def test_service_exports_runnable_godot_project_end_to_end(interactive_env):
     assert target['compatibility']['can_export'] is True
     assert target['export_ready'] is True
     assert target['engine_probe']['status'] in {'READY', 'NOT_INSTALLED', 'UNSUPPORTED_VERSION', 'PROBE_FAILED'}
-    assert target['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
-    assert target['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    assert target['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert target['artifact_evidence_status'] == 'NOT_EXPORTED'
+    assert target['artifact_evidence']['levels']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert target['runtime_claim'] == 'UNVERIFIED'
     preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': TARGET_ID})
     assert preview['can_export'] is True and preview['target_id'] == TARGET_ID
     assert preview['selected_target']['target_id'] == TARGET_ID
@@ -415,7 +418,10 @@ def test_service_exports_runnable_godot_project_end_to_end(interactive_env):
     content = base64.b64decode(out['content_base64'])
     assert hashlib.sha256(content).hexdigest() == out['sha256']
     assert out['target_id'] == TARGET_ID and out['file_count'] == 14
-    assert out['runtime_claim'] == 'SAVE_RESTORE_VERIFIED' and out['published'] is False
+    assert out['runtime_claim'] == 'UNVERIFIED' and out['published'] is False
+    assert out['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert out['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert out['artifact_evidence_status'] == 'UNVERIFIED'
     files = contract.read_zip_safely(content, zip_prefix(row['id']))
     assert set(files) == PAYLOAD_FILES | {'manifest.json', 'source-receipt.json'}
     story = json.loads(files['data/story.json'])
@@ -427,8 +433,9 @@ def test_service_exports_runnable_godot_project_end_to_end(interactive_env):
     manifest = json.loads(files['manifest.json'])
     assert manifest['target_kind'] == 'RUNNABLE_PROJECT'
     assert manifest['extra']['godot_runtime']['template_files'] == godot_export.template_hashes()
-    assert manifest['runtime']['evidence']['SAVE_RESTORE_VERIFIED'] == 'PASS'
-    assert manifest['runtime']['evidence']['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
+    assert manifest['runtime']['historical_evidence']['SAVE_RESTORE_VERIFIED'] == 'PASS'
+    assert manifest['runtime']['historical_evidence']['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
+    assert manifest['runtime']['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
     # the legacy combined export is untouched and still carries the old data adapter output
     legacy_preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], value)
     legacy = e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'preview_digest': legacy_preview['preview_digest']})
@@ -509,9 +516,10 @@ def _extract_project(tmp_path):
     project = tmp_path / 'project'
     project.mkdir()
     with zipfile.ZipFile(__import__('io').BytesIO(package['content'])) as archive:
-        for name in archive.namelist():
+        for info in archive.infolist():
+            name = info.filename
             relative = name[len(package['prefix']):]
-            if not relative:
+            if info.is_dir() or not relative:
                 continue
             destination = project / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -728,7 +736,7 @@ def test_committed_runtime_evidence_matches_descriptor_claims():
     assert levels['TARGET_RUNTIME_EXECUTED'] == 'PASS'
     assert levels['SAVE_RESTORE_VERIFIED'] == 'PASS'
     assert levels['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
-    claims = contract.evidence_for(TARGET_ID)
+    claims = contract.historical_evidence_for(TARGET_ID)
     for level, status in levels.items():
         assert claims[level] == status, level
     assert evidence['alignment']['states_compared'] > 0
