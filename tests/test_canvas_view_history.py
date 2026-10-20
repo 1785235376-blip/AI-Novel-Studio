@@ -38,7 +38,8 @@ def test_restore_rejects_stale_or_wrong_review_context_atomically(rig,field,valu
 
 def test_history_and_restore_do_not_cross_actor_scope_project_or_incarnation(rig):
     e=rig;graph,one,_=versions(e);body=restore_body(graph.canvas_views.history(e.nid,e.scope,e.actor,one['id']))
-    for actor,scope,nid in [('another',e.scope,e.nid),(e.actor,{**e.scope,'novel_id':'other'},e.nid),(e.actor,e.scope,'missing-project')]:
+    other='canvas-history-other-project';e.create_project('Other live project',other)
+    for actor,scope,nid in [('another',e.scope,e.nid),(e.actor,{**e.scope,'novel_id':'other'},e.nid),(e.actor,{**e.scope,'novel_id':other},other),(e.actor,e.scope,'missing-project')]:
         with pytest.raises((FileNotFoundError,ValueError)):graph.canvas_views.history(nid,scope,actor,one['id'])
         with pytest.raises((FileNotFoundError,ValueError)):graph.canvas_views.restore(nid,scope,actor,one['id'],body)
     e.novels.delete(e.nid);e.create_project('Reused project',e.nid)
