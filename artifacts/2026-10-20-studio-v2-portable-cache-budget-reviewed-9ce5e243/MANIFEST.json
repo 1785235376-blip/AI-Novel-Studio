@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_U14_STORE05_ADVISORY_PORTABLE_CACHE_BUDGET",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "7f0d2f98047463102b3f2d920f2b7e31ba11d2aa",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-portable-cache-budget-reviewed-9ce5e243",
+  "product_base": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+  "product_tip": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+  "product_tree": "2255f4321611f125b0a7a12da1f52f9a61df6f6e",
+  "bundle_ref": "refs/heads/work/v2-portable-budget-reviewed-20261020",
+  "bundle_filename": "studio-v2-19d90d51-to-9ce5e243.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+  "original_source_commit_retained": true,
+  "no_cherry_pick_or_merge": true,
+  "commit_mappings": [
+    {
+      "source": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "source_parent": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "adopted": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "adopted_parent": "19d90d51eed4a9683c4290592dd91495125e5fcf",
+      "original_retained_directly": true,
+      "stable_patch_id": "47d96cf0a5b4c38041b156dd4e541e184531fb3e"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/experimental/portable_cache_policy.py",
+      "mode": "100644",
+      "blob": "df3a5b61422dea4d59f59dd746c8678fc275a3ec",
+      "bytes": 2512,
+      "sha256": "46e45a1c100a80fcf187f8efac9326a1380205aaa3073077748d3cf99484f9bc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "app/experimental/portable_projects.py",
+      "mode": "100644",
+      "blob": "5e07195fb6e64915c6712231e3e8cc847d64131b",
+      "bytes": 42946,
+      "sha256": "47d8c3e3d0be83733e0f6a408477fbb9331697bf4c310ba5bbd34f98c7ad3213",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "app/experimental/portable_projects_api.py",
+      "mode": "100644",
+      "blob": "5643ca889034bfe4ec6d45a9ae830ee90da027ea",
+      "bytes": 6790,
+      "sha256": "1ed7a6f7b8f710b7e0c9ca890f7fd38c2d529d0fba208d01fd849d9a3db71a38",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "docs/v2/portable-cache-budget.md",
+      "mode": "100644",
+      "blob": "7ed63bc20bd50720664315243d785dfbe2c46195",
+      "bytes": 5745,
+      "sha256": "304ff5023662c843877b68a0c746fcfa783324a86f56255b48f96ad2448227ac",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/experimental/PortableProjectsBudget.test.tsx",
+      "mode": "100644",
+      "blob": "02112cb99361f6985f87a2020b62417c967531cd",
+      "bytes": 10247,
+      "sha256": "6b8dac7448a5de7d9f8eaa3d0c7b15a9882ea8cd65b34a674f519176552f5656",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/experimental/PortableProjectsPanel.tsx",
+      "mode": "100644",
+      "blob": "f01b4713d99e0113007f8480ea8c21d94e01ea13",
+      "bytes": 23618,
+      "sha256": "1c1f69c25091591e8b1c9003439c9419b21c21aee8d1f7bb02e854eb9b679ecd",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "tests/test_v2_portable_cache_policy.py",
+      "mode": "100644",
+      "blob": "62caf37f9c0db213e2723c872c12e797f5e2cf76",
+      "bytes": 7884,
+      "sha256": "facd606d25d838d1a29c9a5633fdc546c03880d39039a2d1d2d578ecd88d7846",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "tests/test_v2_portable_cache_policy_api.py",
+      "mode": "100644",
+      "blob": "a53744aad85130e8bee48c8d459ab5955f1ff0ec",
+      "bytes": 2389,
+      "sha256": "f77745dc83f393877523aeb581b3403c6a6d1a16b15ef2dc069d1d209e472a6c",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "type": "commit",
+      "bytes": 244,
+      "sha256": "7bee0d294584ff18fb405169d678815af9a3373c0a5761f43261a95a65de1cf9",
+      "path": ""
+    },
+    {
+      "oid": "2255f4321611f125b0a7a12da1f52f9a61df6f6e",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "fea27163749a1d5e855bc088d9f9e4347eba4da0178fd7729d51b8c108c60eda",
+      "path": ""
+    },
+    {
+      "oid": "b6a2680efcd78e125deee4b6c1e24ceb693f585d",
+      "type": "tree",
+      "bytes": 9271,
+      "sha256": "d1f3deda59cc8f129e3e2d15a45ee5072aa795182f42c5dd18269a1a826ccfc2",
+      "path": "app"
+    },
+    {
+      "oid": "1e23a6df44f20783b44d5babc9d245f50381894c",
+      "type": "tree",
+      "bytes": 10925,
+      "sha256": "e303222c73372c29854867e39a6e3d83a421ce0d2ae876ffce932397a01d8870",
+      "path": "app/experimental"
+    },
+    {
+      "oid": "df3a5b61422dea4d59f59dd746c8678fc275a3ec",
+      "type": "blob",
+      "bytes": 2512,
+      "sha256": "46e45a1c100a80fcf187f8efac9326a1380205aaa3073077748d3cf99484f9bc",
+      "path": "app/experimental/portable_cache_policy.py"
+    },
+    {
+      "oid": "5e07195fb6e64915c6712231e3e8cc847d64131b",
+      "type": "blob",
+      "bytes": 42946,
+      "sha256": "47d8c3e3d0be83733e0f6a408477fbb9331697bf4c310ba5bbd34f98c7ad3213",
+      "path": "app/experimental/portable_projects.py"
+    },
+    {
+      "oid": "5643ca889034bfe4ec6d45a9ae830ee90da027ea",
+      "type": "blob",
+      "bytes": 6790,
+      "sha256": "1ed7a6f7b8f710b7e0c9ca890f7fd38c2d529d0fba208d01fd849d9a3db71a38",
+      "path": "app/experimental/portable_projects_api.py"
+    },
+    {
+      "oid": "af8a5bd5101eac1ed42521e64ae20a05bdb2af5d",
+      "type": "tree",
+      "bytes": 23717,
+      "sha256": "2fd5bab52b77f266ec4269a4fd9f399cb772fa61fdde3bca9baf3e026d3e25ff",
+      "path": "docs"
+    },
+    {
+      "oid": "29d434ea2905b4d2b3ac1c6ce266df2cc6646cfe",
+      "type": "tree",
+      "bytes": 15682,
+      "sha256": "b51c7b17b8421d36c87b69915c45a935e46361c95080fd969b9731209301f33c",
+      "path": "docs/v2"
+    },
+    {
+      "oid": "7ed63bc20bd50720664315243d785dfbe2c46195",
+      "type": "blob",
+      "bytes": 5745,
+      "sha256": "304ff5023662c843877b68a0c746fcfa783324a86f56255b48f96ad2448227ac",
+      "path": "docs/v2/portable-cache-budget.md"
+    },
+    {
+      "oid": "96ea6a18bcc43331bbde09510b32482ebf3c5a45",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "749ae4cd50c90e9ed781eeedc269889fc39c137176a73e9284d6d09bd3d400a5",
+      "path": "frontend"
+    },
+    {
+      "oid": "5eb14023ed01866f1772a3ee69f85fc7147a6962",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "31d3ec34506163ba4305e715bb791e04146d00fa12662be7d0626079c1c86200",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "82991a09e5f72e751dee8a8140e5cb545546d953",
+      "type": "tree",
+      "bytes": 27438,
+      "sha256": "949a2d6126b1087a6e2cda825bbb9678a1ee819bd581ab56a2b4b16246e55237",
+      "path": "frontend/src/experimental"
+    },
+    {
+      "oid": "02112cb99361f6985f87a2020b62417c967531cd",
+      "type": "blob",
+      "bytes": 10247,
+      "sha256": "6b8dac7448a5de7d9f8eaa3d0c7b15a9882ea8cd65b34a674f519176552f5656",
+      "path": "frontend/src/experimental/PortableProjectsBudget.test.tsx"
+    },
+    {
+      "oid": "f01b4713d99e0113007f8480ea8c21d94e01ea13",
+      "type": "blob",
+      "bytes": 23618,
+      "sha256": "1c1f69c25091591e8b1c9003439c9419b21c21aee8d1f7bb02e854eb9b679ecd",
+      "path": "frontend/src/experimental/PortableProjectsPanel.tsx"
+    },
+    {
+      "oid": "828f19fb55ac47d58fbccab3a92b0e75ea1e13c9",
+      "type": "tree",
+      "bytes": 72115,
+      "sha256": "604ee75a977ea0178f9f47b43a8e146e7a086cb2ec3749d519a9df4914d1cdde",
+      "path": "tests"
+    },
+    {
+      "oid": "62caf37f9c0db213e2723c872c12e797f5e2cf76",
+      "type": "blob",
+      "bytes": 7884,
+      "sha256": "facd606d25d838d1a29c9a5633fdc546c03880d39039a2d1d2d578ecd88d7846",
+      "path": "tests/test_v2_portable_cache_policy.py"
+    },
+    {
+      "oid": "a53744aad85130e8bee48c8d459ab5955f1ff0ec",
+      "type": "blob",
+      "bytes": 2389,
+      "sha256": "f77745dc83f393877523aeb581b3403c6a6d1a16b15ef2dc069d1d209e472a6c",
+      "path": "tests/test_v2_portable_cache_policy_api.py"
+    }
+  ],
+  "new_object_count": 18,
+  "no_extra_packed_objects": true,
+  "all_other_base_paths_unchanged": true,
+  "Audio_U16_not_included": true,
+  "dependencies_replayed": false,
+  "original_file_and_read_file_AST_unchanged": true,
+  "sole_unlink_uses_original_owned_file_path": true,
+  "original_blocked_symlink_test_blob_unchanged": true,
+  "author_working_source_hashes_verified": 8,
+  "author_evidence_snapshot_files": 28,
+  "independent_source_bindings_verified": 8,
+  "independent_test_hash_verified": true,
+  "independent_groups_passed": 4,
+  "combined_validation": {
+    "status": "PASS",
+    "combined": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+    "backend_isolated_File_passed": 3,
+    "frontend_JSDOM_Mock_panel_passed": 2,
+    "frontend_other_cases_skipped": 6,
+    "typescript_runs": 1,
+    "vite_build_runs": 1,
+    "results": {
+      "collection": {
+        "exit": 0,
+        "retained_first_collection": true,
+        "log": "collection.log"
+      },
+      "frontend": {
+        "exit": 0,
+        "seconds": 1.437,
+        "log": "frontend.log"
+      },
+      "backend": {
+        "exit": 0,
+        "seconds": 5.726,
+        "log": "backend.log"
+      },
+      "typescript": {
+        "exit": 0,
+        "seconds": 20.659,
+        "log": "typescript.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.396,
+        "log": "build.log"
+      }
+    },
+    "profile_root": "<TASK_ROOT>\\task-11\\portable-budget-combined\\.runtime\\profile",
+    "all_backend_data_below_owned_runtime": true,
+    "Windows_symlink_case": "NOT_RUN / NOT_ACCEPTED; original1314 remains",
+    "real_user_cache_cleanup": false,
+    "permissions_or_privileges_changed": false,
+    "real_Host": false,
+    "PostgreSQL": false,
+    "full_E2E": false,
+    "models_GPU": false,
+    "Audio_U16_not_included": true,
+    "schema7_default": "OFF",
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-impact-decisions\\frontend\\node_modules"
+  },
+  "zip_payload_count": 65,
+  "zip_evidence_hashes": 64,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 8,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "windows_link_acceptance": {
+    "state": "ENVIRONMENT_BLOCK / NOT_ACCEPTED",
+    "test": "tests/test_r4_portable_batches.py::test_portable_missing_restoration_readable_and_asset_escape_fails[file]",
+    "reason": "WinError1314 at pathlib.Path.symlink_to, required privilege not held; failed before link creation",
+    "rerun_or_spoofed": false,
+    "permissions_or_privileges_changed": false,
+    "static_review_only": true
+  },
+  "acceptance_limits": [
+    "Current actor/scope reproducible portable export ZIP budget only",
+    "Windows symlink/reparse runtime NOT_ACCEPTED",
+    "PG/installedHost/real user cache cleanup/fullE2E NOT_ACCEPTED",
+    "No full U14/STORE05 or wider cache management completion",
+    "Audio/U16 NOT_INCLUDED; schema7 DEFAULT OFF"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-19d90d51-to-9ce5e243.bundle",
+      "bytes": 16906,
+      "sha256": "3bb4dd8a7a924028f2329d43b41b35d87ac3e2892cea268fdcd8ef3661c5a3e9"
+    },
+    {
+      "path": "studio-v2-portable-cache-budget-9ce5e243-tests-evidence-sanitized.zip",
+      "bytes": 1443119,
+      "sha256": "c1a7bb5d0d062b0912f801d37e638ecb33c56b637451aef64029d0d8274ebcfc"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 4274,
+      "sha256": "bf167273e6dca0a4459811afaa3d7e26ef7a1b81ecbaa6855e14974feb7ec747"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2098,
+      "sha256": "8cf2f015df849ebebc19d4e83394a64467931d00f3c0ce31509a066c0406cf39"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
