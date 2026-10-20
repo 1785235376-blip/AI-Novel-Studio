@@ -1,0 +1,1360 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_DSH_U16_AUDIO_CLOUD_INTEGRATION",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "88fe0e10cd4c8c3892c5c3108056057133c4c46f",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-cloud-dsh-u16-audio-reviewed-c40aec6d",
+  "product_base": "b8371a48816b852176d45151eb9a0e3618a32c07",
+  "product_tip": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+  "product_tree": "d1e9a1da44cc6beca2fa8daf6fb0e0a719c5b704",
+  "bundle_ref": "refs/heads/work/cloud-dsh-integration-20261020",
+  "bundle_filename": "studio-v2-b8371a48-to-c40aec6d.bundle",
+  "bundle_commit_count": 9,
+  "commits": [
+    "e665237149d120bf1521086b55f4393a568cfcb8",
+    "295db650d541041aca61140b5040a46aa23a1891",
+    "d043a8758d2c286db92b00b64855b2cf634a2100",
+    "0039b11fad0cb5fc06eca4124c39e99f325fa9d8",
+    "f50eafa38e4b35014e0a6f2d6164fc6403574763",
+    "04a059a06351f87c772fb2d5720aa256433303d9",
+    "3b26e0f3d5cef43a0ec199488670af4e833de53a",
+    "f47d0db82b637a73614c50f13f13723d11966027",
+    "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+  ],
+  "unique_external_prerequisite": "b8371a48816b852176d45151eb9a0e3618a32c07",
+  "source_binding_path": "docs/delivery/v2-development/cloud-dsh-integration-source-bindings.json",
+  "patch_mappings": [
+    {
+      "patch": "0001.patch",
+      "bytes": 40971,
+      "sha256": "f1b8ab65a1000ccfeb34ff873bdea760264ca20b72030eb6cd520601d254785e",
+      "source_commit": "c1c400cdcbcfb4a191a4e7f7ae4750fbdc03ddc8",
+      "reconstructed_commit": "c5034569065b58b7a44cc379a48f3fb4f6549cb7",
+      "integrated_commit": "e665237149d120bf1521086b55f4393a568cfcb8",
+      "reconstructed_tree": "7cc9ef333a8710b259c6b24d96bb41d1a1749e46",
+      "integrated_tree": "6c22c99b3437179953b76505d9e625fe4aeed6ec",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/creative/production_execution.py",
+          "patch_postimage_prefix": "9cbc1299",
+          "verified_full_blob": "9cbc1299e2cf2e1c62bd1830382e6456bccf796e"
+        },
+        {
+          "path": "app/creative/workspace_api.py",
+          "patch_postimage_prefix": "5aebf135",
+          "verified_full_blob": "5aebf135190d47c7fd1201d76a4bf1160c86ae9e"
+        },
+        {
+          "path": "app/experimental/api.py",
+          "patch_postimage_prefix": "084b1b25",
+          "verified_full_blob": "084b1b2562b5c98edf01ab8b40d5313c31a4a062"
+        },
+        {
+          "path": "app/experimental/safe_batch_studio_image.py",
+          "patch_postimage_prefix": "11272628",
+          "verified_full_blob": "11272628a4175d4964f5cc1b855eb8eefc6094fc"
+        },
+        {
+          "path": "app/experimental/safe_batches.py",
+          "patch_postimage_prefix": "7e72e524",
+          "verified_full_blob": "7e72e524bbe995a54612d9af88d7b0c9fa3f3013"
+        },
+        {
+          "path": "app/services/studio_image_execution.py",
+          "patch_postimage_prefix": "2e87c160",
+          "verified_full_blob": "2e87c160cc0f2fb963e1b0e55e1dfe7f204f0ac3"
+        },
+        {
+          "path": "docs/u16_studio_image_binding.md",
+          "patch_postimage_prefix": "7f8ec2ae",
+          "verified_full_blob": "7f8ec2ae9a87d6578754cb8ad534b7393f7efd4e"
+        },
+        {
+          "path": "tests/test_u16_studio_image_binding_api.py",
+          "patch_postimage_prefix": "ec591cc8",
+          "verified_full_blob": "ec591cc805637930ece71a5ae925ed606c342c6a"
+        }
+      ]
+    },
+    {
+      "patch": "0002.patch",
+      "bytes": 69665,
+      "sha256": "eb8204d188310d5ffdd120bd892176c296bdb6dc29c870ebf30dcf475640c7d1",
+      "source_commit": "6d8176e6095c861d069ad7940a0e44065caec941",
+      "reconstructed_commit": "d34ac9cef980a59a9c68a26f7a82ab8423e978f4",
+      "integrated_commit": "295db650d541041aca61140b5040a46aa23a1891",
+      "reconstructed_tree": "2cd37491296a106b140539dc4d27dccb2120f268",
+      "integrated_tree": "3c80166aaad07513b3f055b238c3b0acade80c27",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/audio_manifest.py",
+          "patch_postimage_prefix": "e0b61038",
+          "verified_full_blob": "e0b61038f7128bd6ce84da9595d5a18162e3b1bb"
+        },
+        {
+          "path": "app/experimental/audio_manifest_api.py",
+          "patch_postimage_prefix": "fe58f46f",
+          "verified_full_blob": "fe58f46f624bc8881f0b0935119aac38b39e0d6d"
+        },
+        {
+          "path": "docs/AUDIO_MANIFEST_HANDOFF.md",
+          "patch_postimage_prefix": "f2c6524e",
+          "verified_full_blob": "f2c6524eb65cf946076d0225449368e16a4c1d44"
+        },
+        {
+          "path": "frontend/src/experimental/AudioManifestWorkspace.additive.test.tsx",
+          "patch_postimage_prefix": "beed985e",
+          "verified_full_blob": "beed985e32c4b628e3c0c4a3c780ce7d1d667d43"
+        },
+        {
+          "path": "frontend/src/experimental/AudioManifestWorkspace.tsx",
+          "patch_postimage_prefix": "c8f9d41e",
+          "verified_full_blob": "c8f9d41ea1ec605d5f14b57609176020306206fb"
+        },
+        {
+          "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+          "patch_postimage_prefix": "ebd34e41",
+          "verified_full_blob": "ebd34e412ca2f1285a69e9f62d022d941b82f83f"
+        },
+        {
+          "path": "frontend/src/experimental/audioManifestClient.ts",
+          "patch_postimage_prefix": "a7a494d9",
+          "verified_full_blob": "a7a494d9b8bc4621dcf6be39e58b4fdf80962bca"
+        },
+        {
+          "path": "tests/test_audio_manifest_additive.py",
+          "patch_postimage_prefix": "f03bb048",
+          "verified_full_blob": "f03bb0485bbfa822aa34373b45c441538b6224bd"
+        }
+      ]
+    },
+    {
+      "patch": "0003.patch",
+      "bytes": 111184,
+      "sha256": "520cdedf7dd6bd9aa3604a5f0a22b6cb7245e9cc461459be4c241e2317711c0b",
+      "source_commit": "0cb20c8f8d78d2697bb9954392597d9bab88d615",
+      "reconstructed_commit": "72cd70cfc27ec22e9c11b7c9c2fcdcecb563524a",
+      "integrated_commit": "d043a8758d2c286db92b00b64855b2cf634a2100",
+      "reconstructed_tree": "45f64239c391bc06adc31f7686b71595fb2292f7",
+      "integrated_tree": "3b15f99f4dbb3f215c673d948926e31b5f5cd4c5",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/safe_batch_studio_image.py",
+          "patch_postimage_prefix": "12fc02d9",
+          "verified_full_blob": "12fc02d90a976e2b73d20bc24081a731696f6e94"
+        },
+        {
+          "path": "app/experimental/safe_batches.py",
+          "patch_postimage_prefix": "b98e7fff",
+          "verified_full_blob": "b98e7fff8924d6d99b27643b4aee7f517bfff91a"
+        },
+        {
+          "path": "app/experimental/safe_batches_api.py",
+          "patch_postimage_prefix": "a8358544",
+          "verified_full_blob": "a83585448ab54733ace536d62153f3837331888d"
+        },
+        {
+          "path": "docs/u16_studio_image_batch.md",
+          "patch_postimage_prefix": "00e1da13",
+          "verified_full_blob": "00e1da132e18e82f463bcd9c98c6934552ca26cb"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.file-api.json",
+          "patch_postimage_prefix": "724bec67",
+          "verified_full_blob": "724bec67febb2a8f0b6b0efff10d55d354154d7a"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.test.tsx",
+          "patch_postimage_prefix": "d4f245b9",
+          "verified_full_blob": "d4f245b9b24df43703db95d2b50295a27d6aeaad"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.tsx",
+          "patch_postimage_prefix": "c434abee",
+          "verified_full_blob": "c434abee21cd7144bc5d7a3da8700e1658963d68"
+        },
+        {
+          "path": "tests/test_u16_studio_image_batch_api.py",
+          "patch_postimage_prefix": "d8ae0cac",
+          "verified_full_blob": "d8ae0cac4f9a2b7cb30d2db87c4907d75bea3021"
+        }
+      ]
+    },
+    {
+      "patch": "0004.patch",
+      "bytes": 2289,
+      "sha256": "d41afeb0ecc9cdfcd9d970a19e525943365a421fed5123dc81ac6276a7d175f6",
+      "source_commit": "0dc15d4ddf7ae807350c5bc042b27ab580c36732",
+      "reconstructed_commit": "307b4e881808ac63ac4d55d458f93d6d39fd33df",
+      "integrated_commit": "0039b11fad0cb5fc06eca4124c39e99f325fa9d8",
+      "reconstructed_tree": "f4abfe161840cb80f4b2935ba430eefeb81fb3f6",
+      "integrated_tree": "320d532995d4a5cbff48b4a3c5709945730fe5dc",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "tests/test_u16_studio_image_batch_api.py",
+          "patch_postimage_prefix": "d76a5615",
+          "verified_full_blob": "d76a56150a372ebaef1c97daba2fbca218e132f9"
+        }
+      ]
+    },
+    {
+      "patch": "0005.patch",
+      "bytes": 2943,
+      "sha256": "8523394049c2ce6d05dc681f71e2b653bf03bc8fa8ed1046d5c7409e1af794b7",
+      "source_commit": "e815fc3fdb4d80f9d36ca2453a2fa6f237b9888a",
+      "reconstructed_commit": "9cbcc4d12f9204ae232c35eae923f68ebb28151b",
+      "integrated_commit": "f50eafa38e4b35014e0a6f2d6164fc6403574763",
+      "reconstructed_tree": "b1bc0ecc035a64d4e8d88cae8063322bfb47c34b",
+      "integrated_tree": "45f246217b29eda6d257c580aece94e3242a5f70",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/audio_manifest_api.py",
+          "patch_postimage_prefix": "5c468ba4",
+          "verified_full_blob": "5c468ba454c8dd33047aa071f574563030b14ee3"
+        },
+        {
+          "path": "tests/test_audio_manifest_additive.py",
+          "patch_postimage_prefix": "34b11d4c",
+          "verified_full_blob": "34b11d4cb2a699ac5448435ae840938ee9c198fc"
+        }
+      ]
+    },
+    {
+      "patch": "0006.patch",
+      "bytes": 7793,
+      "sha256": "5342c67e264183b0fecf99f1ac8ece4b3b0c718588c4702714525cd7aba54ee0",
+      "source_commit": "0516c6d8a9c9c94d1ccd05fc81c6210ef5d55452",
+      "reconstructed_commit": "896a80480546bc0dcfc801a441bba93b04c772f8",
+      "integrated_commit": "04a059a06351f87c772fb2d5720aa256433303d9",
+      "reconstructed_tree": "1e6493e33875c501a5d11bb10aee54d5e41805c4",
+      "integrated_tree": "1abd2272ed3f8f1f59aa8f7ef35b4fa5be78e50d",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/creative/workspace_api.py",
+          "patch_postimage_prefix": "167cd8e8",
+          "verified_full_blob": "167cd8e841a8811827ec23b114d26697b92148c3"
+        },
+        {
+          "path": "tests/test_audio_manifest_product_mount.py",
+          "patch_postimage_prefix": "8abc1204",
+          "verified_full_blob": "8abc120437447aa9c512dc446cf07d4e24118126"
+        }
+      ]
+    }
+  ],
+  "corrective_commit": "3b26e0f3d5cef43a0ec199488670af4e833de53a",
+  "original_source_commit_identity_proven": false,
+  "per_patch_postimages_verified": 29,
+  "preserved_prior_cloud_paths": [
+    "app/experimental/portable_cache_policy.py",
+    "app/experimental/portable_projects.py",
+    "app/experimental/portable_projects_api.py",
+    "docs/v2/CLOUD_ASSET_COMPARISON_SLICE_20261020.md",
+    "docs/v2/IMAGE_MASK_REDO_RECEIPT_20261020.md",
+    "docs/v2/portable-cache-budget.md",
+    "frontend/scripts/check-mask-redo-browser.mjs",
+    "frontend/src/assetbrowser/AssetBrowserHost.comparison.test.tsx",
+    "frontend/src/assetbrowser/AssetBrowserPanel.comparison.test.tsx",
+    "frontend/src/assetbrowser/AssetBrowserPanel.tsx",
+    "frontend/src/assetbrowser/AssetComparePanel.test.tsx",
+    "frontend/src/assetbrowser/AssetComparePanel.tsx",
+    "frontend/src/assetbrowser/assetComparisonPreview.test.ts",
+    "frontend/src/assetbrowser/assetComparisonPreview.ts",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StudioBinaryMaskCanvas.redo.test.tsx",
+    "frontend/src/creative/StudioBinaryMaskCanvas.tsx",
+    "frontend/src/creative/StudioManualMaskRedo.test.tsx",
+    "frontend/src/creative/StudioModelMeshPreview.tsx",
+    "frontend/src/creative/StudioModelSceneStructure.additive.test.tsx",
+    "frontend/src/creative/studioBinaryMask.redo.test.ts",
+    "frontend/src/creative/studioBinaryMask.ts",
+    "frontend/src/creative/studioModelSceneStructure.ts",
+    "frontend/src/experimental/PortableProjectsBudget.test.tsx",
+    "frontend/src/experimental/PortableProjectsPanel.tsx",
+    "frontend/tests/visual/studio-mask-redo.fixture.tsx",
+    "tests/test_v2_portable_cache_policy.py",
+    "tests/test_v2_portable_cache_policy_api.py"
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/production_execution.py",
+      "mode": "100644",
+      "blob": "83b056479473a3d94be5737cb4eabc94125f9b1a",
+      "bytes": 132799,
+      "sha256": "91355ecd0a70091e17c8f98a1a363a11cc0f5564c9cc79d3980909f6bb037f13"
+    },
+    {
+      "path": "app/creative/workspace_api.py",
+      "mode": "100644",
+      "blob": "167cd8e841a8811827ec23b114d26697b92148c3",
+      "bytes": 35488,
+      "sha256": "8ba63f34482efe0be4db8e4d2694a30d680a0661c6908f6d1f7c2bf3c7f745bc"
+    },
+    {
+      "path": "app/experimental/api.py",
+      "mode": "100644",
+      "blob": "084b1b2562b5c98edf01ab8b40d5313c31a4a062",
+      "bytes": 43384,
+      "sha256": "facae00ba31e9ae4cd46852d203892194a8889297b3f49f5d5bcc55b567fe26c"
+    },
+    {
+      "path": "app/experimental/audio_manifest.py",
+      "mode": "100644",
+      "blob": "e0b61038f7128bd6ce84da9595d5a18162e3b1bb",
+      "bytes": 11924,
+      "sha256": "830002200d3cf3ee87035bb27835da4d869128bf38f09de0af0cd09d498b595e"
+    },
+    {
+      "path": "app/experimental/audio_manifest_api.py",
+      "mode": "100644",
+      "blob": "5c468ba454c8dd33047aa071f574563030b14ee3",
+      "bytes": 5659,
+      "sha256": "f30649f4637a93c6b7dacaa60f5b55dceb7d541c407ece9e3aa6efa543a145a9"
+    },
+    {
+      "path": "app/experimental/safe_batch_studio_image.py",
+      "mode": "100644",
+      "blob": "12fc02d90a976e2b73d20bc24081a731696f6e94",
+      "bytes": 13802,
+      "sha256": "8c8109067ae01f9b395ca3c2bf47ed3a9e77fb399ca7c47d4c35240eb71ada73"
+    },
+    {
+      "path": "app/experimental/safe_batches.py",
+      "mode": "100644",
+      "blob": "885944413b42a16b94d2ac9168d5bed2e74b1d87",
+      "bytes": 62400,
+      "sha256": "8d5ce8a8f58e3672c019825253ecbe793388ec1c0bf2410cb4e0bfea7a744d87"
+    },
+    {
+      "path": "app/experimental/safe_batches_api.py",
+      "mode": "100644",
+      "blob": "a83585448ab54733ace536d62153f3837331888d",
+      "bytes": 8578,
+      "sha256": "8495c5efee5c37b69870046eb721ca2bc5a98e7748328798efa2145292ed6e3d"
+    },
+    {
+      "path": "app/services/studio_image_execution.py",
+      "mode": "100644",
+      "blob": "2e87c160cc0f2fb963e1b0e55e1dfe7f204f0ac3",
+      "bytes": 56699,
+      "sha256": "70fda74431c6207ff7f390b8548a066831c3836b9d6499793a7e24d09dd311a2"
+    },
+    {
+      "path": "docs/AUDIO_MANIFEST_HANDOFF.md",
+      "mode": "100644",
+      "blob": "f2c6524eb65cf946076d0225449368e16a4c1d44",
+      "bytes": 8105,
+      "sha256": "b0817c53ef40a85567dec86a247cd94b762c013bc1d904b8fce9402d63165ae4"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-design-tokens.log",
+      "mode": "100644",
+      "blob": "b55127c876586e656832de7fd1f8a139add6c109",
+      "bytes": 31,
+      "sha256": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-file-api.log",
+      "mode": "100644",
+      "blob": "186324fb7263d5f3310af952bc217d0022194bde",
+      "bytes": 1131,
+      "sha256": "801fd39ca0df6ccd9e713bcc26484a6e95f77cb9b96a5ac6f442421b830b58a0"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-final-file-api.log",
+      "mode": "100644",
+      "blob": "9f4c5c6f7c61d8c39860b947ebe9d5c922812ba3",
+      "bytes": 1141,
+      "sha256": "4d42994dd8b0e810fd9342ee2ce1c3552846b27e5314f06e5aa9b632cc1b5594"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-frontend.log",
+      "mode": "100644",
+      "blob": "0785ca8bdedaa4cdf8a768489806b8acbaf07ff4",
+      "bytes": 829,
+      "sha256": "f17a8025f0973831c64fab8b5e94539ee1d3540fcef86f965979f90e9988275b"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-guard-fixed.log",
+      "mode": "100644",
+      "blob": "540df1ff43f262fcc98c6f9b565abfdfd89334ac",
+      "bytes": 1020,
+      "sha256": "ab6067ef52b9b5bd4bfbc3083ad4295b662686d83ebc3535e8df105c4ffd481b"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-guard-repro.log",
+      "mode": "100644",
+      "blob": "52fde54f58ab7c75404c71c12d663303c24d5797",
+      "bytes": 162144,
+      "sha256": "6172db30c1eaa2cbbf805e0a214fcd7047a46c50da04c87dccb6dc012618fc59"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-integration-source-bindings.json",
+      "mode": "100644",
+      "blob": "d7c98a2f198d7c031f33290b472a1b66f0b0e7a7",
+      "bytes": 18017,
+      "sha256": "f496c6fe53208f78572bacd21cd8bf5a22ccfca6a19d1f8e6f084bffa542c0b6"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-read-repro.log",
+      "mode": "100644",
+      "blob": "b268a0155e0e38973bf593c81d78724a93ab7e5e",
+      "bytes": 8746,
+      "sha256": "eaea3289ed77b96ef2efe205924d77af892ff8c1bd542aafedd4b88cc3ddef1b"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-dsh-serial-build.log",
+      "mode": "100644",
+      "blob": "fd735494cab9b73f76ed0abdb4a0218b4d7c9090",
+      "bytes": 2044,
+      "sha256": "a60aa6e53bd69ab491138fb93175b7949182e310afa792fba73a3303043b259b"
+    },
+    {
+      "path": "docs/u16_studio_image_batch.md",
+      "mode": "100644",
+      "blob": "00e1da132e18e82f463bcd9c98c6934552ca26cb",
+      "bytes": 3492,
+      "sha256": "fd522caee681e32966ca88fff665346a03f9caf4e426ed5aa8a2f9e4f1a8fcaa"
+    },
+    {
+      "path": "docs/u16_studio_image_binding.md",
+      "mode": "100644",
+      "blob": "7f8ec2ae9a87d6578754cb8ad534b7393f7efd4e",
+      "bytes": 2326,
+      "sha256": "ffa5d3a5fc3948079687732afdde6fbd2a2a6006db46f783ab7e50d399f65ffd"
+    },
+    {
+      "path": "docs/v2/CLOUD_DSH_U16_AUDIO_INTEGRATION_20261020.md",
+      "mode": "100644",
+      "blob": "29b3eb95b943012dd5e20bcbc421dbdf7e3a3f4e",
+      "bytes": 8290,
+      "sha256": "ce15ebe8c5d8604411215d2710d4b8d561c553d16cfd7a3cacdf69dcffb28f45"
+    },
+    {
+      "path": "frontend/src/experimental/AudioManifestWorkspace.additive.test.tsx",
+      "mode": "100644",
+      "blob": "beed985e32c4b628e3c0c4a3c780ce7d1d667d43",
+      "bytes": 11297,
+      "sha256": "e49a285a44b098ecdaad1f98efa4ee68de26cd08c7518c28595d475634a8699d"
+    },
+    {
+      "path": "frontend/src/experimental/AudioManifestWorkspace.tsx",
+      "mode": "100644",
+      "blob": "c8f9d41ea1ec605d5f14b57609176020306206fb",
+      "bytes": 10202,
+      "sha256": "b940885383d68149e44b54ccca760d374301cf13edfe6592b1ce717700e9ff85"
+    },
+    {
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "mode": "100644",
+      "blob": "ebd34e412ca2f1285a69e9f62d022d941b82f83f",
+      "bytes": 27933,
+      "sha256": "14edf8588db3eb4aa77b6f2abac2584b14daa1608824690e07053a94f31a8172"
+    },
+    {
+      "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.file-api.json",
+      "mode": "100644",
+      "blob": "724bec67febb2a8f0b6b0efff10d55d354154d7a",
+      "bytes": 23358,
+      "sha256": "572c57eed3e1fe458dfc172f8d19ec1625c3c73a42e2301ca6f33dceeb595567"
+    },
+    {
+      "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.test.tsx",
+      "mode": "100644",
+      "blob": "d4f245b9b24df43703db95d2b50295a27d6aeaad",
+      "bytes": 7081,
+      "sha256": "91d16dc18aeedeb7ac705a42a00bae20e76acc14b75f71c2ec0177dec0660356"
+    },
+    {
+      "path": "frontend/src/experimental/SafeBatchesPanel.tsx",
+      "mode": "100644",
+      "blob": "c434abee21cd7144bc5d7a3da8700e1658963d68",
+      "bytes": 26076,
+      "sha256": "aaee0272184d08c4b3550afdb0625cabb6265c177eec5168cdbfac2b236c1b3e"
+    },
+    {
+      "path": "frontend/src/experimental/audioManifestClient.ts",
+      "mode": "100644",
+      "blob": "a7a494d9b8bc4621dcf6be39e58b4fdf80962bca",
+      "bytes": 7197,
+      "sha256": "8fc0355620cbe96275289a13a920ebcd6564808416238112754774b8e09bd09f"
+    },
+    {
+      "path": "tests/test_audio_manifest_additive.py",
+      "mode": "100644",
+      "blob": "34b11d4cb2a699ac5448435ae840938ee9c198fc",
+      "bytes": 9822,
+      "sha256": "7b3d16f1ce71137476546dce1ab6f29b74f031f7137e8d7e81bb1fe9082d45d4"
+    },
+    {
+      "path": "tests/test_audio_manifest_product_mount.py",
+      "mode": "100644",
+      "blob": "8abc120437447aa9c512dc446cf07d4e24118126",
+      "bytes": 5392,
+      "sha256": "c7e3e7663057f774a5c6cbf4e4dca6966b4be831f0e573e54aaa974d5cb5ec0e"
+    },
+    {
+      "path": "tests/test_u16_cloud_integration_guards.py",
+      "mode": "100644",
+      "blob": "a4d5eb61e0c3bf1bc1e883c9ef041977ac902790",
+      "bytes": 6041,
+      "sha256": "a343f8818540950d9af6e22a0d0f13b625e689f4b9dde03f21f5a07b1c979aab"
+    },
+    {
+      "path": "tests/test_u16_studio_image_batch_api.py",
+      "mode": "100644",
+      "blob": "d76a56150a372ebaef1c97daba2fbca218e132f9",
+      "bytes": 13803,
+      "sha256": "5683ec0e941c7698b527b47126cfd06cc0c563d718a62ae1418e3fd16e74e033"
+    },
+    {
+      "path": "tests/test_u16_studio_image_binding_api.py",
+      "mode": "100644",
+      "blob": "ec591cc805637930ece71a5ae925ed606c342c6a",
+      "bytes": 7834,
+      "sha256": "c6ac3bda5cafb44c8880dc2542ab8922e4b99256c388f15e200860a47659a8f5"
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+      "type": "commit",
+      "bytes": 256,
+      "sha256": "8381722c75ec7470655f260334759c1f8f4b321f082b2e775e52052e327314b1",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f47d0db82b637a73614c50f13f13723d11966027",
+      "type": "commit",
+      "bytes": 266,
+      "sha256": "a36c401313d6cbe456bd6129d51e91429682b9df35b864022a01c9704542c9cd",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3b26e0f3d5cef43a0ec199488670af4e833de53a",
+      "type": "commit",
+      "bytes": 267,
+      "sha256": "ecec411bbe1cf0cf373a578660a16030a939b895347c2d90cefaf79418eb931d",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "04a059a06351f87c772fb2d5720aa256433303d9",
+      "type": "commit",
+      "bytes": 277,
+      "sha256": "b9a5e18097f1c0417a2ac6004ae2ddf39fb902d15cf0eef22269d3b9f80af80a",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f50eafa38e4b35014e0a6f2d6164fc6403574763",
+      "type": "commit",
+      "bytes": 326,
+      "sha256": "631101da665f10bd0b29ab3afd90021fd469d4dcc3cb6f0ed09aeb58d610ce05",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "0039b11fad0cb5fc06eca4124c39e99f325fa9d8",
+      "type": "commit",
+      "bytes": 274,
+      "sha256": "080343002e3084bb7fdc6614d0044fe5080f105a7451a5e5b186e7137e9b9bb3",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d043a8758d2c286db92b00b64855b2cf634a2100",
+      "type": "commit",
+      "bytes": 263,
+      "sha256": "f244d27d389d47bdc472c3ff338f6a2e05142ce08927f9d1b326b296750c7428",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "295db650d541041aca61140b5040a46aa23a1891",
+      "type": "commit",
+      "bytes": 330,
+      "sha256": "c2eafca6e550e3bb3ba981eef27c0d7db992b2f58fc8bc7cea738aa0fd72c863",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "e665237149d120bf1521086b55f4393a568cfcb8",
+      "type": "commit",
+      "bytes": 267,
+      "sha256": "071824ad452f53b3db8924238a07e58a1329d18f61fb9859a0197be1c0f2e336",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d1e9a1da44cc6beca2fa8daf6fb0e0a719c5b704",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "094fc3c229b451c0edadccc1c76c847f2d56e905eaf464b9defb0e6f66ebaacf",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "48518e893d8c95d72460e9b6784dedc41c8bccf6",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "4260446afc192211ef5079e145bcda520deb32d91b73d7a4163f3285f4014eb7",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "8198cd8bf9391933f6b9aa32dea02493c57adcdf",
+      "type": "tree",
+      "bytes": 4892,
+      "sha256": "26f7b569f840814bc0a28dd055bef55ce86af70b8a9eb4b3f3ca19edd200b245",
+      "path": "app/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "83b056479473a3d94be5737cb4eabc94125f9b1a",
+      "type": "blob",
+      "bytes": 132799,
+      "sha256": "91355ecd0a70091e17c8f98a1a363a11cc0f5564c9cc79d3980909f6bb037f13",
+      "path": "app/creative/production_execution.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "167cd8e841a8811827ec23b114d26697b92148c3",
+      "type": "blob",
+      "bytes": 35488,
+      "sha256": "8ba63f34482efe0be4db8e4d2694a30d680a0661c6908f6d1f7c2bf3c7f745bc",
+      "path": "app/creative/workspace_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "950b1fb1d702341b44dd26084a6a1d1545d35a6c",
+      "type": "tree",
+      "bytes": 7199,
+      "sha256": "c739ec60c96eaa317dede14a44e48c93d9cd13acde05abef520f93c022812f43",
+      "path": "app/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "084b1b2562b5c98edf01ab8b40d5313c31a4a062",
+      "type": "blob",
+      "bytes": 43384,
+      "sha256": "facae00ba31e9ae4cd46852d203892194a8889297b3f49f5d5bcc55b567fe26c",
+      "path": "app/experimental/api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "e0b61038f7128bd6ce84da9595d5a18162e3b1bb",
+      "type": "blob",
+      "bytes": 11924,
+      "sha256": "830002200d3cf3ee87035bb27835da4d869128bf38f09de0af0cd09d498b595e",
+      "path": "app/experimental/audio_manifest.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5c468ba454c8dd33047aa071f574563030b14ee3",
+      "type": "blob",
+      "bytes": 5659,
+      "sha256": "f30649f4637a93c6b7dacaa60f5b55dceb7d541c407ece9e3aa6efa543a145a9",
+      "path": "app/experimental/audio_manifest_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "12fc02d90a976e2b73d20bc24081a731696f6e94",
+      "type": "blob",
+      "bytes": 13802,
+      "sha256": "8c8109067ae01f9b395ca3c2bf47ed3a9e77fb399ca7c47d4c35240eb71ada73",
+      "path": "app/experimental/safe_batch_studio_image.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "885944413b42a16b94d2ac9168d5bed2e74b1d87",
+      "type": "blob",
+      "bytes": 62400,
+      "sha256": "8d5ce8a8f58e3672c019825253ecbe793388ec1c0bf2410cb4e0bfea7a744d87",
+      "path": "app/experimental/safe_batches.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a83585448ab54733ace536d62153f3837331888d",
+      "type": "blob",
+      "bytes": 8578,
+      "sha256": "8495c5efee5c37b69870046eb721ca2bc5a98e7748328798efa2145292ed6e3d",
+      "path": "app/experimental/safe_batches_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "aa69291952d93662bdc8fc713fc060985051468b",
+      "type": "tree",
+      "bytes": 3969,
+      "sha256": "f713e11c3b439bb73d537a23d5965d89ca50c60d19d5c22023374edcde5d9dc0",
+      "path": "app/services",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "2e87c160cc0f2fb963e1b0e55e1dfe7f204f0ac3",
+      "type": "blob",
+      "bytes": 56699,
+      "sha256": "70fda74431c6207ff7f390b8548a066831c3836b9d6499793a7e24d09dd311a2",
+      "path": "app/services/studio_image_execution.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fd142be140527abd45b465dcf3f131eff030a7ff",
+      "type": "tree",
+      "bytes": 16747,
+      "sha256": "42b20e93f6d171d5cc83141e26924e4ce7e8f9ebe48da230a1ea1ad8dfc5f2b0",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f2c6524eb65cf946076d0225449368e16a4c1d44",
+      "type": "blob",
+      "bytes": 8105,
+      "sha256": "b0817c53ef40a85567dec86a247cd94b762c013bc1d904b8fce9402d63165ae4",
+      "path": "docs/AUDIO_MANIFEST_HANDOFF.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "289ef3f09ada53f1b4038bdf50dec02c6602934e",
+      "type": "tree",
+      "bytes": 793,
+      "sha256": "f2a82a34b178dbad3f06dbab9a905b2a0b891cbc0d44c723698755913fb13bb6",
+      "path": "docs/delivery",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "00e2a0295b422a227d260fc424eddd7159b75c03",
+      "type": "tree",
+      "bytes": 350161,
+      "sha256": "a8ab3f3ad604b5274e0ae7d6fb993a56aa6529a63f61c33afba17170ab3db645",
+      "path": "docs/delivery/v2-development",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "186324fb7263d5f3310af952bc217d0022194bde",
+      "type": "blob",
+      "bytes": 1131,
+      "sha256": "801fd39ca0df6ccd9e713bcc26484a6e95f77cb9b96a5ac6f442421b830b58a0",
+      "path": "docs/delivery/v2-development/cloud-dsh-file-api.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9f4c5c6f7c61d8c39860b947ebe9d5c922812ba3",
+      "type": "blob",
+      "bytes": 1141,
+      "sha256": "4d42994dd8b0e810fd9342ee2ce1c3552846b27e5314f06e5aa9b632cc1b5594",
+      "path": "docs/delivery/v2-development/cloud-dsh-final-file-api.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "0785ca8bdedaa4cdf8a768489806b8acbaf07ff4",
+      "type": "blob",
+      "bytes": 829,
+      "sha256": "f17a8025f0973831c64fab8b5e94539ee1d3540fcef86f965979f90e9988275b",
+      "path": "docs/delivery/v2-development/cloud-dsh-frontend.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "540df1ff43f262fcc98c6f9b565abfdfd89334ac",
+      "type": "blob",
+      "bytes": 1020,
+      "sha256": "ab6067ef52b9b5bd4bfbc3083ad4295b662686d83ebc3535e8df105c4ffd481b",
+      "path": "docs/delivery/v2-development/cloud-dsh-guard-fixed.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "52fde54f58ab7c75404c71c12d663303c24d5797",
+      "type": "blob",
+      "bytes": 162144,
+      "sha256": "6172db30c1eaa2cbbf805e0a214fcd7047a46c50da04c87dccb6dc012618fc59",
+      "path": "docs/delivery/v2-development/cloud-dsh-guard-repro.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d7c98a2f198d7c031f33290b472a1b66f0b0e7a7",
+      "type": "blob",
+      "bytes": 18017,
+      "sha256": "f496c6fe53208f78572bacd21cd8bf5a22ccfca6a19d1f8e6f084bffa542c0b6",
+      "path": "docs/delivery/v2-development/cloud-dsh-integration-source-bindings.json",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b268a0155e0e38973bf593c81d78724a93ab7e5e",
+      "type": "blob",
+      "bytes": 8746,
+      "sha256": "eaea3289ed77b96ef2efe205924d77af892ff8c1bd542aafedd4b88cc3ddef1b",
+      "path": "docs/delivery/v2-development/cloud-dsh-read-repro.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fd735494cab9b73f76ed0abdb4a0218b4d7c9090",
+      "type": "blob",
+      "bytes": 2044,
+      "sha256": "a60aa6e53bd69ab491138fb93175b7949182e310afa792fba73a3303043b259b",
+      "path": "docs/delivery/v2-development/cloud-dsh-serial-build.log",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "00e1da132e18e82f463bcd9c98c6934552ca26cb",
+      "type": "blob",
+      "bytes": 3492,
+      "sha256": "fd522caee681e32966ca88fff665346a03f9caf4e426ed5aa8a2f9e4f1a8fcaa",
+      "path": "docs/u16_studio_image_batch.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "7f8ec2ae9a87d6578754cb8ad534b7393f7efd4e",
+      "type": "blob",
+      "bytes": 2326,
+      "sha256": "ffa5d3a5fc3948079687732afdde6fbd2a2a6006db46f783ab7e50d399f65ffd",
+      "path": "docs/u16_studio_image_binding.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "c08b275ca80dcee839d32a274fe3d54f45c97d4b",
+      "type": "tree",
+      "bytes": 11333,
+      "sha256": "fbc5183ee4484ecaf097a594516ac51ad5cbaf00e8aed4a3718b7bde231392c2",
+      "path": "docs/v2",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "29b3eb95b943012dd5e20bcbc421dbdf7e3a3f4e",
+      "type": "blob",
+      "bytes": 8290,
+      "sha256": "ce15ebe8c5d8604411215d2710d4b8d561c553d16cfd7a3cacdf69dcffb28f45",
+      "path": "docs/v2/CLOUD_DSH_U16_AUDIO_INTEGRATION_20261020.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ab1cceb7f180a446876bfdf8d0aa8a90b8f0b6f0",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "a17e474e7213a01329481aae370e6381ae909f04ae67fa67048b2cd32f340236",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d3280f62a39c452fa4615999e94199a41370d149",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "929cc5b321a237128c50bbfcee37b965f9ef3809dd5f144a4fd2dd2c2a10fa34",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a0749fbc514f062e0a514f55e55df3eb6467aafc",
+      "type": "tree",
+      "bytes": 19009,
+      "sha256": "d41e95bd70ee14b713023ee5d5a070e8c0dd801f41d664dd7a9fe06a52e6de8e",
+      "path": "frontend/src/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "beed985e32c4b628e3c0c4a3c780ce7d1d667d43",
+      "type": "blob",
+      "bytes": 11297,
+      "sha256": "e49a285a44b098ecdaad1f98efa4ee68de26cd08c7518c28595d475634a8699d",
+      "path": "frontend/src/experimental/AudioManifestWorkspace.additive.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "c8f9d41ea1ec605d5f14b57609176020306206fb",
+      "type": "blob",
+      "bytes": 10202,
+      "sha256": "b940885383d68149e44b54ccca760d374301cf13edfe6592b1ce717700e9ff85",
+      "path": "frontend/src/experimental/AudioManifestWorkspace.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ebd34e412ca2f1285a69e9f62d022d941b82f83f",
+      "type": "blob",
+      "bytes": 27933,
+      "sha256": "14edf8588db3eb4aa77b6f2abac2584b14daa1608824690e07053a94f31a8172",
+      "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "724bec67febb2a8f0b6b0efff10d55d354154d7a",
+      "type": "blob",
+      "bytes": 23358,
+      "sha256": "572c57eed3e1fe458dfc172f8d19ec1625c3c73a42e2301ca6f33dceeb595567",
+      "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.file-api.json",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d4f245b9b24df43703db95d2b50295a27d6aeaad",
+      "type": "blob",
+      "bytes": 7081,
+      "sha256": "91d16dc18aeedeb7ac705a42a00bae20e76acc14b75f71c2ec0177dec0660356",
+      "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "c434abee21cd7144bc5d7a3da8700e1658963d68",
+      "type": "blob",
+      "bytes": 26076,
+      "sha256": "aaee0272184d08c4b3550afdb0625cabb6265c177eec5168cdbfac2b236c1b3e",
+      "path": "frontend/src/experimental/SafeBatchesPanel.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a7a494d9b8bc4621dcf6be39e58b4fdf80962bca",
+      "type": "blob",
+      "bytes": 7197,
+      "sha256": "8fc0355620cbe96275289a13a920ebcd6564808416238112754774b8e09bd09f",
+      "path": "frontend/src/experimental/audioManifestClient.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fa1828c9c50b7732560234101cf50cb17a650bbc",
+      "type": "tree",
+      "bytes": 50817,
+      "sha256": "c9807a9b68dfae795cb9875145250e18760d328d93a9ca7436094a2f62cdcb90",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "34b11d4cb2a699ac5448435ae840938ee9c198fc",
+      "type": "blob",
+      "bytes": 9822,
+      "sha256": "7b3d16f1ce71137476546dce1ab6f29b74f031f7137e8d7e81bb1fe9082d45d4",
+      "path": "tests/test_audio_manifest_additive.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "8abc120437447aa9c512dc446cf07d4e24118126",
+      "type": "blob",
+      "bytes": 5392,
+      "sha256": "c7e3e7663057f774a5c6cbf4e4dca6966b4be831f0e573e54aaa974d5cb5ec0e",
+      "path": "tests/test_audio_manifest_product_mount.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a4d5eb61e0c3bf1bc1e883c9ef041977ac902790",
+      "type": "blob",
+      "bytes": 6041,
+      "sha256": "a343f8818540950d9af6e22a0d0f13b625e689f4b9dde03f21f5a07b1c979aab",
+      "path": "tests/test_u16_cloud_integration_guards.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d76a56150a372ebaef1c97daba2fbca218e132f9",
+      "type": "blob",
+      "bytes": 13803,
+      "sha256": "5683ec0e941c7698b527b47126cfd06cc0c563d718a62ae1418e3fd16e74e033",
+      "path": "tests/test_u16_studio_image_batch_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ec591cc805637930ece71a5ae925ed606c342c6a",
+      "type": "blob",
+      "bytes": 7834,
+      "sha256": "c6ac3bda5cafb44c8880dc2542ab8922e4b99256c388f15e200860a47659a8f5",
+      "path": "tests/test_u16_studio_image_binding_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d628e813de39cb260fb1f609bd554f1eaa828620",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "7cbff65f34618c1eec574e94fa2da7fe3796f207f0a27d5f275e30ce6ecdbe64",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "070848e387fcb35adaa79a3eca32fe09bd824fdd",
+      "type": "tree",
+      "bytes": 16747,
+      "sha256": "5fdb09783f16684bd8f612127652e793b2f3d5d5bbd0a6604b5d3e8a30a144b1",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "85b975353f028eef6384fd8aa04b083543dc053d",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "4b607dffb9090b3cb96d7d5425cb5b929b7184f733502e78d4b2dd93a5d637a2",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ca1c5ec6b205072157a77b723ece2d890a1274bc",
+      "type": "tree",
+      "bytes": 16747,
+      "sha256": "a41a8791616a308397fc646acc7ee0becae7dc8041bb8fe4d5c167368f25be89",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "1abd2272ed3f8f1f59aa8f7ef35b4fa5be78e50d",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "73fbd1c99826b5a76d5c86f1247c23c34b0e6faadc9570ea203c2535bc4eaede",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d047bcc75e870aca05a5c3f1b6157b18a185760f",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "1a7a9454bf48061d91c7cf3ebbb2db61a843595a73dd03609364cdbdc3d994f8",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "989de62fdea31e83a02d345cfb2ea85596edae0a",
+      "type": "tree",
+      "bytes": 4892,
+      "sha256": "ee48e71abce8beed0e9872948aa31fc7bfd623e9f60e1dcc26474142280aa26b",
+      "path": "app/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9cbc1299e2cf2e1c62bd1830382e6456bccf796e",
+      "type": "blob",
+      "bytes": 132053,
+      "sha256": "76689abc16c58798348b33b2c5c690a0a67565f2cd0ceba2fa7e7e405ab8ed70",
+      "path": "app/creative/production_execution.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "08127cf560efe403861613dfe3b00224945334b5",
+      "type": "tree",
+      "bytes": 7199,
+      "sha256": "ed0d1fb15cabefcb3d0134c3cb2d90d73b9cca3fed0600db22ffb8bb449f4ae8",
+      "path": "app/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b98e7fff8924d6d99b27643b4aee7f517bfff91a",
+      "type": "blob",
+      "bytes": 61804,
+      "sha256": "de2976c3774a0ecff7b296f8827e2cc9385084e8837ecaad39297040fda65137",
+      "path": "app/experimental/safe_batches.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "4350f2ff8a656f3e2bd9712818fb86d9351c98d5",
+      "type": "tree",
+      "bytes": 50753,
+      "sha256": "d17a327a8a0dcc604673057ca6e3691ab7eceb169c948d396c776328e5fdf7ba",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "45f246217b29eda6d257c580aece94e3242a5f70",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "5427804b735fb30b1a076064fb4f426588b24d866f6be3992903ffa87eef9e15",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "05e80e69cfa613485ea6b95f232b66cbc965a2e3",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "63d04f6c3632d019f6e9800d6088a630ad1c87ac3b018bf03d6257ab2d5466fb",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3a92731908a9102610f6ca1c54d4e563f7564d86",
+      "type": "tree",
+      "bytes": 4892,
+      "sha256": "ff0388ae090fdf9ef1211eb264b61d7f1a0eb2fd510272bd728aea2923f2b3bd",
+      "path": "app/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5aebf135190d47c7fd1201d76a4bf1160c86ae9e",
+      "type": "blob",
+      "bytes": 34533,
+      "sha256": "5d31302743c222132e0a63a1d7bbb6ce8c4b96457f859d9eab41585d9941c504",
+      "path": "app/creative/workspace_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "075baa7092bf511ef4bda53d1cdea51de08afcf3",
+      "type": "tree",
+      "bytes": 50689,
+      "sha256": "9a8648316572a8845f2236d5b2ac32f805a5b6b2a1cd194207475fb74a248dc7",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "320d532995d4a5cbff48b4a3c5709945730fe5dc",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "55b4685b712bf049603e92d3b45a961135a14bbc62c6890f0cbe22bdb3e327dd",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "579f64c3d772d3f0387f6e0999052886ca54903e",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "b03ab92b7211d0b9a6dcbcc0592afcff0f3d7469d8fd95b18fef88b592608ff7",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ccc28e29d7164a8b39a25ae00eb9a50f6b372a71",
+      "type": "tree",
+      "bytes": 7199,
+      "sha256": "71157e5adc0e3ca9caa81d9eafef6e4f0a50d797022c55e4dacec2ebf4503855",
+      "path": "app/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fe58f46f624bc8881f0b0935119aac38b39e0d6d",
+      "type": "blob",
+      "bytes": 5622,
+      "sha256": "2f37b5c23d949a694351bde292f8518ebdbe4bb5d5587d5527aeb16000197b99",
+      "path": "app/experimental/audio_manifest_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "23dcaf311506548a78171ce0a12a9edfaa59f747",
+      "type": "tree",
+      "bytes": 50689,
+      "sha256": "b5934fff12f41105213055d5ca85ba1bee68a56538ac3566eee9164792de5768",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f03bb0485bbfa822aa34373b45c441538b6224bd",
+      "type": "blob",
+      "bytes": 8826,
+      "sha256": "46b5984b17d76caadd643684ef04c010be4ad151679473bd31355186bd1572b5",
+      "path": "tests/test_audio_manifest_additive.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3b15f99f4dbb3f215c673d948926e31b5f5cd4c5",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "44efe7e85a64547ab58ea52a567c0a4cd3c8b26283a1dbda1958ed0e003d44fa",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a0d3c038a0014328d5d876996b204c958e40f28c",
+      "type": "tree",
+      "bytes": 50689,
+      "sha256": "6a2b26147ecbdaada58354fe3b5f6e0195e85cc942e56d42bc1ad409bc6c4012",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d8ae0cac4f9a2b7cb30d2db87c4907d75bea3021",
+      "type": "blob",
+      "bytes": 12369,
+      "sha256": "fff80db359570808d47bca55f3da2cb32216103e6195cf9d60fa18dca2b168ee",
+      "path": "tests/test_u16_studio_image_batch_api.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3c80166aaad07513b3f055b238c3b0acade80c27",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "1791b534c30d58e9648c306bde50c0cdc34606d36e1a148354cae4580d15197a",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "23a874ee0bb4d6009bcd0195395c06517ddc10e2",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "37354abe108474434533fe4ed808524c9907875f554a2fce57df23f9f78a8ab1",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "411fa25a6e3217bcfa98e77739da18f09d8dc291",
+      "type": "tree",
+      "bytes": 7199,
+      "sha256": "801e5e65ea1247080e2c5dea6ca133ed2efd44e6a37d8d15abfa9658e09cf2b4",
+      "path": "app/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "11272628a4175d4964f5cc1b855eb8eefc6094fc",
+      "type": "blob",
+      "bytes": 4850,
+      "sha256": "a5a89c36461d07a6d24b787af972be8dd593137e4c77aac37192ab6d844cd1ef",
+      "path": "app/experimental/safe_batch_studio_image.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "7e72e524bbe995a54612d9af88d7b0c9fa3f3013",
+      "type": "blob",
+      "bytes": 54727,
+      "sha256": "bf07506502442c7f963d2cb092c8003a3cdd442a33838bcfd79b5d77c0cde8d2",
+      "path": "app/experimental/safe_batches.py",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b8966d6bd24e7ca20db314d82acd8ce83d8affe6",
+      "type": "tree",
+      "bytes": 16694,
+      "sha256": "dcec9f45fd3db846d1f3722c67bf077ddbef1d36ee70ba86399bbbcdf3ad512e",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "db4f4fa4aaab7b8abdafa001ac80306924e3380d",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "303c4a9c44695b22c580c736d4efc6525f4df70c1d5aa501186a163eaab022db",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "068663c7de81a6ae15005c18fcb40bbd0c5adefa",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "e4ef49a6b2cbd385a4f47c8009b7de1fa7c50a95f5ac9ba137e08c486e4e2bd2",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d2a3a9afb6c416a56ba1c449ad5ec1e1b7b63c8f",
+      "type": "tree",
+      "bytes": 18874,
+      "sha256": "f2f016795aa461f54a7b923127c202e6ae65b7a0a4ac89c0b3b40608aa11b4ba",
+      "path": "frontend/src/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "0e32e2e60693fc4250ba503a18ba34db3278062d",
+      "type": "tree",
+      "bytes": 50627,
+      "sha256": "5d06f7237b4103c5df348a56384c7e4dd8c5edfe1bfee4b28983dca1cf6a39a9",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "6c22c99b3437179953b76505d9e625fe4aeed6ec",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "066b1ff3e525bb744ffcd96b6298464c3b567188365786507a026fd58a9034f6",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "287388738f561ea8a3719ac3dd187969ee79b304",
+      "type": "tree",
+      "bytes": 5958,
+      "sha256": "cc1b5062493e47d1e1489ced513c4d020cc24826c882250288937704a8e5254f",
+      "path": "app",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "28e41cc1534dcb754e5354bfcaa5fbd4d684a175",
+      "type": "tree",
+      "bytes": 7105,
+      "sha256": "2a2fbc0266dca6e308d31a2069727614afd7bd1c407ab986cd8f41d7359248f8",
+      "path": "app/experimental",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3866e89d697d86c0679a158c087b602a772af189",
+      "type": "tree",
+      "bytes": 16641,
+      "sha256": "580901b11193276fb1fff5e457319fbf5a27f5ac86beb0a0212fd1ffd558af23",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "667fac5de52b22f229bbff263a7eb7dd76c72daa",
+      "type": "tree",
+      "bytes": 50568,
+      "sha256": "86cecfb2cf51a1ed055b0376d8f88b8c73bc2736328c0554a1e495f80f2610a8",
+      "path": "tests",
+      "serialization": "raw Git object payload"
+    }
+  ],
+  "new_object_count": 95,
+  "object_serialization": "raw Git object payload for all types including trees",
+  "all_other_base_paths_unchanged": true,
+  "evidence_zip": "studio-v2-cloud-dsh-u16-audio-c40aec6d-tests-evidence-sanitized.zip",
+  "zip_payload_count": 81,
+  "validation": {
+    "file_api": "115 passed, 114 postgres_backend_only deselected",
+    "frontend": "53 passed in 7 files",
+    "tokens": "PASS (52 files)",
+    "build": "tsc -b && vite build passed; existing chunk-size warning",
+    "source_changed_during_checks": false,
+    "limitations": [
+      "Real Host not verified",
+      "PostgreSQL not run",
+      "Browser geometry/E2E blocked previously by Unix socket/bwrap restriction; not retried",
+      "Full Python/frontend suites not run",
+      "Clean-Windows not run",
+      "Real GPU/models/paid APIs not run",
+      "Audio replay/environment reproducibility not provided"
+    ]
+  },
+  "final_test_source_hashes_verified": 3437,
+  "independent_final_review": {
+    "head": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+    "passed": 7,
+    "fixture": "File storage and synthetic trusted Host",
+    "scoped_P1_P2_findings": 0,
+    "raw_log_original_sha256": "f549b96eb2cfd489763d075ce5b8b52b02e85bf7d30a384b681bf9d7ecc2e794"
+  },
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_new_objects_scanned": 95,
+    "evidence_local_paths_normalized": true,
+    "original_evidence_preserved": true,
+    "credential_pattern_findings": 0,
+    "only_project_code_tests_reports_logs": true,
+    "dependencies_builds_runtime_databases_private_data_chat_internal_notes_excluded": true
+  },
+  "acceptance_limits": [
+    "Bounded engineering integration and independent focused validation, not Studio V2 completion or release acceptance",
+    "File storage with synthetic trusted Host sessions only; real installed Host/desktop NOT_ACCEPTED",
+    "PostgreSQL 114 cases deselected; full Python/frontend suites NOT_RUN",
+    "Browser geometry/E2E previously blocked by Chromium Unix-socket and bwrap restrictions; not retried or bypassed",
+    "Clean-Windows, symlink/security/native behavior, real GPU/models/paid APIs and full E2E remain NOT_ACCEPTED",
+    "Audio manual reviewed manifest only; replay/environment reproducibility unsupported",
+    "Source format-patches supply eight-hex blob prefixes, not original full source commit objects; original commit identity not proven"
+  ],
+  "payload_hashes": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 5127,
+      "sha256": "80d5506f50fa7a1ee63a5d8f8ca89c419d854c6a3e9a9012024a1cfbf0af5761"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2407,
+      "sha256": "4a7b747f4fed9580a66c8cf4c4e64cf7d6ddcf4d72cec0f2a12b23fa42beb042"
+    },
+    {
+      "path": "studio-v2-b8371a48-to-c40aec6d.bundle",
+      "bytes": 83052,
+      "sha256": "302f3f2d707734c13f87a51ac207b8409e6eb400c20ae2f2243130ccd1fae1ca"
+    },
+    {
+      "path": "studio-v2-cloud-dsh-u16-audio-c40aec6d-tests-evidence-sanitized.zip",
+      "bytes": 1965333,
+      "sha256": "4b90c221580b4107e429779f93929e6f30d6a6bead996525e60ec245cd1413e7"
+    }
+  ]
+}
