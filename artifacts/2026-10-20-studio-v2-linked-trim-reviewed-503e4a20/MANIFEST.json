@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_LINKED_TRIM_INTEGRATION",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "d92955d58d68b5d2bda23825bbbbe34d0bab6587",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-linked-trim-reviewed-503e4a20",
+  "product_base": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+  "product_tip": "503e4a207de487eb8d6879790713c29f805a71ca",
+  "product_tree": "5c7899d8f286a224e9d9745e53394f95800e215d",
+  "bundle_ref": "refs/heads/work/v2-linked-trim-after-split-20261020",
+  "bundle_filename": "studio-v2-b3e5c546-to-503e4a20.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+  "commit_mappings": [
+    {
+      "source": "a36bc5b7d0211527b45606ec87ebba7cc8402cbf",
+      "source_parent": "d9466d253fa4d8141391fd7295af65ce7276ee56",
+      "adopted": "503e4a207de487eb8d6879790713c29f805a71ca",
+      "adopted_parent": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+      "stable_patch_id": "83033b452b2fc2312a4ec771b36e761c5a668bde"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/services/studio_timeline_edit.py",
+      "mode": "100644",
+      "blob": "822941382ae0f6a89d2e32724d5cc59533e1272d",
+      "bytes": 19260,
+      "sha256": "f1e07a0a40834f7b0d0d30a33a8ae797e15c88451f92b1d17acb5d96789815b9",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "app/services/studio_timeline_links.py",
+      "mode": "100644",
+      "blob": "4286dc7e188fc8d5ab96670803f54ab1d41f4681",
+      "bytes": 10937,
+      "sha256": "e1af6d44f884f40eda0c7ba2b3ee1ffe8ac4a812dddd38cb8e6ee919d4b06813",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "docs/TIMELINE_LINKED_TRIM_HANDOFF.md",
+      "mode": "100644",
+      "blob": "bbd64f1b63564a2a07157a7228f2198a7c51bed2",
+      "bytes": 6463,
+      "sha256": "1970aae7adcff326c5c1a6a3622e8e03d416b75ff562911af1122eb241daf39c",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "mode": "100644",
+      "blob": "4ff7a0a0c89a382db89a0994cd9bccd01d6f73f4",
+      "bytes": 58269,
+      "sha256": "ccda01cd4ef3710316afce0834c84c4b20b3fcb54884f811c1f100838d7db973",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineLinkedTrim.additive.test.tsx",
+      "mode": "100644",
+      "blob": "f30ac371a1c24d1f9c3c51e8c13cef9c4c8c101d",
+      "bytes": 13599,
+      "sha256": "cd0f745d68bac63589d47e76db8325316ac066e814295e12047a2048eaeb186f",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineClipLinks.ts",
+      "mode": "100644",
+      "blob": "d211cfda12410a5dfbc1626e81b202bd3a3a1c72",
+      "bytes": 7234,
+      "sha256": "99706689c7828e8e64ab27d1411fbe97cf8d2a67379c55f8c14927de04c3dd20",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineLinkedSplit.ts",
+      "mode": "100644",
+      "blob": "afb25f61164458f6c7054006763023b74368f549",
+      "bytes": 5772,
+      "sha256": "b8aed8ea369a4993921f6ee2309e6e4b2a7b71108e5cda0434fef4a792efca26",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineLinkedTrim.ts",
+      "mode": "100644",
+      "blob": "656ce54c9b2891bfb4afd1e0b86d535f3d960093",
+      "bytes": 2235,
+      "sha256": "a01e5d9e44275332e456e4be0cbbfe0c19d23763262337088d85fcb52a9f2c7e",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "mode": "100644",
+      "blob": "f86b5ebd001b8eae3ef0e76008d5c116e629d03e",
+      "bytes": 60915,
+      "sha256": "8012e926b9305d3cf8597813b615dde2609b34d6bcce9db002e30c470bbea1b4",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/nle/LinkedClipTrimPanel.tsx",
+      "mode": "100644",
+      "blob": "9eb0c7f18755d887019af59e7d724e5c484c3731",
+      "bytes": 3311,
+      "sha256": "8ba5057e4736b4b00fa8e4f04ba512c76d7213512ca43837be6b40f3c2b29831",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "tests/test_timeline_linked_trim_additive.py",
+      "mode": "100644",
+      "blob": "104821e0964520569dd8e5d179e05e0551de248a",
+      "bytes": 8048,
+      "sha256": "ff7b7f460c20ad2e236609f9e5c97cf712fb1be62f6a0cc4d65bb60b2420fb89",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "503e4a207de487eb8d6879790713c29f805a71ca",
+      "type": "commit",
+      "bytes": 258,
+      "sha256": "4ee9a647383b5a70a3e2ed23fe8507a25d530776ef333c4fe41789ca7c2411e2",
+      "path": ""
+    },
+    {
+      "oid": "5c7899d8f286a224e9d9745e53394f95800e215d",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "41babe153b1f47d8d1f8f0efbc9f26d6f141bd58f7e76b4cdcd0dea57febcf7c",
+      "path": ""
+    },
+    {
+      "oid": "a8fe69b641ac83a83ce2c173e31214f2f530f572",
+      "type": "tree",
+      "bytes": 9271,
+      "sha256": "d5305c53846608e0dea2a0129f1857c0513689b318fb55531eebf809fde11e5a",
+      "path": "app"
+    },
+    {
+      "oid": "458bba41ff1dbb7517102cecdeab515377f25ba2",
+      "type": "tree",
+      "bytes": 5919,
+      "sha256": "97939ed86cd258f6f0228adaa9e06ddf40e2268fd10c4f93a563f77b6cb25bfd",
+      "path": "app/services"
+    },
+    {
+      "oid": "822941382ae0f6a89d2e32724d5cc59533e1272d",
+      "type": "blob",
+      "bytes": 19260,
+      "sha256": "f1e07a0a40834f7b0d0d30a33a8ae797e15c88451f92b1d17acb5d96789815b9",
+      "path": "app/services/studio_timeline_edit.py"
+    },
+    {
+      "oid": "4286dc7e188fc8d5ab96670803f54ab1d41f4681",
+      "type": "blob",
+      "bytes": 10937,
+      "sha256": "e1af6d44f884f40eda0c7ba2b3ee1ffe8ac4a812dddd38cb8e6ee919d4b06813",
+      "path": "app/services/studio_timeline_links.py"
+    },
+    {
+      "oid": "adfebaecd16400b86ef4414a843d76061b1e9ca3",
+      "type": "tree",
+      "bytes": 23547,
+      "sha256": "e65beed9ec22d0843f65e32428a1f81645502927db11c334098a5e6b656d10fa",
+      "path": "docs"
+    },
+    {
+      "oid": "bbd64f1b63564a2a07157a7228f2198a7c51bed2",
+      "type": "blob",
+      "bytes": 6463,
+      "sha256": "1970aae7adcff326c5c1a6a3622e8e03d416b75ff562911af1122eb241daf39c",
+      "path": "docs/TIMELINE_LINKED_TRIM_HANDOFF.md"
+    },
+    {
+      "oid": "5c053b07d5c67049280e9fd0d59842d15e9775a9",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "a91cb1e2bb1453353f70f87e78c25881f68290d6bd27b75b8065a4428e9fad85",
+      "path": "frontend"
+    },
+    {
+      "oid": "c5612e848980468fb2ed83dbf5dadadb906a3f39",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "869a30a8c0c36fb7fa51396ac8e1a0a441295eafcf0b2e692bcbfb034c2ef6da",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "639b3398e41098106c6645f90d1fc88038bd9687",
+      "type": "tree",
+      "bytes": 52260,
+      "sha256": "aa53d5115c4b4bb7c9c464c4e6b1d54c640ee5371197f7b4b3a8a954e91135f8",
+      "path": "frontend/src/creative"
+    },
+    {
+      "oid": "4ff7a0a0c89a382db89a0994cd9bccd01d6f73f4",
+      "type": "blob",
+      "bytes": 58269,
+      "sha256": "ccda01cd4ef3710316afce0834c84c4b20b3fcb54884f811c1f100838d7db973",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx"
+    },
+    {
+      "oid": "f30ac371a1c24d1f9c3c51e8c13cef9c4c8c101d",
+      "type": "blob",
+      "bytes": 13599,
+      "sha256": "cd0f745d68bac63589d47e76db8325316ac066e814295e12047a2048eaeb186f",
+      "path": "frontend/src/creative/StudioTimelineLinkedTrim.additive.test.tsx"
+    },
+    {
+      "oid": "d211cfda12410a5dfbc1626e81b202bd3a3a1c72",
+      "type": "blob",
+      "bytes": 7234,
+      "sha256": "99706689c7828e8e64ab27d1411fbe97cf8d2a67379c55f8c14927de04c3dd20",
+      "path": "frontend/src/creative/studioTimelineClipLinks.ts"
+    },
+    {
+      "oid": "afb25f61164458f6c7054006763023b74368f549",
+      "type": "blob",
+      "bytes": 5772,
+      "sha256": "b8aed8ea369a4993921f6ee2309e6e4b2a7b71108e5cda0434fef4a792efca26",
+      "path": "frontend/src/creative/studioTimelineLinkedSplit.ts"
+    },
+    {
+      "oid": "656ce54c9b2891bfb4afd1e0b86d535f3d960093",
+      "type": "blob",
+      "bytes": 2235,
+      "sha256": "a01e5d9e44275332e456e4be0cbbfe0c19d23763262337088d85fcb52a9f2c7e",
+      "path": "frontend/src/creative/studioTimelineLinkedTrim.ts"
+    },
+    {
+      "oid": "f86b5ebd001b8eae3ef0e76008d5c116e629d03e",
+      "type": "blob",
+      "bytes": 60915,
+      "sha256": "8012e926b9305d3cf8597813b615dde2609b34d6bcce9db002e30c470bbea1b4",
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts"
+    },
+    {
+      "oid": "b843b9592ce49fdc1f2064b9797b49c1944103ce",
+      "type": "tree",
+      "bytes": 3435,
+      "sha256": "f11fc8df27a023a04f560b28e3d128ed6ebe9e48391e75f1ceee5a0ac555f85b",
+      "path": "frontend/src/nle"
+    },
+    {
+      "oid": "9eb0c7f18755d887019af59e7d724e5c484c3731",
+      "type": "blob",
+      "bytes": 3311,
+      "sha256": "8ba5057e4736b4b00fa8e4f04ba512c76d7213512ca43837be6b40f3c2b29831",
+      "path": "frontend/src/nle/LinkedClipTrimPanel.tsx"
+    },
+    {
+      "oid": "a384b70637d400524c04624d3b048b43a9c54b70",
+      "type": "tree",
+      "bytes": 71939,
+      "sha256": "560ce9861c8e9dac77169576e80db88b64db49e81a7a383ae3ef8e40f4ccefa0",
+      "path": "tests"
+    },
+    {
+      "oid": "104821e0964520569dd8e5d179e05e0551de248a",
+      "type": "blob",
+      "bytes": 8048,
+      "sha256": "ff7b7f460c20ad2e236609f9e5c97cf712fb1be62f6a0cc4d65bb60b2420fb89",
+      "path": "tests/test_timeline_linked_trim_additive.py"
+    }
+  ],
+  "new_object_count": 21,
+  "no_extra_packed_objects": true,
+  "exact_original_binary_patch": true,
+  "all_other_base_paths_unchanged": true,
+  "source_review_evidence_hashes_verified": 23,
+  "combined_validation": {
+    "status": "PASS",
+    "combined": "503e4a207de487eb8d6879790713c29f805a71ca",
+    "backend_real_File": 3,
+    "backend_source_guard_unit": 1,
+    "frontend_controlled_client_JSDOM": 3,
+    "frontend_split_guard_unit": 1,
+    "frontend_other_cases_skipped": 19,
+    "typescript_runs": 1,
+    "build_runs": 1,
+    "results": {
+      "frontend": {
+        "exit": 0,
+        "seconds": 3.363,
+        "log": "frontend.log"
+      },
+      "backend": {
+        "exit": 0,
+        "seconds": 6.714,
+        "log": "backend.log"
+      },
+      "typescript": {
+        "exit": 0,
+        "seconds": 20.883,
+        "log": "typescript.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.524,
+        "log": "build.log"
+      }
+    },
+    "full_E2E": false,
+    "postgres": false,
+    "real_models": false,
+    "schema7_default": "OFF",
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-impact-decisions\\frontend\\node_modules"
+  },
+  "independent_review": "PASS_BOUNDED_REVIEW_NO_P1_P2;3 unique groups,28 atomic refusals",
+  "zip_payload_count": 73,
+  "zip_evidence_hashes": 72,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 11,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "acceptance_limits": [
+    "schema7 DEFAULT OFF",
+    "live Host browser NOT_RUN/BLOCKED; inherited519a401 SESSION_REQUIRED",
+    "PG,models,GPU,playback,render,export,fullE2E NOT_ACCEPTED",
+    "no extension/ripple/left-edge advancement/fade/transition/multi-pair trim; no full EDIT04/AUDIO09/NLE completion"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-b3e5c546-to-503e4a20.bundle",
+      "bytes": 15475,
+      "sha256": "3dce91f588fcf811c82ee2dcc746b8624b86800812775ae051ae25e308af3965"
+    },
+    {
+      "path": "studio-v2-linked-trim-503e4a20-tests-evidence-sanitized.zip",
+      "bytes": 444328,
+      "sha256": "2acaf457b11c63933c2d6b80949b60d03d9addcf905ff25f5e81be5402601a65"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3939,
+      "sha256": "6e9711c9c17af023159cd08624647888b7d0a01af77ce419695df039bf132da8"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1804,
+      "sha256": "86bebd68fb2392e3293db8dd382fa8cb3aef31be7ab83b5c821e89af4d2090ba"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
