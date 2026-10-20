@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "poemseed-ink-save-envelope/1",
   "title": "PoemSeed Ink save envelope",
-  "description": "Versioned save data bound to one story revision, compiled-artifact digest, target format and Ink runtime. Unbound legacy state is rejected.",
+  "description": "Versioned save data bound to one story revision, compiled-artifact digest, target format and Ink runtime. Restore requires the complete current-artifact context supplied by the caller (never derived from this envelope); unbound legacy state is rejected.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -53,7 +53,8 @@
           "additionalProperties": false,
           "required": [
             "name",
-            "version"
+            "version",
+            "format"
           ],
           "properties": {
             "name": {
@@ -129,6 +130,13 @@
         },
         "created_by": {
           "const": "poemseed-ink-player/1"
+        },
+        "migrated_from": {
+          "const": "UNBOUND_LEGACY_INK_STATE"
+        },
+        "migration_note": {
+          "type": "string",
+          "maxLength": 400
         }
       }
     },

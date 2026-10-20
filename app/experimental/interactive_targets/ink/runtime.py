@@ -35,6 +35,8 @@ SAVE_ENVELOPE_SCHEMA_PATH = 'ink/player/save-envelope.schema.json'
 SAVE_ENVELOPE_SCHEMA = 'poemseed-ink-save-envelope/1'
 SAVE_ENVELOPE_FORMAT_VERSION = 'ink-save-envelope-1'
 SAVE_ENVELOPE_BINDING_FIELDS = ('story_id', 'revision', 'compiled_artifact_sha256', 'target_format_version', 'runtime')
+SAVE_ENVELOPE_RESTORE_CONTEXT_FIELDS = ('storyId', 'revision', 'compiledArtifactSha256', 'targetFormatVersion', 'runtime')
+SAVE_ENVELOPE_CONTEXT_ERRORS = ('SAVE_ENVELOPE_CONTEXT_REQUIRED', 'SAVE_ENVELOPE_CONTEXT_INVALID')
 SAVE_ENVELOPE_LEGACY_POLICY = 'UNBOUND_LEGACY_SAVE_REJECTED_EXPLICIT_MIGRATION_REQUIRED'
 SAVE_ENVELOPE_MAX_BYTES = 2 * 1024 * 1024
 
@@ -64,9 +66,17 @@ def save_envelope_document():
         'integrity': 'sha256(canonical-json(schema,binding,save))',
         'max_bytes': SAVE_ENVELOPE_MAX_BYTES,
         'legacy_policy': SAVE_ENVELOPE_LEGACY_POLICY,
+        'restore_context': {
+            'required': True,
+            'fields': list(SAVE_ENVELOPE_RESTORE_CONTEXT_FIELDS),
+            'errors': list(SAVE_ENVELOPE_CONTEXT_ERRORS),
+            'policy': 'CALLER_MUST_DERIVE_FROM_CURRENT_LOADED_ARTIFACT_AND_RUNTIME_NEVER_FROM_SAVE',
+        },
         'restore_rules': [
-            'Reject before restore when the envelope schema, integrity digest, story id, revision, compiled-artifact digest, target format or runtime identity does not match the current artifact.',
-            'Reject unbound legacy state with LEGACY_SAVE_ENVELOPE_REQUIRED; migration requires an explicit caller-supplied binding (migrateLegacySaveEnvelope).',
+            'Restore requires the complete current-artifact context: storyId, revision, compiledArtifactSha256, targetFormatVersion and runtime name/version/format, derived from the currently loaded artifact and runtime.',
+            'A missing, empty, partial or malformed restore context is rejected with SAVE_ENVELOPE_CONTEXT_REQUIRED or SAVE_ENVELOPE_CONTEXT_INVALID before story.state.LoadJson() is called; the save is never allowed to fill in its own expected identity.',
+            'Reject before restore when the envelope schema, integrity digest, story id, revision, compiled-artifact digest, target format or runtime identity does not match the supplied current-artifact context.',
+            'Reject unbound legacy state with LEGACY_SAVE_ENVELOPE_REQUIRED; explicit migration (migrateLegacySaveEnvelope) labels the result as migrated, never as verified execution.',
             'Reject a state that does not restore to the recorded typed variable snapshot.',
         ],
     }
@@ -79,7 +89,7 @@ def build_commands():
         'compile_and_verify': 'node scripts/verify_ink_current_artifact.mjs --bundle <exported-zip-or-extracted-bundle> --vendor <project>/node_modules/inkjs --report acceptance-report.json',
         'independent_play': 'Consume acceptance/witness.json with the pinned runtime: match currentChoices labels to states[i].choices, choose the recorded index, assert ink_state/variables/output_lines per step.',
         'save': 'import { createSaveEnvelope } from "./ink/player/save_envelope.mjs"; write the returned bytes as a new file (the envelope binds story_id, revision, compiled_artifact_sha256, target_format_version and runtime).',
-        'restore': 'import { loadSaveEnvelope } from "./ink/player/save_envelope.mjs"; call loadSaveEnvelope({ bytes, story, expected }) in a fresh process. Mismatched story/revision/artifact/runtime or a tampered envelope is rejected with a readable code; unbound legacy saves are rejected with LEGACY_SAVE_ENVELOPE_REQUIRED.',
+        'restore': 'import { loadSaveEnvelope } from "./ink/player/save_envelope.mjs"; call loadSaveEnvelope({ bytes, story, expected }) in a fresh process where expected is derived from the CURRENT loaded artifact/runtime and contains storyId, revision, compiledArtifactSha256, targetFormatVersion and runtime {name,version,format}. Missing/incomplete context throws SAVE_ENVELOPE_CONTEXT_REQUIRED or SAVE_ENVELOPE_CONTEXT_INVALID before state restore; mismatched story/revision/artifact/format/runtime or a tampered envelope is rejected with a readable code; unbound legacy saves are rejected with LEGACY_SAVE_ENVELOPE_REQUIRED.',
     }
 
 

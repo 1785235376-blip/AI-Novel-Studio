@@ -9,8 +9,13 @@
 // Security rules:
 //   * No imports, no dynamic code, no file/network access, no eval.
 //   * The envelope is bounded before parsing and before state restore.
+//   * Restore REQUIRES the complete current-artifact context (story id, revision,
+//     compiled-artifact digest, target format and runtime name/version/format).
+//     The helper never derives that context from the save being loaded: a missing,
+//     empty, partial or malformed context fails before any state is loaded.
 //   * An unbound/legacy save is rejected with an explicit code; it is never
-//     silently trusted. Migration requires an explicit caller-supplied binding.
+//     silently trusted. Migration requires an explicit caller-supplied binding and
+//     is labelled as migrated, never as verified execution.
 //
 // This module is a pure ESM file; it runs in Node >= 18 and in modern browsers.
 
@@ -19,6 +24,10 @@ export const SAVE_ENVELOPE_FORMAT_VERSION = 'ink-save-envelope-1';
 export const SAVE_ENVELOPE_LEGACY_POLICY = 'UNBOUND_LEGACY_SAVE_REJECTED_EXPLICIT_MIGRATION_REQUIRED';
 export const SAVE_ENVELOPE_MAX_BYTES = 2 * 1024 * 1024;
 export const SAVE_ENVELOPE_BINDING_FIELDS = ['story_id', 'revision', 'compiled_artifact_sha256', 'target_format_version', 'runtime'];
+// The caller must supply these from the CURRENTLY loaded artifact and runtime.
+export const SAVE_ENVELOPE_RESTORE_CONTEXT_FIELDS = ['storyId', 'revision', 'compiledArtifactSha256', 'targetFormatVersion', 'runtime'];
+export const SAVE_ENVELOPE_CONTEXT_REQUIRED = 'SAVE_ENVELOPE_CONTEXT_REQUIRED';
+export const SAVE_ENVELOPE_CONTEXT_INVALID = 'SAVE_ENVELOPE_CONTEXT_INVALID';
 
 export class SaveEnvelopeError extends Error {
   constructor(code, message, detail) {
@@ -107,17 +116,40 @@ function requireText(value, code, field, maxLength) {
   return value;
 }
 
-function requireDigest(value, field) {
-  if (typeof value !== 'string' || !HEX64.test(value)) throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', field + ' must be a lowercase sha256 digest');
+function requireDigest(value, field, code) {
+  if (typeof value !== 'string' || !HEX64.test(value)) throw new SaveEnvelopeError(code || 'SAVE_ENVELOPE_SCHEMA_INVALID', field + ' must be a lowercase sha256 digest');
   return value;
 }
 
-function requireRuntime(runtime, code) {
+function requireRuntime(runtime, code, requireFormat) {
   if (!runtime || typeof runtime !== 'object' || Array.isArray(runtime)) throw new SaveEnvelopeError(code, 'runtime identity must be an object');
   requireText(runtime.name, code, 'runtime.name', 80);
   requireText(runtime.version, code, 'runtime.version', 80);
-  if (runtime.format != null) requireText(runtime.format, code, 'runtime.format', 80);
+  if (requireFormat || runtime.format != null) requireText(runtime.format, code, 'runtime.format', 80);
   return runtime;
+}
+
+/**
+ * Validate the complete restore context supplied by the caller from the CURRENT
+ * loaded artifact/runtime. This is deliberately independent from the envelope:
+ * the save is never allowed to fill in its own expected identity.
+ */
+function requireRestoreContext(expected) {
+  if (expected === undefined || expected === null) {
+    throw new SaveEnvelopeError(SAVE_ENVELOPE_CONTEXT_REQUIRED,
+      'restore requires the complete current-artifact context (expected: ' + SAVE_ENVELOPE_RESTORE_CONTEXT_FIELDS.join(', ') + ')');
+  }
+  if (typeof expected !== 'object' || Array.isArray(expected)) {
+    throw new SaveEnvelopeError(SAVE_ENVELOPE_CONTEXT_INVALID, 'restore context must be an object');
+  }
+  requireText(expected.storyId, SAVE_ENVELOPE_CONTEXT_INVALID, 'expected.storyId', 80);
+  if (!Number.isInteger(expected.revision) || expected.revision < 1) {
+    throw new SaveEnvelopeError(SAVE_ENVELOPE_CONTEXT_INVALID, 'expected.revision must be a positive integer');
+  }
+  requireDigest(expected.compiledArtifactSha256, 'expected.compiledArtifactSha256', SAVE_ENVELOPE_CONTEXT_INVALID);
+  requireText(expected.targetFormatVersion, SAVE_ENVELOPE_CONTEXT_INVALID, 'expected.targetFormatVersion', 40);
+  requireRuntime(expected.runtime, SAVE_ENVELOPE_CONTEXT_INVALID, true);
+  return expected;
 }
 
 function normalizedPayload(envelope) {
@@ -143,19 +175,23 @@ export function describeSaveEnvelope() {
     max_bytes: SAVE_ENVELOPE_MAX_BYTES,
     legacy_policy: SAVE_ENVELOPE_LEGACY_POLICY,
     integrity: 'sha256(canonical-json(schema,binding,save))',
+    restore_context_required: true,
+    restore_context_fields: [...SAVE_ENVELOPE_RESTORE_CONTEXT_FIELDS],
+    restore_context_errors: [SAVE_ENVELOPE_CONTEXT_REQUIRED, SAVE_ENVELOPE_CONTEXT_INVALID],
+    restore_context_policy: 'CALLER_MUST_DERIVE_FROM_CURRENT_LOADED_ARTIFACT_AND_RUNTIME_NEVER_FROM_SAVE',
   };
 }
 
 /** Create a save envelope for the exact delivered artifact and runtime. */
 export function createSaveEnvelope(options) {
   const { story, storyId, revision, compiledArtifactSha256, targetFormatVersion, runtime,
-    steps, path, savedAtStep, variables, variablesChangedBeforeSave } = options || {};
+    steps, path, savedAtStep, variables, variablesChangedBeforeSave, migratedFrom, migrationNote } = options || {};
   if (!story || typeof story.state?.ToJson !== 'function') throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_INVALID', 'story with state.ToJson() is required');
   requireText(storyId, 'SAVE_ENVELOPE_SCHEMA_INVALID', 'story_id', 80);
   if (!Number.isInteger(revision) || revision < 1) throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'revision must be a positive integer');
   requireDigest(compiledArtifactSha256, 'compiled_artifact_sha256');
   requireText(targetFormatVersion, 'SAVE_ENVELOPE_SCHEMA_INVALID', 'target_format_version', 40);
-  requireRuntime(runtime, 'SAVE_ENVELOPE_SCHEMA_INVALID');
+  requireRuntime(runtime, 'SAVE_ENVELOPE_SCHEMA_INVALID', true);
   const stateJson = story.state.ToJson();
   if (typeof stateJson !== 'string' || !stateJson) throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_INVALID', 'state.ToJson() returned nothing');
   if (new TextEncoder().encode(stateJson).length > SAVE_ENVELOPE_MAX_BYTES) throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_TOO_LARGE', 'ink state exceeds the envelope size limit');
@@ -187,6 +223,7 @@ export function createSaveEnvelope(options) {
       variables: recordedVariables,
       variables_changed_before_save: variablesChangedBeforeSave === true,
       created_by: 'poemseed-ink-player/1',
+      ...(migratedFrom ? { migrated_from: String(migratedFrom), migration_note: String(migrationNote || '') } : {}),
     },
   };
   envelope.integrity = { algorithm: 'sha256', digest: computeEnvelopeDigest(envelope) };
@@ -214,6 +251,11 @@ function parseEnvelopeBytes(bytes) {
 
 /** Validate + bind + restore one save envelope; throws typed errors on any mismatch. */
 export function loadSaveEnvelope(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'loadSaveEnvelope expects { bytes, story, expected } or { envelope, story, expected }');
+  }
+  // Trusted context first: no state is parsed or loaded without it.
+  const expected = requireRestoreContext(input.expected);
   const { envelope } = parseEnvelopeInput(input);
   if (!envelope || typeof envelope !== 'object' || Array.isArray(envelope)) throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'envelope must be a JSON object');
   if (envelope.schema !== SAVE_ENVELOPE_SCHEMA) {
@@ -229,7 +271,7 @@ export function loadSaveEnvelope(input) {
   if (!Number.isInteger(binding.revision) || binding.revision < 1) throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'binding.revision must be a positive integer');
   requireDigest(binding.compiled_artifact_sha256, 'binding.compiled_artifact_sha256');
   requireText(binding.target_format_version, 'SAVE_ENVELOPE_SCHEMA_INVALID', 'binding.target_format_version', 40);
-  requireRuntime(binding.runtime, 'SAVE_ENVELOPE_SCHEMA_INVALID');
+  requireRuntime(binding.runtime, 'SAVE_ENVELOPE_SCHEMA_INVALID', true);
   if (typeof save.state_json !== 'string' || !save.state_json) throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_INVALID', 'save.state_json is required');
   if (new TextEncoder().encode(save.state_json).length > SAVE_ENVELOPE_MAX_BYTES) throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_TOO_LARGE', 'state_json exceeds the size limit');
   if (typeof save.saved_after_choice !== 'boolean') throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'save.saved_after_choice is required');
@@ -241,17 +283,13 @@ export function loadSaveEnvelope(input) {
   if (!Array.isArray(save.steps) || !Array.isArray(save.path)) throw new SaveEnvelopeError('SAVE_ENVELOPE_SCHEMA_INVALID', 'save.steps and save.path must be arrays');
   const digest = computeEnvelopeDigest(envelope);
   if (digest !== integrity.digest) throw new SaveEnvelopeError('SAVE_ENVELOPE_INTEGRITY_INVALID', 'envelope content does not match its integrity digest', { expected: digest, recorded: integrity.digest });
-  const expected = input.expected || null;
-  if (expected) {
-    if (expected.storyId != null && binding.story_id !== expected.storyId) throw new SaveEnvelopeError('SAVE_ENVELOPE_STORY_MISMATCH', 'save belongs to story ' + binding.story_id + ', expected ' + expected.storyId);
-    if (expected.revision != null && binding.revision !== expected.revision) throw new SaveEnvelopeError('SAVE_ENVELOPE_REVISION_MISMATCH', 'save belongs to revision ' + binding.revision + ', expected ' + expected.revision);
-    if (expected.compiledArtifactSha256 != null && binding.compiled_artifact_sha256 !== expected.compiledArtifactSha256) throw new SaveEnvelopeError('SAVE_ENVELOPE_ARTIFACT_MISMATCH', 'save was created for compiled artifact ' + binding.compiled_artifact_sha256 + ', current artifact is ' + expected.compiledArtifactSha256);
-    if (expected.targetFormatVersion != null && binding.target_format_version !== expected.targetFormatVersion) throw new SaveEnvelopeError('SAVE_ENVELOPE_FORMAT_MISMATCH', 'save target format ' + binding.target_format_version + ' != expected ' + expected.targetFormatVersion);
-    const runtime = expected.runtime || {};
-    if (runtime.name != null && binding.runtime.name !== runtime.name) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime ' + binding.runtime.name + ' != expected ' + runtime.name);
-    if (runtime.version != null && binding.runtime.version !== runtime.version) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime version ' + binding.runtime.version + ' != expected ' + runtime.version);
-    if (runtime.format != null && (binding.runtime.format || '') !== runtime.format) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime format ' + String(binding.runtime.format) + ' != expected ' + runtime.format);
-  }
+  if (binding.story_id !== expected.storyId) throw new SaveEnvelopeError('SAVE_ENVELOPE_STORY_MISMATCH', 'save belongs to story ' + binding.story_id + ', expected ' + expected.storyId);
+  if (binding.revision !== expected.revision) throw new SaveEnvelopeError('SAVE_ENVELOPE_REVISION_MISMATCH', 'save belongs to revision ' + binding.revision + ', expected ' + expected.revision);
+  if (binding.compiled_artifact_sha256 !== expected.compiledArtifactSha256) throw new SaveEnvelopeError('SAVE_ENVELOPE_ARTIFACT_MISMATCH', 'save was created for compiled artifact ' + binding.compiled_artifact_sha256 + ', current artifact is ' + expected.compiledArtifactSha256);
+  if (binding.target_format_version !== expected.targetFormatVersion) throw new SaveEnvelopeError('SAVE_ENVELOPE_FORMAT_MISMATCH', 'save target format ' + binding.target_format_version + ' != expected ' + expected.targetFormatVersion);
+  if (binding.runtime.name !== expected.runtime.name) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime ' + binding.runtime.name + ' != expected ' + expected.runtime.name);
+  if (binding.runtime.version !== expected.runtime.version) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime version ' + binding.runtime.version + ' != expected ' + expected.runtime.version);
+  if ((binding.runtime.format || '') !== expected.runtime.format) throw new SaveEnvelopeError('SAVE_ENVELOPE_RUNTIME_MISMATCH', 'save runtime format ' + String(binding.runtime.format) + ' != expected ' + expected.runtime.format);
   const story = input.story;
   if (!story || typeof story.state?.LoadJson !== 'function') throw new SaveEnvelopeError('SAVE_ENVELOPE_STATE_INVALID', 'story with state.LoadJson() is required');
   try { story.state.LoadJson(save.state_json); }
@@ -279,5 +317,8 @@ export function migrateLegacySaveEnvelope(input) {
   const { legacyStateJson, storyId, revision, compiledArtifactSha256, targetFormatVersion, runtime, steps, path, variables } = input || {};
   if (typeof legacyStateJson !== 'string' || !legacyStateJson) throw new SaveEnvelopeError('LEGACY_SAVE_INVALID', 'legacy state JSON is required');
   const fake = { state: { ToJson: () => legacyStateJson } };
-  return createSaveEnvelope({ story: fake, storyId, revision, compiledArtifactSha256, targetFormatVersion, runtime, steps, path, savedAtStep: Array.isArray(path) ? path.length : 0, variables, variablesChangedBeforeSave: true });
+  return createSaveEnvelope({ story: fake, storyId, revision, compiledArtifactSha256, targetFormatVersion, runtime,
+    steps, path, savedAtStep: Array.isArray(path) ? path.length : 0, variables, variablesChangedBeforeSave: true,
+    migratedFrom: 'UNBOUND_LEGACY_INK_STATE',
+    migrationNote: 'Legacy unbound state was migrated with an explicit caller-supplied binding. It is labelled as migrated, never as system-verified execution.' });
 }
