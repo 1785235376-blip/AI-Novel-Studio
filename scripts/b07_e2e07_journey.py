@@ -1119,9 +1119,13 @@ def static_ink_legacy_checks(recorder, payload, spec, characters):
     return {"static": _checks_result(checks), "witness_alignment": alignment}
 
 
-def static_target_checks(recorder, target_id, payload, spec, characters):
+def static_target_checks(recorder, target_id, payload, story_row, characters, manifest=None):
     """Adaptive artifact-shape checks for the new target IDs (generation-level only)."""
     checks = []
+    spec = story_row["spec"]
+    story_id, revision = story_row["id"], story_row["version"]
+    manifest = manifest or {}
+    manifest_extra = manifest.get("extra") or {}
 
     def check(cid, ok, detail=""):
         checks.append({"id": cid, "status": "PASS" if ok else "FAIL", "detail": detail})
@@ -1137,35 +1141,100 @@ def static_target_checks(recorder, target_id, payload, spec, characters):
         check("main scene present", any(path.endswith(".tscn") for path in payload), "")
         gd_scripts = [path for path in payload if path.endswith(".gd")]
         check("fixed runtime scripts present", bool(gd_scripts), ",".join(sorted(gd_scripts)[:8]))
-        dynamic = [path for path in gd_scripts
-                   if any(token in payload[path].decode("utf-8", "replace")
-                          for token in ("Expression.execute", "eval(", "OS.execute", "HTTPRequest"))]
+        forbidden_tokens = ("Expression", "JavaScriptBridge", "OS.execute", "OS.shell_open",
+                            "OS.create_process", "HTTPRequest", "HTTPClient", "WebSocketPeer",
+                            "DirAccess", "ResourceLoader.load", "RichTextLabel", "bbcode_enabled")
+        forbidden_patterns = (r"(?<![A-Za-z0-9_])eval\s*\(", r"(?<![A-Za-z0-9_])load\s*\(")
+        dynamic = []
+        for path in gd_scripts:
+            code = "\n".join(line.split("#", 1)[0] for line in
+                              payload[path].decode("utf-8", "replace").splitlines())
+            hits = [token for token in forbidden_tokens if token in code]
+            hits += [pattern for pattern in forbidden_patterns if re.search(pattern, code)]
+            if hits:
+                dynamic.append(path + ":" + ",".join(hits[:4]))
         check("no dynamic execution / network in runtime", not dynamic, ",".join(dynamic))
-        data_paths = [path for path in payload if path.endswith(".json") and "story" in path]
-        check("typed story data present", bool(data_paths), ",".join(sorted(data_paths)))
-        if data_paths:
+        story_data = payload.get("data/story.json")
+        check("data/story.json present", story_data is not None, "")
+        if story_data is not None:
             try:
-                data = json.loads(payload[data_paths[0]])
-                check("story data parses", True, data_paths[0])
-                check("story id bound in data", data.get("story_id") in (spec.get("story_id"), None), "")
+                data = json.loads(story_data)
+                check("runtime story data parses", True, "")
+                check("runtime story id bound", data.get("story_id") == story_id, str(data.get("story_id")))
+                check("runtime revision bound", data.get("revision") == revision, str(data.get("revision")))
+                check("runtime spec digest bound", data.get("spec_digest") == digest_json(spec), "")
+                check("runtime source digest bound",
+                      data.get("source_digest") == (manifest.get("story") or {}).get("source_digest"), "")
             except ValueError:
-                check("story data parses", False, data_paths[0])
-        check("no engine bundled", not any(path.endswith((".exe", ".dll", ".so", ".dylib")) for path in payload), "")
+                check("runtime story data parses", False, "")
+        cases_raw = payload.get("acceptance/cases.json")
+        check("acceptance/cases.json present", cases_raw is not None, "")
+        if cases_raw is not None:
+            try:
+                cases = json.loads(cases_raw)
+                check("acceptance cases schema", cases.get("schema") == "poemseed-godot-acceptance-cases/1",
+                      str(cases.get("schema")))
+                check("acceptance cases bound to story", cases.get("story_id") == story_id
+                      and cases.get("revision") == revision, "")
+            except ValueError:
+                check("acceptance cases parse", False, "")
+        templates = ((manifest_extra.get("godot_runtime") or {}).get("template_files") or {})
+        if templates:
+            mismatched = [path for path, expected in templates.items()
+                          if path not in payload or sha256_hex(payload[path]) != expected]
+            check("fixed runtime template hashes match manifest", not mismatched, json.dumps(mismatched)[:500])
+        check("no engine bundled",
+              not any(path.endswith((".exe", ".dll", ".so", ".dylib")) for path in payload), "")
     elif target_id == "INK_2_3_2_CURRENT_ARTIFACT_V1":
         ink_sources = [path for path in payload if path.endswith(".ink")]
         check("ink story source present", bool(ink_sources), ",".join(sorted(ink_sources)))
-        check("ink validation json present", any(path.endswith("validation.json") for path in payload), "")
-        pins = [path for path in payload if "pin" in path and path.endswith(".json")]
-        check("runtime pin json present", bool(pins), ",".join(sorted(pins)))
-        if pins:
+        source = payload.get("ink/story.ink")
+        check("ink/story.ink present", source is not None, "")
+        witness_raw = payload.get("acceptance/witness.json")
+        check("acceptance/witness.json present", witness_raw is not None, "")
+        if witness_raw is not None:
             try:
-                pin = json.loads(payload[pins[0]])
-                check("runtime pin version 2.3.2", str(pin.get("version")) == "2.3.2", str(pin.get("version")))
+                witness = json.loads(witness_raw)
+                check("witness schema", witness.get("schema") == "poemseed-ink-current-artifact-witness/1",
+                      str(witness.get("schema")))
+                check("witness bound to story",
+                      (witness.get("story") or {}).get("id") == story_id
+                      and (witness.get("story") or {}).get("revision") == revision, "")
+                check("witness script sha binds ink/story.ink",
+                      source is not None and (witness.get("script") or {}).get("sha256") == sha256_hex(source), "")
+                check("witness covers every discovered ending",
+                      len(witness.get("endings") or []) == len(analyze_summary(spec)["endings"]),
+                      "witness=" + str(len(witness.get("endings") or [])))
             except ValueError:
-                check("runtime pin parses", False, pins[0])
-        check("no ink runtime bundled", not any(path.endswith((".js", ".mjs", ".cjs", ".exe")) for path in payload), "")
+                check("witness parses", False, "")
+        validation_raw = payload.get("ink/validation.json")
+        check("ink/validation.json present", validation_raw is not None, "")
+        pins = payload.get("ink/runtime-pin.json")
+        check("ink/runtime-pin.json present", pins is not None, "")
+        if pins is not None:
+            try:
+                pin = json.loads(pins)
+                check("runtime pin version 2.3.2", str(pin.get("version")) == "2.3.2", str(pin.get("version")))
+                check("runtime pin bundles no runtime", pin.get("runtime_bundled") is False,
+                      str(pin.get("runtime_bundled")))
+            except ValueError:
+                check("runtime pin parses", False, "")
+        if validation_raw is not None and witness_raw is not None:
+            try:
+                validation = json.loads(validation_raw)
+                check("validation binds witness sha",
+                      (validation.get("witness") or {}).get("sha256") == sha256_hex(witness_raw), "")
+                check("validation binds runtime pin sha", pins is not None
+                      and (validation.get("runtime_pin") or {}).get("sha256") == sha256_hex(pins), "")
+            except ValueError:
+                check("validation parses", False, "")
+        check("no ink runtime bundled",
+              not any(path.endswith((".js", ".mjs", ".cjs", ".exe", ".wasm")) for path in payload), "")
     elif target_id == "RENPY_8_5_4_PROJECT_V1":
-        renpy = static_renpy_checks(payload, spec, characters)
+        script_name = "game/script.rpy" if "game/script.rpy" in payload else (
+            "game/story.rpy" if "game/story.rpy" in payload else "game/script.rpy")
+        renpy = static_renpy_checks(payload, spec, characters, script_name=script_name,
+                                    require_options="game/options.rpy" in payload)
         checks.extend(renpy["checks"])
         check("README present", any(path.lower().endswith("readme.txt") or path.lower().endswith("readme.md")
                                     for path in payload), "")
@@ -1355,8 +1424,16 @@ def verify_target_export(recorder, data, *, story_row, characters, targets_respo
               story_block.get("witness_digest") == digest_json(targets_response.get("witness") or []), "")
         check("manifest media digest",
               story_block.get("media_manifest_digest") == digest_json(targets_response.get("media_manifest") or []), "")
-        check("manifest losses match compatibility", manifest.get("losses") == preview.get("losses") or
-              set(manifest.get("losses") or []) == set(preview.get("losses") or []), "")
+        compatibility_losses = ((target_row.get("compatibility") or {}).get("losses")) or []
+        preview_losses = set(preview.get("losses") or [])
+        check("manifest losses match target compatibility",
+              sorted(manifest.get("losses") or []) == sorted(compatibility_losses),
+              json.dumps({"manifest": manifest.get("losses"), "compatibility": compatibility_losses})[:800])
+        check("preview surfaces every target loss",
+              set(manifest.get("losses") or []) <= preview_losses,
+              json.dumps(sorted(set(manifest.get("losses") or []) - preview_losses))[:500])
+        check("receipt losses equal manifest losses",
+              sorted(receipt.get("losses") or []) == sorted(manifest.get("losses") or []), "")
         check("capability vocabulary complete",
               isinstance(manifest.get("capabilities"), dict)
               and set(manifest["capabilities"]) == set(contract.CAPABILITY_KEYS), "")
@@ -1364,7 +1441,7 @@ def verify_target_export(recorder, data, *, story_row, characters, targets_respo
         check("receipt capability partition", sorted(receipt.get("capabilities_supported") or []) == supported, "")
         check("runtime evidence separate from generation",
               isinstance((manifest.get("runtime") or {}).get("evidence"), dict), "")
-        static = static_target_checks(recorder, target_id, payload, story_row["spec"], characters)
+        static = static_target_checks(recorder, target_id, payload, story_row, characters, manifest)
         check("target artifact static checks", static["status"] == "PASS",
               json.dumps([item["id"] for item in static["checks"] if item["status"] != "PASS"])[:500])
         total = sum(len(content) for content in files.values())
@@ -1848,7 +1925,8 @@ def find_inkjs_vendor(scratch_dir):
         if not parent.is_dir():
             continue
         for child in sorted(parent.glob("ink*")):
-            candidates += [child, child / "package", child / "inkjs" / "package"]
+            candidates += [child, child / "package", child / "inkjs" / "package",
+                           child / "node_modules" / "inkjs"]
     seen = set()
     for candidate in candidates:
         key = str(candidate).lower()
@@ -1873,6 +1951,10 @@ def prepare_inkjs_vendor(recorder, scratch_dir):
     found = find_inkjs_vendor(scratch_dir)
     if found:
         return {"status": "AVAILABLE", **found, "source": "prepared"}
+    host_vendor = Path(r"D:\PoemSeed\Recovery\b07-scratch\ink-vendor")
+    host_found = find_inkjs_vendor(host_vendor.parent)
+    if host_found:
+        return {"status": "AVAILABLE", **host_found, "source": "host-prepared"}
     tarball = scratch_dir / "tarballs" / ("inkjs-" + INKJS_VERSION + ".tgz")
     prepare_script = REPO_ROOT / "scripts" / "prepare_inkjs_test_dependency.py"
     detail = {"status": "UNAVAILABLE", "commands": [], "download": None}
@@ -2016,8 +2098,14 @@ def godot_data_runtime_report(target_row):
 
 
 def runtime_phase(recorder, target_id, export_record, story_row, spec, cases, scratch_dir,
-                  delivery_dir, enabled=True):
-    """Dispatch one exported target to its real runtime verification level."""
+                  delivery_dir, characters=None, project_dir=None, enabled=True):
+    """Dispatch one exported target to its real runtime verification level.
+
+    Godot and Ink are driven against the CURRENT exported artifact: the Godot project
+    ships its own auditable acceptance runner, and the Ink current artifact is consumed
+    by the line-owned pinned-inkjs verifier.  Ren'Py has no engine on this host and is
+    recorded as BLOCKED_ENVIRONMENT with static project checks only.
+    """
     target_dir = Path(delivery_dir) / "runtime" / target_id
     target_dir.mkdir(parents=True, exist_ok=True)
     if not enabled:
@@ -2031,12 +2119,35 @@ def runtime_phase(recorder, target_id, export_record, story_row, spec, cases, sc
         report = godot_data_runtime_report(export_record.get("target_row") if export_record else None)
         write_json(target_dir / "result.json", report)
         return report
+    if export_record is None or not project_dir:
+        return {"target_id": target_id, "status": "BLOCKED_ENVIRONMENT",
+                "reason": "export not available to drive the target runtime"}
+    characters = characters or {}
+    manifest = (export_record.get("archive") or {}).get("manifest") or {}
+    manifest_story = manifest.get("story") or {}
+    binding = {"story_id": story_row.get("id"), "revision": story_row.get("version"),
+               "spec_digest": digest_json(spec),
+               "source_digest": manifest_story.get("source_digest"),
+               "review_receipt": manifest_story.get("review_receipt"),
+               "witness": analyze_summary(spec)["endings"]}
+    project_dir = Path(project_dir)
+    if target_id == "GODOT_4_RUNTIME_PROJECT_V1":
+        engine = find_engine(target_id)
+        if not engine or not engine.get("found"):
+            report = {"target_id": target_id, "status": "BLOCKED_ENVIRONMENT",
+                      "reason": "Godot executable not found (POEMSEED_GODOT_BIN, declared hints, PATH)",
+                      "engine": engine}
+            write_json(target_dir / "result.json", report)
+            return report
+        return drive_godot_artifact(recorder, target_id, project_dir, story_row, spec, cases,
+                                    characters, engine["path"], delivery_dir, binding)
+    if target_id == "INK_2_3_2_CURRENT_ARTIFACT_V1":
+        return drive_ink_current_artifact(recorder, target_id, project_dir, spec, characters, cases,
+                                          Path(scratch_dir) / "runtime" / target_id,
+                                          delivery_dir, binding)
     module = RUNTIME_VERIFIERS.get(target_id)
     if module is None:
         return {"target_id": target_id, "status": "NOT_RUN", "reason": "no runtime adapter registered"}
-    if export_record is None or not export_record.get("materialized"):
-        return {"target_id": target_id, "status": "BLOCKED_ENVIRONMENT",
-                "reason": "export not available to drive the target runtime"}
     engine = find_engine(target_id)
     if not engine or not engine.get("found"):
         report = {"target_id": target_id, "status": "BLOCKED_ENVIRONMENT",
@@ -2044,7 +2155,6 @@ def runtime_phase(recorder, target_id, export_record, story_row, spec, cases, sc
                   "engine": engine}
         write_json(target_dir / "result.json", report)
         return report
-    project_dir = export_record["materialized"]["unpack_dir"]
     return run_target_runtime(recorder, target_id, project_dir, story_row, spec, cases,
                               Path(scratch_dir) / "runtime" / target_id, delivery_dir, engine=engine)
 
@@ -2337,7 +2447,8 @@ def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delive
                          "unpacked": relative_to(materialized["unpack_dir"], delivery_dir)},
         }
         runtime_report = runtime_phase(recorder, target_id, record, story_row, spec, cases,
-                                       scratch_dir, delivery_dir, enabled=runtime)
+                                       scratch_dir, delivery_dir, characters=characters,
+                                       project_dir=materialized["unpack_dir"], enabled=runtime)
         record["runtime"] = runtime_report
         result["new_targets"][target_id] = record
     # 3. Ren'Py target: static artifact already verified; engine absence blocks runtime only
@@ -3179,6 +3290,593 @@ def main(argv=None):
     if args.command == "runtime":
         return cmd_runtime(args)
     return execute(args)
+
+
+# ---------------------------------------------------------------------------
+# real Godot 4 runtime driver for the CURRENT exported artifact
+#
+# The delivered GODOT_4_RUNTIME_PROJECT_V1 project ships its own auditable
+# acceptance interface (acceptance/cases.json + the fixed GDScript runtime):
+#   <godot-console> --headless --quit-after 600 --path <project> -- [args]
+# with --print-user-dir / --witness-path / --save / --load / --result and
+# one-line POEMSEED_STATE / POEMSEED_DONE / POEMSEED_ERROR records on stdout.
+# Driving that interface on the delivered ZIP is running the current work, not a
+# fixture: the engine reads the exported data/story.json and every step is
+# compared with the Python play() projection.
+# ---------------------------------------------------------------------------
+GODOT_STATE_PREFIXES = (
+    ("POEMSEED_STATE ", "states"), ("POEMSEED_STORY ", "story"),
+    ("POEMSEED_DONE ", "done"), ("POEMSEED_ERROR ", "error"),
+    ("POEMSEED_RESTORED ", "restored"), ("POEMSEED_SAVED ", "saved"),
+    ("POEMSEED_RESULT ", "result"), ("POEMSEED_USERDIR ", "user_dir"),
+)
+
+
+def parse_godot_records(stdout):
+    records = {"states": [], "story": None, "done": None, "error": None,
+               "restored": None, "saved": None, "result": None, "user_dir": None}
+    for line in (stdout or "").splitlines():
+        for prefix, key in GODOT_STATE_PREFIXES:
+            if prefix not in line:
+                continue
+            raw_value = line.split(prefix, 1)[1].strip()
+            if key == "user_dir":
+                records["user_dir"] = raw_value.rstrip("/\\")
+                break
+            try:
+                parsed_value = json.loads(raw_value)
+            except ValueError:
+                records.setdefault("malformed", []).append(raw_value[:200])
+                break
+            if key == "states":
+                records["states"].append(parsed_value)
+            else:
+                records[key] = parsed_value
+            break
+    return records
+
+
+def expected_godot_projection(spec, characters, path):
+    """The same server-authoritative per-step projection the Godot runtime prints."""
+    story = story_authority()
+    result = story.play(spec, list(path))
+    node = result["node"]
+    speaker = characters.get(node.get("character_id")) if node.get("character_id") else ""
+    return {
+        "node": {"node_id": node["node_id"], "title": node["title"], "dialogue": node["dialogue"],
+                 "speaker": speaker or "", "ending": node["ending"]},
+        "choices": [{"id": choice["id"], "label": choice["label"], "enabled": choice["enabled"]}
+                    for choice in result["choices"]],
+        "variables": result["variables"],
+        "steps": result["steps"],
+        "max_steps": result["max_steps"],
+        "status": result["status"],
+        "path": list(result["path"]),
+    }
+
+
+def typed_diff(expected, actual, where="$"):
+    """Type-strict comparison (True is never equal to 1); no type coercion."""
+    problems = []
+    if type(expected) is not type(actual):
+        return [where + ": type " + type(expected).__name__ + " != " + type(actual).__name__
+                + " (expected " + repr(expected)[:120] + ", actual " + repr(actual)[:120] + ")"]
+    if isinstance(expected, dict):
+        for key in expected:
+            if key not in actual:
+                problems.append(where + "." + str(key) + ": missing")
+            else:
+                problems.extend(typed_diff(expected[key], actual[key], where + "." + str(key)))
+        for key in actual:
+            if key not in expected:
+                problems.append(where + "." + str(key) + ": unexpected")
+        return problems
+    if isinstance(expected, list):
+        if len(expected) != len(actual):
+            return [where + ": length " + str(len(expected)) + " != " + str(len(actual))]
+        for index, (left, right) in enumerate(zip(expected, actual)):
+            problems.extend(typed_diff(left, right, where + "[" + str(index) + "]"))
+        return problems
+    if expected != actual:
+        problems.append(where + ": " + repr(expected)[:200] + " != " + repr(actual)[:200])
+    return problems
+
+
+def align_projections(actual_states, expected_states, scope):
+    details = []
+    for index, expected in enumerate(expected_states):
+        actual = actual_states[index] if index < len(actual_states) else None
+        if actual is None:
+            details.append({"index": index, "status": "FAIL", "mismatches": ["state missing"]})
+            continue
+        problems = typed_diff(expected, actual)
+        details.append({"index": index, "steps": expected["steps"], "node_id": expected["node"]["node_id"],
+                        "status": "PASS" if not problems else "FAIL", "mismatches": problems[:6]})
+    extra = len(actual_states) - len(expected_states)
+    passed = all(item["status"] == "PASS" for item in details) and extra == 0
+    return {"scope": scope, "status": "PASS" if passed else "FAIL",
+            "states_expected": len(expected_states), "states_actual": len(actual_states),
+            "states_matched": sum(1 for item in details if item["status"] == "PASS"),
+            "extra_states": max(0, extra), "details": details}
+
+
+def godot_run(recorder, engine, project_dir, user_args, label, timeout=180):
+    argv = [engine, "--headless", "--quit-after", "600", "--path", str(project_dir), "--", *user_args]
+    record = run_process(argv, cwd=str(project_dir), timeout=timeout, label=label)
+    record["parsed"] = parse_godot_records(record.get("stdout_full") or record["stdout_tail"])
+    recorder.command({key: value for key, value in record.items()
+                      if key not in ("stdout_full", "parsed")})
+    return record
+
+
+def _write_save_variant(user_dir, name, payload):
+    path = Path(user_dir) / name
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return path
+
+
+def drive_godot_artifact(recorder, target_id, project_dir, story_row, spec, cases, characters,
+                         engine, delivery_dir, binding):
+    """Execute the CURRENT exported Godot project in the real engine and align every step."""
+    project_dir = Path(project_dir)
+    target_dir = Path(delivery_dir) / "runtime" / target_id
+    target_dir.mkdir(parents=True, exist_ok=True)
+    report = {
+        "target_id": target_id, "driver": "GODOT_ARTIFACT_ACCEPTANCE_RUNNER",
+        "status": "NOT_RUN", "engine": engine, "project_dir": str(project_dir),
+        "binding": binding, "artifact_binding_checks": [], "cases": [],
+        "save_restore": {"status": "NOT_RUN", "level": "NOT_RUN"},
+        "commands": [], "line_verifier": find_runtime_verifier(target_id),
+    }
+    story = story_authority()
+    engine_record = run_process([engine, "--version"], cwd=project_dir, timeout=60, label="godot-version")
+    report["engine_version"] = (engine_record.get("stdout_tail") or engine_record.get("stderr_tail") or "").strip()[:200]
+    recorder.command({key: value for key, value in engine_record.items() if key != "stdout_full"})
+    checks = []
+
+    def check(cid, ok, detail=""):
+        checks.append({"id": cid, "status": "PASS" if ok else "FAIL", "detail": detail[:1500]})
+        recorder.check("godot-" + cid, ok, detail)
+        return ok
+
+    story_file = project_dir / "data" / "story.json"
+    cases_file = project_dir / "acceptance" / "cases.json"
+    check("data/story.json present", story_file.is_file())
+    check("acceptance/cases.json present", cases_file.is_file())
+    data_story = {}
+    if story_file.is_file():
+        try:
+            data_story = json.loads(story_file.read_text(encoding="utf-8"))
+            check("data/story.json parses", True)
+        except ValueError as exc:
+            check("data/story.json parses", False, str(exc))
+    if data_story:
+        check("runtime data story id bound", data_story.get("story_id") == binding.get("story_id"),
+              str(data_story.get("story_id")))
+        check("runtime data revision bound", data_story.get("revision") == binding.get("revision"),
+              str(data_story.get("revision")))
+        check("runtime data spec digest bound", data_story.get("spec_digest") == binding.get("spec_digest"), "")
+        check("runtime data source digest bound", data_story.get("source_digest") == binding.get("source_digest"), "")
+        check("runtime data review receipt bound", data_story.get("review_receipt") == binding.get("review_receipt"), "")
+        story_meta = data_story.get("story") if isinstance(data_story.get("story"), dict) else data_story
+        check("runtime typed story entry", story_meta.get("entry_node_id") == spec["entry_node_id"],
+              str(story_meta.get("entry_node_id")))
+    shipped_cases = {}
+    if cases_file.is_file():
+        try:
+            shipped_cases = json.loads(cases_file.read_text(encoding="utf-8"))
+            check("acceptance cases schema", shipped_cases.get("schema") == "poemseed-godot-acceptance-cases/1",
+                  str(shipped_cases.get("schema")))
+            check("acceptance cases bound to story", shipped_cases.get("story_id") == binding.get("story_id"), "")
+            check("acceptance cases carry every ending witness",
+                  len(shipped_cases.get("cases") or []) == len(binding.get("witness") or []) - 0,
+                  "cases=" + str(len(shipped_cases.get("cases") or []))
+                  + " witnesses=" + str(len(binding.get("witness") or [])))
+        except ValueError as exc:
+            check("acceptance cases parse", False, str(exc))
+    report["artifact_binding_checks"] = checks
+    # -- initial state -----------------------------------------------------
+    initial_run = godot_run(recorder, engine, project_dir, ["--print-user-dir"], "godot.initial")
+    report["commands"].append({key: value for key, value in initial_run.items()
+                               if key not in ("stdout_full", "parsed")})
+    initial = initial_run["parsed"]
+    report["user_dir"] = initial.get("user_dir")
+    initial_alignment = align_projections(initial["states"],
+                                          [expected_godot_projection(spec, characters, [])], "initial")
+    report["initial_alignment"] = initial_alignment
+    check("runtime initial state", initial_alignment["status"] == "PASS",
+          json.dumps(initial_alignment["details"], ensure_ascii=False)[:1200])
+    story_binding_checks = []
+    runtime_story = initial.get("story") or {}
+    for field in ("story_id", "revision", "spec_digest", "source_digest", "review_receipt"):
+        ok = runtime_story.get(field) == binding.get(field)
+        story_binding_checks.append({"field": field, "status": "PASS" if ok else "FAIL",
+                                     "expected": binding.get(field), "actual": runtime_story.get(field)})
+        check("runtime story binding " + field, ok, str(runtime_story.get(field)))
+    report["runtime_story_binding"] = story_binding_checks
+    # -- every expected case, one real engine process per path ------------
+    all_aligned = initial_alignment["status"] == "PASS"
+    for case in cases:
+        choices = list(case["choices"])
+        run = godot_run(recorder, engine, project_dir, ["--witness-path", ",".join(choices)],
+                        "godot.case." + case["id"])
+        report["commands"].append({key: value for key, value in run.items()
+                                   if key not in ("stdout_full", "parsed")})
+        records = run["parsed"]
+        expected_states = [expected_godot_projection(spec, characters, choices[:index])
+                           for index in range(len(choices) + 1)]
+        alignment = align_projections(records["states"], expected_states, case["id"])
+        done = records.get("done") or {}
+        done_ok = done.get("path") == choices and done.get("status") == expected_states[-1]["status"]
+        entry = {"id": case["id"], "kind": case.get("kind"), "choices": choices,
+                 "runtime_status": records.get("error"),
+                 "states_expected": len(expected_states), "states_actual": len(records["states"]),
+                 "alignment": alignment, "done": done,
+                 "done_ok": done_ok}
+        report["cases"].append(entry)
+        recorder.require("godot-step-alignment:" + case["id"], alignment["status"] == "PASS",
+                         json.dumps(alignment["details"], ensure_ascii=False)[:2500])
+        recorder.require("godot-done-record:" + case["id"], done_ok,
+                         json.dumps(done, ensure_ascii=False)[:800])
+        all_aligned = all_aligned and alignment["status"] == "PASS" and done_ok
+    # -- save / restore across two real engine processes ------------------
+    save_restore = {"status": "NOT_ATTEMPTED", "level": "NOT_RUN", "checks": [], "rejections": []}
+    save_cases = [case for case in cases if case.get("save_restore")]
+    save_case = save_cases[0] if save_cases else max(cases, key=lambda case: len(case["choices"]), default=None)
+    if save_case is not None and len(save_case["choices"]) >= 2:
+        path = list(save_case["choices"])
+        metadata = save_case.get("save_restore") or {}
+        split = metadata.get("resume_at")
+        if not isinstance(split, int) or not 1 <= split < len(path):
+            split = len(path) // 2
+        prefix, continuation = path[:split], path[split:]
+        save_name = "b07-e2e07-save-" + target_id.lower() + ".json"
+        save_restore = {"status": "RUN", "level": "NOT_RUN", "case_id": save_case["id"],
+                        "path": path, "split": split, "checks": [], "rejections": []}
+
+        def sr_check(cid, ok, detail=""):
+            save_restore["checks"].append({"id": cid, "status": "PASS" if ok else "FAIL", "detail": detail[:1500]})
+            recorder.check("godot-save-restore-" + cid, ok, detail)
+
+        first = godot_run(recorder, engine, project_dir,
+                          ["--witness-path", ",".join(prefix), "--save", "user://" + save_name], "godot.save")
+        report["commands"].append({key: value for key, value in first.items()
+                                   if key not in ("stdout_full", "parsed")})
+        first_records = first["parsed"]
+        user_dir = first_records.get("user_dir") or Path(report.get("user_dir") or ".")
+        save_file = Path(user_dir) / save_name
+        sr_check("save.process.exit", first["exit_code"] == 0, str(first["exit_code"]))
+        sr_check("save.file.written", save_file.is_file(), str(save_file))
+        save_payload = {}
+        if save_file.is_file():
+            save_bytes = save_file.read_bytes()
+            save_restore["save_bytes"] = len(save_bytes)
+            save_restore["save_sha256"] = sha256_hex(save_bytes)
+            saved_record = first_records.get("saved") or {}
+            sr_check("save.sha256", saved_record.get("sha256") == sha256_hex(save_bytes), "")
+            try:
+                save_payload = json.loads(save_bytes.decode("utf-8"))
+                sr_check("save.schema", save_payload.get("schema") == "poemseed-godot-save/1",
+                         str(save_payload.get("schema")))
+                sr_check("save.story.binding",
+                         (save_payload.get("story") or {}).get("id") == binding.get("story_id")
+                         and (save_payload.get("story") or {}).get("revision") == binding.get("revision")
+                         and (save_payload.get("story") or {}).get("spec_digest") == binding.get("spec_digest")
+                         and (save_payload.get("story") or {}).get("source_digest") == binding.get("source_digest"), "")
+                sr_check("save.state.prefix", save_payload.get("path") == prefix
+                         and save_payload.get("steps") == len(prefix)
+                         and save_payload.get("current_node_id")
+                         == expected_godot_projection(spec, characters, prefix)["node"]["node_id"], "")
+            except ValueError:
+                sr_check("save.parses", False, "")
+        restored = godot_run(recorder, engine, project_dir, ["--load", "user://" + save_name], "godot.restore")
+        report["commands"].append({key: value for key, value in restored.items()
+                                   if key not in ("stdout_full", "parsed")})
+        restored_records = restored["parsed"]
+        restored_alignment = align_projections(
+            restored_records["states"],
+            [expected_godot_projection(spec, characters, prefix)], "restored")
+        sr_check("restore.state", restored_alignment["status"] == "PASS",
+                 json.dumps(restored_alignment["details"], ensure_ascii=False)[:1200])
+        sr_check("restore.node", (restored_records.get("restored") or {}).get("current_node_id")
+                 == expected_godot_projection(spec, characters, prefix)["node"]["node_id"], "")
+        result_name = "b07-e2e07-result-" + target_id.lower() + ".json"
+        continued = godot_run(recorder, engine, project_dir,
+                              ["--load", "user://" + save_name, "--witness-path", ",".join(continuation),
+                               "--result", "user://" + result_name], "godot.continue")
+        report["commands"].append({key: value for key, value in continued.items()
+                                   if key not in ("stdout_full", "parsed")})
+        continued_records = continued["parsed"]
+        full_expected = [expected_godot_projection(spec, characters, path[:index])
+                         for index in range(len(path) + 1)]
+        continued_alignment = align_projections(continued_records["states"], full_expected[split:],
+                                                "continued")
+        sr_check("restore.continued.step_alignment", continued_alignment["status"] == "PASS",
+                 json.dumps(continued_alignment["details"], ensure_ascii=False)[:1800])
+        final_expected = full_expected[-1]
+        final_actual = continued_records["states"][-1] if continued_records["states"] else None
+        final_problems = typed_diff(final_expected, final_actual) if final_actual is not None else ["no final state"]
+        sr_check("restore.final.expected_ending", not final_problems,
+                 json.dumps(final_problems, ensure_ascii=False)[:1500])
+        result_file = Path(user_dir) / result_name
+        sr_check("restore.result_file.written", result_file.is_file(), str(result_file))
+        if result_file.is_file():
+            try:
+                result_payload = json.loads(result_file.read_text(encoding="utf-8"))
+                sr_check("restore.result_file.schema", result_payload.get("schema") == "poemseed-godot-runtime-result/1",
+                         str(result_payload.get("schema")))
+                sr_check("restore.result_file.state", not typed_diff(final_expected, result_payload.get("state")), "")
+                result_story = result_payload.get("story") or {}
+                sr_check("restore.result_file.story",
+                         (result_story.get("story_id") or result_story.get("id")) == binding.get("story_id")
+                         and result_story.get("revision") == binding.get("revision"), "")
+            except ValueError:
+                sr_check("restore.result_file.parses", False, "")
+        # fail-closed save rejection matrix on the same real engine process path
+        rejections = []
+        variants = {}
+        if save_payload:
+            tampered_variables = deepcopy(save_payload)
+            variables = tampered_variables.get("variables") or {}
+            first_variable = next(iter(variables), None)
+            if first_variable is not None:
+                raw_value = variables[first_variable]
+                variables[first_variable] = (not raw_value) if isinstance(raw_value, bool) else (
+                    int(raw_value) + 1 if int(raw_value) < 3 else int(raw_value) - 1)
+                variants["tampered_variables"] = tampered_variables
+            tampered_path = deepcopy(save_payload)
+            if tampered_path.get("path"):
+                tampered_path["path"] = list(tampered_path["path"])[:-1] + ["missing_choice"]
+                variants["tampered_path"] = tampered_path
+            wrong_revision = deepcopy(save_payload)
+            wrong_revision.setdefault("story", {})["revision"] = int((wrong_revision.get("story") or {}).get("revision") or 0) + 1
+            variants["wrong_revision"] = wrong_revision
+            wrong_digest = deepcopy(save_payload)
+            wrong_digest.setdefault("story", {})["spec_digest"] = "0" * 64
+            variants["wrong_spec_digest"] = wrong_digest
+        for name, payload in variants.items():
+            variant_name = "b07-e2e07-reject-" + name + ".json"
+            _write_save_variant(user_dir, variant_name, payload)
+            rejected = godot_run(recorder, engine, project_dir, ["--load", "user://" + variant_name],
+                                 "godot.reject." + name)
+            report["commands"].append({key: value for key, value in rejected.items()
+                                       if key not in ("stdout_full", "parsed")})
+            rejected_records = rejected["parsed"]
+            passed = (rejected["exit_code"] == 2
+                      and (rejected_records.get("error") or {}).get("code") == "SAVE_REJECTED"
+                      and not rejected_records["states"])
+            rejections.append({"case": name, "status": "PASS" if passed else "FAIL",
+                               "exit_code": rejected["exit_code"], "error": rejected_records.get("error")})
+            sr_check("reject." + name, passed, str(rejected["exit_code"]) + " "
+                     + json.dumps(rejected_records.get("error"), ensure_ascii=False)[:300])
+        corrupt_name = "b07-e2e07-reject-corrupt.json"
+        (Path(user_dir) / corrupt_name).write_text("{not valid json", encoding="utf-8")
+        corrupt = godot_run(recorder, engine, project_dir, ["--load", "user://" + corrupt_name],
+                            "godot.reject.corrupt_json")
+        report["commands"].append({key: value for key, value in corrupt.items()
+                                   if key not in ("stdout_full", "parsed")})
+        corrupt_records = corrupt["parsed"]
+        corrupt_ok = (corrupt["exit_code"] == 2
+                      and (corrupt_records.get("error") or {}).get("code") == "SAVE_REJECTED")
+        rejections.append({"case": "corrupt_json", "status": "PASS" if corrupt_ok else "FAIL",
+                           "exit_code": corrupt["exit_code"], "error": corrupt_records.get("error")})
+        sr_check("reject.corrupt_json", corrupt_ok, str(corrupt["exit_code"]))
+        save_restore["rejections"] = rejections
+        for name in [save_name, result_name, corrupt_name] + [
+                "b07-e2e07-reject-" + name + ".json" for name in variants]:
+            try:
+                (Path(user_dir) / name).unlink()
+            except OSError:
+                pass
+        save_restore["user_dir"] = str(user_dir)
+        save_passed = all(item["status"] == "PASS" for item in save_restore["checks"])
+        save_restore["status"] = "PASS" if save_passed else "FAIL"
+        save_restore["level"] = "PASS" if save_passed else "FAIL"
+    else:
+        save_restore["status"] = "NOT_ATTEMPTED"
+        save_restore["reason"] = "no case path long enough for a save/restore continuation"
+    report["save_restore"] = save_restore
+    save_ok = save_restore.get("status") == "PASS"
+    report["status"] = "EXECUTED_AND_ALIGNED" if (all_aligned and save_ok) else "EXECUTED_WITH_MISMATCH"
+    report["alignment"] = {
+        "status": "PASS" if all_aligned else "FAIL", "driver": "GODOT_ARTIFACT_ACCEPTANCE_RUNNER",
+        "cases": [{key: case[key] for key in ("id", "kind", "choices", "states_expected",
+                                              "states_actual", "done_ok")}
+                  | {"alignment_status": case["alignment"]["status"]}
+                  for case in report["cases"]],
+    }
+    write_json(target_dir / "result.json", report)
+    write_json(target_dir / "godot-raw-records.json",
+               {"initial": initial, "cases": [case["id"] for case in cases]})
+    return report
+
+
+# ---------------------------------------------------------------------------
+# real pinned inkjs runtime for the CURRENT exported Ink artifact
+#
+# The line-owned verifier compiles the delivered ink/story.ink with the pinned
+# inkjs 2.3.2 compiler, replays every acceptance/witness.json state step by step,
+# performs in-memory state restores and a cross-process save/restore, and writes a
+# machine-readable report.  This script additionally re-derives every witness state
+# from play() itself, so the report is anchored to the Python authority.
+# ---------------------------------------------------------------------------
+INK_WITNESS_SCHEMA = "poemseed-ink-current-artifact-witness/1"
+
+
+def _ink_expected_output_lines(spec, characters, node):
+    lines = []
+    speaker = characters.get(node.get("character_id")) if node.get("character_id") else None
+    if speaker:
+        lines.append(speaker)
+    if node.get("dialogue"):
+        lines.extend(line for line in node["dialogue"].split("\n") if line)
+    if node.get("ending"):
+        lines.extend(line for line in node["ending"].split("\n") if line)
+    return lines
+
+
+def align_ink_witness(recorder, witness, spec, characters, label):
+    story = story_authority()
+    node_index = {node["node_id"]: index for index, node in enumerate(spec["nodes"])}
+    variable_ink = {item["name"]: item["ink"] for item in witness.get("variables") or []}
+    checks, cases = [], []
+
+    def check(cid, ok, detail=""):
+        checks.append({"id": cid, "status": "PASS" if ok else "FAIL", "detail": detail[:1200]})
+        recorder.check(label + ":" + cid, ok, detail)
+
+    check("witness schema", witness.get("schema") == INK_WITNESS_SCHEMA, str(witness.get("schema")))
+    endings = witness.get("endings") or []
+    cap_cases = witness.get("step_cap_cases") or []
+    check("witness has ending cases", bool(endings), str(len(endings)))
+    for case in endings + cap_cases:
+        choices = [str(choice) for choice in case.get("choices") or []]
+        states = case.get("states") or []
+        expected_count = len(choices) + 1
+        problems = []
+        for index, state in enumerate(states):
+            authority = story.play(spec, choices[:index])
+            node = authority["node"]
+            enabled = [choice for choice in authority["choices"] if choice["enabled"]] \
+                if authority["status"] == "PLAYING" else []
+            expected = {
+                "step": authority["steps"],
+                "node_id": node["node_id"],
+                "node_index": node_index[node["node_id"]],
+                "status": authority["status"],
+                "variables": {name: authority["variables"][name] for name in variable_ink},
+                "ink_variables": {variable_ink[name]: authority["variables"][name] for name in variable_ink},
+                "output_lines": _ink_expected_output_lines(spec, characters, node),
+                "choices": [{"id": choice["id"], "label": choice["label"],
+                             "index": position} for position, choice in enumerate(enabled)],
+            }
+            for field in ("step", "node_id", "node_index", "status", "variables", "ink_variables", "choices"):
+                if typed_diff(expected[field], state.get(field)):
+                    problems.append({"case": case.get("kind"), "step": index, "field": field,
+                                     "mismatches": typed_diff(expected[field], state.get(field))[:4]})
+            if expected["output_lines"] != state.get("output_lines"):
+                problems.append({"case": case.get("kind"), "step": index, "field": "output_lines",
+                                 "mismatches": [expected["output_lines"], state.get("output_lines")]})
+        case_alignment = {"kind": case.get("kind"), "choices": choices,
+                          "states_expected": expected_count, "states_actual": len(states),
+                          "step_problems": len(problems),
+                          "alignment_status": "PASS" if not problems and len(states) == expected_count else "FAIL"}
+        cases.append(case_alignment)
+        recorder.require(label + ":witness-case:" + str(case.get("kind")) + ":" + "-".join(choices),
+                         case_alignment["alignment_status"] == "PASS",
+                         json.dumps(problems[:6], ensure_ascii=False)[:2000])
+    return {"status": "PASS" if checks and all(item["status"] == "PASS" for item in checks) else "FAIL",
+            "checks": checks, "cases": cases,
+            "endings": len(endings), "step_cap_cases": len(cap_cases)}
+
+
+def drive_ink_current_artifact(recorder, target_id, project_dir, spec, characters, cases,
+                               scratch_dir, delivery_dir, binding):
+    """Run the line-owned pinned-inkjs verifier against the CURRENT exported artifact."""
+    project_dir = Path(project_dir)
+    scratch_dir = Path(scratch_dir)
+    scratch_dir.mkdir(parents=True, exist_ok=True)
+    target_dir = Path(delivery_dir) / "runtime" / target_id
+    target_dir.mkdir(parents=True, exist_ok=True)
+    report = {"target_id": target_id, "driver": "LINE_VERIFIER_PINNED_INKJS", "status": "NOT_RUN",
+              "project_dir": str(project_dir), "binding": binding, "commands": [],
+              "witness_alignment": None, "verifier": None, "report_path": None,
+              "save_restore": {"status": "NOT_RUN", "level": "NOT_RUN"}}
+    witness_file = project_dir / "acceptance" / "witness.json"
+    if not witness_file.is_file():
+        report["status"] = "FAIL_RUNTIME_RESULT_SHAPE"
+        report["reason"] = "acceptance/witness.json missing from the delivered Ink artifact"
+        write_json(target_dir / "result.json", report)
+        return report
+    witness = json.loads(witness_file.read_text(encoding="utf-8"))
+    report["witness_alignment"] = align_ink_witness(recorder, witness, spec, characters, "ink-witness")
+    verifier = find_runtime_verifier(target_id)
+    report["verifier"] = verifier
+    if not verifier or not verifier.get("path"):
+        report["status"] = "BLOCKED_VERIFIER_UNAVAILABLE"
+        report["reason"] = ("line verifier not present in this worktree: "
+                            + str((verifier or {}).get("relative")))
+        write_json(target_dir / "result.json", report)
+        return report
+    node = os.environ.get("POEMSEED_NODE") or shutil.which("node")
+    if not node:
+        report["status"] = "BLOCKED_ENVIRONMENT"
+        report["reason"] = "Node.js not found"
+        write_json(target_dir / "result.json", report)
+        return report
+    vendor = find_inkjs_vendor(scratch_dir)
+    if vendor is None:
+        prepared = prepare_inkjs_vendor(recorder, scratch_dir)
+        report["vendor_prepare"] = {key: value for key, value in prepared.items() if key != "vendor"}
+        if prepared.get("status") == "AVAILABLE":
+            vendor = {"vendor": prepared["vendor"], "version": prepared.get("version")}
+    if vendor is None:
+        report["status"] = "BLOCKED_ENVIRONMENT"
+        report["reason"] = "pinned inkjs 2.3.2 dependency could not be prepared"
+        write_json(target_dir / "result.json", report)
+        return report
+    report["vendor"] = {"path": str(vendor["vendor"]), "version": vendor["version"]}
+    report_path = target_dir / "ink-verifier-report.json"
+    argv = [node, verifier["path"], "--bundle", str(project_dir),
+            "--vendor", str(vendor["vendor"]), "--report", str(report_path)]
+    record = run_process(argv, cwd=REPO_ROOT, timeout=600, label="ink-current-artifact-verifier")
+    report["commands"].append({key: value for key, value in record.items() if key != "stdout_full"})
+    recorder.command({key: value for key, value in record.items() if key != "stdout_full"})
+    verifier_report = None
+    if report_path.is_file():
+        try:
+            verifier_report = json.loads(report_path.read_text(encoding="utf-8"))
+        except ValueError:
+            verifier_report = None
+    report["report_path"] = relative_to(report_path, delivery_dir)
+    if verifier_report is None:
+        report["status"] = "FAIL_RUNTIME_PROCESS"
+        report["reason"] = "verifier produced no report JSON"
+        report["exit_code"] = record["exit_code"]
+        write_json(target_dir / "result.json", report)
+        return report
+    report["verifier_result"] = verifier_report.get("result")
+    report["verifier_assertions"] = verifier_report.get("assertions")
+    report["compile"] = verifier_report.get("compile")
+    runtime_cases = (verifier_report.get("runtime") or {}).get("cases") or []
+    report["runtime_cases"] = [{key: case.get(key) for key in (
+        "kind", "ending_node_id", "choices", "passed", "final_status", "steps", "states_checked",
+        "failures")} for case in runtime_cases]
+    report["cross_process"] = verifier_report.get("cross_process")
+    report["unicode_and_escape"] = verifier_report.get("unicode_and_escape")
+    report["runtime_pin"] = verifier_report.get("runtime_pin")
+    all_cases_passed = bool(runtime_cases) and all(case.get("passed") for case in runtime_cases)
+    states_checked = sum(int(case.get("states_checked") or 0) for case in runtime_cases)
+    report["states_checked_by_real_runtime"] = states_checked
+    witness_ok = report["witness_alignment"]["status"] == "PASS"
+    file_denied = (verifier_report.get("assertions") or {}).get("file_access_denied") == "PASS"
+    aligned = (verifier_report.get("result") == "PASS" and all_cases_passed and witness_ok and file_denied)
+    report["alignment"] = {
+        "status": "PASS" if aligned else "FAIL",
+        "source": "line-owned verifier report + independent Python witness re-derivation",
+        "cases": [{"kind": case.get("kind"), "choices": case.get("choices"), "passed": case.get("passed"),
+                   "states_checked": case.get("states_checked"), "final_status": case.get("final_status")}
+                  for case in runtime_cases],
+        "witness_alignment": report["witness_alignment"]["status"],
+        "states_checked_by_real_runtime": states_checked,
+    }
+    cross = verifier_report.get("cross_process") or {}
+    save_ok = bool(cross.get("performed") and cross.get("passed")
+                   and (verifier_report.get("assertions") or {}).get("save_restore") == "PASS")
+    report["save_restore"] = {
+        "status": "PASS" if save_ok else "FAIL", "level": "PASS" if save_ok else "FAIL",
+        "cross_process": cross, "in_memory_restore_checks": (verifier_report.get("runtime") or {}).get("in_memory_restore_checks"),
+        "detail": "parent process saves the pinned runtime state; a fresh node process restores it and replays to the ending.",
+    }
+    report["status"] = "EXECUTED_AND_ALIGNED" if aligned else "EXECUTED_WITH_MISMATCH"
+    recorder.require("ink-current-artifact-runtime", aligned,
+                     json.dumps({"result": verifier_report.get("result"),
+                                 "cases": len(runtime_cases),
+                                 "states_checked": states_checked,
+                                 "failures": verifier_report.get("failures")}, ensure_ascii=False)[:2500])
+    recorder.require("ink-current-artifact-save-restore", save_ok, json.dumps(cross, ensure_ascii=False)[:1500])
+    write_json(target_dir / "result.json", report)
+    return report
 
 
 if __name__ == "__main__":
