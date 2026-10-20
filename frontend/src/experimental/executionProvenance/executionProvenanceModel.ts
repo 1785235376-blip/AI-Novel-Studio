@@ -1,5 +1,6 @@
 import type { StudioAsset } from '../../creative/studioClient';
 import type { ProductionJob } from '../../creative/studioProductionClient';
+import { canvasReturnInCommand, type CanvasReturnBinding } from '../../creative/studioCanvasReturnBinding';
 
 export type ExecutionSelection = {
   projectId: string; branchId: string | null; identity: string;
@@ -7,6 +8,7 @@ export type ExecutionSelection = {
 };
 export type ExecutionAssetPin = { id: string; version: number; digest: string; kind: string };
 export type ExecutionProjection = {
+  canvasReturn: CanvasReturnBinding | null;
   jobId: string; requestId: string; version: number; status: ProductionJob['status']; operationId: string;
   requestDigest: string; receiptDigest: string | null;
   provider: { providerId: string; modelId: string; local: boolean; routeDigest: string } | null;
@@ -107,8 +109,13 @@ export function projectExecution(job: ProductionJob): ExecutionProjection {
       : ['LOCAL_CPU_MASK', 'LOCAL_FFMPEG', 'LOCAL_CPU_COMPOSITE'].includes(job.execution_recipe?.adapter)
         ? '原记录声明本地媒体处理；该路线不使用生成模型。'
       : '原回执未提供可确认的模型路线；不会补造来源或内部节点。';
+  const canvasReturn = canvasReturnInCommand(job.command) ?? null;
+  if (canvasReturn && (canvasReturn.project_id !== job.novel_id || (canvasReturn.scope.mode === 'collaboration' ? canvasReturn.scope.branch_id : null) !== job.branch_id
+    || ![canvasReturn.canvas_id, canvasReturn.card_id, canvasReturn.source.id].every(id)
+    || !sources.some(source => source.kind === canvasReturn.source.kind && source.id === canvasReturn.source.id
+      && source.version === canvasReturn.source.version && source.digest === canvasReturn.source.digest))) fail();
   return {
-    jobId: job.id, requestId: job.request_id, version: job.version, status: job.status,
+    canvasReturn, jobId: job.id, requestId: job.request_id, version: job.version, status: job.status,
     operationId: /^m[0-9]+\.[a-z]+\.[a-z0-9]+$/.test(job.operation_id) ? job.operation_id : '未提供可显示的操作标识',
     requestDigest: job.request_digest, receiptDigest: job.receipt_digest,
     provider, parameters, sources, candidate,

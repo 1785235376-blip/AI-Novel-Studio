@@ -14,7 +14,7 @@ export type ExecutionProvenanceProps = {
   busy?: boolean;
   isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>;
-  /** Original session capture only. Never inferred from a source asset. */
+  /** Original host capture only. Persistent origin is read from the original Job command, never inferred from an asset. */
   origin?: CanvasImageTaskOrigin;
   isOriginCurrent?: () => boolean;
   onUnavailable?: () => void;

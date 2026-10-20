@@ -44,3 +44,9 @@ it shows Job approval as recorded and leaves current formal-asset verification
 explicitly unavailable. A host with the original StudioClient can supply
 `assets={studioClient}` to enable the original asset GET verification. No history
 or result-return component is changed.
+
+When the original Job command contains a checked `studio-canvas-return/1` binding,
+the panel displays that recorded canvas/card/source pin. It does not infer an
+adoption receipt or certify current CAS, permission, source or incarnation freshness;
+the original recovery/adoption owner rechecks these before any write. Legacy Jobs
+without the field retain the session-only/missing-origin boundary.

@@ -138,3 +138,16 @@ it.each(['owner','client'])('retires a late original Job read across %s A/B/A be
  await act(async()=>finish(json(fixture.approved)));expect(fetcher.mock.calls.slice(before).filter(([u])=>u.includes('/assets/')||u===canvasPath)).toHaveLength(0);
  expect(screen.queryByRole('region',{name:'审核结果回到原作品位置'})).toBeNull();expect(fetcher.mock.calls.filter(([,i])=>i.method==='PUT')).toHaveLength(0);
 });
+
+it('reads real Job provenance explicitly from the card task and checks its formal asset without adopting or replaying',async()=>{
+ const {task}=await startTask();await approveTask(task);fireEvent.click(screen.getByRole('button',{name:'执行画布'}));
+ const panel=within(task).getByRole('region',{name:'执行来源与失败恢复'}),jobPath=`${productionPath}/jobs/image/${fixture.approved.id}`;
+ const before=fetcher.mock.calls.length;expect(within(panel).getByText('尚未读取执行来源')).toBeTruthy();
+ fireEvent.click(within(panel).getByRole('button',{name:'读取执行来源'}));
+ await within(panel).findByText(/原 Job 已持久记录位置绑定/);
+ expect(within(panel).getByText('origin-card')).toBeTruthy();expect(panel.textContent).toContain(fixture.incarnation);
+ await within(panel).findByText(/已核验正式资产/);
+ expect(panel.textContent).toContain('持久绑定不代表已回填');expect(panel.textContent).not.toContain('原 Job 没有持久 canvas/card origin');
+ expect(fetcher.mock.calls.slice(before).map(([url,init])=>[url,init.method||'GET'])).toEqual([[jobPath,'GET'],[`${base}/assets/${fixture.asset.id}`,'GET']]);
+ expect(canvas.version).toBe(1);for(const suffix of ['/execute','/review'])expect(fetcher.mock.calls.filter(([url])=>url.endsWith(suffix))).toHaveLength(1);
+});

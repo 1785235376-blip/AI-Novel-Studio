@@ -12,7 +12,7 @@ const digest = (hash: unknown) => typeof hash === 'string' && /^[a-f0-9]{64}$/.t
 /** Detail slot for original standalone Job receipts; graph projections are not this contract. */
 export function ExecutionProvenancePanel(props: ExecutionProvenanceProps) {
   const state = useExecutionProvenance(props), view = state.view, job = view?.execution;
-  const origin = props.origin;
+  const origin = props.origin, recorded = job?.canvasReturn;
   const matchingOrigin = job && origin && origin.projectId === props.selection.projectId
     && isExecutionIdentifier(origin.canvasId) && isExecutionIdentifier(origin.cardId) && Number.isSafeInteger(origin.canvasVersion) && origin.canvasVersion > 0
     && digest(origin.canvasDigest) && origin.source.kind === 'image' && isExecutionIdentifier(origin.source.asset_id)
@@ -66,7 +66,12 @@ export function ExecutionProvenancePanel(props: ExecutionProvenanceProps) {
       {view?.approved && <p>已核验正式资产 <code>{view.approved.id}</code> · v{view.approved.version} · <code>{view.approved.digest}</code></p>}
       <p>采用到作品：未提供持久的采用回执，不能据“审核入库”推断已经回填卡片。</p>
       <h3>原作品锚点</h3>
-      {matchingOrigin && origin ? <>
+      {recorded ? <>
+        <p>原 Job 已持久记录位置绑定：画布 <code>{recorded.canvas_id}</code> · v{recorded.canvas_version} · <code>{recorded.canvas_digest}</code>；卡片 <code>{recorded.card_id}</code>。</p>
+        <p>原输入资产 <code>{recorded.source.id}</code> · v{recorded.source.version} · <code>{recorded.source.digest}</code>。</p>
+        <p>存储代际 <code>{recorded.incarnation}</code>。绑定记录保留创建时的位置与源版本；当前权限、画布 CAS、卡片和源 pin 必须在原回流入口重新核验。</p>
+        <StatusMessage tone="warning">持久绑定不代表已回填，也不授权重放或自动采用。画布或源版本发生变化时，保留候选并阻断旧位置回流。</StatusMessage>
+      </> : matchingOrigin && origin ? <>
         <p>宿主提供的本会话捕获：画布 <code>{origin.canvasId}</code> · v{origin.canvasVersion} · <code>{origin.canvasDigest}</code>；卡片 <code>{origin.cardId}</code>。</p>
         <p>原采用资产 <code>{origin.source.asset_id}</code> · v{origin.source.version} · <code>{origin.source.digest}</code>。</p>
         <StatusMessage tone="warning">{props.isOriginCurrent?.() ? '宿主确认原会话锚点仍有效。' : '原会话锚点已变化或当前有效性未核验。'}原 Job 没有持久 canvas/card origin，跨会话不能恢复此位置；不会根据相同输入资产猜位置。</StatusMessage>

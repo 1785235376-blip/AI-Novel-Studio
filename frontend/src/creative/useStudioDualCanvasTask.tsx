@@ -27,7 +27,7 @@ export function useStudioDualCanvasTask(props:StudioGraphEditorProps&StudioDualC
   function frame(creation:ReactNode,sharedExecution:ReactNode,inspector:ReactNode,blocked:boolean){
     const taskCurrent=()=>current()&&taskOwner.current===token&&taskRef.current===task;
     const visibleTask=taskCurrent()?task:undefined;
-    const taskContent=visibleTask&&props.productionTaskSource&&<StudioCanvasImageTaskPanel key={visibleTask.id} task={visibleTask} client={props.productionTaskSource}
+    const taskContent=visibleTask&&props.productionTaskSource&&<StudioCanvasImageTaskPanel key={visibleTask.id} task={visibleTask} client={props.productionTaskSource} provenanceAssets={props.client}
       leaveGuard={props.productionTaskLeaveGuard} canMutate={props.canMutate&&!blocked} canReview={props.canReview&&!blocked} busy={props.busy} isBusy={props.isBusy}
       isCurrent={taskCurrent} read={props.read} mutate={props.mutate} onUnavailable={()=>props.onCanvasTaskUnavailable?.()}
       onDirtyChange={dirty=>{if(taskCurrent()){dirtyRef.current=dirty;setTaskDirty(dirty);}}}
