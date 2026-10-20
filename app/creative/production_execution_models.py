@@ -145,6 +145,23 @@ class VideoReference(ExecutionModel):
         return self
 
 
+class VideoFrame(ExecutionModel):
+    """One exact first/last image frame of an existing Asset owner, in role order."""
+    role: Literal["FIRST", "LAST"]
+    source: ProductionSourceSnapshot
+
+    @model_validator(mode="after")
+    def original_image(self):
+        if self.source.kind != "ASSET" or self.source.asset_kind != "image":
+            raise ValueError("STUDIO_VIDEO_FRAME_KIND_INVALID")
+        return self
+
+    @model_serializer(mode="wrap")
+    def canonical_source(self, handler):
+        value = handler(self); value["source"] = image_snapshot(self.source)
+        return value
+
+
 class StoryboardDocumentSnapshot(ExecutionModel):
     id: Name
     version: int = Field(ge=1)
@@ -189,6 +206,7 @@ class _MediaCommandShape(ExecutionModel):
     image_references: list[ImageReference] | None = Field(default=None, max_length=5)
     mask_source: ProductionSourceSnapshot | None = None
     video_reference: VideoReference | None = None
+    video_frames: list[VideoFrame] | None = Field(default=None, min_length=1, max_length=2)
     storyboard_shot: StoryboardShotPin | None = None
     storyboard_speech: StoryboardSpeechPin | None = None
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
@@ -211,7 +229,7 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
@@ -331,12 +349,22 @@ class _MediaCommandShape(ExecutionModel):
         assets = [s for s in self.source_snapshots if s.kind == "ASSET"]
         if required and (not assets or any(s.asset_kind != required for s in assets)):
             raise ValueError("STUDIO_MEDIA_REFERENCE_KIND_INVALID")
-        if self.operation_id in {"m7.video.i2v", "m7.video.v2v"} and len(assets) != 1:
+        if self.operation_id == "m7.video.v2v" and len(assets) != 1:
             raise ValueError("STUDIO_VIDEO_SINGLE_REFERENCE_REQUIRED")
         if self.video_reference is not None:
             if (self.operation_id != "m7.video.v2v" or len(assets) != 1
                     or image_snapshot(assets[0]) != image_snapshot(self.video_reference.source)):
                 raise ValueError("STUDIO_VIDEO_REFERENCE_SNAPSHOT_MISMATCH")
+        if self.video_frames is not None:
+            if self.operation_id != "m7.video.i2v":
+                raise ValueError("STUDIO_VIDEO_FRAME_OPERATION_INVALID")
+            roles = [frame.role for frame in self.video_frames]
+            if roles not in (["FIRST"], ["FIRST", "LAST"]):
+                raise ValueError("STUDIO_VIDEO_FRAME_ROLE_ORDER_INVALID")
+            if [image_snapshot(source) for source in assets] != [image_snapshot(frame.source) for frame in self.video_frames]:
+                raise ValueError("STUDIO_VIDEO_FRAME_SNAPSHOT_MISMATCH")
+        if self.operation_id == "m7.video.i2v" and len(assets) != (len(self.video_frames) if self.video_frames is not None else 1):
+            raise ValueError("STUDIO_VIDEO_FRAME_COUNT_REQUIRED")
         if self.operation_id == "m5.image.i2i" and len(assets) > 5:
             raise ValueError("STUDIO_IMAGE_REFERENCE_LIMIT")
         if not required and self.operation_id not in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"} and assets:

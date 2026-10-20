@@ -354,6 +354,14 @@ class ProductionExecutionService:
                 config = provider.studio_configuration()
             capability = {"m7.video.t2v": "text_to_video", "m7.video.i2v": "image_to_video", "m7.video.v2v": "video_to_video"}[operation]
             if not provider.capabilities().get(capability): raise ValueError("STUDIO_VIDEO_CAPABILITY_UNSUPPORTED")
+            frames = getattr(command, "video_frames", None)
+            if frames is not None:
+                if operation != "m7.video.i2v":
+                    raise ValueError("STUDIO_VIDEO_FRAME_OPERATION_INVALID")
+                if len(frames) == 2 and not provider.capabilities().get("end_frame"):
+                    raise ValueError("STUDIO_VIDEO_END_FRAME_UNSUPPORTED")
+                if not provider.capabilities().get("start_frame"):
+                    raise ValueError("STUDIO_VIDEO_START_FRAME_UNSUPPORTED")
             model = getattr(provider, "default_model", "")
         else:
             from ..audio_providers import provider_catalog
@@ -1521,6 +1529,13 @@ class ProductionExecutionService:
             elif operation.startswith("m7."):
                 from ..model_center.discovery_bridge import LocalVideoAdapter
                 provider = self.video_providers.get(pid)
+                if provider is not None:
+                    capabilities = provider.capabilities()
+                    row["video_frame_capabilities"] = {
+                        "start_frame": bool(capabilities.get("start_frame")),
+                        "end_frame": bool(capabilities.get("end_frame")),
+                        "multi_reference": False,
+                    }
                 if type(provider) is LocalVideoAdapter:
                     config = provider.studio_configuration()
                     row["video_capabilities"] = {key: copy.deepcopy(config["video_recipe"][key]) for key in
