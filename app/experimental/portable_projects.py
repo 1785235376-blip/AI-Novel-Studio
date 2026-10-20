@@ -7,6 +7,7 @@ only content writers. No archive is ever extracted and no grant is imported.
 from __future__ import annotations
 
 import base64
+from contextlib import nullcontext
 from copy import deepcopy
 import hashlib
 import io
@@ -47,6 +48,7 @@ LIMITS = ['CURRENT_SELECTED_MANUSCRIPT_AND_REFERENCED_MEDIA_ONLY', 'HISTORY_TRAS
 
 class SelectionIn(StrictModel):
     chapter_ids: list[str] = Field(min_length=1, max_length=MAX_CHAPTERS)
+    image_reference_id: str | None = Field(default=None, pattern=SAFE_ID)
 
 
 class UploadIn(StrictModel):
@@ -99,6 +101,41 @@ class Manifest(StrictModel):
     chapters: list[PortableChapter] = Field(min_length=1, max_length=MAX_CHAPTERS)
     media: list[PortableMedia] = Field(default_factory=list, max_length=100)
     limitations: list[str]
+
+
+class PortableImageReference(StrictModel):
+    type: Literal['REFERENCES']
+    source: str = Field(pattern=r'^a[0-9]{4}$')
+    target: str = Field(pattern=r'^a[0-9]{4}$')
+    selection_digest: str = Field(pattern=SHA)
+
+
+class ImageReferenceManifest(Manifest):
+    format: Literal['AI_NOVEL_PORTABLE_IMAGE_REFERENCE_1']
+    image_reference: PortableImageReference
+
+
+class ReferencePreviewIn(StrictModel):
+    expected_version: int = Field(ge=1, strict=True)
+    snapshot_digest: str = Field(pattern=SHA)
+
+
+class ReferenceConfirmIn(ReferencePreviewIn):
+    preview_digest: str = Field(pattern=SHA)
+    confirmed: Literal[True]
+
+
+def image_reference_profile(manifest):
+    return isinstance(manifest, dict) and manifest.get('format') == 'AI_NOVEL_PORTABLE_IMAGE_REFERENCE_1'
+
+
+def validate_image_reference(manifest):
+    if not image_reference_profile(manifest): return
+    media = manifest['media']; reference = manifest['image_reference']
+    if (len(media) != 2 or any(m['state'] != 'AVAILABLE' or m['kind'] != 'image' for m in media)
+            or reference['source'] == reference['target']
+            or {reference['source'], reference['target']} != {m['ref'] for m in media}):
+        raise ValueError('PORTABLE_TWO_AVAILABLE_IMAGES_REQUIRED')
 
 
 def atomic_bytes(path, data):
@@ -208,7 +245,9 @@ def read_archive(raw):
             if 'manifest.json' not in names: raise ValueError('PORTABLE_MANIFEST_MISSING')
             doc = _json(archive.read('manifest.json'))
             if _has_credential(doc): raise ValueError('PORTABLE_CREDENTIAL_FIELD')
-            manifest = Manifest.model_validate(doc).model_dump()
+            model = ImageReferenceManifest if image_reference_profile(doc) else Manifest
+            manifest = model.model_validate(doc).model_dump()
+            validate_image_reference(manifest)
             if manifest['limitations'] != LIMITS: raise ValueError('PORTABLE_SCOPE_DECLARATION_INVALID')
             if len({c['ref'] for c in manifest['chapters']}) != len(manifest['chapters']) or len({m['ref'] for m in manifest['media']}) != len(manifest['media']):
                 raise ValueError('PORTABLE_DUPLICATE_REFERENCE')
@@ -237,9 +276,10 @@ class PortableProjectsService(DomainService):
     MISSING_MEDIA = 'portable_missing_media_v2'
     CACHE_POLICIES = 'portable_cache_policies_v1'
 
-    def __init__(self, store, novels, chapters, *, sources, assets):
+    def __init__(self, store, novels, chapters, *, sources, assets, workspace=None):
         super().__init__(store, novels, chapters)
         self.sources, self.assets = sources, assets
+        self.workspace = workspace
         self.cache_root = store.root / 'portable_cache_v2'
 
     def _rows(self, ctx, selected=None):
@@ -260,13 +300,19 @@ class PortableProjectsService(DomainService):
     def _owned(self, ctx, rid):
         row = self.get(ctx.novel_id, ctx.scope, self.RECORDS, rid)
         if row['created_by'] != ctx.actor: raise FileNotFoundError('record unavailable')
+        profile = image_reference_profile(row.get('manifest', {}))
+        if profile:
+            with self._workspace().store.existing_owner_only():
+                if self.workspace.store.incarnation(ctx.novel_id) != row.get('source_incarnation'):
+                    raise FileNotFoundError('record unavailable')
         if row.get('sources'):
             rows = self._rows(ctx, list(row['sources']))
             if row['kind'] == 'EXPORT':
                 for alias, aid in enumerate(NovelService._asset_references(rows), 1):
                     old = next((m for m in row['manifest']['media'] if m['ref'] == f'a{alias:04d}'), None)
                     if old is None or old['state'] != 'AVAILABLE': continue
-                    asset = self.assets.get(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
+                    with self.workspace._asset_scope(ctx.novel_id, ctx.scope) if profile else nullcontext():
+                        asset = self.assets.get(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
                     if asset.get('novel_id') != ctx.novel_id or asset.get('branch_id') != ctx.scope.get('branch_id') or asset.get('hidden') or asset.get('secret'):
                         raise FileNotFoundError('record unavailable')
         if row['kind'] == 'RELINK' and not row['missing_id'].startswith('missing-'):
@@ -315,6 +361,11 @@ class PortableProjectsService(DomainService):
             result['title'] = manifest['title']; result['chapter_count'] = len(manifest['chapters'])
             result['media'] = [{k: v for k, v in m.items() if k != 'path'} for m in manifest['media']]
             result['limitations'] = LIMITS
+            if image_reference_profile(manifest):
+                result['image_reference'] = deepcopy(manifest['image_reference'])
+                result['reference_state'] = row.get('reference_state', 'PENDING')
+                if row.get('reference_review'): result['reference_review'] = deepcopy(row['reference_review'])
+                if row.get('reference_receipt'): result['reference_receipt'] = deepcopy(row['reference_receipt'])
         if row['kind'] == 'RELINK':
             review = deepcopy(row.get('relink_review'))
             if review is None:
@@ -353,8 +404,10 @@ class PortableProjectsService(DomainService):
             meta = meta or self._missing_metadata(ctx, aid)
             missing.append({'id': aid, 'expected_sha256': meta.get('sha256') if meta else None,
                             'chapter_ids': [r['id'] for r in rows if aid in NovelService._asset_references(r)]})
+        references = self._reference_candidates(ctx, NovelService._asset_references(rows)) if self.workspace else []
         return {'chapters': [{'id': r['id'], 'title': r['title'], 'version': r['version']} for r in rows],
                 'missing': missing, 'restore_available': ctx.scope['mode'] == 'local', 'limitations': LIMITS,
+                'image_references': references,
                 'max_archive_bytes': MAX_ARCHIVE, 'max_member_bytes': MAX_MEMBER}
 
     def records(self, ctx):
@@ -366,18 +419,168 @@ class PortableProjectsService(DomainService):
             visible.append(self._summary(row, ctx))
         return {'items': visible[-100:]}
 
-    def _build(self, ctx, selected):
+    def _workspace(self):
+        if self.workspace is None or self.workspace.assets is not self.assets:
+            raise ValueError('PORTABLE_STUDIO_ADAPTER_REQUIRED')
+        return self.workspace
+
+    def _image_pin(self, nid, scope, aid, *, content=False):
+        # Called only inside the original workspace asset scope. No alternate
+        # asset store or protected-metadata writer is introduced here.
+        row = self.workspace._row(nid, scope, aid)
+        if (row.get('kind') != 'image' or row.get('_owner_actor_id') is not None
+                or row.get('hidden') or row.get('secret')):
+            raise ValueError('PORTABLE_FORMAL_IMAGE_REQUIRED')
+        if content:
+            raw = self.assets.content(aid, branch_id=scope.get('branch_id'))
+            capture_asset(row, raw, asset_id=aid, novel_id=nid, branch_id=scope.get('branch_id'))
+            inspect_payload(raw, 'image')
+        return {'id': aid, 'version': row['version'], 'sha256': row['sha256']}
+
+    def _reference_candidates(self, ctx, refs):
+        # Legacy deployments/test adapters may replace only their original
+        # asset owner. Optional relation discovery must not cross that boundary.
+        if self.workspace is None or self.workspace.assets is not self.assets: return []
+        workspace = self._workspace(); candidates = []
+        if len(refs) > 100: raise ValueError('PORTABLE_MEDIA_LIMIT')
+        try:
+            with workspace.store.existing_owner_only(), workspace._asset_scope(ctx.novel_id, ctx.scope):
+                incarnation = workspace.store.incarnation(ctx.novel_id)
+                for aid in refs:
+                    try: source = self._image_pin(ctx.novel_id, ctx.scope, aid)
+                    except (FileNotFoundError, ValueError): continue
+                    row = workspace._row(ctx.novel_id, ctx.scope, aid)
+                    for relation in workspace.relationships.records(row):
+                        target = relation['target']
+                        if (relation.get('removed_at') or relation['type'] != 'REFERENCES'
+                                or target['kind'] != 'ASSET' or target['id'] not in refs or target['id'] == aid): continue
+                        try: pin = self._image_pin(ctx.novel_id, ctx.scope, target['id'])
+                        except (FileNotFoundError, ValueError): continue
+                        if (pin['version'], pin['sha256']) != (target['version'], target['digest']): continue
+                        candidates.append({'id': relation['id'], 'source_id': aid, 'target_id': pin['id'],
+                            'selection_digest': digest([incarnation, source, pin, relation['id']])})
+        except FileNotFoundError: return []
+        return candidates
+
+    def _restored_pins(self, nid, scope, mapping, manifest):
+        validate_image_reference(manifest)
+        if set(mapping) != {m['ref'] for m in manifest['media']} or len(set(mapping.values())) != 2:
+            raise ValueError('PORTABLE_IMAGE_MAPPING_INVALID')
+        with self._workspace()._asset_scope(nid, scope):
+            pins = {alias: self._image_pin(nid, scope, aid, content=True) for alias, aid in mapping.items()}
+        for media in manifest['media']:
+            if pins[media['ref']]['sha256'] != media['sha256']:
+                raise StaleSourceError('PORTABLE_IMAGE_DIGEST_CHANGED')
+        return pins
+
+    def reference_target(self, ctx, rid):
+        row = self._owned(ctx, rid)
+        if (row['kind'] != 'IMPORT' or row['status'] != 'RESTORED'
+                or not image_reference_profile(row.get('manifest'))):
+            raise ValueError('PORTABLE_RESTORED_IMAGE_PROFILE_REQUIRED')
+        return row['target_id']
+
+    def _reference_review(self, ctx, row, target_ctx, reauthorize):
+        workspace = self._workspace(); target = row['target_id']
+        if (target_ctx.novel_id != target or target_ctx.scope != {'mode': 'local', 'novel_id': target}
+                or ctx.scope['mode'] != 'local' or target_ctx.actor != ctx.actor):
+            raise ValueError('PORTABLE_TARGET_AUTHORITY_INVALID')
+        reauthorize()
+        with workspace.store.existing_owner_only():
+            if workspace.store.incarnation(ctx.novel_id) != row.get('source_incarnation'):
+                raise StaleSourceError('PORTABLE_SOURCE_INCARNATION_CHANGED')
+            if workspace.store.incarnation(target) != row.get('target_incarnation'):
+                raise StaleSourceError('PORTABLE_TARGET_INCARNATION_CHANGED')
+            document = workspace.store.read(target, target_ctx.scope)
+            preferences = workspace._preferences(document)
+            if not preferences or preferences.get('entry_kind') != 'NEUTRAL_STUDIO':
+                raise ValueError('PORTABLE_OPEN_RESTORED_STUDIO_FIRST')
+            pins = self._restored_pins(target, target_ctx.scope, row['id_map']['media'], row['manifest'])
+            if pins != row.get('restored_image_pins'):
+                raise StaleSourceError('PORTABLE_RESTORED_IMAGE_CHANGED')
+            reference = row['manifest']['image_reference']
+            source, destination = pins[reference['source']], pins[reference['target']]
+            with workspace._asset_scope(target, target_ctx.scope):
+                relations = workspace.relationships.records(workspace._row(target, target_ctx.scope, source['id']))
+                if any(not r.get('removed_at') and r['type'] == 'REFERENCES'
+                       and r['target']['kind'] == 'ASSET' and r['target']['id'] == destination['id'] for r in relations):
+                    raise ValueError('PORTABLE_REFERENCE_ALREADY_EXISTS')
+            reauthorize()
+        review = {'target_id': target, 'incarnation': row['target_incarnation'], 'type': 'REFERENCES',
+                  'source': {**source, 'ref': reference['source']}, 'target': {**destination, 'ref': reference['target']},
+                  'semantics': 'NEW_AUTHOR_DECLARATION_NOT_DERIVATION_APPROVAL_OR_EXECUTION'}
+        return {**review, 'preview_digest': digest([row['id'], row['snapshot_digest'], review])}
+
+    def preview_reference(self, ctx, rid, body, target_ctx, reauthorize=lambda: None):
+        value = ReferencePreviewIn.model_validate(body); row = self._owned(ctx, rid)
+        self.reference_target(ctx, rid); check_version(row, value.expected_version)
+        if row['snapshot_digest'] != value.snapshot_digest or row.get('reference_state') not in {'PENDING', 'PREVIEW'}:
+            raise ValueError('PORTABLE_REFERENCE_NOT_RETRYABLE')
+        review = self._reference_review(ctx, row, target_ctx, reauthorize)
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            reauthorize(); current = state['collections'][self.RECORDS][rid]
+            change_row(current, ctx.actor, value.expected_version, lambda r: r.update(reference_state='PREVIEW', reference_review=review))
+        return self._summary(self._owned(ctx, rid))
+
+    def confirm_reference(self, ctx, rid, body, target_ctx, reauthorize=lambda: None):
+        value = ReferenceConfirmIn.model_validate(body); row = self._owned(ctx, rid)
+        self.reference_target(ctx, rid); check_version(row, value.expected_version)
+        if (row['snapshot_digest'] != value.snapshot_digest or row.get('reference_state') != 'PREVIEW'
+                or row.get('reference_review', {}).get('preview_digest') != value.preview_digest):
+            raise ValueError('PORTABLE_REFERENCE_NOT_RETRYABLE')
+        review = self._reference_review(ctx, row, target_ctx, reauthorize)
+        if review != row['reference_review']: raise StaleSourceError('PORTABLE_REFERENCE_PREVIEW_CHANGED')
+        # Durable claim precedes the sole original-owner write. Cross-domain
+        # outcome is not atomic; APPLYING/UNKNOWN are never replayable.
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            reauthorize(); current = state['collections'][self.RECORDS][rid]
+            change_row(current, ctx.actor, value.expected_version, lambda r: r.update(reference_state='APPLYING'))
+        def guard():
+            reauthorize()
+            with self.workspace.store.existing_owner_only():
+                if (self.workspace.store.incarnation(row['target_id']) != review['incarnation']
+                        or self.workspace.store.incarnation(ctx.novel_id) != row.get('source_incarnation')):
+                    raise StaleSourceError('PORTABLE_TARGET_INCARNATION_CHANGED')
+        source, target = review['source'], review['target']
+        try:
+            guard()
+            self.workspace.relationships.add(row['target_id'], target_ctx.scope, ctx.actor, source['id'], {
+                'expected_version': source['version'], 'type': 'REFERENCES',
+                'target': {'kind': 'ASSET', 'id': target['id'], 'version': target['version'], 'digest': target['sha256']},
+                'reason': 'Explicit portable image reference confirmation'}, guard)
+            with self.workspace._asset_scope(row['target_id'], target_ctx.scope):
+                saved = self.workspace._row(row['target_id'], target_ctx.scope, source['id'])
+                current_target = self._image_pin(row['target_id'], target_ctx.scope, target['id'], content=True)
+                matches = [r for r in self.workspace.relationships.records(saved) if not r.get('removed_at')
+                           and r['type'] == 'REFERENCES' and r['target']['kind'] == 'ASSET' and r['target']['id'] == target['id']]
+                if (len(matches) != 1 or saved['version'] != source['version'] + 1 or matches[0]['created_by'] != ctx.actor
+                        or current_target != {k: target[k] for k in ('id', 'version', 'sha256')}):
+                    raise ValueError('PORTABLE_REFERENCE_READBACK_UNKNOWN')
+                receipt = {'relationship_id': matches[0]['id'], 'source_id': source['id'], 'source_version': saved['version'],
+                           'target_id': target['id'], 'type': 'REFERENCES'}
+            with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+                guard(); current = state['collections'][self.RECORDS][rid]
+                change_row(current, ctx.actor, current['version'], lambda r: r.update(reference_state='RESTORED', reference_receipt=receipt))
+            return self._summary(self._owned(ctx, rid))
+        except Exception:
+            with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+                current = state['collections'][self.RECORDS][rid]
+                change_row(current, ctx.actor, current['version'], lambda r: r.update(reference_state='UNKNOWN'))
+            raise
+
+    def _build(self, ctx, selected, image_reference_id=None):
         rows = self._rows(ctx, selected); refs = NovelService._asset_references(rows)
         if len(refs) > 100: raise ValueError('PORTABLE_MEDIA_LIMIT')
         mapping = {rid: f'a{i:04d}' for i, rid in enumerate(refs, 1)}; media, payloads = [], {}; total = 0
         for aid, alias in mapping.items():
             meta = None
             try:
-                meta = self.assets.get(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
-                if meta.get('novel_id') != ctx.novel_id or meta.get('branch_id') != ctx.scope.get('branch_id') or meta.get('hidden') or meta.get('secret'):
-                    meta = None; raise FileNotFoundError()
-                if type(meta.get('size')) is not int or meta['size'] > MAX_MEMBER: raise ValueError('limit')
-                data = self.assets.content(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
+                with self._workspace()._asset_scope(ctx.novel_id, ctx.scope) if image_reference_id else nullcontext():
+                    meta = self.assets.get(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
+                    if meta.get('novel_id') != ctx.novel_id or meta.get('branch_id') != ctx.scope.get('branch_id') or meta.get('hidden') or meta.get('secret'):
+                        meta = None; raise FileNotFoundError()
+                    if type(meta.get('size')) is not int or meta['size'] > MAX_MEMBER: raise ValueError('limit')
+                    data = self.assets.content(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
                 capture_asset(meta, data, asset_id=aid, novel_id=ctx.novel_id, branch_id=ctx.scope.get('branch_id'))
                 kind = meta.get('kind'); measured = inspect_payload(data, kind) if kind in {'image', 'audio', 'video'} else None
                 if not measured: raise ValueError('unsupported media')
@@ -391,6 +594,13 @@ class PortableProjectsService(DomainService):
                               'path': None, 'size': None, 'media_type': None, 'sha256': meta.get('sha256') if meta else None})
         manifest = Manifest.model_validate({'format': 'AI_NOVEL_PORTABLE_1', 'title': str(self.novels.get(ctx.novel_id)['title'])[:200], 'privacy_level': 'LOCAL_ONLY',
             'chapters': [{'ref': f'c{i:04d}', 'title': r['title'][:200], 'document': safe_document(r['document'], mapping)} for i, r in enumerate(rows, 1)], 'media': media, 'limitations': LIMITS}).model_dump()
+        if image_reference_id:
+            reference = next((r for r in self._reference_candidates(ctx, refs) if r['id'] == image_reference_id), None)
+            if reference is None: raise ValueError('PORTABLE_CURRENT_IMAGE_REFERENCE_REQUIRED')
+            manifest = ImageReferenceManifest.model_validate({**manifest, 'format': 'AI_NOVEL_PORTABLE_IMAGE_REFERENCE_1',
+                'image_reference': {'type': 'REFERENCES', 'source': mapping[reference['source_id']],
+                    'target': mapping[reference['target_id']], 'selection_digest': reference['selection_digest']}}).model_dump()
+            validate_image_reference(manifest)
         encoded = canonical(manifest).encode()
         if len(encoded) > MAX_MANIFEST or len(encoded) + sum(map(len, payloads.values())) > MAX_TOTAL: raise ValueError('PORTABLE_TOTAL_LIMIT')
         out = io.BytesIO()
@@ -402,9 +612,11 @@ class PortableProjectsService(DomainService):
 
     def export(self, ctx, body, reauthorize=lambda: None):
         selected = SelectionIn.model_validate(body)
-        manifest, raw, sources = self._build(ctx, selected.chapter_ids); reauthorize()
+        manifest, raw, sources = self._build(ctx, selected.chapter_ids, selected.image_reference_id); reauthorize()
         row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'kind': 'EXPORT', 'status': 'READY', 'manifest': manifest, 'sources': sources,
             'artifact_digest': sha(raw), 'snapshot_digest': digest([manifest, sources])})
+        if selected.image_reference_id:
+            row.update(image_reference_id=selected.image_reference_id, source_incarnation=self._workspace().store.incarnation(ctx.novel_id))
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             reauthorize(); self._assert_sources(ctx, sources)
             atomic_bytes(self._file(ctx, row['id']), raw)
@@ -415,12 +627,12 @@ class PortableProjectsService(DomainService):
         row = self._owned(ctx, rid); check_version(row, version)
         if row['kind'] != 'EXPORT': raise ValueError('PORTABLE_EXPORT_REQUIRED')
         self._assert_sources(ctx, row['sources']); reauthorize()
-        current_manifest, _, _ = self._build(ctx, list(row['sources']))
+        current_manifest, _, _ = self._build(ctx, list(row['sources']), row.get('image_reference_id'))
         if current_manifest != row['manifest']: raise StaleSourceError('PORTABLE_MEDIA_OR_PROJECT_CHANGED')
         with self.store.transaction(ctx.novel_id, ctx.scope):
             try: raw = self._read_file(ctx, row)
             except FileNotFoundError:
-                manifest, raw, sources = self._build(ctx, list(row['sources']))
+                manifest, raw, sources = self._build(ctx, list(row['sources']), row.get('image_reference_id'))
                 if digest([manifest, sources]) != row['snapshot_digest']: raise StaleSourceError('PORTABLE_MEDIA_CHANGED')
                 if sha(raw) != row['artifact_digest']: raise StaleSourceError('PORTABLE_CACHE_REGENERATION_CHANGED')
                 reauthorize(); atomic_bytes(self._file(ctx, rid), raw)
@@ -433,6 +645,8 @@ class PortableProjectsService(DomainService):
         raw = decode(value.content_base64); manifest, _ = read_archive(raw); reauthorize()
         row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'kind': 'IMPORT', 'status': 'PREFLIGHT', 'manifest': manifest,
             'artifact_digest': sha(raw), 'snapshot_digest': sha(raw)})
+        if image_reference_profile(manifest):
+            row['source_incarnation'] = self._workspace().store.incarnation(ctx.novel_id)
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             reauthorize(); atomic_bytes(self._file(ctx, row['id']), raw); state['collections'].setdefault(self.RECORDS, {})[row['id']] = row
         return self._summary(row)
@@ -443,6 +657,14 @@ class PortableProjectsService(DomainService):
         row = self._owned(ctx, rid); check_version(row, value.expected_version)
         if row['kind'] != 'IMPORT' or row['status'] != 'PREFLIGHT' or row['snapshot_digest'] != value.snapshot_digest: raise ValueError('PORTABLE_CONFIRMATION_CHANGED')
         manifest, payloads = read_archive(self._read_file(ctx, row)); target = 'portable-' + uuid4().hex
+        profile = image_reference_profile(manifest)
+        if profile:
+            authority = reauthorize
+            def reauthorize():
+                authority()
+                with self.workspace.store.existing_owner_only():
+                    if self.workspace.store.incarnation(ctx.novel_id) != row.get('source_incarnation'):
+                        raise StaleSourceError('PORTABLE_SOURCE_INCARNATION_CHANGED')
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             current = state['collections'][self.RECORDS][rid]
             change_row(current, ctx.actor, value.expected_version, lambda r: r.update(status='RESTORING', target_id=target, id_map={'chapters': {}, 'media': {}})); reauthorize()
@@ -450,11 +672,19 @@ class PortableProjectsService(DomainService):
         # An interrupted restore is never automatically replayed or overwritten.
         try:
             reauthorize(); self.novels.create({'id': target, 'title': manifest['title'] + ' (portable)', 'genre': 'Portable copy'})
+            if profile:
+                incarnation = self._workspace().store.incarnation(target)
+                with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+                    state['collections'][self.RECORDS][rid]['target_incarnation'] = incarnation
+            target_scope = {'mode': 'local', 'novel_id': target}
             mapping = {}
             for media in manifest['media']:
                 reauthorize()
                 if media['state'] == 'AVAILABLE':
-                    asset = self.assets.create(target, media['path'].split('/')[-1], base64.b64encode(payloads[media['ref']]).decode(), media['media_type'], media['kind'], 'portable:' + rid + ':' + media['ref'], required_features=(FEATURE,), owner_actor_id=ctx.actor)
+                    with self.workspace._asset_scope(target, target_scope) if profile else nullcontext():
+                        if profile and self.workspace.store.incarnation(target) != incarnation: raise StaleSourceError('PORTABLE_TARGET_CHANGED')
+                        reauthorize()
+                        asset = self.assets.create(target, media['path'].split('/')[-1], base64.b64encode(payloads[media['ref']]).decode(), media['media_type'], media['kind'], 'portable:' + rid + ':' + media['ref'], required_features=(FEATURE,), owner_actor_id=ctx.actor)
                     mapping[media['ref']] = asset['id']
                 else:
                     mapping[media['ref']] = 'missing-' + uuid4().hex
@@ -471,9 +701,12 @@ class PortableProjectsService(DomainService):
                 for media in manifest['media']:
                     if media['state'] != 'AVAILABLE': continue
                     reauthorize(); aid = mapping[media['ref']]
-                    stored = self.assets.get(aid, actor_id=ctx.actor)
-                    self.assets.promote_owned(aid, actor_id=ctx.actor, branch_id=None, expected_version=stored['version'], provenance={'portable_record_id': rid, 'operation': 'RESTORE_NEW_PROJECT'}, guard=reauthorize)
-                change_row(current, ctx.actor, current['version'], lambda r: r.update(status='RESTORED'))
+                    with self.workspace._asset_scope(target, target_scope) if profile else nullcontext():
+                        if profile and self.workspace.store.incarnation(target) != incarnation: raise StaleSourceError('PORTABLE_TARGET_CHANGED')
+                        stored = self.assets.get(aid, actor_id=ctx.actor)
+                        self.assets.promote_owned(aid, actor_id=ctx.actor, branch_id=None, expected_version=stored['version'], provenance={'portable_record_id': rid, 'operation': 'RESTORE_NEW_PROJECT'}, guard=reauthorize)
+                pins = self._restored_pins(target, target_scope, mapping, manifest) if profile else None
+                change_row(current, ctx.actor, current['version'], lambda r: r.update(status='RESTORED', **({'reference_state': 'PENDING', 'restored_image_pins': pins} if profile else {})))
             return self._summary(self._owned(ctx, rid))
         except Exception:
             with self.store.transaction(ctx.novel_id, ctx.scope) as state:
