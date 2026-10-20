@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/20a0022d2b33/studio-cloud-dsh-integrated-20261020/frontend
+
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 634ms
+ ✓ src/experimental/SafeBatchesPanel.test.tsx (10 tests) 432ms
+ ✓ src/experimental/ProductionLineagePanel.navigationCompatibility.test.tsx (15 tests) 740ms
+ ✓ src/experimental/AudioManifestWorkspace.additive.test.tsx (8 tests) 378ms
+ ✓ src/experimental/SafeBatchesPanel.studioImage.test.tsx (6 tests) 338ms
+ ✓ src/experimental/ProductionLineagePanel.additive.test.tsx (1 test) 115ms
+ ✓ src/experimental/ProductionLineagePanel.continuation.test.tsx (2 tests) 200ms
+
+ Test Files  7 passed (7)
+      Tests  53 passed (53)
+   Start at  15:16:11
+   Duration  7.47s (transform 329ms, setup 44ms, collect 1.10s, tests 2.84s, environment 2.20s, prepare 362ms)
+

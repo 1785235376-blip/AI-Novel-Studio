@@ -1,0 +1,363 @@
+{
+  "input_bytes": 243592,
+  "input_sha256": "4e1d1dd499b2cb070506ac4723ec349e01ff704145ea50c6c84c18572653d1b7",
+  "patches": [
+    {
+      "patch": "0001.patch",
+      "bytes": 40971,
+      "sha256": "f1b8ab65a1000ccfeb34ff873bdea760264ca20b72030eb6cd520601d254785e",
+      "source_commit": "c1c400cdcbcfb4a191a4e7f7ae4750fbdc03ddc8",
+      "reconstructed_commit": "c5034569065b58b7a44cc379a48f3fb4f6549cb7",
+      "integrated_commit": "e665237149d120bf1521086b55f4393a568cfcb8",
+      "reconstructed_tree": "7cc9ef333a8710b259c6b24d96bb41d1a1749e46",
+      "integrated_tree": "6c22c99b3437179953b76505d9e625fe4aeed6ec",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/creative/production_execution.py",
+          "patch_postimage_prefix": "9cbc1299",
+          "verified_full_blob": "9cbc1299e2cf2e1c62bd1830382e6456bccf796e"
+        },
+        {
+          "path": "app/creative/workspace_api.py",
+          "patch_postimage_prefix": "5aebf135",
+          "verified_full_blob": "5aebf135190d47c7fd1201d76a4bf1160c86ae9e"
+        },
+        {
+          "path": "app/experimental/api.py",
+          "patch_postimage_prefix": "084b1b25",
+          "verified_full_blob": "084b1b2562b5c98edf01ab8b40d5313c31a4a062"
+        },
+        {
+          "path": "app/experimental/safe_batch_studio_image.py",
+          "patch_postimage_prefix": "11272628",
+          "verified_full_blob": "11272628a4175d4964f5cc1b855eb8eefc6094fc"
+        },
+        {
+          "path": "app/experimental/safe_batches.py",
+          "patch_postimage_prefix": "7e72e524",
+          "verified_full_blob": "7e72e524bbe995a54612d9af88d7b0c9fa3f3013"
+        },
+        {
+          "path": "app/services/studio_image_execution.py",
+          "patch_postimage_prefix": "2e87c160",
+          "verified_full_blob": "2e87c160cc0f2fb963e1b0e55e1dfe7f204f0ac3"
+        },
+        {
+          "path": "docs/u16_studio_image_binding.md",
+          "patch_postimage_prefix": "7f8ec2ae",
+          "verified_full_blob": "7f8ec2ae9a87d6578754cb8ad534b7393f7efd4e"
+        },
+        {
+          "path": "tests/test_u16_studio_image_binding_api.py",
+          "patch_postimage_prefix": "ec591cc8",
+          "verified_full_blob": "ec591cc805637930ece71a5ae925ed606c342c6a"
+        }
+      ]
+    },
+    {
+      "patch": "0002.patch",
+      "bytes": 69665,
+      "sha256": "eb8204d188310d5ffdd120bd892176c296bdb6dc29c870ebf30dcf475640c7d1",
+      "source_commit": "6d8176e6095c861d069ad7940a0e44065caec941",
+      "reconstructed_commit": "d34ac9cef980a59a9c68a26f7a82ab8423e978f4",
+      "integrated_commit": "295db650d541041aca61140b5040a46aa23a1891",
+      "reconstructed_tree": "2cd37491296a106b140539dc4d27dccb2120f268",
+      "integrated_tree": "3c80166aaad07513b3f055b238c3b0acade80c27",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/audio_manifest.py",
+          "patch_postimage_prefix": "e0b61038",
+          "verified_full_blob": "e0b61038f7128bd6ce84da9595d5a18162e3b1bb"
+        },
+        {
+          "path": "app/experimental/audio_manifest_api.py",
+          "patch_postimage_prefix": "fe58f46f",
+          "verified_full_blob": "fe58f46f624bc8881f0b0935119aac38b39e0d6d"
+        },
+        {
+          "path": "docs/AUDIO_MANIFEST_HANDOFF.md",
+          "patch_postimage_prefix": "f2c6524e",
+          "verified_full_blob": "f2c6524eb65cf946076d0225449368e16a4c1d44"
+        },
+        {
+          "path": "frontend/src/experimental/AudioManifestWorkspace.additive.test.tsx",
+          "patch_postimage_prefix": "beed985e",
+          "verified_full_blob": "beed985e32c4b628e3c0c4a3c780ce7d1d667d43"
+        },
+        {
+          "path": "frontend/src/experimental/AudioManifestWorkspace.tsx",
+          "patch_postimage_prefix": "c8f9d41e",
+          "verified_full_blob": "c8f9d41ea1ec605d5f14b57609176020306206fb"
+        },
+        {
+          "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+          "patch_postimage_prefix": "ebd34e41",
+          "verified_full_blob": "ebd34e412ca2f1285a69e9f62d022d941b82f83f"
+        },
+        {
+          "path": "frontend/src/experimental/audioManifestClient.ts",
+          "patch_postimage_prefix": "a7a494d9",
+          "verified_full_blob": "a7a494d9b8bc4621dcf6be39e58b4fdf80962bca"
+        },
+        {
+          "path": "tests/test_audio_manifest_additive.py",
+          "patch_postimage_prefix": "f03bb048",
+          "verified_full_blob": "f03bb0485bbfa822aa34373b45c441538b6224bd"
+        }
+      ]
+    },
+    {
+      "patch": "0003.patch",
+      "bytes": 111184,
+      "sha256": "520cdedf7dd6bd9aa3604a5f0a22b6cb7245e9cc461459be4c241e2317711c0b",
+      "source_commit": "0cb20c8f8d78d2697bb9954392597d9bab88d615",
+      "reconstructed_commit": "72cd70cfc27ec22e9c11b7c9c2fcdcecb563524a",
+      "integrated_commit": "d043a8758d2c286db92b00b64855b2cf634a2100",
+      "reconstructed_tree": "45f64239c391bc06adc31f7686b71595fb2292f7",
+      "integrated_tree": "3b15f99f4dbb3f215c673d948926e31b5f5cd4c5",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/safe_batch_studio_image.py",
+          "patch_postimage_prefix": "12fc02d9",
+          "verified_full_blob": "12fc02d90a976e2b73d20bc24081a731696f6e94"
+        },
+        {
+          "path": "app/experimental/safe_batches.py",
+          "patch_postimage_prefix": "b98e7fff",
+          "verified_full_blob": "b98e7fff8924d6d99b27643b4aee7f517bfff91a"
+        },
+        {
+          "path": "app/experimental/safe_batches_api.py",
+          "patch_postimage_prefix": "a8358544",
+          "verified_full_blob": "a83585448ab54733ace536d62153f3837331888d"
+        },
+        {
+          "path": "docs/u16_studio_image_batch.md",
+          "patch_postimage_prefix": "00e1da13",
+          "verified_full_blob": "00e1da132e18e82f463bcd9c98c6934552ca26cb"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.file-api.json",
+          "patch_postimage_prefix": "724bec67",
+          "verified_full_blob": "724bec67febb2a8f0b6b0efff10d55d354154d7a"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.studioImage.test.tsx",
+          "patch_postimage_prefix": "d4f245b9",
+          "verified_full_blob": "d4f245b9b24df43703db95d2b50295a27d6aeaad"
+        },
+        {
+          "path": "frontend/src/experimental/SafeBatchesPanel.tsx",
+          "patch_postimage_prefix": "c434abee",
+          "verified_full_blob": "c434abee21cd7144bc5d7a3da8700e1658963d68"
+        },
+        {
+          "path": "tests/test_u16_studio_image_batch_api.py",
+          "patch_postimage_prefix": "d8ae0cac",
+          "verified_full_blob": "d8ae0cac4f9a2b7cb30d2db87c4907d75bea3021"
+        }
+      ]
+    },
+    {
+      "patch": "0004.patch",
+      "bytes": 2289,
+      "sha256": "d41afeb0ecc9cdfcd9d970a19e525943365a421fed5123dc81ac6276a7d175f6",
+      "source_commit": "0dc15d4ddf7ae807350c5bc042b27ab580c36732",
+      "reconstructed_commit": "307b4e881808ac63ac4d55d458f93d6d39fd33df",
+      "integrated_commit": "0039b11fad0cb5fc06eca4124c39e99f325fa9d8",
+      "reconstructed_tree": "f4abfe161840cb80f4b2935ba430eefeb81fb3f6",
+      "integrated_tree": "320d532995d4a5cbff48b4a3c5709945730fe5dc",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "tests/test_u16_studio_image_batch_api.py",
+          "patch_postimage_prefix": "d76a5615",
+          "verified_full_blob": "d76a56150a372ebaef1c97daba2fbca218e132f9"
+        }
+      ]
+    },
+    {
+      "patch": "0005.patch",
+      "bytes": 2943,
+      "sha256": "8523394049c2ce6d05dc681f71e2b653bf03bc8fa8ed1046d5c7409e1af794b7",
+      "source_commit": "e815fc3fdb4d80f9d36ca2453a2fa6f237b9888a",
+      "reconstructed_commit": "9cbcc4d12f9204ae232c35eae923f68ebb28151b",
+      "integrated_commit": "f50eafa38e4b35014e0a6f2d6164fc6403574763",
+      "reconstructed_tree": "b1bc0ecc035a64d4e8d88cae8063322bfb47c34b",
+      "integrated_tree": "45f246217b29eda6d257c580aece94e3242a5f70",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/experimental/audio_manifest_api.py",
+          "patch_postimage_prefix": "5c468ba4",
+          "verified_full_blob": "5c468ba454c8dd33047aa071f574563030b14ee3"
+        },
+        {
+          "path": "tests/test_audio_manifest_additive.py",
+          "patch_postimage_prefix": "34b11d4c",
+          "verified_full_blob": "34b11d4cb2a699ac5448435ae840938ee9c198fc"
+        }
+      ]
+    },
+    {
+      "patch": "0006.patch",
+      "bytes": 7793,
+      "sha256": "5342c67e264183b0fecf99f1ac8ece4b3b0c718588c4702714525cd7aba54ee0",
+      "source_commit": "0516c6d8a9c9c94d1ccd05fc81c6210ef5d55452",
+      "reconstructed_commit": "896a80480546bc0dcfc801a441bba93b04c772f8",
+      "integrated_commit": "04a059a06351f87c772fb2d5720aa256433303d9",
+      "reconstructed_tree": "1e6493e33875c501a5d11bb10aee54d5e41805c4",
+      "integrated_tree": "1abd2272ed3f8f1f59aa8f7ef35b4fa5be78e50d",
+      "source_commit_object_available": false,
+      "postimages": [
+        {
+          "path": "app/creative/workspace_api.py",
+          "patch_postimage_prefix": "167cd8e8",
+          "verified_full_blob": "167cd8e841a8811827ec23b114d26697b92148c3"
+        },
+        {
+          "path": "tests/test_audio_manifest_product_mount.py",
+          "patch_postimage_prefix": "8abc1204",
+          "verified_full_blob": "8abc120437447aa9c512dc446cf07d4e24118126"
+        }
+      ]
+    }
+  ],
+  "preserved_cloud_files": [
+    "app/experimental/portable_cache_policy.py",
+    "app/experimental/portable_projects.py",
+    "app/experimental/portable_projects_api.py",
+    "docs/v2/CLOUD_ASSET_COMPARISON_SLICE_20261020.md",
+    "docs/v2/IMAGE_MASK_REDO_RECEIPT_20261020.md",
+    "docs/v2/portable-cache-budget.md",
+    "frontend/scripts/check-mask-redo-browser.mjs",
+    "frontend/src/assetbrowser/AssetBrowserHost.comparison.test.tsx",
+    "frontend/src/assetbrowser/AssetBrowserPanel.comparison.test.tsx",
+    "frontend/src/assetbrowser/AssetBrowserPanel.tsx",
+    "frontend/src/assetbrowser/AssetComparePanel.test.tsx",
+    "frontend/src/assetbrowser/AssetComparePanel.tsx",
+    "frontend/src/assetbrowser/assetComparisonPreview.test.ts",
+    "frontend/src/assetbrowser/assetComparisonPreview.ts",
+    "frontend/src/creative/IndependentStudioWorkspace.tsx",
+    "frontend/src/creative/StudioBinaryMaskCanvas.redo.test.tsx",
+    "frontend/src/creative/StudioBinaryMaskCanvas.tsx",
+    "frontend/src/creative/StudioManualMaskRedo.test.tsx",
+    "frontend/src/creative/StudioModelMeshPreview.tsx",
+    "frontend/src/creative/StudioModelSceneStructure.additive.test.tsx",
+    "frontend/src/creative/studioBinaryMask.redo.test.ts",
+    "frontend/src/creative/studioBinaryMask.ts",
+    "frontend/src/creative/studioModelSceneStructure.ts",
+    "frontend/src/experimental/PortableProjectsBudget.test.tsx",
+    "frontend/src/experimental/PortableProjectsPanel.tsx",
+    "frontend/tests/visual/studio-mask-redo.fixture.tsx",
+    "tests/test_v2_portable_cache_policy.py",
+    "tests/test_v2_portable_cache_policy_api.py"
+  ],
+  "original_index_limitation": "Source format-patches contain 8-hex blob prefixes. Full source commit objects were not supplied; commit identities cannot be reconstructed from patch metadata alone.",
+  "corrective_commit": "3b26e0f3d5cef43a0ec199488670af4e833de53a",
+  "corrective_tree": "85b975353f028eef6384fd8aa04b083543dc053d",
+  "validation_source_count": 3437,
+  "final_test_receipt_head": "04a059a06351f87c772fb2d5720aa256433303d9",
+  "final_test_sources_match_corrective_commit": true,
+  "corrective_sources": {
+    "app/creative/production_execution.py": {
+      "git_blob": "83b056479473a3d94be5737cb4eabc94125f9b1a",
+      "sha256": "91355ecd0a70091e17c8f98a1a363a11cc0f5564c9cc79d3980909f6bb037f13"
+    },
+    "app/experimental/safe_batches.py": {
+      "git_blob": "885944413b42a16b94d2ac9168d5bed2e74b1d87",
+      "sha256": "8d5ce8a8f58e3672c019825253ecbe793388ec1c0bf2410cb4e0bfea7a744d87"
+    },
+    "tests/test_u16_cloud_integration_guards.py": {
+      "git_blob": "a4d5eb61e0c3bf1bc1e883c9ef041977ac902790",
+      "sha256": "a343f8818540950d9af6e22a0d0f13b625e689f4b9dde03f21f5a07b1c979aab"
+    }
+  },
+  "validation": {
+    "file_api": "115 passed, 114 postgres_backend_only deselected",
+    "frontend": "53 passed in 7 files",
+    "tokens": "PASS (52 files)",
+    "build": "tsc -b && vite build passed; existing chunk-size warning",
+    "source_changed_during_checks": false,
+    "limitations": [
+      "Real Host not verified",
+      "PostgreSQL not run",
+      "Browser geometry/E2E blocked previously by Unix socket/bwrap restriction; not retried",
+      "Full Python/frontend suites not run",
+      "Clean-Windows not run",
+      "Real GPU/models/paid APIs not run",
+      "Audio replay/environment reproducibility not provided"
+    ]
+  },
+  "evidence_sha256": {
+    "docs/delivery/v2-development/cloud-dsh-design-tokens.log": "720c976bb800c2f989255bfef0431c263b72c50e0b2c052599e3b39e1cb1de50",
+    "docs/delivery/v2-development/cloud-dsh-file-api.log": "801fd39ca0df6ccd9e713bcc26484a6e95f77cb9b96a5ac6f442421b830b58a0",
+    "docs/delivery/v2-development/cloud-dsh-final-file-api.log": "4d42994dd8b0e810fd9342ee2ce1c3552846b27e5314f06e5aa9b632cc1b5594",
+    "docs/delivery/v2-development/cloud-dsh-frontend.log": "f17a8025f0973831c64fab8b5e94539ee1d3540fcef86f965979f90e9988275b",
+    "docs/delivery/v2-development/cloud-dsh-guard-fixed.log": "ab6067ef52b9b5bd4bfbc3083ad4295b662686d83ebc3535e8df105c4ffd481b",
+    "docs/delivery/v2-development/cloud-dsh-guard-repro.log": "6172db30c1eaa2cbbf805e0a214fcd7047a46c50da04c87dccb6dc012618fc59",
+    "docs/delivery/v2-development/cloud-dsh-read-repro.log": "eaea3289ed77b96ef2efe205924d77af892ff8c1bd542aafedd4b88cc3ddef1b",
+    "docs/delivery/v2-development/cloud-dsh-serial-build.log": "a60aa6e53bd69ab491138fb93175b7949182e310afa792fba73a3303043b259b"
+  },
+  "archived_receipt_sha256": {
+    ".runtime/dsh-integration-evidence-20261020/runner-receipts/cloud-dsh-file-api.json": "37158d21d265db703bf44e36d1a4049669bd62076e8a6451b32bf37d2455192c",
+    ".runtime/dsh-integration-evidence-20261020/runner-receipts/cloud-dsh-final-file-api.json": "cf770b79ec35c19cc63c625ac675af53ee077392f10d70661c76201dd986ba76",
+    ".runtime/dsh-integration-evidence-20261020/runner-receipts/cloud-dsh-guard-fixed.json": "3fe5d87ed8f0e32790345aab91ffa90a7dbc5d1ecaf7aa51a283e6798b5c761c",
+    ".runtime/dsh-integration-evidence-20261020/runner-receipts/cloud-dsh-guard-repro.json": "e37cf221216ed6661a469395aa863b0fbbc088517bf1e1d4402d15b9e851b1b0",
+    ".runtime/dsh-integration-evidence-20261020/runner-receipts/cloud-dsh-read-repro.json": "4243e61e23c964f704411d11ff3b15a9efb6f6535dd83115e681cc0ae8e26fe3"
+  },
+  "initial_setup_failure": {
+    "log": ".runtime/dsh-integration-evidence-20261020/file-api.log",
+    "sha256": "676c369b8809f1d6a920b064a70af7c3572f63810f90b102068cdb30d2d72a0d",
+    "summary": "103 setup errors: default home identity path read-only. No tests counted. Retried with existing scripts/run_v2_checks.py isolated profile; no change to denied path."
+  },
+  "reproduction_note": "cloud-dsh-guard-repro has 4 product-boundary failures and 4 duplicate-item fixture rejections. The corrected two-mask fixture was rerun as cloud-dsh-read-repro and reproduced all 4 cached-read failures. cloud-dsh-guard-fixed passed the first 8 regression cases; final run passed 12 expanded regression cases plus the original 103.",
+  "independent_source_review": {
+    "reviewed_corrective_commit": "3b26e0f3d5cef43a0ec199488670af4e833de53a",
+    "mode": "read-only source review; no reviewer edits or test execution",
+    "result": "All three findings resolved; no new blocking issue or weakened guard found",
+    "checks": [
+      {
+        "path": "app/creative/production_execution.py",
+        "lines": "208-215",
+        "finding": "Scope -> asset -> project order restored for bound cutout validation; no nested existing leased caller; CPU render and live stop/revocation remain outside."
+      },
+      {
+        "path": "app/creative/production_execution.py",
+        "lines": "747-751",
+        "finding": "Binding mismatches filtered before validation; exact matches retain strict validation and explicit-null standalone denial."
+      },
+      {
+        "path": "app/experimental/safe_batches.py",
+        "lines": "400-420",
+        "finding": "All private image caches retired before independent owner reads; cancelled payloads remain cleared; non-404 authorization errors propagate."
+      }
+    ]
+  },
+  "red_to_green": [
+    {
+      "finding": "File scope/asset inversion",
+      "red": "docs/delivery/v2-development/cloud-dsh-guard-repro.log",
+      "test": "test_bound_pixel_checks_keep_scope_before_asset_lock",
+      "green": "docs/delivery/v2-development/cloud-dsh-final-file-api.log",
+      "note": "Deterministic lock-order assertion fails on old code; final test also asserts CPU rendering holds no raw scope lease."
+    },
+    {
+      "finding": "Unrelated-job recovery admission",
+      "red": "docs/delivery/v2-development/cloud-dsh-guard-repro.log",
+      "test": "test_bound_recovery_list_filters_unrelated_original_jobs",
+      "green": "docs/delivery/v2-development/cloud-dsh-final-file-api.log",
+      "note": "Final extra test covers missing recorded job ID after lost create ACK, finds QUEUED original beside unrelated job, and never resends."
+    },
+    {
+      "finding": "Per-item stale image cache",
+      "red": "docs/delivery/v2-development/cloud-dsh-read-repro.log",
+      "test": "test_every_private_image_result_is_revalidated_or_removed",
+      "green": "docs/delivery/v2-development/cloud-dsh-final-file-api.log",
+      "note": "Completed and cancelled two-image batches reproduce old leakage; final variants also prove a valid second item is independently refreshed after first-item denial."
+    }
+  ]
+}
