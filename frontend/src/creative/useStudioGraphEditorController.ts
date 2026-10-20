@@ -455,6 +455,14 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     } });
   const dirty = graphDirty || localSubgraph.formDirty;
   const bindingDraftEpoch = bindingMutationEpoch.current;
+  // Template approval also belongs to the synchronous mutation generation.
+  // A same-batch A -> B -> A must not revive its earlier confirmation.
+  const templateFence = useRef({ scope: insertionScope, generation: bindingDraftEpoch, token: {} });
+  if (templateFence.current.scope !== insertionScope || templateFence.current.generation !== bindingDraftEpoch)
+    templateFence.current = { scope: insertionScope, generation: bindingDraftEpoch, token: {} };
+  const templateScope = templateFence.current.token;
+  const templateCurrent = () => templateScope === templateFence.current.token
+    && bindingDraftEpoch === bindingMutationEpoch.current && insertionCurrent(insertionScope);
   const selectedVideoBinding = useGraphSelectedVideoBinding({ definition: draft, selected, catalog, source: providerSource,
     scope: verificationScope, generation: bindingDraftEpoch, current: () => isVerificationCurrent() && bindingDraftEpoch === bindingMutationEpoch.current && !imageSelectionFence.current?.(),
     editable: active && editable && !timelineEditor.formDirty && !checking && !imageSelectionFence.current?.(),
@@ -946,7 +954,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningForkScope: verificationScope, isPlanningForkCurrent: isVerificationCurrent, preparePlanningGraphFork, planningForkReferences,
     records, base, draft, selected, past, future, loading, error, notice, blocked,
     candidate, replaceConfirmed, checking, pendingNavigation, discardConfirmed, kind, sourcePort, targetPort,
-    assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, dirty, editable, protectedNodes, node,
+    assets, assetChoice, assetLoading, preview, previewState, refreshPreview, downloadPreviewAsset, current, templateScope, templateCurrent, dirty, editable, protectedNodes, node,
     loadVideoCatalog, videoSchemaConfirmed, confirmVideoSchema, upgradeVideoSchema, shotParent, chooseShotParent, shotReceipt, shotChoice, chooseShot, shotLoading, loadShotReceipt,
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,

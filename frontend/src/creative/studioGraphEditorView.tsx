@@ -225,7 +225,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         </div>}
       </section>
       <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
-      <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.insertionScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
+      <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.templateScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => controller.templateCurrent() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       {videoGraph && <GraphSelectedVideoBindingPanel binding={controller.selectedVideoBinding} />}
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
         removalDefinitions={catalog.definitions} removalOwner={controller.insertionScope} removalDisabled={timelineEditor.formDirty}
