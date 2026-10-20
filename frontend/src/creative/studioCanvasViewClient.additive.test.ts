@@ -13,7 +13,7 @@ describe('original captured display client', () => {
     expect(json).toHaveBeenLastCalledWith('/api/projects/project/studio/canvas-views', 'POST', { expected_version: 0, request_id: 'request-1', definition });
     json.mockResolvedValue({ ...row(), version: 2 }); await client.save('view', 1, definition);
     expect(json).toHaveBeenLastCalledWith('/api/projects/project/studio/canvas-views/view', 'PUT', { expected_version: 1, definition });
-    expect(Object.keys(client).sort()).toEqual(['create', 'get', 'list', 'save']);
+    expect(Object.keys(client).sort()).toEqual(['create', 'get', 'history', 'list', 'restore', 'save']);
   });
   it.each(['project', 'scope', 'id', 'execution', 'binary', 'state', 'filename', 'duplicate', 'port'])('rejects wrong or executable %s response', async kind => {
     const value: any = row();

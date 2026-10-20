@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from ..experimental.production_lineage_api import PrivateProductionRoute
-from .canvas_view_models import CANVAS_VIEWS, CanvasViewCreate, CanvasViewSave
+from .canvas_view_models import CANVAS_VIEWS, CanvasViewCreate, CanvasViewSave, CanvasViewRestore
 
 
 class CanvasViewRoute(PrivateProductionRoute):
@@ -52,6 +52,18 @@ def create_canvas_view_router(service, invoke):
     def save_view(nid: str, vid: str, request: Request, body: CanvasViewSave, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
             lambda actor, scope, guard: service.canvas_views.save(nid, scope, actor, vid, body, guard), request,
+            target=(CANVAS_VIEWS, vid))
+
+    @router.get("/projects/{nid}/studio/canvas-views/{vid}/history")
+    def history_view(nid: str, vid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.read",
+            lambda actor, scope, guard: service.canvas_views.history(nid, scope, actor, vid, guard), request,
+            target=(CANVAS_VIEWS, vid))
+
+    @router.post("/projects/{nid}/studio/canvas-views/{vid}/restore")
+    def restore_view(nid: str, vid: str, request: Request, body: CanvasViewRestore, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.canvas_views.restore(nid, scope, actor, vid, body, guard), request,
             target=(CANVAS_VIEWS, vid))
 
     return router

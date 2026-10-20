@@ -9,7 +9,7 @@ from hashlib import sha256
 from ..experimental.common import StaleSourceError, new_row, change_row, check_version
 from ..experimental.store import canonical
 from .project_store import BINDING
-from .canvas_view_models import CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave
+from .canvas_view_models import CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave, CanvasViewRestore
 
 
 def digest(value):
@@ -105,3 +105,70 @@ class CreativeCanvasViews:
             change_row(row,actor,body.expected_version,lambda target:target.update(definition=deepcopy(definition),definition_digest=digest(definition)))
             self.graph._capacity(state);current()
         return self.get(nid,scope,actor,rid,current)
+
+    def _history_entries(self, nid, scope, actor, row):
+        # Original change_row snapshots are the only history authority. Never
+        # trust a client-supplied definition or another record's snapshot.
+        entries = [*row['history'], row]
+        for version, entry in enumerate(entries, 1):
+            if (not isinstance(entry, dict) or type(entry.get('version')) is not int
+                    or entry['version'] != version or entry.get('id') != row['id']
+                    or entry.get('novel_id') != nid or entry.get('scope') != scope
+                    or entry.get('created_by') != actor or entry.get(BINDING) != row[BINDING]):
+                raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+            definition = CanvasViewDefinition.model_validate(entry.get('definition')).model_dump()
+            if definition != entry['definition'] or digest(definition) != entry.get('definition_digest'):
+                raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+        if len(entries) != row['version']:
+            raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+        return entries
+
+    def history(self, nid, scope, actor, rid, guard=lambda: None):
+        incarnation, current = self.graph._context(nid, scope, actor, guard)
+        with self.graph.asset_inputs.phase(nid, scope, actor, current) as state:
+            row = self._owned(nid, scope, actor, rid, state)
+            items = []
+            for entry in self._history_entries(nid, scope, actor, row):
+                states = self._states(nid, scope, actor, entry['definition'], current)
+                definition = deepcopy(entry['definition'])
+                unavailable = {value['card_id'] for value in states if value['state'] == 'UNAVAILABLE'}
+                for card in definition['cards']:
+                    if card['id'] in unavailable:
+                        card.pop('asset')
+                items.append({key: deepcopy(entry[key]) for key in
+                    ('version', 'definition_digest', 'created_at', 'updated_at')} |
+                    {'definition': definition, 'reference_states': states,
+                     'can_restore': entry['version'] < row['version'] and
+                         all(value['state'] == 'CURRENT_METADATA' for value in states)})
+            current()
+            return {'project_id': nid, 'scope': deepcopy(scope), 'id': rid,
+                'incarnation': incarnation, 'current_version': row['version'],
+                'current_definition_digest': row['definition_digest'], 'items': items,
+                'restore_policy': 'CURRENT_METADATA_ONLY', 'execution_authority': False,
+                'binary_content_verified': False}
+
+    def restore(self, nid, scope, actor, rid, value, guard=lambda: None):
+        body = CanvasViewRestore.model_validate(value)
+        incarnation, current = self.graph._context(nid, scope, actor, guard)
+        if body.expected_incarnation != incarnation:
+            raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
+        with self.graph.asset_inputs.transaction(nid, scope, actor, current) as state:
+            row = self._owned(nid, scope, actor, rid, state)
+            check_version(row, body.expected_version)
+            if row['definition_digest'] != body.expected_definition_digest:
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
+            entries = self._history_entries(nid, scope, actor, row)
+            target = next((entry for entry in entries[:-1] if entry['version'] == body.restore_version), None)
+            if target is None:
+                raise ValueError('CREATIVE_CANVAS_RESTORE_HISTORY_VERSION_REQUIRED')
+            if target['definition_digest'] != body.restore_definition_digest:
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_HISTORY_CHANGED')
+            definition = deepcopy(target['definition'])
+            if any(item['state'] != 'CURRENT_METADATA' for item in
+                    self._states(nid, scope, actor, definition, current)):
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_SOURCE_UNRESOLVED')
+            change_row(row, actor, body.expected_version, lambda value: value.update(
+                definition=definition, definition_digest=target['definition_digest']))
+            self.graph._capacity(state)
+            current()
+        return self.get(nid, scope, actor, rid, current)

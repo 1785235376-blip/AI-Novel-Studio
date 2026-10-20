@@ -12,6 +12,9 @@ export type CanvasViewRecord = StudioGraphOwner & { id: string; version: number;
   created_at: string; updated_at: string; reference_states: CanvasReferenceState[]; execution_authority: false; binary_content_verified: false;
   capacity: { history_used: number; record_bytes: number } };
 export type CanvasViewSummary = Pick<CanvasViewRecord, 'id' | 'version' | 'definition_digest' | 'created_at' | 'updated_at'> & { title: string; card_count: number };
+export type CanvasViewHistoryItem = Pick<CanvasViewRecord, 'version' | 'definition' | 'definition_digest' | 'reference_states' | 'created_at' | 'updated_at'> & { can_restore: boolean };
+export type CanvasViewHistory = StudioGraphOwner & { id: string; incarnation: string; current_version: number; current_definition_digest: string;
+  items: CanvasViewHistoryItem[]; restore_policy: 'CURRENT_METADATA_ONLY'; execution_authority: false; binary_content_verified: false };
 function invalid(): never { throw new ApiError({ status: 422, code: 'STUDIO_CANVAS_VIEW_INVALID', message: '媒体画布数据不完整或已经变化，请重新读取。' }); }
 function object(v: unknown): Record<string, unknown> { if (!v || typeof v !== 'object' || Array.isArray(v)) invalid(); return v as Record<string, unknown>; }
 function keys(v: Record<string, unknown>, allowed: string[]) { if (Object.keys(v).some(k => !allowed.includes(k))) invalid(); }
@@ -78,7 +81,36 @@ export function createCanvasViewClient(projectId: string, transport: StudioGraph
     return { ...ownership, id, version: integer(r.version), definition, definition_digest: digest(r.definition_digest), created_at: text(r.created_at, 128), updated_at: text(r.updated_at, 128),
       reference_states: states, execution_authority: false, binary_content_verified: false, capacity: { history_used: integer(capacity.history_used, 0, 20), record_bytes: integer(capacity.record_bytes, 1, 2_000_000) } };
   }
+  function history(v: unknown, expectedId?: string): CanvasViewHistory {
+    const r = object(v); keys(r, ['project_id', 'scope', 'id', 'incarnation', 'current_version', 'current_definition_digest', 'items', 'restore_policy', 'execution_authority', 'binary_content_verified']);
+    const ownership = owner(r), id = text(r.id), currentVersion = integer(r.current_version, 1, 21);
+    if (expectedId !== undefined && id !== expectedId || r.restore_policy !== 'CURRENT_METADATA_ONLY' || r.execution_authority !== false || r.binary_content_verified !== false) invalid();
+    const items = list(r.items, 21).map((value, index): CanvasViewHistoryItem => {
+      const item = object(value); keys(item, ['version', 'definition', 'definition_digest', 'reference_states', 'created_at', 'updated_at', 'can_restore']);
+      const parsed = record({ ...ownership, id, version: item.version, definition: item.definition, definition_digest: item.definition_digest,
+        reference_states: item.reference_states, created_at: item.created_at, updated_at: item.updated_at,
+        capacity: { history_used: 0, record_bytes: 1 }, execution_authority: false, binary_content_verified: false }, id);
+      if (parsed.version !== index + 1 || typeof item.can_restore !== 'boolean'
+        || item.can_restore !== (parsed.version < currentVersion && parsed.reference_states.every(state => state.state === 'CURRENT_METADATA'))) invalid();
+      const { capacity: _capacity, project_id: _project, scope: _scope, execution_authority: _execution, binary_content_verified: _binary, id: _id, ...snapshot } = parsed;
+      return { ...snapshot, can_restore: item.can_restore };
+    });
+    if (items.length !== currentVersion || items.at(-1)?.definition_digest !== r.current_definition_digest) invalid();
+    return { ...ownership, id, incarnation: text(r.incarnation), current_version: currentVersion, current_definition_digest: digest(r.current_definition_digest),
+      items, restore_policy: 'CURRENT_METADATA_ONLY', execution_authority: false, binary_content_verified: false };
+  }
   return {
+    history: async (id: string, signal?: AbortSignal) => history(await transport.json<unknown>(`${base}/${encodeURIComponent(text(id))}/history`, 'GET', undefined, signal), id),
+    restore: async (source: CanvasViewHistory, restoreVersion: number) => {
+      const captured = history(source), target = captured.items.find(item => item.version === integer(restoreVersion));
+      if (!target?.can_restore) invalid();
+      const definition = checkedCanvasDefinition(target.definition, true), expected = captured.current_version, targetDigest = target.definition_digest;
+      const result = record(await transport.json<unknown>(`${base}/${encodeURIComponent(captured.id)}/restore`, 'POST', {
+        expected_version: expected, expected_definition_digest: captured.current_definition_digest, expected_incarnation: captured.incarnation,
+        restore_version: target.version, restore_definition_digest: targetDigest }), captured.id);
+      if (result.version !== expected + 1 || result.definition_digest !== targetDigest || JSON.stringify(result.definition) !== JSON.stringify(definition)) invalid();
+      return result;
+    },
     list: async (signal?: AbortSignal) => { const r = object(await transport.json<unknown>(base, 'GET', undefined, signal)); keys(r, ['items', 'execution_authority']); if (r.execution_authority !== false) invalid();
       const items = list(r.items, 8).map(summary); if (new Set(items.map(x => x.id)).size !== items.length) invalid(); return { items }; },
     get: async (id: string, signal?: AbortSignal) => record(await transport.json<unknown>(`${base}/${encodeURIComponent(text(id))}`, 'GET', undefined, signal), id),
