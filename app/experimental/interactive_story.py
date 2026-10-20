@@ -26,7 +26,7 @@ from ..services.v1_capability_service import CapabilityVersionConflict
 from .interactive_export_contract import (
     CONTRACT_SCHEMA, CONTRACT_VERSION, TARGETS_SCHEMA, all_target_descriptors, available_target_ids,
     build_export_bundle, compatibility_report, contract_document, evidence_for, package_export_zip,
-    probe_engine,
+    probe_engine, single_target_exportable,
 )
 
 FEATURE = 'interactive_story_v2'
@@ -783,8 +783,10 @@ class InteractiveStoryService(SourceFencedService):
             target_id = descriptor['target_id']
             compatibility = compatibility_report(target_id, snapshot)
             evidence = evidence_for(target_id)
+            single_export_ready = single_target_exportable(target_id)
             rows.append({**descriptor, 'compatibility': compatibility, 'engine_probe': probe_engine(descriptor.get('engine')),
-                         'evidence': evidence, 'export_ready': approved and compatibility['can_export'],
+                         'evidence': evidence, 'single_export_ready': single_export_ready,
+                         'export_ready': approved and compatibility['can_export'] and single_export_ready,
                          'runtime_claim': self._runtime_claim(evidence)})
         return snapshot, rows
 
@@ -833,7 +835,7 @@ class InteractiveStoryService(SourceFencedService):
             matching = [target for target in targets if target['target_id'] == data.target_id]
             if not matching: raise ValueError('UNKNOWN_EXPORT_TARGET')
             result['target_id'] = data.target_id; result['selected_target'] = matching[0]
-            result['can_export'] = result['can_export'] and matching[0]['compatibility']['can_export']
+            result['can_export'] = result['can_export'] and matching[0]['compatibility']['can_export'] and matching[0]['single_export_ready']
             result['losses'] = list(dict.fromkeys([*result['losses'], *matching[0]['compatibility']['losses']]))
         # Engine detection is host state, not story authority; it must never change
         # the reproducible preview digest used to bind the export.
@@ -848,6 +850,7 @@ class InteractiveStoryService(SourceFencedService):
         if not preview['can_export']: raise ValueError('approve exact current story before export')
         row = self._owned(nid, scope, actor, sid); self._version(row, data.expected_version); self._current(nid, scope, row)
         if data.target_id:
+            if not single_target_exportable(data.target_id): raise ValueError('EXPORT_TARGET_NOT_SINGLE_EXPORTABLE')
             snapshot = self._snapshot(nid, scope, row, preview['analysis'])
             bundle = build_export_bundle(data.target_id, snapshot, {'include_witness': True, 'target_options': {}})
             package = package_export_zip(bundle)

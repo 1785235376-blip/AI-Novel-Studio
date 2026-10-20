@@ -363,6 +363,16 @@ def describe_target(target_id: str) -> TargetDescriptor:
     return descriptor
 
 
+def single_target_exportable(target_id: str) -> bool:
+    """Only a landed adapter can produce a standalone target project bundle.
+
+    Legacy fragment/data ids stay selectable for compatibility reporting and are
+    still included by the legacy multi-target export, but they are not offered as
+    a standalone project download.
+    """
+    return target_id not in LEGACY_TARGETS and _module(target_id) is not None
+
+
 def all_target_descriptors() -> list[dict]:
     return [describe_target(target_id).model_dump(mode='json') for target_id in available_target_ids()]
 

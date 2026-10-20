@@ -128,7 +128,7 @@ def test_evidence_levels_default_to_not_run_and_never_upgrade(fake_target):
     assert evidence['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
     contract.EVIDENCE_OVERRIDES[FAKE_TARGET] = {'TARGET_RUNTIME_EXECUTED': 'PASS'}
     assert contract.evidence_for(fake_target)['TARGET_RUNTIME_EXECUTED'] == 'PASS'
-    with pytest.raises(ValueError): contract.evidence_for('NO_SUCH_TARGET') if False else contract.TargetDescriptor.model_validate({**FAKE_DESCRIPTOR, 'evidence': {'SOURCE_IMPLEMENTED': 'MAYBE'}})
+    assert contract.evidence_for('NO_SUCH_TARGET')['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
     bundle = contract.build_export_bundle(fake_target, snapshot())
     assert bundle.manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
 
@@ -296,9 +296,7 @@ def test_service_export_targets_and_target_bundle(interactive_env, fake_target):
     assert manifest['target_kind'] == 'RUNNABLE_PROJECT' and manifest['contract_version'] == contract.CONTRACT_VERSION
     assert manifest['runtime']['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
     assert json.loads(files['data/story.json'])['story_id'] == row['id']
-    contract.verify_bundle(contract.ExportBundle.model_validate({
-        **out['manifest'], 'files': files, 'target_id': fake_target,
-    })) if False else None
+    assert manifest['story']['spec_digest'] == hashlib.sha256(json.dumps(row['spec'], ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()
 
 
 def test_preview_digest_is_host_independent_and_unknown_target_rejected(interactive_env, fake_target, monkeypatch):
@@ -321,7 +319,7 @@ def test_incompatible_target_blocks_export_but_legacy_bundle_stays(interactive_e
     with pytest.raises(ValueError): e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': fake_target, 'preview_digest': preview['preview_digest']})
     monkeypatch.setattr(story_service, 'compatibility_report', original)
     legacy = e.service.export_preview(e.nid, e.scope, 'author', row['id'], value)
-    assert legacy['can_export'] is True and legacy['target_id'] is None if 'target_id' in legacy else legacy['can_export'] is True
+    assert legacy['can_export'] is True and 'target_id' not in legacy
     legacy_out = e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'preview_digest': legacy['preview_digest']})
     with zipfile.ZipFile(io.BytesIO(base64.b64decode(legacy_out['content_base64']))) as archive:
         names = archive.namelist()
@@ -337,3 +335,18 @@ def test_target_export_requires_approved_current_revision(interactive_env, fake_
     preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': fake_target})
     assert preview['can_export'] is False and preview['selected_target']['export_ready'] is False
     with pytest.raises(ValueError): e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': fake_target, 'preview_digest': preview['preview_digest']})
+
+
+def test_legacy_targets_are_compatibility_only_and_never_standalone(interactive_env, fake_target):
+    e = interactive_env; row = create_approved(e); value = {'expected_version': row['version']}
+    assert contract.single_target_exportable('RENPY_8_5_4_TEXT_MENU_SUBSET') is False
+    assert contract.single_target_exportable('GODOT_4_DATA_ADAPTER') is False
+    assert contract.single_target_exportable(fake_target) is True
+    targets = e.service.export_targets(e.nid, e.scope, 'author', row['id'], value)
+    legacy = next(item for item in targets['targets'] if item['target_id'] == 'RENPY_8_5_4_TEXT_MENU_SUBSET')
+    assert legacy['export_ready'] is False and legacy['single_export_ready'] is False
+    assert legacy['compatibility']['capabilities']['save']['supported'] is False
+    preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': 'RENPY_8_5_4_TEXT_MENU_SUBSET'})
+    assert preview['can_export'] is False and preview['selected_target']['single_export_ready'] is False
+    with pytest.raises(ValueError):
+        e.service.export(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': 'RENPY_8_5_4_TEXT_MENU_SUBSET', 'preview_digest': preview['preview_digest']})
