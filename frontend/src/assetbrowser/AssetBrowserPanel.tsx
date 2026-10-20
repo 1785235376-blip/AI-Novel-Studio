@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CollaborationContext } from '../api';
 import type { StudioAsset } from '../creative/studioClient';
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
@@ -10,6 +10,7 @@ import { AssetComparePanel, type AssetMediaSlot } from './AssetComparePanel';
 import { AssetFilters, AssetPager } from './AssetFilters';
 import { AssetGrid } from './AssetGrid';
 import { AssetSendToPanel } from './AssetSendToPanel';
+import { loadAssetComparisonPreview, type AssetComparisonDownload } from './assetComparisonPreview';
 import { compareVersions } from './assetBrowserOps';
 import {
   ASSET_BROWSER_NOTICES, ASSET_BROWSER_UNVERIFIED,
@@ -79,8 +80,8 @@ export function AssetBrowserPanel({
     : Promise.reject(new Error('no-download')), [client]);
 
   const [otherId, setOtherId] = useState<string | null>(null);
-  const [otherAsset, setOtherAsset] = useState<AssetBrowserAsset>();
-  const [compareError, setCompareError] = useState('');
+  const [otherResult, setOtherResult] = useState<{ token: object; asset: AssetBrowserAsset }>();
+  const [compareFailure, setCompareFailure] = useState<{ token: object; message: string }>();
   const [zoom, setZoom] = useState(1);
   const [activeSlot, setActiveSlot] = useState<AssetMediaSlot | null>(null);
   const [showCompare, setShowCompare] = useState(false);
@@ -105,18 +106,55 @@ export function AssetBrowserPanel({
     });
   }, [controller.rows, controller.selectedId, selectedRow?.filename, detail]);
 
-  // 对比目标按需读取：只有被选中时才发一次请求。
+  const fatal = denied || controller.state === 'DENIED';
+  const authorityCurrent = isCurrent();
+  const candidateKey = JSON.stringify(candidates);
+  const detailKey = detail && JSON.stringify([detail.id, detail.version, detail.digest, detail.size, detail.media_type, detail.kind, detail.media_kind, detail.branch_id, detail.deleted]);
+  // A -> B -> A creates a fresh token: a late result can never revive a former session.
+  const compareToken = useMemo(() => ({}),
+    [identity, scopeKey, client, read, active, fatal, authorityCurrent, showCompare, detailKey, candidateKey, otherId]);
+  const latestCompare = useRef(compareToken), latestCurrent = useRef(isCurrent);
+  latestCompare.current = compareToken; latestCurrent.current = isCurrent;
+  const comparisonCurrent = useCallback(() => latestCompare.current === compareToken
+    && active && !fatal && showCompare && latestCurrent.current(), [compareToken, active, fatal, showCompare]);
+  const otherAsset = otherResult?.token === compareToken ? otherResult.asset : undefined;
+  const compareError = compareFailure?.token === compareToken ? compareFailure.message : '';
+
+  // Only an explicitly selected, disclosed target can be read in the current scope.
   useEffect(() => {
-    setOtherAsset(undefined); setCompareError('');
-    if (!otherId || !active || denied || otherId === controller.selectedId) return;
-    let cancelled = false;
-    void read(() => client.readAsset(otherId)).then(value => {
-      if (!cancelled) setOtherAsset(value);
+    const candidate = candidates.find(value => value.id === otherId);
+    if (!candidate || !detail || !comparisonCurrent()) return;
+    const abort = new AbortController();
+    const current = () => !abort.signal.aborted && comparisonCurrent();
+    void read(() => {
+      if (!current()) throw new Error('stale-comparison');
+      return client.readAsset(candidate.id, abort.signal);
+    }).then(value => {
+      if (!current()) return;
+      if (value.id !== candidate.id || value.deleted || value.branch_id !== (scope?.branchId || null)
+          || (candidate.version !== null && value.version !== candidate.version)
+          || (candidate.digest && value.digest !== candidate.digest)) throw new Error('changed-comparison');
+      setOtherResult({ token: compareToken, asset: value });
     }).catch(() => {
-      if (!cancelled) setCompareError('对比版本读取失败；当前对比未变，选择保持不变。');
+      if (current()) setCompareFailure({ token: compareToken,
+        message: '对比版本读取失败或已变化；未显示旧预览，选择保持不变。' });
     });
-    return () => { cancelled = true; };
-  }, [otherId, active, denied, read, client, controller.selectedId]);
+    return () => abort.abort();
+    // Candidate / detail snapshots are captured by compareToken, not object identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compareToken, comparisonCurrent]);
+
+  const downloadComparison = useCallback<AssetComparisonDownload>((asset, slotCurrent) => {
+    const current = () => comparisonCurrent() && slotCurrent();
+    return read(() => {
+      if (!current() || asset.branch_id !== (scope?.branchId || null)) throw new Error('stale-comparison');
+      return loadAssetComparisonPreview(client, asset, current);
+    }).then(blob => {
+      if (!current()) throw new Error('stale-comparison');
+      return blob;
+    });
+  }, [client, read, comparisonCurrent, scope?.branchId]);
+  useEffect(() => { setActiveSlot(null); setZoom(1); }, [compareToken]);
 
   const comparison: AssetBrowserCompareResult | undefined = useMemo(
     () => detail && otherAsset ? compareVersions(detail, otherAsset) : undefined,
@@ -126,7 +164,6 @@ export function AssetBrowserPanel({
     setActiveSlot(current => current === slot ? null : current);
   }, []);
 
-  const fatal = denied || controller.state === 'DENIED';
   const impact = controller.impact();
   const deleteImpact = controller.deleteImpact();
 
@@ -186,8 +223,8 @@ export function AssetBrowserPanel({
           </div>
         </div>
 
-        {showCompare && detail && <AssetComparePanel current={detail} candidates={candidates} otherId={otherId}
-          comparison={comparison} download={download} onPick={assetId => { setOtherId(assetId); setZoom(1); }}
+        {showCompare && active && authorityCurrent && detail && <AssetComparePanel current={detail} other={otherAsset} candidates={candidates} otherId={otherId}
+          comparison={comparison} download={downloadComparison} onPick={assetId => { setOtherId(assetId || null); setActiveSlot(null); setZoom(1); }}
           onZoom={setZoom} onStartPlayback={setActiveSlot} onStopPlayback={stopPlayback}
           activeSlot={activeSlot} zoom={zoom}/>}
         {showCompare && !detail && <StatusMessage tone="warning">

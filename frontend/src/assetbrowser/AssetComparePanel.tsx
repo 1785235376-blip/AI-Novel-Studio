@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { AssetComparisonDownload } from './assetComparisonPreview';
 import { Button, StatusMessage } from '../ui/primitives';
 import { ASSET_BROWSER_NOTICES, ASSET_BROWSER_UNVERIFIED,
   type AssetBrowserAsset, type AssetBrowserCompareResult } from './assetBrowserTypes';
@@ -22,39 +23,64 @@ function MediaSurface({
   onStartPlayback: (slot: AssetMediaSlot) => void;
   onStopPlayback: (slot: AssetMediaSlot) => void;
   onZoom: (value: number) => void;
-  download?: (assetId: string) => Promise<Blob>;
+  download?: AssetComparisonDownload;
 }) {
   const kind = asset.media_kind;
   const [url, setUrl] = useState('');
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'READY' | 'FAILED'>('IDLE');
   const media = useRef<HTMLVideoElement & HTMLAudioElement>(null);
   const objectUrl = useRef('');
+  const epoch = useRef(0), pending = useRef(false), alive = useRef(false);
+  const snapshot = JSON.stringify([asset.id, asset.version, asset.digest, asset.size, asset.media_type, asset.kind, asset.media_kind, asset.branch_id, asset.deleted]);
 
-  useEffect(() => () => { if (objectUrl.current) URL.revokeObjectURL(objectUrl.current); }, []);
-  // 一旦不再是活动槽（切换素材 / 版本 / 用户停止），立刻停止旧播放。
+  // Before paint: no old bytes or playback survive a version / scope / reader change.
+  useLayoutEffect(() => {
+    epoch.current++; pending.current = false; alive.current = true;
+    setUrl(''); setState('IDLE');
+    return () => {
+      epoch.current++; pending.current = false; alive.current = false;
+      const node = media.current;
+      if (node) { try { node.pause(); node.currentTime = 0; } catch { /* not loaded */ } }
+      if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
+      objectUrl.current = '';
+    };
+  }, [snapshot, download]);
   useEffect(() => {
     if (activeSlot === slot) return;
     const node = media.current;
-    if (node) { try { node.pause(); node.currentTime = 0; } catch { /* 尚未加载完成时忽略 */ } }
-  }, [activeSlot, slot, asset.id]);
-  // 素材换了就必须停掉旧的媒体节点，避免上一个版本继续出声。
-  useEffect(() => {
-    setUrl(''); setState('IDLE');
-  }, [asset.id]);
+    if (node) { try { node.pause(); node.currentTime = 0; } catch { /* not loaded */ } }
+  }, [activeSlot, slot]);
 
   async function load() {
-    if (!download || state === 'LOADING') return;
+    if (!download || pending.current || !alive.current) return;
+    pending.current = true;
+    const request = epoch.current;
+    const current = () => alive.current && epoch.current === request;
     setState('LOADING');
+    // A failed re-read must not leave old media looking like a verified result.
+    if (media.current) { try { media.current.pause(); media.current.currentTime = 0; } catch { /* not loaded */ } }
+    onStopPlayback(slot);
+    if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
+    objectUrl.current = ''; setUrl('');
     try {
-      const blob = await download(asset.id);
-      if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
+      const blob = await download(asset, current);
+      if (!current()) return;
       objectUrl.current = URL.createObjectURL(blob);
-      setUrl(objectUrl.current);
-      setState('READY');
+      setUrl(objectUrl.current); setState('READY');
     } catch {
-      // 预览失败：**保持当前选择**，只解释原因。
-      setState('FAILED');
+      if (current()) setState('FAILED');
+    } finally {
+      if (current()) pending.current = false;
     }
+  }
+
+  function mediaFailed(failedUrl: string) {
+    // Ignore a decoder event from an element that has already been replaced.
+    if (!alive.current || !failedUrl || objectUrl.current !== failedUrl) return;
+    if (media.current) { try { media.current.pause(); media.current.currentTime = 0; } catch { /* not loaded */ } }
+    onStopPlayback(slot);
+    URL.revokeObjectURL(objectUrl.current); objectUrl.current = '';
+    setUrl(''); setState('FAILED');
   }
 
   if (kind === null) {
@@ -69,7 +95,7 @@ function MediaSurface({
       <Button type="button" variant="ghost" disabled={!canDownload || state === 'LOADING'} onClick={() => void load()}>
         {url ? '重新读取图片' : '读取图片预览'}
       </Button>
-      {url && <img src={url} alt={`${asset.filename} 预览`} style={{ transform: `scale(${zoom})` }}/>}
+      {url && <img src={url} alt={`${asset.filename} 预览`} onError={() => mediaFailed(url)} style={{ transform: `scale(${zoom})` }}/>}
       <div className="asset-browser__actions" role="group" aria-label="图片缩放">
         {ZOOM_STEPS.map(step => <Button key={step} type="button" variant="ghost" aria-pressed={zoom === step}
           onClick={() => onZoom(step)}>{step}×</Button>)}
@@ -79,14 +105,14 @@ function MediaSurface({
       <Button type="button" variant="ghost" disabled={!canDownload || state === 'LOADING'} onClick={() => void load()}>
         {url ? '重新读取音频' : '读取音频预览（需你主动开始）'}
       </Button>
-      {url && <audio ref={media} src={url} controls preload="none" aria-label={`${asset.filename} 音频预览`}
+      {url && <audio ref={media} src={url} controls preload="none" onError={() => mediaFailed(url)} aria-label={`${asset.filename} 音频预览`}
         onPlay={() => onStartPlayback(slot)} onPause={() => { if (activeSlot === slot) onStopPlayback(slot); }}/>}
     </>}
     {kind === 'video' && <>
       <Button type="button" variant="ghost" disabled={!canDownload || state === 'LOADING'} onClick={() => void load()}>
         {url ? '重新读取视频' : '读取视频预览（需你主动开始）'}
       </Button>
-      {url && <video ref={media} src={url} controls preload="none" aria-label={`${asset.filename} 视频预览`}
+      {url && <video ref={media} src={url} controls preload="none" onError={() => mediaFailed(url)} aria-label={`${asset.filename} 视频预览`}
         onPlay={() => onStartPlayback(slot)} onPause={() => { if (activeSlot === slot) onStopPlayback(slot); }}/>}
     </>}
     {(kind === 'audio' || kind === 'video') && activeSlot === slot
@@ -105,14 +131,15 @@ function MediaSurface({
  * - 旧的版本列表来自 owner 已披露的来源投影（调用方传入），这里**不**发明版本历史。
  */
 export function AssetComparePanel({
-  current, candidates, otherId, comparison, download, onPick, onZoom, onStartPlayback, onStopPlayback,
+  current, other, candidates, otherId, comparison, download, onPick, onZoom, onStartPlayback, onStopPlayback,
   activeSlot, zoom,
 }: {
   current: AssetBrowserAsset;
+  other?: AssetBrowserAsset;
   candidates: readonly { id: string; version: number | null; digest: string; label: string }[];
   otherId: string | null;
   comparison?: AssetBrowserCompareResult;
-  download?: (assetId: string) => Promise<Blob>;
+  download?: AssetComparisonDownload;
   onPick: (assetId: string) => void;
   onZoom: (value: number) => void;
   onStartPlayback: (slot: AssetMediaSlot) => void;
@@ -142,12 +169,12 @@ export function AssetComparePanel({
       </Button>
     </div>
     <div className="asset-browser__compare-grid">
-      <div className="asset-browser__compare-side">
+      <div className="asset-browser__compare-side" role="group" aria-label="当前版本预览">
         <h4>当前 v{current.version ?? ASSET_BROWSER_UNVERIFIED}</h4>
         <MediaSurface asset={current} slot="LEFT" zoom={zoom} activeSlot={activeSlot}
           onStartPlayback={onStartPlayback} onStopPlayback={onStopPlayback} onZoom={onZoom} download={download}/>
       </div>
-      <div className="asset-browser__compare-side">
+      <div className="asset-browser__compare-side" role="group" aria-label="对比版本预览">
         <h4>对比版本</h4>
         {candidates.length === 0
           ? <p className="asset-browser__note">原 owner 未披露任何可对比版本；无法对比。</p>
@@ -161,8 +188,14 @@ export function AssetComparePanel({
                 </option>)}
               </select>
             </label>
+            {other && other.id === otherId && <>
+              <p className="asset-browser__note">{other.filename} · v{other.version ?? ASSET_BROWSER_UNVERIFIED}</p>
+              <MediaSurface asset={other} slot="RIGHT" zoom={zoom} activeSlot={activeSlot}
+                onStartPlayback={onStartPlayback} onStopPlayback={onStopPlayback} onZoom={onZoom} download={download}/>
+            </>}
+            {otherId && !other && <p className="asset-browser__note">对比版本尚未核实，预览未读取。</p>}
             {comparison && <p className="asset-browser__note">
-              对比目标 {comparison.right_id} · {comparison.same_asset ? '同一资产的不同版本' : '不同资产（内容不同）'}
+              对比目标 {comparison.right_id} · {comparison.same_asset ? '同一资产的不同版本' : '不同资产（内容以 SHA-256 核对）'}
             </p>}
           </>}
       </div>
