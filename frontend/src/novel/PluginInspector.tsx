@@ -3,6 +3,8 @@ import { KeyRound, Plug, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { Badge, Button, EmptyState } from "../ui/primitives";
 import { KIND_LABEL, formatResourceKinds, publisherLabel, type PluginCatalogSummary } from "./PluginManagerPanel";
+import { PluginResourceDetail } from "./PluginResourceDetail";
+import { resourceDetailPin } from "./pluginResourceDetailContract";
 import "./PluginInspector.css";
 
 export type PluginResourceSummary = {
@@ -146,6 +148,8 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
           <ul>
             {resources.map((resource) => {
               const digest = shaShort(resource);
+              const pin = resourceDetailPin(inspection.id, catalog, resource);
+              const name = resource.summary?.name || resource.name || resource.resource_id;
               return (
                 <li key={resource.resource_id}>
                   <KeyRound aria-hidden="true" size={12}/>
@@ -153,6 +157,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
                     <strong>{resource.summary?.name || resource.name || resource.resource_id}</strong>
                     <span>{KIND_LABEL[resource.kind] || resource.kind}{resource.schema_version ? ` · schema ${resource.schema_version}` : ""}{digest ? ` · SHA-256 ${digest}` : ""}{resource.validated ? " · 已校验" : ""}</span>
                     {resource.summary?.description || resource.description ? <span>{resource.summary?.description || resource.description}</span> : null}
+                    {pin && <PluginResourceDetail key={JSON.stringify([readKey, pin])} pin={pin} name={name} ownerKey={readKey} />}
                   </div>
                 </li>
               );
@@ -160,7 +165,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
           </ul>
         )}
       </section>
-      <p className="novel-help">密钥、插件代码、绝对路径和运行时响应不会在此面板展示。发布者字段不是签名。代码执行：当前禁止。</p>
+      <p className="novel-help">正文仅作为文本展示，不读取凭据、加载插件代码、解析主机路径或请求正文链接。发布者字段不是签名。代码执行：当前禁止。</p>
     </section>
   );
 }
