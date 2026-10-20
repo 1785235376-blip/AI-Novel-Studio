@@ -368,6 +368,7 @@ function mainMode(args) {
         failures = failures.concat(compareState(current, caseValue.states[position + 1]));
       }
       record.steps = current.ink_state.ans_steps;
+      record.states_checked = caseValue.states.length;
       record.final_status = caseValue.states[caseValue.states.length - 1].status;
       if (current.ink_state.ans_status !== caseValue.states[caseValue.states.length - 1].ink_state.ans_status) {
         failures.push({ check: 'status', detail: 'final ans_status differs from witness' });
@@ -388,6 +389,9 @@ function mainMode(args) {
   }
   report.runtime.artifact_consumed = report.compile.success && report.runtime.cases.length > 0;
   report.runtime.artifact_sha256 = report.compile.artifact_sha256;
+  report.runtime.states_compared = report.runtime.cases.reduce(function (total, value) {
+    return total + (value.states_checked || 0);
+  }, 0);
 
   const allCasesPassed = report.runtime.cases.every(function (value) { return value.passed; });
   const endings = report.runtime.cases.filter(function (value) { return value.kind === 'ENDING'; });
