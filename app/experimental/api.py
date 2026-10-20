@@ -691,6 +691,7 @@ from ..creative.graph import CreativeGraphService
 
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
+portable_projects_service.workspace = independent_workspace_service
 creative_service.configure_adaptation_assets(independent_workspace_service)
 from .comic_author_archive_api import create_comic_author_archive_router
 router.include_router(create_comic_author_archive_router(comic_layouts_service, authorize, require_flag,

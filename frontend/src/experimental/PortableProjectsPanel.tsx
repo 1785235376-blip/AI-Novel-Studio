@@ -4,7 +4,7 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
-import { portableProjectsClient, readPortableFile, downloadPortableBlob, type StoragePreview } from './portableProjectsClient';
+import { portableProjectsClient, readPortableFile, downloadPortableBlob, type StoragePreview, type PortableRecord, type ImageReferenceReview } from './portableProjectsClient';
 type CachePolicy = { version: number; limit_bytes: number | null };
 type CacheBudget = {
   policy: CachePolicy; state: string; excess_bytes: number | null;
@@ -76,6 +76,66 @@ function CacheBudgetEditor({ client, budget, disabled, run, onDirty, onSaved, on
   </section>;
 }
 let nextScope = 0;
+function checkedReference(row: PortableRecord, review: ImageReferenceReview | undefined): review is ImageReferenceReview {
+  const reference = row.image_reference, media = row.media || [], map = row.id_map?.media;
+  const pin = (value: ImageReferenceReview['source'] | undefined, alias: string | undefined) => !!value && !!alias &&
+    value.ref === alias && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(value.id) && value.id === map?.[alias] &&
+    Number.isSafeInteger(value.version) && value.version >= 1 && /^[a-f0-9]{64}$/.test(value.sha256) &&
+    media.find(m => m.ref === alias)?.state === 'AVAILABLE' && media.find(m => m.ref === alias)?.sha256 === value.sha256;
+  return !!reference && reference.type === 'REFERENCES' && reference.source !== reference.target && media.length === 2 &&
+    !!review && review.type === 'REFERENCES' && review.target_id === row.target_id &&
+    /^(file|postgres):[a-f0-9-]{36}$/.test(review.incarnation) && /^[a-f0-9]{64}$/.test(review.preview_digest) &&
+    review.semantics === 'NEW_AUTHOR_DECLARATION_NOT_DERIVATION_APPROVAL_OR_EXECUTION' &&
+    pin(review.source, reference.source) && pin(review.target, reference.target) && review.source.id !== review.target.id;
+}
+function PortableImageReferenceRecovery({ row, client, disabled, reload }: { row: PortableRecord; client: ExperimentalClient; disabled: boolean; reload: () => void }) {
+  const api = useMemo(() => portableProjectsClient(client), [client]), action = useReviewAction();
+  const [preview, setPreview] = useState<PortableRecord>(); const [consent, setConsent] = useState(false); const [uncertain, setUncertain] = useState(false);
+  const live = useRef({ row, disabled, claimed: false }); live.current.row = row; live.current.disabled = disabled;
+  const alive = useRef(true); useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const known = row.reference_state === 'PENDING' || row.reference_state === 'PREVIEW';
+  const reviewed = preview && checkedReference(row, preview.reference_review) && preview.reference_state === 'PREVIEW' ? preview : undefined;
+  const blocked = disabled || action.busy || uncertain || !known;
+  const current = () => alive.current && live.current.row === row && !live.current.disabled;
+  return <section aria-label="两图片参考关系恢复">
+    <h4>两图片参考关系恢复</h4>
+    <p>仅恢复一条 REFERENCES 作者声明。图片恢复不会自动添加关系。请先通过原 Studio 入口打开新项目，再回到本记录预览新身份与摘要；不会恢复派生、审批或执行关系。</p>
+    <p>关系状态：{row.reference_state || '未知'}</p>
+    {(uncertain || row.reference_state === 'UNKNOWN' || row.reference_state === 'APPLYING') && <StatusMessage tone="warning">关系写入结果未确认，禁止重发。请通过新项目的原资产关系入口核对；保留图片与映射。</StatusMessage>}
+    {row.reference_state === 'RESTORED' && row.reference_receipt && <StatusMessage tone="success">参考关系已保存。重新打开新项目可查看该关系。</StatusMessage>}
+    {!!action.error && <ErrorMessage error={action.error} />}
+    <Button disabled={blocked || !!reviewed} onClick={() => {
+      if (!current() || blocked || reviewed || live.current.claimed) return;
+      live.current.claimed = true; setConsent(false); setPreview(undefined);
+      void action.run(async valid => {
+        try {
+          const saved = await api.previewReference(row);
+          if (!valid() || !current()) return;
+          if (saved.id !== row.id || saved.version !== row.version + 1 || saved.snapshot_digest !== row.snapshot_digest || saved.target_id !== row.target_id || !checkedReference(row, saved.reference_review) || saved.reference_state !== 'PREVIEW') throw new ApiError({ status: 502, code: 'PORTABLE_REFERENCE_PREVIEW_INVALID', message: '关系预览响应无法核实，请刷新记录。' });
+          setPreview(saved);
+        } finally { live.current.claimed = false; }
+      });
+    }}>仅预览两图片新身份与参考关系</Button>
+    {reviewed && <>
+      <Field label="新关系来源图片"><input readOnly value={`${reviewed.reference_review!.source.ref} → ${reviewed.reference_review!.source.id} · v${reviewed.reference_review!.source.version}`} /></Field>
+      <Field label="来源图片 SHA-256"><input readOnly value={reviewed.reference_review!.source.sha256} /></Field>
+      <Field label="新关系目标图片"><input readOnly value={`${reviewed.reference_review!.target.ref} → ${reviewed.reference_review!.target.id} · v${reviewed.reference_review!.target.version}`} /></Field>
+      <Field label="目标图片 SHA-256"><input readOnly value={reviewed.reference_review!.target.sha256} /></Field>
+      <label className="experimental-check"><input type="checkbox" disabled={blocked} checked={consent} onChange={e => { if (current() && !blocked) setConsent(e.target.checked); }} />已核对两图片新身份、版本和摘要，确认添加这一条 REFERENCES 作者声明</label>
+      <Button disabled={blocked || !consent} onClick={() => {
+        if (!current() || blocked || !consent || live.current.claimed) return;
+        live.current.claimed = true; setConsent(false); setUncertain(true);
+        void action.run(async valid => {
+          const saved = await api.confirmReference(reviewed, reviewed.reference_review!.preview_digest);
+          if (!valid() || !current()) return;
+          const receipt = saved.reference_receipt, proof = reviewed.reference_review!;
+          if (saved.id !== row.id || saved.snapshot_digest !== row.snapshot_digest || saved.target_id !== row.target_id || saved.version !== reviewed.version + 2 || saved.reference_state !== 'RESTORED' || receipt?.type !== 'REFERENCES' || receipt.source_id !== proof.source.id || receipt.target_id !== proof.target.id || receipt.source_version !== proof.source.version + 1 || !/^[a-f0-9-]{36}$/.test(receipt.relationship_id)) throw new ApiError({ status: 502, code: 'PORTABLE_REFERENCE_RESULT_UNKNOWN', message: '关系结果无法核实，禁止重发。' });
+          setUncertain(false); reload();
+        });
+      }}>确认添加这一条 REFERENCES</Button>
+    </>}
+  </section>;
+}
 const conflicts: Record<string, string> = { DIGEST_MISMATCH: '候选文件与原媒体摘要不同；确认替代后才会写入。', ORIGINAL_DIGEST_UNKNOWN: '原媒体摘要未知；不能证明候选文件与原文件相同。', SOURCE_CHANGED: '章节版本或来源权限已变化；请重新预检。', ORIGINAL_REFERENCE_CHANGED: '原媒体状态或摘要已变化；请重新预检。', PREFLIGHT_REQUIRED: '此旧记录缺少完整影响报告；请重新预检。' };
 const names: Record<string, string> = { MANUSCRIPT: '作品正文', ACCEPTED_ASSETS: '正式资产', HISTORY: '历史版本', TRASH: '回收站', REPRODUCIBLE_CACHE: '可重建缓存', TEMPORARY_FAILED_FILES: '临时失败与恢复文件' };
 export function PortableProjectsPanel({ client }: { client: ExperimentalClient }) {
@@ -85,6 +145,7 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
   const api = useMemo(() => portableProjectsClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]); const storage = useResource(signal => api.storage(signal), [api]);
   const action = useReviewAction(); const [selected, setSelected] = useState<string[]>([]); const [file, setFile] = useState<File>();
+  const [imageReference, setImageReference] = useState('');
   const [relinkFile, setRelinkFile] = useState<File>(); const [missing, setMissing] = useState(''); const [kind, setKind] = useState('audio');
   const [reviewed, setReviewed] = useState<Record<string, boolean>>({}); const [replace, setReplace] = useState<Record<string, boolean>>({}); const [cleanupConsent, setCleanupConsent] = useState<{ key: string }>(); const [cleanupSelection, setCleanupSelection] = useState<{ digest: string; ids: string[] }>(); const [policyDirty, setPolicyDirty] = useState(false); const epoch = useRef(0);
   const available = !catalog.loading && !catalog.error && !!catalog.data; const recordAvailable = !records.loading && !records.error && !!records.data; const storageAvailable = !storage.loading && !storage.error && !!storage.data;
@@ -107,7 +168,9 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
     <Panel title="导出选中的当前正文">
       {available && !catalog.data!.chapters.length && <EmptyState title="没有已授权章节" detail="先保存正文，或切换到可读取的分支。" />}
       {available && catalog.data!.chapters.map(chapter => <label className="experimental-check" key={chapter.id}><input type="checkbox" checked={selected.includes(chapter.id)} disabled={action.busy} onChange={() => setSelected(ids => ids.includes(chapter.id) ? ids.filter(id => id !== chapter.id) : [...ids, chapter.id])} />{chapter.title} · v{chapter.version}</label>)}
-      <Button disabled={action.busy || !available || !selected.length || selected.some(id => !catalog.data!.chapters.some(c => c.id === id))} onClick={() => void action.run(async current => { await api.export(selected); if (current()) { records.reload(); storage.reload(); } }, '已生成带摘要校验的便携包，可在下方下载。')}>创建所选章节便携包</Button>
+      {!!catalog.data?.image_references?.length && <Field label="可选：两正式图片的当前参考关系"><select disabled={action.busy || !available} value={imageReference} onChange={e => setImageReference(e.target.value)}><option value="">原便携格式（不复制关系）</option>{catalog.data.image_references.map(r => <option key={r.id} value={r.id}>{r.source_id} → {r.target_id} · REFERENCES</option>)}</select></Field>}
+      {imageReference && <p>新格式要求选中章节只引用两张可用正式图片，并且包含所选当前 REFERENCES。恢复图片后需另外预览并确认关系。</p>}
+      <Button disabled={action.busy || !available || !selected.length || selected.some(id => !catalog.data!.chapters.some(c => c.id === id)) || (!!imageReference && !catalog.data?.image_references?.some(r => r.id === imageReference))} onClick={() => void action.run(async current => { await api.export(selected, imageReference || undefined); if (current()) { records.reload(); storage.reload(); } }, '已生成带摘要校验的便携包，可在下方下载。')}>创建所选章节便携包</Button>
     </Panel>
     <Panel title="导入预检与新项目恢复">
       <Field label="选择便携 ZIP 文件"><input type="file" accept=".zip,application/zip" disabled={action.busy} onChange={e => { epoch.current++; setFile(e.target.files?.[0]); setReviewed({}); }} /></Field>
@@ -149,6 +212,7 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
         {row.target_id && <p>新项目 ID：{row.target_id}</p>}
         {row.status === 'RECOVERY_REQUIRED' && <StatusMessage tone="warning">操作部分完成或结果无法确认。已保留新项目、原文件和映射；不会自动重复写入。请在原项目与版本入口核对。</StatusMessage>}
         {row.id_map && <Details value={row.id_map} label="查看新旧引用映射" />}
+        {row.kind === 'IMPORT' && row.status === 'RESTORED' && row.image_reference && <PortableImageReferenceRecovery key={`${row.id}:${row.version}`} row={row} client={client} disabled={action.busy || !available} reload={refresh} />}
       </article>)}
     </Panel>
     <Panel title="存储分类与清理预览">

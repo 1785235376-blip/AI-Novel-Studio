@@ -6,6 +6,7 @@ from ..repositories.chapter_repository import VersionConflict
 from .portable_projects import FEATURE, MAX_ARCHIVE, SelectionIn, UploadIn, ConfirmIn, RelinkIn, RelinkConfirmIn, CleanupIn
 from .ux import ReadContext
 from .portable_cache_policy import CachePolicyInput
+from .portable_projects import ReferencePreviewIn, ReferenceConfirmIn
 
 
 def api_call(fn, *args):
@@ -76,6 +77,29 @@ def create_portable_projects_router(service, authorize, require_flag, require_ho
         ctx, check = access(nid, x_session_token, x_branch_id, True); body = await upload(request, RelinkIn)
         from starlette.concurrency import run_in_threadpool
         return await run_in_threadpool(api_call, service.preflight_relink, ctx, body, check)
+
+    def reference_access(nid, rid, token, branch):
+        ctx, source_check = access(nid, token, branch, True)
+        target = api_call(service.reference_target, ctx, rid)
+        target_ctx, target_check = access(target, token, None, True)
+        def check():
+            require_flag('narrative_production_v2'); source_check(); target_check()
+        check()
+        return ctx, target_ctx, check
+
+    @router.post('/records/{rid}/reference-preview')
+    def reference_preview(nid: str, rid: str, body: ReferencePreviewIn, response: Response,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, target_ctx, check = reference_access(nid, rid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return api_call(service.preview_reference, ctx, rid, body, target_ctx, check)
+
+    @router.post('/records/{rid}/reference-confirm')
+    def reference_confirm(nid: str, rid: str, body: ReferenceConfirmIn, response: Response,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, target_ctx, check = reference_access(nid, rid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return api_call(service.confirm_reference, ctx, rid, body, target_ctx, check)
 
     @router.post('/records/{rid}/relink')
     def relink(nid: str, rid: str, body: RelinkConfirmIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
