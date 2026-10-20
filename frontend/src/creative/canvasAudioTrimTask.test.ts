@@ -141,6 +141,32 @@ it('keeps the original source type and accepts a null-free provider/model comman
   expect(() => assertCanvasAudioTrimTaskCommand(f.binding, f.command)).not.toThrow();
 });
 
+it('matches the native receipt null projection while keeping fresh commands strict', () => {
+  const f = fixture();
+  // Same bounded historical projection as the real CPU AudioJob preview receipt.
+  Object.assign(f.job.command!.parameters, { width: null, height: null, steps: null, seed: null, cfg: null,
+    negative_prompt: null, size: null, quality: null, duration_seconds: null, frame_rate: null, voice_id: null, speech_rate: null });
+  f.job.sources[0].reference_only = true;
+  f.job.command!.source_snapshots[0].reference_only = true;
+  expect(canvasAudioTrimTaskJobMatches(f.binding, f.job)).toBe(true);
+  expect(replaceCanvasAudioTrimTaskResult(f.origin, f.canvas, f.job, f.result).cards[0].asset?.asset_id).toBe(f.result.id);
+  expect(() => assertCanvasAudioTrimTaskCommand(f.binding, { ...f.command, parameters: f.job.command!.parameters })).toThrow();
+});
+
+it.each(['unknown null', 'known real value', 'audio control null', 'recipe null', 'changed pin'] as const)(
+  'rejects an unsafe native receipt projection: %s', kind => {
+    const f = fixture();
+    if (kind === 'unknown null') Object.assign(f.job.command!.parameters, { unknown_control: null });
+    if (kind === 'known real value') Object.assign(f.job.command!.parameters, { seed: 0 });
+    if (kind === 'audio control null') Object.assign(f.job.command!.parameters, { gain_db: null });
+    if (kind === 'recipe null') f.job.execution_recipe.parameters = { ...f.job.command!.parameters, seed: null };
+    if (kind === 'changed pin') {
+      f.job.command!.source_snapshots[0].reference_only = true;
+      f.job.command!.source_snapshots[0].version++;
+    }
+    expect(canvasAudioTrimTaskJobMatches(f.binding, f.job)).toBe(false);
+  });
+
 it('captures and rechecks the original persisted audio binding without guessing another target', () => {
   const f = fixture(true);
   expect(f.origin.binding?.incarnation).toBe(incarnation);
@@ -151,7 +177,7 @@ it('captures and rechecks the original persisted audio binding without guessing 
 
 it.each(['scope', 'incarnation', 'card', 'missing binding'] as const)('rejects an altered persisted binding: %s', kind => {
   const f = fixture(true);
-  if (kind === 'scope') f.canvas.scope = { ...f.canvas.scope, project_id: 'other-project' };
+  if (kind === 'scope') f.canvas.scope = { mode: 'collaboration', novel_id: 'project', workspace_id: 'workspace', storyline_id: 'storyline', branch_id: 'branch' };
   if (kind === 'incarnation') f.job.command!.canvas_return!.incarnation = 'file:11234567-89ab-4cde-8fab-0123456789ab';
   if (kind === 'card') f.job.command!.canvas_return!.card_id = 'other';
   if (kind === 'missing binding') delete f.job.command!.canvas_return;
