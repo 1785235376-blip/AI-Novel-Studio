@@ -1,6 +1,6 @@
 {
-  "entry_node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
-  "graph_id": "3ec582fe-4759-47cc-a8bd-8781278ef50f",
+  "entry_node_id": "bc79f6fd-0f58-435b-b7df-7e2dd1ed51de",
+  "graph_id": "37589015-ec1d-483e-a10d-af8a4cdd9f36",
   "graph_record_ids": [],
   "graph_version": 1,
   "max_steps": 8,
@@ -16,7 +16,7 @@
           "condition": "",
           "id": "share",
           "label": "分一块面包给朋友",
-          "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d"
+          "target": "9db62421-f4ac-4be5-a174-3353a8ea1351"
         },
         {
           "assignments": {
@@ -25,20 +25,20 @@
           "condition": "",
           "id": "keep",
           "label": "悄悄收起两枚硬币",
-          "target": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d"
+          "target": "9db62421-f4ac-4be5-a174-3353a8ea1351"
         },
         {
           "assignments": {},
           "condition": "trusted and coins >= 0",
           "id": "call",
           "label": "请朋友同行",
-          "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          "target": "00399cc1-0bac-4417-aa6d-46529b6449e2"
         }
       ],
       "dialogue": "集市收摊了。雨丝斜斜地落，她把灯挂在檐下，手里有两枚硬币。🙂 全角标点，。！？；：「引号」",
       "ending": "",
       "music_asset_id": null,
-      "node_id": "9d727a9b-ffb7-4878-b54e-8acfb9749b19",
+      "node_id": "bc79f6fd-0f58-435b-b7df-7e2dd1ed51de",
       "node_version": 1,
       "title": "集市 · 旅程起点"
     },
@@ -54,41 +54,41 @@
           "condition": "coins >= 1",
           "id": "buy",
           "label": "买一盏灯",
-          "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2"
+          "target": "8ee4950a-16f2-459c-98c9-44afb44e774e"
         },
         {
           "assignments": {},
           "condition": "",
           "id": "dark",
           "label": "摸着黑走（没有灯）",
-          "target": "fc22789a-7417-41e4-9a59-29c0cc0a67f2"
+          "target": "8ee4950a-16f2-459c-98c9-44afb44e774e"
         },
         {
           "assignments": {},
           "condition": "trusted",
           "id": "beg",
           "label": "向神庙求助",
-          "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          "target": "00399cc1-0bac-4417-aa6d-46529b6449e2"
         },
         {
           "assignments": {},
           "condition": "",
           "id": "turn",
           "label": "折返回家",
-          "target": "5b54638c-bdab-4347-835d-9ee409e37c55"
+          "target": "f9aadab2-f2bd-472d-9984-e8f4db8dd7a3"
         },
         {
           "assignments": {},
           "condition": "",
           "id": "wander",
           "label": "跟着风走",
-          "target": "19ee1604-86f5-4864-b254-1b74bc375243"
+          "target": "5f4ba904-a401-4ca0-9538-72e3cfc54bbf"
         }
       ],
       "dialogue": "一条路亮着灯，一条路只听得见风。",
       "ending": "",
       "music_asset_id": null,
-      "node_id": "51f6e84f-2e32-4c1b-879a-64c6ceafb30d",
+      "node_id": "9db62421-f4ac-4be5-a174-3353a8ea1351",
       "node_version": 1,
       "title": "岔路 · 选择"
     },
@@ -101,27 +101,27 @@
           "condition": "not trusted",
           "id": "forge",
           "label": "翻过山口",
-          "target": "08aa60ac-5577-4602-85fd-e40bf16928e5"
+          "target": "f0a68ae3-4a11-4772-b6b3-96dc1df00a7e"
         },
         {
           "assignments": {},
           "condition": "trusted or coins == 0",
           "id": "pray",
           "label": "在路边祈祷",
-          "target": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96"
+          "target": "00399cc1-0bac-4417-aa6d-46529b6449e2"
         },
         {
           "assignments": {},
           "condition": "",
           "id": "retreat",
           "label": "退回镇上",
-          "target": "5b54638c-bdab-4347-835d-9ee409e37c55"
+          "target": "f9aadab2-f2bd-472d-9984-e8f4db8dd7a3"
         }
       ],
       "dialogue": "风从山口下来，带着雪的味道。",
       "ending": "",
       "music_asset_id": null,
-      "node_id": "fc22789a-7417-41e4-9a59-29c0cc0a67f2",
+      "node_id": "8ee4950a-16f2-459c-98c9-44afb44e774e",
       "node_version": 1,
       "title": "夜路 · 分岔"
     },
@@ -134,20 +134,20 @@
           "condition": "",
           "id": "again",
           "label": "再听一次 [回声] {继续} 〖…〗 % 🙂（已编辑）",
-          "target": "19ee1604-86f5-4864-b254-1b74bc375243"
+          "target": "5f4ba904-a401-4ca0-9538-72e3cfc54bbf"
         },
         {
           "assignments": {},
           "condition": "",
           "id": "escape",
           "label": "离开回声厅",
-          "target": "08aa60ac-5577-4602-85fd-e40bf16928e5"
+          "target": "f0a68ae3-4a11-4772-b6b3-96dc1df00a7e"
         }
       ],
       "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』\n第三行：编辑后保存的对白。",
       "ending": "",
       "music_asset_id": null,
-      "node_id": "19ee1604-86f5-4864-b254-1b74bc375243",
+      "node_id": "5f4ba904-a401-4ca0-9538-72e3cfc54bbf",
       "node_version": 1,
       "title": "回声厅 · 循环"
     },
@@ -158,7 +158,7 @@
       "dialogue": "门闩落下，雨声被关在门外。",
       "ending": "平安回家 · 已核验",
       "music_asset_id": null,
-      "node_id": "5b54638c-bdab-4347-835d-9ee409e37c55",
+      "node_id": "f9aadab2-f2bd-472d-9984-e8f4db8dd7a3",
       "node_version": 1,
       "title": "结局 · 平安回家"
     },
@@ -169,7 +169,7 @@
       "dialogue": "石阶很凉，香火很轻。",
       "ending": "神庙的安眠",
       "music_asset_id": null,
-      "node_id": "9a411fe2-9f25-4e87-89bb-cfa6f2402b96",
+      "node_id": "00399cc1-0bac-4417-aa6d-46529b6449e2",
       "node_version": 1,
       "title": "结局 · 神庙的安眠"
     },
@@ -180,7 +180,7 @@
       "dialogue": "雪停了，天边有一线很薄的金。",
       "ending": "山口黎明",
       "music_asset_id": null,
-      "node_id": "08aa60ac-5577-4602-85fd-e40bf16928e5",
+      "node_id": "f0a68ae3-4a11-4772-b6b3-96dc1df00a7e",
       "node_version": 1,
       "title": "结局 · 山口黎明"
     }

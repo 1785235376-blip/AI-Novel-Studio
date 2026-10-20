@@ -1,11 +1,11 @@
 {
   "title": "B · 岔路与代价（条件分支样例）",
-  "graph_id": "24a181e7-e44d-4832-ae79-6ffbc453ee10",
+  "graph_id": "8ab7f487-76ff-4a2c-862f-66327aa4488a",
   "graph_version": 1,
-  "entry_node_id": "fd0ba19a-501f-44a9-8d03-72092b6fe8be",
+  "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
   "nodes": [
     {
-      "node_id": "fd0ba19a-501f-44a9-8d03-72092b6fe8be",
+      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
       "node_version": 1,
       "title": "集市 · 初始",
       "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
@@ -17,7 +17,7 @@
         {
           "id": "share",
           "label": "分一块面包给朋友",
-          "target": "6635d9f4-ec4e-4c7c-927e-28827976346e",
+          "target": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
           "condition": "",
           "assignments": {
             "trusted": true
@@ -26,7 +26,7 @@
         {
           "id": "keep",
           "label": "悄悄收起两枚硬币",
-          "target": "6635d9f4-ec4e-4c7c-927e-28827976346e",
+          "target": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
           "condition": "",
           "assignments": {
             "coins": 2
@@ -35,14 +35,14 @@
         {
           "id": "call",
           "label": "请朋友同行",
-          "target": "4bb71ff5-e0ea-4847-8be9-9dd408cbe169",
+          "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
           "condition": "trusted",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "6635d9f4-ec4e-4c7c-927e-28827976346e",
+      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
       "node_version": 1,
       "title": "岔路 · 选择",
       "dialogue": "一条路亮着灯，一条路只听得见风。",
@@ -54,7 +54,7 @@
         {
           "id": "buy",
           "label": "买一盏灯",
-          "target": "14216dcc-98c3-4c6e-af56-75e059ffaa75",
+          "target": "61559276-f796-4140-87eb-845a3b09fd52",
           "condition": "coins >= 1",
           "assignments": {
             "coins": 0
@@ -63,28 +63,28 @@
         {
           "id": "dark",
           "label": "摸着黑走",
-          "target": "14216dcc-98c3-4c6e-af56-75e059ffaa75",
+          "target": "61559276-f796-4140-87eb-845a3b09fd52",
           "condition": "",
           "assignments": {}
         },
         {
           "id": "beg",
           "label": "向神庙求助",
-          "target": "4bb71ff5-e0ea-4847-8be9-9dd408cbe169",
+          "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
           "condition": "trusted",
           "assignments": {}
         },
         {
           "id": "turn",
           "label": "折返回家",
-          "target": "9710841c-32b9-441d-af02-392daf698b32",
+          "target": "854a3de4-3806-42fe-bcf6-694cf351c136",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "14216dcc-98c3-4c6e-af56-75e059ffaa75",
+      "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
       "node_version": 1,
       "title": "夜路 · 分岔",
       "dialogue": "风从山口下来，带着雪的味道。",
@@ -96,28 +96,28 @@
         {
           "id": "forge",
           "label": "翻过山口",
-          "target": "53819d4b-f6d2-432b-beee-b3ab5cabb0b7",
+          "target": "d644a09b-195b-4a77-9978-0ada816bea7e",
           "condition": "not trusted",
           "assignments": {}
         },
         {
           "id": "pray",
           "label": "在路边祈祷",
-          "target": "4bb71ff5-e0ea-4847-8be9-9dd408cbe169",
+          "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
           "condition": "trusted",
           "assignments": {}
         },
         {
           "id": "retreat",
           "label": "退回镇上",
-          "target": "9710841c-32b9-441d-af02-392daf698b32",
+          "target": "854a3de4-3806-42fe-bcf6-694cf351c136",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "9710841c-32b9-441d-af02-392daf698b32",
+      "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
       "node_version": 1,
       "title": "结局 · 平安回家",
       "dialogue": "门闩落下，雨声被关在门外。",
@@ -128,7 +128,7 @@
       "choices": []
     },
     {
-      "node_id": "4bb71ff5-e0ea-4847-8be9-9dd408cbe169",
+      "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
       "node_version": 1,
       "title": "结局 · 神庙的安眠",
       "dialogue": "石阶很凉，香火很轻。",
@@ -139,7 +139,7 @@
       "choices": []
     },
     {
-      "node_id": "53819d4b-f6d2-432b-beee-b3ab5cabb0b7",
+      "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
       "node_version": 1,
       "title": "结局 · 山口黎明",
       "dialogue": "雪停了，天边有一线很薄的金。",

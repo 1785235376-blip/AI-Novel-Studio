@@ -128,7 +128,8 @@ def test_real_api_journey_review_export_and_artifact_alignment(tmp_path, mounted
             assert record["deterministic_repeat"]["identical"] is True
             assert record["runtime"]["status"] in ("NOT_RUN", "BLOCKED_ENVIRONMENT",
                                                    "EXECUTED_AND_ALIGNED", "EXECUTED_WITH_MISMATCH")
-            assert record["runtime"]["alignment"] is None or record["runtime"]["alignment"]["status"] in ("PASS", "FAIL")
+            runtime_alignment = record["runtime"].get("alignment")
+            assert runtime_alignment is None or runtime_alignment["status"] in ("PASS", "FAIL")
     # delivered bytes exist on disk for the legacy bundle
     assert (delivery / "journey" / "exports" / "legacy").is_dir()
 
