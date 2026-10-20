@@ -1,0 +1,229 @@
+{
+  "producer": "buildCanvasImageGraphStarter",
+  "request": {
+    "prompt": "保留人物服装和雨后街道的作者输入",
+    "sources": [
+      {
+        "cardId": "Card_A",
+        "reference": {
+          "asset_id": "image-a",
+          "version": 2,
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "image"
+        },
+        "weight": 0.75,
+        "purpose": "character"
+      },
+      {
+        "cardId": "Card_B",
+        "reference": {
+          "asset_id": "image-b",
+          "version": 3,
+          "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "kind": "image"
+        },
+        "weight": 0.5,
+        "purpose": "environment"
+      }
+    ]
+  },
+  "plan": {
+    "definition": {
+      "schema_version": 4,
+      "title": "双参考图保存控制",
+      "nodes": [
+        {
+          "id": "starter_1",
+          "definition_id": "text_input",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 40,
+            "y": 80
+          },
+          "parameters": {
+            "text": "保留人物服装和雨后街道的作者输入"
+          }
+        },
+        {
+          "id": "starter_2",
+          "definition_id": "image_prompt",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 460,
+            "y": 80
+          },
+          "parameters": {
+            "prompt": ""
+          }
+        },
+        {
+          "id": "starter_3",
+          "definition_id": "image_generate",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 880,
+            "y": 80
+          },
+          "parameters": {
+            "operation_id": "m5.image.reference",
+            "provider_id": "",
+            "model_id": "",
+            "parameters": {},
+            "allow_cloud": false,
+            "license_note": ""
+          }
+        },
+        {
+          "id": "starter_4",
+          "definition_id": "media_review",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 1300,
+            "y": 80
+          },
+          "parameters": {}
+        },
+        {
+          "id": "asset_8",
+          "definition_id": "asset_reference",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 40,
+            "y": 360
+          },
+          "parameters": {
+            "asset_id": "image-a",
+            "version": 2,
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "kind": "image"
+          }
+        },
+        {
+          "id": "asset_9",
+          "definition_id": "asset_reference",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 40,
+            "y": 620
+          },
+          "parameters": {
+            "asset_id": "image-b",
+            "version": 3,
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "kind": "image"
+          }
+        },
+        {
+          "id": "references_10",
+          "definition_id": "image_reference",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 460,
+            "y": 360
+          },
+          "parameters": {
+            "bindings": [
+              {
+                "port": "source_1",
+                "weight": 0.75,
+                "purpose": "character"
+              },
+              {
+                "port": "source_2",
+                "weight": 0.5,
+                "purpose": "environment"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge_5",
+          "source_node_id": "starter_1",
+          "source_port": "text",
+          "target_node_id": "starter_2",
+          "target_port": "text"
+        },
+        {
+          "id": "edge_6",
+          "source_node_id": "starter_2",
+          "source_port": "prompt",
+          "target_node_id": "starter_3",
+          "target_port": "prompt"
+        },
+        {
+          "id": "edge_7",
+          "source_node_id": "starter_3",
+          "source_port": "candidate",
+          "target_node_id": "starter_4",
+          "target_port": "candidate"
+        },
+        {
+          "id": "edge_11",
+          "source_node_id": "asset_8",
+          "source_port": "asset",
+          "target_node_id": "references_10",
+          "target_port": "source_1"
+        },
+        {
+          "id": "edge_12",
+          "source_node_id": "asset_9",
+          "source_port": "asset",
+          "target_node_id": "references_10",
+          "target_port": "source_2"
+        },
+        {
+          "id": "edge_13",
+          "source_node_id": "references_10",
+          "source_port": "references",
+          "target_node_id": "starter_2",
+          "target_port": "references"
+        }
+      ],
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 1
+      }
+    },
+    "generatorNodeId": "starter_3",
+    "promptNodeId": "starter_1",
+    "sources": [
+      {
+        "cardId": "Card_A",
+        "reference": {
+          "asset_id": "image-a",
+          "version": 2,
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "image"
+        },
+        "weight": 0.75,
+        "purpose": "character",
+        "nodeId": "asset_8"
+      },
+      {
+        "cardId": "Card_B",
+        "reference": {
+          "asset_id": "image-b",
+          "version": 3,
+          "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "kind": "image"
+        },
+        "weight": 0.5,
+        "purpose": "environment",
+        "nodeId": "asset_9"
+      }
+    ],
+    "prompt": "保留人物服装和雨后街道的作者输入",
+    "nodeCount": 7,
+    "edgeCount": 6
+  }
+}

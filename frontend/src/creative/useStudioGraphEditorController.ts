@@ -1,4 +1,5 @@
 import { readBoundDraftCatalog, verifyBoundDraftSources } from './studioGraphDraftRecoverySources';
+import { buildCanvasImageGraphStarter, type CanvasImageGraphHandoff, type CanvasImageGraphPlan } from './canvasImageGraphStarter';
 import { buildConditionalStarter, checkedConditionParameters, conditionSame, conditionShape } from './graphConditionContract';
 import type { GraphConditionPredicate } from './studioGraphTypes';
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
@@ -463,6 +464,33 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const templateScope = templateFence.current.token;
   const templateCurrent = () => templateScope === templateFence.current.token
     && bindingDraftEpoch === bindingMutationEpoch.current && insertionCurrent(insertionScope);
+  const canvasImagePlan = useRef<{ plan: CanvasImageGraphPlan; encoded: string; scope: object }>();
+  const canvasImageCurrent = () => templateCurrent() && !checking && !insertionRef.current
+    && !historyFull && !localSubgraph.formDirty && !imageSelectionFence.current?.();
+  const canvasImageGraphStarter: CanvasImageGraphHandoff = {
+    scope: templateScope, isCurrent: canvasImageCurrent,
+    available: canvasImageCurrent() && !!catalog && draft.schema_version === 4 && !draft.nodes.length && !draft.edges.length
+      && catalog.capabilities.image_graph === true,
+    preview: (request, scope) => {
+      canvasImagePlan.current = undefined;
+      if (scope !== templateScope || !canvasImageCurrent() || !catalog) throw new Error('原图、权限或表单已变化，请重新核对。');
+      const plan = buildCanvasImageGraphStarter(draftRef.current, catalog, request);
+      canvasImagePlan.current = { plan, encoded: JSON.stringify(plan), scope }; return plan;
+    },
+    apply: (plan, scope, sourceCurrent) => {
+      const proof = canvasImagePlan.current;
+      if (!proof || proof.plan !== plan || proof.scope !== scope || scope !== templateScope
+        || !canvasImageCurrent() || !sourceCurrent() || proof.encoded !== JSON.stringify(plan)) return false;
+      canvasImagePlan.current = undefined;
+      const next = structuredClone(plan.definition); change(next);
+      if (draftRef.current !== next) return false;
+      setSelected([plan.generatorNodeId]); setNotice('双参考图与作者输入已加入原图片图草稿，可一次撤销；尚未保存或执行。'); return true;
+    },
+    graph: { id: base?.id, version: base?.version, title: draft.title,
+      prompts: draft.schema_version === 4 ? draft.nodes.filter(row => row.definition_id === 'text_input').map(row => ({ nodeId: row.id, text: String(row.parameters.text || '') })) : [],
+      references: draft.schema_version === 4 ? draft.nodes.filter(row => row.definition_id === 'asset_reference' && row.parameters.kind === 'image').map(row => ({ nodeId: row.id, reference: { asset_id: String(row.parameters.asset_id), version: Number(row.parameters.version), digest: String(row.parameters.digest), kind: 'image' } })) : [] },
+    focusPrompt: (id, scope) => { if (scope === templateScope && canvasImageCurrent() && draft.nodes.some(row => row.id === id && row.definition_id === 'text_input')) setSelected([id]); },
+  };
   const selectedVideoBinding = useGraphSelectedVideoBinding({ definition: draft, selected, catalog, source: providerSource,
     scope: verificationScope, generation: bindingDraftEpoch, current: () => isVerificationCurrent() && bindingDraftEpoch === bindingMutationEpoch.current && !imageSelectionFence.current?.(),
     editable: active && editable && !timelineEditor.formDirty && !checking && !imageSelectionFence.current?.(),
@@ -959,7 +987,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
-    canvasAssetHandoff, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
+    canvasAssetHandoff, canvasImageGraphStarter, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
     nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, replaceConnection, connectionReplacementScope, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,

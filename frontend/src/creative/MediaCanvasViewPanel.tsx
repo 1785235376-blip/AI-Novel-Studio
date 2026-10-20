@@ -1,6 +1,8 @@
 import { useMediaCanvasRecovery } from './useMediaCanvasRecovery';
 import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
+import { MediaCanvasImageGraphStarter } from './MediaCanvasImageGraphStarter';
+import type { CanvasImageGraphHandoff } from './canvasImageGraphStarter';
 import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { alignCanvasCards } from './mediaCanvasSelection';
 import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
@@ -18,7 +20,7 @@ import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
 import { mediaViewportCenter } from './mediaCanvasGeometry';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
-type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff };
+type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff; imageGraphHandoff?: CanvasImageGraphHandoff };
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
 export function MediaCanvasViewPanel(props: Props) {
@@ -28,6 +30,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const [draft, setDraft] = useState(blank), [base, setBase] = useState<CanvasViewRecord>();
   const [rows, setRows] = useState<CanvasViewSummary[]>([]), [assets, setAssets] = useState<StudioAsset[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const selectionEpoch = useRef(0), selectionGeneration = selectionEpoch.current;
   const [selected, setSelected] = useState(''), [assetId, setAssetId] = useState(''), [query, setQuery] = useState('');
   const [pending, setPending] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [discard, setDiscard] = useState(false), [size, setSize] = useState({ width: 800, height: 480 });
@@ -72,9 +75,17 @@ export function MediaCanvasViewPanel(props: Props) {
   const states = new Map(base?.reference_states.map(row => [row.card_id, row]) ?? []);
   const currentCardIds = new Set(draft.cards.map(card => card.id));
   const selection = selectedIds.filter(id => currentCardIds.has(id));
-  function selectCard(id: string, additive = false) { if (!current() || pendingRef.current) return; setSelected(id); setSelectedIds(previous => additive ? previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id] : [id]); }
+  function selectCard(id: string, additive = false) { if (!current() || pendingRef.current) return; selectionEpoch.current++; setSelected(id); setSelectedIds(previous => additive ? previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id] : [id]); }
   const card = draft.cards.find(c => c.id === selected);
   const matches = searchCanvasCards(draft, query);
+  // Reference selection is metadata-only. The graph owner separately fences its own
+  // dirty draft; all layout writes retain the original externalDirty lock.
+  const imageSourceCurrent = () => current() && selectionEpoch.current === selectionGeneration && draftRef.current === draft
+    && !!base && !dirty && !discard && !uncertain && !recoveryBusy.current && !pendingRef.current
+    && !live.current.busy && !live.current.isBusy?.() && live.current.canMutate;
+  const imageSources = selection.flatMap(id => { const row = draft.cards.find(value => value.id === id);
+    return row?.asset?.kind === 'image' && states.get(id)?.state === 'CURRENT_METADATA' ? [{ cardId: id, reference: row.asset }] : []; });
+  const imageChoiceAvailable = imageSourceCurrent() && props.imageGraphHandoff?.available;
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布" onKeyDown={event => {
       if (event.nativeEvent.isComposing || event.altKey || !(event.ctrlKey || event.metaKey) || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
@@ -120,10 +131,14 @@ export function MediaCanvasViewPanel(props: Props) {
       <label>缩放<input type="number" step="0.1" min="0.35" max="2.5" value={draft.viewport.zoom} disabled={!editable} onChange={e => edit({ ...draftRef.current, viewport: { ...draftRef.current.viewport, zoom: clampGraphZoom(e.target.valueAsNumber) } })} /></label>
     </div>
     <div className="creative-actions"><span>已选 {selection.length} 张卡片</span>
-      <Button disabled={!editable} onClick={() => { if (!locked()) { setSelectedIds(draft.cards.map(c => c.id)); setSelected(draft.cards[0]?.id ?? ''); } }}>选择全部卡片（含视口外）</Button>
-      <Button disabled={pending} onClick={() => { if (current()) setSelectedIds([]); }}>清空卡片多选</Button>
+      <Button disabled={!editable} onClick={() => { if (!locked()) { selectionEpoch.current++; setSelectedIds(draft.cards.map(c => c.id)); setSelected(draft.cards[0]?.id ?? ''); } }}>选择全部卡片（含视口外）</Button>
+      <Button disabled={pending} onClick={() => { if (current()) { selectionEpoch.current++; setSelectedIds([]); } }}>清空卡片多选</Button>
       {([['left', '左对齐'], ['center', '水平居中'], ['top', '顶端对齐'], ['distribute', '水平等距']] as const).map(([mode, label]) => <Button key={mode} disabled={!editable || selection.length < (mode === 'distribute' ? 3 : 2)} onClick={() => edit(alignCanvasCards(draftRef.current, selection, mode))}>{label}所选卡片</Button>)}
     </div>
+    {props.imageGraphHandoff && <details><summary>选择双参考图片输入</summary><p>沿用卡片多选；这里仅选择已保存且元数据当前的图片，不移动视口或改写布局。显示查找结果前 20 张；上方查找可缩小范围。</p>
+      {(query.trim() ? matches : draft.cards).filter(row => row.asset?.kind === 'image').slice(0,20).map(row => <label key={row.id}><input type="checkbox" aria-label={`图片输入 ${row.id}`} checked={selection.includes(row.id)} disabled={!imageChoiceAvailable || states.get(row.id)?.state !== 'CURRENT_METADATA'} onChange={() => { if (imageSourceCurrent() && live.current.imageGraphHandoff?.available) selectCard(row.id,true); }} />{row.id} · {row.asset?.asset_id}</label>)}
+    </details>}
+    {props.imageGraphHandoff && <MediaCanvasImageGraphStarter sources={selection.length === 2 && imageSources.length === 2 ? imageSources : []} owner={token} disabled={!imageSourceCurrent()} isCurrent={imageSourceCurrent} client={props.client} read={props.read} handoff={props.imageGraphHandoff} />}
     <MediaCanvasGroupTools definition={draft} selectedCard={selected} owner={token} disabled={!editable} isCurrent={current} onChange={edit} />
     <MediaCardViewport definition={draft} states={states} selected={selected} selection={selection} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={selectCard} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
