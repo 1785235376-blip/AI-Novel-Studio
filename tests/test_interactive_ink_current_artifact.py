@@ -120,7 +120,7 @@ def _runtime_env():
     return node, root
 
 
-def _run_verifier(tmp_path, files, node, root, name='report'):
+def _run_verifier(tmp_path, files, node, root, name='report', extra_args=None):
     import subprocess
     bundle_dir = tmp_path / (name + '-bundle')
     for relative, data in files.items():
@@ -128,8 +128,9 @@ def _run_verifier(tmp_path, files, node, root, name='report'):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     report = tmp_path / (name + '-report.json')
-    completed = subprocess.run([node, str(_verify_script()), '--bundle', str(bundle_dir), '--vendor', root,
-                                '--report', str(report)], capture_output=True, text=True, encoding='utf-8',
+    command = [node, str(_verify_script()), '--bundle', str(bundle_dir), '--vendor', root,
+               '--report', str(report), *(extra_args or [])]
+    completed = subprocess.run(command, capture_output=True, text=True, encoding='utf-8',
                                errors='replace', timeout=240, check=False)
     payload = json.loads(report.read_text(encoding='utf-8')) if report.exists() else None
     return completed, payload, bundle_dir

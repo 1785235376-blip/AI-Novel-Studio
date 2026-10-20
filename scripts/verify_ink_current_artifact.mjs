@@ -596,56 +596,174 @@ async function mainMode(args) {
       if (crossFailures.length) report.failures.push({ check: 'cross_process', failures: crossFailures.slice(0, 8) });
 
       // Negative matrix: the same save must be rejected for any mismatched binding
-      // and for tampering, including a state loaded into a different compiled artifact.
-      function expectCode(label, expectedCode, action) {
-        const record = { case: label, expected_code: expectedCode, actual_code: null, passed: false, message: null };
-        try { action(); record.message = 'no error was raised'; }
-        catch (error) {
+      // and for tampering. Preparation and rejection are strictly separate:
+      // a negative counts only when its preparation really produced the intended
+      // valid-but-different input, the DELIVERED helper was actually called, and
+      // that call failed with exactly the expected binding code. A no-op mutation,
+      // an unloadable artifact, a setup exception or a helper that was never
+      // reached is a SETUP_ERROR and fails the acceptance run.
+      const helperCall = function (record, options) {
+        record.entry_called = true;
+        return player.module.loadSaveEnvelope(options);
+      };
+      function expectCode(label, expectedCode, prepare, action) {
+        const record = { case: label, expected_code: expectedCode, phase: 'REJECTION', setup_ok: false,
+          entry_called: false, actual_code: null, passed: false, message: null, preparation: null };
+        try {
+          record.preparation = prepare ? prepare() : null;
+          record.setup_ok = true;
+        } catch (error) {
+          record.phase = 'SETUP_ERROR';
+          record.message = String(error && error.message ? error.message : error);
+          report.failures.push({ check: 'save_restore_negative_setup', detail: label + ': ' + record.message });
+          report.save_restore_negatives.push(record);
+          return;
+        }
+        try {
+          action(function (options) { return helperCall(record, options); });
+          record.message = 'no error was raised';
+        } catch (error) {
           record.actual_code = error && error.code ? String(error.code) : 'UNEXPECTED_ERROR';
           record.message = String(error && error.message ? error.message : error);
-          record.passed = record.actual_code === expectedCode;
+        }
+        record.passed = record.setup_ok && record.entry_called && record.actual_code === expectedCode;
+        if (!record.passed) {
+          report.failures.push({ check: 'save_restore_negative', detail: label + ' expected ' + expectedCode
+            + ' from the delivered helper, got ' + String(record.actual_code)
+            + (record.entry_called ? '' : ' (helper was never called)') });
         }
         report.save_restore_negatives.push(record);
-        if (!record.passed) report.failures.push({ check: 'save_restore_negative', detail: label + ' expected ' + expectedCode + ' got ' + record.actual_code });
       }
+
+      // --- negative preparation: a valid, loadable, REALLY different artifact ---
+      function firstLineMutations(sourceText) {
+        const lines = sourceText.split('\n');
+        const mutations = [];
+        for (let index = 0; index < lines.length; index += 1) {
+          const line = lines[index];
+          if (/^\{ "[^"\n]*" \}$/.test(line)) {
+            const changed = line.replace(/" \}$/, ' [VERIFIER_ARTIFACT_DIFFERENCE]" }');
+            if (changed !== line) {
+              const copy = lines.slice();
+              copy[index] = changed;
+              mutations.push({ source: copy.join('\n'), mutation: 'narrative_text_line_' + index });
+              break;
+            }
+          }
+        }
+        for (let index = 0; index < lines.length; index += 1) {
+          const line = lines[index];
+          const match = line.match(/^(\+ \{[^}]*\} \[\{ ")([^"\n]+)(" \}\].*)$/);
+          if (match) {
+            const copy = lines.slice();
+            copy[index] = match[1] + match[2] + ' [VERIFIER_ARTIFACT_DIFFERENCE]' + match[3];
+            mutations.push({ source: copy.join('\n'), mutation: 'choice_label_line_' + index });
+            break;
+          }
+        }
+        const variableLines = lines.filter(function (line) { return line.startsWith('VAR ans_steps'); });
+        if (variableLines.length) {
+          const copy = lines.slice();
+          copy.push('~ ans_var_0 = not ans_var_0');
+          mutations.push({ source: copy.join('\n'), mutation: 'appended_binding_change' });
+        }
+        mutations.push({ source: sourceText + '\nThe verifier altered artifact text.\n', mutation: 'appended_top_level_text' });
+        return mutations;
+      }
+
+      function produceDifferentArtifact() {
+        if (args['fault-negative-artifact-noop'] === 'true') {
+          throw new Error('FAULT_INJECTION: negative artifact mutation intentionally disabled; prepared digest would be unchanged');
+        }
+        const attempts = [];
+        for (const mutation of firstLineMutations(sourceBytes.toString('utf8'))) {
+          const attempt = { mutation: mutation.mutation, source_changed: mutation.source !== sourceBytes.toString('utf8'),
+            compile_ok: false, digest_changed: false, parse_ok: false, artifact_sha256: null, error: null };
+          if (!attempt.source_changed) { attempt.error = 'SOURCE_UNCHANGED'; attempts.push(attempt); continue; }
+          try {
+            const denyFile = function () { throw new Error('FILE_ACCESS_DENIED'); };
+            const compileErrors = [];
+            const compiler = new runtime.Compiler(mutation.source, { errorHandler: function (message) { compileErrors.push(String(message)); },
+              fileHandler: { ResolveInkFilename: denyFile, LoadInkFileContents: denyFile } });
+            const compiled = compiler.Compile();
+            if (compileErrors.length) throw new Error('COMPILER_ERRORS: ' + compileErrors.slice(0, 3).join(' | '));
+            const artifact = compiled.ToJson();
+            attempt.compile_ok = true;
+            attempt.artifact_sha256 = sha256(Buffer.from(artifact, 'utf8'));
+            attempt.digest_changed = attempt.artifact_sha256 !== artifactSha;
+            if (!attempt.digest_changed) throw new Error('ARTIFACT_DIGEST_UNCHANGED after mutation');
+            const checkStory = new runtime.Story(artifact);
+            let guard = 0;
+            while (checkStory.canContinue && guard < 256) { checkStory.Continue(); guard += 1; }
+            if (guard >= 256) throw new Error('MODIFIED_ARTIFACT_ADVANCE_UNBOUNDED');
+            attempt.parse_ok = true;
+            if (attempt.digest_changed && attempt.parse_ok) {
+              return { artifact: artifact, artifactSha256: attempt.artifact_sha256, mutation: attempt.mutation,
+                original_sha256: artifactSha, digest_changed: true, parse_ok: true, attempts: attempts.concat([attempt]) };
+            }
+          } catch (error) {
+            attempt.error = String(error && error.message ? error.message : error);
+          }
+          attempts.push(attempt);
+        }
+        throw new Error('NO_VALID_DIFFERENT_ARTIFACT: ' + JSON.stringify(attempts).slice(0, 1200));
+      }
+
       const bytes = new TextEncoder().encode(created.bytes);
       const freshStory = function () { return new runtime.Story(artifactJson); };
-      expectCode('story mismatch', 'SAVE_ENVELOPE_STORY_MISMATCH', function () {
-        player.module.loadSaveEnvelope({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { storyId: 'another-story' }) });
+      let preparedDifferentArtifact = null;
+      expectCode('story mismatch', 'SAVE_ENVELOPE_STORY_MISMATCH', null, function (callLoad) {
+        callLoad({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { storyId: 'another-story' }) });
       });
-      expectCode('revision mismatch', 'SAVE_ENVELOPE_REVISION_MISMATCH', function () {
-        player.module.loadSaveEnvelope({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { revision: bindingBase.revision + 1 }) });
+      expectCode('revision mismatch', 'SAVE_ENVELOPE_REVISION_MISMATCH', null, function (callLoad) {
+        callLoad({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { revision: bindingBase.revision + 1 }) });
       });
-      expectCode('target format mismatch', 'SAVE_ENVELOPE_FORMAT_MISMATCH', function () {
-        player.module.loadSaveEnvelope({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { targetFormatVersion: 'other-format' }) });
+      expectCode('target format mismatch', 'SAVE_ENVELOPE_FORMAT_MISMATCH', null, function (callLoad) {
+        callLoad({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { targetFormatVersion: 'other-format' }) });
       });
-      expectCode('runtime mismatch', 'SAVE_ENVELOPE_RUNTIME_MISMATCH', function () {
-        player.module.loadSaveEnvelope({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { runtime: { name: 'inkjs', version: '2.2.0', format: formatVersion } }) });
+      expectCode('runtime mismatch', 'SAVE_ENVELOPE_RUNTIME_MISMATCH', null, function (callLoad) {
+        callLoad({ bytes: bytes, story: freshStory(), expected: Object.assign({}, envelopeIdentity, { runtime: { name: 'inkjs', version: '2.2.0', format: formatVersion } }) });
       });
       expectCode('tampered integrity', 'SAVE_ENVELOPE_INTEGRITY_INVALID', function () {
         const tampered = JSON.parse(created.bytes);
         tampered.save.state_json = tampered.save.state_json.slice(0, -1) + 'X';
-        player.module.loadSaveEnvelope({ bytes: new TextEncoder().encode(JSON.stringify(tampered)), story: freshStory(), expected: envelopeIdentity });
+        const tamperedBytes = new TextEncoder().encode(JSON.stringify(tampered));
+        if (sha256(Buffer.from(tamperedBytes)) === sha256(Buffer.from(created.bytes))) throw new Error('TAMPER_PREPARATION_NOOP');
+        return { tampered_sha256: sha256(Buffer.from(tamperedBytes)), mutation: 'state_json_last_char' };
+      }, function (callLoad) {
+        const tampered = JSON.parse(created.bytes);
+        tampered.save.state_json = tampered.save.state_json.slice(0, -1) + 'X';
+        callLoad({ bytes: new TextEncoder().encode(JSON.stringify(tampered)), story: freshStory(), expected: envelopeIdentity });
       });
       expectCode('tampered binding without integrity', 'SAVE_ENVELOPE_INTEGRITY_INVALID', function () {
         const tampered = JSON.parse(created.bytes);
         tampered.binding.story_id = 'forged-story';
-        player.module.loadSaveEnvelope({ bytes: new TextEncoder().encode(JSON.stringify(tampered)), story: freshStory(), expected: envelopeIdentity });
+        if (tampered.binding.story_id === JSON.parse(created.bytes).binding.story_id) throw new Error('BINDING_TAMPER_NOOP');
+        return { tampered_story_id: tampered.binding.story_id };
+      }, function (callLoad) {
+        const tampered = JSON.parse(created.bytes);
+        tampered.binding.story_id = 'forged-story';
+        callLoad({ bytes: new TextEncoder().encode(JSON.stringify(tampered)), story: freshStory(), expected: envelopeIdentity });
       });
       expectCode('unbound legacy state', 'LEGACY_SAVE_ENVELOPE_REQUIRED', function () {
-        player.module.loadSaveEnvelope({ envelope: JSON.parse(story.state.ToJson()), story: freshStory(), expected: envelopeIdentity });
+        const legacy = JSON.parse(story.state.ToJson());
+        if (!legacy || typeof legacy !== 'object' || Array.isArray(legacy)) throw new Error('LEGACY_STATE_PREPARATION_INVALID');
+        return { legacy_keys: Object.keys(legacy) };
+      }, function (callLoad) {
+        callLoad({ envelope: JSON.parse(story.state.ToJson()), story: freshStory(), expected: envelopeIdentity });
       });
       expectCode('different compiled artifact', 'SAVE_ENVELOPE_ARTIFACT_MISMATCH', function () {
-        const modifiedSource = sourceBytes.toString('utf8').replace('Trusted generated subset', 'Trusted generated subset modified');
-        let modifiedArtifact = null;
-        try {
-          const denyFile = function () { throw new Error('FILE_ACCESS_DENIED'); };
-          const compiler = new runtime.Compiler(modifiedSource, { errorHandler: function () {}, fileHandler: { ResolveInkFilename: denyFile, LoadInkFileContents: denyFile } });
-          modifiedArtifact = compiler.Compile().ToJson();
-        } catch (error) { modifiedArtifact = artifactJson + ' '; }
-        if (sha256(Buffer.from(modifiedArtifact, 'utf8')) === artifactSha) throw Object.assign(new Error('tampered artifact digest did not change'), { code: 'SAVE_ENVELOPE_ARTIFACT_MISMATCH' });
-        const otherStory = new runtime.Story(modifiedArtifact);
-        player.module.loadSaveEnvelope({ bytes: bytes, story: otherStory, expected: Object.assign({}, envelopeIdentity, { compiledArtifactSha256: sha256(Buffer.from(modifiedArtifact, 'utf8')) }) });
+        const prepared = produceDifferentArtifact();
+        report.different_artifact_preparation = { mutation: prepared.mutation, original_sha256: prepared.original_sha256,
+          modified_sha256: prepared.artifactSha256, digest_changed: prepared.digest_changed, parse_ok: prepared.parse_ok,
+          attempts: prepared.attempts };
+        if (prepared.original_sha256 === prepared.artifactSha256) throw new Error('ARTIFACT_DIGEST_UNCHANGED');
+        preparedDifferentArtifact = prepared;
+        return { modified_artifact: prepared.artifact, modified_sha256: prepared.artifactSha256, mutation: prepared.mutation };
+      }, function (callLoad) {
+        if (!preparedDifferentArtifact) throw new Error('DIFFERENT_ARTIFACT_PREPARATION_MISSING');
+        callLoad({ bytes: bytes, story: new runtime.Story(preparedDifferentArtifact.artifact),
+          expected: Object.assign({}, envelopeIdentity, { compiledArtifactSha256: preparedDifferentArtifact.artifactSha256 }) });
       });
     } finally {
       try { fs.rmSync(tempRoot, { recursive: true, force: true }); } catch (error) { /* best effort */ }
