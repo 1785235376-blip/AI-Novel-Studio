@@ -6,7 +6,7 @@ import re
 import json
 
 from .studio_timeline_render import normalize_studio_timeline
-from .studio_timeline_links import clip_link, require_clip_link_preservation
+from .studio_timeline_links import clip_link, require_clip_link_preservation, split_linked_pair
 
 
 def _fields(value, required, optional=()):
@@ -71,6 +71,8 @@ def apply_timeline_edits(timeline, operations):
         raise ValueError("STUDIO_TIMELINE_EDIT_OPERATION_LIMIT")
     if len(json.dumps(operations, ensure_ascii=False, allow_nan=False).encode("utf-8")) > 128_000:
         raise ValueError("STUDIO_TIMELINE_EDIT_BYTES_LIMIT")
+    if any(isinstance(operation, dict) and operation.get('op') == 'clip.split_linked' for operation in operations) and len(operations) != 1:
+        raise ValueError('STUDIO_TIMELINE_LINKED_SPLIT_SINGLE_OPERATION_REQUIRED')
 
     def track(identity):
         _id(identity)
@@ -106,7 +108,10 @@ def apply_timeline_edits(timeline, operations):
                 or operation == 'clip.update' and isinstance(raw.get('changes'), dict)
                 and set(raw['changes']) & {'source_snapshot', 'start_ms', 'in_ms', 'out_ms', 'speed_num', 'speed_den'}):
             raise ValueError('STUDIO_TIMELINE_LINK_EDIT_UNSUPPORTED_UNLINK_FIRST')
-        if operation == 'clip.link':
+        if operation == 'clip.split_linked':
+            body = _fields(raw, ('op', 'video_clip_id', 'audio_clip_id', 'at_ms', 'new_video_clip_id', 'new_audio_clip_id'))
+            result = split_linked_pair(result, body['video_clip_id'], body['audio_clip_id'], body['at_ms'], body['new_video_clip_id'], body['new_audio_clip_id'])
+        elif operation == 'clip.link':
             body = _fields(raw, ('op', 'video_clip_id', 'audio_clip_id'))
             if result.get('schema_version') != 2:
                 raise ValueError('STUDIO_TIMELINE_EDIT_SCHEMA_UPGRADE_REQUIRED')

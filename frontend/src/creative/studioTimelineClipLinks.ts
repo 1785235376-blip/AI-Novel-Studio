@@ -1,4 +1,5 @@
 import type { StudioTimeline, StudioTimelineClipLink, StudioTimelineTrack } from './studioTimelineTypes';
+import { matchesLinkedSplit } from './studioTimelineLinkedSplit';
 
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/;
 export const CLIP_LINK_EDIT_REFUSAL = '链接片段暂不支持独立裁剪、拆分、滑移或替换来源；请先明确解除链接。';
@@ -31,14 +32,22 @@ export function requireClipLinkPreservation(before: StudioTimeline, after: Studi
   const previous = before.clip_links ?? [], current = after.clip_links ? checkedClipLinks(after.clip_links, after.tracks) : [];
   const old = new Map(before.tracks.flatMap(track => track.clips.map(clip => [clip.id, { track, clip }] as const)));
   const next = new Map(after.tracks.flatMap(track => track.clips.map(clip => [clip.id, { track, clip }] as const)));
+  let splitCount = 0;
   for (const pair of previous) {
     const match = current.find(row => row.video_clip_id === pair.video_clip_id && row.audio_clip_id === pair.audio_clip_id);
     if (!match) continue;
     if (pair.offset_ms !== match.offset_ms) throw new Error('已保存链接的偏移不可重定义；请先解除并保存，再建立新链接。');
+    const rangeChanged = [pair.video_clip_id, pair.audio_clip_id].some(id => {
+      const left = old.get(id)!.clip, right = next.get(id)!.clip;
+      return JSON.stringify(left.source_snapshot) !== JSON.stringify(right.source_snapshot)
+        || ['in_ms', 'out_ms', 'speed_num', 'speed_den'].some(key => (left[key as 'in_ms'] ?? 1) !== (right[key as 'in_ms'] ?? 1));
+    });
+    const pairedSplit = rangeChanged && matchesLinkedSplit(before, after, pair);
+    if (pairedSplit && ++splitCount > 1) throw new Error('首片联动拆分一次只支持一对链接。');
     for (const id of [pair.video_clip_id, pair.audio_clip_id]) {
       const left = old.get(id)!, right = next.get(id)!;
-      if (JSON.stringify(left.clip.source_snapshot) !== JSON.stringify(right.clip.source_snapshot)
-        || ['in_ms', 'out_ms', 'speed_num', 'speed_den'].some(key => (left.clip[key as 'in_ms'] ?? 1) !== (right.clip[key as 'in_ms'] ?? 1))) throw new Error(CLIP_LINK_EDIT_REFUSAL);
+      if (!pairedSplit && (JSON.stringify(left.clip.source_snapshot) !== JSON.stringify(right.clip.source_snapshot)
+        || ['in_ms', 'out_ms', 'speed_num', 'speed_den'].some(key => (left.clip[key as 'in_ms'] ?? 1) !== (right.clip[key as 'in_ms'] ?? 1)))) throw new Error(CLIP_LINK_EDIT_REFUSAL);
       if ((left.track.locked || right.track.locked) && (left.track.id !== right.track.id || left.clip.start_ms !== right.clip.start_ms)) throw new Error('链接包含锁定轨道，整批移动未应用。');
     }
   }

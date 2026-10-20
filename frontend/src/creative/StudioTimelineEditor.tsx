@@ -26,6 +26,7 @@ import { useStudioTimelineWaveform } from './useStudioTimelineWaveform';
 // SAME controller and draft; it never introduces a second timeline engine.
 import { TimelineWorkspacePanel } from '../nle/TimelineWorkspacePanel';
 import { TimelineClipLinkPanel } from '../nle/TimelineClipLinkPanel';
+import { LinkedClipSplitPanel } from '../nle/LinkedClipSplitPanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -312,6 +313,15 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
         if (live.props.client === props.client && live.c.getHandoffRevision() === reviewGeneration
           && selection.current.generation === selectionGeneration && live.props.isCurrent()
           && JSON.stringify(selection.current.ids) === JSON.stringify(nleClips)) live.c.unlinkClips(nleClips);
+      }} />
+    <LinkedClipSplitPanel timeline={draft.timeline} selectedClipIds={nleClips} videoAtMs={nlePlayhead}
+      ready={c.canEdit && c.sourcesCurrent && !!c.base && !c.inputDirty} onSplit={() => {
+        const live = latestReview.current;
+        if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+          || selection.current.generation !== selectionGeneration || playhead.current.generation !== playheadGeneration
+          || !live.props.isCurrent() || !live.c.canEdit || live.c.inputDirty || !live.c.base
+          || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+        live.c.splitLinkedClips(nleClips, nlePlayhead, { video: crypto.randomUUID(), audio: crypto.randomUUID() });
       }} />
     <TimelineWorkspacePanel documentId={c.base?.id} projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}

@@ -5,6 +5,7 @@ import type { TimelineWaveform } from './studioTimelineWaveformTypes';
 import { selectionDuplicateOperations, type SelectionDuplicateIds } from '../nle/timelineSelectionDuplicate';
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { changeClipLinks, clipLink, requireClipLinkPreservation, CLIP_LINK_EDIT_REFUSAL } from './studioTimelineClipLinks';
+import { linkedSplitFacts, splitLinkedTimeline, type LinkedSplitIds } from './studioTimelineLinkedSplit';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -372,6 +373,20 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       return true;
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段链接未应用。'); return false; }
   }
+  function splitLinkedClips(clipIds: readonly string[], videoAtMs: number, newIds: LinkedSplitIds, revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const saved = baseRef.current;
+      if (!saved || timelineInputKey(draftRef.current) !== baseline.current) throw new Error('先保存当前草稿，再明确拆分已持久链接。');
+      if (!timelineSourcesCurrent(saved.timeline, latest.current.assets)) throw new Error('链接来源已失效或版本改变，整批拆分未应用。');
+      linkedSplitFacts(saved.timeline, clipIds, videoAtMs);
+      const timeline = checkedTimeline(splitLinkedTimeline(saved.timeline, clipIds, videoAtMs, newIds));
+      if (!change(input => { input.timeline = timeline; })) return false;
+      setNotice('已原子拆分一对链接，左右关系和原偏移保留；一次撤销可恢复，需要明确保存。');
+      return true;
+    } catch (reason) { setError(reason instanceof Error ? reason.message : '联动拆分未应用。'); return false; }
+  }
   function trimClip(trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean,
     revision: string, client: StudioProductionClient): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
@@ -613,6 +628,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     moveSelection: (clipIds: readonly string[], offsetMs: number) => moveSelection(clipIds, offsetMs, editRevision, props.client),
     linkClips: (clipIds: readonly string[]) => editClipLinks(clipIds, false, editRevision, props.client),
     unlinkClips: (clipIds: readonly string[]) => editClipLinks(clipIds, true, editRevision, props.client),
+    splitLinkedClips: (clipIds: readonly string[], videoAtMs: number, newIds: LinkedSplitIds) => splitLinkedClips(clipIds, videoAtMs, newIds, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,
