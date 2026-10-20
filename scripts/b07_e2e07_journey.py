@@ -1330,8 +1330,38 @@ def static_target_checks(recorder, target_id, payload, story_row, characters, ma
                       and (validation.get("runtime_pin") or {}).get("sha256") == sha256_hex(pins), "")
             except ValueError:
                 check("validation parses", False, "")
-        check("no ink runtime bundled",
-              not any(path.endswith((".js", ".mjs", ".cjs", ".exe", ".wasm")) for path in payload), "")
+        player = payload.get("ink/player/save_envelope.mjs")
+        check("delivered save envelope helper present", player is not None, "")
+        if player is not None:
+            player_text = player.decode("utf-8", "replace")
+            check("save envelope helper is dependency-free",
+                  "import " not in player_text and "require(" not in player_text
+                  and "eval(" not in player_text and "fetch(" not in player_text, "")
+            check("delivered save envelope schema present",
+                  payload.get("ink/player/save-envelope.schema.json") is not None, "")
+            if pins is not None and validation_raw is not None:
+                try:
+                    pin_doc = json.loads(pins)
+                    envelope_pin = (pin_doc.get("save_restore") or {}).get("envelope") or {}
+                    validation = json.loads(validation_raw)
+                    validation_envelope = (validation.get("save_restore") or {}).get("envelope") or {}
+                    check("runtime pin binds delivered save envelope sha",
+                          (envelope_pin.get("player_module") or {}).get("sha256") == sha256_hex(player), "")
+                    check("validation binds delivered save envelope sha",
+                          ((validation_envelope.get("player_module") or {}).get("sha256")) == sha256_hex(player), "")
+                    check("save envelope legacy policy explicit",
+                          envelope_pin.get("legacy_policy") == "UNBOUND_LEGACY_SAVE_REJECTED_EXPLICIT_MIGRATION_REQUIRED",
+                          str(envelope_pin.get("legacy_policy")))
+                    check("save envelope binds story/revision/artifact/format/runtime",
+                          envelope_pin.get("binding_fields") ==
+                          ["story_id", "revision", "compiled_artifact_sha256", "target_format_version", "runtime"],
+                          json.dumps(envelope_pin.get("binding_fields")))
+                except ValueError:
+                    check("runtime pin save envelope parses", False, "")
+        other_scripts = [path for path in payload
+                         if path.endswith((".js", ".cjs", ".wasm"))
+                         or (path.endswith(".mjs") and path != "ink/player/save_envelope.mjs")]
+        check("no ink runtime bundled", not other_scripts, ",".join(sorted(other_scripts)))
     elif target_id == "RENPY_8_5_4_PROJECT_V1":
         renpy = static_renpy_project_artifact(recorder, payload, story_row, characters, manifest)
         checks.extend(renpy["checks"])
@@ -1540,8 +1570,13 @@ def verify_target_export(recorder, data, *, story_row, characters, targets_respo
               and set(manifest["capabilities"]) == set(contract.CAPABILITY_KEYS), "")
         supported = sorted(key for key, value in (manifest.get("capabilities") or {}).items() if value.get("supported"))
         check("receipt capability partition", sorted(receipt.get("capabilities_supported") or []) == supported, "")
-        check("runtime evidence separate from generation",
-              isinstance((manifest.get("runtime") or {}).get("evidence"), dict), "")
+        runtime_section = manifest.get("runtime") or {}
+        check("historical evidence separate from generation",
+              isinstance(runtime_section.get("historical_evidence"), dict)
+              and "evidence" not in runtime_section, "")
+        check("current artifact evidence unverified at generation",
+              (runtime_section.get("current_artifact_evidence") or {}).get("status") == "UNVERIFIED_AT_GENERATION",
+              str((runtime_section.get("current_artifact_evidence") or {}).get("status")))
         static = static_target_checks(recorder, target_id, payload, story_row, characters, manifest)
         check("target artifact static checks", static["status"] == "PASS",
               json.dumps([item["id"] for item in static["checks"] if item["status"] != "PASS"])[:500])
@@ -2434,6 +2469,88 @@ def _export_summary(record):
     }
 
 
+def _receipt_runtime(target_id, runtime_report, format_version):
+    if target_id == "GODOT_4_RUNTIME_PROJECT_V1":
+        text = str(runtime_report.get("engine_version") or (runtime_report.get("engine") or ""))
+        match = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", text)
+        version = ".".join(part for part in (match.groups() if match else ()) if part) or "4.7.0"
+        return {"name": "Godot", "version": version, "format": format_version}
+    vendor = runtime_report.get("vendor") or {}
+    return {"name": "inkjs", "version": str(vendor.get("version") or "2.3.2"), "format": format_version}
+
+
+def _receipt_checks(runtime_report):
+    executed = runtime_report.get("status") == "EXECUTED_AND_ALIGNED"
+    save_passed = (runtime_report.get("save_restore") or {}).get("status") == "PASS"
+    return {"TARGET_RUNTIME_EXECUTED": "PASS" if executed else "FAIL",
+            "SAVE_RESTORE_VERIFIED": "PASS" if save_passed else "NOT_RUN"}
+
+
+def build_artifact_verification_receipt(story_row, out, target_id, runtime_report, *, verifier_label):
+    """Build the receipt for exactly the artifact bytes the runtime just executed."""
+    manifest_story = (out.get("manifest") or {}).get("story") or {}
+    checks = _receipt_checks(runtime_report)
+    evidence = dict(out.get("historical_evidence") or {})
+    evidence.update(checks)
+    evidence["GENERATED_ARTIFACT_VALIDATED"] = "PASS"
+    commands = []
+    for command in (runtime_report.get("commands") or [])[:12]:
+        if not isinstance(command, dict):
+            continue
+        argv = command.get("argv")
+        commands.append({"label": str(command.get("label") or "command")[:120],
+                         "argv": [str(value)[:300] for value in (argv or [])][:16] if isinstance(argv, list) else [],
+                         "exit_code": command.get("exit_code")})
+    return {"schema": "poemseed-interactive-export-verification/1",
+            "target_id": target_id, "target_format_version": out["target_format_version"],
+            "story_id": story_row["id"], "revision": story_row["version"],
+            "spec_digest": manifest_story.get("spec_digest"),
+            "source_digest": manifest_story.get("source_digest"),
+            "artifact_sha256": out["sha256"], "files_digest": out["files_digest"],
+            "runtime": _receipt_runtime(target_id, runtime_report, out["target_format_version"]),
+            "checks": checks, "evidence": evidence,
+            "verifier": verifier_label,
+            "commands": commands,
+            "log_sha256": sha256_hex(json.dumps(runtime_report, ensure_ascii=False, sort_keys=True).encode("utf-8")),
+            "verified_at": utcnow()}
+
+
+def record_artifact_verification(recorder, env, story_row, out, target_id, runtime_report, *, verifier_label):
+    """Record the receipt through the real mounted API, then prove the product bound it."""
+    story_id, version = story_row["id"], story_row["version"]
+    receipt = build_artifact_verification_receipt(story_row, out, target_id, runtime_report, verifier_label=verifier_label)
+    recorded = http_call(recorder, env, "POST", story_url(env, story_id) + "/export-verification",
+                         body={"expected_version": version, "receipt": receipt}, expected=(200,),
+                         label="interactive-stories.export-verification." + target_id)
+    recorder.require(target_id + ":receipt-recorded", recorded.get("status") == "RECORDED",
+                     json.dumps(recorded.get("artifact_evidence"), ensure_ascii=False)[:1200])
+    recorder.require(target_id + ":receipt-bound-status",
+                     (recorded.get("artifact_evidence") or {}).get("status") == "PASS",
+                     str((recorded.get("artifact_evidence") or {}).get("status")))
+    # A receipt whose target does not match the recorded artifact must be rejected.
+    wrong = deepcopy(receipt)
+    wrong["target_id"] = ("INK_2_3_2_CURRENT_ARTIFACT_V1" if target_id != "INK_2_3_2_CURRENT_ARTIFACT_V1"
+                          else "GODOT_4_RUNTIME_PROJECT_V1")
+    rejected = http_call(recorder, env, "POST", story_url(env, story_id) + "/export-verification",
+                         body={"expected_version": version, "receipt": wrong}, expected=(422,),
+                         label="interactive-stories.export-verification.wrong-target")
+    recorder.require(target_id + ":wrong-target-rejected",
+                     str((rejected or {}).get("code")) == "EXPERIMENTAL_INVALID", json.dumps(rejected)[:800])
+    return {"receipt": receipt, "recorded": recorded}
+
+
+def _target_availability_rows(targets):
+    rows = []
+    for target in targets.get("targets") or []:
+        rows.append({key: target.get(key) for key in (
+            "target_id", "display_name", "kind", "format_version", "adapter_revision", "export_ready",
+            "runtime_claim", "historical_evidence", "artifact_evidence", "artifact_evidence_status",
+            "engine_probe", "capabilities", "losses")}
+            | {"compatibility": {key: target.get("compatibility", {}).get(key) for key in
+                                 ("target_id", "can_export", "losses", "issues", "notes")}})
+    return rows
+
+
 def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delivery_dir,
                      runtime=True, scratch_dir=None):
     story = story_authority()
@@ -2448,13 +2565,7 @@ def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delive
                      "server witness differs from analyze(spec).endings")
     recorder.require(label + ":targets-spec-digest", targets["story"]["spec_digest"] == digest_json(spec), "")
     recorder.require(label + ":targets-contract", targets.get("contract_version") == 1, "")
-    availability = []
-    for target in targets.get("targets") or []:
-        availability.append({key: target.get(key) for key in (
-            "target_id", "display_name", "kind", "format_version", "adapter_revision", "export_ready",
-            "runtime_claim", "evidence", "engine_probe", "capabilities", "losses")}
-            | {"compatibility": {key: target.get("compatibility", {}).get(key) for key in
-                                 ("target_id", "can_export", "losses", "issues", "notes")}})
+    availability = _target_availability_rows(targets)
     result = {"service_targets": {"schema": targets.get("schema"),
                                   "contract_schema": targets.get("contract_schema"),
                                   "contract_version": targets.get("contract_version"),
@@ -2558,11 +2669,49 @@ def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delive
             "delivery": {"zip": relative_to(materialized["zip_path"], delivery_dir),
                          "unpacked": relative_to(materialized["unpack_dir"], delivery_dir)},
         }
+        record["historical_evidence"] = out.get("historical_evidence")
+        record["artifact_evidence"] = out.get("artifact_evidence")
+        record["artifact_evidence_status"] = out.get("artifact_evidence_status")
+        recorder.require(label + ":" + target_id + ":export-unverified-before-run",
+                         out.get("artifact_evidence_status") != "PASS",
+                         "a freshly generated artifact must not inherit a runtime PASS")
         runtime_report = runtime_phase(recorder, target_id, record, story_row, spec, cases,
                                        scratch_dir, delivery_dir, characters=characters,
                                        project_dir=materialized["unpack_dir"],
                                        artifact_zip=materialized["zip_path"], enabled=runtime)
         record["runtime"] = runtime_report
+        if runtime and runtime_report.get("status") == "EXECUTED_AND_ALIGNED" and target_id in (
+                "GODOT_4_RUNTIME_PROJECT_V1", "INK_2_3_2_CURRENT_ARTIFACT_V1"):
+            verifier_meta = runtime_report.get("verifier") or {}
+            verifier_label = (verifier_meta.get("path") if isinstance(verifier_meta, dict) else str(verifier_meta))                 or ("scripts/verify_godot_interactive_runtime.py" if target_id == "GODOT_4_RUNTIME_PROJECT_V1"
+                    else "scripts/verify_ink_current_artifact.mjs")
+            verification = record_artifact_verification(
+                recorder, env, story_row, out, target_id, runtime_report,
+                verifier_label=str(verifier_label)[:200])
+            record["verification_record"] = verification
+            refreshed = export_targets(recorder, env, story_id, version)
+            refreshed_row = next((item for item in refreshed.get("targets") or []
+                                  if item.get("target_id") == target_id), {})
+            refreshed_evidence = refreshed_row.get("artifact_evidence") or {}
+            recorder.require(label + ":" + target_id + ":product-artifact-evidence-pass",
+                             refreshed_row.get("artifact_evidence_status") == "PASS",
+                             str(refreshed_row.get("artifact_evidence_status")))
+            recorder.require(label + ":" + target_id + ":product-artifact-evidence-bound",
+                             (refreshed_evidence.get("export_record") or {}).get("artifact_sha256") == out.get("sha256"),
+                             "the product artifact evidence is not bound to this export digest")
+            reexport = export_archive(recorder, env, story_id, version, preview["preview_digest"], target_id)
+            recorder.require(label + ":" + target_id + ":reexport-keeps-bound-pass",
+                             reexport.get("sha256") == out.get("sha256")
+                             and reexport.get("artifact_evidence_status") == "PASS",
+                             "a re-export of the identical artifact must keep the bound PASS")
+            record["artifact_evidence"] = reexport.get("artifact_evidence")
+            record["artifact_evidence_status"] = reexport.get("artifact_evidence_status")
+            record["verification_reexport_sha256"] = reexport.get("sha256")
+            # Publish the POST-runtime service view so the assembled evidence reads
+            # the product's bound artifact evidence, not the pre-export snapshot.
+            refreshed = export_targets(recorder, env, story_id, version)
+            result["service_targets"]["targets"] = _target_availability_rows(refreshed)
+            result["service_targets"]["refreshed_after_runtime"] = True
         result["new_targets"][target_id] = record
     # 3. Ren'Py target: static artifact already verified; engine absence blocks runtime only
     if "RENPY_8_5_4_PROJECT_V1" in result["new_targets"] and result["new_targets"]["RENPY_8_5_4_PROJECT_V1"].get("status") == "EXPORTED":
@@ -2576,7 +2725,8 @@ def export_lifecycle(recorder, env, story_row, analysis, cases, *, label, delive
 def _target_row_evidence(target_row):
     return {key: target_row.get(key) for key in (
         "target_id", "display_name", "kind", "format_version", "adapter_revision",
-        "evidence", "engine_probe", "runtime_claim", "export_ready", "launch_instructions")}
+        "historical_evidence", "artifact_evidence", "artifact_evidence_status",
+        "engine_probe", "runtime_claim", "export_ready", "launch_instructions")}
 
 
 # ---------------------------------------------------------------------------
@@ -2886,6 +3036,10 @@ def collect_target_records(run):
                     "archive_checks_failed": [check["id"] for check in archive.get("checks") or []
                                               if check["status"] != "PASS"],
                     "deterministic_repeat": record.get("deterministic_repeat"),
+                    "historical_evidence": record.get("historical_evidence"),
+                    "artifact_evidence": record.get("artifact_evidence"),
+                    "artifact_evidence_status": record.get("artifact_evidence_status"),
+                    "verification_record": record.get("verification_record"),
                     "delivery": record.get("delivery"),
                 })
                 runtime = record.get("runtime") or {}
@@ -2936,7 +3090,8 @@ def build_evidence(run):
             "SAVE_RESTORE_VERIFIED is set only after the target runtime actually saved, restored and continued to the expected state.",
             "Ren'Py 8.5.4 is not installed on this host; Ren'Py runtime evidence is BLOCKED_ENVIRONMENT and only static project checks are claimed.",
             "The samples are real File-backend fixtures created through the mounted Studio API; they are not claims about the current author's manuscript.",
-            "Target-line evidence declarations (DESCRIPTOR.evidence) are recorded separately and are never auto-upgraded by this journey.",
+            "Historical adapter/template evidence and current-artifact evidence are separate: only a verification receipt bound to the exact story revision, target build and artifact digest may set TARGET_RUNTIME_EXECUTED/SAVE_RESTORE_VERIFIED in the product.",
+            "The product export response is re-read after each runtime run and must show artifact_evidence_status=PASS for the same artifact digest; a missing bound receipt is reported as PRODUCT_ARTIFACT_EVIDENCE rather than inherited from another story.",
         ],
         "files": {},
         "error": run.get("error"),
@@ -2949,8 +3104,18 @@ def build_evidence(run):
         row = records.get(target_id, {"present": False, "service_rows": [], "artifact_records": [],
                                       "runtime_reports": [], "blocked": []})
         declared = {}
+        product_artifact_evidence = []
         for service_row in row["service_rows"]:
-            declared = (service_row.get("target_row") or {}).get("evidence") or declared
+            target_row = service_row.get("target_row") or {}
+            declared = target_row.get("historical_evidence") or declared
+            artifact_value = target_row.get("artifact_evidence") or {}
+            if artifact_value:
+                product_artifact_evidence.append({
+                    "scope": service_row.get("scope"), "status": artifact_value.get("status"),
+                    "levels": artifact_value.get("levels"), "matched_receipt": artifact_value.get("matched_receipt"),
+                    "reason": artifact_value.get("reason"),
+                    "export_record": artifact_value.get("export_record"),
+                })
         status = {level: "NOT_RUN" for level in EVIDENCE_LEVELS}
         notes = []
         if row["present"]:
@@ -2984,8 +3149,14 @@ def build_evidence(run):
         notes.append("WINDOWS_USABILITY_VERIFIED is out of E2E-07 scope and is not claimed.")
         if target_id in TARGET_ORDER and not row["present"]:
             notes.append("Target adapter module is not registered by interactive_export_contract at this revision; the line had not landed at run time.")
-        levels[target_id] = {"present": row["present"], "service_declared": declared,
+        levels[target_id] = {"present": row["present"], "historical_evidence": declared,
+                             "product_artifact_evidence": product_artifact_evidence,
                              "e2e07_independent": status, "notes": notes}
+        if target_id in TARGET_ORDER and status["TARGET_RUNTIME_EXECUTED"] == "PASS":
+            if not any(item.get("status") == "PASS" for item in product_artifact_evidence):
+                unmet.append({"target_id": target_id, "item": "PRODUCT_ARTIFACT_EVIDENCE",
+                              "status": "UNVERIFIED",
+                              "detail": "the runtime ran, but the Studio export response does not show a verification receipt bound to this exact artifact"})
         if target_id in TARGET_ORDER:
             if not row["present"]:
                 unmet.append({"target_id": target_id, "item": "TARGET_ADAPTER", "status": "NOT_LANDED",
@@ -3016,6 +3187,10 @@ def build_evidence(run):
             "artifact_records": artifacts,
             "runtime_reports": runtimes,
             "blocked": row["blocked"],
+            "historical_evidence": declared,
+            "product_artifact_evidence": product_artifact_evidence,
+            "verification_records": [record.get("verification_record") for record in artifacts
+                                     if record.get("verification_record")],
         }
     for scope_name in ("samples", "journey"):
         document = evidence.get(scope_name)
@@ -3153,12 +3328,19 @@ def render_markdown(evidence):
     level_rows = []
     for target_id, values in (evidence.get("evidence_levels") or {}).items():
         ind = values["e2e07_independent"]
+        product_statuses = [item.get("status") for item in (values.get("product_artifact_evidence") or [])]
+        product_bound = ("PASS" if product_statuses and all(status == "PASS" for status in product_statuses)
+                         else (product_statuses[0] if product_statuses else "UNVERIFIED"))
+        historical = values.get("historical_evidence") or {}
         level_rows.append([target_id, "yes" if values["present"] else "no",
                            ind.get("GENERATED_ARTIFACT_VALIDATED"), ind.get("TARGET_RUNTIME_EXECUTED"),
-                           ind.get("SAVE_RESTORE_VERIFIED"),
-                           values.get("service_declared", {}).get("TARGET_RUNTIME_EXECUTED", "NOT_DECLARED")])
-    lines += [_md_table(["target", "present", "artifact", "runtime", "save/restore", "service-declared runtime"], level_rows), "",
-              "service-declared runtime is the target line's own declaration and is never auto-upgraded here.", ""]
+                           ind.get("SAVE_RESTORE_VERIFIED"), product_bound,
+                           historical.get("TARGET_RUNTIME_EXECUTED", "NOT_DECLARED")])
+    lines += [_md_table(["target", "present", "artifact", "runtime (e2e)", "save/restore (e2e)",
+                         "product bound artifact", "historical adapter runtime"], level_rows), "",
+              "runtime/save-restore are accepted only after the real target ran THIS artifact. "
+              "product bound artifact is read back from Studio export-targets after recording a receipt bound to the exact "
+              "story revision and artifact digest; the historical adapter column is never used as a current claim.", ""]
     samples = evidence.get("samples") or {}
     if samples:
         lines += ["## Samples", ""]
@@ -4181,13 +4363,31 @@ def drive_ink_current_artifact(recorder, target_id, project_dir, spec, character
         "states_checked_by_real_runtime": states_checked,
     }
     cross = verifier_report.get("cross_process") or {}
-    save_ok = bool(cross.get("performed") and cross.get("passed")
-                   and (verifier_report.get("assertions") or {}).get("save_restore") == "PASS")
+    assertions = verifier_report.get("assertions") or {}
+    save_assertion = assertions.get("save_restore")
+    after_choice_possible = bool(cross.get("after_choice_possible"))
+    negatives = verifier_report.get("save_restore_negatives") or []
+    negatives_ok = bool(negatives) and len(negatives) >= 8 and all(item.get("passed") for item in negatives)
+    save_envelope_ok = (verifier_report.get("save_envelope") or {}).get("pinned") is True
+    if save_assertion == "PASS":
+        save_contract_ok = bool(cross.get("performed") and cross.get("passed")
+                                and cross.get("saved_after_choice") is True and negatives_ok and save_envelope_ok)
+        save_detail = "post-choice save through the delivered envelope helper; a fresh process restored it, replayed to the ending and every mismatched binding was rejected."
+    elif save_assertion == "NOT_APPLICABLE_SINGLE_STEP":
+        save_contract_ok = bool(cross.get("performed") and cross.get("passed")
+                                and after_choice_possible is False and negatives_ok and save_envelope_ok)
+        save_detail = "no multi-step witness path exists; initial-state envelope restore and the full negative binding matrix were verified instead (NOT_APPLICABLE_SINGLE_STEP)."
+    else:
+        save_contract_ok = False
+        save_detail = "verifier did not accept the save/restore contract"
     report["save_restore"] = {
-        "status": "PASS" if save_ok else "FAIL", "level": "PASS" if save_ok else "FAIL",
-        "cross_process": cross, "in_memory_restore_checks": (verifier_report.get("runtime") or {}).get("in_memory_restore_checks"),
-        "detail": "parent process saves the pinned runtime state; a fresh node process restores it and replays to the ending.",
-    }
+        "status": "PASS" if save_contract_ok else "FAIL", "level": "PASS" if save_contract_ok else "FAIL",
+        "assertion": save_assertion, "cross_process": cross,
+        "in_memory_envelope_restores": (verifier_report.get("runtime") or {}).get("in_memory_envelope_restores"),
+        "negative_cases": negatives, "delivered_player": verifier_report.get("delivered_player"),
+        "save_envelope": verifier_report.get("save_envelope"), "detail": save_detail,
+    };
+    save_ok = save_contract_ok
     report["status"] = "EXECUTED_AND_ALIGNED" if aligned else "EXECUTED_WITH_MISMATCH"
     recorder.require("ink-current-artifact-runtime", aligned,
                      json.dumps({"result": verifier_report.get("result"),
