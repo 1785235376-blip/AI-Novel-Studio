@@ -31,19 +31,17 @@ reader is available, the formal asset must match scope, candidate id/digest/kind
 approved asset version and non-deleted state. An unreadable or changed asset is
 not substituted. Job approval does not prove adoption into a canvas.
 
-`origin` may only be the original host's `CanvasImageTaskOrigin` capture. It is
-shown as a session capture after matching its exact input pin. It is not durable
-Job provenance and never infers a canvas/card from an asset shared by several
-positions. The existing Job contract has no durable canvas/card origin or durable
-adoption receipt, so cross-session position recovery remains unavailable.
+`origin` is the original host's `CanvasImageTaskOrigin` capture. For legacy Jobs
+without a recorded binding it is shown only as a session capture after matching
+its exact input pin. It never infers a canvas/card from an asset shared by several
+positions. A binding records an intended return position, not a durable adoption
+receipt.
 
-`task-detail.integration.patch` is a minimal, **unapplied** insertion into the
-existing `StudioCanvasImageTaskPanel` detail. The owner should review/apply it in
-the integration line. That example has no asset getter in its current props, so
-it shows Job approval as recorded and leaves current formal-asset verification
-explicitly unavailable. A host with the original StudioClient can supply
-`assets={studioClient}` to enable the original asset GET verification. No history
-or result-return component is changed.
+`task-detail.integration.patch` is the author's retained, unapplied example from
+the pre-binding baseline. The current `StudioCanvasImageTaskPanel` has integrated
+the panel semantically, supplies the original production GET and StudioClient
+asset reader, and retains the original task/scope guards. Do not apply that older
+example over the integrated entry. No history or result-return owner is changed.
 
 When the original Job command contains a checked `studio-canvas-return/1` binding,
 the panel displays that recorded canvas/card/source pin. It does not infer an
