@@ -21,18 +21,23 @@ export function ExecutionImpactPanel(props: ExecutionImpactPanelProps) {
   try { snapshot = executionImpactSnapshot(props.input); } catch (reason) { error = reason instanceof Error ? reason.message : '无法完整核对输入。'; }
   const alive = useRef(true), live = useRef(props); live.current = props;
   const values = [snapshot?.canonical ?? error, props.owner, props.current, props.canConfirm];
-  const fence = useRef({ values, token: {} });
-  if (values.some((v, i) => !Object.is(v, fence.current.values[i]))) fence.current = { values, token: {} };
-  const token = fence.current.token, capturedGuard = props.isCurrent, canonical = snapshot?.canonical;
+  const fence = useRef({ values, token: {}, retired: false });
+  if (values.some((v, i) => !Object.is(v, fence.current.values[i]))) fence.current = { values, token: {}, retired: false };
+  const generation = fence.current, token = generation.token, capturedGuard = props.isCurrent, canonical = snapshot?.canonical;
   const [fingerprint, setFingerprint] = useState<Fingerprint>(), [failure, setFailure] = useState<Fingerprint>();
   const [acknowledgement, setAcknowledgement] = useState<Fingerprint>(), [issued, setIssued] = useState<object>();
   const acknowledgementRef = useRef(acknowledgement); acknowledgementRef.current = acknowledgement;
   const fingerprintRef = useRef(fingerprint); fingerprintRef.current = fingerprint;
   const issuedRef = useRef(issued); issuedRef.current = issued;
   function current() {
-    try { return alive.current && fence.current.token === token && live.current.current && live.current.canConfirm
-      && capturedGuard() && live.current.isCurrent() && !!canonical && canonicalExecutionImpact(live.current.input) === canonical; }
-    catch { return false; }
+    if (generation.retired) return false;
+    try {
+      const valid = alive.current && fence.current.token === token && live.current.current && live.current.canConfirm
+        && capturedGuard() && live.current.isCurrent() && !!canonical && canonicalExecutionImpact(live.current.input) === canonical;
+      // An observed mismatch retires every receipt of this generation permanently.
+      if (!valid) generation.retired = true;
+      return valid;
+    } catch { generation.retired = true; return false; }
   }
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useLayoutEffect(() => {
