@@ -37,12 +37,12 @@ export function GraphTextTemplateTools(props: Props) {
     importConsent.current = undefined; setCandidate(undefined); ticket.current++;
     props.onApply(visible.result.definition, visible.result.selected);
   }
-  return <section aria-label="文字图模板复用"><h4>文字图模板</h4><p>仅支持不含素材引用的文字图 v1/v2。模板包含节点文字与内部连接；不携带项目权限、审批、运行结果、分组或便笺。导入仅追加到当前草稿，仍需原保存、预检和执行确认。</p>
-    <label><input type="checkbox" disabled={props.disabled || loading} checked={!!exportChecked} onChange={event => { exportConsent.current = { token, checked: event.target.checked }; renderConsent(value => value + 1); }} />确认将当前节点文字导出为本地模板文件</label>
+  return <section aria-label="文字图模板复用"><h4>文字图模板</h4><p>仅支持不含素材引用的文字图 v1/v2。模板包含节点文字、内部连接、视觉分组与便笺；不携带项目权限、审批、运行结果、图注释或视图设置。导入仅追加到当前草稿，仍需原保存、预检和执行确认。</p>
+    <label><input type="checkbox" disabled={props.disabled || loading} checked={!!exportChecked} onChange={event => { exportConsent.current = { token, checked: event.target.checked }; renderConsent(value => value + 1); }} />确认将当前节点文字、分组与便笺导出为本地模板文件</label>
     <Button disabled={props.disabled || loading || !exportChecked || !props.definition.nodes.length} onClick={exportFile}>导出受限文字图模板</Button>
     <label>导入文字图模板 JSON<input ref={input} type="file" accept="application/json,.json" disabled={props.disabled || loading} onChange={event => void read(event.target.files?.[0])} /></label>
     {loading && <StatusMessage>正在读取并核对模板…</StatusMessage>}
-    {visible && <div><p>来源标题：{visible.sourceTitle}。将新增 {visible.result.nodeCount} 个节点、{visible.result.edgeCount} 条内部连接；节点与连接会使用新标识，目标图现有内容保持。</p>
+    {visible && <div><p>来源标题：{visible.sourceTitle}。将新增 {visible.result.nodeCount} 个节点、{visible.result.edgeCount} 条内部连接、{visible.groupCount} 个视觉分组、{visible.noteCount} 条便笺；新增内容使用新标识，目标图现有内容保持。</p>
       <label><input type="checkbox" disabled={props.disabled} checked={!!importChecked} onChange={event => { importConsent.current = { candidate: visible, checked: event.target.checked }; renderConsent(value => value + 1); }} />确认仅把模板追加到当前本地草稿</label>
       <Button disabled={props.disabled || !importChecked} onClick={apply}>明确追加模板节点</Button></div>}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}
