@@ -31,13 +31,25 @@ SAVE_RESTORE_VERIFIED and GENERATED_ARTIFACT_VALIDATED can become PASS here.
 WINDOWS_USABILITY_VERIFIED stays NOT_RUN because headless automation is not GUI
 acceptance.
 
-Usage: python scripts/verify_godot_interactive_runtime.py [--godot PATH] [--keep]
-Exit code 0 means every check passed.
+Two modes:
+- default (unchanged): generate the real target export through the frozen contract,
+  package it, then run the checks above against that freshly generated project;
+- external artifact (--artifact ZIP): verify a ZIP that the Studio journey already
+  exported (E2E-07). Nothing is regenerated: expectations come from the artifact's
+  data/story.json plus acceptance/cases.json, the product bundle records are recomputed
+  fail-closed, and the same real Godot headless execution, per-step alignment, static
+  audit and two-process save/restore checks run against the delivered project.
+
+Usage:
+  python scripts/verify_godot_interactive_runtime.py [--godot PATH] [--scratch-root DIR]
+  python scripts/verify_godot_interactive_runtime.py --artifact exported.zip --report result.json [--godot PATH] [--scratch-root DIR]
+Exit code 0 means every check passed; FAIL or a blocked environment is non-zero.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import platform
@@ -737,14 +749,492 @@ def check_save_restore(engine: str, project: Path, spec: dict, characters: dict,
 
 
 # ---------------------------------------------------------------------------
+# external artifact verification mode (--artifact): verify what the Studio already
+# exported, never re-generate the story, and fail closed on any inconsistency.
+# ---------------------------------------------------------------------------
+ARTIFACT_REPORT_SCHEMA = 'poemseed-b07-godot-artifact-verification/1'
+ARTIFACT_SAVE_NAME = 'artifact-save.json'
+
+
+def read_artifact_files(content: bytes) -> tuple[dict[str, bytes], str]:
+    """Read an externally exported target ZIP with the same path rules as the product."""
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        names = [info.filename for info in archive.infolist() if not info.is_dir()]
+    roots = {name.split('/', 1)[0] for name in names if name}
+    if len(roots) != 1:
+        raise ValueError('ARTIFACT_ROOT_INVALID')
+    prefix = roots.pop() + '/'
+    files = contract.read_zip_safely(content, prefix)
+    return files, prefix
+
+
+def expression_text(tree: dict) -> str:
+    """Serialise a typed condition AST back to the restricted expression grammar."""
+    op = str(tree['op'])
+    if op == 'literal':
+        value = tree['value']
+        if type(value) is bool:
+            return 'True' if value else 'False'
+        return str(int(value))
+    if op == 'var':
+        return str(tree['name'])
+    if op == 'not':
+        return '(not (' + expression_text(tree['arg']) + '))'
+    if op in ('and', 'or'):
+        return '(' + (' ' + op + ' ').join('(' + expression_text(argument) + ')' for argument in tree['args']) + ')'
+    operators = {'eq': '==', 'ne': '!=', 'lt': '<', 'le': '<=', 'gt': '>', 'ge': '>='}
+    if op not in operators:
+        raise ValueError('ARTIFACT_CONDITION_OPERATOR_INVALID:' + op)
+    return '((' + expression_text(tree['left']) + ') ' + operators[op] + ' (' + expression_text(tree['right']) + '))'
+
+
+def artifact_spec_from_story(story: dict):
+    """Reconstruct a StorySpec-equivalent dict from data/story.json for authoritative playback."""
+    from app.experimental.interactive_story import parse_condition
+    problems = []
+    speakers = {str(node['node_id']): str(node.get('speaker') or '') for node in story['nodes']}
+    nodes = []
+    for node in story['nodes']:
+        choices = []
+        for choice in node['choices']:
+            text = expression_text(choice['condition'])
+            try:
+                if parse_condition(text) != choice['condition']:
+                    problems.append('condition round trip mismatch at ' + str(node['node_id']) + '/' + str(choice['id']))
+            except ValueError as exc:
+                problems.append('condition not serialisable at ' + str(node['node_id']) + '/' + str(choice['id'])
+                                + ': ' + str(exc)[:160])
+            choices.append({'id': choice['id'], 'label': choice['label'], 'target': choice['target'],
+                            'condition': text, 'assignments': dict(choice['assignments'])})
+        nodes.append({'node_id': node['node_id'], 'node_version': 1, 'title': node['title'],
+                      'dialogue': node['dialogue'], 'character_id': None,
+                      'background_asset_id': None, 'music_asset_id': None,
+                      'ending': node['ending'], 'choices': choices})
+    spec = {'title': story['title'], 'graph_id': 'artifact-' + str(story['story_id']),
+            'graph_version': int(story['revision']), 'entry_node_id': story['entry_node_id'], 'nodes': nodes,
+            'variables': [dict(variable) for variable in story['variables']],
+            'graph_record_ids': [], 'max_steps': int(story['max_steps'])}
+    try:
+        spec = StorySpec.model_validate(spec).model_dump()
+    except Exception as exc:
+        problems.append('SPEC_RECONSTRUCTION_FAILED:' + type(exc).__name__ + ':' + str(exc)[:200])
+        return {}, speakers, problems
+    return spec, speakers, problems
+
+
+def artifact_expected_state(spec: dict, speakers: dict, path) -> dict:
+    from app.experimental.interactive_story import play
+    result = play(spec, list(path))
+    node = result['node']
+    return {
+        'node': {'node_id': node['node_id'], 'title': node['title'], 'dialogue': node['dialogue'],
+                 'speaker': speakers.get(str(node['node_id']), ''), 'ending': node['ending']},
+        'choices': [{'id': choice['id'], 'label': choice['label'], 'enabled': bool(choice['enabled'])}
+                    for choice in result['choices']],
+        'variables': result['variables'], 'steps': result['steps'], 'max_steps': result['max_steps'],
+        'status': result['status'], 'path': list(result['path']),
+    }
+
+
+def flatten_state(state: dict) -> dict:
+    """The compact per-step projection required by the external E2E report."""
+    return {'node_id': str(state['node']['node_id']), 'variables': state['variables'],
+            'enabled_choice_ids': [str(choice['id']) for choice in state['choices'] if bool(choice['enabled'])],
+            'steps': int(state['steps']), 'status': str(state['status'])}
+
+
+def artifact_bundle_records(files: dict):
+    """Recompute the product bundle integrity from the artifact records, fail closed."""
+    problems = []
+    for name in ('manifest.json', 'source-receipt.json'):
+        if name not in files:
+            problems.append('missing ' + name)
+    if problems:
+        return {}, {}, problems
+    try:
+        manifest = json.loads(files['manifest.json'])
+        receipt = json.loads(files['source-receipt.json'])
+    except ValueError as exc:
+        return {}, {}, ['RECORD_JSON_INVALID:' + type(exc).__name__]
+    story = manifest.get('story') or {}
+    raw = {'target_id': manifest.get('target_id'),
+           'target_format_version': manifest.get('target_format_version'),
+           'adapter_revision': manifest.get('adapter_revision'), 'kind': manifest.get('target_kind'),
+           'story_id': story.get('id'), 'revision': story.get('revision'), 'filename_base': 'artifact',
+           'files': files, 'payload_files_digest': manifest.get('payload_files_digest'),
+           'files_digest': contract.files_digest(files), 'manifest': manifest, 'receipt': receipt,
+           'capabilities': manifest.get('capabilities') or {}, 'losses': list(manifest.get('losses') or [])}
+    try:
+        bundle = contract.ExportBundle.model_validate(raw)
+        contract.verify_bundle(bundle)
+    except Exception as exc:
+        problems.append('BUNDLE_INTEGRITY_INVALID:' + type(exc).__name__ + ':' + str(exc)[:240])
+        return manifest, receipt, problems
+    if bundle.target_id != TARGET_ID:
+        problems.append('target id is ' + str(bundle.target_id))
+    if bundle.kind != 'RUNNABLE_PROJECT':
+        problems.append('target kind is ' + str(bundle.kind))
+    if bundle.target_format_version != godot_export.FORMAT_VERSION:
+        problems.append('format version is ' + str(bundle.target_format_version))
+    return manifest, receipt, problems
+
+
+def artifact_story_binding(story: dict, manifest: dict, receipt: dict) -> list:
+    problems = []
+    story_block = manifest.get('story') or {}
+    pairs = [('story_id', story.get('story_id'), story_block.get('id')),
+             ('revision', int(story.get('revision', 0)), story_block.get('revision')),
+             ('spec_digest', story.get('spec_digest'), story_block.get('spec_digest')),
+             ('source_digest', story.get('source_digest'), story_block.get('source_digest')),
+             ('review_receipt', story.get('review_receipt'), story_block.get('review_receipt')),
+             ('receipt_spec_digest', story.get('spec_digest'), receipt.get('spec_digest')),
+             ('receipt_source_digest', story.get('source_digest'), receipt.get('source_digest')),
+             ('receipt_story_id', story.get('story_id'), receipt.get('story_id')),
+             ('receipt_revision', int(story.get('revision', 0)), receipt.get('story_revision'))]
+    for name, story_value, record_value in pairs:
+        if story_value != record_value:
+            problems.append(name + ' story=' + str(story_value)[:64] + ' records=' + str(record_value)[:64])
+    return problems
+
+
+def artifact_cases_consistency(cases: dict, story: dict, spec: dict, speakers: dict) -> list:
+    problems = []
+    if not isinstance(cases, dict):
+        return ['CASES_JSON_INVALID']
+    if cases.get('schema') != godot_export.CASES_SCHEMA:
+        problems.append('cases schema is ' + str(cases.get('schema')))
+    if cases.get('target_id') != TARGET_ID:
+        problems.append('cases target is ' + str(cases.get('target_id')))
+    if str(cases.get('story_id')) != str(story['story_id']) or int(cases.get('revision', -1)) != int(story['revision']):
+        problems.append('cases do not bind the artifact story/revision')
+    if cases.get('spec_digest') != story['spec_digest'] or cases.get('source_digest') != story['source_digest']:
+        problems.append('cases do not bind the artifact spec/source digest')
+    case_list = cases.get('cases') or []
+    if not case_list:
+        problems.append('cases are empty: no authoritative witness to replay')
+    witness_paths = {tuple(record.get('choices') or []) for record in (story.get('witness') or [])}
+    case_paths = set()
+    for case in case_list:
+        path = list(case.get('choices') or [])
+        case_paths.add(tuple(path))
+        try:
+            expected = artifact_expected_state(spec, speakers, path)
+        except (ValueError, TypeError) as exc:
+            problems.append('case ' + str(case.get('case_id')) + ' playback failed: ' + str(exc)[:160])
+            continue
+        if expected['status'] != 'ENDING':
+            problems.append('case ' + str(case.get('case_id')) + ' does not reach an ending in authoritative playback')
+        for difference in typed_diff(expected, case.get('expected_final'), 'case ' + str(case.get('case_id'))):
+            problems.append('cases.json expected_final mismatch: ' + difference[:240])
+    if witness_paths and case_paths != witness_paths:
+        missing = sorted(witness_paths - case_paths)
+        extra = sorted(case_paths - witness_paths)
+        problems.append('cases cover different paths than the artifact witness: missing='
+                        + str(missing[:4]) + ' extra=' + str(extra[:4]))
+    return problems
+
+
+def artifact_project_checks(project: Path, manifest: dict) -> None:
+    project_file = project / 'project.godot'
+    project_text = project_file.read_text(encoding='utf-8') if project_file.is_file() else ''
+    extra = (manifest.get('extra') or {}).get('godot_runtime') or {}
+    failures = []
+    if 'config_version=5' not in project_text:
+        failures.append('config_version=5 missing')
+    if 'run/main_scene="res://main.tscn"' not in project_text:
+        failures.append('main scene missing')
+    if 'viewport_width=960' not in project_text or 'viewport_height=600' not in project_text:
+        failures.append('window size missing')
+    if extra.get('project_name') and ('config/name="' + str(extra['project_name']) + '"') not in project_text:
+        failures.append('project name does not match the export manifest')
+    record('artifact.project_config', 'PASS' if not failures else 'FAIL', '; '.join(failures[:5]))
+    drift = [relative for relative, expected in godot_export.PINNED_TEMPLATE_SHA256.items()
+             if not (project / relative).is_file() or sha256_file(project / relative) != expected]
+    record('artifact.runtime_template_pinned', 'PASS' if not drift else 'FAIL',
+           'all delivered runtime files match the audited pinned template' if not drift else 'drift: ' + ','.join(drift[:6]))
+    template_mismatch = []
+    for relative, expected in (extra.get('template_files') or {}).items():
+        shipped = project / relative
+        if not shipped.is_file() or sha256_file(shipped) != expected:
+            template_mismatch.append(relative)
+    record('artifact.manifest_template_hashes', 'PASS' if not template_mismatch else 'FAIL',
+           '; '.join(template_mismatch[:6]))
+    if not (project / 'data' / 'story.json').is_file() or not (project / 'acceptance' / 'cases.json').is_file():
+        record('artifact.data_files', 'FAIL', 'data/story.json or acceptance/cases.json missing after extraction')
+    else:
+        record('artifact.data_files', 'PASS')
+
+
+def extract_artifact(files: dict, target: Path) -> None:
+    if target.exists():
+        shutil.rmtree(target)
+    for relative, content in files.items():
+        if relative in {'manifest.json', 'source-receipt.json'}:
+            continue
+        contract.safe_bundle_path(relative)
+        destination = target / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(content)
+
+
+def artifact_save_restore(engine: str, project: Path, story: dict, spec: dict, speakers: dict, cases: dict) -> dict:
+    """Two-process save -> load -> continue and compare with authoritative playback."""
+    case_list = list(cases.get('cases') or [])
+    scenario = None
+    for case in case_list:
+        path = list(case.get('choices') or [])
+        save_at = case.get('save_at')
+        if isinstance(save_at, int) and not isinstance(save_at, bool) and 1 <= save_at < len(path):
+            scenario = (path, save_at, 'cases.save_at:' + str(case.get('case_id')))
+            break
+    if scenario is None and case_list:
+        candidates = [case for case in case_list if len(list(case.get('choices') or [])) >= 2]
+        if candidates:
+            longest = max(candidates, key=lambda case: len(list(case.get('choices') or [])))
+            path = list(longest.get('choices') or [])
+            scenario = (path, max(1, len(path) // 2), 'derived.two_process')
+        else:
+            longest = max(case_list, key=lambda case: len(list(case.get('choices') or [])))
+            path = list(longest.get('choices') or [])
+            if path:
+                scenario = (path, 0, 'derived.initial_state_save')
+    if scenario is None:
+        return {'performed': False, 'passed': False,
+                'detail': 'no artifact witness path is available; two-process save/restore not performed'}
+    path, split, origin = scenario
+    prefix, continuation = path[:split], path[split:]
+    result = {'performed': True, 'passed': False, 'origin': origin, 'save_after_steps': len(prefix),
+              'continued_steps': len(continuation), 'detail': ''}
+    problems = []
+    first_args = (['--witness-path', ','.join(prefix)] if prefix else []) + ['--save', 'user://' + ARTIFACT_SAVE_NAME]
+    first = run_engine(engine, project, first_args, 'artifact.save.process1')
+    ok, detail = healthy_run(first, 0)
+    first_records = parse_records(first)
+    user_dir = first_records['user_dir']
+    result['user_dir'] = str(user_dir)
+    if not ok:
+        problems.append('process1: ' + detail)
+    expected_prefix = [artifact_expected_state(spec, speakers, prefix[:depth]) for depth in range(len(prefix) + 1)]
+    if len(first_records['states']) != len(expected_prefix):
+        problems.append('process1 emitted ' + str(len(first_records['states'])) + ' states, expected ' + str(len(expected_prefix)))
+    else:
+        for index, (actual, expected) in enumerate(zip(first_records['states'], expected_prefix)):
+            differences = typed_diff(expected, actual)
+            if differences:
+                problems.append('process1 step ' + str(index) + ': ' + differences[0])
+    save_file = (user_dir / ARTIFACT_SAVE_NAME) if user_dir else None
+    if save_file is None or not save_file.is_file():
+        problems.append('save file was not written under user://')
+    else:
+        save_bytes = save_file.read_bytes()
+        result['save_sha256'] = sha256_bytes(save_bytes)
+        result['save_bytes'] = len(save_bytes)
+        recorded_sha = (first_records['saved'] or {}).get('sha256')
+        if recorded_sha != result['save_sha256']:
+            problems.append('reported save sha256 does not match the file')
+        try:
+            save_payload = json.loads(save_bytes.decode('utf-8'))
+        except (ValueError, UnicodeDecodeError):
+            save_payload = {}
+            problems.append('save file is not valid UTF-8 JSON')
+        if save_payload.get('schema') != godot_export.SAVE_SCHEMA or save_payload.get('save_schema_version') != 1:
+            problems.append('save schema invalid')
+        save_story = save_payload.get('story') or {}
+        if (save_story.get('id') != story['story_id']
+                or int(save_story.get('revision', -1)) != int(story['revision'])):
+            problems.append('save does not bind the artifact story/revision')
+        if save_payload.get('path') != prefix or int(save_payload.get('steps', -1)) != len(prefix):
+            problems.append('save does not record the replayed path')
+    second = run_engine(engine, project, ['--load', 'user://' + ARTIFACT_SAVE_NAME,
+                                          '--witness-path', ','.join(continuation)], 'artifact.save.process2')
+    ok, detail = healthy_run(second, 0)
+    second_records = parse_records(second)
+    if not ok:
+        problems.append('process2: ' + detail)
+    expected_continued = [artifact_expected_state(spec, speakers, prefix)]
+    for depth in range(1, len(continuation) + 1):
+        expected_continued.append(artifact_expected_state(spec, speakers, prefix + continuation[:depth]))
+    if len(second_records['states']) != len(expected_continued):
+        problems.append('process2 emitted ' + str(len(second_records['states'])) + ' states, expected ' + str(len(expected_continued)))
+    else:
+        for index, (actual, expected) in enumerate(zip(second_records['states'], expected_continued)):
+            differences = typed_diff(expected, actual)
+            if differences:
+                problems.append('process2 step ' + str(index) + ': ' + differences[0])
+        direct = artifact_expected_state(spec, speakers, path)
+        for difference in typed_diff(direct, second_records['states'][-1]):
+            problems.append('restored continuation differs from direct playback: ' + difference[:240])
+    result['passed'] = not problems
+    result['detail'] = '; '.join(problems[:6]) if problems else (
+        'two-process save/restore matched direct playback (' + origin + '; saved after ' + str(len(prefix))
+        + ' step(s), continued ' + str(len(continuation)) + ' step(s))')
+    return result
+
+
+def artifact_main(args) -> int:
+    """Verify an externally exported target ZIP with the real engine; write a JSON report."""
+    started = time.monotonic()
+    artifact_path = Path(str(args.artifact))
+    if args.report:
+        report_path = Path(str(args.report))
+    else:
+        report_path = Path(args.scratch_root) / ('artifact-verification-' + artifact_path.stem[:60] + '.json')
+    report = {'schema': ARTIFACT_REPORT_SCHEMA, 'result': 'FAIL', 'mode': 'EXTERNAL_ARTIFACT',
+              'generated_at': datetime.now(timezone.utc).isoformat(), 'target_id': TARGET_ID,
+              'artifact': {'path': str(artifact_path), 'filename': artifact_path.name, 'sha256': None,
+                           'bundle_files': [], 'story_id': None, 'revision': None,
+                           'manifest_sha256': None, 'receipt_sha256': None},
+              'engine': {'executable': None, 'version': None, 'exit_code': None, 'minimum_version': '4.0'},
+              'cases': [], 'save_restore': {'performed': False, 'passed': False, 'detail': ''},
+              'checks': [], 'failures': [], 'elapsed_ms': 0}
+    user_dir = None
+    print('== B07 Godot runtime verifier (external artifact mode) ==')
+    try:
+        engine, source = find_engine(args.godot)
+        report['engine']['executable'] = engine
+        if engine is None:
+            record('artifact.engine_found', 'FAIL', source)
+            return 1
+        record('artifact.engine_found', 'PASS', engine)
+        version_proc = subprocess.run([engine, '--version'], capture_output=True, timeout=30)
+        report['engine']['version'] = (version_proc.stdout + version_proc.stderr).decode('utf-8', 'replace').strip()
+        report['engine']['exit_code'] = version_proc.returncode
+        record('artifact.engine_version', 'PASS' if version_proc.returncode == 0 else 'FAIL', report['engine']['version'])
+        if not artifact_path.is_file():
+            record('artifact.exists', 'FAIL', str(artifact_path))
+            return 1
+        content = artifact_path.read_bytes()
+        report['artifact']['sha256'] = sha256_bytes(content)
+        record('artifact.exists', 'PASS', artifact_path.name + ' sha256 ' + report['artifact']['sha256'][:16])
+        try:
+            files, prefix = read_artifact_files(content)
+        except (ValueError, zipfile.BadZipFile, OSError) as exc:
+            record('artifact.zip_structure', 'FAIL', type(exc).__name__ + ':' + str(exc)[:200])
+            return 1
+        report['artifact']['bundle_files'] = sorted(files)
+        record('artifact.zip_structure', 'PASS', str(len(files)) + ' files under ' + prefix)
+        for name in ('manifest.json', 'source-receipt.json', 'project.godot', 'main.tscn',
+                     'data/story.json', 'acceptance/cases.json'):
+            record('artifact.file:' + name, 'PASS' if name in files else 'FAIL')
+        manifest, receipt, problems = artifact_bundle_records(files)
+        record('artifact.bundle_integrity', 'PASS' if not problems else 'FAIL', '; '.join(problems[:5]))
+        if problems:
+            return 1
+        report['artifact']['manifest_sha256'] = sha256_bytes(files['manifest.json'])
+        report['artifact']['receipt_sha256'] = sha256_bytes(files['source-receipt.json'])
+        try:
+            story = json.loads(files['data/story.json'])
+            godot_export.GodotRuntimeStory.model_validate(story)
+            record('artifact.story_schema', 'PASS', godot_export.RUNTIME_STORY_SCHEMA)
+        except Exception as exc:
+            record('artifact.story_schema', 'FAIL', type(exc).__name__ + ':' + str(exc)[:240])
+            return 1
+        report['artifact']['story_id'] = story['story_id']
+        report['artifact']['revision'] = story['revision']
+        binding_problems = artifact_story_binding(story, manifest, receipt)
+        record('artifact.story_binding', 'PASS' if not binding_problems else 'FAIL', '; '.join(binding_problems[:5]))
+        spec, speakers, reconstruction_problems = artifact_spec_from_story(story)
+        record('artifact.spec_reconstruction', 'PASS' if not reconstruction_problems else 'FAIL',
+               '; '.join(reconstruction_problems[:5]))
+        if reconstruction_problems:
+            return 1
+        try:
+            cases = json.loads(files['acceptance/cases.json'])
+        except ValueError as exc:
+            record('artifact.cases_json', 'FAIL', type(exc).__name__)
+            return 1
+        case_problems = artifact_cases_consistency(cases, story, spec, speakers)
+        record('artifact.cases_authority', 'PASS' if not case_problems else 'FAIL', '; '.join(case_problems[:6]))
+        if case_problems:
+            return 1
+        project = Path(args.scratch_root) / ('artifact-' + artifact_path.stem[:50] + '-' + report['artifact']['sha256'][:12])
+        try:
+            extract_artifact(files, project)
+        except (ValueError, OSError) as exc:
+            record('artifact.extract', 'FAIL', type(exc).__name__ + ':' + str(exc)[:200])
+            return 1
+        record('artifact.extract', 'PASS', str(project))
+        artifact_project_checks(project, manifest)
+        check_static_audit(project)
+        initial = run_engine(engine, project, ['--print-user-dir'], 'artifact.initial')
+        ok, detail = healthy_run(initial, 0)
+        initial_records = parse_records(initial)
+        user_dir = initial_records['user_dir']
+        problems = []
+        if not ok:
+            problems.append(detail)
+        expected_initial = artifact_expected_state(spec, speakers, [])
+        if not initial_records['states']:
+            problems.append('no POEMSEED_STATE emitted')
+        else:
+            problems.extend(typed_diff(expected_initial, initial_records['states'][0])[:3])
+        record('artifact.initial_state', 'PASS' if not problems else 'FAIL', '; '.join(problems[:4]))
+        for case in cases['cases']:
+            path = list(case.get('choices') or [])
+            entry = {'case_id': str(case.get('case_id')), 'choices': path, 'states': [],
+                     'ending': None, 'step_cap': False, 'result': 'FAIL', 'detail': ''}
+            label = 'artifact.case.' + entry['case_id']
+            result = run_engine(engine, project, ['--witness-path', ','.join(path)], label)
+            ok, detail = healthy_run(result, 0)
+            records = parse_records(result)
+            problems = []
+            if not ok:
+                problems.append(detail)
+            expected_states = [artifact_expected_state(spec, speakers, path[:depth]) for depth in range(len(path) + 1)]
+            if len(records['states']) != len(expected_states):
+                problems.append('runtime emitted ' + str(len(records['states'])) + ' states, expected ' + str(len(expected_states)))
+            else:
+                for index, (actual, expected) in enumerate(zip(records['states'], expected_states)):
+                    differences = typed_diff(expected, actual)
+                    if differences:
+                        problems.append('step ' + str(index) + ': ' + differences[0])
+                done = records['done'] or {}
+                if done.get('path') != path or done.get('status') != 'ENDING':
+                    problems.append('POEMSEED_DONE record mismatch')
+                for difference in typed_diff(case.get('expected_final'), records['states'][-1]):
+                    problems.append('final state does not match acceptance/cases.json: ' + difference[:240])
+            entry['states'] = [flatten_state(state) for state in records['states']]
+            if records['states']:
+                final_state = records['states'][-1]
+                entry['ending'] = str(final_state['node']['ending']) if final_state['status'] == 'ENDING' else None
+                entry['step_cap'] = any(str(state['status']) == 'STEP_CAP_REACHED' for state in records['states'])
+            entry['result'] = 'PASS' if not problems else 'FAIL'
+            entry['detail'] = '; '.join(problems[:5])
+            report['cases'].append(entry)
+            record(label, entry['result'], entry['detail'])
+        report['save_restore'] = artifact_save_restore(engine, project, story, spec, speakers, cases)
+        if report['save_restore'].get('user_dir'):
+            user_dir = Path(report['save_restore']['user_dir'])
+        record('artifact.save_restore', 'PASS' if report['save_restore']['passed'] else 'FAIL',
+               report['save_restore']['detail'][:400])
+    except Exception as exc:  # noqa: BLE001 - never crash the harness; report the failure
+        record('artifact.unexpected_error', 'FAIL', type(exc).__name__ + ':' + str(exc)[:300])
+    finally:
+        if user_dir is not None and Path(user_dir).is_dir():
+            for name in (ARTIFACT_SAVE_NAME, 'artifact-result.json'):
+                target = Path(user_dir) / name
+                try:
+                    if target.exists():
+                        target.unlink()
+                except OSError:
+                    pass
+        report['elapsed_ms'] = int((time.monotonic() - started) * 1000)
+        report['checks'] = list(CHECKS)
+        report['failures'] = list(FAILURES)
+        report['result'] = 'PASS' if not FAILURES else 'FAIL'
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps(json_safe(report), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        print('artifact report: ' + str(report_path))
+        print('result: ' + report['result'] + ', checks: ' + str(len(CHECKS)) + ', failures: ' + str(len(FAILURES)))
+        for failure in FAILURES[:10]:
+            print('  FAIL ' + failure['check'] + ' :: ' + failure['detail'][:300])
+    return 0 if report['result'] == 'PASS' else 1
+
+
+# ---------------------------------------------------------------------------
 # main
 # ---------------------------------------------------------------------------
-def main() -> int:
-    parser = argparse.ArgumentParser(description='Verify the real Godot 4 runtime project export.')
-    parser.add_argument('--godot', default=None, help='Godot 4 console executable to use')
-    parser.add_argument('--scratch-root', default=str(DEFAULT_SCRATCH_ROOT))
-    args = parser.parse_args()
-
+def default_main(args) -> int:
     print('== B07 Godot runtime verifier ==')
     engine, source = find_engine(args.godot)
     if engine is None:
@@ -944,6 +1434,24 @@ def run_git(arguments: list[str]) -> str | None:
     except (OSError, subprocess.SubprocessError):
         return None
     return completed.stdout.strip() if completed.returncode == 0 else None
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description='Verify a real Godot 4 runtime project: freshly generated fixture export (default) or an externally exported target ZIP (--artifact).')
+    parser.add_argument('--godot', default=None, help='Godot 4 console executable to use')
+    parser.add_argument('--scratch-root', default=str(DEFAULT_SCRATCH_ROOT),
+                        help='scratch directory for extraction; the artifact report default path lives here')
+    parser.add_argument('--artifact', default=None, metavar='ZIP',
+                        help='verify an already exported GODOT_4_RUNTIME_PROJECT_V1 ZIP instead of generating one')
+    parser.add_argument('--report', default=None, metavar='JSON',
+                        help='write the verification report JSON here (artifact mode; defaults under --scratch-root)')
+    args = parser.parse_args()
+    if args.report and not args.artifact:
+        parser.error('--report is only meaningful together with --artifact')
+    if args.artifact:
+        return artifact_main(args)
+    return default_main(args)
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import zipfile
 from copy import deepcopy
 from pathlib import Path
@@ -22,7 +23,7 @@ import pytest
 import app.experimental.interactive_export_contract as contract
 import app.experimental.interactive_godot_export as godot_export
 from app.experimental.interactive_story import (
-    GodotExportAdapter, InteractiveStoryService, StorySpec, analyze,
+    GodotExportAdapter, InteractiveStoryService, StorySpec, analyze, play,
 )
 from app.experimental.planning import PlanningService
 from app.experimental.story_graph import StoryGraphService
@@ -614,6 +615,102 @@ def test_real_godot_two_process_save_restore_and_rejection_matrix(tmp_path):
                 target = user_dir / name
                 if target.exists():
                     target.unlink()
+
+
+# ---------------------------------------------------------------------------
+# verifier external-artifact mode (E2E-07: verify what the Studio already exported)
+# ---------------------------------------------------------------------------
+VERIFIER_SCRIPT = Path(__file__).resolve().parent.parent / 'scripts' / 'verify_godot_interactive_runtime.py'
+
+
+def _run_verifier(arguments, timeout=420):
+    return subprocess.run([sys.executable, str(VERIFIER_SCRIPT), *arguments],
+                          cwd=str(VERIFIER_SCRIPT.parent.parent), capture_output=True, text=True,
+                          encoding='utf-8', errors='replace', timeout=timeout)
+
+
+def _rewrite_zip_member(source: Path, target: Path, member_suffix: str, mutate) -> None:
+    with zipfile.ZipFile(source) as archive:
+        entries = [(info.filename, archive.read(info)) for info in archive.infolist() if not info.is_dir()]
+    with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for name, content in entries:
+            if name.endswith(member_suffix):
+                content = mutate(content)
+            archive.writestr(name, content)
+
+
+def _tamper_cases(content):
+    payload = json.loads(content.decode('utf-8'))
+    payload['cases'][0]['expected_final']['steps'] = int(payload['cases'][0]['expected_final']['steps']) + 1
+    return json.dumps(payload, ensure_ascii=False).encode('utf-8')
+
+
+def _tamper_story(content):
+    payload = json.loads(content.decode('utf-8'))
+    payload['nodes'][0]['dialogue'] = str(payload['nodes'][0]['dialogue']) + ' tampered'
+    return json.dumps(payload, ensure_ascii=False).encode('utf-8')
+
+
+def _artifact_projection(spec, path):
+    result = play(spec, list(path))
+    return {'node_id': result['node']['node_id'], 'variables': result['variables'],
+            'enabled_choice_ids': [choice['id'] for choice in result['choices'] if choice['enabled']],
+            'steps': result['steps'], 'status': result['status']}
+
+
+@requires_godot
+def test_verifier_artifact_mode_verifies_real_service_export_and_detects_tampering(interactive_env, tmp_path):
+    e = interactive_env
+    row = create_approved(e)
+    value = {'expected_version': row['version']}
+    preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], {**value, 'target_id': TARGET_ID})
+    exported = e.service.export(e.nid, e.scope, 'author', row['id'], {
+        **value, 'target_id': TARGET_ID, 'preview_digest': preview['preview_digest']})
+    artifact = tmp_path / 'studio-export.zip'
+    artifact.write_bytes(base64.b64decode(exported['content_base64']))
+    report_path = tmp_path / 'artifact-report.json'
+    completed = _run_verifier(['--artifact', str(artifact), '--report', str(report_path),
+                               '--scratch-root', str(tmp_path / 'scratch'), '--godot', GODOT])
+    assert completed.returncode == 0, completed.stdout[-5000:] + completed.stderr[-3000:]
+    report = json.loads(report_path.read_text(encoding='utf-8'))
+    assert report['schema'] == 'poemseed-b07-godot-artifact-verification/1'
+    assert report['result'] == 'PASS' and report['target_id'] == TARGET_ID
+    assert report['artifact']['sha256'] == hashlib.sha256(artifact.read_bytes()).hexdigest()
+    assert report['artifact']['story_id'] == row['id']
+    assert report['engine']['exit_code'] == 0 and '4.' in str(report['engine']['version'])
+    assert set(report['artifact']['bundle_files']) >= {
+        'project.godot', 'main.tscn', 'data/story.json', 'acceptance/cases.json', 'manifest.json', 'source-receipt.json'}
+    assert report['save_restore']['performed'] is True and report['save_restore']['passed'] is True
+    assert isinstance(report['elapsed_ms'], int) and report['elapsed_ms'] >= 0
+    endings = analyze(row['spec'])['endings']
+    assert len(report['cases']) == len(endings) and report['cases']
+    for case in report['cases']:
+        assert case['result'] == 'PASS', case
+        path = list(case['choices'])
+        expected = [_artifact_projection(row['spec'], path[:depth]) for depth in range(len(path) + 1)]
+        assert len(case['states']) == len(expected)
+        for index, (actual, expected_state) in enumerate(zip(case['states'], expected)):
+            assert_typed_equal(expected_state, actual, 'artifact case ' + str(case['case_id']) + ' step ' + str(index))
+        assert case['ending'] is not None and case['step_cap'] is False
+    # a modified state expectation must fail closed, never silently pass
+    tampered = tmp_path / 'tampered-cases.zip'
+    _rewrite_zip_member(artifact, tampered, 'acceptance/cases.json', _tamper_cases)
+    tampered_report = tmp_path / 'tampered-report.json'
+    tampered_run = _run_verifier(['--artifact', str(tampered), '--report', str(tampered_report),
+                                  '--scratch-root', str(tmp_path / 'scratch-tampered'), '--godot', GODOT])
+    assert tampered_run.returncode != 0
+    tampered_payload = json.loads(tampered_report.read_text(encoding='utf-8'))
+    assert tampered_payload['result'] == 'FAIL' and tampered_payload['failures']
+    assert tampered_payload['artifact']['sha256'] == hashlib.sha256(tampered.read_bytes()).hexdigest()
+    assert any('bundle' in failure['check'].lower() or 'BUNDLE' in failure['detail'] for failure in tampered_payload['failures'])
+    # a modified story field outside the signed bundle must also fail closed
+    story_tampered = tmp_path / 'tampered-story.zip'
+    _rewrite_zip_member(artifact, story_tampered, 'data/story.json', _tamper_story)
+    story_report = tmp_path / 'tampered-story-report.json'
+    story_run = _run_verifier(['--artifact', str(story_tampered), '--report', str(story_report),
+                               '--scratch-root', str(tmp_path / 'scratch-story'), '--godot', GODOT])
+    assert story_run.returncode != 0
+    assert json.loads(story_report.read_text(encoding='utf-8'))['result'] == 'FAIL'
 
 
 # ---------------------------------------------------------------------------
