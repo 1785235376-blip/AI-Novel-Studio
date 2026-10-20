@@ -90,6 +90,7 @@ def main() -> int:
     integration_patches = sorted(path.name for path in integration_dir.glob('*.patch'))
 
     order = run(repo, 'log', '--reverse', '--format=%H%x09%ci%x09%s', base + '..' + tip).strip()
+    mbox = ''.join((integration_dir / name).read_text(encoding='utf-8') for name in integration_patches)
     patch_name = 'B07_DIF10_E2E07_FULL_PATCH_' + args.date.replace('-', '') + '.txt'
     with (out / patch_name).open('w', encoding='utf-8', newline='\n') as handle:
         handle.write('# ' + args.story + '\n')
@@ -105,12 +106,13 @@ def main() -> int:
         for row in order.splitlines():
             handle.write('#   ' + row.replace('\t', '  ') + '\n')
         handle.write('# Individual patch files: ' + ', '.join(integration_patches) + '\n')
-        handle.write('#\n')
-        # Pure concatenation of the mbox messages: anything inserted between
-        # messages would corrupt git am parsing, so the index above is the only
-        # commentary and each message starts with its own "From <sha>" envelope.
-        for name in integration_patches:
-            handle.write((integration_dir / name).read_text(encoding='utf-8'))
+        handle.write('# Extract the pure mbox below with the documented exact command, or use the\n')
+        handle.write('# individual patch files directly. The mbox is byte-identical to the\n')
+        handle.write('# concatenation of those files and is verified by a clean-room git am replay.\n')
+        handle.write('#\n#   sed -n "/^From [0-9a-f][0-9a-f]* /,\$p" ' + patch_name + ' > patch.mbox\n')
+        handle.write('#   git am --3way patch.mbox\n#\n')
+        handle.write('# --- BEGIN GIT MBOX (all ' + str(len(integration_patches)) + ' messages follow verbatim) ---\n')
+        handle.write(mbox)
     print('full patch txt written:', patch_name)
 
     # A bundle needs at least one recorded ref; a bare SHA range is refused as an
@@ -134,7 +136,9 @@ def main() -> int:
         run(work, 'checkout', '-q', '-B', 'b07-delivery', 'refs/b07/base')
         run(work, 'config', 'user.name', 'delivery-verifier')
         run(work, 'config', 'user.email', 'delivery-verifier@local')
-        applied = subprocess.run(['git', 'am', '--3way', str(out / patch_name)], cwd=work, capture_output=True)
+        mbox_file = work / 'delivery-patch.mbox'
+        mbox_file.write_text(mbox, encoding='utf-8')
+        applied = subprocess.run(['git', 'am', '--3way', str(mbox_file)], cwd=work, capture_output=True)
         head = run(work, 'rev-parse', 'HEAD').strip() if applied.returncode == 0 else ''
         tree = run(work, 'rev-parse', 'HEAD^{tree}').strip() if head else ''
         replay_ok = applied.returncode == 0 and tree == tip_tree
@@ -158,6 +162,7 @@ def main() -> int:
         'integration': {'tip': tip, 'tree': tip_tree, 'commits': commits},
         'lines': lines,
         'patch_file': patch_name, 'patch_messages': len(integration_patches),
+        'patch_mbox_extract': 'sed -n "/^From [0-9a-f][0-9a-f]* /,\$p" ' + patch_name + ' > patch.mbox && git am --3way patch.mbox',
         'bundle': {'path': bundle.name, 'bytes': bundle.stat().st_size,
                    'verify': 'PASS' if 'okay' in bundle_verify else bundle_verify.strip(),
                    'prerequisite': base, 'tip': tip,
@@ -183,7 +188,8 @@ def render_restore(manifest: dict) -> str:
              '## Apply with patches (recommended)', '', '~~~sh',
              'cd /path/to/AI-Novel-Studio',
              'git fetch origin && git checkout -B b07-interactive ' + manifest['product_base']['commit'],
-             'git am --3way ' + manifest['patch_file'],
+             'sed -n "/^From [0-9a-f][0-9a-f]* /,\$p" ' + manifest['patch_file'] + ' > patch.mbox',
+             'git am --3way patch.mbox',
              'git rev-parse HEAD  # expected ' + manifest['integration']['tip'],
              '~~~', '', '## Or restore with the incremental bundle', '', '~~~sh',
              'git bundle verify bundles/' + manifest['bundle']['path'],
