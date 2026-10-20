@@ -66,6 +66,7 @@ def create_interactive_story_router(service, authorize, require_flag):
     post_route('preview', service.preview, PlayIn, 'domain.write')
     post_route('refresh-preview', service.refresh_preview, VersionIn, 'domain.write')
     post_route('refresh', service.refresh, ExportIn, 'domain.write')
+    post_route('export-targets', service.export_targets, VersionIn, 'domain.review')
     post_route('export-preview', service.export_preview, ExportIn, 'domain.review')
     post_route('export', service.export, ExportIn, 'domain.review')
     post_route('history', service.revisions, VersionIn, 'domain.write')

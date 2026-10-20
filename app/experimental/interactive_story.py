@@ -23,6 +23,11 @@ from .common import StaleSourceError, change_row, new_row, now
 from .planning import StrictModel, collection, require_row, digest, entity_sources
 from .style_analysis import SourceFencedService
 from ..services.v1_capability_service import CapabilityVersionConflict
+from .interactive_export_contract import (
+    CONTRACT_SCHEMA, CONTRACT_VERSION, TARGETS_SCHEMA, all_target_descriptors, available_target_ids,
+    build_export_bundle, compatibility_report, contract_document, evidence_for, package_export_zip,
+    probe_engine,
+)
 
 FEATURE = 'interactive_story_v2'
 SCHEMA = 'ai-novel-interactive-story/1'
@@ -138,6 +143,7 @@ class PlayIn(VersionIn):
 
 class ExportIn(VersionIn):
     preview_digest: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
+    target_id: str | None = Field(default=None, pattern=r'^[A-Z][A-Z0-9_]{2,80}$')
 
 
 def parse_condition(expression):
@@ -506,10 +512,14 @@ class InteractiveStoryService(SourceFencedService):
 
     @staticmethod
     def engine_contract():
+        descriptors = {descriptor['target_id']: descriptor for descriptor in all_target_descriptors()}
         return {'schema': SCHEMA, 'input_schema': StorySpec.model_json_schema(), 'condition_language': 'BOUNDED_BOOL_INT_AST',
-                'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS]],
+                'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS], *available_target_ids()],
                 'target_schemas': {'GODOT_4_DATA_ADAPTER': GodotStoryResource.model_json_schema()},
-                'target_limits': {InkExportAdapter.target: 'TYPED_TEXT_SUBSET_COMMUNITY_PORT_CURRENT_ARTIFACT_NOT_RUN', 'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME'},
+                'target_descriptors': descriptors,
+                'target_contract': contract_document(),
+                'target_limits': {InkExportAdapter.target: 'TYPED_TEXT_SUBSET_COMMUNITY_PORT_CURRENT_ARTIFACT_NOT_RUN', 'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME',
+                                  'RENPY_8_5_4_PROJECT_V1': 'RUNNABLE_PROJECT_TARGET_RUNTIME_EVIDENCE_PER_LEVEL', 'GODOT_4_RUNTIME_PROJECT_V1': 'RUNNABLE_PROJECT_TARGET_RUNTIME_EVIDENCE_PER_LEVEL', 'INK_2_3_2_CURRENT_ARTIFACT_V1': 'CURRENT_ARTIFACT_COMPILED_AND_RUN_WITH_PINNED_COMMUNITY_JS_PORT'},
                 'third_party_execution': 'DENY_ALL', 'runtime_status': 'NOT_RUN',
                 'media_policy': 'VERSIONED_REFERENCES_ONLY_NOT_DEPLOYED', 'adapter_policy': 'SHIPPED_TRUSTED_EXPORTERS_ONLY',
                 'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states'],
@@ -749,6 +759,57 @@ class InteractiveStoryService(SourceFencedService):
                 'missing': missing, 'packaged': False, 'reason': 'MISSING_OR_CORRUPT' if missing else 'TEXT_SUBSET_REFERENCE_ONLY'})
         return manifest
 
+    def _snapshot(self, nid, scope, row, analysis=None):
+        """The single authoritative snapshot any target adapter may consume."""
+        analysis = analysis or analyze(row['spec'])
+        return {'story_id': row['id'], 'revision': row['version'], 'status': row['status'], 'title': row['spec']['title'],
+                'spec': deepcopy(row['spec']), 'spec_digest': digest(row['spec']), 'source_digest': digest(row['capture']),
+                'review_receipt': self._receipt(row), 'characters': dict(row['capture']['characters']),
+                'witness': deepcopy(analysis['endings']), 'media_manifest': self._manifest(nid, scope, row), 'analysis': analysis}
+
+    @staticmethod
+    def _runtime_claim(evidence):
+        for level in ('SAVE_RESTORE_VERIFIED', 'TARGET_RUNTIME_EXECUTED'):
+            if evidence.get(level) == 'PASS': return level
+        blocked = evidence.get('TARGET_RUNTIME_EXECUTED') or evidence.get('SAVE_RESTORE_VERIFIED')
+        return 'BLOCKED_ENVIRONMENT' if blocked in {'BLOCKED_ENVIRONMENT', 'BLOCKED_AUTHORITY'} else 'NOT_RUN'
+
+    def _target_rows(self, nid, scope, row, analysis):
+        """Per-target compatibility, engine probe and independent evidence record."""
+        snapshot = self._snapshot(nid, scope, row, analysis)
+        approved = row['status'] == 'APPROVED' and bool(analysis['can_review'])
+        rows = []
+        for descriptor in all_target_descriptors():
+            target_id = descriptor['target_id']
+            compatibility = compatibility_report(target_id, snapshot)
+            evidence = evidence_for(target_id)
+            rows.append({**descriptor, 'compatibility': compatibility, 'engine_probe': probe_engine(descriptor.get('engine')),
+                         'evidence': evidence, 'export_ready': approved and compatibility['can_export'],
+                         'runtime_claim': self._runtime_claim(evidence)})
+        return snapshot, rows
+
+    def export_targets(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        """Compatibility and evidence view for every registered export target."""
+        data = VersionIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
+        self._version(row, data.expected_version); self._current(nid, scope, row)
+        if row['status'] == 'ARCHIVED': raise ValueError('restore the adaptation before export')
+        analysis = analyze(row['spec']); snapshot, targets = self._target_rows(nid, scope, row, analysis)
+        self._current(nid, scope, row); reauthorize()
+        return {'schema': TARGETS_SCHEMA, 'contract_schema': CONTRACT_SCHEMA, 'contract_version': CONTRACT_VERSION,
+                'contract': contract_document(),
+                'adaptation': {'id': row['id'], 'version': row['version'], 'status': row['status']},
+                'story': {'title': row['spec']['title'], 'entry_node_id': row['spec']['entry_node_id'],
+                          'max_steps': row['spec']['max_steps'], 'nodes': len(row['spec']['nodes']),
+                          'variables': len(row['spec']['variables']), 'endings': len(analysis['endings']),
+                          'spec_digest': snapshot['spec_digest'], 'source_digest': snapshot['source_digest']},
+                'witness': deepcopy(analysis['endings']),
+                'analysis': {'can_review': analysis['can_review'], 'analysis_complete': analysis['analysis_complete'],
+                             'issues': analysis['issues'], 'warnings': analysis['warnings'], 'states_checked': analysis['states_checked']},
+                'targets': targets, 'media_manifest': snapshot['media_manifest'],
+                'can_export_any': row['status'] == 'APPROVED' and analysis['can_review'] and any(target['export_ready'] for target in targets),
+                'target_runtime_policy': 'INDEPENDENT_EVIDENCE_LEVELS; GENERATION_IS_NOT_RUNTIME; MISSING_ENGINE_BLOCKS_RUNTIME_NOT_SAFE_EXPORT',
+                'model_called': False}
+
     def export_preview(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
         data = ExportIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
         self._version(row, data.expected_version); self._current(nid, scope, row)
@@ -766,13 +827,41 @@ class InteractiveStoryService(SourceFencedService):
             'ink_target': {**INK_PIN, 'compatibility': 'UNSUPPORTED' if ink_issues else 'SUPPORTED_SUBSET'}, 'ink_issues': ink_issues,
             'target_runtime': 'NOT_RUN', 'schema': SCHEMA, 'analysis': analysis,
             'engine_adapters': [{'target': a.target, 'schema_validation': 'UNSUPPORTED' if a.target == InkExportAdapter.target and ink_issues else 'CONTRACT_VERIFIED', 'runtime': 'NOT_RUN'} for a in ENGINE_ADAPTERS]}
-        result['preview_digest'] = digest([self._receipt(row), result]); self._current(nid, scope, row); reauthorize(); return result
+        snapshot, targets = self._target_rows(nid, scope, row, analysis)
+        result['targets'] = targets
+        if data.target_id:
+            matching = [target for target in targets if target['target_id'] == data.target_id]
+            if not matching: raise ValueError('UNKNOWN_EXPORT_TARGET')
+            result['target_id'] = data.target_id; result['selected_target'] = matching[0]
+            result['can_export'] = result['can_export'] and matching[0]['compatibility']['can_export']
+            result['losses'] = list(dict.fromkeys([*result['losses'], *matching[0]['compatibility']['losses']]))
+        # Engine detection is host state, not story authority; it must never change
+        # the reproducible preview digest used to bind the export.
+        stable = deepcopy(result)
+        for target in stable.get('targets', []): target.pop('engine_probe', None)
+        if isinstance(stable.get('selected_target'), dict): stable['selected_target'].pop('engine_probe', None)
+        result['preview_digest'] = digest([self._receipt(row), stable]); self._current(nid, scope, row); reauthorize(); return result
 
     def export(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
         data = ExportIn.model_validate(value); preview = self.export_preview(nid, scope, actor, sid, data, reauthorize=reauthorize)
         if data.preview_digest != preview['preview_digest']: raise StaleSourceError('export preview changed')
         if not preview['can_export']: raise ValueError('approve exact current story before export')
         row = self._owned(nid, scope, actor, sid); self._version(row, data.expected_version); self._current(nid, scope, row)
+        if data.target_id:
+            snapshot = self._snapshot(nid, scope, row, preview['analysis'])
+            bundle = build_export_bundle(data.target_id, snapshot, {'include_witness': True, 'target_options': {}})
+            package = package_export_zip(bundle)
+            current = self.export_preview(nid, scope, actor, sid, data, reauthorize=reauthorize)
+            if current['preview_digest'] != preview['preview_digest']: raise StaleSourceError('export authority changed')
+            self._current(nid, scope, row); reauthorize()
+            evidence = evidence_for(data.target_id); claim = self._runtime_claim(evidence)
+            return {'filename': package['filename'], 'mime': 'application/zip',
+                    'content_base64': base64.b64encode(package['content']).decode('utf-8'), 'sha256': package['sha256'],
+                    'target_id': bundle.target_id, 'target_format_version': bundle.target_format_version,
+                    'adapter_revision': bundle.adapter_revision, 'file_count': package['file_count'],
+                    'files_digest': bundle.files_digest, 'manifest': bundle.manifest, 'losses': bundle.losses,
+                    'capabilities': {key: value.model_dump(mode='json') for key, value in bundle.capabilities.items()},
+                    'evidence': evidence, 'runtime_claim': claim, 'published': False, 'target_runtime': claim}
         spec = deepcopy(row['spec'])
         for n in spec['nodes']:
             for c in n['choices']: c['condition_tree'] = parse_condition(c['condition'])
