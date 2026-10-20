@@ -10,6 +10,8 @@ Bundle layout (relative to the deterministic target ZIP):
     ink/validation.json        source map, witness/loss/evidence record
     ink/runtime-pin.json       pinned inkjs 2.3.2 manifest and run instructions
     ink/README.txt             extraction, compile, run and acceptance steps
+    ink/player/save_envelope.mjs         delivered save envelope helper (no imports)
+    ink/player/save-envelope.schema.json  machine-readable save envelope schema
     acceptance/witness.json    per-step target-environment acceptance expectations
 
 Evidence levels live in descriptor.py; nothing here upgrades them.
@@ -22,8 +24,10 @@ import json
 from . import descriptor as _descriptor
 from .runtime import (
     EVENT_RESTORE, EVENT_SAVE, IMPLEMENTATION, RUNTIME_BASIS, RUNTIME_ENTRY,
-    RUNTIME_ENTRY_SHA256, STATUS_CODES, STATUS_NAMES, evidence_record,
-    runtime_pin_document,
+    RUNTIME_ENTRY_SHA256, SAVE_ENVELOPE_LEGACY_POLICY, SAVE_ENVELOPE_PATH,
+    SAVE_ENVELOPE_SCHEMA_PATH, STATUS_CODES, STATUS_NAMES, evidence_record,
+    player_asset_bytes, runtime_pin_document, save_envelope_document,
+    save_envelope_module_sha256,
 )
 
 TARGET_ID = _descriptor.TARGET_ID
@@ -257,7 +261,7 @@ def compatibility(snapshot):
     }
 
 
-def _readme(snapshot, spec, script, witness, runtime_pin, validation_sha):
+def _readme(snapshot, spec, script, witness, runtime_pin, validation_sha, save_envelope):
     lines = [
         'PoemSeed Studio Ink current-artifact delivery (target ' + TARGET_ID + ').',
         'Story: ' + str(snapshot.get('title')) + ' (id ' + str(snapshot.get('story_id')) + ', revision ' + str(snapshot.get('revision')) + ').',
@@ -267,6 +271,8 @@ def _readme(snapshot, spec, script, witness, runtime_pin, validation_sha):
         '  ink/story.ink             generated source, frozen typed Ink subset only (sha256 ' + _sha256(script) + ')',
         '  ink/validation.json       source map, witness/loss/evidence record (sha256 ' + validation_sha + ')',
         '  ink/runtime-pin.json      pinned inkjs 2.3.2 registry URL, sha512 integrity and run instructions',
+        '  ink/player/save_envelope.mjs         save envelope helper (sha256 ' + save_envelope['player_module']['sha256'] + ')',
+        '  ink/player/save-envelope.schema.json save envelope JSON schema',
         '  ink/README.txt            this file',
         '  acceptance/witness.json   per-step acceptance expectations for every discovered ending',
         '',
@@ -279,8 +285,13 @@ def _readme(snapshot, spec, script, witness, runtime_pin, validation_sha):
         '     acceptance/witness.json assert, per step: output text equals output_lines,',
         '     currentChoices labels equal states[i].choices in order, ans_node/ans_steps/ans_status',
         '     and typed variables equal ink_state / variables.',
-        '  4. Save with story.state.ToJson(), restore with story.state.LoadJson() in a fresh process,',
-        '     and resume to the ending state.',
+        '  4. Save through the delivered helper, never bare state JSON:',
+        '       import { createSaveEnvelope } from "./ink/player/save_envelope.mjs";',
+        '       createSaveEnvelope({ story, storyId, revision, compiledArtifactSha256, targetFormatVersion, runtime, ... })',
+        '     The envelope binds story_id, revision, compiled_artifact_sha256, target_format_version and runtime.',
+        '     Restore in a fresh process with loadSaveEnvelope({ bytes, story, expected }); any mismatch is',
+        '     rejected before story.state.LoadJson(). A bare/unbound legacy state throws',
+        '     LEGACY_SAVE_ENVELOPE_REQUIRED and must be migrated explicitly, never trusted implicitly.',
         '',
         'Security: only the frozen typed subset is emitted. No INCLUDE, external function, user code,',
         'remote import, dynamic path, unbounded loop, eval or network access is present. Cycles end at',
@@ -293,6 +304,7 @@ def _readme(snapshot, spec, script, witness, runtime_pin, validation_sha):
         '  Blank lines and paragraph spacing normalize in Ink text presentation.',
         '  Character names are plain text lines, not Ink tags/attributes.',
         '  Target font rendering is not verified.',
+        '  The save envelope is a PoemSeed product helper, not native Ink save format.',
         '',
         'Runtime pin: ' + runtime_pin['package'] + ' ' + runtime_pin['version'] + ' (' + runtime_pin['integrity'] + ').',
         'Acceptance verifier shipped with the product: scripts/verify_ink_current_artifact.mjs.',
@@ -316,6 +328,9 @@ def build(snapshot, options):
     if not ending_cases:
         raise ValueError('INK_ACCEPTANCE_WITNESS_EMPTY')
     step_cap_case = _step_cap_case(spec, characters, source_map, node_index)
+    save_envelope = save_envelope_document()
+    save_envelope['player_module']['bytes'] = len(player_asset_bytes('save_envelope.mjs'))
+    save_envelope['json_schema']['bytes'] = len(player_asset_bytes('save-envelope.schema.json'))
     runtime_pin = runtime_pin_document()
     runtime_pin['target_id'] = TARGET_ID
     runtime_pin['format_version'] = FORMAT_VERSION
@@ -382,7 +397,12 @@ def build(snapshot, options):
         'runtime_basis': RUNTIME_BASIS,
         'native_csharp_runtime': NATIVE_CSHARP_RUNTIME,
         'artifact_runtime': 'NOT_RUN_BY_PRODUCT_GENERATION; ACCEPTANCE_EXPECTATIONS_FOR_PINNED_INKJS_2_3_2',
-        'save_restore': {'save': EVENT_SAVE, 'restore': EVENT_RESTORE},
+        'save_restore': {
+            'save_raw_primitive': EVENT_SAVE,
+            'restore_raw_primitive': EVENT_RESTORE,
+            'envelope': save_envelope,
+            'legacy_policy': SAVE_ENVELOPE_LEGACY_POLICY,
+        },
         'security': {
             'typed_subset_only': True,
             'include_allowed': False,
@@ -400,13 +420,15 @@ def build(snapshot, options):
         },
     }
     validation_bytes = _encode(validation)
-    readme = _readme(snapshot, spec, script, witness_bytes, runtime_pin, _sha256(validation_bytes))
+    readme = _readme(snapshot, spec, script, witness_bytes, runtime_pin, _sha256(validation_bytes), save_envelope)
     files = {
         SCRIPT_PATH: script,
         VALIDATION_PATH: validation_bytes,
         RUNTIME_PIN_PATH: runtime_pin_bytes,
         README_PATH: readme,
         WITNESS_PATH: witness_bytes,
+        SAVE_ENVELOPE_PATH: player_asset_bytes('save_envelope.mjs'),
+        SAVE_ENVELOPE_SCHEMA_PATH: player_asset_bytes('save-envelope.schema.json'),
     }
     manifest_extra = {
         'ink_current_artifact': {
@@ -423,6 +445,7 @@ def build(snapshot, options):
             'native_csharp_runtime': NATIVE_CSHARP_RUNTIME,
             'evidence': evidence_record(),
             'acceptance': {'witness': WITNESS_PATH, 'verifier': 'scripts/verify_ink_current_artifact.mjs'},
+            'save_envelope': save_envelope,
         }
     }
     return {'files': files, 'manifest_extra': manifest_extra}

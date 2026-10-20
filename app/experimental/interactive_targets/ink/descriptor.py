@@ -9,8 +9,8 @@ from __future__ import annotations
 from .runtime import INTEGRITY, PINNED_VERSION, REGISTRY
 
 TARGET_ID = 'INK_2_3_2_CURRENT_ARTIFACT_V1'
-FORMAT_VERSION = 'ink-current-artifact-1'
-ADAPTER_REVISION = 1
+FORMAT_VERSION = 'ink-current-artifact-2'
+ADAPTER_REVISION = 2
 DISPLAY_NAME = 'Ink 2.3.2 current-artifact delivery (pinned inkjs)'
 
 CAPABILITIES = {
@@ -23,8 +23,8 @@ CAPABILITIES = {
     'endings': (True, False, 'Every discovered ending witness plays to its ending state in the pinned runtime.'),
     'loops': (True, True, 'Cycles replay until the generated explicit step cap; the cap case is part of acceptance.'),
     'step_cap': (True, False, 'The generated ans_steps branch ends the story at the exact max_steps cap.'),
-    'save': (True, False, 'story.state.ToJson() is captured at every acceptance step.'),
-    'restore': (True, False, 'A fresh process restores the saved state with LoadJson and resumes to the ending.'),
+    'save': (True, False, 'story.state.ToJson() is captured in a versioned save envelope bound to this story, revision, compiled-artifact digest, target format and runtime.'),
+    'restore': (True, False, 'A fresh process restores through ink/player/save_envelope.mjs; mismatched story/revision/artifact/runtime or tampered envelopes are rejected, unbound legacy saves are not trusted.'),
     'unicode': (True, True, 'UTF-8 dialogue/choice text including emoji and escapes is asserted exactly; target font rendering is not verified.'),
     'media': (False, True, 'Approved asset references remain manifest-only; no media bytes are bundled or played.'),
 }
@@ -36,6 +36,7 @@ LOSSES = [
     'INK_CHARACTER_NAMES_RENDERED_AS_PLAIN_TEXT',
     'INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED',
     'INK_TARGET_FONT_RENDERING_NOT_VERIFIED',
+    'INK_SAVE_ENVELOPE_IS_A_PRODUCT_HELPER_NOT_A_NATIVE_INK_SAVE',
 ]
 
 INTEGRATION_NOTES = [
@@ -64,6 +65,7 @@ DESCRIPTOR = {
     'kind': 'RUNNABLE_PROJECT',
     'format_version': FORMAT_VERSION,
     'adapter_revision': ADAPTER_REVISION,
+    'verification_runtime': {'name': 'inkjs', 'version': PINNED_VERSION, 'version_mode': 'EXACT', 'format': FORMAT_VERSION},
     'engine': {
         'name': 'Node.js (inkjs runtime host)',
         'minimum_version': '18.0',

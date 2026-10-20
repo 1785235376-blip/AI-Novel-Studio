@@ -19,7 +19,7 @@ import pytest
 
 from app.experimental.interactive_export_contract import (
     CAPABILITY_KEYS, EVIDENCE_LEVELS, EVIDENCE_STATUSES, available_target_ids, build_export_bundle,
-    compatibility_report, describe_target, evidence_for, package_export_zip, read_zip_safely,
+    compatibility_report, describe_target, historical_evidence_for, package_export_zip, read_zip_safely,
 )
 from app.experimental.interactive_story import StorySpec, analyze, play, digest
 from app.experimental.ink_export import (
@@ -129,7 +129,8 @@ def _run_verifier(tmp_path, files, node, root, name='report'):
         target.write_bytes(data)
     report = tmp_path / (name + '-report.json')
     completed = subprocess.run([node, str(_verify_script()), '--bundle', str(bundle_dir), '--vendor', root,
-                                '--report', str(report)], capture_output=True, text=True, timeout=240, check=False)
+                                '--report', str(report)], capture_output=True, text=True, encoding='utf-8',
+                               errors='replace', timeout=240, check=False)
     payload = json.loads(report.read_text(encoding='utf-8')) if report.exists() else None
     return completed, payload, bundle_dir
 
@@ -149,7 +150,7 @@ def _export_current(e, row, value, target=TARGET):
 
 def _runtime_claim_expected():
     """Mirror InteractiveStoryService._runtime_claim: save/restore outranks runtime."""
-    evidence = evidence_for(TARGET)
+    evidence = historical_evidence_for(TARGET)
     for level in ('SAVE_RESTORE_VERIFIED', 'TARGET_RUNTIME_EXECUTED'):
         if evidence.get(level) == 'PASS':
             return level
@@ -167,10 +168,12 @@ def test_new_target_registered_with_honest_descriptor():
     assert LEGACY_TARGETS[LEGACY_TARGET]['kind'] == 'LEGACY_FRAGMENT'
     descriptor = describe_target(TARGET).model_dump(mode='json')
     assert descriptor['target_id'] == TARGET and descriptor['kind'] == 'RUNNABLE_PROJECT'
-    assert descriptor['format_version'] == 'ink-current-artifact-1' and descriptor['adapter_revision'] == 1
+    assert descriptor['format_version'] == 'ink-current-artifact-2' and descriptor['adapter_revision'] == 2
+    assert descriptor['verification_runtime'] == {'name': 'inkjs', 'version': PINNED_VERSION,
+                                                   'version_mode': 'EXACT', 'format': 'ink-current-artifact-2'}
     assert set(descriptor['capabilities']) == set(CAPABILITY_KEYS)
     assert descriptor['engine']['name'].startswith('Node.js')
-    evidence = evidence_for(TARGET)
+    evidence = historical_evidence_for(TARGET)
     assert set(evidence) == set(EVIDENCE_LEVELS)
     for level in ('SOURCE_IMPLEMENTED', 'SCHEMA_VALIDATED', 'FIXTURE_TESTED', 'GENERATED_ARTIFACT_VALIDATED'):
         assert evidence[level] == 'PASS'
@@ -203,8 +206,23 @@ def test_current_artifact_bundle_shape_witness_and_determinism():
     bundle = _bundle(snapshot)
     files = _read_bundle(bundle)
     assert set(files) == {'ink/story.ink', 'ink/validation.json', 'ink/runtime-pin.json', 'ink/README.txt',
+                          'ink/player/save_envelope.mjs', 'ink/player/save-envelope.schema.json',
                           'acceptance/witness.json', 'manifest.json', 'source-receipt.json'}
-    assert not any(name.endswith(('.js', '.cjs', '.mjs')) for name in files)
+    # The delivered player helper is our own dependency-free ESM; no third-party
+    # runtime or extra executable script may be bundled.
+    assert [name for name in files if name.endswith(('.js', '.cjs', '.mjs'))] == ['ink/player/save_envelope.mjs']
+    player_bytes = files['ink/player/save_envelope.mjs']
+    assert b'require(' not in player_bytes and b'import ' not in player_bytes
+    runtime_pin_json = json.loads(files['ink/runtime-pin.json'])
+    envelope_pin = runtime_pin_json['save_restore']['envelope']
+    assert envelope_pin['schema'] == 'poemseed-ink-save-envelope/1'
+    assert envelope_pin['player_module']['sha256'] == _sha(player_bytes)
+    assert envelope_pin['legacy_policy'] == 'UNBOUND_LEGACY_SAVE_REJECTED_EXPLICIT_MIGRATION_REQUIRED'
+    assert envelope_pin['binding_fields'] == ['story_id', 'revision', 'compiled_artifact_sha256', 'target_format_version', 'runtime']
+    validation_envelope = json.loads(files['ink/validation.json'])['save_restore']
+    assert validation_envelope['envelope']['player_module']['sha256'] == _sha(player_bytes)
+    assert validation_envelope['legacy_policy'] == 'UNBOUND_LEGACY_SAVE_REJECTED_EXPLICIT_MIGRATION_REQUIRED'
+    assert json.loads(files['ink/player/save-envelope.schema.json'])['$id'] == 'poemseed-ink-save-envelope/1'
     assert b'require(' not in files['ink/story.ink']
     legacy_script = InkExportAdapter().files(StorySpec.model_validate(GOLDEN_SPEC).model_dump(), GOLDEN_CHARACTERS)['ink/story.ink']
     current_script = files['ink/story.ink']
@@ -328,12 +346,14 @@ def test_real_file_service_exports_current_artifact_zip(interactive_env):
     preview = e.service.export_preview(e.nid, e.scope, 'author', row['id'], value)
     targets = {target['target_id']: target for target in preview['targets']}
     assert TARGET in targets and preview['ink_target']['version'] == '2.3.2'
-    assert targets[TARGET]['evidence'] == evidence_for(TARGET)
+    assert targets[TARGET]['historical_evidence'] == historical_evidence_for(TARGET)
+    assert targets[TARGET]['artifact_evidence_status'] == 'NOT_EXPORTED'
+    assert targets[TARGET]['runtime_claim'] == 'UNVERIFIED'
     assert targets[TARGET]['export_ready'] is True
 
     preview, out = _export_current(e, row, value)
     assert out['target_id'] == TARGET and out['mime'] == 'application/zip'
-    assert out['filename'].endswith('.zip') and out['file_count'] == 7
+    assert out['filename'].endswith('.zip') and out['file_count'] == 9
     content = base64.b64decode(out['content_base64'])
     assert hashlib.sha256(content).hexdigest() == out['sha256']
     prefix = 'interactive-ink-2-3-2-current-artifact-v1-' + row['id'] + '/'
@@ -354,7 +374,10 @@ def test_real_file_service_exports_current_artifact_zip(interactive_env):
         assert case['states'][-1]['status'] == 'ENDING'
         assert any(line in ending_texts for line in case['states'][-1]['output_lines'])
     assert json.loads(files['ink/validation.json'])['story']['spec_digest'] == digest(row['spec'])
-    assert out['runtime_claim'] == _runtime_claim_expected()
+    assert out['runtime_claim'] == 'UNVERIFIED'
+    assert out['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert out['historical_evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert out['artifact_evidence_status'] == 'UNVERIFIED'
     assert out['published'] is False
     record = {
         'target_id': TARGET, 'story_id': row['id'], 'revision': row['version'], 'zip_sha256': out['sha256'],
@@ -447,6 +470,15 @@ def test_pinned_runtime_executes_exported_current_artifact(interactive_env, tmp_
     assert len(report['runtime']['cases']) == len(json.loads(files['acceptance/witness.json'])['endings'])
     assert report['cross_process']['performed'] is True and report['cross_process']['passed'] is True
     assert report['cross_process']['fresh_process'] is True
+    assert report['assertions']['save_envelope'] == 'PASS'
+    assert report['delivered_player']['sha256'] == report['delivered_player']['pinned_sha256']
+    assert len(report['save_restore_negatives']) >= 8
+    assert all(item['passed'] for item in report['save_restore_negatives'])
+    assert {item['expected_code'] for item in report['save_restore_negatives']} >= {
+        'SAVE_ENVELOPE_STORY_MISMATCH', 'SAVE_ENVELOPE_REVISION_MISMATCH',
+        'SAVE_ENVELOPE_INTEGRITY_INVALID', 'LEGACY_SAVE_ENVELOPE_REQUIRED', 'SAVE_ENVELOPE_ARTIFACT_MISMATCH'}
+    if report['assertions']['save_restore'] == 'NOT_APPLICABLE_SINGLE_STEP':
+        assert report['cross_process']['after_choice_possible'] is False
     assert report['native_csharp_runtime'] == 'NOT_RUN'
     assert report['runtime']['ending_reached'] is True
     assert report['unicode_and_escape'] == 'PASS'
@@ -485,12 +517,19 @@ def test_pinned_runtime_executes_loop_step_cap_artifact(interactive_env, tmp_pat
     files = read_zip_safely(base64.b64decode(out['content_base64']), prefix)
     assert json.loads(files['acceptance/witness.json'])['step_cap_cases']
     completed, report, _ = _run_verifier(tmp_path, files, node, root, 'loop')
-    assert completed.returncode == 0, completed.stderr[-4000:]
+    assert completed.returncode == 0, (json.dumps(report, ensure_ascii=False)[:5000] if report else (completed.stderr or '')[-4000:])
     assert report['result'] == 'PASS'
     step_cap = [case for case in report['runtime']['cases'] if case['kind'] == 'STEP_CAP']
     assert len(step_cap) == 1 and step_cap[0]['passed'] is True
     assert step_cap[0]['final_status'] == 'STEP_CAP_REACHED'
     assert report['runtime']['step_cap_enforced'] is True
+    # The loop witness has a real post-choice save with changed variables.
+    assert report['assertions']['save_restore'] == 'PASS', json.dumps(report['cross_process'], ensure_ascii=False)[:2000]
+    assert report['cross_process']['saved_after_choice'] is True
+    assert report['cross_process']['variables_changed_before_save'] is True
+    assert report['cross_process']['save_at_step'] >= 1
+    assert report['cross_process']['remaining']
+    assert report['save_envelope']['pinned'] is True
 
 
 def test_verifier_detects_tampered_current_artifact(interactive_env, tmp_path):
@@ -509,3 +548,25 @@ def test_verifier_detects_tampered_current_artifact(interactive_env, tmp_path):
     assert completed.returncode != 0, 'a tampered story source must not pass acceptance'
     assert report is not None and report['result'] == 'FAIL'
     assert report['assertions']['text'] == 'FAIL'
+
+
+def test_verifier_accepts_the_exported_zip_directly(interactive_env, tmp_path):
+    node, root = _runtime_env()
+    import subprocess
+    e = interactive_env
+    row = approve(e, create(e))
+    value = {'expected_version': row['version']}
+    _, out = _export_current(e, row, value)
+    zip_file = tmp_path / 'exported-ink.zip'
+    zip_file.write_bytes(base64.b64decode(out['content_base64']))
+    report_file = tmp_path / 'zip-report.json'
+    completed = subprocess.run([node, str(_verify_script()), '--bundle', str(zip_file), '--vendor', root,
+                                '--report', str(report_file)], capture_output=True, text=True, encoding='utf-8',
+                               errors='replace', timeout=240, check=False)
+    payload = json.loads(report_file.read_text(encoding='utf-8')) if report_file.exists() else None
+    assert completed.returncode == 0, (completed.stderr or '')[-3000:] + json.dumps(payload, ensure_ascii=False)[:2000]
+    assert payload['result'] == 'PASS'
+    assert payload['bundle_extracted'] is True
+    assert payload['bundle_zip_sha256'] == _sha(zip_file.read_bytes())
+    assert payload['delivered_player']['sha256'] == payload['delivered_player']['pinned_sha256']
+    assert payload['save_envelope']['pinned'] is True
