@@ -569,6 +569,22 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_prompt_adoption_router(prompt_adoption_service, commit_invoke))
 
     if production_service is not None:
+        # The Audio manifest adapter resolves its production owner once at mount;
+        # keep that owner's rebindable store/workspace live, like every other
+        # router closure in this module, without editing the author's files.
+        class _LiveOwner:
+            def __getattr__(self, name): return getattr(production_service, name)
+        class _LiveStore:
+            def __getattr__(self, name): return getattr(production_service.store, name)
+        class _LiveWorkspace:
+            def __getattr__(self, name): return getattr(production_service.workspace, name)
+        class _AudioManifestOwner(_LiveOwner):
+            @property
+            def store(self): return _LiveStore()
+            @property
+            def workspace(self): return _LiveWorkspace()
+        from ..experimental.audio_manifest_api import create_audio_manifest_router
+        router.include_router(create_audio_manifest_router(_AudioManifestOwner(), mask_call))
         if studio_image_batches is not None:
             studio_image_batches.configure_studio_image(production_service, mask_call)
         from .production_execution_api import create_production_execution_router
