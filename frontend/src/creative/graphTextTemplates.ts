@@ -2,6 +2,7 @@ import { checkedLocalGraphDefinition } from './studioGraphLocalDraft';
 import { graphSelectionCopy } from './graphSelectionCopy';
 import { graphId } from './graphDraft';
 import { GRAPH_POSITION_LIMIT } from './graphCanvasGeometry';
+import { graphNoteDefinitionBytes } from './graphCanvasNotesHelpers';
 import type { StudioGraphCatalog, StudioGraphDefinition } from './studioGraphTypes';
 export const TEXT_GRAPH_TEMPLATE_CONTRACT = 'poemseed-text-graph-template/1';
 export const TEXT_GRAPH_TEMPLATE_PRESENTATION_CONTRACT = 'poemseed-text-graph-template/2';
@@ -61,7 +62,7 @@ export function planTextGraphTemplate(raw: string, target: StudioGraphDefinition
   const definition = { ...result.definition, ...(copiedGroups.length || copiedNotes.length ? { presentation: { ...result.definition.presentation,
     ...(copiedGroups.length ? { groups: [...structuredClone(target.presentation?.groups || []), ...copiedGroups] } : {}),
     ...(copiedNotes.length ? { notes: [...structuredClone(target.presentation?.notes || []), ...copiedNotes] } : {}) } } : {}) };
-  if (new TextEncoder().encode(JSON.stringify(definition)).length > catalog.limits.definition_bytes) throw new Error('模板追加将超过原图定义大小限制。');
+  if (graphNoteDefinitionBytes(definition) > catalog.limits.definition_bytes) throw new Error('模板追加将超过原图定义大小限制。');
   checkedLocalGraphDefinition(definition);
   return { sourceTitle: source.title, groupCount: groups.length, noteCount: notes.length, result: { ...result, definition } };
 }
