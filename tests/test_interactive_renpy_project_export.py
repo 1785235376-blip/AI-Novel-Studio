@@ -680,6 +680,8 @@ def test_project_payload_is_complete_safe_and_runtime_free():
     assert manifest['target_id'] == TARGET and receipt['target_id'] == TARGET
     assert receipt['capabilities_supported'] and receipt['capabilities_unsupported'] == ['media']
     assert 'MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED' in receipt['losses']
+    assert 'SAVE_LOAD_UI_SCREENS_NOT_GENERATED_NATIVE_ENGINE_PERSISTENCE_ONLY' in receipt['losses']
+    assert 'save UI screens' in bundle.manifest['capabilities']['save']['note']
     extra = manifest['extra']['renpy_project']
     assert extra['witness_count'] == len(analyze(normalize(spec))['endings']) > 1
     assert extra['engine_bundled'] is False
@@ -930,7 +932,8 @@ def test_readme_documents_extraction_launcher_flow_limits_and_evidence():
         'Launch Project',
         'does NOT contain',
         'engine',
-        'Save compatibility across re-exported story revisions is NOT guaranteed',
+        're-exported story revisions is NOT guaranteed',
+        'ships no save/load',
         'acceptance/witness.json',
         'BLOCKED_ENVIRONMENT',
         'TARGET_RUNTIME_EXECUTED=BLOCKED_ENVIRONMENT',
@@ -1063,6 +1066,7 @@ def test_compatibility_reports_media_as_reference_only_loss():
     assert media['supported'] is False and media['lossy'] is True
     assert '1 approved asset reference' in media['note']
     assert 'MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED' in report['losses']
+    assert 'SAVE_LOAD_UI_SCREENS_NOT_GENERATED_NATIVE_ENGINE_PERSISTENCE_ONLY' in report['losses']
     assert report['notes']
     bundle = contract.build_export_bundle(TARGET, deepcopy(snapshot),
                                           {'include_witness': True, 'target_options': {}})

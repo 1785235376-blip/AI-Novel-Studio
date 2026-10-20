@@ -46,6 +46,7 @@ LOSSES = [
     'NO_ENGINE_ADDONS_OR_MEDIA_BYTES_BUNDLED',
     'TARGET_FONT_AND_WHITESPACE_RENDERING_NOT_VERIFIED',
     'SAVE_RESTORE_CROSS_REEXPORT_COMPATIBILITY_NOT_GUARANTEED',
+    'SAVE_LOAD_UI_SCREENS_NOT_GENERATED_NATIVE_ENGINE_PERSISTENCE_ONLY',
     'TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST',
     'NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS',
 ]
@@ -92,8 +93,8 @@ def _capabilities(media_count=0):
         'endings': {'supported': True, 'lossy': False, 'note': 'Ending nodes display the approved ending text and return to the Ren\'Py main menu.'},
         'loops': {'supported': True, 'lossy': True, 'note': 'Cycles are projected as labels and jumps and execute until the approved step cap; bounded analysis is not an unbounded proof.'},
         'step_cap': {'supported': True, 'lossy': False, 'note': 'The generated script checks ans_steps against the approved max_steps before every menu and returns instead of exceeding it.'},
-        'save': {'supported': True, 'lossy': True, 'note': 'Ren\'Py native save stores variables and the current label; save compatibility across re-exported story revisions is not guaranteed.'},
-        'restore': {'supported': True, 'lossy': True, 'note': 'Ren\'Py native load restores variables and the current label; SAVE_RESTORE_VERIFIED is BLOCKED_ENVIRONMENT on this host.'},
+        'save': {'supported': True, 'lossy': True, 'note': 'Ren\'Py native persistence serializes variables and the current label; this generated project ships no save UI screens, so in-game save controls are out of scope and cross-re-export save compatibility is not guaranteed.'},
+        'restore': {'supported': True, 'lossy': True, 'note': 'Ren\'Py native persistence restores variables and the current label; this generated project ships no load UI screens and SAVE_RESTORE_VERIFIED is BLOCKED_ENVIRONMENT on this host.'},
         'unicode': {'supported': True, 'lossy': True, 'note': 'UTF-8 text with Chinese, quotes, newlines and interpolation/markup punctuation is escaped; target font and bidi rendering are not verified.'},
         'media': {'supported': False, 'lossy': True, 'note': media_note},
     }

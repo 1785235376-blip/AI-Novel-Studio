@@ -268,8 +268,10 @@ def render_readme(project, meta, *, script_path, include_witness, media_referenc
         '  does not play media.',
         '- All story text is bounded, escaped text: the generated project contains no python',
         '  blocks, imports, eval/exec, network calls or arbitrary file access.',
-        '- Save/restore is native Ren\'Py behavior (variables and the current label are part',
-        '  of a save). Save compatibility across re-exported story revisions is NOT guaranteed.',
+        '- Save/restore uses native Ren\'Py persistence (variables and the current label can',
+        '  be serialized by the engine). This generated project intentionally ships no save/load',
+        '  UI screens, so in-game save/load controls are out of scope; save compatibility across',
+        '  re-exported story revisions is NOT guaranteed.',
         '  SAVE_RESTORE_VERIFIED=' + str(evidence.get('SAVE_RESTORE_VERIFIED', 'BLOCKED_ENVIRONMENT')) + ' on the generation host.',
         '- TARGET_RUNTIME_EXECUTED=' + str(evidence.get('TARGET_RUNTIME_EXECUTED', 'BLOCKED_ENVIRONMENT')) +
         ': no Ren\'Py engine was available on the host that generated this project.',
