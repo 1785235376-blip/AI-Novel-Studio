@@ -143,7 +143,8 @@ function trimCommandShape(v: unknown, projected = false): asserts v is MediaComm
   if (!record(v) || v.operation_id !== 'm8.audio.trim' || v.provider_id != null || v.model_id != null || v.prompt !== '' || v.allow_cloud !== false
     || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000
-    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'audio_profile'].includes(key))) invalid();
+    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'audio_profile', 'canvas_return'].includes(key))) invalid();
+  canvasReturnInCommand(v);
   const parameters = trimParameters(v.parameters, projected);
   if (Object.hasOwn(v, 'audio_profile') && (v.audio_profile !== AUDIO_MP3_PROFILE || parameters.output_format !== 'MP3')) invalid();
   sources(v.source_snapshots, 1);
@@ -169,7 +170,7 @@ function trimRecipe(v: ProductionRecipe, command: unknown) {
   return recordedTrimRecipe(v, command);
 }
 function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCommand | null) {
-  return !!value && Object.hasOwn(expected, 'audio_profile') === Object.hasOwn(value, 'audio_profile') && expected.audio_profile === value.audio_profile
+  return !!value && sameCanvasReturn(expected,value) && Object.hasOwn(expected, 'audio_profile') === Object.hasOwn(value, 'audio_profile') && expected.audio_profile === value.audio_profile
     && sameCutoutCommand({ ...expected, provider_id: expected.provider_id ?? null, model_id: expected.model_id ?? null },
     { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
 }
@@ -403,7 +404,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       sources(c.source_snapshots, 8);
       const canvasOrigin=canvasReturnInCommand(c);
       if(canvasOrigin&&(canvasOrigin.project_id!==v.novel_id||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==(v.branch_id??null)
-        ||!record(v.provider)||v.provider.local!==true||executionRecipe.adapter!=='COMFYUI_BUILTIN_IMAGE'||executionRecipe.image_recipe_id!=='comfy-sd-checkpoint-v1'))invalid();
+        ||(canvasOrigin.source.asset_kind==='audio'
+          ? v.owner!=='audio'||v.provider!==null||executionRecipe.adapter!=='LOCAL_FFMPEG'||executionRecipe.output_profile!=='PCM_S16LE_WAV_48000_STEREO'
+          : !record(v.provider)||v.provider.local!==true||executionRecipe.adapter!=='COMFYUI_BUILTIN_IMAGE'||executionRecipe.image_recipe_id!=='comfy-sd-checkpoint-v1')))invalid();
       checkedVideoReference(c.video_reference, c.source_snapshots, String(c.operation_id));
       checkedVideoFrames(c.video_frames, c.source_snapshots, String(c.operation_id));
       storyboardShotFields(c.storyboard_shot, c.source_snapshots, String(c.operation_id));

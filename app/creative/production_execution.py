@@ -571,17 +571,14 @@ class ProductionExecutionService:
         if command.canvas_return is not None:
             origin = command.canvas_return
             graph = getattr(self, 'graph_service', None)
+            image_route = (origin.source.asset_kind == 'image' and binding is not None and binding.get('local')
+                and recipe.get('adapter') == 'COMFYUI_BUILTIN_IMAGE' and recipe.get('image_recipe_id') == 'comfy-sd-checkpoint-v1')
+            audio_route = (origin.source.asset_kind == 'audio' and command.operation_id == 'm8.audio.trim'
+                and binding is None and recipe.get('adapter') == 'LOCAL_FFMPEG')
             if (graph is None or graph_binding is not None or benchmark_binding is not None or batch_binding is not None
-                    or origin.project_id != nid or origin.scope != scope or origin.incarnation != context['incarnation']
-                    or not binding.get('local') or recipe.get('adapter') != 'COMFYUI_BUILTIN_IMAGE'
-                    or recipe.get('image_recipe_id') != 'comfy-sd-checkpoint-v1'):
+                    or not (image_route or audio_route)):
                 raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
-            canvas = graph.canvas_views.get(nid, scope, actor, origin.canvas_id, guard)
-            card = next((c for c in canvas['definition']['cards'] if c['id'] == origin.card_id), {})
-            expected = {'asset_id': origin.source.id, 'version': origin.source.version, 'digest': origin.source.digest, 'kind': 'image'}
-            if (canvas['version'] != origin.canvas_version or canvas['definition_digest'] != origin.canvas_digest
-                    or card.get('asset') != expected or not any(s['card_id'] == origin.card_id and s['state'] == 'CURRENT_METADATA' for s in canvas['reference_states'])):
-                raise StaleSourceError('STUDIO_CANVAS_RETURN_TARGET_CHANGED')
+            self._canvas_return_target(nid, scope, actor, origin, context, guard)
         context.update(request_id=command.request_id, operation_id=command.operation_id, sources=sources,
             provider_binding=binding, license_note=command.license_note, rights={"license_note": command.license_note}, execution_recipe=recipe)
         if batch_binding is not None:
@@ -598,6 +595,31 @@ class ProductionExecutionService:
         preview["preview_digest"] = digest(preview)
         guard()
         return preview, context, command
+
+    def _canvas_return_target(self, nid, scope, actor, origin, context, guard, *, document=None):
+        # The return intent never grants authority. The original Graph owner
+        # validates the original record; publication reuses its already leased
+        # source document before the existing asset phase (no nested lock order).
+        graph = getattr(self, 'graph_service', None)
+        if (graph is None or origin.project_id != nid or origin.scope != scope
+                or origin.incarnation != context['incarnation']):
+            raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
+        canvas = (graph.canvas_views.get(nid, scope, actor, origin.canvas_id, guard) if document is None
+            else graph.canvas_views._owned(nid, scope, actor, origin.canvas_id, document))
+        card = next((c for c in canvas['definition']['cards'] if c['id'] == origin.card_id), {})
+        expected = {'asset_id': origin.source.id, 'version': origin.source.version,
+            'digest': origin.source.digest, 'kind': origin.source.asset_kind}
+        if (canvas['version'] != origin.canvas_version or canvas['definition_digest'] != origin.canvas_digest
+                or card.get('asset') != expected or document is None and not any(
+                    s['card_id'] == origin.card_id and s['state'] == 'CURRENT_METADATA' for s in canvas['reference_states'])):
+            raise StaleSourceError('STUDIO_CANVAS_RETURN_TARGET_CHANGED')
+        guard()
+
+    def _canvas_audio_return_current(self, nid, scope, actor, context, guard, *, document=None):
+        command = context.get('command')
+        if isinstance(command, dict) and command.get('operation_id') == 'm8.audio.trim' and 'canvas_return' in command:
+            checked = MediaCommand.model_validate(command)
+            self._canvas_return_target(nid, scope, actor, checked.canvas_return, context, guard, document=document)
 
     def _recipe(self, command, *, source_dimensions=None):
         if command.operation_id == 'm5.image.composite':
@@ -1169,6 +1191,7 @@ class ProductionExecutionService:
                 source_guard=lambda: self._sources_current(nid, scope, context, guard), promote=promote,
                 recover_review=self._review_compensation(nid, scope, actor, context, jid))
         elif owner == "audio":
+            self._canvas_audio_return_current(nid, scope, actor, context, guard)
             if context.get("storyboard_speech") is not None:
                 self._sources_current(nid, scope, context, guard)
             row = self._audio(scope, actor).review(nid, jid, action.expected_version, context, guard, sources, action.reviewed_output_digest, promote,
@@ -1394,6 +1417,7 @@ class ProductionExecutionService:
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
+            self._canvas_audio_return_current(nid, scope, actor, context, guard, document=document)
             if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 self._comic_owner().current(nid, scope, context, guard)
             if context.get("benchmark_binding") is not None:
@@ -1591,6 +1615,7 @@ class ProductionExecutionService:
             command = _HistoricalAudioCommand.model_validate(captured_command)
         else:
             command = MediaCommand.model_validate(captured_command)
+        if owner == 'audio': self._canvas_audio_return_current(nid, scope, actor, context, guard)
         host_guard = guard
         def guard():
             host_guard()
@@ -1606,6 +1631,7 @@ class ProductionExecutionService:
                     if not settings.enable_cloud or not command.allow_cloud: raise ValueError("STUDIO_CLOUD_DISABLED")
         guard()
         def before_send(*args):
+            if owner == 'audio': self._canvas_audio_return_current(nid, scope, actor, context, guard)
             if context.get("storyboard_speech") is not None or any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 self._sources_current(nid, scope, context, guard)
             if context.get("graph_binding") is not None:

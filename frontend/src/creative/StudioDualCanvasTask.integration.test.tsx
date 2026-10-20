@@ -105,7 +105,7 @@ it('refuses a changed return target while retaining the formal asset and never g
  expect(screen.queryByRole('button',{name:'确认采用并回填原卡片'})).toBeNull();expect(fetcher.mock.calls.filter(([u,i])=>u===canvasPath&&i.method==='PUT')).toHaveLength(0);expect(phase).toBe('approved');
 });
 async function recoverResult(){
- fireEvent.click(screen.getByText('重开后恢复尚未采用的图像结果'));fireEvent.click(screen.getByRole('button',{name:'读取有原位置绑定的图像结果'}));
+ fireEvent.click(screen.getByText('重开后恢复尚未采用的卡片结果'));fireEvent.click(screen.getByRole('button',{name:'读取有原位置绑定的卡片结果'}));
  fireEvent.click(await screen.findByRole('button',{name:/核验并恢复原卡片任务/}));
 }
 it('reopens from the original approved Job after complete unmount and requires a new explicit adoption',async()=>{
@@ -131,7 +131,7 @@ it.each(['card deleted','version changed'])('blocks recovery after %s and retain
 });
 it('does not offer a recorded result from another project',async()=>{
  phase='approved';const original=fetcher.getMockImplementation()!;fetcher.mockImplementation((url,init)=>url===productionPath+'/jobs'?Promise.resolve(json({items:[{...fixture.approved,novel_id:'other-project'}],product_acceptance:'LOCAL_REQUIRED'})):original(url,init));
- mount();fireEvent.click(screen.getByText('重开后恢复尚未采用的图像结果'));fireEvent.click(screen.getByRole('button',{name:'读取有原位置绑定的图像结果'}));
+ mount();fireEvent.click(screen.getByText('重开后恢复尚未采用的卡片结果'));fireEvent.click(screen.getByRole('button',{name:'读取有原位置绑定的卡片结果'}));
  await screen.findByText('服务回执不完整。请重新读取核对，勿重复发送。');expect(screen.queryByRole('button',{name:/核验并恢复原卡片任务/})).toBeNull();expect(fetcher.mock.calls.filter(([,i])=>i.method==='PUT')).toHaveLength(0);
 });
 it.each(['owner','client'])('retires a late original Job read across %s A/B/A before further source reads or adoption',async mode=>{

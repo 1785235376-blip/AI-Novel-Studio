@@ -1,6 +1,7 @@
 import { canonicalExecutionImpact, type ExecutionImpactConfirmation } from '../experimental/executionImpact/executionImpact';
 import { studioExecutionImpactGate, sameExecutionPreview, type StudioExecutionImpactGate, type StudioExecutionImpactInput } from './studioExecutionImpactGate';
 import { sameCompositeCommand } from './studioImageCompositeContract';
+import { assertCanvasAudioTrimTaskCommand, canvasAudioTrimTaskJobMatches, type CanvasAudioTrimTaskBinding } from './canvasAudioTrimTask';
 import { assertCanvasImageTaskCommand, canvasImageTaskJobMatches, type CanvasImageTaskBinding } from './canvasImageTask';
 import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 import { sameComicImageCommand } from './studioComicImageContract';
@@ -26,12 +27,16 @@ export type StudioMediaExecutionProps = {
   onDirtyChange: (dirty: boolean) => void; onJob?: (job: ProductionJob) => void; onUnavailable: () => void; onApproved?: (job: ProductionJob) => void | Promise<void>;
   /** Optional single-card task fence. It owns no execution, storage or queue. */
   canvasImageTask?: CanvasImageTaskBinding;
+  canvasAudioTrimTask?: CanvasAudioTrimTaskBinding;
   /** Explicit read-only navigation; never grants review or execution authority. */
   onOpenApprovedAsset?: (job: ProductionJob) => void;
   externalJob?: ProductionJob;
   preparedCommand?: RecordedMediaCommand; preparedIsCurrent?: () => boolean; onPreparedClose?: () => void;
   cutoutExecution?: { execute: (job: ProductionJob) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
 };
+const boundTask = (props: StudioMediaExecutionProps) => props.canvasAudioTrimTask ?? props.canvasImageTask;
+const canvasTaskJobMatches = (task: CanvasImageTaskBinding, job: ProductionJob) => task.source.asset_kind==='audio'
+  ? canvasAudioTrimTaskJobMatches(task,job) : canvasImageTaskJobMatches(task,job);
 export const GRAPH_MEDIA_OPERATION_LABELS: Record<GraphMediaOperation, string> = {
   'm5.image.t2i': '文字生成图片', 'm5.image.i2i': '参考图片生成图片', 'm7.video.t2v': '文字生成视频',
   'm7.video.i2v': '图片生成视频', 'm7.video.v2v': '视频生成视频', 'm8.audio.speech': '语音合成',
@@ -71,9 +76,9 @@ const parametersByOperation: Record<MediaOperation, MediaParameter[]> = {
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
   'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile'],
 };
-const initialDraft = (task?: CanvasImageTaskBinding): Draft => ({ route: 'local', operation: task ? 'm5.image.i2i' : 'm5.image.t2i', providerKey: '', prompt: '',
+const initialDraft = (task?: CanvasImageTaskBinding): Draft => ({ route: 'local', operation: task ? task.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i' : 'm5.image.t2i', providerKey: '', prompt: '',
   parameters: Object.fromEntries(parameterNames.map(name => [name, ''])) as Record<MediaParameter, string>, sources: task ? [{...task.source}] : [],
-  ...(task ? {imageSource:{...task.source}} : {}), imageReferences: [], allowCloud: false, licenseNote: '' });
+  ...(task?.source.asset_kind==='image' ? {imageSource:{...task.source}} : {}), imageReferences: [], allowCloud: false, licenseNote: '' });
 const inputKey = (draft: Draft) => JSON.stringify(draft);
 export const mediaProviderKey = (row: ProductionProvider) => JSON.stringify([row.operation_id, row.provider_id, row.model_id, row.route_digest]);
 const jobIdentity = (job?: ProductionJob) => job ? JSON.stringify([job.owner, job.id, job.version, job.request_digest]) : '';
@@ -227,7 +232,7 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
     ] } : {}),
     ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
   if(task?.returnBinding)command.canvas_return=structuredClone(task.returnBinding);
-  if(task)assertCanvasImageTaskCommand(task,command,provider);
+  if(task){if(task.source.asset_kind==='audio')assertCanvasAudioTrimTaskCommand(task,command);else assertCanvasImageTaskCommand(task,command,provider);}
   return command;
 }
 
@@ -237,7 +242,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const [handoffPending, setHandoffPending] = useState(false), [handoffNotice, setHandoffNotice] = useState('');
   const handoffFlight = useRef(false), handoffConsumed = useRef<TimelineAssetHandoff>();
   const handoffRevision = useRef(0), handoffStamp = useRef(''), handoffRequest = useRef(props.assetHandoff);
-  const [draft, setDraft] = useState<Draft>(()=>initialDraft(props.canvasImageTask)), [providers, setProviders] = useState<ProductionProvider[]>([]);
+  const [draft, setDraft] = useState<Draft>(()=>initialDraft(boundTask(props))), [providers, setProviders] = useState<ProductionProvider[]>([]);
   const [providerLoading, setProviderLoading] = useState(false), [jobs, setJobs] = useState<ProductionJob[]>([]), [selected, setSelected] = useState<ProductionJob>();
   const [preview, setPreview] = useState<Preview>(), [previewConsent, setPreviewConsent] = useState(''), [reviewConsent, setReviewConsent] = useState('');
   const [candidate, setCandidate] = useState<Candidate>(), [pending, setPending] = useState<Kind>(), [uncertain, setUncertain] = useState(false);
@@ -250,7 +255,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const providerEpoch = useRef(0), providerRead = useRef<AbortController>(), candidateRef = useRef<Candidate>();
   const draftRef = useRef(draft), selectedRef = useRef(selected), previewRef = useRef(preview), uncertainRef = useRef(uncertain);
   const previewConsentRef = useRef(previewConsent), reviewConsentRef = useRef(reviewConsent), providersRef = useRef(providers);
-  const creation = useRef<Creation>(), baseline = useRef(inputKey(initialDraft(props.canvasImageTask)));
+  const creation = useRef<Creation>(), baseline = useRef(inputKey(initialDraft(boundTask(props))));
   const sentActions = useRef(new Set<string>()), consumedExternal = useRef('');
   const impactState = useRef<{ stamp: string; client: StudioProductionClient; methods: unknown[]; canMutate: boolean; canReview: boolean; gate?: StudioExecutionImpactGate }>();
   const impactReadRevision = useRef(0);
@@ -286,12 +291,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     handoffStamp.current = nextHandoffStamp; handoffRequest.current = props.assetHandoff; handoffRevision.current++;
   }
   const canClosePrepared = canEdit && (!selected || !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selected.status));
-  let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check',props.canvasImageTask); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
+  let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check',boundTask(props)); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
 
-  // Additive confirmation for the original single-card image path only.
-  const impactRequired = () => !!latest.current.canvasImageTask || !!previewRef.current?.command.canvas_return || !!selectedRef.current?.command?.canvas_return;
+  // Single-use confirmation for original, explicitly bound media-card tasks.
+  const impactRequired = () => !!boundTask(latest.current) || !!previewRef.current?.command.canvas_return || !!selectedRef.current?.command?.canvas_return;
   function impactInput(): StudioExecutionImpactInput | undefined {
-    const task = latest.current.canvasImageTask, binding = task?.returnBinding, saved = previewRef.current, job = selectedRef.current;
+    const task = boundTask(latest.current), binding = task?.returnBinding, saved = previewRef.current, job = selectedRef.current;
     if (!task || !binding) return;
     const scope = { novel_id: binding.project_id, branch_id: binding.scope.mode === 'collaboration' ? binding.scope.branch_id : null, incarnation: binding.incarnation };
     if (saved && saved.input === inputKey(draftRef.current)) return { scope, command: saved.command, recipe: saved.value.execution_recipe,
@@ -302,11 +307,11 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       boundary:{kind:'EXECUTE',job:{id:job.id,owner:job.owner,version:job.version,request_digest:job.request_digest}}, preview:stored.preview };
   }
   function impactStamp() {
-    return canonicalExecutionImpact({revision:impactReadRevision.current,input:impactInput() ?? null,draft:draftRef.current,task:latest.current.canvasImageTask?.returnBinding ?? null,
+    return canonicalExecutionImpact({revision:impactReadRevision.current,input:impactInput() ?? null,draft:draftRef.current,task:boundTask(latest.current)?.returnBinding ?? null,
       assets:latest.current.assets,providers:providersRef.current});
   }
   function impactAuthority() {
-    const task = latest.current.canvasImageTask;
+    const task = boundTask(latest.current);
     return current() && latest.current.canMutate && !uncertainRef.current
       && !['UNKNOWN','SEND_RESERVED','RUNNING','REMOTE_RUNNING','REVIEWING'].includes(selectedRef.current?.status ?? '') && !!task?.isCurrent()
       && sourcesCurrent(draftRef.current.sources,latest.current.assets,draftRef.current.operation);
@@ -359,7 +364,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!alive.current) return;
     revoked.current = true; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
     clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); providerHandoffLoading.current = false; setProviderLoading(false);
-    const empty = initialDraft(latest.current.canvasImageTask); draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
+    const empty = initialDraft(boundTask(latest.current)); draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
     setDenied(true); setError('身份、权限或项目入口已经变化，请重新打开当前项目。'); latest.current.onDirtyChange(false); latest.current.onUnavailable();
   }
   function failure(reason: unknown, fallback: string, mutation = false) {
@@ -386,7 +391,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (latest.current.preparedCommand || !current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     handoffRevision.current++; draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
   }
-  function changeOperation(operation: MediaOperation) { if (latest.current.canvasImageTask&&operation!=='m5.image.i2i')return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(latest.current.canvasImageTask), operation, licenseNote: draftRef.current.licenseNote }); }
+  function changeOperation(operation: MediaOperation) { if (boundTask(latest.current)&&operation!==(boundTask(latest.current)?.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i'))return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(boundTask(latest.current)), operation, licenseNote: draftRef.current.licenseNote }); }
   function changeRoute(route: MediaRoute) {
     const old = draftRef.current;
     if (!routeSelectable(old.operation) || !['local', 'cloud'].includes(route) || route === old.route) return;
@@ -595,7 +600,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     allowCloud: draftRef.current.imageSource || draftRef.current.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(draftRef.current.operation) ? false : draftRef.current.allowCloud }); }
   function clearInputs() { if (!current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     if (latest.current.preparedCommand) { if (selectedRef.current && ['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selectedRef.current.status)) return; latest.current.onPreparedClose?.(); return; }
-    edit(initialDraft(latest.current.canvasImageTask)); baseline.current = inputKey(initialDraft(latest.current.canvasImageTask)); clearCandidate(); }
+    edit(initialDraft(boundTask(latest.current))); baseline.current = inputKey(initialDraft(boundTask(latest.current))); clearCandidate(); }
 
   async function loadProviders() {
     if (!current() || busy()) return;
@@ -614,7 +619,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const value = begin('PREVIEW'); if (!value) return;
     const captured = inputKey(draftRef.current); clearPreview();
     try {
-      const command = latest.current.preparedCommand ? structuredClone(latest.current.preparedCommand) as MediaCommand : commandFor(draftRef.current, providersRef.current, latest.current.assets, crypto.randomUUID(),latest.current.canvasImageTask);
+      const command = latest.current.preparedCommand ? structuredClone(latest.current.preparedCommand) as MediaCommand : commandFor(draftRef.current, providersRef.current, latest.current.assets, crypto.randomUUID(),boundTask(latest.current));
       const result = await latest.current.read(() => value.client.preview(command));
       if (!live(value) || captured !== inputKey(draftRef.current) || !sourcesCurrent(command.source_snapshots, latest.current.assets, command.operation_id)) return;
       const chosen = providersRef.current.find(row => latest.current.preparedCommand ? row.operation_id === command.operation_id && row.provider_id === command.provider_id && row.model_id === command.model_id : mediaProviderKey(row) === draftRef.current.providerKey);
@@ -678,12 +683,19 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   async function inspectExecution() {
     const job = selectedRef.current;
     if (!impactRequired() || !job?.command || job.status!=='QUEUED' || !latest.current.canMutate || uncertainRef.current
-      || !latest.current.canvasImageTask?.isCurrent() || !canvasImageTaskJobMatches(latest.current.canvasImageTask,job)
+      || !boundTask(latest.current)?.isCurrent() || !canvasTaskJobMatches(boundTask(latest.current)!,job)
       || !sourcesCurrent(job.sources,latest.current.assets,job.operation_id)) return;
     const value=begin('PREVIEW');if(!value)return;clearPreview();
     const captured=impactStamp(),identity=jobIdentity(job);
     try {
-      const result=await latest.current.read(()=>value.client.preview(structuredClone(job.command!)));
+      const command=structuredClone(job.command!) as MediaCommand;
+      if(boundTask(latest.current)?.source.asset_kind==='audio'){
+        // Re-preview the already matched original AudioJob; projection-only markers are not fresh inputs.
+        command.parameters={in_ms:Number(job.command!.parameters.in_ms),out_ms:Number(job.command!.parameters.out_ms)};
+        command.source_snapshots=[{...boundTask(latest.current)!.source}];
+        delete command.source_snapshots[0].reference_only;
+      }
+      const result=await latest.current.read(()=>value.client.preview(command));
       if(!live(value)||jobIdentity(selectedRef.current)!==identity||impactStamp()!==captured)return;
       if(!sameExecutionPreview(job,result))throw invalid('重新读取的预览与原入队命令、路线或配方不一致，不能执行。');
       impactReadRevision.current++;executionPreview.current={jobId:job.id,preview:result};updateImpact(v=>v+1);setNotice('已核对原入队任务预览；仍需单独确认本次执行输入，没有派发。');
@@ -691,8 +703,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function canAction(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
     if (kind==='execute' && impactRequired() && !impactReady('EXECUTE')) return false;
-    const task = latest.current.canvasImageTask, originalJob = selectedRef.current;
-    if(task && (kind==='execute'||kind==='review') && (!originalJob||!canvasImageTaskJobMatches(task,originalJob)||kind==='execute'&&!task.isCurrent()))return false;
+    const task = boundTask(latest.current), originalJob = selectedRef.current;
+    if(task && (kind==='execute'||kind==='review') && (!originalJob||!canvasTaskJobMatches(task,originalJob)||kind==='execute'&&!task.isCurrent()))return false;
     const job = selectedRef.current;
     if (!job || busy() || uncertainRef.current || creation.current?.uncertain || sentActions.current.has(actionIdentity(job, kind))) return false;
     const assetSources = job.sources.filter((source): source is ProductionSource => source.kind === 'ASSET');
@@ -814,7 +826,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
     controlFence.current++; executingCutout.current = undefined; runningControlRef.current = undefined; setRunningControl(undefined);
     clearCandidate(); clearPreview(); owner.current = props.client; revoked.current = false; setDenied(false); setPending(undefined); setProviders([]); setJobs([]);
-    const empty = initialDraft(latest.current.canvasImageTask); draftRef.current = empty; setDraft(empty); baseline.current = inputKey(empty); selectedRef.current = undefined; setSelected(undefined);
+    const empty = initialDraft(boundTask(latest.current)); draftRef.current = empty; setDraft(empty); baseline.current = inputKey(empty); selectedRef.current = undefined; setSelected(undefined);
     creation.current = undefined; sentActions.current.clear(); consumedExternal.current = ''; markUncertain(false); setError(''); setNotice('');
   }, [props.client]);
   useLayoutEffect(() => {
@@ -846,7 +858,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,
     pending, uncertain, repeatBlocked, error: owns ? error : '当前身份或项目范围待核对。', notice: owns ? notice : '', denied, dirty, locked, canEdit, canClosePrepared, inputError, freshSources, jobSourcesFresh, requiredSourceKind: owns ? sourceKind(draft.operation) : undefined,
-    parameterNames: !owns ? [] : draft.operation === 'm8.audio.trim' ? parametersByOperation[draft.operation] : provider ? parametersByOperation[draft.operation].filter(name => provider.supported_parameters.includes(name)) : [],
+    parameterNames: !owns ? [] : props.canvasAudioTrimTask ? ['in_ms','out_ms'] as MediaParameter[] : draft.operation === 'm8.audio.trim' ? parametersByOperation[draft.operation] : provider ? parametersByOperation[draft.operation].filter(name => provider.supported_parameters.includes(name)) : [],
     unsupportedParameters: owns ? unsupportedParameters : [], creationUncertain: owns && !!creation.current?.uncertain,
     uncertainRequestId: owns && creation.current?.uncertain ? creation.current.requestId : undefined,
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding && impactReady('CREATE'),

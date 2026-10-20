@@ -404,11 +404,20 @@ def _binding(value, body):
             or body.get("storyboard_speech") != value.get("storyboard_speech")
             or body.get("storyboard_speech") != value.get("command", {}).get("storyboard_speech")):
         raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED", "分镜对白绑定已变化", 409)
-    if "audio_profile" in body or fade_bound or peak_bound or loudness_bound or denoise_bound or speech_bound:
+    canvas_bound = isinstance(value.get('command'), dict) and 'canvas_return' in value['command']
+    if canvas_bound and ('execution_recipe' not in value or 'graph_binding' in value):
+        raise _error('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED', '原卡片绑定缺少执行配方或混入共享 Graph', 409)
+    if "audio_profile" in body or fade_bound or peak_bound or loudness_bound or denoise_bound or speech_bound or canvas_bound:
         from ..creative.production_execution_models import MediaCommand
         try:
             command = MediaCommand.model_validate(value["command"])
-            projected = command.model_dump(exclude={"request_id", "allow_cloud", "license_note"})
+            if canvas_bound:
+                from ..experimental.store import ExperimentalStore
+                origin = command.canvas_return
+                if (origin.incarnation != value['incarnation']
+                        or ExperimentalStore.key(origin.project_id, origin.scope) != value['scope_key']):
+                    raise ValueError('canvas return context')
+            projected = command.model_dump(exclude={"request_id", "allow_cloud", "license_note", "canvas_return"})
             projected["parameters"] = command.parameters.model_dump(exclude_none=True)
             projected["source_snapshots"] = [source.model_dump(exclude={"reference_only"}, exclude_none=True)
                 for source in command.source_snapshots]
@@ -419,7 +428,7 @@ def _binding(value, body):
                     or request_digest != value["request_digest"]):
                 raise ValueError("versioned command binding")
         except (ValueError, TypeError, KeyError):
-            raise _error("STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_LOUDNESS_BINDING_CHANGED" if loudness_bound else "STUDIO_AUDIO_DENOISE_BINDING_CHANGED" if denoise_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
+            raise _error("STUDIO_CANVAS_RETURN_CONTEXT_CHANGED" if canvas_bound else "STUDIO_STORYBOARD_SPEECH_BINDING_CHANGED" if speech_bound else "STUDIO_AUDIO_LOUDNESS_BINDING_CHANGED" if loudness_bound else "STUDIO_AUDIO_DENOISE_BINDING_CHANGED" if denoise_bound else "STUDIO_AUDIO_PEAK_BINDING_CHANGED" if peak_bound else "STUDIO_AUDIO_FADE_BINDING_CHANGED" if fade_bound else "STUDIO_AUDIO_PROFILE_BINDING_CHANGED",
                 "音频命令与原请求摘要不一致", 409) from None
     if "execution_recipe" in value:
         recipe = value["execution_recipe"]
@@ -526,6 +535,11 @@ class StudioAudioExecution:
                     pass
             raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频任务绑定已变化，不能继续执行", 409)
         body = _body_shape(row.get("_studio_body")); binding = _binding(row.get("context"), body)
+        captured = binding.get('command')
+        origin = captured.get('canvas_return') if isinstance(captured, dict) else None
+        if origin is not None and (origin.get('project_id') != row.get('novel_id')
+                or origin.get('scope', {}).get('branch_id') != self.branch_id):
+            raise _error('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED', '原卡片范围与音频任务不一致', 409)
         provider = binding["provider_binding"] or {}
         if (row.get("chapter_id") is not None or row.get("experimental_origin") != "narrative_production_v2"
                 or row.get("operation_id") != body["operation_id"] or row.get("provider_id") != provider.get("provider_id")
@@ -541,7 +555,7 @@ class StudioAudioExecution:
             self._receipt(historical_receipt)
             if row.get("receipt_digest") != historical_receipt["receipt_digest"]:
                 raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频持久回执已变化，不能继续执行", 409)
-        controlled_output = (body["operation_id"] == "m8.audio.trim" and TRIM_CONTROLS.intersection(body["parameters"])
+        controlled_output = (body["operation_id"] == "m8.audio.trim" and (TRIM_CONTROLS.intersection(body["parameters"]) or origin is not None)
             and (row.get("publication_ready") is not None or row.get("publication_state") in {"RESERVED", "VERIFIED"}
                  or row.get("output_asset_id") is not None or row.get("status") in {"AWAITING_REVIEW", "REVIEWING", "APPROVED"}))
         if controlled_output and "measured" not in row:

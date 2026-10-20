@@ -17,15 +17,23 @@ export function checkedCanvasReturnBinding(value:unknown):CanvasReturnBinding{
   if(!object(scope)||Object.keys(scope).some(k=>!['mode','novel_id','workspace_id','project_id','storyline_id','branch_id'].includes(k))||scope.novel_id!==value.project_id
     ||!['local','collaboration'].includes(String(scope.mode))||Object.values(scope).some(v=>v!==null&&(typeof v!=='string'||!v.length||v.length>240))
     ||scope.mode==='collaboration'&&!['workspace_id','storyline_id','branch_id'].every(k=>id(scope[k]))
-    ||!object(source)||Object.keys(source).some(k=>!['id','kind','version','digest','asset_kind','reference_only'].includes(k))||!id(source.id)||source.kind!=='ASSET'||source.asset_kind!=='image'
+    ||!object(source)||Object.keys(source).some(k=>!['id','kind','version','digest','asset_kind','reference_only'].includes(k))||!id(source.id)||source.kind!=='ASSET'||!['image','audio'].includes(String(source.asset_kind))||source.asset_kind==='audio'&&source.reference_only!==undefined
     ||!Number.isSafeInteger(source.version)||(source.version as number)<1||!hex(source.digest)||source.reference_only!==undefined&&source.reference_only!==true)invalid();
-  return {...structuredClone(value),source:{id:source.id,kind:'ASSET',version:source.version,digest:source.digest,asset_kind:'image'}} as CanvasReturnBinding;
+  return {...structuredClone(value),source:{id:source.id,kind:'ASSET',version:source.version,digest:source.digest,asset_kind:source.asset_kind}} as CanvasReturnBinding;
 }
 export function canvasReturnInCommand(command:unknown):CanvasReturnBinding|undefined{
   if(!object(command)||!Object.hasOwn(command,'canvas_return'))return;
   const binding=checkedCanvasReturnBinding(command.canvas_return),sources=command.source_snapshots;
   const pin=(v:unknown)=>object(v)&&['id','kind','version','digest','asset_kind'].every(k=>v[k]===(binding.source as unknown as Record<string,unknown>)[k]);
-  if(command.operation_id!=='m5.image.i2i'||command.allow_cloud!==false||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!pin(command.image_source)
+  if(binding.source.asset_kind==='audio'){
+    const raw=command.parameters, nullPlaceholders=new Set(['width','height','steps','seed','cfg','negative_prompt','size','quality','duration_seconds','frame_rate','voice_id','speech_rate']);
+    const parameters=object(raw)?Object.fromEntries(Object.entries(raw).filter(([key,value])=>value!==null||!nullPlaceholders.has(key))):raw;
+    if(command.operation_id!=='m8.audio.trim'||command.allow_cloud!==false||command.provider_id!=null||command.model_id!=null||command.prompt!==''
+      ||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!object(parameters)||Object.keys(parameters).length!==2
+      ||!['in_ms','out_ms'].every(k=>Object.hasOwn(parameters,k))||!Number.isSafeInteger(parameters.in_ms)||!Number.isSafeInteger(parameters.out_ms)
+      ||Number(parameters.in_ms)<0||Number(parameters.out_ms)<=Number(parameters.in_ms)||Number(parameters.out_ms)-Number(parameters.in_ms)>120000
+      ||['image_source','image_references','mask_source','video_reference','video_frames','storyboard_shot','storyboard_speech','audio_profile','image_layers'].some(k=>Object.hasOwn(command,k)))invalid();
+  }else if(command.operation_id!=='m5.image.i2i'||command.allow_cloud!==false||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!pin(command.image_source)
     ||command.mask_source!==undefined||command.image_references!==undefined&&(!Array.isArray(command.image_references)||command.image_references.length))invalid();
   return binding;
 }
