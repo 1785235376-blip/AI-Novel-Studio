@@ -1,6 +1,6 @@
 {
   "schema": "poemseed-b07-godot-runtime-evidence/1",
-  "generated_at": "2026-10-20T07:17:31.375880+00:00",
+  "generated_at": "2026-10-20T07:27:37.568134+00:00",
   "status": "PASS",
   "title": "B07/DIF-10/E2E-07 Godot 4 runnable runtime project - real headless acceptance evidence",
   "target": {
@@ -10,8 +10,8 @@
     "kind": "RUNNABLE_PROJECT"
   },
   "product": {
-    "repository_head": "bc6941fe4429ec75d04eab41cbaee459ff2125ab",
-    "branch": "work/v2-b07-godot-20261020",
+    "repository_head": "933fea148d4fde94a8185dade36f00615bedf8fa",
+    "branch": "work/v2-b07-integration-20261020",
     "repository_head_note": "repository_head is the code commit under test at time of run; the evidence .json/.log files are committed afterwards as a separate docs commit.",
     "script": "scripts/verify_godot_interactive_runtime.py",
     "script_sha256": "7f14e42eb91ff84f45f1da02490ac71ba5f9552add7dfbc061bf28160e9a6674"
@@ -80,7 +80,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 282,
+      "duration_ms": 171,
       "stdout_sha256": "de0702162a89a477041b4a35fd31c8a5b48817803da862c9883c54df105d5989",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -118,7 +118,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 171,
+      "duration_ms": 187,
       "stdout_sha256": "287e38415a2287953b0df3a300564067e20a2ce7a7e76c27788d8c973b11bb56",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -137,7 +137,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 187,
       "stdout_sha256": "9117af08d768020fbc106bbf42b3536a8a31ac84a04ede685ecd20a255baadd3",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -156,7 +156,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 171,
       "stdout_sha256": "2217ad16b96ea238ee47f49c42bf61247f07ac7f7296fa55f4701fe47713f297",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -175,7 +175,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 187,
+      "duration_ms": 172,
       "stdout_sha256": "23f06b479575750d78f14b2fad33e26c1c29db075087db5347917c51295f5124",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -194,7 +194,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 266,
+      "duration_ms": 186,
       "stdout_sha256": "393d022ab0ed0b1d287997931d105d968c5830a88eeeb17e80aecdb8bab7f082",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -229,7 +229,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 170,
       "stdout_sha256": "4982fd4b4742f51e7038a876e3a99953240e8c914cdb272c87d8486e2944f367",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -246,7 +246,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 172,
       "stdout_sha256": "4982fd4b4742f51e7038a876e3a99953240e8c914cdb272c87d8486e2944f367",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -263,7 +263,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 170,
       "stdout_sha256": "497cbae3d1f308894c4bed504b9cac81ff98e8ee1fd6dddbfbf947b68608d9b6",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -301,7 +301,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 170,
+      "duration_ms": 172,
       "stdout_sha256": "935f9d0556533474ae64d67b4d0c6c86823a0124cb76966c2ffa67a5ab3ea021",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -320,7 +320,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 172,
       "stdout_sha256": "b77b697777854fc51b390089a7041c2851a4e75cc67b0d5aaaab4b92361dd8b5",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -343,7 +343,7 @@
       ],
       "exit_code": 0,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 188,
       "stdout_sha256": "b48c577db541afbc9e8b72320c58475c093e1c09e60ece741b9f18d75ac9a862",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -362,7 +362,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 172,
+      "duration_ms": 171,
       "stdout_sha256": "1e0f1e15d128e0917149a5ac9d46c205b7394db17a7dd1a3b3b7ca5752eb4a06",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -381,7 +381,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 187,
       "stdout_sha256": "2cfff12e063b94e9f82e7013ba04582a09f49afa55b60f06fe777b6fdd60151a",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -400,7 +400,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 171,
       "stdout_sha256": "3666dcd471b483d8db29dfda3190fa4aeed17ec87bf45a88cdfa37096508d6c7",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -438,7 +438,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 187,
+      "duration_ms": 186,
       "stdout_sha256": "643b512fd8f7964e69035409c6d026af79d16b989dbf96dc256a3182d47e7810",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -457,7 +457,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 187,
+      "duration_ms": 172,
       "stdout_sha256": "0d48c662aeec7b0e7e0ba7f1fd45268463251f3865b573ef3c378021808fbaba",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -476,7 +476,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 187,
+      "duration_ms": 186,
       "stdout_sha256": "a2e8ad6c015ed4e53e4469debfa48c03414e240a3ce1befc8c10d5db2bf2ba6a",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -495,7 +495,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 187,
+      "duration_ms": 172,
       "stdout_sha256": "83bbb9770497fe2a039dce5e7062a41b6bbd048a50806003cf42c715134be0bd",
       "stderr_sha256": "93d32362ebb6340fbc0e894365e5d5bda319e6fbebb8a3cad748ee0167ec65f0"
     },
@@ -514,7 +514,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 171,
+      "duration_ms": 188,
       "stdout_sha256": "d0a3b7958cf07d8644a18507fcba7d3133567f2a0dd8c0f5bc28a1d412f7f0da",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -533,7 +533,7 @@
       ],
       "exit_code": 2,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 171,
       "stdout_sha256": "bcad96d45bc3ea7312a5621a5a1f2dbc1d69613f44ff5956d6e5c6e35b1afdfe",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -552,7 +552,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 186,
+      "duration_ms": 187,
       "stdout_sha256": "5f38c5b04cf3533d8ee3ebcaeafc71bf367a82e094245923bcc131a1a270473b",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -571,7 +571,7 @@
       ],
       "exit_code": 3,
       "timed_out": false,
-      "duration_ms": 188,
+      "duration_ms": 171,
       "stdout_sha256": "d0a3b7958cf07d8644a18507fcba7d3133567f2a0dd8c0f5bc28a1d412f7f0da",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }

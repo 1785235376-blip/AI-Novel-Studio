@@ -1,11 +1,11 @@
 {
   "title": "C · 回声边界（复杂边界样例）",
-  "graph_id": "6718a392-da7c-4508-b99a-5e5abbc22487",
+  "graph_id": "6854cb08-c162-40c1-b509-fa62048e4791",
   "graph_version": 1,
-  "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+  "entry_node_id": "551728bc-ddff-4c5b-89d8-529db31b8070",
   "nodes": [
     {
-      "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+      "node_id": "551728bc-ddff-4c5b-89d8-529db31b8070",
       "node_version": 1,
       "title": "循环 · 回声厅",
       "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
@@ -17,14 +17,14 @@
         {
           "id": "again",
           "label": "再听一次 [回声] {继续} 〖…〗 % 🙂",
-          "target": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+          "target": "551728bc-ddff-4c5b-89d8-529db31b8070",
           "condition": "",
           "assignments": {}
         },
         {
           "id": "descend",
           "label": "顺着回声往下走",
-          "target": "3ada3440-0341-468d-99ae-665b5f840a94",
+          "target": "fa08e414-b921-47f8-a37c-1cdbb38db3f8",
           "condition": "",
           "assignments": {
             "resonance": 2
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
+      "node_id": "fa08e414-b921-47f8-a37c-1cdbb38db3f8",
       "node_version": 1,
       "title": "深处 · 刻字墙",
       "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
@@ -45,21 +45,21 @@
         {
           "id": "remember",
           "label": "记住这一切",
-          "target": "a8443190-f0d6-4300-bfbd-eb266be478fb",
+          "target": "1c7b5dfc-b3d7-420d-87c3-4f813fb7f304",
           "condition": "resonance >= 2",
           "assignments": {}
         },
         {
           "id": "forget",
           "label": "忘掉一切",
-          "target": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
+          "target": "ed1493d7-f6c3-471e-a93c-6d334a303dfd",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
+      "node_id": "1c7b5dfc-b3d7-420d-87c3-4f813fb7f304",
       "node_version": 1,
       "title": "结局 · 记忆封存",
       "dialogue": "她把回声收进一盏灯里。",
@@ -70,7 +70,7 @@
       "choices": []
     },
     {
-      "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
+      "node_id": "ed1493d7-f6c3-471e-a93c-6d334a303dfd",
       "node_version": 1,
       "title": "结局 · 归于虚空",
       "dialogue": "厅里只剩下她自己的呼吸。",

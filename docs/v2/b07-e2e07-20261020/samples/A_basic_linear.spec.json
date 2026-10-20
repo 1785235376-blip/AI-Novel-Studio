@@ -1,11 +1,11 @@
 {
   "title": "A · 檐下灯火（基础线性样例）",
-  "graph_id": "e7719c84-47ba-4e7f-97e6-653957647663",
+  "graph_id": "ae4296bd-bfd7-487a-b8ec-cc56d8ecab5d",
   "graph_version": 1,
-  "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
+  "entry_node_id": "7a07716d-1a3e-4563-a65d-ccefd6fc4558",
   "nodes": [
     {
-      "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
+      "node_id": "7a07716d-1a3e-4563-a65d-ccefd6fc4558",
       "node_version": 1,
       "title": "第一幕 · 檐下",
       "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
@@ -17,14 +17,14 @@
         {
           "id": "to_middle",
           "label": "推门进去",
-          "target": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
+          "target": "79b11487-073e-4df8-8283-b4b70699cae7",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
+      "node_id": "79b11487-073e-4df8-8283-b4b70699cae7",
       "node_version": 1,
       "title": "第二幕 · 灯下",
       "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
@@ -36,14 +36,14 @@
         {
           "id": "to_late",
           "label": "读完那封信",
-          "target": "adc594cf-594c-4152-beef-7fe833201fcc",
+          "target": "b56f1059-df5f-4ef3-a65f-f1dd9182abc8",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
+      "node_id": "b56f1059-df5f-4ef3-a65f-f1dd9182abc8",
       "node_version": 1,
       "title": "第三幕 · 信末",
       "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
@@ -55,14 +55,14 @@
         {
           "id": "to_finale",
           "label": "吹灭灯",
-          "target": "83cf616b-8c4a-46ae-825e-d24e3896133d",
+          "target": "b55a038e-5897-4d70-bdc3-aceb5ee08121",
           "condition": "",
           "assignments": {}
         }
       ]
     },
     {
-      "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
+      "node_id": "b55a038e-5897-4d70-bdc3-aceb5ee08121",
       "node_version": 1,
       "title": "结局 · 灯火",
       "dialogue": "屋里暗下来，雨声却暖了。",

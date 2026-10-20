@@ -71,7 +71,32 @@ _MODULE_CACHE: dict[str, object] = {}
 # claimed here after the integration owner actually ran the generated artifact
 # in the target runtime; generation success never promotes a lower level.
 # Updated by the integration owner at the end of a verified slice.
-EVIDENCE_OVERRIDES: dict[str, dict[str, str]] = {}
+#
+# Verified on 2026-10-20 at integration tip (see
+# docs/v2/B07_DIF10_E2E07_EVIDENCE_20261020.json, 588 checks, 0 failures):
+#   Godot 4.7.stable headless executed the real exported project and a
+#   two-process save/restore, plus an artifact-mode replay of the E2E journey.
+#   Pinned inkjs 2.3.2 compiled and executed the current exported Ink artifact
+#   with cross-process state restore. No Ren'Py engine exists on this host, so
+#   its runtime and save/restore levels stay BLOCKED_ENVIRONMENT; GUI usability
+#   was never claimed for any target.
+EVIDENCE_OVERRIDES: dict[str, dict[str, str]] = {
+    'GODOT_4_RUNTIME_PROJECT_V1': {
+        'SOURCE_IMPLEMENTED': 'PASS', 'SCHEMA_VALIDATED': 'PASS', 'FIXTURE_TESTED': 'PASS',
+        'GENERATED_ARTIFACT_VALIDATED': 'PASS', 'TARGET_RUNTIME_EXECUTED': 'PASS',
+        'SAVE_RESTORE_VERIFIED': 'PASS', 'WINDOWS_USABILITY_VERIFIED': 'NOT_RUN',
+    },
+    'INK_2_3_2_CURRENT_ARTIFACT_V1': {
+        'SOURCE_IMPLEMENTED': 'PASS', 'SCHEMA_VALIDATED': 'PASS', 'FIXTURE_TESTED': 'PASS',
+        'GENERATED_ARTIFACT_VALIDATED': 'PASS', 'TARGET_RUNTIME_EXECUTED': 'PASS',
+        'SAVE_RESTORE_VERIFIED': 'PASS', 'WINDOWS_USABILITY_VERIFIED': 'NOT_RUN',
+    },
+    'RENPY_8_5_4_PROJECT_V1': {
+        'SOURCE_IMPLEMENTED': 'PASS', 'SCHEMA_VALIDATED': 'PASS', 'FIXTURE_TESTED': 'PASS',
+        'GENERATED_ARTIFACT_VALIDATED': 'PASS', 'TARGET_RUNTIME_EXECUTED': 'BLOCKED_ENVIRONMENT',
+        'SAVE_RESTORE_VERIFIED': 'BLOCKED_ENVIRONMENT', 'WINDOWS_USABILITY_VERIFIED': 'NOT_RUN',
+    },
+}
 
 
 class Frozen(BaseModel):
