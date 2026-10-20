@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CAPABILITY_KEYS, artifactEvidenceRows, artifactEvidenceStatusLabel, artifactEvidenceStatusTone, capabilityLabel, compatibleIssueText, evidenceRows, formatDigest, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
+import { CAPABILITY_KEYS, artifactEvidenceRows, artifactEvidenceStatusLabel, artifactEvidenceStatusTone, capabilityLabel, compatibleIssueText, evidenceMatchText, evidenceRows, externalClaimRows, externalClaimSummary, formatDigest, probeDescription, runtimeClaimText, splitCapabilities, targetKindLabel, targetLossRows, targetReadiness } from './interactiveStoryExportPresentation';
 import type { StoryArtifactEvidence, StoryCapability, StoryExportTarget } from './interactiveStoryClient';
 
 const caps = (overrides: Record<string, { supported: boolean; lossy?: boolean; note?: string }> = {}): Record<string, StoryCapability> => {
@@ -110,8 +110,23 @@ describe('formatting', () => {
 
 
 describe('current-artifact evidence presentation', () => {
+  it('treats an uploaded claim as external and never as system evidence', () => {
+    const claim = { claim_digest: 'a'.repeat(64), verifier: 'self-declared', verified_at: '2026-10-20T00:00:00Z',
+      runtime: { name: 'Godot', version: '4.7.0' }, commands: [], log_sha256: 'f'.repeat(64),
+      checked_levels: { TARGET_RUNTIME_EXECUTED: 'PASS' }, asserted_levels: { TARGET_RUNTIME_EXECUTED: 'PASS' },
+      trust: 'EXTERNAL_UNVERIFIED' };
+    expect(artifactEvidenceStatusTone('EXTERNALLY_ASSERTED_PENDING', { TARGET_RUNTIME_EXECUTED: 'PASS' })).toBe('warning');
+    const rows = externalClaimRows({ TARGET_RUNTIME_EXECUTED: 'PASS' });
+    expect(rows.find(row => row.level === 'TARGET_RUNTIME_EXECUTED')).toMatchObject({ status: 'PASS', tone: 'warning' });
+    expect(externalClaimSummary([claim])).toContain('不是系统已执行');
+    expect(evidenceMatchText(claim)).toContain('外部验收声明来源');
+    expect(evidenceMatchText(claim)).toContain('未经系统执行或复核');
+  });
+
   it('labels every binding status without ever implying a pass for unverified work', () => {
-    expect(artifactEvidenceStatusLabel('PASS')).toContain('已通过匹配的运行时验证');
+    expect(artifactEvidenceStatusLabel('PASS')).toContain('已由系统实际运行验证');
+    expect(artifactEvidenceStatusLabel('EXTERNALLY_ASSERTED_PENDING')).toContain('外部验收声明');
+    expect(artifactEvidenceStatusLabel('EXTERNALLY_ASSERTED_PENDING')).toContain('不构成运行 PASS');
     expect(artifactEvidenceStatusLabel('UNVERIFIED')).toContain('未验证');
     expect(artifactEvidenceStatusLabel('NOT_EXPORTED')).toContain('尚未导出');
     expect(artifactEvidenceStatusLabel('STALE_REVISION')).toContain('旧修订');
@@ -121,6 +136,7 @@ describe('current-artifact evidence presentation', () => {
     expect(artifactEvidenceStatusTone('STALE_REVISION', {})).toBe('warning');
     expect(artifactEvidenceStatusTone('EVIDENCE_INVALID', {})).toBe('error');
     expect(runtimeClaimText('UNVERIFIED').text).toContain('生成成功不等于运行成功');
+    expect(runtimeClaimText('UNVERIFIED').text).toContain('外部声明');
     expect(runtimeClaimText('UNVERIFIED').success).toBe(false);
   });
   it('shows only the current artifact levels in the artifact row set', () => {

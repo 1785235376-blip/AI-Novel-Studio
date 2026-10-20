@@ -1,4 +1,4 @@
-import type { StoryArtifactEvidence, StoryCapability, StoryEngineProbe, StoryExportTarget } from './interactiveStoryClient';
+import type { StoryArtifactEvidence, StoryCapability, StoryEngineProbe, StoryExportTarget, StoryExternalClaim } from './interactiveStoryClient';
 
 export const CAPABILITY_KEYS = [
   'conditions', 'bool_variables', 'int_variables', 'assignment', 'dialogue',
@@ -114,7 +114,8 @@ export function probeDescription(probe: StoryEngineProbe | undefined): ProbeDesc
 export type RuntimeClaim = { tone: Tone; text: string; success: boolean };
 
 export const ARTIFACT_EVIDENCE_STATUS_LABELS: Record<string, string> = {
-  PASS: '当前产物已通过匹配的运行时验证',
+  PASS: '当前产物已由系统实际运行验证',
+  EXTERNALLY_ASSERTED_PENDING: '外部验收声明已记录（待系统核验，不构成运行 PASS）',
   UNVERIFIED: '当前产物未验证（导出后尚未记录运行时验证回执）',
   NOT_EXPORTED: '当前修订尚未导出到该目标',
   EVIDENCE_INVALID: '验证回执无效，已拒绝',
@@ -133,6 +134,7 @@ export function artifactEvidenceStatusLabel(status: string | undefined): string 
 
 export function artifactEvidenceStatusTone(status: string | undefined, levels: Record<string, string> | undefined): Tone {
   if (status === 'PASS' && (levels?.TARGET_RUNTIME_EXECUTED === 'PASS' || levels?.SAVE_RESTORE_VERIFIED === 'PASS')) return 'success';
+  if (status === 'EXTERNALLY_ASSERTED_PENDING') return 'warning';
   if (status === 'UNVERIFIED' || status === 'NOT_EXPORTED') return 'neutral';
   if (status === 'EVIDENCE_INVALID') return 'error';
   return 'warning';
@@ -150,7 +152,25 @@ export function artifactEvidenceRows(levels: Record<string, string> | undefined)
 
 export function evidenceMatchText(matched: StoryArtifactEvidence['matched_receipt'] | undefined): string {
   if (!matched) return '';
-  return '验证器 ' + matched.verifier + ' · ' + matched.verified_at + ' · 运行时 ' + matched.runtime.name + ' ' + matched.runtime.version + (matched.runtime.format ? '（' + matched.runtime.format + '）' : '');
+  return '外部验收声明来源：' + matched.verifier + ' · ' + matched.verified_at + ' · 声称运行时 ' + matched.runtime.name + ' ' + matched.runtime.version
+    + (matched.runtime.format ? '（' + matched.runtime.format + '）' : '')
+    + (matched.log_sha256 ? ' · 日志摘要 ' + matched.log_sha256.slice(0, 16) + '…' : '')
+    + '（上传文本，未经系统执行或复核）';
+}
+
+export type ExternalClaimRow = EvidenceRow & { externalClaim: true };
+
+/** Claimed levels are shown in their own list; they are never the system levels. */
+export function externalClaimRows(asserted: Record<string, string> | undefined): ExternalClaimRow[] {
+  return EVIDENCE_LEVELS.map(level => {
+    const status = asserted?.[level];
+    return { level, label: evidenceLabel(level), status: status ?? 'NOT_ASSERTED', tone: status === 'PASS' ? 'warning' : 'neutral', externalClaim: true };
+  });
+}
+
+export function externalClaimSummary(claims: StoryExternalClaim[] | undefined): string {
+  if (!claims || !claims.length) return '';
+  return '已记录 ' + String(claims.length) + ' 条外部验收声明；它们证明的是“…有人声称运行通过并指向此产物”，不是系统已执行此产物。';
 }
 
 /** Runtime claims are independent evidence records. Nothing here ever upgrades
@@ -161,14 +181,14 @@ export function runtimeClaimText(claim: string | undefined): RuntimeClaim {
   }
   if (claim === 'BLOCKED_ENVIRONMENT') return { tone: 'warning', text: '运行验证：BLOCKED_ENVIRONMENT（未执行；缺少引擎/运行时）', success: false };
   if (claim === 'BLOCKED_AUTHORITY') return { tone: 'warning', text: '运行验证：BLOCKED_AUTHORITY（未执行；缺少授权）', success: false };
-  if (claim === 'UNVERIFIED') return { tone: 'neutral', text: '当前产物未验证：生成成功不等于运行成功；需在目标运行时实际执行后提交绑定该产物摘要的验证回执。', success: false };
+  if (claim === 'UNVERIFIED') return { tone: 'neutral', text: '当前产物未验证：生成成功不等于运行成功；上传的验收声明只作为外部声明保存并展示来源，不会升级为系统 PASS。', success: false };
   return { tone: 'neutral', text: '运行验证：' + (claim || 'NOT_RUN') + '（未执行；生成成功不等于运行成功）', success: false };
 }
 
 export function historicalEvidenceText(evidence: Record<string, string> | undefined): string {
   const runtime = evidence?.TARGET_RUNTIME_EXECUTED ?? 'NOT_RUN';
   const save = evidence?.SAVE_RESTORE_VERIFIED ?? 'NOT_RUN';
-  return '模板/适配器历史记录：TARGET_RUNTIME_EXECUTED=' + runtime + ' · SAVE_RESTORE_VERIFIED=' + save + '。历史记录不代表当前作品已运行。';
+  return '模板/适配器历史记录：TARGET_RUNTIME_EXECUTED=' + runtime + ' · SAVE_RESTORE_VERIFIED=' + save + '。历史记录不代表当前作品已运行，也不是系统对当前产物的验证。';
 }
 
 export type TargetReadiness = { exportReady: boolean; reasons: string[] };

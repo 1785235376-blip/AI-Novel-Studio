@@ -260,3 +260,26 @@ it('does not read targets while input is unsaved and reports the blocked state',
   expect((screen.getByRole('button', { name: '读取导出目标' }) as HTMLButtonElement).disabled).toBe(true);
   expect(spies.targets).not.toHaveBeenCalled();
 });
+
+it('shows an uploaded acceptance claim as external evidence, never as a system runtime PASS', async () => {
+  const claim = { claim_digest: 'a'.repeat(64), verifier: 'self-declared-runner', verified_at: '2026-10-20T00:00:00Z',
+    runtime: { name: 'Godot', version: '4.7.0', format: 'godot-runtime-project-1' }, commands: [],
+    log_sha256: 'f'.repeat(64), checked_levels: { TARGET_RUNTIME_EXECUTED: 'PASS', SAVE_RESTORE_VERIFIED: 'PASS' },
+    asserted_levels: { TARGET_RUNTIME_EXECUTED: 'PASS', SAVE_RESTORE_VERIFIED: 'PASS' }, trust: 'EXTERNAL_UNVERIFIED' };
+  const pending = godotTarget({ artifact_evidence_status: 'EXTERNALLY_ASSERTED_PENDING', runtime_claim: 'UNVERIFIED',
+    artifact_evidence: artifactEvidence({ status: 'EXTERNALLY_ASSERTED_PENDING', matched_receipt: claim,
+      latest_external_claim: claim, external_claims: [claim], asserted_levels: claim.asserted_levels,
+      claim_trust: 'EXTERNAL_UNVERIFIED', system_verification: 'NOT_PERFORMED', checked_receipts: 1,
+      reason: 'external acceptance claim, not system verification' }) });
+  const { api } = apiMock({ targets: vi.fn(async () => targetsResponse({ targets: [pending] })) });
+  render(<InteractiveStoryExportTargets api={api} story={story} blocked={false} />);
+  await readTargets();
+  const section = screen.getByLabelText('当前产物验证 GODOT_4_RUNTIME_PROJECT_V1');
+  expect(section.textContent).toContain('外部验收声明');
+  expect(section.textContent).toContain('系统没有执行');
+  expect(section.textContent).toContain('声称 PASS');
+  expect(section.textContent).toContain('外部验收声明来源：self-declared-runner');
+  expect(section.textContent).toContain('NOT_RUN');
+  expect(section.textContent).not.toMatch(/运行验证：.*已记录（PASS）/);
+  expect(screen.queryByText(/已通过匹配的运行时验证/)).toBeNull();
+});
