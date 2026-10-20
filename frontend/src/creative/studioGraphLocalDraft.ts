@@ -34,10 +34,10 @@ export const studioGraphDraftKey = (owner: StudioGraphDraftOwner) => `studio-gra
   owner.actorId, owner.actorWorkspaceId, owner.projectId, owner.incarnation, owner.mode, owner.workspaceId, owner.storylineId, owner.branchId,
 ])}`;
 
-/** The first recovery slice is deliberately limited to text graphs without external bindings. */
+/** Recovery contains authoring only: legacy text graphs and the existing closed local condition graph. */
 export function checkedLocalGraphDefinition(value: unknown): StudioGraphDefinition {
   const definition = checkedStudioGraphDraft(value);
-  if (definition.schema_version > 2 || definition.nodes.some(node => node.definition_id === 'asset_reference')) throw new Error('GRAPH_DRAFT_TEXT_ONLY');
+  if (definition.schema_version > 2 && definition.schema_version !== 7 || definition.nodes.some(node => node.definition_id === 'asset_reference')) throw new Error('GRAPH_DRAFT_TEXT_ONLY');
   return definition;
 }
 export function graphDraftRecoverable(value: StudioGraphDefinition): boolean {

@@ -1,3 +1,4 @@
+import { GraphConditionFields } from './GraphConditionFields';
 import { useState } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import type { StudioGraphEditorController } from './useStudioGraphEditorController';
@@ -17,7 +18,7 @@ export function StudioGraphDraftRecovery({ controller }: { controller: StudioGra
   if (!draftOwnerCurrent) return <StatusMessage tone="warning">作者身份或项目代次尚未确认，图草稿只保留在本页。</StatusMessage>;
   return <section aria-label="本机图草稿恢复">
     {draftStorageNotice && <StatusMessage tone="warning">{draftStorageNotice}</StatusMessage>}
-    {!draftRecoverable && <StatusMessage tone="warning">本机自动恢复当前仅支持不含外部引用的文本图 v1 / v2。当前图输入只保留在本页；请明确保存到服务端。</StatusMessage>}
+    {!draftRecoverable && <StatusMessage tone="warning">本机草稿保留支持无外部引用的文本图 v1 / v2 与受限条件图 v7；条件图恢复还须明确核对当前门禁。当前格式的输入只保留在本页，请明确保存到服务端。</StatusMessage>}
     {!recovery && draftRecoverable && !draftStorageNotice && <StatusMessage>{draftSavedAt
       ? `文本图草稿已保留在本机 · ${new Date(draftSavedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai' })}。服务端版本、审核与运行仍需明确操作。`
       : '文本图后续修改可自动保留在本机；服务端保存仍需明确操作。'}</StatusMessage>}
@@ -38,6 +39,8 @@ export function StudioGraphDraftRecovery({ controller }: { controller: StudioGra
             <Button type="button" disabled={offset + 20 >= notes.length} onClick={() => setNotePage({ snapshot: recovery, page: page + 1 })}>下一页缓存便笺</Button>
           </div>}
         </section>}
+        {recovery.definition.schema_version === 7 && <p>受限条件图 v7：恢复只恢复作者草稿。门禁默认关闭；不会恢复运行、审核授权或启用缓存。</p>}
+        {recovery.definition.nodes.filter(node => node.definition_id === 'local_condition' && node.parameters.predicate).map(node => <section key={node.id} aria-label={`本机草稿 ${node.id} · 条件`}><GraphConditionFields value={node.parameters.predicate!} disabled onChange={() => {}} /></section>)}
         {recovery.definition.nodes.flatMap(node =>
         (['text', 'result', 'note', 'instruction'] as const).flatMap(field => typeof node.parameters[field] === 'string'
           ? <label key={`${node.id}:${field}`}>本机草稿 {node.id} · {field}<textarea readOnly value={String(node.parameters[field])} /></label> : []))}</details>

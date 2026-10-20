@@ -26,7 +26,7 @@ import type { ProductionProvider, StudioProductionClient } from './studioProduct
 import { mediaProviderKey } from './useStudioMediaExecution';
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphCatalog, StudioGraphDefinition, StudioGraphDefinitionId, StudioGraphPosition, StudioGraphRecord } from './studioGraphTypes';
-import { GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
+import { GRAPH_CONDITIONS_CONTRACT, GRAPH_VIDEO_OPERATIONS, GRAPH_IMAGE_OPERATIONS, GRAPH_MEDIA_OPERATIONS, type GraphImageOperation, type GraphMediaOperation } from './studioGraphTypes';
 import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraphDefinitions, videoGraphDefinitions, retainsSavedAssetBindings } from './graphDraft';
 import { graphConnectionReplacement } from './graphConnectionReplacementHelpers';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
@@ -226,6 +226,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const isVerificationCurrent = () => verificationScope === reviewedVerificationFence.current.token
     && reviewedNavigation === selectedEpoch.current && reviewedSelection === reviewedSelectionEpoch.current && draftRef.current === draft && baseRef.current === base
     && connectionLive.current.current();
+  // A schema7 recovery may read its gate, but cannot outlive another authoring /
+  // permission / busy lifetime. Its own recoveryBusy render is intentionally absent.
+  const conditionRecoveryValues = [verificationScope, current, localRecovery, requestedGraphId, busy];
+  const conditionRecoveryFence = useRef({ values: conditionRecoveryValues, token: {} });
+  if (conditionRecoveryValues.some((value, index) => !Object.is(value, conditionRecoveryFence.current.values[index]))) {
+    conditionRecoveryFence.current = { values: conditionRecoveryValues, token: {} };
+  }
+  const conditionRecoveryScope = conditionRecoveryFence.current.token;
+  const conditionRecoveryPending = useRef(false);
   const nodeInspectorRef = useRef<HTMLElement>(null);
   function locateRunNode(nodeId: string, graph: StudioGraphRecord): boolean {
     if (connectionScope !== connectionFence.current.token || !isVerificationCurrent() || !active || denied || !current() || locked()
@@ -847,37 +856,55 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const canRecoverDraft = !!localRecovery && draftOwnerCurrent && canMutate && current() && !denied && !locked()
     && !externalDirty && !executionDirty && !dirty && !blocked && !timelineEditor.formDirty
     && (!base || base.id === localRecovery.base?.id) && (!requestedGraphId || requestedGraphId === localRecovery.base?.id)
-    && draft.schema_version <= 2;
+    && (draft.schema_version <= 2 || draft.schema_version === 7 && localRecovery.definition.schema_version === 7)
+    && (localRecovery.definition.schema_version !== 7 || active && !loading && !checking);
   async function recoverLocalDraft() {
     if (!canRecoverDraft || !localRecovery || !draftOwner || !ownerKey) return;
+    const conditional = localRecovery.definition.schema_version === 7;
+    if (conditional && (conditionRecoveryPending.current || conditionRecoveryScope !== conditionRecoveryFence.current.token || !isVerificationCurrent())) return;
     const snapshot = localRecovery, key = ownerKey, epoch = ++recoveryEpoch.current, selection = selectedEpoch.current;
+    const conditionalCurrent = () => !conditional || conditionRecoveryScope === conditionRecoveryFence.current.token && current();
+    if (conditional) conditionRecoveryPending.current = true;
     const original = JSON.stringify(draftRef.current); setRecoveryBusy(true); setRecoveryError('');
     try {
-      const record = await read(async () => {
+      const { record, conditionCatalog } = await read(async () => {
         // Recheck even an unsaved graph: the public project ID may have been recreated.
-        const overview = await client.overview();
-        if (overview.project.id !== draftOwner.projectId || overview.project.incarnation !== draftOwner.incarnation)
-          throw new Error('项目代次已经改变；旧草稿未恢复到当前项目。');
-        if (!overview.capabilities.can_mutate) throw new Error('当前身份没有图编辑权限；本机草稿保持。');
-        if (!snapshot.base) return undefined;
-        const value = await client.graphs.get(snapshot.base.id);
-        if (!graphDraftBaselineMatches(snapshot, value)) throw new Error('图服务端版本或摘要已改变；本机草稿保持，请先核对下方作者输入与当前服务端版本。');
-        return value;
+        const checkOwner = async () => {
+          const overview = await client.overview();
+          if (overview.project.id !== draftOwner.projectId || overview.project.incarnation !== draftOwner.incarnation)
+            throw new Error('项目代次已经改变；旧草稿未恢复到当前项目。');
+          if (!overview.capabilities.can_mutate) throw new Error('当前身份没有图编辑权限；本机草稿保持。');
+        };
+        await checkOwner();
+        let conditionCatalog: StudioGraphCatalog | undefined;
+        if (conditional) {
+          if (!conditionalCurrent() || typeof client.graphs.conditionsCatalog !== 'function') throw new Error('条件图恢复能力当前不可用；本机草稿保持。');
+          conditionCatalog = await client.graphs.conditionsCatalog();
+          if (conditionCatalog.capabilities.local_conditions_contract !== GRAPH_CONDITIONS_CONTRACT
+            || conditionCatalog.capabilities.local_conditions_schema_version !== 7) throw new Error('条件图门禁与目录未确认；本机草稿保持。');
+        }
+        if (conditional && !conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。');
+        const record = snapshot.base ? await client.graphs.get(snapshot.base.id) : undefined;
+        if (record && (!graphDraftBaselineMatches(snapshot, record) || conditional && record.definition.schema_version !== 7))
+          throw new Error('图服务端版本或摘要已改变；本机草稿保持，请先核对下方作者输入与当前服务端版本。');
+        if (conditional) { if (!conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。'); await checkOwner(); }
+        return { record, conditionCatalog };
       });
       const fence = recoveryFence.current;
-      if (!current() || epoch !== recoveryEpoch.current || selection !== selectedEpoch.current || fence.ownerKey !== key
+      if (!current() || !conditionalCurrent() || epoch !== recoveryEpoch.current || selection !== selectedEpoch.current || fence.ownerKey !== key
         || fence.busy || fence.externalDirty || fence.executionDirty || !fence.canMutate || isBusy?.()
         || original !== JSON.stringify(draftRef.current)) return;
       if (localStorage.getItem(key) !== persistedDraftRaw.current) throw new Error('其他页面已更新本机图草稿，未替换当前输入；请重新打开后核对。');
+      if (conditionCatalog) { catalogEpoch.current++; setLoading(false); schemaCatalogs.current.set(7, conditionCatalog); setCatalog(conditionCatalog); }
       timelineEditor.resetForm(); setIndependentConsent(''); setIndependentOrigin(undefined); invalidateCandidate(); selectedEpoch.current++; setBase(record);
       draftRef.current = structuredClone(snapshot.definition); setDraft(draftRef.current); setSelected([]); setPast([]); setFuture([]);
       createRequest.current = snapshot.request_id; setBlocked(snapshot.uncertain); setSourcePort(''); setTargetPort('');
       setLocalRecovery(undefined); setRecoveryError(''); reportSelection.current?.({ graphId: record?.id });
       setNotice('已恢复本机文本图草稿。尚未保存到服务端，也未创建或执行运行。');
     } catch (value) {
-      if (current() && epoch === recoveryEpoch.current) setRecoveryError(value instanceof ApiError
+      if (current() && conditionalCurrent() && epoch === recoveryEpoch.current) setRecoveryError(value instanceof ApiError
         ? apiErrorView(value, '当前图无法重新授权读取，本机草稿保持。').message : value instanceof Error ? value.message : '本机草稿未恢复。');
-    } finally { if (current() && epoch === recoveryEpoch.current) setRecoveryBusy(false); }
+    } finally { if (conditional) conditionRecoveryPending.current = false; if (current() && epoch === recoveryEpoch.current) setRecoveryBusy(false); }
   }
   function discardLocalRecovery() {
     if (!current() || locked() || !ownerKey || !draftOwnerCurrent) return;
