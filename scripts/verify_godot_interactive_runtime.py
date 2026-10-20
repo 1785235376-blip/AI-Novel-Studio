@@ -869,6 +869,8 @@ def write_evidence(*, engine, engine_info, scratch, artifacts, alignment, saves,
         'target': {'target_id': TARGET_ID, 'format_version': godot_export.FORMAT_VERSION,
                    'adapter_revision': godot_export.ADAPTER_REVISION, 'kind': 'RUNNABLE_PROJECT'},
         'product': {'repository_head': head, 'branch': branch,
+                    'repository_head_note': 'repository_head is the code commit under test at time of run; '
+                                            'the evidence .json/.log files are committed afterwards as a separate docs commit.',
                     'script': 'scripts/verify_godot_interactive_runtime.py', 'script_sha256': script_sha},
         'host': {'platform': platform.platform(), 'machine': platform.machine(), 'python': sys.version.split()[0]},
         'engine': engine_info,
