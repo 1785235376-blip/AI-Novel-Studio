@@ -122,11 +122,11 @@ E2E 证据已在干净树该 HEAD 重新生成（648 checks / 0 failed / PASS_WI
 | git am 回放 | 声称可复原 | 更正 | `git am` 回放只保证**内容/tree** 一致（tree 相等已验证），不保证提交 SHA 相同；保留精确提交身份必须使用 `git/bundles/*.bundle`（含原始提交作者/时间/消息）。 |
 | 分线 patch | 未说明 | 已更正 | 分线 patch（contract/ui/renpy/godot/ink/e2e）各自从基线起算，含重复历史；**不得把全部分线 patch 与 integration patch 依次应用**。恢复只用 integration 全量 patch 或 bundle。 |
 
-修复轮增量统计（6232f9d7..修复最终 tip）：实测 38 个文件 = 新增 4 + 修改 34 + 删除 0。
+修复轮增量统计（6232f9d7..修复最终 tip）：实测 39 个文件 = 新增 5 + 修改 34 + 删除 0。
 修复轮交付子目录 `fixes-20261020/` 的文件与校验关系见该子目录的 `COVERAGE_AND_STATS.md`；
 原交付的 67 文件与根目录旧文件均保留未动。
 
-修复轮增量统计（6232f9d7..修复最终 tip）：38 个文件（新增 4、修改 34、删除 0），
+修复轮增量统计（6232f9d7..修复最终 tip）：39 个文件（新增 5、修改 34、删除 0），
 其中 app 代码 8、tests 12、docs 10、frontend 3、scripts 3、其它 2。
 原交付的 67 文件不受影响（旧目录保留）。
 
