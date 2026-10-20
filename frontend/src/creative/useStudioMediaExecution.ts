@@ -47,7 +47,7 @@ type MediaRoute = 'local' | 'cloud';
 const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale', 'm5.image.composite'].includes(operation);
 type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
   layerSettings?: Record<string, { visible: boolean; opacity: string }>;
-  imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose'] };
+  imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose']; lastFrame?: ProductionSource };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
 type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
@@ -174,12 +174,20 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
   if (!localTrim && !upscale && (!draft.prompt.trim() || draft.prompt.length > 16000)) throw new Error('请填写本次提示词，最多 16000 字符。');
   if (upscale && provider?.local !== true) throw new Error('超分需要当前明确启用的本地服务。');
   if (provider && !provider.local && !draft.allowCloud) throw new Error('使用云端服务前，请明确确认本次发送提示词与参考素材。');
-  const kind = sourceKind(draft.operation), sources = draft.sources;
+  const kind = sourceKind(draft.operation), baseSources = draft.sources;
+  if (draft.lastFrame) {
+    if (draft.operation !== 'm7.video.i2v') throw new Error('只有图片生成视频可绑定首帧与尾帧。');
+    if (!provider?.video_frame_capabilities?.end_frame) throw new Error('当前配置不支持尾帧；请选择支持首尾帧的配置，不会静默丢弃尾帧或降级为单图。');
+    if (!baseSources.length) throw new Error('请先选择首帧，再选择尾帧。');
+    if (baseSources[0].id === draft.lastFrame.id) throw new Error('首帧与尾帧不能是同一张图片。');
+  }
+  const sources = draft.operation === 'm7.video.i2v' && draft.lastFrame ? [baseSources[0], draft.lastFrame] : baseSources;
+  const frameCount = draft.operation === 'm7.video.i2v' ? (draft.lastFrame ? 2 : 1) : undefined;
   if (cutout && sources.length !== 2) throw new Error('请先选择一张 PNG 来源，再明确选择为该版本绘制的二值遮罩。');
   if (!sourcesCurrent(sources, assets, draft.operation)) throw new Error('来源素材版本已变化，请重新选取当前版本。');
   const rich = upscale || draft.operation === 'm5.image.reference' || draft.operation === 'm5.image.inpaint' || draft.imageSource !== undefined || draft.imageReferences.length > 0;
   if (kind && (!sources.length || sources.some(source => source.asset_kind !== kind) || (draft.operation === 'm5.image.i2i' ? sources.length > 5
-    : draft.operation === 'm5.image.reference' ? sources.length > 5 : sources.length !== (cutout || draft.operation === 'm5.image.composite' || draft.operation === 'm5.image.inpaint' ? 2 : 1)))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
+    : draft.operation === 'm5.image.reference' ? sources.length > 5 : sources.length !== (frameCount ?? (cutout || draft.operation === 'm5.image.composite' || draft.operation === 'm5.image.inpaint' ? 2 : 1))))) throw new Error(kind === 'image' ? '请选取对应数量的图片来源。' : '请选取一个对应类型的来源素材。');
   if (!kind && sources.length) throw new Error('本操作不接收素材参考。');
   if (draft.licenseNote.length > 2000) throw new Error('来源与授权说明超过长度限制。');
   let image: { image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource } = {};
@@ -206,7 +214,12 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
       if (!asset || !usableCutoutSource(asset)) throw new Error('叠层仅接受每张不超过 8 MiB 的已保存 PNG。');
       return { source: { ...source }, visible: control.visible, opacity: Number(control.opacity) };
     }) } : {}),
-    source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim || upscale ? false : draft.allowCloud, license_note: draft.licenseNote, ...image, ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
+    source_snapshots: sources.map(source => ({ ...source })), allow_cloud: localTrim || upscale ? false : draft.allowCloud, license_note: draft.licenseNote, ...image,
+    ...(draft.operation === 'm7.video.i2v' && draft.lastFrame ? { video_frames: [
+      { role: 'FIRST' as const, source: { ...sources[0] } },
+      { role: 'LAST' as const, source: { ...sources[1] } },
+    ] } : {}),
+    ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
 }
 
 /** Draft, exact receipts and private media lifetime remain independent of rendering. */
@@ -238,8 +251,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const current = () => preparedCurrent() && alive.current && !revoked.current && owner.current === latest.current.client && latest.current.isCurrent();
   const busy = () => !!slot.current || !!runningControlRef.current || latest.current.busy || !!latest.current.isBusy?.() || !current();
   const owns = preparedCurrent() && !denied && owner.current === props.client && props.isCurrent();
-  const input = inputKey(draft), freshSources = sourcesCurrent(draft.sources, props.assets, draft.operation);
-  const sourceState = JSON.stringify(draft.sources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance]; }));
+  const input = inputKey(draft);
+  const materialSources = draft.operation === 'm7.video.i2v' && draft.lastFrame ? [draft.sources[0], draft.lastFrame].filter(Boolean) : draft.sources;
+  const freshSources = sourcesCurrent(materialSources, props.assets, draft.operation);
+  const sourceState = JSON.stringify(materialSources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance]; }));
   const jobSources = selected?.sources.filter((source): source is ProductionSource => source.kind === 'ASSET') || [];
   const jobSourcesFresh = sourcesCurrent(jobSources, props.assets, selected?.operation_id);
   const jobSourceState = JSON.stringify(jobSources.map(source => { const row = props.assets.find(asset => asset.id === source.id); return [source.id, row?.version, row?.sha256, row?.deleted_at, row?.kind, row?.manual_mask, row?.provenance]; }));
@@ -418,6 +433,14 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       edit({ ...old, sources: checked && row ? [{ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' }] : [] }); return;
     }
     const selectedProvider = providersRef.current.find(provider => mediaProviderKey(provider) === old.providerKey && provider.operation_id === old.operation);
+    if (old.operation === 'm7.video.i2v') {
+      if (checked && !row) { setError('首帧来源不可用，请重新读取素材。'); return; }
+      const next = checked && row
+        ? { ...old, sources: [{ id: row.id, kind: 'ASSET' as const, version: row.version, digest: row.sha256, asset_kind: 'image' as const }],
+            lastFrame: old.lastFrame?.id === row.id ? undefined : old.lastFrame }
+        : { ...old, sources: [], lastFrame: undefined };
+      edit(next); return;
+    }
     if (old.operation === 'm5.image.upscale' || old.operation === 'm5.image.inpaint' || old.operation === 'm5.image.i2i' && !!selectedProvider?.image_capabilities) {
       if (checked && (!row || old.operation === 'm5.image.inpaint' && !usableCutoutSource(row))) { setError('图片来源不可用，请重新读取素材。'); return; }
       if (checked && old.imageReferences.some(reference => reference.source.id === id)) { setError('参考素材已绑定为辅助输入，请明确移除该参考后再选择基础图。'); return; }
@@ -432,6 +455,19 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
     }
     edit({ ...old, sources });
+  }
+  function selectEndFrame(id: string) {
+    const old = draftRef.current;
+    if (old.operation !== 'm7.video.i2v') return;
+    if (!id) { edit({ ...old, lastFrame: undefined }); return; }
+    const selectedProvider = providersRef.current.find(provider => mediaProviderKey(provider) === old.providerKey && provider.operation_id === old.operation);
+    if (!selectedProvider?.video_frame_capabilities?.end_frame) { setError('当前配置不支持尾帧；请选择支持首尾帧的配置。'); return; }
+    const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, 'image'));
+    const first = old.sources[0];
+    if (!row) { setError('尾帧来源不可用，请重新读取素材。'); return; }
+    if (!first) { setError('请先选择首帧，再选择尾帧。'); return; }
+    if (first.id === row.id) { setError('首帧与尾帧不能是同一张图片。'); return; }
+    edit({ ...old, lastFrame: { id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' }, allowCloud: false });
   }
   function selectMask(id: string) {
     const old = draftRef.current, source = latest.current.assets.find(asset => asset.id === old.sources[0]?.id);
@@ -454,11 +490,17 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (!row) { setError('已选来源已删除或不可用，请先移除该来源。'); return; }
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
     }
+    let lastFrame = old.lastFrame;
+    if (lastFrame) {
+      const row = latest.current.assets.find(asset => asset.id === lastFrame!.id && usableAsset(asset, 'image'));
+      if (!row) { setError('尾帧来源已删除或不可用，请先移除尾帧。'); return; }
+      lastFrame = { id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' };
+    }
     if (old.imageSource || old.imageReferences.length || old.operation === 'm5.image.inpaint') {
       const next = { ...old, allowCloud: false, imageSource: old.imageSource ? sources.find(row => row.id === old.imageSource!.id) : undefined,
         imageReferences: old.imageReferences.map(reference => ({ ...reference, source: sources.find(row => row.id === reference.source.id)! })), maskSource: undefined };
       edit({ ...next, sources: imageSources(next) });
-    } else edit({ ...old, sources });
+    } else edit({ ...old, sources, lastFrame });
   }
   function selectReference(id: string, checked: boolean) {
     const old = draftRef.current;
@@ -485,7 +527,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (value === '') delete next[key]; else { const metadata = checkedImageReferenceMetadata({ [key]: value }, true); Object.assign(next, metadata); } return next; });
     edit({ ...old, imageReferences: refs, allowCloud: false });
   }
-  function clearSources() { edit({ ...draftRef.current, sources: [], imageSource: undefined, imageReferences: [], maskSource: undefined,
+  function clearSources() { edit({ ...draftRef.current, sources: [], lastFrame: undefined, imageSource: undefined, imageReferences: [], maskSource: undefined,
     allowCloud: draftRef.current.imageSource || draftRef.current.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(draftRef.current.operation) ? false : draftRef.current.allowCloud }); }
   function clearInputs() { if (!current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     if (latest.current.preparedCommand) { if (selectedRef.current && ['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selectedRef.current.status)) return; latest.current.onPreparedClose?.(); return; }
@@ -715,6 +757,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding,
     canRead: !locked, canLoadCandidate: !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
+    endFrameSource: draft.lastFrame, videoFrameCapabilities: provider?.video_frame_capabilities, selectEndFrame,
     routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }

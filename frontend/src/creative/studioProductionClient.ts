@@ -2,7 +2,7 @@ import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof,
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
 import { checkedStoryboardSpeechFields, sameStoryboardSpeech, type StoryboardSpeechPin } from './studioStoryboardSpeechContract';
 import {checkedTimelineSourceBounds,timelineSourceBoundsRequest} from './studioTimelineSourceBounds';
-import { checkedVideoReference, checkedVideoRecipe, checkedVideoCapabilities, sameVideoReference, storyboardShotFields, sameStoryboardShot, type VideoReference, type VideoCapabilities } from './studioVideoRuntimeContract';
+import { checkedVideoReference, checkedVideoRecipe, checkedVideoCapabilities, checkedVideoFrameCapabilities, checkedVideoFrames, sameVideoFrames, sameVideoReference, storyboardShotFields, sameStoryboardShot, type VideoReference, type VideoCapabilities, type VideoFrame, type VideoFrameCapabilities } from './studioVideoRuntimeContract';
 import type { ShotPin } from './studioStoryboardContract';
 import { CUTOUT_WEBP_PROFILE, CUTOUT_WEBP_OUTPUT, validCutoutParameters, checkedCutoutProof, type CutoutProcessingProof } from './studioCutoutContract';
 import { checkedImageUpscaleProof, type ImageUpscaleProof, checkedImageRecipeCommand, checkedImageRecipeFields, checkedImageRuntimeInputs, sameImageRuntimeInputs, type ImageReference } from './studioImageRuntimeContract';
@@ -22,10 +22,10 @@ export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.referen
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
   parameters: Record<string, string | number>; source_snapshots: RecordedProductionSource[]; allow_cloud: boolean; license_note: string;
-  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[] };
+  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; video_frames?: VideoFrame[]; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[] };
 export type RecordedProductionSource = ProductionSource | ComicImageSource | { id: string; kind: 'CREATIVE_DOCUMENT'; version: number; digest: string; reference_only?: true };
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
-export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities;
+export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities; video_frame_capabilities?: VideoFrameCapabilities;
   image_capabilities?: { recipe_id: string; reference_limit: number; reference_semantics: 'WEIGHTED_PIXEL_INITIALIZATION' | 'SINGLE_IMAGE_INITIALIZATION';
     mask_semantics: 'WHITE_KEEP_BLACK_REPAINT' | null; structural_only: true; inference_verified: false; upscaling?: { scales: [2, 4]; output_format: 'PNG'; output_size_limit: 4096; output_pixel_limit: 16777216 } } };
 export type ProductionPreview = { contract: 'studio-production-preview/1'; novel_id: string; branch_id: string | null; request_id: string; operation_id: MediaOperation;
@@ -176,6 +176,7 @@ function commandScope(command: MediaCommand) {
   if (command.operation_id !== 'm5.image.cutout' && command.parameters.cutout_output !== undefined) invalid();
   if (Object.hasOwn(command, 'audio_profile') && command.operation_id !== 'm8.audio.trim') invalid();
   checkedVideoReference(command.video_reference, command.source_snapshots, command.operation_id);
+  checkedVideoFrames(command.video_frames, command.source_snapshots, command.operation_id);
   storyboardShotFields(command.storyboard_shot, command.source_snapshots, command.operation_id);
   checkedImageRuntimeInputs(command, command.source_snapshots, command.operation_id, true);
   if (command.operation_id === 'm5.image.upscale' ? command.prompt !== '' || command.allow_cloud || Object.keys(command.parameters).length !== 1 || ![2, 4].includes(command.parameters.scale as number) : command.parameters.scale !== undefined) invalid();
@@ -382,12 +383,13 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const c = v.command;
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
         || !record(c.parameters) || !Array.isArray(c.source_snapshots) || typeof c.allow_cloud !== 'boolean' || typeof c.license_note !== 'string' || c.license_note.length > 2000) invalid();
-      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers'].includes(key))
+      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'video_frames', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers'].includes(key))
         || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key) || c.operation_id !== 'm8.audio.trim' && trimControlKeys.includes(key)
           || (typeof value === 'number' ? !Number.isFinite(value) : typeof value !== 'string' || value.length > 8000))) invalid();
       if (Object.hasOwn(c, 'audio_profile') && c.operation_id !== 'm8.audio.trim') invalid();
       sources(c.source_snapshots, 8);
       checkedVideoReference(c.video_reference, c.source_snapshots, String(c.operation_id));
+      checkedVideoFrames(c.video_frames, c.source_snapshots, String(c.operation_id));
       storyboardShotFields(c.storyboard_shot, c.source_snapshots, String(c.operation_id));
       checkedStoryboardSpeechFields(c);
       checkedComicImageFields(c);
@@ -447,7 +449,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
   async function action(owner: ProductionOwner, id: string, operation: 'execute' | 'refresh' | 'cancel' | 'reconcile' | 'review', body: ProductionAction & { reviewed_output_digest?: string }, expected?: ProductionJob) {
     const result = job(await transport.json<unknown>(`${jobUrl(owner, id)}/${operation}`, 'POST', body));
     if (result.owner !== owner || result.id !== id || result.request_digest !== body.expected_request_digest) invalid();
-    if (expected?.command && (!sameVideoReference(expected.command, result.command) || !sameStoryboardShot(expected.command, result.command) || !sameStoryboardSpeech(expected.command, result.command) || !sameComicImageCommand(expected.command, result.command))) invalid();
+    if (expected?.command && (!sameVideoReference(expected.command, result.command) || !sameVideoFrames(expected.command, result.command) || !sameStoryboardShot(expected.command, result.command) || !sameStoryboardSpeech(expected.command, result.command) || !sameComicImageCommand(expected.command, result.command))) invalid();
     if (expected?.command && (expected.command.image_source !== undefined || expected.command.image_references !== undefined || expected.command.mask_source !== undefined)
       && (result.version < expected.version || !sameImageRuntimeInputs(expected.command, result.command)
         || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
@@ -485,6 +487,10 @@ export function studioProductionClient(projectId: string, context: Collaboration
             || JSON.stringify(row.supported_parameters) !== '["scale"]') invalid();
         }
         if (row.video_capabilities !== undefined) { checkedVideoCapabilities(row.video_capabilities, String(row.operation_id)); if (row.local !== true) invalid(); }
+        if (row.video_frame_capabilities !== undefined) {
+          checkedVideoFrameCapabilities(row.video_frame_capabilities);
+          if (!String(row.operation_id).startsWith('m7.')) invalid();
+        }
         return row as unknown as ProductionProvider;
       });
     },
@@ -510,7 +516,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
           || !record(v.sources[0]) || !sameComicImageCommand(command, { ...v.command, source_snapshots: [v.sources[0].snapshot] })) invalid();
       }
       checkedImageRuntimeInputs(v.command, v.command.source_snapshots as RecordedProductionSource[], command.operation_id);
-      if (!sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)) invalid();
+      if (!sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameVideoFrames(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)) invalid();
       checkedImageRecipeCommand(v.execution_recipe as Record<string, unknown>, command);
       if (command.operation_id === 'm8.audio.trim') {
         const keys = ['contract', 'novel_id', 'branch_id', 'operation_id', 'request_id', 'request_digest', 'provider', 'sources', 'execution_recipe',
@@ -552,7 +558,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
       const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, undefined, command.request_id));
       if (v.request_id !== command.request_id || v.operation_id !== command.operation_id
-        || !sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)
+        || !sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameVideoFrames(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)
         || command.operation_id === 'm5.image.cutout' && !sameCutoutCommand(command, v.command)
         || command.operation_id === 'm8.audio.trim' && !sameTrimCommand(command, v.command)) invalid(); return v;
     },

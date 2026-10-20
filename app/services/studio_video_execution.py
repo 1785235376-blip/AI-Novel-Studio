@@ -99,9 +99,25 @@ class StudioVideoExecution:
             raise ValueError("STUDIO_VIDEO_LAST_MILE_AUTHORITY_UNSUPPORTED")
         operation = body["operation_id"]
         capability = {"m7.video.t2v": "text_to_video", "m7.video.i2v": "image_to_video", "m7.video.v2v": "video_to_video"}[operation]
-        if not provider.capabilities().get(capability):
+        capabilities = provider.capabilities()
+        if not capabilities.get(capability):
             raise ValueError("STUDIO_VIDEO_CAPABILITY_UNSUPPORTED")
-        start_frame, video_uri = "", None
+        frames = body.get("video_frames") or []
+        if frames:
+            if operation != "m7.video.i2v":
+                raise ValueError("STUDIO_VIDEO_FRAME_OPERATION_INVALID")
+            roles = [str(frame.get("role")) for frame in frames]
+            if roles not in (["FIRST"], ["FIRST", "LAST"]):
+                raise ValueError("STUDIO_VIDEO_FRAME_ROLE_ORDER_INVALID")
+            if len(frames) == 2 and not capabilities.get("end_frame"):
+                raise ValueError("STUDIO_VIDEO_END_FRAME_UNSUPPORTED")
+            if not capabilities.get("start_frame"):
+                raise ValueError("STUDIO_VIDEO_START_FRAME_UNSUPPORTED")
+            frame_specs = {str(frame["role"]): frame["source"] for frame in frames}
+        else:
+            frame_specs = {}
+        start_frame, end_frame, video_uri = "", "", None
+        observed_frames = {}
         def inspection_current():
             guard()
             current = self.owner._studio_read(nid, branch, actor, jid, context=context)
@@ -111,8 +127,27 @@ class StudioVideoExecution:
             result = (inspect_source(snapshot, inspection_guard=inspection_current) if inspect_source is not None else source_guard(snapshot))
             if snapshot["kind"] == "ASSET":
                 uri = "data:" + result["measured"]["media_type"] + ";base64," + base64.b64encode(result["data"]).decode("ascii")
-                if operation == "m7.video.i2v": start_frame = uri
-                elif operation == "m7.video.v2v": video_uri = uri
+                if operation == "m7.video.i2v":
+                    if frames:
+                        matched = next((role for role, spec in frame_specs.items()
+                            if (snapshot["id"], snapshot["version"], snapshot["digest"])
+                            == (spec["id"], spec["version"], spec["digest"])), None)
+                        if matched is None:
+                            raise ValueError("STUDIO_VIDEO_FRAME_SOURCE_MISMATCH")
+                        observed_frames[matched] = uri
+                    else:
+                        start_frame = uri
+                elif operation == "m7.video.v2v":
+                    video_uri = uri
+        if frames:
+            if set(observed_frames) != set(frame_specs) or len(observed_frames) != len(frames):
+                raise ValueError("STUDIO_VIDEO_FRAME_SOURCE_MISMATCH")
+            start_frame = observed_frames["FIRST"]
+            if "LAST" in observed_frames:
+                end_frame = observed_frames["LAST"]
+        frame_bindings = tuple({"role": str(frame["role"]), "id": str(frame["source"]["id"]),
+            "version": int(frame["source"]["version"]), "digest": str(frame["source"]["digest"]),
+            "order": index} for index, frame in enumerate(frames))
         guard()
         row = self._mutate(nid, branch, actor, row, context, status="RUNNING", attempt=row["attempt"] + 1, execution_token=str(uuid4()))
         sent = False
@@ -127,9 +162,10 @@ class StudioVideoExecution:
             elif self.get(nid, branch, actor, jid, context=context, guard=guard)["version"] != row["version"]:
                 raise ValueError("STUDIO_VIDEO_ATTEMPT_CHANGED")
         request = VideoGenerationRequest(body["provider_id"], body["model_id"], body["prompt"],
-            start_frame, "", jid, idempotency_key=row["request_digest"], parameters=body["parameters"],
+            start_frame, end_frame, jid, idempotency_key=row["request_digest"], parameters=body["parameters"],
             source_video_uri=video_uri, dispatch_guard=last_mile,
-            reference_purpose=(body.get('video_reference') or {}).get('purpose'))
+            reference_purpose=(body.get('video_reference') or {}).get('purpose'),
+            frame_bindings=frame_bindings)
         try:
             result = provider.generate(request)
             if not sent or result.provider_id != body["provider_id"] or result.model_id != body["model_id"]:

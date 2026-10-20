@@ -118,6 +118,9 @@ class VideoGenerationRequest:
     source_video_uri: str | None = None
     dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
     reference_purpose: str | None = None
+    #: Exact ordered image-frame binding (role, asset id, version, digest) resolved
+    #: from the approved job; providers receive it only for audit-capable protocols.
+    frame_bindings: tuple[dict, ...] = field(default_factory=tuple)
 
 @dataclass(frozen=True)
 class VideoGenerationResult:
