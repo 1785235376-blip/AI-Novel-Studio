@@ -11,6 +11,7 @@ export type StudioExecutionRecipeInput = Readonly<{
   type: string;
   source: string | null;
   component: string | null;
+  recordedValue?: number | boolean;
 }>;
 export type StudioExecutionRecipeStep = Readonly<{
   id: string;
@@ -92,8 +93,11 @@ function workflowSteps(workflow: unknown): { steps: StudioExecutionRecipeStep[];
           notes.add('部分来源连线不完整；未验证其可执行性。');
         }
       }
-      return { name, type: known && own(known.inputs, name) ? known.inputs[name] : 'UNKNOWN', source,
-        component: known && componentFields.has(name) && text(value, 256) ? value : null };
+      const type = known && own(known.inputs, name) ? known.inputs[name] : 'UNKNOWN';
+      const scalar = type === 'INT' && Number.isSafeInteger(value) || type === 'FLOAT' && typeof value === 'number' && Number.isFinite(value)
+        || type === 'BOOLEAN' && typeof value === 'boolean';
+      return { name, type, source, component: known && componentFields.has(name) && text(value, 256) ? value : null,
+        ...(scalar ? { recordedValue: value as number | boolean } : {}) };
     });
     if (!known || inputs.some(input => input.type === 'UNKNOWN')) notes.add('部分步骤或端口没有已知说明，类型保持 UNKNOWN。');
     return { id, classType: node.class_type, title: known?.title ?? '未提供此步骤的说明', known: !!known,

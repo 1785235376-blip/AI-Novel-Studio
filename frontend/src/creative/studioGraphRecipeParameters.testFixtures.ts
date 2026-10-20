@@ -1,0 +1,17 @@
+import type { ProductionProvider } from './studioProductionClient';
+import type { StudioGraphDefinition } from './studioGraphTypes';
+import { imageGraphRecord } from './studioImageGraph.testFixtures';
+export const samplingProvider = (): ProductionProvider => ({ operation_id: 'm5.image.t2i', provider_id: 'sampling-provider', model_id: 'sampling-model',
+  local: true, route_digest: 'b'.repeat(64), capability: 'IMAGE', supported_parameters: ['width', 'height', 'steps', 'seed', 'negative_prompt'], readiness: 'CONFIGURED_NOT_VERIFIED',
+  image_capabilities: { recipe_id: 'comfy-sd-checkpoint-v1', reference_limit: 5, reference_semantics: 'WEIGHTED_PIXEL_INITIALIZATION', mask_semantics: 'WHITE_KEEP_BLACK_REPAINT', structural_only: true, inference_verified: false } });
+export const samplingDefinition = (): StudioGraphDefinition => ({ schema_version: 4, title: 'Explicit sampling fixture', viewport: { x: 0, y: 0, zoom: 1 },
+  nodes: [
+    { id: 'prompt', definition_id: 'image_prompt', definition_version: 1, enabled: true, position: { x: 0, y: 0 }, parameters: { prompt: 'Synthetic explicit sampling prompt' } },
+    { id: 'generate', definition_id: 'image_generate', definition_version: 1, enabled: true, position: { x: 280, y: 0 },
+      parameters: { operation_id: 'm5.image.t2i', provider_id: 'sampling-provider', model_id: 'sampling-model', parameters: { width: 512, height: 512, steps: 20, seed: 7, negative_prompt: 'synthetic negative' }, allow_cloud: false, license_note: 'Synthetic author declaration' } },
+    { id: 'review', definition_id: 'media_review', definition_version: 1, enabled: true, position: { x: 560, y: 0 }, parameters: {} },
+  ], edges: [
+    { id: 'prompt_generate', source_node_id: 'prompt', source_port: 'prompt', target_node_id: 'generate', target_port: 'prompt' },
+    { id: 'generate_review', source_node_id: 'generate', source_port: 'candidate', target_node_id: 'review', target_port: 'candidate' },
+  ] });
+export const samplingRecord = () => ({ ...imageGraphRecord(), definition: samplingDefinition(), reference_states: [] });

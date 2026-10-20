@@ -1,4 +1,6 @@
 import { readBoundDraftCatalog, verifyBoundDraftSources } from './studioGraphDraftRecoverySources';
+import { useStudioGraphRecipeParameters } from './useStudioGraphRecipeParameters';
+import { applyGraphRecipeParameters } from './studioGraphRecipeParameters';
 import { buildCanvasImageGraphStarter, type CanvasImageGraphHandoff, type CanvasImageGraphPlan } from './canvasImageGraphStarter';
 import { buildImageOutputStarter, type ImageOutputHandoff, type ImageOutputPlan } from './graphImageOutputStarter';
 import { buildConditionalStarter, checkedConditionParameters, conditionSame, conditionShape } from './graphConditionContract';
@@ -229,6 +231,21 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const isVerificationCurrent = () => verificationScope === reviewedVerificationFence.current.token
     && reviewedNavigation === selectedEpoch.current && reviewedSelection === reviewedSelectionEpoch.current && draftRef.current === draft && baseRef.current === base
     && connectionLive.current.current();
+  const recipeMutationEpoch = bindingMutationEpoch.current;
+  const recipeParameters = useStudioGraphRecipeParameters({ identity, scope: reviewedScope, revision: recipeMutationEpoch, node,
+    provider: providerPicker.matchedProvider, readable: active && !denied && current(), editable: editable && !checking,
+    current: () => recipeMutationEpoch === bindingMutationEpoch.current && isVerificationCurrent() && insertionCurrent(insertionScope) && !imageSelectionFence.current?.(),
+    apply: (fields, scope) => {
+      if (recipeMutationEpoch !== bindingMutationEpoch.current || scope !== reviewedFence.current.token || !isVerificationCurrent() || !insertionCurrent(insertionScope)
+        || checking || imageSelectionFence.current?.() || !providerPicker.matchedProvider || !node
+        || draftRef.current.nodes.find(row => row.id === selected[0]) !== node) return false;
+      const next = applyGraphRecipeParameters(draftRef.current, node.id, providerPicker.matchedProvider, fields);
+      change(next);
+      return draftRef.current === next || same(draftRef.current, next);
+    } });
+  // Also fence retained run callbacks before React commits a form edit or Graph command.
+  const runInputCurrent = useCallback(() => current() && !recipeParameters.pending() && draftRef.current === draft
+    && recipeMutationEpoch === bindingMutationEpoch.current, [current, draft, recipeMutationEpoch, recipeParameters.pending]);
   // A schema7 recovery may read its gate, but cannot outlive another authoring /
   // permission / busy lifetime. Its own recoveryBusy render is intentionally absent.
   const conditionRecoveryValues = [verificationScope, current, localRecovery, requestedGraphId, busy];
@@ -277,7 +294,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
       } catch { setError('素材引用与目标图格式或容量不匹配，未改动原图。'); return false; }
     },
   };
-  const graphDirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty;
+  const graphDirty = !same(draft, base?.definition || blankGraph()) || timelineEditor.formDirty || recipeParameters.formDirty;
   const independentKey = JSON.stringify([identity, base?.id, base?.version, draft]);
   const independentConfirmed = independentConsent !== '' && independentConsent === independentKey;
   const historyFull = !!base?.capacity && base.capacity.history_used >= base.capacity.history_limit
@@ -330,14 +347,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (current()) reportSelection.current?.({ graphId: baseRef.current?.id, runId });
   }, [current]);
   const accept = useCallback((record: StudioGraphRecord, restored = false) => {
+    recipeParameters.clear();
     timelineEditor.resetForm(); setIndependentConsent(''); setIndependentOrigin(undefined);
     setMediaSchemaConsent(false);
     setImageSchemaConsent('');
     selectedEpoch.current++; invalidateCandidate(); setBase(record); setDraft(structuredClone(record.definition)); setPast([]); setFuture([]); setSelected([]); setBlocked(false); setSourcePort(''); setTargetPort('');
     setRecords(rows => [...rows.filter(row => row.id !== record.id), record]); createRequest.current = graphId('graph');
     if (!restored) reportSelection.current?.({ graphId: record.id });
-  }, [invalidateCandidate]);
-  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; setIndependentConsent(''); setIndependentOrigin(undefined); providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm]);
+  }, [invalidateCandidate, recipeParameters.clear]);
+  const discard = useCallback(() => { if (!current() || busy || saving.current || isBusy?.() || executionDirty) return; recipeParameters.clear(); setIndependentConsent(''); setIndependentOrigin(undefined); providerPicker.reset(); timelineEditor.clearForm(); selectedEpoch.current++; invalidateCandidate(); setDraft(structuredClone(baseRef.current?.definition || blankGraph())); setPast([]); setFuture([]); setBlocked(false); setPendingNavigation(undefined); setSourcePort(''); setTargetPort(''); createRequest.current = graphId('graph'); }, [current, busy, isBusy, invalidateCandidate, executionDirty, timelineEditor.clearForm, recipeParameters.clear]);
   useEffect(() => { alive.current = true; return () => { alive.current = false; selectedEpoch.current++; catalogEpoch.current++; assetEpoch.current++; candidateEpoch.current++; candidateRequest.current?.abort(); }; }, []);
   useEffect(() => { shotEpoch.current++; setShotReceipt(undefined); setShotChoice(''); setShotParent(''); setVideoSchemaConsent(''); planningEpoch.current++; setPlanningDocuments([]); setPlanningChoice(''); setPlanningLoading(false); setImageSchemaConsent(''); }, [identity, denied, canMutate, externalDirty, executionDirty]);
   useEffect(() => {
@@ -621,7 +639,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   function navigate(work: () => void) {
     if (imageSelectionFence.current?.()) { setNotice('图像导演审核尚未处理，请先提交或明确关闭图像审核，再切换创作图。当前输入已保留。'); return; }
     if (!current() || locked() || externalDirty || executionDirty) return;
-    if (dirty || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
+    if (dirty || recipeParameters.pending() || blocked) { setDiscardConfirmed(false); setPendingNavigation(() => work); return; }
     work();
   }
   async function open(id: string) {
@@ -645,7 +663,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     accept(candidate); setReplaceConfirmed(false); setError(''); setNotice('已采用核对的图服务端版本，没有创建或执行运行。');
   }
   async function save(retry = false) {
-    if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || timelineEditor.formDirty || executionDirty || locked() || !current() || !draft.title.trim()) return;
+    if ((!editable && !(retry && blocked && !base && canMutate && !busy && !externalDirty)) || recipeParameters.pending() || timelineEditor.formDirty || executionDirty || locked() || !current() || !draft.title.trim()) return;
     if (historyFull && !retry) { setError('当前服务端记录的历史配额已满。完整草稿仍保留，可明确准备独立新图后保存；原图历史不会删除。'); return; }
     saving.current = true; setError(''); const originContext = visibleIndependentOrigin; const epoch = selectedEpoch.current, value = structuredClone(draftRef.current), original = base, request = createRequest.current;
     try {
@@ -819,7 +837,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     } catch (reason) { setError(reason instanceof Error ? reason.message : '输入重接未应用。'); return false; }
   }
   function travel(redo: boolean) {
-    if (!editable || locked() || !current()) return;
+    if (!editable || locked() || !current() || recipeParameters.pending()) return;
     providerPicker.reset();
     const from = redo ? future : past, value = redo ? from[0] : from.at(-1); if (!value) return;
     if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
@@ -993,6 +1011,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }) : [];
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
+    recipeParameters, runInputCurrent,
     conditionCatalog: visibleConditionCatalog, loadConditions, createConditions, updateCondition,
     localSubgraph,
     retired, retainedText, retainedTitle,
@@ -1094,6 +1113,6 @@ function useGraphProviderPicker(props: {
   const matchedRow = visible?.rows.find(row => row.operation_id === stored?.operation_id && row.provider_id === stored.provider_id && row.model_id === stored.model_id);
   const matched = !!matchedRow;
   const bindingRoute = matchedRow ? matchedRow.local ? 'local' : 'cloud' : 'unknown';
-  return { rows, route, choice: rows.some(row => mediaProviderKey(row) === choice && row.provider_id === stored?.provider_id && row.model_id === stored?.model_id) ? choice : '',
+  return { rows, matchedProvider: matchedRow, route, choice: rows.some(row => mediaProviderKey(row) === choice && row.provider_id === stored?.provider_id && row.model_id === stored?.model_id) ? choice : '',
     loading, error, loaded: !!visible, matched, bindingRoute, manualBindingCurrent, canRead: readable(), canEdit: readable() && props.editable && !loading, load, choose, chooseRoute, reset };
 }

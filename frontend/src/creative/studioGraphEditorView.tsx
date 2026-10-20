@@ -35,6 +35,7 @@ import { GraphPlanningFork } from './GraphPlanningFork';
 import { CanvasOpsRail } from '../canvasops/CanvasOpsRail';
 import type { LocalCanvasState } from '../canvasops/canvasOpsTypes';
 import './studioGraph.css';
+import { StudioGraphRecipeParameterPanel } from './StudioGraphRecipeParameterPanel';
 
 const portKey = (node: string, port: string) => JSON.stringify([node, port]);
 /** Explain the pending connection using the ORIGINAL authority only.
@@ -153,7 +154,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         {controller.independentOrigin.references.map(row => <p key={row.node_id}>原图读取时绑定 {row.node_id}：{row.state}；未自动更新或批准。</p>)}
         <Button disabled={busy || externalDirty || executionDirty} onClick={() => navigate(() => void open(controller.independentOrigin!.id))}>返回原图（保留原历史）</Button></section>}
       <Badge tone={dirty || blocked ? 'warning' : 'neutral'}>{base ? `v${base.version}` : '尚未保存'} · {dirty ? '未保存修改' : '无未保存修改'}</Badge>
-      <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || controller.historyFull || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
+      <div className="studio-graph-actions"><Button variant="primary" disabled={!editable || controller.recipeParameters.formDirty || controller.historyFull || !draft.title.trim() || !!base && !dirty} onClick={() => void save()}>保存创作图</Button><Button disabled={!editable || controller.recipeParameters.formDirty || !past.length} onClick={() => travel(false)}>撤销图编辑</Button><Button disabled={!editable || controller.recipeParameters.formDirty || !future.length} onClick={() => travel(true)}>重做图编辑</Button><Button disabled={busy || !base} onClick={() => navigate(() => void open(base!.id))}>重新读取创作图</Button></div>
     </Panel>
     {catalog && draft.nodes.length > 0 && <GraphDraftChecklist draft={draft} catalog={catalog.definitions} scope={controller.starterScope} disabled={busy || loading || props.denied || externalDirty || executionDirty} onSelect={setSelected} />}
     {loading && <StatusMessage>正在读取当前范围的节点目录…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
@@ -240,7 +241,10 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
         disabled={!structureEditable || timelineEditor.formDirty || checking || !!controller.positionedInsertion}
         isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
         onApply={(edgeId, nodeId, portId) => controller.replaceConnection(edgeId, nodeId, portId, controller.connectionReplacementScope)} />
-      <GraphRunPanel onLocateNode={controller.locateRunNode} client={client.graphs} graph={base} targetNodeIds={restricted ? base?.definition.nodes.filter(node => node.enabled).map(node => node.id) || [] : selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!restricted && !videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={!restricted && mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={current} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
+      {imageGraph && node?.definition_id === 'image_generate' && <StudioGraphRecipeParameterPanel state={controller.recipeParameters}
+        nodeId={node.id} provider={node.parameters.provider_id} model={node.parameters.model_id} recipeId={providerPicker.matchedProvider?.image_capabilities?.recipe_id}
+        canRead={providerPicker.canRead && !providerPicker.loading} readConfiguration={() => void providerPicker.load()} />}
+      <GraphRunPanel onLocateNode={controller.locateRunNode} client={client.graphs} graph={base} targetNodeIds={restricted ? base?.definition.nodes.filter(node => node.enabled).map(node => node.id) || [] : selected} dirty={dirty || blocked} busy={busy} canMutate={canMutate && !externalDirty} canReview={canReview && !externalDirty} modelExecutionEnabled={!restricted && !videoGraph && catalog.capabilities.model_execution && catalog.capabilities.model_execution_contract === 'creative-graph-model/1'} mediaExecutionEnabled={!restricted && mediaEnabled} onDirtyChange={setExecutionDirty} isCurrent={controller.runInputCurrent} read={read} mutate={mutate} requestedRunId={requestedRunId} onRunSelectionChange={reportRunSelection} />
     </>}
   </section>;
   const referenceState = base?.reference_states.find(row => row.node_id === node?.id)?.state;
