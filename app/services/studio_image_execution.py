@@ -117,9 +117,14 @@ def _payload(body):
 def _context(value, body, actor):
     fields = {"scope_key", "incarnation", "actor", "request_id", "operation_id", "request_digest",
               "sources", "provider_binding", "rights"}
-    if not isinstance(value, dict) or not fields.issubset(value) or set(value) - fields - {"license_note", "command", "execution_recipe", "graph_binding"}:
+    if not isinstance(value, dict) or not fields.issubset(value) or set(value) - fields - {"license_note", "command", "execution_recipe", "graph_binding", "batch_binding"}:
         raise ValueError("STUDIO_IMAGE_CONTEXT_INVALID")
     _require_digest(value["scope_key"]); _require_digest(value["request_digest"])
+    if 'batch_binding' in value:
+        from ..experimental.safe_batch_studio_image import validate_binding
+        if value['batch_binding'] is None:
+            raise ValueError('BATCH_STUDIO_IMAGE_BINDING_INVALID')
+        validate_binding(value['batch_binding'], value)
     if "graph_binding" in value:
         from ..creative.graph_media_binding import validate_graph_binding
         if value["graph_binding"] is None:
@@ -605,6 +610,12 @@ def _candidate_identity(asset, job, output_digest, output_bytes, media_type):
         if binding is None:
             raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
         expected_origin["graph_binding"] = copy.deepcopy(binding)
+    if 'batch_binding' in job['context']:
+        from ..experimental.safe_batch_studio_image import validate_binding
+        binding = validate_binding(job['context']['batch_binding'], job['context'])
+        if binding is None:
+            raise ValueError('BATCH_STUDIO_IMAGE_BINDING_INVALID')
+        expected_origin['batch_binding'] = binding
     if (not isinstance(asset, dict) or any(asset.get(key) != value for key, value in expected.items())
             or asset.get("_owner_actor_id") != job["owner_actor_id"] or asset.get("deleted_at")
             or asset.get("_project_binding") != expected_binding

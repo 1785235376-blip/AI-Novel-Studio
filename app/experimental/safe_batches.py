@@ -93,10 +93,16 @@ class SafeBatchesService(DomainService):
         super().__init__(store, novels, chapters)
         self.sources, self.reader, self.media, self.broker, self.templates = sources, reader, media, broker, templates
         self.voice = voice
+        self.studio_image = None
         if flag_check is None:
             from .flags import require_flag
             flag_check = require_flag
         self.flag_check = flag_check
+
+    def configure_studio_image(self, production, invoke):
+        from .safe_batch_studio_image import BatchStudioImageAuthority
+        self.studio_image = BatchStudioImageAuthority(self, production, invoke)
+        production.studio_image_batches = self.studio_image
 
     def _rows(self, ctx):
         rows = authorized_chapter_rows(ctx, self.sources, self.chapters)

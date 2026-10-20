@@ -170,7 +170,8 @@ class VideoReferenceRoute(PrivateProductionRoute):
 def create_independent_workspace_router(service, authorize, require_flag, *, create_project, workspace_writer,
                                     graph_service=None, require_host_session=None, model_host_authority=None, production_service=None,
                                     bible_service=None, prompt_service=None, prompt_authoring_service=None,
-                                    prompt_adoption_service=None, authority_lease=None, comic_authorize=None):
+                                    prompt_adoption_service=None, authority_lease=None, comic_authorize=None,
+                                    studio_image_batches=None):
     router = APIRouter(tags=["Independent Studios V2"], route_class=PrivateProductionRoute)
 
     def access(nid, token, branch, permission):
@@ -568,6 +569,8 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         router.include_router(create_prompt_adoption_router(prompt_adoption_service, commit_invoke))
 
     if production_service is not None:
+        if studio_image_batches is not None:
+            studio_image_batches.configure_studio_image(production_service, mask_call)
         from .production_execution_api import create_production_execution_router
         router.include_router(create_production_execution_router(production_service, invoke,
             require_host_session=require_host_session, model_host_authority=model_host_authority,

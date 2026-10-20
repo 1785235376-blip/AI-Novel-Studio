@@ -742,4 +742,5 @@ router.include_router(create_independent_workspace_router(independent_workspace_
     production_service=studio_production_service, bible_service=studio_bible_service,
     prompt_service=studio_prompt_service, prompt_authoring_service=studio_prompt_authoring_service,
     prompt_adoption_service=studio_prompt_adoption_service,
-    authority_lease=legacy_api._workbench_authority_lease))
+    authority_lease=legacy_api._workbench_authority_lease,
+    studio_image_batches=safe_batches_service))
