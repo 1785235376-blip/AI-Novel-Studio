@@ -220,6 +220,12 @@ export function StudioBinaryMaskCanvas({ mask, sourceUrl, readOnly, isCurrent, o
       <Button type="button" disabled={controlsDisabled} aria-pressed={!keep} onClick={() => setKeep(false)}>黑色 REMOVE · 移除</Button>
       <Button type="button" disabled={controlsDisabled} aria-pressed={keep} onClick={() => setKeep(true)}>白色 KEEP · 保留</Button>
       <Button type="button" disabled={controlsDisabled || !mask.canUndo} onClick={() => run(() => mask.undo())}>撤销蒙版编辑</Button>
+      <Button type="button" disabled={controlsDisabled || !mask.canRedo} onClick={() => {
+        // A deferred click cannot restore pixels across a retired source,
+        // permission, tool or bitmap revision, including a rendered ABA change.
+        if (polygonScope.current.token !== polygonToken || renderedMaskRevision !== mask.revision) return;
+        run(() => mask.redo());
+      }}>重做蒙版编辑</Button>
     </div>
     <Field label="笔刷半径（像素）"><input type="number" min="0" max={BINARY_MASK_MAX_RADIUS} step="1" value={radius}
       disabled={controlsDisabled} onChange={event => setRadius(event.target.value)} /></Field>
