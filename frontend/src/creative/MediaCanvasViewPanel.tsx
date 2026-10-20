@@ -3,6 +3,8 @@ import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
 import { MediaCanvasImageGraphStarter } from './MediaCanvasImageGraphStarter';
 import type { CanvasImageGraphHandoff } from './canvasImageGraphStarter';
+import { GraphImageOutputStarterPanel } from './GraphImageOutputStarterPanel';
+import type { ImageOutputHandoff } from './graphImageOutputStarter';
 import type { CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { alignCanvasCards } from './mediaCanvasSelection';
 import { emptyCanvasHistory, recordCanvasEdit, travelCanvasEdit } from './mediaCanvasHistory';
@@ -20,7 +22,7 @@ import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
 import { mediaViewportCenter } from './mediaCanvasGeometry';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
-type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff; imageGraphHandoff?: CanvasImageGraphHandoff };
+type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff; imageGraphHandoff?: CanvasImageGraphHandoff; imageOutputHandoff?: ImageOutputHandoff };
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
 export function MediaCanvasViewPanel(props: Props) {
@@ -86,6 +88,8 @@ export function MediaCanvasViewPanel(props: Props) {
   const imageSources = selection.flatMap(id => { const row = draft.cards.find(value => value.id === id);
     return row?.asset?.kind === 'image' && states.get(id)?.state === 'CURRENT_METADATA' ? [{ cardId: id, reference: row.asset }] : []; });
   const imageChoiceAvailable = imageSourceCurrent() && props.imageGraphHandoff?.available;
+  const textSourceCurrent = () => current() && draftRef.current === draft && !dirty && !discard && !uncertain
+    && !recoveryBusy.current && !pendingRef.current && !live.current.busy && !live.current.isBusy?.() && live.current.canMutate;
   if (!props.active || props.denied || !client) return null;
   return <section className="media-canvas" aria-label="独立媒体素材画布" onKeyDown={event => {
       if (event.nativeEvent.isComposing || event.altKey || !(event.ctrlKey || event.metaKey) || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
@@ -135,6 +139,7 @@ export function MediaCanvasViewPanel(props: Props) {
       <Button disabled={pending} onClick={() => { if (current()) { selectionEpoch.current++; setSelectedIds([]); } }}>清空卡片多选</Button>
       {([['left', '左对齐'], ['center', '水平居中'], ['top', '顶端对齐'], ['distribute', '水平等距']] as const).map(([mode, label]) => <Button key={mode} disabled={!editable || selection.length < (mode === 'distribute' ? 3 : 2)} onClick={() => edit(alignCanvasCards(draftRef.current, selection, mode))}>{label}所选卡片</Button>)}
     </div>
+    {props.imageOutputHandoff && <GraphImageOutputStarterPanel owner={token} disabled={!textSourceCurrent()} isCurrent={textSourceCurrent} handoff={props.imageOutputHandoff} />}
     {props.imageGraphHandoff && <details><summary>选择双参考图片输入</summary><p>沿用卡片多选；这里仅选择已保存且元数据当前的图片，不移动视口或改写布局。显示查找结果前 20 张；上方查找可缩小范围。</p>
       {(query.trim() ? matches : draft.cards).filter(row => row.asset?.kind === 'image').slice(0,20).map(row => <label key={row.id}><input type="checkbox" aria-label={`图片输入 ${row.id}`} checked={selection.includes(row.id)} disabled={!imageChoiceAvailable || states.get(row.id)?.state !== 'CURRENT_METADATA'} onChange={() => { if (imageSourceCurrent() && live.current.imageGraphHandoff?.available) selectCard(row.id,true); }} />{row.id} · {row.asset?.asset_id}</label>)}
     </details>}

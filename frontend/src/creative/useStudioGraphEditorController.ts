@@ -1,5 +1,6 @@
 import { readBoundDraftCatalog, verifyBoundDraftSources } from './studioGraphDraftRecoverySources';
 import { buildCanvasImageGraphStarter, type CanvasImageGraphHandoff, type CanvasImageGraphPlan } from './canvasImageGraphStarter';
+import { buildImageOutputStarter, type ImageOutputHandoff, type ImageOutputPlan } from './graphImageOutputStarter';
 import { buildConditionalStarter, checkedConditionParameters, conditionSame, conditionShape } from './graphConditionContract';
 import type { GraphConditionPredicate } from './studioGraphTypes';
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
@@ -467,6 +468,28 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const canvasImagePlan = useRef<{ plan: CanvasImageGraphPlan; encoded: string; scope: object }>();
   const canvasImageCurrent = () => templateCurrent() && !checking && !insertionRef.current
     && !historyFull && !localSubgraph.formDirty && !imageSelectionFence.current?.();
+  const imageOutputPlan = useRef<{ plan: ImageOutputPlan; encoded: string; scope: object }>();
+  const imageOutputHandoff: ImageOutputHandoff = {
+    scope: templateScope, isCurrent: canvasImageCurrent,
+    existingGenerators: draft.nodes.filter(row => ['image_generate', 'image_upscale'].includes(row.definition_id)).length,
+    available: canvasImageCurrent() && !!catalog && draft.schema_version === 4 && !draft.nodes.length && !draft.edges.length
+      && catalog.capabilities.image_graph === true && (catalog.media_limits?.generators || 0) >= 2 && (catalog.media_limits?.nodes || 0) >= 8,
+    preview: (request, scope) => {
+      if (scope !== templateScope || !canvasImageCurrent() || !catalog) throw new Error('原图、权限或表单已变化，请重新预览。');
+      imageOutputPlan.current = undefined;
+      const plan = buildImageOutputStarter(draftRef.current, catalog, request);
+      imageOutputPlan.current = { plan, scope, encoded: JSON.stringify(plan) }; return plan;
+    },
+    cancel: (plan, scope) => { if (imageOutputPlan.current?.plan === plan && imageOutputPlan.current.scope === scope) imageOutputPlan.current = undefined; },
+    apply: (plan, scope, sourceCurrent) => {
+      const proof = imageOutputPlan.current;
+      if (!proof || proof.plan !== plan || proof.scope !== scope || scope !== templateScope) return false;
+      imageOutputPlan.current = undefined;
+      if (!canvasImageCurrent() || !sourceCurrent() || proof.encoded !== JSON.stringify(plan) || !canvasImageCurrent()) return false;
+      const next = structuredClone(plan.definition); change(next); if (draftRef.current !== next) return false;
+      setSelected([plan.outputs[0].generatorNodeId]); setNotice(`已建立${plan.count}份原图片生成／审核分支，可一次撤销；尚未保存或执行。`); return true;
+    },
+  };
   const canvasImageGraphStarter: CanvasImageGraphHandoff = {
     scope: templateScope, isCurrent: canvasImageCurrent,
     available: canvasImageCurrent() && !!catalog && draft.schema_version === 4 && !draft.nodes.length && !draft.edges.length
@@ -987,7 +1010,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     planningDocuments: current() ? planningDocuments : [], planningChoice: current() ? planningChoice : '', planningLoading, choosePlanningDocument, loadPlanningDocuments, loadProductionCatalog, updateProductionField, updateShotBinding, updateReferenceMetadata,
     discard, load, loadImageCatalog, change, applyAutoLayout, navigate, open, newGraph, save, checkServer, loadAssets, addNode, connect, travel, confirmNavigation, adoptCandidate,
     setReplaceConfirmed, setCandidate, setDiscardConfirmed, setPendingNavigation, setKind, setAssetChoice,
-    canvasAssetHandoff, canvasImageGraphStarter, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
+    canvasAssetHandoff, canvasImageGraphStarter, imageOutputHandoff, reviewedDirectorHandoff, storyboardCanvasHandoff, insertionScope, positionedInsertion, insertionExpired, invalidatePositionedInsertion, requestPositionedInsertion, cancelPositionedInsertion,
     nodeInspectorRef, locateRunNode, connectionScope, stageConnection, selectConnectionPort, replaceConnection, connectionReplacementScope, setSourcePort, setTargetPort, setSelected, reportRunSelection, mediaSchemaConsent, setMediaSchemaConsent, upgradeMediaSchema, executionDirty, setExecutionDirty,
     imageSchemaConfirmed, confirmImageSchema, upgradeImageSchema, updateImagePrompt, updateImageReference,
     updateMediaField, updateMediaParameter, clearUnsupportedMediaParameters, clearMediaTrimInputs, timelineEditor,

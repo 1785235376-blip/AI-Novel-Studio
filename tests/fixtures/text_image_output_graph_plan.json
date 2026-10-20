@@ -1,0 +1,569 @@
+{
+  "producer": "buildImageOutputStarter",
+  "two": {
+    "request": {
+      "count": 2,
+      "prompt": "雨后城市，保留作者人物设定",
+      "supplements": [
+        "清晨柔光",
+        "夜间霓虹"
+      ]
+    },
+    "plan": {
+      "definition": {
+        "schema_version": 4,
+        "title": "作者图片产物草稿",
+        "nodes": [
+          {
+            "id": "starter_1",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 80
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n清晨柔光"
+            }
+          },
+          {
+            "id": "starter_2",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 80
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_3",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 80
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_4",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 80
+            },
+            "parameters": {}
+          },
+          {
+            "id": "starter_8",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 400
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n夜间霓虹"
+            }
+          },
+          {
+            "id": "starter_9",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 400
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_10",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 400
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_11",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 400
+            },
+            "parameters": {}
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge_5",
+            "source_node_id": "starter_1",
+            "source_port": "text",
+            "target_node_id": "starter_2",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_6",
+            "source_node_id": "starter_2",
+            "source_port": "prompt",
+            "target_node_id": "starter_3",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_7",
+            "source_node_id": "starter_3",
+            "source_port": "candidate",
+            "target_node_id": "starter_4",
+            "target_port": "candidate"
+          },
+          {
+            "id": "edge_12",
+            "source_node_id": "starter_8",
+            "source_port": "text",
+            "target_node_id": "starter_9",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_13",
+            "source_node_id": "starter_9",
+            "source_port": "prompt",
+            "target_node_id": "starter_10",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_14",
+            "source_node_id": "starter_10",
+            "source_port": "candidate",
+            "target_node_id": "starter_11",
+            "target_port": "candidate"
+          }
+        ],
+        "viewport": {
+          "x": 0,
+          "y": 0,
+          "zoom": 1
+        }
+      },
+      "outputs": [
+        {
+          "number": 1,
+          "prompt": "雨后城市，保留作者人物设定\n\n清晨柔光",
+          "supplement": "清晨柔光",
+          "inputNodeId": "starter_1",
+          "generatorNodeId": "starter_3",
+          "reviewNodeId": "starter_4"
+        },
+        {
+          "number": 2,
+          "prompt": "雨后城市，保留作者人物设定\n\n夜间霓虹",
+          "supplement": "夜间霓虹",
+          "inputNodeId": "starter_8",
+          "generatorNodeId": "starter_10",
+          "reviewNodeId": "starter_11"
+        }
+      ],
+      "count": 2,
+      "nodeCount": 8,
+      "edgeCount": 6
+    }
+  },
+  "four": {
+    "request": {
+      "count": 4,
+      "prompt": "雨后城市，保留作者人物设定",
+      "supplements": [
+        "清晨柔光",
+        "夜间霓虹",
+        "作者补充画面3",
+        "作者补充画面4"
+      ]
+    },
+    "plan": {
+      "definition": {
+        "schema_version": 4,
+        "title": "作者图片产物草稿",
+        "nodes": [
+          {
+            "id": "starter_1",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 80
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n清晨柔光"
+            }
+          },
+          {
+            "id": "starter_2",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 80
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_3",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 80
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_4",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 80
+            },
+            "parameters": {}
+          },
+          {
+            "id": "starter_8",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 400
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n夜间霓虹"
+            }
+          },
+          {
+            "id": "starter_9",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 400
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_10",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 400
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_11",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 400
+            },
+            "parameters": {}
+          },
+          {
+            "id": "starter_15",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 720
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n作者补充画面3"
+            }
+          },
+          {
+            "id": "starter_16",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 720
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_17",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 720
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_18",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 720
+            },
+            "parameters": {}
+          },
+          {
+            "id": "starter_22",
+            "definition_id": "text_input",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 40,
+              "y": 1040
+            },
+            "parameters": {
+              "text": "雨后城市，保留作者人物设定\n\n作者补充画面4"
+            }
+          },
+          {
+            "id": "starter_23",
+            "definition_id": "image_prompt",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 460,
+              "y": 1040
+            },
+            "parameters": {
+              "prompt": ""
+            }
+          },
+          {
+            "id": "starter_24",
+            "definition_id": "image_generate",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 880,
+              "y": 1040
+            },
+            "parameters": {
+              "operation_id": "m5.image.t2i",
+              "provider_id": "",
+              "model_id": "",
+              "parameters": {},
+              "allow_cloud": false,
+              "license_note": ""
+            }
+          },
+          {
+            "id": "starter_25",
+            "definition_id": "media_review",
+            "definition_version": 1,
+            "enabled": true,
+            "position": {
+              "x": 1300,
+              "y": 1040
+            },
+            "parameters": {}
+          }
+        ],
+        "edges": [
+          {
+            "id": "edge_5",
+            "source_node_id": "starter_1",
+            "source_port": "text",
+            "target_node_id": "starter_2",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_6",
+            "source_node_id": "starter_2",
+            "source_port": "prompt",
+            "target_node_id": "starter_3",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_7",
+            "source_node_id": "starter_3",
+            "source_port": "candidate",
+            "target_node_id": "starter_4",
+            "target_port": "candidate"
+          },
+          {
+            "id": "edge_12",
+            "source_node_id": "starter_8",
+            "source_port": "text",
+            "target_node_id": "starter_9",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_13",
+            "source_node_id": "starter_9",
+            "source_port": "prompt",
+            "target_node_id": "starter_10",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_14",
+            "source_node_id": "starter_10",
+            "source_port": "candidate",
+            "target_node_id": "starter_11",
+            "target_port": "candidate"
+          },
+          {
+            "id": "edge_19",
+            "source_node_id": "starter_15",
+            "source_port": "text",
+            "target_node_id": "starter_16",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_20",
+            "source_node_id": "starter_16",
+            "source_port": "prompt",
+            "target_node_id": "starter_17",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_21",
+            "source_node_id": "starter_17",
+            "source_port": "candidate",
+            "target_node_id": "starter_18",
+            "target_port": "candidate"
+          },
+          {
+            "id": "edge_26",
+            "source_node_id": "starter_22",
+            "source_port": "text",
+            "target_node_id": "starter_23",
+            "target_port": "text"
+          },
+          {
+            "id": "edge_27",
+            "source_node_id": "starter_23",
+            "source_port": "prompt",
+            "target_node_id": "starter_24",
+            "target_port": "prompt"
+          },
+          {
+            "id": "edge_28",
+            "source_node_id": "starter_24",
+            "source_port": "candidate",
+            "target_node_id": "starter_25",
+            "target_port": "candidate"
+          }
+        ],
+        "viewport": {
+          "x": 0,
+          "y": 0,
+          "zoom": 1
+        }
+      },
+      "outputs": [
+        {
+          "number": 1,
+          "prompt": "雨后城市，保留作者人物设定\n\n清晨柔光",
+          "supplement": "清晨柔光",
+          "inputNodeId": "starter_1",
+          "generatorNodeId": "starter_3",
+          "reviewNodeId": "starter_4"
+        },
+        {
+          "number": 2,
+          "prompt": "雨后城市，保留作者人物设定\n\n夜间霓虹",
+          "supplement": "夜间霓虹",
+          "inputNodeId": "starter_8",
+          "generatorNodeId": "starter_10",
+          "reviewNodeId": "starter_11"
+        },
+        {
+          "number": 3,
+          "prompt": "雨后城市，保留作者人物设定\n\n作者补充画面3",
+          "supplement": "作者补充画面3",
+          "inputNodeId": "starter_15",
+          "generatorNodeId": "starter_17",
+          "reviewNodeId": "starter_18"
+        },
+        {
+          "number": 4,
+          "prompt": "雨后城市，保留作者人物设定\n\n作者补充画面4",
+          "supplement": "作者补充画面4",
+          "inputNodeId": "starter_22",
+          "generatorNodeId": "starter_24",
+          "reviewNodeId": "starter_25"
+        }
+      ],
+      "count": 4,
+      "nodeCount": 16,
+      "edgeCount": 12
+    }
+  }
+}
