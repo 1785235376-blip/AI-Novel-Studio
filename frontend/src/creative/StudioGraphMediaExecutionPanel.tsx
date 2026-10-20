@@ -1,12 +1,22 @@
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS } from './useStudioMediaExecution';
 import { useStudioGraphMediaExecution, type StudioGraphMediaExecutionProps } from './useStudioGraphMediaExecution';
+import { StudioExecutionRecipePanel } from './StudioExecutionRecipePanel';
 
 export type { GraphMediaAction, GraphMediaActionEvidence, StudioGraphMediaExecutionProps } from './useStudioGraphMediaExecution';
 
 /** Replaceable presentation. Exact receipts, one-send reservations and private media lifetime remain in the headless controller. */
 export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionProps) {
   const state = useStudioGraphMediaExecution(props), preview = state.preview, execution = state.execution, job = state.job;
+  const graphNode = props.graph?.definition.nodes.find(row => row.id === state.node?.node_id);
+  const operationId = graphNode?.definition_id === 'timeline_export' ? 'm9.timeline.multitrack'
+    : graphNode?.definition_id === 'image_upscale' ? 'm5.image.upscale' : graphNode?.parameters.operation_id;
+  // The Graph Job projection intentionally omits recipes. Explain only the
+  // original decoded preview; a missing preview must remain unavailable.
+  const recipe = preview?.production_preview.execution_recipe;
+  const recipeCurrent = !!state.run && !state.run.stale && !state.locked && !state.unknown && props.isCurrent()
+    && !!operationId && props.graph?.id === state.run.graph_id && props.graph?.version === state.run.graph_version
+    && (!recipe || recipe.operation_id === operationId);
   const approved = state.run && !state.run.stale ? Object.entries(state.run.node_states).flatMap(([nodeId, node]) =>
     node.status === 'SUCCEEDED' && props.graph?.definition.nodes.some(value => value.id === nodeId && value.definition_id === 'media_review') && node.output?.asset
       ? [{ nodeId, asset: node.output.asset }] : []) : [];
@@ -25,6 +35,7 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
       </select></label>
       <div className="studio-graph-actions"><Button disabled={!state.canRead} loading={state.pendingKind === 'get'} onClick={() => void state.action('get')}>读取原运行核对</Button>
         <Button disabled={!state.canPreview} loading={state.pendingKind === 'preview'} onClick={() => void state.action('preview')}>预览当前媒体节点</Button></div>
+      <StudioExecutionRecipePanel recipe={recipe} operationId={operationId} current={recipeCurrent} />
       {state.node?.status === 'PENDING' && <p>先明确执行前置节点，到达媒体边界后再预览。</p>}
       {preview && <section aria-label="图媒体预览确认">
         <Badge tone="info">预览尚未调用媒体服务</Badge>
@@ -38,7 +49,7 @@ export function StudioGraphMediaExecutionPanel(props: StudioGraphMediaExecutionP
           <details><summary>核对所有正式来源版本与摘要</summary><pre>{JSON.stringify(preview.production_preview.sources, null, 2)}</pre></details>
           {preview.production_preview.timeline_edit_proof && <details><summary>核对原时间线编辑批次摘要（与媒体任务请求摘要独立）</summary><pre>{JSON.stringify(preview.production_preview.timeline_edit_proof, null, 2)}</pre></details>}
         </section>}
-        <details><summary>核对执行接口和工作流</summary><pre>{JSON.stringify(preview.production_preview.execution_recipe, null, 2)}</pre></details>
+        {recipeCurrent && <details><summary>核对执行接口和工作流</summary><pre>{JSON.stringify(recipe, null, 2)}</pre></details>}
         {!execution && <><label><input type="checkbox" checked={state.previewReviewed} disabled={!state.canConfirm} onChange={event => state.confirmPreview(event.target.checked)} />已核对本次输入、来源版本、处理边界与服务配置</label>
           <Button disabled={!state.canDispatch} loading={state.pendingKind === 'dispatch'} onClick={() => void state.action('dispatch')}>{preview.command.operation_id === 'm9.timeline.multitrack' ? '确认保存时间线编辑并仅入队' : '仅入队当前媒体节点'}</Button></>}
       </section>}
