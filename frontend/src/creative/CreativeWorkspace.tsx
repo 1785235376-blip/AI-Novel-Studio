@@ -57,13 +57,13 @@ function CreativeWorkspaceSession({ navigationConfirmation, novelId, context, sc
       return { row, capabilities: storyboardHost.prepared.capabilities, requestId: storyboardHost.prepared.request.requestId };
     } catch { return undefined; }
   });
-  const [mode, setMode] = useState<WorkspaceMode>(storyboardHost ? 'STORYBOARD' : 'NOVEL'), [capabilities, setCapabilities] = useState<CreativeCapabilities | undefined>(intake?.capabilities), [documents, setDocuments] = useState<CreativeDocument[]>(intake ? [intake.row] : []), [drafts, setDrafts] = useState<Partial<Record<WorkspaceMode, Draft>>>(intake ? { STORYBOARD: { value: documentInput(intake.row), base: intake.row, dirty: false } } : {}), [loading, setLoading] = useState(!storyboardHost), [documentsReady, setDocumentsReady] = useState(!!intake), [operation, setOperation] = useState<Operation>(), [directorBusy, setDirectorBusy] = useState(false), [error, setError] = useState(storyboardHost && !intake ? '分镜交接请求无效，请返回创作图重新核对。' : ''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false), [references, setReferences] = useState<CreativeReferences>(), [assets, setAssets] = useState<CreativeAsset[]>(), [assetLoading, setAssetLoading] = useState(false), [assetError, setAssetError] = useState(false), [asset, setAsset] = useState<AssetSelection>(), [sceneId, setSceneId] = useState<string>(), [shotId, setShotId] = useState<string>(), [history, setHistory] = useState<CreativeHistory>(), [restoreVersion, setRestoreVersion] = useState<number>(), [pendingNavigation, setPendingNavigation] = useState<(() => void)>(), [discardChecked, setDiscardChecked] = useState(false), [serverCandidate, setServerCandidate] = useState<CreativeDocument>();
+  const [mode, setModeState] = useState<WorkspaceMode>(storyboardHost ? 'STORYBOARD' : 'NOVEL'), [capabilities, setCapabilities] = useState<CreativeCapabilities | undefined>(intake?.capabilities), [documents, setDocuments] = useState<CreativeDocument[]>(intake ? [intake.row] : []), [drafts, setDrafts] = useState<Partial<Record<WorkspaceMode, Draft>>>(intake ? { STORYBOARD: { value: documentInput(intake.row), base: intake.row, dirty: false } } : {}), [loading, setLoading] = useState(!storyboardHost), [documentsReady, setDocumentsReady] = useState(!!intake), [operation, setOperation] = useState<Operation>(), [directorBusy, setDirectorBusyState] = useState(false), [error, setError] = useState(storyboardHost && !intake ? '分镜交接请求无效，请返回创作图重新核对。' : ''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false), [references, setReferences] = useState<CreativeReferences>(), [assets, setAssets] = useState<CreativeAsset[]>(), [assetLoading, setAssetLoading] = useState(false), [assetError, setAssetError] = useState(false), [asset, setAsset] = useState<AssetSelection>(), [sceneId, setSceneIdState] = useState<string>(), [shotId, setShotId] = useState<string>(), [history, setHistory] = useState<CreativeHistory>(), [restoreVersion, setRestoreVersion] = useState<number>(), [pendingNavigation, setPendingNavigation] = useState<(() => void)>(), [discardChecked, setDiscardChecked] = useState(false), [serverCandidate, setServerCandidate] = useState<CreativeDocument>();
   const busy = operation !== undefined;
   const hostOwner = useRef(useLocalHostSession.getState().epoch);
   const hostEpoch = useLocalHostSession(state => !context.scope && !context.actor ? state.epoch : 0);
   const production = useMemo(() => studioProductionClient(novelId, context), [client]);
   const studio = useMemo(() => studioClient(novelId, context), [client]);
-  const [productionDirty, setProductionDirty] = useState(false);
+  const [productionDirty, setProductionDirtyState] = useState(false);
   const [productionReceipt, setProductionReceipt] = useState<StoryboardReceipt>();
   // UX-05: the shot workspace reads on demand only, so opening the creative module
   // never adds a request or duplicate evidence to the existing inspector.
@@ -74,6 +74,18 @@ function CreativeWorkspaceSession({ navigationConfirmation, novelId, context, sc
   const mounted = useRef(true), mutationLock = useRef(false), readEpoch = useRef(0), assetEpoch = useRef(0);
   const currentMode = useRef(mode); currentMode.current = mode;
   const currentDrafts = useRef(drafts); currentDrafts.current = drafts;
+  // Batch previews must observe the original author's mutations before React commits,
+  // including transitions that return to the same value within one event batch.
+  const shotBatchEpoch = useRef(0);
+  const [, refreshShotBatch] = useState(0);
+  // Keep the controls observable even when React coalesces a busy/scene A→B→A.
+  const advanceShotBatch = useCallback(() => { refreshShotBatch(++shotBatchEpoch.current); }, []);
+  const authorState = useRef({ mode, sceneId, directorBusy, productionDirty });
+  authorState.current = { mode, sceneId, directorBusy, productionDirty };
+  const setMode = (next: WorkspaceMode) => { if (authorState.current.mode !== next) advanceShotBatch(); authorState.current.mode = next; currentMode.current = next; setModeState(next); };
+  const setSceneId = (next: string | undefined) => { if (authorState.current.sceneId !== next) advanceShotBatch(); authorState.current.sceneId = next; setSceneIdState(next); };
+  const setDirectorBusy = useCallback((next: boolean) => { if (authorState.current.directorBusy !== next) advanceShotBatch(); authorState.current.directorBusy = next; setDirectorBusyState(next); }, [advanceShotBatch]);
+  const setProductionDirty = useCallback((next: boolean) => { if (authorState.current.productionDirty !== next) advanceShotBatch(); authorState.current.productionDirty = next; setProductionDirtyState(next); }, [advanceShotBatch]);
   const draft = drafts[mode], dirtyModes = Object.entries(drafts).filter(([, value]) => value?.dirty).map(([key]) => key as WorkspaceMode);
   const hostRef = useRef(storyboardHost); hostRef.current = storyboardHost;
   const requestKey = storyboardHost ? JSON.stringify(storyboardHost.prepared.request) : undefined;
@@ -104,7 +116,7 @@ function CreativeWorkspaceSession({ navigationConfirmation, novelId, context, sc
       const row = checkedStoryboardReceipt(storyboardHost.prepared.request, storyboardHost.prepared.receipt);
       admittedRequest.current = requested; admittedKey.current = requestKey;
       const next = { STORYBOARD: { value: documentInput(row), base: row, dirty: false } };
-      currentDrafts.current = next; setDrafts(next); setDocuments([row]); setCapabilities(storyboardHost.prepared.capabilities); setDocumentsReady(true); setMode('STORYBOARD'); setError('');
+      advanceShotBatch(); currentDrafts.current = next; setDrafts(next); setDocuments([row]); setCapabilities(storyboardHost.prepared.capabilities); setDocumentsReady(true); setMode('STORYBOARD'); setError('');
       setHistory(undefined); setServerCandidate(undefined); setSceneId(undefined); setShotId(undefined);
     } catch { setError('分镜交接回执无效，未替换当前文档。'); }
   }, [requestKey]);
@@ -126,7 +138,7 @@ function CreativeWorkspaceSession({ navigationConfirmation, novelId, context, sc
     });
   }, [mode, loading, documentsReady, capabilities?.enabled, denied, documents, manuscriptReady, chapter?.id]);
   useEffect(() => { if (!dirtyModes.length && !adaptationDraft && !productionDirty) return; const prevent = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; }; window.addEventListener('beforeunload', prevent); return () => window.removeEventListener('beforeunload', prevent); }, [dirtyModes.length, adaptationDraft, productionDirty]);
-  const setDraft = (next: Draft, target: WorkspaceMode = mode) => { currentDrafts.current = { ...currentDrafts.current, [target]: next }; setDrafts(current => ({ ...current, [target]: next })); };
+  const setDraft = (next: Draft, target: WorkspaceMode = mode) => { advanceShotBatch(); currentDrafts.current = { ...currentDrafts.current, [target]: next }; setDrafts(current => ({ ...current, [target]: next })); };
   const changeMode = (next: WorkspaceMode) => {
     if (storyboardHost || busy || directorBusy || productionDirty || denied || mutationLock.current) return;
     setMode(next); setHistory(undefined); setRestoreVersion(undefined); setServerCandidate(undefined); setSceneId(undefined); setShotId(undefined); setAsset(undefined); setNotice(''); setError('');
@@ -227,7 +239,13 @@ function CreativeWorkspaceSession({ navigationConfirmation, novelId, context, sc
         request={client.storyboardSheetExport} onDenied={deny} />}
       {draft?.base && mode === 'SCREENPLAY' && <ScreenplayExportPanel key={`${draft.base.id}:${draft.base.version}`} client={client} document={draft.base} available={!draft.dirty && !draft.blocked && !busy && capabilities?.enabled === true} onDenied={deny} />}
       {draft?.base && draft.value.mode === "DIRECTOR" && draft.value.director_notes.length > 0 && <Button disabled={!canEdit || busy || directorBusy || draft.dirty || draft.blocked} onClick={() => void derive("DIRECTOR_NOTES")}>按已保存导演调度逐项建立分镜草稿</Button>}
-      {draft && <CreativeCanvas storyboardImages={draft.base && draft.value.mode === 'STORYBOARD' ? {
+      {draft && <CreativeCanvas shotBatchOwner={{
+        revision: () => shotBatchEpoch.current,
+        isCurrent: () => mounted.current && hostCurrent() && !revoked.current && canEdit
+          && capabilities?.modes.includes(draft.value.mode) === true && !draft.blocked
+          && currentMode.current === mode && currentDrafts.current[mode] === draft
+          && !mutationLock.current && !busy && !authorState.current.directorBusy && !authorState.current.productionDirty,
+      }} storyboardImages={draft.base && draft.value.mode === 'STORYBOARD' ? {
         projectId: novelId, branchId: context.scope?.branchId || null, document: draft.base, client, studio,
         available: capabilities?.enabled === true && !denied && !draft.dirty && !draft.blocked && !busy && !directorBusy && !productionDirty,
         isCurrent: () => !!productionCurrent() && currentMode.current === 'STORYBOARD' && currentDrafts.current.STORYBOARD?.base === draft.base && !currentDrafts.current.STORYBOARD?.dirty && !currentDrafts.current.STORYBOARD?.blocked,

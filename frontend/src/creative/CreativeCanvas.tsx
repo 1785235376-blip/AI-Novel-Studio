@@ -12,6 +12,8 @@ import { creativeAuthoringProblems, creativeTextLength, creativeId, newScene, ne
 import { CameraGrammarEditor } from './CameraGrammarEditor';
 import { DirectorTargetPanel } from './DirectorTargetPanel';
 import { StoryboardTimingTools } from './StoryboardTimingTools';
+import { StoryboardShotBatchTools } from './StoryboardShotBatchTools';
+import type { StoryboardShotBatchOwner } from './storyboardShotBatch';
 import { StoryboardCardImage, StoryboardImageComparison, StoryboardImageToolbar } from './StoryboardBoardImages';
 import { useStoryboardBoardImages } from './useStoryboardBoardImages';
 import type { StoryboardImageAccess } from './storyboardImagePreview';
@@ -39,7 +41,7 @@ export function DirectorFields({ value, onChange, prefix = '' }: { value: Direct
       const { camera_grammar: _old, ...rest } = value; onChange(geometry ? { ...rest, camera_grammar: geometry } : rest);
     }} /></>;
 }
-export function CreativeCanvas({ draft, storyboardImages, productionShots, productionApproved, version, dirty, canEdit, busy, saving = busy, selectedSceneId, selectedShotId, onScene, onShot, onChange, onSave, onNew, allowNew = true, onExport, onHistory, onDerive, onScaffold, sourceChapterTitle }: { draft: CreativeInput; storyboardImages?: StoryboardImageAccess; productionShots?: StoryboardShot[]; productionApproved?: boolean; version?: number; dirty: boolean; canEdit: boolean; busy: boolean; saving?: boolean; selectedSceneId?: string; selectedShotId?: string; onScene: (id: string) => void; onShot: (id: string) => void; onChange: (draft: CreativeInput) => void; onSave: () => void; onNew: () => void; allowNew?: boolean; onExport?: () => void; onHistory?: () => void; onDerive?: () => void; onScaffold?: () => void; sourceChapterTitle?: string }) {
+export function CreativeCanvas({ draft, shotBatchOwner, storyboardImages, productionShots, productionApproved, version, dirty, canEdit, busy, saving = busy, selectedSceneId, selectedShotId, onScene, onShot, onChange, onSave, onNew, allowNew = true, onExport, onHistory, onDerive, onScaffold, sourceChapterTitle }: { draft: CreativeInput; shotBatchOwner?: StoryboardShotBatchOwner; storyboardImages?: StoryboardImageAccess; productionShots?: StoryboardShot[]; productionApproved?: boolean; version?: number; dirty: boolean; canEdit: boolean; busy: boolean; saving?: boolean; selectedSceneId?: string; selectedShotId?: string; onScene: (id: string) => void; onShot: (id: string) => void; onChange: (draft: CreativeInput) => void; onSave: () => void; onNew: () => void; allowNew?: boolean; onExport?: () => void; onHistory?: () => void; onDerive?: () => void; onScaffold?: () => void; sourceChapterTitle?: string }) {
   const authoringProblems = creativeAuthoringProblems(draft);
   const [shotView, setShotView] = useState<'cards' | 'list'>('cards');
   const scene = draft.scenes.find(row => row.id === selectedSceneId) || draft.scenes[0];
@@ -72,6 +74,7 @@ export function CreativeCanvas({ draft, storyboardImages, productionShots, produ
         {directing && <section aria-label="导演场面调度">{notes.map(note => <article className="creative-director-note" key={note.id}><h3>调度 {note.number}</h3><DirectorNoteActions draft={draft} noteId={note.id} disabled={!canEdit || busy} onChange={onChange}/><DirectorFields value={note} onChange={next => update({ director_notes: draft.director_notes.map(row => row.id === next.id ? next : row) })} /></article>)}{!notes.length && <p>当前场景尚未安排导演调度。手动添加，或在右侧从已保存剧本准备待审建议。</p>}</section>}
       </section>}
       {draft.mode === 'STORYBOARD' && scene && <StoryboardDirectorCameraAdoption draft={draft} sceneId={scene.id} version={version} dirty={dirty} canEdit={canEdit} busy={busy} onChange={onChange} />}
+      {draft.mode === 'STORYBOARD' && scene && <StoryboardShotBatchTools owner={shotBatchOwner} draft={draft} sceneId={scene.id} version={version} dirty={dirty} canEdit={canEdit} busy={busy} onChange={onChange} />}
       {(draft.mode === 'STORYBOARD' || directing) && <StoryboardTimingTools draft={draft} sceneId={scene?.id} disabled={!canEdit || busy} onChange={onChange} />}
 
       </>}
