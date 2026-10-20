@@ -9,10 +9,38 @@ from contextvars import ContextVar
 from copy import deepcopy
 import re
 
+from pydantic import Field, model_validator
+from fastapi.routing import APIRoute
+from fastapi import HTTPException
+from .common import StaleSourceError
+from .planning import StrictModel
+from ..creative.production_contracts import ProductionSourceSnapshot
+from ..creative.production_execution_models import MediaCommand, MediaCreate, MediaJobAction, MediaReview
+
 from .planning import digest
 
 CONTRACT = 'studio-image-safe-batch/1'
 _request = ContextVar('studio_image_batch_request', default=None)
+
+
+class StudioImageSelection(StrictModel):
+    image: ProductionSourceSnapshot
+    mask: ProductionSourceSnapshot
+    request_id: str = Field(min_length=1, max_length=100, pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]*$')
+    license_note: str = Field(default='', max_length=2000)
+
+    @model_validator(mode='after')
+    def assets_only(self):
+        if (self.image.kind != 'ASSET' or self.mask.kind != 'ASSET'
+                or self.image.asset_kind != 'image' or self.mask.asset_kind != 'image'
+                or self.image.id == self.mask.id):
+            raise ValueError('BATCH_SAVED_IMAGE_AND_MASK_REQUIRED')
+        return self
+
+    def command(self):
+        return MediaCommand.model_validate({'operation_id': 'm5.image.cutout', 'request_id': self.request_id,
+            'provider_id': None, 'model_id': None, 'prompt': '', 'parameters': {}, 'allow_cloud': False,
+            'license_note': self.license_note, 'source_snapshots': [self.image.model_dump(exclude_none=True), self.mask.model_dump(exclude_none=True)]})
 
 
 @contextmanager
@@ -22,6 +50,15 @@ def request_context(request):
         yield
     finally:
         _request.reset(token)
+
+
+class StudioImageRequestRoute(APIRoute):
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            with request_context(request):
+                return await handler(request)
+        return checked
 
 
 def validate_binding(value, context):
@@ -54,7 +91,129 @@ class BatchStudioImageAuthority:
             if (actor, scope) != (ctx.actor, ctx.scope):
                 raise ValueError('BATCH_STUDIO_AUTHORITY_CHANGED')
             return callback(guard)
-        return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation)
+        try:
+            return self.invoke(request, ctx.novel_id, ctx.token, ctx.branch, permission, operation)
+        except HTTPException as exc:
+            # Preserve the original batch owner's per-record stale projection;
+            # the original Studio invoker maps these domain errors to HTTP.
+            code = exc.detail.get('code') if isinstance(exc.detail, dict) else None
+            if exc.status_code == 409 and code == 'EXPERIMENTAL_SOURCE_STALE':
+                message = exc.detail.get('message')
+                reason = message if isinstance(message, str) and re.fullmatch(r'[A-Z][A-Z0-9_]{1,95}', message) else 'BATCH_STUDIO_IMAGE_SOURCE_CHANGED'
+                raise StaleSourceError(reason) from None
+            raise
+
+    def catalog(self, ctx):
+        def read(guard):
+            guard()
+            rows = self.production.workspace.list_assets(ctx.novel_id, ctx.scope)['items']
+            assets = [{'id': a['id'], 'title': a.get('title') or a.get('filename') or a['id'],
+                'snapshot': {'id': a['id'], 'kind': 'ASSET', 'asset_kind': 'image', 'version': a['version'], 'digest': a['sha256']}}
+                for a in rows if a.get('kind') == 'image' and not a.get('deleted_at')][:200]
+            guard()
+            return {'contract': CONTRACT, 'operation_id': 'm5.image.cutout', 'assets': assets,
+                'concurrency': 1, 'max_items': 20, 'known_cost_microusd': 0, 'model': 'NONE',
+                'verification': 'ORIGINAL_CPU_CUTOUT_NOT_AI', 'automatic_dispatch': False}
+        return self.call(ctx, 'domain.read', read)
+
+    def visible_sources(self, ctx, selection):
+        def read(guard):
+            for source in (selection.image, selection.mask):
+                guard()
+                self.production.workspace.asset(ctx.novel_id, ctx.scope, source.id)
+            guard()
+        self.call(ctx, 'domain.read', read)
+
+    def snapshot(self, ctx, selection):
+        def read(guard):
+            preview, context, _ = self.production.preview(ctx.novel_id, ctx.scope, ctx.actor, selection.command(), guard)
+            return {'incarnation': context['incarnation'], **preview}
+        return self.call(ctx, 'domain.read', read)
+
+    @staticmethod
+    def binding(row, index, scope_key):
+        config = row['snapshot']['steps'][index]['configuration']
+        return {'contract': CONTRACT, 'batch_id': row['id'], 'item_index': index, 'actor': row['created_by'],
+            'scope_key': scope_key, 'incarnation': config['incarnation'],
+            'snapshot_digest': row['snapshot_digest'], 'request_id': config['command']['request_id']}
+
+    def _binding(self, ctx, row, index, guard):
+        scope_key = self.production._base(ctx.novel_id, ctx.scope, ctx.actor, guard)['scope_key']
+        return self.binding(row, index, scope_key)
+
+    @staticmethod
+    def result(job):
+        return {'image_job': deepcopy(job), 'verification': 'ORIGINAL_CPU_CUTOUT_NOT_AI'}
+
+    def dispatch(self, ctx, row, index, guard):
+        config = row['snapshot']['steps'][index]['configuration']
+        def run(host_guard):
+            # Full-batch preflight stays outside original queue/asset phases.
+            # Within them production's metadata-only batch guard + exact source
+            # guard fence stop, scope, claim and pixels without nested leases.
+            host_guard(); guard()
+            binding = self._binding(ctx, row, index, host_guard)
+            preview = self.production.preview(ctx.novel_id, ctx.scope, ctx.actor,
+                MediaCommand.model_validate(config['command']), host_guard, batch_binding=binding)[0]
+            if any(preview[k] != config[k] for k in ('command', 'sources', 'execution_recipe')):
+                raise ValueError('BATCH_STUDIO_IMAGE_PREVIEW_CHANGED')
+            # Claim/intention precede the original create. An absent response
+            # is UNKNOWN, never evidence that this key may be sent again.
+            with self.batches.store.transaction(ctx.novel_id, ctx.scope) as state:
+                host_guard(); guard()
+                item = state['collections'][self.batches.BATCHES][row['id']]['items'][index]
+                if item.get('image_create_intent') or item.get('image_job_id'):
+                    raise ValueError('BATCH_STUDIO_IMAGE_ALREADY_SENT')
+                item['image_create_intent'] = True
+            job = self.production.create(ctx.novel_id, ctx.scope, ctx.actor,
+                MediaCreate(command=MediaCommand.model_validate(config['command']), reviewed_preview_digest=preview['preview_digest']),
+                host_guard, batch_binding=binding)
+            with self.batches.store.transaction(ctx.novel_id, ctx.scope) as state:
+                host_guard(); guard()
+                item = state['collections'][self.batches.BATCHES][row['id']]['items'][index]
+                item.update(image_job_id=job['id'], task_id=job['id'])
+                self.batches._receipt(item, task_id=job['id'], cost_state='KNOWN_ZERO_LOCAL')
+            done = self.production.execute(ctx.novel_id, ctx.scope, ctx.actor, 'image', job['id'],
+                MediaJobAction(expected_version=job['version'], expected_request_digest=job['request_digest']), host_guard, batch_binding=binding)
+            if done['status'] not in {'AWAITING_REVIEW', 'APPROVED'}:
+                raise ValueError('BATCH_STUDIO_IMAGE_ORIGINAL_RECEIPT_REQUIRED')
+            host_guard(); guard()
+            return self.result(done)
+        return self.call(ctx, 'domain.write', run)
+
+    def job(self, ctx, row, index):
+        def read(guard):
+            binding = self._binding(ctx, row, index, guard)
+            jid = row['items'][index].get('image_job_id')
+            if jid:
+                return self.production.get(ctx.novel_id, ctx.scope, ctx.actor, 'image', jid, guard, batch_binding=binding)
+            rows = self.production.list(ctx.novel_id, ctx.scope, ctx.actor, guard, batch_binding=binding)['items']
+            rows = [j for j in rows if j['owner'] == 'image' and j['request_id'] == binding['request_id']]
+            if len(rows) > 1:
+                raise ValueError('BATCH_STUDIO_IMAGE_AMBIGUOUS_JOB')
+            return rows[0] if rows else None
+        return self.call(ctx, 'domain.read', read)
+
+    def candidate(self, ctx, row, index, reauthorize):
+        def read(host_guard):
+            host_guard(); reauthorize()
+            item = row['items'][index]
+            result = self.production.candidate(ctx.novel_id, ctx.scope, ctx.actor, 'image', item['image_job_id'], host_guard,
+                batch_binding=self._binding(ctx, row, index, host_guard))
+            host_guard(); reauthorize()
+            return result
+        return self.call(ctx, 'domain.read', read)
+
+    def approve(self, ctx, row, index, action, reauthorize):
+        def review(host_guard):
+            host_guard(); reauthorize()
+            result = self.production.review(ctx.novel_id, ctx.scope, ctx.actor, 'image', row['items'][index]['image_job_id'],
+                MediaReview(expected_version=action.expected_job_version, expected_request_digest=action.expected_request_digest,
+                    reviewed_output_digest=action.reviewed_output_digest), host_guard,
+                batch_binding=self._binding(ctx, row, index, host_guard))
+            host_guard(); reauthorize()
+            return result
+        return self.call(ctx, 'domain.review', review)
 
     def guard_binding(self, nid, scope, actor, context, jid=None, *, phase='read'):
         """Metadata only under queue/asset locks; never recursively read a job.

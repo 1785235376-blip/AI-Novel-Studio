@@ -20,6 +20,7 @@ from .reader_sources import authorized_chapter_rows
 from .ux import chapter_text
 from .media import MockImageWorkflowAdapter, batch_media_context
 from .store import canonical
+from .safe_batch_studio_image import StudioImageSelection
 from ..services.export_job_service import ExportJobService
 from ..services.novel_service import NovelService
 from ..source_privacy import source_privacy_status
@@ -31,7 +32,7 @@ MAX_RESULT = 2 * 1024 * 1024
 
 
 class BatchItemIn(StrictModel):
-    kind: Literal['PROOF', 'EXPORT', 'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA', 'VOICE_REDO']
+    kind: Literal['PROOF', 'EXPORT', 'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA', 'VOICE_REDO', 'STUDIO_IMAGE']
     chapter_ids: list[str] = Field(default_factory=list, max_length=100)
     start: int = Field(default=0, ge=0, le=2_000_000)
     end: int | None = Field(default=None, ge=1, le=2_000_000)
@@ -40,6 +41,7 @@ class BatchItemIn(StrictModel):
     expected_brief_version: int | None = Field(default=None, ge=1)
     adapter_id: str = Field(default='mock-image-v1', max_length=240)
 
+    studio_image: StudioImageSelection | None = None
     voice_job_id: str | None = Field(default=None, max_length=240)
     expected_voice_digest: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
     broker_preview_id: str | None = Field(default=None, max_length=240)
@@ -48,13 +50,25 @@ class BatchItemIn(StrictModel):
     @model_validator(mode='after')
     def valid_selection(self):
         if len(set(self.chapter_ids)) != len(self.chapter_ids): raise ValueError('BATCH_DUPLICATE_CHAPTER')
-        if self.kind not in {'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA', 'VOICE_REDO'} and not self.chapter_ids: raise ValueError('BATCH_CHAPTER_SELECTION_REQUIRED')
+        if self.kind not in {'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA', 'VOICE_REDO', 'STUDIO_IMAGE'} and not self.chapter_ids: raise ValueError('BATCH_CHAPTER_SELECTION_REQUIRED')
         if self.kind in {'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA'} and (not self.brief_id or self.expected_brief_version is None): raise ValueError('BATCH_BRIEF_REQUIRED')
         if self.kind in {'REGISTERED_MEDIA', 'VOICE_REDO'} and (not self.broker_preview_id or self.expected_broker_version is None): raise ValueError('BATCH_ORIGINAL_BROKER_PREVIEW_REQUIRED')
         if self.kind == 'VOICE_REDO' and (not self.voice_job_id or not self.expected_voice_digest): raise ValueError('BATCH_ORIGINAL_APPROVED_VOICE_JOB_REQUIRED')
         if (self.start or self.end is not None) and (self.kind != 'PROOF' or len(self.chapter_ids) != 1): raise ValueError('BATCH_RANGE_REQUIRES_ONE_PROOF_CHAPTER')
         if self.end is not None and self.end <= self.start: raise ValueError('BATCH_RANGE_INVALID')
+        if self.kind == 'STUDIO_IMAGE':
+            if (self.studio_image is None or self.chapter_ids or self.brief_id is not None or self.voice_job_id is not None
+                    or self.broker_preview_id is not None or self.expected_broker_version is not None
+                    or self.expected_brief_version is not None or self.expected_voice_digest is not None
+                    or self.adapter_id != 'mock-image-v1' or self.format != 'txt'):
+                raise ValueError('BATCH_EXPLICIT_STUDIO_IMAGE_SELECTION_REQUIRED')
+        elif self.studio_image is not None:
+            raise ValueError('BATCH_STUDIO_IMAGE_KIND_REQUIRED')
         return self
+
+    def original_input(self):
+        # Old five-kind frozen DTOs retain their original bytes on upgrade.
+        return self.model_dump(exclude={'studio_image'} if self.studio_image is None else set())
 
 
 class BatchIn(StrictModel):
@@ -64,6 +78,12 @@ class BatchIn(StrictModel):
     skip_satisfied: bool = True
     preset_id: str | None = Field(default=None, max_length=240)
     expected_preset_version: int | None = Field(default=None, ge=1)
+
+    @model_validator(mode='after')
+    def unique_image_keys(self):
+        keys = [i.studio_image.request_id for i in self.items if i.kind == 'STUDIO_IMAGE']
+        if len(keys) != len(set(keys)): raise ValueError('BATCH_DUPLICATE_STUDIO_IMAGE_REQUEST')
+        return self
 
 
 class VersionIn(StrictModel):
@@ -84,6 +104,14 @@ class ReviewIn(ConfirmIn):
 class VoiceReviewIn(ConfirmIn):
     item_index: int = Field(ge=0, le=19)
     expected_asset_version: int = Field(ge=1)
+
+
+class ImageReviewIn(ConfirmIn):
+    item_index: int = Field(ge=0, le=19)
+    job_id: str = Field(min_length=1, max_length=240)
+    expected_job_version: int = Field(ge=1)
+    expected_request_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    reviewed_output_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
 
 
 class SafeBatchesService(DomainService):
@@ -235,6 +263,10 @@ class SafeBatchesService(DomainService):
                 if set(admission['source_ids']) != set(source_ids): raise ValueError('BATCH_BROKER_SOURCE_SELECTION_MISMATCH')
                 media_snapshot['broker_admission'] = admission
                 resources = [{'kind': 'ORIGINAL_LOCAL_TTS_EXECUTOR', 'gpu_vram': 'UNKNOWN', 'external_occupancy': 'WARNING_NOT_CONTROLLED'}]
+            if item.kind == 'STUDIO_IMAGE':
+                if self.studio_image is None: raise ValueError('BATCH_STUDIO_HOST_INVOKER_REQUIRED')
+                media_snapshot = self.studio_image.snapshot(ctx, item.studio_image)
+                resources = [{'kind': 'ORIGINAL_CPU_CUTOUT', 'gpu_vram': 'NOT_REQUESTED', 'model': 'NONE'}]
             if item.kind == 'PROOF':
                 self.flag_check('reader_preflight_v2')
                 if item.start or item.end is not None:
@@ -250,14 +282,15 @@ class SafeBatchesService(DomainService):
                 resources = [{'kind': 'CPU_LOCAL', 'gpu_vram': 'NOT_REQUESTED'}]
             if set(source_ids) - set(rows): raise FileNotFoundError('source unavailable')
             config = self.reader.settings(ctx) if item.kind == 'PROOF' else {'format': item.format} if item.kind == 'EXPORT' else media_snapshot
-            frozen = {'input': item.model_dump(), 'sources': {cid: digest(rows[cid]) for cid in source_ids}, 'source_versions': {cid: rows[cid]['version'] for cid in source_ids}, 'configuration': config,
+            frozen = {'input': item.original_input(), 'sources': {cid: digest(rows[cid]) for cid in source_ids}, 'source_versions': {cid: rows[cid]['version'] for cid in source_ids}, 'configuration': config,
                 'resource_requirements': resources or [{'kind': 'CPU_LOCAL', 'gpu_vram': 'NOT_REQUESTED'}], 'known_cost_microusd': 0,
-                'permission': 'domain.write', 'network': item.kind in {'REGISTERED_MEDIA', 'VOICE_REDO'}, 'model': 'SYNTHETIC_FIXTURE' if item.kind == 'SYNTHETIC_MEDIA' else 'REGISTERED_ADAPTER_UNVERIFIED_QUALITY' if item.kind == 'REGISTERED_MEDIA' else 'ORIGINAL_TTS_ADAPTER_UNVERIFIED_QUALITY' if item.kind == 'VOICE_REDO' else 'NONE'}
+                'permission': 'STUDIO_HOST_AND_DOMAIN_WRITE' if item.kind == 'STUDIO_IMAGE' else 'domain.write', 'network': item.kind in {'REGISTERED_MEDIA', 'VOICE_REDO'}, 'model': 'SYNTHETIC_FIXTURE' if item.kind == 'SYNTHETIC_MEDIA' else 'REGISTERED_ADAPTER_UNVERIFIED_QUALITY' if item.kind == 'REGISTERED_MEDIA' else 'ORIGINAL_TTS_ADAPTER_UNVERIFIED_QUALITY' if item.kind == 'VOICE_REDO' else 'NONE'}
             steps.append({**frozen, 'fingerprint': digest(frozen)})
         identities = []
         for step in steps:
             item = step['input']
-            if item['kind'] == 'VOICE_REDO': key = ['VOICE', item['voice_job_id']]
+            if item['kind'] == 'STUDIO_IMAGE': key = ['STUDIO_IMAGE', item['studio_image']['image'], item['studio_image']['mask']]
+            elif item['kind'] == 'VOICE_REDO': key = ['VOICE', item['voice_job_id']]
             elif item['kind'] in {'SYNTHETIC_MEDIA', 'REGISTERED_MEDIA'}: key = ['MEDIA', item['brief_id'], item['adapter_id']]
             elif item['kind'] == 'PROOF': key = ['PROOF', item['chapter_ids'], item['start'], item['end']]
             else: key = ['EXPORT', item['chapter_ids'], item['format']]
@@ -280,6 +313,9 @@ class SafeBatchesService(DomainService):
                 self.flag_check('voice_direction_v2'); self.flag_check('audiobook_v2')
                 if self.voice is None: raise FileNotFoundError('voice authority unavailable')
                 self.voice.job(ctx, step['input']['voice_job_id'], row['id'], current=False)
+            if step['input']['kind'] == 'STUDIO_IMAGE':
+                if self.studio_image is None: raise FileNotFoundError('studio batch unavailable')
+                self.studio_image.visible_sources(ctx, StudioImageSelection.model_validate(step['input']['studio_image']))
         return row
 
     def _assert(self, ctx, row, reauthorize):
@@ -293,9 +329,9 @@ class SafeBatchesService(DomainService):
         result['approvals'] = deepcopy(row.get('approvals', [])); result['preset'] = deepcopy(row['snapshot'].get('preset'))
         result['items'] = []
         for step, item in zip(row['snapshot']['steps'], row['items']):
-            public = {k: deepcopy(v) for k, v in item.items() if k not in {'result', 'claim'}}
+            public = {k: deepcopy(v) for k, v in item.items() if k not in {'result', 'claim', 'image_create_intent'}}
             public.update(kind=step['input']['kind'], chapter_ids=list(step['sources']), source_versions_digest=digest(step['sources']),
-                source_versions=deepcopy(step['source_versions']), configuration_summary={'format': step['input']['format']} if step['input']['kind'] == 'EXPORT' else {'rules_version': step['configuration']['version'], 'start': step['input']['start'], 'end': step['input']['end']} if step['input']['kind'] == 'PROOF' else {'job_id': step['input']['voice_job_id'], 'broker_preview_id': step['input']['broker_preview_id']} if step['input']['kind'] == 'VOICE_REDO' else {'brief_id': step['input']['brief_id'], 'brief_version': step['input']['expected_brief_version'], 'adapter_id': step['input']['adapter_id'], 'candidate_count': 1},
+                source_versions=deepcopy(step['source_versions']), configuration_summary={'command': step['configuration']['command'], 'incarnation': step['configuration']['incarnation']} if step['input']['kind'] == 'STUDIO_IMAGE' else {'format': step['input']['format']} if step['input']['kind'] == 'EXPORT' else {'rules_version': step['configuration']['version'], 'start': step['input']['start'], 'end': step['input']['end']} if step['input']['kind'] == 'PROOF' else {'job_id': step['input']['voice_job_id'], 'broker_preview_id': step['input']['broker_preview_id']} if step['input']['kind'] == 'VOICE_REDO' else {'brief_id': step['input']['brief_id'], 'brief_version': step['input']['expected_brief_version'], 'adapter_id': step['input']['adapter_id'], 'candidate_count': 1},
                 known_cost_microusd=0, cost_state=step['configuration'].get('broker_admission', {}).get('cost_state', 'KNOWN_ZERO_LOCAL'), resource_requirements=step['resource_requirements'], permission=step['permission'])
             if item['status'] == 'RUNNING' and item.get('claim') not in ACTIVE:
                 public['status'] = 'UNKNOWN'; public['error_code'] = 'BATCH_INTERRUPTED_RECONCILIATION_REQUIRED_NO_REPLAY'
@@ -304,6 +340,7 @@ class SafeBatchesService(DomainService):
                 if payload.get('satisfied_asset_ids'): public['satisfied_asset_ids'] = deepcopy(payload['satisfied_asset_ids'])
                 if step['input']['kind'] == 'PROOF': public['findings'] = payload['items']
                 elif step['input']['kind'] == 'EXPORT': public['download_available'] = True; public['format'] = step['input']['format']
+                elif step['input']['kind'] == 'STUDIO_IMAGE': public['image_result'] = deepcopy(payload['image_job'])
                 elif step['input']['kind'] == 'VOICE_REDO': public['voice_result'] = deepcopy(payload)
                 else: public['proposals'] = deepcopy(payload['proposals']); public['verification'] = 'SYNTHETIC_PROTOCOL_ONLY' if step['input']['kind'] == 'SYNTHETIC_MEDIA' else 'REGISTERED_ADAPTER_CONTRACT_ONLY'
             result['items'].append(public)
@@ -365,6 +402,11 @@ class SafeBatchesService(DomainService):
                 if row['status'] != 'CANCELLED':
                     with self._media_context(ctx, row['id'], lambda: self._assert(ctx, row, lambda: None)):
                         for item in row['items']:
+                            if item.get('image_job_id') and item.get('result'):
+                                # Never return a cached private candidate after
+                                # its original owner refuses a current read.
+                                item.pop('result', None)
+                                item['result'] = self.studio_image.result(self.studio_image.job(ctx, row, item['index']))
                             for proposal in (item.get('result') or {}).get('proposals', []):
                                 current = self.media.get(ctx.novel_id, ctx.scope, self.media.PROPOSALS, proposal['id'])
                                 proposal.update({key: current[key] for key in ('version', 'status', 'asset_id') if key in current})
@@ -419,8 +461,21 @@ class SafeBatchesService(DomainService):
         items = []
         for index, step in enumerate(frozen['steps']):
             result = completed.get(step['fingerprint']); items.append({'index': index, 'status': 'SKIPPED' if result else 'PENDING', 'attempts': 0, 'result': deepcopy(result), 'claim': None, 'receipts': []})
-        row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'input': value.model_dump(), 'snapshot': frozen, 'snapshot_digest': digest(frozen), 'items': items, 'status': 'PREFLIGHT', 'confirmed': False})
+        original_input = {**value.model_dump(exclude={'items'}), 'items': [i.original_input() for i in value.items]}
+        row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'input': original_input, 'snapshot': frozen, 'snapshot_digest': digest(frozen), 'items': items, 'status': 'PREFLIGHT', 'confirmed': False})
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            keys = {i.studio_image.request_id for i in value.items if i.kind == 'STUDIO_IMAGE'}
+            if keys:
+                # The original batch store lock makes repeated/concurrent
+                # preflight one allocation. UNKNOWN cannot be rewrapped as a
+                # new batch and reach ImageJob.create again with the same key.
+                for prior in state['collections'].get(self.BATCHES, {}).values():
+                    if prior['created_by'] != ctx.actor: continue
+                    prior_keys = {i['studio_image']['request_id'] for i in prior['input']['items'] if i['kind'] == 'STUDIO_IMAGE'}
+                    if not keys.intersection(prior_keys): continue
+                    self._owned(ctx, prior['id']); self._assert(ctx, prior, reauthorize)
+                    if prior['input'] != original_input: raise ValueError('BATCH_STUDIO_IMAGE_REQUEST_ALREADY_OWNED')
+                    return self._public(prior)
             self._assert(ctx, row, reauthorize); state['collections'].setdefault(self.BATCHES, {})[row['id']] = row
         return self._public(row)
 
@@ -468,6 +523,8 @@ class SafeBatchesService(DomainService):
                     guard(); result = self.novels.export_snapshot_result(snapshot, item['format'], progress_callback=lambda *_: guard())
                     raw = ExportJobService._result_bytes(result)
                     if len(raw) > MAX_RESULT: raise ValueError('BATCH_RESULT_LIMIT')
+                elif item['kind'] == 'STUDIO_IMAGE':
+                    result = self.studio_image.dispatch(ctx, row, index, guard)
                 elif item['kind'] == 'VOICE_REDO':
                     voice_item = BatchItemIn.model_validate(item)
                     reservation_key = f"batch:{rid}:{index}:{row['items'][index]['attempts'] + 1}"
@@ -540,7 +597,7 @@ class SafeBatchesService(DomainService):
                     stage = current['items'][index]
                     original = state['collections'].get(self.media.TASKS, {}).get(stage.get('task_id'), {})
                     ledger = state['collections'].get(self.broker.LEDGER, {}).get(stage.get('reservation_id'), {}) if self.broker else {}
-                    unknown = original.get('status') in {'RUNNING', 'SUCCEEDED'} or ledger.get('status') in {'DISPATCHED', 'UNKNOWN_UPSTREAM'}
+                    unknown = item['kind'] == 'STUDIO_IMAGE' or original.get('status') in {'RUNNING', 'SUCCEEDED'} or ledger.get('status') in {'DISPATCHED', 'UNKNOWN_UPSTREAM'}
                     self._receipt(stage, status='UNKNOWN' if unknown else 'FAILED', original_task_status=original.get('status'), cost_state=ledger.get('cost_state', 'KNOWN_ZERO_LOCAL'))
                     if current['status'] == 'RUNNING' and stage.get('claim') == claim:
                         def fail(r):
@@ -565,14 +622,15 @@ class SafeBatchesService(DomainService):
     def retry_failed(self, ctx, rid, body, reauthorize=lambda: None):
         value = VersionIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version); self._assert(ctx, row, reauthorize)
         if row['status'] != 'PARTIAL' or any(i['status'] in {'RUNNING', 'UNKNOWN'} for i in row['items']) or not any(i['status'] == 'FAILED' for i in row['items']): raise ValueError('BATCH_ONLY_FAILED_RETRY_UNKNOWN_MUST_RECONCILE')
+        if not any(i['status'] == 'FAILED' and step['input']['kind'] != 'STUDIO_IMAGE' for step, i in zip(row['snapshot']['steps'], row['items'])): raise ValueError('BATCH_STUDIO_IMAGE_NO_REPLAY')
         for step, item in zip(row['snapshot']['steps'], row['items']):
             if item['status'] == 'FAILED' and step['input']['kind'] == 'VOICE_REDO': self.voice.retry(ctx, rid, step['input'])
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             current = state['collections'][self.BATCHES][rid]
             def reset(r):
                 r.update(status='PREFLIGHT', confirmed=False)
-                for item in r['items']:
-                    if item['status'] == 'FAILED':
+                for step, item in zip(r['snapshot']['steps'], r['items']):
+                    if item['status'] == 'FAILED' and step['input']['kind'] != 'STUDIO_IMAGE':
                         # The prior attempt and original approval remain in receipts.
                         # Unknown outcomes cannot enter this failed-only branch.
                         item.update(status='PENDING', claim=None); item.pop('error_code', None); item.pop('task_id', None); item.pop('reservation_id', None)
@@ -587,6 +645,13 @@ class SafeBatchesService(DomainService):
             for index, item in enumerate(row['items']):
                 if item['status'] not in {'RUNNING', 'UNKNOWN'}: continue
                 if item.get('claim') in ACTIVE: raise ValueError('BATCH_ORIGINAL_EXECUTOR_STILL_ACTIVE')
+                if row['snapshot']['steps'][index]['input']['kind'] == 'STUDIO_IMAGE':
+                    job = self.studio_image.job(ctx, row, index)
+                    if job and job['status'] in {'AWAITING_REVIEW', 'APPROVED'}:
+                        changed.append((index, 'COMPLETED', self.studio_image.result(job), None))
+                    elif job and job['status'] in {'FAILED', 'CANCELLED'}:
+                        changed.append((index, 'FAILED', None, None))
+                    continue
                 if item.get('voice_job_id'):
                     task = self.voice.job(ctx, item['voice_job_id'], rid)
                 elif item.get('task_id'):
@@ -615,10 +680,37 @@ class SafeBatchesService(DomainService):
                 for index, status, result, ledger in changed:
                     item = r['items'][index]
                     item.update(status=status, result=result, claim=None)
+                    if result and result.get('image_job'):
+                        item.update(image_job_id=result['image_job']['id'], task_id=result['image_job']['id'])
                     item.pop('error_code', None)
                     self._receipt(item, status=status, reconciled_at=now(), reconciliation='ORIGINAL_EXECUTOR_RECEIPT', cost_state=ledger['cost_state'] if ledger else 'KNOWN_ZERO_LOCAL')
                 r['status'] = 'CANCELLED' if r['status'] == 'CANCELLED' else 'UNKNOWN' if any(i['status'] in {'RUNNING', 'UNKNOWN'} for i in r['items']) else 'READY' if any(i['status'] == 'PENDING' for i in r['items']) else 'PARTIAL' if any(i['status'] == 'FAILED' for i in r['items']) else 'COMPLETED'
             change_row(current, ctx.actor, value.expected_version, update); self._assert(ctx, current, reauthorize)
+            return self._public(current)
+
+    def _image_item(self, ctx, rid, index, reauthorize):
+        row = self._owned(ctx, rid); self._assert(ctx, row, reauthorize)
+        if (not 0 <= index < len(row['items']) or row['snapshot']['steps'][index]['input']['kind'] != 'STUDIO_IMAGE'
+                or row['items'][index]['status'] != 'COMPLETED' or row['status'] in {'CANCELLED', 'UNKNOWN'}):
+            raise ValueError('BATCH_STUDIO_IMAGE_RESULT_UNAVAILABLE')
+        return row
+
+    def preview_image(self, ctx, rid, index, reauthorize=lambda: None):
+        row = self._image_item(ctx, rid, index, reauthorize)
+        return self.studio_image.candidate(ctx, row, index, lambda: self._assert(ctx, row, reauthorize))
+
+    def approve_image(self, ctx, rid, body, reauthorize=lambda: None):
+        value = ImageReviewIn.model_validate(body)
+        row = self._image_item(ctx, rid, value.item_index, reauthorize); check_version(row, value.expected_version)
+        if value.snapshot_digest != row['snapshot_digest'] or row['items'][value.item_index].get('image_job_id') != value.job_id:
+            raise ValueError('BATCH_STUDIO_IMAGE_REVIEW_CHANGED')
+        done = self.studio_image.approve(ctx, row, value.item_index, value, lambda: self._assert(ctx, row, reauthorize))
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            current = state['collections'][self.BATCHES][rid]
+            def accept(r):
+                r['items'][value.item_index]['result'] = self.studio_image.result(done)
+                self._receipt(r['items'][value.item_index], status='COMPLETED', original_job_status=done['status'], human_review='EXPLICIT_APPROVAL')
+            change_row(current, ctx.actor, value.expected_version, accept); self._assert(ctx, current, reauthorize)
             return self._public(current)
 
     def download(self, ctx, rid, index, reauthorize=lambda: None):
