@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "seed_source": "Previously recovered public c40 object closure; no network fetch in this task",
+  "base": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+  "base_tree": "d1e9a1da44cc6beca2fa8daf6fb0e0a719c5b704",
+  "base_object_count": 27895,
+  "base_only_objects_equal_reachable_set": true,
+  "accepted_commits_absent_before_fetch": {
+    "3300636a91761f59bb150b9f871327a9574cfe62": 1,
+    "16f0e8db40929a2494fe0c0c01255087709afbfb": 1,
+    "3c4dd726225e96719917e52f43f485c3f184e6b4": 1,
+    "faeb4d975c4fb44db39132538371f01658d2ff18": 1,
+    "0574ff74e4d0b40472d26a737172bfac7fec7f5f": 1
+  },
+  "bundle_prerequisites": [
+    "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+  ],
+  "bundle_pack_object_count": 50,
+  "after_object_count": 27945,
+  "introduced_by_type": {
+    "commit": 5,
+    "tree": 26,
+    "blob": 19
+  },
+  "all_new_object_payloads_sha256_verified": true,
+  "tip": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+  "tree": "6c4e7ebd30a1835457ab16787026ad7e7b7fefa1",
+  "no_alternates": true,
+  "no_shallow": true,
+  "no_replace_objects": true,
+  "fsck_full_strict_exit": 0,
+  "merge_tree_recomputed_equal": true,
+  "changed_paths": 17,
+  "all_other_base_source_entries_identical": true,
+  "exact_original_commit_identities_preserved": true,
+  "active_main_head_observed": "3c4dd726225e96719917e52f43f485c3f184e6b4",
+  "active_main_tree_observed": "c261451fa2f181392d6935fe27627e4925cfc196",
+  "active_workspaces_mutated": false,
+  "remote_write": false
+}

@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "status": "PREPARED_LOCAL_REVIEWED_LIMITED_INCREMENT_NOT_PUBLISHED",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_branch": "archive/verified-studio-v2-20261017-5a6f697",
+  "archive_parent": "271f2e2f1ce2ee7c75c07d275b9945e2a92898f2",
+  "archive_parent_tree": "03e544918d50ceb3995ca19ee5b36b853a3ec1a8",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-template-public-reviewed-0574ff74",
+  "product_base": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+  "product_tip": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+  "product_tree": "6c4e7ebd30a1835457ab16787026ad7e7b7fefa1",
+  "template_commit": "3300636a91761f59bb150b9f871327a9574cfe62",
+  "public_manifest_commit": "16f0e8db40929a2494fe0c0c01255087709afbfb",
+  "merge_commit": "3c4dd726225e96719917e52f43f485c3f184e6b4",
+  "capacity_fix": "faeb4d975c4fb44db39132538371f01658d2ff18",
+  "same_batch_fix": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+  "bundle_ref": "refs/heads/work/v2-template-review-fixes-20261020",
+  "local_verified_ref": "refs/heads/archive/template-public-0574-verified",
+  "bundle_filename": "studio-v2-c40-to-0574.bundle",
+  "bundle_sha256": "582654d99249f9400e4ba125f82fc97a280d44a2a2b2bce52c4c902cc28286f9",
+  "unique_external_prerequisite": "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b",
+  "bundle_commit_count": 5,
+  "new_object_count": 50,
+  "introduced_objects_by_type": {
+    "commit": 5,
+    "tree": 26,
+    "blob": 19
+  },
+  "introduced_objects_file": "introduced-objects.json",
+  "object_serialization": "Raw Git object payload for all types, including trees",
+  "commit_graph": [
+    {
+      "commit": "3300636a91761f59bb150b9f871327a9574cfe62",
+      "tree": "1e3ded4edacefda185d701390e9e61d2d8f3171d",
+      "parents": [
+        "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+      ],
+      "subject": "feat(graph): preserve author groups and notes in text templates"
+    },
+    {
+      "commit": "16f0e8db40929a2494fe0c0c01255087709afbfb",
+      "tree": "1a0acbf75e4a831b029420099f16142322719d8d",
+      "parents": [
+        "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+      ],
+      "subject": "build(public): close reviewed c40 source and Docker inputs"
+    },
+    {
+      "commit": "3c4dd726225e96719917e52f43f485c3f184e6b4",
+      "tree": "c261451fa2f181392d6935fe27627e4925cfc196",
+      "parents": [
+        "3300636a91761f59bb150b9f871327a9574cfe62",
+        "16f0e8db40929a2494fe0c0c01255087709afbfb"
+      ],
+      "subject": "Merge reviewed c40 PUBLIC closure into isolated V2 development"
+    },
+    {
+      "commit": "faeb4d975c4fb44db39132538371f01658d2ff18",
+      "tree": "dc99e3b5eeb2253a550118da35a1aaa3c7489d22",
+      "parents": [
+        "3c4dd726225e96719917e52f43f485c3f184e6b4"
+      ],
+      "subject": "fix(graph): use owner-compatible template capacity admission"
+    },
+    {
+      "commit": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+      "tree": "6c4e7ebd30a1835457ab16787026ad7e7b7fefa1",
+      "parents": [
+        "faeb4d975c4fb44db39132538371f01658d2ff18"
+      ],
+      "subject": "fix(graph): retire template consent on synchronous draft changes"
+    }
+  ],
+  "changed_source_file_count": 17,
+  "file_mapping": [
+    {
+      "path": "docs/delivery/v2-development/PUBLIC_BUILD_C40_CLOSURE_20261020.md",
+      "mode": "100644",
+      "oid": "6b21d147fd61adbc128fbc6281da6f1981c229f5",
+      "bytes": 9583,
+      "sha256": "b07f18e8faa604872ec3a5f0c06dcf82a7af56fa525cffd1a5953d64132b72c5",
+      "previous_blob": null
+    },
+    {
+      "path": "docs/v2/GRAPH_TEMPLATE_OWNER_CAPACITY_FIX_20261020.md",
+      "mode": "100644",
+      "oid": "72d876eb1ffdf75dd05295310278f798f419a7a4",
+      "bytes": 2099,
+      "sha256": "094cbd9015bd209e3da898371b7ca75e2fadbed4614c64889b3fd9ba2551a898",
+      "previous_blob": null
+    },
+    {
+      "path": "docs/v2/GRAPH_TEMPLATE_SAME_BATCH_GUARD_FIX_20261020.md",
+      "mode": "100644",
+      "oid": "73d31e2d3b738386483f91d5988a5ade9ae96bb3",
+      "bytes": 2980,
+      "sha256": "746697d97c4659ba83a03dffa3c74b45eb3cf308769d2c00421663b35b7b5ce9",
+      "previous_blob": null
+    },
+    {
+      "path": "docs/v2/GRAPH_TEXT_TEMPLATE_PRESENTATION_20261020.md",
+      "mode": "100644",
+      "oid": "e49aedcfdf29c41fd9da0765318c35fdd8c155e8",
+      "bytes": 6005,
+      "sha256": "41348e02deb905180bb1f1db4c07450d58ccc4ddd32495c27bcf73d53f626080",
+      "previous_blob": null
+    },
+    {
+      "path": "frontend/src/creative/GraphTextTemplateCapacity.integration.test.tsx",
+      "mode": "100644",
+      "oid": "91917ce50fbe3775b8159f4443b97a2452c26ef8",
+      "bytes": 2146,
+      "sha256": "632a54850e839d793335e7a8e1e24fbdc09f17bc6a4aca07030013cca01a1bcc",
+      "previous_blob": null
+    },
+    {
+      "path": "frontend/src/creative/GraphTextTemplateController.integration.test.tsx",
+      "mode": "100644",
+      "oid": "98695e1803f00ac76c1e4b79b81257256f1450ad",
+      "bytes": 4134,
+      "sha256": "8b3743d572f078b432709463c06072bb594c3b2ba56b88844c23a001097035d7",
+      "previous_blob": "abb35ceac6b9608b9e495877244640ee0367fc56"
+    },
+    {
+      "path": "frontend/src/creative/GraphTextTemplateController.sameBatch.additive.test.tsx",
+      "mode": "100644",
+      "oid": "d86c922f7715bb27a7e0760c4e363301b3413dd4",
+      "bytes": 4287,
+      "sha256": "f678e7db8d1e4b4cc7428694383b71df65f1a45c018855ecb7b100b9cf609ce0",
+      "previous_blob": null
+    },
+    {
+      "path": "frontend/src/creative/GraphTextTemplateTools.additive.test.tsx",
+      "mode": "100644",
+      "oid": "266c23ad3c91cc7b92560b7ab4bb15ce664a1723",
+      "bytes": 4514,
+      "sha256": "ea780a933e86963703843d60f2eddd0691f330d073f38664f7208a53ce56a6df",
+      "previous_blob": "adaa0fc652c28615c4fede34270e0228cebfbbd3"
+    },
+    {
+      "path": "frontend/src/creative/GraphTextTemplateTools.tsx",
+      "mode": "100644",
+      "oid": "bb36173a72f0e66147a51cf34f76cdf6d0afaf83",
+      "bytes": 5813,
+      "sha256": "715d428d9143fff805db5bd29452aa59c651f6599f40c2d9abca44bdae845186",
+      "previous_blob": "793ffe1341b74643389750dd3bfa728afc5c59a1"
+    },
+    {
+      "path": "frontend/src/creative/graphTextTemplateCapacity.testFixtures.ts",
+      "mode": "100644",
+      "oid": "1f082359fd47b5b69a7c114d9ddfc289487fa324",
+      "bytes": 1065,
+      "sha256": "d6f50b690330279064666e8697a2a1f3e1e641211e0bed1b5eda9cd6065e3ea4",
+      "previous_blob": null
+    },
+    {
+      "path": "frontend/src/creative/graphTextTemplates.additive.test.ts",
+      "mode": "100644",
+      "oid": "12c878e1c79654a867a35406b275cf8ddccc7872",
+      "bytes": 9610,
+      "sha256": "2a0ce51c7a22fddddb2dcf5ee707199af6503805c66a62d52d6e99759fc44086",
+      "previous_blob": "75fa816d419ea3807b2cc2a152391a1c220b8e07"
+    },
+    {
+      "path": "frontend/src/creative/graphTextTemplates.ownerCapacity.additive.test.ts",
+      "mode": "100644",
+      "oid": "0a034f3df42fa8ae577d27fc3809010996f12e3c",
+      "bytes": 1282,
+      "sha256": "d2bed3d7ed555fcdc8647672b66c9174339f540ac5708fbb49d7a677236649b2",
+      "previous_blob": null
+    },
+    {
+      "path": "frontend/src/creative/graphTextTemplates.ts",
+      "mode": "100644",
+      "oid": "ed647c7fca718e963bcb5af99142a54f033a00c4",
+      "bytes": 6543,
+      "sha256": "0423113a16b72cf282bb1669c00599dcb0bd67922cabd500857e3107e4451bb1",
+      "previous_blob": "191aeba1600b8ce9b3f0f3c8a2441b8767d63b67"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "mode": "100644",
+      "oid": "5d80b4885bc0fbe3d41bdde37d3af5f2a4d9fa30",
+      "bytes": 61554,
+      "sha256": "0a40bbec20056a0fba774c3c8a1b381c2e14603102ae9258bbcceff171ad248d",
+      "previous_blob": "8634c41bbbc2fd74e12d0a1c75465a71c4ad7ba6"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "oid": "d6d18b8ec9d2620b6b318565d18f8e1253d31f0e",
+      "bytes": 104150,
+      "sha256": "7ac7df271e4e181a1411b255a77fa017d724ff29ed534b62c721ec816f880380",
+      "previous_blob": "60c898343df5f15f5f8d90a70b8b8d70fdb9fc37"
+    },
+    {
+      "path": "packaging/public-build.json",
+      "mode": "100644",
+      "oid": "dbbea2cd1cdabdf7458c16dc8dc8ad0fad796ee1",
+      "bytes": 27345,
+      "sha256": "93802ec90f75adf3a7769ae6c2896e906492f6937590a3c196c61fbdd3df64f9",
+      "previous_blob": "f20021282b670cf18fc100e8159bce65664d20cf"
+    },
+    {
+      "path": "tests/test_public_build_c40_closure.py",
+      "mode": "100644",
+      "oid": "12504557ca7805c30a82d7ce3cd603d8804f9a4c",
+      "bytes": 7002,
+      "sha256": "cba290333eac7a4069969124c2e80721aeb360612f08a39eb57bb1bac91b3253",
+      "previous_blob": null
+    }
+  ],
+  "all_other_base_source_entries_identical": true,
+  "source_snapshot": "source-delta.zip",
+  "evidence_zip": "evidence-exact.zip",
+  "evidence_original_file_count": 172,
+  "evidence_zip_entry_count": 182,
+  "original_registry_entries_verified": 213,
+  "original_evidence_bytes_modified": false,
+  "base_only_restore": "base-only-restore.json",
+  "acceptance_limits": [
+    "Real Host unverified; historical fixtures static/mock/synthetic only",
+    "PostgreSQL and full E2E NOT_ACCEPTED",
+    "Native symlink BLOCKED_ENVIRONMENT_WINERROR_1314",
+    "No full/concurrent build for this archive",
+    "No real model/provider/GPU or paid API execution",
+    "No Windows installer/container/wheel/sdist Release acceptance"
+  ],
+  "excluded": [
+    "Seven uncommitted Storyboard files",
+    "New dual canvas work",
+    "Post-c40 DSH6232/725/6c857 interactive implementations",
+    "Dependencies, builds, runtime DBs, user projects, credentials, internal chat, handoff/coordination notes"
+  ],
+  "publication": {
+    "remote_mutations": 0,
+    "pushed": false,
+    "new_remote_commit": null,
+    "earlier_blob_attempt": "DENIED_NOT_EXECUTED_NO_RETRY",
+    "parent_review_pending": true
+  },
+  "payload_hashes": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "git_blob": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+    },
+    {
+      "path": "base-only-fsck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "base-only-restore.json",
+      "bytes": 1525,
+      "sha256": "8ab366ed74e9f4e483504210b0dd99bb42946513775bdd671f73507468a1934a",
+      "git_blob": "7aba0ccf27e866f377313e26f9360b0b4d64cf49"
+    },
+    {
+      "path": "bundle-verify.log",
+      "bytes": 379,
+      "sha256": "400f8846b59d06380ab96d4d63a323c7ec20b367cce9f2b2a566f44348ecf125",
+      "git_blob": "8b66657ef742a5db99b27d93b2aa6452d41ac11d"
+    },
+    {
+      "path": "commit-graph.json",
+      "bytes": 1473,
+      "sha256": "9d36fff7ae34c0538bb0311fb671392f6eb6d29b4330b2583a68031de301ca0c",
+      "git_blob": "2e45a61e90f2682a89d4c15a065e397554099cc6"
+    },
+    {
+      "path": "evidence-exact.zip",
+      "bytes": 1195115,
+      "sha256": "abd7c59398dea7c4ffce4a2259f19c1e7e6cb7c5bd082899f703fa3749b7d5ab",
+      "git_blob": "1223a6cf62aa0894441f57ab0d5dbfa9e3ad9931"
+    },
+    {
+      "path": "evidence-index.json",
+      "bytes": 69419,
+      "sha256": "ce1cb04428f7bae598fde752568d61e8ef1549ef0bac2678df0070cff161bd09",
+      "git_blob": "14d864fc814b9fa5181b511ee77ce657086b2c8c"
+    },
+    {
+      "path": "introduced-objects.json",
+      "bytes": 9531,
+      "sha256": "658ce9fa680d276fb1069c8cd2df88d81b08fbdf3e46a35ffda9e842da3f5055",
+      "git_blob": "536179eb8b1ee12e8d4a149a18063d66f78f2d64"
+    },
+    {
+      "path": "public-content-audit.json",
+      "bytes": 894,
+      "sha256": "119fbfc33f5771f30663a6f06a28ce4b1d0dfa6f2eaf5c3b5150842ae8881081",
+      "git_blob": "d8b1aa8e1629676d9e4d5dc1fcef768b6b81d907"
+    },
+    {
+      "path": "public-parent-read.json",
+      "bytes": 317,
+      "sha256": "a83e110c26bfe751eee2f7d876b95221bf76c179618493392aa784bd1e82098f",
+      "git_blob": "d813c713576f86dec4049264c4084c9f825bcd4a"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 6307,
+      "sha256": "2de8f8222849bde2f2d6c9aa4037fb9d6b3208e48e6f82b98012a0430e5c25e5",
+      "git_blob": "bdf4f6e1561206be270fe11808e3a1c78b740304"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2717,
+      "sha256": "4523add1c4b7b9711e8d09591fa00e02457e6f83ebc6eee1b37ecae919345eee",
+      "git_blob": "a6b4d77217fa709861d2b987c18033942f709abc"
+    },
+    {
+      "path": "source-delta.zip",
+      "bytes": 75127,
+      "sha256": "8e93e4507bb1e0233841307a0ed2e148d730a9033edd976e78e12488fce0274f",
+      "git_blob": "778069cf626c670ef6ca175d7d5932bc0fcc6434"
+    },
+    {
+      "path": "source-files.json",
+      "bytes": 5293,
+      "sha256": "cbdf6131366931459372474f68b216e245a64787e531ccf0871252eec1fd183f",
+      "git_blob": "69ab5942fe2d88e324ddd3a20e81d6e3b38b8126"
+    },
+    {
+      "path": "studio-v2-c40-to-0574.bundle",
+      "bytes": 28429,
+      "sha256": "582654d99249f9400e4ba125f82fc97a280d44a2a2b2bce52c4c902cc28286f9",
+      "git_blob": "3b32036bc1b38ff34bd618b2e019cb9dddfd8984"
+    },
+    {
+      "path": "verification-result.json",
+      "bytes": 461,
+      "sha256": "fc123d4d6e8b120377869afe79a36ed28931aebbd5b9dc08d03e389f1559abac",
+      "git_blob": "611afc27542b9f4320a7a2f0c217fc46248fe782"
+    },
+    {
+      "path": "verify_package.py",
+      "bytes": 7380,
+      "sha256": "8a9b6ba453b76569006e3ef916ff6651fd30dfdbe817fd0676abf1f6c822e959",
+      "git_blob": "1b01b1c3b7a06dbff6b84ffa24132216f2ac1f97"
+    }
+  ]
+}

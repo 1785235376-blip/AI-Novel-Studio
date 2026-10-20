@@ -1,0 +1,24 @@
+{
+  "status": "PASS_BOUNDED_MANUAL_AND_PATTERN_REVIEW",
+  "introduced_raw_objects_scanned": 50,
+  "selected_evidence_files_scanned": 172,
+  "high_risk_credential_patterns": [
+    "private-key",
+    "github-token",
+    "openai-key",
+    "aws-key",
+    "credential-url",
+    "long-bearer",
+    "jwt"
+  ],
+  "credential_findings": 0,
+  "forbidden_path_findings": 0,
+  "scope_basis": "Exact five-commit delta, tracked source/tests/docs, deterministic synthetic fixtures and explicit test outputs; no active worktree data read",
+  "original_bytes_retained": true,
+  "user_projects_runtime_data_keys_chat_exports_excluded": true,
+  "handoff_coordination_notes_excluded": true,
+  "only_fixed_git_objects_and_allowlisted_evidence": true,
+  "baseline_objects_not_republished": true,
+  "historical_synthetic_mock_host_only": true,
+  "not_a_general_security_certification": true
+}

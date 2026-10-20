@@ -1,0 +1,138 @@
+[
+  {
+    "path": "docs/delivery/v2-development/PUBLIC_BUILD_C40_CLOSURE_20261020.md",
+    "mode": "100644",
+    "oid": "6b21d147fd61adbc128fbc6281da6f1981c229f5",
+    "bytes": 9583,
+    "sha256": "b07f18e8faa604872ec3a5f0c06dcf82a7af56fa525cffd1a5953d64132b72c5",
+    "previous_blob": null
+  },
+  {
+    "path": "docs/v2/GRAPH_TEMPLATE_OWNER_CAPACITY_FIX_20261020.md",
+    "mode": "100644",
+    "oid": "72d876eb1ffdf75dd05295310278f798f419a7a4",
+    "bytes": 2099,
+    "sha256": "094cbd9015bd209e3da898371b7ca75e2fadbed4614c64889b3fd9ba2551a898",
+    "previous_blob": null
+  },
+  {
+    "path": "docs/v2/GRAPH_TEMPLATE_SAME_BATCH_GUARD_FIX_20261020.md",
+    "mode": "100644",
+    "oid": "73d31e2d3b738386483f91d5988a5ade9ae96bb3",
+    "bytes": 2980,
+    "sha256": "746697d97c4659ba83a03dffa3c74b45eb3cf308769d2c00421663b35b7b5ce9",
+    "previous_blob": null
+  },
+  {
+    "path": "docs/v2/GRAPH_TEXT_TEMPLATE_PRESENTATION_20261020.md",
+    "mode": "100644",
+    "oid": "e49aedcfdf29c41fd9da0765318c35fdd8c155e8",
+    "bytes": 6005,
+    "sha256": "41348e02deb905180bb1f1db4c07450d58ccc4ddd32495c27bcf73d53f626080",
+    "previous_blob": null
+  },
+  {
+    "path": "frontend/src/creative/GraphTextTemplateCapacity.integration.test.tsx",
+    "mode": "100644",
+    "oid": "91917ce50fbe3775b8159f4443b97a2452c26ef8",
+    "bytes": 2146,
+    "sha256": "632a54850e839d793335e7a8e1e24fbdc09f17bc6a4aca07030013cca01a1bcc",
+    "previous_blob": null
+  },
+  {
+    "path": "frontend/src/creative/GraphTextTemplateController.integration.test.tsx",
+    "mode": "100644",
+    "oid": "98695e1803f00ac76c1e4b79b81257256f1450ad",
+    "bytes": 4134,
+    "sha256": "8b3743d572f078b432709463c06072bb594c3b2ba56b88844c23a001097035d7",
+    "previous_blob": "abb35ceac6b9608b9e495877244640ee0367fc56"
+  },
+  {
+    "path": "frontend/src/creative/GraphTextTemplateController.sameBatch.additive.test.tsx",
+    "mode": "100644",
+    "oid": "d86c922f7715bb27a7e0760c4e363301b3413dd4",
+    "bytes": 4287,
+    "sha256": "f678e7db8d1e4b4cc7428694383b71df65f1a45c018855ecb7b100b9cf609ce0",
+    "previous_blob": null
+  },
+  {
+    "path": "frontend/src/creative/GraphTextTemplateTools.additive.test.tsx",
+    "mode": "100644",
+    "oid": "266c23ad3c91cc7b92560b7ab4bb15ce664a1723",
+    "bytes": 4514,
+    "sha256": "ea780a933e86963703843d60f2eddd0691f330d073f38664f7208a53ce56a6df",
+    "previous_blob": "adaa0fc652c28615c4fede34270e0228cebfbbd3"
+  },
+  {
+    "path": "frontend/src/creative/GraphTextTemplateTools.tsx",
+    "mode": "100644",
+    "oid": "bb36173a72f0e66147a51cf34f76cdf6d0afaf83",
+    "bytes": 5813,
+    "sha256": "715d428d9143fff805db5bd29452aa59c651f6599f40c2d9abca44bdae845186",
+    "previous_blob": "793ffe1341b74643389750dd3bfa728afc5c59a1"
+  },
+  {
+    "path": "frontend/src/creative/graphTextTemplateCapacity.testFixtures.ts",
+    "mode": "100644",
+    "oid": "1f082359fd47b5b69a7c114d9ddfc289487fa324",
+    "bytes": 1065,
+    "sha256": "d6f50b690330279064666e8697a2a1f3e1e641211e0bed1b5eda9cd6065e3ea4",
+    "previous_blob": null
+  },
+  {
+    "path": "frontend/src/creative/graphTextTemplates.additive.test.ts",
+    "mode": "100644",
+    "oid": "12c878e1c79654a867a35406b275cf8ddccc7872",
+    "bytes": 9610,
+    "sha256": "2a0ce51c7a22fddddb2dcf5ee707199af6503805c66a62d52d6e99759fc44086",
+    "previous_blob": "75fa816d419ea3807b2cc2a152391a1c220b8e07"
+  },
+  {
+    "path": "frontend/src/creative/graphTextTemplates.ownerCapacity.additive.test.ts",
+    "mode": "100644",
+    "oid": "0a034f3df42fa8ae577d27fc3809010996f12e3c",
+    "bytes": 1282,
+    "sha256": "d2bed3d7ed555fcdc8647672b66c9174339f540ac5708fbb49d7a677236649b2",
+    "previous_blob": null
+  },
+  {
+    "path": "frontend/src/creative/graphTextTemplates.ts",
+    "mode": "100644",
+    "oid": "ed647c7fca718e963bcb5af99142a54f033a00c4",
+    "bytes": 6543,
+    "sha256": "0423113a16b72cf282bb1669c00599dcb0bd67922cabd500857e3107e4451bb1",
+    "previous_blob": "191aeba1600b8ce9b3f0f3c8a2441b8767d63b67"
+  },
+  {
+    "path": "frontend/src/creative/studioGraphEditorView.tsx",
+    "mode": "100644",
+    "oid": "5d80b4885bc0fbe3d41bdde37d3af5f2a4d9fa30",
+    "bytes": 61554,
+    "sha256": "0a40bbec20056a0fba774c3c8a1b381c2e14603102ae9258bbcceff171ad248d",
+    "previous_blob": "8634c41bbbc2fd74e12d0a1c75465a71c4ad7ba6"
+  },
+  {
+    "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+    "mode": "100644",
+    "oid": "d6d18b8ec9d2620b6b318565d18f8e1253d31f0e",
+    "bytes": 104150,
+    "sha256": "7ac7df271e4e181a1411b255a77fa017d724ff29ed534b62c721ec816f880380",
+    "previous_blob": "60c898343df5f15f5f8d90a70b8b8d70fdb9fc37"
+  },
+  {
+    "path": "packaging/public-build.json",
+    "mode": "100644",
+    "oid": "dbbea2cd1cdabdf7458c16dc8dc8ad0fad796ee1",
+    "bytes": 27345,
+    "sha256": "93802ec90f75adf3a7769ae6c2896e906492f6937590a3c196c61fbdd3df64f9",
+    "previous_blob": "f20021282b670cf18fc100e8159bce65664d20cf"
+  },
+  {
+    "path": "tests/test_public_build_c40_closure.py",
+    "mode": "100644",
+    "oid": "12504557ca7805c30a82d7ce3cd603d8804f9a4c",
+    "bytes": 7002,
+    "sha256": "cba290333eac7a4069969124c2e80721aeb360612f08a39eb57bb1bac91b3253",
+    "previous_blob": null
+  }
+]

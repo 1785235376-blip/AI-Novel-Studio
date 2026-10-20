@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "product_tip": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+  "product_tree": "6c4e7ebd30a1835457ab16787026ad7e7b7fefa1",
+  "commits": 5,
+  "introduced_objects": 50,
+  "types": {
+    "commit": 5,
+    "tree": 26,
+    "blob": 19
+  },
+  "source_files": 17,
+  "evidence_entries": 182,
+  "evidence_original_files": 172,
+  "reviewer_module_source_hashes_verified": 392,
+  "no_alternates": true,
+  "fsck_full_strict": "PASS"
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "commit": "3300636a91761f59bb150b9f871327a9574cfe62",
+    "tree": "1e3ded4edacefda185d701390e9e61d2d8f3171d",
+    "parents": [
+      "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+    ],
+    "subject": "feat(graph): preserve author groups and notes in text templates"
+  },
+  {
+    "commit": "16f0e8db40929a2494fe0c0c01255087709afbfb",
+    "tree": "1a0acbf75e4a831b029420099f16142322719d8d",
+    "parents": [
+      "c40aec6d7ccf5162bef7a2a054ff45b6baf2b13b"
+    ],
+    "subject": "build(public): close reviewed c40 source and Docker inputs"
+  },
+  {
+    "commit": "3c4dd726225e96719917e52f43f485c3f184e6b4",
+    "tree": "c261451fa2f181392d6935fe27627e4925cfc196",
+    "parents": [
+      "3300636a91761f59bb150b9f871327a9574cfe62",
+      "16f0e8db40929a2494fe0c0c01255087709afbfb"
+    ],
+    "subject": "Merge reviewed c40 PUBLIC closure into isolated V2 development"
+  },
+  {
+    "commit": "faeb4d975c4fb44db39132538371f01658d2ff18",
+    "tree": "dc99e3b5eeb2253a550118da35a1aaa3c7489d22",
+    "parents": [
+      "3c4dd726225e96719917e52f43f485c3f184e6b4"
+    ],
+    "subject": "fix(graph): use owner-compatible template capacity admission"
+  },
+  {
+    "commit": "0574ff74e4d0b40472d26a737172bfac7fec7f5f",
+    "tree": "6c4e7ebd30a1835457ab16787026ad7e7b7fefa1",
+    "parents": [
+      "faeb4d975c4fb44db39132538371f01658d2ff18"
+    ],
+    "subject": "fix(graph): retire template consent on synchronous draft changes"
+  }
+]
