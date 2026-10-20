@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_SCHEMA7_LOCAL_AUTHOR_DRAFT_RECOVERY",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "28ff2fdbea9cb9b64040aa24dbce284f3b146a81",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-condition-draft-reviewed-7883878a",
+  "product_base": "503e4a207de487eb8d6879790713c29f805a71ca",
+  "product_tip": "7883878ae862326ff3ca256d9a111d8462920fe0",
+  "product_tree": "e8d3774ccc3e9e75d7190b3429636ce77f9d807a",
+  "bundle_ref": "refs/heads/work/v2-condition-draft-after-trim-20261020",
+  "bundle_filename": "studio-v2-503e4a20-to-7883878a.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "503e4a207de487eb8d6879790713c29f805a71ca",
+  "commit_mappings": [
+    {
+      "source": "d58ef8a97bdfe3bc1380ef5eceb929f6b66e4b99",
+      "source_parent": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+      "adopted": "7883878ae862326ff3ca256d9a111d8462920fe0",
+      "adopted_parent": "503e4a207de487eb8d6879790713c29f805a71ca",
+      "stable_patch_id": "36955b29bcbdfcd92e4e610a1101a7dc49e94a91"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "docs/graph_condition_draft_recovery.md",
+      "mode": "100644",
+      "blob": "6a8d21ce74a8bcd34bddde76657c07dc8231bbe9",
+      "bytes": 2988,
+      "sha256": "3e5dfef1fc952ca37c813b8daae682a6fca5320c4be4f2e39a6474e6660400c9",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.conditions.test.tsx",
+      "mode": "100644",
+      "blob": "095448fbbcd398ff553d1c516c51e673461d1355",
+      "bytes": 14335,
+      "sha256": "8f971d69d1dfa4b5333d1b0a81eb94027bd7b81b7e9f6314e81d619f76db274f",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx",
+      "mode": "100644",
+      "blob": "64d650cf0f38d98348f911004ada58a9c1726ae6",
+      "bytes": 5362,
+      "sha256": "12b368708d65671bef42435a5c9fb255be86ba4595f456148574ca8265ebdccf",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLocalDraft.ts",
+      "mode": "100644",
+      "blob": "15814ec5a19d04f13135da4376397978d3ecdf43",
+      "bytes": 4714,
+      "sha256": "6f915ce522378c93f9c2281ac1540b2cc643bd0ed65796dfd79a8f18c44035f5",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "blob": "5c14aad1b1dc6f97fb30fd081420c6469afb6591",
+      "bytes": 102270,
+      "sha256": "530cf08f29e953ce5f63fa865d8bc2ffe1c8afabe80cb24255adeb109b713fb7",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "7883878ae862326ff3ca256d9a111d8462920fe0",
+      "type": "commit",
+      "bytes": 255,
+      "sha256": "4c06dc9faceb213b50f2de858f44061df97f4a3fef1544d4df53e8559af8babf",
+      "path": ""
+    },
+    {
+      "oid": "e8d3774ccc3e9e75d7190b3429636ce77f9d807a",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "d141a1278ba49d49e3e0f6824bcdccfeb0a77394707e288ab61b99215317d231",
+      "path": ""
+    },
+    {
+      "oid": "98ad2d0360dfc7b584b867e19cf0a10257139c8b",
+      "type": "tree",
+      "bytes": 23634,
+      "sha256": "4d29cfe50bf594fadf8c2a25318b42cc558944454d93f48465a7c20167495c69",
+      "path": "docs"
+    },
+    {
+      "oid": "6a8d21ce74a8bcd34bddde76657c07dc8231bbe9",
+      "type": "blob",
+      "bytes": 2988,
+      "sha256": "3e5dfef1fc952ca37c813b8daae682a6fca5320c4be4f2e39a6474e6660400c9",
+      "path": "docs/graph_condition_draft_recovery.md"
+    },
+    {
+      "oid": "a103103ba5b0e2ec6f815b947b97e3610358f3be",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "b045685115bfe6ae309075d0e9566779dba7121f2b4b8fc68cc70c773be67bd0",
+      "path": "frontend"
+    },
+    {
+      "oid": "49ae685c03c98bcb4d708693443f877aca69bb93",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "4e3ce9327db83e6dfe97c1b45dcce8509a6c2f725f92aa8195718e5a27ecfc1a",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "c428625cf14f854b7db61d5ee3ef78f52b89750f",
+      "type": "tree",
+      "bytes": 52358,
+      "sha256": "f9c31d53cbcd3ad6db23f40cda1ba75942911ae682dd730b138e9922fb631423",
+      "path": "frontend/src/creative"
+    },
+    {
+      "oid": "095448fbbcd398ff553d1c516c51e673461d1355",
+      "type": "blob",
+      "bytes": 14335,
+      "sha256": "8f971d69d1dfa4b5333d1b0a81eb94027bd7b81b7e9f6314e81d619f76db274f",
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.conditions.test.tsx"
+    },
+    {
+      "oid": "64d650cf0f38d98348f911004ada58a9c1726ae6",
+      "type": "blob",
+      "bytes": 5362,
+      "sha256": "12b368708d65671bef42435a5c9fb255be86ba4595f456148574ca8265ebdccf",
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx"
+    },
+    {
+      "oid": "15814ec5a19d04f13135da4376397978d3ecdf43",
+      "type": "blob",
+      "bytes": 4714,
+      "sha256": "6f915ce522378c93f9c2281ac1540b2cc643bd0ed65796dfd79a8f18c44035f5",
+      "path": "frontend/src/creative/studioGraphLocalDraft.ts"
+    },
+    {
+      "oid": "5c14aad1b1dc6f97fb30fd081420c6469afb6591",
+      "type": "blob",
+      "bytes": 102270,
+      "sha256": "530cf08f29e953ce5f63fa865d8bc2ffe1c8afabe80cb24255adeb109b713fb7",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts"
+    }
+  ],
+  "new_object_count": 11,
+  "no_extra_packed_objects": true,
+  "exact_original_binary_patch": true,
+  "all_other_base_paths_unchanged": true,
+  "NLE_dependencies_replayed": false,
+  "author_evidence_hashes_verified": 43,
+  "independent_source_bindings_verified": 5,
+  "independent_groups_passed": 4,
+  "combined_validation": {
+    "status": "PASS",
+    "combined": "7883878ae862326ff3ca256d9a111d8462920fe0",
+    "frontend_JSDOM_localStorage_Mock_passed": 3,
+    "other_cases_skipped": 14,
+    "typescript_runs": 1,
+    "vite_build_runs": 1,
+    "results": {
+      "frontend": {
+        "exit": 0,
+        "seconds": 2.145,
+        "log": "frontend.log"
+      },
+      "typescript": {
+        "exit": 0,
+        "seconds": 20.674,
+        "log": "typescript.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.458,
+        "log": "build.log"
+      }
+    },
+    "real_File_API": false,
+    "real_Host": false,
+    "PostgreSQL": false,
+    "full_E2E": false,
+    "models_GPU": false,
+    "schema7_default": "OFF",
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-impact-decisions\\frontend\\node_modules"
+  },
+  "zip_payload_count": 74,
+  "zip_evidence_hashes": 73,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 5,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [
+      {
+        "file": "independent/review-handoff.json",
+        "json_path": "$.authorization"
+      }
+    ],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "prior_trim_path_count_correction": {
+    "path": "corrections/PATH_COUNT_CORRECTION.md",
+    "actual_paths": 11,
+    "historical_typo": 10,
+    "original_source_sha256": "8d3326d555ed99fb8ca12fbcedf9034eb231669dad1a082cf7168aea7d933e40",
+    "original_historical_records_and_published_hashes_unchanged": true
+  },
+  "acceptance_limits": [
+    "schema7 DEFAULT OFF",
+    "JSDOM/localStorage + Mock transport only",
+    "No new real File/API/Host/PG acceptance",
+    "Real legitimate Host recovery -> explicit Save BLOCKED/NOT_RUN; no verified session",
+    "Models/GPU/playback/render/export/fullGRAPH08/fullE2E NOT_ACCEPTED"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-503e4a20-to-7883878a.bundle",
+      "bytes": 7769,
+      "sha256": "2de0119a92530dd53d9f790e71a7f274a4f50c3db23859518beb5d3a47064f8a"
+    },
+    {
+      "path": "studio-v2-condition-draft-7883878a-tests-evidence-sanitized.zip",
+      "bytes": 603207,
+      "sha256": "dad616b6efe5b168fc4fd4fc6140474887dad2a5fe4e031771deff27a2bf169c"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3118,
+      "sha256": "3832163f748e1dee1a324daff43562f6ead16c0f1a2d814680583398a54f946d"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1863,
+      "sha256": "1463c0f1c5d8ae7d2ad0bd70bc34f65b799b385d27c01f1126dd5607b1208def"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
