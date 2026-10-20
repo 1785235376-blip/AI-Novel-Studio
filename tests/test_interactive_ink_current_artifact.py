@@ -148,10 +148,13 @@ def _export_current(e, row, value, target=TARGET):
 
 
 def _runtime_claim_expected():
-    status = evidence_for(TARGET)['TARGET_RUNTIME_EXECUTED']
-    if status == 'PASS':
-        return 'TARGET_RUNTIME_EXECUTED'
-    return 'BLOCKED_ENVIRONMENT' if status in {'BLOCKED_ENVIRONMENT', 'BLOCKED_AUTHORITY'} else 'NOT_RUN'
+    """Mirror InteractiveStoryService._runtime_claim: save/restore outranks runtime."""
+    evidence = evidence_for(TARGET)
+    for level in ('SAVE_RESTORE_VERIFIED', 'TARGET_RUNTIME_EXECUTED'):
+        if evidence.get(level) == 'PASS':
+            return level
+    blocked = evidence.get('TARGET_RUNTIME_EXECUTED') or evidence.get('SAVE_RESTORE_VERIFIED')
+    return 'BLOCKED_ENVIRONMENT' if blocked in {'BLOCKED_ENVIRONMENT', 'BLOCKED_AUTHORITY'} else 'NOT_RUN'
 
 
 # ---------------------------------------------------------------------------
