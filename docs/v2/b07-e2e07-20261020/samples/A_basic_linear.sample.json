@@ -9,49 +9,49 @@
     "speaker",
     "one_ending"
   ],
-  "generated_at_utc": "2026-10-20T07:24:19+00:00",
+  "generated_at_utc": "2026-10-20T07:25:35+00:00",
   "repo": {
-    "head_sha": "a96b7f2998bc15de119312df686ffdeacfe8485f",
+    "head_sha": "ebd0ea373e08f80a4f83187e6302e5307ce78cd0",
     "branch": "work/v2-b07-e2e-20261020"
   },
   "planning": {
-    "graph_id": "2c5feca5-3000-4850-9edc-2360d5038a5d",
+    "graph_id": "e7719c84-47ba-4e7f-97e6-653957647663",
     "graph_version": 1,
-    "root_node_id": "3e34cb75-e127-49ed-b1a4-585e2febc00c",
+    "root_node_id": "d943fe5e-15df-4c45-9166-1ca762b74eeb",
     "volume": {
-      "id": "eb66212e-b630-4106-8a40-01240dd91bd6",
+      "id": "cb1c5876-aa26-48ae-804d-78e1e86018a5",
       "version": 1
     },
     "chapter_node": {
-      "id": "54d9331f-56d2-452f-ab4e-fd642d8c13fa",
+      "id": "dacb8fef-a4fd-4c15-9996-b1bfca0d5e38",
       "version": 1
     },
-    "chapter_id": "r3-mounted-27d42394265f43f7b400d214af7f55c7:1",
+    "chapter_id": "r3-mounted-cf7e1501d22242ac90977a8c72f02abb:1",
     "scenes": [
       {
         "alias": "start",
-        "id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+        "id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
         "version": 1,
         "title": "场景 1 · 檐下",
         "level": "SCENE"
       },
       {
         "alias": "middle",
-        "id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+        "id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
         "version": 1,
         "title": "场景 2 · 灯下",
         "level": "SCENE"
       },
       {
         "alias": "late",
-        "id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+        "id": "adc594cf-594c-4152-beef-7fe833201fcc",
         "version": 1,
         "title": "场景 3 · 信末",
         "level": "SCENE"
       },
       {
         "alias": "finale",
-        "id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+        "id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
         "version": 1,
         "title": "场景 4 · 结局",
         "level": "SCENE"
@@ -59,26 +59,26 @@
     ]
   },
   "story": {
-    "id": "70efb94d-1580-4457-afda-880ff6dff61c",
+    "id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
     "version": 3,
     "status": "APPROVED",
     "title": "A · 檐下灯火（基础线性样例）",
-    "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+    "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
     "node_count": 4,
     "variable_count": 0,
     "max_steps": 8,
-    "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-    "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-    "review_preview_digest": "75443968182223933de4e6acf8b1b25ac2a4e6d4fb9c4d03adaa8fb8c4b4c5c0"
+    "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+    "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+    "review_preview_digest": "6a0c6d583cdc8d02ce8b479065cfe806d73ba140c0cdd9439c1415e0178f4558"
   },
   "spec": {
     "title": "A · 檐下灯火（基础线性样例）",
-    "graph_id": "2c5feca5-3000-4850-9edc-2360d5038a5d",
+    "graph_id": "e7719c84-47ba-4e7f-97e6-653957647663",
     "graph_version": 1,
-    "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+    "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
     "nodes": [
       {
-        "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+        "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
         "node_version": 1,
         "title": "第一幕 · 檐下",
         "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
@@ -90,14 +90,14 @@
           {
             "id": "to_middle",
             "label": "推门进去",
-            "target": "837a6780-d1e0-44ae-972a-202b5c007af8",
+            "target": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+        "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
         "node_version": 1,
         "title": "第二幕 · 灯下",
         "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
@@ -109,14 +109,14 @@
           {
             "id": "to_late",
             "label": "读完那封信",
-            "target": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+            "target": "adc594cf-594c-4152-beef-7fe833201fcc",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+        "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
         "node_version": 1,
         "title": "第三幕 · 信末",
         "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
@@ -128,14 +128,14 @@
           {
             "id": "to_finale",
             "label": "吹灭灯",
-            "target": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+            "target": "83cf616b-8c4a-46ae-825e-d24e3896133d",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+        "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
         "node_version": 1,
         "title": "结局 · 灯火",
         "dialogue": "屋里暗下来，雨声却暖了。",
@@ -155,7 +155,7 @@
     "warnings": [],
     "endings": [
       {
-        "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+        "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
         "ending": "灯火未熄",
         "choices": [
           "to_middle",
@@ -244,7 +244,7 @@
       "steps": 0,
       "expected_states": [
         {
-          "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+          "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
           "title": "第一幕 · 檐下",
           "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
           "character_id": "alice",
@@ -269,7 +269,7 @@
       ]
     },
     {
-      "id": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+      "id": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
       "kind": "ending_witness",
       "description": "Reach ending '灯火未熄' via the authoritative witness path.",
       "choices": [
@@ -280,7 +280,7 @@
       "steps": 3,
       "expected_states": [
         {
-          "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+          "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
           "title": "第一幕 · 檐下",
           "dialogue": "雨落在青石上。她把灯放在门口，像放下一句没说出口的话。",
           "character_id": "alice",
@@ -303,7 +303,7 @@
           "path": []
         },
         {
-          "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+          "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
           "title": "第二幕 · 灯下",
           "dialogue": "灯芯轻轻爆了一下。桌上摊着未写完的信。",
           "character_id": null,
@@ -328,7 +328,7 @@
           ]
         },
         {
-          "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+          "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
           "title": "第三幕 · 信末",
           "dialogue": "信末只有一行字：「若你看见这盏灯，就说明我到家了。」",
           "character_id": null,
@@ -354,7 +354,7 @@
           ]
         },
         {
-          "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+          "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
           "title": "结局 · 灯火",
           "dialogue": "屋里暗下来，雨声却暖了。",
           "character_id": null,
@@ -383,7 +383,7 @@
         "to_finale"
       ],
       "server": {
-        "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+        "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
         "status": "ENDING",
         "steps": 3,
         "variables": {},
@@ -391,7 +391,7 @@
         "disabled_choice_ids": []
       },
       "play": {
-        "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+        "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
         "status": "ENDING",
         "steps": 3,
         "variables": {},
@@ -402,7 +402,7 @@
     }
   ],
   "review": {
-    "preview_digest": "75443968182223933de4e6acf8b1b25ac2a4e6d4fb9c4d03adaa8fb8c4b4c5c0",
+    "preview_digest": "6a0c6d583cdc8d02ce8b479065cfe806d73ba140c0cdd9439c1415e0178f4558",
     "can_approve": true,
     "approved_version": 3,
     "approved_status": "APPROVED"
@@ -415,13 +415,13 @@
       "can_export_any": true,
       "story": {
         "title": "A · 檐下灯火（基础线性样例）",
-        "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+        "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
         "max_steps": 8,
         "nodes": 4,
         "variables": 0,
         "endings": 1,
-        "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-        "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd"
+        "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+        "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8"
       },
       "analysis": {
         "can_review": true,
@@ -432,7 +432,7 @@
       },
       "witness": [
         {
-          "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+          "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
           "ending": "灯火未熄",
           "choices": [
             "to_middle",
@@ -1171,10 +1171,10 @@
     "legacy": {
       "status": "EXPORTED",
       "target_id": null,
-      "filename": "interactive-story-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-      "sha256": "c68492d5eeca4e3ac18c263f874e3bea917b89f9fc59115726a816165b10f446",
+      "filename": "interactive-story-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+      "sha256": "d2da2895423d53fd2b253eb26bb190ab774771ac31a88c40a7c2eca82276a36b",
       "file_count": 13,
-      "preview_digest": "74a4cc0ede0cd2c68221278e0a25a9ff925e2f1820421a436dfb2214b4bf8fa2",
+      "preview_digest": "1e7f8d7e99c9595a01b9371df5bcbe94b649a2e5f554391c2b45df9ec14e3e6b",
       "can_export": true,
       "losses": [
         "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -1189,7 +1189,7 @@
       "available_targets": null,
       "archive": {
         "status": "PASS",
-        "prefix": "interactive-story-70efb94d-1580-4457-afda-880ff6dff61c/",
+        "prefix": "interactive-story-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/",
         "files": [
           {
             "path": "README.txt",
@@ -1199,12 +1199,12 @@
           {
             "path": "checksums.json",
             "bytes": 1081,
-            "sha256": "ff485b9cc1d1523e0a3611aef3c11533f6e6d08ed6b28e7dbd1b3dc0da7d31b4"
+            "sha256": "e909433181d0e8a11e996eefc82e482c12fc1ee893f63b010bef68036fd04026"
           },
           {
             "path": "compatibility.json",
             "bytes": 48274,
-            "sha256": "1370fe0d75a320f0e6bbd8995af128bba3d9cc5fd9ec4576eec8c4bc2b2a35f1"
+            "sha256": "ef8f4353dff35614d4bf6b858e30df6f33bb95524d888e2397d208130f76a80f"
           },
           {
             "path": "game/story.rpy",
@@ -1219,7 +1219,7 @@
           {
             "path": "godot/story.json",
             "bytes": 2197,
-            "sha256": "747edf93f13c886574d10d115707055dcd9fa2a1a5234a526c1faa2831f66773"
+            "sha256": "56da7d92d9323b0b490c93a32a830835af7eb6ac0472b2ea68e4f11d12e8bf38"
           },
           {
             "path": "godot/story.schema.json",
@@ -1239,7 +1239,7 @@
           {
             "path": "ink/validation.json",
             "bytes": 2175,
-            "sha256": "91d34049318ccc7fc51ae3b2428fb5be6c0e5a83d906cef7f163f132327b5a7f"
+            "sha256": "d99a9aa9fd7d9901b444231698e6ae7c4954e6e2c53343fed94e83db83672327"
           },
           {
             "path": "media-manifest.json",
@@ -1249,19 +1249,19 @@
           {
             "path": "source-receipt.json",
             "bytes": 409,
-            "sha256": "a50a95bd3c4607a0460b2407248a78e9601099e0dbe99dc51fc36255495e687c"
+            "sha256": "dba7da6ee411912af4b61f46d97b809f346ad9abc5873e9d75003aa49f55b14d"
           },
           {
             "path": "story.json",
             "bytes": 3133,
-            "sha256": "3a57bd37d50c26dd4390d69329ea5491c01aa0749bf37c43dde227a6aec5eed6"
+            "sha256": "e5b28a9942ae7e6da1d3148d20f445227bb9d32b177004c4d9ff64fe92a2036b"
           }
         ],
         "checks": [
           {
             "id": "single root folder",
             "status": "PASS",
-            "detail": "interactive-story-70efb94d-1580-4457-afda-880ff6dff61c"
+            "detail": "interactive-story-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
           },
           {
             "id": "legacy file set",
@@ -1491,17 +1491,17 @@
         ],
         "checksums": {
           "README.txt": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4",
-          "compatibility.json": "1370fe0d75a320f0e6bbd8995af128bba3d9cc5fd9ec4576eec8c4bc2b2a35f1",
+          "compatibility.json": "ef8f4353dff35614d4bf6b858e30df6f33bb95524d888e2397d208130f76a80f",
           "game/story.rpy": "08aa9aac913512eec6a95adc006692a506e3b2e2ebf53c4b4a9ee7bd977bda3a",
           "godot/README.txt": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81",
-          "godot/story.json": "747edf93f13c886574d10d115707055dcd9fa2a1a5234a526c1faa2831f66773",
+          "godot/story.json": "56da7d92d9323b0b490c93a32a830835af7eb6ac0472b2ea68e4f11d12e8bf38",
           "godot/story.schema.json": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c",
           "ink/README.txt": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d",
           "ink/story.ink": "b92ec49b8b461d453a89617f9911e4cbd42478323906daed06f34bc4db13f296",
-          "ink/validation.json": "91d34049318ccc7fc51ae3b2428fb5be6c0e5a83d906cef7f163f132327b5a7f",
+          "ink/validation.json": "d99a9aa9fd7d9901b444231698e6ae7c4954e6e2c53343fed94e83db83672327",
           "media-manifest.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-          "source-receipt.json": "a50a95bd3c4607a0460b2407248a78e9601099e0dbe99dc51fc36255495e687c",
-          "story.json": "3a57bd37d50c26dd4390d69329ea5491c01aa0749bf37c43dde227a6aec5eed6"
+          "source-receipt.json": "dba7da6ee411912af4b61f46d97b809f346ad9abc5873e9d75003aa49f55b14d",
+          "story.json": "e5b28a9942ae7e6da1d3148d20f445227bb9d32b177004c4d9ff64fe92a2036b"
         },
         "ink_witness_alignment": {
           "status": "PASS",
@@ -1518,28 +1518,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                  "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                  "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                  "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                  "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -1709,8 +1709,8 @@
         }
       },
       "deterministic_repeat": {
-        "sha256_first": "c68492d5eeca4e3ac18c263f874e3bea917b89f9fc59115726a816165b10f446",
-        "sha256_second": "c68492d5eeca4e3ac18c263f874e3bea917b89f9fc59115726a816165b10f446",
+        "sha256_first": "d2da2895423d53fd2b253eb26bb190ab774771ac31a88c40a7c2eca82276a36b",
+        "sha256_second": "d2da2895423d53fd2b253eb26bb190ab774771ac31a88c40a7c2eca82276a36b",
         "identical": true
       },
       "runtime": {
@@ -1728,7 +1728,7 @@
             "choices": []
           },
           {
-            "id": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+            "id": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
             "choices": [
               "to_middle",
               "to_late",
@@ -1768,14 +1768,14 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                  "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+              "scope": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
               "status": "PASS",
               "states_expected": 4,
               "states_actual": 4,
@@ -1785,28 +1785,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                  "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                  "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                  "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                  "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -1820,7 +1820,7 @@
         }
       },
       "delivery": {
-        "zip": "exports/legacy/interactive-story-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+        "zip": "exports/legacy/interactive-story-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
         "unpacked": "exports/legacy/unpacked"
       }
     },
@@ -1828,11 +1828,11 @@
       "GODOT_4_RUNTIME_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
-        "filename": "godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-        "sha256": "bc53ca6d08e8ee7cf6585edfa25cfa04704cb078a1e3cbafc6dcc3728d7b66f8",
+        "filename": "godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+        "sha256": "7e96e55cae1eca789a50d12ef0993db0758ddeca3fffb13f83889846d7ff1d94",
         "file_count": 14,
-        "files_digest": "17fa7e8269e26789e5050b7010f7e7541628d6571ae5de4e63b0afe06554c8a0",
-        "preview_digest": "0ae9886eaecfed0fc37279c273cc72fb57810b965a7e2e618b8ca98d6afbfa76",
+        "files_digest": "3b2b3c3c3b29df58468b9a9644a775f68caa230f629feb32c6d412005b8e734a",
+        "preview_digest": "79579f078a733efca264b6b0ab7cc5cc5288f321b45daec98dea48068f095287",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -1960,27 +1960,27 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c/",
+          "prefix": "interactive-godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/",
           "files": [
             {
               "path": "README.md",
               "bytes": 2691,
-              "sha256": "c2687a809c86c4746f462982ad565e8190d86d97da018939f106432d87c6f3d9"
+              "sha256": "9a539c98efa267f74be64f5d707e7d09b21aa7f922b000a0774571f7e27a7994"
             },
             {
               "path": "acceptance/README.txt",
               "bytes": 550,
-              "sha256": "4d07ec297690819ee899b17395e87af057884958314d298e2b97b5c9a4609c87"
+              "sha256": "ac79d45d8e2fb9d8a28a75e6a9929a290059c7a54080e4d7d7e3225125c3a7c3"
             },
             {
               "path": "acceptance/cases.json",
               "bytes": 1906,
-              "sha256": "237cb28ae31eb514d538813aec5444a5bfade5dd5baf71c7a608a0f4d809ee35"
+              "sha256": "0250274984c6201dbd689defb4bbbdb58ca798f95767376ab5a87c17f6e44555"
             },
             {
               "path": "data/story.json",
               "bytes": 2720,
-              "sha256": "35e149a3f0355d2f32e672c1e8f13d9a217d8799685294547fbc2b99199bb7be"
+              "sha256": "d334e3aea55d69fd71897eb979c55e4642e3e2b205fec9dcc1d31b593495aaa3"
             },
             {
               "path": "data/story.schema.json",
@@ -2000,12 +2000,12 @@
             {
               "path": "manifest.json",
               "bytes": 8732,
-              "sha256": "18fb37bae3d1b207320926aa8ab1abaf3ac27eb7065b9dd7ec67b130ae92229a"
+              "sha256": "ee0705089fe26b611ce1e40b6b1ef9ddce9eaba085a638ad0eb45fc8ecb816b3"
             },
             {
               "path": "project.godot",
               "bytes": 849,
-              "sha256": "b1ce3fdcf95b829c4dee9d932cb5699f4349e6cb1003dbcc371ddd6c41540640"
+              "sha256": "a853a3693fb1b98ad138fb88e1d7b4cd5e6a1583f6d45d238107e2f90e3a0350"
             },
             {
               "path": "runtime/acceptance_runner.gd",
@@ -2030,14 +2030,14 @@
             {
               "path": "source-receipt.json",
               "bytes": 1610,
-              "sha256": "169c3f13bdf3343c20527f674723e822cd9c00ece0eab737d027be6fe9ec1605"
+              "sha256": "efe94d24f0dcf8c470fcf260f0d5fadca882b84a08e288dab0aeb60f8988b334"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "interactive-godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "zip paths safe",
@@ -2112,7 +2112,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "manifest story revision",
@@ -2277,7 +2277,7 @@
                   "--witness-path",
                   "<choice_id,...>"
                 ],
-                "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                 "exit_codes": {
                   "failed": 3,
                   "ok": 0,
@@ -2286,7 +2286,7 @@
                 "main_scene": "res://main.tscn",
                 "max_steps": 8,
                 "nodes": 4,
-                "project_name": "PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c",
+                "project_name": "PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
                 "result_schema": "poemseed-godot-runtime-result/1",
                 "runtime_story_format": "godot-runtime-story-1",
                 "runtime_story_schema": "poemseed-godot-runtime-story/1",
@@ -2319,22 +2319,22 @@
               {
                 "bytes": 2691,
                 "path": "README.md",
-                "sha256": "c2687a809c86c4746f462982ad565e8190d86d97da018939f106432d87c6f3d9"
+                "sha256": "9a539c98efa267f74be64f5d707e7d09b21aa7f922b000a0774571f7e27a7994"
               },
               {
                 "bytes": 550,
                 "path": "acceptance/README.txt",
-                "sha256": "4d07ec297690819ee899b17395e87af057884958314d298e2b97b5c9a4609c87"
+                "sha256": "ac79d45d8e2fb9d8a28a75e6a9929a290059c7a54080e4d7d7e3225125c3a7c3"
               },
               {
                 "bytes": 1906,
                 "path": "acceptance/cases.json",
-                "sha256": "237cb28ae31eb514d538813aec5444a5bfade5dd5baf71c7a608a0f4d809ee35"
+                "sha256": "0250274984c6201dbd689defb4bbbdb58ca798f95767376ab5a87c17f6e44555"
               },
               {
                 "bytes": 2720,
                 "path": "data/story.json",
-                "sha256": "35e149a3f0355d2f32e672c1e8f13d9a217d8799685294547fbc2b99199bb7be"
+                "sha256": "d334e3aea55d69fd71897eb979c55e4642e3e2b205fec9dcc1d31b593495aaa3"
               },
               {
                 "bytes": 15223,
@@ -2354,7 +2354,7 @@
               {
                 "bytes": 849,
                 "path": "project.godot",
-                "sha256": "b1ce3fdcf95b829c4dee9d932cb5699f4349e6cb1003dbcc371ddd6c41540640"
+                "sha256": "a853a3693fb1b98ad138fb88e1d7b4cd5e6a1583f6d45d238107e2f90e3a0350"
               },
               {
                 "bytes": 6028,
@@ -2394,7 +2394,7 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "payload_files_digest": "26df5fb9b46bfa75cb26f0ed7c4fef65914638fa021df22a7db617559464d038",
+            "payload_files_digest": "328b1705bf6b768ff4aeb5f0369f7b94665daf6ab214bb1ec6a7ab2bb0cbc410",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_GODOT_BIN",
@@ -2432,18 +2432,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
-              "id": "70efb94d-1580-4457-afda-880ff6dff61c",
+              "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
+              "id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
               "max_steps": 8,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+              "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
               "revision": 3,
-              "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-              "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
+              "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+              "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
               "title": "A · 檐下灯火（基础线性样例）",
               "variables": 0,
-              "witness_digest": "6f99bd6f6134db1e244a61a24466701f5f90270489f6c22119464c45a45f7467"
+              "witness_digest": "4c21a9130c817c3cce9726180318a6c9f9928fc0ac1432911ac4408bb6c45728"
             },
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -2478,14 +2478,14 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "manifest_sha256": "18fb37bae3d1b207320926aa8ab1abaf3ac27eb7065b9dd7ec67b130ae92229a",
-            "payload_files_digest": "26df5fb9b46bfa75cb26f0ed7c4fef65914638fa021df22a7db617559464d038",
+            "manifest_sha256": "ee0705089fe26b611ce1e40b6b1ef9ddce9eaba085a638ad0eb45fc8ecb816b3",
+            "payload_files_digest": "328b1705bf6b768ff4aeb5f0369f7b94665daf6ab214bb1ec6a7ab2bb0cbc410",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+            "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-            "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-            "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+            "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+            "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+            "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
             "story_revision": 3,
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1"
@@ -2531,7 +2531,7 @@
               {
                 "id": "runtime story id bound",
                 "status": "PASS",
-                "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+                "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
               },
               {
                 "id": "runtime revision bound",
@@ -2580,12 +2580,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "bc53ca6d08e8ee7cf6585edfa25cfa04704cb078a1e3cbafc6dcc3728d7b66f8",
-          "sha256_second": "bc53ca6d08e8ee7cf6585edfa25cfa04704cb078a1e3cbafc6dcc3728d7b66f8",
+          "sha256_first": "7e96e55cae1eca789a50d12ef0993db0758ddeca3fffb13f83889846d7ff1d94",
+          "sha256_second": "7e96e55cae1eca789a50d12ef0993db0758ddeca3fffb13f83889846d7ff1d94",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
           "unpacked": "exports/GODOT_4_RUNTIME_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -2595,14 +2595,14 @@
           "engine": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
           "binding": {
-            "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+            "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
             "revision": 3,
-            "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-            "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-            "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+            "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+            "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+            "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
             "witness": [
               {
-                "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "ending": "灯火未熄",
                 "choices": [
                   "to_middle",
@@ -2631,7 +2631,7 @@
             {
               "id": "runtime data story id bound",
               "status": "PASS",
-              "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "runtime data revision bound",
@@ -2656,7 +2656,7 @@
             {
               "id": "runtime typed story entry",
               "status": "PASS",
-              "detail": "935a1cd9-92be-4f67-96c2-edf54c0a026f"
+              "detail": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0"
             },
             {
               "id": "acceptance cases schema",
@@ -2676,12 +2676,12 @@
             {
               "id": "runtime initial state",
               "status": "PASS",
-              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"935a1cd9-92be-4f67-96c2-edf54c0a026f\", \"status\": \"PASS\", \"mismatches\": []}]"
+              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"d5ddc5dd-073c-43db-bdd0-b7fe273057f0\", \"status\": \"PASS\", \"mismatches\": []}]"
             },
             {
               "id": "runtime story binding story_id",
               "status": "PASS",
-              "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "runtime story binding revision",
@@ -2691,17 +2691,17 @@
             {
               "id": "runtime story binding spec_digest",
               "status": "PASS",
-              "detail": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227"
+              "detail": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b"
             },
             {
               "id": "runtime story binding source_digest",
               "status": "PASS",
-              "detail": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd"
+              "detail": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8"
             },
             {
               "id": "runtime story binding review_receipt",
               "status": "PASS",
-              "detail": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e"
+              "detail": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb"
             }
           ],
           "cases": [
@@ -2723,7 +2723,7 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                    "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -2737,7 +2737,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+              "id": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
               "kind": "ending_witness",
               "choices": [
                 "to_middle",
@@ -2748,7 +2748,7 @@
               "states_expected": 4,
               "states_actual": 4,
               "alignment": {
-                "scope": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "scope": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "status": "PASS",
                 "states_expected": 4,
                 "states_actual": 4,
@@ -2758,28 +2758,28 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                    "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                    "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                    "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 3,
                     "steps": 3,
-                    "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                    "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -2800,7 +2800,7 @@
           "save_restore": {
             "status": "PASS",
             "level": "PASS",
-            "case_id": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+            "case_id": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
             "path": [
               "to_middle",
               "to_late",
@@ -2816,7 +2816,7 @@
               {
                 "id": "save.file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c\\b07-e2e07-save-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\\b07-e2e07-save-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "save.sha256",
@@ -2841,7 +2841,7 @@
               {
                 "id": "restore.state",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"837a6780-d1e0-44ae-972a-202b5c007af8\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.node",
@@ -2851,7 +2851,7 @@
               {
                 "id": "restore.continued.step_alignment",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"837a6780-d1e0-44ae-972a-202b5c007af8\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"9b4f3087-2ab5-4ad8-8481-e9612340e6eb\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 2, \"steps\": 3, \"node_id\": \"07cdae59-122c-49c1-8521-8b6fc04a8e5c\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"adc594cf-594c-4152-beef-7fe833201fcc\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 2, \"steps\": 3, \"node_id\": \"83cf616b-8c4a-46ae-825e-d24e3896133d\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.final.expected_ending",
@@ -2861,7 +2861,7 @@
               {
                 "id": "restore.result_file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c\\b07-e2e07-result-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\\b07-e2e07-result-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "restore.result_file.schema",
@@ -2938,8 +2938,8 @@
               }
             ],
             "save_bytes": 546,
-            "save_sha256": "88c244c51d6365f854baaa37d04fd4282b6d9f4e603acc94141b045c53259bad",
-            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c"
+            "save_sha256": "ce3877e8ac44425f70ad9c38120246305ce143af5a43860231c0b1e71a4a3f53",
+            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
           },
           "commands": [
             {
@@ -2959,7 +2959,7 @@
               "exit_code": 0,
               "signal": null,
               "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"935a1cd9-92be-4f67-96c2-edf54c0a026f\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"d5ddc5dd-073c-43db-bdd0-b7fe273057f0\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -2980,14 +2980,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"935a1cd9-92be-4f67-96c2-edf54c0a026f\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "duration_ms": 170,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"d5ddc5dd-073c-43db-bdd0-b7fe273057f0\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+              "label": "godot.case.ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -3002,8 +3002,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"935a1cd9-92be-4f67-96c2-edf54c0a026f\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_finale\",\"label\":\"吹灭灯\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\",\"ending\":\"\",\"node_id\":\"9b4f3087-2ab5-4ad8-8481-e9612340e6eb\",\"speaker\":\"\",\"title\":\"第三幕 · 信末\"},\"path\":[\"to_middle\",\"to_late\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":8,\"node\":{\"dialogue\":\"屋里暗下来，雨声却暖了。\",\"ending\":\"灯火未熄\",\"node_id\":\"07cdae59-122c-49c1-8521-8b6fc04a8e5c\",\"speaker\":\"\",\"title\":\"结局 · 灯火\"},\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 188,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"d5ddc5dd-073c-43db-bdd0-b7fe273057f0\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_finale\",\"label\":\"吹灭灯\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\",\"ending\":\"\",\"node_id\":\"adc594cf-594c-4152-beef-7fe833201fcc\",\"speaker\":\"\",\"title\":\"第三幕 · 信末\"},\"path\":[\"to_middle\",\"to_late\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":8,\"node\":{\"dialogue\":\"屋里暗下来，雨声却暖了。\",\"ending\":\"灯火未熄\",\"node_id\":\"83cf616b-8c4a-46ae-825e-d24e3896133d\",\"speaker\":\"\",\"title\":\"结局 · 灯火\"},\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3027,7 +3027,7 @@
               "exit_code": 0,
               "signal": null,
               "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"935a1cd9-92be-4f67-96c2-edf54c0a026f\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_SAVED {\"bytes\":546,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"88c244c51d6365f854baaa37d04fd4282b6d9f4e603acc94141b045c53259bad\"}\nPOEMSEED_DONE {\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_middle\",\"label\":\"推门进去\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"雨落在青石上。她把灯放在门口，像放下一句没说出口的话。\",\"ending\":\"\",\"node_id\":\"d5ddc5dd-073c-43db-bdd0-b7fe273057f0\",\"speaker\":\"Alice\",\"title\":\"第一幕 · 檐下\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_SAVED {\"bytes\":546,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"ce3877e8ac44425f70ad9c38120246305ce143af5a43860231c0b1e71a4a3f53\"}\nPOEMSEED_DONE {\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3048,8 +3048,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_DONE {\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3074,8 +3074,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"837a6780-d1e0-44ae-972a-202b5c007af8\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_finale\",\"label\":\"吹灭灯\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\",\"ending\":\"\",\"node_id\":\"9b4f3087-2ab5-4ad8-8481-e9612340e6eb\",\"speaker\":\"\",\"title\":\"第三幕 · 信末\"},\"path\":[\"to_middle\",\"to_late\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":8,\"node\":{\"dialogue\":\"屋里暗下来，雨声却暖了。\",\"ending\":\"灯火未熄\",\"node_id\":\"07cdae59-122c-49c1-8521-8b6fc04a8e5c\",\"speaker\":\"\",\"title\":\"结局 · 灯火\"},\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{}}\nPOEMSEED_RESULT {\"bytes\":1178,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"cdc3fa47136317f133a58ab05d2349012d7e0d71e231d5515dc7c8666a92ffed\"}\nPOEMSEED_DONE {\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 187,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_late\",\"label\":\"读完那封信\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"灯芯轻轻爆了一下。桌上摊着未写完的信。\",\"ending\":\"\",\"node_id\":\"cfb13feb-ebee-4bf7-835d-b0a4caaf0d03\",\"speaker\":\"\",\"title\":\"第二幕 · 灯下\"},\"path\":[\"to_middle\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"to_finale\",\"label\":\"吹灭灯\"}],\"max_steps\":8,\"node\":{\"dialogue\":\"信末只有一行字：「若你看见这盏灯，就说明我到家了。」\",\"ending\":\"\",\"node_id\":\"adc594cf-594c-4152-beef-7fe833201fcc\",\"speaker\":\"\",\"title\":\"第三幕 · 信末\"},\"path\":[\"to_middle\",\"to_late\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":8,\"node\":{\"dialogue\":\"屋里暗下来，雨声却暖了。\",\"ending\":\"灯火未熄\",\"node_id\":\"83cf616b-8c4a-46ae-825e-d24e3896133d\",\"speaker\":\"\",\"title\":\"结局 · 灯火\"},\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{}}\nPOEMSEED_RESULT {\"bytes\":1178,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"7d0fd96d5c31994f8c9967d0ae530c741d7b9867b304817b8483eeb36dc80df0\"}\nPOEMSEED_DONE {\"path\":[\"to_middle\",\"to_late\",\"to_finale\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3096,8 +3096,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 170,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3119,7 +3119,7 @@
               "exit_code": 2,
               "signal": null,
               "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3140,8 +3140,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
+              "duration_ms": 170,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3162,8 +3162,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd\",\"spec_digest\":\"f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227\",\"story_id\":\"70efb94d-1580-4457-afda-880ff6dff61c\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8\",\"spec_digest\":\"e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b\",\"story_id\":\"8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae\",\"title\":\"A · 檐下灯火（基础线性样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
               "stderr_tail": "ERROR: Parse JSON failed. Error at line 0: Expected key\n   at: parse_string (core/io/json.cpp:629)\n   GDScript backtrace (most recent call first):\n       [0] read (res://runtime/save_store.gd:68)\n       [1] run (res://runtime/acceptance_runner.gd:96)\n       [2] _ready (res://main.gd:42)\n",
               "timed_out": false
             }
@@ -3183,7 +3183,7 @@
               "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
               "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_godot_interactive_runtime.py",
               "--artifact",
-              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
               "--report",
               "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\runtime\\GODOT_4_RUNTIME_PROJECT_V1\\godot-line-verifier-report.json",
               "--godot",
@@ -3198,9 +3198,9 @@
               "mode": "EXTERNAL_ARTIFACT",
               "result": "PASS",
               "artifact": {
-                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-                "filename": "godot-4-runtime-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-                "sha256": "bc53ca6d08e8ee7cf6585edfa25cfa04704cb078a1e3cbafc6dcc3728d7b66f8",
+                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+                "filename": "godot-4-runtime-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+                "sha256": "7e96e55cae1eca789a50d12ef0993db0758ddeca3fffb13f83889846d7ff1d94",
                 "bundle_files": [
                   "README.md",
                   "acceptance/README.txt",
@@ -3217,10 +3217,10 @@
                   "runtime/story_runtime.gd",
                   "source-receipt.json"
                 ],
-                "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+                "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
                 "revision": 3,
-                "manifest_sha256": "18fb37bae3d1b207320926aa8ab1abaf3ac27eb7065b9dd7ec67b130ae92229a",
-                "receipt_sha256": "169c3f13bdf3343c20527f674723e822cd9c00ece0eab737d027be6fe9ec1605"
+                "manifest_sha256": "ee0705089fe26b611ce1e40b6b1ef9ddce9eaba085a638ad0eb45fc8ecb816b3",
+                "receipt_sha256": "efe94d24f0dcf8c470fcf260f0d5fadca882b84a08e288dab0aeb60f8988b334"
               },
               "engine": {
                 "executable": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
@@ -3234,7 +3234,7 @@
               "status": "PASS",
               "cases": [
                 {
-                  "case_id": "witness-0-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                  "case_id": "witness-0-83cf616b-8c4a-46ae-825e-d24e3896133d",
                   "choices": [
                     "to_middle",
                     "to_late",
@@ -3245,7 +3245,7 @@
                   "states_expected": 4,
                   "states_actual": 4,
                   "alignment": {
-                    "scope": "line-verifier:witness-0-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                    "scope": "line-verifier:witness-0-83cf616b-8c4a-46ae-825e-d24e3896133d",
                     "status": "PASS",
                     "states_expected": 4,
                     "states_actual": 4,
@@ -3255,28 +3255,28 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                        "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                        "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                        "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 3,
                         "steps": 3,
-                        "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                        "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -3291,7 +3291,7 @@
               "performed": true,
               "passed": true,
               "detail": "two-process save/restore matched direct playback (derived.two_process; saved after 1 step(s), continued 2 step(s))",
-              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c"
+              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             "verifier": {
               "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -3304,7 +3304,7 @@
             }
           },
           "engine_version": "4.7.stable.official.5b4e0cb0f",
-          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 70efb94d-1580-4457-afda-880ff6dff61c",
+          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
           "initial_alignment": {
             "scope": "initial",
             "status": "PASS",
@@ -3316,7 +3316,7 @@
               {
                 "index": 0,
                 "steps": 0,
-                "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                 "status": "PASS",
                 "mismatches": []
               }
@@ -3326,8 +3326,8 @@
             {
               "field": "story_id",
               "status": "PASS",
-              "expected": "70efb94d-1580-4457-afda-880ff6dff61c",
-              "actual": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "expected": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
+              "actual": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "field": "revision",
@@ -3338,20 +3338,20 @@
             {
               "field": "spec_digest",
               "status": "PASS",
-              "expected": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-              "actual": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227"
+              "expected": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+              "actual": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b"
             },
             {
               "field": "source_digest",
               "status": "PASS",
-              "expected": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-              "actual": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd"
+              "expected": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+              "actual": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8"
             },
             {
               "field": "review_receipt",
               "status": "PASS",
-              "expected": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
-              "actual": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e"
+              "expected": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
+              "actual": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb"
             }
           ],
           "alignment": {
@@ -3370,7 +3370,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-1-07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "id": "ending-1-83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "kind": "ending_witness",
                 "choices": [
                   "to_middle",
@@ -3389,11 +3389,11 @@
       "INK_2_3_2_CURRENT_ARTIFACT_V1": {
         "status": "EXPORTED",
         "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-        "filename": "ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-        "sha256": "79c2f6319f838397349d49ef90ef2572c1af6736c1138ce347c232ae45d59ab1",
+        "filename": "ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+        "sha256": "c5bff71fa2206949673583684563a3cb5ccf41e73f65593b46566fd4be56f0e1",
         "file_count": 7,
-        "files_digest": "221eb553d39ba87eae3f88402b8e5523bececd7540d5ef2e1b409db8dd07691f",
-        "preview_digest": "640cfdd09f422431624655da4c54d9bbe0b16cc368ad68bb2214b1343d1327c4",
+        "files_digest": "cf6cb1752e531234ba22dbfe2ecb57f34d320cccb41d5b7fa8d4f7f2ec45cdfd",
+        "preview_digest": "0c491a26901991ddf052338f51c600f3fe3b8ee5746f3a4ca4f058907707f078",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -3519,17 +3519,17 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c/",
+          "prefix": "interactive-ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/",
           "files": [
             {
               "path": "acceptance/witness.json",
               "bytes": 8939,
-              "sha256": "6d68b98d8511407a39fd56b545f2929e2631dd71c854df33d00a58eda046689b"
+              "sha256": "111d3db47bd41d2f855c527101cac344f2efad04741990b495dc1fb1766b1a68"
             },
             {
               "path": "ink/README.txt",
               "bytes": 2513,
-              "sha256": "72b72397b82b1ca0672d31bc92a904e60343ec1bf48f7499bc27ae0fa3e4c342"
+              "sha256": "0c919ec9785d2ab51ced5fac7cb17d3a33094ae8f910607331018fff947a995f"
             },
             {
               "path": "ink/runtime-pin.json",
@@ -3544,24 +3544,24 @@
             {
               "path": "ink/validation.json",
               "bytes": 5963,
-              "sha256": "228d0f8a3f8d6f40f703a2fefa7533a93b329037c8314045c1d497fc6cae88de"
+              "sha256": "b5b7d2263acbfde8f5d2259d0b4f5b24e78e0d420de47471345fa79bc5266db6"
             },
             {
               "path": "manifest.json",
               "bytes": 7888,
-              "sha256": "aa3df5fdc45ac3bb7577e8997477babdef60fdd56230882b6f49fd01876e8562"
+              "sha256": "f86c58c8af93ec0a1ac8c7d0dc8b90375958daa4615e7fc1516a1c3a2d7ed2d6"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1589,
-              "sha256": "86eb49ab3c1f1ed535aecaf3c144d993a0d7abd17be9d540af64d83bc562af29"
+              "sha256": "db74da4693a01a3b27974e0ec5bee963baed74a96347c83e2d31bf7c1c5132eb"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "interactive-ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "zip paths safe",
@@ -3636,7 +3636,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "manifest story revision",
@@ -3820,19 +3820,19 @@
                 "script_sha256": "b48bbdc92b0b882bef3b197f9de2d8c59a34092c39e032d637d9a981c991d450",
                 "step_cap_cases": 0,
                 "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-                "witness_sha256": "6d68b98d8511407a39fd56b545f2929e2631dd71c854df33d00a58eda046689b"
+                "witness_sha256": "111d3db47bd41d2f855c527101cac344f2efad04741990b495dc1fb1766b1a68"
               }
             },
             "files": [
               {
                 "bytes": 8939,
                 "path": "acceptance/witness.json",
-                "sha256": "6d68b98d8511407a39fd56b545f2929e2631dd71c854df33d00a58eda046689b"
+                "sha256": "111d3db47bd41d2f855c527101cac344f2efad04741990b495dc1fb1766b1a68"
               },
               {
                 "bytes": 2513,
                 "path": "ink/README.txt",
-                "sha256": "72b72397b82b1ca0672d31bc92a904e60343ec1bf48f7499bc27ae0fa3e4c342"
+                "sha256": "0c919ec9785d2ab51ced5fac7cb17d3a33094ae8f910607331018fff947a995f"
               },
               {
                 "bytes": 3482,
@@ -3847,7 +3847,7 @@
               {
                 "bytes": 5963,
                 "path": "ink/validation.json",
-                "sha256": "228d0f8a3f8d6f40f703a2fefa7533a93b329037c8314045c1d497fc6cae88de"
+                "sha256": "b5b7d2263acbfde8f5d2259d0b4f5b24e78e0d420de47471345fa79bc5266db6"
               }
             ],
             "generation": {
@@ -3868,7 +3868,7 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "payload_files_digest": "012309c4e94a6b85a96999b8a9b42752fd0d14fd0770f59b171db6bf4b076425",
+            "payload_files_digest": "5010e48a3acceeeb3f5b3dc041b22396dce90ad00f44156820b345da25fe3773",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_NODE",
@@ -3903,18 +3903,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
-              "id": "70efb94d-1580-4457-afda-880ff6dff61c",
+              "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
+              "id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
               "max_steps": 8,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+              "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
               "revision": 3,
-              "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-              "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
+              "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+              "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
               "title": "A · 檐下灯火（基础线性样例）",
               "variables": 0,
-              "witness_digest": "6f99bd6f6134db1e244a61a24466701f5f90270489f6c22119464c45a45f7467"
+              "witness_digest": "4c21a9130c817c3cce9726180318a6c9f9928fc0ac1432911ac4408bb6c45728"
             },
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
@@ -3950,14 +3950,14 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "manifest_sha256": "aa3df5fdc45ac3bb7577e8997477babdef60fdd56230882b6f49fd01876e8562",
-            "payload_files_digest": "012309c4e94a6b85a96999b8a9b42752fd0d14fd0770f59b171db6bf4b076425",
+            "manifest_sha256": "f86c58c8af93ec0a1ac8c7d0dc8b90375958daa4615e7fc1516a1c3a2d7ed2d6",
+            "payload_files_digest": "5010e48a3acceeeb3f5b3dc041b22396dce90ad00f44156820b345da25fe3773",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+            "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-            "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-            "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+            "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+            "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+            "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
             "story_revision": 3,
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1"
@@ -4042,12 +4042,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "79c2f6319f838397349d49ef90ef2572c1af6736c1138ce347c232ae45d59ab1",
-          "sha256_second": "79c2f6319f838397349d49ef90ef2572c1af6736c1138ce347c232ae45d59ab1",
+          "sha256_first": "c5bff71fa2206949673583684563a3cb5ccf41e73f65593b46566fd4be56f0e1",
+          "sha256_second": "c5bff71fa2206949673583684563a3cb5ccf41e73f65593b46566fd4be56f0e1",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
           "unpacked": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/unpacked"
         },
         "runtime": {
@@ -4056,14 +4056,14 @@
           "status": "EXECUTED_AND_ALIGNED",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
           "binding": {
-            "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+            "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
             "revision": 3,
-            "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-            "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-            "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+            "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+            "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+            "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
             "witness": [
               {
-                "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "ending": "灯火未熄",
                 "choices": [
                   "to_middle",
@@ -4081,7 +4081,7 @@
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -4092,7 +4092,7 @@
               "signal": null,
               "duration_ms": 47,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip\\acceptance\\witness.json\n",
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip\\acceptance\\witness.json\n",
               "timed_out": false
             },
             {
@@ -4111,7 +4111,7 @@
               "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 156,
+              "duration_ms": 155,
               "stdout_tail": "RESULT PASS compile=true cases=1 cross_process=true failures=0\n",
               "stderr_tail": "",
               "timed_out": false
@@ -4164,8 +4164,8 @@
             "cross_process": {
               "performed": true,
               "fresh_process": true,
-              "parent_pid": 150040,
-              "child_pid": 129976,
+              "parent_pid": 117080,
+              "child_pid": 141336,
               "child_exit_code": 0,
               "save_at_step": 0,
               "remaining": [
@@ -4183,9 +4183,9 @@
             "detail": "parent process saves the pinned runtime state; a fresh node process restores it and replays to the ending."
           },
           "artifact_zip": {
-            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-            "bytes": 15477,
-            "sha256": "79c2f6319f838397349d49ef90ef2572c1af6736c1138ce347c232ae45d59ab1",
+            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+            "bytes": 15481,
+            "sha256": "c5bff71fa2206949673583684563a3cb5ccf41e73f65593b46566fd4be56f0e1",
             "matches_unpacked_bundle": true
           },
           "vendor": {
@@ -4194,13 +4194,13 @@
           },
           "bundle_attempts": [
             {
-              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
               "bundle_mode": "EXPORTED_ZIP",
               "argv": [
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -4208,7 +4208,7 @@
               ],
               "exit_code": 4,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip\\acceptance\\witness.json\n"
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip\\acceptance\\witness.json\n"
             },
             {
               "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\A_basic_linear\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
@@ -4253,7 +4253,7 @@
           "runtime_cases": [
             {
               "kind": "ENDING",
-              "ending_node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+              "ending_node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
               "choices": [
                 "to_middle",
                 "to_late",
@@ -4269,8 +4269,8 @@
           "cross_process": {
             "performed": true,
             "fresh_process": true,
-            "parent_pid": 150040,
-            "child_pid": 129976,
+            "parent_pid": 117080,
+            "child_pid": 141336,
             "child_exit_code": 0,
             "save_at_step": 0,
             "remaining": [
@@ -4317,11 +4317,11 @@
       "RENPY_8_5_4_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "RENPY_8_5_4_PROJECT_V1",
-        "filename": "renpy-8-5-4-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
-        "sha256": "961b53cc5bfe9d61a43650e6a266d515d56c7c48c08e3a8e4cd6cc8255de558c",
+        "filename": "renpy-8-5-4-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
+        "sha256": "cdef6f0af2e014b0c55786b6b3685bd67c329d831acf4cdf32fba57339ab0f06",
         "file_count": 7,
-        "files_digest": "8cce7126eedf7ebf8d40aa68b73e2f689f80cba1c7ecb439862688f09f31900b",
-        "preview_digest": "e528b55d77eab4f84767b09c2339dfa7fb8ab72f96ec0cfcc3b2c1a479f98727",
+        "files_digest": "5a8fad74afe83958c7c9fe894bc5227ca1e79ac8d10248918a7ec66948a37a27",
+        "preview_digest": "ed6fbe7ec7233b0442f232f29db4f76d980df4da4a450316a385182db963fe17",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -4450,22 +4450,22 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-renpy-8-5-4-project-v1-70efb94d-1580-4457-afda-880ff6dff61c/",
+          "prefix": "interactive-renpy-8-5-4-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae/",
           "files": [
             {
               "path": "README.txt",
               "bytes": 4271,
-              "sha256": "ab253b988f1ebee3e8763813bd726499063b6b4ece78aa83c5573ca64592f331"
+              "sha256": "dc288eedadac938894638acca633ec223e6c201223ce948fa447e4c2323d7e69"
             },
             {
               "path": "acceptance/witness.json",
               "bytes": 5189,
-              "sha256": "d6929f413e98eab54c8d557d6c1bc449664fac0470976557b840dddfc2fd9c51"
+              "sha256": "50b2ebef57b377399511db6fd1d18162483f5ef07563402c300bd2f290976fcc"
             },
             {
               "path": "game/options.rpy",
               "bytes": 810,
-              "sha256": "eedd4a4e54f71bb4b7cfddd02c60b746cfe3d6563a3c63f9612aef6e83aaec03"
+              "sha256": "83f0c485927037c5837ecae0cf27e292d2ded15022fc5a4b422bab8bccc9c155"
             },
             {
               "path": "game/screens.rpy",
@@ -4475,24 +4475,24 @@
             {
               "path": "game/script.rpy",
               "bytes": 3764,
-              "sha256": "c81b0a6b0666c547c44342dead52fa9eec4a8f48b03a76dd2f6a67d68da95093"
+              "sha256": "3d64dfce317d694a8932f0bded7241b0aebb6cc4e8f223ae957c336cde9c07b8"
             },
             {
               "path": "manifest.json",
               "bytes": 8319,
-              "sha256": "e493945a27d9e3aa6847b703663a2d6766c01b1ad41a61df3137a77a24ac56d2"
+              "sha256": "759498bcaf74f16c43c13cc70f18f72145e4fa78f07b12e31e887110a0711214"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1694,
-              "sha256": "d3a58a704c6e832e01a54b318e8b147278fff372908237d34a31f9f80188e57f"
+              "sha256": "0f3466adb5723a1cedf8704e390fcbc95feb3a31f5ef9caac08050ce050f5677"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-renpy-8-5-4-project-v1-70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "interactive-renpy-8-5-4-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "zip paths safe",
@@ -4567,7 +4567,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "70efb94d-1580-4457-afda-880ff6dff61c"
+              "detail": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae"
             },
             {
               "id": "manifest story revision",
@@ -4751,17 +4751,17 @@
               {
                 "bytes": 4271,
                 "path": "README.txt",
-                "sha256": "ab253b988f1ebee3e8763813bd726499063b6b4ece78aa83c5573ca64592f331"
+                "sha256": "dc288eedadac938894638acca633ec223e6c201223ce948fa447e4c2323d7e69"
               },
               {
                 "bytes": 5189,
                 "path": "acceptance/witness.json",
-                "sha256": "d6929f413e98eab54c8d557d6c1bc449664fac0470976557b840dddfc2fd9c51"
+                "sha256": "50b2ebef57b377399511db6fd1d18162483f5ef07563402c300bd2f290976fcc"
               },
               {
                 "bytes": 810,
                 "path": "game/options.rpy",
-                "sha256": "eedd4a4e54f71bb4b7cfddd02c60b746cfe3d6563a3c63f9612aef6e83aaec03"
+                "sha256": "83f0c485927037c5837ecae0cf27e292d2ded15022fc5a4b422bab8bccc9c155"
               },
               {
                 "bytes": 1210,
@@ -4771,7 +4771,7 @@
               {
                 "bytes": 3764,
                 "path": "game/script.rpy",
-                "sha256": "c81b0a6b0666c547c44342dead52fa9eec4a8f48b03a76dd2f6a67d68da95093"
+                "sha256": "3d64dfce317d694a8932f0bded7241b0aebb6cc4e8f223ae957c336cde9c07b8"
               }
             ],
             "generation": {
@@ -4793,7 +4793,7 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "payload_files_digest": "cb0e5192ca17622e722f5e7d13887ec63e81933769b0cce6d31e41b06a7a1f14",
+            "payload_files_digest": "6470c896c5661f66fd8e8e3ee191ccc22131486eebc01d326585cc7762895891",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_RENPY_BIN",
@@ -4834,18 +4834,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
-              "id": "70efb94d-1580-4457-afda-880ff6dff61c",
+              "entry_node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
+              "id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
               "max_steps": 8,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+              "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
               "revision": 3,
-              "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-              "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
+              "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+              "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
               "title": "A · 檐下灯火（基础线性样例）",
               "variables": 0,
-              "witness_digest": "6f99bd6f6134db1e244a61a24466701f5f90270489f6c22119464c45a45f7467"
+              "witness_digest": "4c21a9130c817c3cce9726180318a6c9f9928fc0ac1432911ac4408bb6c45728"
             },
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1",
@@ -4882,14 +4882,14 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "manifest_sha256": "e493945a27d9e3aa6847b703663a2d6766c01b1ad41a61df3137a77a24ac56d2",
-            "payload_files_digest": "cb0e5192ca17622e722f5e7d13887ec63e81933769b0cce6d31e41b06a7a1f14",
+            "manifest_sha256": "759498bcaf74f16c43c13cc70f18f72145e4fa78f07b12e31e887110a0711214",
+            "payload_files_digest": "6470c896c5661f66fd8e8e3ee191ccc22131486eebc01d326585cc7762895891",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "6c19b03ca35de10f0667b886a95ce738b1a6b666e6e91c57a5fd9fe55c70af3e",
+            "review_receipt": "0d016a9c9fe9f79da515f0f56ce1083a1c9090421849e3652c80b11348596deb",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "72b47f2539ba9a0bf5e0579b746725eea7110561d779adf53c447e8a80e2a9bd",
-            "spec_digest": "f9e263dd8ea91a76a758c445ad03c05aab4272fbb84ac590f4028b9e52dd6227",
-            "story_id": "70efb94d-1580-4457-afda-880ff6dff61c",
+            "source_digest": "16028c2914a49de5937bb5270511c537f1f597ed33f075da2733bd1167a0c1c8",
+            "spec_digest": "e796dfa35580415397817fa59ef7db94b00d4618c0ff9163e3eb60c7cffaec3b",
+            "story_id": "8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae",
             "story_revision": 3,
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1"
@@ -5075,7 +5075,7 @@
                 ],
                 "cases": [
                   {
-                    "ending_node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                    "ending_node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                     "ending": "灯火未熄",
                     "choices": [
                       "to_middle",
@@ -5096,28 +5096,28 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                          "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                          "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                          "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 3,
                           "steps": 3,
-                          "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                          "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -5210,7 +5210,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "ending_node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "ending": "灯火未熄",
                 "choices": [
                   "to_middle",
@@ -5231,28 +5231,28 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                      "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                      "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                      "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 3,
                       "steps": 3,
-                      "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                      "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -5329,12 +5329,12 @@
           }
         },
         "deterministic_repeat": {
-          "sha256_first": "961b53cc5bfe9d61a43650e6a266d515d56c7c48c08e3a8e4cd6cc8255de558c",
-          "sha256_second": "961b53cc5bfe9d61a43650e6a266d515d56c7c48c08e3a8e4cd6cc8255de558c",
+          "sha256_first": "cdef6f0af2e014b0c55786b6b3685bd67c329d831acf4cdf32fba57339ab0f06",
+          "sha256_second": "cdef6f0af2e014b0c55786b6b3685bd67c329d831acf4cdf32fba57339ab0f06",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-70efb94d-1580-4457-afda-880ff6dff61c-v3.zip",
+          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-8bb4e47f-ba90-4fa6-b23e-33918c8bf8ae-v3.zip",
           "unpacked": "exports/RENPY_8_5_4_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -5540,7 +5540,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                "ending_node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                 "ending": "灯火未熄",
                 "choices": [
                   "to_middle",
@@ -5561,28 +5561,28 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "935a1cd9-92be-4f67-96c2-edf54c0a026f",
+                      "node_id": "d5ddc5dd-073c-43db-bdd0-b7fe273057f0",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "837a6780-d1e0-44ae-972a-202b5c007af8",
+                      "node_id": "cfb13feb-ebee-4bf7-835d-b0a4caaf0d03",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "9b4f3087-2ab5-4ad8-8481-e9612340e6eb",
+                      "node_id": "adc594cf-594c-4152-beef-7fe833201fcc",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 3,
                       "steps": 3,
-                      "node_id": "07cdae59-122c-49c1-8521-8b6fc04a8e5c",
+                      "node_id": "83cf616b-8c4a-46ae-825e-d24e3896133d",
                       "status": "PASS",
                       "mismatches": []
                     }

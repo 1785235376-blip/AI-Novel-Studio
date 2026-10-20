@@ -10,49 +10,49 @@
     "save_restore_scenario",
     "two_endings"
   ],
-  "generated_at_utc": "2026-10-20T07:24:32+00:00",
+  "generated_at_utc": "2026-10-20T07:25:48+00:00",
   "repo": {
-    "head_sha": "a96b7f2998bc15de119312df686ffdeacfe8485f",
+    "head_sha": "ebd0ea373e08f80a4f83187e6302e5307ce78cd0",
     "branch": "work/v2-b07-e2e-20261020"
   },
   "planning": {
-    "graph_id": "7074d325-4b88-4ae2-82f6-d2584e7b3637",
+    "graph_id": "6718a392-da7c-4508-b99a-5e5abbc22487",
     "graph_version": 1,
-    "root_node_id": "de79c49f-7984-4794-9809-73448bbdcf2f",
+    "root_node_id": "123d23ca-f03e-4a3d-af9d-f00a119ead20",
     "volume": {
-      "id": "0198b30b-3c72-4c22-a938-f4bd5af44589",
+      "id": "ab6a2dbf-e854-448c-91dd-05c7e701b1b1",
       "version": 1
     },
     "chapter_node": {
-      "id": "88459f11-f5b8-4f49-9e1d-7c945247135e",
+      "id": "0cd7aaea-32f7-450d-9b0b-07c045698ad5",
       "version": 1
     },
-    "chapter_id": "r3-mounted-27d42394265f43f7b400d214af7f55c7:1",
+    "chapter_id": "r3-mounted-cf7e1501d22242ac90977a8c72f02abb:1",
     "scenes": [
       {
         "alias": "loop_hub",
-        "id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+        "id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
         "version": 1,
         "title": "场景 1 · 循环回声",
         "level": "SCENE"
       },
       {
         "alias": "echo_chamber",
-        "id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+        "id": "3ada3440-0341-468d-99ae-665b5f840a94",
         "version": 1,
         "title": "场景 2 · 刻字墙",
         "level": "SCENE"
       },
       {
         "alias": "memory_ending",
-        "id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+        "id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
         "version": 1,
         "title": "场景 3 · 结局甲",
         "level": "SCENE"
       },
       {
         "alias": "void_ending",
-        "id": "871f486a-d80b-4317-81ae-17d167acbb08",
+        "id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
         "version": 1,
         "title": "场景 4 · 结局乙",
         "level": "SCENE"
@@ -60,26 +60,26 @@
     ]
   },
   "story": {
-    "id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+    "id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
     "version": 3,
     "status": "APPROVED",
     "title": "C · 回声边界（复杂边界样例）",
-    "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+    "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
     "node_count": 4,
     "variable_count": 1,
     "max_steps": 6,
-    "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-    "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-    "review_preview_digest": "4a270729ef8d1959bdb907a8cbff3427c8aa14f88671fd82b9467c2e16a835bd"
+    "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+    "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+    "review_preview_digest": "7d531412cd1df73ca2ed686ab69f02a21647b50fa7de43f2b046ec54e16e3fc0"
   },
   "spec": {
     "title": "C · 回声边界（复杂边界样例）",
-    "graph_id": "7074d325-4b88-4ae2-82f6-d2584e7b3637",
+    "graph_id": "6718a392-da7c-4508-b99a-5e5abbc22487",
     "graph_version": 1,
-    "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+    "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
     "nodes": [
       {
-        "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+        "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
         "node_version": 1,
         "title": "循环 · 回声厅",
         "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
@@ -91,14 +91,14 @@
           {
             "id": "again",
             "label": "再听一次 [回声] {继续} 〖…〗 % 🙂",
-            "target": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+            "target": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
             "condition": "",
             "assignments": {}
           },
           {
             "id": "descend",
             "label": "顺着回声往下走",
-            "target": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+            "target": "3ada3440-0341-468d-99ae-665b5f840a94",
             "condition": "",
             "assignments": {
               "resonance": 2
@@ -107,7 +107,7 @@
         ]
       },
       {
-        "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+        "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
         "node_version": 1,
         "title": "深处 · 刻字墙",
         "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
@@ -119,21 +119,21 @@
           {
             "id": "remember",
             "label": "记住这一切",
-            "target": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+            "target": "a8443190-f0d6-4300-bfbd-eb266be478fb",
             "condition": "resonance >= 2",
             "assignments": {}
           },
           {
             "id": "forget",
             "label": "忘掉一切",
-            "target": "871f486a-d80b-4317-81ae-17d167acbb08",
+            "target": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+        "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
         "node_version": 1,
         "title": "结局 · 记忆封存",
         "dialogue": "她把回声收进一盏灯里。",
@@ -144,7 +144,7 @@
         "choices": []
       },
       {
-        "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+        "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
         "node_version": 1,
         "title": "结局 · 归于虚空",
         "dialogue": "厅里只剩下她自己的呼吸。",
@@ -172,12 +172,12 @@
     "warnings": [
       {
         "code": "CYCLE_STEP_CAP_REQUIRED",
-        "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb"
+        "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1"
       }
     ],
     "endings": [
       {
-        "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+        "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
         "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
         "choices": [
           "descend",
@@ -185,7 +185,7 @@
         ]
       },
       {
-        "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+        "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
         "ending": "归于虚空",
         "choices": [
           "descend",
@@ -227,8 +227,8 @@
     "initial_disabled_choice_count": 0,
     "condition_driven_divergence": [],
     "assignment_cases": [
-      "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
-      "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+      "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
+      "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
       "save-restore-continue"
     ],
     "step_cap_cases": [
@@ -238,7 +238,7 @@
       "save-restore-continue"
     ],
     "cycle_node_ids": [
-      "7fbb63a0-ba19-441c-ac29-75e5e4d881bb"
+      "806b5981-27cb-4e84-adb3-1db04e65bfe1"
     ],
     "special_characters": {
       "square_brackets": true,
@@ -255,7 +255,7 @@
     "analysis_warnings": [
       {
         "code": "CYCLE_STEP_CAP_REQUIRED",
-        "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb"
+        "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1"
       }
     ],
     "can_review": true,
@@ -297,7 +297,7 @@
       "steps": 0,
       "expected_states": [
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -330,7 +330,7 @@
       ]
     },
     {
-      "id": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+      "id": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
       "kind": "ending_witness",
       "description": "Reach ending '记忆封存 [A] {B} 〖C〗 100% 🙂 é' via the authoritative witness path.",
       "choices": [
@@ -340,7 +340,7 @@
       "steps": 2,
       "expected_states": [
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -371,7 +371,7 @@
           "path": []
         },
         {
-          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
           "title": "深处 · 刻字墙",
           "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
           "character_id": null,
@@ -404,7 +404,7 @@
           ]
         },
         {
-          "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+          "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
           "title": "结局 · 记忆封存",
           "dialogue": "她把回声收进一盏灯里。",
           "character_id": null,
@@ -426,7 +426,7 @@
       ]
     },
     {
-      "id": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+      "id": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
       "kind": "ending_witness",
       "description": "Reach ending '归于虚空' via the authoritative witness path.",
       "choices": [
@@ -436,7 +436,7 @@
       "steps": 2,
       "expected_states": [
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -467,7 +467,7 @@
           "path": []
         },
         {
-          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
           "title": "深处 · 刻字墙",
           "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
           "character_id": null,
@@ -500,7 +500,7 @@
           ]
         },
         {
-          "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+          "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
           "title": "结局 · 归于虚空",
           "dialogue": "厅里只剩下她自己的呼吸。",
           "character_id": null,
@@ -536,7 +536,7 @@
       "steps": 6,
       "expected_states": [
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -567,7 +567,7 @@
           "path": []
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -600,7 +600,7 @@
           ]
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -634,7 +634,7 @@
           ]
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -669,7 +669,7 @@
           ]
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -705,7 +705,7 @@
           ]
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -742,7 +742,7 @@
           ]
         },
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -792,7 +792,7 @@
       "steps": 2,
       "expected_states": [
         {
-          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
           "title": "循环 · 回声厅",
           "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
           "character_id": null,
@@ -823,7 +823,7 @@
           "path": []
         },
         {
-          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
           "title": "深处 · 刻字墙",
           "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
           "character_id": null,
@@ -856,7 +856,7 @@
           ]
         },
         {
-          "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+          "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
           "title": "结局 · 记忆封存",
           "dialogue": "她把回声收进一盏灯里。",
           "character_id": null,
@@ -879,7 +879,7 @@
       "save_restore": {
         "resume_at": 1,
         "saved_state": {
-          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
           "title": "深处 · 刻字墙",
           "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
           "character_id": null,
@@ -915,7 +915,7 @@
           "remember"
         ],
         "final_state": {
-          "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+          "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
           "title": "结局 · 记忆封存",
           "dialogue": "她把回声收进一盏灯里。",
           "character_id": null,
@@ -944,7 +944,7 @@
         "remember"
       ],
       "server": {
-        "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+        "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
         "status": "ENDING",
         "steps": 2,
         "variables": {
@@ -954,7 +954,7 @@
         "disabled_choice_ids": []
       },
       "play": {
-        "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+        "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
         "status": "ENDING",
         "steps": 2,
         "variables": {
@@ -967,7 +967,7 @@
     }
   ],
   "review": {
-    "preview_digest": "4a270729ef8d1959bdb907a8cbff3427c8aa14f88671fd82b9467c2e16a835bd",
+    "preview_digest": "7d531412cd1df73ca2ed686ab69f02a21647b50fa7de43f2b046ec54e16e3fc0",
     "can_approve": true,
     "approved_version": 3,
     "approved_status": "APPROVED"
@@ -980,13 +980,13 @@
       "can_export_any": true,
       "story": {
         "title": "C · 回声边界（复杂边界样例）",
-        "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+        "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
         "max_steps": 6,
         "nodes": 4,
         "variables": 1,
         "endings": 2,
-        "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-        "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971"
+        "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+        "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329"
       },
       "analysis": {
         "can_review": true,
@@ -995,14 +995,14 @@
         "warnings": [
           {
             "code": "CYCLE_STEP_CAP_REQUIRED",
-            "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb"
+            "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1"
           }
         ],
         "states_checked": 4
       },
       "witness": [
         {
-          "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+          "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
           "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
           "choices": [
             "descend",
@@ -1010,7 +1010,7 @@
           ]
         },
         {
-          "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+          "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
           "ending": "归于虚空",
           "choices": [
             "descend",
@@ -1748,10 +1748,10 @@
     "legacy": {
       "status": "EXPORTED",
       "target_id": null,
-      "filename": "interactive-story-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-      "sha256": "82cfedefa330dcef63be368cbc0bb3470924bcd6cbc24c79c5a8cb06813f5f58",
+      "filename": "interactive-story-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+      "sha256": "2a2178a3687a61eac424302ca0b579d16796d56709c6310ea0fea94837cacad2",
       "file_count": 13,
-      "preview_digest": "a671b045e97cca04cfc7960de8ca43c5b49f718a9e9376ee8784b12b4745ad3a",
+      "preview_digest": "9c094354f8d83e469cf54814bb1d18546b0e373c4c2bd2696075f550a0347bf8",
       "can_export": true,
       "losses": [
         "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -1766,7 +1766,7 @@
       "available_targets": null,
       "archive": {
         "status": "PASS",
-        "prefix": "interactive-story-3520dd50-e4c0-40a3-8496-89a6e573f465/",
+        "prefix": "interactive-story-f7746905-43ac-496c-b1a2-15ad40f7ba21/",
         "files": [
           {
             "path": "README.txt",
@@ -1776,12 +1776,12 @@
           {
             "path": "checksums.json",
             "bytes": 1081,
-            "sha256": "c43dfc32d479bf41e0bacc06e816c9f509dbf2c1c352ea0d2d5d8c2b035a73ef"
+            "sha256": "cc3d424a23cc2ac371db643096e9c55488414fcb5d6f786fa6be0b5b51ffc231"
           },
           {
             "path": "compatibility.json",
             "bytes": 48582,
-            "sha256": "4c6d27b46388fdfe18f5b8e30b0d29f6baa6aaed656109b141c2ab169c10c59f"
+            "sha256": "d1130e116688dfff78ab974161cf717b65470eb69d37719019eb9fa711525231"
           },
           {
             "path": "game/story.rpy",
@@ -1796,7 +1796,7 @@
           {
             "path": "godot/story.json",
             "bytes": 2854,
-            "sha256": "668c8fd4db0908d9262384359c85617307e67bbbe08618502f3c1dd51a0cf16a"
+            "sha256": "7ffef7533a0efd979d528c1fc430f1af4fc4efdd51082987f18654dc4d85ec41"
           },
           {
             "path": "godot/story.schema.json",
@@ -1816,7 +1816,7 @@
           {
             "path": "ink/validation.json",
             "bytes": 2678,
-            "sha256": "2e1045e8da7814f7aaf90f07cff7780f8a57b583c60a31714a887d7ca029f5c2"
+            "sha256": "256aba0007b3667c539bed6a48040ef430c7f133bcc06973a971e9757a306269"
           },
           {
             "path": "media-manifest.json",
@@ -1826,19 +1826,19 @@
           {
             "path": "source-receipt.json",
             "bytes": 409,
-            "sha256": "4f52f8c34852e8b74ca14bac589657fd918dd083cf71e6d04a8fc49b8231cebe"
+            "sha256": "07e4d4e37b78e2c89868f80ebb24b19c6cb606f51b5e5a9c9fd000658a2c9659"
           },
           {
             "path": "story.json",
             "bytes": 3901,
-            "sha256": "2087a06830be149300df4c96b6f4f75d74a5c2a7419e2deea9089c462d912462"
+            "sha256": "bb482db00857b8fd3a703386ea2f3c90a7cb28d5477b87b2f90278c6ea84e08e"
           }
         ],
         "checks": [
           {
             "id": "single root folder",
             "status": "PASS",
-            "detail": "interactive-story-3520dd50-e4c0-40a3-8496-89a6e573f465"
+            "detail": "interactive-story-f7746905-43ac-496c-b1a2-15ad40f7ba21"
           },
           {
             "id": "legacy file set",
@@ -2083,17 +2083,17 @@
         ],
         "checksums": {
           "README.txt": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4",
-          "compatibility.json": "4c6d27b46388fdfe18f5b8e30b0d29f6baa6aaed656109b141c2ab169c10c59f",
+          "compatibility.json": "d1130e116688dfff78ab974161cf717b65470eb69d37719019eb9fa711525231",
           "game/story.rpy": "583450215692af2e7f2a11bbb15adeaab073e0a148ee9b4c1e8d6b4262b942a9",
           "godot/README.txt": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81",
-          "godot/story.json": "668c8fd4db0908d9262384359c85617307e67bbbe08618502f3c1dd51a0cf16a",
+          "godot/story.json": "7ffef7533a0efd979d528c1fc430f1af4fc4efdd51082987f18654dc4d85ec41",
           "godot/story.schema.json": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c",
           "ink/README.txt": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d",
           "ink/story.ink": "3de6d5862a53b26193397cf846d38ffef09d52449b7c60b9f75a301063cf3e2b",
-          "ink/validation.json": "2e1045e8da7814f7aaf90f07cff7780f8a57b583c60a31714a887d7ca029f5c2",
+          "ink/validation.json": "256aba0007b3667c539bed6a48040ef430c7f133bcc06973a971e9757a306269",
           "media-manifest.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-          "source-receipt.json": "4f52f8c34852e8b74ca14bac589657fd918dd083cf71e6d04a8fc49b8231cebe",
-          "story.json": "2087a06830be149300df4c96b6f4f75d74a5c2a7419e2deea9089c462d912462"
+          "source-receipt.json": "07e4d4e37b78e2c89868f80ebb24b19c6cb606f51b5e5a9c9fd000658a2c9659",
+          "story.json": "bb482db00857b8fd3a703386ea2f3c90a7cb28d5477b87b2f90278c6ea84e08e"
         },
         "ink_witness_alignment": {
           "status": "PASS",
@@ -2110,21 +2110,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                  "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                  "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2141,21 +2141,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                  "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                  "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2340,8 +2340,8 @@
         }
       },
       "deterministic_repeat": {
-        "sha256_first": "82cfedefa330dcef63be368cbc0bb3470924bcd6cbc24c79c5a8cb06813f5f58",
-        "sha256_second": "82cfedefa330dcef63be368cbc0bb3470924bcd6cbc24c79c5a8cb06813f5f58",
+        "sha256_first": "2a2178a3687a61eac424302ca0b579d16796d56709c6310ea0fea94837cacad2",
+        "sha256_second": "2a2178a3687a61eac424302ca0b579d16796d56709c6310ea0fea94837cacad2",
         "identical": true
       },
       "runtime": {
@@ -2359,14 +2359,14 @@
             "choices": []
           },
           {
-            "id": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+            "id": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
             "choices": [
               "descend",
               "remember"
             ]
           },
           {
-            "id": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+            "id": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
             "choices": [
               "descend",
               "forget"
@@ -2423,14 +2423,14 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+              "scope": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
               "status": "PASS",
               "states_expected": 3,
               "states_actual": 3,
@@ -2440,28 +2440,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                  "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                  "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+              "scope": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
               "status": "PASS",
               "states_expected": 3,
               "states_actual": 3,
@@ -2471,21 +2471,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                  "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                  "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2502,49 +2502,49 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 4,
                   "steps": 4,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 5,
                   "steps": 5,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 6,
                   "steps": 6,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2561,21 +2561,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                  "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                  "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                  "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2589,7 +2589,7 @@
         }
       },
       "delivery": {
-        "zip": "exports/legacy/interactive-story-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+        "zip": "exports/legacy/interactive-story-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
         "unpacked": "exports/legacy/unpacked"
       }
     },
@@ -2597,11 +2597,11 @@
       "GODOT_4_RUNTIME_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
-        "filename": "godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-        "sha256": "37a5a86ac92e7630b08d687f77aec26cacd86510d756a09afa0b7d9810d8141e",
+        "filename": "godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+        "sha256": "61d80d1c065be082bb3d50313561aba9a0b5326a744674a7f8d5a32b3699800e",
         "file_count": 14,
-        "files_digest": "3d810a0f94dba593d72eb22d4da455116ce38bf8590976d247b5d6f866a5c1db",
-        "preview_digest": "b37e90b4b4363f4ac7a78c3acfa63635b0f52672b810b98ade72b499fde57ee4",
+        "files_digest": "a6e01dd3d583950b36b5fb1a579bb2bb6c8f0296c2383a1e4ac8e54a016537a9",
+        "preview_digest": "560d32ed58ec76cffb3ec14233b876cb3079a7e40f1bc5d63eeccc495557fefa",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -2729,27 +2729,27 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465/",
+          "prefix": "interactive-godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21/",
           "files": [
             {
               "path": "README.md",
               "bytes": 2689,
-              "sha256": "3f7482be975e8011ac4d11388c0d26f845e870556c91de05bceb6fa5ef02e6c2"
+              "sha256": "6b020f8a1020728de6efee7b059714b8cb3670383c0f54e8b1470961c4cb68e1"
             },
             {
               "path": "acceptance/README.txt",
               "bytes": 550,
-              "sha256": "875f438bd3318adda4d169871ed3ad2e80525982017982aee22ea2d63a4b0df1"
+              "sha256": "c039335837a46f6fb05864236b287d18e530848e073678f9bc5c1b1e3c9e3ad1"
             },
             {
               "path": "acceptance/cases.json",
               "bytes": 2583,
-              "sha256": "edb500b720097cca14edb43e404bd8a653c4660a708103f2429a862a0a892a70"
+              "sha256": "304cc6812cfb575f834e738b1111914d546d7c7cd519a0fcfab5f5ec237898f6"
             },
             {
               "path": "data/story.json",
               "bytes": 3582,
-              "sha256": "de23297d21d8580eb369c14acee4db00509172a8ba3b6f80471cdf16a7608230"
+              "sha256": "52ebb196c295e9a6dd1554e845da585d4b9bbe7e77642e2183cf58504dd9cc2d"
             },
             {
               "path": "data/story.schema.json",
@@ -2769,12 +2769,12 @@
             {
               "path": "manifest.json",
               "bytes": 8732,
-              "sha256": "bc7698e0b67c14477da63120f5ed689640a2fbb6c346f0f56cfd373bea9aa0b0"
+              "sha256": "767b0f30a6e1a63c334583d5d7dfa3b228d6082ff9db8949d7329b19148e6d84"
             },
             {
               "path": "project.godot",
               "bytes": 849,
-              "sha256": "d6956348440e47b97af58901d15e760ca67d67079dc2c159201dc71a537420ba"
+              "sha256": "199d894e49cb11af6729450d0d4532c2b62c742fd6cb9cee1baf99d12bcf0976"
             },
             {
               "path": "runtime/acceptance_runner.gd",
@@ -2799,14 +2799,14 @@
             {
               "path": "source-receipt.json",
               "bytes": 1610,
-              "sha256": "02b18ae61b15b9befcfae9f3abc8f83f5fc4adde784b793ccb56ccc17c7badc7"
+              "sha256": "484fc4f84b5db89e3ccfbfcbd7dbc08afa99a0e223024308360f2759394cd53f"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "interactive-godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "zip paths safe",
@@ -2881,7 +2881,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "manifest story revision",
@@ -3046,7 +3046,7 @@
                   "--witness-path",
                   "<choice_id,...>"
                 ],
-                "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                 "exit_codes": {
                   "failed": 3,
                   "ok": 0,
@@ -3055,7 +3055,7 @@
                 "main_scene": "res://main.tscn",
                 "max_steps": 6,
                 "nodes": 4,
-                "project_name": "PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465",
+                "project_name": "PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21",
                 "result_schema": "poemseed-godot-runtime-result/1",
                 "runtime_story_format": "godot-runtime-story-1",
                 "runtime_story_schema": "poemseed-godot-runtime-story/1",
@@ -3088,22 +3088,22 @@
               {
                 "bytes": 2689,
                 "path": "README.md",
-                "sha256": "3f7482be975e8011ac4d11388c0d26f845e870556c91de05bceb6fa5ef02e6c2"
+                "sha256": "6b020f8a1020728de6efee7b059714b8cb3670383c0f54e8b1470961c4cb68e1"
               },
               {
                 "bytes": 550,
                 "path": "acceptance/README.txt",
-                "sha256": "875f438bd3318adda4d169871ed3ad2e80525982017982aee22ea2d63a4b0df1"
+                "sha256": "c039335837a46f6fb05864236b287d18e530848e073678f9bc5c1b1e3c9e3ad1"
               },
               {
                 "bytes": 2583,
                 "path": "acceptance/cases.json",
-                "sha256": "edb500b720097cca14edb43e404bd8a653c4660a708103f2429a862a0a892a70"
+                "sha256": "304cc6812cfb575f834e738b1111914d546d7c7cd519a0fcfab5f5ec237898f6"
               },
               {
                 "bytes": 3582,
                 "path": "data/story.json",
-                "sha256": "de23297d21d8580eb369c14acee4db00509172a8ba3b6f80471cdf16a7608230"
+                "sha256": "52ebb196c295e9a6dd1554e845da585d4b9bbe7e77642e2183cf58504dd9cc2d"
               },
               {
                 "bytes": 15223,
@@ -3123,7 +3123,7 @@
               {
                 "bytes": 849,
                 "path": "project.godot",
-                "sha256": "d6956348440e47b97af58901d15e760ca67d67079dc2c159201dc71a537420ba"
+                "sha256": "199d894e49cb11af6729450d0d4532c2b62c742fd6cb9cee1baf99d12bcf0976"
               },
               {
                 "bytes": 6028,
@@ -3163,7 +3163,7 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "payload_files_digest": "8f1561a18b6de503a30a8a69138c8a6a3dfbee27ac4fb1f651ffd85d16f8099a",
+            "payload_files_digest": "ea3c99e639d77fa3230980dc3f8433e303745e6f8a4bd256053cd44868ee5862",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_GODOT_BIN",
@@ -3201,18 +3201,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
-              "id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+              "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+              "id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
               "max_steps": 6,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+              "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
               "revision": 3,
-              "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-              "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
+              "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+              "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
               "title": "C · 回声边界（复杂边界样例）",
               "variables": 1,
-              "witness_digest": "61ceeb95b48e118b471ad4407ad48629bb3118e6a4418425f29026e16f4ceafd"
+              "witness_digest": "13d47d638fe185ff459e6025357517db73b8488b145ea44217b0d53493a661ac"
             },
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -3247,14 +3247,14 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "manifest_sha256": "bc7698e0b67c14477da63120f5ed689640a2fbb6c346f0f56cfd373bea9aa0b0",
-            "payload_files_digest": "8f1561a18b6de503a30a8a69138c8a6a3dfbee27ac4fb1f651ffd85d16f8099a",
+            "manifest_sha256": "767b0f30a6e1a63c334583d5d7dfa3b228d6082ff9db8949d7329b19148e6d84",
+            "payload_files_digest": "ea3c99e639d77fa3230980dc3f8433e303745e6f8a4bd256053cd44868ee5862",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+            "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-            "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-            "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+            "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+            "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+            "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
             "story_revision": 3,
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1"
@@ -3300,7 +3300,7 @@
               {
                 "id": "runtime story id bound",
                 "status": "PASS",
-                "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+                "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
               },
               {
                 "id": "runtime revision bound",
@@ -3354,12 +3354,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "37a5a86ac92e7630b08d687f77aec26cacd86510d756a09afa0b7d9810d8141e",
-          "sha256_second": "37a5a86ac92e7630b08d687f77aec26cacd86510d756a09afa0b7d9810d8141e",
+          "sha256_first": "61d80d1c065be082bb3d50313561aba9a0b5326a744674a7f8d5a32b3699800e",
+          "sha256_second": "61d80d1c065be082bb3d50313561aba9a0b5326a744674a7f8d5a32b3699800e",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
           "unpacked": "exports/GODOT_4_RUNTIME_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -3369,14 +3369,14 @@
           "engine": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
           "binding": {
-            "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+            "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
             "revision": 3,
-            "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-            "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-            "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+            "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+            "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+            "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
             "witness": [
               {
-                "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
                 "choices": [
                   "descend",
@@ -3384,7 +3384,7 @@
                 ]
               },
               {
-                "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "ending": "归于虚空",
                 "choices": [
                   "descend",
@@ -3412,7 +3412,7 @@
             {
               "id": "runtime data story id bound",
               "status": "PASS",
-              "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "runtime data revision bound",
@@ -3437,7 +3437,7 @@
             {
               "id": "runtime typed story entry",
               "status": "PASS",
-              "detail": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb"
+              "detail": "806b5981-27cb-4e84-adb3-1db04e65bfe1"
             },
             {
               "id": "acceptance cases schema",
@@ -3457,12 +3457,12 @@
             {
               "id": "runtime initial state",
               "status": "PASS",
-              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\", \"status\": \"PASS\", \"mismatches\": []}]"
+              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"806b5981-27cb-4e84-adb3-1db04e65bfe1\", \"status\": \"PASS\", \"mismatches\": []}]"
             },
             {
               "id": "runtime story binding story_id",
               "status": "PASS",
-              "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "runtime story binding revision",
@@ -3472,17 +3472,17 @@
             {
               "id": "runtime story binding spec_digest",
               "status": "PASS",
-              "detail": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834"
+              "detail": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711"
             },
             {
               "id": "runtime story binding source_digest",
               "status": "PASS",
-              "detail": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971"
+              "detail": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329"
             },
             {
               "id": "runtime story binding review_receipt",
               "status": "PASS",
-              "detail": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f"
+              "detail": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36"
             }
           ],
           "cases": [
@@ -3504,7 +3504,7 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3518,7 +3518,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+              "id": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
               "kind": "ending_witness",
               "choices": [
                 "descend",
@@ -3528,7 +3528,7 @@
               "states_expected": 3,
               "states_actual": 3,
               "alignment": {
-                "scope": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "scope": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "status": "PASS",
                 "states_expected": 3,
                 "states_actual": 3,
@@ -3538,21 +3538,21 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                    "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                    "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3569,7 +3569,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+              "id": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
               "kind": "ending_witness",
               "choices": [
                 "descend",
@@ -3579,7 +3579,7 @@
               "states_expected": 3,
               "states_actual": 3,
               "alignment": {
-                "scope": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+                "scope": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "status": "PASS",
                 "states_expected": 3,
                 "states_actual": 3,
@@ -3589,21 +3589,21 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                    "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                    "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3644,49 +3644,49 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 3,
                     "steps": 3,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 4,
                     "steps": 4,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 5,
                     "steps": 5,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 6,
                     "steps": 6,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3727,21 +3727,21 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                    "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                    "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                    "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3776,7 +3776,7 @@
               {
                 "id": "save.file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465\\b07-e2e07-save-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21\\b07-e2e07-save-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "save.sha256",
@@ -3801,7 +3801,7 @@
               {
                 "id": "restore.state",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"f61adc5b-c793-4328-ae2a-55a868ce02e6\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"3ada3440-0341-468d-99ae-665b5f840a94\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.node",
@@ -3811,7 +3811,7 @@
               {
                 "id": "restore.continued.step_alignment",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"f61adc5b-c793-4328-ae2a-55a868ce02e6\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"c7b450d1-fead-4cdf-b848-a339c61585ae\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"3ada3440-0341-468d-99ae-665b5f840a94\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"a8443190-f0d6-4300-bfbd-eb266be478fb\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.final.expected_ending",
@@ -3821,7 +3821,7 @@
               {
                 "id": "restore.result_file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465\\b07-e2e07-result-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21\\b07-e2e07-result-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "restore.result_file.schema",
@@ -3912,8 +3912,8 @@
               }
             ],
             "save_bytes": 566,
-            "save_sha256": "88e2656ea70066a5907a87689d425dbcfe5b52182d2c3442f9bd0281a52b9f43",
-            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465"
+            "save_sha256": "2019bec69faeed61ac2ec893c9f147fa989c9c0a58887f817f160d59dd9208de",
+            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21"
           },
           "commands": [
             {
@@ -3932,8 +3932,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 171,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "duration_ms": 187,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -3954,14 +3954,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+              "label": "godot.case.ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -3976,14 +3976,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"c7b450d1-fead-4cdf-b848-a339c61585ae\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 188,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"a8443190-f0d6-4300-bfbd-eb266be478fb\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+              "label": "godot.case.ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -3998,8 +3998,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"厅里只剩下她自己的呼吸。\",\"ending\":\"归于虚空\",\"node_id\":\"871f486a-d80b-4317-81ae-17d167acbb08\",\"speaker\":\"\",\"title\":\"结局 · 归于虚空\"},\"path\":[\"descend\",\"forget\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"forget\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 170,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"厅里只剩下她自己的呼吸。\",\"ending\":\"归于虚空\",\"node_id\":\"1c441ffb-f982-4ca1-a4ae-9ca2cefbb702\",\"speaker\":\"\",\"title\":\"结局 · 归于虚空\"},\"path\":[\"descend\",\"forget\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"forget\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4020,8 +4020,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 171,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":3,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":4,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":5,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"STEP_CAP_REACHED\",\"steps\":6,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"STEP_CAP_REACHED\",\"steps\":6}\n",
+              "duration_ms": 188,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":3,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":4,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"PLAYING\",\"steps\":5,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"STEP_CAP_REACHED\",\"steps\":6,\"variables\":{\"resonance\":0}}\nPOEMSEED_DONE {\"path\":[\"again\",\"again\",\"again\",\"again\",\"again\",\"again\"],\"status\":\"STEP_CAP_REACHED\",\"steps\":6}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4042,8 +4042,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"c7b450d1-fead-4cdf-b848-a339c61585ae\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"a8443190-f0d6-4300-bfbd-eb266be478fb\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4066,8 +4066,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 170,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"7fbb63a0-ba19-441c-ac29-75e5e4d881bb\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_SAVED {\"bytes\":566,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"88e2656ea70066a5907a87689d425dbcfe5b52182d2c3442f9bd0281a52b9f43\"}\nPOEMSEED_DONE {\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "duration_ms": 186,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"again\",\"label\":\"再听一次 [回声] {继续} 〖…〗 % 🙂\"},{\"enabled\":true,\"id\":\"descend\",\"label\":\"顺着回声往下走\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\\n第二行：全角标点，。！？；：『引号』\",\"ending\":\"\",\"node_id\":\"806b5981-27cb-4e84-adb3-1db04e65bfe1\",\"speaker\":\"\",\"title\":\"循环 · 回声厅\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"resonance\":0}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_SAVED {\"bytes\":566,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"2019bec69faeed61ac2ec893c9f147fa989c9c0a58887f817f160d59dd9208de\"}\nPOEMSEED_DONE {\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4088,8 +4088,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_DONE {\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4114,8 +4114,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"f61adc5b-c793-4328-ae2a-55a868ce02e6\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"c7b450d1-fead-4cdf-b848-a339c61585ae\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_RESULT {\"bytes\":1216,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"583dc178da44bb278d405a8276eca21bc4fa6bebb5f4b9f434d7eb51376918ff\"}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 187,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"remember\",\"label\":\"记住这一切\"},{\"enabled\":true,\"id\":\"forget\",\"label\":\"忘掉一切\"}],\"max_steps\":6,\"node\":{\"dialogue\":\"墙上刻着：{ } [ ] 〖记忆〗 🙂\\n“é” 与全角：：（分号）；「引号」\",\"ending\":\"\",\"node_id\":\"3ada3440-0341-468d-99ae-665b5f840a94\",\"speaker\":\"\",\"title\":\"深处 · 刻字墙\"},\"path\":[\"descend\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"resonance\":2}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":6,\"node\":{\"dialogue\":\"她把回声收进一盏灯里。\",\"ending\":\"记忆封存 [A] {B} 〖C〗 100% 🙂 é\",\"node_id\":\"a8443190-f0d6-4300-bfbd-eb266be478fb\",\"speaker\":\"\",\"title\":\"结局 · 记忆封存\"},\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"resonance\":2}}\nPOEMSEED_RESULT {\"bytes\":1216,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"82f9e20d9b4f5cd172f2ae90371b4a9efd71612f88158a17dd6c3d909e7cf8d8\"}\nPOEMSEED_DONE {\"path\":[\"descend\",\"remember\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4136,8 +4136,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STATE_MISMATCH\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STATE_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4158,8 +4158,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
+              "duration_ms": 186,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4180,8 +4180,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 171,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4202,8 +4202,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
+              "duration_ms": 170,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4224,8 +4224,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 171,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971\",\"spec_digest\":\"a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834\",\"story_id\":\"3520dd50-e4c0-40a3-8496-89a6e573f465\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329\",\"spec_digest\":\"689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711\",\"story_id\":\"f7746905-43ac-496c-b1a2-15ad40f7ba21\",\"title\":\"C · 回声边界（复杂边界样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
               "stderr_tail": "ERROR: Parse JSON failed. Error at line 0: Expected key\n   at: parse_string (core/io/json.cpp:629)\n   GDScript backtrace (most recent call first):\n       [0] read (res://runtime/save_store.gd:68)\n       [1] run (res://runtime/acceptance_runner.gd:96)\n       [2] _ready (res://main.gd:42)\n",
               "timed_out": false
             }
@@ -4245,7 +4245,7 @@
               "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
               "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_godot_interactive_runtime.py",
               "--artifact",
-              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
               "--report",
               "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\runtime\\GODOT_4_RUNTIME_PROJECT_V1\\godot-line-verifier-report.json",
               "--godot",
@@ -4260,9 +4260,9 @@
               "mode": "EXTERNAL_ARTIFACT",
               "result": "PASS",
               "artifact": {
-                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-                "filename": "godot-4-runtime-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-                "sha256": "37a5a86ac92e7630b08d687f77aec26cacd86510d756a09afa0b7d9810d8141e",
+                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+                "filename": "godot-4-runtime-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+                "sha256": "61d80d1c065be082bb3d50313561aba9a0b5326a744674a7f8d5a32b3699800e",
                 "bundle_files": [
                   "README.md",
                   "acceptance/README.txt",
@@ -4279,10 +4279,10 @@
                   "runtime/story_runtime.gd",
                   "source-receipt.json"
                 ],
-                "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+                "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
                 "revision": 3,
-                "manifest_sha256": "bc7698e0b67c14477da63120f5ed689640a2fbb6c346f0f56cfd373bea9aa0b0",
-                "receipt_sha256": "02b18ae61b15b9befcfae9f3abc8f83f5fc4adde784b793ccb56ccc17c7badc7"
+                "manifest_sha256": "767b0f30a6e1a63c334583d5d7dfa3b228d6082ff9db8949d7329b19148e6d84",
+                "receipt_sha256": "484fc4f84b5db89e3ccfbfcbd7dbc08afa99a0e223024308360f2759394cd53f"
               },
               "engine": {
                 "executable": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
@@ -4296,7 +4296,7 @@
               "status": "PASS",
               "cases": [
                 {
-                  "case_id": "witness-0-c7b450d1-fead-4cdf-b848-a339c61585ae",
+                  "case_id": "witness-0-a8443190-f0d6-4300-bfbd-eb266be478fb",
                   "choices": [
                     "descend",
                     "remember"
@@ -4306,7 +4306,7 @@
                   "states_expected": 3,
                   "states_actual": 3,
                   "alignment": {
-                    "scope": "line-verifier:witness-0-c7b450d1-fead-4cdf-b848-a339c61585ae",
+                    "scope": "line-verifier:witness-0-a8443190-f0d6-4300-bfbd-eb266be478fb",
                     "status": "PASS",
                     "states_expected": 3,
                     "states_actual": 3,
@@ -4316,21 +4316,21 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                        "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                        "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                        "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -4339,7 +4339,7 @@
                   "status": "PASS"
                 },
                 {
-                  "case_id": "witness-1-871f486a-d80b-4317-81ae-17d167acbb08",
+                  "case_id": "witness-1-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                   "choices": [
                     "descend",
                     "forget"
@@ -4349,7 +4349,7 @@
                   "states_expected": 3,
                   "states_actual": 3,
                   "alignment": {
-                    "scope": "line-verifier:witness-1-871f486a-d80b-4317-81ae-17d167acbb08",
+                    "scope": "line-verifier:witness-1-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                     "status": "PASS",
                     "states_expected": 3,
                     "states_actual": 3,
@@ -4359,21 +4359,21 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                        "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                        "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                        "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -4388,7 +4388,7 @@
               "performed": true,
               "passed": true,
               "detail": "two-process save/restore matched direct playback (derived.two_process; saved after 1 step(s), continued 1 step(s))",
-              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             "verifier": {
               "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -4401,7 +4401,7 @@
             }
           },
           "engine_version": "4.7.stable.official.5b4e0cb0f",
-          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 3520dd50-e4c0-40a3-8496-89a6e573f465",
+          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story f7746905-43ac-496c-b1a2-15ad40f7ba21",
           "initial_alignment": {
             "scope": "initial",
             "status": "PASS",
@@ -4413,7 +4413,7 @@
               {
                 "index": 0,
                 "steps": 0,
-                "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                 "status": "PASS",
                 "mismatches": []
               }
@@ -4423,8 +4423,8 @@
             {
               "field": "story_id",
               "status": "PASS",
-              "expected": "3520dd50-e4c0-40a3-8496-89a6e573f465",
-              "actual": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "expected": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
+              "actual": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "field": "revision",
@@ -4435,20 +4435,20 @@
             {
               "field": "spec_digest",
               "status": "PASS",
-              "expected": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-              "actual": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834"
+              "expected": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+              "actual": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711"
             },
             {
               "field": "source_digest",
               "status": "PASS",
-              "expected": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-              "actual": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971"
+              "expected": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+              "actual": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329"
             },
             {
               "field": "review_receipt",
               "status": "PASS",
-              "expected": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
-              "actual": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f"
+              "expected": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
+              "actual": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36"
             }
           ],
           "alignment": {
@@ -4467,7 +4467,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-1-c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "id": "ending-1-a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "kind": "ending_witness",
                 "choices": [
                   "descend",
@@ -4479,7 +4479,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-2-871f486a-d80b-4317-81ae-17d167acbb08",
+                "id": "ending-2-1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "kind": "ending_witness",
                 "choices": [
                   "descend",
@@ -4525,11 +4525,11 @@
       "INK_2_3_2_CURRENT_ARTIFACT_V1": {
         "status": "EXPORTED",
         "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-        "filename": "ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-        "sha256": "c6a708e7d6b5f1dcb5ba3f16cbcd6a3ba586179c99ead7c100afd75f95a0a03a",
+        "filename": "ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+        "sha256": "e435f3893f4ef6e0ac59d64d395350737b6aee088b22bbf66914cc750bb10fbb",
         "file_count": 7,
-        "files_digest": "d80c42d7258fc78f6d741765c22d3e1ccb51042ab41e6648c7baf302528ff894",
-        "preview_digest": "48e2fa5ae58038afb29877d16f1a1fbeb1bcb173853c7cf2d801ef18e7e3525d",
+        "files_digest": "3e4bb7d648f153fd8560cdc837a202ee9946310bf06baebbefb4ff95cd7dc9a0",
+        "preview_digest": "ef4724d638974768e8d023485bb451779aa3428fec22ebcb60b4fbbc97f20304",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -4655,17 +4655,17 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465/",
+          "prefix": "interactive-ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21/",
           "files": [
             {
               "path": "acceptance/witness.json",
               "bytes": 19649,
-              "sha256": "01f265b3174d7606b6a80579215e6ab0efebc8f868c9e7cd90ec4df7fd12ba7c"
+              "sha256": "d3f521791f26bd7ed46a60a1e68822b1a0cbe6b6cb6c06df34a84931d87b0149"
             },
             {
               "path": "ink/README.txt",
               "bytes": 2513,
-              "sha256": "7fd5777ab4ce2c9484f236ca7f60f51905076d5bb7f0f33c80ecf5a0506a545d"
+              "sha256": "faa92156e0bd439b019d9d00fc81662ff5b37623722d552bc5760699dc98e215"
             },
             {
               "path": "ink/runtime-pin.json",
@@ -4680,24 +4680,24 @@
             {
               "path": "ink/validation.json",
               "bytes": 6137,
-              "sha256": "8e50394e50850fd5d15c2cd274562fd32dea23ed50c41be8f5712e420f86d907"
+              "sha256": "eaef57c8b29fbbbc5f23f54532f37902f8d33741b04f40c3542c4022c893bd9d"
             },
             {
               "path": "manifest.json",
               "bytes": 7889,
-              "sha256": "d806af102047acac789d2ab9397eebd42a543f7effa101e28027e69e47d2fbe5"
+              "sha256": "1ddd46507f8e1d0368832a3c28bc798e22449fd5c2054accb195c7c7d1557060"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1589,
-              "sha256": "63cf84656ca7f44daa493648ed9eb373a49314aff808ef49f0fbe069ef5b4695"
+              "sha256": "2c2677ff4dd3f954b0227e3ba8702275969554f812ca22760858fd46461db036"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "interactive-ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "zip paths safe",
@@ -4772,7 +4772,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "manifest story revision",
@@ -4956,19 +4956,19 @@
                 "script_sha256": "004f262b68247c0ab2ce375c4c74eada69c0b1c701b36df39fb96c842352cbc7",
                 "step_cap_cases": 1,
                 "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-                "witness_sha256": "01f265b3174d7606b6a80579215e6ab0efebc8f868c9e7cd90ec4df7fd12ba7c"
+                "witness_sha256": "d3f521791f26bd7ed46a60a1e68822b1a0cbe6b6cb6c06df34a84931d87b0149"
               }
             },
             "files": [
               {
                 "bytes": 19649,
                 "path": "acceptance/witness.json",
-                "sha256": "01f265b3174d7606b6a80579215e6ab0efebc8f868c9e7cd90ec4df7fd12ba7c"
+                "sha256": "d3f521791f26bd7ed46a60a1e68822b1a0cbe6b6cb6c06df34a84931d87b0149"
               },
               {
                 "bytes": 2513,
                 "path": "ink/README.txt",
-                "sha256": "7fd5777ab4ce2c9484f236ca7f60f51905076d5bb7f0f33c80ecf5a0506a545d"
+                "sha256": "faa92156e0bd439b019d9d00fc81662ff5b37623722d552bc5760699dc98e215"
               },
               {
                 "bytes": 3482,
@@ -4983,7 +4983,7 @@
               {
                 "bytes": 6137,
                 "path": "ink/validation.json",
-                "sha256": "8e50394e50850fd5d15c2cd274562fd32dea23ed50c41be8f5712e420f86d907"
+                "sha256": "eaef57c8b29fbbbc5f23f54532f37902f8d33741b04f40c3542c4022c893bd9d"
               }
             ],
             "generation": {
@@ -5004,7 +5004,7 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "payload_files_digest": "71e987ccb58dc0586fa2e5c5a4cb0cb45703ad8e5e81da46f4a154498320c0a4",
+            "payload_files_digest": "8b97170e74869a2573526e0233eb83dbca4a63ed5caf6a1a062ca046527f9d68",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_NODE",
@@ -5039,18 +5039,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
-              "id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+              "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+              "id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
               "max_steps": 6,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+              "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
               "revision": 3,
-              "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-              "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
+              "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+              "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
               "title": "C · 回声边界（复杂边界样例）",
               "variables": 1,
-              "witness_digest": "61ceeb95b48e118b471ad4407ad48629bb3118e6a4418425f29026e16f4ceafd"
+              "witness_digest": "13d47d638fe185ff459e6025357517db73b8488b145ea44217b0d53493a661ac"
             },
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
@@ -5086,14 +5086,14 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "manifest_sha256": "d806af102047acac789d2ab9397eebd42a543f7effa101e28027e69e47d2fbe5",
-            "payload_files_digest": "71e987ccb58dc0586fa2e5c5a4cb0cb45703ad8e5e81da46f4a154498320c0a4",
+            "manifest_sha256": "1ddd46507f8e1d0368832a3c28bc798e22449fd5c2054accb195c7c7d1557060",
+            "payload_files_digest": "8b97170e74869a2573526e0233eb83dbca4a63ed5caf6a1a062ca046527f9d68",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+            "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-            "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-            "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+            "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+            "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+            "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
             "story_revision": 3,
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1"
@@ -5183,12 +5183,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "c6a708e7d6b5f1dcb5ba3f16cbcd6a3ba586179c99ead7c100afd75f95a0a03a",
-          "sha256_second": "c6a708e7d6b5f1dcb5ba3f16cbcd6a3ba586179c99ead7c100afd75f95a0a03a",
+          "sha256_first": "e435f3893f4ef6e0ac59d64d395350737b6aee088b22bbf66914cc750bb10fbb",
+          "sha256_second": "e435f3893f4ef6e0ac59d64d395350737b6aee088b22bbf66914cc750bb10fbb",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
           "unpacked": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/unpacked"
         },
         "runtime": {
@@ -5197,14 +5197,14 @@
           "status": "EXECUTED_AND_ALIGNED",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
           "binding": {
-            "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+            "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
             "revision": 3,
-            "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-            "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-            "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+            "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+            "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+            "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
             "witness": [
               {
-                "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
                 "choices": [
                   "descend",
@@ -5212,7 +5212,7 @@
                 ]
               },
               {
-                "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "ending": "归于虚空",
                 "choices": [
                   "descend",
@@ -5229,7 +5229,7 @@
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -5240,7 +5240,7 @@
               "signal": null,
               "duration_ms": 47,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip\\acceptance\\witness.json\n",
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip\\acceptance\\witness.json\n",
               "timed_out": false
             },
             {
@@ -5259,7 +5259,7 @@
               "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 156,
+              "duration_ms": 171,
               "stdout_tail": "RESULT PASS compile=true cases=3 cross_process=true failures=0\n",
               "stderr_tail": "",
               "timed_out": false
@@ -5337,8 +5337,8 @@
             "cross_process": {
               "performed": true,
               "fresh_process": true,
-              "parent_pid": 139792,
-              "child_pid": 150172,
+              "parent_pid": 155396,
+              "child_pid": 142932,
               "child_exit_code": 0,
               "save_at_step": 0,
               "remaining": [
@@ -5359,9 +5359,9 @@
             "detail": "parent process saves the pinned runtime state; a fresh node process restores it and replays to the ending."
           },
           "artifact_zip": {
-            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
             "bytes": 16026,
-            "sha256": "c6a708e7d6b5f1dcb5ba3f16cbcd6a3ba586179c99ead7c100afd75f95a0a03a",
+            "sha256": "e435f3893f4ef6e0ac59d64d395350737b6aee088b22bbf66914cc750bb10fbb",
             "matches_unpacked_bundle": true
           },
           "vendor": {
@@ -5370,13 +5370,13 @@
           },
           "bundle_attempts": [
             {
-              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
               "bundle_mode": "EXPORTED_ZIP",
               "argv": [
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -5384,7 +5384,7 @@
               ],
               "exit_code": 4,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip\\acceptance\\witness.json\n"
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip\\acceptance\\witness.json\n"
             },
             {
               "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\C_complex_boundaries\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
@@ -5429,7 +5429,7 @@
           "runtime_cases": [
             {
               "kind": "ENDING",
-              "ending_node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+              "ending_node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
               "choices": [
                 "descend",
                 "remember"
@@ -5442,7 +5442,7 @@
             },
             {
               "kind": "ENDING",
-              "ending_node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+              "ending_node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
               "choices": [
                 "descend",
                 "forget"
@@ -5474,8 +5474,8 @@
           "cross_process": {
             "performed": true,
             "fresh_process": true,
-            "parent_pid": 139792,
-            "child_pid": 150172,
+            "parent_pid": 155396,
+            "child_pid": 142932,
             "child_exit_code": 0,
             "save_at_step": 0,
             "remaining": [
@@ -5548,11 +5548,11 @@
       "RENPY_8_5_4_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "RENPY_8_5_4_PROJECT_V1",
-        "filename": "renpy-8-5-4-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
-        "sha256": "0fefc60219feba709a2f6acf5c35cea1840b835290fdbb9314256940db08c366",
+        "filename": "renpy-8-5-4-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
+        "sha256": "33559b330538d1a7283a5dea421eda6da38b583d4ebe2cf7585bcf5c9f92f1c9",
         "file_count": 7,
-        "files_digest": "a50917c04db57d88debf4dfaf1e5612181621825937ec6fadddc2ae548e2ef41",
-        "preview_digest": "21ec52bd26bb9d9507f149a6ace8610b12221b2d2cd842359af5478aaf687f35",
+        "files_digest": "8be90493a6cf1d200643154001a69e65c7afe097d3d111bda81417da7cda7b34",
+        "preview_digest": "c7350028fa94e1c8514e5be654fc816cbfe82eed7ef5ed778708caef4e83bbaa",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -5681,22 +5681,22 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-renpy-8-5-4-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465/",
+          "prefix": "interactive-renpy-8-5-4-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21/",
           "files": [
             {
               "path": "README.txt",
               "bytes": 4271,
-              "sha256": "3c15232a6ef82a61f08d0a6a256f9fc238a4e83a183a721ec7eddaa871df10b4"
+              "sha256": "ebf93f1b311fbe451691c516a091b645af71e2ce0b0a31704c5408b2e9fafa63"
             },
             {
               "path": "acceptance/witness.json",
               "bytes": 7331,
-              "sha256": "5acbae62d81825ceaf12a1929a8abf2ca407fddf5b0e4cae2637c1e5d8ab6db0"
+              "sha256": "9ecde6cc81b206a461c26af9280ac0b53d5e38d484100d29995e5904d74de843"
             },
             {
               "path": "game/options.rpy",
               "bytes": 810,
-              "sha256": "a3333aed8272c214de2a73375da414a09523e9fcda81c94a031ce3c1950ab461"
+              "sha256": "71ea550b44a6f2866bddadd092e537989a63d2a2d437666cebc5754674e84832"
             },
             {
               "path": "game/screens.rpy",
@@ -5706,24 +5706,24 @@
             {
               "path": "game/script.rpy",
               "bytes": 3823,
-              "sha256": "e1a21421d23fd6d67bca3bc842205a40108b1df667e368bcdd54f0d7d8055623"
+              "sha256": "93c4ee724355454eb6c3380aedce0d760f1c821d504719f7fee8ad6a448f944e"
             },
             {
               "path": "manifest.json",
               "bytes": 8319,
-              "sha256": "94cef4555855f0ee258116fead3776edbc29ddf211bf8e347ddd2d041e4d8586"
+              "sha256": "60a4c49c88bf604c3b445e0c7549ef40c3e308f9c17a223db3edd6f024be8e04"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1694,
-              "sha256": "485eb74200550c03abc59e34b96d12e6781fcd15c0f3955302292a64fc72e942"
+              "sha256": "ecbdda40b82b34d831a6947c8986c7da797c8f615b1ba79ea55610a88e4dc2ee"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-renpy-8-5-4-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "interactive-renpy-8-5-4-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "zip paths safe",
@@ -5798,7 +5798,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "3520dd50-e4c0-40a3-8496-89a6e573f465"
+              "detail": "f7746905-43ac-496c-b1a2-15ad40f7ba21"
             },
             {
               "id": "manifest story revision",
@@ -5982,17 +5982,17 @@
               {
                 "bytes": 4271,
                 "path": "README.txt",
-                "sha256": "3c15232a6ef82a61f08d0a6a256f9fc238a4e83a183a721ec7eddaa871df10b4"
+                "sha256": "ebf93f1b311fbe451691c516a091b645af71e2ce0b0a31704c5408b2e9fafa63"
               },
               {
                 "bytes": 7331,
                 "path": "acceptance/witness.json",
-                "sha256": "5acbae62d81825ceaf12a1929a8abf2ca407fddf5b0e4cae2637c1e5d8ab6db0"
+                "sha256": "9ecde6cc81b206a461c26af9280ac0b53d5e38d484100d29995e5904d74de843"
               },
               {
                 "bytes": 810,
                 "path": "game/options.rpy",
-                "sha256": "a3333aed8272c214de2a73375da414a09523e9fcda81c94a031ce3c1950ab461"
+                "sha256": "71ea550b44a6f2866bddadd092e537989a63d2a2d437666cebc5754674e84832"
               },
               {
                 "bytes": 1210,
@@ -6002,7 +6002,7 @@
               {
                 "bytes": 3823,
                 "path": "game/script.rpy",
-                "sha256": "e1a21421d23fd6d67bca3bc842205a40108b1df667e368bcdd54f0d7d8055623"
+                "sha256": "93c4ee724355454eb6c3380aedce0d760f1c821d504719f7fee8ad6a448f944e"
               }
             ],
             "generation": {
@@ -6024,7 +6024,7 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "payload_files_digest": "5b2534cd9cde0c0d7c4238954992e1018d6759ab31549395ec02da5f0e1db2f6",
+            "payload_files_digest": "88573fddcecd09833ec013f536d2d3e808e0f2c14735ce73a797d63b3d2d3671",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_RENPY_BIN",
@@ -6065,18 +6065,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
-              "id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+              "entry_node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
+              "id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
               "max_steps": 6,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 4,
-              "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+              "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
               "revision": 3,
-              "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-              "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
+              "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+              "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
               "title": "C · 回声边界（复杂边界样例）",
               "variables": 1,
-              "witness_digest": "61ceeb95b48e118b471ad4407ad48629bb3118e6a4418425f29026e16f4ceafd"
+              "witness_digest": "13d47d638fe185ff459e6025357517db73b8488b145ea44217b0d53493a661ac"
             },
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1",
@@ -6113,14 +6113,14 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "manifest_sha256": "94cef4555855f0ee258116fead3776edbc29ddf211bf8e347ddd2d041e4d8586",
-            "payload_files_digest": "5b2534cd9cde0c0d7c4238954992e1018d6759ab31549395ec02da5f0e1db2f6",
+            "manifest_sha256": "60a4c49c88bf604c3b445e0c7549ef40c3e308f9c17a223db3edd6f024be8e04",
+            "payload_files_digest": "88573fddcecd09833ec013f536d2d3e808e0f2c14735ce73a797d63b3d2d3671",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "b18447eead5bebbeb23467af88bf58cd85143ee71d6a1c7338d4ac7afaa9951f",
+            "review_receipt": "b4ec24ba540469f1ef30d9504251622b76b9cfb78ce06599b06a3a6d01981c36",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "24f93c033d377b4beab31e84bd419a0835914f3b71fa07970ef47b97f6691971",
-            "spec_digest": "a18b929e89c453f829cca4f9acfb8f46166d17a86e4352a26c5ab9c1daba7834",
-            "story_id": "3520dd50-e4c0-40a3-8496-89a6e573f465",
+            "source_digest": "812dbe8227d6884fac18b2b94a68299d615799bb7ed5e1654d6ae8c4e6a04329",
+            "spec_digest": "689ab862587d01623b2e08e0ff18991abed5f2579035d498af9311450cb23711",
+            "story_id": "f7746905-43ac-496c-b1a2-15ad40f7ba21",
             "story_revision": 3,
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1"
@@ -6326,7 +6326,7 @@
                 ],
                 "cases": [
                   {
-                    "ending_node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                    "ending_node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                     "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
                     "choices": [
                       "descend",
@@ -6346,21 +6346,21 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                          "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -6368,7 +6368,7 @@
                     }
                   },
                   {
-                    "ending_node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                    "ending_node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                     "ending": "归于虚空",
                     "choices": [
                       "descend",
@@ -6388,21 +6388,21 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                          "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                          "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                          "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -6510,7 +6510,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "ending_node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
                 "choices": [
                   "descend",
@@ -6530,21 +6530,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                      "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                      "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                      "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -6552,7 +6552,7 @@
                 }
               },
               {
-                "ending_node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                "ending_node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "ending": "归于虚空",
                 "choices": [
                   "descend",
@@ -6572,21 +6572,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                      "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                      "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                      "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -6678,12 +6678,12 @@
           }
         },
         "deterministic_repeat": {
-          "sha256_first": "0fefc60219feba709a2f6acf5c35cea1840b835290fdbb9314256940db08c366",
-          "sha256_second": "0fefc60219feba709a2f6acf5c35cea1840b835290fdbb9314256940db08c366",
+          "sha256_first": "33559b330538d1a7283a5dea421eda6da38b583d4ebe2cf7585bcf5c9f92f1c9",
+          "sha256_second": "33559b330538d1a7283a5dea421eda6da38b583d4ebe2cf7585bcf5c9f92f1c9",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-3520dd50-e4c0-40a3-8496-89a6e573f465-v3.zip",
+          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-f7746905-43ac-496c-b1a2-15ad40f7ba21-v3.zip",
           "unpacked": "exports/RENPY_8_5_4_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -6909,7 +6909,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                "ending_node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                 "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
                 "choices": [
                   "descend",
@@ -6929,21 +6929,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                      "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                      "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "c7b450d1-fead-4cdf-b848-a339c61585ae",
+                      "node_id": "a8443190-f0d6-4300-bfbd-eb266be478fb",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -6951,7 +6951,7 @@
                 }
               },
               {
-                "ending_node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                "ending_node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                 "ending": "归于虚空",
                 "choices": [
                   "descend",
@@ -6971,21 +6971,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "7fbb63a0-ba19-441c-ac29-75e5e4d881bb",
+                      "node_id": "806b5981-27cb-4e84-adb3-1db04e65bfe1",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "f61adc5b-c793-4328-ae2a-55a868ce02e6",
+                      "node_id": "3ada3440-0341-468d-99ae-665b5f840a94",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "871f486a-d80b-4317-81ae-17d167acbb08",
+                      "node_id": "1c441ffb-f982-4ca1-a4ae-9ca2cefbb702",
                       "status": "PASS",
                       "mismatches": []
                     }

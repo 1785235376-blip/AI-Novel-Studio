@@ -12,63 +12,63 @@
     "initially_disabled_route",
     "assignment_changes_later_choices"
   ],
-  "generated_at_utc": "2026-10-20T07:24:25+00:00",
+  "generated_at_utc": "2026-10-20T07:25:41+00:00",
   "repo": {
-    "head_sha": "a96b7f2998bc15de119312df686ffdeacfe8485f",
+    "head_sha": "ebd0ea373e08f80a4f83187e6302e5307ce78cd0",
     "branch": "work/v2-b07-e2e-20261020"
   },
   "planning": {
-    "graph_id": "8ab7f487-76ff-4a2c-862f-66327aa4488a",
+    "graph_id": "02d82ad6-2561-4909-9c90-06e5da7a696a",
     "graph_version": 1,
-    "root_node_id": "408d48c2-f04d-4418-a487-53ac11693a2d",
+    "root_node_id": "87d16d15-9ec8-45c8-ab8c-6058824db7d4",
     "volume": {
-      "id": "dc674aa9-22ba-4e2b-b3b9-7f7f99e700bf",
+      "id": "955dcf8f-0707-49dd-9fe0-42ca7d53d86c",
       "version": 1
     },
     "chapter_node": {
-      "id": "11ba39e9-7c5d-4615-a853-5c3f3b62f925",
+      "id": "1df1b8b7-66ae-4f91-832b-654628fd2674",
       "version": 1
     },
-    "chapter_id": "r3-mounted-27d42394265f43f7b400d214af7f55c7:1",
+    "chapter_id": "r3-mounted-cf7e1501d22242ac90977a8c72f02abb:1",
     "scenes": [
       {
         "alias": "market",
-        "id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+        "id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
         "version": 1,
         "title": "场景 1 · 集市",
         "level": "SCENE"
       },
       {
         "alias": "crossroads",
-        "id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "version": 1,
         "title": "场景 2 · 岔路",
         "level": "SCENE"
       },
       {
         "alias": "night_road",
-        "id": "61559276-f796-4140-87eb-845a3b09fd52",
+        "id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
         "version": 1,
         "title": "场景 3 · 夜路",
         "level": "SCENE"
       },
       {
         "alias": "safe_home",
-        "id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+        "id": "fd337614-86f2-4c72-9a57-2634232439a6",
         "version": 1,
         "title": "场景 4 · 结局甲",
         "level": "SCENE"
       },
       {
         "alias": "temple_rest",
-        "id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+        "id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
         "version": 1,
         "title": "场景 5 · 结局乙",
         "level": "SCENE"
       },
       {
         "alias": "mountain_dawn",
-        "id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+        "id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
         "version": 1,
         "title": "场景 6 · 结局丙",
         "level": "SCENE"
@@ -76,26 +76,26 @@
     ]
   },
   "story": {
-    "id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+    "id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
     "version": 3,
     "status": "APPROVED",
     "title": "B · 岔路与代价（条件分支样例）",
-    "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+    "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
     "node_count": 6,
     "variable_count": 2,
     "max_steps": 10,
-    "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-    "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-    "review_preview_digest": "9d19e24a27541e9b05e64959d0ab090771471275a90c8d2551fc91aa201bc976"
+    "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+    "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+    "review_preview_digest": "8e5d91feaf6cfde769277db73e6d96e985cc8030b0acf5893e1ab71022b28af3"
   },
   "spec": {
     "title": "B · 岔路与代价（条件分支样例）",
-    "graph_id": "8ab7f487-76ff-4a2c-862f-66327aa4488a",
+    "graph_id": "02d82ad6-2561-4909-9c90-06e5da7a696a",
     "graph_version": 1,
-    "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+    "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
     "nodes": [
       {
-        "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+        "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
         "node_version": 1,
         "title": "集市 · 初始",
         "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
@@ -107,7 +107,7 @@
           {
             "id": "share",
             "label": "分一块面包给朋友",
-            "target": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+            "target": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
             "condition": "",
             "assignments": {
               "trusted": true
@@ -116,7 +116,7 @@
           {
             "id": "keep",
             "label": "悄悄收起两枚硬币",
-            "target": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+            "target": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
             "condition": "",
             "assignments": {
               "coins": 2
@@ -125,14 +125,14 @@
           {
             "id": "call",
             "label": "请朋友同行",
-            "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+            "target": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
             "condition": "trusted",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "node_version": 1,
         "title": "岔路 · 选择",
         "dialogue": "一条路亮着灯，一条路只听得见风。",
@@ -144,7 +144,7 @@
           {
             "id": "buy",
             "label": "买一盏灯",
-            "target": "61559276-f796-4140-87eb-845a3b09fd52",
+            "target": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
             "condition": "coins >= 1",
             "assignments": {
               "coins": 0
@@ -153,28 +153,28 @@
           {
             "id": "dark",
             "label": "摸着黑走",
-            "target": "61559276-f796-4140-87eb-845a3b09fd52",
+            "target": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
             "condition": "",
             "assignments": {}
           },
           {
             "id": "beg",
             "label": "向神庙求助",
-            "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+            "target": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
             "condition": "trusted",
             "assignments": {}
           },
           {
             "id": "turn",
             "label": "折返回家",
-            "target": "854a3de4-3806-42fe-bcf6-694cf351c136",
+            "target": "fd337614-86f2-4c72-9a57-2634232439a6",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+        "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
         "node_version": 1,
         "title": "夜路 · 分岔",
         "dialogue": "风从山口下来，带着雪的味道。",
@@ -186,28 +186,28 @@
           {
             "id": "forge",
             "label": "翻过山口",
-            "target": "d644a09b-195b-4a77-9978-0ada816bea7e",
+            "target": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
             "condition": "not trusted",
             "assignments": {}
           },
           {
             "id": "pray",
             "label": "在路边祈祷",
-            "target": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+            "target": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
             "condition": "trusted",
             "assignments": {}
           },
           {
             "id": "retreat",
             "label": "退回镇上",
-            "target": "854a3de4-3806-42fe-bcf6-694cf351c136",
+            "target": "fd337614-86f2-4c72-9a57-2634232439a6",
             "condition": "",
             "assignments": {}
           }
         ]
       },
       {
-        "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+        "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
         "node_version": 1,
         "title": "结局 · 平安回家",
         "dialogue": "门闩落下，雨声被关在门外。",
@@ -218,7 +218,7 @@
         "choices": []
       },
       {
-        "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+        "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
         "node_version": 1,
         "title": "结局 · 神庙的安眠",
         "dialogue": "石阶很凉，香火很轻。",
@@ -229,7 +229,7 @@
         "choices": []
       },
       {
-        "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+        "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
         "node_version": 1,
         "title": "结局 · 山口黎明",
         "dialogue": "雪停了，天边有一线很薄的金。",
@@ -264,7 +264,7 @@
     "warnings": [],
     "endings": [
       {
-        "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+        "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
         "ending": "神庙的安眠",
         "choices": [
           "share",
@@ -272,7 +272,7 @@
         ]
       },
       {
-        "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+        "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
         "ending": "平安回家",
         "choices": [
           "share",
@@ -280,7 +280,7 @@
         ]
       },
       {
-        "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+        "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
         "ending": "山口黎明",
         "choices": [
           "keep",
@@ -325,7 +325,7 @@
     "initial_disabled_choice_count": 1,
     "condition_driven_divergence": [
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": true,
@@ -347,7 +347,7 @@
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": true,
@@ -369,7 +369,7 @@
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": true,
@@ -391,7 +391,7 @@
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": true,
@@ -413,7 +413,7 @@
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": false,
@@ -435,7 +435,7 @@
         ]
       },
       {
-        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
         "steps": 1,
         "variables_a": {
           "trusted": true,
@@ -457,7 +457,7 @@
         ]
       },
       {
-        "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+        "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
         "steps": 2,
         "variables_a": {
           "trusted": false,
@@ -477,7 +477,7 @@
         ]
       },
       {
-        "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+        "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
         "steps": 2,
         "variables_a": {
           "trusted": true,
@@ -498,9 +498,9 @@
       }
     ],
     "assignment_cases": [
-      "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
-      "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
-      "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+      "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
+      "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
+      "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
       "assignment-effect-trusted",
       "assignment-effect-coins"
     ],
@@ -569,7 +569,7 @@
       "steps": 0,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -610,7 +610,7 @@
       ]
     },
     {
-      "id": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+      "id": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
       "kind": "ending_witness",
       "description": "Reach ending '神庙的安眠' via the authoritative witness path.",
       "choices": [
@@ -620,7 +620,7 @@
       "steps": 2,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -659,7 +659,7 @@
           "path": []
         },
         {
-          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
           "title": "岔路 · 选择",
           "dialogue": "一条路亮着灯，一条路只听得见风。",
           "character_id": null,
@@ -706,7 +706,7 @@
           ]
         },
         {
-          "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+          "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
           "title": "结局 · 神庙的安眠",
           "dialogue": "石阶很凉，香火很轻。",
           "character_id": null,
@@ -729,7 +729,7 @@
       ]
     },
     {
-      "id": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+      "id": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
       "kind": "ending_witness",
       "description": "Reach ending '平安回家' via the authoritative witness path.",
       "choices": [
@@ -739,7 +739,7 @@
       "steps": 2,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -778,7 +778,7 @@
           "path": []
         },
         {
-          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
           "title": "岔路 · 选择",
           "dialogue": "一条路亮着灯，一条路只听得见风。",
           "character_id": null,
@@ -825,7 +825,7 @@
           ]
         },
         {
-          "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+          "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
           "title": "结局 · 平安回家",
           "dialogue": "门闩落下，雨声被关在门外。",
           "character_id": null,
@@ -848,7 +848,7 @@
       ]
     },
     {
-      "id": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+      "id": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
       "kind": "ending_witness",
       "description": "Reach ending '山口黎明' via the authoritative witness path.",
       "choices": [
@@ -859,7 +859,7 @@
       "steps": 3,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -898,7 +898,7 @@
           "path": []
         },
         {
-          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
           "title": "岔路 · 选择",
           "dialogue": "一条路亮着灯，一条路只听得见风。",
           "character_id": null,
@@ -945,7 +945,7 @@
           ]
         },
         {
-          "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+          "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
           "title": "夜路 · 分岔",
           "dialogue": "风从山口下来，带着雪的味道。",
           "character_id": null,
@@ -987,7 +987,7 @@
           ]
         },
         {
-          "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+          "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
           "title": "结局 · 山口黎明",
           "dialogue": "雪停了，天边有一线很薄的金。",
           "character_id": null,
@@ -1022,7 +1022,7 @@
       "steps": 3,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -1061,7 +1061,7 @@
           "path": []
         },
         {
-          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
           "title": "岔路 · 选择",
           "dialogue": "一条路亮着灯，一条路只听得见风。",
           "character_id": null,
@@ -1108,7 +1108,7 @@
           ]
         },
         {
-          "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+          "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
           "title": "夜路 · 分岔",
           "dialogue": "风从山口下来，带着雪的味道。",
           "character_id": null,
@@ -1150,7 +1150,7 @@
           ]
         },
         {
-          "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+          "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
           "title": "结局 · 神庙的安眠",
           "dialogue": "石阶很凉，香火很轻。",
           "character_id": null,
@@ -1185,7 +1185,7 @@
       "steps": 3,
       "expected_states": [
         {
-          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
           "title": "集市 · 初始",
           "dialogue": "集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。",
           "character_id": "alice",
@@ -1224,7 +1224,7 @@
           "path": []
         },
         {
-          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
           "title": "岔路 · 选择",
           "dialogue": "一条路亮着灯，一条路只听得见风。",
           "character_id": null,
@@ -1271,7 +1271,7 @@
           ]
         },
         {
-          "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+          "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
           "title": "夜路 · 分岔",
           "dialogue": "风从山口下来，带着雪的味道。",
           "character_id": null,
@@ -1313,7 +1313,7 @@
           ]
         },
         {
-          "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+          "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
           "title": "结局 · 山口黎明",
           "dialogue": "雪停了，天边有一线很薄的金。",
           "character_id": null,
@@ -1344,7 +1344,7 @@
         "beg"
       ],
       "server": {
-        "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+        "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
         "status": "ENDING",
         "steps": 2,
         "variables": {
@@ -1355,7 +1355,7 @@
         "disabled_choice_ids": []
       },
       "play": {
-        "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+        "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
         "status": "ENDING",
         "steps": 2,
         "variables": {
@@ -1369,7 +1369,7 @@
     }
   ],
   "review": {
-    "preview_digest": "9d19e24a27541e9b05e64959d0ab090771471275a90c8d2551fc91aa201bc976",
+    "preview_digest": "8e5d91feaf6cfde769277db73e6d96e985cc8030b0acf5893e1ab71022b28af3",
     "can_approve": true,
     "approved_version": 3,
     "approved_status": "APPROVED"
@@ -1382,13 +1382,13 @@
       "can_export_any": true,
       "story": {
         "title": "B · 岔路与代价（条件分支样例）",
-        "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+        "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
         "max_steps": 10,
         "nodes": 6,
         "variables": 2,
         "endings": 3,
-        "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-        "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e"
+        "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+        "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b"
       },
       "analysis": {
         "can_review": true,
@@ -1399,7 +1399,7 @@
       },
       "witness": [
         {
-          "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+          "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
           "ending": "神庙的安眠",
           "choices": [
             "share",
@@ -1407,7 +1407,7 @@
           ]
         },
         {
-          "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+          "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
           "ending": "平安回家",
           "choices": [
             "share",
@@ -1415,7 +1415,7 @@
           ]
         },
         {
-          "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+          "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
           "ending": "山口黎明",
           "choices": [
             "keep",
@@ -2154,10 +2154,10 @@
     "legacy": {
       "status": "EXPORTED",
       "target_id": null,
-      "filename": "interactive-story-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-      "sha256": "f47b4195b882b79cae18710d36a19db276857a06ad630c7ead29beb4e6a75fc8",
+      "filename": "interactive-story-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+      "sha256": "6f37991fcb651b8b9bb4c798fb20e89b7d85b6759cafecba92eb869b11b83232",
       "file_count": 13,
-      "preview_digest": "980e27d131ec245fc4d3de69371fbb418d4a6a11d1a53b477cfd1677238e9144",
+      "preview_digest": "2f903d1e318dbd731614d9c672addee989bd30f6888240f8c87f0402d128b21e",
       "can_export": true,
       "losses": [
         "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -2172,7 +2172,7 @@
       "available_targets": null,
       "archive": {
         "status": "PASS",
-        "prefix": "interactive-story-80db0a3e-4149-4320-86bf-19babd9d13a9/",
+        "prefix": "interactive-story-94e365e8-7a4f-45f9-b444-57f2f0631c9c/",
         "files": [
           {
             "path": "README.txt",
@@ -2182,12 +2182,12 @@
           {
             "path": "checksums.json",
             "bytes": 1081,
-            "sha256": "58dc4d2e04f11f52e6623c0b1546f0e4330b902617a8010186c9e7513ce387cb"
+            "sha256": "2e9d28340fb5a8550e476529be0859f3745aec347aa2790684dda794c5bce7f1"
           },
           {
             "path": "compatibility.json",
             "bytes": 48619,
-            "sha256": "fc7693bbf8f618abf3420c756781099f3161bb15888841da20f570043c79c4df"
+            "sha256": "9a09195c87da3eae9d8f120079ae7f0ffb165ef4c68549a6a7209a89ecef5417"
           },
           {
             "path": "game/story.rpy",
@@ -2202,7 +2202,7 @@
           {
             "path": "godot/story.json",
             "bytes": 4939,
-            "sha256": "04d814f46f88c9fe40431d45606e03d9ad921700a57b5e901e64d505cb037ffe"
+            "sha256": "8ecc1fea627b525a758293ed2f67d1c3d5614dbb2dc460aeb09327ebada36d36"
           },
           {
             "path": "godot/story.schema.json",
@@ -2222,7 +2222,7 @@
           {
             "path": "ink/validation.json",
             "bytes": 4092,
-            "sha256": "ddb1c905b0fb6f0f7e97a79b89d73b42615cc8325a936f3829e4695aba77ed32"
+            "sha256": "52c2d1e430ab8c520604c53a15e08157fa31bd6eee6464b18014aede9899cbb0"
           },
           {
             "path": "media-manifest.json",
@@ -2232,19 +2232,19 @@
           {
             "path": "source-receipt.json",
             "bytes": 409,
-            "sha256": "efbe31903fe8f0849fd89db0d93c0cf0809b91cfbdcefff62392f9178f97aebf"
+            "sha256": "5bbfab806e954e74c1bfda519dbcfbd70cec5af10efd782b4501370807b391ae"
           },
           {
             "path": "story.json",
             "bytes": 6719,
-            "sha256": "42c767726920ef1f428c6b05ec7297d8e41024667644de20bb716cae1db81a59"
+            "sha256": "80eed1a52d70268643176b506187c4461bcdea41a24da6710a9f8292bee30725"
           }
         ],
         "checks": [
           {
             "id": "single root folder",
             "status": "PASS",
-            "detail": "interactive-story-80db0a3e-4149-4320-86bf-19babd9d13a9"
+            "detail": "interactive-story-94e365e8-7a4f-45f9-b444-57f2f0631c9c"
           },
           {
             "id": "legacy file set",
@@ -2474,17 +2474,17 @@
         ],
         "checksums": {
           "README.txt": "c26fdbab4e24c4db39103a14f587e849f2de83baad721d4911fcafcd4a60f0e4",
-          "compatibility.json": "fc7693bbf8f618abf3420c756781099f3161bb15888841da20f570043c79c4df",
+          "compatibility.json": "9a09195c87da3eae9d8f120079ae7f0ffb165ef4c68549a6a7209a89ecef5417",
           "game/story.rpy": "2af5afab0a094ebe84d94dd3fe4433e9db28e7908c97b3699620d4279cccc5ef",
           "godot/README.txt": "15ee5ddf322242165721360395c9e177d78c6ac6f16bf3ed3482060da1277f81",
-          "godot/story.json": "04d814f46f88c9fe40431d45606e03d9ad921700a57b5e901e64d505cb037ffe",
+          "godot/story.json": "8ecc1fea627b525a758293ed2f67d1c3d5614dbb2dc460aeb09327ebada36d36",
           "godot/story.schema.json": "242c65d8578af17e3f8dcd541310f4143dac7cde244faaf829fc75c78f91f76c",
           "ink/README.txt": "df4d1abe67d621acd9d9ad4d434778648a1bb4aa04ffb021c2d9b3dbf494813d",
           "ink/story.ink": "a8495d41ebc1cceba594a4ca5a8807af1828a99828651252cfa5dd2dc60860e2",
-          "ink/validation.json": "ddb1c905b0fb6f0f7e97a79b89d73b42615cc8325a936f3829e4695aba77ed32",
+          "ink/validation.json": "52c2d1e430ab8c520604c53a15e08157fa31bd6eee6464b18014aede9899cbb0",
           "media-manifest.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-          "source-receipt.json": "efbe31903fe8f0849fd89db0d93c0cf0809b91cfbdcefff62392f9178f97aebf",
-          "story.json": "42c767726920ef1f428c6b05ec7297d8e41024667644de20bb716cae1db81a59"
+          "source-receipt.json": "5bbfab806e954e74c1bfda519dbcfbd70cec5af10efd782b4501370807b391ae",
+          "story.json": "80eed1a52d70268643176b506187c4461bcdea41a24da6710a9f8292bee30725"
         },
         "ink_witness_alignment": {
           "status": "PASS",
@@ -2501,21 +2501,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                  "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2532,21 +2532,21 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                  "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2563,28 +2563,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                  "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                  "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2754,8 +2754,8 @@
         }
       },
       "deterministic_repeat": {
-        "sha256_first": "f47b4195b882b79cae18710d36a19db276857a06ad630c7ead29beb4e6a75fc8",
-        "sha256_second": "f47b4195b882b79cae18710d36a19db276857a06ad630c7ead29beb4e6a75fc8",
+        "sha256_first": "6f37991fcb651b8b9bb4c798fb20e89b7d85b6759cafecba92eb869b11b83232",
+        "sha256_second": "6f37991fcb651b8b9bb4c798fb20e89b7d85b6759cafecba92eb869b11b83232",
         "identical": true
       },
       "runtime": {
@@ -2773,21 +2773,21 @@
             "choices": []
           },
           {
-            "id": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+            "id": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
             "choices": [
               "share",
               "beg"
             ]
           },
           {
-            "id": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+            "id": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
             "choices": [
               "share",
               "turn"
             ]
           },
           {
-            "id": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+            "id": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
             "choices": [
               "keep",
               "buy",
@@ -2821,7 +2821,7 @@
             ],
             "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
             "exit_code": 0,
-            "duration_ms": 156,
+            "duration_ms": 157,
             "stdout_tail": "[{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走\",\"向神庙求助\",\"折返回家\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"石阶很凉，香火很轻。\\n神庙的安眠\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":4,\"steps\":2,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走\",\"向神庙求助\",\"折返回家\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"门闩落下，雨声被关在门外。\\n平安回家\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":3,\"steps\":2,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"买一盏灯\",\"摸着黑走\",\"折返回家\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":2},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"翻过山口\",\"退回镇上\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":5,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"摸着黑走\",\"向神庙求助\",\"折返回家\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"在路边祈祷\",\"退回镇上\"],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"石阶很凉，香火很轻。\\n神庙的安眠\\n\",\"choices\":[],\"values\":{\"ans_var_0\":true,\"ans_var_1\":0},\"node\":4,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"},{\"snapshots\":[{\"output\":\"Alice\\n集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\\n\",\"choices\":[\"分一块面包给朋友\",\"悄悄收起两枚硬币\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":0,\"steps\":0,\"status\":0},{\"output\":\"一条路亮着灯，一条路只听得见风。\\n\",\"choices\":[\"买一盏灯\",\"摸着黑走\",\"折返回家\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":2},\"node\":1,\"steps\":1,\"status\":0},{\"output\":\"风从山口下来，带着雪的味道。\\n\",\"choices\":[\"翻过山口\",\"退回镇上\"],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":2,\"steps\":2,\"status\":0},{\"output\":\"雪停了，天边有一线很薄的金。\\n山口黎明\\n\",\"choices\":[],\"values\":{\"ans_var_0\":false,\"ans_var_1\":0},\"node\":5,\"steps\":3,\"status\":1}],\"fileCalls\":0,\"errors\":[],\"version\":\"2.3.2\"}]",
             "stderr_tail": "",
             "timed_out": false,
@@ -2843,14 +2843,14 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+              "scope": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
               "status": "PASS",
               "states_expected": 3,
               "states_actual": 3,
@@ -2860,28 +2860,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                  "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+              "scope": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
               "status": "PASS",
               "states_expected": 3,
               "states_actual": 3,
@@ -2891,28 +2891,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                  "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                   "status": "PASS",
                   "mismatches": []
                 }
               ]
             },
             {
-              "scope": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+              "scope": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
               "status": "PASS",
               "states_expected": 4,
               "states_actual": 4,
@@ -2922,28 +2922,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                  "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                  "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2960,28 +2960,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                  "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                  "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -2998,28 +2998,28 @@
                 {
                   "index": 0,
                   "steps": 0,
-                  "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                  "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 1,
                   "steps": 1,
-                  "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                  "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 2,
                   "steps": 2,
-                  "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                  "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                   "status": "PASS",
                   "mismatches": []
                 },
                 {
                   "index": 3,
                   "steps": 3,
-                  "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                  "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                   "status": "PASS",
                   "mismatches": []
                 }
@@ -3033,7 +3033,7 @@
         }
       },
       "delivery": {
-        "zip": "exports/legacy/interactive-story-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+        "zip": "exports/legacy/interactive-story-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
         "unpacked": "exports/legacy/unpacked"
       }
     },
@@ -3041,11 +3041,11 @@
       "GODOT_4_RUNTIME_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
-        "filename": "godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-        "sha256": "af26dd13b623bf305f6abe347bfa0df0565abff2fc1915406264d81c825104b2",
+        "filename": "godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+        "sha256": "c5123ad8c063be70d39f01a24739795e13ae7ebbce165d2baebc532df71c8b41",
         "file_count": 14,
-        "files_digest": "c1bb119749838026bb595dd3386b7507a30d1459b43b2e017dc30f88f75b2906",
-        "preview_digest": "b6375d623fb4fe02267edd69e734bd32b93146507f939fffac58a8f018d90aa3",
+        "files_digest": "8023ce83a6882705d64c6ff7d0712d9d6154f71ff7228651f85fa6355b44c353",
+        "preview_digest": "f1578d0cb29c28e5d1d3e4070c13f955af4f2e9701bca1fa54c22a22f77b32f0",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -3173,27 +3173,27 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9/",
+          "prefix": "interactive-godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c/",
           "files": [
             {
               "path": "README.md",
               "bytes": 2691,
-              "sha256": "e8ad48dd55e1c5ab6fdf9ac9e8a882b110a4fd23babcb51588ad52e31d7ae343"
+              "sha256": "1f485a76be0910cc74aef4cdc91405d5249329cdb2f359c255957ded52effed6"
             },
             {
               "path": "acceptance/README.txt",
               "bytes": 551,
-              "sha256": "a4ee37d8f2366f99eec6cf01ec9c0db394abb80fffffd6afd40315b2a8a4a28a"
+              "sha256": "d10fa11774c610dc23653b61b70adc35afa8d561fd429c1363c359b895efee4b"
             },
             {
               "path": "acceptance/cases.json",
               "bytes": 3298,
-              "sha256": "703ec499b14f7c99e348ad2b5d2d604fb89d7eed70761f7ce220e8852dc069b7"
+              "sha256": "3bd2a4bdbd0817930e4ee284d568437870f606718a9cafffc4d92d6ee1d0fc66"
             },
             {
               "path": "data/story.json",
               "bytes": 5897,
-              "sha256": "9db0a2547501cf5d3c346338bbcab6db52f300530179a1eaaa3b9c969a722bbb"
+              "sha256": "032bbc410b0d6de15a3e8bd399fa1ad5fcffc21f293ad721d64fa5bc2a5160f0"
             },
             {
               "path": "data/story.schema.json",
@@ -3213,12 +3213,12 @@
             {
               "path": "manifest.json",
               "bytes": 8737,
-              "sha256": "befc535d4328be61be2c47e7a001b6925211119ea969fc0819c54f6169b2b17f"
+              "sha256": "e9ddeaa9f3394c3fbe054af6c12b20491f636e02d3d99b0bfadf16e0a2756ecd"
             },
             {
               "path": "project.godot",
               "bytes": 849,
-              "sha256": "366a07fcfbaa1c2fa77ab1e99a5f5e9ed9bd6901e40f799318daada60b019f1e"
+              "sha256": "0a2ef668e5a4068e42457a5997079c0d53247e9f34fd3150d68628c38d3da71a"
             },
             {
               "path": "runtime/acceptance_runner.gd",
@@ -3243,14 +3243,14 @@
             {
               "path": "source-receipt.json",
               "bytes": 1610,
-              "sha256": "b329ce55060212a4911357ab0d83eb8605ab14bc9f243be9af8a5c0f3e81a6df"
+              "sha256": "db775251997adee8a042daa9bc2e15ab2e16237a67601e215f5c7a4c97e443a3"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "interactive-godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "zip paths safe",
@@ -3325,7 +3325,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "manifest story revision",
@@ -3490,7 +3490,7 @@
                   "--witness-path",
                   "<choice_id,...>"
                 ],
-                "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                 "exit_codes": {
                   "failed": 3,
                   "ok": 0,
@@ -3499,7 +3499,7 @@
                 "main_scene": "res://main.tscn",
                 "max_steps": 10,
                 "nodes": 6,
-                "project_name": "PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9",
+                "project_name": "PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c",
                 "result_schema": "poemseed-godot-runtime-result/1",
                 "runtime_story_format": "godot-runtime-story-1",
                 "runtime_story_schema": "poemseed-godot-runtime-story/1",
@@ -3532,22 +3532,22 @@
               {
                 "bytes": 2691,
                 "path": "README.md",
-                "sha256": "e8ad48dd55e1c5ab6fdf9ac9e8a882b110a4fd23babcb51588ad52e31d7ae343"
+                "sha256": "1f485a76be0910cc74aef4cdc91405d5249329cdb2f359c255957ded52effed6"
               },
               {
                 "bytes": 551,
                 "path": "acceptance/README.txt",
-                "sha256": "a4ee37d8f2366f99eec6cf01ec9c0db394abb80fffffd6afd40315b2a8a4a28a"
+                "sha256": "d10fa11774c610dc23653b61b70adc35afa8d561fd429c1363c359b895efee4b"
               },
               {
                 "bytes": 3298,
                 "path": "acceptance/cases.json",
-                "sha256": "703ec499b14f7c99e348ad2b5d2d604fb89d7eed70761f7ce220e8852dc069b7"
+                "sha256": "3bd2a4bdbd0817930e4ee284d568437870f606718a9cafffc4d92d6ee1d0fc66"
               },
               {
                 "bytes": 5897,
                 "path": "data/story.json",
-                "sha256": "9db0a2547501cf5d3c346338bbcab6db52f300530179a1eaaa3b9c969a722bbb"
+                "sha256": "032bbc410b0d6de15a3e8bd399fa1ad5fcffc21f293ad721d64fa5bc2a5160f0"
               },
               {
                 "bytes": 15223,
@@ -3567,7 +3567,7 @@
               {
                 "bytes": 849,
                 "path": "project.godot",
-                "sha256": "366a07fcfbaa1c2fa77ab1e99a5f5e9ed9bd6901e40f799318daada60b019f1e"
+                "sha256": "0a2ef668e5a4068e42457a5997079c0d53247e9f34fd3150d68628c38d3da71a"
               },
               {
                 "bytes": 6028,
@@ -3607,7 +3607,7 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "payload_files_digest": "10a55cbd03089bcb0fb8b0cce477921f586f7827889b6d1aa623a76535b7d66d",
+            "payload_files_digest": "9b6861f9e618cca846b22660c1e80412bcc8a526c0d85d790d1e5ce1193bb116",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_GODOT_BIN",
@@ -3645,18 +3645,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
-              "id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+              "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
+              "id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
               "max_steps": 10,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 6,
-              "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+              "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
               "revision": 3,
-              "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-              "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
+              "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+              "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
               "title": "B · 岔路与代价（条件分支样例）",
               "variables": 2,
-              "witness_digest": "fe0139adc223d2480567abd9719284702bc10f8016a199f00718ef6778fddf84"
+              "witness_digest": "5e18e052627e1df6cb6989e23a0d697e8eec3f03c1f10d12a2c6a3f5ccbc6499"
             },
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -3691,14 +3691,14 @@
               "GODOT_RUNTIME_SAVE_FILES_ARE_LOCAL_JSON_UNDER_USER_DIR_ONLY",
               "GODOT_RUNTIME_FONT_GLYPH_COVERAGE_NOT_VERIFIED"
             ],
-            "manifest_sha256": "befc535d4328be61be2c47e7a001b6925211119ea969fc0819c54f6169b2b17f",
-            "payload_files_digest": "10a55cbd03089bcb0fb8b0cce477921f586f7827889b6d1aa623a76535b7d66d",
+            "manifest_sha256": "e9ddeaa9f3394c3fbe054af6c12b20491f636e02d3d99b0bfadf16e0a2756ecd",
+            "payload_files_digest": "9b6861f9e618cca846b22660c1e80412bcc8a526c0d85d790d1e5ce1193bb116",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+            "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-            "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-            "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+            "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+            "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+            "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
             "story_revision": 3,
             "target_format_version": "godot-runtime-project-1",
             "target_id": "GODOT_4_RUNTIME_PROJECT_V1"
@@ -3744,7 +3744,7 @@
               {
                 "id": "runtime story id bound",
                 "status": "PASS",
-                "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+                "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
               },
               {
                 "id": "runtime revision bound",
@@ -3793,12 +3793,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "af26dd13b623bf305f6abe347bfa0df0565abff2fc1915406264d81c825104b2",
-          "sha256_second": "af26dd13b623bf305f6abe347bfa0df0565abff2fc1915406264d81c825104b2",
+          "sha256_first": "c5123ad8c063be70d39f01a24739795e13ae7ebbce165d2baebc532df71c8b41",
+          "sha256_second": "c5123ad8c063be70d39f01a24739795e13ae7ebbce165d2baebc532df71c8b41",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+          "zip": "exports/GODOT_4_RUNTIME_PROJECT_V1/godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
           "unpacked": "exports/GODOT_4_RUNTIME_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -3808,14 +3808,14 @@
           "engine": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
           "binding": {
-            "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+            "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
             "revision": 3,
-            "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-            "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-            "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+            "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+            "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+            "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
             "witness": [
               {
-                "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "ending": "神庙的安眠",
                 "choices": [
                   "share",
@@ -3823,7 +3823,7 @@
                 ]
               },
               {
-                "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                 "ending": "平安回家",
                 "choices": [
                   "share",
@@ -3831,7 +3831,7 @@
                 ]
               },
               {
-                "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "ending": "山口黎明",
                 "choices": [
                   "keep",
@@ -3860,7 +3860,7 @@
             {
               "id": "runtime data story id bound",
               "status": "PASS",
-              "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "runtime data revision bound",
@@ -3885,7 +3885,7 @@
             {
               "id": "runtime typed story entry",
               "status": "PASS",
-              "detail": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2"
+              "detail": "9e75811b-c49d-4d8e-93f5-3489b45305d5"
             },
             {
               "id": "acceptance cases schema",
@@ -3905,12 +3905,12 @@
             {
               "id": "runtime initial state",
               "status": "PASS",
-              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\", \"status\": \"PASS\", \"mismatches\": []}]"
+              "detail": "[{\"index\": 0, \"steps\": 0, \"node_id\": \"9e75811b-c49d-4d8e-93f5-3489b45305d5\", \"status\": \"PASS\", \"mismatches\": []}]"
             },
             {
               "id": "runtime story binding story_id",
               "status": "PASS",
-              "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "runtime story binding revision",
@@ -3920,17 +3920,17 @@
             {
               "id": "runtime story binding spec_digest",
               "status": "PASS",
-              "detail": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8"
+              "detail": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2"
             },
             {
               "id": "runtime story binding source_digest",
               "status": "PASS",
-              "detail": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e"
+              "detail": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b"
             },
             {
               "id": "runtime story binding review_receipt",
               "status": "PASS",
-              "detail": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930"
+              "detail": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e"
             }
           ],
           "cases": [
@@ -3952,7 +3952,7 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -3966,7 +3966,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+              "id": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
               "kind": "ending_witness",
               "choices": [
                 "share",
@@ -3976,7 +3976,7 @@
               "states_expected": 3,
               "states_actual": 3,
               "alignment": {
-                "scope": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "scope": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "status": "PASS",
                 "states_expected": 3,
                 "states_actual": 3,
@@ -3986,21 +3986,21 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                    "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                    "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -4017,7 +4017,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+              "id": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
               "kind": "ending_witness",
               "choices": [
                 "share",
@@ -4027,7 +4027,7 @@
               "states_expected": 3,
               "states_actual": 3,
               "alignment": {
-                "scope": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+                "scope": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
                 "status": "PASS",
                 "states_expected": 3,
                 "states_actual": 3,
@@ -4037,21 +4037,21 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                    "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                    "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -4068,7 +4068,7 @@
               "done_ok": true
             },
             {
-              "id": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+              "id": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
               "kind": "ending_witness",
               "choices": [
                 "keep",
@@ -4079,7 +4079,7 @@
               "states_expected": 4,
               "states_actual": 4,
               "alignment": {
-                "scope": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+                "scope": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "status": "PASS",
                 "states_expected": 4,
                 "states_actual": 4,
@@ -4089,28 +4089,28 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                    "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                    "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 3,
                     "steps": 3,
-                    "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                    "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -4149,28 +4149,28 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                    "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                    "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 3,
                     "steps": 3,
-                    "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                    "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -4209,28 +4209,28 @@
                   {
                     "index": 0,
                     "steps": 0,
-                    "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                    "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 1,
                     "steps": 1,
-                    "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                    "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 2,
                     "steps": 2,
-                    "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                    "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                     "status": "PASS",
                     "mismatches": []
                   },
                   {
                     "index": 3,
                     "steps": 3,
-                    "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                    "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                     "status": "PASS",
                     "mismatches": []
                   }
@@ -4251,7 +4251,7 @@
           "save_restore": {
             "status": "PASS",
             "level": "PASS",
-            "case_id": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+            "case_id": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
             "path": [
               "keep",
               "buy",
@@ -4267,7 +4267,7 @@
               {
                 "id": "save.file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9\\b07-e2e07-save-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c\\b07-e2e07-save-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "save.sha256",
@@ -4292,7 +4292,7 @@
               {
                 "id": "restore.state",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"23c40900-82fa-4707-8685-ba39dbd5e5fe\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.node",
@@ -4302,7 +4302,7 @@
               {
                 "id": "restore.continued.step_alignment",
                 "status": "PASS",
-                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"61559276-f796-4140-87eb-845a3b09fd52\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 2, \"steps\": 3, \"node_id\": \"d644a09b-195b-4a77-9978-0ada816bea7e\", \"status\": \"PASS\", \"mismatches\": []}]"
+                "detail": "[{\"index\": 0, \"steps\": 1, \"node_id\": \"23c40900-82fa-4707-8685-ba39dbd5e5fe\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 1, \"steps\": 2, \"node_id\": \"6d0f3c67-b14f-4016-8f43-4b31f788823c\", \"status\": \"PASS\", \"mismatches\": []}, {\"index\": 2, \"steps\": 3, \"node_id\": \"fff8d8d8-6a10-4cf3-9053-ca4a6600ce57\", \"status\": \"PASS\", \"mismatches\": []}]"
               },
               {
                 "id": "restore.final.expected_ending",
@@ -4312,7 +4312,7 @@
               {
                 "id": "restore.result_file.written",
                 "status": "PASS",
-                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9\\b07-e2e07-result-godot_4_runtime_project_v1.json"
+                "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c\\b07-e2e07-result-godot_4_runtime_project_v1.json"
               },
               {
                 "id": "restore.result_file.schema",
@@ -4403,8 +4403,8 @@
               }
             ],
             "save_bytes": 581,
-            "save_sha256": "8cf8e04c80114c80c1fe123ecee9db3e4b025b1435a7aa358fa6b16b674775db",
-            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9"
+            "save_sha256": "efd76cb52fe168b2951d1faaf1b535b72308915c62ed43346e1500e0231a9ce7",
+            "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c"
           },
           "commands": [
             {
@@ -4423,8 +4423,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 170,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4445,14 +4445,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[],\"status\":\"PLAYING\",\"steps\":0}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+              "label": "godot.case.ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -4467,14 +4467,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"石阶很凉，香火很轻。\",\"ending\":\"神庙的安眠\",\"node_id\":\"4bbd726f-a187-4a6d-8eda-2aa4e19fd89f\",\"speaker\":\"\",\"title\":\"结局 · 神庙的安眠\"},\"path\":[\"share\",\"beg\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"beg\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"石阶很凉，香火很轻。\",\"ending\":\"神庙的安眠\",\"node_id\":\"b01d5731-7b64-4c54-9b8b-69ced3aa5684\",\"speaker\":\"\",\"title\":\"结局 · 神庙的安眠\"},\"path\":[\"share\",\"beg\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"beg\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+              "label": "godot.case.ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -4489,14 +4489,14 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"门闩落下，雨声被关在门外。\",\"ending\":\"平安回家\",\"node_id\":\"854a3de4-3806-42fe-bcf6-694cf351c136\",\"speaker\":\"\",\"title\":\"结局 · 平安回家\"},\"path\":[\"share\",\"turn\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"turn\"],\"status\":\"ENDING\",\"steps\":2}\n",
+              "duration_ms": 187,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"门闩落下，雨声被关在门外。\",\"ending\":\"平安回家\",\"node_id\":\"fd337614-86f2-4c72-9a57-2634232439a6\",\"speaker\":\"\",\"title\":\"结局 · 平安回家\"},\"path\":[\"share\",\"turn\"],\"status\":\"ENDING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"turn\"],\"status\":\"ENDING\",\"steps\":2}\n",
               "stderr_tail": "",
               "timed_out": false
             },
             {
               "kind": "process",
-              "label": "godot.case.ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+              "label": "godot.case.ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
               "argv": [
                 "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
                 "--headless",
@@ -4511,8 +4511,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"61559276-f796-4140-87eb-845a3b09fd52\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"d644a09b-195b-4a77-9978-0ada816bea7e\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"6d0f3c67-b14f-4016-8f43-4b31f788823c\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"fff8d8d8-6a10-4cf3-9053-ca4a6600ce57\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4533,8 +4533,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 187,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":true,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"61559276-f796-4140-87eb-845a3b09fd52\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"share\",\"dark\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"石阶很凉，香火很轻。\",\"ending\":\"神庙的安眠\",\"node_id\":\"4bbd726f-a187-4a6d-8eda-2aa4e19fd89f\",\"speaker\":\"\",\"title\":\"结局 · 神庙的安眠\"},\"path\":[\"share\",\"dark\",\"pray\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"dark\",\"pray\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 188,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":true,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"share\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":false,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":true,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"6d0f3c67-b14f-4016-8f43-4b31f788823c\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"share\",\"dark\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"石阶很凉，香火很轻。\",\"ending\":\"神庙的安眠\",\"node_id\":\"b01d5731-7b64-4c54-9b8b-69ced3aa5684\",\"speaker\":\"\",\"title\":\"结局 · 神庙的安眠\"},\"path\":[\"share\",\"dark\",\"pray\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":true}}\nPOEMSEED_DONE {\"path\":[\"share\",\"dark\",\"pray\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4555,8 +4555,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"61559276-f796-4140-87eb-845a3b09fd52\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"d644a09b-195b-4a77-9978-0ada816bea7e\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 170,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"6d0f3c67-b14f-4016-8f43-4b31f788823c\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"fff8d8d8-6a10-4cf3-9053-ca4a6600ce57\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4579,8 +4579,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_SAVED {\"bytes\":581,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"8cf8e04c80114c80c1fe123ecee9db3e4b025b1435a7aa358fa6b16b674775db\"}\nPOEMSEED_DONE {\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "duration_ms": 188,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"share\",\"label\":\"分一块面包给朋友\"},{\"enabled\":true,\"id\":\"keep\",\"label\":\"悄悄收起两枚硬币\"},{\"enabled\":false,\"id\":\"call\",\"label\":\"请朋友同行\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"集市收摊了。朋友在屋檐那头看着她，她手里有两枚硬币。\",\"ending\":\"\",\"node_id\":\"9e75811b-c49d-4d8e-93f5-3489b45305d5\",\"speaker\":\"Alice\",\"title\":\"集市 · 初始\"},\"path\":[],\"status\":\"PLAYING\",\"steps\":0,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_SAVED {\"bytes\":581,\"path\":\"user://b07-e2e07-save-godot_4_runtime_project_v1.json\",\"sha256\":\"efd76cb52fe168b2951d1faaf1b535b72308915c62ed43346e1500e0231a9ce7\"}\nPOEMSEED_DONE {\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4602,7 +4602,7 @@
               "exit_code": 0,
               "signal": null,
               "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1}\n",
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_DONE {\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4627,8 +4627,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"1fdb0a0b-d1a5-45c8-946c-e12937a73dfa\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"61559276-f796-4140-87eb-845a3b09fd52\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"d644a09b-195b-4a77-9978-0ada816bea7e\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_RESULT {\"bytes\":1227,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"e2bf72b4676df6ab9578d781c4a4fe50e699061a5f27ba78cb76c0e9b48ae02c\"}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
+              "duration_ms": 171,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_RESTORED {\"current_node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"steps\":1}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"buy\",\"label\":\"买一盏灯\"},{\"enabled\":true,\"id\":\"dark\",\"label\":\"摸着黑走\"},{\"enabled\":false,\"id\":\"beg\",\"label\":\"向神庙求助\"},{\"enabled\":true,\"id\":\"turn\",\"label\":\"折返回家\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"一条路亮着灯，一条路只听得见风。\",\"ending\":\"\",\"node_id\":\"23c40900-82fa-4707-8685-ba39dbd5e5fe\",\"speaker\":\"\",\"title\":\"岔路 · 选择\"},\"path\":[\"keep\"],\"status\":\"PLAYING\",\"steps\":1,\"variables\":{\"coins\":2,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[{\"enabled\":true,\"id\":\"forge\",\"label\":\"翻过山口\"},{\"enabled\":false,\"id\":\"pray\",\"label\":\"在路边祈祷\"},{\"enabled\":true,\"id\":\"retreat\",\"label\":\"退回镇上\"}],\"max_steps\":10,\"node\":{\"dialogue\":\"风从山口下来，带着雪的味道。\",\"ending\":\"\",\"node_id\":\"6d0f3c67-b14f-4016-8f43-4b31f788823c\",\"speaker\":\"\",\"title\":\"夜路 · 分岔\"},\"path\":[\"keep\",\"buy\"],\"status\":\"PLAYING\",\"steps\":2,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_STATE {\"choices\":[],\"max_steps\":10,\"node\":{\"dialogue\":\"雪停了，天边有一线很薄的金。\",\"ending\":\"山口黎明\",\"node_id\":\"fff8d8d8-6a10-4cf3-9053-ca4a6600ce57\",\"speaker\":\"\",\"title\":\"结局 · 山口黎明\"},\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3,\"variables\":{\"coins\":0,\"trusted\":false}}\nPOEMSEED_RESULT {\"bytes\":1227,\"path\":\"user://b07-e2e07-result-godot_4_runtime_project_v1.json\",\"sha256\":\"ee78544ff5d57bf3502af7bf39f4cf95051ba33dabd8cd615c481f7052c2dfbf\"}\nPOEMSEED_DONE {\"path\":[\"keep\",\"buy\",\"forge\"],\"status\":\"ENDING\",\"steps\":3}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4650,7 +4650,7 @@
               "exit_code": 2,
               "signal": null,
               "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STATE_MISMATCH\"}\n",
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STATE_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4671,8 +4671,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 202,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
+              "duration_ms": 187,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_REPLAY_REJECTED\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4693,8 +4693,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 188,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_STORY_REVISION_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4715,8 +4715,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 172,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
+              "duration_ms": 186,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"SAVE_SPEC_DIGEST_MISMATCH\"}\n",
               "stderr_tail": "",
               "timed_out": false
             },
@@ -4737,8 +4737,8 @@
               "cwd": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\unpacked",
               "exit_code": 2,
               "signal": null,
-              "duration_ms": 186,
-              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e\",\"spec_digest\":\"91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8\",\"story_id\":\"80db0a3e-4149-4320-86bf-19babd9d13a9\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
+              "duration_ms": 172,
+              "stdout_tail": "Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org\n\nPOEMSEED_USERDIR C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c/\nPOEMSEED_STORY {\"format_version\":\"godot-runtime-story-1\",\"review_receipt\":\"0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e\",\"revision\":3,\"schema\":\"poemseed-godot-runtime-story/1\",\"source_digest\":\"270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b\",\"spec_digest\":\"a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2\",\"story_id\":\"94e365e8-7a4f-45f9-b444-57f2f0631c9c\",\"title\":\"B · 岔路与代价（条件分支样例）\"}\nPOEMSEED_ERROR {\"code\":\"SAVE_REJECTED\",\"detail\":\"JSON_INVALID\"}\n",
               "stderr_tail": "ERROR: Parse JSON failed. Error at line 0: Expected key\n   at: parse_string (core/io/json.cpp:629)\n   GDScript backtrace (most recent call first):\n       [0] read (res://runtime/save_store.gd:68)\n       [1] run (res://runtime/acceptance_runner.gd:96)\n       [2] _ready (res://main.gd:42)\n",
               "timed_out": false
             }
@@ -4758,7 +4758,7 @@
               "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
               "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_godot_interactive_runtime.py",
               "--artifact",
-              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+              "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
               "--report",
               "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\runtime\\GODOT_4_RUNTIME_PROJECT_V1\\godot-line-verifier-report.json",
               "--godot",
@@ -4773,9 +4773,9 @@
               "mode": "EXTERNAL_ARTIFACT",
               "result": "PASS",
               "artifact": {
-                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-                "filename": "godot-4-runtime-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-                "sha256": "af26dd13b623bf305f6abe347bfa0df0565abff2fc1915406264d81c825104b2",
+                "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\GODOT_4_RUNTIME_PROJECT_V1\\godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+                "filename": "godot-4-runtime-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+                "sha256": "c5123ad8c063be70d39f01a24739795e13ae7ebbce165d2baebc532df71c8b41",
                 "bundle_files": [
                   "README.md",
                   "acceptance/README.txt",
@@ -4792,10 +4792,10 @@
                   "runtime/story_runtime.gd",
                   "source-receipt.json"
                 ],
-                "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+                "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
                 "revision": 3,
-                "manifest_sha256": "befc535d4328be61be2c47e7a001b6925211119ea969fc0819c54f6169b2b17f",
-                "receipt_sha256": "b329ce55060212a4911357ab0d83eb8605ab14bc9f243be9af8a5c0f3e81a6df"
+                "manifest_sha256": "e9ddeaa9f3394c3fbe054af6c12b20491f636e02d3d99b0bfadf16e0a2756ecd",
+                "receipt_sha256": "db775251997adee8a042daa9bc2e15ab2e16237a67601e215f5c7a4c97e443a3"
               },
               "engine": {
                 "executable": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
@@ -4809,7 +4809,7 @@
               "status": "PASS",
               "cases": [
                 {
-                  "case_id": "witness-0-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                  "case_id": "witness-0-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                   "choices": [
                     "share",
                     "beg"
@@ -4819,7 +4819,7 @@
                   "states_expected": 3,
                   "states_actual": 3,
                   "alignment": {
-                    "scope": "line-verifier:witness-0-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                    "scope": "line-verifier:witness-0-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                     "status": "PASS",
                     "states_expected": 3,
                     "states_actual": 3,
@@ -4829,21 +4829,21 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                        "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                        "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -4852,7 +4852,7 @@
                   "status": "PASS"
                 },
                 {
-                  "case_id": "witness-1-854a3de4-3806-42fe-bcf6-694cf351c136",
+                  "case_id": "witness-1-fd337614-86f2-4c72-9a57-2634232439a6",
                   "choices": [
                     "share",
                     "turn"
@@ -4862,7 +4862,7 @@
                   "states_expected": 3,
                   "states_actual": 3,
                   "alignment": {
-                    "scope": "line-verifier:witness-1-854a3de4-3806-42fe-bcf6-694cf351c136",
+                    "scope": "line-verifier:witness-1-fd337614-86f2-4c72-9a57-2634232439a6",
                     "status": "PASS",
                     "states_expected": 3,
                     "states_actual": 3,
@@ -4872,21 +4872,21 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                        "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                        "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -4895,7 +4895,7 @@
                   "status": "PASS"
                 },
                 {
-                  "case_id": "witness-2-d644a09b-195b-4a77-9978-0ada816bea7e",
+                  "case_id": "witness-2-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                   "choices": [
                     "keep",
                     "buy",
@@ -4906,7 +4906,7 @@
                   "states_expected": 4,
                   "states_actual": 4,
                   "alignment": {
-                    "scope": "line-verifier:witness-2-d644a09b-195b-4a77-9978-0ada816bea7e",
+                    "scope": "line-verifier:witness-2-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                     "status": "PASS",
                     "states_expected": 4,
                     "states_actual": 4,
@@ -4916,28 +4916,28 @@
                       {
                         "index": 0,
                         "steps": 0,
-                        "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                        "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 1,
                         "steps": 1,
-                        "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                        "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 2,
                         "steps": 2,
-                        "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                        "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                         "status": "PASS",
                         "mismatches": []
                       },
                       {
                         "index": 3,
                         "steps": 3,
-                        "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                        "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                         "status": "PASS",
                         "mismatches": []
                       }
@@ -4952,7 +4952,7 @@
               "performed": true,
               "passed": true,
               "detail": "two-process save/restore matched direct playback (derived.two_process; saved after 1 step(s), continued 2 step(s))",
-              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             "verifier": {
               "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
@@ -4965,7 +4965,7 @@
             }
           },
           "engine_version": "4.7.stable.official.5b4e0cb0f",
-          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 80db0a3e-4149-4320-86bf-19babd9d13a9",
+          "user_dir": "C:/Users/admin/AppData/Roaming/Godot/app_userdata/PoemSeed Story 94e365e8-7a4f-45f9-b444-57f2f0631c9c",
           "initial_alignment": {
             "scope": "initial",
             "status": "PASS",
@@ -4977,7 +4977,7 @@
               {
                 "index": 0,
                 "steps": 0,
-                "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                 "status": "PASS",
                 "mismatches": []
               }
@@ -4987,8 +4987,8 @@
             {
               "field": "story_id",
               "status": "PASS",
-              "expected": "80db0a3e-4149-4320-86bf-19babd9d13a9",
-              "actual": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "expected": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
+              "actual": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "field": "revision",
@@ -4999,20 +4999,20 @@
             {
               "field": "spec_digest",
               "status": "PASS",
-              "expected": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-              "actual": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8"
+              "expected": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+              "actual": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2"
             },
             {
               "field": "source_digest",
               "status": "PASS",
-              "expected": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-              "actual": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e"
+              "expected": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+              "actual": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b"
             },
             {
               "field": "review_receipt",
               "status": "PASS",
-              "expected": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
-              "actual": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930"
+              "expected": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
+              "actual": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e"
             }
           ],
           "alignment": {
@@ -5031,7 +5031,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-1-4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "id": "ending-1-b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "kind": "ending_witness",
                 "choices": [
                   "share",
@@ -5043,7 +5043,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-2-854a3de4-3806-42fe-bcf6-694cf351c136",
+                "id": "ending-2-fd337614-86f2-4c72-9a57-2634232439a6",
                 "kind": "ending_witness",
                 "choices": [
                   "share",
@@ -5055,7 +5055,7 @@
                 "alignment_status": "PASS"
               },
               {
-                "id": "ending-3-d644a09b-195b-4a77-9978-0ada816bea7e",
+                "id": "ending-3-fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "kind": "ending_witness",
                 "choices": [
                   "keep",
@@ -5100,11 +5100,11 @@
       "INK_2_3_2_CURRENT_ARTIFACT_V1": {
         "status": "EXPORTED",
         "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-        "filename": "ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-        "sha256": "8e127fc15e211c6f2d1b04c92fea8df3422a0d241432c73f5511d758ec9ea8fe",
+        "filename": "ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+        "sha256": "80584e02e4767e8c624ea060a4d4a428523310c38e7a12fef1edd21dc3d09b42",
         "file_count": 7,
-        "files_digest": "12bd03fd54491f98503295a815676efb04edc2b673da8f9e5e17f16ab044be36",
-        "preview_digest": "0c64681758f65a75bbe2bd24ec37789eabab6bf1d4034c5eec417dbd564a7f0d",
+        "files_digest": "8236756a837a1b7caf91b95ca02b424391e9937ca2ca8262af12c7e04a2645d7",
+        "preview_digest": "8e8b5d6d318c26b91525ba61fea4fb91a18edcc3ef287ed51c99588f5136a884",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -5230,17 +5230,17 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9/",
+          "prefix": "interactive-ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c/",
           "files": [
             {
               "path": "acceptance/witness.json",
               "bytes": 16362,
-              "sha256": "f46aa38df0654f1369dc5fa59a995325191404b5abf1438fabb75a7699d94bcc"
+              "sha256": "b0c7660e7f48e886b6eae6162fdf4eb468ce23667e757ba57729d367bc7b2481"
             },
             {
               "path": "ink/README.txt",
               "bytes": 2516,
-              "sha256": "4bc98cf5e1dbc6f13b90c6c01d56400862c495a9ede0a6f6c6f54e7a3889620c"
+              "sha256": "a5e20d4c4a927e25660210d65a6ca243809cc7b04a868df01838c333427eb9ce"
             },
             {
               "path": "ink/runtime-pin.json",
@@ -5255,24 +5255,24 @@
             {
               "path": "ink/validation.json",
               "bytes": 7119,
-              "sha256": "57fc43b27b4583c6079c4f4bd300deeb872bc414a8fbda32b44b08db86a2b6b1"
+              "sha256": "268edd9e28a4aec9970922bffac13843ec8a41004a9d73c8a257c2c15f000b9f"
             },
             {
               "path": "manifest.json",
               "bytes": 7893,
-              "sha256": "d2c2086da23093fefb05d39a5730ffe0b645c13c3671fbf06f1b86305dd0695f"
+              "sha256": "2d22a9c5130c42dc21e2ca03ce341cd64036d9cca80552d016ffa728b1b85e4b"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1589,
-              "sha256": "d91327fac0c5fb450481655ee808ac24858c976900169908d18250632c7ed2ea"
+              "sha256": "03986ba42bd3fbf464d85db7913ba6891b4a93adf8e6ec94865e3f6a60daa773"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "interactive-ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "zip paths safe",
@@ -5347,7 +5347,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "manifest story revision",
@@ -5531,19 +5531,19 @@
                 "script_sha256": "9ca649c1b94030af83442216d5b6c16a8630d59036d741ef2582c97c66f585ff",
                 "step_cap_cases": 0,
                 "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
-                "witness_sha256": "f46aa38df0654f1369dc5fa59a995325191404b5abf1438fabb75a7699d94bcc"
+                "witness_sha256": "b0c7660e7f48e886b6eae6162fdf4eb468ce23667e757ba57729d367bc7b2481"
               }
             },
             "files": [
               {
                 "bytes": 16362,
                 "path": "acceptance/witness.json",
-                "sha256": "f46aa38df0654f1369dc5fa59a995325191404b5abf1438fabb75a7699d94bcc"
+                "sha256": "b0c7660e7f48e886b6eae6162fdf4eb468ce23667e757ba57729d367bc7b2481"
               },
               {
                 "bytes": 2516,
                 "path": "ink/README.txt",
-                "sha256": "4bc98cf5e1dbc6f13b90c6c01d56400862c495a9ede0a6f6c6f54e7a3889620c"
+                "sha256": "a5e20d4c4a927e25660210d65a6ca243809cc7b04a868df01838c333427eb9ce"
               },
               {
                 "bytes": 3482,
@@ -5558,7 +5558,7 @@
               {
                 "bytes": 7119,
                 "path": "ink/validation.json",
-                "sha256": "57fc43b27b4583c6079c4f4bd300deeb872bc414a8fbda32b44b08db86a2b6b1"
+                "sha256": "268edd9e28a4aec9970922bffac13843ec8a41004a9d73c8a257c2c15f000b9f"
               }
             ],
             "generation": {
@@ -5579,7 +5579,7 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "payload_files_digest": "2724faf5370c0a5818350a0b117026c5a8b5c0166c1cf2811a1c9b96642591e5",
+            "payload_files_digest": "d89ed393b2dd5c21ab61dde7df402fa1de8af5e06ef12f955d7d506c37744922",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_NODE",
@@ -5614,18 +5614,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
-              "id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+              "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
+              "id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
               "max_steps": 10,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 6,
-              "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+              "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
               "revision": 3,
-              "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-              "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
+              "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+              "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
               "title": "B · 岔路与代价（条件分支样例）",
               "variables": 2,
-              "witness_digest": "fe0139adc223d2480567abd9719284702bc10f8016a199f00718ef6778fddf84"
+              "witness_digest": "5e18e052627e1df6cb6989e23a0d697e8eec3f03c1f10d12a2c6a3f5ccbc6499"
             },
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
@@ -5661,14 +5661,14 @@
               "INK_RUNTIME_NOT_VENDORED_INSTALL_REQUIRED",
               "INK_TARGET_FONT_RENDERING_NOT_VERIFIED"
             ],
-            "manifest_sha256": "d2c2086da23093fefb05d39a5730ffe0b645c13c3671fbf06f1b86305dd0695f",
-            "payload_files_digest": "2724faf5370c0a5818350a0b117026c5a8b5c0166c1cf2811a1c9b96642591e5",
+            "manifest_sha256": "2d22a9c5130c42dc21e2ca03ce341cd64036d9cca80552d016ffa728b1b85e4b",
+            "payload_files_digest": "d89ed393b2dd5c21ab61dde7df402fa1de8af5e06ef12f955d7d506c37744922",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+            "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-            "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-            "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+            "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+            "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+            "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
             "story_revision": 3,
             "target_format_version": "ink-current-artifact-1",
             "target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1"
@@ -5753,12 +5753,12 @@
           "renpy_static": null
         },
         "deterministic_repeat": {
-          "sha256_first": "8e127fc15e211c6f2d1b04c92fea8df3422a0d241432c73f5511d758ec9ea8fe",
-          "sha256_second": "8e127fc15e211c6f2d1b04c92fea8df3422a0d241432c73f5511d758ec9ea8fe",
+          "sha256_first": "80584e02e4767e8c624ea060a4d4a428523310c38e7a12fef1edd21dc3d09b42",
+          "sha256_second": "80584e02e4767e8c624ea060a4d4a428523310c38e7a12fef1edd21dc3d09b42",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+          "zip": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
           "unpacked": "exports/INK_2_3_2_CURRENT_ARTIFACT_V1/unpacked"
         },
         "runtime": {
@@ -5767,14 +5767,14 @@
           "status": "EXECUTED_AND_ALIGNED",
           "project_dir": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
           "binding": {
-            "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+            "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
             "revision": 3,
-            "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-            "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-            "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+            "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+            "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+            "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
             "witness": [
               {
-                "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "ending": "神庙的安眠",
                 "choices": [
                   "share",
@@ -5782,7 +5782,7 @@
                 ]
               },
               {
-                "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                 "ending": "平安回家",
                 "choices": [
                   "share",
@@ -5790,7 +5790,7 @@
                 ]
               },
               {
-                "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "ending": "山口黎明",
                 "choices": [
                   "keep",
@@ -5808,7 +5808,7 @@
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -5817,9 +5817,9 @@
               "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
               "exit_code": 4,
               "signal": null,
-              "duration_ms": 47,
+              "duration_ms": 46,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip\\acceptance\\witness.json\n",
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip\\acceptance\\witness.json\n",
               "timed_out": false
             },
             {
@@ -5838,7 +5838,7 @@
               "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020",
               "exit_code": 0,
               "signal": null,
-              "duration_ms": 155,
+              "duration_ms": 156,
               "stdout_tail": "RESULT PASS compile=true cases=3 cross_process=true failures=0\n",
               "stderr_tail": "",
               "timed_out": false
@@ -5913,8 +5913,8 @@
             "cross_process": {
               "performed": true,
               "fresh_process": true,
-              "parent_pid": 154268,
-              "child_pid": 147368,
+              "parent_pid": 145148,
+              "child_pid": 150988,
               "child_exit_code": 0,
               "save_at_step": 0,
               "remaining": [
@@ -5932,9 +5932,9 @@
             "detail": "parent process saves the pinned runtime state; a fresh node process restores it and replays to the ending."
           },
           "artifact_zip": {
-            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-            "bytes": 16472,
-            "sha256": "8e127fc15e211c6f2d1b04c92fea8df3422a0d241432c73f5511d758ec9ea8fe",
+            "path": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+            "bytes": 16485,
+            "sha256": "80584e02e4767e8c624ea060a4d4a428523310c38e7a12fef1edd21dc3d09b42",
             "matches_unpacked_bundle": true
           },
           "vendor": {
@@ -5943,13 +5943,13 @@
           },
           "bundle_attempts": [
             {
-              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+              "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
               "bundle_mode": "EXPORTED_ZIP",
               "argv": [
                 "C:\\Program Files\\nodejs\\node.EXE",
                 "D:\\PoemSeed\\Worktrees\\v2-b07-e2e-20261020\\scripts\\verify_ink_current_artifact.mjs",
                 "--bundle",
-                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+                "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
                 "--vendor",
                 "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-npm\\node_modules\\inkjs",
                 "--report",
@@ -5957,7 +5957,7 @@
               ],
               "exit_code": 4,
               "stdout_tail": "",
-              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip\\acceptance\\witness.json\n"
+              "stderr_tail": "VERIFIER_ERROR BUNDLE_FILE_MISSING: D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\ink-2-3-2-current-artifact-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip\\acceptance\\witness.json\n"
             },
             {
               "bundle": "D:\\PoemSeed\\Recovery\\b07-delivery\\e2e07\\samples\\B_conditional_branch\\exports\\INK_2_3_2_CURRENT_ARTIFACT_V1\\unpacked",
@@ -6002,7 +6002,7 @@
           "runtime_cases": [
             {
               "kind": "ENDING",
-              "ending_node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+              "ending_node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
               "choices": [
                 "share",
                 "beg"
@@ -6015,7 +6015,7 @@
             },
             {
               "kind": "ENDING",
-              "ending_node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+              "ending_node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
               "choices": [
                 "share",
                 "turn"
@@ -6028,7 +6028,7 @@
             },
             {
               "kind": "ENDING",
-              "ending_node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+              "ending_node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
               "choices": [
                 "keep",
                 "buy",
@@ -6044,8 +6044,8 @@
           "cross_process": {
             "performed": true,
             "fresh_process": true,
-            "parent_pid": 154268,
-            "child_pid": 147368,
+            "parent_pid": 145148,
+            "child_pid": 150988,
             "child_exit_code": 0,
             "save_at_step": 0,
             "remaining": [
@@ -6112,11 +6112,11 @@
       "RENPY_8_5_4_PROJECT_V1": {
         "status": "EXPORTED",
         "target_id": "RENPY_8_5_4_PROJECT_V1",
-        "filename": "renpy-8-5-4-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
-        "sha256": "ede5b3d551155f208907c9101774c67da2113706c1b0843e7e79ddb3fde1e49b",
+        "filename": "renpy-8-5-4-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
+        "sha256": "dca80afb66808b4b0a36212fbe1d25f52df6aa92f17da222d4f28d9f46f579ac",
         "file_count": 7,
-        "files_digest": "e751d0360b93be05925d35b7dd9270c929c52afe79539f90e53f7205d59f776d",
-        "preview_digest": "119b2b7e95fabc329d3c1fd6d89e1df5e4d5957284e63ecd04df8b76aef2dce2",
+        "files_digest": "0152f7345747dc3c58064065e42d42fcfd106cc7040987e31936c8d2dc99c59b",
+        "preview_digest": "694808519446805e050d2cd6d6506d02524006e06a11f405b8049be760ee9f08",
         "can_export": true,
         "losses": [
           "MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED",
@@ -6245,22 +6245,22 @@
         },
         "archive": {
           "status": "PASS",
-          "prefix": "interactive-renpy-8-5-4-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9/",
+          "prefix": "interactive-renpy-8-5-4-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c/",
           "files": [
             {
               "path": "README.txt",
               "bytes": 4274,
-              "sha256": "92c12af7fbe7ce75be26530c9264b0aa2942b3084c02ece65edaa9a6b08e51d2"
+              "sha256": "a7f8cee521db5d9bc895f9386c8c2d84c4e06e88030185b47a6067974032d05e"
             },
             {
               "path": "acceptance/witness.json",
               "bytes": 11685,
-              "sha256": "544874fcdee4241cf62bdc2dd31d2323130614f6c9a7b77163e13033568c48cb"
+              "sha256": "b35d6d07eb81b872841dbde2f23f30ed83180d078facde9c2c4fbe9787adcecb"
             },
             {
               "path": "game/options.rpy",
               "bytes": 813,
-              "sha256": "c0727002ab10b0d6ecb9b3a9f2125c62fe3b5a343591806598d791837ca9fe8b"
+              "sha256": "c4c53e1defa88c2d0f652b6b8b58390baa9d3b9fa5dbc558d081694912a39b9b"
             },
             {
               "path": "game/screens.rpy",
@@ -6270,24 +6270,24 @@
             {
               "path": "game/script.rpy",
               "bytes": 5178,
-              "sha256": "9c02e82b5b6f11e98626504181eb54d082dd9abf0d42ef504137bb8b253752f3"
+              "sha256": "8a35103e2d39f4c3601d23a9d485a038c76bdbba90b3579fda7dbe21670c9fe4"
             },
             {
               "path": "manifest.json",
               "bytes": 8325,
-              "sha256": "14d27016b51fbef95f8d727986ecf64f4c636567096ba51d6331343f18bba5ac"
+              "sha256": "e594e3e8b3adbb5fa8f4538f2360e144ab365ba46b07704dc7d13770c1ee783a"
             },
             {
               "path": "source-receipt.json",
               "bytes": 1694,
-              "sha256": "c66cee227333da4ade1dd0753ece775170273bc0e01dd00e587b947df6d6e913"
+              "sha256": "ec19aaf029c3a15bf266d39529b7ccfbc44985e3b4425604e0a1fe00988a3497"
             }
           ],
           "checks": [
             {
               "id": "single root folder",
               "status": "PASS",
-              "detail": "interactive-renpy-8-5-4-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "interactive-renpy-8-5-4-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "zip paths safe",
@@ -6362,7 +6362,7 @@
             {
               "id": "manifest story id",
               "status": "PASS",
-              "detail": "80db0a3e-4149-4320-86bf-19babd9d13a9"
+              "detail": "94e365e8-7a4f-45f9-b444-57f2f0631c9c"
             },
             {
               "id": "manifest story revision",
@@ -6546,17 +6546,17 @@
               {
                 "bytes": 4274,
                 "path": "README.txt",
-                "sha256": "92c12af7fbe7ce75be26530c9264b0aa2942b3084c02ece65edaa9a6b08e51d2"
+                "sha256": "a7f8cee521db5d9bc895f9386c8c2d84c4e06e88030185b47a6067974032d05e"
               },
               {
                 "bytes": 11685,
                 "path": "acceptance/witness.json",
-                "sha256": "544874fcdee4241cf62bdc2dd31d2323130614f6c9a7b77163e13033568c48cb"
+                "sha256": "b35d6d07eb81b872841dbde2f23f30ed83180d078facde9c2c4fbe9787adcecb"
               },
               {
                 "bytes": 813,
                 "path": "game/options.rpy",
-                "sha256": "c0727002ab10b0d6ecb9b3a9f2125c62fe3b5a343591806598d791837ca9fe8b"
+                "sha256": "c4c53e1defa88c2d0f652b6b8b58390baa9d3b9fa5dbc558d081694912a39b9b"
               },
               {
                 "bytes": 1210,
@@ -6566,7 +6566,7 @@
               {
                 "bytes": 5178,
                 "path": "game/script.rpy",
-                "sha256": "9c02e82b5b6f11e98626504181eb54d082dd9abf0d42ef504137bb8b253752f3"
+                "sha256": "8a35103e2d39f4c3601d23a9d485a038c76bdbba90b3579fda7dbe21670c9fe4"
               }
             ],
             "generation": {
@@ -6588,7 +6588,7 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "payload_files_digest": "a32ddcae5b801f7dbb83dc1d1108fd7101791c1bea4f3ff4ba6310b51f0c6879",
+            "payload_files_digest": "8919e7443d2b047766089050c1e991779ebaece6449b589559bdb90e48cdc93d",
             "runtime": {
               "engine": {
                 "env_override": "POEMSEED_RENPY_BIN",
@@ -6629,18 +6629,18 @@
             },
             "schema": "poemseed-interactive-export-manifest/1",
             "story": {
-              "entry_node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
-              "id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+              "entry_node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
+              "id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
               "max_steps": 10,
               "media_manifest_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
               "nodes": 6,
-              "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+              "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
               "revision": 3,
-              "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-              "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
+              "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+              "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
               "title": "B · 岔路与代价（条件分支样例）",
               "variables": 2,
-              "witness_digest": "fe0139adc223d2480567abd9719284702bc10f8016a199f00718ef6778fddf84"
+              "witness_digest": "5e18e052627e1df6cb6989e23a0d697e8eec3f03c1f10d12a2c6a3f5ccbc6499"
             },
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1",
@@ -6677,14 +6677,14 @@
               "TARGET_RUNTIME_NOT_EXECUTED_ON_THE_GENERATION_HOST",
               "NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS"
             ],
-            "manifest_sha256": "14d27016b51fbef95f8d727986ecf64f4c636567096ba51d6331343f18bba5ac",
-            "payload_files_digest": "a32ddcae5b801f7dbb83dc1d1108fd7101791c1bea4f3ff4ba6310b51f0c6879",
+            "manifest_sha256": "e594e3e8b3adbb5fa8f4538f2360e144ab365ba46b07704dc7d13770c1ee783a",
+            "payload_files_digest": "8919e7443d2b047766089050c1e991779ebaece6449b589559bdb90e48cdc93d",
             "reproduce": "Regenerate from the same story revision, spec digest and target adapter revision; this receipt is deterministic.",
-            "review_receipt": "a6164fc227bfb27f9859afddcf1882835bb437ec37655ae9a39a1e4b9c698930",
+            "review_receipt": "0879dec59c0a0054379dfb74e7056c4c4b1e0dea3623747dcdd154021794ea7e",
             "schema": "poemseed-interactive-export-source-receipt/2",
-            "source_digest": "cdb1793aa3bfad9a328711ad6dd781a1100b5fd33720c238f472de7ed2acc70e",
-            "spec_digest": "91f1429fea4ca344854acae4f2ee9b31a09e89a1074ad9ee9ed10bdec1ce9ea8",
-            "story_id": "80db0a3e-4149-4320-86bf-19babd9d13a9",
+            "source_digest": "270155e8266489092754b872c4c286093189d4fb8276fba4390c98348168412b",
+            "spec_digest": "a88bdcf85c1eed9512f0622871f736c3aa46c1162deed289d2a5d48af1d994f2",
+            "story_id": "94e365e8-7a4f-45f9-b444-57f2f0631c9c",
             "story_revision": 3,
             "target_format_version": "renpy-8-5-4-project-1",
             "target_id": "RENPY_8_5_4_PROJECT_V1"
@@ -6870,7 +6870,7 @@
                 ],
                 "cases": [
                   {
-                    "ending_node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                    "ending_node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                     "ending": "神庙的安眠",
                     "choices": [
                       "share",
@@ -6890,21 +6890,21 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                          "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -6912,7 +6912,7 @@
                     }
                   },
                   {
-                    "ending_node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                    "ending_node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                     "ending": "平安回家",
                     "choices": [
                       "share",
@@ -6932,21 +6932,21 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                          "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -6954,7 +6954,7 @@
                     }
                   },
                   {
-                    "ending_node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                    "ending_node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                     "ending": "山口黎明",
                     "choices": [
                       "keep",
@@ -6975,28 +6975,28 @@
                         {
                           "index": 0,
                           "steps": 0,
-                          "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                          "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 1,
                           "steps": 1,
-                          "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                          "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 2,
                           "steps": 2,
-                          "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                          "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                           "status": "PASS",
                           "mismatches": []
                         },
                         {
                           "index": 3,
                           "steps": 3,
-                          "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                          "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                           "status": "PASS",
                           "mismatches": []
                         }
@@ -7089,7 +7089,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "ending_node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "ending": "神庙的安眠",
                 "choices": [
                   "share",
@@ -7109,21 +7109,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                      "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -7131,7 +7131,7 @@
                 }
               },
               {
-                "ending_node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                "ending_node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                 "ending": "平安回家",
                 "choices": [
                   "share",
@@ -7151,21 +7151,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                      "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -7173,7 +7173,7 @@
                 }
               },
               {
-                "ending_node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                "ending_node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "ending": "山口黎明",
                 "choices": [
                   "keep",
@@ -7194,28 +7194,28 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                      "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 3,
                       "steps": 3,
-                      "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                      "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -7292,12 +7292,12 @@
           }
         },
         "deterministic_repeat": {
-          "sha256_first": "ede5b3d551155f208907c9101774c67da2113706c1b0843e7e79ddb3fde1e49b",
-          "sha256_second": "ede5b3d551155f208907c9101774c67da2113706c1b0843e7e79ddb3fde1e49b",
+          "sha256_first": "dca80afb66808b4b0a36212fbe1d25f52df6aa92f17da222d4f28d9f46f579ac",
+          "sha256_second": "dca80afb66808b4b0a36212fbe1d25f52df6aa92f17da222d4f28d9f46f579ac",
           "identical": true
         },
         "delivery": {
-          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-80db0a3e-4149-4320-86bf-19babd9d13a9-v3.zip",
+          "zip": "exports/RENPY_8_5_4_PROJECT_V1/renpy-8-5-4-project-v1-94e365e8-7a4f-45f9-b444-57f2f0631c9c-v3.zip",
           "unpacked": "exports/RENPY_8_5_4_PROJECT_V1/unpacked"
         },
         "runtime": {
@@ -7503,7 +7503,7 @@
             ],
             "cases": [
               {
-                "ending_node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                "ending_node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                 "ending": "神庙的安眠",
                 "choices": [
                   "share",
@@ -7523,21 +7523,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "4bbd726f-a187-4a6d-8eda-2aa4e19fd89f",
+                      "node_id": "b01d5731-7b64-4c54-9b8b-69ced3aa5684",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -7545,7 +7545,7 @@
                 }
               },
               {
-                "ending_node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                "ending_node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                 "ending": "平安回家",
                 "choices": [
                   "share",
@@ -7565,21 +7565,21 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "854a3de4-3806-42fe-bcf6-694cf351c136",
+                      "node_id": "fd337614-86f2-4c72-9a57-2634232439a6",
                       "status": "PASS",
                       "mismatches": []
                     }
@@ -7587,7 +7587,7 @@
                 }
               },
               {
-                "ending_node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                "ending_node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                 "ending": "山口黎明",
                 "choices": [
                   "keep",
@@ -7608,28 +7608,28 @@
                     {
                       "index": 0,
                       "steps": 0,
-                      "node_id": "dd1ac0b1-427c-4ca0-be08-5abe2bbd38f2",
+                      "node_id": "9e75811b-c49d-4d8e-93f5-3489b45305d5",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 1,
                       "steps": 1,
-                      "node_id": "1fdb0a0b-d1a5-45c8-946c-e12937a73dfa",
+                      "node_id": "23c40900-82fa-4707-8685-ba39dbd5e5fe",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 2,
                       "steps": 2,
-                      "node_id": "61559276-f796-4140-87eb-845a3b09fd52",
+                      "node_id": "6d0f3c67-b14f-4016-8f43-4b31f788823c",
                       "status": "PASS",
                       "mismatches": []
                     },
                     {
                       "index": 3,
                       "steps": 3,
-                      "node_id": "d644a09b-195b-4a77-9978-0ada816bea7e",
+                      "node_id": "fff8d8d8-6a10-4cf3-9053-ca4a6600ce57",
                       "status": "PASS",
                       "mismatches": []
                     }
