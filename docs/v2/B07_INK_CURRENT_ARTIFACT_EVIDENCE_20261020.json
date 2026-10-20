@@ -3,7 +3,7 @@
     "artifacts_dir": "D:\\PoemSeed\\Recovery\\b07-scratch\\ink-artifact",
     "loop": {
       "file_count": 7,
-      "filename": "ink-2-3-2-current-artifact-v1-995f2550-b9f8-4757-905e-b0a12acbc134-v3.zip",
+      "filename": "ink-2-3-2-current-artifact-v1-fde8d32b-965e-446b-bdf5-9cf444da7315-v3.zip",
       "files": [
         "acceptance/witness.json",
         "ink/README.txt",
@@ -14,27 +14,29 @@
         "source-receipt.json"
       ],
       "max_steps": 2,
-      "preview_digest": "6513f8ed36517976b3ce1024c766986d535a99e331dd838ac8d8db15416cffc7",
+      "preview_digest": "d463b41ebb74d651c2d9970b0df8a7a99da6c2df12daba21f12d5083f71fc5ce",
       "revision": 3,
+      "runtime_claim": null,
       "script_sha256": "b79a36f3f2495dcc8805f981ba7e22728f73808975b01d6f23fb8f53ee14d4ab",
-      "story_id": "995f2550-b9f8-4757-905e-b0a12acbc134",
+      "service_evidence": null,
+      "story_id": "fde8d32b-965e-446b-bdf5-9cf444da7315",
       "witness_endings": [
         [
           "exit"
         ]
       ],
-      "witness_sha256": "cecb92a24fcda198e0f06c3dbc74002649f67c37c3f77331a13c9c5c479c2414",
+      "witness_sha256": "e32cfdd689ede79890d1d446f0c71babace02998e25db71ebf42fb6fad92e5e3",
       "witness_step_cap_cases": [
         [
           "loop",
           "loop"
         ]
       ],
-      "zip_sha256": "65c9c617317f26442f4b7b68b55edbca1e79482b3b87485fcf5b0cf696162dd8"
+      "zip_sha256": "248a1dd098944e833d394d3e7427c236ed03a0b65d2df1a163effd7d5daa5d4d"
     },
     "main": {
       "file_count": 7,
-      "filename": "ink-2-3-2-current-artifact-v1-fe67b92b-82da-4915-a421-20a0b61a2c9f-v3.zip",
+      "filename": "ink-2-3-2-current-artifact-v1-d5b315cb-14e2-4e27-98bd-e948fb9da0c3-v3.zip",
       "files": [
         "acceptance/witness.json",
         "ink/README.txt",
@@ -44,27 +46,37 @@
         "manifest.json",
         "source-receipt.json"
       ],
-      "files_digest": "7987b346a67c95651b88a4cbe4d682bad94672c9f70ad242b8f19f39e189ec09",
+      "files_digest": "7bc140657029b3a276bdf4cef69c6d53f46f07220ba56f5f98f92dde4144a0c8",
       "manifest_runtime_evidence": {
         "FIXTURE_TESTED": "PASS",
         "GENERATED_ARTIFACT_VALIDATED": "PASS",
-        "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+        "SAVE_RESTORE_VERIFIED": "PASS",
         "SCHEMA_VALIDATED": "PASS",
         "SOURCE_IMPLEMENTED": "PASS",
-        "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+        "TARGET_RUNTIME_EXECUTED": "PASS",
         "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
       },
       "manifest_target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
       "manifest_target_kind": "RUNNABLE_PROJECT",
-      "preview_digest": "54c64a93cdc20a9bae667472a20a68e33e74c2520e98618bf99fd686471c6ff4",
-      "receipt_payload_files_digest": "79b9554e041b384834b8bb4eb515c1afb071c0723d537edc8ec7781a6c8761a8",
+      "preview_digest": "b6e0a544ae8761a5608f17ba00cba786418ecc569bda73d59ff66a0833761e9d",
+      "receipt_payload_files_digest": "18b16ca79b81410ee1928afab29dc25b0dacb4cc9a614fe2366eb48c622f2cd6",
       "receipt_target_id": "INK_2_3_2_CURRENT_ARTIFACT_V1",
       "revision": 3,
+      "runtime_claim": "SAVE_RESTORE_VERIFIED",
       "runtime_pin_sha256": "37a19de7dbcc0c04e31b8a661bfc9c3996ad5b1cc604560c67765cf746567e1e",
       "script_sha256": "492a0a653979ab60cc521e9d9eddcca8213802a6d4be29da94225de915e1f60d",
-      "source_digest": "d562b276dba951e93248521783c70db07e7d4ec5eeafd3c26ce47ad2995bb580",
-      "spec_digest": "c33265bd03edd9f7e87596495c85cc60cec271b65e54d0801767f71f2c23c12f",
-      "story_id": "fe67b92b-82da-4915-a421-20a0b61a2c9f",
+      "service_evidence": {
+        "FIXTURE_TESTED": "PASS",
+        "GENERATED_ARTIFACT_VALIDATED": "PASS",
+        "SAVE_RESTORE_VERIFIED": "PASS",
+        "SCHEMA_VALIDATED": "PASS",
+        "SOURCE_IMPLEMENTED": "PASS",
+        "TARGET_RUNTIME_EXECUTED": "PASS",
+        "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+      },
+      "source_digest": "c35486ded338b734f731f15849140b5eb869ef50309ce36183b4f9c28ed92229",
+      "spec_digest": "4d312c6a1ead1eea46e7f06ef934f383f63c831a42b4d664e2b227c984bcc47b",
+      "story_id": "d5b315cb-14e2-4e27-98bd-e948fb9da0c3",
       "witness_endings": [
         [
           "harbour"
@@ -73,19 +85,19 @@
           "mountain"
         ]
       ],
-      "witness_sha256": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
+      "witness_sha256": "5a45d3341460da8d54de5101eb7e1b6381e334b202f59973612db44a8358f8ce",
       "witness_states": 4,
       "witness_step_cap_cases": [],
       "zip_file_sha256": {
-        "acceptance/witness.json": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
-        "ink/README.txt": "49f1dd8285005f53ad57c4c2f88dc45360409078899daa2665ecc660ad02d4bc",
+        "acceptance/witness.json": "5a45d3341460da8d54de5101eb7e1b6381e334b202f59973612db44a8358f8ce",
+        "ink/README.txt": "ac64749f671078d95d659d63e6a60cbeadd87bf2a884aeddab824669d420f091",
         "ink/runtime-pin.json": "37a19de7dbcc0c04e31b8a661bfc9c3996ad5b1cc604560c67765cf746567e1e",
         "ink/story.ink": "492a0a653979ab60cc521e9d9eddcca8213802a6d4be29da94225de915e1f60d",
-        "ink/validation.json": "cd4d4d1bc45ae035dd20d09eda022bcf130b7a362c73bb0fbef05f629468ebd2",
-        "manifest.json": "4753546c42741a51f7ec47e44464deb5095092e07e26b7a66844d9e0dbe1d134",
-        "source-receipt.json": "a0facdd073cdc5c41b14de5b7b80847f2e66b956e4a8d2cb08afdfb58174a292"
+        "ink/validation.json": "eb377d9eb7a87ffec9a49af5a162488e03cec00fc80e9eda863f2a88d2c37c8e",
+        "manifest.json": "87b8ff7fa949b8e554080ed6dfae2a0ca239a0d59c0b8657aefd72d983e4f1c5",
+        "source-receipt.json": "6201fb5f6d26107768b0edfd6839723adbed7f847a57125f9cb063b94436c1d3"
       },
-      "zip_sha256": "8ac07d91db79bf80ef1e15936c602c4c0aa30944475ca7151c9959f9743e6301"
+      "zip_sha256": "236f2a8b5f64ffe52b301c03bbe32c644e5c537fa6ea122da2bc3780abd7d725"
     },
     "pytest_command": [
       "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
@@ -97,7 +109,7 @@
       "no:cacheprovider"
     ],
     "pytest_exit_code": 0,
-    "pytest_summary": "11 passed, 5 skipped, 2 warnings in 7.20s",
+    "pytest_summary": "11 passed, 5 skipped, 2 warnings in 6.44s",
     "sha256_consistency": "zip/script/witness hashes recomputed from written files and matched the export record",
     "source": "real File-service fixture create -> submit -> review -> approve -> POST export target ZIP"
   },
@@ -157,8 +169,8 @@
   "commits": {
     "contract_freeze": "e46a634d1839fd273095df97ec5c791f59a5241e",
     "product_baseline": "b8371a48816b852176d45151eb9a0e3618a32c07",
-    "verified_code_head": "b8762588646d06debc9ca18b2c647d7fb67d0e01",
-    "worktree_dirty_after_run": ""
+    "verified_code_head": "7adf9e3e007308c8e3d6740df3d60a66d1588d61",
+    "worktree_status_at_run": "M docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json\n M docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.log"
   },
   "environment": {
     "node": "v22.14.0",
@@ -171,7 +183,19 @@
     "javascript_port_vs_native_csharp": "Only the community JavaScript port inkjs 2.3.2 was installed and executed. Native C# Ink runtime is NOT_RUN and never claimed.",
     "legacy_fixture_vs_current_artifact": "Legacy fixture tests (tests/test_storyverse_ink_exchange.py) only freeze the old fragment target; the runtime acceptance above consumes the freshly exported current-work ZIP from the real File-service workflow (story ids recorded per artifact)."
   },
-  "generated_at_utc": "2026-10-20T07:07:10.596930+00:00",
+  "evidence_promotion": {
+    "basis": "Promoted only after the executed acceptance run family recorded here; the values above are read back from the regenerated bundle validation.json, which mirrors the frozen descriptor.",
+    "generation_does_not_promote": "Generating a bundle never claims a runtime level; TARGET_RUNTIME_EXECUTED requires the pinned runtime run and SAVE_RESTORE_VERIFIED requires the cross-process restore below.",
+    "promoted_levels": [
+      "TARGET_RUNTIME_EXECUTED",
+      "SAVE_RESTORE_VERIFIED"
+    ],
+    "still_not_run": [
+      "WINDOWS_USABILITY_VERIFIED",
+      "NATIVE_CSHARP_INK_RUNTIME"
+    ]
+  },
+  "generated_at_utc": "2026-10-20T07:08:52.208494+00:00",
   "legacy_byte_freeze": {
     "exit_code": 0,
     "golden_sha256": {
@@ -182,7 +206,7 @@
     },
     "legacy_runtime_evidence": "NOT_RUN (legacy target keeps its pinned COMMUNITY_JAVASCRIPT_PORT_NOT_NATIVE_CSHARP fragment claim)",
     "reference_target": "INKJS_2_3_2_TYPED_TEXT_SUBSET",
-    "summary": "10 passed, 19 skipped, 2 warnings in 7.57s",
+    "summary": "10 passed, 19 skipped, 2 warnings in 7.42s",
     "test_command": [
       "C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
       "-m",
@@ -235,11 +259,11 @@
   "save_restore": {
     "cross_process_loop": {
       "child_exit_code": 0,
-      "child_pid": 146228,
+      "child_pid": 134916,
       "detail": "save in parent process, resume to the ending in a fresh process",
       "failures": [],
       "fresh_process": true,
-      "parent_pid": 156272,
+      "parent_pid": 146708,
       "passed": true,
       "performed": true,
       "remaining": [
@@ -252,11 +276,11 @@
     },
     "cross_process_main": {
       "child_exit_code": 0,
-      "child_pid": 156632,
+      "child_pid": 130680,
       "detail": "save in parent process, resume to the ending in a fresh process",
       "failures": [],
       "fresh_process": true,
-      "parent_pid": 143740,
+      "parent_pid": 141372,
       "passed": true,
       "performed": true,
       "remaining": [
@@ -342,10 +366,10 @@
     "evidence": {
       "FIXTURE_TESTED": "PASS",
       "GENERATED_ARTIFACT_VALIDATED": "PASS",
-      "SAVE_RESTORE_VERIFIED": "NOT_RUN",
+      "SAVE_RESTORE_VERIFIED": "PASS",
       "SCHEMA_VALIDATED": "PASS",
       "SOURCE_IMPLEMENTED": "PASS",
-      "TARGET_RUNTIME_EXECUTED": "NOT_RUN",
+      "TARGET_RUNTIME_EXECUTED": "PASS",
       "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
     },
     "format_version": "ink-current-artifact-1",
@@ -388,7 +412,7 @@
         "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
         "elapsed_seconds": 0.15,
         "exit_code": 0,
-        "started_at_utc": "2026-10-20T07:07:01.153011+00:00",
+        "started_at_utc": "2026-10-20T07:08:42.951161+00:00",
         "stderr": ""
       },
       {
@@ -403,9 +427,9 @@
           "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-loop.json"
         ],
         "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
-        "elapsed_seconds": 0.16,
+        "elapsed_seconds": 0.15,
         "exit_code": 0,
-        "started_at_utc": "2026-10-20T07:07:01.306930+00:00",
+        "started_at_utc": "2026-10-20T07:08:43.106145+00:00",
         "stderr": ""
       },
       {
@@ -420,9 +444,9 @@
           "D:\\PoemSeed\\Recovery\\b07-scratch\\line-ink\\evidence\\verification-tampered.json"
         ],
         "cwd": "D:\\PoemSeed\\Worktrees\\v2-b07-ink-20261020",
-        "elapsed_seconds": 0.16,
+        "elapsed_seconds": 0.15,
         "exit_code": 3,
-        "started_at_utc": "2026-10-20T07:07:01.469463+00:00",
+        "started_at_utc": "2026-10-20T07:08:43.266482+00:00",
         "stderr": ""
       }
     ],
@@ -458,11 +482,11 @@
       },
       "cross_process": {
         "child_exit_code": 0,
-        "child_pid": 146228,
+        "child_pid": 134916,
         "detail": "save in parent process, resume to the ending in a fresh process",
         "failures": [],
         "fresh_process": true,
-        "parent_pid": 156272,
+        "parent_pid": 146708,
         "passed": true,
         "performed": true,
         "remaining": [
@@ -474,7 +498,7 @@
         "snapshots": 3
       },
       "native_csharp_runtime": "NOT_RUN",
-      "report_sha256": "19ef107690478c1e1bf11c4e3dc7769802279188478acdcbe166972e9ef6fca4",
+      "report_sha256": "c183b7c21afd7d61e4de35e70fafea1a96f23c4e5d75fc90d8c729d9f180ffb8",
       "result": "PASS",
       "runtime": {
         "artifact_consumed": true,
@@ -484,7 +508,7 @@
             "choices": [
               "exit"
             ],
-            "ending_node_id": "347eaa2c-56a8-4464-9a56-bc422f9e333a",
+            "ending_node_id": "b59e9719-426e-4219-8e33-b2696adb8a6b",
             "failures": [],
             "final_status": "ENDING",
             "kind": "ENDING",
@@ -530,7 +554,7 @@
       "witness": {
         "endings": 1,
         "path": "acceptance\\witness.json",
-        "sha256": "cecb92a24fcda198e0f06c3dbc74002649f67c37c3f77331a13c9c5c479c2414",
+        "sha256": "e32cfdd689ede79890d1d446f0c71babace02998e25db71ebf42fb6fad92e5e3",
         "step_cap_cases": 1
       }
     },
@@ -566,11 +590,11 @@
       },
       "cross_process": {
         "child_exit_code": 0,
-        "child_pid": 156632,
+        "child_pid": 130680,
         "detail": "save in parent process, resume to the ending in a fresh process",
         "failures": [],
         "fresh_process": true,
-        "parent_pid": 143740,
+        "parent_pid": 141372,
         "passed": true,
         "performed": true,
         "remaining": [
@@ -581,7 +605,7 @@
         "snapshots": 2
       },
       "native_csharp_runtime": "NOT_RUN",
-      "report_sha256": "dd5b52c693fa3eda62c4cb77600c18417c457224751bf8b7df666cfec7cda106",
+      "report_sha256": "a6b5d39a1875fe346f569b779a8a1b74cb21d5d8771dc4710c91810111053ee5",
       "result": "PASS",
       "runtime": {
         "artifact_consumed": true,
@@ -591,7 +615,7 @@
             "choices": [
               "harbour"
             ],
-            "ending_node_id": "40e0e9b3-9640-437d-8c2a-7c287d2ef78d",
+            "ending_node_id": "3efe84f5-251f-4723-a274-c63be1b10e9e",
             "failures": [],
             "final_status": "ENDING",
             "kind": "ENDING",
@@ -603,7 +627,7 @@
             "choices": [
               "mountain"
             ],
-            "ending_node_id": "15964ec5-213f-4283-9bb2-4cc6866306f4",
+            "ending_node_id": "8c9923a2-874e-4c5e-a396-d9d58b799161",
             "failures": [],
             "final_status": "ENDING",
             "kind": "ENDING",
@@ -636,7 +660,7 @@
       "witness": {
         "endings": 2,
         "path": "acceptance\\witness.json",
-        "sha256": "1be6896cfc7194436d3c70fe6a094f7762659cd3193bf2201fbcb8103a1645b3",
+        "sha256": "5a45d3341460da8d54de5101eb7e1b6381e334b202f59973612db44a8358f8ce",
         "step_cap_cases": 0
       }
     },
@@ -657,7 +681,7 @@
       },
       "detected": true,
       "exit_code": 3,
-      "report_sha256": "2423c374c358faa72c20ef20f8cab77f547737ab485e35991f2efb101e29d6c4",
+      "report_sha256": "a81407e87bbf6bccac281bce8edee04bbdc7c5482a961b33355a6a16d21af2bd",
       "result": "FAIL",
       "tampered_change": "first dialogue marker Choose -> ChoosX in ink/story.ink"
     }

@@ -2,7 +2,7 @@
 $ git rev-parse HEAD
   cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
   stdout:
-    b8762588646d06debc9ca18b2c647d7fb67d0e01
+    7adf9e3e007308c8e3d6740df3d60a66d1588d61
 
 $ git rev-parse work/v2-b07-contract-20261020
   cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
@@ -20,15 +20,18 @@ $ git rev-parse --abbrev-ref HEAD
     work/v2-b07-ink-20261020
 
 $ git status --porcelain=v1
-  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.05s
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.06s
+  stdout:
+    M docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json
+     M docs/v2/B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.log
 B07 Ink current-artifact evidence log
-generated_at_utc=2026-10-20T07:06:51.811411+00:00
+generated_at_utc=2026-10-20T07:08:34.273681+00:00
 worktree=D:\PoemSeed\Worktrees\v2-b07-ink-20261020
 branch=work/v2-b07-ink-20261020
-head=b8762588646d06debc9ca18b2c647d7fb67d0e01
+head=7adf9e3e007308c8e3d6740df3d60a66d1588d61
 
 $ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/test_interactive_ink_current_artifact.py -q -p no:cacheprovider
-  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=8.58s
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=7.73s
   stdout:
     .......s.s.s.s.s                                                         [100%]
     ============================== warnings summary ===============================
@@ -41,10 +44,10 @@ $ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest te
         class GlossaryDocument(StrictModel):
     
     -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-    11 passed, 5 skipped, 2 warnings in 7.20s
+    11 passed, 5 skipped, 2 warnings in 6.44s
 
 $ C:\Program Files\nodejs\npm.cmd view inkjs@2.3.2 version dist.integrity dist.tarball --json
-  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.53s
+  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.73s
   stdout:
     {
       "version": "2.3.2",
@@ -58,7 +61,7 @@ $ C:\Program Files\nodejs\node.exe --version
     v22.14.0
 
 $ C:\Program Files\nodejs\npm.cmd --version
-  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.2s
+  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.19s
   stdout:
     10.9.2
 
@@ -68,18 +71,18 @@ $ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scr
     RESULT PASS compile=true cases=2 cross_process=true failures=0
 
 $ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\verify_ink_current_artifact.mjs --bundle D:\PoemSeed\Recovery\b07-scratch\ink-artifact\current-artifact-loop-bundle --vendor D:\PoemSeed\Recovery\b07-scratch\ink-vendor\node_modules\inkjs --report D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\verification-loop.json
-  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.16s
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.15s
   stdout:
     RESULT PASS compile=true cases=2 cross_process=true failures=0
 
 $ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\verify_ink_current_artifact.mjs --bundle D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\tampered-bundle --vendor D:\PoemSeed\Recovery\b07-scratch\ink-vendor\node_modules\inkjs --report D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\verification-tampered.json
-  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=3  elapsed=0.16s
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=3  elapsed=0.15s
   stdout:
     RESULT FAIL compile=true cases=2 cross_process=false failures=4
     FAILURES [{"check":"witness","detail":"witness script sha256 does not match ink/story.ink"},{"check":"ENDING","case":["harbour"],"failures":[{"check":"text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]},{"check":"ENDING","case":["mountain"],"failures":[{"check":"text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]},{"check":"cross_process","failures":[{"check":"cross_process_text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]}]
 
 $ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/test_interactive_ink_current_artifact.py::test_legacy_adapter_output_is_byte_frozen tests/test_storyverse_ink_exchange.py -q -p no:cacheprovider
-  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=8.97s
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=8.79s
   stdout:
     ..s.s...ssssssssssssss....sss                                            [100%]
     ============================== warnings summary ===============================
@@ -92,6 +95,6 @@ $ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest te
         class GlossaryDocument(StrictModel):
     
     -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-    10 passed, 19 skipped, 2 warnings in 7.57s
+    10 passed, 19 skipped, 2 warnings in 7.42s
 
-EVIDENCE D:\PoemSeed\Worktrees\v2-b07-ink-20261020\docs\v2\B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json sha256=1c73ffce4ca14b67023424ee2d74fd277c08dcdf9833f770aa031778f6a95047
+EVIDENCE D:\PoemSeed\Worktrees\v2-b07-ink-20261020\docs\v2\B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json sha256=d4ad6cea48155973bac6883a0f973b4ed690033cc6546fa407cd9ef58e8e9343
