@@ -75,6 +75,17 @@ it('lets the author locate back to the editing node without changing the story',
   expect(story.spec!.nodes[1].ending).toBe('回家');
 });
 
+it('offers a locate entry from an intermediate play result without changing the story', async () => {
+  const run = vi.fn(async () => gatePlay());
+  const onLocateNode = vi.fn();
+  render(<InteractiveStoryPreview api={client(run)} story={story} blocked={false} onLocateNode={onLocateNode} />);
+  fireEvent.click(screen.getByRole('button', { name: '从开头试玩' }));
+  await screen.findByLabelText('互动故事播放');
+  fireEvent.click(screen.getByRole('button', { name: '定位回编辑节点 城门' }));
+  expect(onLocateNode).toHaveBeenCalledWith('gate');
+  expect(story.spec!.nodes[0].dialogue).toBe('守卫问话');
+});
+
 it('retains an explicit failure state for a rejected path instead of reporting success', async () => {
   const run = vi.fn()
     .mockResolvedValueOnce(gatePlay())

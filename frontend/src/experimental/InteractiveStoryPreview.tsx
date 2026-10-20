@@ -80,7 +80,7 @@ export function InteractiveStoryPreview({ api, story, blocked, onLocateNode }: {
         <ol>{pathSteps.map((step, index) => <li key={index + ':' + step.choiceId}>第 {index + 1} 步 · {step.label}（{step.choiceId}）{step.targetTitle ? ' → ' + step.targetTitle : ''}{step.resolved ? '' : ' · 无法在已保存版本中解析'}</li>)}</ol>
         <Button disabled={action.busy} onClick={() => advance(play.path.slice(0, -1))}>回退一步并重新核验</Button>
       </section>}
-      {play.status === 'ENDING' && canLocate(play.node.node_id) && <div className="experimental-actions"><Button disabled={unavailable} onClick={() => onLocateNode!(play.node.node_id)}>定位回编辑节点 {play.node.title}</Button></div>}
+      {canLocate(play.node.node_id) && <div className="experimental-actions"><Button disabled={unavailable} onClick={() => onLocateNode!(play.node.node_id)}>定位回编辑节点 {play.node.title}</Button></div>}
     </section>}
     {failure && <StatusMessage tone="error">试玩失败：{failure.code}。{play ? '上方仍显示上一次成功返回，不代表本次操作成功。' : '请从开头重试；客户端不会自行解释条件。'}</StatusMessage>}
     {actionOwner.current === token && action.feedback}
