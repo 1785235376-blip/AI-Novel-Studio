@@ -129,6 +129,8 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
   const [taskTarget, setTaskTarget] = useState<{ id: string; target: TaskCenterNavigationTarget }>();
   const taskTransport = useMemo(() => studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined }), [client]);
+  // Stable across presentation changes; explicit local credentials also retire asset previews.
+  const assetTransport = useMemo(() => studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined }), [client, context.localHostToken]);
   useEffect(() => { if (workspaceView !== 'TASKS') setTaskTarget(undefined); }, [workspaceView]);
   const [storyboardHandoff, setStoryboardHandoff] = useState<TimelineAssetHandoff & { selectionEpoch: number }>();
   const [storyboardDirty, setStoryboardDirty] = useState(false), storyboardDirtyRef = useRef(false);
@@ -762,7 +764,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {workspaceView === 'ASSETS' && overview && !denied && relationshipReview && <section aria-label="关联原资产精确版本审阅"><h3>关联原资产精确版本审阅</h3><p>右侧保留刚核对的原资产版本。当前素材目录暂时关闭，避免随后读取的最新详情替代关联版本。</p><Button disabled={busy} onClick={() => navigate(() => { selectionEpoch.current++; setRelationshipReviewEpoch(undefined); setNotice('已返回当前素材浏览。目录和详情按当前版本读取；不代表关联时的历史版本。'); })}>返回当前素材浏览</Button></section>}
     {workspaceView === 'ASSETS' && overview && !denied && !relationshipReview && <AssetLibraryPanel novelId={projectId} adapter={adapter} selectedAssetId={selected?.id} onSelectAsset={asset => navigate(() => { selectionEpoch.current += 1; setFormRevision(value => value + 1); setSelected(asset); setLineageDirty(false); setRelationshipDirty(false); })} />}
     {workspaceView === 'ASSETS' && overview && !denied && !relationshipReview && <AssetBrowserPanel projectId={projectId}
-      transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
+      transport={assetTransport}
       scope={context.scope} identity={cacheKey} active={workspaceView === 'ASSETS' && !denied && !identityRetired}
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}
       selectedId={selected?.id} onSelect={assetId => navigate(() => { void refreshSelectedAsset(assetId); })}
