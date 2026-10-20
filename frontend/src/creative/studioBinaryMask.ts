@@ -80,6 +80,8 @@ export class BinaryMaskDraft {
   readonly height: number;
   private bits: Uint8Array;
   private history: Uint8Array[] = [];
+  // Undo/redo transfer owned bitplanes; together they retain at most 16 states.
+  private future: Uint8Array[] = [];
   private stroke: Stroke | null = null;
   private released = false;
   private changeRevision = 0;
@@ -96,6 +98,7 @@ export class BinaryMaskDraft {
   get revision() { return this.changeRevision; }
   get activeStroke() { return this.stroke !== null; }
   get canUndo() { return !this.released && this.history.length > 0; }
+  get canRedo() { return !this.released && this.future.length > 0; }
 
   private assertAvailable() { if (this.released) throw new Error('蒙版草稿已释放，请重新读取来源。'); }
   private assertIdle() {
@@ -107,6 +110,9 @@ export class BinaryMaskDraft {
   }
   private validateKeep(keep: boolean) { if (typeof keep !== 'boolean') throw new Error('蒙版操作必须明确指定 KEEP 或 REMOVE。'); }
   private remember(before: Uint8Array) {
+    // Only a committed pixel change branches history. No-ops and cancelled
+    // strokes retain redo, and abandoned states are explicitly released.
+    this.future.forEach(state => state.fill(0)); this.future = [];
     if (this.history.length === BINARY_MASK_UNDO_LIMIT) this.history.shift()?.fill(0);
     this.history.push(before);
   }
@@ -219,7 +225,13 @@ export class BinaryMaskDraft {
   undo(): boolean {
     this.assertIdle(); const previous = this.history.pop();
     if (!previous) return false;
-    this.bits.fill(0); this.bits = previous; this.changeRevision++; return true;
+    this.future.push(this.bits); this.bits = previous; this.changeRevision++; return true;
+  }
+
+  redo(): boolean {
+    this.assertIdle(); const next = this.future.pop();
+    if (!next) return false;
+    this.history.push(this.bits); this.bits = next; this.changeRevision++; return true;
   }
 
   serialize(): SerializedBinaryMask {
@@ -238,6 +250,7 @@ export class BinaryMaskDraft {
     if (this.released) return;
     this.bits.fill(0); this.bits = new Uint8Array(0);
     this.history.forEach(state => state.fill(0)); this.history = [];
+    this.future.forEach(state => state.fill(0)); this.future = [];
     this.stroke?.before.fill(0); this.stroke = null; this.released = true; this.changeRevision++;
   }
 }
