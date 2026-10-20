@@ -111,6 +111,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {!draft.sources[0] && <StatusMessage tone="warning">请先在下方图片来源中明确选择首帧。</StatusMessage>}
         {state.endFrameSource && !state.videoFrameCapabilities?.end_frame && <StatusMessage tone="warning">当前配置声明不支持尾帧；预览会被明确拒绝。请清空尾帧或选择支持双图的配置。</StatusMessage>}
         {!!state.endFrameSource && <Button disabled={!state.canEdit} onClick={() => state.selectEndFrame('')}>清空尾帧</Button>}
+        <p>主体/风格多参考图：当前视频协议未声明该能力（multi_reference=false）。本面板不提供参考权重、像素拼接、分段拼接或其他伪装成多图条件化的入口；首尾帧之外的多图参考保持未支持。</p>
       </fieldset>}
       {(cutout || inpaint) && <fieldset disabled={!state.canEdit}><legend>已保存的手绘二值遮罩</legend>
         {inpaint && <p>沿用原手绘遮罩：白色像素保留原图，黑色区域重绘。后端转换处理语义并保护白色区域；原图与遮罩版本必须匹配。结果仍为私有候选，须人工审核。</p>}
