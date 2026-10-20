@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_LINKED_SPLIT_INTEGRATION",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "99d759f0101c49593ff7d616f34c4942c06da47b",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-linked-split-reviewed-b3e5c546",
+  "product_base": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+  "product_tip": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+  "product_tree": "ff7a6fefd5dffe60c8be201b24f05c092b541ecb",
+  "bundle_ref": "refs/heads/work/v2-linked-split-after-conditions-20261020",
+  "bundle_filename": "studio-v2-98ce5423-to-b3e5c546.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+  "commit_mappings": [
+    {
+      "source": "d9466d253fa4d8141391fd7295af65ce7276ee56",
+      "source_parent": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+      "adopted": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+      "adopted_parent": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+      "stable_patch_id": "1c0318b69baf45571a5645a247d5a91d0b2155d6"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/services/studio_timeline_edit.py",
+      "mode": "100644",
+      "blob": "034e0bf88387943d5445f37ab9c6f5555026e6ce",
+      "bytes": 18937,
+      "sha256": "090f8fd0700bda03705fbf52b11b54fa5241288bfbc0117c8b2f3f8e770a3ce0",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "app/services/studio_timeline_links.py",
+      "mode": "100644",
+      "blob": "0478291e16c10ea759ee483f42b8868d0d7c3d01",
+      "bytes": 8718,
+      "sha256": "f70c11cf9c5876739938f8fa7a971a1405f681968c45337f5770822a21eb87f4",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "docs/TIMELINE_LINKED_SPLIT_HANDOFF.md",
+      "mode": "100644",
+      "blob": "517d8e806c59877da8078cf5a0134163a38141fa",
+      "bytes": 5565,
+      "sha256": "f4f4c323fdea88b0cdf9a8b6846618c426ce93cc5b546c36b17e6e2774cc0639",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx",
+      "mode": "100644",
+      "blob": "2dc0ea7f147a537222921b6ad8d1ed2bfe77fda6",
+      "bytes": 57497,
+      "sha256": "0d6b9e409ca3bad3e00678ea08e2c3aee180835031507822838fa62ab442962e",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioTimelineLinkedSplit.additive.test.tsx",
+      "mode": "100644",
+      "blob": "ea362a0d84ed42943d662afb966d830de9725671",
+      "bytes": 10547,
+      "sha256": "ef45323d768079a139a847fd00e43c39f57864b33ea7662b56b8a36b22263907",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineClipLinks.ts",
+      "mode": "100644",
+      "blob": "6fab5277778ea5d344a8574dc133b0d8cf11ff05",
+      "bytes": 7006,
+      "sha256": "0c62be5fd8c19ed8cc9d331f0c71f40e3f6ad3561100026852b8bcbe8fe6bb09",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioTimelineLinkedSplit.ts",
+      "mode": "100644",
+      "blob": "f03a766349c6532faecd58f207467da46cf445e1",
+      "bytes": 5542,
+      "sha256": "a7e1217eeeed247f4e08d92428c98833ce3307eb5ba0dd98b02da9bc0db43c0b",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts",
+      "mode": "100644",
+      "blob": "100360cb35a9d1a6384928781c34574117d18b53",
+      "bytes": 59282,
+      "sha256": "734d252ea15a5736e86631185b5adcde7a4c10b93cc37a562776499f4c7aa7fc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/nle/LinkedClipSplitPanel.tsx",
+      "mode": "100644",
+      "blob": "3dad387a662ef08262455cbc014a0dc83479a78c",
+      "bytes": 1672,
+      "sha256": "cf1b8087cfde1393f6cc1346c64ad44ab979885bc3b2d7de992a68f60891f31d",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "tests/test_timeline_linked_split_additive.py",
+      "mode": "100644",
+      "blob": "a4461f00215a5e103ed3b43c3c4f144eadd52a24",
+      "bytes": 7951,
+      "sha256": "7d58b211b225d9fe7d07c2f3d2475663f9ba309ff32263f32531fb8fdddc5049",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+      "type": "commit",
+      "bytes": 262,
+      "sha256": "abbdf24d0065ef104ec3e8698c209a164794580259d897b867f9820f4a2167d1",
+      "path": ""
+    },
+    {
+      "oid": "ff7a6fefd5dffe60c8be201b24f05c092b541ecb",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "7cdf5305fb31d509de091f70c82e87d9956293a70413c7a72675f95ff02d4b99",
+      "path": ""
+    },
+    {
+      "oid": "d7d8c00e0c4b6a7566893c5f826c2fb934a69b52",
+      "type": "tree",
+      "bytes": 9271,
+      "sha256": "62293396d5fc005fad3ecea1233d675f934083a61b101595fbd9346d1ba450bb",
+      "path": "app"
+    },
+    {
+      "oid": "3322ef7108a9f175649e7327a9c2fb4630d05f6b",
+      "type": "tree",
+      "bytes": 5919,
+      "sha256": "f2523d277cb7a63ebf011a69ea0a445ff4e680b6a3382671b4eff30bf08451a9",
+      "path": "app/services"
+    },
+    {
+      "oid": "034e0bf88387943d5445f37ab9c6f5555026e6ce",
+      "type": "blob",
+      "bytes": 18937,
+      "sha256": "090f8fd0700bda03705fbf52b11b54fa5241288bfbc0117c8b2f3f8e770a3ce0",
+      "path": "app/services/studio_timeline_edit.py"
+    },
+    {
+      "oid": "0478291e16c10ea759ee483f42b8868d0d7c3d01",
+      "type": "blob",
+      "bytes": 8718,
+      "sha256": "f70c11cf9c5876739938f8fa7a971a1405f681968c45337f5770822a21eb87f4",
+      "path": "app/services/studio_timeline_links.py"
+    },
+    {
+      "oid": "732ec7639471743daa7c49f97dd6d5218cc10825",
+      "type": "tree",
+      "bytes": 23462,
+      "sha256": "4c709037d5b03da172320b4b4138248bd97d519ae37b7af94e591ca5840e953d",
+      "path": "docs"
+    },
+    {
+      "oid": "517d8e806c59877da8078cf5a0134163a38141fa",
+      "type": "blob",
+      "bytes": 5565,
+      "sha256": "f4f4c323fdea88b0cdf9a8b6846618c426ce93cc5b546c36b17e6e2774cc0639",
+      "path": "docs/TIMELINE_LINKED_SPLIT_HANDOFF.md"
+    },
+    {
+      "oid": "12f52e7d1ff85ffdd90ddfc072c7a83f76a263b5",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "fc829defeeeef0b2b6d0b1f58f210a0da4164e4128ad7193a82f77cfc8067f03",
+      "path": "frontend"
+    },
+    {
+      "oid": "3e5276082bcf992a188b8f5063898163a4cf05c7",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "c34acf49452c7bb5e0e0e7e57ecbe522aafeb2745cb77c23be3e5ddfe247858a",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "d57f001e63b0c793319956b2dd9a02c64539b890",
+      "type": "tree",
+      "bytes": 52083,
+      "sha256": "7dcda288775401504e2439fb97f26e1bb901c4dd636f897bb117a709abf7323f",
+      "path": "frontend/src/creative"
+    },
+    {
+      "oid": "2dc0ea7f147a537222921b6ad8d1ed2bfe77fda6",
+      "type": "blob",
+      "bytes": 57497,
+      "sha256": "0d6b9e409ca3bad3e00678ea08e2c3aee180835031507822838fa62ab442962e",
+      "path": "frontend/src/creative/StudioTimelineEditor.tsx"
+    },
+    {
+      "oid": "ea362a0d84ed42943d662afb966d830de9725671",
+      "type": "blob",
+      "bytes": 10547,
+      "sha256": "ef45323d768079a139a847fd00e43c39f57864b33ea7662b56b8a36b22263907",
+      "path": "frontend/src/creative/StudioTimelineLinkedSplit.additive.test.tsx"
+    },
+    {
+      "oid": "6fab5277778ea5d344a8574dc133b0d8cf11ff05",
+      "type": "blob",
+      "bytes": 7006,
+      "sha256": "0c62be5fd8c19ed8cc9d331f0c71f40e3f6ad3561100026852b8bcbe8fe6bb09",
+      "path": "frontend/src/creative/studioTimelineClipLinks.ts"
+    },
+    {
+      "oid": "f03a766349c6532faecd58f207467da46cf445e1",
+      "type": "blob",
+      "bytes": 5542,
+      "sha256": "a7e1217eeeed247f4e08d92428c98833ce3307eb5ba0dd98b02da9bc0db43c0b",
+      "path": "frontend/src/creative/studioTimelineLinkedSplit.ts"
+    },
+    {
+      "oid": "100360cb35a9d1a6384928781c34574117d18b53",
+      "type": "blob",
+      "bytes": 59282,
+      "sha256": "734d252ea15a5736e86631185b5adcde7a4c10b93cc37a562776499f4c7aa7fc",
+      "path": "frontend/src/creative/useStudioTimelineEditor.ts"
+    },
+    {
+      "oid": "93cdf20412526498605b3d269783e22f746d5944",
+      "type": "tree",
+      "bytes": 3358,
+      "sha256": "77bd5dfb8dec7c8820d9c2e9425e6a2c6777bdb46936b8544c437b48f4e71cc1",
+      "path": "frontend/src/nle"
+    },
+    {
+      "oid": "3dad387a662ef08262455cbc014a0dc83479a78c",
+      "type": "blob",
+      "bytes": 1672,
+      "sha256": "cf1b8087cfde1393f6cc1346c64ad44ab979885bc3b2d7de992a68f60891f31d",
+      "path": "frontend/src/nle/LinkedClipSplitPanel.tsx"
+    },
+    {
+      "oid": "ddd25edde2175a2649fc7e4296b80aaee7223870",
+      "type": "tree",
+      "bytes": 71848,
+      "sha256": "3b69c63b6622911418e7b05bf4d339e0a92ec24dcdf3f959d240f5b253ae95aa",
+      "path": "tests"
+    },
+    {
+      "oid": "a4461f00215a5e103ed3b43c3c4f144eadd52a24",
+      "type": "blob",
+      "bytes": 7951,
+      "sha256": "7d58b211b225d9fe7d07c2f3d2475663f9ba309ff32263f32531fb8fdddc5049",
+      "path": "tests/test_timeline_linked_split_additive.py"
+    }
+  ],
+  "new_object_count": 20,
+  "no_extra_packed_objects": true,
+  "exact_original_binary_patch": true,
+  "all_other_base_paths_unchanged": true,
+  "source_review_evidence_hashes_verified": 27,
+  "combined_validation": {
+    "status": "PASS",
+    "combined": "b3e5c546da946bb3557cc1122f7ecd0808f57223",
+    "backend_real_File": 2,
+    "frontend_controlled_client_JSDOM": 2,
+    "frontend_other_cases_skipped": 5,
+    "typescript_runs": 1,
+    "build_runs": 1,
+    "results": {
+      "frontend": {
+        "exit": 0,
+        "seconds": 2.12,
+        "log": "frontend.log"
+      },
+      "backend": {
+        "exit": 0,
+        "seconds": 6.013,
+        "log": "backend.log"
+      },
+      "typescript": {
+        "exit": 0,
+        "seconds": 21.498,
+        "log": "typescript.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.599,
+        "log": "build.log"
+      }
+    },
+    "full_E2E": false,
+    "postgres": false,
+    "real_models": false,
+    "schema7_default": "OFF",
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-impact-decisions\\frontend\\node_modules"
+  },
+  "independent_review": "PASS_BOUNDED_REVIEW_NO_P1_P2;3 unique groups,20 atomic refusals",
+  "zip_payload_count": 79,
+  "zip_evidence_hashes": 78,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 10,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "acceptance_limits": [
+    "schema7 DEFAULT OFF",
+    "live Host browser NOT_RUN/BLOCKED; inherited519a401 SESSION_REQUIRED",
+    "PG,models,GPU,playback,render,export,fullE2E NOT_ACCEPTED",
+    "no full EDIT04/AUDIO09/NLE completion"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-98ce5423-to-b3e5c546.bundle",
+      "bytes": 16794,
+      "sha256": "3b561de0282c85127595437bbe7a45c6fabd931aab509df3ce6c01c0f1af28cc"
+    },
+    {
+      "path": "studio-v2-linked-split-b3e5c546-tests-evidence-sanitized.zip",
+      "bytes": 508233,
+      "sha256": "774ad6753c22474d74394b731e3b7c9499af4f405ea1c3d1e69921c21d0115db"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 2793,
+      "sha256": "9ea5a405b15d546792765e2956edb413339d6efcda0003b6e33b846f3de6eec6"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 1666,
+      "sha256": "8ca7e92d9d4c049d3bfa6c7b395ac5e632ffe34e902b2567fdbf5a80b218d7b0"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
