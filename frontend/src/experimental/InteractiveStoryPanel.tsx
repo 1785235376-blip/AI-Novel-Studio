@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
+import { InteractiveStoryExportTargets } from './InteractiveStoryExportTargets';
 import { InteractiveStoryHistory } from './InteractiveStoryHistory';
 import { InteractiveStoryPreview } from './InteractiveStoryPreview';
 import { interactiveStoryClient, type InteractiveStory, type StoryCatalog, type StoryExportPreview, type StoryIssue, type StoryNode, type StoryReviewPreview, type StoryRefreshPreview, type StorySpec, type StoryVariable } from './interactiveStoryClient';
@@ -52,6 +53,7 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
     <InteractiveStoryHistory key={`history:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
     <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} onLocateNode={requestLocate} />
     <StoryApproval key={`approval:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
+    <InteractiveStoryExportTargets api={api} story={story} blocked={dirty || action.busy} />
   </>}
   </>}
   </section>;
