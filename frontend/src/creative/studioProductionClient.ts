@@ -520,7 +520,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
       const v = await transport.json<unknown>(`${base}/preview`, 'POST', command);
       if (!record(v)) invalid(); scoped(v);
-      recipe(v.execution_recipe, command.operation_id);
+      const executionRecipe = recipe(v.execution_recipe, command.operation_id);
+      if (Object.hasOwn(command.parameters, 'cfg') && (!record(executionRecipe.parameters)
+        || executionRecipe.parameters.cfg !== command.parameters.cfg)) invalid();
       if (v.contract !== 'studio-production-preview/1' || !hex(v.preview_digest) || !hex(v.request_digest) || v.request_id !== command.request_id || v.operation_id !== command.operation_id
         || v.product_acceptance !== 'LOCAL_REQUIRED' || v.execution_available !== true || v.automatic_dispatch !== false || v.output_policy !== 'PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW'
         || !record(v.command) || v.command.prompt !== command.prompt || v.command.operation_id !== command.operation_id || v.command.request_id !== command.request_id
