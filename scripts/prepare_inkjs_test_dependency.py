@@ -11,6 +11,12 @@ from pathlib import Path, PurePosixPath
 import tarfile
 
 INTEGRITY = 'iZjrY0lLeRiC+HtDzCfV9IEAP9ExCmBZUrxKkyLy1qIbbGbR1uTXNZ8LDIg8oVkMXZ9TeKKyEFQpQ/m5nQds8w=='
+# The same runtime entry the current-artifact target pins in
+# app/experimental/interactive_targets/ink/runtime.py; the acceptance verifier
+# fails closed unless the installed entry matches it, so the offline extraction
+# path must check it too.
+RUNTIME_ENTRY = PurePosixPath('package/dist/ink-full.js')
+RUNTIME_ENTRY_SHA256 = '4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef'
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -29,6 +35,11 @@ def main():
                 raise ValueError('UNSAFE_ARCHIVE_ENTRY')
         args.new_destination.mkdir(parents=True)
         archive.extractall(args.new_destination,members=members,filter='data')
+    runtime_entry=args.new_destination/RUNTIME_ENTRY
+    if not runtime_entry.is_file(): raise ValueError('PINNED_RUNTIME_ENTRY_MISSING:'+str(RUNTIME_ENTRY))
+    runtime_sha256=hashlib.sha256(runtime_entry.read_bytes()).hexdigest()
+    if runtime_sha256!=RUNTIME_ENTRY_SHA256: raise ValueError('PINNED_RUNTIME_ENTRY_MISMATCH')
     print('Verified inkjs 2.3.2; no lifecycle scripts executed. SHA256 '+hashlib.sha256(data).hexdigest())
+    print('Verified pinned runtime entry '+str(RUNTIME_ENTRY)+' sha256 '+runtime_sha256)
 
 if __name__=='__main__': main()

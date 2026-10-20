@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "poemseed-ink-save-envelope/1",
+  "title": "PoemSeed Ink save envelope",
+  "description": "Versioned save data bound to one story revision, compiled-artifact digest, target format and Ink runtime. Restore requires the complete current-artifact context supplied by the caller (never derived from this envelope); unbound legacy state is rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "format_version",
+    "binding",
+    "save",
+    "integrity"
+  ],
+  "properties": {
+    "schema": {
+      "const": "poemseed-ink-save-envelope/1"
+    },
+    "format_version": {
+      "const": "ink-save-envelope-1"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "story_id",
+        "revision",
+        "compiled_artifact_sha256",
+        "target_format_version",
+        "runtime"
+      ],
+      "properties": {
+        "story_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "compiled_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "target_format_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version",
+            "format"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "format": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          }
+        }
+      }
+    },
+    "save": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state_json",
+        "steps",
+        "path",
+        "saved_at_step",
+        "saved_after_choice",
+        "variables",
+        "variables_changed_before_save",
+        "created_by"
+      ],
+      "properties": {
+        "state_json": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2097152
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 512
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 512
+        },
+        "saved_at_step": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "saved_after_choice": {
+          "type": "boolean"
+        },
+        "variables": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "boolean",
+              "integer"
+            ]
+          }
+        },
+        "variables_changed_before_save": {
+          "type": "boolean"
+        },
+        "created_by": {
+          "const": "poemseed-ink-player/1"
+        },
+        "migrated_from": {
+          "const": "UNBOUND_LEGACY_INK_STATE"
+        },
+        "migration_note": {
+          "type": "string",
+          "maxLength": 400
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}
