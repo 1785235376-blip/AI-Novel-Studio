@@ -40,7 +40,7 @@ class ImageJobService:
 
     def _load(self, novel_id, branch_id=None):
         path = self._path(novel_id, branch_id)
-        return json.loads(path.read_text()) if path.exists() else []
+        return json.loads(path.read_text(encoding='utf-8')) if path.exists() else []
 
     def _mutate(self, novel_id, branch_id, operation):
         with self._lock, workspace_mutation(self.root, "image-jobs"):
