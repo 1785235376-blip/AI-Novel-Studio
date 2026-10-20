@@ -48,9 +48,9 @@ describe('incarnation-bound graph recovery envelope', () => {
     const wrongRequest = snapshot(); wrongRequest.request_id = 'new-request';
     expect(() => readStudioGraphLocalDraft(JSON.stringify(wrongRequest), owner())).toThrow('GRAPH_DRAFT_INVALID');
   });
-  it('keeps media and external-binding recovery out of the bounded text slice', () => {
+  it('keeps legacy external-binding exclusion while bound authoring requires separate fresh recovery checks', () => {
     expect(graphDraftRecoverable(blankGraph())).toBe(true);
-    expect(graphDraftRecoverable({ ...blankGraph(), schema_version: 3 })).toBe(false);
+    expect(graphDraftRecoverable({ ...blankGraph(), schema_version: 3 })).toBe(true); // authoring bytes only; source/catalog checks run before adoption.
     const definition = blankGraph(); definition.nodes.push({ id: 'asset', definition_id: 'asset_reference', definition_version: 1, enabled: true,
       position: { x: 0, y: 0 }, parameters: { asset_id: 'asset', version: 1, digest: 'a'.repeat(64), kind: 'image' } });
     expect(graphDraftRecoverable(definition)).toBe(false);

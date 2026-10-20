@@ -34,10 +34,23 @@ export const studioGraphDraftKey = (owner: StudioGraphDraftOwner) => `studio-gra
   owner.actorId, owner.actorWorkspaceId, owner.projectId, owner.incarnation, owner.mode, owner.workspaceId, owner.storylineId, owner.branchId,
 ])}`;
 
-/** Recovery contains authoring only: legacy text graphs and the existing closed local condition graph. */
+export const isBoundGraphDraft = (value: StudioGraphDefinition) => [3, 4, 5, 6].includes(value.schema_version);
+/** Authoring cache only. Empty fields already emitted by the original palette are
+ * checked with temporary syntax sentinels, then restored exactly. The original
+ * Save decoder is unchanged and never sees a sentinel or accepts these blanks. */
 export function checkedLocalGraphDefinition(value: unknown): StudioGraphDefinition {
-  const definition = checkedStudioGraphDraft(value);
-  if (definition.schema_version > 2 && definition.schema_version !== 7 || definition.nodes.some(node => node.definition_id === 'asset_reference')) throw new Error('GRAPH_DRAFT_TEXT_ONLY');
+  const raw = value as StudioGraphDefinition;
+  const copy = raw && [3, 4, 5].includes(raw.schema_version) && Array.isArray(raw.nodes) && raw.nodes.length <= 24 ? structuredClone(raw) : value;
+  const blanks: { index: number; key: 'provider_id' | 'model_id' | 'shot_id' }[] = [];
+  if (copy !== value) (copy as StudioGraphDefinition).nodes.forEach((node, index) => {
+    if (!node || !node.parameters || typeof node.parameters !== 'object') return;
+    const keys: ('provider_id' | 'model_id' | 'shot_id')[] = ['media_generate', 'image_generate', 'image_upscale', 'video_generate'].includes(node.definition_id)
+      && node.parameters.operation_id !== 'm8.audio.trim' ? ['provider_id', 'model_id'] : node.definition_id === 'storyboard_prompt' ? ['shot_id'] : [];
+    for (const key of keys) if (node.parameters[key] === '') { node.parameters[key] = 'x'; blanks.push({ index, key }); }
+  });
+  const definition = checkedStudioGraphDraft(copy);
+  if (definition.schema_version <= 2 && definition.nodes.some(node => node.definition_id === 'asset_reference')) throw new Error('GRAPH_DRAFT_TEXT_ONLY');
+  for (const { index, key } of blanks) definition.nodes[index].parameters[key] = '';
   return definition;
 }
 export function graphDraftRecoverable(value: StudioGraphDefinition): boolean {

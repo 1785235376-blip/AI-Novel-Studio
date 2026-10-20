@@ -106,9 +106,9 @@ describe('cached presentation recovery inspection through the original controlle
     cleanup(); delete value.definition.presentation; seed(value); await mount();
     expect(screen.queryByLabelText('本机草稿 · 图注释')).toBeNull(); expect(screen.queryByRole('region', { name: '本机草稿空间便笺' })).toBeNull();
   });
-  it('retains schema 1/2 eligibility, schema 3–5 and external reference exclusion and envelope bound', () => {
+  it('retains legacy eligibility/external exclusion and envelope bound while admitting bound authoring bytes', () => {
     for (const schema_version of [1, 2] as const) expect(graphDraftRecoverable({ ...blankGraph(), schema_version, presentation: snapshot().definition.presentation })).toBe(true);
-    for (const schema_version of [3, 4, 5] as const) expect(graphDraftRecoverable({ ...blankGraph(), schema_version, presentation: snapshot().definition.presentation })).toBe(false);
+    for (const schema_version of [3, 4, 5] as const) expect(graphDraftRecoverable({ ...blankGraph(), schema_version, presentation: snapshot().definition.presentation })).toBe(true); // Fresh gates/sources are a separate adoption requirement.
     const value = snapshot(); value.definition.nodes = [{ id: 'asset', definition_id: 'asset_reference', definition_version: 1, enabled: true,
       position: { x: 0, y: 0 }, parameters: { asset_id: 'asset', version: 1, digest: 'a'.repeat(64), kind: 'image' } }]; value.definition.edges = [];
     expect(graphDraftRecoverable(value.definition)).toBe(false);

@@ -1,3 +1,4 @@
+import { readBoundDraftCatalog, verifyBoundDraftSources } from './studioGraphDraftRecoverySources';
 import { buildConditionalStarter, checkedConditionParameters, conditionSame, conditionShape } from './graphConditionContract';
 import type { GraphConditionPredicate } from './studioGraphTypes';
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
@@ -31,7 +32,7 @@ import { blankGraph, connectionIssue, graphCatalogForSchema, graphId, imageGraph
 import { graphConnectionReplacement } from './graphConnectionReplacementHelpers';
 import { useStudioGraphTimelineEditor } from './useStudioGraphTimelineEditor';
 import { graphDraftBaselineMatches, graphDraftRecoverable, readStudioGraphLocalDraft, studioGraphDraftKey,
-  type StudioGraphDraftOwner, type StudioGraphLocalDraft } from './studioGraphLocalDraft';
+  isBoundGraphDraft, type StudioGraphDraftOwner, type StudioGraphLocalDraft } from './studioGraphLocalDraft';
 
 type PositionedNodeRequest = { position: StudioGraphPosition; scope: object; restoreFocus: () => void };
 
@@ -856,15 +857,15 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const canRecoverDraft = !!localRecovery && draftOwnerCurrent && canMutate && current() && !denied && !locked()
     && !externalDirty && !executionDirty && !dirty && !blocked && !timelineEditor.formDirty
     && (!base || base.id === localRecovery.base?.id) && (!requestedGraphId || requestedGraphId === localRecovery.base?.id)
-    && (draft.schema_version <= 2 || draft.schema_version === 7 && localRecovery.definition.schema_version === 7)
-    && (localRecovery.definition.schema_version !== 7 || active && !loading && !checking);
+    && (draft.schema_version <= 2 || draft.schema_version === 7 && localRecovery.definition.schema_version === 7 || isBoundGraphDraft(draft) && isBoundGraphDraft(localRecovery.definition))
+    && (localRecovery.definition.schema_version !== 7 && !isBoundGraphDraft(localRecovery.definition) || active && !loading && !checking);
   async function recoverLocalDraft() {
     if (!canRecoverDraft || !localRecovery || !draftOwner || !ownerKey) return;
-    const conditional = localRecovery.definition.schema_version === 7;
-    if (conditional && (conditionRecoveryPending.current || conditionRecoveryScope !== conditionRecoveryFence.current.token || !isVerificationCurrent())) return;
+    const conditional = localRecovery.definition.schema_version === 7, bound = isBoundGraphDraft(localRecovery.definition), verified = conditional || bound;
+    if (verified && (conditionRecoveryPending.current || conditionRecoveryScope !== conditionRecoveryFence.current.token || !isVerificationCurrent())) return;
     const snapshot = localRecovery, key = ownerKey, epoch = ++recoveryEpoch.current, selection = selectedEpoch.current;
-    const conditionalCurrent = () => !conditional || conditionRecoveryScope === conditionRecoveryFence.current.token && current();
-    if (conditional) conditionRecoveryPending.current = true;
+    const conditionalCurrent = () => !verified || conditionRecoveryScope === conditionRecoveryFence.current.token && current();
+    if (verified) conditionRecoveryPending.current = true;
     const original = JSON.stringify(draftRef.current); setRecoveryBusy(true); setRecoveryError('');
     try {
       const { record, conditionCatalog } = await read(async () => {
@@ -883,11 +884,17 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
           if (conditionCatalog.capabilities.local_conditions_contract !== GRAPH_CONDITIONS_CONTRACT
             || conditionCatalog.capabilities.local_conditions_schema_version !== 7) throw new Error('条件图门禁与目录未确认；本机草稿保持。');
         }
-        if (conditional && !conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。');
+        if (bound) conditionCatalog = await readBoundDraftCatalog(client, snapshot.definition, conditionalCurrent);
+        if (verified && !conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。');
         const record = snapshot.base ? await client.graphs.get(snapshot.base.id) : undefined;
         if (record && (!graphDraftBaselineMatches(snapshot, record) || conditional && record.definition.schema_version !== 7))
           throw new Error('图服务端版本或摘要已改变；本机草稿保持，请先核对下方作者输入与当前服务端版本。');
-        if (conditional) { if (!conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。'); await checkOwner(); }
+        if (bound) {
+          if (record && (!retainsSavedAssetBindings(record.definition.nodes, snapshot.definition.nodes) || !retainsLocalSubgraphTopology(record.definition, snapshot.definition))) throw new Error('缓存改变了原图的固定来源或子图拓扑；草稿保留，未恢复。');
+          await verifyBoundDraftSources(client, snapshot.definition, conditionCatalog!, draftOwner, conditionalCurrent, record);
+          conditionCatalog = await readBoundDraftCatalog(client, snapshot.definition, conditionalCurrent);
+        }
+        if (verified) { if (!conditionalCurrent()) throw new Error('条件图恢复来源已改变；本机草稿保持。'); await checkOwner(); }
         return { record, conditionCatalog };
       });
       const fence = recoveryFence.current;
@@ -895,16 +902,16 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
         || fence.busy || fence.externalDirty || fence.executionDirty || !fence.canMutate || isBusy?.()
         || original !== JSON.stringify(draftRef.current)) return;
       if (localStorage.getItem(key) !== persistedDraftRaw.current) throw new Error('其他页面已更新本机图草稿，未替换当前输入；请重新打开后核对。');
-      if (conditionCatalog) { catalogEpoch.current++; setLoading(false); schemaCatalogs.current.set(7, conditionCatalog); setCatalog(conditionCatalog); }
+      if (conditionCatalog) { catalogEpoch.current++; setLoading(false); schemaCatalogs.current.set(snapshot.definition.schema_version, conditionCatalog); setCatalog(conditionCatalog); }
       timelineEditor.resetForm(); setIndependentConsent(''); setIndependentOrigin(undefined); invalidateCandidate(); selectedEpoch.current++; setBase(record);
       draftRef.current = structuredClone(snapshot.definition); setDraft(draftRef.current); setSelected([]); setPast([]); setFuture([]);
       createRequest.current = snapshot.request_id; setBlocked(snapshot.uncertain); setSourcePort(''); setTargetPort('');
       setLocalRecovery(undefined); setRecoveryError(''); reportSelection.current?.({ graphId: record?.id });
-      setNotice('已恢复本机文本图草稿。尚未保存到服务端，也未创建或执行运行。');
+      setNotice(bound ? '已恢复本机创作图作者草稿。来源仅按当前读取核对；仍需明确保存和原预检，未恢复任何执行或审核授权。' : '已恢复本机文本图草稿。尚未保存到服务端，也未创建或执行运行。');
     } catch (value) {
       if (current() && conditionalCurrent() && epoch === recoveryEpoch.current) setRecoveryError(value instanceof ApiError
         ? apiErrorView(value, '当前图无法重新授权读取，本机草稿保持。').message : value instanceof Error ? value.message : '本机草稿未恢复。');
-    } finally { if (conditional) conditionRecoveryPending.current = false; if (current() && epoch === recoveryEpoch.current) setRecoveryBusy(false); }
+    } finally { if (verified) conditionRecoveryPending.current = false; if (current() && epoch === recoveryEpoch.current) setRecoveryBusy(false); }
   }
   function discardLocalRecovery() {
     if (!current() || locked() || !ownerKey || !draftOwnerCurrent) return;
