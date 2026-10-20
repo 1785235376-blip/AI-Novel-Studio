@@ -24,7 +24,7 @@ class AudioManifestRoute(PrivateProductionRoute):
                 request._body = bytes(body)
                 return await handler(request)
             except RequestValidationError:
-                raise HTTPException(422, {'code': 'AUDIO_MANIFEST_REQUEST_INVALID'}, headers={'Cache-Control': 'no-store'}) from None
+                raise HTTPException(422, {'code': 'AUDIO_MANIFEST_REQUEST_INVALID'}, headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}) from None
             except HTTPException as exc:
                 exc.headers = {**(exc.headers or {}), 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
                 raise

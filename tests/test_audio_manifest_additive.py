@@ -133,3 +133,18 @@ def test_file_dedicated_api_no_host_principal_or_adapter_fails_closed(approved):
     assert client.get(root+'/results').status_code==403 and files(e)==before
     app=FastAPI();app.include_router(create_audio_manifest_router(e.production,None));client=TestClient(app)
     assert client.get(root).status_code==403 and files(e)==before
+
+def test_validation_error_422_keeps_private_body_and_security_headers():
+    def forbidden(*args,**kwargs):
+        raise AssertionError('Invalid request must not reach Host or owner')
+    app=FastAPI()
+    app.include_router(create_audio_manifest_router(SimpleNamespace(store=None,workspace=None),forbidden))
+    response=TestClient(app).post('/novels/synthetic-project/experimental/production/audio-manifests',json={
+        'job_id':'synthetic-job','expected_job_version':1,'reviewed_capture_digest':'a'*64,
+        'request_id':'header-regression','confirmed':True,'prompt':'synthetic-private-do-not-echo'})
+    assert response.status_code==422
+    assert response.json()=={'detail':{'code':'AUDIO_MANIFEST_REQUEST_INVALID'}}
+    assert response.headers['content-type'].startswith('application/json')
+    assert response.headers['cache-control']=='no-store'
+    assert response.headers.get('x-content-type-options')=='nosniff'
+    assert 'synthetic-private-do-not-echo' not in response.text
