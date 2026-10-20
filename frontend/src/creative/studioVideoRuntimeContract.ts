@@ -4,6 +4,10 @@ import { checkedPlanningSnapshot } from './studioProductionGraphContract';
 import type { ShotPin } from './studioStoryboardContract';
 export const VIDEO_REFERENCE_PURPOSES = ['style', 'action', 'camera'] as const;
 export type VideoReference = { source: ProductionSource; purpose: typeof VIDEO_REFERENCE_PURPOSES[number] };
+export const VIDEO_FRAME_ROLES = ['FIRST', 'LAST'] as const;
+/** One exact first/last image frame of an existing Asset owner, in role order. */
+export type VideoFrame = { role: typeof VIDEO_FRAME_ROLES[number]; source: ProductionSource };
+export type VideoFrameCapabilities = { start_frame: boolean; end_frame: boolean; multi_reference: false };
 export const VIDEO_RECIPE_IDS = ['comfy-ltx095-video-v1', 'comfy-wan22-ti2v5b-v1', 'comfy-hunyuan10-t2v-v1'] as const;
 export type VideoCapabilities = { recipe_id: typeof VIDEO_RECIPE_IDS[number]; operations: ('t2v' | 'i2v')[]; structural_only: true; inference_verified: false;
   reference_semantics: 'SINGLE_IMAGE_INITIALIZATION'; reference_video_execution: false; output_format: 'WEBM_VP9' };
@@ -38,6 +42,45 @@ export function sameVideoReference(expected: { video_reference?: VideoReference 
   if (!object(value)) return false;
   try { return JSON.stringify(checkedVideoReference(expected.video_reference, expected.video_reference ? [expected.video_reference.source] : [], 'm7.video.v2v'))
     === JSON.stringify(checkedVideoReference(value.video_reference, expected.video_reference ? [expected.video_reference.source] : [], 'm7.video.v2v')); } catch { return false; }
+}
+const sourceKeys = ['id', 'kind', 'version', 'digest', 'asset_kind'];
+function checkedFrameSource(value: unknown): ProductionSource {
+  if (!object(value)) fail();
+  if (value.kind !== 'ASSET' || value.asset_kind !== 'image' || Object.keys(value).some(key => ![...sourceKeys, 'reference_only'].includes(key))
+    || typeof value.id !== 'string' || !value.id || value.id.length > 240 || /[\u0000-\u001f\u007f]/.test(value.id)
+    || typeof value.version !== 'number' || !Number.isSafeInteger(value.version) || value.version < 1
+    || typeof value.digest !== 'string' || !/^[a-f0-9]{64}$/.test(value.digest)) fail();
+  return { id: value.id, kind: 'ASSET', version: value.version, digest: value.digest, asset_kind: 'image' };
+}
+/** Validates the ordered first/last frame projection against the same source_snapshots. */
+export function checkedVideoFrames(value: unknown, sources: RecordedProductionSource[], operation: string): { video_frames?: VideoFrame[] } {
+  if (value === undefined) return {};
+  if (!Array.isArray(value) || value.length < 1 || value.length > 2 || operation !== 'm7.video.i2v') fail();
+  const roles = value.map(frame => object(frame) ? frame.role : undefined);
+  if (roles.length === 1 ? roles[0] !== 'FIRST' : roles[0] !== 'FIRST' || roles[1] !== 'LAST') fail();
+  const assets = sources.filter(source => source.kind === 'ASSET');
+  if (assets.length !== value.length) fail();
+  const frames = value.map((frame, index) => {
+    if (!object(frame) || Object.keys(frame).some(key => !['role', 'source'].includes(key))) fail();
+    const source = checkedFrameSource(frame.source);
+    if (source.id !== assets[index].id || source.version !== assets[index].version || source.digest !== assets[index].digest) fail();
+    return { role: frame.role as VideoFrame['role'], source };
+  });
+  if (new Set(frames.map(frame => frame.source.id)).size !== frames.length) fail();
+  return { video_frames: frames };
+}
+export function sameVideoFrames(expected: { video_frames?: VideoFrame[]; source_snapshots: RecordedProductionSource[] }, value: unknown): boolean {
+  if (!object(value)) return false;
+  try {
+    const expectedValue = checkedVideoFrames(expected.video_frames, expected.source_snapshots, 'm7.video.i2v');
+    const actualValue = checkedVideoFrames(value.video_frames, expected.source_snapshots, 'm7.video.i2v');
+    return JSON.stringify(expectedValue) === JSON.stringify(actualValue);
+  } catch { return false; }
+}
+export function checkedVideoFrameCapabilities(value: unknown): VideoFrameCapabilities {
+  if (!object(value)) fail(); exact(value, ['start_frame', 'end_frame', 'multi_reference']);
+  if (typeof value.start_frame !== 'boolean' || typeof value.end_frame !== 'boolean' || value.multi_reference !== false) fail();
+  return value as unknown as VideoFrameCapabilities;
 }
 export function checkedVideoCapabilities(value: unknown, operation: string): VideoCapabilities {
   if (!object(value)) fail(); exact(value, ['recipe_id', 'operations', 'structural_only', 'inference_verified', 'reference_semantics', 'reference_video_execution', 'output_format']);

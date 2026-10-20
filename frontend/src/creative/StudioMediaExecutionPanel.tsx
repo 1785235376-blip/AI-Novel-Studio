@@ -97,6 +97,21 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
           <Button disabled={!state.canEdit} onClick={state.clearSources}>移除已选来源</Button>
         </>}
       </fieldset>}
+      {draft.operation === 'm7.video.i2v' && <fieldset disabled={!state.canEdit}><legend>视频首尾帧 · 真实双图绑定</legend>
+        <p>{state.videoFrameCapabilities?.end_frame
+          ? '当前配置声明支持尾帧；首帧与尾帧会以两个不同正式图片版本的 ID、版本与 SHA-256 绑定到同一请求，并由适配器真实接收两份图片字节。'
+          : '当前配置只提供单图初始化，未声明尾帧协议。可以只使用首帧；若选择尾帧，预览会明确拒绝，不会静默丢弃尾帧或降级。'}</p>
+        <p>首帧：{draft.sources[0] ? `${props.assets.find(asset => asset.id === draft.sources[0].id)?.filename || draft.sources[0].id} · v${draft.sources[0].version} · ${draft.sources[0].digest.slice(0, 12)}…` : '尚未选择'}</p>
+        <label>尾帧（可选）<select value={state.endFrameSource?.id || ''} disabled={!state.canEdit || !draft.sources[0]} onChange={event => state.selectEndFrame(event.target.value)}>
+          <option value="">不绑定尾帧，仅单图首帧</option>
+          {props.assets.filter(asset => asset.kind === 'image' && !asset.deleted_at && !asset.manual_mask && asset.id !== draft.sources[0]?.id)
+            .map(asset => <option key={asset.id} value={asset.id}>{asset.filename} · v{asset.version} · {asset.sha256.slice(0, 12)}…</option>)}
+        </select></label>
+        {state.endFrameSource && <p>尾帧：{props.assets.find(asset => asset.id === state.endFrameSource!.id)?.filename || state.endFrameSource.id} · v{state.endFrameSource.version} · <code>{state.endFrameSource.digest}</code></p>}
+        {!draft.sources[0] && <StatusMessage tone="warning">请先在下方图片来源中明确选择首帧。</StatusMessage>}
+        {state.endFrameSource && !state.videoFrameCapabilities?.end_frame && <StatusMessage tone="warning">当前配置声明不支持尾帧；预览会被明确拒绝。请清空尾帧或选择支持双图的配置。</StatusMessage>}
+        {!!state.endFrameSource && <Button disabled={!state.canEdit} onClick={() => state.selectEndFrame('')}>清空尾帧</Button>}
+      </fieldset>}
       {(cutout || inpaint) && <fieldset disabled={!state.canEdit}><legend>已保存的手绘二值遮罩</legend>
         {inpaint && <p>沿用原手绘遮罩：白色像素保留原图，黑色区域重绘。后端转换处理语义并保护白色区域；原图与遮罩版本必须匹配。结果仍为私有候选，须人工审核。</p>}
         <label>绑定当前来源版本的遮罩<select value={inpaint ? draft.maskSource?.id || '' : draft.sources[1]?.id || ''} onChange={event => state.selectMask(event.target.value)}><option value="">明确选择一个已核对的遮罩</option>{state.eligibleMasks.map(mask => <option key={mask.id} value={mask.id}>{mask.filename} · v{mask.version} · {mask.manual_mask!.width} × {mask.manual_mask!.height}</option>)}</select></label>
