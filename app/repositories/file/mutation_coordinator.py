@@ -56,7 +56,10 @@ def _lock_file(handle) -> None:
     if os.name == "nt":
         import msvcrt
 
-        if handle.read(1) == b"":
+        # A Windows byte-range lock also denies reads from that byte. Inspect
+        # file metadata rather than reading another process's locked byte;
+        # the second writer must wait in locking(), not fail before acquiring.
+        if os.fstat(handle.fileno()).st_size == 0:
             handle.write(b"0")
             handle.flush()
         handle.seek(0)

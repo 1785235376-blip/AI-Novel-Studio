@@ -1,0 +1,183 @@
+"""Asset display persistence using original Graph/scope/asset/project ownership.
+
+Metadata binding is checked without loading image/video/audio payloads. Actual
+preview/download remains an original Asset operation. No model, graph run or
+binary ownership is introduced. API and UI mounting are a separate gate.
+"""
+from copy import deepcopy
+from hashlib import sha256
+from ..experimental.common import StaleSourceError, new_row, change_row, check_version
+from ..experimental.store import canonical
+from .project_store import BINDING
+from .canvas_view_models import CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave, CanvasViewRestore
+
+
+def digest(value):
+    return sha256(canonical(value).encode('utf-8')).hexdigest()
+
+
+class CreativeCanvasViews:
+    def __init__(self, graph):
+        self.graph, self.store, self.workspace = graph, graph.store, graph.workspace
+
+    def _owned(self,nid,scope,actor,rid,state):
+        row=self.graph._owned(nid,scope,actor,CANVAS_VIEWS,rid,state)
+        definition=CanvasViewDefinition.model_validate(row.get('definition')).model_dump()
+        if definition!=row['definition'] or digest(definition)!=row.get('definition_digest'):
+            raise ValueError('CREATIVE_CANVAS_RECORD_CORRUPT')
+        return row
+
+    def _states(self,nid,scope,actor,definition,guard):
+        if not self.graph.asset_inputs.in_phase(nid,scope,actor):
+            raise ValueError('CREATIVE_CANVAS_ASSET_PHASE_REQUIRED')
+        guard();cache={};states=[]
+        for card in definition['cards']:
+            reference=card['asset'];key=canonical(reference)
+            if key not in cache:
+                try:
+                    asset=self.workspace._row(nid,scope,reference['asset_id'])
+                    if asset.get('_owner_actor_id'):
+                        raise FileNotFoundError(reference['asset_id'])
+                    current=(asset['version'],asset['sha256'],asset['kind'])==(reference['version'],reference['digest'],reference['kind'])
+                    cache[key]={'state':'CURRENT_METADATA' if current else 'STALE'}
+                    if current:
+                        cache[key]['filename']=asset['filename']
+                except (FileNotFoundError,ValueError,KeyError):
+                    cache[key]={'state':'UNAVAILABLE'}
+            states.append({'card_id':card['id'],**cache[key]})
+        guard();return states
+
+    def _view(self,nid,scope,actor,row,guard):
+        states=self._states(nid,scope,actor,row['definition'],guard)
+        definition=deepcopy(row['definition']);unavailable={item['card_id'] for item in states if item['state']=='UNAVAILABLE'}
+        for card in definition['cards']:
+            if card['id'] in unavailable:card.pop('asset')
+        return {'id':row['id'],'version':row['version'],'definition':definition,
+            'definition_digest':row['definition_digest'],'project_id':nid,'scope':deepcopy(scope),
+            'created_at':row['created_at'],'updated_at':row['updated_at'],'reference_states':states,
+            'execution_authority':False,'binary_content_verified':False,
+            'capacity':{'history_used':len(row['history']),'record_bytes':len(canonical(row).encode('utf-8'))}}
+
+    def list(self,nid,scope,actor,guard=lambda:None):
+        _,current=self.graph._context(nid,scope,actor,guard)
+        state=self.store.read(nid,scope);items=[]
+        for rid,value in state['collections'].get(CANVAS_VIEWS,{}).items():
+            if value.get('created_by')!=actor:continue
+            row=self._owned(nid,scope,actor,rid,state)
+            items.append({key:deepcopy(row[key]) for key in ('id','version','definition_digest','created_at','updated_at')}|
+                {'title':row['definition']['title'],'card_count':len(row['definition']['cards'])})
+        current();return {'items':sorted(items,key=lambda row:(row['created_at'],row['id'])),'execution_authority':False}
+
+    def get(self,nid,scope,actor,rid,guard=lambda:None):
+        _,current=self.graph._context(nid,scope,actor,guard)
+        with self.graph.asset_inputs.phase(nid,scope,actor,current) as state:
+            row=self._owned(nid,scope,actor,rid,state)
+            result=self._view(nid,scope,actor,row,current)
+            current();return result
+
+    def create(self,nid,scope,actor,value,guard=lambda:None):
+        body=CanvasViewCreate.model_validate(value)
+        incarnation,current=self.graph._context(nid,scope,actor,guard)
+        definition=body.definition.model_dump();request_digest=digest(body.model_dump())
+        with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
+            if any(item['state']!='CURRENT_METADATA' for item in self._states(nid,scope,actor,definition,current)):
+                raise StaleSourceError('CREATIVE_CANVAS_SOURCE_CHANGED')
+            rows=state['collections'].setdefault(CANVAS_VIEWS,{})
+            found=next((row for row in rows.values() if row.get('created_by')==actor and row.get('request_id')==body.request_id),None)
+            if found:
+                if found.get('request_digest')!=request_digest:raise ValueError('CREATIVE_CANVAS_REQUEST_ID_REUSED')
+                row=self._owned(nid,scope,actor,found['id'],state)
+            else:
+                row=new_row(nid,scope,actor,{BINDING:incarnation,'definition':definition,
+                    'definition_digest':digest(definition),'request_id':body.request_id,'request_digest':request_digest})
+                rows[row['id']]=row
+            self.graph._capacity(state);current();saved_id=row['id']
+        return self.get(nid,scope,actor,saved_id,current)
+
+    def save(self,nid,scope,actor,rid,value,guard=lambda:None):
+        body=CanvasViewSave.model_validate(value)
+        incarnation,current=self.graph._context(nid,scope,actor,guard)
+        if body.expected_incarnation is not None and body.expected_incarnation != incarnation:
+            raise StaleSourceError('CREATIVE_CANVAS_SAVE_INCARNATION_CHANGED')
+        definition=body.definition.model_dump()
+        with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
+            row=self._owned(nid,scope,actor,rid,state);check_version(row,body.expected_version)
+            if body.expected_definition_digest is not None and body.expected_definition_digest != row['definition_digest']:
+                raise StaleSourceError('CREATIVE_CANVAS_SAVE_DEFINITION_CHANGED')
+            if body.expected_card is not None:
+                old_card = next((card for card in row['definition']['cards'] if card['id'] == body.expected_card.card_id), None)
+                if (old_card is None or old_card['asset'] != body.expected_card.source.model_dump()
+                        or self._states(nid,scope,actor,{'cards':[old_card]},current)[0]['state'] != 'CURRENT_METADATA'):
+                    raise StaleSourceError('CREATIVE_CANVAS_RETURN_SOURCE_CHANGED')
+            if any(item['state']!='CURRENT_METADATA' for item in self._states(nid,scope,actor,definition,current)):
+                raise StaleSourceError('CREATIVE_CANVAS_SOURCE_CHANGED')
+            change_row(row,actor,body.expected_version,lambda target:target.update(definition=deepcopy(definition),definition_digest=digest(definition)))
+            self.graph._capacity(state);current()
+        return self.get(nid,scope,actor,rid,current)
+
+    def _history_entries(self, nid, scope, actor, row):
+        # Original change_row snapshots are the only history authority. Never
+        # trust a client-supplied definition or another record's snapshot.
+        entries = [*row['history'], row]
+        for version, entry in enumerate(entries, 1):
+            if (not isinstance(entry, dict) or type(entry.get('version')) is not int
+                    or entry['version'] != version or entry.get('id') != row['id']
+                    or entry.get('novel_id') != nid or entry.get('scope') != scope
+                    or entry.get('created_by') != actor or entry.get(BINDING) != row[BINDING]):
+                raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+            definition = CanvasViewDefinition.model_validate(entry.get('definition')).model_dump()
+            if definition != entry['definition'] or digest(definition) != entry.get('definition_digest'):
+                raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+        if len(entries) != row['version']:
+            raise ValueError('CREATIVE_CANVAS_HISTORY_CORRUPT')
+        return entries
+
+    def history(self, nid, scope, actor, rid, guard=lambda: None):
+        incarnation, current = self.graph._context(nid, scope, actor, guard)
+        with self.graph.asset_inputs.phase(nid, scope, actor, current) as state:
+            row = self._owned(nid, scope, actor, rid, state)
+            items = []
+            for entry in self._history_entries(nid, scope, actor, row):
+                states = self._states(nid, scope, actor, entry['definition'], current)
+                definition = deepcopy(entry['definition'])
+                unavailable = {value['card_id'] for value in states if value['state'] == 'UNAVAILABLE'}
+                for card in definition['cards']:
+                    if card['id'] in unavailable:
+                        card.pop('asset')
+                items.append({key: deepcopy(entry[key]) for key in
+                    ('version', 'definition_digest', 'created_at', 'updated_at')} |
+                    {'definition': definition, 'reference_states': states,
+                     'can_restore': entry['version'] < row['version'] and
+                         all(value['state'] == 'CURRENT_METADATA' for value in states)})
+            current()
+            return {'project_id': nid, 'scope': deepcopy(scope), 'id': rid,
+                'incarnation': incarnation, 'current_version': row['version'],
+                'current_definition_digest': row['definition_digest'], 'items': items,
+                'restore_policy': 'CURRENT_METADATA_ONLY', 'execution_authority': False,
+                'binary_content_verified': False}
+
+    def restore(self, nid, scope, actor, rid, value, guard=lambda: None):
+        body = CanvasViewRestore.model_validate(value)
+        incarnation, current = self.graph._context(nid, scope, actor, guard)
+        if body.expected_incarnation != incarnation:
+            raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
+        with self.graph.asset_inputs.transaction(nid, scope, actor, current) as state:
+            row = self._owned(nid, scope, actor, rid, state)
+            check_version(row, body.expected_version)
+            if row['definition_digest'] != body.expected_definition_digest:
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
+            entries = self._history_entries(nid, scope, actor, row)
+            target = next((entry for entry in entries[:-1] if entry['version'] == body.restore_version), None)
+            if target is None:
+                raise ValueError('CREATIVE_CANVAS_RESTORE_HISTORY_VERSION_REQUIRED')
+            if target['definition_digest'] != body.restore_definition_digest:
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_HISTORY_CHANGED')
+            definition = deepcopy(target['definition'])
+            if any(item['state'] != 'CURRENT_METADATA' for item in
+                    self._states(nid, scope, actor, definition, current)):
+                raise StaleSourceError('CREATIVE_CANVAS_RESTORE_SOURCE_UNRESOLVED')
+            change_row(row, actor, body.expected_version, lambda value: value.update(
+                definition=definition, definition_digest=target['definition_digest']))
+            self.graph._capacity(state)
+            current()
+        return self.get(nid, scope, actor, rid, current)

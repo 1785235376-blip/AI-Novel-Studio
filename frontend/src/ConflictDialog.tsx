@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import {
   conflictResolutionDrafts,
+  conflicts,
   PersistentConflict,
   type ConflictResolutionDraft,
 } from './drafts';
@@ -80,10 +81,10 @@ export function ConflictDialog({
       sourceConflictDetectedAt: value.detectedAt,
       updatedAt: new Date().toISOString(),
     };
-    conflictResolutionDrafts.save(draft, namespace);
+    const receipt = conflictResolutionDrafts.save(draft, namespace);
     dispatchEvent(new CustomEvent('studio:conflict-resolution-draft', { detail: draft }));
     onResolutionDraft?.(draft);
-    setResolutionStatus('手工解决草稿已保存，本地草稿和冲突记录均未丢弃。');
+    setResolutionStatus(receipt.durability === 'durable' ? '手工解决草稿已写入本机，尚待后端确认。' : '本机存储写入失败，解决草稿仅在内存。请复制文本后再关闭。');
   };
   const copyLocal = async () => {
     try {
@@ -106,7 +107,7 @@ export function ConflictDialog({
       >
         <h2 id={titleId}>检测到版本冲突</h2>
         <p id={descriptionId} role="status" aria-live="assertive">
-          本地草稿已安全保存。请比较两个版本，系统不会自动覆盖任一版本。
+          {conflicts.durability(value.chapterId, namespace) === 'durable' ? '冲突草稿已写入本机。' : '冲突草稿仅在当前页面内存，请复制文本后再关闭。'}请比较两个版本，系统不会自动覆盖任一版本。
         </p>
         <div className="compare" aria-label="版本对照">
           <div>

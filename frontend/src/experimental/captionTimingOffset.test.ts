@@ -1,0 +1,30 @@
+import { describe, expect, it } from 'vitest';
+import { previewCaptionTimingOffset } from './captionTimingOffset';
+import type { CaptionCue, CaptionTrack } from './voiceSubtitleClient';
+const cue=(id='a',start_tick=100,end_tick=200):CaptionCue=>({id,start_tick,end_tick,text:'字幕',segment_id:'speaker',overlap_reason:''});
+const track={timebase:{numerator:1000,denominator:1},media:{duration_seconds:{numerator:10,denominator:1}}} as CaptionTrack;
+const preview=(cues=[cue()],selected:readonly string[]|'all'='all',amount='10',row=track)=>previewCaptionTimingOffset(row,cues,selected,amount);
+describe('exact local caption timing offset',()=>{
+ it.each(['+10','10','-10','0','-0'])('handles signed integer %s without mutating any metadata',amount=>{
+  const cues=[Object.freeze(cue()),Object.freeze(cue('b',300,400))];const before=JSON.stringify(cues),row=JSON.stringify(track);const result=preview(cues,'all',amount);
+  expect(result.cues).toEqual(cues.map(c=>({...c,start_tick:c.start_tick+Number(amount),end_tick:c.end_tick+Number(amount)})));expect(JSON.stringify(cues)).toBe(before);expect(JSON.stringify(track)).toBe(row);expect(result.changes[0]).toEqual({id:'a',index:0,before:[100,200],after:[100+Number(amount),200+Number(amount)]});
+ });
+ it('offsets selected IDs and preserves array order and unselected fields',()=>{const cues=[cue(),cue('b',300,400)];expect(preview(cues,['b'],'20').cues).toEqual([cue(),cue('b',320,420)]);});
+ it.each(['',' ','1.5','1e2','0x10','Infinity','NaN','--1','+ 1','1\n','9007199254740992','-9007199254740992'])('rejects malformed/unsafe input %j',value=>expect(()=>preview(undefined,undefined,value)).toThrow());
+ it.each([[[]],[['missing']],[['a','a']]])('rejects invalid selection %j',selected=>expect(()=>preview(undefined,selected)).toThrow());
+ it('rejects empty, duplicate and over-limit tracks',()=>{expect(()=>preview([])).toThrow();expect(()=>preview([cue(),cue()])).toThrow();expect(()=>preview(Array.from({length:2001},(_,i)=>cue(String(i))))).toThrow();});
+ it('accepts the exact measured rational duration but rejects one tick past it',()=>{const row={...track,timebase:{numerator:24000,denominator:1001},media:{duration_seconds:{numerator:1001,denominator:1000}}} as CaptionTrack;expect(preview([cue('a',1,23)],'all','1',row).cues[0].end_tick).toBe(24);expect(()=>preview([cue('a',1,23)],'all','2',row)).toThrow(/时长/);});
+ it('uses exact cross products above safe multiplication precision',()=>{const max=Number.MAX_SAFE_INTEGER;const row={...track,timebase:{numerator:192000,denominator:1001},media:{duration_seconds:{numerator:max,denominator:192000}}} as CaptionTrack;const last=Number(BigInt(max)/1001n);expect(preview([cue('a',last-2,last-1)],'all','1',row).cues[0].end_tick).toBe(last);expect(()=>preview([cue('a',last-2,last-1)],'all','2',row)).toThrow(/时长/);});
+ it('rejects negative and overflowing results atomically',()=>{expect(()=>preview([cue(),cue('b',300,400)],'all','-101')).toThrow();expect(()=>preview([cue('a',Number.MAX_SAFE_INTEGER-2,Number.MAX_SAFE_INTEGER)],'all','1')).toThrow(/安全整数/);});
+ it.each([NaN,Infinity,1.5,-1,Number.MAX_SAFE_INTEGER+1])('rejects malformed original ticks %s',start_tick=>expect(()=>preview([cue('a',start_tick,200)])).toThrow());
+ it('rejects reversed cues',()=>expect(()=>preview([cue('a',200,100)])).toThrow());
+ it('rejects reordering even when an overlap explanation exists',()=>expect(()=>preview([cue(),{...cue('b',300,400),overlap_reason:'intentional'}],['a'],'250')).toThrow(/顺序/));
+ it('checks unselected following neighbors for newly created overlap',()=>expect(()=>preview([cue(),cue('b',300,400)],['a'],'150')).toThrow(/重叠/));
+ it('checks preceding selected or unselected neighbors for overlap',()=>expect(()=>preview([cue(),cue('b',300,400)],['b'],'-150')).toThrow(/重叠/));
+ it('checks overlap against all earlier ends, not just the previous cue',()=>expect(()=>preview([cue('a',0,800),{...cue('b',100,200),overlap_reason:'nested'},cue('c',900,1000)],['c'],'-400')).toThrow(/重叠/));
+ it('preserves explicit existing overlap explanations without inventing any',()=>{const cues=[cue(),{...cue('b',300,400),overlap_reason:'author reason'}];expect(preview(cues,['b'],'-150').cues[1].overlap_reason).toBe('author reason');});
+ it.each([{numerator:0,denominator:1},{numerator:1,denominator:0},{numerator:192001,denominator:1},{numerator:1000,denominator:1002},{numerator:1.5,denominator:1}])('rejects invalid timebase %#',timebase=>expect(()=>preview(undefined,undefined,'10',{...track,timebase})).toThrow());
+ it.each([{numerator:0,denominator:1},{numerator:1,denominator:0},{numerator:NaN,denominator:1},{numerator:Number.MAX_SAFE_INTEGER+1,denominator:1}])('rejects invalid measured duration %#',duration_seconds=>expect(()=>preview(undefined,undefined,'10',{...track,media:{...track.media,duration_seconds}})).toThrow());
+ it('allows the original 2000 cue bound without a Timeline transfer limit',()=>{const cues=Array.from({length:2000},(_,i)=>cue(String(i),i*2,i*2+1));expect(preview(cues,'all','0').changes).toHaveLength(2000);});
+});
+it.each([{id:''},{id:'x'.repeat(241)},{text:''},{text:' '},{text:'<b>markup</b>'},{text:'a\n\nb'},{text:'x'.repeat(10001)},{segment_id:'x'.repeat(241)},{overlap_reason:'x'.repeat(501)}])('rejects malformed local cue fields atomically %#',patch=>{const original=[{...cue(),...patch}];const bytes=JSON.stringify(original);expect(()=>preview(original)).toThrow();expect(JSON.stringify(original)).toBe(bytes);});

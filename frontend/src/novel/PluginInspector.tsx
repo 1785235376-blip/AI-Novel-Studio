@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { KeyRound, Plug, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { Badge, Button, EmptyState } from "../ui/primitives";
-import { KIND_LABEL, formatResourceKinds, publisherLabel } from "./PluginManagerPanel";
+import { KIND_LABEL, formatResourceKinds, publisherLabel, type PluginCatalogSummary } from "./PluginManagerPanel";
+import { PluginResourceDetail } from "./PluginResourceDetail";
+import { resourceDetailPin } from "./pluginResourceDetailContract";
 import "./PluginInspector.css";
 
 export type PluginResourceSummary = {
@@ -46,45 +48,40 @@ function shaShort(resource: PluginResourceSummary): string {
 }
 
 export function PluginInspector({ inspection }: { inspection?: PluginInspection }) {
-  const [resources, setResources] = useState<PluginResourceSummary[]>([]);
-  const [catalog, setCatalog] = useState<{ validated?: boolean; validation_status?: string; error_code?: string; status?: string; resource_count?: number; resource_kinds?: string[] }>();
-  const [resourceError, setResourceError] = useState<string>();
-  const [loading, setLoading] = useState(false);
+  const [resourceRead, setResourceRead] = useState<{ key: string; resources: PluginResourceSummary[]; catalog?: PluginCatalogSummary; error?: string; loading: boolean }>();
   const [retry, setRetry] = useState(0);
-
   const active = inspection?.status === "MANIFEST_ACTIVE";
+  const readKey = JSON.stringify([inspection?.id, inspection?.version, inspection?.pluginVersion, active, retry]);
+  const currentRead = resourceRead?.key === readKey ? resourceRead : undefined;
+  const resources = currentRead?.resources || [];
+  const catalog = currentRead?.catalog;
+  const resourceError = currentRead?.error;
+  const loading = active && (!currentRead || currentRead.loading);
 
   useEffect(() => {
     let cancelled = false;
-    setResources([]);
-    setCatalog(undefined);
-    setResourceError(undefined);
     if (!inspection?.id || !active) {
-      setLoading(false);
+      setResourceRead(undefined);
       return;
     }
-    setLoading(true);
+    setResourceRead({ key: readKey, resources: [], loading: true });
     api.pluginResources(inspection.id).then((payload) => {
       if (cancelled) return;
-      setCatalog(payload);
-      setResources(payload.validated ? (payload.items || []) : (payload.validation_status === "PARTIAL" ? payload.items || [] : []));
+      let error: string | undefined;
       if (payload.validation_status === "DRIFT" || payload.error_code === "PLUGIN_MANIFEST_DRIFT") {
-        setResourceError("清单与已审核身份不一致，未展示声明式资源。");
+        error = "清单与已审核身份不一致，未展示声明式资源。";
       } else if (payload.validation_status === "DUPLICATE" || payload.error_code === "PLUGIN_ID_DUPLICATE") {
-        setResourceError("插件 ID 重复，未展示声明式资源。");
+        error = "插件 ID 重复，未展示声明式资源。";
       } else if (payload.validated !== true && payload.validation_status !== "PARTIAL") {
-        setResourceError(payload.items?.length ? undefined : "没有已通过现场校验的声明式资源。");
+        error = payload.items?.length ? undefined : "没有已通过现场校验的声明式资源。";
       }
-      setLoading(false);
+      setResourceRead({ key: readKey, resources: payload.validated ? (payload.items || []) : (payload.validation_status === "PARTIAL" ? payload.items || [] : []), catalog: payload, error, loading: false });
     }).catch(() => {
       if (cancelled) return;
-      setResources([]);
-      setCatalog({ validated: false, validation_status: "FAILED" });
-      setResourceError("声明式资源摘要读取失败。未展示未验证内容。");
-      setLoading(false);
+      setResourceRead({ key: readKey, resources: [], catalog: { validated: false, validation_status: "FAILED" }, error: "声明式资源摘要读取失败。未展示未验证内容。", loading: false });
     });
     return () => { cancelled = true; };
-  }, [inspection?.id, active, retry]);
+  }, [inspection?.id, inspection?.version, inspection?.pluginVersion, active, retry]);
 
   if (!inspection) {
     return (
@@ -137,7 +134,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
       <section className="plugin-inspector__resources" aria-labelledby="plugin-resource-title">
         <header>
           <h3 id="plugin-resource-title">声明式资源摘要</h3>
-          {active && resourceError ? <Button variant="ghost" onClick={() => setRetry((value) => value + 1)}>重试读取</Button> : null}
+          {active ? <Button variant="ghost" disabled={loading} onClick={() => setRetry((value) => value + 1)}>{resourceError ? "重试读取" : "重新校验资源摘要"}</Button> : null}
         </header>
         {!active ? (
           <p className="novel-help">清单未激活，声明式资源不可展示。</p>
@@ -151,6 +148,8 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
           <ul>
             {resources.map((resource) => {
               const digest = shaShort(resource);
+              const pin = resourceDetailPin(inspection.id, catalog, resource);
+              const name = resource.summary?.name || resource.name || resource.resource_id;
               return (
                 <li key={resource.resource_id}>
                   <KeyRound aria-hidden="true" size={12}/>
@@ -158,6 +157,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
                     <strong>{resource.summary?.name || resource.name || resource.resource_id}</strong>
                     <span>{KIND_LABEL[resource.kind] || resource.kind}{resource.schema_version ? ` · schema ${resource.schema_version}` : ""}{digest ? ` · SHA-256 ${digest}` : ""}{resource.validated ? " · 已校验" : ""}</span>
                     {resource.summary?.description || resource.description ? <span>{resource.summary?.description || resource.description}</span> : null}
+                    {pin && <PluginResourceDetail key={JSON.stringify([readKey, pin])} pin={pin} name={name} ownerKey={readKey} />}
                   </div>
                 </li>
               );
@@ -165,7 +165,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
           </ul>
         )}
       </section>
-      <p className="novel-help">密钥、插件代码、绝对路径和运行时响应不会在此面板展示。发布者字段不是签名。代码执行：当前禁止。</p>
+      <p className="novel-help">正文仅作为文本展示，不读取凭据、加载插件代码、解析主机路径或请求正文链接。发布者字段不是签名。代码执行：当前禁止。</p>
     </section>
   );
 }

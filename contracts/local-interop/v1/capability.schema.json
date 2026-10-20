@@ -1,0 +1,39 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/capability.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capability": {
+      "enum": [
+        "project.context.read",
+        "project.selection.share",
+        "project.metadata.read",
+        "task.status.read",
+        "task.error.read",
+        "diagnostics.read",
+        "model.registry.read",
+        "model.runtime.status.read",
+        "tutor.guidance.request",
+        "tutor.guidance.receive",
+        "verifier.request",
+        "verifier.result.receive",
+        "case.candidate.create",
+        "handoff.open_feature",
+        "handoff.open_project",
+        "handoff.open_task"
+      ],
+      "title": "Capability",
+      "type": "string"
+    },
+    "supported": {
+      "default": true,
+      "title": "Supported",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "capability"
+  ],
+  "title": "CapabilityDescriptor",
+  "type": "object"
+}

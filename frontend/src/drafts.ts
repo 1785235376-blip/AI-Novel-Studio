@@ -21,14 +21,43 @@ export type ConflictResolutionDraft = {
   updatedAt: string;
 };
 
-const memory = new Map<string, string>();
+export type DraftDurability = 'durable' | 'memory' | 'none';
+export type PersistenceReceipt = { durability: Exclude<DraftDurability, 'none'> };
+
+// BACKPORT CANDIDATE (U02): a failed browser write must never interrupt editing
+// or let an older durable snapshot replace the current, memory-only candidate.
+// This overlay is deliberately volatile. A restart cannot recover its contents.
+const volatile = new Map<string, string | null>();
 const storage = {
-  getItem: (key: string) =>
-    typeof localStorage === 'undefined' ? memory.get(key) ?? null : localStorage.getItem(key),
-  setItem: (key: string, value: string) =>
-    typeof localStorage === 'undefined' ? void memory.set(key, value) : localStorage.setItem(key, value),
-  removeItem: (key: string) =>
-    typeof localStorage === 'undefined' ? void memory.delete(key) : localStorage.removeItem(key),
+  getItem(key: string): string | null {
+    if (volatile.has(key)) return volatile.get(key) ?? null;
+    try { return globalThis.localStorage?.getItem(key) ?? null; } catch { return null; }
+  },
+  setItem(key: string, value: string): PersistenceReceipt {
+    volatile.set(key, value);
+    try {
+      if (!globalThis.localStorage) return { durability: 'memory' };
+      globalThis.localStorage.setItem(key, value);
+      // Some hosts silently reject writes. Only report the value read back.
+      if (globalThis.localStorage.getItem(key) !== value) return { durability: 'memory' };
+      volatile.delete(key);
+      return { durability: 'durable' };
+    } catch { return { durability: 'memory' }; }
+  },
+  removeItem(key: string) {
+    // Keep a tombstone if storage rejects deletion, rather than resurrecting an
+    // explicitly discarded/acknowledged candidate during this session.
+    volatile.set(key, null);
+    try {
+      if (!globalThis.localStorage) return;
+      globalThis.localStorage.removeItem(key);
+      if (globalThis.localStorage.getItem(key) === null) volatile.delete(key);
+    } catch { /* The tombstone remains memory-only; durable recovery may recur. */ }
+  },
+  durability(key: string): DraftDurability {
+    if (volatile.has(key)) return volatile.get(key) === null ? 'none' : 'memory';
+    return this.getItem(key) === null ? 'none' : 'durable';
+  },
 };
 
 const scopedKey = (kind: string, id: string, namespace = 'file') =>
@@ -38,15 +67,34 @@ function loadJson<T>(key: string): T | undefined {
   try {
     const value = storage.getItem(key);
     return value ? (JSON.parse(value) as T) : undefined;
-  } catch {
-    return undefined;
-  }
+  } catch { return undefined; }
+}
+
+export type DraftInspection = { state: 'EMPTY' } | { state: 'READY'; value: LocalDraft } | { state: 'CORRUPT'; raw: string };
+function inspectDraft(id: string, namespace = 'file'): DraftInspection {
+  const raw = storage.getItem(scopedKey('draft', id, namespace));
+  if (raw === null) return { state: 'EMPTY' };
+  try {
+    const value = JSON.parse(raw) as LocalDraft;
+    if (value?.chapterId === id && typeof value.content === 'string'
+        && Number.isInteger(value.baseVersion) && value.baseVersion >= 0
+        && (value.document === undefined || value.document === null || typeof value.document === 'object' && !Array.isArray(value.document)))
+      return { state: 'READY', value };
+  } catch { /* Keep the raw candidate available for explicit local recovery. */ }
+  return { state: 'CORRUPT', raw };
 }
 
 export const drafts = {
-  load: (id: string, namespace = 'file') => loadJson<LocalDraft>(scopedKey('draft', id, namespace)),
+  inspect: inspectDraft,
+  load(id: string, namespace = 'file') {
+    const result = inspectDraft(id, namespace);
+    return result.state === 'READY' ? result.value : undefined;
+  },
+  // One atomic versioned snapshot per chapter/scope is the local draft journal.
+  // Existing records remain readable; no migration or server write is implied.
   save: (value: LocalDraft, namespace = 'file') =>
     storage.setItem(scopedKey('draft', value.chapterId, namespace), JSON.stringify(value)),
+  durability: (id: string, namespace = 'file') => storage.durability(scopedKey('draft', id, namespace)),
   remove: (id: string, namespace = 'file') => storage.removeItem(scopedKey('draft', id, namespace)),
 };
 
@@ -56,10 +104,9 @@ const sameConflict = (left: PersistentConflict, right: PersistentConflict) =>
   left.server.version === right.server.version;
 
 export const conflicts = {
-  load: (id: string, namespace = 'file') =>
-    loadJson<PersistentConflict>(scopedKey('conflict', id, namespace)),
-  list: (id: string, namespace = 'file') =>
-    loadJson<PersistentConflict[]>(scopedKey('conflict-history', id, namespace)) ?? [],
+  load: (id: string, namespace = 'file') => loadJson<PersistentConflict>(scopedKey('conflict', id, namespace)),
+  list: (id: string, namespace = 'file') => loadJson<PersistentConflict[]>(scopedKey('conflict-history', id, namespace)) ?? [],
+  durability: (id: string, namespace = 'file') => storage.durability(scopedKey('conflict', id, namespace)),
   save(value: PersistentConflict, namespace = 'file') {
     const current = this.load(value.chapterId, namespace);
     const history = this.list(value.chapterId, namespace);
@@ -67,18 +114,37 @@ export const conflicts = {
       history.push(current);
       storage.setItem(scopedKey('conflict-history', value.chapterId, namespace), JSON.stringify(history));
     }
-    storage.setItem(scopedKey('conflict', value.chapterId, namespace), JSON.stringify(value));
+    return storage.setItem(scopedKey('conflict', value.chapterId, namespace), JSON.stringify(value));
+  },
+  resolve(id: string, namespace = 'file') {
+    const current = this.load(id, namespace);
+    const history = this.list(id, namespace);
+    if (current && !history.some(item => sameConflict(item, current))) {
+      storage.setItem(scopedKey('conflict-history', id, namespace), JSON.stringify([...history, current]));
+    }
+    return storage.removeItem(scopedKey('conflict', id, namespace));
   },
   remove: (id: string, namespace = 'file') => storage.removeItem(scopedKey('conflict', id, namespace)),
-  clearHistory: (id: string, namespace = 'file') =>
-    storage.removeItem(scopedKey('conflict-history', id, namespace)),
+  clearHistory: (id: string, namespace = 'file') => storage.removeItem(scopedKey('conflict-history', id, namespace)),
 };
 
 export const conflictResolutionDrafts = {
-  load: (id: string, namespace = 'file') =>
-    loadJson<ConflictResolutionDraft>(scopedKey('conflict-resolution', id, namespace)),
+  load: (id: string, namespace = 'file') => loadJson<ConflictResolutionDraft>(scopedKey('conflict-resolution', id, namespace)),
   save: (value: ConflictResolutionDraft, namespace = 'file') =>
     storage.setItem(scopedKey('conflict-resolution', value.chapterId, namespace), JSON.stringify(value)),
-  remove: (id: string, namespace = 'file') =>
-    storage.removeItem(scopedKey('conflict-resolution', id, namespace)),
+  remove: (id: string, namespace = 'file') => storage.removeItem(scopedKey('conflict-resolution', id, namespace)),
 };
+
+/** User-triggered local export only; prose never enters HTML or a network request. */
+export function exportDraftText(content: string, filename = 'writing-recovery.txt') {
+  const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }));
+  const revoke = URL.revokeObjectURL.bind(URL);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  try { link.click(); } finally {
+    link.remove();
+    setTimeout(() => revoke(url), 0);
+  }
+}

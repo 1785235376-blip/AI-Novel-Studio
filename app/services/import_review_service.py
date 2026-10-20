@@ -19,6 +19,8 @@ from pathlib import Path
 from typing import Any
 
 from ..storage import atomic_write
+from ..repositories.file.mutation_coordinator import workspace_mutation
+from .v1_capability_service import CapabilityVersionConflict
 
 
 def _now() -> str:
@@ -26,7 +28,7 @@ def _now() -> str:
 
 
 def _canonical(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
 class ImportReviewService:
@@ -46,11 +48,11 @@ class ImportReviewService:
     def _read(self) -> dict[str, dict]:
         try:
             payload = json.loads(self.path.read_text(encoding="utf-8"))
-        except (FileNotFoundError, json.JSONDecodeError):
+        except FileNotFoundError:
             return {}
-        if not isinstance(payload, dict):
-            return {}
-        return {str(key): value for key, value in payload.items() if isinstance(value, dict)}
+        if not isinstance(payload, dict) or any(not isinstance(value, dict) for value in payload.values()):
+            raise ValueError("knowledge review store is corrupt; restore a verified backup")
+        return {str(key): value for key, value in payload.items()}
 
     def _write(self, records: dict[str, dict]) -> None:
         atomic_write(self.path, json.dumps(records, ensure_ascii=False, indent=2))
@@ -86,6 +88,7 @@ class ImportReviewService:
         item = dict(record)
         item.setdefault("schema_version", ImportReviewService.SCHEMA_VERSION)
         item.setdefault("status", "PENDING")
+        item.setdefault("version", 1)
         item.setdefault("history", [])
         item.setdefault("selected", {})
         item.setdefault("updated_at", item.get("created_at") or _now())
@@ -98,16 +101,19 @@ class ImportReviewService:
         *,
         source_format: str | None = None,
         import_id: str | None = None,
+        permission_context: dict | None = None,
     ) -> dict:
         """Create or reuse a pending review for the same candidate set."""
 
+        permission_context = permission_context or {"mode": "local", "novel_id": novel_id}
         normalized = self._normalise_candidates(candidates)
         fingerprint = self._fingerprint(novel_id, normalized)
-        with self._lock:
+        with self._lock, workspace_mutation(self.path.parent, "import-reviews"):
             records = self._read()
             for raw in records.values():
                 if (
                     raw.get("novel_id") == novel_id
+                    and raw.get("permission_context", {"mode": "local", "novel_id": novel_id}) == permission_context
                     and raw.get("fingerprint") == fingerprint
                     and raw.get("status") == "PENDING"
                     and (not import_id or raw.get("import_id") == import_id)
@@ -118,6 +124,8 @@ class ImportReviewService:
                 "schema_version": self.SCHEMA_VERSION,
                 "novel_id": novel_id,
                 "status": "PENDING",
+                "permission_context": permission_context,
+                "version": 1,
                 "source_format": str(source_format or "")[:40],
                 "import_id": str(import_id or "")[:120] or None,
                 "fingerprint": fingerprint,
@@ -132,7 +140,7 @@ class ImportReviewService:
             return self._normalise(review)
 
     def get(self, review_id: str) -> dict:
-        with self._lock:
+        with self._lock, workspace_mutation(self.path.parent, "import-reviews"):
             item = self._read().get(str(review_id))
             if not isinstance(item, dict):
                 raise FileNotFoundError(review_id)
@@ -140,7 +148,7 @@ class ImportReviewService:
 
     def list_for_novel(self, novel_id: str, *, status: str | None = None) -> list[dict]:
         wanted = str(status or "").upper() or None
-        with self._lock:
+        with self._lock, workspace_mutation(self.path.parent, "import-reviews"):
             rows = [self._normalise(item) for item in self._read().values() if item.get("novel_id") == novel_id]
         rows.sort(key=lambda item: str(item.get("updated_at", "")), reverse=True)
         if wanted:
@@ -154,15 +162,19 @@ class ImportReviewService:
         *,
         selected: dict[str, list[bool]] | None = None,
         analysis: dict[str, Any] | None = None,
+        expected_version: int | None = None,
     ) -> dict:
         normalized = self._normalise_candidates(candidates)
-        with self._lock:
+        with self._lock, workspace_mutation(self.path.parent, "import-reviews"):
             records = self._read()
             item = records.get(str(review_id))
             if not isinstance(item, dict):
                 raise FileNotFoundError(review_id)
             if str(item.get("status", "PENDING")).upper() != "PENDING":
                 raise ValueError("completed knowledge review cannot be edited")
+            if expected_version is not None and expected_version != int(item.get("version", 1)):
+                raise CapabilityVersionConflict(self._normalise(item))
+            item["version"] = int(item.get("version", 1)) + 1
             item["candidates"] = normalized
             if selected is None:
                 item["selected"] = {kind: [False] * len(values) for kind, values in normalized.items()}
@@ -188,11 +200,12 @@ class ImportReviewService:
         selected: dict[str, list[dict]] | None = None,
         applied: dict[str, list[dict]] | None = None,
         note: str = "",
+        actor_id: str = "local-author",
     ) -> dict:
         decision = str(decision or "").upper().strip()
         if decision not in self.VALID_DECISIONS:
             raise ValueError("invalid knowledge review decision")
-        with self._lock:
+        with self._lock, workspace_mutation(self.path.parent, "import-reviews"):
             records = self._read()
             item = records.get(str(review_id))
             if not isinstance(item, dict):
@@ -204,11 +217,14 @@ class ImportReviewService:
                 return self._normalise(item)
             event = {
                 "decision": decision,
+                "actor_id": actor_id,
+                "review_version": int(item.get("version", 1)),
                 "selected": self._normalise_candidates(selected or {}),
                 "applied": self._normalise_candidates(applied or {}),
                 "note": str(note or "")[:500],
                 "at": _now(),
             }
+            item["version"] = int(item.get("version", 1)) + 1
             item["status"] = decision
             item["decision"] = decision
             item["applied"] = event["applied"]

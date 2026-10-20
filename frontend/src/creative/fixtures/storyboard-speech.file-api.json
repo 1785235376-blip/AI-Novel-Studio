@@ -1,0 +1,334 @@
+{
+  "fixture": "SYNTHETIC_WAV_TRANSPORT_ONLY",
+  "prepared": {
+    "contract": "studio-storyboard-audio-request/1",
+    "shot_pin": {
+      "document_snapshot": {
+        "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+        "version": 2,
+        "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+      },
+      "shot_id": "shot-1",
+      "shot_version": 1,
+      "shot_digest": "580b999a149cd95e247da92d1bf6d6bdeb6856fed4edaf59e1820ce70f55f885",
+      "dialogue_index": 0
+    },
+    "command": {
+      "operation_id": "m8.audio.speech",
+      "request_id": "mounted-speech",
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "prompt": "Exact authored speech.",
+      "parameters": {
+        "width": null,
+        "height": null,
+        "steps": null,
+        "seed": null,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0,
+        "in_ms": null,
+        "out_ms": null
+      },
+      "source_snapshots": [
+        {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "kind": "CREATIVE_DOCUMENT",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d",
+          "asset_kind": null,
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "storyboard_speech": {
+        "document_snapshot": {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "580b999a149cd95e247da92d1bf6d6bdeb6856fed4edaf59e1820ce70f55f885",
+        "dialogue_index": 0
+      }
+    },
+    "automatic_dispatch": false,
+    "model_called": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "product_acceptance": "LOCAL_REQUIRED"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-b95894e1-e69d-4d6c-8100-460ecb4aef63",
+    "novel_id": "r3-mounted-db5a07c83d9a4c17bb900f2ca93d35dc",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "7ea252bbd2ab417942d02b0a85d116256b33031f236fc0420b84384acdc3f12d",
+    "receipt_digest": "37fd3aa39688ad9f1e3c9d00504e250fdb4182a3ff7b9032bf49ab9c8429def6",
+    "attempt": 0,
+    "created_at": "2026-10-18T21:21:46.189602+00:00",
+    "updated_at": "2026-10-18T21:21:46.189602+00:00",
+    "error_code": null,
+    "review_state": "NOT_READY",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.speech",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 2,
+        "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.speech",
+      "request_id": "mounted-speech",
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "prompt": "Exact authored speech.",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "source_snapshots": [
+        {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "kind": "CREATIVE_DOCUMENT",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "storyboard_speech": {
+        "document_snapshot": {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "580b999a149cd95e247da92d1bf6d6bdeb6856fed4edaf59e1820ce70f55f885",
+        "dialogue_index": 0
+      }
+    },
+    "provider": {
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "local": true,
+      "route_digest": "7da207f50262e53560c206fc23512f8c4ce443ae64bbbc9fb9eb976b557ef2a0"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.speech",
+      "adapter": "ORIGINAL_HTTP_PROVIDER",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "ec32b6559b315cefe2b48a4b94718226bfc0ab1f227753122080c344ad5dcb51"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-speech",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "ready": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-b95894e1-e69d-4d6c-8100-460ecb4aef63",
+    "novel_id": "r3-mounted-db5a07c83d9a4c17bb900f2ca93d35dc",
+    "branch_id": null,
+    "version": 6,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "7ea252bbd2ab417942d02b0a85d116256b33031f236fc0420b84384acdc3f12d",
+    "receipt_digest": "9b4ae269590e013d4c3353ee29012627dddc757f7e7444306162f7a6e8eef857",
+    "attempt": 1,
+    "created_at": "2026-10-18T21:21:46.189602+00:00",
+    "updated_at": "2026-10-18T21:21:46.277984+00:00",
+    "error_code": null,
+    "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.speech",
+    "output_candidate": {
+      "id": "a0e55019-91d3-4fab-99c1-92410baaefc7",
+      "version": 1,
+      "digest": "c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 2,
+        "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.speech",
+      "request_id": "mounted-speech",
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "prompt": "Exact authored speech.",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "source_snapshots": [
+        {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "kind": "CREATIVE_DOCUMENT",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "storyboard_speech": {
+        "document_snapshot": {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "580b999a149cd95e247da92d1bf6d6bdeb6856fed4edaf59e1820ce70f55f885",
+        "dialogue_index": 0
+      }
+    },
+    "provider": {
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "local": true,
+      "route_digest": "7da207f50262e53560c206fc23512f8c4ce443ae64bbbc9fb9eb976b557ef2a0"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.speech",
+      "adapter": "ORIGINAL_HTTP_PROVIDER",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "ec32b6559b315cefe2b48a4b94718226bfc0ab1f227753122080c344ad5dcb51"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-speech",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-b95894e1-e69d-4d6c-8100-460ecb4aef63",
+    "novel_id": "r3-mounted-db5a07c83d9a4c17bb900f2ca93d35dc",
+    "branch_id": null,
+    "version": 8,
+    "status": "APPROVED",
+    "request_digest": "7ea252bbd2ab417942d02b0a85d116256b33031f236fc0420b84384acdc3f12d",
+    "receipt_digest": "63b83a46aee17ddee8067c010eaef08256c5edccdbed0c0bdf106b1fae6c4f7b",
+    "attempt": 1,
+    "created_at": "2026-10-18T21:21:46.189602+00:00",
+    "updated_at": "2026-10-18T21:21:46.334843+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.speech",
+    "output_candidate": {
+      "id": "a0e55019-91d3-4fab-99c1-92410baaefc7",
+      "version": 1,
+      "digest": "c726d333dd159a31423f3480dbb1c5c4a9dfcd30efe1f7e12ade390dc92e8908",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+        "kind": "CREATIVE_DOCUMENT",
+        "version": 2,
+        "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.speech",
+      "request_id": "mounted-speech",
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "prompt": "Exact authored speech.",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "source_snapshots": [
+        {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "kind": "CREATIVE_DOCUMENT",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "storyboard_speech": {
+        "document_snapshot": {
+          "id": "6529d5ca-11fc-4ebc-9628-a88d8da4084f",
+          "version": 2,
+          "digest": "53d9b8d7eb4019ef460429925905804eec2dbd9e2a55e305f531c06c8be7970d"
+        },
+        "shot_id": "shot-1",
+        "shot_version": 1,
+        "shot_digest": "580b999a149cd95e247da92d1bf6d6bdeb6856fed4edaf59e1820ce70f55f885",
+        "dialogue_index": 0
+      }
+    },
+    "provider": {
+      "provider_id": "fixture-speech",
+      "model_id": "fixture-tts",
+      "local": true,
+      "route_digest": "7da207f50262e53560c206fc23512f8c4ce443ae64bbbc9fb9eb976b557ef2a0"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.speech",
+      "adapter": "ORIGINAL_HTTP_PROVIDER",
+      "parameters": {
+        "voice_id": "explicit-voice",
+        "speech_rate": 1.0
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "ec32b6559b315cefe2b48a4b94718226bfc0ab1f227753122080c344ad5dcb51"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "mounted-speech",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  }
+}

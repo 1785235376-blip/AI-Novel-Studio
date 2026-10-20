@@ -1,0 +1,72 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/capability-negotiation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "granted_capabilities": {
+      "default": [],
+      "items": {
+        "enum": [
+          "project.context.read",
+          "project.selection.share",
+          "project.metadata.read",
+          "task.status.read",
+          "task.error.read",
+          "diagnostics.read",
+          "model.registry.read",
+          "model.runtime.status.read",
+          "tutor.guidance.request",
+          "tutor.guidance.receive",
+          "verifier.request",
+          "verifier.result.receive",
+          "case.candidate.create",
+          "handoff.open_feature",
+          "handoff.open_project",
+          "handoff.open_task"
+        ],
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Granted Capabilities",
+      "type": "array"
+    },
+    "hello_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Hello Id",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "requested_capabilities": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 3,
+        "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Requested Capabilities",
+      "type": "array"
+    }
+  },
+  "required": [
+    "hello_id",
+    "protocol_name",
+    "protocol_version",
+    "requested_capabilities"
+  ],
+  "title": "CapabilityNegotiation",
+  "type": "object"
+}

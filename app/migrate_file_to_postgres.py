@@ -12,9 +12,11 @@ from sqlalchemy import select
 
 from .document import markdown_to_document
 from .repository import FileRepository, read_json
-from .repositories.postgres.common import external_uuid
+from .chapter_identity import load_ledger, require_history_owned, ChapterIdentityConflict
+from .privacy import merge_privacy, normalize_privacy
+from .repositories.postgres.common import chapter_external_id, chapter_or_raise, external_uuid, lock_chapter_namespace, require_chapter_identity
 from .repositories.postgres.models import (
-    CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
+    CanonModel, ChapterIdentityModel, ChapterModel, ChapterSummaryModel, CharacterModel,
     DocumentVersionModel, ForeshadowingModel, GenerationJobModel,
     LocationModel, NovelModel, PendingCanonModel, SecretModel,
     StoryStateModel, TimelineModel,
@@ -57,8 +59,19 @@ def _finalize(report: dict) -> None:
     }
 
 
-def _privacy(item: dict, default: str = "CLOUD_ALLOWED") -> str:
-    return str(item.get("privacy_level", default))
+def _privacy(item: dict, default: str = "LOCAL_ONLY") -> str:
+    return normalize_privacy(item.get("privacy_level", default))
+
+
+def _secret_source_mapping(item: dict, order: int) -> dict:
+    mapping = {"id": str(item["id"]), "order": order}
+    if "title" not in item:
+        mapping["title_present"] = False
+    columns = {"id", "title", "content", "earliest_reveal_chapter", "status", "privacy_level"}
+    extensions = {key: value for key, value in item.items() if key not in columns}
+    if extensions:
+        mapping["extensions"] = extensions
+    return mapping
 
 
 def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> NovelModel:
@@ -68,7 +81,7 @@ def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> No
     style_profile = read_json(root / "style/profile.json", {})
     secrets = read_json(root / "secrets.json", [])
     secret_mapping = {
-        str(stable_source_uuid(SECRET_NAMESPACE, novel_id, str(item["id"]))): {"id": str(item["id"]), "order": order}
+        str(stable_source_uuid(SECRET_NAMESPACE, novel_id, str(item["id"]))): _secret_source_mapping(item, order)
         for order, item in enumerate(secrets) if item.get("id") is not None
     }
     desired_metadata = {key: value for key, value in file_meta.items() if key not in {"id", "title", "created_at", "updated_at"}}
@@ -76,7 +89,8 @@ def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> No
     model = session.scalar(select(NovelModel).where(NovelModel.slug == novel_id))
     if model is None:
         desired_metadata["context_source_ids"] = {"secrets": secret_mapping}
-        model = NovelModel(slug=novel_id, title=file_meta.get("title", novel_id), metadata_json=desired_metadata)
+        provenance = "ALLOCATED" if load_ledger(root).get("legacy_provenance") == "ALLOCATED" else "LEGACY_UNKNOWN"
+        model = NovelModel(slug=novel_id, title=file_meta.get("title", novel_id), metadata_json=desired_metadata, chapter_identity_provenance=provenance)
         session.add(model); session.flush()
         _record(report, "imported", "novels", novel_id, model.id, "novel and context metadata created")
         return model
@@ -102,9 +116,10 @@ def _sync_locations(session, root: Path, novel: NovelModel, report: dict) -> dic
         if not source_id:
             _record(report, "conflicts", "locations", f"index:{order}", reason="source id is missing"); continue
         facts = {key: value for key, value in item.items() if key not in {"id", "name", "privacy_level"}}
-        facts["_source_order"] = order
+        facts["_source_order"] = order; facts["_source_privacy_present"] = "privacy_level" in item
         model = session.scalar(select(LocationModel).where(LocationModel.novel_id == novel.id, LocationModel.slug == source_id))
-        values = (str(item.get("name", source_id)), facts, _privacy(item))
+        values = (str(item.get("name", source_id)), facts,
+                  merge_privacy(_privacy(item), model.privacy) if model is not None else _privacy(item))
         if model is None:
             model = LocationModel(novel_id=novel.id, slug=source_id, name=values[0], facts=values[1], privacy=values[2]); session.add(model); session.flush()
             _record(report, "imported", "locations", source_id, model.id, "created")
@@ -124,10 +139,12 @@ def _sync_characters(session, root: Path, novel: NovelModel, locations: dict[str
         location_slug = item.get("current_location") or item.get("current_location_id")
         if location_slug and str(location_slug) not in locations:
             _record(report, "conflicts", "characters", source_id, reason=f"location {location_slug!r} was not resolved"); continue
-        facts = {key: value for key, value in item.items() if key not in reserved}; facts["_source_order"] = order
+        facts = {key: value for key, value in item.items() if key not in reserved}; facts["_source_order"] = order; facts["_source_privacy_present"] = "privacy_level" in item
         location_id = locations[str(location_slug)].id if location_slug else None
         expected = {"name": str(item.get("name", source_id)), "age": item.get("age"), "life_status": str(item.get("status", item.get("life_status", "ALIVE"))), "current_location_id": location_id, "facts": facts, "privacy": _privacy(item)}
         model = session.scalar(select(CharacterModel).where(CharacterModel.novel_id == novel.id, CharacterModel.slug == source_id))
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = CharacterModel(novel_id=novel.id, slug=source_id, **expected); session.add(model); session.flush(); _record(report, "imported", "characters", source_id, model.id, "created")
         elif any((canonical_json_compare(getattr(model, key), value) is False) for key, value in expected.items()):
@@ -145,8 +162,11 @@ def _sync_timeline(session, root: Path, novel: NovelModel, locations: dict[str, 
             _record(report, "conflicts", "timeline_events", source_id, target_id, f"location {location_slug!r} was not resolved"); continue
         details = {key: value for key, value in item.items() if key not in reserved}; details.update({"_source_id": source_id, "_source_order": order})
         if "privacy_level" in item: details["privacy_level"] = item["privacy_level"]
+        else: details["privacy_status"] = "UNKNOWN"
         expected = {"novel_id": novel.id, "event_time": str(item.get("time", item.get("event_time", ""))), "sequence": int(item.get("sequence", order)), "location_id": locations[str(location_slug)].id if location_slug else None, "title": str(item.get("title", source_id)), "details": details, "privacy": _privacy(item)}
         model = session.get(TimelineModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = TimelineModel(id=target_id, **expected); session.add(model); _record(report, "imported", "timeline_events", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -159,11 +179,13 @@ def _sync_secrets(session, root: Path, novel: NovelModel, report: dict) -> None:
     mapping = dict((novel.metadata_json or {}).get("context_source_ids", {}).get("secrets", {}))
     for order, item in enumerate(read_json(root / "secrets.json", [])):
         source_id = str(item.get("id", f"index-{order}")); target_id = stable_source_uuid(SECRET_NAMESPACE, novel.slug, source_id)
-        expected_mapping = {"id": source_id, "order": order}
+        expected_mapping = _secret_source_mapping({**item, "id": source_id}, order)
         if not canonical_json_compare(mapping.get(str(target_id)), expected_mapping):
             _record(report, "conflicts", "secrets", source_id, target_id, "novel metadata mapping is inconsistent"); continue
         expected = {"novel_id": novel.id, "title": str(item.get("title", source_id)), "content": str(item.get("content", "")), "earliest_reveal_chapter": int(item.get("earliest_reveal_chapter", 0)), "status": str(item.get("status", "ACTIVE")), "privacy": _privacy(item, "LOCAL_ONLY")}
         model = session.get(SecretModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = SecretModel(id=target_id, **expected); session.add(model); _record(report, "imported", "secrets", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -179,6 +201,9 @@ def _sync_foreshadowing(session, root: Path, novel: NovelModel, report: dict) ->
         details = {key: value for key, value in item.items() if key not in reserved}; details.update({"_source_id": source_id, "_source_order": order})
         expected = {"novel_id": novel.id, "title": str(item.get("title", source_id)), "planted_chapter": item.get("planted_chapter"), "target_chapter": item.get("target_chapter"), "status": str(item.get("status", "OPEN")), "details": details}
         model = session.get(ForeshadowingModel, target_id)
+        details["privacy_level"] = merge_privacy(_privacy(item), (model.details or {}).get("privacy_level")) if model is not None else _privacy(item)
+        if "privacy_level" not in item:
+            details["privacy_status"] = "UNKNOWN"
         if model is None:
             model = ForeshadowingModel(id=target_id, **expected); session.add(model); _record(report, "imported", "foreshadowing", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -202,13 +227,33 @@ def _sync_story_state(session, root: Path, novel: NovelModel, report: dict) -> N
 
 def _sync_chapters(session, repo: FileRepository, root: Path, novel: NovelModel, report: dict) -> None:
     summaries = {int(item["chapter"]): item for item in read_json(root / "summaries/index.json", []) if item.get("chapter") is not None}
-    for item in repo.list_chapters(novel.slug):
+    lock_chapter_namespace(session, novel.slug)
+    ledger = load_ledger(root)
+    # Preserve source tombstones in the destination; never revive a deleted
+    # source because only its older references/history survived migration.
+    for number, entry in ledger["allocations"].items():
+        reservation = session.get(ChapterIdentityModel, (novel.id, int(number)))
+        if entry["state"] != "active" and reservation is None:
+            session.add(ChapterIdentityModel(novel_id=novel.id, chapter_number=int(number), chapter_id=None, public_token=entry.get("public_token") if str(entry.get("public_token", "")).startswith("~") else None,
+                                            state="AMBIGUOUS" if entry["state"] == "ambiguous" else "DELETED",
+                                            provenance="FILE_RESERVATION"))
+    session.flush()
+    for position, item in enumerate(repo.list_chapters(novel.slug), 1):
         number = int(item["number"]); source_id = item["id"]
         package = read_json(root / "documents" / f"chapter-{number:04d}.json", {})
         document = package.get("document") or markdown_to_document(item["content"]); file_version = int(package.get("version", 1))
         chapter = session.scalar(select(ChapterModel).where(ChapterModel.novel_id == novel.id, ChapterModel.chapter_number == number))
+        reservation = session.get(ChapterIdentityModel, (novel.id, number))
+        if reservation is not None and (chapter is None or reservation.state != "ACTIVE" or reservation.chapter_id != chapter.id):
+            _record(report, "conflicts", "chapters", source_id, reason="chapter identity is reserved or ambiguous")
+            continue
+        if chapter is not None:
+            require_chapter_identity(chapter)
+            if chapter_external_id(novel,chapter) != source_id:
+                _record(report, "conflicts", "chapters", source_id, chapter.id, "source public identity differs")
+                continue
         if chapter is None:
-            chapter = ChapterModel(novel_id=novel.id, chapter_number=number, title=item["title"], markdown_path=f"chapters/chapter-{number:04d}.md", content_hash=hashlib.sha256(item["content"].encode()).hexdigest(), document=document, version=file_version); session.add(chapter); session.flush(); _record(report, "imported", "chapters", source_id, chapter.id, "created")
+            chapter = ChapterModel(novel_id=novel.id, chapter_number=number, public_token=source_id.rsplit(":",1)[1] if ":~" in source_id else None, sort_order=position, identity_status="ACTIVE", title=item["title"], markdown_path=f"chapters/chapter-{number:04d}.md", content_hash=hashlib.sha256(item["content"].encode()).hexdigest(), document=document, version=file_version); session.add(chapter); session.flush(); _record(report, "imported", "chapters", source_id, chapter.id, "created")
         elif chapter.version > file_version:
             _record(report, "conflicts", "chapters", source_id, chapter.id, "PostgreSQL version is newer")
         elif chapter.version == file_version and not canonical_json_compare(chapter.document, document):
@@ -216,7 +261,18 @@ def _sync_chapters(session, repo: FileRepository, root: Path, novel: NovelModel,
         elif chapter.version < file_version:
             chapter.document, chapter.version, chapter.title = document, file_version, item["title"]; _record(report, "updated", "chapters", source_id, chapter.id, "File version is newer")
         else: _record(report, "skipped", "chapters", source_id, chapter.id, "unchanged")
-        for history_path in sorted((root / "history" / f"chapter-{number:04d}").glob("v*.json")):
+        if reservation is None:
+            session.add(ChapterIdentityModel(novel_id=novel.id, chapter_number=number, chapter_id=chapter.id, public_token=chapter.public_token,
+                                            state="ACTIVE", provenance="FILE_IMPORT"))
+            session.flush()
+        try:
+            require_history_owned(root, number)
+            history_paths = sorted((root / "history" / f"chapter-{number:04d}").glob("v*.json"))
+        except ChapterIdentityConflict:
+            history_paths = []
+            _record(report, "conflicts", "chapter_versions", source_id, chapter.id,
+                    "legacy history identity is unverified; source bytes retained")
+        for history_path in history_paths:
             history = read_json(history_path, {}); version = int(history["version"]); history_id = f"{source_id}:v{version}"
             existing = session.scalar(select(DocumentVersionModel).where(DocumentVersionModel.chapter_id == chapter.id, DocumentVersionModel.version == version))
             if existing is None:
@@ -240,6 +296,10 @@ def _sync_canon_pending(session, root: Path, novel: NovelModel, report: dict) ->
     for index, item in enumerate(read_json(root / "canon.json", [])):
         source_id = str(item.get("id") or f"{novel.slug}:canon:{index}"); target_id = external_uuid(source_id)
         expected = {"fact_value": item, "source": str(item.get("source", "MIGRATED")), "privacy": _privacy(item)}; model = session.get(CanonModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
+            if "privacy_level" in (model.fact_value or {}):
+                expected["privacy"] = merge_privacy(expected["privacy"], model.fact_value["privacy_level"])
         if model is None:
             model = CanonModel(id=target_id, novel_id=novel.id, entity_type=str(item.get("entity_type", "story")), entity_id=None, fact_key=str(item.get("fact_key") or source_id), **expected); session.add(model); _record(report, "imported", "canon_entries", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -268,8 +328,11 @@ def _sync_jobs(session, source: Path, novels: dict[str, NovelModel], report: dic
         novel = novels.get(item.get("novel_id")); chapter_id = None
         if novel and item.get("chapter_id"):
             try:
-                number = int(item["chapter_id"].rsplit(":", 1)[1]); chapter_id = session.scalar(select(ChapterModel.id).where(ChapterModel.novel_id == novel.id, ChapterModel.chapter_number == number))
-            except (ValueError, AttributeError): pass
+                owner, chapter = chapter_or_raise(session, item["chapter_id"])
+                if owner.id == novel.id:
+                    chapter_id = chapter.id
+            except (ValueError, AttributeError, FileNotFoundError):
+                _record(report, "conflicts", "generation_jobs", source_id, reason="chapter identity unresolved; job reference retained without reassignment")
         session.add(GenerationJobModel(id=target_id, novel_id=novel.id if novel else None, chapter_id=chapter_id, operation=item.get("operation", item.get("agent", "unknown")), status=item.get("status", "QUEUED"), request={"_repository_payload": item}, result=item.get("result"))); _record(report, "imported", "generation_jobs", source_id, target_id, "created")
 
 

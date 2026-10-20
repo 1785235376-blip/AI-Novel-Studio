@@ -1,0 +1,36 @@
+{
+  "contract": "studio-director-advice/1",
+  "document_snapshot": {
+    "id": "a54ef734-2ad6-47a7-b22c-59da6c230575",
+    "version": 1,
+    "digest": "531c98056f16e6851d86807e683a6068822a2942be3c916888326a5ee3785a23"
+  },
+  "notes": [
+    {
+      "note_id": "direction-1",
+      "scene_id": "scene-1",
+      "camera": {
+        "shot_size": "CLOSE_UP",
+        "angle": "EYE_LEVEL",
+        "movement": "STATIC",
+        "lens": "50mm",
+        "composition": "Negative space on the left"
+      },
+      "visual_style": {
+        "color": "Blue",
+        "lighting": "Soft key",
+        "material": "Brushed metal",
+        "style": "Ink illustration"
+      },
+      "rhythm": {
+        "pacing": "Pause after dialogue",
+        "duration_seconds": 6,
+        "transition": "Cut on action"
+      }
+    }
+  ],
+  "advice_only": true,
+  "automatic_apply": false,
+  "model_called": false,
+  "product_acceptance": "LOCAL_REQUIRED"
+}

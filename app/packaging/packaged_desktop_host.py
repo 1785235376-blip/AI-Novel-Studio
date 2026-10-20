@@ -11,10 +11,19 @@ from pathlib import Path
 from .desktop_bridge import DesktopHostLaunch
 from .runtime_identity import RuntimeIdentity, RuntimeRole, validate_process_ownership
 from .host_uplink import parse_host_ping
+from .launch_profiles import DEFAULT_PROFILE, V2_PROFILE, validate_profile, validate_profile_paths
+from .paths import WindowsPackagingPaths
 
 
 class PackagedDesktopHost:
-    def __init__(self, *, application: Path, runtime: RuntimeIdentity, inspector, job):
+    def __init__(self, *, application: Path, runtime: RuntimeIdentity, inspector, job,
+                 launch_profile: str = DEFAULT_PROFILE, paths: WindowsPackagingPaths | None = None):
+        self.launch_profile = validate_profile(launch_profile)
+        self.paths = paths
+        if launch_profile == V2_PROFILE:
+            if paths is None:
+                raise ValueError("PACKAGED_V2_ISOLATED_ROOT_REQUIRED")
+            validate_profile_paths(launch_profile, paths, postgres_root=application / "PostgreSQL")
         self.executable = (application / "DesktopHost" / "AI-Novel-Studio.DesktopHost.exe").resolve()
         if not self.executable.is_file():
             raise RuntimeError("应用窗口组件不完整，请重新安装 AI-Novel-Studio。")
@@ -28,10 +37,24 @@ class PackagedDesktopHost:
         self.status_file: Path | None = None
 
     def start(self, launch: DesktopHostLaunch) -> None:
+        if self.launch_profile == V2_PROFILE:
+            assert self.paths is not None
+            validate_profile_paths(self.launch_profile, self.paths,
+                                   postgres_root=self.executable.parent.parent / "PostgreSQL")
+            expected = self.paths.cache / "WebView2" / self.runtime.runtime_instance_id
+            if Path(launch.webview_profile_directory) != expected:
+                raise ValueError("PACKAGED_V2_WEBVIEW_OWNER_MISMATCH")
         self.status_file = Path(launch.webview_profile_directory) / "host.status"
         self.status_file.unlink(missing_ok=True)
         self.status_file.parent.mkdir(parents=True, exist_ok=True)
         environment = os.environ.copy()
+        if self.launch_profile == V2_PROFILE:
+            # WebView2 environment overrides take precedence over the folder
+            # supplied in C#. Keep its actual storage under this owned runtime.
+            for name in tuple(environment):
+                if name.upper().startswith("WEBVIEW2_"):
+                    environment.pop(name)
+            environment["WEBVIEW2_USER_DATA_FOLDER"] = launch.webview_profile_directory
         environment["PACKAGED_HOST_STATUS_FILE"] = str(self.status_file)
         # The packaged launcher may run with an isolated LOCALAPPDATA during
         # acceptance checks.  Pass the already-owned WebView2 root explicitly

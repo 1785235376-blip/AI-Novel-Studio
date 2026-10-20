@@ -84,6 +84,7 @@ class RuntimeLifecycle:
         self._log_byte_limit = log_byte_limit
         self._lock = threading.Lock()
         self._probe_open = _runtime_probe_opener().open
+        self._trusted_whisper: dict[str, Any] = {}
 
     def _drain(self, runtime_id: str, stream_name: str, stream: Any) -> None:
         logs = self._logs[runtime_id][stream_name]
@@ -129,6 +130,8 @@ class RuntimeLifecycle:
         }
 
     def refresh(self, runtime_id: str) -> RuntimeInstance | None:
+        if runtime_id in self._trusted_whisper:
+            return self._trusted_whisper[runtime_id].refresh()
         instance = self.instances.get(runtime_id)
         process = self._owned.get(runtime_id)
         if instance is None or process is None:
@@ -180,6 +183,13 @@ class RuntimeLifecycle:
         except ValueError:
             return False
     def discover(self, definition: RuntimeDefinition, probe_version: bool = False) -> dict[str, Any]:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            instance = self.refresh(definition.id)
+            return {"runtime_id": definition.id, "runtime_type": definition.runtime_type,
+                "path_exists": Path(definition.executable).is_file(), "executable_exists": Path(definition.executable).is_file(),
+                "version": instance.version if instance else None, "version_source": "OWNED_PRIVATE_PIPE" if instance and instance.loaded_models else "NOT_VERIFIED",
+                "executable_executed": False, "health": instance.health if instance else {"reachable": False},
+                "gpu_capability": "UNKNOWN", "security_warning": None}
         executable: Path | None = None
         if definition.executable:
             try:
@@ -188,19 +198,14 @@ class RuntimeLifecycle:
                 executable = None
         path_ok = bool(executable and executable.is_file()) if definition.runtime_type == RuntimeType.LLAMA_CPP else bool(definition.working_directory and Path(definition.working_directory).is_dir())
         version = None
+        version_source = "NOT_VERIFIED"
         if probe_version and executable and executable.is_file():
-            try:
-                result = subprocess.run(
-                    [str(executable), "--version"],
-                    cwd=definition.working_directory or executable.parent,
-                    env=_safe_runtime_environment(definition.environment),
-                    capture_output=True,
-                    check=False,
-                    timeout=5,
-                )
-                version = (result.stdout or result.stderr).decode("utf-8", errors="replace").strip()[:500] or None
-            except (OSError, subprocess.TimeoutExpired):
-                version = None
+            # Even the legacy Validate/Diagnostics paths are passive. Executing
+            # an arbitrary selected binary with --version is still execution.
+            from .discovery_probes import executable_metadata
+            metadata = executable_metadata(str(executable))
+            version = metadata.get("version")
+            version_source = metadata.get("version_source", "NOT_VERIFIED")
         instance = self.refresh(definition.id)
         return {
             "runtime_id": definition.id,
@@ -208,11 +213,18 @@ class RuntimeLifecycle:
             "path_exists": path_ok,
             "executable_exists": bool(executable and executable.is_file()),
             "version": version,
+            "version_source": version_source,
+            "executable_executed": False,
             "health": instance.health if instance else {"reachable": False},
             "gpu_capability": (instance.health.get("gpu") if instance else None) or "UNKNOWN",
             "security_warning": None if self.is_local(definition) else "RUNTIME_NOT_LOOPBACK_BOUND",
         }
     def health(self, definition: RuntimeDefinition) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            if definition.id not in self._trusted_whisper:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return self.refresh(definition.id) or RuntimeInstance(definition.id, base_url=definition.base_url,
+                management=RuntimeManagement.MANAGED)
         self.refresh(definition.id)
         instance = self.instances.setdefault(definition.id, RuntimeInstance(definition.id, base_url=definition.base_url, management=definition.management))
         instance.management = definition.management
@@ -236,7 +248,13 @@ class RuntimeLifecycle:
             instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = "RUNTIME_HEALTH_FAILED"; instance.safe_error_code = "HTTP_UNREACHABLE"
         if not instance.http_reachable: instance.last_failure = datetime.now(timezone.utc).isoformat()
         instance.last_health_check = datetime.now(timezone.utc).isoformat(); return instance
-    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None) -> RuntimeInstance:
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None,
+            authority_guard=None) -> RuntimeInstance:
+        if definition.runtime_type == RuntimeType.WHISPER_CPP:
+            owner = self._trusted_whisper.get(definition.id)
+            if owner is None or definition != owner.definition or host_argv is not None:
+                raise ValueError("WHISPER_HOST_NOT_CONFIGURED")
+            return owner.start(authority_guard)
         if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
         if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
         _safe_runtime_environment(definition.environment)
@@ -275,6 +293,8 @@ class RuntimeLifecycle:
             self._start_log_readers(definition.id, proc)
             return instance
     def stop(self, runtime_id: str) -> RuntimeInstance:
+        if runtime_id in self._trusted_whisper:
+            return self._trusted_whisper[runtime_id].stop()
         with self._lock:
             proc = self._owned.get(runtime_id)
             if proc is None: raise ValueError("RUNTIME_NOT_OWNED")
@@ -323,12 +343,18 @@ class ModelCenterService:
             }
             models = [replace(item, identity_id=owned("model", canonical_model_identity_key(domain_by_type.get(item.runtime_type, "model-center"), item.id), item.identity_id)) for item in models]
             runtimes = [replace(item, identity_id=owned("runtime", item.id, item.identity_id)) for item in runtimes]
+        self.identity_store = identity_store
         self.models={x.id:x for x in models}; self.components={x.component_id:x for x in components}; self.profiles={x.id:x for x in profiles}; self.runtimes={x.id:x for x in runtimes}; self.pipelines={x.id:x for x in pipelines}; self.validations=validations; self.compatibility=CompatibilityGraph(components); self.lifecycle=RuntimeLifecycle()
         self.routing_policy = routing_policy
         self.config_path=config_path
         self.runtime_versions: dict[str, str] = {}
         self.current_hardware_profiles: dict[str, str] = {}
         self._config_lock = threading.RLock()
+        # Empty reviewed catalog and no destination by default. Host composition
+        # may supply reviewed single-artifact inputs; legacy model metadata is
+        # never converted into download authority.
+        from .transfers import ModelTransfers
+        self.transfers = ModelTransfers(self)
         if config_path and config_path.is_file():
             try:
                 saved=json.loads(config_path.read_text(encoding="utf-8"))
@@ -381,6 +407,8 @@ class ModelCenterService:
         return filtered
     def model(self, model_id: str) -> dict[str, Any]:
         model=self.models[model_id]; value=serialize(model)
+        if model.metadata.get("local_discovery"):
+            value["local_paths"] = []  # Paths are available only through the session-protected discovery router.
         eligible = [x for x in self.validations if x.model_id==model_id and x.validation_type in {"INFERENCE","PIPELINE"} and x.status=="PASS"]
         value["historically_validated"] = bool(eligible)
         value["verified"] = any(self._validation_is_current(model, record) for record in eligible)
@@ -451,6 +479,8 @@ class ModelCenterService:
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if self.runtimes[runtime_id].runtime_type == RuntimeType.WHISPER_CPP:
+                raise ValueError("WHISPER_HOST_CONFIG_IMMUTABLE")
             if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
                 raise ValueError("RUNTIME_ID_IMMUTABLE")
             if "launch_arguments" in values:
@@ -475,6 +505,8 @@ class ModelCenterService:
 
     def configure_runtime_profile(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if self.runtimes[runtime_id].runtime_type == RuntimeType.WHISPER_CPP:
+                raise ValueError("WHISPER_HOST_CONFIG_IMMUTABLE")
             if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
                 raise ValueError("RUNTIME_ID_IMMUTABLE")
             runtime = self.runtimes[runtime_id]
@@ -490,6 +522,14 @@ class ModelCenterService:
 
     def validate_runtime(self, runtime_id: str) -> dict[str, Any]:
         runtime = self.runtimes[runtime_id]
+        if runtime.runtime_type == RuntimeType.WHISPER_CPP:
+            instance = self.lifecycle.health(runtime)
+            loaded = bool(instance.loaded_models and instance.state == RuntimeState.RUNNING)
+            return {"runtime_id": runtime_id, "status": "MODEL_LOADED" if loaded else "LOCAL_REQUIRED",
+                "safe_error_code": None if loaded else instance.safe_error_code or "WHISPER_HOST_NOT_ADMITTED",
+                "checks": [{"name": "owned_private_pipe_model_load", "status": "PASS" if loaded else "NOT_RUN",
+                    "code": None if loaded else "WHISPER_HOST_NOT_ADMITTED"}], "version": instance.version,
+                "inference_verification": "NOT_RUN", "product_acceptance": "LOCAL_REQUIRED"}
         checks: list[dict[str, Any]] = []
         def check(name: str, passed: bool, code: str):
             checks.append({"name": name, "status": "PASS" if passed else "FAIL", "code": None if passed else code})
@@ -600,7 +640,8 @@ def create_default_model_center(config_path: Path | None = None, identity_store:
         ModelDefinition("rife-49","RIFE 4.9","RIFE","4.9","4.9",(Capability.INTERPOLATION,),RuntimeType.COMFYUI,"CHECKPOINT",components=("rife-49-checkpoint",),hardware_profiles=("rife49-rtx5080",),compatibility={"components":{"CHECKPOINT":{"family":"RIFE","variant":"4.9","architecture":"RIFE49","version":"4.9"}}},status=ModelStatus.READY),
         ModelDefinition("rife-426","RIFE 4.26","RIFE","4.26","4.26",(Capability.INTERPOLATION,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.INCOMPATIBLE,metadata={"reason":"CHECKPOINT_ARCHITECTURE_MISMATCH"}),
         ModelDefinition("dasheng-audiogen","Dasheng AudioGen","DASHENG","DEFAULT","1",(Capability.AUDIO,),RuntimeType.CUSTOM_HTTP,"CHECKPOINT",status=ModelStatus.RUNTIME_REQUIRED),
-        ModelDefinition("minimax-h3","MiniMax H3","MINIMAX","H3","1",(Capability.TTS,Capability.AUDIO),RuntimeType.CUSTOM_HTTP,"CHECKPOINT",status=ModelStatus.RUNTIME_REQUIRED,metadata={"license_status":"VALIDATION_REQUIRED"}),
+        ModelDefinition("minimax-h3","MiniMax H3 (legacy audio identity, disabled)","MINIMAX","LEGACY_AUDIO","1",(Capability.TTS,Capability.AUDIO),RuntimeType.CUSTOM_HTTP,"CHECKPOINT",status=ModelStatus.DISABLED,metadata={"deprecated":True,"legacy_identity_only":True,"replacement_video_model_id":"minimax-h3-video","reason":"MISCLASSIFIED_LEGACY_AUDIO_DO_NOT_ROUTE"}),
+        ModelDefinition("minimax-h3-video","MiniMax H3 Video","MINIMAX_H3","H3","1",(Capability.VIDEO,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.LICENSE_REQUIRED,metadata={"license_status":"VALIDATION_REQUIRED","workflow_required":True}),
         ModelDefinition("ltx25","LTX 2.5","LTX","2.5","2.5",(Capability.VIDEO,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.LICENSE_REQUIRED),
         ModelDefinition("qwen-image-2512","Qwen Image 2512","QWEN_IMAGE","2512","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.NOT_INSTALLED,metadata={"deferred":True}),
     ]

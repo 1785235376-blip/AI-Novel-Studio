@@ -32,6 +32,7 @@ export type DiscoveredPlugin = {
 
 export type RegisteredPlugin = {
   id: string;
+  rollback_available?: boolean;
   name: string;
   version?: number | string;
   plugin_version?: string;
@@ -159,6 +160,8 @@ export function liveResourceState(catalog?: PluginCatalogSummary, discovered = f
 }
 
 export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: PluginInspection) => void } = {}) {
+  const [bundle, setBundle] = useState("");
+  const [updatePackage, setUpdatePackage] = useState(false);
   const [items, setItems] = useState<DiscoveredPlugin[]>([]);
   const [registered, setRegistered] = useState<RegisteredPlugin[]>([]);
   const [health, setHealth] = useState<any>();
@@ -279,6 +282,14 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
           <div><dt>图片 Provider</dt><dd>{health ? health.image_providers?.length || 0 : "未读取"}</dd></div>
           <div><dt>视频配置</dt><dd>{health ? health.video_provider_configs || 0 : "未读取"}</dd></div>
         </dl>
+      </section>
+      <section className="plugin-manager__section" aria-label="安装声明式插件包">
+        <h3>安装或更新声明式资源包</h3>
+        <p>包格式为 JSON：manifest 和 resources（路径到 JSON 原文的映射）。逐项校验摘要；更新后权限清空，需重新审核。插件代码仍不可执行。</p>
+        <label>插件包 JSON<textarea aria-label="插件包 JSON" rows={5} value={bundle} maxLength={11000000} onChange={event => setBundle(event.target.value)} /></label>
+        <label><input type="checkbox" checked={updatePackage} onChange={event => setUpdatePackage(event.target.checked)} />更新已有版本（保留前一版）</label>
+        <p>{runtime?.management_supported === false ? "当前主机管理权限未就绪，安装、回滚和移除不可用。" : ""}</p>
+        <Button disabled={!bundle.trim() || runtime?.management_supported === false} loading={pending === "package-install"} onClick={() => runAction("package-install", "资源包已验证并保存，请重新审核权限。", async () => api.installPluginPackage(JSON.parse(bundle),updatePackage))}>验证并安装</Button>
       </section>
       {message && <StatusMessage tone={message.tone}>{message.text}</StatusMessage>}
       <section className="plugin-manager__section" aria-labelledby="discovered-title">
@@ -409,6 +420,8 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
                       激活清单
                     </Button>
                   )}
+                  <Button variant="ghost" disabled={runtime?.management_supported === false || !item.rollback_available} loading={pending === `rollback:${item.id}`} onClick={() => runAction(`rollback:${item.id}`, "已回滚资源包，需重新审核权限。", () => api.rollbackPluginPackage(item.id))}>回滚上一版</Button>
+                  <Button variant="ghost" disabled={runtime?.management_supported === false} loading={pending === `remove:${item.id}`} onClick={() => { if (window.confirm(`停用并移除 ${item.name}？本地归档将保留，可由主机恢复。`)) void runAction(`remove:${item.id}`, "资源包已停用并移至本地归档。", () => api.removePluginPackage(item.id)); }}>移除资源包</Button>
                   {active && (
                     <Button variant="ghost" loading={pending === `disable:${item.id}`} onClick={() => runAction(`disable:${item.id}`, `${item.name} 已停用。`, () => api.disablePlugin(item.id))}>
                       停用

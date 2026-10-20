@@ -16,6 +16,7 @@ from .context_intelligence import (
 )
 from ..narrative_context import NarrativeContextView
 from ..context_policy import ContextPolicyResult
+from ..privacy import merge_privacy
 
 
 class LoreMemoryView(BaseModel):
@@ -80,9 +81,17 @@ class LoreContextBuilder:
         privacy: list[dict] = []
         used = 0
         for memory, score, evidence in ordered:
-            if cloud and any(item["privacy"] == "LOCAL_ONLY" for item in evidence):
-                privacy.append({"memory_id": memory["id"], "decision": "OMITTED_LOCAL_ONLY"})
-                continue
+            if cloud:
+                policies = [item.get("privacy") for item in evidence]
+                if "privacy_level" in memory:
+                    policies.append(memory["privacy_level"])
+                effective = merge_privacy(*policies)
+                if effective != "CLOUD_ALLOWED":
+                    # Evidence redaction alone cannot sanitize derived prose.
+                    # Without a proven memory redactor, withhold the whole memory.
+                    decision = "OMITTED_REDACT_BEFORE_CLOUD" if effective == "REDACT_BEFORE_CLOUD" else "OMITTED_LOCAL_ONLY"
+                    privacy.append({"memory_id": memory["id"], "decision": decision})
+                    continue
             cost = max(1, len(json.dumps(memory, ensure_ascii=False)) // 4)
             if used + cost > self.token_budget:
                 privacy.append({"memory_id": memory["id"], "decision": "OMITTED_TOKEN_BUDGET"})

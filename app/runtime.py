@@ -17,6 +17,11 @@ from .model_runtime import (
 from .openai_compatible import CompatibleProviderConfig,OpenAICompatibleTextProvider
 from .stable_identity import ExecutionNodeIdentityStore, StableIdentityStore, get_host_identity_store, canonical_model_identity_key
 
+def _packaged_runtime() -> bool:
+    """Match original credential transport and the desktop host marker."""
+    return settings.enable_packaged_runtime or os.getenv("PACKAGED_WINDOWS_MODE", "").lower() in {"1", "true", "yes", "on"}
+
+
 class Runtime:
     def __init__(self, identity_store: StableIdentityStore | None = None):
         self.providers={"ollama":OllamaProvider(settings.ollama_url),"mock":MockProvider(settings.mock_delay_ms,settings.mock_failure)}
@@ -32,7 +37,7 @@ class Runtime:
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         self._sync_model("ollama", settings.local_model, display_name=settings.local_model, probe=False)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
-        self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not settings.enable_packaged_runtime else "real"
+        self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not _packaged_runtime() else "real"
         if self._deepseek_execution_mode == "mock_standin":
             configured = True
             available = self.providers["mock"].health_check()
@@ -40,13 +45,98 @@ class Runtime:
             health_status = "mock_standin" if available else "mock_standin_unavailable"
         else:
             from .credential_vault import credential_vault
-            configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+            configured = credential_vault.has("deepseek") or (not _packaged_runtime() and bool(os.getenv("DEEPSEEK_API_KEY")))
             available = configured
             self._deepseek_provider_adapter = deepseek
             health_status = "available" if available else "not_configured"
         self.provider_registry.register(ProviderDescriptor("deepseek","DeepSeek","remote",frozenset({Modality.TEXT}),configured,available,health_status),self._deepseek_provider_adapter,replace=True)
         for model_id,display_name in (("deepseek-chat","DeepSeek Chat"),("deepseek-reasoner","DeepSeek Reasoner")):
             self.model_registry.register(ModelDescriptor(model_id,"deepseek",display_name,Modality.TEXT,frozenset({"generate","stream"}),streaming=True,enabled=True),replace=True)
+        # These host-owned variables contain model identifiers only. Credentials
+        # remain in the existing vault (development env fallback is unchanged).
+        for provider_id,variable in (("claude","ANTHROPIC_MODEL"),("gemini","GEMINI_MODEL")):
+            model_id=os.getenv(variable,"").strip()
+            if model_id:self.register_native_text_route(provider_id,model_id)
+        bailian_model = os.getenv("ALIYUN_BAILIAN_MODEL", "")
+        if bailian_model:
+            self.register_bailian_text_route(bailian_model, os.getenv("ALIYUN_BAILIAN_REGION", "cn-beijing"))
+
+        ocr_fields = {key: os.getenv(variable, '').strip() for key, variable in {
+            'executable': 'LOCAL_OCR_EXECUTABLE', 'executable_sha256': 'LOCAL_OCR_EXECUTABLE_SHA256',
+            'traineddata': 'LOCAL_OCR_TRAINEDDATA', 'model_sha256': 'LOCAL_OCR_MODEL_SHA256',
+            'language': 'LOCAL_OCR_LANGUAGE'}.items()}
+        if any(ocr_fields.values()):
+            if not all(ocr_fields.values()): raise ValueError('LOCAL_OCR_COMPLETE_HOST_CONFIGURATION_REQUIRED')
+            self.register_local_ocr_route(**ocr_fields)
+
+        pdf_fields = {key: os.getenv(variable, '').strip() for key, variable in {
+            'renderer': 'LOCAL_PDF_RENDER_EXECUTABLE', 'renderer_sha256': 'LOCAL_PDF_RENDER_EXECUTABLE_SHA256'}.items()}
+        if any(pdf_fields.values()):
+            if not all(pdf_fields.values()) or not all(ocr_fields.values()):
+                raise ValueError('LOCAL_PDF_OCR_COMPLETE_HOST_CONFIGURATION_REQUIRED')
+            self.register_local_pdf_ocr_route(**ocr_fields, **pdf_fields)
+
+    def register_local_pdf_ocr_route(self, *, executable, executable_sha256,
+                                     traineddata, model_sha256, language, renderer, renderer_sha256):
+        """Explicit host pins only; preserves the separate existing IMAGE route."""
+        from .local_tesseract_ocr import LocalTesseractOCRProvider
+        from .local_pdf_raster import LocalPDFPageRasterizer
+        from .local_pdf_ocr import LocalPDFOCRProvider
+        provider_id = 'local-pdf-tesseract-ocr'
+        image = LocalTesseractOCRProvider(provider_id=provider_id, model_id=language,
+            executable=executable, executable_sha256=executable_sha256,
+            traineddata=traineddata, model_sha256=model_sha256, language=language)
+        raster = LocalPDFPageRasterizer(executable=renderer, executable_sha256=renderer_sha256)
+        adapter = LocalPDFOCRProvider(image_provider=image, rasterizer=raster)
+        self.provider_registry.register(ProviderDescriptor(provider_id, 'Local PDF page OCR', 'local',
+            frozenset({Modality.VISION}), True, True, 'pinned_native_unverified_quality'), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(language, provider_id, 'PDF page OCR (' + language + ')',
+            Modality.VISION, frozenset({'OCR'})), replace=True)
+
+    def register_local_ocr_route(self, *, executable, executable_sha256,
+                                 traineddata, model_sha256, language):
+        """Trusted host bootstrap only. No download, discovery or inference."""
+        from pathlib import Path
+        from .local_tesseract_ocr import LocalTesseractOCRProvider
+        provider_id = 'local-tesseract-ocr'
+        adapter = LocalTesseractOCRProvider(provider_id=provider_id, model_id=language,
+            executable=Path(executable), executable_sha256=executable_sha256,
+            traineddata=Path(traineddata), model_sha256=model_sha256, language=language)
+        self.provider_registry.register(ProviderDescriptor(provider_id, 'Local Tesseract OCR', 'local',
+            frozenset({Modality.VISION}), True, True, 'pinned_native_unverified_quality'), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(language, provider_id, 'Local OCR (' + language + ')',
+            Modality.VISION, frozenset({'OCR'})), replace=True)
+
+    def register_bailian_text_route(self, model_id: str, region: str = "cn-beijing"):
+        """Explicit host bootstrap preset. Registration never probes or generates."""
+        from .bailian_text_preset import BailianTextProvider
+        from .credential_vault import credential_vault
+        if (not isinstance(model_id, str) or not model_id or len(model_id) > 200
+                or any(ord(character) <= 32 or ord(character) == 127 for character in model_id)):
+            raise ValueError("BAILIAN_EXPLICIT_MODEL_REQUIRED")
+        adapter = BailianTextProvider(region)
+        packaged = _packaged_runtime()
+        configured = credential_vault.has("aliyun-bailian") or (not packaged and bool(os.getenv("DASHSCOPE_API_KEY")))
+        self.provider_registry.register(ProviderDescriptor("aliyun-bailian", "阿里云百炼（文本）", "remote",
+            frozenset({Modality.TEXT}), configured, configured,
+            "configured_unverified" if configured else "not_configured"), adapter, replace=True)
+        self.model_registry.register(ModelDescriptor(model_id, "aliyun-bailian", model_id,
+            Modality.TEXT, frozenset({"generate", "stream"}), streaming=True), replace=True)
+
+    def register_native_text_route(self, provider_id: str, model_id: str):
+        """Host bootstrap only: explicit configured model, no discovery or egress."""
+        from .native_text_providers import AnthropicTextProvider, GeminiTextProvider
+        from .credential_vault import credential_vault
+        configs={"claude":(AnthropicTextProvider,"https://api.anthropic.com/v1","ANTHROPIC_API_KEY"),"gemini":(GeminiTextProvider,"https://generativelanguage.googleapis.com/v1beta","GEMINI_API_KEY")}
+        if provider_id not in configs or not model_id or len(model_id)>200:
+            raise ValueError("explicit supported native provider and model required")
+        cls,url,key_env=configs[provider_id]
+        packaged = _packaged_runtime()
+        configured=credential_vault.has(provider_id) or (not packaged and bool(os.getenv(key_env)))
+        adapter=cls(CompatibleProviderConfig(provider_id,url,key_env))
+        self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"remote",frozenset({Modality.TEXT}),configured,configured,"configured_unverified" if configured else "not_configured"),adapter,replace=True)
+        self.model_registry.register(ModelDescriptor(model_id,provider_id,model_id,Modality.TEXT,frozenset({"generate","stream"}),streaming=True),replace=True)
+
     def provider_status(self)->dict:
         result={}
         for name,p in self.providers.items():
@@ -58,7 +148,7 @@ class Runtime:
                     execution_mode = "mock_standin"
                 else:
                     from .credential_vault import credential_vault
-                    configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+                    configured = credential_vault.has("deepseek") or (not _packaged_runtime() and bool(os.getenv("DEEPSEEK_API_KEY")))
                     available = p.health_check() if configured else False
                     health_status = "available" if available else ("not_configured" if not configured else "unavailable")
                     execution_mode = "real"
@@ -77,27 +167,47 @@ class Runtime:
                         current.supported_modalities, configured, available,
                         health_status
                     ), self._deepseek_provider_adapter, replace=True)
-        result["anthropic"]={"available":False,"configured":bool(os.getenv("ANTHROPIC_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
-        result["gemini"]={"available":False,"configured":bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
+        descriptors={item.provider_id:item for item in self.provider_registry.descriptors()}
+        for provider_id in ("claude","gemini"):
+            descriptor=descriptors.get(provider_id)
+            result[provider_id]={"available":bool(descriptor and descriptor.available),"configured":bool(descriptor and descriptor.configured),"kind":"cloud","status":"configured_unverified" if descriptor and descriptor.configured else "explicit_model_and_vault_required","execution_mode":"real","protocol_verification":"CONTRACT_ONLY"}
+        result["anthropic"]=result["claude"]
         return result
     def models(self)->list[dict]:
         models=[]
-        for m in self.providers["ollama"].list_models(): models.append({"name":m["name"],"provider":"ollama","context_window":None,"capabilities":["generate","stream"],"local":True,"cloud":False,"available":True})
+        for m in self.providers["ollama"].list_models(include_details=True):
+            remote=bool(m.get("remote_host") or m.get("remote_model"))
+            # A loopback service may proxy hosted inference. Listing metadata
+            # alone proves neither model locality nor its execution capability.
+            models.append({"name":m["name"],"provider":"ollama","context_window":None,"capabilities":[],"local":False,"cloud":remote,"available":False,"source_locality":"REMOTE" if remote else "NOT_VERIFIED"})
         models.append({"name":"mock-writer","provider":"mock","context_window":8192,"capabilities":["generate","stream","test"],"local":True,"cloud":False,"available":self.providers["mock"].health_check()})
         return models
     def text_models(self)->list[dict]:
         providers={item.provider_id:item for item in self.provider_registry.descriptors()}
-        return [
-            {"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name,"available":bool(provider and provider.configured and provider.available)}
-            for model in self.model_registry.descriptors()
-            if model.modality is Modality.TEXT and model.enabled and model.provider_id!="mock"
-            for provider in (providers.get(model.provider_id),)
-        ]
+        result=[]
+        for model in self.model_registry.descriptors():
+            if model.modality is not Modality.TEXT or not model.enabled or model.provider_id=="mock":
+                continue
+            provider=providers.get(model.provider_id)
+            available=bool(provider and provider.configured and provider.available)
+            row={"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name + (" [模拟测试，未调用真实模型]" if provider and provider.health_status.startswith("mock_standin") else ""),"available":available,"execution_mode":"mock_standin" if provider and provider.health_status.startswith("mock_standin") else "real"}
+            if model.provider_id=="ollama":
+                try:
+                    proof=self.providers["ollama"].local_model_metadata(model.model_id)
+                except Exception:
+                    proof={"source_locality":"NOT_VERIFIED","reported_capabilities":[]}
+                row["source_locality"]=proof.get("source_locality","NOT_VERIFIED")
+                row["available"]=available and row["source_locality"]=="LOCAL_VERIFIED" and "completion" in proof.get("reported_capabilities",[])
+            result.append(row)
+        return result
     def is_remote_text_provider(self,provider_id:str|None)->bool:
         if not provider_id:return False
-        return any(item.provider_id==provider_id and item.provider_type=="remote" for item in self.provider_registry.descriptors())
+        # Egress follows the host-owned adapter, not the brand shown in a picker.
+        if provider_id == "deepseek" and self._deepseek_execution_mode == "mock_standin" and isinstance(self._deepseek_provider_adapter, LegacyTextProviderAdapter) and isinstance(self._deepseek_provider_adapter.provider, MockProvider):
+            return False
+        return any(item.provider_id==provider_id and item.provider_type in {"remote", "cloud"} for item in self.provider_registry.descriptors())
     def router(self,profile:str,role:str)->ModelRouter:
-        packaged=bool(settings.enable_packaged_runtime)
+        packaged=_packaged_runtime()
         local="mock" if settings.mock_provider and not packaged else "ollama"
         local_model="mock-writer" if local=="mock" else settings.local_model
         cloud=os.getenv(f"CLOUD_{role.upper()}_PROVIDER") or os.getenv("DEFAULT_CLOUD_PROVIDER")
@@ -115,6 +225,8 @@ class Runtime:
         self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"development" if provider_id=="mock" else ("local" if provider_id=="ollama" else "cloud"),frozenset({Modality.TEXT}),configured,available),LegacyTextProviderAdapter(provider_id,provider),replace=True)
         self.model_registry.register(ModelDescriptor(model_id,provider_id,display_name or model_id,Modality.TEXT,frozenset({"generate","stream"}),context_window,streaming=True,enabled=True),replace=True)
     def prepare_text_route(self,provider_id:str,model_id:str,provider=None):
+        if self.is_remote_text_provider(provider_id) and not settings.enable_cloud:
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, "主机未启用云端模型调用")
         # Route preparation is read-only: registration is the only identity minting path.
         identities_present = (
             self.identity_store.get("provider", provider_id) is not None
@@ -126,13 +238,24 @@ class Runtime:
         return self.generation_runtime.text_node
     def packaged_author_route_ready(self, provider_id: str) -> bool:
         """Packaged DesktopHost must not complete author text with mock or unconfigured DeepSeek."""
-        if not settings.enable_packaged_runtime:
+        if not _packaged_runtime():
             return True
         if provider_id == "mock":
             return False
         if provider_id == "deepseek":
             from .credential_vault import credential_vault
-            return credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+            return credential_vault.has("deepseek")
+        if provider_id in {"claude","gemini"}:
+            from .credential_vault import credential_vault
+            return self.provider_registry.contains(provider_id) and credential_vault.has(provider_id)
+        descriptor = next((item for item in self.provider_registry.descriptors() if item.provider_id == provider_id), None)
+        if descriptor is not None and descriptor.provider_type == "local" and descriptor.configured and descriptor.available:
+            try:
+                adapter = self.provider_registry.resolve(provider_id)
+                health = getattr(adapter, "health_check", None)
+                return bool(health()) if callable(health) else False
+            except (ModelRuntimeError, ValueError):
+                return False
         provider = self.providers.get(provider_id)
         health = getattr(provider, "health_check", None)
         return bool(health()) if callable(health) else False

@@ -1,0 +1,46 @@
+// @vitest-environment jsdom
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { GraphNodeNavigator } from './GraphNodeNavigator';
+import type { StudioGraphDefinition } from './studioGraphTypes';
+afterEach(cleanup);
+const nodes = (count: number): StudioGraphDefinition['nodes'] => Array.from({ length: count }, (_, i) => ({ id: `n${i}`, definition_id: 'text_input', definition_version: 1, enabled: true, position: { x: i, y: 0 }, parameters: {} }));
+const definitions = [{ id: 'text_input', label: '文本', inputs: [], outputs: [] }];
+const search = () => screen.getByRole('combobox');
+const trigger = () => screen.getByRole('button', { name: '查找图中节点' });
+it('resets page and candidate after removal, reorder, empty then regrow', () => {
+  const onNavigate = vi.fn();
+  const props = { nodes: nodes(45), definitions, busy: false, readonly: false, onNavigate };
+  const { rerender } = render(<GraphNodeNavigator {...props} />);
+  fireEvent.click(trigger()); fireEvent.keyDown(search(), { key: 'PageDown' });
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n20');
+  rerender(<GraphNodeNavigator {...props} nodes={props.nodes.slice(21)} />);
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n21');
+  rerender(<GraphNodeNavigator {...props} nodes={[...props.nodes].reverse()} />);
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n44');
+  rerender(<GraphNodeNavigator {...props} nodes={[]} />);
+  fireEvent.keyDown(search(), { key: 'Enter' }); expect(onNavigate).not.toHaveBeenCalled();
+  rerender(<GraphNodeNavigator {...props} />);
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n0');
+  fireEvent.keyDown(search(), { key: 'PageUp' });
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n0');
+  for (let i = 0; i < 5; i++) fireEvent.keyDown(search(), { key: 'PageDown' });
+  expect(screen.getAllByRole('option')).toHaveLength(5);
+  expect(screen.getByRole('option', { selected: true }).textContent).toContain('n44');
+  fireEvent.keyDown(search(), { key: 'Enter', ctrlKey: true });
+  fireEvent.keyDown(search(), { key: 'Enter', altKey: true });
+  fireEvent.keyDown(search(), { key: 'Enter', metaKey: true });
+  expect(onNavigate).not.toHaveBeenCalled();
+  fireEvent.keyDown(search(), { key: 'Enter' }); expect(onNavigate).toHaveBeenCalledWith('n44');
+});
+it('allows busy cancellation to return focus to a non-disabled trigger without permitting reopen', () => {
+  const onNavigate = vi.fn();
+  const props = { nodes: nodes(1), definitions, busy: false, readonly: false, onNavigate };
+  const { rerender } = render(<GraphNodeNavigator {...props} />);
+  fireEvent.click(trigger()); rerender(<GraphNodeNavigator {...props} busy />);
+  fireEvent.keyDown(search(), { key: 'Enter' }); expect(onNavigate).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '关闭节点查找' }));
+  expect(document.activeElement).toBe(trigger()); expect((trigger() as HTMLButtonElement).disabled).toBe(false);
+  expect(trigger().getAttribute('aria-disabled')).toBe('true');
+  fireEvent.click(trigger()); expect(screen.queryByRole('combobox')).toBeNull();
+});

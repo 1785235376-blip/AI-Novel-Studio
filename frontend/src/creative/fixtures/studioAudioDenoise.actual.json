@@ -1,0 +1,516 @@
+{
+  "command": {
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "parameters": {
+      "in_ms": 500,
+      "out_ms": 4500,
+      "denoise_profile": "STATIONARY_FFT_V1",
+      "sample_rate": 16000,
+      "channels": 1
+    },
+    "allow_cloud": false,
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "audio",
+        "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "version": 1,
+        "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d"
+      }
+    ],
+    "license_note": ""
+  },
+  "source": {
+    "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "filename": "stationary-noise.wav",
+    "kind": "audio",
+    "media_type": "audio/wav",
+    "size": 160044,
+    "sha256": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+    "branch_id": null,
+    "created_at": "2026-10-19T18:21:27.144242+00:00",
+    "updated_at": "2026-10-19T18:21:27.144242+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "5b58bc3289134f64b4ab77311e81631b",
+    "provenance": {
+      "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+      "label": "stationary-noise.wav",
+      "kind": "audio",
+      "version": 1,
+      "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "branch_id": null,
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "request_digest": "00c45d1faca0963b5dca05c9168220cac2751ae99889f7a039b1e304e086d44f",
+    "provider": null,
+    "sources": [
+      {
+        "snapshot": {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "asset_kind": "audio"
+        },
+        "measured": {
+          "media_type": "audio/wav",
+          "extension": "wav",
+          "duration_ms": 5000,
+          "sample_rate": 16000,
+          "channels": 1,
+          "sample_width": 2,
+          "validation": "PCM_DECODED"
+        }
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "97a4aace79b7c770b41d13b69e74c8d311ad88643bbc650d51e1bf3c3a3dd236"
+    },
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "width": null,
+        "height": null,
+        "steps": null,
+        "seed": null,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "7b01954fba48a0d7a0e7d98accd272ddc8ed045cd29622d266f0e43960fe8dbe"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-19638814-cc43-45aa-b24e-680499ec921a",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "00c45d1faca0963b5dca05c9168220cac2751ae99889f7a039b1e304e086d44f",
+    "receipt_digest": "831f1ee3f32b6478fc949799e0251ce62d0a725864b5189b28f230d955f76873",
+    "attempt": 0,
+    "created_at": "2026-10-19T18:21:27.291524+00:00",
+    "updated_at": "2026-10-19T18:21:27.291524+00:00",
+    "error_code": null,
+    "review_state": "NOT_READY",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "97a4aace79b7c770b41d13b69e74c8d311ad88643bbc650d51e1bf3c3a3dd236"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-19638814-cc43-45aa-b24e-680499ec921a",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "00c45d1faca0963b5dca05c9168220cac2751ae99889f7a039b1e304e086d44f",
+    "receipt_digest": "3ee4e1cd91ec705f48105ae10d68973eaad92240f0ebd50568347777730ef79a",
+    "attempt": 1,
+    "created_at": "2026-10-19T18:21:27.291524+00:00",
+    "updated_at": "2026-10-19T18:21:27.560470+00:00",
+    "error_code": null,
+    "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "18265c87-130c-4f9c-b87e-eed2f49ae324",
+      "version": 1,
+      "digest": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "97a4aace79b7c770b41d13b69e74c8d311ad88643bbc650d51e1bf3c3a3dd236"
+    },
+    "media_measurement": {
+      "duration_ms": 4000,
+      "byte_count": 128078,
+      "sample_rate": 16000,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+      "noise_reduction": {
+        "contract": "studio-audio-fft-denoise/1",
+        "profile": "STATIONARY_FFT_V1",
+        "source_id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "source_version": 1,
+        "source_sha256": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+        "in_ms": 500,
+        "out_ms": 4500,
+        "sample_rate": 16000,
+        "channels": 1,
+        "selected_frames": 64000,
+        "selected_pcm_sha256": "98462ee28244cd1a163cf1511fe019936282802dcc5d8c2640f11446de1987a2",
+        "source_peak_s16": 5220,
+        "source_rms_s16": 2503.2267886981895,
+        "output_frames": 64000,
+        "output_pcm_sha256": "30a97c132429d859e81e73a67c12e7a4275c9a2ffb621bece003e973c74ddc02",
+        "output_peak_s16": 5213,
+        "output_rms_s16": 2501.942408050818,
+        "output_sha256": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee"
+      }
+    },
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-19638814-cc43-45aa-b24e-680499ec921a",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "00c45d1faca0963b5dca05c9168220cac2751ae99889f7a039b1e304e086d44f",
+    "receipt_digest": "8745b869a658245576b5d649bbf17af84cfedc0bac4fa6f427bc792507d4d251",
+    "attempt": 1,
+    "created_at": "2026-10-19T18:21:27.291524+00:00",
+    "updated_at": "2026-10-19T18:21:27.730618+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "18265c87-130c-4f9c-b87e-eed2f49ae324",
+      "version": 1,
+      "digest": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "source_snapshots": [
+        {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": ""
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 500,
+        "out_ms": 4500,
+        "denoise_profile": "STATIONARY_FFT_V1",
+        "sample_rate": 16000,
+        "channels": 1
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_16000_MONO",
+      "recipe_digest": "97a4aace79b7c770b41d13b69e74c8d311ad88643bbc650d51e1bf3c3a3dd236"
+    },
+    "media_measurement": {
+      "duration_ms": 4000,
+      "byte_count": 128078,
+      "sample_rate": 16000,
+      "channels": 1,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+      "noise_reduction": {
+        "contract": "studio-audio-fft-denoise/1",
+        "profile": "STATIONARY_FFT_V1",
+        "source_id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+        "source_version": 1,
+        "source_sha256": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+        "in_ms": 500,
+        "out_ms": 4500,
+        "sample_rate": 16000,
+        "channels": 1,
+        "selected_frames": 64000,
+        "selected_pcm_sha256": "98462ee28244cd1a163cf1511fe019936282802dcc5d8c2640f11446de1987a2",
+        "source_peak_s16": 5220,
+        "source_rms_s16": 2503.2267886981895,
+        "output_frames": 64000,
+        "output_pcm_sha256": "30a97c132429d859e81e73a67c12e7a4275c9a2ffb621bece003e973c74ddc02",
+        "output_peak_s16": 5213,
+        "output_rms_s16": 2501.942408050818,
+        "output_sha256": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee"
+      }
+    },
+    "approved_asset_version": 2,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "asset": {
+    "id": "18265c87-130c-4f9c-b87e-eed2f49ae324",
+    "novel_id": "r3-mounted-a874ef3de78b47e984d81e23fd296f5e",
+    "filename": "audio-19638814-cc43-45aa-b24e-680499ec921a.wav",
+    "kind": "audio",
+    "media_type": "audio/wav",
+    "size": 128078,
+    "sha256": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+    "branch_id": null,
+    "source_job_id": "audio-19638814-cc43-45aa-b24e-680499ec921a",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-19T18:21:27.543320+00:00",
+    "updated_at": "2026-10-19T18:21:27.723470+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "studio-production:880659de8322cdd883d3135aed8ddb110837f0d5571f1ee1e6851f5d28e1c3de",
+    "approved_at": "2026-10-19T18:21:27.723470+00:00",
+    "provenance": {
+      "id": "18265c87-130c-4f9c-b87e-eed2f49ae324",
+      "label": "audio-19638814-cc43-45aa-b24e-680499ec921a.wav",
+      "kind": "audio",
+      "version": 2,
+      "digest": "fa96da0e86798f20a9830275abf40efc1949f278d5470ebffd08985056bfe1ee",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "DERIVED_PROCESSING",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "m8.audio.trim",
+      "parents": [
+        {
+          "id": "99c77af9-d745-4b6f-ad80-ea2eb146a266",
+          "label": "stationary-noise.wav",
+          "version": 1,
+          "digest": "76dc74653c2c85eea3e83ed55ff9132a38d0923fd6f88afaecb7060eac0c500d",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "stale": false,
+      "source_task_id": "audio-19638814-cc43-45aa-b24e-680499ec921a",
+      "generation": null,
+      "reference_only": true,
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    "relationships": []
+  }
+}

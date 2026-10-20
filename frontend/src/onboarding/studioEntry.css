@@ -1,0 +1,282 @@
+/* UX-01 project entry. DS-v1.0 tokens only: no raw color, no arbitrary spacing. */
+
+.studio-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+
+.studio-entry__header h2,
+.studio-entry__continue h3,
+.studio-entry__blank h3,
+.studio-entry__intent-start h3,
+.studio-entry-intent__header h3,
+.studio-entry-suggestion__header h3,
+.studio-entry-mode h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.studio-entry__header p,
+.studio-entry__continue p,
+.studio-entry__blank p,
+.studio-entry__intent-start p,
+.studio-entry__hint,
+.studio-entry__resume-hint,
+.studio-entry-intent__scope,
+.studio-entry-intent__dirty,
+.studio-entry-suggestion__scope,
+.studio-entry-suggestion__basis,
+.studio-entry-mode__scope {
+  margin: 0;
+  max-width: 72ch;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.studio-entry h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.studio-entry__continue,
+.studio-entry__blank,
+.studio-entry__intent-start,
+.studio-entry-intent,
+.studio-entry-suggestion,
+.studio-entry-mode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-subtle);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.studio-entry__continue > header,
+.studio-entry__blank > header,
+.studio-entry__intent-start > header,
+.studio-entry-intent__header,
+.studio-entry-suggestion__header,
+.studio-entry-suggestion__plan article > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.studio-entry__loading {
+  color: var(--color-text-secondary);
+}
+
+.studio-entry__projects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio-entry__project {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-2);
+  text-align: left;
+  background: var(--color-bg-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+
+.studio-entry__project:hover:not(:disabled) {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-strong);
+}
+
+.studio-entry__project.is-selected,
+.studio-entry__project[aria-pressed='true'] {
+  background: var(--color-selection-bg);
+  border-color: var(--color-selection-border);
+}
+
+.studio-entry__project:focus-visible,
+.studio-entry__field input:focus-visible,
+.studio-entry-intent__value input:focus-visible,
+.studio-entry-intent__custom input:focus-visible,
+.studio-entry-mode__option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.studio-entry__project span {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.studio-entry__resume {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.studio-entry__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.studio-entry__field input,
+.studio-entry-intent__custom input {
+  height: var(--control-height-md);
+  padding: 0 var(--space-2);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.studio-entry__blank > button,
+.studio-entry__continue > button,
+.studio-entry__intent-actions {
+  align-self: flex-start;
+}
+
+.studio-entry-intent__values {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.studio-entry-intent__values legend {
+  padding: 0 var(--space-1);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.studio-entry-intent__value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.studio-entry-intent__custom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.studio-entry-intent__actions,
+.studio-entry__intent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.studio-entry-suggestion__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio-entry-suggestion__plan article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  height: 100%;
+  padding: var(--space-3);
+  background: var(--color-bg-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.studio-entry-suggestion__plan p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.studio-entry-suggestion__note {
+  color: var(--color-text-muted);
+}
+
+.studio-entry-suggestion__plan button {
+  align-self: flex-start;
+}
+
+.studio-entry-mode__options {
+  display: inline-flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background: var(--color-bg-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  align-self: flex-start;
+}
+
+.studio-entry-mode__option {
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.studio-entry-mode__option:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.studio-entry-mode__option.is-selected,
+.studio-entry-mode__option[aria-checked='true'] {
+  color: var(--color-text-inverse);
+  background: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+}
+
+.studio-entry-mode__option:disabled {
+  cursor: default;
+}
+
+@media (max-width: 1100px) {
+  .studio-entry-suggestion__list {
+    grid-template-columns: 1fr;
+  }
+}

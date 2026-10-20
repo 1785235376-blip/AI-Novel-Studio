@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status": "FUNCTIONAL_SURFACE_CONTRACT",
+  "top_level_modules_added": [],
+  "shared_states": {
+    "LOADING": "Disable repeat submission; preserve captured scope and request epoch.",
+    "EMPTY": "Display authorized sources or receipts only; counts cannot reveal hidden sources.",
+    "ERROR": "Show sanitized code, retain user input, allow explicit retry only.",
+    "UNAUTHORIZED": "Clear source/results on session, membership, role or scope loss; no stale preview.",
+    "NOT_CONFIGURED": "Explain missing provider or original model admission; never fake inference or semantic fallback.",
+    "DISABLED": "Hide entry when server flag is off; direct routes fail closed.",
+    "CONFLICT": "Keep input and show current version; refresh before explicit retry; never overwrite.",
+    "REVIEW": "Require explicit versioned human review; no Canon/manuscript or production dispatch.",
+    "RECOVERY": "No automatic model restart; cancel/recover orphaned work, then explicitly run/rebuild.",
+    "PARTIAL": "Synthetic adapter execution is MOCK_ONLY; real OCR/image inference and durable worker are NOT_RUN."
+  },
+  "surfaces": [
+    {
+      "id": "hybrid-search",
+      "module": "Research",
+      "entry": "Existing EmbeddingPanel and Search navigation",
+      "owner": "EmbeddingService",
+      "flag": "visual_embeddings",
+      "components": ["IndexSourcePicker", "IndexDefinition", "RetrievalModeSelect", "HybridResults", "CitationInspector", "IndexRecovery"],
+      "api_prefix": "/api[/v1]/novels/{nid}/experimental/embeddings",
+      "apis": ["GET /sources", "GET /providers", "GET /indexes", "POST /indexes", "PUT /indexes/{rid}", "GET /indexes/{rid}/records", "POST /indexes/{rid}/{rebuild|invalidate|cancel|remove}", "POST /hybrid-query", "POST /query"],
+      "permissions": {"read": "domain.read", "write": "domain.write", "research": "Creator-only index + current Research source visibility and feature flag"},
+      "scope": ["project", "workspace", "storyline", "branch", "actor for private sources"],
+      "version": ["record version CAS", "index_version", "expected_index_version", "source_version", "source_digest", "model_revision", "vector_digest"],
+      "actions": ["create", "edit", "rebuild", "query", "cancel build", "invalidate", "remove", "resolve citation through original owner"],
+      "navigation": ["Character owner", "authoritative mainline or branch chapter", "Research paragraph/page citation", "Asset owner", "screenplay scene"],
+      "engineering_invariants": ["Hybrid must use configured vectors and lexical ranks", "No lexical fallback labelled semantic", "No collaboration mainline fallback", "Provider/source/permission checked before and after inference", "Default provider NOT_CONFIGURED", "No automatic rebuild after restart"]
+    },
+    {
+      "id": "visual-identity",
+      "module": "Assets",
+      "entry": "Existing approved visual reference owner; formal identity comparison panel contract",
+      "owner": "EmbeddingService projection of V1CapabilityService visual_memory and AssetLibraryService",
+      "flag": "visual_embeddings",
+      "components": ["CharacterAppearanceProfile", "ApprovedReferencePicker", "AppearanceVersion", "SimilarityInspector", "DriftWarning", "ImageVideoReferenceSelection", "LineageInspector", "ReviewReceiptRecovery"],
+      "api_prefix": "/api[/v1]/novels/{nid}/experimental/embeddings/visual-identity",
+      "apis": ["GET /profiles", "GET /checks", "POST /checks", "GET /checks/{rid}", "POST /checks/{rid}/{run|cancel|recover|review|invalidate}", "GET /checks/{rid}/selection"],
+      "permissions": {"read": "domain.read plus creator-only receipt", "write": "domain.write plus current approved assets"},
+      "scope": ["project", "workspace", "storyline", "branch", "actor"],
+      "version": ["receipt CAS", "appearance_version", "asset version and digest", "source lineage", "model revision"],
+      "actions": ["edit appearance through existing visual reference API", "approve reference through original owner", "select references", "compare", "review", "cancel", "recover", "select IMAGE or VIDEO references"],
+      "navigation": ["Original visual reference record", "Approved asset", "Character", "Image/Video production"],
+      "engineering_invariants": ["No duplicate profile authority", "Hair/body/accessories live in existing appearance object", "Any appearance edit removes approval", "Missing/changed asset invalidates comparison selection", "No automatic Canon or production dispatch", "Real image model admission NOT_CONFIGURED", "Synthetic comparisons MOCK_ONLY"]
+    },
+    {
+      "id": "research-analysis",
+      "module": "Research",
+      "entry": "Existing ResearchLibrary source inspector; formal OCR/Vision panel contract",
+      "owner": "ResearchLibraryService",
+      "flag": "research_library_v2",
+      "dependencies": ["semantic_import_v2", "temporal_story_graph_v2", "world_character_engines_v2"],
+      "components": ["SourceFormatInspector", "SourceRevisionHistory", "AnalysisOperationPicker", "PagePicker", "AnalysisReceipt", "DerivedCitationInspector", "HumanReview", "ReceiptRecovery"],
+      "api_prefix": "/api[/v1]/novels/{nid}/experimental/research-library",
+      "apis": ["GET /analysis/status", "GET /analysis/jobs", "POST /analysis/jobs", "GET /analysis/jobs/{rid}", "POST /analysis/jobs/{rid}/{run|cancel|recover|review|invalidate}", "PUT /sources/{rid}/file", "POST /sources/{rid}/restore"],
+      "permissions": {"read": "domain.write plus source visibility and creator-only receipt", "write": "domain.write plus current source version"},
+      "scope": ["project", "workspace", "storyline", "branch", "actor"],
+      "version": ["source_version", "original byte digest", "receipt CAS", "derived block digest", "page", "provider model revision"],
+      "operations": ["OCR", "SCAN_PDF_VISION", "IMAGE_UNDERSTANDING", "CHART_UNDERSTANDING", "TABLE_UNDERSTANDING"],
+      "actions": ["create request", "run synthetic adapter", "review", "cancel", "recover", "invalidate", "replace original source", "restore source revision"],
+      "navigation": ["Source original download", "Original source history", "Derived page/block citation", "Research notes"],
+      "engineering_invariants": ["TXT/MD/DOCX/PDF/Web Capture/Notes/Image metadata owners unchanged", "No OCR/vision inferred from metadata", "Original bytes unchanged by analysis", "Replacement/revoke/delete atomically invalidates receipt tokens and results", "No automatic Canon or manuscript", "Real model JobManager admission NOT_CONFIGURED", "No durable worker claim"]
+    }
+  ],
+  "opus_visual_scope": ["Panel arrangement within existing modules", "DS-v1.0 typography and tokens", "Result/citation presentation", "Control labeling", "Accessible loading and empty states"],
+  "opus_protected_behavior": ["Existing source authority", "Branch isolation", "CAS and conflict semantics", "Permission/flag fences", "Cancel execution tokens", "No automatic restart", "Human review", "Honest runtime verification labels", "PoemSeed Local Interop 1.0 frozen protocols"]
+}

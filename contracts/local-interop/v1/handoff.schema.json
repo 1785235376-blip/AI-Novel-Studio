@@ -1,0 +1,337 @@
+{
+  "$defs": {
+    "HandoffTarget": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_FEATURE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "feature"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_PROJECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "project_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_TASK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "task_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_CHAPTER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "string"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "chapter_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_SESSION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "session_id"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "OPEN_FEATURE",
+            "OPEN_PROJECT",
+            "OPEN_TASK",
+            "OPEN_CHAPTER",
+            "OPEN_SESSION"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "chapter_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chapter Id"
+        },
+        "feature": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "source_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Version"
+        },
+        "target_product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Target Product Id",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        }
+      },
+      "required": [
+        "action",
+        "target_product_id"
+      ],
+      "title": "HandoffTarget",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/handoff.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/HandoffTarget"
+    },
+    "user_gesture_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "User Gesture Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_name",
+    "protocol_version",
+    "request_id",
+    "session_id",
+    "target",
+    "user_gesture_id"
+  ],
+  "title": "HandoffRequest",
+  "type": "object"
+}

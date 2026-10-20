@@ -1,0 +1,195 @@
+{
+  "advisory_only": true,
+  "asset_overview": {
+    "by_kind": {
+      "audio": 0,
+      "image": 1,
+      "other": 0,
+      "text": 0,
+      "video": 0
+    },
+    "private_pending_review": 0,
+    "reviewed": 0,
+    "total": 1
+  },
+  "contract": "studio-production-workflow/1",
+  "creative_intent": {
+    "editable": true,
+    "history_retained": true,
+    "preset": "EDITING",
+    "values": [
+      {
+        "custom": false,
+        "intent_id": "novel_writing",
+        "label": "小说创作",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "novel_adaptation",
+        "label": "小说改编",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "ai_short_film",
+        "label": "短片",
+        "selected": true
+      },
+      {
+        "custom": false,
+        "intent_id": "commercial_cg",
+        "label": "商业 CG",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "advertisement",
+        "label": "广告",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "music_video",
+        "label": "MV",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "game_previs",
+        "label": "游戏预演",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "image_design",
+        "label": "图片设计",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "podcast_voice",
+        "label": "播客 / 配音",
+        "selected": false
+      },
+      {
+        "custom": false,
+        "intent_id": "blank",
+        "label": "空白创作",
+        "selected": false
+      },
+      {
+        "custom": true,
+        "intent_id": "custom",
+        "label": "实验短片",
+        "selected": true
+      }
+    ],
+    "version": 2
+  },
+  "dashboard": {
+    "blocked_stages": [],
+    "open_reviews": 0,
+    "stages_reviewed": 0,
+    "stages_started": 2,
+    "stages_total": 7
+  },
+  "execution_authority": false,
+  "generated_at": "2026-10-14T10:00:55.021806+00:00",
+  "modules": [
+    {
+      "asset_count": 0,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "director",
+      "job_count": 0,
+      "label": "导演",
+      "next_action": "尚未开始",
+      "owner": "DirectorService",
+      "status": "NOT_STARTED"
+    },
+    {
+      "asset_count": 0,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "storyboard",
+      "job_count": 0,
+      "label": "分镜",
+      "next_action": "尚未开始",
+      "owner": "StoryboardWorkspace",
+      "status": "NOT_STARTED"
+    },
+    {
+      "asset_count": 1,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "image",
+      "job_count": 0,
+      "label": "图像",
+      "next_action": "素材进行中",
+      "owner": "ImageJobService",
+      "status": "IN_PRODUCTION"
+    },
+    {
+      "asset_count": 0,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "video",
+      "job_count": 0,
+      "label": "视频",
+      "next_action": "尚未开始",
+      "owner": "StudioVideoExecution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "asset_count": 0,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "audio",
+      "job_count": 0,
+      "label": "音频",
+      "next_action": "尚未开始",
+      "owner": "StudioAudioExecution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "asset_count": 0,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "timeline",
+      "job_count": 0,
+      "label": "时间线",
+      "next_action": "尚未开始",
+      "owner": "VideoAssemblyService",
+      "status": "NOT_STARTED"
+    },
+    {
+      "asset_count": 1,
+      "blocked_reasons": [],
+      "document_count": 0,
+      "id": "asset",
+      "job_count": 0,
+      "label": "资产",
+      "next_action": "素材进行中",
+      "owner": "AssetLibraryService",
+      "status": "IN_PRODUCTION"
+    }
+  ],
+  "project_id": "phase7-fixture-project",
+  "project_start": {
+    "entry_kind": "NEUTRAL_STUDIO",
+    "has_creative_documents": false,
+    "incarnation": "file:df66b11c-ccd5-4337-b326-23c1802a6eeb",
+    "start_action": {
+      "method": "POST",
+      "path": "/api/experimental/projects",
+      "requires_original_host_session": true
+    },
+    "state": "STARTED"
+  },
+  "schema_version": 1,
+  "scope": {
+    "mode": "local",
+    "novel_id": "phase7-fixture-project"
+  }
+}

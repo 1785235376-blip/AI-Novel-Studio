@@ -1,0 +1,396 @@
+{
+  "schema_version": 2,
+  "execution_scope": "BACKEND_HOST",
+  "inference_status": "NOT_RUN",
+  "windows_acceptance": "NOT_RUN",
+  "scan_id": "4eadddb2c9f342dfa6e5446dc3176cc2",
+  "status": "PARTIAL",
+  "started_at": "2026-10-13T19:04:03.517237+00:00",
+  "finished_at": "2026-10-13T19:04:03.520426+00:00",
+  "hardware": {
+    "platform": "Synthetic",
+    "architecture": "x86_64",
+    "cpu": "NOT_VERIFIED",
+    "logical_cpu_count": null,
+    "ram_bytes": 17179869184,
+    "gpus": [],
+    "status": "DETECTED",
+    "notes": [],
+    "cuda": {
+      "status": "NOT_RUN",
+      "source": "NOT_RUN",
+      "inference_verified": false
+    },
+    "directml": {
+      "status": "NOT_RUN",
+      "source": "NOT_RUN",
+      "inference_verified": false
+    }
+  },
+  "services": [
+    {
+      "id": "discovery-ollama",
+      "name": "Ollama",
+      "type": "OLLAMA",
+      "endpoint": "http://127.0.0.1:11434",
+      "status": "RUNNING",
+      "version": null,
+      "notes": [
+        "RUNTIME_VERSION_NOT_AVAILABLE"
+      ],
+      "available_models": [
+        "qwen3.6:8b"
+      ],
+      "candidate_ids": [
+        "local-fe54f28ed222aa833fb6d7ce"
+      ],
+      "inference_verified": false
+    },
+    {
+      "id": "comfyui-local",
+      "name": "comfyui-local",
+      "type": "COMFYUI",
+      "endpoint": "http://127.0.0.1:8188",
+      "status": "RUNNING",
+      "version": null,
+      "notes": [],
+      "available_models": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "hunyuan_video_t2v_720p_bf16.safetensors",
+        "ltx-video-2b-v0.9.5.safetensors"
+      ],
+      "candidate_ids": [
+        "local-c7c98852d03292d2d694d9f9",
+        "local-160f4ae4ae3b2951c6532eaf",
+        "local-4bcccd89b25474d723e69947"
+      ],
+      "inference_verified": false
+    },
+    {
+      "id": "discovery-automatic1111",
+      "name": "Automatic1111",
+      "type": "AUTOMATIC1111",
+      "endpoint": "http://127.0.0.1:7860",
+      "status": "NOT_FOUND",
+      "version": null,
+      "notes": [
+        "LOCAL_AI_PROBE_UNAVAILABLE"
+      ],
+      "available_models": [],
+      "candidate_ids": [],
+      "inference_verified": false
+    },
+    {
+      "id": "discovery-openai_compatible_local",
+      "name": "LM Studio",
+      "type": "OPENAI_COMPATIBLE_LOCAL",
+      "endpoint": "http://127.0.0.1:1234",
+      "status": "NOT_FOUND",
+      "version": null,
+      "notes": [
+        "LOCAL_AI_PROBE_UNAVAILABLE"
+      ],
+      "available_models": [],
+      "candidate_ids": [],
+      "inference_verified": false
+    },
+    {
+      "id": "discovery-llama_cpp",
+      "name": "llama.cpp",
+      "type": "LLAMA_CPP",
+      "endpoint": "http://127.0.0.1:8080",
+      "status": "NOT_FOUND",
+      "version": null,
+      "notes": [
+        "EXECUTABLE_NOT_EXECUTED",
+        "LOCAL_AI_PROBE_UNAVAILABLE"
+      ],
+      "available_models": [],
+      "candidate_ids": [],
+      "inference_verified": false
+    },
+    {
+      "id": "llama-cpp-local",
+      "name": "llama-cpp-local",
+      "type": "LLAMA_CPP",
+      "endpoint": "http://127.0.0.1:8081",
+      "status": "NOT_FOUND",
+      "version": null,
+      "notes": [
+        "EXECUTABLE_NOT_EXECUTED",
+        "LOCAL_AI_PROBE_UNAVAILABLE"
+      ],
+      "available_models": [],
+      "candidate_ids": [],
+      "inference_verified": false
+    }
+  ],
+  "model_files": [
+    {
+      "id": "file-e34b0184b262f921135b04e7",
+      "path": "/SYNTHETIC_MODEL_ROOT/wan2.2_ti2v_5B_fp16.safetensors",
+      "name": "wan2.2_ti2v_5B_fp16.safetensors",
+      "format": "SAFETENSORS",
+      "source": "CONFIGURED",
+      "root": "/SYNTHETIC_MODEL_ROOT",
+      "size_bytes": 77,
+      "modified_ns": 1791918243505984800,
+      "header_valid": true,
+      "family": "WAN",
+      "declared_capabilities": [
+        "VIDEO"
+      ],
+      "candidate_ids": [],
+      "notes": [
+        "METADATA_ONLY",
+        "RUNTIME_BINDING_REQUIRED"
+      ],
+      "inference_verified": false
+    }
+  ],
+  "workflow_prerequisites": {
+    "schema_version": 1,
+    "scan_id": "4eadddb2c9f342dfa6e5446dc3176cc2",
+    "scan_status": "PARTIAL",
+    "definition_status": "COMPLETE",
+    "workflows": [
+      {
+        "runtime_id": "comfyui-local",
+        "adapter_id": "comfy-sd-checkpoint-v1",
+        "display_name": "Stable Diffusion checkpoint (T2I)",
+        "evidence_status": "COMPLETE",
+        "nodes": [
+          {
+            "node_class": "CheckpointLoaderSimple",
+            "observation": "observed"
+          },
+          {
+            "node_class": "KSampler",
+            "observation": "observed"
+          },
+          {
+            "node_class": "EmptyLatentImage",
+            "observation": "not_observed"
+          },
+          {
+            "node_class": "CLIPTextEncode",
+            "observation": "observed"
+          },
+          {
+            "node_class": "VAEDecode",
+            "observation": "observed"
+          },
+          {
+            "node_class": "SaveImage",
+            "observation": "not_observed"
+          }
+        ],
+        "loader": {
+          "node_class": "CheckpointLoaderSimple",
+          "observation": "observed",
+          "input_field": "ckpt_name",
+          "advertised_count": 1,
+          "candidate_ids": [
+            "local-4bcccd89b25474d723e69947"
+          ]
+        },
+        "metadata_status": "NOT_VERIFIED",
+        "inference_status": "NOT_RUN"
+      }
+    ],
+    "components": [
+      {
+        "model_id": "flux2-klein-4b-fp8",
+        "model_display_name": "FLUX.2 Klein 4B FP8",
+        "component_id": "flux2-klein-qwen3-encoder",
+        "component_type": "TEXT_ENCODER",
+        "observation": "unknown",
+        "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+        "metadata_status": "NOT_VERIFIED",
+        "inference_status": "NOT_RUN"
+      },
+      {
+        "model_id": "flux2-dev",
+        "model_display_name": "FLUX.2 Dev",
+        "component_id": "flux2-dev-mistral-encoder",
+        "component_type": "TEXT_ENCODER",
+        "observation": "unknown",
+        "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+        "metadata_status": "NOT_VERIFIED",
+        "inference_status": "NOT_RUN"
+      },
+      {
+        "model_id": "rife-49",
+        "model_display_name": "RIFE 4.9",
+        "component_id": "rife-49-checkpoint",
+        "component_type": "CHECKPOINT",
+        "observation": "unknown",
+        "reason": "NO_COMPONENT_IDENTITY_EVIDENCE",
+        "metadata_status": "NOT_VERIFIED",
+        "inference_status": "NOT_RUN"
+      }
+    ]
+  },
+  "video_observations": {
+    "contract": "local-video-observation/1",
+    "scan_id": "4eadddb2c9f342dfa6e5446dc3176cc2",
+    "scan_status": "PARTIAL",
+    "models": [
+      {
+        "candidate_id": "local-160f4ae4ae3b2951c6532eaf",
+        "provider_id": "discovery-local-160f4ae4ae3b2951c6532eaf",
+        "model_name": "hunyuan_video_t2v_720p_bf16.safetensors",
+        "family": "HUNYUAN_VIDEO",
+        "runtime_id": "comfyui-local",
+        "runtime_type": "COMFYUI",
+        "registered": false,
+        "enabled": false,
+        "enable_eligible": false,
+        "route_state": "UNKNOWN",
+        "structure_validated": false,
+        "structural_only": true,
+        "inference_verified": false,
+        "file_association": {
+          "status": "NOT_OBSERVED",
+          "reason": "EXACT_LOADER_FILE_NOT_OBSERVED",
+          "file_id": null,
+          "path": null,
+          "root": null,
+          "observed_file_bytes": null,
+          "size_semantics": null,
+          "runtime_path_verified": false,
+          "eligibility_derived": false
+        },
+        "model_total_bytes": null,
+        "required_vram_bytes": null
+      },
+      {
+        "candidate_id": "local-4bcccd89b25474d723e69947",
+        "provider_id": "discovery-local-4bcccd89b25474d723e69947",
+        "model_name": "ltx-video-2b-v0.9.5.safetensors",
+        "family": "LTX",
+        "runtime_id": "comfyui-local",
+        "runtime_type": "COMFYUI",
+        "registered": false,
+        "enabled": false,
+        "enable_eligible": false,
+        "route_state": "UNKNOWN",
+        "structure_validated": false,
+        "structural_only": true,
+        "inference_verified": false,
+        "file_association": {
+          "status": "NOT_OBSERVED",
+          "reason": "EXACT_LOADER_FILE_NOT_OBSERVED",
+          "file_id": null,
+          "path": null,
+          "root": null,
+          "observed_file_bytes": null,
+          "size_semantics": null,
+          "runtime_path_verified": false,
+          "eligibility_derived": false
+        },
+        "model_total_bytes": null,
+        "required_vram_bytes": null
+      },
+      {
+        "candidate_id": "local-c7c98852d03292d2d694d9f9",
+        "provider_id": "discovery-local-c7c98852d03292d2d694d9f9",
+        "model_name": "wan2.2_ti2v_5B_fp16.safetensors",
+        "family": "WAN",
+        "runtime_id": "comfyui-local",
+        "runtime_type": "COMFYUI",
+        "registered": false,
+        "enabled": false,
+        "enable_eligible": false,
+        "route_state": "UNKNOWN",
+        "structure_validated": false,
+        "structural_only": true,
+        "inference_verified": false,
+        "file_association": {
+          "status": "MATCHED",
+          "reason": "CONFIGURED_ROOT_OBSERVATION_NOT_RUNTIME_BINDING",
+          "file_id": "file-e34b0184b262f921135b04e7",
+          "path": "/SYNTHETIC_MODEL_ROOT/wan2.2_ti2v_5B_fp16.safetensors",
+          "root": "/SYNTHETIC_MODEL_ROOT",
+          "observed_file_bytes": 77,
+          "size_semantics": "WEIGHT_FILE",
+          "runtime_path_verified": false,
+          "eligibility_derived": false
+        },
+        "model_total_bytes": null,
+        "required_vram_bytes": null
+      }
+    ],
+    "files": [
+      {
+        "file_id": "file-e34b0184b262f921135b04e7",
+        "path": "/SYNTHETIC_MODEL_ROOT/wan2.2_ti2v_5B_fp16.safetensors",
+        "root": "/SYNTHETIC_MODEL_ROOT",
+        "source": "CONFIGURED",
+        "format": "SAFETENSORS",
+        "family": "WAN",
+        "header_valid": true,
+        "observed_file_bytes": 77,
+        "size_semantics": "WEIGHT_FILE",
+        "model_total_bytes": null,
+        "required_vram_bytes": null,
+        "inference_verified": false
+      }
+    ],
+    "notes": [
+      "LAST_EXPLICIT_SCAN_ONLY",
+      "FILE_ASSOCIATIONS_DO_NOT_AUTHORIZE_RUNTIME",
+      "MODEL_TOTAL_AND_VRAM_UNKNOWN"
+    ],
+    "health_probed": false,
+    "credentials_read": false,
+    "automatic_runtime_start": false
+  },
+  "roots": [
+    {
+      "path": "/SYNTHETIC_MODEL_ROOT",
+      "source": "CONFIGURED",
+      "status": "SCANNED"
+    }
+  ],
+  "errors": [
+    {
+      "code": "LOCAL_AI_PROBE_UNAVAILABLE",
+      "runtime_id": "discovery-automatic1111",
+      "root": null
+    },
+    {
+      "code": "LOCAL_AI_PROBE_UNAVAILABLE",
+      "runtime_id": "discovery-openai_compatible_local",
+      "root": null
+    },
+    {
+      "code": "LOCAL_AI_PROBE_UNAVAILABLE",
+      "runtime_id": "discovery-llama_cpp",
+      "root": null
+    },
+    {
+      "code": "LOCAL_AI_PROBE_UNAVAILABLE",
+      "runtime_id": "llama-cpp-local",
+      "root": null
+    }
+  ],
+  "limits": {
+    "scan_budget_seconds": 45,
+    "request_timeout_seconds": 2.0,
+    "max_services": 20,
+    "max_models_per_service": 512,
+    "max_response_bytes": 4194304,
+    "max_roots": 32,
+    "max_entries": 5000,
+    "max_files": 2000,
+    "max_depth": 3,
+    "max_metadata_bytes": 262144
+  },
+  "notes": [
+    "BACKEND_HOST_ONLY",
+    "NO_MODEL_LOADED",
+    "NO_INFERENCE_RUN",
+    "WINDOWS_NATIVE_ACCEPTANCE_NOT_RUN"
+  ]
+}

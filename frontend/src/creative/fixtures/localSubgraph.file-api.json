@@ -1,0 +1,1098 @@
+{
+  "synthetic_actual_File_API": true,
+  "project": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+  "prefix": "/api",
+  "catalog": {
+    "definitions": [
+      {
+        "id": "text_input",
+        "version": 1,
+        "inputs": [],
+        "outputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "default": "",
+              "maxLength": 8000,
+              "title": "Text",
+              "type": "string"
+            }
+          },
+          "title": "TextParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "text": ""
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "text_reference",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "draft_prepare",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          },
+          {
+            "id": "direction",
+            "type": "DIRECTOR_NOTES",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "manual_transform",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          },
+          {
+            "id": "direction",
+            "type": "DIRECTOR_NOTES",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "result": {
+              "default": "",
+              "maxLength": 8000,
+              "title": "Result",
+              "type": "string"
+            }
+          },
+          "title": "ManualParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "result": ""
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "director_note",
+        "version": 1,
+        "inputs": [],
+        "outputs": [
+          {
+            "id": "direction",
+            "type": "DIRECTOR_NOTES",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "note": {
+              "default": "",
+              "maxLength": 4000,
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "title": "DirectorParameters",
+          "type": "object"
+        },
+        "default_parameters": {
+          "note": ""
+        },
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "human_review",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {},
+          "title": "EmptyParameters",
+          "type": "object"
+        },
+        "default_parameters": {},
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      },
+      {
+        "id": "local_subgraph",
+        "version": 1,
+        "inputs": [
+          {
+            "id": "text",
+            "type": "TEXT",
+            "required": true,
+            "multiple": false
+          }
+        ],
+        "outputs": [
+          {
+            "id": "draft",
+            "type": "DRAFT",
+            "required": false,
+            "multiple": false
+          }
+        ],
+        "parameters_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "graph_id": {
+              "maxLength": 240,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}$",
+              "title": "Graph Id",
+              "type": "string"
+            },
+            "expected_version": {
+              "minimum": 1,
+              "title": "Expected Version",
+              "type": "integer"
+            },
+            "definition_digest": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Definition Digest",
+              "type": "string"
+            },
+            "execution_digest": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Execution Digest",
+              "type": "string"
+            },
+            "input_node_id": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$",
+              "title": "Input Node Id",
+              "type": "string"
+            },
+            "input_port": {
+              "const": "text",
+              "default": "text",
+              "title": "Input Port",
+              "type": "string"
+            },
+            "output_node_id": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$",
+              "title": "Output Node Id",
+              "type": "string"
+            },
+            "output_port": {
+              "const": "draft",
+              "default": "draft",
+              "title": "Output Port",
+              "type": "string"
+            }
+          },
+          "required": [
+            "graph_id",
+            "expected_version",
+            "definition_digest",
+            "execution_digest",
+            "input_node_id",
+            "output_node_id"
+          ],
+          "title": "LocalSubgraphParameters",
+          "type": "object"
+        },
+        "default_parameters": null,
+        "executable": true,
+        "model_called": false,
+        "blockers": []
+      }
+    ],
+    "limits": {
+      "nodes": 24,
+      "edges": 40,
+      "definition_bytes": 96000,
+      "output_bytes": 64000,
+      "graphs": 25,
+      "runs": 100,
+      "history": 20,
+      "runtime_timeout_seconds": 3600,
+      "node_timeout_seconds": 5
+    },
+    "capabilities": {
+      "local_execution": true,
+      "chapter_required": false,
+      "model_execution": false,
+      "external_reference_execution": false,
+      "external_reference_detach": false,
+      "binary_cache": false,
+      "parallel_execution": false,
+      "automatic_retry": false,
+      "actor_private": true,
+      "cache_mode": "DISABLED_LOCAL_SUBGRAPH_V1",
+      "local_subgraph_contract": "creative-graph-local-subgraph/1",
+      "local_subgraph_schema_version": 6,
+      "local_subgraph_depth": 1,
+      "local_subgraph_child_nodes": 16,
+      "local_subgraph_total_nodes": 24,
+      "local_subgraph_cache": false,
+      "local_subgraph_frontend_entry": false
+    }
+  },
+  "child": {
+    "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+    "version": 1,
+    "definition": {
+      "schema_version": 1,
+      "title": "Reusable local author rule",
+      "nodes": [
+        {
+          "id": "entry",
+          "definition_id": "text_reference",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        },
+        {
+          "id": "draft",
+          "definition_id": "draft_prepare",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        }
+      ],
+      "edges": [
+        {
+          "id": "flow",
+          "source_node_id": "entry",
+          "source_port": "text",
+          "target_node_id": "draft",
+          "target_port": "text"
+        }
+      ],
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+    "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+    "created_at": "2026-10-19T17:26:31.308056+00:00",
+    "updated_at": "2026-10-19T17:26:31.308056+00:00",
+    "can_edit": true,
+    "reference_states": [],
+    "capacity": {
+      "history_used": 0,
+      "history_limit": 20,
+      "record_bytes": 1276,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    }
+  },
+  "parent": {
+    "id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "version": 1,
+    "definition": {
+      "edges": [
+        {
+          "id": "text",
+          "source_node_id": "input",
+          "source_port": "text",
+          "target_node_id": "call",
+          "target_port": "text"
+        },
+        {
+          "id": "draft",
+          "source_node_id": "call",
+          "source_port": "draft",
+          "target_node_id": "review",
+          "target_port": "draft"
+        }
+      ],
+      "nodes": [
+        {
+          "definition_id": "text_input",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "input",
+          "parameters": {
+            "text": "First authored beat\nSecond authored beat"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "local_subgraph",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "call",
+          "parameters": {
+            "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+            "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+            "expected_version": 1,
+            "graph_id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+            "input_node_id": "entry",
+            "input_port": "text",
+            "output_node_id": "draft",
+            "output_port": "draft"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "human_review",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "review",
+          "parameters": {},
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      ],
+      "schema_version": 6,
+      "title": "Explicit pinned local call",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "d0d265bb2384535a05dcb898a3a322b7d6053110bbf5fe01660a58a0be48dc6c",
+    "execution_digest": "e0b5a07265b4b4154d517de898bec8341b690d4cd2c6fcf91b2629756e42f28e",
+    "created_at": "2026-10-19T17:26:31.372151+00:00",
+    "updated_at": "2026-10-19T17:26:31.372151+00:00",
+    "can_edit": true,
+    "reference_states": [
+      {
+        "node_id": "call",
+        "state": "CURRENT"
+      }
+    ],
+    "capacity": {
+      "history_used": 0,
+      "history_limit": 20,
+      "record_bytes": 2805,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    }
+  },
+  "preflight": {
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    },
+    "graph_id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "valid": true,
+    "executable": true,
+    "issues": [],
+    "execution_order": [
+      "input",
+      "call",
+      "review"
+    ],
+    "selected_closure": [
+      "input",
+      "call",
+      "review"
+    ],
+    "definition_digest": "d0d265bb2384535a05dcb898a3a322b7d6053110bbf5fe01660a58a0be48dc6c",
+    "expected_version": 1,
+    "target_node_ids": [
+      "input",
+      "call",
+      "review"
+    ],
+    "model_called": false,
+    "external_calls": 0,
+    "graph_schema_version": 6,
+    "local_subgraph_contract": "creative-graph-local-subgraph/1",
+    "local_subgraph_bindings": {
+      "call": {
+        "contract": "creative-graph-local-subgraph/1",
+        "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+        "project_incarnation": "file:adee601d-e656-4dbe-919b-0fa3a40bd52f",
+        "scope": {
+          "mode": "local",
+          "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+        },
+        "actor": "local-author",
+        "call_node_id": "call",
+        "source": {
+          "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+          "version": 1,
+          "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+          "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8"
+        },
+        "interface": {
+          "input": {
+            "id": "text",
+            "type": "TEXT",
+            "node_id": "entry",
+            "port": "text"
+          },
+          "output": {
+            "id": "draft",
+            "type": "DRAFT",
+            "node_id": "draft",
+            "port": "draft"
+          }
+        },
+        "node_count": 2,
+        "closure_digest": "22d858f58e4f30f95a70f3a8fe77da3f6e3a6337ac9affab89f74366d61ca630",
+        "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee"
+      }
+    },
+    "source_check": "CURRENT_PIN_SCOPE_TRANSACTION",
+    "preflight_digest": "c9296e72137179114dca4755945fe798fb946c8e3b163f3f7def84e735a0db9c"
+  },
+  "queued": {
+    "id": "1536d87a-b393-46cf-b625-21d693dbe7f4",
+    "version": 1,
+    "graph_id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "graph_version": 1,
+    "status": "QUEUED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "mode": "DISABLED_LOCAL_SUBGRAPH_V1"
+    },
+    "created_at": "2026-10-19T17:26:31.579652+00:00",
+    "updated_at": "2026-10-19T17:26:31.579652+00:00",
+    "reviewed": false,
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-19T18:26:31.579652+00:00",
+    "node_states": {
+      "input": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "call": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      },
+      "review": {
+        "status": "PENDING",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "local_subgraph_runtime": {
+      "contract": "creative-graph-local-subgraph/1",
+      "cache_enabled": false,
+      "bindings": {
+        "call": {
+          "contract": "creative-graph-local-subgraph/1",
+          "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+          "project_incarnation": "file:adee601d-e656-4dbe-919b-0fa3a40bd52f",
+          "scope": {
+            "mode": "local",
+            "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+          },
+          "actor": "local-author",
+          "call_node_id": "call",
+          "source": {
+            "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+            "version": 1,
+            "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+            "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8"
+          },
+          "interface": {
+            "input": {
+              "id": "text",
+              "type": "TEXT",
+              "node_id": "entry",
+              "port": "text"
+            },
+            "output": {
+              "id": "draft",
+              "type": "DRAFT",
+              "node_id": "draft",
+              "port": "draft"
+            }
+          },
+          "node_count": 2,
+          "closure_digest": "22d858f58e4f30f95a70f3a8fe77da3f6e3a6337ac9affab89f74366d61ca630",
+          "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee"
+        }
+      },
+      "receipts": {}
+    }
+  },
+  "waiting": {
+    "id": "1536d87a-b393-46cf-b625-21d693dbe7f4",
+    "version": 2,
+    "graph_id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "graph_version": 1,
+    "status": "WAITING_APPROVAL",
+    "current_node_id": "review",
+    "cache": {
+      "hits": 0,
+      "misses": 2,
+      "mode": "DISABLED_LOCAL_SUBGRAPH_V1"
+    },
+    "created_at": "2026-10-19T17:26:31.579652+00:00",
+    "updated_at": "2026-10-19T17:26:32.875890+00:00",
+    "reviewed": false,
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-19T18:26:31.579652+00:00",
+    "node_states": {
+      "call": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "draft": {
+            "text": "First authored beat\nSecond authored beat",
+            "origin": "USER_SUPPLIED",
+            "plan": [
+              {
+                "sequence": 1,
+                "beat": "First authored beat"
+              },
+              {
+                "sequence": 2,
+                "beat": "Second authored beat"
+              }
+            ]
+          }
+        },
+        "error": null
+      },
+      "input": {
+        "status": "SUCCEEDED",
+        "reviewed": false,
+        "output": {
+          "text": "First authored beat\nSecond authored beat"
+        },
+        "error": null
+      },
+      "review": {
+        "status": "WAITING_APPROVAL",
+        "reviewed": false,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": {
+      "node_id": "review",
+      "draft": {
+        "text": "First authored beat\nSecond authored beat",
+        "origin": "USER_SUPPLIED",
+        "plan": [
+          {
+            "sequence": 1,
+            "beat": "First authored beat"
+          },
+          {
+            "sequence": 2,
+            "beat": "Second authored beat"
+          }
+        ]
+      },
+      "output_digest": "22fb74fbf2cc7dd81dea1ee09b3bf09889e901fba8b2ce78ce4680953393d674"
+    },
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "local_subgraph_runtime": {
+      "contract": "creative-graph-local-subgraph/1",
+      "cache_enabled": false,
+      "bindings": {
+        "call": {
+          "actor": "local-author",
+          "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee",
+          "call_node_id": "call",
+          "closure_digest": "22d858f58e4f30f95a70f3a8fe77da3f6e3a6337ac9affab89f74366d61ca630",
+          "contract": "creative-graph-local-subgraph/1",
+          "interface": {
+            "input": {
+              "id": "text",
+              "node_id": "entry",
+              "port": "text",
+              "type": "TEXT"
+            },
+            "output": {
+              "id": "draft",
+              "node_id": "draft",
+              "port": "draft",
+              "type": "DRAFT"
+            }
+          },
+          "node_count": 2,
+          "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+          "project_incarnation": "file:adee601d-e656-4dbe-919b-0fa3a40bd52f",
+          "scope": {
+            "mode": "local",
+            "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+          },
+          "source": {
+            "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+            "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+            "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+            "version": 1
+          }
+        }
+      },
+      "receipts": {
+        "call": {
+          "contract": "creative-graph-local-subgraph/1",
+          "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee",
+          "input_digest": "55b1f39907123ec12d7d10f0c0941fa715e8a76803a09b055b99ee229581d746",
+          "output_digest": "0dcb51bb7b27ab2bb4174f607d9de2cd62321db768dcc2cb6e521b4c3a9ffb7e",
+          "steps": 2
+        }
+      }
+    }
+  },
+  "approved": {
+    "id": "1536d87a-b393-46cf-b625-21d693dbe7f4",
+    "version": 3,
+    "graph_id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "graph_version": 1,
+    "status": "SUCCEEDED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 2,
+      "mode": "DISABLED_LOCAL_SUBGRAPH_V1"
+    },
+    "created_at": "2026-10-19T17:26:31.579652+00:00",
+    "updated_at": "2026-10-19T17:26:33.106258+00:00",
+    "reviewed": true,
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    },
+    "stale": false,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-19T18:26:31.579652+00:00",
+    "node_states": {
+      "call": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "draft": {
+            "origin": "USER_SUPPLIED",
+            "plan": [
+              {
+                "beat": "First authored beat",
+                "sequence": 1
+              },
+              {
+                "beat": "Second authored beat",
+                "sequence": 2
+              }
+            ],
+            "text": "First authored beat\nSecond authored beat"
+          }
+        },
+        "error": null
+      },
+      "input": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": {
+          "text": "First authored beat\nSecond authored beat"
+        },
+        "error": null
+      },
+      "review": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "local_subgraph_runtime": {
+      "contract": "creative-graph-local-subgraph/1",
+      "cache_enabled": false,
+      "bindings": {
+        "call": {
+          "actor": "local-author",
+          "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee",
+          "call_node_id": "call",
+          "closure_digest": "22d858f58e4f30f95a70f3a8fe77da3f6e3a6337ac9affab89f74366d61ca630",
+          "contract": "creative-graph-local-subgraph/1",
+          "interface": {
+            "input": {
+              "id": "text",
+              "node_id": "entry",
+              "port": "text",
+              "type": "TEXT"
+            },
+            "output": {
+              "id": "draft",
+              "node_id": "draft",
+              "port": "draft",
+              "type": "DRAFT"
+            }
+          },
+          "node_count": 2,
+          "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+          "project_incarnation": "file:adee601d-e656-4dbe-919b-0fa3a40bd52f",
+          "scope": {
+            "mode": "local",
+            "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+          },
+          "source": {
+            "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+            "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+            "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+            "version": 1
+          }
+        }
+      },
+      "receipts": {
+        "call": {
+          "binding_digest": "fdfd6d2a6dd3cabd7ecd52dde2bce9490035c6175fa3f5b963cd0d2f6aa472ee",
+          "contract": "creative-graph-local-subgraph/1",
+          "input_digest": "55b1f39907123ec12d7d10f0c0941fa715e8a76803a09b055b99ee229581d746",
+          "output_digest": "0dcb51bb7b27ab2bb4174f607d9de2cd62321db768dcc2cb6e521b4c3a9ffb7e",
+          "steps": 2
+        }
+      }
+    }
+  },
+  "saved_child": {
+    "id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+    "version": 2,
+    "definition": {
+      "schema_version": 1,
+      "title": "Explicit saved current version change",
+      "nodes": [
+        {
+          "id": "entry",
+          "definition_id": "text_reference",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        },
+        {
+          "id": "draft",
+          "definition_id": "draft_prepare",
+          "definition_version": 1,
+          "enabled": true,
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "parameters": {}
+        }
+      ],
+      "edges": [
+        {
+          "id": "flow",
+          "source_node_id": "entry",
+          "source_port": "text",
+          "target_node_id": "draft",
+          "target_port": "text"
+        }
+      ],
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "50cfa76b1269bcf4d51417ff976858cb40e4dfa136e0ff0f2180c0ad292b56b1",
+    "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+    "created_at": "2026-10-19T17:26:31.308056+00:00",
+    "updated_at": "2026-10-19T17:26:33.199465+00:00",
+    "can_edit": true,
+    "reference_states": [],
+    "capacity": {
+      "history_used": 1,
+      "history_limit": 20,
+      "record_bytes": 2550,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    }
+  },
+  "stale_parent": {
+    "id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "version": 1,
+    "definition": {
+      "edges": [
+        {
+          "id": "text",
+          "source_node_id": "input",
+          "source_port": "text",
+          "target_node_id": "call",
+          "target_port": "text"
+        },
+        {
+          "id": "draft",
+          "source_node_id": "call",
+          "source_port": "draft",
+          "target_node_id": "review",
+          "target_port": "draft"
+        }
+      ],
+      "nodes": [
+        {
+          "definition_id": "text_input",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "input",
+          "parameters": {
+            "text": "First authored beat\nSecond authored beat"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "local_subgraph",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "call",
+          "parameters": {
+            "definition_digest": "2ceed2c2bca13fd94ba29d1993867ee55f708f9f786c7053d77ee3ad393f6d62",
+            "execution_digest": "25b62b79ebcf8478e289051b55e8ac720240820261f547ccbc2fb7527b2a03d8",
+            "expected_version": 1,
+            "graph_id": "0ec61df5-acc7-458c-84f7-f437f8376840",
+            "input_node_id": "entry",
+            "input_port": "text",
+            "output_node_id": "draft",
+            "output_port": "draft"
+          },
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        {
+          "definition_id": "human_review",
+          "definition_version": 1,
+          "enabled": true,
+          "id": "review",
+          "parameters": {},
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      ],
+      "schema_version": 6,
+      "title": "Explicit pinned local call",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "d0d265bb2384535a05dcb898a3a322b7d6053110bbf5fe01660a58a0be48dc6c",
+    "execution_digest": "e0b5a07265b4b4154d517de898bec8341b690d4cd2c6fcf91b2629756e42f28e",
+    "created_at": "2026-10-19T17:26:31.372151+00:00",
+    "updated_at": "2026-10-19T17:26:31.372151+00:00",
+    "can_edit": true,
+    "reference_states": [
+      {
+        "node_id": "call",
+        "state": "STALE"
+      }
+    ],
+    "capacity": {
+      "history_used": 0,
+      "history_limit": 20,
+      "record_bytes": 2805,
+      "record_limit_bytes": 2000000
+    },
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    }
+  },
+  "masked_run": {
+    "id": "1536d87a-b393-46cf-b625-21d693dbe7f4",
+    "version": 3,
+    "graph_id": "bb45866a-684d-4458-9cdc-2d7c85b93c1c",
+    "graph_version": 1,
+    "status": "SUCCEEDED",
+    "current_node_id": null,
+    "cache": {
+      "hits": 0,
+      "misses": 2,
+      "mode": "DISABLED_LOCAL_SUBGRAPH_V1"
+    },
+    "created_at": "2026-10-19T17:26:31.579652+00:00",
+    "updated_at": "2026-10-19T17:26:33.106258+00:00",
+    "reviewed": true,
+    "project_id": "r3-mounted-23064be0af01403f83e087be279dc9ae",
+    "scope": {
+      "mode": "local",
+      "novel_id": "r3-mounted-23064be0af01403f83e087be279dc9ae"
+    },
+    "stale": true,
+    "timeout_seconds": 3600,
+    "deadline_at": "2026-10-19T18:26:31.579652+00:00",
+    "node_states": {
+      "call": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": null,
+        "error": null
+      },
+      "input": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": null,
+        "error": null
+      },
+      "review": {
+        "status": "SUCCEEDED",
+        "reviewed": true,
+        "output": null,
+        "error": null
+      }
+    },
+    "review": null,
+    "model_called": false,
+    "external_calls": 0,
+    "applied": false,
+    "local_subgraph_runtime": {
+      "contract": "creative-graph-local-subgraph/1",
+      "cache_enabled": false,
+      "bindings": {},
+      "receipts": {}
+    }
+  }
+}

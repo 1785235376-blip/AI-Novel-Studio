@@ -1,0 +1,67 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/context-evidence.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority": {
+      "enum": [
+        "AUTHORITATIVE",
+        "CONSTRAINING",
+        "SUPPORTING",
+        "ADVISORY"
+      ],
+      "title": "Authority",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "locator": {
+      "maxLength": 256,
+      "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+      "title": "Locator",
+      "type": "string"
+    },
+    "privacy": {
+      "default": "LOCAL_ONLY",
+      "enum": [
+        "LOCAL_ONLY",
+        "REDACTION_REQUIRED",
+        "CONSENTED_CLOUD"
+      ],
+      "title": "Privacy",
+      "type": "string"
+    },
+    "source_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+      "title": "Source Version",
+      "type": "string"
+    },
+    "timestamp": {
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_version",
+    "locator",
+    "content_hash",
+    "timestamp",
+    "authority"
+  ],
+  "title": "ContextEvidence",
+  "type": "object"
+}

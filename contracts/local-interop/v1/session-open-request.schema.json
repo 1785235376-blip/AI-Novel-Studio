@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/session-open-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "hello_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Hello Id",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "session_nonce": {
+      "maxLength": 128,
+      "minLength": 24,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Session Nonce",
+      "type": "string"
+    },
+    "user_identity": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "User Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "hello_id",
+    "protocol_name",
+    "protocol_version",
+    "session_nonce",
+    "user_identity"
+  ],
+  "title": "SessionOpenRequest",
+  "type": "object"
+}

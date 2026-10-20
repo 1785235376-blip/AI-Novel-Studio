@@ -2,9 +2,20 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from functools import wraps
 
 from ...storage import atomic_write
 from .mutation_coordinator import workspace_mutation
+
+
+def identity_mutation(method):
+    @wraps(method)
+    def mutate(self, *args, **kwargs):
+        # Identity and authorization share this existing cross-process lease.
+        # Acquire it before workspace locks, including audit compensation.
+        with self._audit_repository().mutation():
+            return method(self, *args, **kwargs)
+    return mutate
 
 
 class FileIdentityRepository:
@@ -20,6 +31,7 @@ class FileIdentityRepository:
     def _write(self, value: dict) -> None:
         atomic_write(self.path, json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2))
 
+    @identity_mutation
     def _save(self, key: str, item: dict, uniqueness: tuple[str, ...]) -> dict:
         data = self._read()
         old_id = next((x for x in data[key] if x["id"] == item["id"]), None)
@@ -53,6 +65,7 @@ class FileIdentityRepository:
         from .scope import FileAuthorizationRepository
         return FileAuthorizationRepository(self.path.parent)
 
+    @identity_mutation
     def save_membership_with_audit(self, item: dict, audit: dict) -> dict:
         # Both files are snapshotted so an injected audit failure cannot leave a member orphaned.
         before = self.path.read_bytes() if self.path.exists() else None
@@ -73,6 +86,7 @@ class FileIdentityRepository:
             raise KeyError((user_id, workspace_id))
         return item
 
+    @identity_mutation
     def remove_membership_with_audit(self, user_id: str, workspace_id: str, audit: dict, protect_last_admin: bool = True) -> dict:
         with workspace_mutation(self.path.parent, workspace_id):
             before = self.path.read_bytes() if self.path.exists() else None
@@ -93,6 +107,7 @@ class FileIdentityRepository:
     def list_memberships(self, user_id: str | None = None, workspace_id: str | None = None, status: str | None = None) -> list[dict]:
         return [x for x in self._read()["memberships"] if (user_id is None or x["user_id"] == user_id) and (workspace_id is None or x["workspace_id"] == workspace_id) and (status is None or x["status"] == status)]
 
+    @identity_mutation
     def update_membership_status(self, user_id: str, workspace_id: str, status: str, updated_at: str, protect_last_admin: bool = True) -> dict:
         with workspace_mutation(self.path.parent, workspace_id):
             data = self._read()
@@ -108,6 +123,7 @@ class FileIdentityRepository:
             self._write(data)
             return item
 
+    @identity_mutation
     def update_membership_status_with_audit(self, user_id: str, workspace_id: str, status: str, updated_at: str, audit: dict, protect_last_admin: bool = True) -> dict:
         with workspace_mutation(self.path.parent, workspace_id):
             before = self.path.read_bytes() if self.path.exists() else None

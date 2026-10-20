@@ -1,0 +1,123 @@
+{
+  "source": {
+    "id": "c28b0ee5-c289-43c5-884f-6bbf3d8b4e1c",
+    "novel_id": "v2-independent-1a92fb7628a44e2190c27a5f0428027c",
+    "title": "Synthetic source envelope",
+    "version": 1,
+    "timeline_digest": "5603fc607c9ee15e9e8901b3db08b1fce0c4c759e8f0c313d3a8e81799016680",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 10000,
+      "fps": 24,
+      "height": 360,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": -12.0,
+              "id": "measured",
+              "in_ms": 0,
+              "muted": true,
+              "out_ms": 9000,
+              "source_snapshot": {
+                "asset_kind": "audio",
+                "digest": "71d93ef76e5ff6087d522277e83309f1d8d790e9b756324dec73d216ea57cc75",
+                "id": "c0647e42-3af5-4a97-826e-c06e9924b80e",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 500
+            }
+          ],
+          "gain_db": -6.0,
+          "id": "sound",
+          "kind": "AUDIO",
+          "muted": false,
+          "order": 0,
+          "role": "DIALOGUE"
+        },
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 360,
+              "id": "still",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1000,
+              "source_snapshot": {
+                "asset_kind": "image",
+                "digest": "e44c53d995048ed9946460ee419333f679240806c26632cf21c517eb934667a4",
+                "id": "2483daf5-bdbe-4303-ae8c-7aa43bd440e9",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 640,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "visual",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 1,
+          "role": "PRIMARY"
+        }
+      ],
+      "width": 640
+    },
+    "created_at": "2026-10-18T05:51:30.745648+00:00",
+    "updated_at": "2026-10-18T05:51:30.745648+00:00",
+    "branch_id": null
+  },
+  "result": {
+    "contract": "studio-timeline-source-bounds/1",
+    "novel_id": "v2-independent-1a92fb7628a44e2190c27a5f0428027c",
+    "branch_id": null,
+    "timeline_id": "c28b0ee5-c289-43c5-884f-6bbf3d8b4e1c",
+    "timeline_version": 1,
+    "timeline_digest": "5603fc607c9ee15e9e8901b3db08b1fce0c4c759e8f0c313d3a8e81799016680",
+    "clip_id": "measured",
+    "source_snapshot": {
+      "id": "c0647e42-3af5-4a97-826e-c06e9924b80e",
+      "kind": "ASSET",
+      "asset_kind": "audio",
+      "version": 1,
+      "digest": "71d93ef76e5ff6087d522277e83309f1d8d790e9b756324dec73d216ea57cc75"
+    },
+    "byte_count": 96044,
+    "status": "MEASURED_PCM16_SOURCE_BOUNDS",
+    "scope": "SOURCE_DURATION_ONLY",
+    "clip": {
+      "in_ms": 0,
+      "out_ms": 9000,
+      "start_ms": 500,
+      "speed_num": 1,
+      "speed_den": 1
+    },
+    "frame_count": 48000,
+    "sample_rate": 8000,
+    "channels": 1,
+    "duration_seconds": {
+      "num": 48000,
+      "den": 8000
+    },
+    "maximum_out_ms": 6000,
+    "requested_start_frame": 0,
+    "requested_end_frame": 72000,
+    "within_source": false
+  }
+}

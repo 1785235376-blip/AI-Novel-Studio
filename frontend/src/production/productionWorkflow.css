@@ -1,0 +1,56 @@
+.production-workflow-dashboard { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.production-workflow-dashboard p { margin: 0; color: var(--color-text-secondary); }
+.production-workflow-dashboard__scope { color: var(--color-text-muted); }
+
+.production-workflow-start { display: flex; flex-direction: column; gap: var(--space-3); border-top: var(--border-default); padding-top: var(--space-4); }
+.production-workflow-start > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.production-workflow-start h3 { margin: 0; }
+.production-workflow-start dl { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.production-workflow-start dl > div { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.production-workflow-start dt { color: var(--color-text-muted); }
+.production-workflow-start dd { margin: 0; overflow-wrap: anywhere; font-family: var(--font-mono); }
+
+.production-workflow-intent { display: flex; flex-direction: column; gap: var(--space-3); border-top: var(--border-default); padding-top: var(--space-4); }
+.production-workflow-intent > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.production-workflow-intent h3 { margin: 0; }
+.production-workflow-intent__values { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin: 0; border: 0; padding: 0; }
+.production-workflow-intent__values > legend { color: var(--color-text-muted); padding: 0; }
+.production-workflow-intent__values > label { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-primary); }
+.production-workflow-intent__values input:focus-visible,
+.production-workflow-intent__custom input:focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.production-workflow-intent__custom { display: flex; flex-direction: column; gap: var(--space-1); max-width: 32rem; }
+.production-workflow-intent__custom > span { color: var(--color-text-muted); }
+.production-workflow-intent__custom > input { min-height: var(--control-height-md); padding: 0 var(--space-2); border: var(--border-default); border-radius: var(--radius-sm); background: var(--color-bg-elevated); color: var(--color-text-primary); font-family: var(--font-ui); }
+.production-workflow-intent__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.production-workflow-board { display: flex; flex-direction: column; gap: var(--space-3); border-top: var(--border-default); padding-top: var(--space-4); }
+.production-workflow-board > header h3 { margin: 0 0 var(--space-1); }
+.production-workflow-board__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.production-workflow-module { display: flex; flex-direction: column; gap: var(--space-2); border: var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3); background: var(--color-bg-surface); min-width: 0; }
+.production-workflow-module[data-blocked='true'] { border-color: var(--color-status-warning); }
+.production-workflow-module > header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.production-workflow-module dl { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.production-workflow-module dt { color: var(--color-text-muted); }
+.production-workflow-module dd { margin: 0; }
+.production-workflow-module__owner { color: var(--color-text-muted); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.production-workflow-module__codes { color: var(--color-text-muted); font-family: var(--font-mono); overflow-wrap: anywhere; }
+
+.production-asset-overview { display: flex; flex-direction: column; gap: var(--space-2); border-top: var(--border-default); padding-top: var(--space-4); }
+.production-asset-overview > header h3 { margin: 0 0 var(--space-1); }
+.production-asset-overview dl { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.production-asset-overview dt { color: var(--color-text-muted); }
+.production-asset-overview dd { margin: 0; }
+
+.production-workflow-inspector { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.production-workflow-inspector p { margin: 0; color: var(--color-text-secondary); }
+.production-workflow-inspector section { display: flex; flex-direction: column; gap: var(--space-2); border-top: var(--border-default); padding-top: var(--space-3); }
+.production-workflow-inspector section:first-of-type { border-top: 0; padding-top: 0; }
+.production-workflow-inspector h3 { margin: 0; }
+.production-workflow-inspector header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.production-workflow-inspector dl { margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.production-workflow-inspector dl > div { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.production-workflow-inspector dt { color: var(--color-text-muted); }
+.production-workflow-inspector dd { margin: 0; overflow-wrap: anywhere; }
+.production-workflow-assets ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.production-workflow-models ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.production-workflow-models li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }

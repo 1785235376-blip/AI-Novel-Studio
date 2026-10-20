@@ -1,0 +1,800 @@
+{
+  "command": {
+    "operation_id": "m5.image.composite",
+    "request_id": "mounted-cutout",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "parameters": {},
+    "allow_cloud": false,
+    "license_note": "",
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "image",
+        "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d"
+      },
+      {
+        "kind": "ASSET",
+        "asset_kind": "image",
+        "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+      }
+    ],
+    "image_layers": [
+      {
+        "source": {
+          "kind": "ASSET",
+          "asset_kind": "image",
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d"
+        },
+        "visible": true,
+        "opacity": 255
+      },
+      {
+        "source": {
+          "kind": "ASSET",
+          "asset_kind": "image",
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+        },
+        "visible": true,
+        "opacity": 128
+      }
+    ]
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+    "branch_id": null,
+    "operation_id": "m5.image.composite",
+    "request_id": "mounted-cutout",
+    "request_digest": "14723a2ae710e27be7db1a114122f975b40819b41481952ddfaa8bd4f14d5284",
+    "provider": null,
+    "sources": [
+      {
+        "snapshot": {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image"
+        },
+        "measured": {
+          "media_type": "image/png",
+          "extension": "png",
+          "width": 64,
+          "height": 64,
+          "validation": "DECODED"
+        }
+      },
+      {
+        "snapshot": {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image"
+        },
+        "measured": {
+          "media_type": "image/png",
+          "extension": "png",
+          "width": 64,
+          "height": 64,
+          "validation": "DECODED"
+        }
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.composite",
+      "adapter": "LOCAL_CPU_COMPOSITE",
+      "parameters": {},
+      "layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ],
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE_ZERO_ALPHA_RGB",
+      "automatic_fallback": false,
+      "recipe_digest": "dabd3c94d79e69fc8637e0009d3b06fd07d4ebcda33b701e714fb6991a2826db"
+    },
+    "command": {
+      "operation_id": "m5.image.composite",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "image_layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ]
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "40a575c1c740a352d1cfe2243a268ea2a181385b66b179c2cbc733d6a004e063"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": null,
+    "id": "5dd04d59-38e2-499c-9914-fa01226169e6",
+    "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "14723a2ae710e27be7db1a114122f975b40819b41481952ddfaa8bd4f14d5284",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-19T22:38:57.013850+00:00",
+    "updated_at": "2026-10-19T22:38:57.013850+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.composite",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.composite",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "image_layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ]
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.composite",
+      "adapter": "LOCAL_CPU_COMPOSITE",
+      "parameters": {},
+      "layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ],
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE_ZERO_ALPHA_RGB",
+      "automatic_fallback": false,
+      "recipe_digest": "dabd3c94d79e69fc8637e0009d3b06fd07d4ebcda33b701e714fb6991a2826db"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": {
+      "contract": "cpu-two-layer-composite/1",
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "width": 64,
+      "height": 64,
+      "source_sha256": [
+        "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+      ],
+      "layers_digest": "440319ad1e1cb7107ff338baee4d5b1a708840c3a5f52efdb45c970e046c3446",
+      "output_sha256": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+      "rgba_sha256": "916d8afdd7d11b29d0a3c3040fde289fb62844beeea39aa575986c8b862c258e",
+      "output_bytes": 16516
+    },
+    "id": "5dd04d59-38e2-499c-9914-fa01226169e6",
+    "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "14723a2ae710e27be7db1a114122f975b40819b41481952ddfaa8bd4f14d5284",
+    "receipt_digest": "774cb17fcf954e6876b3bff323a21598b2aac253b881d54e9b0c779b324d6cf3",
+    "attempt": 1,
+    "created_at": "2026-10-19T22:38:57.013850+00:00",
+    "updated_at": "2026-10-19T22:38:57.858075+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.composite",
+    "output_candidate": {
+      "id": "3a121b5e-fb39-4fd4-b799-b965dc6dafcb",
+      "version": 1,
+      "digest": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.composite",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "image_layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ]
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.composite",
+      "adapter": "LOCAL_CPU_COMPOSITE",
+      "parameters": {},
+      "layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ],
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE_ZERO_ALPHA_RGB",
+      "automatic_fallback": false,
+      "recipe_digest": "dabd3c94d79e69fc8637e0009d3b06fd07d4ebcda33b701e714fb6991a2826db"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "processing_proof": {
+      "contract": "cpu-two-layer-composite/1",
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "width": 64,
+      "height": 64,
+      "source_sha256": [
+        "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+      ],
+      "layers_digest": "440319ad1e1cb7107ff338baee4d5b1a708840c3a5f52efdb45c970e046c3446",
+      "output_sha256": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+      "rgba_sha256": "916d8afdd7d11b29d0a3c3040fde289fb62844beeea39aa575986c8b862c258e",
+      "output_bytes": 16516
+    },
+    "id": "5dd04d59-38e2-499c-9914-fa01226169e6",
+    "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "14723a2ae710e27be7db1a114122f975b40819b41481952ddfaa8bd4f14d5284",
+    "receipt_digest": "774cb17fcf954e6876b3bff323a21598b2aac253b881d54e9b0c779b324d6cf3",
+    "attempt": 1,
+    "created_at": "2026-10-19T22:38:57.013850+00:00",
+    "updated_at": "2026-10-19T22:38:58.488852+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.composite",
+    "output_candidate": {
+      "id": "3a121b5e-fb39-4fd4-b799-b965dc6dafcb",
+      "version": 1,
+      "digest": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+      "kind": "image"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "asset_kind": "image"
+      },
+      {
+        "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "asset_kind": "image"
+      }
+    ],
+    "command": {
+      "operation_id": "m5.image.composite",
+      "request_id": "mounted-cutout",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {},
+      "source_snapshots": [
+        {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "asset_kind": "image",
+          "reference_only": true
+        },
+        {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "asset_kind": "image",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "image_layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ]
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.composite",
+      "adapter": "LOCAL_CPU_COMPOSITE",
+      "parameters": {},
+      "layers": [
+        {
+          "source": {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 255
+        },
+        {
+          "source": {
+            "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+            "asset_kind": "image"
+          },
+          "visible": true,
+          "opacity": 128
+        }
+      ],
+      "algorithm": "ENCODED_RGBA8_STRAIGHT_SOURCE_OVER_HALF_UP_V1",
+      "output_profile": "PNG_RGBA8_STORED_DEFLATE_ZERO_ALPHA_RGB",
+      "automatic_fallback": false,
+      "recipe_digest": "dabd3c94d79e69fc8637e0009d3b06fd07d4ebcda33b701e714fb6991a2826db"
+    },
+    "media_measurement": null,
+    "approved_asset_version": 2,
+    "request_id": "mounted-cutout",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "assets": [
+    {
+      "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+      "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+      "filename": "source.png",
+      "kind": "image",
+      "media_type": "image/png",
+      "size": 203,
+      "sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+      "branch_id": null,
+      "created_at": "2026-10-19T22:38:55.773192+00:00",
+      "updated_at": "2026-10-19T22:38:55.773192+00:00",
+      "version": 1,
+      "deleted_at": null,
+      "idempotency_key": "source",
+      "provenance": {
+        "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "label": "source.png",
+        "kind": "image",
+        "version": 1,
+        "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "deleted": false,
+        "integrity": "VERIFIED",
+        "origin": "UNDECLARED",
+        "license": {
+          "label": "UNSPECIFIED",
+          "source": "",
+          "note": ""
+        },
+        "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+        "operation": "",
+        "parents": [],
+        "sources": [],
+        "producer": {
+          "declared_by": null,
+          "provider_id": null,
+          "model_id": null
+        },
+        "generation": null,
+        "declaration_history_versions": [],
+        "stale": false,
+        "source_task_id": null
+      },
+      "relationships": []
+    },
+    {
+      "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+      "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+      "filename": "manual-mask.png",
+      "kind": "image",
+      "media_type": "image/png",
+      "size": 4228,
+      "sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+      "branch_id": null,
+      "source_asset_ids": [
+        "6445bb1e-d884-480b-9e7c-9acc9aefbd20"
+      ],
+      "source_job_id": null,
+      "provider_id": null,
+      "model_id": null,
+      "created_at": "2026-10-19T22:38:56.635659+00:00",
+      "updated_at": "2026-10-19T22:38:56.635659+00:00",
+      "version": 1,
+      "deleted_at": null,
+      "idempotency_key": "studio-manual-mask:aabe860fbd7a22d79278a3d66c822261ace674626da0fc79bfb339afbfc49740",
+      "parameters": {},
+      "manual_mask": {
+        "contract": "manual-binary-mask/1",
+        "source_asset_id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+        "source_version": 1,
+        "source_sha256": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+        "width": 64,
+        "height": 64,
+        "bitplane_sha256": "0dc50ed6e41c0a4d3eaa8c5a1e850607fd4bf2042596439f6112369e90f58364",
+        "keep_pixels": 512,
+        "remove_pixels": 3584,
+        "mask_sha256": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48"
+      },
+      "provenance": {
+        "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+        "label": "manual-mask.png",
+        "kind": "image",
+        "version": 1,
+        "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+        "deleted": false,
+        "integrity": "VERIFIED",
+        "origin": "MANUAL_EDIT",
+        "license": {
+          "label": "UNSPECIFIED",
+          "source": "",
+          "note": ""
+        },
+        "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+        "operation": "Manual binary mask: white KEEP, black REMOVE",
+        "parents": [
+          {
+            "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+            "label": "source.png",
+            "version": 1,
+            "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+            "state": "CURRENT"
+          }
+        ],
+        "sources": [],
+        "producer": {
+          "declared_by": "local-author",
+          "provider_id": null,
+          "model_id": null
+        },
+        "generation": null,
+        "declaration_history_versions": [],
+        "stale": false,
+        "source_task_id": null
+      },
+      "relationships": []
+    }
+  ],
+  "saved": {
+    "id": "3a121b5e-fb39-4fd4-b799-b965dc6dafcb",
+    "novel_id": "r3-mounted-6969e35676684679a25b0938300d68c0",
+    "filename": "studio-image-5dd04d59-38e2-499c-9914-fa01226169e6.png",
+    "kind": "image",
+    "media_type": "image/png",
+    "size": 16516,
+    "sha256": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+    "branch_id": null,
+    "source_job_id": "5dd04d59-38e2-499c-9914-fa01226169e6",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-19T22:38:57.776595+00:00",
+    "updated_at": "2026-10-19T22:38:58.412811+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "studio-production:5b2703585fdc9e1bd681f9c95ad2489c7aa905e0e5ad94bd476a85fdaf19d98f",
+    "approved_at": "2026-10-19T22:38:58.412811+00:00",
+    "provenance": {
+      "id": "3a121b5e-fb39-4fd4-b799-b965dc6dafcb",
+      "label": "studio-image-5dd04d59-38e2-499c-9914-fa01226169e6.png",
+      "kind": "image",
+      "version": 2,
+      "digest": "03271f4e10575e7131066bf8cbe45fd0ad6d5c2b3a094aa3d20a19b10a82762b",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "DERIVED_PROCESSING",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "m5.image.composite",
+      "parents": [
+        {
+          "id": "6445bb1e-d884-480b-9e7c-9acc9aefbd20",
+          "label": "source.png",
+          "version": 1,
+          "digest": "297148b89ec3cf69b9a5984ad404e277bdb5b0280c2f8bad13c8db81fb938f6d",
+          "state": "CURRENT"
+        },
+        {
+          "id": "bf99c4be-cf06-4dad-9b81-e7e3565c209d",
+          "label": "manual-mask.png",
+          "version": 1,
+          "digest": "f9eddad96c10de3ec87fa4d27bb27777041beeea7e9ce2d566c63f909f51ea48",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "stale": false,
+      "source_task_id": "5dd04d59-38e2-499c-9914-fa01226169e6",
+      "generation": null,
+      "reference_only": true,
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    "relationships": []
+  },
+  "source_base64": [
+    "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAkklEQVR4nO3QQREAAAiAMJtb3Rh7yBJwzD43OkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAK0BOkBrgA7QGqADtAboAO0AB0zB0pU5YkkAAAAASUVORK5CYII=",
+    "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAQS0lEQVR4AQFAEL/vAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAD/AAAAAAAAAP8AAAAAAAAA/wAAAAAAAAC8ef4QwzCC/AAAAABJRU5ErkJggg=="
+  ],
+  "output_base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAABAS0lEQVR4AQFAQL+/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8A1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvwDV1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/ANXV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr/V1dW/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/Kioqv9XV1b8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr8qKiq/1dXVvyoqKr8qKiq/KioqvyoqKr8qKiq/KioqvyoqKr+A3dNaQMx9zAAAAABJRU5ErkJggg==",
+  "backend": "real File / native CPU pixels / original Image Job Review Asset"
+}

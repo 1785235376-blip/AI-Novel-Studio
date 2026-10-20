@@ -1,0 +1,20 @@
+{
+  "document": {
+    "title": "SYNTHETIC authored duplicate", "screenplay_id": "screenplay", "expected_screenplay_version": 1,
+    "preset": "PAGE", "font_family": "NOTO_SANS_SC_OFL", "width": 320, "height": 640, "safe_area": 8, "segment_height": 320,
+    "panels": [{"id": "authored", "shot_id": "shot", "order": 1, "x": 16, "y": 16, "width": 128, "height": 128,
+      "asset_id": "asset", "expected_asset_version": 2, "fit": "COVER", "cover_x_percent": 100, "cover_y_percent": 25,
+      "character_ids": ["alice"], "image_brief": "保留原始简报\nNo generation",
+      "appearance_references": [{"character_id": "alice", "asset_id": "asset", "expected_asset_version": 2, "note": "原外观"}],
+      "bubbles": [{"id": "speech", "kind": "DIALOGUE", "character_id": "alice", "text": "你好", "font_size": 14, "x": 24, "y": 24, "width": 112, "height": 48}]
+    }]
+  },
+  "target": {"sourceId": "authored", "x": 160, "y": 336},
+  "ids": {"panel": "duplicate", "bubbles": ["duplicate-speech"]},
+  "expectedPanel": {"id": "duplicate", "shot_id": "shot", "order": 2, "x": 160, "y": 336, "width": 128, "height": 128,
+    "asset_id": "asset", "expected_asset_version": 2, "fit": "COVER", "cover_x_percent": 100, "cover_y_percent": 25,
+    "character_ids": ["alice"], "image_brief": "保留原始简报\nNo generation",
+    "appearance_references": [{"character_id": "alice", "asset_id": "asset", "expected_asset_version": 2, "note": "原外观"}],
+    "bubbles": [{"id": "duplicate-speech", "kind": "DIALOGUE", "character_id": "alice", "text": "你好", "font_size": 14, "x": 168, "y": 344, "width": 112, "height": 48}]
+  }
+}

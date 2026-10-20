@@ -1,0 +1,38 @@
+{
+  "contract": "studio-bailian-text-preset-catalog/1",
+  "provider_id": "aliyun-bailian",
+  "regions": [
+    {
+      "id": "cn-beijing",
+      "label": "中国北京",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    },
+    {
+      "id": "ap-southeast-1",
+      "label": "新加坡",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    },
+    {
+      "id": "us-east-1",
+      "label": "美国弗吉尼亚",
+      "base_url": "https://dashscope-us.aliyuncs.com/compatible-mode/v1"
+    },
+    {
+      "id": "cn-hongkong",
+      "label": "中国香港",
+      "base_url": "https://cn-hongkong.dashscope.aliyuncs.com/compatible-mode/v1"
+    }
+  ],
+  "region_variable": "ALIYUN_BAILIAN_REGION",
+  "model_variable": "ALIYUN_BAILIAN_MODEL",
+  "endpoint_family": "DASHSCOPE_SHARED_PAY_AS_YOU_GO",
+  "modality": "TEXT",
+  "enable_thinking": false,
+  "model_id_required": true,
+  "current_configuration_included": false,
+  "credential_value_included": false,
+  "configuration_applied": false,
+  "network_called": false,
+  "model_called": false,
+  "official_reference": "https://www.alibabacloud.com/help/en/model-studio/base-url"
+}

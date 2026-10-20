@@ -96,3 +96,15 @@ class PostgresNarrativeRepository:
    c.execute("INSERT INTO narrative_events(id,project_id,subject_id,chapter_version_id,fingerprint,payload,storyline_id,branch_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",(event["id"],project,event["subject_id"],event["chapter_version_id"],event["fingerprint"],json.dumps(event),event.get("storyline_id"),event.get("branch_id")))
    c.execute("INSERT INTO narrative_chapter_links(id,project_id,chapter_id,chapter_version,entity_type,entity_id,progress_type,event_id,payload,storyline_id,branch_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(link["id"],project,link["chapter_id"],link["chapter_version"],link["entity_type"],link["entity_id"],link["progress_type"],link["event_id"],json.dumps(link),link.get("storyline_id"),link.get("branch_id")));c.commit()
   return link
+
+ def mutate_finding(self,project,finding_id,callback):
+  with self.connection_factory() as conn:
+   conn.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", ("narrative:" + project + ":" + finding_id,))
+   existing=conn.execute("SELECT project_id,payload FROM narrative_findings WHERE id=%s FOR UPDATE",(finding_id,)).fetchone()
+   if existing and existing[0]!=project:raise FileNotFoundError(finding_id)
+   result=callback(existing[1] if existing else None)
+   if result.get("project_id")!=project or result.get("id")!=finding_id:raise ValueError("FINDING_SCOPE_MISMATCH")
+   if existing:conn.execute("UPDATE narrative_findings SET payload=%s WHERE project_id=%s AND id=%s",(json.dumps(result),project,finding_id))
+   else:conn.execute("INSERT INTO narrative_findings (id,project_id,payload) VALUES (%s,%s,%s)",(finding_id,project,json.dumps(result)))
+   conn.commit()
+  return result

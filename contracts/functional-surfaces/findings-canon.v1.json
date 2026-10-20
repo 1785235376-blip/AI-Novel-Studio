@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "status": "FUNCTIONAL_SURFACE_CONTRACT",
+  "top_level_modules_added": [],
+  "flag": "finding_review_v1",
+  "default_enabled": false,
+  "surfaces": [
+    {
+      "id": "source-bound-findings",
+      "module": "Review",
+      "entry": "ContinuityCheckPanel / FindingReviewPanel",
+      "owners": [
+        "original continuity findings",
+        "original narrative findings"
+      ],
+      "apis": [
+        "GET /api[/v1]/projects/{nid}/{kind}/review-findings",
+        "POST /api[/v1]/projects/{nid}/{kind}/review-checks",
+        "GET /api[/v1]/projects/{nid}/{kind}/review-findings/{id}",
+        "GET /api[/v1]/projects/{nid}/{kind}/review-findings/{id}/history",
+        "GET /api[/v1]/projects/{nid}/{kind}/review-findings/{id}/evidence",
+        "POST /api[/v1]/projects/{nid}/{kind}/review-findings/{id}/review"
+      ],
+      "kinds": [
+        "continuity",
+        "narrative"
+      ],
+      "scope": [
+        "project",
+        "workspace",
+        "storyline",
+        "branch"
+      ],
+      "permissions": {
+        "read": "domain.read",
+        "check": "domain.write",
+        "review": "domain.review"
+      },
+      "versions": [
+        "expected_source_version",
+        "review_version",
+        "source_digest",
+        "finding_fingerprint",
+        "context_digest",
+        "operation_id"
+      ],
+      "actions": [
+        "check",
+        "resolve",
+        "intentional",
+        "reopen",
+        "feedback",
+        "open exact source",
+        "close without write",
+        "refresh history"
+      ],
+      "states": [
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "UNAUTHORIZED",
+        "DISABLED",
+        "NOT_CONFIGURED",
+        "CONFLICT",
+        "OPEN",
+        "RESOLVED",
+        "INTENTIONAL",
+        "REVIEW_REQUIRED",
+        "RECOVERY"
+      ],
+      "navigation": [
+        "existing Write chapter",
+        "exact current or historical chapter snapshot",
+        "existing branch manuscript authority"
+      ],
+      "invariants": [
+        "No mainline fallback in a branch",
+        "No unreviewed Canon or prose write",
+        "Suppression binds one exact source and fingerprint",
+        "History retained on source change",
+        "All reads reauthorize after loading",
+        "Legacy versionless actions cannot mutate source-bound rows",
+        "No inferred paragraph coordinates",
+        "Deterministic rule checks are not model quality verification"
+      ]
+    },
+    {
+      "id": "original-pending-canon-review",
+      "module": "Review",
+      "entry": "ContinuityCheckPanel / PendingCanonReviewPanel",
+      "owners": [
+        "original pending Canon",
+        "original approved Canon"
+      ],
+      "apis": [
+        "GET /api[/v1]/projects/{nid}/pending-canon/review",
+        "POST /api[/v1]/projects/{nid}/pending-canon/{id}/preview",
+        "POST /api[/v1]/projects/{nid}/pending-canon/{id}/review",
+        "POST /api[/v1]/projects/{nid}/pending-canon/{id}/recover",
+        "POST /api[/v1]/projects/{nid}/pending-canon/{id}/cancel-recovery"
+      ],
+      "scope": [
+        "project mainline only"
+      ],
+      "permissions": {
+        "read": "project domain.read",
+        "review_and_recovery": "project domain.review"
+      },
+      "versions": [
+        "expected_version",
+        "preview_digest",
+        "current source version and digest",
+        "operation_id",
+        "durable fact receipts"
+      ],
+      "actions": [
+        "preview",
+        "approve",
+        "reject",
+        "close without write",
+        "recover committed receipt",
+        "cancel uncommitted journal",
+        "read terminal history"
+      ],
+      "states": [
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "UNAUTHORIZED",
+        "DISABLED",
+        "NOT_CONFIGURED",
+        "EXPLICIT_CURRENT_SOURCE",
+        "SOURCE_UNAVAILABLE",
+        "CONFLICT",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RECOVERY_REQUIRED"
+      ],
+      "navigation": [
+        "original project Canon candidate",
+        "exact current chapter snapshot",
+        "retained reviewed source and history"
+      ],
+      "invariants": [
+        "Branch-only roles never confer project Canon permission",
+        "Approval requires versioned preview plus human confirmation and reason",
+        "No second Canon owner",
+        "No Research auto-promotion",
+        "Terminal legacy saves/actions cannot duplicate facts or reopen rows",
+        "File recovery after commit does not require a still-existing source",
+        "Unavailable sources do not reveal snapshots or crash the inbox",
+        "PostgreSQL commits facts and receipt transactionally",
+        "No fabricated generation-time lineage"
+      ]
+    }
+  ],
+  "opus_visual_scope": [
+    "Token-based visual layout inside existing Write/Review surfaces",
+    "Accessible control presentation",
+    "Loading, history and source snapshot presentation"
+  ],
+  "opus_protected_behavior": [
+    "Original owner routing",
+    "Feature flags",
+    "CAS and evidence fences",
+    "Project versus branch authorization",
+    "Human review",
+    "Terminal receipt idempotency",
+    "Recovery and cancellation boundaries",
+    "Late-response withholding",
+    "PoemSeed Local Interop 1.0"
+  ],
+  "inbox_integration": {
+    "owner": "UnifiedReviewInbox read-through bindings; original domain services retain all writes",
+    "domains": [
+      "continuity_finding",
+      "narrative_finding",
+      "pending_canon"
+    ],
+    "feature": "finding_review_v1",
+    "entry": "Existing Unified Review Inbox / InboxPanel domain filter",
+    "allowed_actions": [],
+    "batch_actions": [],
+    "identity": [
+      "original record ID",
+      "review_revision",
+      "source_revision",
+      "source_versions",
+      "source_hash",
+      "authority_scope"
+    ],
+    "navigation_status": "FORMAL_TARGET_ONLY; generic Inbox renders metadata, not an exact-open control",
+    "canon_deduplication": "Suppress legacy_canon only if finding_review_v1 is enabled and replacement pending_canon binding is mounted",
+    "read_fences": [
+      "before/after original domain authorization",
+      "before/after flags",
+      "project-level Canon permission independent of branch role",
+      "final aggregate Inbox authorization"
+    ],
+    "historical_source": "Canon retains the reviewed source revision; separately reports current_source_revision and does not claim a changed historical snapshot is available"
+  }
+}

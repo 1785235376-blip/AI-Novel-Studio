@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.lore.schemas import Evidence,LoreProposal,ProposalEvidenceRelation,CharacterMemory,MemorySnapshot
 from app.lore.validators import require_evidence_transition,require_proposal_transition
 from app.models.lore import EvidenceModel,LoreProposalEvidenceModel,LoreProposalModel,CharacterMemoryModel,MemorySnapshotModel
-from .common import chapter_or_raise,external_uuid,novel_or_raise
+from .common import chapter_or_raise,external_uuid,novel_or_raise,chapter_external_id
 from .models import ChapterModel,NovelModel,CharacterModel
 REQUIRED_TABLES={"evidence_records","lore_proposals","lore_proposal_evidence","character_memories","memory_snapshots"}
 def now():return datetime.now(timezone.utc)
@@ -18,7 +18,9 @@ class PostgresLoreRepository:
  def _chapter(session,cid):
   if not cid:return None
   row=session.get(ChapterModel,cid);novel=session.get(NovelModel,row.novel_id) if row else None
-  return f"{novel.slug}:{row.chapter_number}" if row and novel else None
+  if row and novel:
+   cid=chapter_external_id(novel,row);chapter_or_raise(session,cid);return cid
+  return None
  def _ev(self,s,x):
   novel=s.get(NovelModel,x.novel_id);loc=dict(x.locator or {});eid=loc.pop("_external_id",str(x.id))
   return Evidence.model_validate({"id":eid,"novel_id":novel.slug,"schema_version":x.schema_version,"source_type":x.source_type,"source_id":x.source_id,"chapter_id":self._chapter(s,x.chapter_id),"chapter_version":x.chapter_version,"generation_job_id":str(x.generation_job_id) if x.generation_job_id else None,"excerpt":x.excerpt,"locator":loc,"content_hash":x.content_hash,"privacy":x.privacy,"status":x.status,"invalidation_reason":x.invalidation_reason,"created_at":x.created_at,"updated_at":x.updated_at}).model_dump(mode="json")

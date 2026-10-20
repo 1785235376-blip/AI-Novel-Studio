@@ -1,0 +1,1116 @@
+{
+  "scope": "real File TimelinePlayback preview/build/cache/reopen/candidate/attestation; CPU FFmpeg only",
+  "row": {
+    "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "title": "Half preview proof",
+    "version": 1,
+    "timeline_digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 1000,
+      "fps": 10,
+      "height": 66,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 66,
+              "id": "clip",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1000,
+              "source_snapshot": {
+                "asset_kind": "video",
+                "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 98,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "picture",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        }
+      ],
+      "width": 98
+    },
+    "created_at": "2026-10-19T23:05:31.888600+00:00",
+    "updated_at": "2026-10-19T23:05:31.888600+00:00",
+    "branch_id": null
+  },
+  "source": {
+    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "filename": "synthetic-source.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 26864,
+    "sha256": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+    "branch_id": null,
+    "created_at": "2026-10-19T23:05:31.814680+00:00",
+    "updated_at": "2026-10-19T23:05:31.814680+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "1f96603ae7cf4414afe4d02b65b6309b",
+    "provenance": {
+      "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+      "label": "synthetic-source.mp4",
+      "kind": "video",
+      "version": 1,
+      "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "half_preview": {
+    "contract": "studio-timeline-export-preview/1",
+    "timeline_snapshot": {
+      "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+      "version": 1,
+      "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+    },
+    "export_profile": {
+      "preset": "DELIVERY_H264_MP4",
+      "video_bitrate_kbps": 1500,
+      "audio_bitrate_kbps": 96,
+      "crf": 28,
+      "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+    },
+    "sources": [
+      {
+        "asset_kind": "video",
+        "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+        "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+        "kind": "ASSET",
+        "version": 1
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 1000,
+        "fps": 10,
+        "height": 66,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 66,
+                "id": "clip",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 1000,
+                "source_snapshot": {
+                  "asset_kind": "video",
+                  "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                  "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 98,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "picture",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          }
+        ],
+        "width": 98
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28,
+        "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+    },
+    "limits": {
+      "max_output_bytes": 26214400,
+      "render_timeout_seconds": 120
+    },
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "preview_digest": "1892f1386ab252f221c3baffd176be4dea5d3a4279915378c9d60451a5635a43"
+  },
+  "normal_preview": {
+    "contract": "studio-timeline-export-preview/1",
+    "timeline_snapshot": {
+      "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+      "version": 1,
+      "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+    },
+    "export_profile": {
+      "preset": "DELIVERY_H264_MP4",
+      "video_bitrate_kbps": 1500,
+      "audio_bitrate_kbps": 96,
+      "crf": 28
+    },
+    "sources": [
+      {
+        "asset_kind": "video",
+        "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+        "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+        "kind": "ASSET",
+        "version": 1
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 1000,
+        "fps": 10,
+        "height": 66,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 66,
+                "id": "clip",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 1000,
+                "source_snapshot": {
+                  "asset_kind": "video",
+                  "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                  "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 98,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "picture",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          }
+        ],
+        "width": 98
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "973c43e508a3ece210ae430004d3877f62c9d4d3fbd5ef8df89c9044cdabdfde"
+    },
+    "limits": {
+      "max_output_bytes": 26214400,
+      "render_timeout_seconds": 120
+    },
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "preview_digest": "139ce33bf65db7588e7474a569205e3ae9e26f13337813834a07f32ea9c0ba7e"
+  },
+  "half_playback_preview": {
+    "contract": "studio-timeline-playback/1",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "branch_id": null,
+    "cache_key": "01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "request_id": "playback_01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "job_id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+    "export_preview": {
+      "contract": "studio-timeline-export-preview/1",
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28,
+        "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+      },
+      "limits": {
+        "max_output_bytes": 26214400,
+        "render_timeout_seconds": 120
+      },
+      "model_called": false,
+      "automatic_replay": false,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "preview_digest": "1892f1386ab252f221c3baffd176be4dea5d3a4279915378c9d60451a5635a43"
+    },
+    "job": null,
+    "cache_state": "MISSING",
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "playback_digest": "43b0fc975a70f152e73bc04b237394a4b7d00fcd34efe67d29fd01c7618b5d22"
+  },
+  "normal_playback_preview": {
+    "contract": "studio-timeline-playback/1",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "branch_id": null,
+    "cache_key": "aeed35c1fea5ac6b73b1fd3dde5bc75e4992c3755831f92ff0d66e478a164859",
+    "request_id": "playback_aeed35c1fea5ac6b73b1fd3dde5bc75e4992c3755831f92ff0d66e478a164859",
+    "job_id": "d3a1cb46bf856b9355b940e3a7f6a5044dc9111647cc1e241aa2a54923639573",
+    "export_preview": {
+      "contract": "studio-timeline-export-preview/1",
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "973c43e508a3ece210ae430004d3877f62c9d4d3fbd5ef8df89c9044cdabdfde"
+      },
+      "limits": {
+        "max_output_bytes": 26214400,
+        "render_timeout_seconds": 120
+      },
+      "model_called": false,
+      "automatic_replay": false,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "preview_digest": "139ce33bf65db7588e7474a569205e3ae9e26f13337813834a07f32ea9c0ba7e"
+    },
+    "job": null,
+    "cache_state": "MISSING",
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "playback_digest": "68635ad08b2974f5b32e15363a0ebb9b8aac1bc6d76995ffcd25cab7b46c36f6"
+  },
+  "half_playback_built": {
+    "contract": "studio-timeline-playback/1",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "branch_id": null,
+    "cache_key": "01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "request_id": "playback_01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "job_id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+    "export_preview": {
+      "contract": "studio-timeline-export-preview/1",
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28,
+        "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+      },
+      "limits": {
+        "max_output_bytes": 26214400,
+        "render_timeout_seconds": 120
+      },
+      "model_called": false,
+      "automatic_replay": false,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "preview_digest": "1892f1386ab252f221c3baffd176be4dea5d3a4279915378c9d60451a5635a43"
+    },
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "timeline",
+      "id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+      "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+      "branch_id": null,
+      "version": 4,
+      "status": "SUCCEEDED",
+      "request_digest": "594910914a6ec352d5cda2aeb0aaa51ef2e3a12ebdd486351eaf33d933d2178c",
+      "receipt_digest": "85fbf132d589214633e08669d30df668113d19d4ffda2f9253695f16653be992",
+      "attempt": null,
+      "created_at": "2026-10-19T23:05:34.046009+00:00",
+      "updated_at": "2026-10-19T23:05:37.134113+00:00",
+      "error_code": null,
+      "review_state": "HUMAN_REVIEW_REQUIRED",
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m9.timeline.multitrack",
+      "output_candidate": {
+        "id": "d767d1f6-3a29-493b-b4f5-885bcd6f6de7",
+        "version": 1,
+        "digest": "9f953a5fad828c356a5cd5e5f2ef2ef005565ef97044be6c75d1a1dfceb5fea0",
+        "kind": "video"
+      },
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "command": null,
+      "provider": null,
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+      },
+      "media_measurement": {
+        "duration_ms": 1000,
+        "byte_count": 4161,
+        "width": 48,
+        "height": 32,
+        "fps": 10.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "sample_rate": 48000,
+        "channels": 2,
+        "container": "mp4",
+        "profile_validation": "NATIVE_FFPROBE_EXACT",
+        "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4",
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        }
+      },
+      "approved_asset_version": null,
+      "request_id": "playback_01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "cache_state": "RECORDED",
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "playback_digest": "43b0fc975a70f152e73bc04b237394a4b7d00fcd34efe67d29fd01c7618b5d22"
+  },
+  "half_playback_reopened": {
+    "contract": "studio-timeline-playback/1",
+    "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+    "branch_id": null,
+    "cache_key": "01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "request_id": "playback_01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "job_id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+    "export_preview": {
+      "contract": "studio-timeline-export-preview/1",
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 1500,
+        "audio_bitrate_kbps": 96,
+        "crf": 28,
+        "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+      },
+      "limits": {
+        "max_output_bytes": 26214400,
+        "render_timeout_seconds": 120
+      },
+      "model_called": false,
+      "automatic_replay": false,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "preview_digest": "1892f1386ab252f221c3baffd176be4dea5d3a4279915378c9d60451a5635a43"
+    },
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "timeline",
+      "id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+      "novel_id": "v2-independent-a5b8250c83c640c38643adf6a40a8b5c",
+      "branch_id": null,
+      "version": 4,
+      "status": "SUCCEEDED",
+      "request_digest": "594910914a6ec352d5cda2aeb0aaa51ef2e3a12ebdd486351eaf33d933d2178c",
+      "receipt_digest": "85fbf132d589214633e08669d30df668113d19d4ffda2f9253695f16653be992",
+      "attempt": null,
+      "created_at": "2026-10-19T23:05:34.046009+00:00",
+      "updated_at": "2026-10-19T23:05:37.134113+00:00",
+      "error_code": null,
+      "review_state": "HUMAN_REVIEW_REQUIRED",
+      "cancellation_mode": null,
+      "needs_reconciliation": false,
+      "execution_state": "SUCCEEDED",
+      "operation_id": "m9.timeline.multitrack",
+      "output_candidate": {
+        "id": "d767d1f6-3a29-493b-b4f5-885bcd6f6de7",
+        "version": 1,
+        "digest": "9f953a5fad828c356a5cd5e5f2ef2ef005565ef97044be6c75d1a1dfceb5fea0",
+        "kind": "video"
+      },
+      "timeline_snapshot": {
+        "id": "142fc79f-14ea-4f1d-92f0-4bcf65613542",
+        "version": 1,
+        "digest": "ee43c3d3a2d8179f07dec8efb0f19a0db2160f28d78af9bd1e4fd815d90f3b01"
+      },
+      "sources": [
+        {
+          "asset_kind": "video",
+          "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+          "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+          "kind": "ASSET",
+          "version": 1
+        }
+      ],
+      "command": null,
+      "provider": null,
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m9.timeline.multitrack",
+        "adapter": "LOCAL_FFMPEG",
+        "output_profile": "DELIVERY_H264_MP4",
+        "timeline": {
+          "captions": [],
+          "duration_ms": 1000,
+          "fps": 10,
+          "height": 66,
+          "schema_version": 2,
+          "tracks": [
+            {
+              "clips": [
+                {
+                  "fade_in_ms": 0,
+                  "fade_out_ms": 0,
+                  "gain_db": 0.0,
+                  "height": 66,
+                  "id": "clip",
+                  "in_ms": 0,
+                  "include_audio": false,
+                  "muted": false,
+                  "opacity": 1.0,
+                  "out_ms": 1000,
+                  "source_snapshot": {
+                    "asset_kind": "video",
+                    "digest": "c8dffe1caf611afd7a648c7b359b9ca14265e1e655b2edfa9856992a2487c735",
+                    "id": "32435a5b-78ff-4e0c-be20-d6ca21596bd5",
+                    "kind": "ASSET",
+                    "version": 1
+                  },
+                  "speed_den": 1,
+                  "speed_num": 1,
+                  "start_ms": 0,
+                  "width": 98,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "gain_db": 0.0,
+              "id": "picture",
+              "kind": "VIDEO",
+              "muted": false,
+              "order": 0,
+              "role": "PRIMARY"
+            }
+          ],
+          "width": 98
+        },
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        },
+        "automatic_fallback": false,
+        "recipe_digest": "5b0775797ad3eef2cb2d4406d4ace14125457a02d35d65e3b406feb6c1e1d63d"
+      },
+      "media_measurement": {
+        "duration_ms": 1000,
+        "byte_count": 4161,
+        "width": 48,
+        "height": 32,
+        "fps": 10.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "sample_rate": 48000,
+        "channels": 2,
+        "container": "mp4",
+        "profile_validation": "NATIVE_FFPROBE_EXACT",
+        "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4",
+        "export_profile": {
+          "preset": "DELIVERY_H264_MP4",
+          "video_bitrate_kbps": 1500,
+          "audio_bitrate_kbps": 96,
+          "crf": 28,
+          "preview_scale": "HALF_EVEN_FLOOR_BILINEAR_V1"
+        }
+      },
+      "approved_asset_version": null,
+      "request_id": "playback_01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "cache_state": "RECORDED",
+    "model_called": false,
+    "automatic_replay": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "playback_digest": "43b0fc975a70f152e73bc04b237394a4b7d00fcd34efe67d29fd01c7618b5d22"
+  },
+  "half_attestation": {
+    "contract": "studio-timeline-playback-attestation/1",
+    "cache_key": "01c80e6cd9ac2e7b3e657a5640823739e44b46747ac12909f977ab1555fd53fd",
+    "playback_digest": "43b0fc975a70f152e73bc04b237394a4b7d00fcd34efe67d29fd01c7618b5d22",
+    "job_id": "577c631995729fe53649a9745690ae250c93c31dbce534d705a76e8a3a707403",
+    "job_version": 4,
+    "request_digest": "594910914a6ec352d5cda2aeb0aaa51ef2e3a12ebdd486351eaf33d933d2178c",
+    "asset_version": 1,
+    "sha256": "9f953a5fad828c356a5cd5e5f2ef2ef005565ef97044be6c75d1a1dfceb5fea0",
+    "byte_count": 4161,
+    "media_type": "video/mp4",
+    "product_acceptance": "LOCAL_REQUIRED"
+  },
+  "probe": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "mime_codec_string": "avc1.640015",
+        "width": 48,
+        "height": 32,
+        "coded_width": 48,
+        "coded_height": 32,
+        "has_b_frames": 2,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "3:2",
+        "pix_fmt": "yuv420p",
+        "level": 21,
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "10/1",
+        "avg_frame_rate": "10/1",
+        "time_base": "1/10240",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 10240,
+        "duration": "1.000000",
+        "bit_rate": "15920",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "10",
+        "extradata_size": 44,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "encoder": "Lavc62.28.102 libx264"
+        }
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_long_name": "AAC (Advanced Audio Coding)",
+        "profile": "LC",
+        "codec_type": "audio",
+        "codec_tag_string": "mp4a",
+        "codec_tag": "0x6134706d",
+        "mime_codec_string": "mp4a.40.2",
+        "sample_fmt": "fltp",
+        "sample_rate": "48000",
+        "channels": 2,
+        "channel_layout": "stereo",
+        "bits_per_sample": 0,
+        "initial_padding": 0,
+        "id": "0x2",
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0",
+        "time_base": "1/48000",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 48000,
+        "duration": "1.000000",
+        "bit_rate": "2389",
+        "nb_frames": "48",
+        "extradata_size": 5,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "SoundHandler"
+        }
+      }
+    ],
+    "format": {
+      "filename": "D:\\codex\u6570\u636e\\2026-10-19\\task-5\\half-preview-proxy\\.runtime\\proxy-playback1\\test_real_playback_half_cache_0\\actual-playback-half.mp4",
+      "nb_streams": 2,
+      "nb_programs": 0,
+      "nb_stream_groups": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "1.000000",
+      "size": "4161",
+      "bit_rate": "33288",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "encoder": "Lavf62.12.102"
+      }
+    }
+  },
+  "render_calls": 1,
+  "default_exact_parent": "d9b2ea4b602af099f133e7ef7e954fb7618979ae",
+  "engine_key_changed": true,
+  "version_key_changed": true,
+  "stale_source_rejected": true,
+  "private_candidate": true,
+  "timeline_unchanged_before_deliberate_version_test": true
+}

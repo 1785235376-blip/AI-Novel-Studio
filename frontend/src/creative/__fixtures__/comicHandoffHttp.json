@@ -1,0 +1,693 @@
+{
+  "prefix": "/api",
+  "request": {
+    "title": "HTTP static draft",
+    "width": 640,
+    "height": 360,
+    "fps": 24,
+    "pages": [
+      {
+        "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+        "version": 2,
+        "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+        "duration_ms": 10000
+      },
+      {
+        "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+        "version": 2,
+        "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+        "duration_ms": 10000
+      }
+    ]
+  },
+  "preview_response": {
+    "preview": {
+      "contract": "studio-comic-timeline-handoff/1",
+      "scope_key": "50be337b621f2623cbcb2bcecb9f034cfdcf16a57900f651a7a3753444e013de",
+      "incarnation": "file:131c653b-f341-4713-82d5-fbd4bca77c0d",
+      "actor": "local-author",
+      "request": {
+        "title": "HTTP static draft",
+        "pages": [
+          {
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "version": 2,
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "duration_ms": 10000
+          },
+          {
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "version": 2,
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "duration_ms": 10000
+          }
+        ],
+        "width": 640,
+        "height": 360,
+        "fps": 24
+      },
+      "request_digest": "f046160df11b6694c0f40903bdec0d3f681642e68f12d3a4c731f5cdffb2cad1",
+      "pages": [
+        {
+          "source": {
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "version": 2,
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "document_digest": "6fe78c52d4effbd38da3b7e24e1fdb69071c45ebe991517f53664693a45e9538"
+          },
+          "duration_ms": 10000,
+          "width": 320,
+          "height": 640,
+          "png_sha256": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+          "bytes": 1966,
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        },
+        {
+          "source": {
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "version": 2,
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "document_digest": "b53fb5d662f939024007d6451e5019815e0e604d48c99d11e57813bf52f0af57"
+          },
+          "duration_ms": 10000,
+          "width": 320,
+          "height": 640,
+          "png_sha256": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+          "bytes": 5114,
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c"
+        }
+      ],
+      "duration_ms": 20000,
+      "losses": [
+        "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+        "NO_PANEL_MOTION_OR_AUDIO",
+        "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+        "ORIGINAL_COMIC_PAGES_UNCHANGED"
+      ],
+      "automatic_dispatch": false,
+      "model_called": false,
+      "video_rendered": false,
+      "approval_inherited": false,
+      "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485"
+    },
+    "pages": [
+      {
+        "index": 0,
+        "png_base64": "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"
+      },
+      {
+        "index": 1,
+        "png_base64": "iVBORw0KGgoAAAANSUhEUgAAAUAAAAKACAIAAABi8jbUAAATwUlEQVR4nO3df6zVdeHH8c/hXn4IokLMOwQ2ERO0VggoSbC54Y80ERstqyHkD0qijA2bLTGqIaMfWxLdfmHLOWhZDKXNVZa0IAN/TIf9gpAuCS5xgYAD5cflfPf17Ht2v8D9AVzhvu59PP4659zPr3Pu53nen/M5nwulcrlcAJm6ne4NAE6cgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCGYgCFYbXstqFQqtdeioNMov8P/7roRGIK12whc4f95gFN5TGoEhmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmAChmC1RbJSqXS6N4EOoVwuF11SZMC6pbldotzFSq6NTrer/bZodccovX2j6+wYSQF32XdZWlX+v12ispOUSqUuspNkBCxd2qj8drelt3WF9/qAs9Dq5SQH5E4sIOCKTv9WSvsqd40dpqMH3EUOhHhHD6eLzqtDB6xeTlK5szfcoQMGUgM2/NIuyp16EO64AQOtEnCYcrn8/PPPv/rqqye5nF27dv3sZz/bvn17O20Xp0cHvZDj1B8/79q1a+PGjWPHjm364NatW/fu3dvyjCNGjChOofnz53/lK1/52Mc+9sgjj5zMcn7wgx98+ctfnjJlyvLly4vOrlwuVy7t6HxfZ7TbU2rf5I5raePHj9+wYcOAAQOOdy3XXnvtokWLKrdvuummlStXTpw48etf//q4ceMqD1511VVPPvlkyws5YiNvuummDRs2HO+WFEUxevToZcuWtTrZ66+/PnTo0N27dz/99NOXX355caIOHDgwYsSIhoaGZ599dsyYMUVnVzrlQ8KpWWMHHYGPy0svvbTjbcc743vf+97q7YceemjBggUPPPDABz/4wY9+9KOLFi0677zziqIYNGjQtm3bjjn7iBEjNm7ceMSDW7ZsOfrBtmjjG1C/fv1mzZq1YMGC+fPn/+pXv2p1+hYOECqv2Ic+9KHmVn1i70ScUuV2chqXVldX17Nnz2P+aNWqVbfddtuDDz7YxkX94x//GDduXN++fTdu3FgulydOnHjKXsC2+/e//33ppZcuWLCgLRN3hH2jIyhO+TM6NWvs5AHfcMMNRVH8+Mc/bvuqDx48+MILL1RuT5w4sa6urqEZF1xwwTv0G5o8efLJhNd0q4qiGD58+PFuwPDhwwUcEXBnOIRu6oc//GH19t69ex9//PE+ffocOHCg6eNFUZxzzjkf//jHj7mE2trakSNHNn3krbfeOuaUrY5vX/3qV1ue4PLLL7/++uuPfnzQoEGVhIqiqByQV+8e00svvdTY2DhkyJDevXu3vEY6m/Z6J+ggI3Abn3UbB6WTPIRudd5Zs2a1ug0333xzURR//vOfm5tg69atNTU1/fr1e+utt465DW0fgatLMAJ3tCKa0wm/B251fz16lvvvv3/q1KkNDQ1HPP773/++1VfwiFnmzJkzderU6t177rmn6ZS33377MWccOXLkLbfccsync9dddxVF8Y1vfKO55/ujH/2osbHx1ltv7dmz59E/XbNmTeXk9lVXXVVqzXnnnbdq1aqiKJYtW7ZmzZrm1kjH0RkOoQ8fPtz0QrlyuXzo0KG2z75///41a9b89re/XbFixdy5c7/4xS927979uC6+a2hoOP/88yu3V65cuXnz5qVLlx7XU1i/fn2vXr2O+aNx48ZdeeWVK1eufO65547+vmfPnj319fW1tbWf//znjzn7+PHjKzeGDBnS3HH466+//tprrxVFcdlll11xxRWV77SOa/s5bU5uAD9yIDotS+vfv3/fvn2bzngCo/SSJUv69OlTFMWYMWPeeOONyqI++clP/uNtRVF86Utfqt6eO3du5fatt95aCbi6nGHDhlW3vNURuHoIXRTF2LFjm3uCq1evLoriAx/4wOHDh4/40b333lsUxR133FE+UevXrx88eHBRFLfddtuBAwfKnVTRrvtnx1ljZxiB33zzzb59+1bvDhw48Jvf/GYL0x/zYPWOO+4YP3785MmTBw8efOaZZ1Ye7NevX/V71Lq6uqNv9+/fv+Vte/bZZx944IHq3RdffLHp3TaaMGHCzTff/Mgjj9TX13/uc5+rPr5p06Zvf/vbvXv3njdvXnFClixZMnv27MbGxvr6+s9+9rMnthBOp/Z6JzhdS6scLV9wwQXVGdvyGbi5aXbs2LF9+/bqZCc/AresjSNwuVzetm3b2Wef3atXr7/+9a/VJ165Yuxb3/pW+YRcd911RVFcccUVf/vb38qdXdGu+2fHWWP8pZQ7duwYMGDAZZdd9swzz1RmrKurmz9/fguzzJgxY/jw4a1eZnRin4EvvPDCzZs3V/+E7Z577lm4cGF1gbfffvuDDz5YvTtr1qzvfe97ldtjx45dt25dC2t5+OGHp0+fPmzYsKeffvpd73rX7NmzFy1aNG7cuNWrV9fU1BTHb/Dgwa+88soRZxA6q5JLKTumV155pSiKymWPFdu3b58xY8YJL/C+++778Ic/PGzYsE2bNrU85Z49e+rq6gYNGlScEtOmTVu9evVPfvKTG264YfLkyYsWLRo4cOAvfvGLFur9zW9+UxlmW9CtW7PfRPz0pz/91Kc+dXJbzTsr/jPwli1biqKoDoBvvPHGERP07dv3wgsvfOGFF9qy1z7//PP333//5s2b+/fvX19f3+rae/Xq9dRTT40aNao4Jerr6zdt2rR69ep169b17t37sccea/nto0+fPi1cAdLqJSJnn332SW8y76z4gP/+978XRXHJJZdU7p555pl//OMfV65cOWPGjIsvvrjyYE1NTeW81KpVq/75z3/eeeedzS3t7rvvLpVKc+fOffPNN8ePH7906dLHH3/8mmuuqXzWbeq73/3u2rVrr7zyyksvvbSFzfvOd77T9CKwhx566GT+fK+mpmbEiBGVk9Lnnntuq6fQJkyY0MInhcohtL9YiBYfcOVzY7WinTt33nLLLTt27Pj0pz99xJSNjY0LFix48sknu3XrdvRPi6J49NFH//CHP0ydOrXydjB69Ogbb7zxmmuueeKJJ8aMGfO1r32ttvZ/X679+/fPmTNn7dq1o0aN+vnPf97CB8jPfOYzLW989Uvatti0adPUqVOfeeaZc88996KLLvrTn/40atSoxYsXT58+ve0LobNpr7Nhp2Vphw4d6tev31lnnXXo0KFyuXzgwIHKxY9Lly495jnnPXv2vP/97+/Wrdtjjz12xKL27ds3dOjQHj16ND2lXC6X9+7de+ONN1Z6Xrt27a9//evKMeekSZN279599CY1PQt9XM+3hbPQu3fvvvfeeysXWk2YMOHll1/ev39/9fuk6667bsOG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"
+      }
+    ]
+  },
+  "confirm": {
+    "request_id": "http-create",
+    "request": {
+      "title": "HTTP static draft",
+      "width": 640,
+      "height": 360,
+      "fps": 24,
+      "pages": [
+        {
+          "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+          "version": 2,
+          "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+          "duration_ms": 10000
+        },
+        {
+          "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+          "version": 2,
+          "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+          "duration_ms": 10000
+        }
+      ]
+    },
+    "reviewed_preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+    "acknowledge_losses": true
+  },
+  "created": {
+    "id": "159cd26b-54cf-464b-a848-913aed1a8282",
+    "request_id": "http-create",
+    "version": 4,
+    "status": "DRAFT_CREATED",
+    "steps": [
+      {
+        "asset_id": "4b763a38-4bb0-4252-a56b-13e1025f9789",
+        "asset_version": 1,
+        "state": "READY",
+        "observed_state": "READY"
+      },
+      {
+        "asset_id": "f606a81d-5a99-47be-9f64-d1fcd16579fb",
+        "asset_version": 1,
+        "state": "READY",
+        "observed_state": "READY"
+      }
+    ],
+    "preview": {
+      "actor": "local-author",
+      "approval_inherited": false,
+      "automatic_dispatch": false,
+      "contract": "studio-comic-timeline-handoff/1",
+      "duration_ms": 20000,
+      "incarnation": "file:131c653b-f341-4713-82d5-fbd4bca77c0d",
+      "losses": [
+        "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+        "NO_PANEL_MOTION_OR_AUDIO",
+        "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+        "ORIGINAL_COMIC_PAGES_UNCHANGED"
+      ],
+      "model_called": false,
+      "pages": [
+        {
+          "bytes": 1966,
+          "duration_ms": 10000,
+          "height": 640,
+          "png_sha256": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+          "source": {
+            "document_digest": "6fe78c52d4effbd38da3b7e24e1fdb69071c45ebe991517f53664693a45e9538",
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "version": 2
+          },
+          "width": 320
+        },
+        {
+          "bytes": 5114,
+          "duration_ms": 10000,
+          "height": 640,
+          "png_sha256": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+          "source": {
+            "document_digest": "b53fb5d662f939024007d6451e5019815e0e604d48c99d11e57813bf52f0af57",
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "version": 2
+          },
+          "width": 320
+        }
+      ],
+      "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+      "request": {
+        "fps": 24,
+        "height": 360,
+        "pages": [
+          {
+            "duration_ms": 10000,
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "version": 2
+          },
+          {
+            "duration_ms": 10000,
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "version": 2
+          }
+        ],
+        "title": "HTTP static draft",
+        "width": 640
+      },
+      "request_digest": "f046160df11b6694c0f40903bdec0d3f681642e68f12d3a4c731f5cdffb2cad1",
+      "scope_key": "50be337b621f2623cbcb2bcecb9f034cfdcf16a57900f651a7a3753444e013de",
+      "video_rendered": false
+    },
+    "timeline_snapshot": {
+      "digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+      "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+      "version": 1
+    },
+    "automatic_dispatch": false,
+    "model_called": false,
+    "video_rendered": false,
+    "approval_inherited": false,
+    "source_current_checked": false,
+    "timeline": {
+      "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+      "novel_id": "r3-mounted-6703a36db7aa411eac53e937cf56f344",
+      "title": "HTTP static draft",
+      "version": 1,
+      "timeline_digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 20000,
+        "fps": 24,
+        "height": 360,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 360,
+                "id": "comic-page-1",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 10000,
+                "source_snapshot": {
+                  "asset_kind": "image",
+                  "digest": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+                  "id": "4b763a38-4bb0-4252-a56b-13e1025f9789",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 640,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 360,
+                "id": "comic-page-2",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 10000,
+                "source_snapshot": {
+                  "asset_kind": "image",
+                  "digest": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+                  "id": "f606a81d-5a99-47be-9f64-d1fcd16579fb",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 10000,
+                "width": 640,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "comic-pages-video",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          }
+        ],
+        "width": 640
+      },
+      "created_at": "2026-10-19T07:23:24.093490+00:00",
+      "updated_at": "2026-10-19T07:23:24.093490+00:00",
+      "branch_id": null,
+      "comic_handoff_origin": {
+        "contract": "studio-comic-timeline-handoff/1",
+        "creation_snapshot": {
+          "digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+          "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+          "version": 1
+        },
+        "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+        "receipt_id": "159cd26b-54cf-464b-a848-913aed1a8282",
+        "request_id": "http-create"
+      }
+    },
+    "timeline_state": "CREATION_SNAPSHOT"
+  },
+  "readback": {
+    "id": "159cd26b-54cf-464b-a848-913aed1a8282",
+    "request_id": "http-create",
+    "version": 4,
+    "status": "DRAFT_CREATED",
+    "steps": [
+      {
+        "asset_id": "4b763a38-4bb0-4252-a56b-13e1025f9789",
+        "asset_version": 1,
+        "state": "READY",
+        "observed_state": "READY"
+      },
+      {
+        "asset_id": "f606a81d-5a99-47be-9f64-d1fcd16579fb",
+        "asset_version": 1,
+        "state": "READY",
+        "observed_state": "READY"
+      }
+    ],
+    "preview": {
+      "actor": "local-author",
+      "approval_inherited": false,
+      "automatic_dispatch": false,
+      "contract": "studio-comic-timeline-handoff/1",
+      "duration_ms": 20000,
+      "incarnation": "file:131c653b-f341-4713-82d5-fbd4bca77c0d",
+      "losses": [
+        "WHOLE_PAGES_FLATTENED_TO_STATIC_PNG",
+        "NO_PANEL_MOTION_OR_AUDIO",
+        "TIMELINE_DRAFT_ONLY_NO_VIDEO_RENDER_OR_APPROVAL",
+        "ORIGINAL_COMIC_PAGES_UNCHANGED"
+      ],
+      "model_called": false,
+      "pages": [
+        {
+          "bytes": 1966,
+          "duration_ms": 10000,
+          "height": 640,
+          "png_sha256": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+          "source": {
+            "document_digest": "6fe78c52d4effbd38da3b7e24e1fdb69071c45ebe991517f53664693a45e9538",
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "version": 2
+          },
+          "width": 320
+        },
+        {
+          "bytes": 5114,
+          "duration_ms": 10000,
+          "height": 640,
+          "png_sha256": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+          "render_fingerprint": "89805639b3b26b709f997d74e3d7d2142c598d5f8bf8b825746a9e2c153ecc7c",
+          "source": {
+            "document_digest": "b53fb5d662f939024007d6451e5019815e0e604d48c99d11e57813bf52f0af57",
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "version": 2
+          },
+          "width": 320
+        }
+      ],
+      "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+      "request": {
+        "fps": 24,
+        "height": 360,
+        "pages": [
+          {
+            "duration_ms": 10000,
+            "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+            "review_digest": "e8b2dae26e42f9efff6c0bd238b0e613c196ed0ed6e802484b5edce66cd70dfc",
+            "version": 2
+          },
+          {
+            "duration_ms": 10000,
+            "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+            "review_digest": "b392c5a7579d5ce77ef4dfc1f470c17b89e6e72bec5f63f429c36e8b3ac32756",
+            "version": 2
+          }
+        ],
+        "title": "HTTP static draft",
+        "width": 640
+      },
+      "request_digest": "f046160df11b6694c0f40903bdec0d3f681642e68f12d3a4c731f5cdffb2cad1",
+      "scope_key": "50be337b621f2623cbcb2bcecb9f034cfdcf16a57900f651a7a3753444e013de",
+      "video_rendered": false
+    },
+    "timeline_snapshot": {
+      "digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+      "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+      "version": 1
+    },
+    "automatic_dispatch": false,
+    "model_called": false,
+    "video_rendered": false,
+    "approval_inherited": false,
+    "source_current_checked": false,
+    "timeline": {
+      "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+      "novel_id": "r3-mounted-6703a36db7aa411eac53e937cf56f344",
+      "title": "HTTP static draft",
+      "version": 1,
+      "timeline_digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+      "timeline": {
+        "captions": [],
+        "duration_ms": 20000,
+        "fps": 24,
+        "height": 360,
+        "schema_version": 2,
+        "tracks": [
+          {
+            "clips": [
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 360,
+                "id": "comic-page-1",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 10000,
+                "source_snapshot": {
+                  "asset_kind": "image",
+                  "digest": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+                  "id": "4b763a38-4bb0-4252-a56b-13e1025f9789",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 0,
+                "width": 640,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "gain_db": 0.0,
+                "height": 360,
+                "id": "comic-page-2",
+                "in_ms": 0,
+                "include_audio": false,
+                "muted": false,
+                "opacity": 1.0,
+                "out_ms": 10000,
+                "source_snapshot": {
+                  "asset_kind": "image",
+                  "digest": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+                  "id": "f606a81d-5a99-47be-9f64-d1fcd16579fb",
+                  "kind": "ASSET",
+                  "version": 1
+                },
+                "speed_den": 1,
+                "speed_num": 1,
+                "start_ms": 10000,
+                "width": 640,
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "gain_db": 0.0,
+            "id": "comic-pages-video",
+            "kind": "VIDEO",
+            "muted": false,
+            "order": 0,
+            "role": "PRIMARY"
+          }
+        ],
+        "width": 640
+      },
+      "created_at": "2026-10-19T07:23:24.093490+00:00",
+      "updated_at": "2026-10-19T07:23:24.093490+00:00",
+      "branch_id": null,
+      "comic_handoff_origin": {
+        "contract": "studio-comic-timeline-handoff/1",
+        "creation_snapshot": {
+          "digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+          "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+          "version": 1
+        },
+        "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+        "receipt_id": "159cd26b-54cf-464b-a848-913aed1a8282",
+        "request_id": "http-create"
+      }
+    },
+    "timeline_state": "CREATION_SNAPSHOT"
+  },
+  "original_timeline": {
+    "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+    "novel_id": "r3-mounted-6703a36db7aa411eac53e937cf56f344",
+    "title": "HTTP static draft",
+    "version": 1,
+    "timeline_digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 20000,
+      "fps": 24,
+      "height": 360,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 360,
+              "id": "comic-page-1",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 10000,
+              "source_snapshot": {
+                "asset_kind": "image",
+                "digest": "8a1cefa65d989bede7a0d17c6fb654625633b295009a5b8351f5c5e1208e25af",
+                "id": "4b763a38-4bb0-4252-a56b-13e1025f9789",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 640,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 360,
+              "id": "comic-page-2",
+              "in_ms": 0,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 10000,
+              "source_snapshot": {
+                "asset_kind": "image",
+                "digest": "f397ff418191731d68642743c20aff61975ca332a986947dc11fc66c7985ccf2",
+                "id": "f606a81d-5a99-47be-9f64-d1fcd16579fb",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 10000,
+              "width": 640,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "comic-pages-video",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        }
+      ],
+      "width": 640
+    },
+    "created_at": "2026-10-19T07:23:24.093490+00:00",
+    "updated_at": "2026-10-19T07:23:24.093490+00:00",
+    "branch_id": null,
+    "comic_handoff_origin": {
+      "contract": "studio-comic-timeline-handoff/1",
+      "creation_snapshot": {
+        "digest": "ae2616dc5ecf5c321ffca1f108000c4ce4a2866c9e5907f57bb14e7f2c923596",
+        "id": "3d849f69-9726-44e7-9579-130c4f0d15a2",
+        "version": 1
+      },
+      "preview_digest": "3d57afc1754daea4a051e58ffbb78733dc66a4576c4443ab5ae8ab178d620485",
+      "receipt_id": "159cd26b-54cf-464b-a848-913aed1a8282",
+      "request_id": "http-create"
+    }
+  },
+  "source_records": [
+    {
+      "id": "1fc95a00-86d8-4e23-9b02-923c78767467",
+      "version": 2,
+      "status": "APPROVED",
+      "document": {
+        "expected_screenplay_version": null,
+        "font_family": "NOTO_SANS_SC_OFL",
+        "height": 640,
+        "panels": [
+          {
+            "appearance_references": [],
+            "artwork_mode": "BLANK",
+            "asset_id": null,
+            "bubbles": [],
+            "character_ids": [],
+            "expected_asset_version": null,
+            "fit": "CONTAIN",
+            "height": 580,
+            "id": "p",
+            "image_brief": "",
+            "order": 1,
+            "shot_id": null,
+            "width": 264,
+            "x": 24,
+            "y": 24
+          }
+        ],
+        "preset": "PAGE",
+        "safe_area": 24,
+        "screenplay_id": null,
+        "segment_height": 320,
+        "source_mode": "INDEPENDENT",
+        "title": "Synthetic HTTP page",
+        "width": 320
+      },
+      "stale": false,
+      "history_versions": []
+    },
+    {
+      "id": "4f50fa81-0497-440c-bafe-452dbe2884f6",
+      "version": 2,
+      "status": "APPROVED",
+      "document": {
+        "expected_screenplay_version": null,
+        "font_family": "NOTO_SANS_SC_OFL",
+        "height": 640,
+        "panels": [
+          {
+            "appearance_references": [],
+            "artwork_mode": "BLANK",
+            "asset_id": null,
+            "bubbles": [
+              {
+                "character_id": null,
+                "font_size": 24,
+                "height": 130,
+                "id": "b",
+                "kind": "DIALOGUE",
+                "text": "原漫画文字",
+                "width": 200,
+                "x": 50,
+                "y": 380
+              }
+            ],
+            "character_ids": [],
+            "expected_asset_version": null,
+            "fit": "CONTAIN",
+            "height": 580,
+            "id": "p",
+            "image_brief": "",
+            "order": 1,
+            "shot_id": null,
+            "width": 264,
+            "x": 24,
+            "y": 24
+          }
+        ],
+        "preset": "PAGE",
+        "safe_area": 24,
+        "screenplay_id": null,
+        "segment_height": 320,
+        "source_mode": "INDEPENDENT",
+        "title": "Synthetic HTTP page",
+        "width": 320
+      },
+      "stale": false,
+      "history_versions": []
+    }
+  ],
+  "source_commit": "608f629b218d1b299ee25d551957b0397fe2a2e5"
+}
