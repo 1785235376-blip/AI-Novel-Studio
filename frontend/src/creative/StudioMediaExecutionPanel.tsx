@@ -20,7 +20,8 @@ const kindLabels = { image: '图片', video: '视频', audio: '音频' };
 export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const state = useStudioMediaExecution(props), draft = state.draft, job = state.selected;
   const crossRouteReferences = draft.operation === 'm5.image.reference';
-  const providers = state.providers.filter(row => row.operation_id === draft.operation && (crossRouteReferences || !state.routeSelectable || row.local === (draft.route === 'local')))
+  const providers = state.providers.filter(row => row.operation_id === draft.operation && (crossRouteReferences || !state.routeSelectable || row.local === (draft.route === 'local'))
+    &&(!props.canvasImageTask||row.local&&row.image_capabilities?.recipe_id==='comfy-sd-checkpoint-v1'))
     .sort((left, right) => Number(right.local) - Number(left.local));
   const upscale = draft.operation === 'm5.image.upscale';
   const cutout = draft.operation === 'm5.image.cutout';
@@ -63,7 +64,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     </section>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
-      <label>操作<select disabled={!state.canEdit} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
+      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
       {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}

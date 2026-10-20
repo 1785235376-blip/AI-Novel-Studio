@@ -1,0 +1,22 @@
+import { useMemo, useState } from 'react';
+import { Badge, Panel } from '../ui/primitives';
+import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
+import { StudioExecutionRecipePanel } from './StudioExecutionRecipePanel';
+import { canvasImageTaskSource, type CanvasImageTaskSession } from './canvasImageTask';
+import type { StudioMediaExecutionProps } from './useStudioMediaExecution';
+import type { ProductionJob } from './studioProductionClient';
+
+export function StudioCanvasImageTaskPanel({task,...props}:Omit<StudioMediaExecutionProps,'assets'|'canvasImageTask'|'onJob'>&{task:CanvasImageTaskSession}) {
+  const [job,setJob]=useState<ProductionJob>();
+  const binding=useMemo(()=>({source:canvasImageTaskSource(task.origin.source),isCurrent:task.isOriginCurrent}),[task]);
+  return <section aria-label="所选卡片的执行画布">
+    <Panel title="本次图像任务 · 影响范围">
+      <p><Badge>单次任务草稿</Badge> 原位置 <code>{task.origin.canvasId}</code> · v{task.origin.canvasVersion} · 卡片 <code>{task.origin.cardId}</code></p>
+      <p>只使用原图片 <code>{task.origin.source.asset_id}</code> · v{task.origin.source.version}。本次最多生成 1 个候选；预览、入队、实际执行和审核仍分别明确确认。</p>
+      <p>下面参数只写入本次原 Job，不修改原执行图或共享工作流模板。创作关系不转换成执行节点。审核入库后，还需核验并明确采用到上述卡片；坐标和分组保留，其他作品位置不变。</p>
+      <p>本首片只接受已声明图生图能力的本地 Comfy SD。云接口内部不可见步骤保持不可见，其他路线不会代用。</p>
+    </Panel>
+    <StudioMediaExecutionPanel {...props} canvasImageTask={binding} assets={[task.asset]} onJob={setJob}/>
+    {job&&<StudioExecutionRecipePanel recipe={job.execution_recipe} operationId={job.operation_id} current={props.isCurrent()}/>}
+  </section>;
+}
