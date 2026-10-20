@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_SCHEMAS3_TO6_BOUND_AUTHOR_DRAFT_RECOVERY",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "6b96a125043c4f08a495836a7d126e196d0b4ad6",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-bound-draft-reviewed-a8ac7dff",
+  "product_base": "7883878ae862326ff3ca256d9a111d8462920fe0",
+  "product_tip": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+  "product_tree": "bdee896c0e48891af0484eb3569571909b49faa1",
+  "bundle_ref": "refs/heads/work/v2-bound-draft-reviewed-20261020",
+  "bundle_filename": "studio-v2-7883878a-to-a8ac7dff.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "7883878ae862326ff3ca256d9a111d8462920fe0",
+  "original_commit_retained": true,
+  "no_cherry_pick_or_merge": true,
+  "commit_mappings": [
+    {
+      "source": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+      "source_parent": "7883878ae862326ff3ca256d9a111d8462920fe0",
+      "adopted": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+      "adopted_parent": "7883878ae862326ff3ca256d9a111d8462920fe0",
+      "original_retained_directly": true,
+      "stable_patch_id": "5b451de14e529ccd40ba285d164d9a3ab0e86c28"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "docs/graph_bound_draft_recovery.md",
+      "mode": "100644",
+      "blob": "4c7a152d0a90e3303c8559caac6abadfddbaf6ba",
+      "bytes": 4430,
+      "sha256": "3dbeb40cf272929974ff2b02f5e52ccb3183ba92f0b8f543414e965ee1b9c43b",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.bound.test.tsx",
+      "mode": "100644",
+      "blob": "ce8ff1a51d2cbc934d44c93b131e84ced907b3c3",
+      "bytes": 23858,
+      "sha256": "3e0caeb82afcc257dbb61d46458913b0f2e9289ec345f8e1f68570198aa3792f",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.notes.test.tsx",
+      "mode": "100644",
+      "blob": "d03b605175ad61c8a3728188d54f3e53bae2e449",
+      "bytes": 9289,
+      "sha256": "2c08d658e64972ac2ccdd4a48412eaf47a2d0a1c5e3c5406a619ac1e4b7fa499",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx",
+      "mode": "100644",
+      "blob": "6780a4d9b9610c845e80e022e64b452392307df6",
+      "bytes": 6195,
+      "sha256": "853acfe208db7bea7bf0277375c2f9e5bf89498a0f7fa94a139d500e3457ccc4",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/graphBoundDraftRecovery.testFixtures.ts",
+      "mode": "100644",
+      "blob": "dcf1bd3712499c0f229b7010d06dc67eb0b79ff7",
+      "bytes": 4025,
+      "sha256": "b0f83a3d6405b975f84712abcec13caf87d9bcea237c3920a7f60d2ebb1a2835",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioGraphDraftRecoverySources.ts",
+      "mode": "100644",
+      "blob": "f3b24150a857b09f6ff5e4d7ff2b16f123f2c651",
+      "bytes": 9432,
+      "sha256": "64161635d5d62ff7603376fa1c6d628de62f0d8ccce406e8ad6435ed6e54a44b",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLocalDraft.test.ts",
+      "mode": "100644",
+      "blob": "d5f43eff777ea4b4eed92b5d08ad2cc18de53a65",
+      "bytes": 5974,
+      "sha256": "7f2b4efa73af5930bdfae71c7c5f9e85ffa2ffb4cdda934729ac671237f40a07",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLocalDraft.ts",
+      "mode": "100644",
+      "blob": "0caa0ceaa1f2ea23e926687af3cc6c108e73cd46",
+      "bytes": 5907,
+      "sha256": "9868602506dded90e6e3e5dd03f2f13033049f09772447398cd52b0c21a14c50",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "blob": "60c898343df5f15f5f8d90a70b8b8d70fdb9fc37",
+      "bytes": 103434,
+      "sha256": "723fe3d2d52aee770d1341d2e5115721273f6be5fde9747df5151ca00c482c45",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+      "type": "commit",
+      "bytes": 268,
+      "sha256": "a148638ed44dae961c70f865358ba757a2897b3b20b01eb0a2d4c23f29ef340d",
+      "path": ""
+    },
+    {
+      "oid": "bdee896c0e48891af0484eb3569571909b49faa1",
+      "type": "tree",
+      "bytes": 15452,
+      "sha256": "26828c941045ecb65eadb258aa06d8c861f1ce3e103bfdcab21b04712657c16f",
+      "path": ""
+    },
+    {
+      "oid": "382fe8d8b4d0d8c4d64964dc5cad4f07aadf05d1",
+      "type": "tree",
+      "bytes": 23717,
+      "sha256": "8603a91940ac8f305a8bbd38ac96b2066fb5ac61b0116ec5f0d9da630ddbd3a2",
+      "path": "docs"
+    },
+    {
+      "oid": "4c7a152d0a90e3303c8559caac6abadfddbaf6ba",
+      "type": "blob",
+      "bytes": 4430,
+      "sha256": "3dbeb40cf272929974ff2b02f5e52ccb3183ba92f0b8f543414e965ee1b9c43b",
+      "path": "docs/graph_bound_draft_recovery.md"
+    },
+    {
+      "oid": "b5b2c19d375cf076ed00db8053894c976d482e90",
+      "type": "tree",
+      "bytes": 3552,
+      "sha256": "3ffc8db24fd895b38affc5cf4c379d9a071493b8d4e52816186492c4f0b92e46",
+      "path": "frontend"
+    },
+    {
+      "oid": "72ffa80aeddf664bb551e93e5d8bb320f3c73979",
+      "type": "tree",
+      "bytes": 7640,
+      "sha256": "e373acd8d9d3639cf4adea16a4d8e1243732808de3f03360e36884831abe0879",
+      "path": "frontend/src"
+    },
+    {
+      "oid": "2b7adb097125ec6c62c8fe2aa6f59d40a3218185",
+      "type": "tree",
+      "bytes": 52632,
+      "sha256": "28e4c1c931e1653e25727f2fe70214c798548f478dc979242bbf3a9902ec3d6d",
+      "path": "frontend/src/creative"
+    },
+    {
+      "oid": "ce8ff1a51d2cbc934d44c93b131e84ced907b3c3",
+      "type": "blob",
+      "bytes": 23858,
+      "sha256": "3e0caeb82afcc257dbb61d46458913b0f2e9289ec345f8e1f68570198aa3792f",
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.bound.test.tsx"
+    },
+    {
+      "oid": "d03b605175ad61c8a3728188d54f3e53bae2e449",
+      "type": "blob",
+      "bytes": 9289,
+      "sha256": "2c08d658e64972ac2ccdd4a48412eaf47a2d0a1c5e3c5406a619ac1e4b7fa499",
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.notes.test.tsx"
+    },
+    {
+      "oid": "6780a4d9b9610c845e80e022e64b452392307df6",
+      "type": "blob",
+      "bytes": 6195,
+      "sha256": "853acfe208db7bea7bf0277375c2f9e5bf89498a0f7fa94a139d500e3457ccc4",
+      "path": "frontend/src/creative/StudioGraphDraftRecovery.tsx"
+    },
+    {
+      "oid": "dcf1bd3712499c0f229b7010d06dc67eb0b79ff7",
+      "type": "blob",
+      "bytes": 4025,
+      "sha256": "b0f83a3d6405b975f84712abcec13caf87d9bcea237c3920a7f60d2ebb1a2835",
+      "path": "frontend/src/creative/graphBoundDraftRecovery.testFixtures.ts"
+    },
+    {
+      "oid": "f3b24150a857b09f6ff5e4d7ff2b16f123f2c651",
+      "type": "blob",
+      "bytes": 9432,
+      "sha256": "64161635d5d62ff7603376fa1c6d628de62f0d8ccce406e8ad6435ed6e54a44b",
+      "path": "frontend/src/creative/studioGraphDraftRecoverySources.ts"
+    },
+    {
+      "oid": "d5f43eff777ea4b4eed92b5d08ad2cc18de53a65",
+      "type": "blob",
+      "bytes": 5974,
+      "sha256": "7f2b4efa73af5930bdfae71c7c5f9e85ffa2ffb4cdda934729ac671237f40a07",
+      "path": "frontend/src/creative/studioGraphLocalDraft.test.ts"
+    },
+    {
+      "oid": "0caa0ceaa1f2ea23e926687af3cc6c108e73cd46",
+      "type": "blob",
+      "bytes": 5907,
+      "sha256": "9868602506dded90e6e3e5dd03f2f13033049f09772447398cd52b0c21a14c50",
+      "path": "frontend/src/creative/studioGraphLocalDraft.ts"
+    },
+    {
+      "oid": "60c898343df5f15f5f8d90a70b8b8d70fdb9fc37",
+      "type": "blob",
+      "bytes": 103434,
+      "sha256": "723fe3d2d52aee770d1341d2e5115721273f6be5fde9747df5151ca00c482c45",
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts"
+    }
+  ],
+  "new_object_count": 15,
+  "no_extra_packed_objects": true,
+  "all_other_base_paths_unchanged": true,
+  "NLE_dependencies_replayed": false,
+  "author_evidence_hashes_verified": 80,
+  "independent_source_bindings_verified": 9,
+  "independent_capture_and_test_hashes_verified": 2,
+  "independent_groups_passed": 4,
+  "independent_schema6_File_owner_source_subcheck": "PASS; retained original review, not rerun and not Host/PG/HTTP acceptance",
+  "recovery_transport": "JSDOM/localStorage + Mock",
+  "combined_validation": {
+    "status": "PASS_AFTER_SPARSE_WORKTREE_FIXTURE_CORRECTION",
+    "combined": "a8ac7dff36c94e3b58d2edc7116708ef4e42f742",
+    "frontend_JSDOM_localStorage_Mock_passed": 7,
+    "other_cases_skipped": 65,
+    "frontend_runs": 1,
+    "typescript_runs": 2,
+    "typescript_complete_worktree_runs": 1,
+    "typescript_initial_failure": "Missing two unchanged repository JSON fixtures in owned sparse worktree; originals materialized with clean Git status",
+    "vite_build_runs": 1,
+    "results": {
+      "typescript-final": {
+        "exit": 0,
+        "seconds": 20.4,
+        "log": "typescript-final.log"
+      },
+      "build": {
+        "exit": 0,
+        "seconds": 5.455,
+        "log": "build.log"
+      }
+    },
+    "real_File_API": false,
+    "real_Host": false,
+    "PostgreSQL": false,
+    "full_E2E": false,
+    "models_GPU": false,
+    "schema7_default": "OFF",
+    "dependency_junction_target": "<TASK_ROOT>\\task\\studio-v2-comic-live-handoff-browser\\frontend\\node_modules"
+  },
+  "zip_payload_count": 112,
+  "zip_evidence_hashes": 111,
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_product_blobs_scanned": 9,
+    "product_credential_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_redactions": [
+      {
+        "file": "independent/review-handoff.json",
+        "json_path": "$.authorization"
+      }
+    ],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "author_original_bundle_retained_locally_not_duplicated": true,
+  "acceptance_limits": [
+    "schema7 DEFAULT OFF",
+    "Recovery UI JSDOM/localStorage+Mock only",
+    "Real File child-source review evidence separately labelled; not Host/PG/fullE2E",
+    "No new backend/HTTP permission acceptance",
+    "Real legitimate Host recovery -> explicit Save BLOCKED/NOT_RUN; no verified session",
+    "Providers/models/GPU/fullGRAPH08/fullV2/fullE2E NOT_ACCEPTED"
+  ],
+  "payload_hashes": [
+    {
+      "path": "studio-v2-7883878a-to-a8ac7dff.bundle",
+      "bytes": 15874,
+      "sha256": "802337b00ec94cf1cc39b10fcf12e954aa7e0539a3c262e6303da3d54950782d"
+    },
+    {
+      "path": "studio-v2-bound-draft-a8ac7dff-tests-evidence-sanitized.zip",
+      "bytes": 1965777,
+      "sha256": "b1ca0049b71b6e95ad5e4c84407f21317c436daea4d6ead7859021d31044d4cd"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 4064,
+      "sha256": "82ed770ab2916d4cdd6125b5b0259e11800931032e2ec4cda5b0c9a62d7a4c2e"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2034,
+      "sha256": "44b8da16d740649187f258668842f75cadf85372381cab047a5ae8bc8aa7bfd9"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ]
+}
