@@ -5,6 +5,7 @@ from .common import api_call as domain_call
 from ..repositories.chapter_repository import VersionConflict
 from .portable_projects import FEATURE, MAX_ARCHIVE, SelectionIn, UploadIn, ConfirmIn, RelinkIn, RelinkConfirmIn, CleanupIn
 from .ux import ReadContext
+from .portable_cache_policy import CachePolicyInput
 
 
 def api_call(fn, *args):
@@ -88,4 +89,15 @@ def create_portable_projects_router(service, authorize, require_flag, require_ho
     @router.post('/cleanup')
     def cleanup(nid: str, body: CleanupIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, True); return api_call(service.cleanup, ctx, body, check)
+
+    @router.get('/cache-policy')
+    def cache_policy(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        result = api_call(service.cache_policy, ctx); check(); return result
+
+    @router.put('/cache-policy')
+    def set_cache_policy(nid: str, body: CachePolicyInput, response: Response,
+                         x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = access(nid, x_session_token, x_branch_id, True); response.headers['Cache-Control'] = 'no-store'
+        return api_call(service.set_cache_policy, ctx, body, check)
     return router

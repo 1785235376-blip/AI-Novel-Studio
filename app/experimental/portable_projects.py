@@ -30,6 +30,7 @@ from .common import DomainService, StaleSourceError, change_row, check_version, 
 from .planning import StrictModel, digest
 from .reader_sources import authorized_chapter_rows
 from .store import canonical
+from .portable_cache_policy import CachePolicyInput, cache_budget, policy_view
 
 FEATURE = 'portable_projects_v2'
 MAX_ARCHIVE = 40 * 1024 * 1024
@@ -234,6 +235,7 @@ def read_archive(raw):
 class PortableProjectsService(DomainService):
     RECORDS = 'portable_projects_v2'
     MISSING_MEDIA = 'portable_missing_media_v2'
+    CACHE_POLICIES = 'portable_cache_policies_v1'
 
     def __init__(self, store, novels, chapters, *, sources, assets):
         super().__init__(store, novels, chapters)
@@ -577,18 +579,55 @@ class PortableProjectsService(DomainService):
         return {'kind': 'TEMPORARY_FAILED_FILES', 'bytes': measured, 'unmeasured_records': unmeasured,
                 'measurement': 'OWNED_PRESERVED_INPUT_AND_STAGED_ASSET_BYTES', 'cleanable': False}
 
+    def _cache_policy_row(self, ctx):
+        rows = [row for row in self.list(ctx.novel_id, ctx.scope, self.CACHE_POLICIES) if row['created_by'] == ctx.actor]
+        if len(rows) > 1: raise ValueError('PORTABLE_CACHE_POLICY_INVALID')
+        return rows[0] if rows else None
+
+    def cache_policy(self, ctx):
+        return policy_view(self._cache_policy_row(ctx))
+
+    def set_cache_policy(self, ctx, body, reauthorize=lambda: None):
+        value = CachePolicyInput.model_validate(body); reauthorize()
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            reauthorize()
+            old = self._cache_policy_row(ctx)
+            check_version(policy_view(old), value.expected_version)
+            rows = state['collections'].setdefault(self.CACHE_POLICIES, {})
+            if old:
+                row = rows[old['id']]
+                change_row(row, ctx.actor, value.expected_version, lambda current: current.update(limit_bytes=value.limit_bytes))
+            else:
+                row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'limit_bytes': value.limit_bytes})
+                rows[row['id']] = row
+            result = policy_view(row); reauthorize()
+        return result
+
+    def _cache_candidate(self, ctx, row):
+        """The original reproducibility check, shared by preview and final unlink."""
+        self._assert_sources(ctx, row['sources']); raw = self._read_file(ctx, row)
+        manifest, _, _ = self._build(ctx, list(row['sources']))
+        if manifest != row['manifest']: raise StaleSourceError('PORTABLE_CACHE_NOT_REPRODUCIBLE')
+        return {'id': row['id'], 'version': row['version'], 'bytes': len(raw), 'sha256': sha(raw), 'reproducible': True, 'in_use': False}
+
     def storage(self, ctx):
         rows = self._rows(ctx); assets = [a for a in self.assets.list(ctx.novel_id, branch_id=ctx.scope.get('branch_id'), include_deleted=True, actor_id=ctx.actor)
             if a.get('branch_id') == ctx.scope.get('branch_id') and not a.get('hidden') and not a.get('secret')]
-        cache = []
+        cache, unmeasured, order = [], 0, {}
         for row in self.list(ctx.novel_id, ctx.scope, self.RECORDS):
             if row['created_by'] != ctx.actor or row['kind'] != 'EXPORT' or row['status'] != 'READY': continue
             try:
-                self._assert_sources(ctx, row['sources']); raw = self._read_file(ctx, row)
-                manifest, _, _ = self._build(ctx, list(row['sources']))
-                if manifest != row['manifest']: continue
-                cache.append({'id': row['id'], 'version': row['version'], 'bytes': len(raw), 'sha256': sha(raw), 'reproducible': True, 'in_use': False})
-            except (FileNotFoundError, ValueError, OSError): continue
+                cache.append(self._cache_candidate(ctx, row))
+                order[row['id']] = (row['created_at'], row['id'])
+            except StaleSourceError:
+                continue  # No longer reproducible: original recovery category retains it.
+            except FileNotFoundError:
+                # Distinguish absent cache bytes from an unavailable source.
+                try: unmeasured += int(self._file(ctx, row['id']).exists())
+                except (ValueError, OSError): unmeasured += 1
+            except (ValueError, OSError):
+                unmeasured += 1
+        cache.sort(key=lambda row: order[row['id']])
         categories = [
             {'kind': 'MANUSCRIPT', 'bytes': sum(len(canonical(r['document']).encode()) for r in rows), 'measurement': 'AUTHORIZED_CONTENT_BYTES', 'cleanable': False},
             {'kind': 'ACCEPTED_ASSETS', 'bytes': sum(a['size'] for a in assets if not a.get('deleted_at') and not a.get('_owner_actor_id')), 'measurement': 'AUTHORIZED_RECORDED_BYTES', 'cleanable': False},
@@ -596,7 +635,11 @@ class PortableProjectsService(DomainService):
             {'kind': 'TRASH', 'bytes': sum(a['size'] for a in assets if a.get('deleted_at')), 'measurement': 'AUTHORIZED_RECORDED_BYTES', 'cleanable': False},
             {'kind': 'REPRODUCIBLE_CACHE', 'bytes': sum(c['bytes'] for c in cache), 'measurement': 'VERIFIED_PORTABLE_EXPORT_CACHE_ONLY', 'cleanable': True},
             self._recovery_measurement(ctx, cache, assets)]
-        return {'categories': categories, 'eligible': cache, 'preview_digest': digest([ctx.scope, ctx.actor, cache]), 'default_policy': 'ONLY_VERIFIED_UNUSED_REPRODUCIBLE_CACHE'}
+        budget = cache_budget(self.cache_policy(ctx), cache, unmeasured)
+        return {'categories': categories, 'eligible': cache,
+                'cache_budget': budget,
+                'preview_digest': digest([ctx.scope, ctx.actor, cache, budget, self._sources(rows)]),
+                'default_policy': 'ONLY_VERIFIED_UNUSED_REPRODUCIBLE_CACHE'}
 
     def cleanup(self, ctx, body, reauthorize=lambda: None):
         value = CleanupIn.model_validate(body)
@@ -605,7 +648,16 @@ class PortableProjectsService(DomainService):
             if value.preview_digest != preview['preview_digest']: raise StaleSourceError('PORTABLE_CLEANUP_PREVIEW_CHANGED')
             allowed = {r['id']: r for r in preview['eligible']}
             if len(set(value.record_ids)) != len(value.record_ids) or any(rid not in allowed for rid in value.record_ids): raise ValueError('PORTABLE_CACHE_NOT_ELIGIBLE')
+            policy = preview['cache_budget']['policy']; sources = self._sources(self._rows(ctx))
             reauthorize()
             for rid in value.record_ids:
-                reauthorize(); self._file(ctx, rid).unlink()
+                reauthorize()
+                if self.cache_policy(ctx) != policy or self._sources(self._rows(ctx)) != sources:
+                    raise StaleSourceError('PORTABLE_CLEANUP_PREVIEW_CHANGED')
+                if self._cache_candidate(ctx, self._owned(ctx, rid)) != allowed[rid]:
+                    raise StaleSourceError('PORTABLE_CLEANUP_PREVIEW_CHANGED')
+                reauthorize()
+                if self.cache_policy(ctx) != policy or self._sources(self._rows(ctx)) != sources:
+                    raise StaleSourceError('PORTABLE_CLEANUP_PREVIEW_CHANGED')
+                self._file(ctx, rid).unlink()
             return {'removed_cache_count': len(value.record_ids), 'preserved': ['MANUSCRIPT', 'ACCEPTED_ASSETS', 'HISTORY', 'TRASH', 'RECOVERY_INPUTS']}

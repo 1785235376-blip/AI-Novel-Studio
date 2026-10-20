@@ -1,9 +1,80 @@
-import { useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { ApiError } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
-import { portableProjectsClient, readPortableFile, downloadPortableBlob } from './portableProjectsClient';
+import { portableProjectsClient, readPortableFile, downloadPortableBlob, type StoragePreview } from './portableProjectsClient';
+type CachePolicy = { version: number; limit_bytes: number | null };
+type CacheBudget = {
+  policy: CachePolicy; state: string; excess_bytes: number | null;
+  measurement: { state: 'MEASURED' | 'UNKNOWN'; bytes: number | null; verified_reproducible_bytes: number; unmeasured_records: number };
+  plan: { record_ids: string[]; reclaim_bytes: number; remaining_excess_bytes: number | null; complete: boolean };
+};
+const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const bytes = (value: unknown): value is number => Number.isSafeInteger(value) && Number(value) >= 0;
+function checkedPolicy(value: unknown): CachePolicy | undefined {
+  return object(value) && bytes(value.version) && (value.limit_bytes === null || bytes(value.limit_bytes))
+    ? { version: value.version, limit_bytes: value.limit_bytes } : undefined;
+}
+function readCacheBudget(preview: StoragePreview | undefined): { budget?: CacheBudget; invalid: boolean } {
+  const value: unknown = (preview as (StoragePreview & { cache_budget?: unknown }) | undefined)?.cache_budget;
+  if (value === undefined) return { invalid: false };
+  const invalid = { invalid: true };
+  if (!object(value) || value.scope !== 'CURRENT_AUTHOR_SCOPE_REPRODUCIBLE_PORTABLE_EXPORTS_ONLY' || value.advisory_only !== true || value.automatic_cleanup !== false) return invalid;
+  const policy = checkedPolicy(value.policy), m = value.measurement, p = value.plan;
+  if (!policy || !object(m) || !object(p) || !preview || !bytes(m.verified_reproducible_bytes) || !bytes(m.unmeasured_records)) return invalid;
+  const known = preview.eligible.reduce((total, row) => total + row.bytes, 0);
+  if (!bytes(known) || m.verified_reproducible_bytes !== known) return invalid;
+  const measured = m.state === 'MEASURED';
+  if (measured ? m.unmeasured_records !== 0 || m.bytes !== known : m.state !== 'UNKNOWN' || m.unmeasured_records < 1 || m.bytes !== null) return invalid;
+  const ids = p.record_ids;
+  if (!Array.isArray(ids) || ids.length > 100 || new Set(ids).size !== ids.length || ids.some(id => typeof id !== 'string' || !preview.eligible.some(row => row.id === id))) return invalid;
+  const reclaim = preview.eligible.filter(row => ids.includes(row.id)).reduce((total, row) => total + row.bytes, 0);
+  const excess = measured && policy.limit_bytes !== null ? Math.max(0, known - policy.limit_bytes) : null;
+  const state = policy.limit_bytes === null ? 'UNCONFIGURED' : !measured ? 'UNKNOWN' : excess ? 'OVER_BUDGET' : 'WITHIN_BUDGET';
+  if (value.state !== state || value.excess_bytes !== excess || p.reclaim_bytes !== reclaim || p.remaining_excess_bytes !== (excess === null ? null : Math.max(0, excess - reclaim)) || p.complete !== (excess !== null && reclaim >= excess) || (!excess && ids.length)) return invalid;
+  return { invalid: false, budget: { policy, state, excess_bytes: excess, measurement: { state: measured ? 'MEASURED' : 'UNKNOWN', bytes: measured ? known : null, verified_reproducible_bytes: known, unmeasured_records: m.unmeasured_records }, plan: { record_ids: ids, reclaim_bytes: reclaim, remaining_excess_bytes: excess === null ? null : Math.max(0, excess - reclaim), complete: excess !== null && reclaim >= excess } } };
+}
+function CacheBudgetEditor({ client, budget, disabled, run, onDirty, onSaved, onPlan }: {
+  client: ExperimentalClient; budget: CacheBudget; disabled: boolean; run: ReturnType<typeof useReviewAction>['run'];
+  onDirty: (dirty: boolean) => void; onSaved: () => void; onPlan: (ids: string[]) => void;
+}) {
+  const [draft, setDraft] = useState<{ base: CachePolicy; text: string }>();
+  const alive = useRef(true), live = useRef({ budget, disabled, draft }); live.current = { budget, disabled, draft };
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const conflicted = !!draft && draft.base.version !== budget.policy.version;
+  return <section aria-label="可重建导出缓存预算">
+    <h4>可重建导出缓存预算</h4>
+    <p>仅统计当前用户、当前项目分支中可核实重建的便携导出缓存。预算只提供回收建议；不会自动清理或阻止导出。</p>
+    <p>策略 v{budget.policy.version} · 上限：{budget.policy.limit_bytes === null ? '未配置' : `${budget.policy.limit_bytes} 字节`} · 占用：{budget.measurement.bytes === null ? '未知' : `${budget.measurement.bytes} 字节`} · 超额：{budget.excess_bytes === null ? '未确定' : `${budget.excess_bytes} 字节`}</p>
+    {budget.measurement.state === 'UNKNOWN' && <StatusMessage tone="warning">有 {budget.measurement.unmeasured_records} 条记录无法核实，不能将未知占用视为零。已核实部分为 {budget.measurement.verified_reproducible_bytes} 字节；暂不生成预算回收计划。</StatusMessage>}
+    <Field label="导出缓存预算上限（字节，留空为未配置）"><input inputMode="numeric" maxLength={16} value={draft ? draft.text : budget.policy.limit_bytes ?? ''} disabled={disabled} onChange={event => {
+      if (live.current.disabled || live.current.budget !== budget) return;
+      setDraft({ base: draft?.base || budget.policy, text: event.target.value }); onDirty(true);
+    }} /></Field>
+    {conflicted && <StatusMessage tone="warning">预算策略已改变，本地输入已保留。请核对当前策略并放弃旧输入后重新填写。</StatusMessage>}
+    <div className="experimental-actions"><Button disabled={disabled || !draft || conflicted} onClick={() => {
+      if (!alive.current || live.current.disabled || live.current.budget !== budget || live.current.draft !== draft || !draft || conflicted) return;
+      const submitted = draft;
+      void run(async current => {
+        const text = submitted.text.trim(), limit = text === '' ? null : /^\d+$/.test(text) ? Number(text) : NaN;
+        if (limit !== null && !bytes(limit)) throw new ApiError({ status: 422, code: 'INVALID_CACHE_BUDGET', message: '请输入非负安全整数字节数，或留空取消预算。' });
+        const saved = checkedPolicy(await client.put('/portable-projects/cache-policy', { expected_version: submitted.base.version, limit_bytes: limit }));
+        if (!current() || !alive.current) return;
+        if (!saved || saved.version !== submitted.base.version + 1 || saved.limit_bytes !== limit) throw new ApiError({ status: 502, code: 'INVALID_CACHE_POLICY', message: '预算响应无法核实，请刷新后重新核对。' });
+        setDraft(undefined); onDirty(false); onSaved();
+      }, '预算已保存，请核对刷新后的占用与回收计划。');
+    }}>保存导出缓存预算</Button>
+      {draft && <Button disabled={disabled} onClick={() => { if (!alive.current || live.current.disabled || live.current.draft !== draft) return; setDraft(undefined); onDirty(false); }}>放弃预算输入并载入当前策略</Button>}
+    </div>
+    <p>预算回收计划：{budget.plan.record_ids.length} 条，预计释放 {budget.plan.reclaim_bytes} 字节；剩余超额：{budget.plan.remaining_excess_bytes === null ? '未确定' : `${budget.plan.remaining_excess_bytes} 字节`}。每批最多 100 条，仍需下方明确确认。</p>
+    <Button disabled={disabled || !!draft || !budget.plan.record_ids.length} onClick={() => {
+      if (!alive.current || live.current.disabled || live.current.budget !== budget || live.current.draft || !budget.plan.record_ids.length) return;
+      onPlan([...budget.plan.record_ids]);
+    }}>采用预算回收计划（尚不清理）</Button>
+  </section>;
+}
 let nextScope = 0;
 const conflicts: Record<string, string> = { DIGEST_MISMATCH: '候选文件与原媒体摘要不同；确认替代后才会写入。', ORIGINAL_DIGEST_UNKNOWN: '原媒体摘要未知；不能证明候选文件与原文件相同。', SOURCE_CHANGED: '章节版本或来源权限已变化；请重新预检。', ORIGINAL_REFERENCE_CHANGED: '原媒体状态或摘要已变化；请重新预检。', PREFLIGHT_REQUIRED: '此旧记录缺少完整影响报告；请重新预检。' };
 const names: Record<string, string> = { MANUSCRIPT: '作品正文', ACCEPTED_ASSETS: '正式资产', HISTORY: '历史版本', TRASH: '回收站', REPRODUCIBLE_CACHE: '可重建缓存', TEMPORARY_FAILED_FILES: '临时失败与恢复文件' };
@@ -15,9 +86,17 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]); const storage = useResource(signal => api.storage(signal), [api]);
   const action = useReviewAction(); const [selected, setSelected] = useState<string[]>([]); const [file, setFile] = useState<File>();
   const [relinkFile, setRelinkFile] = useState<File>(); const [missing, setMissing] = useState(''); const [kind, setKind] = useState('audio');
-  const [reviewed, setReviewed] = useState<Record<string, boolean>>({}); const [replace, setReplace] = useState<Record<string, boolean>>({}); const [cleanupReviewed, setCleanupReviewed] = useState(false); const epoch = useRef(0);
+  const [reviewed, setReviewed] = useState<Record<string, boolean>>({}); const [replace, setReplace] = useState<Record<string, boolean>>({}); const [cleanupConsent, setCleanupConsent] = useState<{ key: string }>(); const [cleanupSelection, setCleanupSelection] = useState<{ digest: string; ids: string[] }>(); const [policyDirty, setPolicyDirty] = useState(false); const epoch = useRef(0);
   const available = !catalog.loading && !catalog.error && !!catalog.data; const recordAvailable = !records.loading && !records.error && !!records.data; const storageAvailable = !storage.loading && !storage.error && !!storage.data;
-  const refresh = () => { epoch.current++; setReviewed({}); setReplace({}); setCleanupReviewed(false); catalog.reload(); records.reload(); storage.reload(); };
+  const budgetRead = useMemo(() => readCacheBudget(storage.data), [storage.data]);
+  const lastBudget = useRef<CacheBudget>(); if (budgetRead.budget) lastBudget.current = budgetRead.budget;
+  const shownBudget = budgetRead.budget || lastBudget.current;
+  const cleanupIds = cleanupSelection && cleanupSelection.digest === storage.data?.preview_digest ? cleanupSelection.ids : (storage.data?.eligible || []).slice(0, 100).map(row => row.id);
+  const cleanupKey = storageAvailable ? JSON.stringify([storage.data!.preview_digest, cleanupIds]) : '';
+  const cleanupLive = useRef({ key: cleanupKey, consent: cleanupConsent, disabled: true });
+  cleanupLive.current = { key: cleanupKey, consent: cleanupConsent, disabled: action.busy || !storageAvailable || policyDirty || budgetRead.invalid };
+  const retireCleanup = () => { cleanupLive.current.consent = undefined; setCleanupConsent(undefined); };
+  const refresh = () => { epoch.current++; setReviewed({}); setReplace({}); retireCleanup(); setCleanupSelection(undefined); catalog.reload(); records.reload(); storage.reload(); };
   const chosenMissing = available ? catalog.data!.missing.find(r => r.id === missing) : undefined;
   return <section className="experimental-section" aria-label="项目便携与资源恢复">
     <div className="experimental-actions"><h3>项目便携与资源恢复</h3><Badge>新项目副本 · 明确确认</Badge><Button disabled={action.busy} onClick={refresh}>刷新便携与存储状态</Button></div>
@@ -74,12 +153,27 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
     </Panel>
     <Panel title="存储分类与清理预览">
       <ResourceState loading={storage.loading} error={storage.error} />
+      {budgetRead.invalid && <StatusMessage tone="warning">预算或回收计划无法核实，请刷新后重试；当前清理确认已停用。</StatusMessage>}
+      {shownBudget && <CacheBudgetEditor client={client} budget={shownBudget} disabled={action.busy || !storageAvailable || !budgetRead.budget} run={action.run}
+        onDirty={dirty => { setPolicyDirty(dirty); retireCleanup(); }}
+        onSaved={() => { retireCleanup(); setCleanupSelection(undefined); storage.reload(); }}
+        onPlan={ids => { retireCleanup(); setCleanupSelection({ digest: storage.data!.preview_digest, ids }); }} />}
+
       {storageAvailable && <><ul>{storage.data!.categories.map(c => <li key={c.kind}>{names[c.kind] || c.kind}：{c.bytes == null ? '未统计，保留' : `${c.bytes} 字节`}{c.cleanable ? '（可重建便携缓存）' : '（不清理）'}{!!c.unmeasured_records && `；另有 ${c.unmeasured_records} 项无法校验，保留且未计入`}</li>)}</ul>
         <p>正文与历史按当前已授权章节的内容字节计量；正式资产按登记大小计量。恢复输入只统计当前用户可校验的保留文件与待确认资产，不代表整个磁盘占用。</p>
         <Details value={storage.data!.eligible} label="查看本次可清理缓存清单" />
         <p>本次可清理 {storage.data!.eligible.length} 个经过校验、未被任务占用的导出缓存；历史、回收站、正式资产和恢复输入保留。</p>
-        <label className="experimental-check"><input type="checkbox" checked={cleanupReviewed} disabled={action.busy} onChange={e => setCleanupReviewed(e.target.checked)} />已核对当前预览，只清理列出的可重建缓存</label>
-        <Button disabled={action.busy || !cleanupReviewed || !storage.data!.eligible.length} onClick={() => void action.run(async current => { const preview = storage.data!; await api.cleanup(preview, preview.eligible.map(c => c.id)); if (current()) refresh(); }, '已清理确认的导出缓存；原正文、历史、回收站和资产未修改。')}>确认清理预览中的缓存</Button>
+        <Details value={cleanupIds} label="查看本次选定的清理记录（最多 100 条）" />
+        <Button disabled={cleanupLive.current.disabled} onClick={() => { if (cleanupLive.current.disabled) return; retireCleanup(); setCleanupSelection(undefined); }}>选择全部可清理缓存（最多 100 条）</Button>
+        <label className="experimental-check"><input type="checkbox" checked={!!cleanupConsent && cleanupConsent.key === cleanupKey} disabled={cleanupLive.current.disabled} onChange={e => {
+          if (cleanupLive.current.disabled || cleanupLive.current.key !== cleanupKey) return;
+          const consent = e.target.checked ? { key: cleanupKey } : undefined; cleanupLive.current.consent = consent; setCleanupConsent(consent);
+        }} />已核对当前预览，只清理列出的可重建缓存</label>
+        <Button disabled={cleanupLive.current.disabled || !cleanupConsent || cleanupConsent.key !== cleanupKey || !cleanupIds.length} onClick={() => {
+          if (cleanupLive.current.disabled || !cleanupConsent || cleanupLive.current.consent !== cleanupConsent || cleanupLive.current.key !== cleanupKey || cleanupConsent.key !== cleanupKey || !cleanupIds.length) return;
+          const preview = storage.data!, ids = [...cleanupIds]; retireCleanup();
+          void action.run(async current => { await api.cleanup(preview, ids); if (current()) refresh(); }, '已清理确认的导出缓存；原稿、历史、回收站和资产未修改。');
+        }}>确认清理预览中的缓存</Button>
       </>}
     </Panel>
   </section>;
