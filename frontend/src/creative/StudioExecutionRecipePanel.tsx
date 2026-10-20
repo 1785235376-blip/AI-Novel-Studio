@@ -34,6 +34,7 @@ export function StudioExecutionRecipePanel(props: StudioExecutionRecipePanelProp
             <ul style={list} aria-label={`节点 ${step.id} 输入类型`}>
               {step.inputs.map(input => <li key={input.name}>
                 <code>{input.name}</code>：<code>{input.type}</code>
+                {input.recordedValue !== undefined && <> · 配方记录值 <code>{String(input.recordedValue)}</code></>}
                 {input.source && <> · 来源 <code>{input.source}</code></>}
                 {input.component && <> · 组件 <code>{input.component}</code></>}
               </li>)}

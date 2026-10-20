@@ -38,3 +38,11 @@
 - `frontend/src/creative/StudioGraphRecipeParameterPanel.tsx`
 
 接线仅在原 `useStudioGraphEditorController.ts` 与 `studioGraphEditorView.tsx`。无需App、全局路由或ExperimentalWorkbench补丁。PUBLIC清单未编辑；现有后端PUBLIC/Docker合同不接收frontend路径，前端源交付由统一整合者另核对。
+
+## 后续同范围：原配方记录值回显
+
+完成首片后，原只读配方说明补充已记录的INT/FLOAT/BOOLEAN标量，例如KSampler.steps、seed、cfg、denoise和潜空间尺寸。0和false是已提供值，不当作缺失；只有已知类的已知端口、类型相符且数值有限/整数安全时显示。文字提示词、未知端口、非有限数及黑盒云内部内容不因此展开。
+
+回显明确标为“配方记录值”，保留“执行未验证”，不把结构声明升级成推理PASS，不改变只读props或赋予新执行能力。显示来源仍是原预览/Job已校验的execution_recipe，未知或过期时依原owner隐藏。该小片增加5个专项用例，并复验受影响的38个原说明测试；不是重新运行全量产品测试。
+
+下一步若要编辑cfg、sampler_name、scheduler或内部编码/解码组件，当前固定图片配方构建器尚未开放这些命令字段，需要原适配器参数白名单、能力目录及共享生产契约的协调变更；本前端独占切片不会伪造这些可编辑能力。
