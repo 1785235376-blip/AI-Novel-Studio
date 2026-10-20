@@ -24,7 +24,7 @@ it.each([2,3,4] as const)('builds %s original independent image/review branches 
 });
 it('rejects invalid counts/inputs/IDs and full-definition capacity atomically under unchanged original limits',()=>{
  const target=empty(),before=structuredClone(target),catalog=imageGraphCatalog();
- for(const input of [{...request(),count:1},{...request(),count:5},{...request(),supplements:[]},{...request(),prompt:' '},{...request(),prompt:'字'.repeat(8000)},{...request(),supplements:['字'.repeat(2001),'']}])expect(()=>buildImageOutputStarter(target,catalog,input as ImageOutputRequest)).toThrow();
+ for(const input of [{...request(),count:1},{...request(),count:5},{...request(),supplements:[]},{...request(),supplements:new Array<string>(2)},{...request(),prompt:' '},{...request(),prompt:'字'.repeat(8000)},{...request(),supplements:['字'.repeat(2001),'']}])expect(()=>buildImageOutputStarter(target,catalog,input as ImageOutputRequest)).toThrow();
  expect(()=>buildImageOutputStarter({...target,schema_version:3},catalog,request())).toThrow();expect(()=>buildImageOutputStarter({...target,nodes:[{id:'Keep',definition_id:'text_input',definition_version:1,enabled:true,position:{x:0,y:0},parameters:{text:'Keep'}}]},catalog,request())).toThrow();
  expect(()=>buildImageOutputStarter(target,{...catalog,media_limits:undefined},request())).toThrow();expect(()=>buildImageOutputStarter(target,catalog,request(),()=> 'same')).toThrow();
  const notes={...target,presentation:{notes:Array.from({length:900},(_,index)=>({id:`Note_${index}`,text:'字'.repeat(13),position:{x:0,y:0}}))}};expect(()=>checkedLocalGraphDefinition(notes)).not.toThrow();expect(()=>buildImageOutputStarter(notes,catalog,{...request(),prompt:'字'.repeat(4000)})).toThrow();expect(target).toEqual(before);

@@ -17,7 +17,7 @@ export type ImageOutputHandoff={scope:object;available:boolean;isCurrent:()=>boo
 export function buildImageOutputStarter(draft:StudioGraphDefinition,catalog:StudioGraphCatalog,request:ImageOutputRequest,makeId=graphId){
  if(draft.schema_version!==4||!graphStarterAvailable('image-draft',draft,catalog)||draft.nodes.length||draft.edges.length)throw new Error('请在原图明确采用空白图片图 v4；不会升级或覆盖已有图。');
  if(!IMAGE_OUTPUT_COUNTS.includes(request.count)||!Array.isArray(request.supplements)||request.supplements.length!==request.count)throw new Error('请明确选择2–4份产物，并核对每份补充说明。');
- if(typeof request.prompt!=='string'||!request.prompt.trim()||Array.from(request.prompt).length>8000||request.supplements.some(text=>typeof text!=='string'||Array.from(text).length>2000))throw new Error('作者输入须为1–8000字符，每份补充说明最多2000字符。');
+ if(typeof request.prompt!=='string'||!request.prompt.trim()||Array.from(request.prompt).length>8000||Array.from(request.supplements).some(text=>typeof text!=='string'||Array.from(text).length>2000))throw new Error('作者输入须为1–8000字符，每份补充说明最多2000字符。');
  const limits=catalog.media_limits;
  if(!limits||request.count>limits.generators||request.count*4>limits.nodes||request.count*3>catalog.limits.edges)throw new Error('产物数量超过原图生成节点或连接预算，未建立任何分支。');
  const occupied=new Set([...(draft.presentation?.groups||[]),...(draft.presentation?.notes||[])].map(row=>row.id));
