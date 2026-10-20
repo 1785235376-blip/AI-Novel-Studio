@@ -206,6 +206,15 @@ export function diffStorySpecs(from: StorySpec, to: StorySpec): StoryDiffRow[] {
   return rows;
 }
 
+export const DIFF_KIND_LABELS: Record<StoryDiffKind, string> = {
+  TITLE: '标题变化', ENTRY_NODE: '入口变化', MAX_STEPS: '步数上限变化', GRAPH_RECORDS: '图谱关联变化',
+  NODE_ADDED: '新增节点', NODE_REMOVED: '移除节点', NODE_FIELD: '节点变化',
+  CHOICE_ADDED: '新增选择', CHOICE_REMOVED: '移除选择', CHOICE_FIELD: '选择变化',
+  VARIABLE_ADDED: '新增变量', VARIABLE_REMOVED: '移除变量', VARIABLE_FIELD: '变量变化',
+};
+
+export function diffKindLabel(kind: StoryDiffKind): string { return DIFF_KIND_LABELS[kind] ?? kind; }
+
 export type StoryDiffSummary = { total: number; story: number; nodes: number; choices: number; variables: number; identical: boolean };
 
 export function summarizeStoryDiff(rows: readonly StoryDiffRow[]): StoryDiffSummary {

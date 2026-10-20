@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { describeStoryDiffRow, diffStorySpecs, formatStoryDiffValue, summarizeStoryDiff } from './interactiveStoryDiff';
+import { describeStoryDiffRow, diffKindLabel, diffStorySpecs, formatStoryDiffValue, summarizeStoryDiff } from './interactiveStoryDiff';
 import type { StorySpec } from './interactiveStoryClient';
 
 function base(): StorySpec {
@@ -92,6 +92,11 @@ describe('formatters', () => {
     expect(formatStoryDiffValue(['a', 'b'])).toBe('a、b');
     expect(formatStoryDiffValue({})).toBe('{}');
     expect(formatStoryDiffValue('x'.repeat(400)).endsWith('…')).toBe(true);
+  });
+  it('labels every diff kind for display', () => {
+    expect(diffKindLabel('NODE_FIELD')).toBe('节点变化');
+    expect(diffKindLabel('CHOICE_REMOVED')).toBe('移除选择');
+    expect(diffKindLabel('VARIABLE_ADDED')).toBe('新增变量');
   });
   it('summarises category counts', () => {
     const next = base(); next.title = '新'; next.variables = [];
