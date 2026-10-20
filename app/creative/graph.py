@@ -210,8 +210,13 @@ class CreativeGraphService:
         current()
         return result
 
-    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False, include_local_subgraph=False):
+    def catalog(self, nid, scope, actor, guard=lambda: None, *, include_image=False, include_production=False, include_video=False, include_local_subgraph=False, include_local_conditions=False):
         _, current = self._context(nid, scope, actor, guard)
+        if include_local_conditions:
+            if include_image or include_production or include_video or include_local_subgraph:
+                raise ValueError("CREATIVE_GRAPH_CONDITION_CATALOG_MODE_INVALID")
+            from .graph_conditions_catalog import catalog
+            return catalog(current)
         if include_local_subgraph:
             if include_image or include_production or include_video:
                 raise ValueError("CREATIVE_GRAPH_SUBGRAPH_CATALOG_MODE_INVALID")
@@ -317,13 +322,19 @@ class CreativeGraphService:
                 document=state, source_kinds=kinds)
         guard()
 
-    def list(self, nid, scope, actor, guard=lambda: None, *, include_local_subgraph=False):
+    def list(self, nid, scope, actor, guard=lambda: None, *, include_local_subgraph=False, include_local_conditions=False):
         _, current = self._context(nid, scope, actor, guard)
+        if include_local_conditions:
+            from .graph_local_conditions import require_conditions
+            original_current = current
+            def current():
+                original_current(); require_conditions()
+            current()
         state = self.store.read(nid, scope)
         result = []
         for rid, row in state["collections"].get(GRAPHS, {}).items():
             if (isinstance(row, dict) and row.get("created_by") == actor
-                    and row.get("definition", {}).get("schema_version") != 7
+                    and (include_local_conditions or row.get("definition", {}).get("schema_version") != 7)
                     and (include_local_subgraph or row.get("definition", {}).get("schema_version") != 6)):
                 # Keep legacy asset/owner lock ordering. Schema6 _view acquires
                 # its own original scope lease instead of wrapping mixed rows.

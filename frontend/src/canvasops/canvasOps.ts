@@ -85,7 +85,7 @@ const CANVAS_DEFINITION_ID_SET = new Set<string>(CANVAS_DEFINITION_IDS);
  * 少写一个现存节点类型或发明一个新类型都无法通过 `tsc`。
  */
 export const CANVAS_NODE_ROLE: Record<StudioGraphDefinitionId, CanvasNodeCategory> = {
-  text_input: 'TEXT', text_reference: 'TEXT', draft_prepare: 'TEXT', manual_transform: 'TEXT',
+  local_condition: 'TEXT', text_input: 'TEXT', text_reference: 'TEXT', draft_prepare: 'TEXT', manual_transform: 'TEXT',
   director_note: 'TEXT', human_review: 'TEXT', text_generate: 'TEXT', local_subgraph: 'TEXT',
   asset_reference: 'ASSET',
   media_generate: 'MEDIA', media_review: 'MEDIA', timeline_export: 'MEDIA',

@@ -231,12 +231,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
 
     @router.get("/projects/{nid}/studio/graphs/catalog")
     def catalog(nid: str, request: Request, include_image: bool = False, include_production: bool = False, include_video: bool = False,
-                include_local_subgraph: bool = False,
+                include_local_subgraph: bool = False, include_local_conditions: bool = False,
                 x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.catalog(nid, scope, actor, guard=guard,
                           include_image=include_image, include_production=include_production, include_video=include_video,
-                          include_local_subgraph=include_local_subgraph), request,
+                          include_local_subgraph=include_local_subgraph, include_local_conditions=include_local_conditions), request,
                           model_input=include_image or include_production or include_video)
 
     @router.get("/projects/{nid}/studio/graphs/planning-documents")
@@ -247,11 +247,11 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                       request, model_input=True)
 
     @router.get("/projects/{nid}/studio/graphs")
-    def graphs(nid: str, request: Request, include_local_subgraph: bool = False,
+    def graphs(nid: str, request: Request, include_local_subgraph: bool = False, include_local_conditions: bool = False,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                       lambda actor, scope, guard: service.list(nid, scope, actor, guard=guard,
-                          include_local_subgraph=include_local_subgraph), request, target=("list", None))
+                          include_local_subgraph=include_local_subgraph, include_local_conditions=include_local_conditions), request, target=("list", None))
 
     @router.post("/projects/{nid}/studio/graphs", status_code=201)
     def create(nid: str, request: Request, body: GraphCreate,

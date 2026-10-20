@@ -1,3 +1,4 @@
+import { GraphConditionFields } from './GraphConditionFields';
 import { GraphNodeStateControl } from './GraphNodeStateControl';
 import { GraphNodeRemovalControl } from './GraphNodeRemovalControl';
 import { GraphConnectionList } from './GraphConnectionList';
@@ -87,7 +88,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
   const mediaEnabled = catalog?.capabilities.media_execution === true && catalog.capabilities.media_execution_contract === 'creative-graph-media/1';
   const videoGraph = draft.schema_version === 5;
   const imageGraph = draft.schema_version === 4;
-  const restricted = draft.schema_version === 6, structureEditable = editable && !restricted;
+  const conditional = draft.schema_version === 7, restricted = draft.schema_version === 6 || conditional, structureEditable = editable && !restricted;
   const nodeLimit = draft.schema_version >= 3 ? catalog?.media_limits?.nodes || 24 : catalog?.limits.nodes || 16;
   const schemaRequired = !imageGraph && !videoGraph && (kind === 'media_generate' || kind === 'media_review' || kind === 'timeline_export' || kind === 'asset_reference' && mediaEnabled);
   const mediaOperation = node?.parameters.operation_id, parameterNames = mediaOperation ? graphMediaParameterNames(mediaOperation, ['image_generate', 'image_upscale'].includes(node?.definition_id || '')) : [];
@@ -125,9 +126,12 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
   </fieldset>;
   const content = <section className="studio-graph-editor" aria-label="独立创作图编辑器">
     <GraphDirectorCompareDeck definition={draft} base={base} identity={identity} active={props.active && !props.denied} client={client.graphs} busy={busy} onLocate={controller.locateRunNode} isCurrent={current} read={read} />
-    <Panel title="创作图 · 手工编排"><p>空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。</p>{catalog?.capabilities.model_execution && <p>可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。</p>}
+    <Panel title="创作图 · 手工编排">{conditional && <p>本地条件图 v7：固定两条闭合分支。仅整图预检与执行，缓存关闭，分支输出仍须原人工审核。</p>}<p>空图和不相连的组件都可以保存。导演备注可选，可随时移除；连接类型由服务端定义。</p>{catalog?.capabilities.model_execution && <p>可选本地文字模型节点需单独预览输入并明确确认一次调用。每次运行最多一个文字模型节点，输出必须人工审核；不自动调用、重试或转云端。</p>}
       {videoGraph ? <p>视频图 v5：原导演与已批准分镜 → 版本绑定镜头 → 视频生成 → 原媒体审核 → 正式视频，可再连接原时间线。各次模型调用、入队、执行与审核单独确认。</p> : imageGraph ? <p>图片图 v4：资产引用 → 图片参考与权重 → 图片提示词 → 图片生成 → 媒体审核 → 正式素材。各节点可独立编排；最多四个图片生成节点。保存、预览、入队、执行和审核分别操作，真实推理与完整流程验收仍待完成。</p>
         : mediaEnabled ? <p>媒体图 v3 使用原任务服务逐项入队和执行。候选只能进入人工审核，审核后的当前素材才能用于下游。每图最多四个媒体制作节点；本机与完整流程验收仍待完成。</p> : <p>当前保留本地文本与手工工作流。旧图中的资产节点保持只读引用，不执行媒体处理。</p>}
+      {typeof client.graphs.conditionsCatalog === 'function' && <section aria-label="受限条件图入口"><h3>本地条件分支</h3><Button disabled={loading || busy || externalDirty || executionDirty || timelineEditor.formDirty || !props.active || props.denied} onClick={() => void controller.loadConditions()}>核对条件图能力与目录</Button>
+        {controller.conditionCatalog && <><p>支持保存的布尔值或 A/B 等值；两臂各以人工审核结束。请先使用新建空白图，再准备六节点草稿。</p><Button disabled={!editable || loading || !!base || !!draft.nodes.length || !!draft.edges.length || timelineEditor.formDirty} onClick={controller.createConditions}>准备六节点条件草稿</Button></>}
+      </section>}
       {controller.localSubgraph.available && <GraphLocalSubgraphPanel controller={controller.localSubgraph} definition={draft} base={base} disabled={busy || externalDirty || executionDirty || loading || !props.active || props.denied} />}
       <Button disabled={restricted || loading || busy || externalDirty || executionDirty} onClick={() => void loadImageCatalog()}>明确读取图片节点目录</Button>
       <Button disabled={restricted || loading || busy || externalDirty || executionDirty || !client.graphs.videoCatalog} onClick={() => void loadVideoCatalog()}>明确读取视频图节点目录</Button>
@@ -241,6 +245,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
   </section>;
   const referenceState = base?.reference_states.find(row => row.node_id === node?.id)?.state;
   const inspector = <section ref={controller.nodeInspectorRef} tabIndex={-1} className="studio-graph-inspector" aria-label="创作图节点检查器">{node ? <><h2>{GRAPH_NODE_LABELS[node.definition_id]}</h2><p>{node.id} · 定义 v{node.definition_version}</p><GraphNodeStateControl nodeId={node.id} definition={draft} definitions={catalog?.definitions ?? []} owner={controller.insertionScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()} onChange={change} />
+    {node.definition_id === 'local_condition' && node.parameters.predicate && <GraphConditionFields value={node.parameters.predicate} disabled={!editable} onChange={controller.updateCondition} />}
     {(['text_input', 'manual_transform', 'director_note'] as const).includes(node.definition_id as 'text_input') && <label>{node.definition_id === 'text_input' ? '作者输入文本' : node.definition_id === 'manual_transform' ? '手工处理结果' : '可选导演备注'}<textarea maxLength={node.definition_id === 'director_note' ? 4000 : 8000} disabled={!editable} value={String(node.parameters[node.definition_id === 'text_input' ? 'text' : node.definition_id === 'manual_transform' ? 'result' : 'note'] || '')} onChange={event => { const key = node.definition_id === 'text_input' ? 'text' : node.definition_id === 'manual_transform' ? 'result' : 'note'; change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { [key]: event.target.value } } : row) }); }} /></label>}
     {node.definition_id === 'text_generate' && <><label>本地模型写作指令<textarea maxLength={4000} disabled={!editable} value={node.parameters.instruction || ''} onChange={event => change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { ...row.parameters, instruction: event.target.value } } : row) })} /></label><label>最大输出 token<input type="number" min={1} max={2048} step={1} disabled={!editable} value={node.parameters.max_output_tokens ?? 512} onChange={event => { const value = Number(event.target.value); if (Number.isSafeInteger(value) && value >= 1 && value <= 2048) change({ ...draft, nodes: draft.nodes.map(row => row.id === node.id ? { ...row, parameters: { ...row.parameters, max_output_tokens: value } } : row) }); }} /></label><p>保存节点不调用模型。将草稿输出连接到人工审核节点后，创建运行并单独核对本地路由和完整输入。</p></>}
     {node.definition_id === 'image_reference' && <><p>每个端口绑定一张原图片或已审核素材。权重在原路线中归一化后用于像素初始化；不能据此宣称角色、风格或构图一致性。</p>

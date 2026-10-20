@@ -20,15 +20,22 @@ export const GRAPH_LOCAL_SUBGRAPH_PARENT_IDS = [...GRAPH_LOCAL_SUBGRAPH_CHILD_ID
 export type GraphVideoOperation = typeof GRAPH_VIDEO_OPERATIONS[number];
 export type GraphUpscaleOperation = 'm5.image.upscale';
 /** Finite, code-owned contracts. A catalog entry cannot register executable code. */
+export const GRAPH_CONDITIONS_CONTRACT = 'creative-graph-local-conditions/1';
+export const GRAPH_CONDITIONS_CACHE = 'DISABLED_LOCAL_CONDITIONS_V1';
+export const GRAPH_CONDITIONS_IDS = ['text_input', 'local_condition', 'text_reference', 'draft_prepare', 'manual_transform', 'human_review'] as const;
+export type GraphConditionPredicate = { kind: 'boolean'; value: boolean } | { kind: 'enum'; value: 'A' | 'B'; equals: 'A' | 'B' };
+export type GraphConditionPlan = { contract: typeof GRAPH_CONDITIONS_CONTRACT; condition_node_id: string; selected_port: 'when_true' | 'when_false'; active_node_ids: string[]; skipped_node_ids: string[]; plan_digest: string };
+export type GraphConditionalRuntime = { contract: typeof GRAPH_CONDITIONS_CONTRACT; cache_enabled: false; plan: GraphConditionPlan | null; skipped_dispatches: 0 | null; skipped_outputs: 0 | null };
 export type StudioGraphDefinitionId = 'text_input' | 'text_reference' | 'draft_prepare'
   | 'manual_transform' | 'director_note' | 'human_review' | 'asset_reference' | 'text_generate' | 'media_generate' | 'media_review' | 'timeline_export'
-  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt' | 'storyboard_shot' | 'video_generate' | 'local_subgraph';
+  | 'image_reference' | 'image_prompt' | 'image_generate' | 'image_style' | 'image_upscale' | 'director_plan' | 'storyboard_plan' | 'storyboard_prompt' | 'storyboard_shot' | 'video_generate' | 'local_subgraph' | 'local_condition';
 export type StudioGraphPortType = 'TEXT' | 'DIRECTOR_NOTES' | 'DRAFT' | 'ASSET_REF' | 'MEDIA_CANDIDATE' | 'IMAGE_REFERENCES' | 'IMAGE_PROMPT' | 'DIRECTOR_PLAN' | 'STORYBOARD_DATA' | 'STORYBOARD_SHOT' | 'VIDEO_CANDIDATE';
 export type StudioGraphPort = { id: string; type: StudioGraphPortType; required: boolean; multiple: false };
 export type StudioGraphPosition = { x: number; y: number };
 export type StudioGraphViewport = StudioGraphPosition & { zoom: number };
 /** Only parameters owned by the selected definition are sent or returned. */
 export type StudioGraphParameters = {
+  predicate?: GraphConditionPredicate;
   text?: string;
   result?: string;
   note?: string;
@@ -70,7 +77,7 @@ export type StudioGraphEdge = {
   target_port: string;
 };
 export type StudioGraphDefinition = {
-  schema_version: 1 | 2 | 3 | 4 | 5 | 6;
+  schema_version: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   title: string;
   nodes: StudioGraphNode[];
   edges: StudioGraphEdge[];
@@ -154,10 +161,11 @@ export type StudioGraphCatalog = {
     parallel_execution: false;
     automatic_retry: false;
     actor_private: true;
-    cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_SUBGRAPH_CACHE;
+    cache_mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_SUBGRAPH_CACHE | typeof GRAPH_CONDITIONS_CACHE;
     local_subgraph_contract?: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT; local_subgraph_schema_version?: 6;
     local_subgraph_depth?: 1; local_subgraph_child_nodes?: 16; local_subgraph_total_nodes?: 24;
     local_subgraph_cache?: false; local_subgraph_frontend_entry?: false;
+    local_conditions_contract?: typeof GRAPH_CONDITIONS_CONTRACT; local_conditions_schema_version?: 7; local_conditions_frontend_entry?: true; whole_graph_required?: true; condition_kinds?: ['boolean', 'enum'];
     local_dependency_reuse?: typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE;
   };
 };
@@ -180,8 +188,8 @@ export type StudioGraphRecord = StudioGraphOwner & {
 };
 export type StudioGraphIssue = { code: string; node_id?: string };
 export type StudioGraphPreflight = StudioGraphOwner & {
-  graph_schema_version?: 6; local_subgraph_contract?: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT;
-  local_subgraph_bindings?: Record<string, StudioGraphSubgraphBinding>; source_check?: 'CURRENT_PIN_SCOPE_TRANSACTION';
+  graph_schema_version?: 6 | 7; conditional_plan?: GraphConditionPlan; cache_enabled?: false; local_subgraph_contract?: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT;
+  local_subgraph_bindings?: Record<string, StudioGraphSubgraphBinding>; source_check?: 'CURRENT_PIN_SCOPE_TRANSACTION' | 'SAVED_INLINE_DEFINITION_PIN';
   graph_id: string;
   valid: true;
   executable: boolean;
@@ -208,11 +216,12 @@ export type StudioGraphAssetRef = { asset_id: string; version: number; digest: s
 export type StudioGraphImageReference = { asset: StudioGraphAssetRef & { kind: 'image' }; weight: number; purpose?: ImageReferencePurpose; source_note?: string };
 export type StudioGraphImagePrompt = { prompt: string; references: StudioGraphImageReference[]; document_sources?: RecordedMediaCommand['source_snapshots'] };
 export type StudioGraphMediaCandidate = { owner: 'image' | 'video' | 'audio' | 'timeline'; job_id: string; job_version: number; request_digest: string; asset: StudioGraphAssetRef };
-export type StudioGraphOutput = { text?: string; direction?: StudioGraphDirection | PlanningProjection; storyboard?: PlanningProjection; shot?: StoryboardShot & { document_snapshot: PlanningSnapshot; approved: boolean }; draft?: StudioGraphDraft; reviewed_draft?: StudioGraphDraft; asset?: StudioGraphAssetRef; candidate?: StudioGraphMediaCandidate;
+export type StudioGraphOutput = { when_true?: string; when_false?: string; text?: string; direction?: StudioGraphDirection | PlanningProjection; storyboard?: PlanningProjection; shot?: StoryboardShot & { document_snapshot: PlanningSnapshot; approved: boolean }; draft?: StudioGraphDraft; reviewed_draft?: StudioGraphDraft; asset?: StudioGraphAssetRef; candidate?: StudioGraphMediaCandidate;
   references?: StudioGraphImageReference[]; prompt?: StudioGraphImagePrompt };
 export type StudioGraphNodeStatus = 'PENDING' | 'WAITING_APPROVAL' | 'QUEUED' | 'WORKING'
   | 'SUCCEEDED' | 'FAILED' | 'SKIPPED' | 'REJECTED';
 export type StudioGraphNodeState = {
+  reviewed?: boolean;
   status: StudioGraphNodeStatus;
   output: StudioGraphOutput | null;
   error: { code: string } | null;
@@ -229,7 +238,8 @@ export type StudioGraphRun = StudioGraphOwner & {
   current_node_id: string | null;
   node_states: Record<string, StudioGraphNodeState>;
   review: { node_id: string; output_digest: string; draft: StudioGraphDraft } | null;
-  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE | typeof GRAPH_LOCAL_SUBGRAPH_CACHE };
+  cache: { hits: number; misses: number; mode: 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' | typeof GRAPH_LOCAL_DEPENDENCY_REUSE_MODE | typeof GRAPH_LOCAL_SUBGRAPH_CACHE | typeof GRAPH_CONDITIONS_CACHE };
+  conditional_runtime?: GraphConditionalRuntime;
   local_subgraph_runtime?: { contract: typeof GRAPH_LOCAL_SUBGRAPH_CONTRACT; cache_enabled: false;
     bindings: Record<string, StudioGraphSubgraphBinding>; receipts: Record<string, StudioGraphSubgraphReceipt> };
   created_at: string;

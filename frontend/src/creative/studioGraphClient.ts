@@ -1,3 +1,5 @@
+import { checkedConditionParameters, closedConditionalFields, conditionShape, conditionClosed, checkedConditionSchema, checkedConditionPlan, checkedConditionalRuntime, conditionHash, conditionSame, conditionInvalid } from './graphConditionContract';
+import { GRAPH_CONDITIONS_CONTRACT, GRAPH_CONDITIONS_CACHE, GRAPH_CONDITIONS_IDS } from './studioGraphTypes';
 import { createCanvasViewClient } from './studioCanvasViewClient';
 import { checkedStoryboardShot, checkedStoryboardReceipt } from './studioStoryboardContract';
 import { checkedVideoReference, checkedVideoRecipe, storyboardShotFields, sameVideoReference } from './studioVideoRuntimeContract';
@@ -40,12 +42,13 @@ const modelDefinitionIds: readonly StudioGraphDefinitionId[] = [...localDefiniti
 const mediaDefinitionIds: readonly StudioGraphDefinitionId[] = ['media_generate', 'media_review'];
 const imageDefinitionIds: readonly StudioGraphDefinitionId[] = ['image_reference', 'image_prompt', 'image_generate'];
 const imageSchemaDefinitionIds: readonly StudioGraphDefinitionId[] = ['text_input', 'text_reference', 'asset_reference', ...imageDefinitionIds, ...productionGraphDefinitions, 'media_review'];
-const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'timeline_export', ...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate', 'local_subgraph'];
+const definitionIds: readonly StudioGraphDefinitionId[] = [...modelDefinitionIds, ...mediaDefinitionIds, 'local_condition', 'timeline_export', ...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate', 'local_subgraph'];
 const statuses: readonly StudioGraphRunStatus[] = ['QUEUED', 'RUNNING', 'WAITING_APPROVAL', 'PAUSED', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'];
 const nodeStatuses: readonly StudioGraphNodeStatus[] = ['PENDING', 'WAITING_APPROVAL', 'QUEUED', 'WORKING', 'SUCCEEDED', 'FAILED', 'SKIPPED', 'REJECTED'];
 const actions: readonly StudioGraphAction[] = ['execute', 'approve', 'reject', 'cancel', 'pause', 'resume'];
 const portKinds = ['TEXT', 'DIRECTOR_NOTES', 'DRAFT', 'ASSET_REF', 'MEDIA_CANDIDATE', 'IMAGE_REFERENCES', 'IMAGE_PROMPT', 'DIRECTOR_PLAN', 'STORYBOARD_DATA', 'STORYBOARD_SHOT', 'VIDEO_CANDIDATE'] as const;
 const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
+  local_condition: ['predicate'],
   local_subgraph: ['graph_id', 'expected_version', 'definition_digest', 'execution_digest', 'input_node_id', 'input_port', 'output_node_id', 'output_port'],
   text_input: ['text'], text_reference: [], draft_prepare: [], manual_transform: ['result'],
   director_note: ['note'], human_review: [], asset_reference: ['asset_id', 'version', 'digest', 'kind'],
@@ -59,6 +62,7 @@ const parameterKeys: Record<StudioGraphDefinitionId, readonly string[]> = {
   image_generate: ['operation_id', 'provider_id', 'model_id', 'parameters', 'allow_cloud', 'license_note'],
 };
 const ports: Record<StudioGraphDefinitionId, { inputs: Record<string, string>; outputs: Record<string, string> }> = {
+  local_condition: { inputs: { text: 'TEXT' }, outputs: { when_true: 'TEXT', when_false: 'TEXT' } },
   local_subgraph: { inputs: { text: 'TEXT' }, outputs: { draft: 'DRAFT' } },
   text_input: { inputs: {}, outputs: { text: 'TEXT' } },
   text_reference: { inputs: { text: 'TEXT' }, outputs: { text: 'TEXT' } },
@@ -209,6 +213,7 @@ function mediaParameterValues(value: unknown, operation: GraphMediaOperation | G
 }
 function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false, unavailable = false): StudioGraphParameters {
   const row = record(value, input);
+  if (kind === 'local_condition') return checkedConditionParameters(value);
   // Redacted references never expose identifiers even if a malformed response includes them.
   if (unavailable && ['asset_reference', 'director_plan', 'storyboard_plan', 'local_subgraph'].includes(kind)) return {};
   if (kind === 'local_subgraph') {
@@ -278,10 +283,12 @@ function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false
 }
 function definition(value: unknown, input = false, unavailable = new Set<string>()): StudioGraphDefinition {
   const row = record(value, input);
-  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3 && row.schema_version !== 4 && row.schema_version !== 5 && row.schema_version !== 6) invalid(input);
-  const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version >= 3 ? 24 : 16, input).map(item => {
+  if (row.schema_version !== 1 && row.schema_version !== 2 && row.schema_version !== 3 && row.schema_version !== 4 && row.schema_version !== 5 && row.schema_version !== 6 && row.schema_version !== 7) invalid(input);
+  if (row.schema_version === 7) closedConditionalFields(value);
+  const nodes: StudioGraphNode[] = list(row.nodes, row.schema_version >= 3 && row.schema_version !== 7 ? 24 : 16, input).map(item => {
     const node = record(item, input), nodeId = id(node.id, input), kind = definitionId(node.definition_id, input);
-    if (row.schema_version === 6 ? !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(value => value === kind) : kind === 'local_subgraph' || (row.schema_version === 5 ? !videoGraphDefinitions.includes(kind as typeof videoGraphDefinitions[number]) : row.schema_version === 4 ? !imageSchemaDefinitionIds.includes(kind) || ['storyboard_shot', 'video_generate'].includes(kind)
+    if (row.schema_version !== 7 && kind === 'local_condition') invalid(input);
+    if (row.schema_version === 7 ? !GRAPH_CONDITIONS_IDS.some(value => value === kind) : row.schema_version === 6 ? !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(value => value === kind) : kind === 'local_subgraph' || (row.schema_version === 5 ? !videoGraphDefinitions.includes(kind as typeof videoGraphDefinitions[number]) : row.schema_version === 4 ? !imageSchemaDefinitionIds.includes(kind) || ['storyboard_shot', 'video_generate'].includes(kind)
       : [...imageDefinitionIds, ...productionGraphDefinitions, 'storyboard_shot', 'video_generate'].includes(kind) || kind === 'text_generate' && row.schema_version === 1 || [...mediaDefinitionIds, 'timeline_export'].includes(kind) && row.schema_version !== 3)) invalid(input);
     if (node.definition_version !== 1) invalid(input);
     return { id: nodeId, definition_id: kind, definition_version: 1, enabled: bool(node.enabled, input),
@@ -403,6 +410,7 @@ function definition(value: unknown, input = false, unavailable = new Set<string>
     }
   }
   if (new TextEncoder().encode(JSON.stringify(result)).length > 96_000) invalid(input);
+  if (result.schema_version === 7) conditionShape(result);
   return result;
 }
 
@@ -511,7 +519,7 @@ function catalogDefinition(value: unknown, mediaEnabled = false, videoSchema = f
   }
   if (['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate', 'local_subgraph'].includes(kind) && row.default_parameters !== null) invalid();
   return { id: kind, version: 1, inputs: checkedPorts(row.inputs, 'inputs'), outputs: checkedPorts(row.outputs, 'outputs'),
-    parameters_schema: schema(row.parameters_schema, kind),
+    parameters_schema: kind === 'local_condition' ? checkedConditionSchema(row.parameters_schema) : schema(row.parameters_schema, kind),
     default_parameters: ['asset_reference', 'media_generate', 'timeline_export', 'image_generate', 'image_upscale', 'director_plan', 'storyboard_plan', 'storyboard_prompt', 'storyboard_shot', 'video_generate', 'local_subgraph'].includes(kind) ? null : parameters(row.default_parameters, kind),
     executable, model_called: false, blockers: list(row.blockers, 16).map(code) };
 }
@@ -531,6 +539,11 @@ function draft(value: unknown, allowModel = false): StudioGraphDraft {
 function output(value: unknown, allowModel = false, allowReviewed = false, imageKind?: StudioGraphDefinitionId): StudioGraphOutput | null {
   if (value === null) return null;
   const row = record(value), result: StudioGraphOutput = {};
+  if (imageKind === 'local_condition') {
+    const keys = Object.keys(row); if (keys.length !== 1 || !['when_true', 'when_false'].includes(keys[0])) invalid();
+    return { [keys[0]]: text(row[keys[0]], 8000, false, true) };
+  }
+  if (row.when_true !== undefined || row.when_false !== undefined) invalid();
   if (imageKind === 'image_reference') closed(row, ['references']);
   if (['image_prompt', 'image_style', 'storyboard_prompt'].includes(imageKind || '')) closed(row, ['prompt']);
   if (imageKind === 'director_plan') closed(row, ['direction']);
@@ -765,8 +778,20 @@ function runStatus(value: unknown): StudioGraphRunStatus {
   return value as StudioGraphRunStatus;
 }
 
-function catalog(value: unknown): StudioGraphCatalog {
+function catalog(value: unknown, conditions = false): StudioGraphCatalog {
   const row = record(value), limits = record(row.limits), capabilities = record(row.capabilities);
+  if (capabilities.local_conditions_contract !== undefined) {
+    if (!conditions) invalid();
+    conditionClosed(row, ['definitions', 'limits', 'capabilities']);
+    for (const item of list(row.definitions, 6)) conditionClosed(item, ['id', 'version', 'inputs', 'outputs', 'parameters_schema', 'default_parameters', 'executable', 'model_called', 'blockers']);
+    const expectedLimits: StudioGraphCatalog['limits'] = { nodes: 16, edges: 40, definition_bytes: 96000, output_bytes: 64000, graphs: 25, runs: 100, history: 20, runtime_timeout_seconds: 3600, node_timeout_seconds: 5 };
+    const expectedCapabilities: StudioGraphCatalog['capabilities'] = { local_execution: true, chapter_required: false, model_execution: false, external_reference_execution: false, external_reference_detach: false, binary_cache: false, parallel_execution: false, automatic_retry: false, actor_private: true, cache_mode: GRAPH_CONDITIONS_CACHE, local_conditions_contract: GRAPH_CONDITIONS_CONTRACT, local_conditions_schema_version: 7, local_conditions_frontend_entry: true, whole_graph_required: true, condition_kinds: ['boolean', 'enum'] };
+    if (!conditionSame(limits, expectedLimits) || !conditionSame(capabilities, expectedCapabilities) || row.media_limits !== undefined) invalid();
+    const definitions = list(row.definitions, 6).map(item => catalogDefinition(item));
+    if (definitions.length !== 6 || new Set(definitions.map(d => d.id)).size !== 6 || definitions.some(d => !GRAPH_CONDITIONS_IDS.some(id => id === d.id) || d.blockers.length)) invalid();
+    return { limits: expectedLimits, capabilities: expectedCapabilities, definitions };
+  }
+  if (conditions) invalid();
   if (capabilities.local_subgraph_contract !== undefined) {
     const expectedLimits: StudioGraphCatalog['limits'] = { nodes: 24, edges: 40, definition_bytes: 96000, output_bytes: 64000,
       graphs: 25, runs: 100, history: 20, runtime_timeout_seconds: 3600, node_timeout_seconds: 5 };
@@ -855,7 +880,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   const graphUrl = (value: unknown) => `${base}/graphs/${encodeURIComponent(resourceId(value, true))}`;
   const runUrl = (value: unknown) => `${base}/graph-runs/${encodeURIComponent(resourceId(value, true))}`;
   const observedGraphs = new Map<string, { version: number; can_edit: boolean; enabledIds: string[]; definition_digest: string;
-    schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; localPins: Record<string, StudioGraphParameters>; localEdges: StudioGraphDefinition['edges']; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
+    conditionDefinition?: StudioGraphDefinition; schemaVersion: number; nodes: Record<string, StudioGraphDefinitionId>; localPins: Record<string, StudioGraphParameters>; localEdges: StudioGraphDefinition['edges']; planningSnapshots: Record<string, unknown>; shotPins: Record<string, { shot_id?: string; shot_version?: number; shot_digest?: string; document_snapshot?: unknown }> }>();
   const observedRuns = new Map<string, string>();
   const observedReviewRecoveries = new Map<string, { version: number; workflow: string;
     nodes: Map<string, { owner: StudioGraphMediaExecution['owner']; jobId: string;
@@ -951,6 +976,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if (new Set(referenceStates.map(item => item.node_id)).size !== referenceStates.length) invalid();
     const unavailable = new Set(referenceStates.filter(item => item.state === 'UNAVAILABLE').map(item => item.node_id));
     const checkedDefinition = definition(row.definition, false, unavailable);
+    if (checkedDefinition.schema_version === 7) conditionClosed(row, ["id", "version", "definition", "definition_digest", "execution_digest", "created_at", "updated_at", "can_edit", "reference_states", "project_id", "scope", ...(row.capacity === undefined ? [] : ["capacity"])]);
     const assetNodes = checkedDefinition.nodes.filter(node => ['asset_reference', 'director_plan', 'storyboard_plan', 'local_subgraph'].includes(node.definition_id));
     if (assetNodes.length !== referenceStates.length || referenceStates.some(item => !assetNodes.some(node => node.id === item.node_id))) invalid();
     const canEdit = bool(row.can_edit);
@@ -973,7 +999,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     const previous = observedGraphs.get(value.id);
     if (!previous || previous.version <= value.version) observedGraphs.set(value.id, {
       version: value.version, can_edit: value.can_edit, enabledIds: value.definition.nodes.filter(node => node.enabled).map(node => node.id),
-      definition_digest: value.definition_digest,
+      definition_digest: value.definition_digest, conditionDefinition: value.definition.schema_version === 7 ? structuredClone(value.definition) : undefined,
       localPins: Object.fromEntries(value.definition.nodes.filter(node => node.definition_id === 'local_subgraph').map(node => [node.id, { ...node.parameters }])),
       localEdges: value.definition.schema_version === 6 ? value.definition.edges.map(edge => ({ ...edge })) : [],
       schemaVersion: value.definition.schema_version, planningSnapshots: Object.fromEntries(value.definition.nodes.filter(node => node.parameters.document_snapshot).map(node => [node.id, node.parameters.document_snapshot])), nodes: Object.fromEntries(value.definition.nodes.map(node => [node.id, node.definition_id])),
@@ -1018,6 +1044,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     if ((expectedId !== undefined && expectedId !== runId) || (expectedGraphId !== undefined && expectedGraphId !== graphId)) mismatch();
     if (row.external_calls !== 0 || row.applied !== false || row.timeout_seconds !== 3600) invalid();
     const stale = bool(row.stale), status = runStatus(row.status), hideOutputs = stale || ['CANCELLED', 'REJECTED', 'FAILED'].includes(status);
+    const conditionMode = row.conditional_runtime !== undefined;
+    if (conditionMode) conditionClosed(row, ["id", "version", "graph_id", "graph_version", "status", "current_node_id", "cache", "created_at", "updated_at", "reviewed", "retry_of", "attempt", "project_id", "scope", "stale", "timeout_seconds", "deadline_at", "node_states", "review", "model_called", "external_calls", "applied", "conditional_runtime"]);
     const localMode = row.local_subgraph_runtime !== undefined;
     const model = row.model_runtime === undefined ? undefined : graphModelRuntime(row.model_runtime, hideOutputs);
     const media = row.media_runtime === undefined ? undefined : graphMediaRuntime(row.media_runtime, projectId, capturedScope?.branchId ?? null,
@@ -1033,7 +1061,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       if (!nodeStatuses.includes(state.status as StudioGraphNodeStatus)) invalid();
       const nodeState: StudioGraphNodeState = { status: state.status as StudioGraphNodeStatus,
         output: hideOutputs ? null : output(state.output, modelOutput, state.status === 'SUCCEEDED' && (!knownGraph
-          || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review'), knownGraph && [4, 5].includes(knownGraph.schemaVersion) ? knownGraph.nodes[nodeId] : undefined), error: state.error === null ? null : { code: code(record(state.error).code) } };
+          || knownGraph.schemaVersion === 3 && knownGraph.nodes[nodeId] === 'human_review'), knownGraph && [4, 5, 7].includes(knownGraph.schemaVersion) ? knownGraph.nodes[nodeId] : undefined), error: state.error === null ? null : { code: code(record(state.error).code) } };
       if (localMode && nodeState.output) {
         const kind = knownGraph?.nodes[nodeId];
         if (kind && !GRAPH_LOCAL_SUBGRAPH_PARENT_IDS.some(value => value === kind)) invalid();
@@ -1065,7 +1093,8 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       review = { node_id: nodeId, output_digest: digest(source.output_digest), draft: draft(source.draft, modelOutput) };
     }
     const cache = record(row.cache);
-    if (cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' && cache.mode !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && cache.mode !== GRAPH_LOCAL_SUBGRAPH_CACHE) invalid();
+    if (conditionMode !== (cache.mode === GRAPH_CONDITIONS_CACHE) || knownGraph?.schemaVersion === 7 && !conditionMode || conditionMode && (localMode || model || media || modelCalled || row.asset_output !== undefined || knownGraph && knownGraph.schemaVersion !== 7)) invalid();
+    if (cache.mode !== GRAPH_CONDITIONS_CACHE && cache.mode !== 'SAME_GRAPH_VERSION_REVIEWED_LOCAL_ONLY' && cache.mode !== GRAPH_LOCAL_DEPENDENCY_REUSE_MODE && cache.mode !== GRAPH_LOCAL_SUBGRAPH_CACHE) invalid();
     if (localMode !== (cache.mode === GRAPH_LOCAL_SUBGRAPH_CACHE) || localMode && (model || media || modelCalled || row.asset_output !== undefined
       || cache.hits !== 0 || knownGraph && knownGraph.schemaVersion !== 6) || knownGraph?.schemaVersion === 6 && !localMode) invalid();
     const local = localMode ? subgraphRuntime(row.local_subgraph_runtime, hideOutputs) : undefined;
@@ -1109,6 +1138,15 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
   }
   async function checkedRunResponse(value: unknown, expectedId?: string, expectedGraphId?: string): Promise<StudioGraphRun> {
     const row = record(value);
+    if (row.conditional_runtime !== undefined) {
+      const observed = observedGraphs.get(resourceId(row.graph_id)), result = checkedRun(value, expectedId, expectedGraphId, false);
+      const known = observed?.version === result.graph_version ? observed : undefined;
+      if (known?.conditionDefinition && await conditionHash(known.conditionDefinition) !== known.definition_digest) conditionInvalid();
+      result.conditional_runtime = await checkedConditionalRuntime(value, result, known?.conditionDefinition);
+      if (observedGraphs.get(result.graph_id) !== observed) conditionInvalid();
+      for (const [id, state] of Object.entries(record(row.node_states))) result.node_states[id].reviewed = bool(record(state).reviewed);
+      return rememberRun(result);
+    }
     if (row.local_subgraph_runtime === undefined) return checkedRun(value, expectedId, expectedGraphId);
     const observed = observedGraphs.get(resourceId(row.graph_id));
     const result = checkedRun(value, expectedId, expectedGraphId, false), runtime = result.local_subgraph_runtime!;
@@ -1195,6 +1233,11 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
       return transport.json(`${base}/production/timelines/${encodeURIComponent(snapshotId)}`, 'GET', undefined, signal).then(value => checkedTimelineRow(value, timelineId));
     },
     catalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog`, 'GET', undefined, signal).then(catalog),
+    conditionsCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_local_conditions=true`, 'GET', undefined, signal).then(value => catalog(value, true)),
+    conditionsList: (signal?: AbortSignal): Promise<{ items: StudioGraphRecord[] }> => transport.json(`${base}/graphs?include_local_conditions=true`, 'GET', undefined, signal).then(value => {
+      const items = list(record(value).items, 25).map(item => checkedGraph(item));
+      if (new Set(items.map(item => item.id)).size !== items.length) invalid(); return { items: items.map(rememberGraph) };
+    }),
     localSubgraphCatalog: (signal?: AbortSignal): Promise<StudioGraphCatalog> => transport.json(`${base}/graphs/catalog?include_local_subgraph=true`, 'GET', undefined, signal).then(value => {
       const result = catalog(value); if (result.capabilities.local_subgraph_contract !== GRAPH_LOCAL_SUBGRAPH_CONTRACT) invalid(); return result;
     }),
@@ -1261,7 +1304,17 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
     preflight: (graphId: string, value: StudioGraphPreflightInput, signal?: AbortSignal): Promise<StudioGraphPreflight> => {
       const url = graphUrl(graphId), row = record(value, true);
       const payload: StudioGraphPreflightInput = { expected_version: integer(row.expected_version, 1, Number.MAX_SAFE_INTEGER, true), target_node_ids: uniqueIds(row.target_node_ids, true) };
-      return transport.json(`${url}/preflight`, 'POST', payload, signal).then(value => checkedPreflight(value, graphId, payload));
+      return transport.json(`${url}/preflight`, 'POST', payload, signal).then(async value => {
+        const observed = observedGraphs.get(graphId), result = checkedPreflight(value, graphId, payload), row = record(value);
+        if (observed?.schemaVersion === 7 || row.graph_schema_version === 7) {
+          if (!observed?.conditionDefinition || observed.version !== payload.expected_version || row.graph_schema_version !== 7 || row.source_check !== 'SAVED_INLINE_DEFINITION_PIN' || row.cache_enabled !== false || payload.target_node_ids.length || !result.executable || await conditionHash(observed.conditionDefinition) !== observed.definition_digest) conditionInvalid();
+          conditionClosed(row, ["project_id", "scope", "graph_id", "valid", "executable", "issues", "execution_order", "selected_closure", "definition_digest", "expected_version", "target_node_ids", "model_called", "external_calls", "graph_schema_version", "conditional_plan", "source_check", "cache_enabled", "preflight_digest"]);
+          const plan = await checkedConditionPlan(row.conditional_plan, observed.conditionDefinition);
+          if (!conditionSame(result.execution_order, conditionShape(observed.conditionDefinition).order) || observedGraphs.get(graphId) !== observed) conditionInvalid();
+          return { ...result, graph_schema_version: 7 as const, source_check: 'SAVED_INLINE_DEFINITION_PIN' as const, cache_enabled: false as const, conditional_plan: plan };
+        }
+        if (row.conditional_plan !== undefined || row.cache_enabled !== undefined) invalid(); return result;
+      });
     },
     runs: (graphId: string, signal?: AbortSignal): Promise<{ items: StudioGraphRun[] }> => transport.json(`${graphUrl(graphId)}/runs`, 'GET', undefined, signal).then(async value => {
       const items = await Promise.all(list(record(value).items, 100).map(item => checkedRunResponse(item, undefined, graphId)));
@@ -1371,7 +1424,7 @@ export function createStudioGraphClient(projectId: string, context: Pick<Collabo
 
 // Older embedded clients can omit the advisory extension; execution stays unchanged.
 type StudioGraphMediaClient = Pick<ReturnType<typeof createStudioGraphClient>, 'previewMedia' | 'dispatchMedia' | 'executeMedia' | 'refreshMedia' | 'reconcileMedia' | 'reviewMedia' | 'mediaCandidate' | 'graphTimelineList' | 'graphTimelineGet'>;
-type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews' | 'localSubgraphCatalog' | 'localSubgraphList'>;
+type StudioGraphImageClient = Pick<ReturnType<typeof createStudioGraphClient>, 'imageCatalog' | 'productionCatalog' | 'planningDocuments' | 'readDirectorWorkspace' | 'videoCatalog' | 'videoStoryboard' | 'canvasViews' | 'localSubgraphCatalog' | 'localSubgraphList' | 'conditionsCatalog' | 'conditionsList'>;
 type StudioGraphRetryClient = Pick<ReturnType<typeof createStudioGraphClient>, 'retryLocal'>;
 export type StudioGraphClient = Omit<ReturnType<typeof createStudioGraphClient>, keyof StudioProviderClient | keyof StudioGraphMediaClient | keyof StudioGraphImageClient | keyof StudioGraphRetryClient>
   & Partial<StudioProviderClient> & Partial<StudioGraphMediaClient> & Partial<StudioGraphImageClient> & Partial<StudioGraphRetryClient>;

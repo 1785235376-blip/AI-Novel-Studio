@@ -23,7 +23,7 @@ type Operation = { id: number; kind: OperationKind; client: StudioGraphClient; o
 const targets = (ids: string[]) => JSON.stringify([...ids].sort());
 const terminalRun = (run?: StudioGraphRun) => !!run && ['SUCCEEDED', 'FAILED', 'CANCELLED', 'REJECTED'].includes(run.status);
 const uncertainFailure = (value: unknown) => !(value instanceof ApiError) || value.status === 0 || value.status >= 500
-  || value.status === 409 || value.problem.code === 'STUDIO_RESPONSE_INVALID';
+  || value.status === 409 || ['STUDIO_RESPONSE_INVALID', 'STUDIO_GRAPH_CONDITION_RESPONSE_INVALID'].includes(value.problem.code);
 const reviewIdentity = (run?: StudioGraphRun) => run?.review
   ? JSON.stringify([run.id, run.version, run.review.node_id, run.review.output_digest]) : undefined;
 const invalidRun = () => new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '运行回执与当前图或记录不一致，请重新读取。' });
@@ -71,7 +71,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
   const preflightKey = (value?: StudioGraphPreflight) => {
     const source = latest.current.graph;
     return value && source && value.graph_id === source.id && value.expected_version === source.version
-      && targets(value.target_node_ids) === targets(latest.current.targetNodeIds) && !latest.current.dirty
+      && targets(value.target_node_ids) === targets(source.definition.schema_version === 7 ? source.definition.nodes.filter(n => n.enabled).map(n => n.id) : latest.current.targetNodeIds) && !latest.current.dirty
       ? JSON.stringify([source.id, source.version, targets(value.target_node_ids), value.preflight_digest]) : undefined;
   };
   function begin(kind: OperationKind): Operation | undefined {
@@ -185,7 +185,7 @@ export function useStudioGraphRunController(props: StudioGraphRunPanelProps) {
     try {
       // Retain the legacy interactive-read call shape; live/epoch checks fence late responses.
       const value = await source.read(() => source.client.preflight(source.graph!.id,
-        { expected_version: source.graph!.version, target_node_ids: [...source.targetNodeIds] }), operation.controller.signal);
+        { expected_version: source.graph!.version, target_node_ids: source.graph!.definition.schema_version === 7 ? [] : [...source.targetNodeIds] }), operation.controller.signal);
       if (live(operation) && expectedEpoch === preflightEpoch.current && !latest.current.dirty
         && targetKey === targets(latest.current.targetNodeIds)) { preflightRef.current = value; setPreflight(value); }
     } catch (value) { failure(value, operation); } finally { finish(operation); }

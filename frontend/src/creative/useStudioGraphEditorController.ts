@@ -1,3 +1,5 @@
+import { buildConditionalStarter, checkedConditionParameters, conditionSame, conditionShape } from './graphConditionContract';
+import type { GraphConditionPredicate } from './studioGraphTypes';
 import { appendCanvasAssetNode, type CanvasGraphAssetHandoff } from './mediaCanvasGraphHandoffHelpers';
 import { uniqueGraphProviders } from './graphProviderChoices';
 import { useGraphSelectedVideoBinding } from './useGraphSelectedVideoBinding';
@@ -87,6 +89,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   const [mediaSchemaConsent, setMediaSchemaConsent] = useState(false);
   const [videoSchemaConsent, setVideoSchemaConsent] = useState('');
   const [pendingVideoCatalog, setPendingVideoCatalog] = useState<StudioGraphCatalog>();
+  const [conditionCatalog, setConditionCatalog] = useState<{ identity: string; client: StudioClient; value: StudioGraphCatalog }>();
   const schemaCatalogs = useRef(new Map<number, StudioGraphCatalog>());
   const [shotParent, setShotParent] = useState(''), [shotChoice, setShotChoice] = useState(''), [shotReceipt, setShotReceipt] = useState<StoryboardReceipt>(), [shotLoading, setShotLoading] = useState(false); const shotEpoch = useRef(0);
   const [imageSchemaConsent, setImageSchemaConsent] = useState('');
@@ -333,12 +336,38 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!current()) return;
     const epoch = ++catalogEpoch.current; setLoading(true); setError('');
     try {
-      const [schema, values] = await read(() => Promise.all([client.graphs.catalog(), client.graphs.list()]));
-      if (current() && epoch === catalogEpoch.current) { [1, 2, 3].forEach(version => schemaCatalogs.current.set(version, schema)); setCatalog(schema); setRecords(values.items); }
+      const conditional = draftRef.current.schema_version === 7;
+      const [schema, values] = await read(() => Promise.all([conditional && client.graphs.conditionsCatalog ? client.graphs.conditionsCatalog() : client.graphs.catalog(), conditional && client.graphs.conditionsList ? client.graphs.conditionsList() : client.graphs.list()]));
+      if (current() && epoch === catalogEpoch.current) { if (conditional) schemaCatalogs.current.set(7, schema); else [1, 2, 3].forEach(version => schemaCatalogs.current.set(version, schema)); setCatalog(schema); setRecords(values.items); }
     } catch (value) { if (current() && epoch === catalogEpoch.current) setError(apiErrorView(value, '创作图目录读取失败。').message); }
     finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
   }, [client, current, read]);
   useEffect(() => { if (active && !denied && !catalog) void load(); }, [active, denied, catalog, load]);
+  const visibleConditionCatalog = !denied && conditionCatalog?.identity === identity && conditionCatalog.client === client ? conditionCatalog.value : undefined;
+  async function loadConditions() {
+    if (connectionScope !== connectionFence.current.token || !active || denied || !current() || locked() || loading || externalDirty || executionDirty || timelineEditor.formDirty || !client.graphs.conditionsCatalog || !client.graphs.conditionsList) return;
+    const epoch = ++catalogEpoch.current, scope = verificationScope; setLoading(true); setError('');
+    try {
+      const [value, rows] = await read(() => Promise.all([client.graphs.conditionsCatalog!(), client.graphs.conditionsList!()]));
+      if (current() && active && !denied && scope === reviewedVerificationFence.current.token && epoch === catalogEpoch.current) {
+        schemaCatalogs.current.set(7, value); setConditionCatalog({ identity, client, value }); setRecords(rows.items);
+        if (draftRef.current.schema_version === 7) setCatalog(value);
+        setNotice('已核对受限条件图能力与目录。条件为保存的布尔值或 A/B 等值；缓存关闭，保存和运行仍需分别确认。');
+      }
+    } catch (value) { if (current() && scope === reviewedVerificationFence.current.token && epoch === catalogEpoch.current) setError(apiErrorView(value, '条件图能力未确认；服务端默认关闭，当前草稿保持。').message); }
+    finally { if (current() && epoch === catalogEpoch.current) setLoading(false); }
+  }
+  function createConditions() {
+    if (connectionScope !== connectionFence.current.token || !visibleConditionCatalog || !active || denied || !editable || !isVerificationCurrent() || locked() || loading || baseRef.current || draftRef.current.nodes.length || draftRef.current.edges.length || externalDirty || executionDirty || timelineEditor.formDirty || blocked) return;
+    change(buildConditionalStarter()); setCatalog(visibleConditionCatalog); setKind('text_input'); setSelected(['condition']);
+    setNotice('六节点条件草稿已准备。可以撤销；请填写文本、核对条件后明确保存，尚未创建或执行运行。');
+  }
+  function updateCondition(predicate: GraphConditionPredicate) {
+    if (!connectionSelectionCurrent(connectionScope) || !isVerificationCurrent() || timelineEditor.formDirty || draftRef.current.schema_version !== 7) return;
+    const node = draftRef.current.nodes.find(n => n.id === selected[0] && n.definition_id === 'local_condition'); if (!node) return;
+    const parameters = checkedConditionParameters({ predicate });
+    change({ ...draftRef.current, nodes: draftRef.current.nodes.map(n => n.id === node.id ? { ...n, parameters } : n) });
+  }
   async function loadImageCatalog() {
     if (draftRef.current.schema_version === 6) return;
     if (!current() || locked() || externalDirty || executionDirty || !client.graphs.imageCatalog) return;
@@ -367,6 +396,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }
   const choosePlanningDocument = (value: string) => { if (editable && current() && !locked()) setPlanningChoice(value); };
   async function graphCatalogForRecord(value: StudioGraphRecord, signal?: AbortSignal) {
+    if (value.definition.schema_version === 7) { if (!client.graphs.conditionsCatalog) throw new Error('受限条件目录当前不可用。'); const catalog = await client.graphs.conditionsCatalog(signal); schemaCatalogs.current.set(7, catalog); return catalog; }
     if (value.definition.schema_version === 6) { if (!client.graphs.localSubgraphCatalog) throw new Error('受限子调用目录当前不可用。'); return client.graphs.localSubgraphCatalog(signal); }
     if (value.definition.schema_version === 5) { if (!client.graphs.videoCatalog) throw new Error('视频图目录当前不可用。'); return client.graphs.videoCatalog(signal); }
     if (value.definition.schema_version !== 4) return schemaCatalogs.current.get(value.definition.schema_version) || client.graphs.catalog(signal);
@@ -388,12 +418,17 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   function chooseShot(value: string) { if (editable && current() && !locked()) setShotChoice(value); }
   const change = useCallback((next: StudioGraphDefinition, record = true) => {
     if (!editable || !current() || saving.current || isBusy?.()) return;
+    if (draftRef.current.schema_version === 7 || next.schema_version === 7) {
+      if (connectionScope !== connectionFence.current.token || !active || denied || externalDirty || executionDirty || timelineEditor.formDirty) return;
+      if (draftRef.current.schema_version === 7 && (next.schema_version !== 7 || !conditionSame(next.edges, draftRef.current.edges) || !conditionSame(next.nodes.map(n => [n.id, n.definition_id, n.definition_version, n.enabled]), draftRef.current.nodes.map(n => [n.id, n.definition_id, n.definition_version, n.enabled])))) { setError('此条件图入口保留两条闭合分支、节点与连接；可编辑文本、条件与位置。'); return; }
+      try { conditionShape(next); } catch { setError('条件图结构或字段不完整，当前草稿保持。'); return; }
+    }
     if (!retainsLocalSubgraphTopology(draftRef.current, next)) { setError('本首片保持 schema 6 的节点、连接与 pin 不变；请通过新建空图重新明确生成受限父草稿。'); return; }
     if (!retainsSavedAssetBindings(baseRef.current?.definition.nodes || [], next.nodes)) { setError('已保存资产引用暂不能移除或重新绑定；可移动或禁用节点。原资产不会被删除。'); return; }
     if (same(draftRef.current, next)) return;
     if (record) { const previous = structuredClone(draftRef.current); setPast(rows => [...rows.slice(-49), previous]); setFuture([]); }
     bindingMutationEpoch.current++; crossCopyEpoch.current++; draftRef.current = next; setDraft(next); setError(''); setNotice(''); invalidateCandidate();
-  }, [editable, current, isBusy, invalidateCandidate]);
+  }, [editable, current, isBusy, invalidateCandidate, connectionScope, active, denied, externalDirty, executionDirty, timelineEditor.formDirty]);
   const localSubgraph = useGraphLocalSubgraphParent({ client: client.graphs, identity, scope: verificationScope,
     readable: active && !denied && canMutate && !externalDirty && !executionDirty && !blocked && current(),
     blank: !base && draft.schema_version === 1 && !draft.nodes.length && !draft.edges.length && !graphDirty,
@@ -552,7 +587,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
         ? ({ CREATIVE_GRAPH_HISTORY_CAPACITY: '原图历史数量或记录字节容量已满。草稿仍保留，可明确准备独立新图；原图历史不会删除。',
           CREATIVE_GRAPH_SCOPE_CAPACITY: '当前范围的图与运行总容量已满。草稿仍保留；新图也受同一范围容量限制，不会自动重试。',
           CREATIVE_GRAPH_COLLECTION_CAPACITY: '当前范围的图或运行数量已满。草稿仍保留；不能保证新图可保存，不会自动重试。' } as Record<string, string>)[value.problem.message] : undefined;
-        setError(quota || apiErrorView(value, '创作图未确认保存，输入已保留。').message); if (!(value instanceof ApiError) || value.status === 0 || value.status === 409 || value.status >= 500 || value.problem.code === 'STUDIO_RESPONSE_INVALID') setBlocked(true); }
+        setError(quota || apiErrorView(value, '创作图未确认保存，输入已保留。').message); if (!(value instanceof ApiError) || value.status === 0 || value.status === 409 || value.status >= 500 || ['STUDIO_RESPONSE_INVALID', 'STUDIO_GRAPH_CONDITION_RESPONSE_INVALID'].includes(value.problem.code)) setBlocked(true); }
     } finally { saving.current = false; }
   }
   async function checkServer() {
@@ -721,7 +756,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     if (!retainsSavedAssetBindings(base?.definition.nodes || [], value.nodes)) { setError('撤销不能移除已经保存的资产绑定。'); return; }
     if (redo) { setPast(rows => [...rows.slice(-49), structuredClone(draft)]); setFuture(rows => rows.slice(1)); }
     else { setFuture(rows => [structuredClone(draft), ...rows].slice(0, 50)); setPast(rows => rows.slice(0, -1)); }
-    if (draft.schema_version === 6 || value.schema_version === 6) {
+    if ([6, 7].includes(draft.schema_version) || [6, 7].includes(value.schema_version)) {
       const schema = schemaCatalogs.current.get(value.schema_version); if (schema) setCatalog(schema);
     }
     crossCopyEpoch.current++; invalidateCandidate(); draftRef.current = structuredClone(value); setDraft(draftRef.current); setSourcePort(''); setTargetPort('');
@@ -865,6 +900,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
   }) : [];
   const retainedTitle = !base || draft.title !== base.definition.title ? draft.title : blankGraph().title;
   return {
+    conditionCatalog: visibleConditionCatalog, loadConditions, createConditions, updateCondition,
     localSubgraph,
     retired, retainedText, retainedTitle,
     localRecovery: current() && !denied ? localRecovery : undefined, recoveryBusy, recoveryError,
