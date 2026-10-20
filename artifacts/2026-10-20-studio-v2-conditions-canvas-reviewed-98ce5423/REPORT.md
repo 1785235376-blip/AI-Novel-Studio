@@ -1,0 +1,19 @@
+# Reviewed default-off conditional canvas closure
+
+Product `98ce5423e619e311aa574c73288bef8fe8fe1dd1`, tree `5209377b7cfae7f07ddd240b411ab11d362d1e4b`, unique prerequisite `11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c`. The exact original reviewed commit98ce5423 is retained directly, source -> adopted `98ce5423e619e311aa574c73288bef8fe8fe1dd1`. Exactly1 new commit,20 changed paths and31 new objects. Every other11b path is unchanged; no merge, rewrite, source edit or d946 linked-split integration. Original superseded unpublished d003 is not selected. Ordinary main/archive report tree is not the product.
+
+Scope: explicit read-only conditional capability discovery and schema7 list, original canvas condition fields, strict full-definition/plan/branch proof validation, whole-graph preflight/run/exact human review, and normal zero-dispatch/zero-output SKIPPED rendering. Boolean and fixed A/B equality remain closed local routing; no dynamic script, external source, model or cache. No new execution engine/store/queue or global gate.
+
+Schema7 remains DEFAULT OFF. Existing original Graph invoker/guard/Host functions are AST-identical to11b. Original graph executor/local condition/model/feature-flag blobs and Video API are unchanged. Default catalog/list behavior stays closed; only explicit include_local_conditions with the original server gate grants discovery. Prior Video/Image/DIF/proxy/links remain preserved through unchanged base paths.
+
+## Minimal validation
+
+Two actual mounted File/API cases pass: default-off catalog/list and read permission; enum A!=B with Unicode/BOM source through original Save/reopen, whole preflight, exact idempotent run, hidden unreviewed outputs, wrong digest refusal and original review. Three frontend smoke cases pass for original whole-run/review/normal SKIPPED, genuine false-arm proof/altered source rejection, and strict/default catalog contracts;9 unrelated cases skipped. TypeScript/build each ran exactly once and passed; existing large-chunk warning retained. Independent2 File/API plus3 frontend counterexamples and author final/Unicode/visual evidence are retained, not full suites rerun. Current product tree is exactly their frozen98ce tree.
+
+Independent no-alternates recovery verifies1 commit,20 final file mode/blob/byte/SHA256 values and31 new object digests; strict fsck PASS. Public-content checks inspect all20 exact product blobs and selected evidence for credential-shaped/private-key literals and sensitive JSON/header values. Evidence paths are normalized, any redactions recorded in public-content-safety.json, and original source hashes retained. No original evidence is modified/deleted. SHA256SUMS covers the other six files; MANIFEST records five nonrecursive payload hashes; ZIP evidence-index covers every payload.
+
+## Limits and remaining blocker
+
+Real legitimate Host browser Save/whole preflight/run/human-review remains BLOCKED and NOT_RUN: no verified usable legitimate same-backend Host session. Existing519a returned401 SESSION_REQUIRED; old19128/5322 services are stopped. No real credentials provisioned, searched/read or authorization bypass/uncertain write. Mounted API test-only session/role fixtures do not establish browser acceptance. PG, real models/GPU/paid APIs and full E2E remain NOT_ACCEPTED. Author browser checks use fixed real File/API captures plus mocked component transport. No persistent service started here; original demo services preserved.
+
+Archive append pins the freshly observed a74c483993fef6bacc113354969b50d62d7baef5 head, rechecks before normal non-force push, and adds only this seven-file directory. No main/reset/force/Tag/Release; no d946. Preserve original workspaces/unique evidence/Git objects, clean only owned recoverable worktree/build/junction/index/package copies after public readback.

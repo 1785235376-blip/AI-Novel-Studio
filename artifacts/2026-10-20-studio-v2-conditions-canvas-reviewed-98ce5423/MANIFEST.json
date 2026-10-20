@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_DEFAULT_OFF_CONDITIONAL_CANVAS_CLOSURE",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "a74c483993fef6bacc113354969b50d62d7baef5",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-conditions-canvas-reviewed-98ce5423",
+  "product_base": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+  "product_tip": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+  "product_tree": "5209377b7cfae7f07ddd240b411ab11d362d1e4b",
+  "bundle_ref": "refs/heads/work/v2-conditions-canvas-reviewed-20261020",
+  "bundle_filename": "studio-v2-11b53ede-to-98ce5423.bundle",
+  "bundle_commit_count": 1,
+  "unique_external_prerequisite": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+  "commit_mappings": [
+    {
+      "source": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+      "source_parent": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+      "adopted": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+      "adopted_parent": "11b53ede67259f7c2d81fb495e1b1dcfdfb7ce9c",
+      "original_retained_directly": true,
+      "stable_patch_id": "d4c4966ee1a6a130b2cd7fe5d893bc0f26ac55ef"
+    }
+  ],
+  "file_mapping": [
+    {
+      "path": "app/creative/graph.py",
+      "mode": "100644",
+      "blob": "2cc135547a155c1689a14506ce2a06826d2db524",
+      "bytes": 45186,
+      "sha256": "4b020a57b50802faf8c4449b94daeae5c177cbc37e62be7d7fde0674942909ec",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "app/creative/graph_api.py",
+      "mode": "100644",
+      "blob": "e67688b9f072aa7afe739e3c4f0d03692ab202b2",
+      "bytes": 21500,
+      "sha256": "88fae23a8f9d80b443e956d6b573d608f448f3ad09621f2daa5849afc1287a9e",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "app/creative/graph_conditions_catalog.py",
+      "mode": "100644",
+      "blob": "86d39a562b8bf1fe2e10163e4c44cfe999e67aed",
+      "bytes": 1825,
+      "sha256": "9780704da8863b77faf30e21208a8ccf9039041a81f5bbdcfeeec5577ee9ed1e",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "docs/graph_local_conditions_v1.md",
+      "mode": "100644",
+      "blob": "fe3d4831aa719caa8d2f42e9a40e3d254af924de",
+      "bytes": 4147,
+      "sha256": "0f19eceed5b2338f21e3730183f80f59dedf45a8de84adc27c2e0d6a1726b091",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/canvasops/canvasOps.ts",
+      "mode": "100644",
+      "blob": "cc6c50e41d025986d438f7808b8bd4b37bd51ad8",
+      "bytes": 49512,
+      "sha256": "2bff92f43815c498cbc3282e1975cd4e7f9b1f10afd2d7cabc8e3262e7698f16",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/GraphConditionFields.tsx",
+      "mode": "100644",
+      "blob": "42e2ec111a7415f0a6fb31be62d401bb80c4d156",
+      "bytes": 1837,
+      "sha256": "b09b4c3b12f4466fcd9c406c71131ef65cbdefe113dcd8f053f506c428947056",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/GraphConditionsEntry.test.tsx",
+      "mode": "100644",
+      "blob": "b7bcf12a9a965c1cd2271a43de09253aea0dea95",
+      "bytes": 8547,
+      "sha256": "5edce28a6167cba106941811df8c64632d3520985cbacc0091fd66628be8490b",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/conditions-enum.file-api.json",
+      "mode": "100644",
+      "blob": "ef9d6e7b0ffde2aca6bae824e5b22e6351e79c3f",
+      "bytes": 22823,
+      "sha256": "85f8df597a7437de660581deff5cbb1808db39d96107af9f38ff490e3659a870",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/fixtures/conditions.file-api.json",
+      "mode": "100644",
+      "blob": "0ed794bc8e52c0adcb11d0f32d65e9b35a5de582",
+      "bytes": 22193,
+      "sha256": "2a3e82e9684e49d57e62f75fb83998dd67ee65ae9f9af6dbcf4f8c8e503bd508",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/graphConditionContract.ts",
+      "mode": "100644",
+      "blob": "6763b5e0d4f813cb67340342880d19f9399f2c8a",
+      "bytes": 16790,
+      "sha256": "4f5ed7af84a9c4afff99960768393b59d6e5ac48124a97846b86ee2e8c4a8c02",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/graphDraft.ts",
+      "mode": "100644",
+      "blob": "a6985a7e770d11a5c7540736c312a1b5f00bdb9f",
+      "bytes": 7038,
+      "sha256": "3c12af7364247332f6bebb3afb87fdde1a01d7273bbf239d05b4e00cb8f0a8c6",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphClient.ts",
+      "mode": "100644",
+      "blob": "3076d61fde6f4776edaa2fff0cdf2e93af7ab3a3",
+      "bytes": 132335,
+      "sha256": "2463691d154160e77b02b0ad423b6a3940e1067cc286bc6ff7726ff5cfcf3854",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphConditions.test.ts",
+      "mode": "100644",
+      "blob": "28231e7cc809040308048710cc414bdb07657dec",
+      "bytes": 10548,
+      "sha256": "00965775331b8e8341506c88d8c43463ffd278e6e22079e3bca0448af08a2699",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphEditorView.tsx",
+      "mode": "100644",
+      "blob": "8634c41bbbc2fd74e12d0a1c75465a71c4ad7ba6",
+      "bytes": 61536,
+      "sha256": "0a103a33738a8318cfd0413dbff33983be752721140fafc27284a7f349c6ba4d",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphLabels.ts",
+      "mode": "100644",
+      "blob": "78e73c3a4976fd2a74a15bb25583eb111ad453f1",
+      "bytes": 1456,
+      "sha256": "86e6f69d0c620388ea019d04d071f01b331b4f34845b6a2a8a71d3e8832239af",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphRunView.tsx",
+      "mode": "100644",
+      "blob": "84081b179df1c2656328bd2110b5adb621a963f2",
+      "bytes": 10886,
+      "sha256": "20d48fc0d0e1df30e130aa03f3e25474c76d5f85fad33cb189d2d350eea3075d",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/studioGraphTypes.ts",
+      "mode": "100644",
+      "blob": "f09aecd29b36dc40f339bce656f6ebdb76bc099f",
+      "bytes": 20672,
+      "sha256": "d82e120ff7337756f8a24fee6734345dc3e3a22f6a22158e7b9ac26ca44e1f8d",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphEditorController.ts",
+      "mode": "100644",
+      "blob": "0f8510304d93a1422fc0147878b31809b9d5e569",
+      "bytes": 99615,
+      "sha256": "478b0ce4c7418738b0b8ae5c4ee6ad2a737f0d58cf6044b2a5fa041f69664798",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "frontend/src/creative/useStudioGraphRunController.ts",
+      "mode": "100644",
+      "blob": "54ebda9c6f9e8e237f8d4d8a8c0205f8776094c4",
+      "bytes": 35991,
+      "sha256": "50cc004d5724d8227d3874160083d72ca068b144da94f33ec8589f9f35dd0252",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    },
+    {
+      "path": "tests/test_graph_conditions_entry_additive.py",
+      "mode": "100644",
+      "blob": "aeea6b930c83665f9a24aceff9aa5ba4e3c236c6",
+      "bytes": 5361,
+      "sha256": "47229cf23968bb2847f66e868a4602934083f0d4046f9313e2c8763405860419",
+      "source_original": "98ce5423e619e311aa574c73288bef8fe8fe1dd1"
+    }
+  ],
+  "object_inventory": [
+    {
+      "oid": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+      "type": "commit",
+      "size": 256,
+      "cat_file_sha256": "63facbd28ac2afcd3b733b558ad9b0f6ed8805413048324360359ca38103902f"
+    },
+    {
+      "oid": "5209377b7cfae7f07ddd240b411ab11d362d1e4b",
+      "type": "tree",
+      "size": 10538,
+      "cat_file_sha256": "e2d90ff5bd9e95e469b39b4b5fd6ef097035806dc8d153158ef358c03446745c"
+    },
+    {
+      "oid": "48aadb794a6eb8a2cae7f9bf6ee79b76b4e0d406",
+      "type": "tree",
+      "size": 5958,
+      "cat_file_sha256": "c569d9b74024135d23e753fe5c3199fe7c15d1d642c69ac66449d827fc95de12"
+    },
+    {
+      "oid": "6de6d95688119e327bda5879939c6161f8368a0f",
+      "type": "tree",
+      "size": 4892,
+      "cat_file_sha256": "f37272c5d13f6dc2f00db78a47c8c47f6b5ff4302354e84958fee8a2af8c7982"
+    },
+    {
+      "oid": "2cc135547a155c1689a14506ce2a06826d2db524",
+      "type": "blob",
+      "size": 45186,
+      "cat_file_sha256": "4b020a57b50802faf8c4449b94daeae5c177cbc37e62be7d7fde0674942909ec"
+    },
+    {
+      "oid": "e67688b9f072aa7afe739e3c4f0d03692ab202b2",
+      "type": "blob",
+      "size": 21500,
+      "cat_file_sha256": "88fae23a8f9d80b443e956d6b573d608f448f3ad09621f2daa5849afc1287a9e"
+    },
+    {
+      "oid": "86d39a562b8bf1fe2e10163e4c44cfe999e67aed",
+      "type": "blob",
+      "size": 1825,
+      "cat_file_sha256": "9780704da8863b77faf30e21208a8ccf9039041a81f5bbdcfeeec5577ee9ed1e"
+    },
+    {
+      "oid": "e1ea3cb26ca66de58cc83c6eb34cd3270fbe3f99",
+      "type": "tree",
+      "size": 16349,
+      "cat_file_sha256": "daa7c07af5c9a11e3ae31f8f58f042175ec76c171b9e9c4faae17a104c0dd510"
+    },
+    {
+      "oid": "fe3d4831aa719caa8d2f42e9a40e3d254af924de",
+      "type": "blob",
+      "size": 4147,
+      "cat_file_sha256": "0f19eceed5b2338f21e3730183f80f59dedf45a8de84adc27c2e0d6a1726b091"
+    },
+    {
+      "oid": "437a31efcc6302039dab28296baf51e771367413",
+      "type": "tree",
+      "size": 2377,
+      "cat_file_sha256": "7a05fdfb27e102cff8367cbd38f0d02d3b7c75d594c8b6275d85834ea5c00080"
+    },
+    {
+      "oid": "0d760894fc8a51643b811d5cbcffa91fd3bb9aef",
+      "type": "tree",
+      "size": 4970,
+      "cat_file_sha256": "b9ced17774844b82f2a83125099d0061b66de56f8fd17346b477e3fdb33a1b96"
+    },
+    {
+      "oid": "edcdd00228b22216d78016cb9051fa07945638ce",
+      "type": "tree",
+      "size": 599,
+      "cat_file_sha256": "76cd7651949f18c016e3dba1dbc71289d85a440b6df375372139b54bf04d3420"
+    },
+    {
+      "oid": "cc6c50e41d025986d438f7808b8bd4b37bd51ad8",
+      "type": "blob",
+      "size": 49512,
+      "cat_file_sha256": "2bff92f43815c498cbc3282e1975cd4e7f9b1f10afd2d7cabc8e3262e7698f16"
+    },
+    {
+      "oid": "5b184fec723745b2a595d4ef9eb2916bf989ccfc",
+      "type": "tree",
+      "size": 36328,
+      "cat_file_sha256": "9198456827eb761b83b91757e6593f576b52a0518dc592ab49e7de2cb4823426"
+    },
+    {
+      "oid": "42e2ec111a7415f0a6fb31be62d401bb80c4d156",
+      "type": "blob",
+      "size": 1837,
+      "cat_file_sha256": "b09b4c3b12f4466fcd9c406c71131ef65cbdefe113dcd8f053f506c428947056"
+    },
+    {
+      "oid": "b7bcf12a9a965c1cd2271a43de09253aea0dea95",
+      "type": "blob",
+      "size": 8547,
+      "cat_file_sha256": "5edce28a6167cba106941811df8c64632d3520985cbacc0091fd66628be8490b"
+    },
+    {
+      "oid": "a939f793d1ddbcef68de8c9c407ea626fa37e624",
+      "type": "tree",
+      "size": 2514,
+      "cat_file_sha256": "9e5d5e33a762242a50df953a07cf0b3e85729e3729d90ea4ac03077bea5ca6d3"
+    },
+    {
+      "oid": "ef9d6e7b0ffde2aca6bae824e5b22e6351e79c3f",
+      "type": "blob",
+      "size": 22823,
+      "cat_file_sha256": "85f8df597a7437de660581deff5cbb1808db39d96107af9f38ff490e3659a870"
+    },
+    {
+      "oid": "0ed794bc8e52c0adcb11d0f32d65e9b35a5de582",
+      "type": "blob",
+      "size": 22193,
+      "cat_file_sha256": "2a3e82e9684e49d57e62f75fb83998dd67ee65ae9f9af6dbcf4f8c8e503bd508"
+    },
+    {
+      "oid": "6763b5e0d4f813cb67340342880d19f9399f2c8a",
+      "type": "blob",
+      "size": 16790,
+      "cat_file_sha256": "4f5ed7af84a9c4afff99960768393b59d6e5ac48124a97846b86ee2e8c4a8c02"
+    },
+    {
+      "oid": "a6985a7e770d11a5c7540736c312a1b5f00bdb9f",
+      "type": "blob",
+      "size": 7038,
+      "cat_file_sha256": "3c12af7364247332f6bebb3afb87fdde1a01d7273bbf239d05b4e00cb8f0a8c6"
+    },
+    {
+      "oid": "3076d61fde6f4776edaa2fff0cdf2e93af7ab3a3",
+      "type": "blob",
+      "size": 132335,
+      "cat_file_sha256": "2463691d154160e77b02b0ad423b6a3940e1067cc286bc6ff7726ff5cfcf3854"
+    },
+    {
+      "oid": "28231e7cc809040308048710cc414bdb07657dec",
+      "type": "blob",
+      "size": 10548,
+      "cat_file_sha256": "00965775331b8e8341506c88d8c43463ffd278e6e22079e3bca0448af08a2699"
+    },
+    {
+      "oid": "8634c41bbbc2fd74e12d0a1c75465a71c4ad7ba6",
+      "type": "blob",
+      "size": 61536,
+      "cat_file_sha256": "0a103a33738a8318cfd0413dbff33983be752721140fafc27284a7f349c6ba4d"
+    },
+    {
+      "oid": "78e73c3a4976fd2a74a15bb25583eb111ad453f1",
+      "type": "blob",
+      "size": 1456,
+      "cat_file_sha256": "86e6f69d0c620388ea019d04d071f01b331b4f34845b6a2a8a71d3e8832239af"
+    },
+    {
+      "oid": "84081b179df1c2656328bd2110b5adb621a963f2",
+      "type": "blob",
+      "size": 10886,
+      "cat_file_sha256": "20d48fc0d0e1df30e130aa03f3e25474c76d5f85fad33cb189d2d350eea3075d"
+    },
+    {
+      "oid": "f09aecd29b36dc40f339bce656f6ebdb76bc099f",
+      "type": "blob",
+      "size": 20672,
+      "cat_file_sha256": "d82e120ff7337756f8a24fee6734345dc3e3a22f6a22158e7b9ac26ca44e1f8d"
+    },
+    {
+      "oid": "0f8510304d93a1422fc0147878b31809b9d5e569",
+      "type": "blob",
+      "size": 99615,
+      "cat_file_sha256": "478b0ce4c7418738b0b8ae5c4ee6ad2a737f0d58cf6044b2a5fa041f69664798"
+    },
+    {
+      "oid": "54ebda9c6f9e8e237f8d4d8a8c0205f8776094c4",
+      "type": "blob",
+      "size": 35991,
+      "cat_file_sha256": "50cc004d5724d8227d3874160083d72ca068b144da94f33ec8589f9f35dd0252"
+    },
+    {
+      "oid": "e2036fff95e0a9273c57eeec592672b5054d373b",
+      "type": "tree",
+      "size": 50249,
+      "cat_file_sha256": "78fe9e854a110a83408bff13654a1750af025cf20fc1659f267ce60d5d445842"
+    },
+    {
+      "oid": "aeea6b930c83665f9a24aceff9aa5ba4e3c236c6",
+      "type": "blob",
+      "size": 5361,
+      "cat_file_sha256": "47229cf23968bb2847f66e868a4602934083f0d4046f9313e2c8763405860419"
+    }
+  ],
+  "all20_paths_original_exact": true,
+  "all_other_11b_paths_unchanged": true,
+  "original_Graph_guard_AST_and_core_Video_API_blobs_unchanged": true,
+  "schema7_default_gate": "OFF",
+  "d946": "NOT_INCLUDED",
+  "validation": {
+    "combined_real_File_API_passed": 2,
+    "File_API_cases": [
+      "default-off original catalog/list and source-read boundary",
+      "enum A!=B false arm, Unicode/BOM saved source, Save/reopen, whole preflight, idempotent admission, wrong-review refusal and exact original review"
+    ],
+    "frontend_smoke_passed": 3,
+    "frontend_skipped": 9,
+    "frontend_cases": [
+      "original whole-graph preflight/run/review and normal skip rendering",
+      "real enum false-arm proof and altered-source refusal",
+      "default catalog/non-finite/coerced/authority/structural rejection"
+    ],
+    "typescript_runs": 1,
+    "typescript_exit": 0,
+    "vite_build_runs": 1,
+    "vite_build_exit": 0,
+    "independent_File_API_passed_retained": 2,
+    "independent_frontend_passed_retained": 3,
+    "author_full_suites_and_visual_retained_not_rerun": true,
+    "schema7_default_gate": "OFF",
+    "UI_transport": "controlled capture/client; not live Host/fullE2E"
+  },
+  "restore": {
+    "bundle": "studio-v2-11b53ede-to-98ce5423.bundle",
+    "bundle_sha256": "9dc71c3d4f21783c87a41d54ad21ae689bcf3a0e77cbd6629750ce233a65becb",
+    "restored_commit": "98ce5423e619e311aa574c73288bef8fe8fe1dd1",
+    "tree": "5209377b7cfae7f07ddd240b411ab11d362d1e4b",
+    "commits": 1,
+    "file_paths_verified": 20,
+    "new_objects_verified": 31,
+    "no_alternates": true,
+    "fsck": "PASS",
+    "restore_ref": "refs/heads/recovered-conditions-canvas-98ce5423"
+  },
+  "public_content_safety": {
+    "exact_product_blobs_scanned": 20,
+    "product_credential_or_sensitive_JSON_findings": 0,
+    "evidence_credential_literals_after_sanitization": 0,
+    "sensitive_header_or_JSON_redactions": [
+      {
+        "file": "independent/api-first.log",
+        "text_header_values": 1
+      },
+      {
+        "file": "independent/api-first-results.xml",
+        "text_header_values": 1
+      }
+    ],
+    "local_paths_normalized": true,
+    "strict_transcoded": [],
+    "original_source_evidence_unchanged": true
+  },
+  "live_Host_browser": {
+    "state": "BLOCKED / not run",
+    "action": "Real legitimate Host browser Save -> whole preflight -> run -> human review",
+    "target": "schema7 original conditional canvas",
+    "reason": "No verified usable legitimate Host session available in the delegated task. No real credentials created, no authorization bypass or attempted real write. Existing original test-only trusted-session/role fixtures were used solely in isolated mounted File/API tests.",
+    "denied": false,
+    "pending": false,
+    "uncertain_write": false
+  },
+  "PG": "NOT_ACCEPTED",
+  "real_models_GPU_paid_execution": "NOT_ACCEPTED",
+  "full_E2E": "NOT_ACCEPTED",
+  "inherited_519a_browser": {
+    "status": "BLOCKED",
+    "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+    "target": "original isolated backend19128 / frontend5322",
+    "reason": "401 SESSION_REQUIRED; author services stopped; no confirmed existing valid same-backend Host session",
+    "preview": "NOT_RUN",
+    "Save": "NOT_RUN",
+    "fresh_reopen": "NOT_RUN",
+    "original_denial": "backend HTTP401, not tool/approval rejection",
+    "services_stopped_evidence_retained": true,
+    "new_services_started": false,
+    "credentials_searched_read_created": false,
+    "auth_bypassed_or_settings_changed": false,
+    "uncertain_feature_writes": false,
+    "source_evidence": {
+      "action": "Authenticated original browser coupled preview -> explicit original Save -> fresh context reopen",
+      "target": "isolated backend 19128 / frontend 5322",
+      "reason": "author401 SESSION_REQUIRED; both services now stopped; no confirmed existing valid same-backend Host authorization; original session state is page/process-memory only",
+      "status": "BLOCKED_PREREQUISITE; browser feature sequence NOT EXECUTED; no uncertain writes",
+      "original_denial": "author backend401 SESSION_REQUIRED, not a new tool/approval denial",
+      "completed": "read-only five-file diff and supported Host-session source flow; 3 independent controller/component/helper checks",
+      "user_action": "Coordinate an existing registered same-backend Host credential and bind through original 本机可信会话 panel; revalidate after refresh/new context; no credential should be pasted into chat; no new credential/security change authorized here"
+    }
+  },
+  "files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "conditions-canvas-tests-evidence-sanitized.zip": {
+      "bytes": 65745,
+      "sha256": "907dbccbcc689db574a7d6b7511c2b6346d4fadf1d0d3784e28ed260d4a970ab"
+    },
+    "REPORT.md": {
+      "bytes": 3815,
+      "sha256": "b2851d6bbbdd8aa43e928afd77ab761f2bfa63cd0f14af07318a7df6e94388e4"
+    },
+    "RESTORE.md": {
+      "bytes": 1561,
+      "sha256": "b5a770f901b8345b9c9364b342d33be49f6c4a34f183623791b41aa21b8e3625"
+    },
+    "studio-v2-11b53ede-to-98ce5423.bundle": {
+      "bytes": 27412,
+      "sha256": "9dc71c3d4f21783c87a41d54ad21ae689bcf3a0e77cbd6629750ce233a65becb"
+    }
+  },
+  "checked_at": "2026-10-20T00:55:31.246968+00:00"
+}
