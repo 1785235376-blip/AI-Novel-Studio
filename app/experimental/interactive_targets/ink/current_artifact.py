@@ -141,7 +141,10 @@ def _expected_state(spec, characters, source_map, node_index, path):
     """Exact target expectation for one server-authoritative play state."""
     result = _story_authority()['play'](spec, path)
     node = result['node']
-    enabled = [choice for choice in result['choices'] if choice['enabled']]
+    # The generated script emits the step-cap/no-exit branch BEFORE the choice
+    # block, so those states expose no choices even though play() can list them.
+    enabled = [choice for choice in result['choices'] if choice['enabled']] \
+        if result['status'] == 'PLAYING' else []
     variables = {variable['name']: result['variables'][variable['name']] for variable in spec['variables']}
     status_code = STATUS_CODES[result['status']]
     return {
@@ -345,6 +348,7 @@ def build(snapshot, options):
         'losses': list(_descriptor.LOSSES),
         'notes': [
             'Each state lists the choices the pinned runtime must expose, in order, so selection is by witness id.',
+            'At STEP_CAP_REACHED and NO_EXIT states the generated script ends before the choice block, so no choices are exposed.',
             'output_lines are the exact plain-text lines the generated script emits for that state.',
             'variables use original story names; ink_variables use the generated Ink VAR names.',
             'The loop step-cap case asserts the generated ans_steps branch ends the story at max_steps.',
