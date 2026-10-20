@@ -8,6 +8,11 @@ V0.1 数据与 Agent 架构保留。V0.2 增加 Runtime Registry、Mock/Ollama S
 
 V1.0 Windows DesktopHost 正在开发验收中，尚未发布。当前已有内部验收 ZIP/EXE 快照（不是公共发行物）；已完成项、前端预留窗口和未完成项见 [`docs/v1_implementation_status.md`](docs/v1_implementation_status.md)，验收矩阵见 [`docs/acceptance_report_20260822.md`](docs/acceptance_report_20260822.md)。
 
+## 开发与贡献
+
+- [开发者源码导航](docs/development/README.md)：模块与原 owner 地图、常见改动入口和开发运行方式。
+- [贡献与 PR 审核指南](docs/development/contribution-review.md)：按变更类型选择检查，核对跨模块契约、恢复行为和多人文件归属。
+
 ## 启动与停止
 
 1. 安装 Docker Desktop 与 Ollama，并确认 WSL2 可用。
