@@ -108,3 +108,10 @@ class CanvasViewCreate(Strict):
 class CanvasViewSave(Strict):
     expected_version: int = Field(ge=1,strict=True)
     definition: CanvasViewDefinition
+
+class CanvasViewRestore(Strict):
+    expected_version: int = Field(ge=1, strict=True)
+    expected_definition_digest: str = Field(pattern=r'^[a-f0-9]{64}$', strict=True)
+    expected_incarnation: str = Field(min_length=1, max_length=240, strict=True)
+    restore_version: int = Field(ge=1, strict=True)
+    restore_definition_digest: str = Field(pattern=r'^[a-f0-9]{64}$', strict=True)
