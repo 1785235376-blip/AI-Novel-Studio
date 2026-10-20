@@ -6,6 +6,7 @@ reject rather than silently drop the last frame.
 """
 import base64
 import json
+from uuid import uuid4
 
 import pytest
 
@@ -215,3 +216,20 @@ def test_mounted_unknown_submission_never_replays_automatically(image_client, tm
     again = e.client.post(path + '/execute', headers=e.headers, json=action(current))
     assert again.status_code in {409, 422}
     assert len(provider.requests) == 1
+
+
+def test_mounted_cross_project_asset_cannot_be_used_as_a_frame(image_client, tmp_path):
+    e = image_client
+    provider = FrameProvider(cpu_video(tmp_path))
+    configure(e, provider)
+    first = upload(e, b'\x11\x22\x33', 'cross-project-first')
+    other = checked(e.client.post(e.prefix + '/experimental/projects', json={
+        'title': 'Other video project', 'id': 'cross-project-' + uuid4().hex}), 201)
+    other_base = e.prefix + '/projects/' + other['id'] + '/studio'
+    body = {'filename': 'other.png', 'kind': 'image', 'content_base64': base64.b64encode(png_bytes(b'\x44\x55\x66')).decode(),
+            'idempotency_key': 'cross-project-other'}
+    foreign = checked(e.client.post(other_base + '/assets', headers=e.headers, json=body), 201)
+    value = command(provider, [first, foreign])
+    response = e.client.post(e.base + '/preview', headers=e.headers, json=value)
+    assert response.status_code in {403, 404, 409, 422}, response.text
+    assert provider.requests == []
