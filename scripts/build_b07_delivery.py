@@ -104,9 +104,12 @@ def main() -> int:
         handle.write('#\n# Commit order:\n')
         for row in order.splitlines():
             handle.write('#   ' + row.replace('\t', '  ') + '\n')
+        handle.write('# Individual patch files: ' + ', '.join(integration_patches) + '\n')
         handle.write('#\n')
+        # Pure concatenation of the mbox messages: anything inserted between
+        # messages would corrupt git am parsing, so the index above is the only
+        # commentary and each message starts with its own "From <sha>" envelope.
         for name in integration_patches:
-            handle.write('\n# ===== ' + name + ' =====\n')
             handle.write((integration_dir / name).read_text(encoding='utf-8'))
     print('full patch txt written:', patch_name)
 
