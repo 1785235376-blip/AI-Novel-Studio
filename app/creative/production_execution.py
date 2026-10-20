@@ -568,6 +568,20 @@ class ProductionExecutionService:
         source_dimensions = ({key: evidence[0]["measured"][key] for key in ("width", "height")}
             if command.operation_id == "m5.image.upscale" else None)
         recipe = self._recipe(command, source_dimensions=source_dimensions)
+        if command.canvas_return is not None:
+            origin = command.canvas_return
+            graph = getattr(self, 'graph_service', None)
+            if (graph is None or graph_binding is not None or benchmark_binding is not None or batch_binding is not None
+                    or origin.project_id != nid or origin.scope != scope or origin.incarnation != context['incarnation']
+                    or not binding.get('local') or recipe.get('adapter') != 'COMFYUI_BUILTIN_IMAGE'
+                    or recipe.get('image_recipe_id') != 'comfy-sd-checkpoint-v1'):
+                raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
+            canvas = graph.canvas_views.get(nid, scope, actor, origin.canvas_id, guard)
+            card = next((c for c in canvas['definition']['cards'] if c['id'] == origin.card_id), {})
+            expected = {'asset_id': origin.source.id, 'version': origin.source.version, 'digest': origin.source.digest, 'kind': 'image'}
+            if (canvas['version'] != origin.canvas_version or canvas['definition_digest'] != origin.canvas_digest
+                    or card.get('asset') != expected or not any(s['card_id'] == origin.card_id and s['state'] == 'CURRENT_METADATA' for s in canvas['reference_states'])):
+                raise StaleSourceError('STUDIO_CANVAS_RETURN_TARGET_CHANGED')
         context.update(request_id=command.request_id, operation_id=command.operation_id, sources=sources,
             provider_binding=binding, license_note=command.license_note, rights={"license_note": command.license_note}, execution_recipe=recipe)
         if batch_binding is not None:
@@ -699,7 +713,7 @@ class ProductionExecutionService:
         preview, context, command = self.preview(nid, scope, actor, body.command, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         if preview["preview_digest"] != body.reviewed_preview_digest:
             raise StaleSourceError("STUDIO_PRODUCTION_PREVIEW_CHANGED")
-        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id"})
+        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return"})
         payload["parameters"] = command.parameters.model_dump(exclude_none=True)
         # Keep the exact reviewed command for later egress and route rechecks.
         context["command"] = copy.deepcopy(preview["command"]) if command.operation_id in {"m5.image.cutout", "m5.image.composite"} else command.model_dump()

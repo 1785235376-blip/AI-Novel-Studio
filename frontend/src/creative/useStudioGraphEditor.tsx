@@ -37,7 +37,7 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps & StudioDualC
   const creation = !controller.retired && props.client.graphs?.canvasViews && <MediaCanvasViewPanel key={`media:${props.identity}:${directorSession}`} {...props}
     externalDirty={props.externalDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty || dual.taskDirty} onDirtyChange={setMediaViewDirty}
     graphHandoff={controller.canvasAssetHandoff} imageGraphHandoff={controller.canvasImageGraphStarter} imageOutputHandoff={controller.imageOutputHandoff}
-    onBeginImageTask={props.productionTaskSource?dual.begin:undefined} canvasTask={dual.task} canvasTaskApproved={dual.approved} taskProduction={props.productionTaskSource} onTaskReturned={dual.returned}/>;
+    onBeginImageTask={props.productionTaskSource?dual.begin:undefined} onResumeImageTask={props.productionTaskSource?dual.begin:undefined} canvasTask={dual.task} canvasTaskApproved={dual.approved} taskProduction={props.productionTaskSource} onTaskReturned={dual.returned}/>;
   const execution = <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
     draftOwner={props.draftOwner} registerRecoveryDiscard={discard => { discardDirectorRecovery.current = discard; }}
     verifyDraftOwner={props.draftOwner ? async () => {

@@ -209,10 +209,13 @@ def _context(value, body, actor):
                 or "denoising_strength" in body["parameters"]):
             from ..creative.production_execution_models import MediaCommand
             checked = MediaCommand.model_validate(command)
-            checked_body = checked.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id"})
+            checked_body = checked.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return"})
             checked_body["parameters"] = checked.parameters.model_dump(exclude_none=True)
             if checked.operation_id not in OPERATIONS or checked_body != body:
                 raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_INVALID")
+            if checked.canvas_return is not None and (checked.canvas_return.incarnation != value['incarnation']
+                    or value.get('graph_binding') is not None or value.get('batch_binding') is not None):
+                raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
     elif (IMAGE_RUNTIME_FIELDS.intersection(body) or body["operation_id"] in {"m5.image.reference", "m5.image.inpaint", "m5.image.upscale"}
             or "denoising_strength" in body["parameters"]):
         raise ValueError("STUDIO_IMAGE_RUNTIME_CONTEXT_REQUIRED")
@@ -296,6 +299,9 @@ def _owned(service, row, nid, branch, actor):
     _require_version(row.get("version")); _require_digest(row.get("request_digest"))
     body = _payload(row.get("body"))
     context = _context(row.get("context"), body, actor)
+    origin = context.get('command', {}).get('canvas_return')
+    if origin is not None and (origin.get('project_id') != nid or origin.get('scope', {}).get('branch_id') != branch):
+        raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
     if row["request_digest"] != context["request_digest"]:
         raise ValueError("STUDIO_IMAGE_REQUEST_BINDING_CHANGED")
     if body["operation_id"] == "m5.image.cutout": _cutout_proof(row)

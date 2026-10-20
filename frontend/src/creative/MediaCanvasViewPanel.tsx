@@ -4,6 +4,7 @@ import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
 import { MediaCanvasImageGraphStarter } from './MediaCanvasImageGraphStarter';
 import { CanvasImageTaskReturn } from './CanvasImageTaskReturn';
 import { MediaCanvasHistoryPanel } from './MediaCanvasHistoryPanel';
+import { CanvasImageTaskRecovery } from './CanvasImageTaskRecovery';
 import { captureCanvasImageTask, type CanvasImageTaskOrigin, type CanvasImageTaskSession } from './canvasImageTask';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
 import type { CanvasImageGraphHandoff } from './canvasImageGraphStarter';
@@ -28,6 +29,7 @@ import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
 type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff; imageGraphHandoff?: CanvasImageGraphHandoff; imageOutputHandoff?: ImageOutputHandoff;
   onBeginImageTask?:(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean)=>void;
+  onResumeImageTask?:(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean,job:ProductionJob)=>void;
   canvasTask?:CanvasImageTaskSession;canvasTaskApproved?:ProductionJob;taskProduction?:StudioProductionClient;onTaskReturned?:()=>void };
 
 /** Display metadata only; generation, media download and execution keep their original owners. */
@@ -44,6 +46,8 @@ export function MediaCanvasViewPanel(props: Props) {
   const [discard, setDiscard] = useState(false), [size, setSize] = useState({ width: 800, height: 480 });
   const alive = useRef(true), pendingRef = useRef(false), draftRef = useRef(draft), live = useRef(props);
   const sourceEpoch = useRef(0), baseRef = useRef(base), dirtyRef = useRef(false);
+  const originOwner=JSON.stringify(props.draftOwner),originOwnerRef=useRef(originOwner);
+  if(originOwnerRef.current!==originOwner){originOwnerRef.current=originOwner;sourceEpoch.current++;}
   baseRef.current=base;
   draftRef.current = draft; live.current = props;
   const dirty = uncertain || JSON.stringify(draft) !== JSON.stringify(base?.definition ?? blank());
@@ -90,9 +94,10 @@ export function MediaCanvasViewPanel(props: Props) {
   const card = draft.cards.find(c => c.id === selected);
   function beginImageTask(){
     if(!base||!card?.asset||card.asset.kind!=='image'||!editable||dirty||!props.onBeginImageTask)return;
+    if(!props.draftOwner){setError('当前项目代次尚未核对，不能建立可恢复的卡片任务。');return;}
     const canvas=base,cardId=card.id,assetId=card.asset.asset_id,epoch=sourceEpoch.current,identity=props.identity,originalClient=props.client;
     void work(false,()=>props.client.asset(assetId),asset=>{
-      try{const origin=captureCanvasImageTask(canvas,cardId,asset);
+      try{const origin=captureCanvasImageTask(canvas,cardId,asset,props.draftOwner!.incarnation);
         const isOriginCurrent=()=>alive.current&&live.current.identity===identity&&live.current.client===originalClient&&live.current.active&&!live.current.denied&&live.current.canMutate&&live.current.isCurrent()
           &&sourceEpoch.current===epoch&&!dirtyRef.current&&baseRef.current?.id===origin.canvasId&&baseRef.current.version===origin.canvasVersion&&baseRef.current.definition_digest===origin.canvasDigest;
         if(isOriginCurrent())props.onBeginImageTask!(origin,asset,isOriginCurrent);
@@ -131,6 +136,12 @@ export function MediaCanvasViewPanel(props: Props) {
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
     <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
+    {props.taskProduction&&props.onResumeImageTask&&<CanvasImageTaskRecovery client={props.client} production={props.taskProduction} owner={props.draftOwner} ownerToken={token}
+      disabled={dirty||pending||props.busy||props.externalDirty} canMutate={props.canMutate} isCurrent={current} read={props.read}
+      onResume={(row,asset,job,origin)=>{if(!current()||locked()||!props.canMutate)return;adopt(row);const epoch=sourceEpoch.current,identity=props.identity,originalClient=props.client;
+        const isOriginCurrent=()=>alive.current&&sourceEpoch.current===epoch&&live.current.identity===identity&&live.current.client===originalClient&&live.current.active&&!live.current.denied
+          &&live.current.canMutate&&live.current.draftOwner?.incarnation===origin.binding?.incarnation&&live.current.isCurrent()&&!dirtyRef.current&&baseRef.current?.id===origin.canvasId&&baseRef.current.version===origin.canvasVersion&&baseRef.current.definition_digest===origin.canvasDigest;
+        props.onResumeImageTask!(origin,asset,isOriginCurrent,job);setNotice('已从原 Job 恢复精确卡片位置；没有执行或采用，请继续原审核和回流确认。');}}/>}
     {base&&typeof client.history==='function'&&<MediaCanvasHistoryPanel base={base} client={client} owner={token} incarnation={props.draftOwner?.incarnation} canMutate={props.canMutate}
       externalDirty={dirty||props.externalDirty} busy={pending||props.busy} isBusy={props.isBusy} isCurrent={current} read={props.read} mutate={props.mutate}
       onAdopt={row=>{adopt(row);props.onTaskReturned?.();setNotice('已恢复为新的当前画布版本；原历史保留，旧选择和预览已退役。');}}

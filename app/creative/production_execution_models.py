@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
-from .production_contracts import ProductionSourceSnapshot, Name, Digest
+from .production_contracts import ProductionSourceSnapshot, Name, Digest, PUBLIC_SCOPE_KEYS
 
 GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
     "m7.video.v2v", "m8.audio.speech", "m8.audio.music", "m8.audio.effects", "m8.audio.trim"]
@@ -20,6 +20,35 @@ class ProviderSelection(ExecutionModel):
     operation_id: Literal[GraphMediaOperation, "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
     provider_id: Name
     model_id: Name
+
+
+class CanvasReturnBinding(ExecutionModel):
+    """Immutable return intent in the original Job command; never authority."""
+    contract: Literal['studio-canvas-return/1']
+    project_id: Name
+    scope: dict[str, str | None]
+    incarnation: str = Field(pattern=r'^(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
+    canvas_id: Name
+    canvas_version: int = Field(ge=1, strict=True)
+    canvas_digest: Digest
+    card_id: Name
+    source: ProductionSourceSnapshot
+
+    @model_validator(mode='after')
+    def exact_origin(self):
+        if (set(self.scope) - PUBLIC_SCOPE_KEYS or self.scope.get('novel_id') != self.project_id
+                or self.scope.get('mode') not in {'local', 'collaboration'}
+                or any(v is not None and not 1 <= len(v) <= 240 for v in self.scope.values())
+                or self.scope['mode'] == 'collaboration' and any(not self.scope.get(k) for k in ('workspace_id', 'storyline_id', 'branch_id'))
+                or self.source.kind != 'ASSET' or self.source.asset_kind != 'image'):
+            raise ValueError('STUDIO_CANVAS_RETURN_BINDING_INVALID')
+        return self
+
+    @model_serializer(mode='wrap')
+    def reference_identity(self, handler):
+        value = handler(self)
+        value['source'] = self.source.model_dump(exclude={'reference_only'}, exclude_none=True)
+        return value
 
 
 class MediaParameters(ExecutionModel):
@@ -221,6 +250,13 @@ class _MediaCommandShape(ExecutionModel):
     storyboard_speech: StoryboardSpeechPin | None = None
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
     image_layers: list[ImageCompositeLayer] | None = Field(default=None, min_length=2, max_length=2)
+    canvas_return: CanvasReturnBinding | None = None
+
+    @field_validator('canvas_return', mode='before')
+    @classmethod
+    def explicit_canvas_return(cls, value):
+        if value is None: raise ValueError('STUDIO_CANVAS_RETURN_BINDING_INVALID')
+        return value
 
     @field_validator('image_layers', mode='before')
     @classmethod
@@ -239,13 +275,18 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers", "canvas_return"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if self.canvas_return is not None and (self.operation_id != 'm5.image.i2i' or self.allow_cloud
+                or len(self.source_snapshots) != 1 or self.image_source is None or self.image_references or self.mask_source is not None
+                or image_snapshot(self.canvas_return.source) != image_snapshot(self.source_snapshots[0])
+                or image_snapshot(self.canvas_return.source) != image_snapshot(self.image_source)):
+            raise ValueError('STUDIO_CANVAS_RETURN_COMMAND_INVALID')
         if self.image_layers is not None and self.operation_id != 'm5.image.composite':
             raise ValueError('STUDIO_IMAGE_COMPOSITE_OPERATION_REQUIRED')
         if self.audio_profile is not None and (self.operation_id != "m8.audio.trim" or self.parameters.output_format != "MP3"):

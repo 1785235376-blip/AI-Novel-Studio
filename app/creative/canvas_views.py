@@ -96,10 +96,19 @@ class CreativeCanvasViews:
 
     def save(self,nid,scope,actor,rid,value,guard=lambda:None):
         body=CanvasViewSave.model_validate(value)
-        _,current=self.graph._context(nid,scope,actor,guard)
+        incarnation,current=self.graph._context(nid,scope,actor,guard)
+        if body.expected_incarnation is not None and body.expected_incarnation != incarnation:
+            raise StaleSourceError('CREATIVE_CANVAS_SAVE_INCARNATION_CHANGED')
         definition=body.definition.model_dump()
         with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
             row=self._owned(nid,scope,actor,rid,state);check_version(row,body.expected_version)
+            if body.expected_definition_digest is not None and body.expected_definition_digest != row['definition_digest']:
+                raise StaleSourceError('CREATIVE_CANVAS_SAVE_DEFINITION_CHANGED')
+            if body.expected_card is not None:
+                old_card = next((card for card in row['definition']['cards'] if card['id'] == body.expected_card.card_id), None)
+                if (old_card is None or old_card['asset'] != body.expected_card.source.model_dump()
+                        or self._states(nid,scope,actor,{'cards':[old_card]},current)[0]['state'] != 'CURRENT_METADATA'):
+                    raise StaleSourceError('CREATIVE_CANVAS_RETURN_SOURCE_CHANGED')
             if any(item['state']!='CURRENT_METADATA' for item in self._states(nid,scope,actor,definition,current)):
                 raise StaleSourceError('CREATIVE_CANVAS_SOURCE_CHANGED')
             change_row(row,actor,body.expected_version,lambda target:target.update(definition=deepcopy(definition),definition_digest=digest(definition)))

@@ -224,6 +224,7 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
       { role: 'LAST' as const, source: { ...sources[1] } },
     ] } : {}),
     ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
+  if(task?.returnBinding)command.canvas_return=structuredClone(task.returnBinding);
   if(task)assertCanvasImageTaskCommand(task,command,provider);
   return command;
 }

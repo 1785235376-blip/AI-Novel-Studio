@@ -4,6 +4,7 @@ import { replaceCanvasImageTaskResult, type CanvasImageTaskSession } from './can
 import type { StudioClient, StudioAsset } from './studioClient';
 import type { CanvasViewRecord } from './studioCanvasViewClient';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
+import { sameCanvasReturnScope } from './studioCanvasReturnBinding';
 type Proof={token:object;canvas:CanvasViewRecord;job:ProductionJob;asset:StudioAsset};
 export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approved:ProductionJob;client:StudioClient;production:StudioProductionClient;
   disabled:boolean;canMutate:boolean;isCurrent:()=>boolean;read:<T>(f:()=>Promise<T>)=>Promise<T>;mutate:<T>(f:()=>Promise<T>)=>Promise<T>;
@@ -20,8 +21,13 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
     try{
       const value=await props.read(async()=>{
         const job=await props.production.get('image',props.approved.id);
+        if(!current())throw new Error('原审核任务读取已退役。');
         if(job.request_digest!==props.approved.request_digest||job.version!==props.approved.version||!job.output_candidate)throw new Error('原审核任务版本已改变。');
-        const asset=await props.client.asset(job.output_candidate.id),canvas=await props.client.graphs.canvasViews!.get(props.task.origin.canvasId);
+        const asset=await props.client.asset(job.output_candidate.id);if(!current())throw new Error('正式素材读取已退役。');
+        const canvas=await props.client.graphs.canvasViews!.get(props.task.origin.canvasId);if(!current())throw new Error('原位置读取已退役。');
+        const binding=props.task.origin.binding;
+        if(binding){const history=await props.client.graphs.canvasViews!.history(binding.canvas_id);
+          if(!sameCanvasReturnScope(binding,canvas.project_id,canvas.scope,history.incarnation)||history.current_version!==canvas.version||history.current_definition_digest!==canvas.definition_digest)throw new Error('原项目代次、范围或画布版本已改变，不能采用。');}
         replaceCanvasImageTaskResult(props.task.origin,canvas,job,asset);return {token,canvas,job,asset};
       });
       if(current())setProof(value);
@@ -33,7 +39,8 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
     running.current=true;setBusy(true);proofRef.current=undefined;approvedRef.current=undefined;setProof(undefined);setConsent(false);
     try{
       const definition=replaceCanvasImageTaskResult(props.task.origin,visible.canvas,visible.job,visible.asset);
-      const row=await props.mutate(()=>props.client.graphs.canvasViews!.save(visible.canvas.id,visible.canvas.version,definition));
+      const binding=props.task.origin.binding;
+      const row=await props.mutate(()=>props.client.graphs.canvasViews!.save(visible.canvas.id,visible.canvas.version,definition,binding?{expected_incarnation:binding.incarnation,expected_definition_digest:binding.canvas_digest,expected_card:{card_id:binding.card_id,source:props.task.origin.source}}:undefined));
       if(current()){props.onAdopt(row);props.onComplete();}
       else if(alive.current){setUncertain(true);props.onUncertain();setError('原位置或权限在回填期间改变，保存结果待核对。请重新读取原画布，不会重试。');}
     }catch(reason){setUncertain(true);props.onUncertain();if(alive.current)setError('回填结果待核对，请重新读取原画布；不会自动重试。'+(reason instanceof Error?reason.message:''));}

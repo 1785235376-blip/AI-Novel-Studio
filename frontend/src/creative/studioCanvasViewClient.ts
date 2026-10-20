@@ -119,9 +119,11 @@ export function createCanvasViewClient(projectId: string, transport: StudioGraph
       const result = record(await transport.json<unknown>(base, 'POST', { request_id: requestId, expected_version: 0, definition: captured }));
       if (result.version !== 1 || JSON.stringify(result.definition) !== JSON.stringify(captured)) invalid(); return result;
     },
-    save: async (id: string, expectedVersion: number, definition: CanvasDefinition) => {
+    save: async (id: string, expectedVersion: number, definition: CanvasDefinition, origin?:{expected_incarnation:string;expected_definition_digest:string;expected_card?:{card_id:string;source:CanvasAssetReference}}) => {
       const captured = checkedCanvasDefinition(definition, true), expected = integer(expectedVersion);
-      const result = record(await transport.json<unknown>(`${base}/${encodeURIComponent(text(id))}`, 'PUT', { expected_version: expected, definition: captured }), id);
+      const fence=origin===undefined?{}:{expected_incarnation:text(origin.expected_incarnation),expected_definition_digest:digest(origin.expected_definition_digest)};
+      const card=origin?.expected_card===undefined?undefined:checkedCanvasDefinition({schema_version:1,title:'Return origin',cards:[{id:origin.expected_card.card_id,position:{x:0,y:0},asset:origin.expected_card.source}],viewport:{x:0,y:0,zoom:1}},true).cards[0];
+      const result = record(await transport.json<unknown>(`${base}/${encodeURIComponent(text(id))}`, 'PUT', { expected_version: expected, definition: captured,...fence,...(card?{expected_card:{card_id:card.id,source:card.asset}}:{}) }), id);
       if (result.version !== expected + 1 || JSON.stringify(result.definition) !== JSON.stringify(captured)) invalid(); return result;
     },
   };

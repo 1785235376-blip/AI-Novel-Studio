@@ -14,14 +14,14 @@ export function useStudioDualCanvasTask(props:StudioGraphEditorProps&StudioDualC
   const [mode,setMode]=useState<Mode>(props.client.graphs?.canvasViews&&!props.requestedGraphId?'CREATION':'EXECUTION');
   const [task,setTask]=useState<CanvasImageTaskSession>(),[approved,setApproved]=useState<ProductionJob>(),[taskDirty,setTaskDirty]=useState(false),[graphExecution,setGraphExecution]=useState(false);
   const live=useRef(props),taskRef=useRef(task),taskOwner=useRef<object>(),dirtyRef=useRef(taskDirty),alive=useRef(true);live.current=props;taskRef.current=task;dirtyRef.current=taskDirty;
-  const values=[props.identity,props.client,props.productionTaskSource,props.active,props.denied,props.canMutate,props.canReview],fence=useRef({values,token:{}});
+  const values=[props.identity,props.client,props.productionTaskSource,props.active,props.denied,props.canMutate,props.canReview,JSON.stringify(props.draftOwner)],fence=useRef({values,token:{}});
   if(values.some((v,i)=>!Object.is(v,fence.current.values[i])))fence.current={values,token:{}};
   const token=fence.current.token,current=()=>alive.current&&token===fence.current.token&&live.current.active&&!live.current.denied&&live.current.isCurrent();
   useLayoutEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
-  function begin(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean){
+  function begin(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean,resumeJob?:ProductionJob){
     if(!current()||!props.productionTaskSource||dirtyRef.current||!props.canMutate||props.busy||props.externalDirty||!isOriginCurrent())return;
-    const id=crypto.randomUUID();const next:CanvasImageTaskSession={id,origin,asset,isOriginCurrent:()=>current()&&taskRef.current===next&&isOriginCurrent()};
-    taskOwner.current=token;taskRef.current=next;setTask(next);setApproved(undefined);setGraphExecution(false);setMode('EXECUTION');
+    const id=crypto.randomUUID();const next:CanvasImageTaskSession={id,origin,asset,resumeJob,isOriginCurrent:()=>current()&&taskRef.current===next&&isOriginCurrent()};
+    taskOwner.current=token;taskRef.current=next;setTask(next);setApproved(resumeJob?.status==='APPROVED'?resumeJob:undefined);setGraphExecution(false);setMode(resumeJob?.status==='APPROVED'?'CREATION':'EXECUTION');
   }
   const returned=()=>{if(current()){taskOwner.current=undefined;taskRef.current=undefined;dirtyRef.current=false;setTask(undefined);setApproved(undefined);setTaskDirty(false);setMode('CREATION');}};
   function frame(creation:ReactNode,sharedExecution:ReactNode,inspector:ReactNode,blocked:boolean){

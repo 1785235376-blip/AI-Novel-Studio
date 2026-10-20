@@ -105,9 +105,33 @@ class CanvasViewCreate(Strict):
     expected_version: int = Field(default=0,ge=0,le=0,strict=True)
     definition: CanvasViewDefinition
 
+class CanvasCardPin(Strict):
+    card_id: Id
+    source: AssetParameters
+
 class CanvasViewSave(Strict):
     expected_version: int = Field(ge=1,strict=True)
     definition: CanvasViewDefinition
+    expected_incarnation: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
+    expected_definition_digest: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$', strict=True)
+    expected_card: CanvasCardPin | None = None
+
+    @model_validator(mode='after')
+    def paired_origin_fence(self):
+        supplied = self.model_fields_set & {'expected_incarnation', 'expected_definition_digest'}
+        if supplied and (len(supplied) != 2 or self.expected_incarnation is None or self.expected_definition_digest is None):
+            raise ValueError('CREATIVE_CANVAS_SAVE_ORIGIN_FENCE_INVALID')
+        if 'expected_card' in self.model_fields_set and (self.expected_card is None or len(supplied) != 2):
+            raise ValueError('CREATIVE_CANVAS_SAVE_CARD_FENCE_INVALID')
+        return self
+
+    @model_serializer(mode='wrap')
+    def legacy_save_identity(self, handler):
+        value = handler(self)
+        if self.expected_incarnation is None:
+            value.pop('expected_incarnation', None); value.pop('expected_definition_digest', None)
+        if self.expected_card is None: value.pop('expected_card', None)
+        return value
 
 class CanvasViewRestore(Strict):
     expected_version: int = Field(ge=1, strict=True)

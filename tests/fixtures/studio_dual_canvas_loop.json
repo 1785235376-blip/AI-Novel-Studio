@@ -1,26 +1,26 @@
 {
-  "project": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+  "project": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
   "scope": {
     "mode": "local",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
   },
-  "incarnation": "file:cbbc6251-e366-46e7-841e-f030d181d249",
+  "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
   "source": {
-    "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "filename": "synthetic-origin.png",
     "kind": "image",
     "media_type": "image/png",
     "size": 4228,
     "sha256": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
     "branch_id": null,
-    "created_at": "2026-10-20T18:22:04.297751+00:00",
-    "updated_at": "2026-10-20T18:22:04.297751+00:00",
+    "created_at": "2026-10-20T19:26:32.598354+00:00",
+    "updated_at": "2026-10-20T19:26:32.598354+00:00",
     "version": 1,
     "deleted_at": null,
-    "idempotency_key": "b2f5eaf01c1849eb8c48753af5e7441e",
+    "idempotency_key": "0577ebcfc83a446aab696ea3bba71cc6",
     "provenance": {
-      "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+      "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
       "label": "synthetic-origin.png",
       "kind": "image",
       "version": 1,
@@ -50,13 +50,13 @@
     "relationships": []
   },
   "canvas": {
-    "id": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
     "version": 1,
     "definition": {
       "cards": [
         {
           "asset": {
-            "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+            "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 1
@@ -69,7 +69,7 @@
         },
         {
           "asset": {
-            "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+            "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 1
@@ -99,14 +99,14 @@
         "zoom": 1.0
       }
     },
-    "definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
-    "project_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "scope": {
       "mode": "local",
-      "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
     },
-    "created_at": "2026-10-20T18:22:04.336560+00:00",
-    "updated_at": "2026-10-20T18:22:04.336560+00:00",
+    "created_at": "2026-10-20T19:26:32.638163+00:00",
+    "updated_at": "2026-10-20T19:26:32.638163+00:00",
     "reference_states": [
       {
         "card_id": "origin-card",
@@ -139,7 +139,7 @@
     },
     "source_snapshots": [
       {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -147,7 +147,7 @@
       }
     ],
     "image_source": {
-      "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+      "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
       "kind": "ASSET",
       "version": 1,
       "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -155,7 +155,27 @@
     },
     "image_references": [],
     "allow_cloud": false,
-    "license_note": "Synthetic author declaration"
+    "license_note": "Synthetic author declaration",
+    "canvas_return": {
+      "contract": "studio-canvas-return/1",
+      "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+      "scope": {
+        "mode": "local",
+        "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+      },
+      "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+      "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+      "canvas_version": 1,
+      "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+      "card_id": "origin-card",
+      "source": {
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+        "asset_kind": "image"
+      }
+    }
   },
   "providers": {
     "items": [
@@ -164,7 +184,7 @@
         "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
         "model_id": "local-8d3041ad54b52890b98ff2bd",
         "local": true,
-        "route_digest": "f92fd737b8d6f75acb1f8fe11a61c615b19f3571b9df26b4c6b73b5fe5853e47",
+        "route_digest": "cb7bc8ddd6832f8b3aa6293e63b4370f7b308498f343902eadefdb5c48f62646",
         "capability": "TEXT_TO_IMAGE",
         "supported_parameters": [
           "width",
@@ -195,7 +215,7 @@
         "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
         "model_id": "local-8d3041ad54b52890b98ff2bd",
         "local": true,
-        "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc",
+        "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf",
         "capability": "IMAGE_EDIT",
         "supported_parameters": [
           "steps",
@@ -224,7 +244,7 @@
         "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
         "model_id": "local-8d3041ad54b52890b98ff2bd",
         "local": true,
-        "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc",
+        "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf",
         "capability": "IMAGE_EDIT",
         "supported_parameters": [
           "steps",
@@ -253,7 +273,7 @@
         "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
         "model_id": "local-8d3041ad54b52890b98ff2bd",
         "local": true,
-        "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc",
+        "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf",
         "capability": "IMAGE_EDIT",
         "supported_parameters": [
           "steps",
@@ -284,21 +304,21 @@
   },
   "preview": {
     "contract": "studio-production-preview/1",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "branch_id": null,
     "operation_id": "m5.image.i2i",
     "request_id": "synthetic-single-card-task",
-    "request_digest": "ff1f279a699c8127a4c4432843e75d6d7b0891b43270509a1753fe99b9fd2001",
+    "request_digest": "0c92b19fa498215fcfb6e0616e480b7127f1b83136eef407a28d46c6d2ba4108",
     "provider": {
       "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
       "model_id": "local-8d3041ad54b52890b98ff2bd",
       "local": true,
-      "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc"
+      "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf"
     },
     "sources": [
       {
         "snapshot": {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "kind": "ASSET",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -453,7 +473,7 @@
       },
       "source_snapshots": [
         {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "kind": "ASSET",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -464,33 +484,53 @@
       "allow_cloud": false,
       "license_note": "Synthetic author declaration",
       "image_source": {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
         "asset_kind": "image",
         "reference_only": true
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+        },
+        "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+        "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+        "canvas_version": 1,
+        "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "card_id": "origin-card",
+        "source": {
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+          "asset_kind": "image"
+        }
       }
     },
     "product_acceptance": "LOCAL_REQUIRED",
     "execution_available": true,
     "automatic_dispatch": false,
     "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
-    "preview_digest": "cf4226b57acf4d85b3459162498f07a504c9ad3943e33697e14fb01450cd1339"
+    "preview_digest": "5af59a9a265f042f03ae8656e0e371bc88dcfaf4fe2a1c661a63a4f79e6bff36"
   },
   "queued": {
     "contract": "studio-production-job/1",
     "owner": "image",
-    "id": "e69e5507-a378-40be-8a03-4bee28ba1859",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "id": "927b02cc-583a-4e51-8c4e-533e40ffefb8",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "branch_id": null,
     "version": 1,
     "status": "QUEUED",
-    "request_digest": "ff1f279a699c8127a4c4432843e75d6d7b0891b43270509a1753fe99b9fd2001",
+    "request_digest": "0c92b19fa498215fcfb6e0616e480b7127f1b83136eef407a28d46c6d2ba4108",
     "receipt_digest": null,
     "attempt": 0,
-    "created_at": "2026-10-20T18:22:04.600353+00:00",
-    "updated_at": "2026-10-20T18:22:04.600353+00:00",
+    "created_at": "2026-10-20T19:26:32.939517+00:00",
+    "updated_at": "2026-10-20T19:26:32.939517+00:00",
     "error_code": null,
     "review_state": null,
     "cancellation_mode": null,
@@ -501,7 +541,7 @@
     "timeline_snapshot": null,
     "sources": [
       {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -521,7 +561,7 @@
       },
       "source_snapshots": [
         {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "kind": "ASSET",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -532,19 +572,39 @@
       "allow_cloud": false,
       "license_note": "Synthetic author declaration",
       "image_source": {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
         "asset_kind": "image",
         "reference_only": true
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+        },
+        "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+        "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+        "canvas_version": 1,
+        "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "card_id": "origin-card",
+        "source": {
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+          "asset_kind": "image"
+        }
       }
     },
     "provider": {
       "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
       "model_id": "local-8d3041ad54b52890b98ff2bd",
       "local": true,
-      "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc"
+      "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf"
     },
     "execution_recipe": {
       "contract": "studio-execution-recipe/1",
@@ -671,16 +731,16 @@
   "executed": {
     "contract": "studio-production-job/1",
     "owner": "image",
-    "id": "e69e5507-a378-40be-8a03-4bee28ba1859",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "id": "927b02cc-583a-4e51-8c4e-533e40ffefb8",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "branch_id": null,
     "version": 5,
     "status": "AWAITING_REVIEW",
-    "request_digest": "ff1f279a699c8127a4c4432843e75d6d7b0891b43270509a1753fe99b9fd2001",
-    "receipt_digest": "39ccae811b36e7e0638e72d60446c0e753eae2d5c1f20404415c8e90d5e3c171",
+    "request_digest": "0c92b19fa498215fcfb6e0616e480b7127f1b83136eef407a28d46c6d2ba4108",
+    "receipt_digest": "3bbc9a20a1187e5dbb9adc6a48204ecd977834d9eabac31e9e456d9ae2759f7f",
     "attempt": 1,
-    "created_at": "2026-10-20T18:22:04.600353+00:00",
-    "updated_at": "2026-10-20T18:22:06.860421+00:00",
+    "created_at": "2026-10-20T19:26:32.939517+00:00",
+    "updated_at": "2026-10-20T19:26:35.078534+00:00",
     "error_code": null,
     "review_state": null,
     "cancellation_mode": null,
@@ -688,7 +748,7 @@
     "execution_state": null,
     "operation_id": "m5.image.i2i",
     "output_candidate": {
-      "id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
+      "id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
       "version": 1,
       "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
       "kind": "image"
@@ -696,7 +756,7 @@
     "timeline_snapshot": null,
     "sources": [
       {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -716,7 +776,7 @@
       },
       "source_snapshots": [
         {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "kind": "ASSET",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -727,19 +787,39 @@
       "allow_cloud": false,
       "license_note": "Synthetic author declaration",
       "image_source": {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
         "asset_kind": "image",
         "reference_only": true
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+        },
+        "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+        "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+        "canvas_version": 1,
+        "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "card_id": "origin-card",
+        "source": {
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+          "asset_kind": "image"
+        }
       }
     },
     "provider": {
       "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
       "model_id": "local-8d3041ad54b52890b98ff2bd",
       "local": true,
-      "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc"
+      "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf"
     },
     "execution_recipe": {
       "contract": "studio-execution-recipe/1",
@@ -866,16 +946,16 @@
   "approved": {
     "contract": "studio-production-job/1",
     "owner": "image",
-    "id": "e69e5507-a378-40be-8a03-4bee28ba1859",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "id": "927b02cc-583a-4e51-8c4e-533e40ffefb8",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "branch_id": null,
     "version": 7,
     "status": "APPROVED",
-    "request_digest": "ff1f279a699c8127a4c4432843e75d6d7b0891b43270509a1753fe99b9fd2001",
-    "receipt_digest": "39ccae811b36e7e0638e72d60446c0e753eae2d5c1f20404415c8e90d5e3c171",
+    "request_digest": "0c92b19fa498215fcfb6e0616e480b7127f1b83136eef407a28d46c6d2ba4108",
+    "receipt_digest": "3bbc9a20a1187e5dbb9adc6a48204ecd977834d9eabac31e9e456d9ae2759f7f",
     "attempt": 1,
-    "created_at": "2026-10-20T18:22:04.600353+00:00",
-    "updated_at": "2026-10-20T18:22:07.049850+00:00",
+    "created_at": "2026-10-20T19:26:32.939517+00:00",
+    "updated_at": "2026-10-20T19:26:35.246796+00:00",
     "error_code": null,
     "review_state": null,
     "cancellation_mode": null,
@@ -883,7 +963,7 @@
     "execution_state": null,
     "operation_id": "m5.image.i2i",
     "output_candidate": {
-      "id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
+      "id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
       "version": 1,
       "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
       "kind": "image"
@@ -891,7 +971,7 @@
     "timeline_snapshot": null,
     "sources": [
       {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -911,7 +991,7 @@
       },
       "source_snapshots": [
         {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "kind": "ASSET",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -922,19 +1002,39 @@
       "allow_cloud": false,
       "license_note": "Synthetic author declaration",
       "image_source": {
-        "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
         "kind": "ASSET",
         "version": 1,
         "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
         "asset_kind": "image",
         "reference_only": true
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+        },
+        "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+        "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+        "canvas_version": 1,
+        "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "card_id": "origin-card",
+        "source": {
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+          "asset_kind": "image"
+        }
       }
     },
     "provider": {
       "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
       "model_id": "local-8d3041ad54b52890b98ff2bd",
       "local": true,
-      "route_digest": "f7a03123b7e4d4d418927b6d4e478225ed251e5a614cfde7ca1148aabce223fc"
+      "route_digest": "a518422bfc4d4c148dfbf0aede2468b5d7d7e70c039af2f1f456ecefa9af7baf"
     },
     "execution_recipe": {
       "contract": "studio-execution-recipe/1",
@@ -1059,26 +1159,26 @@
     "remote_compute_may_continue": false
   },
   "asset": {
-    "id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
-    "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
-    "filename": "studio-image-e69e5507-a378-40be-8a03-4bee28ba1859.png",
+    "id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
+    "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+    "filename": "studio-image-927b02cc-583a-4e51-8c4e-533e40ffefb8.png",
     "kind": "image",
     "media_type": "image/png",
     "size": 4228,
     "sha256": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
     "branch_id": null,
-    "source_job_id": "e69e5507-a378-40be-8a03-4bee28ba1859",
+    "source_job_id": "927b02cc-583a-4e51-8c4e-533e40ffefb8",
     "provider_id": "discovery-local-8d3041ad54b52890b98ff2bd",
     "model_id": "local-8d3041ad54b52890b98ff2bd",
-    "created_at": "2026-10-20T18:22:06.778672+00:00",
-    "updated_at": "2026-10-20T18:22:06.974871+00:00",
+    "created_at": "2026-10-20T19:26:35.005902+00:00",
+    "updated_at": "2026-10-20T19:26:35.178280+00:00",
     "version": 2,
     "deleted_at": null,
-    "idempotency_key": "studio-production:3be27f82692df0adbaaeaf015b5cd0bf392a4d3ddd410b9b84ac07f602b45c4a",
-    "approved_at": "2026-10-20T18:22:06.974871+00:00",
+    "idempotency_key": "studio-production:82cbeee223cfe4a17a95149ed0069c9258022d3c1b48c0843af213421fd0209c",
+    "approved_at": "2026-10-20T19:26:35.178280+00:00",
     "provenance": {
-      "id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
-      "label": "studio-image-e69e5507-a378-40be-8a03-4bee28ba1859.png",
+      "id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
+      "label": "studio-image-927b02cc-583a-4e51-8c4e-533e40ffefb8.png",
       "kind": "image",
       "version": 2,
       "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -1094,7 +1194,7 @@
       "operation": "m5.image.i2i",
       "parents": [
         {
-          "id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+          "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
           "label": "synthetic-origin.png",
           "version": 1,
           "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
@@ -1103,7 +1203,7 @@
       ],
       "sources": [],
       "stale": false,
-      "source_task_id": "e69e5507-a378-40be-8a03-4bee28ba1859",
+      "source_task_id": "927b02cc-583a-4e51-8c4e-533e40ffefb8",
       "generation": null,
       "reference_only": true,
       "product_acceptance": "LOCAL_REQUIRED"
@@ -1112,14 +1212,96 @@
   },
   "candidate_png_base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAQS0lEQVR4AQFAEL/vAP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wD/////////////////////////////////////////////////////////////////////////////////////AP////////////////////////////////////////////////////////////////////////////////////8A/////////////////////////////////////////////////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBXPhqxiUFMQAAAABJRU5ErkJggg==",
   "model_inference": false,
+  "initial_history": {
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+    },
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
+    "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+    "current_version": 1,
+    "current_definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+    "items": [
+      {
+        "version": 1,
+        "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:32.638163+00:00",
+        "definition": {
+          "cards": [
+            {
+              "asset": {
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+                "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+                "kind": "image",
+                "version": 1
+              },
+              "id": "origin-card",
+              "position": {
+                "x": 44.0,
+                "y": 66.0
+              }
+            },
+            {
+              "asset": {
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+                "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+                "kind": "image",
+                "version": 1
+              },
+              "id": "other-card",
+              "position": {
+                "x": 400.0,
+                "y": 100.0
+              }
+            }
+          ],
+          "groups": [
+            {
+              "card_ids": [
+                "origin-card"
+              ],
+              "collapsed": false,
+              "id": "original-group",
+              "name": "Original group"
+            }
+          ],
+          "schema_version": 1,
+          "title": "Single-card original work",
+          "viewport": {
+            "x": 0.0,
+            "y": 0.0,
+            "zoom": 1.0
+          }
+        },
+        "reference_states": [
+          {
+            "card_id": "origin-card",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-origin.png"
+          },
+          {
+            "card_id": "other-card",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-origin.png"
+          }
+        ],
+        "can_restore": false
+      }
+    ],
+    "restore_policy": "CURRENT_METADATA_ONLY",
+    "execution_authority": false,
+    "binary_content_verified": false
+  },
   "returned": {
-    "id": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
     "version": 2,
     "definition": {
       "cards": [
         {
           "asset": {
-            "asset_id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
+            "asset_id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 2
@@ -1132,7 +1314,7 @@
         },
         {
           "asset": {
-            "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+            "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 1
@@ -1162,19 +1344,19 @@
         "zoom": 1.0
       }
     },
-    "definition_digest": "ff88c716d2d2621583dc6ed193acc9d84a1f86f3cbcc2ed602d84636a24acad0",
-    "project_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "definition_digest": "3c9371a834ffb0fe3c3888b0cb637b0406224bbf0eb5571c3a1cb712811985df",
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "scope": {
       "mode": "local",
-      "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
     },
-    "created_at": "2026-10-20T18:22:04.336560+00:00",
-    "updated_at": "2026-10-20T18:22:07.193297+00:00",
+    "created_at": "2026-10-20T19:26:32.638163+00:00",
+    "updated_at": "2026-10-20T19:26:35.403227+00:00",
     "reference_states": [
       {
         "card_id": "origin-card",
         "state": "CURRENT_METADATA",
-        "filename": "studio-image-e69e5507-a378-40be-8a03-4bee28ba1859.png"
+        "filename": "studio-image-927b02cc-583a-4e51-8c4e-533e40ffefb8.png"
       },
       {
         "card_id": "other-card",
@@ -1190,26 +1372,26 @@
     }
   },
   "history": {
-    "project_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "scope": {
       "mode": "local",
-      "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
     },
-    "id": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
-    "incarnation": "file:cbbc6251-e366-46e7-841e-f030d181d249",
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
+    "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
     "current_version": 2,
-    "current_definition_digest": "ff88c716d2d2621583dc6ed193acc9d84a1f86f3cbcc2ed602d84636a24acad0",
+    "current_definition_digest": "3c9371a834ffb0fe3c3888b0cb637b0406224bbf0eb5571c3a1cb712811985df",
     "items": [
       {
         "version": 1,
-        "definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
-        "created_at": "2026-10-20T18:22:04.336560+00:00",
-        "updated_at": "2026-10-20T18:22:04.336560+00:00",
+        "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:32.638163+00:00",
         "definition": {
           "cards": [
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1222,7 +1404,7 @@
             },
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1268,14 +1450,14 @@
       },
       {
         "version": 2,
-        "definition_digest": "ff88c716d2d2621583dc6ed193acc9d84a1f86f3cbcc2ed602d84636a24acad0",
-        "created_at": "2026-10-20T18:22:04.336560+00:00",
-        "updated_at": "2026-10-20T18:22:07.193297+00:00",
+        "definition_digest": "3c9371a834ffb0fe3c3888b0cb637b0406224bbf0eb5571c3a1cb712811985df",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:35.403227+00:00",
         "definition": {
           "cards": [
             {
               "asset": {
-                "asset_id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
+                "asset_id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 2
@@ -1288,7 +1470,7 @@
             },
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1322,7 +1504,7 @@
           {
             "card_id": "origin-card",
             "state": "CURRENT_METADATA",
-            "filename": "studio-image-e69e5507-a378-40be-8a03-4bee28ba1859.png"
+            "filename": "studio-image-927b02cc-583a-4e51-8c4e-533e40ffefb8.png"
           },
           {
             "card_id": "other-card",
@@ -1338,13 +1520,13 @@
     "binary_content_verified": false
   },
   "restored": {
-    "id": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
     "version": 3,
     "definition": {
       "cards": [
         {
           "asset": {
-            "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+            "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 1
@@ -1357,7 +1539,7 @@
         },
         {
           "asset": {
-            "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+            "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
             "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
             "kind": "image",
             "version": 1
@@ -1387,14 +1569,14 @@
         "zoom": 1.0
       }
     },
-    "definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
-    "project_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "scope": {
       "mode": "local",
-      "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
     },
-    "created_at": "2026-10-20T18:22:04.336560+00:00",
-    "updated_at": "2026-10-20T18:22:07.238888+00:00",
+    "created_at": "2026-10-20T19:26:32.638163+00:00",
+    "updated_at": "2026-10-20T19:26:35.431068+00:00",
     "reference_states": [
       {
         "card_id": "origin-card",
@@ -1415,26 +1597,26 @@
     }
   },
   "final_history": {
-    "project_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
+    "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
     "scope": {
       "mode": "local",
-      "novel_id": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab"
+      "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
     },
-    "id": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
-    "incarnation": "file:cbbc6251-e366-46e7-841e-f030d181d249",
+    "id": "8a708682-74b8-4f05-ba41-2145002d647a",
+    "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
     "current_version": 3,
-    "current_definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
+    "current_definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
     "items": [
       {
         "version": 1,
-        "definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
-        "created_at": "2026-10-20T18:22:04.336560+00:00",
-        "updated_at": "2026-10-20T18:22:04.336560+00:00",
+        "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:32.638163+00:00",
         "definition": {
           "cards": [
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1447,7 +1629,7 @@
             },
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1493,14 +1675,14 @@
       },
       {
         "version": 2,
-        "definition_digest": "ff88c716d2d2621583dc6ed193acc9d84a1f86f3cbcc2ed602d84636a24acad0",
-        "created_at": "2026-10-20T18:22:04.336560+00:00",
-        "updated_at": "2026-10-20T18:22:07.193297+00:00",
+        "definition_digest": "3c9371a834ffb0fe3c3888b0cb637b0406224bbf0eb5571c3a1cb712811985df",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:35.403227+00:00",
         "definition": {
           "cards": [
             {
               "asset": {
-                "asset_id": "5c739380-5ace-4d06-84ba-8428d2fc4529",
+                "asset_id": "a5021366-06d2-4941-91c5-674e9f6c9e70",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 2
@@ -1513,7 +1695,7 @@
             },
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1547,7 +1729,7 @@
           {
             "card_id": "origin-card",
             "state": "CURRENT_METADATA",
-            "filename": "studio-image-e69e5507-a378-40be-8a03-4bee28ba1859.png"
+            "filename": "studio-image-927b02cc-583a-4e51-8c4e-533e40ffefb8.png"
           },
           {
             "card_id": "other-card",
@@ -1559,14 +1741,14 @@
       },
       {
         "version": 3,
-        "definition_digest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
-        "created_at": "2026-10-20T18:22:04.336560+00:00",
-        "updated_at": "2026-10-20T18:22:07.238888+00:00",
+        "definition_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+        "created_at": "2026-10-20T19:26:32.638163+00:00",
+        "updated_at": "2026-10-20T19:26:35.431068+00:00",
         "definition": {
           "cards": [
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1579,7 +1761,7 @@
             },
             {
               "asset": {
-                "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+                "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
                 "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
                 "kind": "image",
                 "version": 1
@@ -1630,16 +1812,36 @@
   },
   "prompt_posts": 1,
   "frontend_adoption_origin": {
-    "projectId": "v2-independent-1ff8942e61214368aeb56a9c5dc7c9ab",
-    "canvasId": "5a2dab21-f0a4-4d39-8d8f-2d320446f6e8",
+    "projectId": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+    "canvasId": "8a708682-74b8-4f05-ba41-2145002d647a",
     "canvasVersion": 1,
-    "canvasDigest": "cf9a3ffbb42575dd1df57486b5019514476c006fb8eff2b33eb382ea3f2c9a27",
+    "canvasDigest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
     "cardId": "origin-card",
     "source": {
-      "asset_id": "ca34f6d2-2734-4fae-b5eb-957a054eb360",
+      "asset_id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
       "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
       "kind": "image",
       "version": 1
+    },
+    "binding": {
+      "contract": "studio-canvas-return/1",
+      "project_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287",
+      "scope": {
+        "mode": "local",
+        "novel_id": "v2-independent-e1a6d8c903ef466e83438c74098ca287"
+      },
+      "incarnation": "file:1f25356b-1af8-4c16-8111-973fbe05e573",
+      "canvas_id": "8a708682-74b8-4f05-ba41-2145002d647a",
+      "canvas_version": 1,
+      "canvas_digest": "1ce1f81f76dc470ffc8205561901f66c6acbb8816bd71f28320ab2b739c5e4ff",
+      "card_id": "origin-card",
+      "source": {
+        "id": "b71293b4-19de-4af2-8661-4d2b24cfab1d",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "fc2738620fecb11358bda431400dd58c051071396d8c1f52bf4edd84f49bdf3f",
+        "asset_kind": "image"
+      }
     }
   }
 }

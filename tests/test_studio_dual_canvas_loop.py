@@ -11,18 +11,20 @@ from test_v2_image_discovery_capabilities import enabled
 from test_v2_discovered_image_production import owner as production_owner
 from test_v2_image_provider_recipes import Transport,png
 
-def test_card_task_original_job_review_exact_return_history_restore_and_reopen(rig,tmp_path,monkeypatch):
+@pytest.mark.parametrize('persistent',[False,True],ids=['legacy-command','persistent-return'])
+def test_card_task_original_job_review_exact_return_history_restore_and_reopen(rig,tmp_path,monkeypatch,persistent):
  if not shutil.which('node') or not (Path(__file__).parents[1]/'frontend/node_modules').is_dir():
   pytest.skip('Cross-owner replay requires Node and the existing frontend dependencies; no installation is performed.')
- e=rig;out=Path(os.environ.get('STUDIO_DUAL_LOOP_EVIDENCE',str(tmp_path/'evidence')));out.mkdir(exist_ok=True)
+ e=rig;out=Path(os.environ.get('STUDIO_DUAL_LOOP_EVIDENCE',str(tmp_path/'evidence')))/('bound' if persistent else 'legacy');out.mkdir(parents=True,exist_ok=True)
  source=import_asset(e,data=png(),filename='synthetic-origin.png');graph=owner(e)
  canvas=create(e,graph,{'schema_version':1,'title':'Single-card original work','cards':[{'id':'origin-card','position':{'x':44,'y':66},'asset':reference(source)},{'id':'other-card','position':{'x':400,'y':100},'asset':reference(source)}],
    'groups':[{'id':'original-group','name':'Original group','card_ids':['origin-card'],'collapsed':False}],'viewport':{'x':0,'y':0,'zoom':1}})
- _,registry,adapter,_=enabled(tmp_path,'sdxl-fixture.safetensors','COMFYUI');production=production_owner(registry,monkeypatch,e);wire=Transport();adapter.delegate.transport=wire
+ _,registry,adapter,_=enabled(tmp_path,'sdxl-fixture.safetensors','COMFYUI');production=production_owner(registry,monkeypatch,e);graph.configure_media(production);wire=Transport();adapter.delegate.transport=wire
  snapshot={'id':source['id'],'kind':'ASSET','version':source['version'],'digest':source['sha256'],'asset_kind':'image'}
  command={'operation_id':'m5.image.i2i','request_id':'synthetic-single-card-task','provider_id':adapter.candidate['provider_id'],'model_id':adapter.candidate['id'],
    'prompt':'Synthetic single-card variation','parameters':{'steps':33,'seed':100,'denoising_strength':0.6},'source_snapshots':[snapshot],'image_source':snapshot,'image_references':[],
    'allow_cloud':False,'license_note':'Synthetic author declaration'}
+ if persistent:command['canvas_return']={'contract':'studio-canvas-return/1','project_id':e.nid,'scope':e.scope,'incarnation':e.store.incarnation(e.nid),'canvas_id':canvas['id'],'canvas_version':canvas['version'],'canvas_digest':canvas['definition_digest'],'card_id':'origin-card','source':snapshot}
  preview,_,_=production.preview(e.nid,e.scope,e.actor,command,lambda:None);assert not any(url.endswith('/prompt') for url,_ in wire.calls)
  queued=production.create(e.nid,e.scope,e.actor,{'command':command,'reviewed_preview_digest':preview['preview_digest']},lambda:None)
  assert queued['status']=='QUEUED' and not any(url.endswith('/prompt') for url,_ in wire.calls)
@@ -40,11 +42,23 @@ def test_card_task_original_job_review_exact_return_history_restore_and_reopen(r
  output_path=out/'task-adoption-output.json';subprocess.run(['node',str(Path(__file__).parent/'fixtures/studio_canvas_image_adoption.cjs'),str(input_path),str(output_path)],check=True,capture_output=True,timeout=30)
  projected=json.loads(output_path.read_text(encoding='utf-8'));definition=projected['definition'];assert definition['cards'][0]['position']==canvas['definition']['cards'][0]['position'] and definition['groups']==canvas['definition']['groups']
  assert definition['cards'][1]==canvas['definition']['cards'][1]
- returned=graph.canvas_views.save(e.nid,e.scope,e.actor,canvas['id'],{'expected_version':canvas['version'],'definition':definition})
+ payload['initial_history']=graph.canvas_views.history(e.nid,e.scope,e.actor,canvas['id'])
+ fence={'expected_incarnation':e.store.incarnation(e.nid),'expected_definition_digest':canvas['definition_digest'],'expected_card':{'card_id':'origin-card','source':canvas['definition']['cards'][0]['asset']}} if persistent else {}
+ returned=graph.canvas_views.save(e.nid,e.scope,e.actor,canvas['id'],{'expected_version':canvas['version'],'definition':definition,**fence})
  history=graph.canvas_views.history(e.nid,e.scope,e.actor,canvas['id']);restored=graph.canvas_views.restore(e.nid,e.scope,e.actor,canvas['id'],restore_body(history))
  assert returned['version']==2 and restored['version']==3 and restored['definition']==canvas['definition'] and restored['definition_digest']==canvas['definition_digest']
  assert 'incarnation' not in restored and history['incarnation']==e.store.incarnation(e.nid)
  fresh=reopened(e);assert owner(type('Env',(),{'store':fresh.store,'service':fresh})()).canvas_views.get(e.nid,e.scope,e.actor,canvas['id'])==restored
+ if persistent:
+  from app.services.image_job_service import ImageJobService
+  from app.audio_production_store import AudioProductionStore
+  from app.services.video_assembly_service import VideoAssemblyService
+  production.image_jobs=ImageJobService(e.root)
+  production.audio_store=AudioProductionStore(e.root/'audio-production')
+  production.video_owner=VideoAssemblyService(e.root,e.service.assets)
+  assert production.get(e.nid,e.scope,e.actor,'image',approved['id'],lambda:None)['command']['canvas_return']==command['canvas_return']
+  assert production.list(e.nid,e.scope,e.actor,lambda:None)['items'][0]['command']['canvas_return']==command['canvas_return']
+ else:assert 'canvas_return' not in approved['command']
  final_history=graph.canvas_views.history(e.nid,e.scope,e.actor,canvas['id']);assert [r['version'] for r in final_history['items']]==[1,2,3]
  payload.update(returned=returned,history=history,restored=restored,final_history=final_history,prompt_posts=len(posted),frontend_adoption_origin=projected['origin'])
  (out/'dual-loop-fixture.json').write_text(json.dumps(payload,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
