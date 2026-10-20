@@ -991,9 +991,30 @@ class InteractiveStoryService(SourceFencedService):
             same_artifact = [item for item in evidence_rows.values()
                              if item.get('export_record_id') == match['id']
                              and item.get('target_id') == receipt.target_id]
-            recorded = next((item for item in same_artifact if item.get('claim_digest') == claim_digest), None)
+
+            def stored_claim_digest(item):
+                """Claim identity including rows written before claim_digest existed.
+
+                Older (725) rows stored only the receipt body. Deriving the digest
+                from that stored body keeps exact replays idempotent without
+                rewriting the historical row or upgrading its trust semantics.
+                """
+                explicit = item.get('claim_digest')
+                if isinstance(explicit, str) and len(explicit) == 64:
+                    return explicit
+                raw = item.get('receipt')
+                try:
+                    return verification_claim_digest(VerificationReceipt.model_validate(raw))
+                except Exception:
+                    return None
+
+            recorded = next((item for item in same_artifact
+                             if stored_claim_digest(item) == claim_digest), None)
+            legacy_compat = False
             if recorded is not None:
                 idempotent = True
+                legacy_compat = not (isinstance(recorded.get('claim_digest'), str)
+                                     and len(recorded.get('claim_digest')) == 64)
             else:
                 conflicting = next((item for item in same_artifact
                                     if (item.get('receipt') or {}).get('verifier') == receipt.verifier), None)
@@ -1027,6 +1048,16 @@ class InteractiveStoryService(SourceFencedService):
                 'origin': 'EXTERNAL_SUBMISSION', 'trust': 'EXTERNAL_UNVERIFIED',
                 'system_verification': 'NOT_PERFORMED', 'claim_digest': claim_digest,
                 'claimed_levels': dict(receipt.checks), 'system_runtime_levels': 'NOT_RUN',
+                'evidence_record_audit': {
+                    'id': result['id'],
+                    'origin': result.get('origin') or 'LEGACY_RECORD_NO_ORIGIN',
+                    'trust': result.get('trust') or 'EXTERNAL_UNVERIFIED',
+                    'claim_digest_stored': result.get('claim_digest') or None,
+                    'stored_row_rewritten': False,
+                },
+                'legacy_compatibility': ({'matched_legacy_record': True, 'digest_derived_from_stored_receipt': True,
+                                          'stored_row_rewritten': False}
+                                         if idempotent and legacy_compat else None),
                 'export_record_id': match['id'], 'evidence_record_id': result['id'],
                 'target_id': receipt.target_id, 'story_id': receipt.story_id, 'revision': receipt.revision,
                 'artifact_sha256': receipt.artifact_sha256, 'files_digest': receipt.files_digest,
