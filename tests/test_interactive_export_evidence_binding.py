@@ -1,10 +1,11 @@
-"""Current-artifact verification binding for B07 target exports.
+"""Current-artifact binding for B07 target exports.
 
-The reproduced defect: global Godot/Ink runtime PASS was inherited by a brand-new
-story that had never been run. These regressions prove that only a verification
-receipt bound to the exact story revision, target build, runtime identity and
-artifact digest can produce runtime levels, and that every other combination is
-unverified/stale and never PASS.
+The first reproduced defect: global Godot/Ink runtime PASS was inherited by a
+brand-new story that had never been run. The second reproduced defect: an upload
+with matching digests was itself treated as system execution proof. These
+regressions prove that an uploaded receipt is only an EXTERNAL ACCEPTANCE CLAIM:
+exact binding stops cross-story/revision/artifact reuse, idempotency/conflict and
+stale-revision rules are explicit, and no upload can make a runtime level PASS.
 """
 from copy import deepcopy
 
@@ -13,6 +14,7 @@ from fastapi import HTTPException
 
 import app.experimental.interactive_export_contract as contract
 from app.experimental.interactive_story import InteractiveStoryService
+from app.experimental.common import StaleSourceError
 from app.experimental.planning import PlanningService
 from app.experimental.story_graph import StoryGraphService
 from app.services.asset_library_service import AssetLibraryService
@@ -148,23 +150,36 @@ def test_new_export_never_inherits_historical_runtime_pass(env):
     assert out['verification']['binding']['revision'] == row['version']
 
 
-def test_valid_receipt_binds_current_artifact_and_reenables_pass(env):
+def test_valid_receipt_is_an_external_claim_never_a_system_pass(env):
     e = env; row = make_approved(e); out = export(e, row)
     result = record(e, row, receipt(e, row, out))
     assert result['status'] == 'RECORDED'
+    assert result['origin'] == 'EXTERNAL_SUBMISSION' and result['trust'] == 'EXTERNAL_UNVERIFIED'
+    assert result['system_verification'] == 'NOT_PERFORMED' and result['system_runtime_levels'] == 'NOT_RUN'
     view = result['artifact_evidence']
-    assert view['status'] == 'PASS' and view['matched_receipt']['verifier'].endswith('evidence_binding.py')
-    assert result['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    assert view['status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert view['claim_trust'] == 'EXTERNAL_UNVERIFIED' and view['system_verification'] == 'NOT_PERFORMED'
+    assert view['levels']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert view['levels']['SAVE_RESTORE_VERIFIED'] == 'NOT_RUN'
+    assert view['levels']['GENERATED_ARTIFACT_VALIDATED'] == 'PASS'
+    assert view['asserted_levels']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert view['latest_external_claim']['verifier'].endswith('evidence_binding.py')
+    assert len(view['latest_external_claim']['claim_digest']) == 64
+    assert result['runtime_claim'] == 'UNVERIFIED'
     current = row_for(e, row)
-    assert current['artifact_evidence_status'] == 'PASS' and current['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
-    # Re-exporting the identical deterministic artifact keeps the matching PASS.
+    assert current['artifact_evidence_status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert current['runtime_claim'] == 'UNVERIFIED'
+    # Re-exporting the identical deterministic artifact keeps the same artifact
+    # identity and the same external claim (never an inherited PASS).
     again = export(e, row)
     assert again['sha256'] == out['sha256']
-    assert again['artifact_evidence_status'] == 'PASS'
-    assert again['evidence']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
-    assert again['evidence']['WINDOWS_USABILITY_VERIFIED'] == 'NOT_RUN'
-    # The manifest generated at export time still refuses to self-assert runtime.
+    assert again['export_record_id'] == out['export_record_id']
+    assert again['artifact_evidence_status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert again['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert again['verification']['external_claim_only'] is True
+    assert again['verification']['system_verification'] == 'NOT_PERFORMED'
     assert again['manifest']['runtime']['current_artifact_evidence']['status'] == 'UNVERIFIED_AT_GENERATION'
+    assert contract.artifact_evidence.__doc__ and 'EXTERNAL ACCEPTANCE CLAIMS' in contract.artifact_evidence.__doc__
 
 
 def test_new_story_never_receives_another_story_receipt(env):
@@ -188,13 +203,13 @@ def test_revised_story_stales_previous_artifact_evidence(env):
     revised_out = export(e, revised)
     assert revised_out['sha256'] != out['sha256']
     assert revised_out['artifact_evidence_status'] == 'NOT_EXPORTED' or revised_out['artifact_evidence_status'] != 'PASS'
-    with pytest.raises(ValueError, match='EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'):
+    with pytest.raises(StaleSourceError, match='EXPORT_VERIFICATION_STALE_REVISION'):
         record(e, revised, receipt(e, row, out))
 
 
 @pytest.mark.parametrize('field,value,match', [
     ('story_id', 'another-story', 'EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'),
-    ('revision', 99, 'EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'),
+    ('revision', 99, 'EXPORT_VERIFICATION_STALE_REVISION'),
     ('spec_digest', '9' * 64, 'EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'),
     ('source_digest', '9' * 64, 'EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'),
     ('artifact_sha256', '9' * 64, 'EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT'),
@@ -240,7 +255,9 @@ def test_invalid_receipt_records_are_rejected(env):
 def test_ink_runtime_identity_is_exactly_bound(env):
     e = env; row = make_approved(e); out = export(e, row, INK)
     good = receipt(e, row, out, target=INK)
-    assert record(e, row, good)['artifact_evidence']['status'] == 'PASS'
+    recorded = record(e, row, good)
+    assert recorded['artifact_evidence']['status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert recorded['artifact_evidence']['levels']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
     other = make_approved(e, 'Ink other'); other_out = export(e, other, INK)
     old = receipt(e, other, other_out, target=INK)
     old['runtime']['version'] = '2.2.0'
@@ -272,3 +289,93 @@ def test_revoked_authority_rolls_back_recorded_evidence(env):
                                              reauthorize=revoke)
     assert e.store.read(e.nid, e.scope) == before
     assert row_for(e, row)['artifact_evidence_status'] != 'PASS'
+
+
+# ---------------------------------------------------------------------------
+# the second reported defect: a self-reported "success" upload is not proof
+# ---------------------------------------------------------------------------
+def test_forged_success_fields_are_kept_only_as_an_external_claim(env):
+    e = env; row = make_approved(e); out = export(e, row)
+    forged = receipt(e, row, out, verifier='self-declared-runner',
+                     log_sha256='f' * 64,
+                     commands=[{'label': 'fabricated', 'argv': [], 'exit_code': 0}])
+    result = record(e, row, forged)
+    assert result['trust'] == 'EXTERNAL_UNVERIFIED'
+    assert result['system_verification'] == 'NOT_PERFORMED'
+    assert result['artifact_evidence']['status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert result['artifact_evidence']['levels']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert result['artifact_evidence']['levels']['SAVE_RESTORE_VERIFIED'] == 'NOT_RUN'
+    assert result['runtime_claim'] == 'UNVERIFIED'
+    claim = result['artifact_evidence']['latest_external_claim']
+    assert claim['commands'][0]['label'] == 'fabricated'
+    assert claim['log_sha256'] == 'f' * 64
+    current = row_for(e, row)
+    assert current['runtime_claim'] == 'UNVERIFIED'
+    assert current['artifact_evidence']['status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    exported_again = export(e, row)
+    assert exported_again['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert exported_again['runtime_claim'] == 'UNVERIFIED'
+
+
+def test_identical_claim_replay_is_idempotent(env):
+    e = env; row = make_approved(e); out = export(e, row); value = receipt(e, row, out)
+    first = record(e, row, value)
+    second = record(e, row, value)
+    assert first['status'] == 'RECORDED' and second['status'] == 'IDEMPOTENT'
+    assert second['evidence_record_id'] == first['evidence_record_id']
+    rows = [item for item in e.service.list(e.nid, e.scope, e.service.EVIDENCE_COLLECTION)
+            if item.get('export_record_id') == out['export_record_id']]
+    assert len(rows) == 1
+
+
+def test_conflicting_claim_does_not_overwrite_stored_evidence(env):
+    e = env; row = make_approved(e); out = export(e, row)
+    first = record(e, row, receipt(e, row, out))
+    conflicting = receipt(e, row, out, log_sha256='a' * 64, verified_at='2026-10-20T01:00:00Z')
+    with pytest.raises(StaleSourceError, match='EXPORT_VERIFICATION_CONFLICT'):
+        record(e, row, conflicting)
+    current = row_for(e, row)
+    assert current['artifact_evidence_status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    claim = current['artifact_evidence']['latest_external_claim']
+    assert claim['claim_digest'] == first['claim_digest']
+    assert claim['log_sha256'] == 'f' * 64
+    rows = [item for item in e.service.list(e.nid, e.scope, e.service.EVIDENCE_COLLECTION)
+            if item.get('export_record_id') == out['export_record_id']]
+    assert len(rows) == 1
+
+
+def test_claim_for_replaced_revision_is_rejected_after_verification(env):
+    e = env; row = make_approved(e); out = export(e, row)
+    record(e, row, receipt(e, row, out))
+    revised = revise(e, row)
+    current = row_for(e, revised)
+    assert current['artifact_evidence_status'] == 'STALE_REVISION'
+    assert current['runtime_claim'] == 'UNVERIFIED'
+    with pytest.raises(StaleSourceError, match='EXPORT_VERIFICATION_STALE_REVISION'):
+        record(e, revised, receipt(e, row, out))
+    fresh = export(e, revised)
+    assert fresh['artifact_evidence_status'] == 'UNVERIFIED'
+    assert fresh['evidence']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert fresh['runtime_claim'] == 'UNVERIFIED'
+
+
+def test_claim_after_source_authority_change_is_rejected(env):
+    e = env; row = make_approved(e); out = export(e, row)
+    e.chapters.save(e.cid, {'version': e.chapters.get(e.cid)['version'], 'content': 'Changed after export'})
+    with pytest.raises(StaleSourceError):
+        record(e, row, receipt(e, row, out))
+    with pytest.raises(StaleSourceError):
+        row_for(e, row)
+
+
+def test_export_identity_is_stable_and_not_duplicated(env):
+    e = env; row = make_approved(e); first = export(e, row); second = export(e, row)
+    assert first['export_record_id'] == second['export_record_id']
+    assert first['sha256'] == second['sha256']
+    exports = [item for item in e.service.list(e.nid, e.scope, e.service.EXPORT_COLLECTION)
+               if item.get('target_id') == GODOT]
+    assert len(exports) == 1
+    assert contract.contract_document()['evidence_policy']['verification_receipts'] == \
+        'EXTERNAL_ACCEPTANCE_CLAIMS_NOT_SYSTEM_EXECUTION'
+    assert contract.contract_document()['evidence_policy']['system_runtime_verification'] == \
+        'NOT_AVAILABLE_IN_THIS_PRODUCT'

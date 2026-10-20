@@ -27,7 +27,7 @@ from .interactive_export_contract import (
     CONTRACT_SCHEMA, CONTRACT_VERSION, EVIDENCE_LEVELS, TARGETS_SCHEMA, VERIFICATION_SCHEMA, VerificationReceipt,
     all_target_descriptors, artifact_evidence, available_target_ids, build_export_bundle,
     compatibility_report, contract_document, historical_evidence_for, package_export_zip,
-    probe_engine, receipt_binding_issues, single_target_exportable,
+    probe_engine, receipt_binding_issues, single_target_exportable, verification_claim_digest,
 )
 
 FEATURE = 'interactive_story_v2'
@@ -779,7 +779,12 @@ class InteractiveStoryService(SourceFencedService):
 
     @staticmethod
     def _runtime_claim(artifact_view):
-        """Only the current-artifact evidence may set a runtime claim."""
+        """Only SYSTEM-executed runtime evidence may set a runtime claim.
+
+        Uploaded receipts are external claims; they never set this claim. The
+        product ships no trusted server-side execution runner today, so a fresh
+        export always reports UNVERIFIED until such a record exists.
+        """
         levels = (artifact_view or {}).get('levels') or {}
         for level in ('SAVE_RESTORE_VERIFIED', 'TARGET_RUNTIME_EXECUTED'):
             if levels.get(level) == 'PASS': return level
@@ -834,8 +839,10 @@ class InteractiveStoryService(SourceFencedService):
 
     def _not_exported_view(self, target_id):
         return {'status': 'NOT_EXPORTED', 'levels': {level: 'NOT_RUN' for level in EVIDENCE_LEVELS},
-                'binding': None, 'matched_receipt': None, 'stale_receipts': [], 'checked_receipts': 0,
-                'policy': 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+                'binding': None, 'matched_receipt': None, 'latest_external_claim': None, 'external_claims': [],
+                'asserted_levels': {}, 'claim_trust': 'EXTERNAL_UNVERIFIED', 'system_verification': 'NOT_PERFORMED',
+                'stale_receipts': [], 'checked_receipts': 0,
+                'policy': 'EXTERNAL_CLAIMS_NEVER_SET_SYSTEM_RUNTIME_LEVELS',
                 'reason': 'this target is not offered as a standalone downloadable project'}
 
     def _target_rows(self, nid, scope, row, analysis):
@@ -879,11 +886,16 @@ class InteractiveStoryService(SourceFencedService):
                     'historical_evidence': 'WHAT_THE_ADAPTER_OR_FIXED_TEMPLATE_ONCE_VERIFIED_NOT_THIS_STORY',
                     'artifact_evidence': 'BOUND_TO_THE_EXACT_LATEST_EXPORTED_ARTIFACT_OF_THIS_TARGET',
                     'scope': 'LATEST_EXPORTED_ARTIFACT_PER_TARGET',
+                    'verification_receipts': 'EXTERNAL_ACCEPTANCE_CLAIMS_NOT_SYSTEM_EXECUTION',
+                    'external_claim_status': 'EXTERNALLY_ASSERTED_PENDING',
+                    'runtime_levels_set_only_by': 'TRUSTED_SERVER_SIDE_EXECUTION_RECORD',
+                    'system_runtime_verification': 'NOT_AVAILABLE_IN_THIS_PRODUCT',
+                    'claim_binding_proves': 'THE_CLAIM_NAMES_THIS_ARTIFACT_NOT_THAT_IT_RAN',
                     'generation_sets_runtime_levels': False,
                     'stale_or_foreign_evidence_never_passes': True,
                     'inheritance_forbidden': True,
                 },
-                'target_runtime_policy': 'INDEPENDENT_EVIDENCE_LEVELS; GENERATION_IS_NOT_RUNTIME; CURRENT_ARTIFACT_EVIDENCE_REQUIRES_AN_EXACT_BOUND_VERIFICATION_RECEIPT',
+                'target_runtime_policy': 'INDEPENDENT_EVIDENCE_LEVELS; GENERATION_IS_NOT_RUNTIME; UPLOADED_RECEIPTS_ARE_EXTERNAL_CLAIMS_AND_RUNTIME_LEVELS_STAY_NOT_RUN_UNTIL_A_TRUSTED_SERVER_EXECUTION_RECORD_EXISTS',
                 'model_called': False}
 
     def _record_export(self, nid, scope, actor, row, target_id, snapshot, bundle, package, preview_digest, *, reauthorize):
@@ -916,12 +928,21 @@ class InteractiveStoryService(SourceFencedService):
             self._current(nid, scope, current, state); reauthorize()
             return deepcopy(record)
 
-    def record_export_verification(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
-        """Record one runtime verification receipt for its exact recorded artifact.
+    @staticmethod
+    def _claim_asserted_levels(receipt):
+        asserted = dict(receipt.evidence)
+        asserted.update({level: status for level, status in receipt.checks.items()})
+        return {level: status for level, status in asserted.items() if level in EVIDENCE_LEVELS}
 
-        A receipt that does not bind to an artifact this service actually exported
-        for this story/revision/target/digest is rejected, so a verification can
-        never be reused across stories, revisions, targets or rebuilt artifacts.
+    def record_export_verification(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        """Record one EXTERNAL acceptance claim for its exact recorded artifact.
+
+        The claim is stored and displayed with its source, but it is not system
+        execution evidence: runtime levels stay NOT_RUN and PASS is never granted
+        by an upload. Exact binding stops a claim from being reused across
+        stories, revisions, targets or rebuilt artifacts. Replaying the identical
+        claim is idempotent; a different claim for the same artifact and verifier
+        is rejected as a conflict instead of overwriting stored evidence.
         """
         data = ExportVerificationIn.model_validate(value)
         try:
@@ -929,12 +950,16 @@ class InteractiveStoryService(SourceFencedService):
         except Exception as exc:
             detail = ' | '.join(line.strip() for line in str(exc).splitlines() if line.strip())[:1200]
             raise ValueError('EXPORT_VERIFICATION_RECEIPT_INVALID: ' + detail) from None
+        claim_digest = verification_claim_digest(receipt)
         if receipt.story_id != sid:
             raise ValueError('EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT: receipt story does not match this adaptation')
         descriptor = next((item for item in all_target_descriptors() if item['target_id'] == receipt.target_id), None)
         if descriptor is None: raise ValueError('UNKNOWN_EXPORT_TARGET')
         if not single_target_exportable(receipt.target_id): raise ValueError('EXPORT_TARGET_NOT_SINGLE_EXPORTABLE')
         row = self._owned(nid, scope, actor, sid); self._version(row, data.expected_version); self._current(nid, scope, row)
+        if receipt.revision != row['version']:
+            raise StaleSourceError('EXPORT_VERIFICATION_STALE_REVISION: claim revision ' + str(receipt.revision)
+                                   + ' is not the current revision ' + str(row['version']))
         match = None
         for record in self._export_rows(nid, scope):
             if (record.get('story_id') == receipt.story_id and record.get('target_id') == receipt.target_id
@@ -953,21 +978,40 @@ class InteractiveStoryService(SourceFencedService):
                                          'spec_digest': match['spec_digest'], 'source_digest': match['source_digest']},
                                         match['artifact_sha256'], match['files_digest'])
         if issues: raise ValueError('EXPORT_VERIFICATION_BINDING_INVALID:' + issues[0][0] + ':' + issues[0][1])
+        idempotent = False
         with self.store.transaction(nid, scope) as state:
             current = self._owned(nid, scope, actor, row['id'], state)
             self._version(current, row['version']); self._current(nid, scope, current, state)
+            # Re-check inside the transaction: a revision/source change that raced
+            # this request must not let an old claim attach to the current state.
+            if current['version'] != match['revision']:
+                raise StaleSourceError('EXPORT_VERIFICATION_STALE_REVISION: artifact belongs to revision '
+                                       + str(match['revision']) + ', current revision is ' + str(current['version']))
             evidence_rows = collection(state, self.EVIDENCE_COLLECTION)
-            recorded = next((item for item in evidence_rows.values()
+            same_artifact = [item for item in evidence_rows.values()
                              if item.get('export_record_id') == match['id']
-                             and item.get('receipt', {}).get('verifier') == receipt.verifier
-                             and item.get('receipt', {}).get('artifact_sha256') == receipt.artifact_sha256
-                             and item.get('receipt', {}).get('verified_at') == receipt.verified_at), None)
-            if recorded is None:
+                             and item.get('target_id') == receipt.target_id]
+            recorded = next((item for item in same_artifact if item.get('claim_digest') == claim_digest), None)
+            if recorded is not None:
+                idempotent = True
+            else:
+                conflicting = next((item for item in same_artifact
+                                    if (item.get('receipt') or {}).get('verifier') == receipt.verifier), None)
+                if conflicting is not None:
+                    raise StaleSourceError('EXPORT_VERIFICATION_CONFLICT: a different claim from verifier '
+                                           + repr(receipt.verifier) + ' is already recorded for this artifact ('
+                                           + str(conflicting.get('id')) + '); stored evidence was not overwritten')
                 if len(evidence_rows) >= self.MAX_EVIDENCE: raise ValueError('export verification evidence limit reached')
                 recorded = new_row(nid, scope, actor, {
-                    'status': 'RECORDED', 'export_record_id': match['id'], 'story_id': match['story_id'],
+                    'status': 'RECORDED',
+                    'origin': 'EXTERNAL_SUBMISSION',
+                    'trust': 'EXTERNAL_UNVERIFIED',
+                    'system_verification': 'NOT_PERFORMED',
+                    'claim_digest': claim_digest,
+                    'export_record_id': match['id'], 'story_id': match['story_id'],
                     'revision': match['revision'], 'target_id': match['target_id'],
                     'artifact_sha256': match['artifact_sha256'], 'files_digest': match['files_digest'],
+                    'asserted_levels': self._claim_asserted_levels(receipt),
                     'receipt': receipt.model_dump(mode='json'),
                 })
                 evidence_rows[recorded['id']] = recorded
@@ -978,7 +1022,11 @@ class InteractiveStoryService(SourceFencedService):
         current = self._owned(nid, scope, actor, sid); self._current(nid, scope, current)
         analysis = analyze(current['spec']); snapshot = self._snapshot(nid, scope, current, analysis)
         view = self._artifact_evidence_view(nid, scope, current, snapshot, receipt.target_id)
-        return {'schema': 'poemseed-interactive-export-verification-record/1', 'status': 'RECORDED',
+        return {'schema': 'poemseed-interactive-export-verification-record/1',
+                'status': 'IDEMPOTENT' if idempotent else 'RECORDED',
+                'origin': 'EXTERNAL_SUBMISSION', 'trust': 'EXTERNAL_UNVERIFIED',
+                'system_verification': 'NOT_PERFORMED', 'claim_digest': claim_digest,
+                'claimed_levels': dict(receipt.checks), 'system_runtime_levels': 'NOT_RUN',
                 'export_record_id': match['id'], 'evidence_record_id': result['id'],
                 'target_id': receipt.target_id, 'story_id': receipt.story_id, 'revision': receipt.revision,
                 'artifact_sha256': receipt.artifact_sha256, 'files_digest': receipt.files_digest,
@@ -1064,7 +1112,11 @@ class InteractiveStoryService(SourceFencedService):
                     'verification': {'schema': VERIFICATION_SCHEMA, 'record_with':
                                      'POST /novels/{nid}/experimental/interactive-stories/{sid}/export-verification',
                                      'binding': artifact['binding'],
-                                     'current_status': artifact['status']}}
+                                     'current_status': artifact['status'],
+                                     'external_claim_only': True,
+                                     'system_verification': 'NOT_PERFORMED',
+                                     'runtime_level_source': 'NO_TRUSTED_SERVER_EXECUTION_RECORD',
+                                     'note': 'A recorded receipt is an external acceptance claim bound to this artifact; it never marks the artifact as executed and runtime levels stay NOT_RUN.'}}
         spec = deepcopy(row['spec'])
         for n in spec['nodes']:
             for c in n['choices']: c['condition_tree'] = parse_condition(c['condition'])

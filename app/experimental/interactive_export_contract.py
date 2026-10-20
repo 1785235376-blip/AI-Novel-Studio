@@ -52,7 +52,9 @@ TARGET_KINDS = ('RUNNABLE_PROJECT', 'DATA_ONLY_ADAPTER', 'LEGACY_FRAGMENT')
 # artifact. They are never inherited from an adapter/template's historical run.
 RUNTIME_EVIDENCE_LEVELS = ('TARGET_RUNTIME_EXECUTED', 'SAVE_RESTORE_VERIFIED')
 ARTIFACT_EVIDENCE_STATUSES = (
-    'PASS', 'UNVERIFIED', 'NOT_EXPORTED', 'EVIDENCE_INVALID',
+    # PASS is reserved for evidence the SYSTEM itself produced by executing the
+    # exact artifact. Uploaded receipts are only ever external claims.
+    'PASS', 'EXTERNALLY_ASSERTED_PENDING', 'UNVERIFIED', 'NOT_EXPORTED', 'EVIDENCE_INVALID',
     'TARGET_MISMATCH', 'FORMAT_MISMATCH', 'RUNTIME_MISMATCH',
     'STALE_STORY', 'STALE_REVISION', 'STALE_SOURCE', 'STALE_ARTIFACT',
 )
@@ -295,9 +297,40 @@ _STALE_PRIORITY = ('TARGET_MISMATCH', 'FORMAT_MISMATCH', 'RUNTIME_MISMATCH', 'EV
                    'STALE_STORY', 'STALE_REVISION', 'STALE_SOURCE', 'STALE_ARTIFACT')
 
 
+def verification_claim_digest(receipt: VerificationReceipt) -> str:
+    """Stable identity of one external acceptance claim (for idempotency)."""
+    canonical = json.dumps(receipt.model_dump(mode='json'), ensure_ascii=False, sort_keys=True,
+                           separators=(',', ':'))
+    return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
+
+
+def _claim_view(receipt: VerificationReceipt) -> dict:
+    """Everything the caller asserted, kept visibly separate from system results."""
+    asserted = dict(receipt.evidence)
+    asserted.update({level: status for level, status in receipt.checks.items()})
+    return {
+        'claim_digest': verification_claim_digest(receipt),
+        'verifier': receipt.verifier,
+        'verified_at': receipt.verified_at,
+        'runtime': receipt.runtime.model_dump(mode='json'),
+        'commands': receipt.commands,
+        'log_sha256': receipt.log_sha256,
+        'checked_levels': dict(receipt.checks),
+        'asserted_levels': {level: status for level, status in asserted.items() if level in EVIDENCE_LEVELS},
+        'trust': 'EXTERNAL_UNVERIFIED',
+    }
+
+
 def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, files_digest_value: str,
                       receipts) -> dict:
-    """Current-artifact evidence: only exact artifact-bound receipts may PASS.
+    """Current-artifact evidence with an explicit claim/system distinction.
+
+    Uploaded verification receipts are EXTERNAL ACCEPTANCE CLAIMS. The exact
+    binding proves only that a claim names this story revision, target format,
+    runtime identity and artifact digest. It does NOT prove that this product
+    executed the artifact, so runtime levels remain NOT_RUN and the status is
+    EXTERNALLY_ASSERTED_PENDING. PASS is reserved for a future trusted
+    server-side execution record; the product ships no such runner today.
 
     Historical adapter/template verification lives in historical_evidence_for and
     is intentionally not consulted here.
@@ -320,11 +353,17 @@ def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, f
             'verification_runtime': descriptor.verification_runtime.model_dump(mode='json') if descriptor.verification_runtime else None,
         },
         'matched_receipt': None,
+        'latest_external_claim': None,
+        'external_claims': [],
+        'asserted_levels': {},
+        'claim_trust': 'EXTERNAL_UNVERIFIED',
+        'system_verification': 'NOT_PERFORMED',
         'stale_receipts': [],
         'checked_receipts': 0,
-        'policy': 'ONLY_RECEIPTS_BOUND_TO_THIS_EXACT_ARTIFACT_CAN_SET_RUNTIME_LEVELS',
+        'policy': 'EXTERNAL_CLAIMS_NEVER_SET_SYSTEM_RUNTIME_LEVELS',
     }
     stale: list[tuple[list[tuple[str, str]], VerificationReceipt]] = []
+    claims: list[dict] = []
     invalid = 0
     checked = 0
     for raw in receipts or ():
@@ -335,19 +374,19 @@ def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, f
             invalid += 1
             continue
         issues = receipt_binding_issues(receipt, descriptor, snapshot, artifact_sha256, files_digest_value)
-        if issues: stale.append((issues, receipt)); continue
-        recorded = dict(receipt.evidence)
-        recorded.update({level: status for level, status in receipt.checks.items()})
-        for level in RUNTIME_EVIDENCE_LEVELS:
-            if recorded.get(level) == 'PASS': levels[level] = 'PASS'
-        matched = {
-            'verifier': receipt.verifier, 'verified_at': receipt.verified_at,
-            'runtime': receipt.runtime.model_dump(mode='json'),
-            'commands': receipt.commands, 'log_sha256': receipt.log_sha256,
-            'checks': dict(receipt.checks),
-        }
-        base.update(status='PASS', matched_receipt=matched, checked_receipts=checked,
-                    reason='a verification receipt matches this exact story revision, target build and artifact digest')
+        if issues:
+            stale.append((issues, receipt))
+            continue
+        claims.append(_claim_view(receipt))
+    if claims:
+        claims.sort(key=lambda claim: (str(claim.get('verified_at') or ''), str(claim.get('verifier') or '')))
+        latest = claims[-1]
+        base.update(status='EXTERNALLY_ASSERTED_PENDING', checked_receipts=checked,
+                    matched_receipt=latest, latest_external_claim=latest, external_claims=claims,
+                    asserted_levels=dict(latest['asserted_levels']),
+                    reason=('an external acceptance claim names this exact story revision, target format, '
+                            'runtime and artifact digest; the product has not executed or verified the '
+                            'artifact, so runtime levels stay NOT_RUN'))
         return base
     stale.sort(key=lambda item: min(_STALE_PRIORITY.index(code) if code in _STALE_PRIORITY else 99 for code, _ in item[0]))
     if stale:
@@ -355,7 +394,7 @@ def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, f
         code = min((code for code, _ in issues), key=lambda item: _STALE_PRIORITY.index(item) if item in _STALE_PRIORITY else 99)
         detail = next(text for found, text in issues if found == code)
         base.update(status=code, checked_receipts=checked,
-                    reason='verification evidence exists but is not valid for this artifact: ' + detail,
+                    reason='verification claim exists but is not bound to this artifact: ' + detail,
                     stale_receipts=[{'code': found, 'detail': text, 'receipt_story': receipt.story_id,
                                      'receipt_revision': receipt.revision, 'receipt_target': receipt.target_id,
                                      'receipt_artifact_sha256': receipt.artifact_sha256}
@@ -364,8 +403,8 @@ def artifact_evidence(target_id: str, snapshot: dict, *, artifact_sha256: str, f
             levels[level] = 'PARTIAL' if base['status'] == 'EVIDENCE_INVALID' else 'NOT_RUN'
         return base
     base.update(status='EVIDENCE_INVALID' if invalid and not stale else 'UNVERIFIED', checked_receipts=checked,
-                reason=('no verification receipt exists for this artifact' if not invalid
-                        else 'receipts exist but none is a valid verification record'))
+                reason=('no external verification claim exists for this artifact' if not invalid
+                        else 'claims exist but none is a valid external verification claim'))
     return base
 
 
@@ -1041,9 +1080,14 @@ def contract_document() -> dict:
                     'verification': VERIFICATION_SCHEMA},
         'evidence_policy': {
             'historical': 'ADAPTER_OR_FIXED_TEMPLATE_VERIFICATION_ONCE',
-            'current_artifact': 'RECEIPT_BOUND_TO_EXACT_STORY_REVISION_AND_ARTIFACT_DIGEST',
+            'current_artifact': 'EXTERNAL_CLAIMS_BOUND_TO_EXACT_STORY_REVISION_AND_ARTIFACT_DIGEST',
+            'verification_receipts': 'EXTERNAL_ACCEPTANCE_CLAIMS_NOT_SYSTEM_EXECUTION',
             'runtime_levels': list(RUNTIME_EVIDENCE_LEVELS),
+            'runtime_levels_set_only_by': 'TRUSTED_SERVER_SIDE_EXECUTION_RECORD',
+            'system_runtime_verification': 'NOT_AVAILABLE_IN_THIS_PRODUCT',
             'artifact_evidence_statuses': list(ARTIFACT_EVIDENCE_STATUSES),
+            'external_claim_status': 'EXTERNALLY_ASSERTED_PENDING',
+            'claim_binding_proves': 'THE_CLAIM_NAMES_THIS_ARTIFACT_NOT_THAT_IT_RAN',
             'generation_never_sets_runtime_levels': True,
             'inheritance_forbidden': True,
         },

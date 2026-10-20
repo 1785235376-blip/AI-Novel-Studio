@@ -142,12 +142,17 @@ def test_mounted_export_verification_requires_exact_artifact_binding(mounted):
     recorded = checked(e.client.post(url + '/export-verification', json={
         'expected_version': row['version'], 'receipt': _verification_receipt(row, exported, preview)}))
     assert recorded['status'] == 'RECORDED'
-    assert recorded['artifact_evidence']['status'] == 'PASS'
-    assert recorded['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    assert recorded['origin'] == 'EXTERNAL_SUBMISSION' and recorded['trust'] == 'EXTERNAL_UNVERIFIED'
+    assert recorded['system_verification'] == 'NOT_PERFORMED'
+    assert recorded['artifact_evidence']['status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert recorded['artifact_evidence']['levels']['TARGET_RUNTIME_EXECUTED'] == 'NOT_RUN'
+    assert recorded['runtime_claim'] == 'UNVERIFIED'
     current = checked(e.client.post(url + '/export-targets', json={'expected_version': row['version']}))
     godot = next(item for item in current['targets'] if item['target_id'] == 'GODOT_4_RUNTIME_PROJECT_V1')
-    assert godot['artifact_evidence_status'] == 'PASS'
-    assert godot['runtime_claim'] == 'SAVE_RESTORE_VERIFIED'
+    assert godot['artifact_evidence_status'] == 'EXTERNALLY_ASSERTED_PENDING'
+    assert godot['runtime_claim'] == 'UNVERIFIED'
+    assert godot['artifact_evidence']['asserted_levels']['TARGET_RUNTIME_EXECUTED'] == 'PASS'
+    assert godot['artifact_evidence']['system_verification'] == 'NOT_PERFORMED'
     # A receipt for a different artifact digest or a different story is rejected.
     wrong_artifact = _verification_receipt(row, exported, preview, artifact_sha256='9' * 64)
     assert e.client.post(url + '/export-verification', json={'expected_version': row['version'], 'receipt': wrong_artifact}).status_code == 422
