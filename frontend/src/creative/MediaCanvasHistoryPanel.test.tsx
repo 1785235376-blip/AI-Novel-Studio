@@ -7,7 +7,7 @@ import type { CanvasViewClient,CanvasViewHistory,CanvasViewRecord } from './stud
 afterEach(cleanup);
 const retained=(el:HTMLElement)=>(el as any)[Object.keys(el).find(k=>k.startsWith('__reactProps$'))!].onClick as ()=>void;
 function setup(incarnation:string|undefined=fixture.incarnation){
- const restore=vi.fn(async()=>structuredClone(fixture.restored) as unknown as CanvasViewRecord);
+ const restore=vi.fn(async(..._args:Parameters<CanvasViewClient['restore']>)=>structuredClone(fixture.restored) as unknown as CanvasViewRecord);
  const props={base:structuredClone(fixture.returned) as unknown as CanvasViewRecord,client:{history:vi.fn(async()=>structuredClone(fixture.history) as unknown as CanvasViewHistory),restore} as unknown as CanvasViewClient,owner:{},incarnation,
   canMutate:true,externalDirty:false,busy:false,isCurrent:()=>true,read:async<T,>(f:()=>Promise<T>)=>f(),mutate:async<T,>(f:()=>Promise<T>)=>f(),onAdopt:vi.fn(),onUncertain:vi.fn()};
  const view=render(<MediaCanvasHistoryPanel {...props}/>);return {...view,props,restore};

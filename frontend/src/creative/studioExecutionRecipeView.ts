@@ -132,6 +132,17 @@ export function buildStudioExecutionRecipeView({ recipe, operationId, current }:
     operationId: recipe.operation_id, adapter: recipe.adapter, digest: recipe.recipe_digest,
     recipeId: text(recipe.image_recipe_id) ? recipe.image_recipe_id : text(recipe.video_recipe_id) ? recipe.video_recipe_id : null,
     notes };
+  // This is the original CPU adapter's fixed mapping, not an editable workflow or execution evidence.
+  const parameters=recipe.parameters;
+  if(recipe.adapter==='LOCAL_FFMPEG'&&recipe.operation_id==='m8.audio.trim'&&recipe.output_profile==='PCM_S16LE_WAV_48000_STEREO'
+    &&record(parameters)&&Object.keys(parameters).length===2&&['in_ms','out_ms'].every(k=>own(parameters,k))
+    &&Number.isSafeInteger(parameters.in_ms)&&Number.isSafeInteger(parameters.out_ms)&&Number(parameters.in_ms)>=0
+    &&Number(parameters.out_ms)>Number(parameters.in_ms)&&Number(parameters.out_ms)-Number(parameters.in_ms)<=120000){
+    return {...result,visibility:'visible',steps:[{id:'local-ffmpeg-trim',classType:'LOCAL_FFMPEG',title:'按来源起止毫秒截取并输出 PCM16 WAV',known:true,
+      inputs:[{name:'in_ms',type:'INT',source:null,component:null,recordedValue:Number(parameters.in_ms)},
+        {name:'out_ms',type:'INT',source:null,component:null,recordedValue:Number(parameters.out_ms)}],outputs:['AUDIO_PCM_S16LE_WAV_48000_STEREO']}],
+      notes:[...notes,'这是原 FFmpeg 适配器的固定参数映射说明，不是可编辑节点图，也不代表已经执行。来源 pin 以原 Job 为准；执行后另核对真实时长、采样率、声道和输出摘要。不调用 TTS 或模型。']};
+  }
   // HTTP and A1111 have no internal workflow contract here, even if an extension happens to be named workflow.
   if (recipe.adapter !== 'COMFYUI_BUILTIN_IMAGE' && recipe.adapter !== 'COMFYUI_BUILTIN_VIDEO') {
     return { ...result, visibility: 'hidden', steps: [], notes: [...notes,

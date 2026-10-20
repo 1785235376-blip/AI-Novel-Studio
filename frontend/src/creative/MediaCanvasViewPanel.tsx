@@ -5,6 +5,7 @@ import { MediaCanvasImageGraphStarter } from './MediaCanvasImageGraphStarter';
 import { CanvasImageTaskReturn } from './CanvasImageTaskReturn';
 import { MediaCanvasHistoryPanel } from './MediaCanvasHistoryPanel';
 import { CanvasImageTaskRecovery } from './CanvasImageTaskRecovery';
+import { captureCanvasAudioTrimTask } from './canvasAudioTrimTask';
 import { captureCanvasImageTask, type CanvasImageTaskOrigin, type CanvasImageTaskSession } from './canvasImageTask';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
 import type { CanvasImageGraphHandoff } from './canvasImageGraphStarter';
@@ -93,11 +94,11 @@ export function MediaCanvasViewPanel(props: Props) {
   function selectCard(id: string, additive = false) { if (!current() || pendingRef.current) return; selectionEpoch.current++; setSelected(id); setSelectedIds(previous => additive ? previous.includes(id) ? previous.filter(value => value !== id) : [...previous, id] : [id]); }
   const card = draft.cards.find(c => c.id === selected);
   function beginImageTask(){
-    if(!base||!card?.asset||card.asset.kind!=='image'||!editable||dirty||!props.onBeginImageTask)return;
+    if(!base||!card?.asset||!['image','audio'].includes(card.asset.kind)||!editable||dirty||!props.onBeginImageTask)return;
     if(!props.draftOwner){setError('当前项目代次尚未核对，不能建立可恢复的卡片任务。');return;}
     const canvas=base,cardId=card.id,assetId=card.asset.asset_id,epoch=sourceEpoch.current,identity=props.identity,originalClient=props.client;
     void work(false,()=>props.client.asset(assetId),asset=>{
-      try{const origin=captureCanvasImageTask(canvas,cardId,asset,props.draftOwner!.incarnation);
+      try{const origin=(asset.kind==='audio'?captureCanvasAudioTrimTask:captureCanvasImageTask)(canvas,cardId,asset,props.draftOwner!.incarnation);
         const isOriginCurrent=()=>alive.current&&live.current.identity===identity&&live.current.client===originalClient&&live.current.active&&!live.current.denied&&live.current.canMutate&&live.current.isCurrent()
           &&sourceEpoch.current===epoch&&!dirtyRef.current&&baseRef.current?.id===origin.canvasId&&baseRef.current.version===origin.canvasVersion&&baseRef.current.definition_digest===origin.canvasDigest;
         if(isOriginCurrent())props.onBeginImageTask!(origin,asset,isOriginCurrent);
@@ -182,7 +183,7 @@ export function MediaCanvasViewPanel(props: Props) {
     <MediaCanvasGroupTools definition={draft} selectedCard={selected} owner={token} disabled={!editable} isCurrent={current} onChange={edit} />
     <MediaCardViewport definition={draft} states={states} selected={selected} selection={selection} query={query} owner={token} disabled={!editable} isCurrent={current} onSelect={selectCard} onChange={edit} onSize={setSize} />
     {card && <div className="creative-actions"><span>选中 {card.id}</span>{(['x', 'y'] as const).map(axis => <label key={axis}>卡片 {axis}<input type="number" value={card.position[axis]} disabled={!editable} onChange={e => edit({ ...draftRef.current, cards: draftRef.current.cards.map(c => c.id === card.id ? { ...c, position: { ...c.position, [axis]: clampGraphPosition(e.target.valueAsNumber) } } : c) })} /></label>)}
-      {props.onBeginImageTask&&<Button disabled={!editable||dirty||card.asset?.kind!=='image'} onClick={beginImageTask}>从此卡片创建图像任务</Button>}
+      {props.onBeginImageTask&&<Button disabled={!editable||dirty||!['image','audio'].includes(card.asset?.kind??'')} onClick={beginImageTask}>{card.asset?.kind==='audio'?'从此卡片创建音频截取任务':'从此卡片创建图像任务'}</Button>}
       <Button disabled={!editable} onClick={() => { edit(removeCanvasCard(draftRef.current, card.id)); setSelected(''); }}>移除此引用卡片</Button></div>}
     {card?.asset && props.graphHandoff && <MediaCanvasGraphHandoff key={`graph:${card.id}`} reference={card.asset} owner={token} client={props.client} handoff={props.graphHandoff} disabled={dirty || pending || props.externalDirty || !props.canMutate} isCurrent={current} read={props.read} />}
     {card?.asset && <CanvasAssetPreview key={card.id} reference={card.asset} owner={token} client={props.client} disabled={pending || props.busy || props.externalDirty} isCurrent={current} read={props.read} />}

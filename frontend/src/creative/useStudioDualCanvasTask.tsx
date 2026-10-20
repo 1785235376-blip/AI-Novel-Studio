@@ -45,7 +45,7 @@ export function useStudioDualCanvasTask(props:StudioGraphEditorProps&StudioDualC
         <div aria-label="创作层显示区" hidden={mode==='EXECUTION'} style={{minHeight:0,minWidth:0,overflow:'auto'}}>{creation}</div>
         <div aria-label="执行层显示区" hidden={mode==='CREATION'} style={{minHeight:0,minWidth:0,overflow:'auto'}}><div hidden={!task||graphExecution}>{taskContent}{task&&!visibleTask&&<StatusMessage tone="warning">原任务范围或权限已改变，任务不会重新发送。请返回创作画布核对；原请求仍按任务记录处理。</StatusMessage>}</div><div hidden={!!task&&!graphExecution}>{sharedExecution}</div></div>
       </div>
-    </section>,inspector:mode!=='CREATION'&&(!task||graphExecution)?inspector:<Panel title="创作画布与任务位置"><p>{visibleTask?`所选任务固定返回卡片 ${visibleTask.origin.cardId}。审核和采用分别确认，其他卡片不受影响。`:'先组织并保存素材卡片，再选择一张图片进入单次任务。原素材、位置与创作关系独立于执行图。'}</p></Panel>};
+    </section>,inspector:mode!=='CREATION'&&(!task||graphExecution)?inspector:<Panel title="创作画布与任务位置"><p>{visibleTask?`所选任务固定返回卡片 ${visibleTask.origin.cardId}。审核和采用分别确认，其他卡片不受影响。`:'先组织并保存素材卡片，再选择一张图片或音频进入单次任务。原素材、位置与创作关系独立于执行图。'}</p></Panel>};
   }
   function discard(){props.productionTaskLeaveGuard?.capture();taskOwner.current=undefined;taskRef.current=undefined;dirtyRef.current=false;setTask(undefined);setApproved(undefined);setTaskDirty(false);setGraphExecution(false);setMode('CREATION');}
   return {task,approved,taskDirty,begin,returned,frame,discard};

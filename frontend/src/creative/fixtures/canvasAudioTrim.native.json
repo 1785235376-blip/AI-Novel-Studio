@@ -1,0 +1,819 @@
+{
+  "contract": "synthetic-audio-canvas-proof/1",
+  "model_inference": false,
+  "real_cpu_ffmpeg": true,
+  "source": {
+    "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "filename": "synthetic-card-source.wav",
+    "kind": "audio",
+    "media_type": "audio/wav",
+    "size": 64044,
+    "sha256": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+    "branch_id": null,
+    "created_at": "2026-10-20T21:46:57.037554+00:00",
+    "updated_at": "2026-10-20T21:46:57.037554+00:00",
+    "version": 1,
+    "deleted_at": null
+  },
+  "output": {
+    "id": "2192b6d3-dd21-4bc1-9cb8-acef3ddbc518",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "filename": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3.wav",
+    "kind": "audio",
+    "media_type": "audio/wav",
+    "size": 57678,
+    "sha256": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84",
+    "branch_id": null,
+    "source_job_id": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-20T21:46:57.309056+00:00",
+    "updated_at": "2026-10-20T21:46:57.417032+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "approved_at": "2026-10-20T21:46:57.417032+00:00"
+  },
+  "canvas": {
+    "id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+    "version": 1,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+            "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+            "kind": "audio",
+            "version": 1
+          },
+          "id": "origin-audio",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+            "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+            "kind": "audio",
+            "version": 1
+          },
+          "id": "other-audio",
+          "position": {
+            "x": 360.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Synthetic audio card",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+    "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+    },
+    "created_at": "2026-10-20T21:46:57.054618+00:00",
+    "updated_at": "2026-10-20T21:46:57.054618+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-card-source.wav"
+      },
+      {
+        "card_id": "other-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-card-source.wav"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 0,
+      "record_bytes": 1267
+    }
+  },
+  "command": {
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "parameters": {
+      "in_ms": 550,
+      "out_ms": 850
+    },
+    "allow_cloud": false,
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "audio",
+        "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+        "version": 1,
+        "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb"
+      }
+    ],
+    "license_note": "",
+    "canvas_return": {
+      "contract": "studio-canvas-return/1",
+      "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+      "scope": {
+        "mode": "local",
+        "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+      },
+      "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+      "canvas_id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+      "canvas_version": 1,
+      "canvas_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+      "card_id": "origin-audio",
+      "source": {
+        "kind": "ASSET",
+        "asset_kind": "audio",
+        "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+        "version": 1,
+        "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb"
+      }
+    }
+  },
+  "preview": {
+    "contract": "studio-production-preview/1",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "branch_id": null,
+    "operation_id": "m8.audio.trim",
+    "request_id": "trim-one",
+    "request_digest": "d9dd6f9e1e62e961a39de4a61fb6e880efb78fdd6e44e403186abefd19cd9456",
+    "provider": null,
+    "sources": [
+      {
+        "snapshot": {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio"
+        },
+        "measured": {
+          "media_type": "audio/wav",
+          "extension": "wav",
+          "duration_ms": 2000,
+          "sample_rate": 16000,
+          "channels": 1,
+          "sample_width": 2,
+          "validation": "PCM_DECODED"
+        }
+      }
+    ],
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+      "recipe_digest": "f688a5e6b645865be574373d155053cb660c303f8dfa507602d76eb0dfdff259"
+    },
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "width": null,
+        "height": null,
+        "steps": null,
+        "seed": null,
+        "cfg": null,
+        "negative_prompt": null,
+        "size": null,
+        "quality": null,
+        "duration_seconds": null,
+        "frame_rate": null,
+        "voice_id": null,
+        "speech_rate": null,
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "source_snapshots": [
+        {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+        },
+        "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+        "canvas_id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+        "canvas_version": 1,
+        "canvas_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+        "card_id": "origin-audio",
+        "source": {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio"
+        }
+      }
+    },
+    "product_acceptance": "LOCAL_REQUIRED",
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "output_policy": "PRIVATE_CANDIDATE_THEN_EXPLICIT_REVIEW",
+    "preview_digest": "dee86efbcf816932d64e127156d64daa13d9ddb55bcc612b4ec9e31a370a62e9"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "d9dd6f9e1e62e961a39de4a61fb6e880efb78fdd6e44e403186abefd19cd9456",
+    "receipt_digest": "976a12176997ac31760836110400adfb29394e61e2f373cda5d59d0aed006e79",
+    "attempt": 0,
+    "created_at": "2026-10-20T21:46:57.145128+00:00",
+    "updated_at": "2026-10-20T21:46:57.145128+00:00",
+    "error_code": null,
+    "review_state": "NOT_READY",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "source_snapshots": [
+        {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+        },
+        "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+        "canvas_id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+        "canvas_version": 1,
+        "canvas_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+        "card_id": "origin-audio",
+        "source": {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio"
+        }
+      }
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+      "recipe_digest": "f688a5e6b645865be574373d155053cb660c303f8dfa507602d76eb0dfdff259"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "branch_id": null,
+    "version": 4,
+    "status": "AWAITING_REVIEW",
+    "request_digest": "d9dd6f9e1e62e961a39de4a61fb6e880efb78fdd6e44e403186abefd19cd9456",
+    "receipt_digest": "ee758225cb735e7282d05cb13e76bbcda32df1c27b466d011a51d750279f042b",
+    "attempt": 1,
+    "created_at": "2026-10-20T21:46:57.145128+00:00",
+    "updated_at": "2026-10-20T21:46:57.323437+00:00",
+    "error_code": null,
+    "review_state": "VERIFIED_PRIVATE_CANDIDATE",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "2192b6d3-dd21-4bc1-9cb8-acef3ddbc518",
+      "version": 1,
+      "digest": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "source_snapshots": [
+        {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+        },
+        "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+        "canvas_id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+        "canvas_version": 1,
+        "canvas_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+        "card_id": "origin-audio",
+        "source": {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio"
+        }
+      }
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+      "recipe_digest": "f688a5e6b645865be574373d155053cb660c303f8dfa507602d76eb0dfdff259"
+    },
+    "media_measurement": {
+      "duration_ms": 300,
+      "byte_count": 57678,
+      "sample_rate": 48000,
+      "channels": 2,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84"
+    },
+    "approved_asset_version": null,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "audio",
+    "id": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3",
+    "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "branch_id": null,
+    "version": 6,
+    "status": "APPROVED",
+    "request_digest": "d9dd6f9e1e62e961a39de4a61fb6e880efb78fdd6e44e403186abefd19cd9456",
+    "receipt_digest": "0dba66fceb88d3d47115ab7b8207904930c1d452267de8dfb9b3e155dc535eb9",
+    "attempt": 1,
+    "created_at": "2026-10-20T21:46:57.145128+00:00",
+    "updated_at": "2026-10-20T21:46:57.421587+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m8.audio.trim",
+    "output_candidate": {
+      "id": "2192b6d3-dd21-4bc1-9cb8-acef3ddbc518",
+      "version": 1,
+      "digest": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84",
+      "kind": "audio"
+    },
+    "timeline_snapshot": null,
+    "sources": [
+      {
+        "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+        "asset_kind": "audio"
+      }
+    ],
+    "command": {
+      "operation_id": "m8.audio.trim",
+      "request_id": "trim-one",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "source_snapshots": [
+        {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio",
+          "reference_only": true
+        }
+      ],
+      "allow_cloud": false,
+      "license_note": "",
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+        },
+        "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+        "canvas_id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+        "canvas_version": 1,
+        "canvas_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+        "card_id": "origin-audio",
+        "source": {
+          "id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+          "asset_kind": "audio"
+        }
+      }
+    },
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m8.audio.trim",
+      "adapter": "LOCAL_FFMPEG",
+      "parameters": {
+        "in_ms": 550,
+        "out_ms": 850
+      },
+      "automatic_fallback": false,
+      "output_profile": "PCM_S16LE_WAV_48000_STEREO",
+      "recipe_digest": "f688a5e6b645865be574373d155053cb660c303f8dfa507602d76eb0dfdff259"
+    },
+    "media_measurement": {
+      "duration_ms": 300,
+      "byte_count": 57678,
+      "sample_rate": 48000,
+      "channels": 2,
+      "sample_width": 2,
+      "container": "wav",
+      "audio_codec": "pcm_s16le",
+      "profile_validation": "PCM_DECODED",
+      "output_sha256": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84"
+    },
+    "approved_asset_version": 2,
+    "request_id": "trim-one",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "returned": {
+    "id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+    "version": 2,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "2192b6d3-dd21-4bc1-9cb8-acef3ddbc518",
+            "digest": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84",
+            "kind": "audio",
+            "version": 2
+          },
+          "id": "origin-audio",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+            "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+            "kind": "audio",
+            "version": 1
+          },
+          "id": "other-audio",
+          "position": {
+            "x": 360.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Synthetic audio card",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "ae118d9c7fcbb2fde47ece499d61f31d61ea285df7b8d6adcf7f946363d915eb",
+    "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+    },
+    "created_at": "2026-10-20T21:46:57.054618+00:00",
+    "updated_at": "2026-10-20T21:46:57.444108+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3.wav"
+      },
+      {
+        "card_id": "other-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-card-source.wav"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 1,
+      "record_bytes": 2521
+    }
+  },
+  "restored": {
+    "id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+    "version": 3,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+            "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+            "kind": "audio",
+            "version": 1
+          },
+          "id": "origin-audio",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+            "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+            "kind": "audio",
+            "version": 1
+          },
+          "id": "other-audio",
+          "position": {
+            "x": 360.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Synthetic audio card",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+    "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+    },
+    "created_at": "2026-10-20T21:46:57.054618+00:00",
+    "updated_at": "2026-10-20T21:46:57.472796+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-card-source.wav"
+      },
+      {
+        "card_id": "other-audio",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-card-source.wav"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 2,
+      "record_bytes": 3776
+    }
+  },
+  "history": {
+    "project_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-87dd2e3a94024bf580856bad5ebc9c17"
+    },
+    "id": "e60a7a08-5f95-443c-84ba-ae8b483a48c6",
+    "incarnation": "file:185c4fe9-7290-499d-bdf3-06ddf4386835",
+    "current_version": 2,
+    "current_definition_digest": "ae118d9c7fcbb2fde47ece499d61f31d61ea285df7b8d6adcf7f946363d915eb",
+    "items": [
+      {
+        "version": 1,
+        "definition_digest": "c16bcccd92697277e80ab5941dcf2ef62f4e6a58fe575857d1c82e89d5ae288a",
+        "created_at": "2026-10-20T21:46:57.054618+00:00",
+        "updated_at": "2026-10-20T21:46:57.054618+00:00",
+        "definition": {
+          "cards": [
+            {
+              "asset": {
+                "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+                "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+                "kind": "audio",
+                "version": 1
+              },
+              "id": "origin-audio",
+              "position": {
+                "x": 44.0,
+                "y": 66.0
+              }
+            },
+            {
+              "asset": {
+                "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+                "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+                "kind": "audio",
+                "version": 1
+              },
+              "id": "other-audio",
+              "position": {
+                "x": 360.0,
+                "y": 120.0
+              }
+            }
+          ],
+          "schema_version": 1,
+          "title": "Synthetic audio card",
+          "viewport": {
+            "x": 0.0,
+            "y": 0.0,
+            "zoom": 1.0
+          }
+        },
+        "reference_states": [
+          {
+            "card_id": "origin-audio",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-card-source.wav"
+          },
+          {
+            "card_id": "other-audio",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-card-source.wav"
+          }
+        ],
+        "can_restore": true
+      },
+      {
+        "version": 2,
+        "definition_digest": "ae118d9c7fcbb2fde47ece499d61f31d61ea285df7b8d6adcf7f946363d915eb",
+        "created_at": "2026-10-20T21:46:57.054618+00:00",
+        "updated_at": "2026-10-20T21:46:57.444108+00:00",
+        "definition": {
+          "cards": [
+            {
+              "asset": {
+                "asset_id": "2192b6d3-dd21-4bc1-9cb8-acef3ddbc518",
+                "digest": "abe99b34a2494356b6a98a9f725c630e9ae7ed4aeb205a2384c25cb695590c84",
+                "kind": "audio",
+                "version": 2
+              },
+              "id": "origin-audio",
+              "position": {
+                "x": 44.0,
+                "y": 66.0
+              }
+            },
+            {
+              "asset": {
+                "asset_id": "b94617e5-3315-48b8-b026-f47c5191e3bc",
+                "digest": "27daa65aecb40ced823561dadd976239813a587c585047e15f113b398d3c96fb",
+                "kind": "audio",
+                "version": 1
+              },
+              "id": "other-audio",
+              "position": {
+                "x": 360.0,
+                "y": 120.0
+              }
+            }
+          ],
+          "schema_version": 1,
+          "title": "Synthetic audio card",
+          "viewport": {
+            "x": 0.0,
+            "y": 0.0,
+            "zoom": 1.0
+          }
+        },
+        "reference_states": [
+          {
+            "card_id": "origin-audio",
+            "state": "CURRENT_METADATA",
+            "filename": "audio-5f3c580b-7dd6-4447-8364-89bf8c7b1ed3.wav"
+          },
+          {
+            "card_id": "other-audio",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-card-source.wav"
+          }
+        ],
+        "can_restore": false
+      }
+    ],
+    "restore_policy": "CURRENT_METADATA_ONLY",
+    "execution_authority": false,
+    "binary_content_verified": false
+  },
+  "candidate_wav_base64": "UklGRkbhAABXQVZFZm10IBAAAAABAAIAgLsAAADuAgAEABAATElTVBoAAABJTkZPSVNGVA4AAABMYXZmNjIuMTIuMTAyAGRhdGEA4QAASQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkISQhJCEkI"
+}

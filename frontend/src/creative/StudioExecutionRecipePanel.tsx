@@ -20,13 +20,13 @@ export function StudioExecutionRecipePanel(props: StudioExecutionRecipePanelProp
         <dt>操作</dt><dd style={value}><code>{view.operationId}</code></dd>
         <dt>适配器</dt><dd style={value}><code>{view.adapter}</code></dd>
         {view.recipeId && <><dt>配方标识</dt><dd style={value}><code>{view.recipeId}</code></dd></>}
-        <dt>服务与模型</dt><dd style={value}>配方未提供 provider_id / model_id；见原预览或任务回执。下列组件名称来自原 workflow，不是路由选择。</dd>
+        <dt>服务与模型</dt><dd style={value}>{view.adapter==='LOCAL_FFMPEG'?'本地 FFmpeg CPU 处理，不使用服务商模型。实际输出以原任务测量为准。':'配方未提供 provider_id / model_id；见原预览或任务回执。下列组件名称来自原 workflow，不是路由选择。'}</dd>
         <dt>配方摘要</dt><dd style={value}><code>{view.digest}</code></dd>
       </dl>
       <p>步骤可见性：{view.visibility === 'visible' ? '已提供结构' : view.visibility === 'hidden' ? '内部不可见' : '不可用'}。本面板不执行任务。</p>
       {!!view.steps.length && <details open>
         <summary>原配方步骤（{view.steps.length}）</summary>
-        <p>按配方记录展示；来源连线说明依赖，列表顺序不是执行日志。类型仅供说明。</p>
+        <p>按原配方及已知适配器映射展示；来源连线说明依赖，列表顺序不是执行日志。类型仅供说明。</p>
         <ul style={list} aria-label="原配方步骤">
           {view.steps.map(step => <li key={step.id}>
             <strong>{step.title}</strong> · <code>{step.classType}</code> · 节点 <code>{step.id}</code>
