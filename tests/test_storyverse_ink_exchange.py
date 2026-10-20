@@ -51,7 +51,7 @@ def test_actual_pinned_inkjs_compiler_runtime_replay_and_persistence():
             p=play(s,path[:i]); indices.append([c['id'] for c in p['choices'] if c['enabled']].index(cid))
         cases.append({'source':files['ink/story.ink'].decode(),'variables':['ans_var_0','ans_var_1'],'indices':indices})
         expected.append([play(s,path[:i]) for i in range(len(path)+1)])
-    result=subprocess.run([node,str(Path(__file__).parents[1]/'scripts/verify_ink_runtime.cjs')],input=json.dumps(cases),text=True,capture_output=True,timeout=30,check=False)
+    result=subprocess.run([node,str(Path(__file__).parents[1]/'scripts/verify_ink_runtime.cjs')],input=json.dumps(cases),text=True,encoding='utf-8',capture_output=True,timeout=30,check=False)
     assert result.returncode == 0, result.stderr[-5000:]
     results=json.loads(result.stdout)
     assert len(results)==len(expected)==len(cases)
@@ -96,7 +96,7 @@ def test_original_export_owner_ink_receipt_and_source_drift(interactive_env):
             path=witness['choices']; states=[play(row['spec'],path[:i]) for i in range(len(path)+1)]
             indices=[[c['id'] for c in state['choices'] if c['enabled']].index(cid) for state,cid in zip(states,path)]
             cases.append({'source':exported_script,'variables':['ans_var_0','ans_var_1'],'indices':indices}); expected.append(states)
-        run=subprocess.run([os.environ['POEMSEED_NODE'],str(Path(__file__).parents[1]/'scripts/verify_ink_runtime.cjs')],input=json.dumps(cases),text=True,capture_output=True,timeout=30)
+        run=subprocess.run([os.environ['POEMSEED_NODE'],str(Path(__file__).parents[1]/'scripts/verify_ink_runtime.cjs')],input=json.dumps(cases),text=True,encoding='utf-8',capture_output=True,timeout=30)
         assert run.returncode==0,run.stderr[-3000:]
         runtime_results=json.loads(run.stdout)
         assert len(runtime_results)==len(expected)==len(cases)

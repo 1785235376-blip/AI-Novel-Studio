@@ -1,0 +1,95 @@
+{
+  "title": "C · 回声边界（复杂边界样例）",
+  "graph_id": "ecd3c618-295d-433a-823b-bf0168a5a6c9",
+  "graph_version": 1,
+  "entry_node_id": "ec9f1baa-2955-4739-8e61-396f78ed349e",
+  "nodes": [
+    {
+      "node_id": "ec9f1baa-2955-4739-8e61-396f78ed349e",
+      "node_version": 1,
+      "title": "循环 · 回声厅",
+      "dialogue": "「回声：〖第 1 次〗{不是} [选择] 100% 🙂 é」\n第二行：全角标点，。！？；：『引号』",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "",
+      "choices": [
+        {
+          "id": "again",
+          "label": "再听一次 [回声] {继续} 〖…〗 % 🙂",
+          "target": "ec9f1baa-2955-4739-8e61-396f78ed349e",
+          "condition": "",
+          "assignments": {}
+        },
+        {
+          "id": "descend",
+          "label": "顺着回声往下走",
+          "target": "c1fc6249-616b-43f8-874f-4d2bc36a03a8",
+          "condition": "",
+          "assignments": {
+            "resonance": 2
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "c1fc6249-616b-43f8-874f-4d2bc36a03a8",
+      "node_version": 1,
+      "title": "深处 · 刻字墙",
+      "dialogue": "墙上刻着：{ } [ ] 〖记忆〗 🙂\n“é” 与全角：：（分号）；「引号」",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "",
+      "choices": [
+        {
+          "id": "remember",
+          "label": "记住这一切",
+          "target": "1b9310f4-7067-4034-a5bb-009e1577477e",
+          "condition": "resonance >= 2",
+          "assignments": {}
+        },
+        {
+          "id": "forget",
+          "label": "忘掉一切",
+          "target": "cf24d2e0-eb91-4c48-a174-8f50d420f122",
+          "condition": "",
+          "assignments": {}
+        }
+      ]
+    },
+    {
+      "node_id": "1b9310f4-7067-4034-a5bb-009e1577477e",
+      "node_version": 1,
+      "title": "结局 · 记忆封存",
+      "dialogue": "她把回声收进一盏灯里。",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "记忆封存 [A] {B} 〖C〗 100% 🙂 é",
+      "choices": []
+    },
+    {
+      "node_id": "cf24d2e0-eb91-4c48-a174-8f50d420f122",
+      "node_version": 1,
+      "title": "结局 · 归于虚空",
+      "dialogue": "厅里只剩下她自己的呼吸。",
+      "character_id": null,
+      "background_asset_id": null,
+      "music_asset_id": null,
+      "ending": "归于虚空",
+      "choices": []
+    }
+  ],
+  "variables": [
+    {
+      "name": "resonance",
+      "type": "int",
+      "initial": 0,
+      "minimum": 0,
+      "maximum": 3
+    }
+  ],
+  "graph_record_ids": [],
+  "max_steps": 6
+}

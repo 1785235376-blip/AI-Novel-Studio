@@ -13,3 +13,25 @@
   display: grid;
   gap: var(--space-3);
 }
+
+.interactive-story-diff {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.interactive-story-diff li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.interactive-story-diff li > span {
+  overflow-wrap: anywhere;
+}

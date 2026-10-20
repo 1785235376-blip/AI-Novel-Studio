@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
+import { InteractiveStoryExportTargets } from './InteractiveStoryExportTargets';
 import { InteractiveStoryHistory } from './InteractiveStoryHistory';
 import { InteractiveStoryPreview } from './InteractiveStoryPreview';
 import { interactiveStoryClient, type InteractiveStory, type StoryCatalog, type StoryExportPreview, type StoryIssue, type StoryNode, type StoryReviewPreview, type StoryRefreshPreview, type StorySpec, type StoryVariable } from './interactiveStoryClient';
@@ -17,12 +18,18 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
   const catalog = useResource(signal => api.catalog(signal), [api]), stories = useResource(signal => api.list(signal), [api]);
   const [title, setTitle] = useState(''), [graphId, setGraphId] = useState(''), [nodeIds, setNodeIds] = useState<string[]>([]);
   const [story, setStory] = useState<InteractiveStory>(), [dirty, setDirty] = useState(false), [refresh, setRefresh] = useState<StoryRefreshPreview>();
+  const [locateRequest, setLocateRequest] = useState<{ nodeId: string; nonce: number; storyKey: string }>();
+  const locateNonce = useRef(0);
   const alive = useRef(true), epoch = useRef(0); const action = useAction();
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   const updated = (value: InteractiveStory) => { if (alive.current) { epoch.current++; setStory(value); setDirty(false); setRefresh(undefined); stories.reload(); } };
   const perform = (fn: () => Promise<InteractiveStory>, message: string) => void action.run(async () => { const ticket = epoch.current; const value = await fn(); if (alive.current && ticket === epoch.current) updated(value); }, message);
   const graph = catalog.data?.graphs.find(g => g.id === graphId);
   const choose = (value: InteractiveStory) => { epoch.current++; setStory(value); setDirty(false); setRefresh(undefined); };
+  const storyKey = story ? `${story.id}:${story.version}` : '';
+  // Locating from playback only switches the editor node; it never edits content.
+  const requestLocate = (nodeId: string) => setLocateRequest({ nodeId, nonce: ++locateNonce.current, storyKey });
+  const activeLocate = locateRequest && locateRequest.storyKey === storyKey ? locateRequest : undefined;
   return <section className="experimental-section interactive-story" aria-label="互动故事与导出"><Panel title="规划节点改编为互动故事"><p>复用原规划图和节点 ID，另存作者私有互动改编。剧情结局不是协作分支；不会改写原稿、Canon 或批准资产。</p><StatusMessage>本地确定性功能，无模型调用。Ren’Py 8.5.4 与 inkjs 2.3.2 文本/选择子集。inkjs 为社区 JavaScript 实现；原生 C# Ink、Ren’Py 及当前导出文件的运行验证：NOT_RUN。</StatusMessage>
     <ResourceState loading={catalog.loading} error={catalog.error} empty={!catalog.data?.graphs.length} />
     {!catalog.loading && !catalog.error && !catalog.data?.graphs.length && <p>请先在「分层规划」创建规划图和剧情节点。</p>}
@@ -42,10 +49,11 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
     <Button disabled={dirty || action.busy || story.status === 'ARCHIVED'} onClick={() => perform(() => api.review(story, 'archive'), '改编已归档，记录仍可恢复。')}>归档互动改编</Button>
     {story.status === 'ARCHIVED' && <Button disabled={action.busy || story.stale} onClick={() => perform(() => api.review(story, 'restore'), '改编恢复为待审草稿。')}>恢复互动改编</Button>}
   </Panel>
-  {!story.stale && !story.content_withheld && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} catalogReady={!catalog.loading && !catalog.error} busy={action.busy} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
+  {!story.stale && !story.content_withheld && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} catalogReady={!catalog.loading && !catalog.error} busy={action.busy} locateRequest={activeLocate} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
     <InteractiveStoryHistory key={`history:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
-    <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} />
+    <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} onLocateNode={requestLocate} />
     <StoryApproval key={`approval:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
+    <InteractiveStoryExportTargets api={api} story={story} blocked={dirty || action.busy} />
   </>}
   </>}
   </section>;
@@ -85,7 +93,7 @@ function membershipGraph(spec: StorySpec, catalog: StoryCatalog) {
   if (spec.nodes.some(node => !graph.nodes.some(source => source.node_id === node.node_id && source.node_version === node.node_version))) return;
   return graph;
 }
-function StoryEditor({ story, catalog, catalogReady, busy, onDirty, onSave }: { story: InteractiveStory; catalog: StoryCatalog; catalogReady: boolean; busy: boolean; onDirty: (value: boolean) => void; onSave: (spec: StorySpec) => void }) {
+function StoryEditor({ story, catalog, catalogReady, busy, locateRequest, onDirty, onSave }: { story: InteractiveStory; catalog: StoryCatalog; catalogReady: boolean; busy: boolean; locateRequest?: { nodeId: string; nonce: number }; onDirty: (value: boolean) => void; onSave: (spec: StorySpec) => void }) {
   const [spec, setSpec] = useState<StorySpec>(() => structuredClone(story.spec!)), [index, setIndex] = useState(0), [dirty, setDirty] = useState(false);
   const [name, setName] = useState(''), [kind, setKind] = useState<'bool' | 'int'>('bool'), [initial, setInitial] = useState('false'), [minimum, setMinimum] = useState(0), [maximum, setMaximum] = useState(100);
   const titleInput = useRef<HTMLInputElement>(null), choiceInputs = useRef(new Map<string, HTMLInputElement>());
@@ -118,6 +126,16 @@ function StoryEditor({ story, catalog, catalogReady, busy, onDirty, onSave }: { 
     input?.focus(); setFocusTarget(undefined);
   }, [focusTarget, index, blocked, node.node_id]);
   const liveEditor = useRef({ spec, blocked }); liveEditor.current = { spec, blocked };
+  // A playback/exports locate request only switches the current editing node.
+  // It is ignored while an IME composition is in progress so the draft is never
+  // interrupted; it never writes spec content and never clears unsaved input.
+  useEffect(() => {
+    if (!locateRequest || !membershipAlive.current || composing.current) return;
+    const matches = spec.nodes.flatMap((item, index) => item.node_id === locateRequest.nodeId ? [index] : []);
+    if (matches.length !== 1) return;
+    invalidateRemoval(); currentMembershipTicket.current = {}; setFocusTarget(undefined); setCandidate(undefined); setIndex(matches[0]);
+    titleInput.current?.focus();
+  }, [locateRequest]);
   const locate = (issue: StoryIssue) => {
     const { spec: current, blocked: unavailable } = liveEditor.current;
     if (!membershipAlive.current || currentMembershipTicket.current !== membershipTicket || interactionEpoch !== removalEpoch.current || unavailable || composing.current) return;

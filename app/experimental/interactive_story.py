@@ -23,6 +23,12 @@ from .common import StaleSourceError, change_row, new_row, now
 from .planning import StrictModel, collection, require_row, digest, entity_sources
 from .style_analysis import SourceFencedService
 from ..services.v1_capability_service import CapabilityVersionConflict
+from .interactive_export_contract import (
+    CONTRACT_SCHEMA, CONTRACT_VERSION, EVIDENCE_LEVELS, TARGETS_SCHEMA, VERIFICATION_SCHEMA, VerificationReceipt,
+    all_target_descriptors, artifact_evidence, available_target_ids, build_export_bundle,
+    compatibility_report, contract_document, historical_evidence_for, package_export_zip,
+    probe_engine, receipt_binding_issues, single_target_exportable, verification_claim_digest,
+)
 
 FEATURE = 'interactive_story_v2'
 SCHEMA = 'ai-novel-interactive-story/1'
@@ -138,6 +144,12 @@ class PlayIn(VersionIn):
 
 class ExportIn(VersionIn):
     preview_digest: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
+    target_id: str | None = Field(default=None, pattern=r'^[A-Z][A-Z0-9_]{2,80}$')
+
+
+class ExportVerificationIn(VersionIn):
+    """Submit a runtime verification receipt produced by executing one artifact."""
+    receipt: dict
 
 
 def parse_condition(expression):
@@ -472,6 +484,10 @@ ENGINE_ADAPTERS: tuple[EngineExportAdapter, ...] = (RenPyExportAdapter(), GodotE
 
 class InteractiveStoryService(SourceFencedService):
     COLLECTION = 'interactive_story_adaptations'
+    EXPORT_COLLECTION = 'interactive_story_target_exports'
+    EVIDENCE_COLLECTION = 'interactive_story_target_evidence'
+    MAX_EXPORTS = 500
+    MAX_EVIDENCE = 1000
 
     def __init__(self, store, novels, chapters, planning, story_graph, assets):
         super().__init__(store, novels, chapters)
@@ -506,10 +522,14 @@ class InteractiveStoryService(SourceFencedService):
 
     @staticmethod
     def engine_contract():
+        descriptors = {descriptor['target_id']: descriptor for descriptor in all_target_descriptors()}
         return {'schema': SCHEMA, 'input_schema': StorySpec.model_json_schema(), 'condition_language': 'BOUNDED_BOOL_INT_AST',
-                'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS]],
+                'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS], *available_target_ids()],
                 'target_schemas': {'GODOT_4_DATA_ADAPTER': GodotStoryResource.model_json_schema()},
-                'target_limits': {InkExportAdapter.target: 'TYPED_TEXT_SUBSET_COMMUNITY_PORT_CURRENT_ARTIFACT_NOT_RUN', 'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME'},
+                'target_descriptors': descriptors,
+                'target_contract': contract_document(),
+                'target_limits': {InkExportAdapter.target: 'TYPED_TEXT_SUBSET_COMMUNITY_PORT_CURRENT_ARTIFACT_NOT_RUN', 'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME',
+                                  'RENPY_8_5_4_PROJECT_V1': 'RUNNABLE_PROJECT_TARGET_RUNTIME_EVIDENCE_PER_LEVEL', 'GODOT_4_RUNTIME_PROJECT_V1': 'RUNNABLE_PROJECT_TARGET_RUNTIME_EVIDENCE_PER_LEVEL', 'INK_2_3_2_CURRENT_ARTIFACT_V1': 'CURRENT_ARTIFACT_COMPILED_AND_RUN_WITH_PINNED_COMMUNITY_JS_PORT'},
                 'third_party_execution': 'DENY_ALL', 'runtime_status': 'NOT_RUN',
                 'media_policy': 'VERSIONED_REFERENCES_ONLY_NOT_DEPLOYED', 'adapter_policy': 'SHIPPED_TRUSTED_EXPORTERS_ONLY',
                 'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states'],
@@ -749,6 +769,301 @@ class InteractiveStoryService(SourceFencedService):
                 'missing': missing, 'packaged': False, 'reason': 'MISSING_OR_CORRUPT' if missing else 'TEXT_SUBSET_REFERENCE_ONLY'})
         return manifest
 
+    def _snapshot(self, nid, scope, row, analysis=None):
+        """The single authoritative snapshot any target adapter may consume."""
+        analysis = analysis or analyze(row['spec'])
+        return {'story_id': row['id'], 'revision': row['version'], 'status': row['status'], 'title': row['spec']['title'],
+                'spec': deepcopy(row['spec']), 'spec_digest': digest(row['spec']), 'source_digest': digest(row['capture']),
+                'review_receipt': self._receipt(row), 'characters': dict(row['capture']['characters']),
+                'witness': deepcopy(analysis['endings']), 'media_manifest': self._manifest(nid, scope, row), 'analysis': analysis}
+
+    @staticmethod
+    def _runtime_claim(artifact_view):
+        """Only SYSTEM-executed runtime evidence may set a runtime claim.
+
+        Uploaded receipts are external claims; they never set this claim. The
+        product ships no trusted server-side execution runner today, so a fresh
+        export always reports UNVERIFIED until such a record exists.
+        """
+        levels = (artifact_view or {}).get('levels') or {}
+        for level in ('SAVE_RESTORE_VERIFIED', 'TARGET_RUNTIME_EXECUTED'):
+            if levels.get(level) == 'PASS': return level
+        return 'UNVERIFIED'
+
+    def _export_rows(self, nid, scope):
+        try:
+            rows = self.list(nid, scope, self.EXPORT_COLLECTION)
+        except (FileNotFoundError, ValueError):
+            return []
+        return [row for row in rows if isinstance(row, dict)]
+
+    def _evidence_rows(self, nid, scope, export_id):
+        try:
+            rows = self.list(nid, scope, self.EVIDENCE_COLLECTION)
+        except (FileNotFoundError, ValueError):
+            return []
+        return [row for row in rows if isinstance(row, dict) and row.get('export_record_id') == export_id]
+
+    @staticmethod
+    def _latest_export(rows):
+        if not rows: return None
+        return max(rows, key=lambda item: (str(item.get('created_at') or ''), int(item.get('revision') or 0), str(item.get('id') or '')))
+
+    def _artifact_evidence_view(self, nid, scope, row, snapshot, target_id):
+        """Evidence bound to the artifact last exported for THIS target.
+
+        A target whose current revision was never exported reports NOT_EXPORTED;
+        a receipt for a different story/revision/digest is STALE, never PASS.
+        """
+        candidates = [record for record in self._export_rows(nid, scope) if record.get('story_id') == row['id'] and record.get('target_id') == target_id]
+        latest = self._latest_export(candidates)
+        if latest is None:
+            view = artifact_evidence(target_id, snapshot, artifact_sha256='0' * 64, files_digest_value='0' * 64, receipts=[])
+            view.update(status='NOT_EXPORTED', reason='this story revision has not been exported to this target yet')
+            return view
+        if latest.get('revision') != row['version']:
+            view = artifact_evidence(target_id, snapshot, artifact_sha256=latest.get('artifact_sha256') or '0' * 64,
+                                     files_digest_value=latest.get('files_digest') or '0' * 64,
+                                     receipts=[evidence.get('receipt') for evidence in self._evidence_rows(nid, scope, latest['id'])])
+            view.update(status='STALE_REVISION',
+                        reason='the latest exported artifact is for revision ' + str(latest.get('revision')) + ', current revision is ' + str(row['version']))
+            for level in ('TARGET_RUNTIME_EXECUTED', 'SAVE_RESTORE_VERIFIED'):
+                view['levels'][level] = 'NOT_RUN'
+            view['export_record'] = {key: latest.get(key) for key in ('id', 'revision', 'artifact_sha256', 'files_digest', 'filename', 'file_count', 'created_at')}
+            return view
+        receipts = [evidence.get('receipt') for evidence in self._evidence_rows(nid, scope, latest['id'])]
+        view = artifact_evidence(target_id, snapshot, artifact_sha256=latest['artifact_sha256'],
+                                 files_digest_value=latest['files_digest'], receipts=receipts)
+        view['export_record'] = {key: latest.get(key) for key in ('id', 'revision', 'artifact_sha256', 'files_digest', 'filename', 'file_count', 'created_at')}
+        return view
+
+    def _not_exported_view(self, target_id):
+        return {'status': 'NOT_EXPORTED', 'levels': {level: 'NOT_RUN' for level in EVIDENCE_LEVELS},
+                'binding': None, 'matched_receipt': None, 'latest_external_claim': None, 'external_claims': [],
+                'asserted_levels': {}, 'claim_trust': 'EXTERNAL_UNVERIFIED', 'system_verification': 'NOT_PERFORMED',
+                'stale_receipts': [], 'checked_receipts': 0,
+                'policy': 'EXTERNAL_CLAIMS_NEVER_SET_SYSTEM_RUNTIME_LEVELS',
+                'reason': 'this target is not offered as a standalone downloadable project'}
+
+    def _target_rows(self, nid, scope, row, analysis):
+        """Historical adapter evidence and current-artifact evidence are separate."""
+        snapshot = self._snapshot(nid, scope, row, analysis)
+        approved = row['status'] == 'APPROVED' and bool(analysis['can_review'])
+        rows = []
+        for descriptor in all_target_descriptors():
+            target_id = descriptor['target_id']
+            compatibility = compatibility_report(target_id, snapshot)
+            historical = historical_evidence_for(target_id)
+            single_export_ready = single_target_exportable(target_id)
+            current = self._artifact_evidence_view(nid, scope, row, snapshot, target_id) if single_export_ready else self._not_exported_view(target_id)
+            rows.append({**descriptor, 'compatibility': compatibility, 'engine_probe': probe_engine(descriptor.get('engine')),
+                         'historical_evidence': historical, 'artifact_evidence': current,
+                         'artifact_evidence_status': current['status'], 'single_export_ready': single_export_ready,
+                         'export_ready': approved and compatibility['can_export'] and single_export_ready,
+                         'runtime_claim': self._runtime_claim(current) if single_export_ready else 'UNVERIFIED'})
+        return snapshot, rows
+
+    def export_targets(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        """Compatibility and evidence view for every registered export target."""
+        data = VersionIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
+        self._version(row, data.expected_version); self._current(nid, scope, row)
+        if row['status'] == 'ARCHIVED': raise ValueError('restore the adaptation before export')
+        analysis = analyze(row['spec']); snapshot, targets = self._target_rows(nid, scope, row, analysis)
+        self._current(nid, scope, row); reauthorize()
+        return {'schema': TARGETS_SCHEMA, 'contract_schema': CONTRACT_SCHEMA, 'contract_version': CONTRACT_VERSION,
+                'contract': contract_document(),
+                'adaptation': {'id': row['id'], 'version': row['version'], 'status': row['status']},
+                'story': {'title': row['spec']['title'], 'entry_node_id': row['spec']['entry_node_id'],
+                          'max_steps': row['spec']['max_steps'], 'nodes': len(row['spec']['nodes']),
+                          'variables': len(row['spec']['variables']), 'endings': len(analysis['endings']),
+                          'spec_digest': snapshot['spec_digest'], 'source_digest': snapshot['source_digest']},
+                'witness': deepcopy(analysis['endings']),
+                'analysis': {'can_review': analysis['can_review'], 'analysis_complete': analysis['analysis_complete'],
+                             'issues': analysis['issues'], 'warnings': analysis['warnings'], 'states_checked': analysis['states_checked']},
+                'targets': targets, 'media_manifest': snapshot['media_manifest'],
+                'can_export_any': row['status'] == 'APPROVED' and analysis['can_review'] and any(target['export_ready'] for target in targets),
+                'evidence_policy': {
+                    'historical_evidence': 'WHAT_THE_ADAPTER_OR_FIXED_TEMPLATE_ONCE_VERIFIED_NOT_THIS_STORY',
+                    'artifact_evidence': 'BOUND_TO_THE_EXACT_LATEST_EXPORTED_ARTIFACT_OF_THIS_TARGET',
+                    'scope': 'LATEST_EXPORTED_ARTIFACT_PER_TARGET',
+                    'verification_receipts': 'EXTERNAL_ACCEPTANCE_CLAIMS_NOT_SYSTEM_EXECUTION',
+                    'external_claim_status': 'EXTERNALLY_ASSERTED_PENDING',
+                    'runtime_levels_set_only_by': 'TRUSTED_SERVER_SIDE_EXECUTION_RECORD',
+                    'system_runtime_verification': 'NOT_AVAILABLE_IN_THIS_PRODUCT',
+                    'claim_binding_proves': 'THE_CLAIM_NAMES_THIS_ARTIFACT_NOT_THAT_IT_RAN',
+                    'generation_sets_runtime_levels': False,
+                    'stale_or_foreign_evidence_never_passes': True,
+                    'inheritance_forbidden': True,
+                },
+                'target_runtime_policy': 'INDEPENDENT_EVIDENCE_LEVELS; GENERATION_IS_NOT_RUNTIME; UPLOADED_RECEIPTS_ARE_EXTERNAL_CLAIMS_AND_RUNTIME_LEVELS_STAY_NOT_RUN_UNTIL_A_TRUSTED_SERVER_EXECUTION_RECORD_EXISTS',
+                'model_called': False}
+
+    def _record_export(self, nid, scope, actor, row, target_id, snapshot, bundle, package, preview_digest, *, reauthorize):
+        """Persist the exact artifact identity the runtime evidence must bind to."""
+        with self.store.transaction(nid, scope) as state:
+            current = self._owned(nid, scope, actor, row['id'], state)
+            self._version(current, row['version']); self._current(nid, scope, current, state)
+            if current['status'] != 'APPROVED': raise ValueError('approve exact current story before export')
+            records = collection(state, self.EXPORT_COLLECTION)
+            existing = next((item for item in records.values()
+                             if item.get('story_id') == row['id'] and item.get('target_id') == target_id
+                             and item.get('revision') == row['version'] and item.get('artifact_sha256') == package['sha256']
+                             and item.get('files_digest') == bundle.files_digest), None)
+            if existing is not None:
+                self._current(nid, scope, current, state); reauthorize()
+                return deepcopy(existing)
+            if len(records) >= self.MAX_EXPORTS:
+                raise ValueError('export artifact record limit reached')
+            record = new_row(nid, scope, actor, {
+                'status': 'EXPORTED',
+                'story_id': row['id'], 'revision': row['version'], 'target_id': target_id,
+                'target_format_version': bundle.target_format_version, 'adapter_revision': bundle.adapter_revision,
+                'artifact_sha256': package['sha256'], 'files_digest': bundle.files_digest,
+                'payload_files_digest': bundle.payload_files_digest,
+                'spec_digest': snapshot['spec_digest'], 'source_digest': snapshot['source_digest'],
+                'review_receipt': snapshot['review_receipt'], 'filename': package['filename'],
+                'file_count': package['file_count'], 'export_preview_digest': preview_digest,
+            })
+            records[record['id']] = record
+            self._current(nid, scope, current, state); reauthorize()
+            return deepcopy(record)
+
+    @staticmethod
+    def _claim_asserted_levels(receipt):
+        asserted = dict(receipt.evidence)
+        asserted.update({level: status for level, status in receipt.checks.items()})
+        return {level: status for level, status in asserted.items() if level in EVIDENCE_LEVELS}
+
+    def record_export_verification(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        """Record one EXTERNAL acceptance claim for its exact recorded artifact.
+
+        The claim is stored and displayed with its source, but it is not system
+        execution evidence: runtime levels stay NOT_RUN and PASS is never granted
+        by an upload. Exact binding stops a claim from being reused across
+        stories, revisions, targets or rebuilt artifacts. Replaying the identical
+        claim is idempotent; a different claim for the same artifact and verifier
+        is rejected as a conflict instead of overwriting stored evidence.
+        """
+        data = ExportVerificationIn.model_validate(value)
+        try:
+            receipt = VerificationReceipt.model_validate(data.receipt)
+        except Exception as exc:
+            detail = ' | '.join(line.strip() for line in str(exc).splitlines() if line.strip())[:1200]
+            raise ValueError('EXPORT_VERIFICATION_RECEIPT_INVALID: ' + detail) from None
+        claim_digest = verification_claim_digest(receipt)
+        if receipt.story_id != sid:
+            raise ValueError('EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT: receipt story does not match this adaptation')
+        descriptor = next((item for item in all_target_descriptors() if item['target_id'] == receipt.target_id), None)
+        if descriptor is None: raise ValueError('UNKNOWN_EXPORT_TARGET')
+        if not single_target_exportable(receipt.target_id): raise ValueError('EXPORT_TARGET_NOT_SINGLE_EXPORTABLE')
+        row = self._owned(nid, scope, actor, sid); self._version(row, data.expected_version); self._current(nid, scope, row)
+        if receipt.revision != row['version']:
+            raise StaleSourceError('EXPORT_VERIFICATION_STALE_REVISION: claim revision ' + str(receipt.revision)
+                                   + ' is not the current revision ' + str(row['version']))
+        match = None
+        for record in self._export_rows(nid, scope):
+            if (record.get('story_id') == receipt.story_id and record.get('target_id') == receipt.target_id
+                    and record.get('revision') == receipt.revision
+                    and record.get('artifact_sha256') == receipt.artifact_sha256
+                    and record.get('files_digest') == receipt.files_digest
+                    and record.get('spec_digest') == receipt.spec_digest
+                    and record.get('source_digest') == receipt.source_digest
+                    and record.get('target_format_version') == receipt.target_format_version):
+                match = record; break
+        if match is None:
+            raise ValueError('EXPORT_VERIFICATION_NOT_BOUND_TO_RECORDED_ARTIFACT')
+        from .interactive_export_contract import describe_target
+        issues = receipt_binding_issues(receipt, describe_target(receipt.target_id),
+                                        {'story_id': match['story_id'], 'revision': match['revision'],
+                                         'spec_digest': match['spec_digest'], 'source_digest': match['source_digest']},
+                                        match['artifact_sha256'], match['files_digest'])
+        if issues: raise ValueError('EXPORT_VERIFICATION_BINDING_INVALID:' + issues[0][0] + ':' + issues[0][1])
+        idempotent = False
+        with self.store.transaction(nid, scope) as state:
+            current = self._owned(nid, scope, actor, row['id'], state)
+            self._version(current, row['version']); self._current(nid, scope, current, state)
+            # Re-check inside the transaction: a revision/source change that raced
+            # this request must not let an old claim attach to the current state.
+            if current['version'] != match['revision']:
+                raise StaleSourceError('EXPORT_VERIFICATION_STALE_REVISION: artifact belongs to revision '
+                                       + str(match['revision']) + ', current revision is ' + str(current['version']))
+            evidence_rows = collection(state, self.EVIDENCE_COLLECTION)
+            same_artifact = [item for item in evidence_rows.values()
+                             if item.get('export_record_id') == match['id']
+                             and item.get('target_id') == receipt.target_id]
+
+            def stored_claim_digest(item):
+                """Claim identity including rows written before claim_digest existed.
+
+                Older (725) rows stored only the receipt body. Deriving the digest
+                from that stored body keeps exact replays idempotent without
+                rewriting the historical row or upgrading its trust semantics.
+                """
+                explicit = item.get('claim_digest')
+                if isinstance(explicit, str) and len(explicit) == 64:
+                    return explicit
+                raw = item.get('receipt')
+                try:
+                    return verification_claim_digest(VerificationReceipt.model_validate(raw))
+                except Exception:
+                    return None
+
+            recorded = next((item for item in same_artifact
+                             if stored_claim_digest(item) == claim_digest), None)
+            legacy_compat = False
+            if recorded is not None:
+                idempotent = True
+                legacy_compat = not (isinstance(recorded.get('claim_digest'), str)
+                                     and len(recorded.get('claim_digest')) == 64)
+            else:
+                conflicting = next((item for item in same_artifact
+                                    if (item.get('receipt') or {}).get('verifier') == receipt.verifier), None)
+                if conflicting is not None:
+                    raise StaleSourceError('EXPORT_VERIFICATION_CONFLICT: a different claim from verifier '
+                                           + repr(receipt.verifier) + ' is already recorded for this artifact ('
+                                           + str(conflicting.get('id')) + '); stored evidence was not overwritten')
+                if len(evidence_rows) >= self.MAX_EVIDENCE: raise ValueError('export verification evidence limit reached')
+                recorded = new_row(nid, scope, actor, {
+                    'status': 'RECORDED',
+                    'origin': 'EXTERNAL_SUBMISSION',
+                    'trust': 'EXTERNAL_UNVERIFIED',
+                    'system_verification': 'NOT_PERFORMED',
+                    'claim_digest': claim_digest,
+                    'export_record_id': match['id'], 'story_id': match['story_id'],
+                    'revision': match['revision'], 'target_id': match['target_id'],
+                    'artifact_sha256': match['artifact_sha256'], 'files_digest': match['files_digest'],
+                    'asserted_levels': self._claim_asserted_levels(receipt),
+                    'receipt': receipt.model_dump(mode='json'),
+                })
+                evidence_rows[recorded['id']] = recorded
+            # Both authority gates stay inside the transaction: a revoke must roll
+            # back the evidence row instead of committing it and then failing.
+            self._current(nid, scope, current, state); reauthorize()
+            self._current(nid, scope, current, state); reauthorize(); result = deepcopy(recorded)
+        current = self._owned(nid, scope, actor, sid); self._current(nid, scope, current)
+        analysis = analyze(current['spec']); snapshot = self._snapshot(nid, scope, current, analysis)
+        view = self._artifact_evidence_view(nid, scope, current, snapshot, receipt.target_id)
+        return {'schema': 'poemseed-interactive-export-verification-record/1',
+                'status': 'IDEMPOTENT' if idempotent else 'RECORDED',
+                'origin': 'EXTERNAL_SUBMISSION', 'trust': 'EXTERNAL_UNVERIFIED',
+                'system_verification': 'NOT_PERFORMED', 'claim_digest': claim_digest,
+                'claimed_levels': dict(receipt.checks), 'system_runtime_levels': 'NOT_RUN',
+                'evidence_record_audit': {
+                    'id': result['id'],
+                    'origin': result.get('origin') or 'LEGACY_RECORD_NO_ORIGIN',
+                    'trust': result.get('trust') or 'EXTERNAL_UNVERIFIED',
+                    'claim_digest_stored': result.get('claim_digest') or None,
+                    'stored_row_rewritten': False,
+                },
+                'legacy_compatibility': ({'matched_legacy_record': True, 'digest_derived_from_stored_receipt': True,
+                                          'stored_row_rewritten': False}
+                                         if idempotent and legacy_compat else None),
+                'export_record_id': match['id'], 'evidence_record_id': result['id'],
+                'target_id': receipt.target_id, 'story_id': receipt.story_id, 'revision': receipt.revision,
+                'artifact_sha256': receipt.artifact_sha256, 'files_digest': receipt.files_digest,
+                'artifact_evidence': view, 'historical_evidence': historical_evidence_for(receipt.target_id),
+                'runtime_claim': self._runtime_claim(view), 'model_called': False}
+
     def export_preview(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
         data = ExportIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
         self._version(row, data.expected_version); self._current(nid, scope, row)
@@ -766,13 +1081,73 @@ class InteractiveStoryService(SourceFencedService):
             'ink_target': {**INK_PIN, 'compatibility': 'UNSUPPORTED' if ink_issues else 'SUPPORTED_SUBSET'}, 'ink_issues': ink_issues,
             'target_runtime': 'NOT_RUN', 'schema': SCHEMA, 'analysis': analysis,
             'engine_adapters': [{'target': a.target, 'schema_validation': 'UNSUPPORTED' if a.target == InkExportAdapter.target and ink_issues else 'CONTRACT_VERIFIED', 'runtime': 'NOT_RUN'} for a in ENGINE_ADAPTERS]}
-        result['preview_digest'] = digest([self._receipt(row), result]); self._current(nid, scope, row); reauthorize(); return result
+        snapshot, targets = self._target_rows(nid, scope, row, analysis)
+        result['targets'] = targets
+        if data.target_id:
+            matching = [target for target in targets if target['target_id'] == data.target_id]
+            if not matching: raise ValueError('UNKNOWN_EXPORT_TARGET')
+            result['target_id'] = data.target_id; result['selected_target'] = matching[0]
+            result['can_export'] = result['can_export'] and matching[0]['compatibility']['can_export'] and matching[0]['single_export_ready']
+            result['losses'] = list(dict.fromkeys([*result['losses'], *matching[0]['compatibility']['losses']]))
+            result['historical_evidence'] = matching[0]['historical_evidence']
+            result['artifact_evidence'] = matching[0]['artifact_evidence']
+            result['artifact_evidence_status'] = matching[0]['artifact_evidence_status']
+            result['runtime_claim'] = matching[0]['runtime_claim']
+            result['target_runtime'] = matching[0]['runtime_claim']
+        # Engine detection and already-recorded artifact verification are host /
+        # history state, not story authority. They must never change the
+        # reproducible preview digest that binds this export request.
+        stable = deepcopy(result)
+        volatile_keys = ('engine_probe', 'artifact_evidence', 'artifact_evidence_status', 'runtime_claim')
+        for target in stable.get('targets', []):
+            for key in volatile_keys:
+                target.pop(key, None)
+        if isinstance(stable.get('selected_target'), dict):
+            for key in volatile_keys:
+                stable['selected_target'].pop(key, None)
+        for key in ('artifact_evidence', 'artifact_evidence_status', 'runtime_claim', 'target_runtime'):
+            stable.pop(key, None)
+        result['preview_digest'] = digest([self._receipt(row), stable]); self._current(nid, scope, row); reauthorize(); return result
 
     def export(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
         data = ExportIn.model_validate(value); preview = self.export_preview(nid, scope, actor, sid, data, reauthorize=reauthorize)
         if data.preview_digest != preview['preview_digest']: raise StaleSourceError('export preview changed')
         if not preview['can_export']: raise ValueError('approve exact current story before export')
         row = self._owned(nid, scope, actor, sid); self._version(row, data.expected_version); self._current(nid, scope, row)
+        if data.target_id:
+            if not single_target_exportable(data.target_id): raise ValueError('EXPORT_TARGET_NOT_SINGLE_EXPORTABLE')
+            snapshot = self._snapshot(nid, scope, row, preview['analysis'])
+            bundle = build_export_bundle(data.target_id, snapshot, {'include_witness': True, 'target_options': {}})
+            package = package_export_zip(bundle)
+            current = self.export_preview(nid, scope, actor, sid, data, reauthorize=reauthorize)
+            if current['preview_digest'] != preview['preview_digest']: raise StaleSourceError('export authority changed')
+            self._current(nid, scope, row); reauthorize()
+            record = self._record_export(nid, scope, actor, row, data.target_id, snapshot, bundle, package,
+                                         preview['preview_digest'], reauthorize=reauthorize)
+            analysis = analyze(row['spec']); evidence_snapshot = self._snapshot(nid, scope, row, analysis)
+            artifact = self._artifact_evidence_view(nid, scope, row, evidence_snapshot, data.target_id)
+            claim = self._runtime_claim(artifact)
+            current_row = self._owned(nid, scope, actor, sid); self._current(nid, scope, current_row); reauthorize()
+            return {'filename': package['filename'], 'mime': 'application/zip',
+                    'content_base64': base64.b64encode(package['content']).decode('utf-8'), 'sha256': package['sha256'],
+                    'target_id': bundle.target_id, 'target_format_version': bundle.target_format_version,
+                    'adapter_revision': bundle.adapter_revision, 'file_count': package['file_count'],
+                    'files_digest': bundle.files_digest, 'payload_files_digest': bundle.payload_files_digest,
+                    'manifest': bundle.manifest, 'losses': bundle.losses,
+                    'capabilities': {key: value.model_dump(mode='json') for key, value in bundle.capabilities.items()},
+                    'artifact_evidence': artifact, 'artifact_evidence_status': artifact['status'],
+                    'historical_evidence': historical_evidence_for(data.target_id),
+                    # 'evidence' now means the CURRENT artifact only, never the adapter history.
+                    'evidence': artifact['levels'], 'runtime_claim': claim, 'published': False, 'target_runtime': claim,
+                    'export_record_id': record['id'],
+                    'verification': {'schema': VERIFICATION_SCHEMA, 'record_with':
+                                     'POST /novels/{nid}/experimental/interactive-stories/{sid}/export-verification',
+                                     'binding': artifact['binding'],
+                                     'current_status': artifact['status'],
+                                     'external_claim_only': True,
+                                     'system_verification': 'NOT_PERFORMED',
+                                     'runtime_level_source': 'NO_TRUSTED_SERVER_EXECUTION_RECORD',
+                                     'note': 'A recorded receipt is an external acceptance claim bound to this artifact; it never marks the artifact as executed and runtime levels stay NOT_RUN.'}}
         spec = deepcopy(row['spec'])
         for n in spec['nodes']:
             for c in n['choices']: c['condition_tree'] = parse_condition(c['condition'])

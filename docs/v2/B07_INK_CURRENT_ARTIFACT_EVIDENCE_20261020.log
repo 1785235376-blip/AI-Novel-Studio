@@ -1,0 +1,134 @@
+
+$ git rev-parse HEAD
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
+  stdout:
+    9ca55dd625a66685ccfe0f9ac6610fbfe45f0c42
+
+$ git rev-parse work/v2-b07-contract-20261020
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
+  stdout:
+    3752b9250e5fc14577aad3df14ab1e1e063e900b
+
+$ git rev-parse b8371a48816b852176d45151eb9a0e3618a32c07
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
+  stdout:
+    b8371a48816b852176d45151eb9a0e3618a32c07
+
+$ git rev-parse --abbrev-ref HEAD
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.03s
+  stdout:
+    work/v2-b07-ink-20261020
+
+$ git status --porcelain=v1
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.07s
+B07 Ink current-artifact evidence log
+generated_at_utc=2026-10-20T07:09:42.075412+00:00
+worktree=D:\PoemSeed\Worktrees\v2-b07-ink-20261020
+branch=work/v2-b07-ink-20261020
+head=9ca55dd625a66685ccfe0f9ac6610fbfe45f0c42
+
+$ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/test_interactive_ink_current_artifact.py -q -p no:cacheprovider
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=7.9s
+  stdout:
+    .......s.s.s.s.s                                                         [100%]
+    ============================== warnings summary ===============================
+    C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+      C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+        from starlette.testclient import TestClient as TestClient  # noqa
+    
+    tests/test_interactive_ink_current_artifact.py::test_new_target_registered_with_honest_descriptor
+      D:\PoemSeed\Worktrees\v2-b07-ink-20261020\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+        class GlossaryDocument(StrictModel):
+    
+    -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+    11 passed, 5 skipped, 2 warnings in 6.56s
+
+$ C:\Program Files\nodejs\npm.cmd view inkjs@2.3.2 version dist.integrity dist.tarball --json
+  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.53s
+  stdout:
+    {
+      "version": "2.3.2",
+      "dist.integrity": "sha512-iZjrY0lLeRiC+HtDzCfV9IEAP9ExCmBZUrxKkyLy1qIbbGbR1uTXNZ8LDIg8oVkMXZ9TeKKyEFQpQ/m5nQds8w==",
+      "dist.tarball": "https://registry.npmjs.org/inkjs/-/inkjs-2.3.2.tgz"
+    }
+
+$ C:\Program Files\nodejs\node.exe --version
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.02s
+  stdout:
+    v22.14.0
+
+$ C:\Program Files\nodejs\npm.cmd --version
+  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.2s
+  stdout:
+    10.9.2
+
+$ C:\Program Files\nodejs\npm.cmd pack inkjs@2.3.2 --pack-destination D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\pin-tarball
+  cwd=D:\PoemSeed\Recovery\b07-scratch\ink-vendor  exit=0  elapsed=0.43s
+  stdout:
+    inkjs-2.3.2.tgz
+  stderr (tail):
+    npm notice 413B engine/VariableReference.d.ts
+    npm notice 1.2kB engine/VariableReference.js
+    npm notice 1.0kB engine/VariableReference.js.map
+    npm notice 2.9kB engine/VariablesState.d.ts
+    npm notice 17.3kB engine/VariablesState.js
+    npm notice 12.7kB engine/VariablesState.js.map
+    npm notice 110B engine/Void.d.ts
+    npm notice 279B engine/Void.js
+    npm notice 206B engine/Void.js.map
+    npm notice 264B ink.d.mts
+    npm notice 264B ink.d.ts
+    npm notice 1.2kB ink.js
+    npm notice 280B ink.js.map
+    npm notice 2.7kB package.json
+    npm notice 5.9kB script/inkjs-compiler.ts
+    npm notice Tarball Details
+    npm notice name: inkjs
+    npm notice version: 2.3.2
+    npm notice filename: inkjs-2.3.2.tgz
+    npm notice package size: 1.7 MB
+    npm notice unpacked size: 6.9 MB
+    npm notice shasum: a59a430635e4847a6ff9b3ed5c7a7c3f8140d926
+    npm notice integrity: sha512-iZjrY0lLeRiC+[...]FQpQ/m5nQds8w==
+    npm notice total files: 346
+    npm notice
+
+$ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\prepare_inkjs_test_dependency.py D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\pin-tarball\inkjs-2.3.2.tgz D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\offline-extract
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.29s
+  stdout:
+    Verified inkjs 2.3.2; no lifecycle scripts executed. SHA256 8dbf9d64218ed86d1c905a4e972bba5c1f6ff451df2d63b2a30a18c0d29cf232
+    Verified pinned runtime entry package/dist/ink-full.js sha256 4a76187c713c889b5e71d9380b37b5b42eaba9d24af099bb9f968d02311cfeef
+
+$ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\verify_ink_current_artifact.mjs --bundle D:\PoemSeed\Recovery\b07-scratch\ink-artifact\current-artifact-main-bundle --vendor D:\PoemSeed\Recovery\b07-scratch\ink-vendor\node_modules\inkjs --report D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\verification-main.json
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.71s
+  stdout:
+    RESULT PASS compile=true cases=2 cross_process=true failures=0
+
+$ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\verify_ink_current_artifact.mjs --bundle D:\PoemSeed\Recovery\b07-scratch\ink-artifact\current-artifact-loop-bundle --vendor D:\PoemSeed\Recovery\b07-scratch\ink-vendor\node_modules\inkjs --report D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\verification-loop.json
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=0.76s
+  stdout:
+    RESULT PASS compile=true cases=2 cross_process=true failures=0
+
+$ C:\Program Files\nodejs\node.exe D:\PoemSeed\Worktrees\v2-b07-ink-20261020\scripts\verify_ink_current_artifact.mjs --bundle D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\tampered-bundle --vendor D:\PoemSeed\Recovery\b07-scratch\ink-vendor\node_modules\inkjs --report D:\PoemSeed\Recovery\b07-scratch\line-ink\evidence\verification-tampered.json
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=3  elapsed=1.11s
+  stdout:
+    RESULT FAIL compile=true cases=2 cross_process=false failures=4
+    FAILURES [{"check":"witness","detail":"witness script sha256 does not match ink/story.ink"},{"check":"ENDING","case":["harbour"],"failures":[{"check":"text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]},{"check":"ENDING","case":["mountain"],"failures":[{"check":"text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]},{"check":"cross_process","failures":[{"check":"cross_process_text","detail":"runtime output differs","expected":"Alice \"[literal]\" {text} 銆杛uby\nChoose \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n","actual":"Alice \"[literal]\" {text} 銆杛uby\nChoosX \"[safe]\" {safe} 銆杝afe馃檪e虂\nnot code\n"}]}]
+
+$ C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/test_interactive_ink_current_artifact.py::test_legacy_adapter_output_is_byte_frozen tests/test_storyverse_ink_exchange.py -q -p no:cacheprovider
+  cwd=D:\PoemSeed\Worktrees\v2-b07-ink-20261020  exit=0  elapsed=9.77s
+  stdout:
+    ..s.s...ssssssssssssss....sss                                            [100%]
+    ============================== warnings summary ===============================
+    C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+      C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+        from starlette.testclient import TestClient as TestClient  # noqa
+    
+    tests/test_interactive_ink_current_artifact.py::test_legacy_adapter_output_is_byte_frozen
+      D:\PoemSeed\Worktrees\v2-b07-ink-20261020\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+        class GlossaryDocument(StrictModel):
+    
+    -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+    10 passed, 19 skipped, 2 warnings in 8.12s
+
+EVIDENCE D:\PoemSeed\Worktrees\v2-b07-ink-20261020\docs\v2\B07_INK_CURRENT_ARTIFACT_EVIDENCE_20261020.json sha256=5a3c43acfb81a34439854a48e50a0bf59b9ca6131bb6941bbf8135ef32916c9c

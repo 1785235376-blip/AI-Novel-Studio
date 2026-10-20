@@ -1,0 +1,996 @@
+{
+  "schema": "poemseed-b07-godot-runtime-evidence/1",
+  "generated_at": "2026-10-20T07:27:37.568134+00:00",
+  "status": "PASS",
+  "title": "B07/DIF-10/E2E-07 Godot 4 runnable runtime project - real headless acceptance evidence",
+  "target": {
+    "target_id": "GODOT_4_RUNTIME_PROJECT_V1",
+    "format_version": "godot-runtime-project-1",
+    "adapter_revision": 1,
+    "kind": "RUNNABLE_PROJECT"
+  },
+  "product": {
+    "repository_head": "933fea148d4fde94a8185dade36f00615bedf8fa",
+    "branch": "work/v2-b07-integration-20261020",
+    "repository_head_note": "repository_head is the code commit under test at time of run; the evidence .json/.log files are committed afterwards as a separate docs commit.",
+    "script": "scripts/verify_godot_interactive_runtime.py",
+    "script_sha256": "7f14e42eb91ff84f45f1da02490ac71ba5f9552add7dfbc061bf28160e9a6674"
+  },
+  "host": {
+    "platform": "Windows-10-10.0.26100-SP0",
+    "machine": "AMD64",
+    "python": "3.11.9"
+  },
+  "engine": {
+    "executable": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+    "version_stdout": "4.7.stable.official.5b4e0cb0f",
+    "version_exit_code": 0,
+    "source": "found",
+    "minimum_version": "4.0"
+  },
+  "artifacts": {
+    "zip_filename": "godot-4-runtime-project-v1-b07-godot-runtime-verify-20261020-v7.zip",
+    "zip_sha256": "77ad9cf19ec358d7408df5cefd0d845944c4f18507a20ca8f442d26e812512cc",
+    "zip_file_count": 14,
+    "bundle_files_digest": "75a47423981bc83e9dd8078323652f04522463c73089f518f9358f86cd89093f",
+    "payload_files_digest": "98f89a3d27b056481595b206282e58e12f8419750d334da356dfb4647ea91477",
+    "story_sha256": "3ad9d3c4ac75f9a289238011bfcfb77f7e16ed43506902a0d622cfc0754a1dac",
+    "cases_sha256": "31f38bf601fa4397ec5377cc887d74d0a92ee0f01035f3e40b8ec1f4a1332d6c",
+    "project_godot_sha256": "7260c7140b94063ffac717c0d604509055866c096fb8197207a8d4667c0a7b66",
+    "template_sha256": {
+      "main.gd": "f43ebb34000d2278abc7a1a626ff621b90b23d06f63f32e673cc513c00b37170",
+      "main.tscn": "ac167bb92adbfb94de91e1011dd715e0d2bb4ccb1fc05486f04e33a6ac5438ca",
+      "runtime/story_loader.gd": "5fbe936ef022488f72aeb16399ee84d3f5534c26ebca3c0fe0b0f7372e5ff159",
+      "runtime/story_runtime.gd": "4d101c7c87f55ef84fd436f9ffb55b7b6a8b7ad13e4c20e487211bd595d56bb6",
+      "runtime/save_store.gd": "f69fe3ddfe26d7afa564975863b9cf150446b27dd9712bcc766d462f96ba58ea",
+      "runtime/acceptance_runner.gd": "88d2ffd1125ef142d5e057418ec86ec86d08427183bf5b62882003ec443fdd62"
+    },
+    "extracted_root": "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+    "extracted_zip_sha256_matches": true,
+    "manifest_sha256": "1912ad1fe4222c33c80d90919f6df394c09ec75fb6ebccf7affafe8850eb3f7f",
+    "receipt_sha256": "42a6211f3ad5764910d7c144c97f504f96c776b2e298cfee120f0aba2afa0ba9",
+    "spec_digest": "509b829e838c17e19c7699a157c9ae3f62f135d8847e9b38fc3918123b84072d",
+    "source_digest": "2e091a149a55fec3c960ae7193c788eca5510ddd268048a5820cbe993a92c729",
+    "review_receipt": "b5d8f21edde1ca64b149be58f8b3abb5bbdf9d86012fc622c2d48bacfd437c38"
+  },
+  "commands": [
+    {
+      "label": "engine.version",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 47,
+      "stdout_sha256": "5a4c39354856b07de09b419a9327a4e8edec0ac610ec5fb8a3ebcd7017e7d035",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "align.initial",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--print-user-dir"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "de0702162a89a477041b4a35fd31c8a5b48817803da862c9883c54df105d5989",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "align.case.witness-0-g3",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--witness-path",
+        "c_wait"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 187,
+      "stdout_sha256": "f44877853534ade7cc919b850170d5d99688c32a701bdb8cba93803b30cb7341",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "align.case.witness-1-g4",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--witness-path",
+        "c_go,c_home"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 187,
+      "stdout_sha256": "287e38415a2287953b0df3a300564067e20a2ce7a7e76c27788d8c973b11bb56",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "align.case.witness-2-g6",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--witness-path",
+        "c_go,c_leave,c_rest"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 187,
+      "stdout_sha256": "9117af08d768020fbc106bbf42b3536a8a31ac84a04ede685ecd20a255baadd3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "align.case.witness-3-g7",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--witness-path",
+        "c_go,c_leave,c_press"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "2217ad16b96ea238ee47f49c42bf61247f07ac7f7296fa55f4701fe47713f297",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.cycle.step_cap",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-cycle",
+        "--",
+        "--witness-path",
+        "loop,loop,loop"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "23f06b479575750d78f14b2fad33e26c1c29db075087db5347917c51295f5124",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.cycle.beyond_cap",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-cycle",
+        "--",
+        "--witness-path",
+        "loop,loop,loop,loop"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 186,
+      "stdout_sha256": "393d022ab0ed0b1d287997931d105d968c5830a88eeeb17e80aecdb8bab7f082",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.no_exit",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-no-exit",
+        "--",
+        "--print-user-dir"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "c6d329492c70e64cac9322445bbc41e29c5dffcbe109da443a8a402ffb49ba27",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.broken.unknown_operator",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-broken-unknown_operator",
+        "--"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 170,
+      "stdout_sha256": "4982fd4b4742f51e7038a876e3a99953240e8c914cdb272c87d8486e2944f367",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.broken.undefined_variable",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-broken-undefined_variable",
+        "--"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "4982fd4b4742f51e7038a876e3a99953240e8c914cdb272c87d8486e2944f367",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.broken.assignment_type_mismatch",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-broken-assignment_type_mismatch",
+        "--"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 170,
+      "stdout_sha256": "497cbae3d1f308894c4bed504b9cac81ff98e8ee1fd6dddbfbf947b68608d9b6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "enforce.broken.missing_choice_target",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\fixture-broken-missing_choice_target",
+        "--"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "3c362e5b982cd6f9e8a68540bc7d0a8b5eebd2bab27a3ffda4d22d973c633400",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "save.process1",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--witness-path",
+        "c_go",
+        "--save",
+        "user://b07-godot-save.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "935f9d0556533474ae64d67b4d0c6c86823a0124cb76966c2ffa67a5ab3ea021",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "save.process2.restore",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-godot-save.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "b77b697777854fc51b390089a7041c2851a4e75cc67b0d5aaaab4b92361dd8b5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "save.process2.continue",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-godot-save.json",
+        "--witness-path",
+        "c_leave,c_rest",
+        "--result",
+        "user://b07-godot-result.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_ms": 188,
+      "stdout_sha256": "b48c577db541afbc9e8b72320c58475c093e1c09e60ece741b9f18d75ac9a862",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.wrong_revision",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-wrong_revision.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "1e0f1e15d128e0917149a5ac9d46c205b7394db17a7dd1a3b3b7ca5752eb4a06",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.wrong_spec_digest",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-wrong_spec_digest.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 187,
+      "stdout_sha256": "2cfff12e063b94e9f82e7013ba04582a09f49afa55b60f06fe777b6fdd60151a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.wrong_source_digest",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-wrong_source_digest.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "3666dcd471b483d8db29dfda3190fa4aeed17ec87bf45a88cdfa37096508d6c7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.wrong_story_id",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-wrong_story_id.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "747bd03dad9bead4338212c24adb7e6f1a0764abddebc7348272b7baf6cc188c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.wrong_save_schema_version",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-wrong_save_schema_version.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 186,
+      "stdout_sha256": "643b512fd8f7964e69035409c6d026af79d16b989dbf96dc256a3182d47e7810",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.tampered_variables",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-tampered_variables.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "0d48c662aeec7b0e7e0ba7f1fd45268463251f3865b573ef3c378021808fbaba",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.tampered_path",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-tampered_path.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 186,
+      "stdout_sha256": "a2e8ad6c015ed4e53e4469debfa48c03414e240a3ce1befc8c10d5db2bf2ba6a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reject.corrupt_json",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://b07-reject-corrupt.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 172,
+      "stdout_sha256": "83bbb9770497fe2a039dce5e7062a41b6bbd048a50806003cf42c715134be0bd",
+      "stderr_sha256": "93d32362ebb6340fbc0e894365e5d5bda319e6fbebb8a3cad748ee0167ec65f0"
+    },
+    {
+      "label": "path.traversal_result",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--result",
+        "user://../b07-escape.json"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 188,
+      "stdout_sha256": "d0a3b7958cf07d8644a18507fcba7d3133567f2a0dd8c0f5bc28a1d412f7f0da",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "path.traversal_load",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--load",
+        "user://../b07-save.json"
+      ],
+      "exit_code": 2,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "bcad96d45bc3ea7312a5621a5a1f2dbc1d69613f44ff5956d6e5c6e35b1afdfe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "path.absolute_save",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--save",
+        "C:/Windows/Temp/b07-absolute-save.json"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 187,
+      "stdout_sha256": "5f38c5b04cf3533d8ee3ebcaeafc71bf367a82e094245923bcc131a1a270473b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "path.bad_suffix",
+      "argv": [
+        "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe",
+        "--headless",
+        "--quit-after",
+        "600",
+        "--path",
+        "D:\\PoemSeed\\Recovery\\b07-scratch\\godot-runtime\\b07-godot-runtime-verify-20261020",
+        "--",
+        "--result",
+        "user://b07-result.txt"
+      ],
+      "exit_code": 3,
+      "timed_out": false,
+      "duration_ms": 171,
+      "stdout_sha256": "d0a3b7958cf07d8644a18507fcba7d3133567f2a0dd8c0f5bc28a1d412f7f0da",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "checks": [
+    {
+      "check": "engine.found",
+      "status": "PASS",
+      "detail": "D:\\GameDev\\Godot\\Godot-4.7-stable\\Godot_v4.7-stable_win64_console.exe"
+    },
+    {
+      "check": "engine.version",
+      "status": "PASS",
+      "detail": "4.7.stable.official.5b4e0cb0f"
+    },
+    {
+      "check": "story.analysis",
+      "status": "PASS",
+      "detail": "states_checked=7 endings=4"
+    },
+    {
+      "check": "story.compatibility",
+      "status": "PASS",
+      "detail": "issues="
+    },
+    {
+      "check": "build.deterministic",
+      "status": "PASS",
+      "detail": "digest 75a47423981bc83e"
+    },
+    {
+      "check": "build.artifact_extracted",
+      "status": "PASS",
+      "detail": "14 files, zip sha256 77ad9cf19ec358d7"
+    },
+    {
+      "check": "artifact.project.godot.config",
+      "status": "PASS",
+      "detail": "config_version=5, main scene, 960x600, project name"
+    },
+    {
+      "check": "artifact.main.tscn",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "artifact.runtime_template_verbatim",
+      "status": "PASS",
+      "detail": "all fixed runtime files match repository template"
+    },
+    {
+      "check": "artifact.template_hashes_pinned",
+      "status": "PASS",
+      "detail": "6 pinned files"
+    },
+    {
+      "check": "artifact.story_schema",
+      "status": "PASS",
+      "detail": "typed schema vgodot-runtime-story-1"
+    },
+    {
+      "check": "artifact.story_target_binding",
+      "status": "PASS",
+      "detail": "target + spec digest bound"
+    },
+    {
+      "check": "artifact.acceptance_cases",
+      "status": "PASS",
+      "detail": "4 ending witness cases"
+    },
+    {
+      "check": "artifact.manifest_template_hashes",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "artifact.zip_round_trip",
+      "status": "PASS",
+      "detail": "14 files, payload digest 98f89a3d27b05648"
+    },
+    {
+      "check": "artifact.docs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "audit.no_dynamic_execution_or_network",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.initial.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-0-g3.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-0-g3.final_matches_cases_json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-0-g3.done",
+      "status": "PASS",
+      "detail": "status ENDING after 1 steps"
+    },
+    {
+      "check": "align.case.witness-1-g4.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-1-g4.final_matches_cases_json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-1-g4.done",
+      "status": "PASS",
+      "detail": "status ENDING after 2 steps"
+    },
+    {
+      "check": "align.case.witness-2-g6.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-2-g6.final_matches_cases_json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-2-g6.done",
+      "status": "PASS",
+      "detail": "status ENDING after 3 steps"
+    },
+    {
+      "check": "align.case.witness-3-g7.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-3-g7.final_matches_cases_json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "align.case.witness-3-g7.done",
+      "status": "PASS",
+      "detail": "status ENDING after 3 steps"
+    },
+    {
+      "check": "enforce.cycle.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "enforce.cycle.step_cap_status",
+      "status": "PASS",
+      "detail": "STEP_CAP_REACHED"
+    },
+    {
+      "check": "enforce.cycle.refuses_beyond_cap",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"PATH_REJECTED\", \"detail\": \"STEP_CAP_REACHED\"}"
+    },
+    {
+      "check": "enforce.no_exit.states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "enforce.no_exit.status",
+      "status": "PASS",
+      "detail": "NO_EXIT"
+    },
+    {
+      "check": "enforce.broken.unknown_operator",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"STORY_LOAD_FAILED\", \"detail\": \"f1/loop: condition invalid\"}"
+    },
+    {
+      "check": "enforce.broken.undefined_variable",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"STORY_LOAD_FAILED\", \"detail\": \"f1/loop: condition invalid\"}"
+    },
+    {
+      "check": "enforce.broken.assignment_type_mismatch",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"STORY_LOAD_FAILED\", \"detail\": \"f1/loop: assignment type mismatch for flag\"}"
+    },
+    {
+      "check": "enforce.broken.missing_choice_target",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"STORY_LOAD_FAILED\", \"detail\": \"f1 -> no-such-node\"}"
+    },
+    {
+      "check": "enforce.authority_refuses_cycle",
+      "status": "PASS",
+      "detail": "GODOT_RUNTIME_ANALYSIS:NO_ENDING_PATH,GODOT_RUNTIME_WITNESS_MISSING"
+    },
+    {
+      "check": "enforce.authority_refuses_no_exit",
+      "status": "PASS",
+      "detail": "GODOT_RUNTIME_ANALYSIS:CONDITIONAL_NO_EXIT,GODOT_RUNTIME_ANALYSIS:NO_REACHABLE_ENDING_WITHIN_CAP,GODOT_RUNTIME_WITNESS_MISSING"
+    },
+    {
+      "check": "save.path_selection",
+      "status": "PASS",
+      "detail": "path c_go,c_leave,c_rest split after 1"
+    },
+    {
+      "check": "save.user_dir",
+      "status": "PASS",
+      "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story b07-godot-runtime-verify-20261020"
+    },
+    {
+      "check": "save.file_sha256",
+      "status": "PASS",
+      "detail": "d5abef609e98b248ad5e7661080661ce88e05aaa6f0cda6774131793b4423285 vs d5abef609e98b248ad5e7661080661ce88e05aaa6f0cda6774131793b4423285"
+    },
+    {
+      "check": "save.schema_and_state",
+      "status": "PASS",
+      "detail": "schema/identity/path/steps"
+    },
+    {
+      "check": "save.restored_state",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "save.restored_node",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "save.continued_states",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "save.continued_final_matches_direct_playback",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "save.result_file",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "reject.wrong_revision",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_STORY_REVISION_MISMATCH\"}"
+    },
+    {
+      "check": "reject.wrong_spec_digest",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_SPEC_DIGEST_MISMATCH\"}"
+    },
+    {
+      "check": "reject.wrong_source_digest",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_SOURCE_DIGEST_MISMATCH\"}"
+    },
+    {
+      "check": "reject.wrong_story_id",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_STORY_ID_MISMATCH\"}"
+    },
+    {
+      "check": "reject.wrong_save_schema_version",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_SCHEMA_VERSION_INVALID\"}"
+    },
+    {
+      "check": "reject.tampered_variables",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_STATE_MISMATCH\"}"
+    },
+    {
+      "check": "reject.tampered_path",
+      "status": "PASS",
+      "detail": "2 {\"code\": \"SAVE_REJECTED\", \"detail\": \"SAVE_REPLAY_REJECTED\"}"
+    },
+    {
+      "check": "reject.corrupt_json",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "path.traversal_result",
+      "status": "PASS",
+      "detail": "3 {\"code\": \"RESULT_WRITE_FAILED\", \"detail\": \"USER_PATH_INVALID\"}"
+    },
+    {
+      "check": "path.traversal_load",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "path.absolute_save",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "path.bad_suffix",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "path.no_files_outside_user_dir",
+      "status": "PASS",
+      "detail": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\b07-escape.json"
+    },
+    {
+      "check": "save.cleanup_user_dir",
+      "status": "PASS",
+      "detail": "10 temporary user:// files removed"
+    }
+  ],
+  "failures": [],
+  "alignment": {
+    "cases": 4,
+    "states_compared": 14
+  },
+  "save_restore": {
+    "path": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story b07-godot-runtime-verify-20261020\\b07-reject-wrong_story_id.json",
+    "split": 1,
+    "save_sha256": "d5abef609e98b248ad5e7661080661ce88e05aaa6f0cda6774131793b4423285",
+    "save_bytes": 576,
+    "restored_states_compared": 4,
+    "rejection_cases": [
+      {
+        "case": "wrong_revision",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_STORY_REVISION_MISMATCH"
+        }
+      },
+      {
+        "case": "wrong_spec_digest",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_SPEC_DIGEST_MISMATCH"
+        }
+      },
+      {
+        "case": "wrong_source_digest",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_SOURCE_DIGEST_MISMATCH"
+        }
+      },
+      {
+        "case": "wrong_story_id",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_STORY_ID_MISMATCH"
+        }
+      },
+      {
+        "case": "wrong_save_schema_version",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_SCHEMA_VERSION_INVALID"
+        }
+      },
+      {
+        "case": "tampered_variables",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_STATE_MISMATCH"
+        }
+      },
+      {
+        "case": "tampered_path",
+        "status": "PASS",
+        "exit_code": 2,
+        "error": {
+          "code": "SAVE_REJECTED",
+          "detail": "SAVE_REPLAY_REJECTED"
+        }
+      }
+    ],
+    "user_dir": "C:\\Users\\admin\\AppData\\Roaming\\Godot\\app_userdata\\PoemSeed Story b07-godot-runtime-verify-20261020"
+  },
+  "evidence_levels": {
+    "SOURCE_IMPLEMENTED": "PASS",
+    "SCHEMA_VALIDATED": "PASS",
+    "FIXTURE_TESTED": "PASS",
+    "GENERATED_ARTIFACT_VALIDATED": "PASS",
+    "TARGET_RUNTIME_EXECUTED": "PASS",
+    "SAVE_RESTORE_VERIFIED": "PASS",
+    "WINDOWS_USABILITY_VERIFIED": "NOT_RUN"
+  },
+  "limits": [
+    "Headless engine automation does not verify Windows GUI usability, window behavior, input or font glyph rendering; WINDOWS_USABILITY_VERIFIED is NOT_RUN.",
+    "The verifier executes the exported project from a scratch extraction directory; it does not install or modify the engine.",
+    "Runtime enforcement fixtures (step cap, no-exit, malformed data) are defense in depth; the authority gate refuses to export such stories.",
+    "Media references are recorded as IDs only; no media bytes are packaged or played.",
+    "This evidence covers one synthetic end-to-end story fixture, not every possible user story; the export path is the real product contract path."
+  ],
+  "engine_note": "Generation is not execution: this file exists only because the packaged project really ran."
+}
