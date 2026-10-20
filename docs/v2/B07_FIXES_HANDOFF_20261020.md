@@ -138,7 +138,7 @@ E2E 证据已在干净树该 HEAD 重新生成（648 checks / 0 failed / PASS_WI
 | 前端互动叙事 15 测试文件 | **157 passed** |
 | TypeScript + 生产构建 | `tsc -b` exit 0；`vite build` exit 0 |
 | Ink pinned runtime（opt-in） | 主作品/loop step-cap/ZIP 直入 3 项 PASS |
-| Godot 真机（headless） | 64 checks / 0 failures，两进程 save/restore PASS（沿用既有可信安装，未新增引擎） |
+| Godot 真机（headless） | 4 个产物的 artifact-mode line verifier 共 101 checks / 0 failures（样本 24/26/25 + 旅程 26），E2E 驱动两进程 save/restore PASS（沿用既有可信安装，未新增引擎） |
 | E2E-07（干净 HEAD cd140a39） | 648 checks / 0 failed / exit 0 / PASS_WITH_BLOCKED_ENVIRONMENT |
 | public build 白名单 | 27 passed / 3 failed，**均非本轮缺陷**：2 项为基线 17 个既有未审文件漂移，1 项为 Windows symlink 权限；本轮**未修改** `packaging/public-build.json`（Hermia 独占） |
 
