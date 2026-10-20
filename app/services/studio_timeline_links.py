@@ -31,13 +31,13 @@ def clip_link(timeline, identity):
                  if identity in (row['video_clip_id'], row['audio_clip_id'])), None)
 
 
-def linked_split_facts(timeline, video_id, audio_id, at_ms):
-    """Video-referenced cut; audio cut is shifted by the saved start offset."""
-    from .studio_timeline_render import _identity, _integer, MAX_DURATION_MS
+def linked_pair_facts(timeline, video_id, audio_id, operation='SPLIT'):
+    """Shared bounded mode/lock check on the original persisted pair."""
+    from .studio_timeline_render import _identity
     _identity(video_id); _identity(audio_id)
     pair = clip_link(timeline, video_id)
     if timeline.get('schema_version') != 2 or not pair or pair['video_clip_id'] != video_id or pair['audio_clip_id'] != audio_id:
-        raise ValueError('STUDIO_TIMELINE_LINKED_SPLIT_PAIR_REQUIRED')
+        raise ValueError(f'STUDIO_TIMELINE_LINKED_{operation}_PAIR_REQUIRED')
     clips = {clip['id']: (track, clip) for track in timeline['tracks'] for clip in track['clips']}
     video_track, video = clips[video_id]; audio_track, audio = clips[audio_id]
     if video_track.get('locked') or audio_track.get('locked'):
@@ -47,13 +47,52 @@ def linked_split_facts(timeline, video_id, audio_id, at_ms):
             or any(clip.get(key, 0) for clip in (video, audio) for key in ('fade_in_ms', 'fade_out_ms'))
             or any(clip.get('transition_out') and (clip['id'] in (video_id, audio_id)
                    or clip['transition_out']['to_clip_id'] in (video_id, audio_id)) for _, clip in clips.values())):
-        raise ValueError('STUDIO_TIMELINE_LINKED_SPLIT_MODE_UNSUPPORTED')
+        raise ValueError(f'STUDIO_TIMELINE_LINKED_{operation}_MODE_UNSUPPORTED')
+    return {'pair': pair, 'video': (video_track, video), 'audio': (audio_track, audio),
+            'common_length_ms': min(video['out_ms'] - video['in_ms'], audio['out_ms'] - audio['in_ms'])}
+
+
+def linked_split_facts(timeline, video_id, audio_id, at_ms):
+    """Video-referenced cut; audio cut is shifted by the saved start offset."""
+    from .studio_timeline_render import _integer, MAX_DURATION_MS
+    facts = linked_pair_facts(timeline, video_id, audio_id)
+    video, audio = facts['video'][1], facts['audio'][1]
     at_ms = _integer(at_ms, 0, MAX_DURATION_MS)
     elapsed = at_ms - video['start_ms']
-    if not 0 < elapsed < min(video['out_ms'] - video['in_ms'], audio['out_ms'] - audio['in_ms']):
+    if not 0 < elapsed < facts['common_length_ms']:
         raise ValueError('STUDIO_TIMELINE_LINKED_SPLIT_OUTSIDE_COMMON_RANGE')
-    return {'pair': pair, 'video_at_ms': at_ms, 'audio_at_ms': audio['start_ms'] + elapsed, 'elapsed_ms': elapsed,
-            'video': (video_track, video), 'audio': (audio_track, audio)}
+    return {**facts, 'video_at_ms': at_ms, 'audio_at_ms': audio['start_ms'] + elapsed, 'elapsed_ms': elapsed}
+
+
+def trim_linked_pair(timeline, video_id, audio_id, keep_from_ms, keep_to_ms):
+    """Non-ripple source trim: same relative interval, original timeline starts."""
+    from .studio_timeline_render import _integer, normalize_studio_timeline, MAX_DURATION_MS
+    result = deepcopy(timeline)
+    facts = linked_pair_facts(result, video_id, audio_id, 'TRIM')
+    start = _integer(keep_from_ms, 0, MAX_DURATION_MS)
+    end = _integer(keep_to_ms, 0, MAX_DURATION_MS)
+    if not 0 <= start < end <= facts['common_length_ms']:
+        raise ValueError('STUDIO_TIMELINE_LINKED_TRIM_OUTSIDE_COMMON_RANGE')
+    if start == 0 and all(clip['out_ms'] - clip['in_ms'] == end for _, clip in (facts['video'], facts['audio'])):
+        raise ValueError('STUDIO_TIMELINE_LINKED_TRIM_NO_CHANGE')
+    for _, clip in (facts['video'], facts['audio']):
+        clip.update(in_ms=clip['in_ms'] + start, out_ms=clip['in_ms'] + end)
+    return normalize_studio_timeline(result)
+
+
+def _matches_linked_trim(before, after, pair):
+    old = {clip['id']: (track['id'], clip) for track in before['tracks'] for clip in track['clips']}
+    new = {clip['id']: (track['id'], clip) for track in after['tracks'] for clip in track['clips']}
+    video_id, audio_id = pair['video_clip_id'], pair['audio_clip_id']
+    if video_id not in new or audio_id not in new:
+        return False
+    try:
+        origin = old[video_id][1]['in_ms']
+        expected = trim_linked_pair(before, video_id, audio_id, new[video_id][1]['in_ms'] - origin, new[video_id][1]['out_ms'] - origin)
+    except ValueError:
+        return False
+    # A source trim cannot admit a split with orphaned tails or unrelated changes.
+    return after == expected
 
 
 def split_linked_pair(timeline, video_id, audio_id, at_ms, new_video_id, new_audio_id):
@@ -103,12 +142,12 @@ def require_clip_link_preservation(before, after):
 
     Explicit removal of a pair permits later independent edits. A pair retained
     across the save keeps its original offset, source snapshots and source ranges,
-    except for one exact four-clip linked partition checked against the prior DTO.
+    except for one exact linked partition or shared source trim checked against the prior DTO.
     """
     previous, current = before.get('clip_links', []), after.get('clip_links', [])
     old = {clip['id']: (track, clip) for track in before['tracks'] for clip in track['clips']}
     new = {clip['id']: (track, clip) for track in after['tracks'] for clip in track['clips']}
-    split_count = 0
+    linked_edit_count = 0
     for pair in previous:
         match = next((row for row in current if row['video_clip_id'] == pair['video_clip_id']
                       and row['audio_clip_id'] == pair['audio_clip_id']), None)
@@ -119,13 +158,14 @@ def require_clip_link_preservation(before, after):
                                 for identity in (pair['video_clip_id'], pair['audio_clip_id'])
                                 for key in ('source_snapshot', 'in_ms', 'out_ms', 'speed_num', 'speed_den'))
             paired_split = range_changed and _matches_linked_split(before, after, pair)
-            if paired_split:
-                split_count += 1
-                if split_count > 1:
-                    raise ValueError('STUDIO_TIMELINE_LINKED_SPLIT_ONE_PAIR_REQUIRED')
+            paired_trim = range_changed and _matches_linked_trim(before, after, pair)
+            if paired_split or paired_trim:
+                linked_edit_count += 1
+                if linked_edit_count > 1:
+                    raise ValueError('STUDIO_TIMELINE_LINKED_EDIT_ONE_PAIR_REQUIRED')
             for identity in (pair['video_clip_id'], pair['audio_clip_id']):
                 left, right = old[identity][1], new[identity][1]
-                if not paired_split and any(left.get(key, 1) != right.get(key, 1)
+                if not (paired_split or paired_trim) and any(left.get(key, 1) != right.get(key, 1)
                        for key in ('source_snapshot', 'in_ms', 'out_ms', 'speed_num', 'speed_den')):
                     raise ValueError('STUDIO_TIMELINE_LINK_EDIT_UNSUPPORTED_UNLINK_FIRST')
                 if ((old[identity][0].get('locked') is True or new[identity][0].get('locked') is True)

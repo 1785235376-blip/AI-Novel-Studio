@@ -1,5 +1,6 @@
 import type { StudioTimeline, StudioTimelineClipLink, StudioTimelineTrack } from './studioTimelineTypes';
 import { matchesLinkedSplit } from './studioTimelineLinkedSplit';
+import { matchesLinkedTrim } from './studioTimelineLinkedTrim';
 
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/;
 export const CLIP_LINK_EDIT_REFUSAL = '链接片段暂不支持独立裁剪、拆分、滑移或替换来源；请先明确解除链接。';
@@ -26,13 +27,13 @@ export function checkedClipLinks(value: unknown, tracks: StudioTimelineTrack[]):
 export const clipLink = (timeline: StudioTimeline, id: string) => timeline.clip_links?.find(pair => pair.video_clip_id === id || pair.audio_clip_id === id);
 
 /** Guard all original draft inputs, including the numeric editor and whole DTO saves. */
-export function requireClipLinkPreservation(before: StudioTimeline, after: StudioTimeline): void {
+export function requireClipLinkPreservation(before: StudioTimeline, after: StudioTimeline, allowLinkedTrim = true): void {
   if (!before.clip_links && !after.clip_links) return;
   if (after.clip_links && after.schema_version !== 2) throw new Error('片段链接需要版本 2 的视频与音频时间线。');
   const previous = before.clip_links ?? [], current = after.clip_links ? checkedClipLinks(after.clip_links, after.tracks) : [];
   const old = new Map(before.tracks.flatMap(track => track.clips.map(clip => [clip.id, { track, clip }] as const)));
   const next = new Map(after.tracks.flatMap(track => track.clips.map(clip => [clip.id, { track, clip }] as const)));
-  let splitCount = 0;
+  let linkedEditCount = 0;
   for (const pair of previous) {
     const match = current.find(row => row.video_clip_id === pair.video_clip_id && row.audio_clip_id === pair.audio_clip_id);
     if (!match) continue;
@@ -43,10 +44,11 @@ export function requireClipLinkPreservation(before: StudioTimeline, after: Studi
         || ['in_ms', 'out_ms', 'speed_num', 'speed_den'].some(key => (left[key as 'in_ms'] ?? 1) !== (right[key as 'in_ms'] ?? 1));
     });
     const pairedSplit = rangeChanged && matchesLinkedSplit(before, after, pair);
-    if (pairedSplit && ++splitCount > 1) throw new Error('首片联动拆分一次只支持一对链接。');
+    const pairedTrim = allowLinkedTrim && rangeChanged && matchesLinkedTrim(before, after, pair);
+    if ((pairedSplit || pairedTrim) && ++linkedEditCount > 1) throw new Error('首片联动编辑一次只支持一对链接。');
     for (const id of [pair.video_clip_id, pair.audio_clip_id]) {
       const left = old.get(id)!, right = next.get(id)!;
-      if (!pairedSplit && (JSON.stringify(left.clip.source_snapshot) !== JSON.stringify(right.clip.source_snapshot)
+      if (!(pairedSplit || pairedTrim) && (JSON.stringify(left.clip.source_snapshot) !== JSON.stringify(right.clip.source_snapshot)
         || ['in_ms', 'out_ms', 'speed_num', 'speed_den'].some(key => (left.clip[key as 'in_ms'] ?? 1) !== (right.clip[key as 'in_ms'] ?? 1)))) throw new Error(CLIP_LINK_EDIT_REFUSAL);
       if ((left.track.locked || right.track.locked) && (left.track.id !== right.track.id || left.clip.start_ms !== right.clip.start_ms)) throw new Error('链接包含锁定轨道，整批移动未应用。');
     }

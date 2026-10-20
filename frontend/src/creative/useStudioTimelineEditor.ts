@@ -6,6 +6,7 @@ import { selectionDuplicateOperations, type SelectionDuplicateIds } from '../nle
 import { selectionMoveOperations } from '../nle/timelineSelectionMove';
 import { changeClipLinks, clipLink, requireClipLinkPreservation, CLIP_LINK_EDIT_REFUSAL } from './studioTimelineClipLinks';
 import { linkedSplitFacts, splitLinkedTimeline, type LinkedSplitIds } from './studioTimelineLinkedSplit';
+import { trimLinkedTimeline } from './studioTimelineLinkedTrim';
 import type { TimelineAssetHandoff } from './StudioTimelineAssetHandoff';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, apiErrorView } from '../api';
@@ -221,14 +222,14 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       values.set(key,bound);measuredBounds.current={source,client,values};setMeasurementRevision(value=>value+1);return true;
     } catch { return false; }
   }
-  function change(work: (input: StudioTimelineDraft) => void): boolean {
+  function change(work: (input: StudioTimelineDraft) => void, linkedTrimIntent = false): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN') return false;
     const input = cloneTimeline(draftRef.current); work(input);
     if ((input.timeline.schema_version === 3) !== ((latest.current.mediaKind ?? 'VIDEO') === 'AUDIO')) return false;
     try {
       if ((draftRef.current.timeline.clip_links?.length || input.timeline.clip_links?.length)
         && !timelineSourcesCurrent(draftRef.current.timeline, latest.current.assets)) throw new Error('链接片段来源已失效或版本改变，整批编辑未应用；请重新核对原素材。');
-      requireClipLinkPreservation(draftRef.current.timeline, input.timeline);
+      requireClipLinkPreservation(draftRef.current.timeline, input.timeline, linkedTrimIntent);
     } catch (reason) { setError(reason instanceof Error ? reason.message : '片段链接核对失败，未修改草稿。'); return false; }
     const beyond=changedRangeBeyondMeasurement(draftRef.current,input,currentMeasuredBounds());
     if(beyond){setError(`片段 ${beyond} 的新素材终点超过已读取的实测长度，未修改草稿。请缩短范围或重新核对原素材。`);return false;}
@@ -387,6 +388,19 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       return true;
     } catch (reason) { setError(reason instanceof Error ? reason.message : '联动拆分未应用。'); return false; }
   }
+  function trimLinkedClips(clipIds: readonly string[], keepFromMs: number, keepToMs: number, revision: string, client: StudioProductionClient): boolean {
+    if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
+      || client !== latest.current.client || revision !== `${epoch.current}:${handoffGeneration.current}`) return false;
+    try {
+      const saved = baseRef.current;
+      if (!saved || timelineInputKey(draftRef.current) !== baseline.current) throw new Error('先保存当前草稿，再明确裁剪已持久链接。');
+      if (!timelineSourcesCurrent(saved.timeline, latest.current.assets)) throw new Error('链接来源已失效或版本改变，整批裁剪未应用。');
+      const timeline = checkedTimeline(trimLinkedTimeline(saved.timeline, clipIds, keepFromMs, keepToMs));
+      if (!change(input => { input.timeline = timeline; }, true)) return false;
+      setNotice('已原子裁剪绑定视频／音频的共同来源区间；起点、偏移与其他片段保持，未波纹。一次撤销可恢复；请先保存，再编辑其他内容。');
+      return true;
+    } catch (reason) { setError(reason instanceof Error ? reason.message : '联动裁剪未应用。'); return false; }
+  }
   function trimClip(trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean,
     revision: string, client: StudioProductionClient): boolean {
     if (blocked() || !latest.current.canMutate || failureRef.current || attemptRef.current?.state === 'UNKNOWN'
@@ -395,6 +409,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
       const input = checkedTimelineDraft(cloneTimeline(draftRef.current));
       const track = input.timeline.tracks.find(row => row.id === trackId), clip = track?.clips.find(row => row.id === clipId);
       if (!track || !clip) throw new Error('找不到原裁剪片段，请重新选择。');
+      if (clipLink(input.timeline, clipId)) throw new Error(CLIP_LINK_EDIT_REFUSAL);
       if (track.locked) throw new Error('该轨道已锁定，请先通过原服务明确解锁。');
       if (!Number.isSafeInteger(inMs) || !Number.isSafeInteger(outMs) || typeof ripple !== 'boolean') throw new Error('裁剪需要整数毫秒入出点与明确的波纹选择。');
       if (clip.in_ms === inMs && clip.out_ms === outMs) return false;
@@ -629,6 +644,7 @@ export function useStudioTimelineEditor(props: StudioTimelineEditorProps) {
     linkClips: (clipIds: readonly string[]) => editClipLinks(clipIds, false, editRevision, props.client),
     unlinkClips: (clipIds: readonly string[]) => editClipLinks(clipIds, true, editRevision, props.client),
     splitLinkedClips: (clipIds: readonly string[], videoAtMs: number, newIds: LinkedSplitIds) => splitLinkedClips(clipIds, videoAtMs, newIds, editRevision, props.client),
+    trimLinkedClips: (clipIds: readonly string[], keepFromMs: number, keepToMs: number) => trimLinkedClips(clipIds, keepFromMs, keepToMs, editRevision, props.client),
     trimClip: (trackId: string, clipId: string, inMs: number, outMs: number, ripple: boolean) => trimClip(trackId, clipId, inMs, outMs, ripple, editRevision, props.client),
     exportAvailable, exportProfile: owns ? exportProfile : { preset: 'REVIEW_MP4' } as TimelineExportProfile, exportPreview: owns ? exportPreview : undefined,
     exportConfirmed: owns && !!exportPreview && exportConfirmed === exportPreview.preview_digest, canPreviewExport, canExport,

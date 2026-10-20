@@ -27,6 +27,7 @@ import { useStudioTimelineWaveform } from './useStudioTimelineWaveform';
 import { TimelineWorkspacePanel } from '../nle/TimelineWorkspacePanel';
 import { TimelineClipLinkPanel } from '../nle/TimelineClipLinkPanel';
 import { LinkedClipSplitPanel } from '../nle/LinkedClipSplitPanel';
+import { LinkedClipTrimPanel } from '../nle/LinkedClipTrimPanel';
 export type { StudioTimelineEditorProps } from './useStudioTimelineEditor';
 
 const numeric = (value: string) => value === '' ? Number.NaN : Number(value);
@@ -322,6 +323,15 @@ export function StudioTimelineEditor(props: StudioTimelineEditorProps) {
           || !live.props.isCurrent() || !live.c.canEdit || live.c.inputDirty || !live.c.base
           || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
         live.c.splitLinkedClips(nleClips, nlePlayhead, { video: crypto.randomUUID(), audio: crypto.randomUUID() });
+      }} />
+    <LinkedClipTrimPanel key={`${reviewGeneration}:${selectionGeneration}`} timeline={draft.timeline} selectedClipIds={nleClips}
+      ready={c.canEdit && c.sourcesCurrent && !!c.base && !c.inputDirty} onTrim={(from, to) => {
+        const live = latestReview.current;
+        if (live.props.client !== props.client || live.c.getHandoffRevision() !== reviewGeneration
+          || selection.current.generation !== selectionGeneration || !live.props.isCurrent()
+          || !live.c.canEdit || !live.c.sourcesCurrent || live.c.inputDirty || !live.c.base
+          || JSON.stringify(selection.current.ids) !== JSON.stringify(nleClips)) return;
+        live.c.trimLinkedClips(nleClips, from, to);
       }} />
     <TimelineWorkspacePanel documentId={c.base?.id} projectId={props.projectId || ''} identity={props.projectId || ''} timeline={draft.timeline}
       selectedClipIds={nleClips} playheadMs={nlePlayhead} viewStartMs={nleView.startMs} viewScale={nleView.scale}
