@@ -113,9 +113,17 @@ def main() -> int:
             handle.write((integration_dir / name).read_text(encoding='utf-8'))
     print('full patch txt written:', patch_name)
 
+    # A bundle needs at least one recorded ref; a bare SHA range is refused as an
+    # empty bundle. Publish a temporary branch ref for the delivery tip and remove
+    # it again, so the bundle records a fetchable ref name and a clean prerequisite.
+    bundle_ref = 'refs/heads/b07-interactive-delivery'
     bundle = out / 'bundles' / ('b07-interactive-' + tip[:12] + '-from-' + base[:12] + '.bundle')
-    run(repo, 'bundle', 'create', str(bundle), base + '..' + tip)
-    bundle_verify = run(repo, 'bundle', 'verify', str(bundle))
+    run(repo, 'update-ref', bundle_ref, tip)
+    try:
+        run(repo, 'bundle', 'create', str(bundle), base + '..' + bundle_ref)
+        bundle_verify = run(repo, 'bundle', 'verify', str(bundle))
+    finally:
+        run(repo, 'update-ref', '-d', bundle_ref)
     print('bundle verify PASS')
 
     replay_ok, replay_detail = False, ''
@@ -153,7 +161,7 @@ def main() -> int:
         'bundle': {'path': bundle.name, 'bytes': bundle.stat().st_size,
                    'verify': 'PASS' if 'okay' in bundle_verify else bundle_verify.strip(),
                    'prerequisite': base, 'tip': tip,
-                   'restore': 'git bundle verify ' + bundle.name + ' && git fetch ' + bundle.name + ' ' + tip + ':refs/heads/b07-interactive'},
+                   'restore': 'git bundle verify ' + bundle.name + ' && git fetch ' + bundle.name + ' refs/heads/b07-interactive-delivery:refs/heads/b07-interactive && git checkout b07-interactive'},
         'clean_room_replay': {'result': 'PASS' if replay_ok else 'FAIL', 'detail': replay_detail},
         'files': files,
         'apply': ['git checkout ' + base, 'git am --3way ' + patch_name,
@@ -179,12 +187,13 @@ def render_restore(manifest: dict) -> str:
              'git rev-parse HEAD  # expected ' + manifest['integration']['tip'],
              '~~~', '', '## Or restore with the incremental bundle', '', '~~~sh',
              'git bundle verify bundles/' + manifest['bundle']['path'],
-             'git fetch bundles/' + manifest['bundle']['path'] + ' ' + manifest['integration']['tip'] + ':refs/heads/b07-interactive',
+             'git fetch bundles/' + manifest['bundle']['path'] + ' refs/heads/b07-interactive-delivery:refs/heads/b07-interactive',
              'git checkout b07-interactive',
              '~~~', '', '## Verification actually performed when this package was built', '',
              '- Commit count: ' + str(len(manifest['integration']['commits'])),
              '- Patch replay in a clean repository: **' + manifest['clean_room_replay']['result'] + '**',
-             '- Bundle verify: **' + manifest['bundle']['verify'] + '**', '', '## Line branches', '',
+             '- Bundle verify: **' + manifest['bundle']['verify'] + '**',
+             '- Bundle tip ref: refs/heads/b07-interactive-delivery (fetch into any local branch)', '', '## Line branches', '',
              '| line | branch | tip | commits |', '|---|---|---|---|']
     for line in manifest['lines']:
         lines.append('| ' + line['name'] + ' | ' + line['branch'] + ' | ' + line['tip'][:12] + ' | ' + str(len(line['commits'])) + ' |')
