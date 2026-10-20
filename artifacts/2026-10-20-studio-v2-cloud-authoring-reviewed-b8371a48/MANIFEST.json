@@ -1,0 +1,810 @@
+{
+  "schema_version": 1,
+  "status": "LIMITED_REVIEWED_CLOUD_AUTHORING_BATCH",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "archive_parent": "9d1228ca855342035ae2c86a2837b8e96f7dc849",
+  "artifact_dir": "artifacts/2026-10-20-studio-v2-cloud-authoring-reviewed-b8371a48",
+  "product_base": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+  "product_tip": "b8371a48816b852176d45151eb9a0e3618a32c07",
+  "product_tree": "d1abbaaf64d7fd95535ad75ea2470fa288a35579",
+  "bundle_ref": "refs/heads/work/cloud-authoring-reviewed-20261020",
+  "bundle_filename": "studio-v2-9ce5e243-to-b8371a48.bundle",
+  "bundle_commit_count": 6,
+  "unique_external_prerequisite": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+  "commit_mappings": [
+    {
+      "source": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "source_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "adopted": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "adopted_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "original_retained_directly": true
+    },
+    {
+      "source": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "source_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "adopted": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "adopted_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "original_retained_directly": true
+    },
+    {
+      "source": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "source_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "adopted": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "adopted_parent": "9ce5e243f925f6fb5141046758045c59b1dca46f",
+      "original_retained_directly": true
+    },
+    {
+      "source": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "source_parent": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "adopted": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "adopted_parent": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "original_retained_directly": true
+    }
+  ],
+  "integration_only_merges": [
+    "b8371a48816b852176d45151eb9a0e3618a32c07",
+    "dce0d828a1e06849f6a6a684a25607413aeaf30e"
+  ],
+  "file_mapping": [
+    {
+      "path": "docs/v2/CLOUD_ASSET_COMPARISON_SLICE_20261020.md",
+      "mode": "100644",
+      "blob": "029a7a9c5a985463c8cd60e4b382970f22437c3c",
+      "bytes": 3551,
+      "sha256": "cf20fe8d49ca4d27d70617e70fc139e3dadd37b2c125f756eab2b9d0b9e57dfe",
+      "reviewed_source_commit": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "docs/v2/IMAGE_MASK_REDO_RECEIPT_20261020.md",
+      "mode": "100644",
+      "blob": "fc135b8990edf947606ce5f98142b21eb967912d",
+      "bytes": 6010,
+      "sha256": "932a37465270ec8dd1e0014db2663abecd6c2660896023bcb8c1762e4b7ab516",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/scripts/check-mask-redo-browser.mjs",
+      "mode": "100644",
+      "blob": "e0d69a62b461661b803e24cfc0e882920f484946",
+      "bytes": 5017,
+      "sha256": "f24ca7ae2f5f8bbf38c92f8485667848f5e527aaab517fc84cc1e1a55bf19892",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/AssetBrowserHost.comparison.test.tsx",
+      "mode": "100644",
+      "blob": "2d8664c752c68ab022e4ad9f3832bc3081cc3711",
+      "bytes": 12026,
+      "sha256": "439c81a5246b106f8463dd29dd11afa079b5cd738b379d40576447b14218dd50",
+      "reviewed_source_commit": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/AssetBrowserPanel.comparison.test.tsx",
+      "mode": "100644",
+      "blob": "00997a5b6bf932a1fb16402aa26cfbb759b140c2",
+      "bytes": 7036,
+      "sha256": "9d8ad18e223953ebeaff3aedf3c30a8bb86d07562a0c1aeb61df85478f428816",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/AssetBrowserPanel.tsx",
+      "mode": "100644",
+      "blob": "550cb3db4116f9ef4d13feabff4ffbd611663c90",
+      "bytes": 14396,
+      "sha256": "6c8ba1197e2c0a90072cbb2209be5cd91d974df2bc9565c85bbdd8a3045363ea",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/AssetComparePanel.test.tsx",
+      "mode": "100644",
+      "blob": "8430a062b334b176ada68a1e6fd206b0bd48a30e",
+      "bytes": 8409,
+      "sha256": "1eeddae7cff42fb3b1e477e7bbaea70eeb25cbb7927374ecbe3a05768b64af88",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/AssetComparePanel.tsx",
+      "mode": "100644",
+      "blob": "f09a44a28b486bf43616c40a94ac7ca9a35b4664",
+      "bytes": 11981,
+      "sha256": "9b03d580ae1d137ba91ba2bca0835847c4fd81055d7222d47a6d8d096f082e68",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/assetComparisonPreview.test.ts",
+      "mode": "100644",
+      "blob": "b6ac5c843432ce29bbfcbcc548fd3da7716fb3b5",
+      "bytes": 4197,
+      "sha256": "4ccbdf56321f9e67f2861da534fd8fdba1514947249fec2a9db5ccc705dd65bf",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/assetbrowser/assetComparisonPreview.ts",
+      "mode": "100644",
+      "blob": "8db8a4b8075ca5ac5bee81df55f844a124a0df63",
+      "bytes": 2663,
+      "sha256": "c13f02e1779cbd2b3829a714cf2e28346c6c6fdec9188b10145093e4381de115",
+      "reviewed_source_commit": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "mode": "100644",
+      "blob": "9e17863e3c08ac4a642a1797f578d545b233795e",
+      "bytes": 85969,
+      "sha256": "1954fc2a8393b5f2cfe6e5b16c8d9fc29c64febcace87d432d12208a33a3bda3",
+      "reviewed_source_commit": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioBinaryMaskCanvas.redo.test.tsx",
+      "mode": "100644",
+      "blob": "05f84478f7cb02b987ecca03df8bca3b47aefcfd",
+      "bytes": 7128,
+      "sha256": "5f406499ee41054566e1df6a4c1279dedfe8f311a7ed9824b3fade89ecee2cd0",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioBinaryMaskCanvas.tsx",
+      "mode": "100644",
+      "blob": "0e4c7f450bb381ad6c3878d3914b7f3400a1efcf",
+      "bytes": 22410,
+      "sha256": "b02390e4df3e411af116853c2f052321cb349726930f77c2609ab742cfdce0cb",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioManualMaskRedo.test.tsx",
+      "mode": "100644",
+      "blob": "f89866c0d55f7cc584b128a8879efd346373e053",
+      "bytes": 4495,
+      "sha256": "ae3a25822d1c9bcac4efff4ece83582a83fbf884914e6bb1c3d971486d7977b6",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioModelMeshPreview.tsx",
+      "mode": "100644",
+      "blob": "49559f1e39ffaf76d0a79a4cb5ebaca69efd7a17",
+      "bytes": 11710,
+      "sha256": "ab1f18870c8cd7ba1f9d95ac60fb1e66f68eb31a9a45881a6c1471acdd84e75b",
+      "reviewed_source_commit": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/StudioModelSceneStructure.additive.test.tsx",
+      "mode": "100644",
+      "blob": "1730d2ed771e226fbc30a64636c09329ef39ccdb",
+      "bytes": 12586,
+      "sha256": "2542365210513c85f832b9d78b140aca3a2d6b870a6bc04a17351b7fe20ce9b3",
+      "reviewed_source_commit": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioBinaryMask.redo.test.ts",
+      "mode": "100644",
+      "blob": "16f00cb2a379488b586cce077a389703c4bcd9e6",
+      "bytes": 6914,
+      "sha256": "fec74b8c36613f3a8905d635a0a4237fe585d1d180c67dac480aeb85660942a2",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioBinaryMask.ts",
+      "mode": "100644",
+      "blob": "1e4b16e037ab4fca4223bbf9f2edbefcfa845967",
+      "bytes": 13519,
+      "sha256": "c0860937caa03eece1f23336b2ee570c9459f09ceacbd5bfea27877a09c6d8b0",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/src/creative/studioModelSceneStructure.ts",
+      "mode": "100644",
+      "blob": "9e4216f9a172ae7270e8fd3733111248a1588c86",
+      "bytes": 2803,
+      "sha256": "81ed66496283551436a176a684d57510c73cf3b33d6011f0f6df293463af1146",
+      "reviewed_source_commit": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "exact_reviewed_source": true
+    },
+    {
+      "path": "frontend/tests/visual/studio-mask-redo.fixture.tsx",
+      "mode": "100644",
+      "blob": "c63fa33b7daaad042018604d39b3b66ded68de5c",
+      "bytes": 1915,
+      "sha256": "4a1c8edc0baa2e82f6bde29de4dac0c2925919d71ced181814ca516ee5c496f1",
+      "reviewed_source_commit": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "exact_reviewed_source": true
+    }
+  ],
+  "new_object_inventory": [
+    {
+      "oid": "b8371a48816b852176d45151eb9a0e3618a32c07",
+      "type": "commit",
+      "bytes": 313,
+      "sha256": "5c68e3c013a27cf7aefc2e24f6a53c59f76ec52d30980adcc7bd1f62a746fe71",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "dce0d828a1e06849f6a6a684a25607413aeaf30e",
+      "type": "commit",
+      "bytes": 314,
+      "sha256": "358e0df7fd51edc1c311ce4385ffa784ec9d7bf485d2d15748ef212e7ceed9e3",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b59c930255160d5b1aa200f53689c2a2cf27f19e",
+      "type": "commit",
+      "bytes": 249,
+      "sha256": "4f6c7844f51720c6c09ec3590863e8394f7e5cf1aa291591a150f29664328a46",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "8f1a75366d86ad2b09bb09d7cd9f5ee19f301fdc",
+      "type": "commit",
+      "bytes": 253,
+      "sha256": "ec0e2e02129ba9c95d65fd177d4d61663374e881ab4954f510dd9f078cb8ab2a",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5167bcd6acb7db9c2a336d7a432ea6e597561a80",
+      "type": "commit",
+      "bytes": 236,
+      "sha256": "3996c0cd23cc6d94d14f574db4fc9ca7d626b56237746cec8fdbae9108a65a15",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b4e23cfe870c8d7b8944710c47d79c8817ff4587",
+      "type": "commit",
+      "bytes": 250,
+      "sha256": "3a63b425e954fd87ff26dcde304c0507bf4a4d9f36942acfbe84a5a2af07c8f5",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d1abbaaf64d7fd95535ad75ea2470fa288a35579",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "4a365b0406aded11097248949e2634dc4d2b7a9c1550e8ffb1f3c1bbda587116",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "6e0ad7148dc104cbc8e1ac6f96f24263e32954ff",
+      "type": "tree",
+      "bytes": 16586,
+      "sha256": "0d93490c9336892b470068def7c92490809a254442557d13f56ab86f367f14ef",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5a6825fec8665356a6ed214dd161ed526970a2b5",
+      "type": "tree",
+      "bytes": 11262,
+      "sha256": "7178591aa8b7adcdec42844bf391fb1ed1c06a402777420ae0dffe15f819a544",
+      "path": "docs/v2",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "029a7a9c5a985463c8cd60e4b382970f22437c3c",
+      "type": "blob",
+      "bytes": 3551,
+      "sha256": "cf20fe8d49ca4d27d70617e70fc139e3dadd37b2c125f756eab2b9d0b9e57dfe",
+      "path": "docs/v2/CLOUD_ASSET_COMPARISON_SLICE_20261020.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fc135b8990edf947606ce5f98142b21eb967912d",
+      "type": "blob",
+      "bytes": 6010,
+      "sha256": "932a37465270ec8dd1e0014db2663abecd6c2660896023bcb8c1762e4b7ab516",
+      "path": "docs/v2/IMAGE_MASK_REDO_RECEIPT_20261020.md",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5b593807603a1bdd404af2a5a88c759b7aa84c4a",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "d10ff07aa11cd5fca001476b20af31efe89300c52efb1940186a41b8cccc5949",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ce33de8bb98bba89e439cee47c91ec648494881f",
+      "type": "tree",
+      "bytes": 380,
+      "sha256": "1423243e4f7a0b41a8c95623b74b81b18ab571db4d86ced9666124f28d95f5a3",
+      "path": "frontend/scripts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "e0d69a62b461661b803e24cfc0e882920f484946",
+      "type": "blob",
+      "bytes": 5017,
+      "sha256": "f24ca7ae2f5f8bbf38c92f8485667848f5e527aaab517fc84cc1e1a55bf19892",
+      "path": "frontend/scripts/check-mask-redo-browser.mjs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "52d9330dd4e2804e1dc5070ec7136740befce0a5",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "c9563b99685ad2a747449783abfa5b469e099b307b4e8cd31c1dce237eeed5fb",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ae9aca40d194660187452ccda758a181e01052fb",
+      "type": "tree",
+      "bytes": 1232,
+      "sha256": "c487b195e52adcb64e59f4431b4bdad1ff0f2aecc180f8e66ad523a75862a3c1",
+      "path": "frontend/src/assetbrowser",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "2d8664c752c68ab022e4ad9f3832bc3081cc3711",
+      "type": "blob",
+      "bytes": 12026,
+      "sha256": "439c81a5246b106f8463dd29dd11afa079b5cd738b379d40576447b14218dd50",
+      "path": "frontend/src/assetbrowser/AssetBrowserHost.comparison.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "00997a5b6bf932a1fb16402aa26cfbb759b140c2",
+      "type": "blob",
+      "bytes": 7036,
+      "sha256": "9d8ad18e223953ebeaff3aedf3c30a8bb86d07562a0c1aeb61df85478f428816",
+      "path": "frontend/src/assetbrowser/AssetBrowserPanel.comparison.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "550cb3db4116f9ef4d13feabff4ffbd611663c90",
+      "type": "blob",
+      "bytes": 14396,
+      "sha256": "6c8ba1197e2c0a90072cbb2209be5cd91d974df2bc9565c85bbdd8a3045363ea",
+      "path": "frontend/src/assetbrowser/AssetBrowserPanel.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "8430a062b334b176ada68a1e6fd206b0bd48a30e",
+      "type": "blob",
+      "bytes": 8409,
+      "sha256": "1eeddae7cff42fb3b1e477e7bbaea70eeb25cbb7927374ecbe3a05768b64af88",
+      "path": "frontend/src/assetbrowser/AssetComparePanel.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f09a44a28b486bf43616c40a94ac7ca9a35b4664",
+      "type": "blob",
+      "bytes": 11981,
+      "sha256": "9b03d580ae1d137ba91ba2bca0835847c4fd81055d7222d47a6d8d096f082e68",
+      "path": "frontend/src/assetbrowser/AssetComparePanel.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "b6ac5c843432ce29bbfcbcc548fd3da7716fb3b5",
+      "type": "blob",
+      "bytes": 4197,
+      "sha256": "4ccbdf56321f9e67f2861da534fd8fdba1514947249fec2a9db5ccc705dd65bf",
+      "path": "frontend/src/assetbrowser/assetComparisonPreview.test.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "8db8a4b8075ca5ac5bee81df55f844a124a0df63",
+      "type": "blob",
+      "bytes": 2663,
+      "sha256": "c13f02e1779cbd2b3829a714cf2e28346c6c6fdec9188b10145093e4381de115",
+      "path": "frontend/src/assetbrowser/assetComparisonPreview.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "2f0aeb62d8604ebaef9585b034aec7f3271d0796",
+      "type": "tree",
+      "bytes": 37153,
+      "sha256": "01d8661c36ef799578d22a717c946558ba1d6015667d46371ca08321d83059e0",
+      "path": "frontend/src/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9e17863e3c08ac4a642a1797f578d545b233795e",
+      "type": "blob",
+      "bytes": 85969,
+      "sha256": "1954fc2a8393b5f2cfe6e5b16c8d9fc29c64febcace87d432d12208a33a3bda3",
+      "path": "frontend/src/creative/IndependentStudioWorkspace.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "05f84478f7cb02b987ecca03df8bca3b47aefcfd",
+      "type": "blob",
+      "bytes": 7128,
+      "sha256": "5f406499ee41054566e1df6a4c1279dedfe8f311a7ed9824b3fade89ecee2cd0",
+      "path": "frontend/src/creative/StudioBinaryMaskCanvas.redo.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "0e4c7f450bb381ad6c3878d3914b7f3400a1efcf",
+      "type": "blob",
+      "bytes": 22410,
+      "sha256": "b02390e4df3e411af116853c2f052321cb349726930f77c2609ab742cfdce0cb",
+      "path": "frontend/src/creative/StudioBinaryMaskCanvas.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "f89866c0d55f7cc584b128a8879efd346373e053",
+      "type": "blob",
+      "bytes": 4495,
+      "sha256": "ae3a25822d1c9bcac4efff4ece83582a83fbf884914e6bb1c3d971486d7977b6",
+      "path": "frontend/src/creative/StudioManualMaskRedo.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "49559f1e39ffaf76d0a79a4cb5ebaca69efd7a17",
+      "type": "blob",
+      "bytes": 11710,
+      "sha256": "ab1f18870c8cd7ba1f9d95ac60fb1e66f68eb31a9a45881a6c1471acdd84e75b",
+      "path": "frontend/src/creative/StudioModelMeshPreview.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "1730d2ed771e226fbc30a64636c09329ef39ccdb",
+      "type": "blob",
+      "bytes": 12586,
+      "sha256": "2542365210513c85f832b9d78b140aca3a2d6b870a6bc04a17351b7fe20ce9b3",
+      "path": "frontend/src/creative/StudioModelSceneStructure.additive.test.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "16f00cb2a379488b586cce077a389703c4bcd9e6",
+      "type": "blob",
+      "bytes": 6914,
+      "sha256": "fec74b8c36613f3a8905d635a0a4237fe585d1d180c67dac480aeb85660942a2",
+      "path": "frontend/src/creative/studioBinaryMask.redo.test.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "1e4b16e037ab4fca4223bbf9f2edbefcfa845967",
+      "type": "blob",
+      "bytes": 13519,
+      "sha256": "c0860937caa03eece1f23336b2ee570c9459f09ceacbd5bfea27877a09c6d8b0",
+      "path": "frontend/src/creative/studioBinaryMask.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9e4216f9a172ae7270e8fd3733111248a1588c86",
+      "type": "blob",
+      "bytes": 2803,
+      "sha256": "81ed66496283551436a176a684d57510c73cf3b33d6011f0f6df293463af1146",
+      "path": "frontend/src/creative/studioModelSceneStructure.ts",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "08d0f187dfe20d70c1f1aeeea91a832bc8f0900d",
+      "type": "tree",
+      "bytes": 419,
+      "sha256": "7ec244d7aa654384304a0549e5da831492d3ba07466eff90ee5f8d9e34e1d553",
+      "path": "frontend/tests",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "ca77d5be0347cabfa63ce86a9b889e6a8acb8b75",
+      "type": "tree",
+      "bytes": 587,
+      "sha256": "8e35f5d1c1603c9167652a42cbfd773fe14f5c8325faa24f19e58b4c1350a8b5",
+      "path": "frontend/tests/visual",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "c63fa33b7daaad042018604d39b3b66ded68de5c",
+      "type": "blob",
+      "bytes": 1915,
+      "sha256": "4a1c8edc0baa2e82f6bde29de4dac0c2925919d71ced181814ca516ee5c496f1",
+      "path": "frontend/tests/visual/studio-mask-redo.fixture.tsx",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "e59afe4957b94f082e742bb658b3c0724fd8e2fd",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "0d61c836cdaff63cce21d46293e39df30a073037a50f1e91dfc83dbc9ade69a0",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9539cbf2fbb5f580be5748d981207d8a56c68dcd",
+      "type": "tree",
+      "bytes": 16586,
+      "sha256": "ff10cc9ef370d0ba0d89870efc72dfa7d1b219f5c251db48c7df5938efe709a1",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "92c8545e54347f051bd1a2a46eaf177a8ae64bfb",
+      "type": "tree",
+      "bytes": 11194,
+      "sha256": "2e507579c4ab7fe1897a2d5492aa66a9cbe7e80628534ae1f817b7bad1b71945",
+      "path": "docs/v2",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "5b50110f2ae9a399486fb59e4a7a0a369320f3da",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "9f801f753fdeee3233b8040572813c55ecd986cdd0a5f5ed752218820f54f87d",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "e01415939ac770e0c71108724cdcb99a7b1b2ede",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "7e09c9b674cb86280009c52e3cf01c698db88676e09e4c00d17b7094f80a876e",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "700739eac5133d914331c221e0b2a685836c628f",
+      "type": "tree",
+      "bytes": 37153,
+      "sha256": "6fbae9df7b32e258887858772582c5aa69f59b520a477f2a8a579fd7631bec07",
+      "path": "frontend/src/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "756288e4a73dc38c9a5e5860bf79de4c76e27b78",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "21dc3b278d391a8aff200d2f39295481179daf76a25ff1a543067a1ddef333ea",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "240629a6c2f653ffaa09698cb36cb11aad71508e",
+      "type": "tree",
+      "bytes": 16586,
+      "sha256": "e6500783b32d1e1039074839e5246443ae24552b81b967d8ee96dae31534885a",
+      "path": "docs",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "04ade9033ce0cd49964096ac17fb346cb5d0a3fb",
+      "type": "tree",
+      "bytes": 11199,
+      "sha256": "d9e7a969245c93b73836b7e3652f79600713d36fd01bbced6df14f0aa3fbe381",
+      "path": "docs/v2",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "0bab007a60f98a824663ca649331944c66c006ea",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "7ada8b4a5f6ebb7075805af50da21ef39298cd5e2ce84c9c7356afa8dbc4d86d",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "fad494efa1791ddfb72d3839601fc98818cfa6c6",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "5cecef0aa807ee6a539017dea34f1a35766704c2b448041d908b0b6af9d92840",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "80a8a272c65ea5dbc5bb5b8d0532974ce25b1646",
+      "type": "tree",
+      "bytes": 36848,
+      "sha256": "5fed6cadd0fc792fdf69e4ef93dbabb0f31714d577fe15509f58cd1eb6fbdaeb",
+      "path": "frontend/src/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "eb284327eb8f1c94bbb7a3df82c35505f9d71692",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "89b6be49cc4fad6a09e426e9393f98782073aa8d85f1b20040d59fba56e7972a",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "bbc0aa4f8a6b9dee6b791f0f73b9b5b29bf42562",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "c600cd7aec5e626dff84a16aa32af93555812b81a6ea78c1e3c6e5d8d72e57c9",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "7d0107246289802cd0b39bd25a36b25dd5c46e83",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "e3a8514005d8cb87037aab666543c10a3fa72f7aee633a241ca5346182373f2f",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "4d1346aa31cad1dec40830170ad317ba0d5deb7b",
+      "type": "tree",
+      "bytes": 1168,
+      "sha256": "575895bd3abad8d214dbbbc288d487daf1f368355e17e40cd3277e3955d4df7f",
+      "path": "frontend/src/assetbrowser",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "9229ec4709c27ba6912e356c3a84af2849805ca0",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "f76aeb6dae9cbba8ffc7030ca0c17ec5f06f592d05dcfd39be9f6c0e1c8239ad",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "4ccc049c572e4c4d4d2c3d2fb9103e043761b89a",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "54b640f8993c288a2ec20215149638bfa163f43a1e88ac7ec5f36b745ec6712a",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "60f77d68cef6c7ca780e1b1cf101388be6c6f58d",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "0948b1fc08f84601cdd348b6ba53e13930633399e94a0eee52005da7e526d3d5",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "6ec42685150b49786e77c1138be1dbfd6450db65",
+      "type": "tree",
+      "bytes": 37026,
+      "sha256": "0231a32255379aed1778469649fa9a39cda370fbab72a2bfed811ed1717b4d03",
+      "path": "frontend/src/creative",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "a7c2f90ac9c56f083b65658d7d11ef5a983d4fe6",
+      "type": "tree",
+      "bytes": 10538,
+      "sha256": "41f47a00457ce26b48c7ea0fb4acf8831447181ed3e69cd30b6fe8738ea292d6",
+      "path": "",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d279730d571cfa62089a4dd1bee2cd8c8549386e",
+      "type": "tree",
+      "bytes": 2377,
+      "sha256": "0b6c313d24a2a56042b27a77082d2f5d371a9ba0e1930a33db1052f4259f9d25",
+      "path": "frontend",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "d634f22e30b42231985e49e41a4fa05ce50586a9",
+      "type": "tree",
+      "bytes": 4970,
+      "sha256": "2dbc2aa966f1ed09eee5862c083907e72f4e59a255c8de093b9541f196b8764c",
+      "path": "frontend/src",
+      "serialization": "raw Git object payload"
+    },
+    {
+      "oid": "3f6e20f7482da77567c56a8f1b2eff0e9df0cc05",
+      "type": "tree",
+      "bytes": 36975,
+      "sha256": "a907556db7428e9cde85ab3d363bc0ff40ab060278f0cd1084b6e464d22a9a08",
+      "path": "frontend/src/creative",
+      "serialization": "raw Git object payload"
+    }
+  ],
+  "new_object_count": 60,
+  "object_serialization": "raw Git object payload for all types, including trees",
+  "all_other_base_paths_unchanged": true,
+  "exact_reviewed_file_bindings": 20,
+  "evidence_zip": "studio-v2-cloud-authoring-b8371a48-tests-evidence-sanitized.zip",
+  "zip_payload_count": 66,
+  "combined_validation": {
+    "status": "PASS",
+    "frontend_JSDOM_fixture_tests_passed": 12,
+    "filtered_tests_skipped": 24,
+    "typescript_runs": 1,
+    "vite_build_runs": 1,
+    "results": [
+      {
+        "command": [
+          "./node_modules/.bin/vitest",
+          "run",
+          "src/creative/StudioModelSceneStructure.additive.test.tsx",
+          "src/creative/studioBinaryMask.redo.test.ts",
+          "src/creative/StudioManualMaskRedo.test.tsx",
+          "src/assetbrowser/AssetBrowserHost.comparison.test.tsx",
+          "--maxWorkers=1",
+          "--minWorkers=1",
+          "-t",
+          "keeps full-scene exports|retires selection as soon|pending old scene|original sixteen-state|fresh save consent|unrelated host draft|decoder failure|private comparison on|keyed workspace replacement|localHostToken prop"
+        ],
+        "exit": 0,
+        "seconds": 11.065
+      },
+      {
+        "name": "build",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exit": 0,
+        "seconds": 47.221
+      },
+      {
+        "name": "design-tokens",
+        "command": [
+          "node",
+          "../scripts/check_ui_design_tokens.mjs"
+        ],
+        "exit": 0,
+        "seconds": 0.062
+      }
+    ],
+    "browser_geometry": "BLOCKED_NOT_RETRIED",
+    "real_Host": false,
+    "PostgreSQL": false,
+    "full_E2E": false
+  },
+  "public_content_safety": {
+    "status": "PASS",
+    "exact_source_blobs_scanned": 20,
+    "evidence_local_paths_normalized": true,
+    "original_evidence_preserved": true,
+    "credential_pattern_findings": 0,
+    "only_project_code_tests_reports_logs": true,
+    "node_modules_build_outputs_private_data_internal_notes_excluded": true
+  },
+  "Audio_U16_not_included": true,
+  "acceptance_limits": [
+    "Bounded frontend authoring improvements only; no full feature or Studio V2 completion",
+    "Browser geometry/screenshots blocked by observed Chromium Unix-socket and escalated bwrap restriction; not retried",
+    "Real codecs, installed Host, PostgreSQL, Windows-native and full-suite/full-E2E NOT_ACCEPTED",
+    "Standalone 3D false-to-true isCurrent ABA diagnostic fails in both base and feature; production host permanently retires authority and does not offer that contract",
+    "DSH unpublished Audio/U16 and inaccessible private migration inputs NOT_INCLUDED; schema7 remains DEFAULT OFF; PromptAdoption POST remains closed"
+  ],
+  "payload_hashes": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 3979,
+      "sha256": "bed3bfd12e8c42eb9c3d07cddbcf5754f5f6b6bf7f082a60d103a5ac7c98f690"
+    },
+    {
+      "path": "RESTORE.md",
+      "bytes": 2122,
+      "sha256": "b35d611f32b126ce61b967b59bfc475a86967371077d3112412d11144691f14d"
+    },
+    {
+      "path": "studio-v2-9ce5e243-to-b8371a48.bundle",
+      "bytes": 37839,
+      "sha256": "172907839598d694bdd603701aa5b311a21abca427fe84ae3025670ef4f5e007"
+    },
+    {
+      "path": "studio-v2-cloud-authoring-b8371a48-tests-evidence-sanitized.zip",
+      "bytes": 119836,
+      "sha256": "346ced9e97b34b7dadc69278771ea2dfdbf266613f0cb005a062e8136e873991"
+    }
+  ]
+}
