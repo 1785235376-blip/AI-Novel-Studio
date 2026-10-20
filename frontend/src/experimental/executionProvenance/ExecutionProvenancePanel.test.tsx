@@ -79,6 +79,27 @@ describe('independent original Job provenance panel', () => {
     expect(screen.getByText(/禁止重放/)).toBeTruthy();
   });
 
+  it.each([
+    ['STUDIO_IMAGE_CUTOUT_FAILED', true], ['UNKNOWN_PUBLIC_LOOKING_CODE', false],
+    ['STUDIO_IMAGE_DYNAMIC_ERROR', false], ['SK_SECRET_PROBE_123456', false],
+    ['Authorization: Bearer synthetic-error', false],
+  ] as const)('error-code display through the original decoder handles %s', async (errorCode, visible) => {
+    useLocalHostSession.setState({ token: '', actorId: '' });
+    const value = { ...cutoutJob('UNKNOWN', 3), error_code: errorCode };
+    const fetcher = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => structuredClone(value) });
+    vi.stubGlobal('fetch', fetcher);
+    mount({ selection: { projectId: cutoutProject, branchId: null, identity: 'local-reader', job: value },
+      production: studioProductionClient(cutoutProject, { sessionToken: '', localHostToken: '' }) });
+    fireEvent.click(button()); await screen.findByText('cutout-request');
+    expect(fetcher.mock.calls).toHaveLength(1);
+    expect(fetcher.mock.calls[0][1].method).toBe('GET');
+    if (visible) expect(screen.getByText(errorCode)).toBeTruthy();
+    else {
+      expect(document.body.textContent).not.toContain(errorCode);
+      expect(screen.getByText('未提供可显示的错误代码')).toBeTruthy();
+    }
+  });
+
   it.each(['UNKNOWN', 'FAILED', 'CANCELLED'] as const)('%s exposes no retry/replay/review/execute action', async status => {
     const state = mount({ production: { get: vi.fn().mockResolvedValue(job({ status, remote_compute_may_continue: true })) } });
     await load();

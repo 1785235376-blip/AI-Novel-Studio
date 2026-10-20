@@ -127,6 +127,21 @@ describe('original Studio execution provenance projection', () => {
     expect(() => projectExecution(original)).toThrow();
   });
 
+  it.each(['STUDIO_IMAGE_CUTOUT_FAILED', 'STUDIO_VIDEO_REMOTE_STATE_UNKNOWN', 'STUDIO_AUDIO_EXECUTION_FAILED'])(
+    'error-code display preserves known static owner code %s', errorCode => {
+      const original = job(); original.error_code = errorCode;
+      expect(projectExecution(original).errorCode).toBe(errorCode);
+    });
+
+  it.each(['UNKNOWN_PUBLIC_LOOKING_CODE', 'STUDIO_IMAGE_DYNAMIC_ERROR', 'STUDIO_IMAGE_CUTOUT_FAILED_SK_SECRET',
+    'SK_SECRET_PROBE_123456', 'API_KEY_PROBE_123456', 'Authorization: Bearer synthetic-error'])(
+    'error-code display withholds unknown, credential-shaped or free-text value %s', errorCode => {
+      const original = job(); original.error_code = errorCode;
+      const projected = projectExecution(original);
+      expect(projected.errorCode).toBeNull();
+      expect(JSON.stringify(projected)).not.toContain(errorCode);
+    });
+
   it('does not turn missing or oversized source evidence into an empty valid input list', () => {
     const original = job();
     original.sources = undefined as unknown as ProductionJob['sources'];

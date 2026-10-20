@@ -26,6 +26,16 @@ const routeId = (value: unknown): value is string => typeof value === 'string'
   && /^[A-Za-z0-9][A-Za-z0-9_./-]{0,239}$/.test(value) && !credential.test(value);
 const states: readonly string[] = ['QUEUED', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'AWAITING_REVIEW', 'SUCCEEDED', 'REVIEWING', 'APPROVED', 'UNKNOWN', 'FAILED', 'CANCELLED'];
 const owners: readonly string[] = ['image', 'audio', 'video', 'timeline'];
+// Display-only subset of static original-owner codes. A prefix or uppercase shape
+// is not evidence of a safe code: owners can also persist dynamic error strings.
+const displayErrorCodes = new Set([
+  'STUDIO_IMAGE_INTERRUPTED_DISPATCH', 'STUDIO_IMAGE_CUTOUT_FAILED', 'STUDIO_IMAGE_PROVIDER_REQUEST_FAILED',
+  'STUDIO_IMAGE_REVIEW_RECOVERED_NOT_PROMOTED', 'STUDIO_IMAGE_REVIEW_NOT_PROMOTED',
+  'STUDIO_VIDEO_SUBMISSION_UNKNOWN', 'STUDIO_VIDEO_PREPARATION_FAILED', 'STUDIO_VIDEO_REMOTE_TERMINAL',
+  'STUDIO_VIDEO_REMOTE_STATE_UNKNOWN', 'STUDIO_VIDEO_REVIEW_NOT_PROMOTED', 'STUDIO_VIDEO_INTERRUPTED_NO_AUTOMATIC_REPLAY',
+  'STUDIO_AUDIO_EXECUTION_FAILED', 'STUDIO_AUDIO_ORPHANED_ATTEMPT', 'STUDIO_AUDIO_REVIEW_RECOVERED_NOT_PROMOTED',
+  'STUDIO_AUDIO_REVIEW_NOT_PROMOTED', 'STUDIO_AUDIO_REVIEW_INCOMPLETE',
+]);
 const fail = (): never => { throw new Error('原任务或素材来源不完整、版本已退回或范围不匹配，请重新读取核对。'); };
 
 function validJob(job: ProductionJob) {
@@ -104,7 +114,7 @@ export function projectExecution(job: ProductionJob): ExecutionProjection {
     provider, parameters, sources, candidate,
     approvedAssetVersion: job.status === 'APPROVED' && version(job.approved_asset_version) ? job.approved_asset_version : null,
     executionKind, recoveryReason: recoveryReason(job), remoteComputeMayContinue: job.remote_compute_may_continue === true,
-    errorCode: typeof job.error_code === 'string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(job.error_code) ? job.error_code : null,
+    errorCode: typeof job.error_code === 'string' && displayErrorCodes.has(job.error_code) ? job.error_code : null,
   };
 }
 
