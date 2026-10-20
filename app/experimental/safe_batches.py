@@ -397,16 +397,27 @@ class SafeBatchesService(DomainService):
             except HTTPException as exc:
                 if exc.status_code == 404: continue
                 raise
+            image_refresh = set()
+            for step, item in zip(row['snapshot']['steps'], row['items']):
+                if step['input']['kind'] == 'STUDIO_IMAGE':
+                    if item.get('image_job_id') and item.get('result'):
+                        image_refresh.add(item['index'])
+                    # Retire every cached private image payload before any
+                    # owner read can fail, including for cancelled batches.
+                    item.pop('result', None)
             try:
                 self._assert(ctx, row, lambda: None)
                 if row['status'] != 'CANCELLED':
                     with self._media_context(ctx, row['id'], lambda: self._assert(ctx, row, lambda: None)):
                         for item in row['items']:
-                            if item.get('image_job_id') and item.get('result'):
-                                # Never return a cached private candidate after
-                                # its original owner refuses a current read.
-                                item.pop('result', None)
-                                item['result'] = self.studio_image.result(self.studio_image.job(ctx, row, item['index']))
+                            if item['index'] in image_refresh:
+                                try:
+                                    item['result'] = self.studio_image.result(self.studio_image.job(ctx, row, item['index']))
+                                except (FileNotFoundError, ValueError):
+                                    continue
+                                except HTTPException as exc:
+                                    if exc.status_code != 404: raise
+                                    continue
                             for proposal in (item.get('result') or {}).get('proposals', []):
                                 current = self.media.get(ctx.novel_id, ctx.scope, self.media.PROPOSALS, proposal['id'])
                                 proposal.update({key: current[key] for key in ('version', 'status', 'asset_id') if key in current})

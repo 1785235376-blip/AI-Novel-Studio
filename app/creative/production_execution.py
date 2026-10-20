@@ -202,9 +202,17 @@ class ProductionExecutionService:
     def _cutout_inputs(self, nid, scope, context, guard, *, under_asset_lease=False):
         """Original formal assets only; never probe media or resolve a provider.
 
-        May run under the original asset lease. It must not acquire a queue or
+        When already under the original asset lease, never acquire a queue or
         source-document lease, keeping source -> asset -> project order intact.
         """
+        if context.get("batch_binding") is not None and not under_asset_lease:
+            # The bound guard reads batch metadata. Lease its scope before
+            # assets so its checkpoints cannot invert scope -> asset -> project.
+            # Only bounded source validation is leased; CPU rendering and its
+            # live stop/revocation checkpoints remain outside this phase.
+            with self.store.source_lease(nid, scope):
+                with self.workspace._asset_scope(nid, scope):
+                    return self._cutout_inputs(nid, scope, context, guard, under_asset_lease=True)
         from ..experimental.flags import require_flag
         from ..services.studio_image_mask_authoring import SOURCE_MAX_BYTES, verify_mask, validate_source_png
         guard(); require_flag("asset_lineage_v2")
@@ -736,9 +744,11 @@ class ProductionExecutionService:
     @staticmethod
     def _batch_admission(context, binding, jid):
         from ..experimental.safe_batch_studio_image import validate_binding
-        expected = validate_binding(binding, context)
-        if context.get('batch_binding') != expected or ('batch_binding' in context and expected is None):
+        # Listings inspect unrelated original jobs too. Filter their captured
+        # binding before validating this request against a different job's key.
+        if context.get('batch_binding') != binding or ('batch_binding' in context and binding is None):
             raise FileNotFoundError(jid)
+        validate_binding(binding, context)
 
     def _batch_current(self, nid, scope, actor, context, jid=None, *, phase='read'):
         if context.get('batch_binding') is not None:
