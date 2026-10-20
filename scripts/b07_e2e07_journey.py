@@ -2906,6 +2906,9 @@ def build_evidence(run):
         "modes": run.get("modes") or [],
         "status": "PARTIAL",
         "claim_scope": "INDEPENDENT_E2E_07_EVIDENCE_NOT_LINE_SELF_REPORT",
+        "provenance_note": ("Generated from the clean worktree at repository.head_sha; the generated evidence "
+                            "files are committed immediately after the run, so this JSON is reproducible from "
+                            "that head with the documented commands."),
         "repository": {"worktree": str(REPO_ROOT), **(run.get("git") or {})},
         "delivery_root": run.get("delivery"),
         "scratch_root": run.get("scratch"),
