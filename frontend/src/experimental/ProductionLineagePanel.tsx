@@ -9,6 +9,7 @@ import { PristineReplayNavigation, usePristineReplayNavigation } from './pristin
 import { originalTaskTarget, receiptRecoveryAdvice, receiptRecoveryStage } from './productionReceiptReviewHelpers';
 import { StudioUsagesPanel } from './StudioUsagesPanel';
 import { ProductionPassportSidecar } from './ProductionPassportSidecar';
+import { AudioManifestWorkspace } from './AudioManifestWorkspace';
 
 type Link = { id?: string; label?: string; version?: number; digest?: string; state: string };
 export type LineageAsset = { id: string; label: string; kind: string; version: number; digest: string; deleted: boolean; integrity: string; origin: string; license: { label: string; source: string; note: string }; operation: string; parents: Link[]; sources: Link[]; stale: boolean; source_task_id?: string; producer?: { declared_by?: string; provider_id?: string; model_id?: string }; generation?: { task_id: string; adapter_id: string; operation: string; candidate_count: number; input_digest: string } | null; declaration_history_versions?: number[]; impact?: Impact };
@@ -136,6 +137,7 @@ function ProductionWorkspace(props: Props) {
   return <Panel title="资产来源与生产复现"><StatusMessage>复用现有资产库和媒体任务。缺失来源会保留占位关系，不会被当成原创；重放不会自动批准产物。</StatusMessage><div className="experimental-actions"><h3>资产来源</h3><Button onClick={() => { navigationGate.retire(); resource.reload(); }} disabled={resource.loading}>刷新资产列表</Button></div><ResourceState loading={resource.loading} error={resource.error} empty={resource.data?.items.length === 0} />
     {resource.data && !resource.loading && !resource.error && <><div className="experimental-actions" aria-label="资产列表">{resource.data.items.map(a => <Button key={a.id} aria-pressed={selected === a.id} onClick={() => { navigationGate.retire(); setSelected(a.id); }}>{a.label} · v{a.version}{a.deleted ? ' · 已删除' : a.stale ? ' · 待核对' : ''}</Button>)}</div>{selected && <AssetDetail key={selected} {...props} id={selected} assets={resource.data.items} choose={id => { navigationGate.retire(); setSelected(id); }} />}</>}
     {manifestsEnabled ? <ManifestWorkspace {...props} navigationGate={navigationGate} /> : <StatusMessage>生产清单与重放未启用，资产来源仍可单独使用。</StatusMessage>}
+    <AudioManifestWorkspace client={client} onInteraction={navigationGate.retire} />
   </Panel>;
 }
 
