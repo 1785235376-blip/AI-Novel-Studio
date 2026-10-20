@@ -12,6 +12,11 @@ const area = () => screen.getByLabelText('媒体卡片视口');
 function down(target: Element, x = 0, y = 0) { fireEvent.pointerDown(target, { button: 0, pointerId: 1, clientX: x, clientY: y }); }
 function move(x: number, y: number) { fireEvent.pointerMove(area(), { pointerId: 1, clientX: x, clientY: y }); }
 function up() { fireEvent.pointerUp(area(), { pointerId: 1 }); }
+it('leaves an ordinary card press uncaptured for native click and captures only a real drag', () => {
+ const p = props(); render(<MediaCardViewport {...p} />); const capture=vi.fn();Object.defineProperty(area(),'setPointerCapture',{value:capture});
+ down(screen.getByText('Card'));move(1,1);expect(capture).not.toHaveBeenCalled();up();fireEvent.click(screen.getByText('Card'));expect(p.onSelect).toHaveBeenCalledTimes(1);expect(p.onChange).not.toHaveBeenCalled();
+ down(screen.getByText('Card'));move(20,20);expect(capture).toHaveBeenCalledTimes(1);up();expect(p.onChange).toHaveBeenCalledTimes(1);
+});
 it('previews card movement at zoom and commits exactly once on release', () => {
  const p = props(), original = structuredClone(p.definition); render(<MediaCardViewport {...p} />); down(screen.getByText('Card')); move(100, 60);
  expect(p.onChange).not.toHaveBeenCalled(); expect((document.querySelector('[data-media-card]') as HTMLElement).style.left).toBe('120px');

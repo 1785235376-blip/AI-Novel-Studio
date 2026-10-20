@@ -124,6 +124,12 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [resume] = useState(() => !context.scope && !context.sessionToken && !context.actor
     ? readLocalStudioResume(projectId) : { state: 'EMPTY' as const });
   const [workspaceView, setWorkspaceView] = useState<StudioWorkspaceView>(resume.state === 'SAVED' ? resume.location.view : 'ASSETS');
+  const defaultCanvasChosen=useRef(resume.state==='SAVED');
+  useEffect(()=>{
+    if(defaultCanvasChosen.current||!overview)return;
+    defaultCanvasChosen.current=true;
+    if(module==='IMAGE'&&overview.project.entry_kind==='NEUTRAL_STUDIO')setWorkspaceView(view=>view==='ASSETS'?'GRAPH':view);
+  },[module,overview]);
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});
@@ -318,6 +324,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
   const graph = useStudioGraphEditor({ active: !editorSession && graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, directorSource, onOpenStoryboard: (request, isOriginCurrent) => openStoryboard(request, isOriginCurrent), onOpenModels: () => navigate(() => onModuleChange('CONTROL')), onOpenBroker: onOpenBroker ? () => navigate(onOpenBroker) : undefined, providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
+    productionTaskSource:productionClient,productionTaskLeaveGuard:leaveGuard,onCanvasTaskApproved:()=>productionApproved(),onCanvasTaskUnavailable:()=>deny(),
     draftOwner: studioGraphDraftOwner(projectId, overview?.project.incarnation, context, capturedHost.current),
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;

@@ -35,6 +35,7 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
       const definition=replaceCanvasImageTaskResult(props.task.origin,visible.canvas,visible.job,visible.asset);
       const row=await props.mutate(()=>props.client.graphs.canvasViews!.save(visible.canvas.id,visible.canvas.version,definition));
       if(current()){props.onAdopt(row);props.onComplete();}
+      else if(alive.current){setUncertain(true);props.onUncertain();setError('原位置或权限在回填期间改变，保存结果待核对。请重新读取原画布，不会重试。');}
     }catch(reason){setUncertain(true);props.onUncertain();if(alive.current)setError('回填结果待核对，请重新读取原画布；不会自动重试。'+(reason instanceof Error?reason.message:''));}
     finally{running.current=false;if(alive.current)setBusy(false);}
   }

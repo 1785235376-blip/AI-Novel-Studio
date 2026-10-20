@@ -3,6 +3,7 @@ import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
 import { MediaCanvasGraphHandoff } from './MediaCanvasGraphHandoff';
 import { MediaCanvasImageGraphStarter } from './MediaCanvasImageGraphStarter';
 import { CanvasImageTaskReturn } from './CanvasImageTaskReturn';
+import { MediaCanvasHistoryPanel } from './MediaCanvasHistoryPanel';
 import { captureCanvasImageTask, type CanvasImageTaskOrigin, type CanvasImageTaskSession } from './canvasImageTask';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
 import type { CanvasImageGraphHandoff } from './canvasImageGraphStarter';
@@ -130,6 +131,10 @@ export function MediaCanvasViewPanel(props: Props) {
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
     <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
+    {base&&typeof client.history==='function'&&<MediaCanvasHistoryPanel base={base} client={client} owner={token} incarnation={props.draftOwner?.incarnation} canMutate={props.canMutate}
+      externalDirty={dirty||props.externalDirty} busy={pending||props.busy} isBusy={props.isBusy} isCurrent={current} read={props.read} mutate={props.mutate}
+      onAdopt={row=>{adopt(row);props.onTaskReturned?.();setNotice('已恢复为新的当前画布版本；原历史保留，旧选择和预览已退役。');}}
+      onUncertain={()=>{sourceEpoch.current++;dirtyRef.current=true;setUncertain(true);live.current.onDirtyChange(true);}}/>}
     {dirty && <label><input type="checkbox" checked={discard} onChange={e => setDiscard(e.target.checked)} />允许用所选已存版本或空白视图替换当前草稿</label>}
     {uncertain && <StatusMessage tone="warning">保存结果尚未确认。已停止再次保存，请读取已存画布并核对；替换草稿需要上方明确确认。</StatusMessage>}
     {rows.length > 0 && <ul>{rows.map(row => <li key={row.id}><Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => open(row.id)}>{row.title} · v{row.version} · {row.card_count} 张</Button></li>)}</ul>}

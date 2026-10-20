@@ -42,8 +42,8 @@ def is_independent_studio_route(method, normalized_path):
     if method in handoff_patterns and re.fullmatch(handoff_patterns[method], normalized_path) is not None:
         return True
     canvas_patterns = {
-        "GET": root + r"/canvas-views(?:/[^/]+)?",
-        "POST": root + r"/canvas-views",
+        "GET": root + r"/canvas-views(?:/[^/]+(?:/history)?)?",
+        "POST": root + r"/canvas-views(?:/[^/]+/restore)?",
         "PUT": root + r"/canvas-views/[^/]+",
     }
     if method in canvas_patterns and re.fullmatch(canvas_patterns[method], normalized_path) is not None:

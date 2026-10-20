@@ -6,6 +6,7 @@ import { studioGraphEditorView } from './studioGraphEditorView';
 import { blankLocalCanvasState } from '../canvasops/canvasOps';
 import type { LocalCanvasState } from '../canvasops/canvasOpsTypes';
 import { StudioGraphDraftRecovery } from './StudioGraphDraftRecovery';
+import { useStudioDualCanvasTask, type StudioDualCanvasTaskProps } from './useStudioDualCanvasTask';
 
 export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useStudioGraphEditorController';
 /** Preserve the existing content/inspector consumer while separating state from rendering.
@@ -15,13 +16,14 @@ export type { StudioGraphEditorProps, StudioGraphEditorSelection } from './useSt
  * is discarded whenever the captured identity changes, exactly like the controller's own
  * draft state.
  */
-export function useStudioGraphEditor(props: StudioGraphEditorProps) {
+export function useStudioGraphEditor(props: StudioGraphEditorProps & StudioDualCanvasTaskProps) {
+  const dual = useStudioDualCanvasTask(props);
   const imageSelectionLock = useRef(false);
   const discardDirectorRecovery = useRef<(() => void)>();
   const [directorDirty, setDirectorDirty] = useState(false);
   const [mediaViewDirty, setMediaViewDirty] = useState(false);
   const [directorSession, setDirectorSession] = useState(0);
-  const controller = useStudioGraphEditorController({ ...props, isDirectorImagePending: () => imageSelectionLock.current, externalDirty: props.externalDirty || directorDirty || mediaViewDirty });
+  const controller = useStudioGraphEditorController({ ...props, isDirectorImagePending: () => imageSelectionLock.current, externalDirty: props.externalDirty || directorDirty || mediaViewDirty || dual.taskDirty });
   const [canvasLocal, setCanvasLocal] = useState<LocalCanvasState>(() => blankLocalCanvasState());
   const identity = props.identity, identityRef = useRef(identity);
   useEffect(() => {
@@ -31,8 +33,12 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
   const handoffAuthority = useRef({ key: handoffKey, epoch: 0 });
   if (handoffAuthority.current.key !== handoffKey) handoffAuthority.current = { key: handoffKey, epoch: handoffAuthority.current.epoch + 1 };
   const handoffEpoch = handoffAuthority.current.epoch;
-  const view = studioGraphEditorView(controller, { ...props, externalDirty: props.externalDirty || directorDirty || mediaViewDirty }, { local: canvasLocal, onLocal: setCanvasLocal });
-  return { ...view, content: <>{!controller.retired && props.client.graphs?.canvasViews && <MediaCanvasViewPanel key={`media:${props.identity}:${directorSession}`} {...props} externalDirty={props.externalDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty} onDirtyChange={setMediaViewDirty} graphHandoff={controller.canvasAssetHandoff} imageGraphHandoff={controller.canvasImageGraphStarter} imageOutputHandoff={controller.imageOutputHandoff} />}{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
+  const view = studioGraphEditorView(controller, { ...props, externalDirty: props.externalDirty || directorDirty || mediaViewDirty || dual.taskDirty }, { local: canvasLocal, onLocal: setCanvasLocal });
+  const creation = !controller.retired && props.client.graphs?.canvasViews && <MediaCanvasViewPanel key={`media:${props.identity}:${directorSession}`} {...props}
+    externalDirty={props.externalDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty || dual.taskDirty} onDirtyChange={setMediaViewDirty}
+    graphHandoff={controller.canvasAssetHandoff} imageGraphHandoff={controller.canvasImageGraphStarter} imageOutputHandoff={controller.imageOutputHandoff}
+    onBeginImageTask={props.productionTaskSource?dual.begin:undefined} canvasTask={dual.task} canvasTaskApproved={dual.approved} taskProduction={props.productionTaskSource} onTaskReturned={dual.returned}/>;
+  const execution = <>{props.active && !controller.retired && controller.catalog && <StudioGraphDraftRecovery controller={controller} />}{props.directorSource && !controller.retired && <GraphDirectorConsole key={`${props.identity}:${directorSession}`}
     draftOwner={props.draftOwner} registerRecoveryDiscard={discard => { discardDirectorRecovery.current = discard; }}
     verifyDraftOwner={props.draftOwner ? async () => {
       const owner = props.draftOwner!;
@@ -46,9 +52,10 @@ export function useStudioGraphEditor(props: StudioGraphEditorProps) {
     }} onOpenModels={props.onOpenModels} onOpenBroker={props.onOpenBroker} selectionKey={JSON.stringify([controller.base?.id, controller.selected, handoffEpoch])} canvasHandoff={controller.reviewedDirectorHandoff} storyboardCanvasHandoff={controller.storyboardCanvasHandoff} pin={controller.node?.definition_id === 'director_plan' ? controller.node.parameters.document_snapshot : undefined}
     graph={controller.draft} selectedNodeId={controller.node?.id}
     active={props.active && !props.denied} canMutate={props.canMutate && !props.externalDirty && !mediaViewDirty && !controller.executionDirty}
-    busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} onImagePendingChange={value => { imageSelectionLock.current = value; }} />}{view.content}</>,
+    busy={props.busy} isCurrent={props.isCurrent} read={props.read} mutate={props.mutate} onDirtyChange={setDirectorDirty} onImagePendingChange={value => { imageSelectionLock.current = value; }} />}{view.content}</>;
+  return { ...view, ...dual.frame(creation,execution,view.inspector,props.externalDirty||directorDirty||mediaViewDirty||controller.dirty||controller.blocked||controller.executionDirty),
     directorPending: directorDirty,
-    dirty: mediaViewDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty,
-    discard: () => { if (props.active && !props.denied && props.isCurrent()) discardDirectorRecovery.current?.(); imageSelectionLock.current = false; setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
+    dirty: dual.taskDirty || mediaViewDirty || directorDirty || controller.dirty || controller.blocked || controller.executionDirty,
+    discard: () => { if (props.active && !props.denied && props.isCurrent()) discardDirectorRecovery.current?.(); dual.discard();imageSelectionLock.current = false; setDirectorSession(value => value + 1); setDirectorDirty(false); setMediaViewDirty(false); controller.discard(); } };
 
 }

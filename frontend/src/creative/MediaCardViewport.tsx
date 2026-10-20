@@ -47,12 +47,14 @@ export function MediaCardViewport(props: Props) {
     if (!card && event.target !== event.currentTarget) return;
     suppressClick.current = false;
     gesture.current = { pointer: event.pointerId, card, cards: card ? (props.selection?.includes(card) ? [...props.selection] : [card]) : [], start: { x: event.clientX, y: event.clientY }, source: props.definition, token, latest: props.definition, moved: false };
-    event.currentTarget.setPointerCapture?.(event.pointerId);
   }
   function move(event: React.PointerEvent<HTMLDivElement>) {
     const g = gesture.current; if (!g || g.pointer !== event.pointerId || g.token !== token || !current()) return;
     const x = event.clientX - g.start.x, y = event.clientY - g.start.y;
     if (!Number.isFinite(x) || !Number.isFinite(y) || !g.moved && Math.abs(x) + Math.abs(y) < 3) return;
+    // Capturing an ordinary press retargets Chromium's click to the viewport,
+    // preventing the existing card button from selecting its card.
+    if (!g.moved) event.currentTarget.setPointerCapture?.(event.pointerId);
     g.moved = true;
     g.latest = g.card ? dragCanvasCards(g.source, g.cards, g.card, x / g.source.viewport.zoom, y / g.source.viewport.zoom)
       : { ...g.source, viewport: { ...g.source.viewport, x: clampGraphPosition(g.source.viewport.x + x), y: clampGraphPosition(g.source.viewport.y + y) } };
@@ -73,6 +75,7 @@ export function MediaCardViewport(props: Props) {
     </select></label>
   </div><div className={`media-canvas__viewport${options.grid ? ' media-canvas__viewport--grid' : ''}`} style={options.grid ? { backgroundSize: `${gridSize}px ${gridSize}px`, backgroundPosition: `${definition.viewport.x}px ${definition.viewport.y}px` } : undefined} ref={root} aria-label="媒体卡片视口" tabIndex={0}
     onPointerDown={start} onPointerMove={move} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onLostPointerCapture={event => finish(event, true)}
+    onPointerLeave={() => { if (gesture.current && !gesture.current.moved) gesture.current = undefined; }}
     onKeyDown={event => {
       if (event.key === 'Escape') { gesture.current = undefined; setPreview(undefined); return; }
       if (!current() || gesture.current || event.ctrlKey || event.altKey || event.metaKey || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
