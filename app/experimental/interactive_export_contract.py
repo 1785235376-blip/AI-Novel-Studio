@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib
+import io
 import json
 import os
 import re
@@ -278,19 +279,40 @@ def safe_bundle_path(path: str) -> str:
     return path
 
 
+def check_path_set(paths) -> None:
+    """Reject case-insensitive collisions and file/directory prefix conflicts.
+
+    A file named "a" and a file named "a/b" cannot both exist on the delivered
+    filesystem; neither can "A.txt" and "a.txt". This check is shared by bundle
+    generation and by ZIP read-back so both directions enforce one rule.
+    """
+    folded: dict[str, str] = {}
+    for path in paths:
+        low = path.lower()
+        if low in folded: raise ValueError('BUNDLE_PATH_COLLISION:' + path)
+        folded[low] = path
+    directories = set()
+    for path in paths:
+        parts = path.split('/')
+        for index in range(1, len(parts)):
+            directories.add('/'.join(parts[:index]).lower())
+    conflicts = directories & set(folded)
+    if conflicts: raise ValueError('BUNDLE_PATH_PREFIX_CONFLICT:' + sorted(conflicts)[0])
+
+
 def normalize_files(raw: dict[str, bytes]) -> dict[str, bytes]:
     if not isinstance(raw, dict): raise ValueError('BUNDLE_FILES_INVALID')
     if not 1 <= len(raw) <= MAX_FILES: raise ValueError('BUNDLE_FILE_COUNT_INVALID')
-    files, folded, total = {}, set(), 0
+    files, total = {}, 0
     for path, content in raw.items():
         path = safe_bundle_path(path)
         if isinstance(content, str): raise ValueError('BUNDLE_FILE_CONTENT_MUST_BE_BYTES:' + path)
         if not isinstance(content, (bytes, bytearray)): raise ValueError('BUNDLE_FILE_CONTENT_MUST_BE_BYTES:' + path)
         if len(content) > MAX_FILE_BYTES: raise ValueError('BUNDLE_FILE_TOO_LARGE:' + path)
-        if path.lower() in folded: raise ValueError('BUNDLE_PATH_COLLISION:' + path)
-        folded.add(path.lower()); total += len(content)
+        total += len(content)
         files[path] = bytes(content)
     if total > MAX_TOTAL_BYTES: raise ValueError('BUNDLE_TOTAL_SIZE_INVALID')
+    check_path_set(list(files))
     return files
 
 
@@ -672,27 +694,96 @@ def package_export_zip(bundle: ExportBundle) -> dict:
             info.external_attr = 0o644 << 16
             archive.writestr(info, bundle.files[path])
     content = buffer.getvalue()
+    # The writer and the hardened reader must agree on the delivered container.
+    if read_zip_safely(content, prefix) != bundle.files: raise ValueError('BUNDLE_ZIP_ROUNDTRIP_FAILED')
     return {'content': content, 'sha256': sha256_bytes(content), 'filename': bundle.filename_base + '.zip',
             'prefix': prefix, 'file_count': len(bundle.files), 'files_digest': bundle.files_digest}
 
 
+ZIP_CHUNK_BYTES = 64 * 1024
+ZIP_OVERHEAD_BYTES = 1024 * 1024
+
+
+def _read_entry_bounded(stream, declared_size: int, total_used: int) -> tuple[bytes, int]:
+    """Read one entry within the declared size and the running total budget.
+
+    The ZIP header is treated as untrusted: reading stops the moment the actual
+    payload exceeds either the declared size or the per-file/total limits, so a
+    lying header or a decompression bomb cannot allocate more than the bounded
+    chunk it asked for.
+    """
+    if declared_size < 0 or declared_size > MAX_FILE_BYTES: raise ValueError('BUNDLE_ZIP_ENTRY_TOO_LARGE')
+    if total_used + declared_size > MAX_TOTAL_BYTES: raise ValueError('BUNDLE_ZIP_TOTAL_TOO_LARGE')
+    chunks, read = [], 0
+    while True:
+        chunk = stream.read(min(ZIP_CHUNK_BYTES, MAX_FILE_BYTES - read + 1))
+        if not chunk: break
+        read += len(chunk)
+        if read > declared_size: raise ValueError('BUNDLE_ZIP_DECLARED_SIZE_MISMATCH')
+        if read > MAX_FILE_BYTES: raise ValueError('BUNDLE_ZIP_ENTRY_TOO_LARGE')
+        if total_used + read > MAX_TOTAL_BYTES: raise ValueError('BUNDLE_ZIP_TOTAL_TOO_LARGE')
+        chunks.append(chunk)
+    if read != declared_size: raise ValueError('BUNDLE_ZIP_SIZE_MISMATCH')
+    return b''.join(chunks), read
+
+
 def read_zip_safely(content: bytes, expected_prefix: str) -> dict[str, bytes]:
-    """Read back a delivered ZIP with the same path rules used to create it."""
-    files: dict[str, bytes] = {}
-    with zipfile.ZipFile(__import__('io').BytesIO(content)) as archive:
-        if len(archive.namelist()) > MAX_FILES + 8: raise ValueError('BUNDLE_ZIP_TOO_MANY_ENTRIES')
-        total = 0
-        for info in archive.infolist():
-            if info.is_dir(): continue
+    """Read back a delivered ZIP before trusting any of it.
+
+    Bounds are enforced from the archive directory *and again while reading*:
+    entry count, declared per-entry size, declared cumulative size, actual
+    per-entry/total bytes, case-insensitive collisions and file/directory
+    prefix conflicts. Traversal, absolute paths, backslashes and reserved names
+    stay rejected through the shared path validator.
+    """
+    if not isinstance(content, (bytes, bytearray)): raise ValueError('BUNDLE_ZIP_INVALID')
+    if len(content) > MAX_TOTAL_BYTES + ZIP_OVERHEAD_BYTES: raise ValueError('BUNDLE_ZIP_TOO_LARGE:archive')
+    if not isinstance(expected_prefix, str) or not expected_prefix.endswith('/'):
+        raise ValueError('BUNDLE_ZIP_PREFIX_INVALID')
+    prefix_root = expected_prefix.rstrip('/')
+    if prefix_root: safe_bundle_path(prefix_root)
+    try:
+        archive = zipfile.ZipFile(io.BytesIO(bytes(content)))
+    except (zipfile.BadZipFile, OSError, ValueError): raise ValueError('BUNDLE_ZIP_INVALID') from None
+    with archive:
+        infos = archive.infolist()
+        if len(infos) > MAX_FILES + 16: raise ValueError('BUNDLE_ZIP_TOO_MANY_ENTRIES')
+        entries, file_paths, directory_paths = [], [], set()
+        declared_total = 0
+        for info in infos:
             name = info.filename
             if not name.startswith(expected_prefix): raise ValueError('BUNDLE_ZIP_PREFIX_INVALID')
             relative = name[len(expected_prefix):]
+            if info.is_dir():
+                relative = relative.rstrip('/')
+                if not relative: continue
+                safe_bundle_path(relative)
+                low = relative.lower()
+                if low in directory_paths: raise ValueError('BUNDLE_ZIP_DUPLICATE_ENTRY:' + relative)
+                directory_paths.add(low)
+                continue
+            if info.flag_bits & 0x1: raise ValueError('BUNDLE_ZIP_ENCRYPTED')
             safe_bundle_path(relative)
-            data = archive.read(info); total += len(data)
-            if total > MAX_TOTAL_BYTES: raise ValueError('BUNDLE_ZIP_TOO_LARGE')
-            if relative in files: raise ValueError('BUNDLE_ZIP_DUPLICATE_ENTRY')
+            if info.file_size > MAX_FILE_BYTES: raise ValueError('BUNDLE_ZIP_ENTRY_TOO_LARGE:' + relative)
+            declared_total += info.file_size
+            if declared_total > MAX_TOTAL_BYTES: raise ValueError('BUNDLE_ZIP_TOTAL_TOO_LARGE')
+            entries.append((info, relative)); file_paths.append(relative)
+        if not entries: raise ValueError('BUNDLE_ZIP_EMPTY')
+        check_path_set(file_paths)
+        if directory_paths & {path.lower() for path in file_paths}: raise ValueError('BUNDLE_ZIP_PATH_CONFLICT')
+        files: dict[str, bytes] = {}
+        total = 0
+        for info, relative in entries:
+            try:
+                with archive.open(info) as stream:
+                    data, size = _read_entry_bounded(stream, info.file_size, total)
+            except zipfile.BadZipFile:
+                # A header whose declared size/CRC does not match the payload is
+                # rejected as an integrity failure of that exact entry.
+                raise ValueError('BUNDLE_ZIP_ENTRY_INTEGRITY_INVALID:' + relative) from None
+            total += size
             files[relative] = data
-    return files
+        return files
 
 
 def contract_document() -> dict:
@@ -704,7 +795,9 @@ def contract_document() -> dict:
         'evidence_statuses': list(EVIDENCE_STATUSES),
         'target_kinds': list(TARGET_KINDS),
         'records': {'manifest': MANIFEST_SCHEMA, 'receipt': RECEIPT_SCHEMA, 'targets': TARGETS_SCHEMA},
-        'limits': {'files': MAX_FILES, 'file_bytes': MAX_FILE_BYTES, 'total_bytes': MAX_TOTAL_BYTES, 'path_length': MAX_PATH_LENGTH},
+        'limits': {'files': MAX_FILES, 'file_bytes': MAX_FILE_BYTES, 'total_bytes': MAX_TOTAL_BYTES,
+                   'path_length': MAX_PATH_LENGTH, 'zip_compressed_bytes': MAX_TOTAL_BYTES + ZIP_OVERHEAD_BYTES,
+                   'zip_read_chunk_bytes': ZIP_CHUNK_BYTES},
         'adapter_contract': {
             'module_exports': ['DESCRIPTOR', 'compatibility(snapshot)', 'build(snapshot, options)'],
             'snapshot_is_only_story_authority': True,
