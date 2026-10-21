@@ -2,9 +2,11 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../../ui/primitives';
 import { studioGraphDraftKey, type StudioGraphDraftOwner } from '../studioGraphLocalDraft';
 import type { StudioGraphRecord } from '../studioGraphTypes';
-import { captureCanvasAudioWorkflowTemplate, type CanvasAudioWorkflowTemplateRef } from './canvasAudioWorkflowTemplate';
+import { CanvasAudioTemplateParameterComparison } from './CanvasAudioTemplateParameterComparison';
+import { captureCanvasAudioWorkflowTemplate, type CanvasAudioTemplateParameters, type CanvasAudioWorkflowTemplateRef } from './canvasAudioWorkflowTemplate';
 
 export type CanvasAudioWorkflowTemplatePanelProps = {
+  currentParameters?: CanvasAudioTemplateParameters;
   owner?: StudioGraphDraftOwner; ownerToken: object; current: boolean; busy: boolean; canApply: boolean;
   isCurrent: () => boolean;
   list: () => Promise<StudioGraphRecord[]>;
@@ -24,6 +26,12 @@ const source = (raw: StudioGraphRecord): Source => {
   const saved = snapshot(raw);
   return { raw, snapshot: saved, record: JSON.parse(saved) as StudioGraphRecord };
 };
+const currentParameterSnapshot = (value: CanvasAudioTemplateParameters | undefined) => {
+  if (value === undefined) return '';
+  try { return snapshot(Object.fromEntries(['in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms']
+    .filter(key => Object.hasOwn(value, key)).map(key => [key, value[key as keyof CanvasAudioTemplateParameters]]))); }
+  catch { return 'INVALID'; }
+};
 const unmodified = (value: Source) => snapshot(value.raw) === value.snapshot;
 const samePin = (a: StudioGraphRecord, b: StudioGraphRecord) => a.id === b.id && a.version === b.version
   && a.definition_digest === b.definition_digest && a.execution_digest === b.execution_digest;
@@ -35,7 +43,7 @@ export function CanvasAudioWorkflowTemplatePanel(props: CanvasAudioWorkflowTempl
   const alive = useRef(true), live = useRef(props), ticket = useRef(0), active = useRef<object>();
   const consent = useRef<Choice>(), listRef = useRef<SavedList>(), loadedRef = useRef<Loaded>(), choiceRef = useRef<Choice>(); live.current = props;
   const values = [props.owner && studioGraphDraftKey(props.owner), props.ownerToken, props.current, props.busy, props.canApply,
-    props.isCurrent, props.list, props.read, props.onApply];
+    props.isCurrent, props.list, props.read, props.onApply, currentParameterSnapshot(props.currentParameters)];
   const fence = useRef({ values, token: {}, retired: false });
   if (values.some((value, i) => !Object.is(value, fence.current.values[i]))) {
     fence.current.retired = true;
@@ -46,7 +54,7 @@ export function CanvasAudioWorkflowTemplatePanel(props: CanvasAudioWorkflowTempl
     if (!alive.current || fence.current.token !== token || fence.current.retired) return false;
     const p = live.current;
     let valid = false;
-    try { valid = !!p.owner && studioGraphDraftKey(p.owner) === values[0] && p.current && !p.busy && p.canApply && p.isCurrent(); } catch { /* Fail closed on a retired client. */ }
+    try { valid = !!p.owner && studioGraphDraftKey(p.owner) === values[0] && p.current && !p.busy && p.canApply && currentParameterSnapshot(p.currentParameters) === values[9] && p.isCurrent(); } catch { /* Fail closed on a retired client. */ }
     if (!valid) fence.current.retired = true;
     return valid;
   }
@@ -129,7 +137,7 @@ export function CanvasAudioWorkflowTemplatePanel(props: CanvasAudioWorkflowTempl
   }
   return <section aria-label="本次音频卡片任务模板">
     <h4>使用已保存工作流的音频截取参数</h4>
-    <p>从原工作流编辑器保存的媒体图读取模板。只把 in_ms 与 out_ms 复制到本次音频卡片任务；增益与淡入淡出仍在本次任务中单独编辑。修改共享模板请返回原工作流编辑器。</p>
+    <p>从原工作流编辑器保存的媒体图读取模板。只复制该版本明确提供的截取、增益与淡入淡出参数到本次音频卡片任务；模板未提供的效果字段保留本次设置。修改共享模板请返回原工作流编辑器。</p>
     <p>应用只准备任务草稿。排队、执行和正式结果审核仍需在原任务流程中分别确认。</p>
     {!eligible && <StatusMessage>当前项目实例、身份或原卡片任务不可用，请重新建立任务后读取模板。</StatusMessage>}
     <Button disabled={!eligible || pending} loading={pending} onClick={() => void refresh()}>读取已保存工作流</Button>
@@ -145,13 +153,16 @@ export function CanvasAudioWorkflowTemplatePanel(props: CanvasAudioWorkflowTempl
     </select></label>}
     {visibleChoice && <div>
       <p>原图 {visibleChoice.reference.graph_id} · v{visibleChoice.reference.graph_version} · 节点 {visibleChoice.reference.node_id}</p>
-      <p>截取区间：{visibleChoice.reference.parameters.in_ms}–{visibleChoice.reference.parameters.out_ms} ms。影响范围：只覆盖本次任务的开始与结束时间。</p>
+      <p>截取区间：{visibleChoice.reference.parameters.in_ms}–{visibleChoice.reference.parameters.out_ms} ms。影响范围：只覆盖本次任务中模板明确提供的字段，其他设置保持。</p>
+      <CanvasAudioTemplateParameterComparison source={visibleChoice.reference.parameters} current={props.currentParameters} />
+      <p>复制后仍须通过原任务预览核验；本次修改不会改变共享模板或已排队任务。</p>
       <p style={{ overflowWrap: 'anywhere' }}>定义摘要：<code>{visibleChoice.reference.definition_digest}</code><br />执行摘要：<code>{visibleChoice.reference.execution_digest}</code></p>
       <label><input type="checkbox" checked={consent.current === visibleChoice} disabled={!eligible || pending} onChange={event => {
         if (!current() || active.current || choiceRef.current !== visibleChoice) return;
         if (!unmodified(visibleChoice.loaded.source)) { clearLoaded(); setError('原图数据已变化，请重新读取并确认。'); return; }
         consent.current = event.target.checked ? visibleChoice : undefined; rerender(value => value + 1);
-      }} />确认把此版本截取区间复制到本次音频卡片任务</label>
+      }} />{['gain_db', 'fade_in_ms', 'fade_out_ms'].some(key => Object.hasOwn(visibleChoice.reference.parameters, key))
+        ? '确认把此版本截取与效果参数复制到本次音频卡片任务' : '确认把此版本截取区间复制到本次音频卡片任务'}</label>
       <Button disabled={!eligible || pending || consent.current !== visibleChoice} onClick={() => void apply()}>核对原图并应用到本次任务</Button>
     </div>}
     {applied && <StatusMessage tone="success">已准备本次任务参数副本；原工作流模板保持原版本。请核对任务预览后再排队。</StatusMessage>}

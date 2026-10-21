@@ -128,3 +128,29 @@ it('shows list and read failures without inventing a latest snapshot or automati
   p.read.mockResolvedValue(invalid); fireEvent.change(screen.getByLabelText('已保存工作流'), { target: { value: templateGraph().id } }); await screen.findByText(/没有可用的音频截取节点/);
   expect(p.onApply).not.toHaveBeenCalled();
 });
+
+it('shows supported source effects and only forwards an immutable input copy after its explicit confirmation',async()=>{
+ const p=props(),graph=templateGraph();Object.assign(graph.definition.nodes[1].parameters.parameters!,{gain_db:-6,fade_in_ms:100,fade_out_ms:200});p.list.mockResolvedValue([graph]);p.read.mockResolvedValue(graph);
+ render(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={{in_ms:0,out_ms:1000,gain_db:-3,fade_in_ms:50,fade_out_ms:50}}/>);await choose();
+ expect(screen.getByRole('table',{name:'模板参数与本次任务对照'})).toBeTruthy();expect(screen.getByText('-6 dB（本次覆盖）')).toBeTruthy();
+ fireEvent.click(applyButton());expect(p.onApply).not.toHaveBeenCalled();fireEvent.click(screen.getByLabelText('确认把此版本截取与效果参数复制到本次音频卡片任务'));fireEvent.click(applyButton());
+ await waitFor(()=>expect(p.onApply).toHaveBeenCalledTimes(1));expect(p.onApply.mock.calls[0][0].parameters).toEqual({in_ms:100,out_ms:900,gain_db:-6,fade_in_ms:100,fade_out_ms:200});expect(Object.isFrozen(p.onApply.mock.calls[0][0].parameters)).toBe(true);
+});
+it('keeps legacy interval confirmation and declares absent effect values preserved',async()=>{
+ const p=props();render(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={{in_ms:0,out_ms:1000,gain_db:-3,fade_in_ms:50}}/>);await choose();
+ expect(screen.getAllByText('保留本次设置')).toHaveLength(3);expect(screen.getByLabelText('确认把此版本截取区间复制到本次音频卡片任务')).toBeTruthy();approve();fireEvent.click(applyButton());
+ await waitFor(()=>expect(p.onApply).toHaveBeenCalledTimes(1));expect(p.onApply.mock.calls[0][0].parameters).toEqual({in_ms:100,out_ms:900});
+});
+it('retires a copied-source consent when task parameter values change then return through rerenders',async()=>{
+ const p=props(),current={in_ms:0,out_ms:1000,gain_db:-3},view=render(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={current}/>);await choose();approve();const retained=handler(applyButton());
+ view.rerender(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={{...current,gain_db:-6}}/>);view.rerender(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={{...current}}/>);
+ await act(async()=>retained());expect(p.onApply).not.toHaveBeenCalled();
+});
+it('latches an in-place task parameter ABA observed by a captured apply without rerender',async()=>{
+ const p=props(),current={in_ms:0,out_ms:1000,gain_db:-3};render(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={current}/>);await choose();approve();const retained=handler(applyButton());
+ current.gain_db=-6;await act(async()=>retained());current.gain_db=-3;await act(async()=>retained());expect(p.onApply).not.toHaveBeenCalled();expect(p.read).toHaveBeenCalledTimes(1);
+});
+it('does not retire consent for a detached equal-valued current parameter object',async()=>{
+ const p=props(),current={in_ms:0,out_ms:1000,gain_db:-3},view=render(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={current}/>);await choose();approve();view.rerender(<CanvasAudioWorkflowTemplatePanel {...p} currentParameters={{...current}}/>);
+ fireEvent.click(applyButton());await waitFor(()=>expect(p.onApply).toHaveBeenCalledTimes(1));
+});

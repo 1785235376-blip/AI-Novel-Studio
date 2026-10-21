@@ -2,6 +2,8 @@ import { checkedStudioGraphDraft } from '../studioGraphClient';
 import { graphDraftIncarnation, type StudioGraphDraftOwner } from '../studioGraphLocalDraft';
 import type { StudioGraphRecord } from '../studioGraphTypes';
 
+export type CanvasAudioTemplateParameters = Readonly<{ in_ms: number; out_ms: number; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number }>;
+
 /** A parameter copy for one card task. The original Graph remains the template owner. */
 export type CanvasAudioWorkflowTemplateRef = Readonly<{
   contract: 'studio-canvas-audio-template/1';
@@ -10,7 +12,7 @@ export type CanvasAudioWorkflowTemplateRef = Readonly<{
   definition_digest: string;
   execution_digest: string;
   node_id: string;
-  parameters: Readonly<{ in_ms: number; out_ms: number }>;
+  parameters: CanvasAudioTemplateParameters;
 }>;
 
 const name = (value: unknown): value is string => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}$/.test(value);
@@ -60,12 +62,24 @@ export function captureCanvasAudioWorkflowTemplate(graph: StudioGraphRecord, nod
     throw new Error('该节点不是可用的本地音频截取模板。');
   }
   const values = node.parameters.parameters;
-  if (!values || Object.keys(values).some(key => key !== 'in_ms' && key !== 'out_ms')
-    || !Number.isSafeInteger(values.in_ms) || !Number.isSafeInteger(values.out_ms)) {
-    throw new Error('原图模板仅支持已保存的 in_ms 与 out_ms。');
+  if (!values || Object.keys(values).some(key => !['in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms'].includes(key))
+    || !Number.isSafeInteger(values.in_ms) || !Number.isSafeInteger(values.out_ms)
+    || (values.in_ms as number) < 0 || (values.out_ms as number) > 600000
+    || (values.out_ms as number) <= (values.in_ms as number) || (values.out_ms as number) - (values.in_ms as number) > 120000
+    || Object.hasOwn(values, 'gain_db') && (typeof values.gain_db !== 'number' || !Number.isFinite(values.gain_db) || values.gain_db < -60 || values.gain_db > 12)
+    || ['fade_in_ms', 'fade_out_ms'].some(key => Object.hasOwn(values, key) && (typeof values[key] !== 'number'
+      || !Number.isSafeInteger(values[key]) || (values[key] as number) < 0 || (values[key] as number) > 120000))
+    || ((values.fade_in_ms as number | undefined) ?? 0) + ((values.fade_out_ms as number | undefined) ?? 0) > (values.out_ms as number) - (values.in_ms as number)) {
+    throw new Error('原图模板的截取、增益或淡化参数不受支持，请重新读取已保存版本。');
   }
+  const parameters: { in_ms: number; out_ms: number; gain_db?: number; fade_in_ms?: number; fade_out_ms?: number } = {
+    in_ms: values.in_ms as number, out_ms: values.out_ms as number,
+    ...(Object.hasOwn(values, 'gain_db') ? { gain_db: values.gain_db as number } : {}),
+    ...(Object.hasOwn(values, 'fade_in_ms') ? { fade_in_ms: values.fade_in_ms as number } : {}),
+    ...(Object.hasOwn(values, 'fade_out_ms') ? { fade_out_ms: values.fade_out_ms as number } : {}),
+  };
   return Object.freeze({ contract: 'studio-canvas-audio-template/1' as const,
     graph_id: graph.id, graph_version: graph.version, definition_digest: graph.definition_digest,
     execution_digest: graph.execution_digest, node_id: nodeId,
-    parameters: Object.freeze({ in_ms: values.in_ms as number, out_ms: values.out_ms as number }) });
+    parameters: Object.freeze(parameters) });
 }

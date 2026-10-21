@@ -30,7 +30,7 @@ it('allows a matching collaboration scope with the original actor workspace', ()
   expect(capture(graph, 'trim', owner).node_id).toBe('trim');
   expect(() => capture(graph, 'trim', { ...owner, branchId: 'foreign' })).toThrow();
 });
-it.each(['schema2', 'schema4', 'missing-node', 'node-name', 'disabled', 'wrong-kind', 'wrong-operation', 'provider', 'model', 'cloud', 'prompt', 'gain', 'fades', 'extra', 'null-extra', 'missing-in', 'null-out', 'bool-in', 'fraction', 'negative', 'reversed', 'duration', 'absolute-range', 'duplicate-node', 'edge', 'cycle', 'missing-reference', 'stale-source', 'unavailable-source', 'duplicate-reference', 'unknown-reference', 'readonly', 'project', 'scope', 'local-branch', 'version', 'definition-digest', 'execution-digest', 'graph-id', 'incarnation', 'actor', 'owner-branch', 'owner-workspace'])('refuses %s through the original closed Graph and owner contracts', mode => {
+it.each(['schema2', 'schema4', 'missing-node', 'node-name', 'disabled', 'wrong-kind', 'wrong-operation', 'provider', 'model', 'cloud', 'prompt', 'gain-low', 'fade-too-long', 'extra', 'null-extra', 'missing-in', 'null-out', 'bool-in', 'fraction', 'negative', 'reversed', 'duration', 'absolute-range', 'duplicate-node', 'edge', 'cycle', 'missing-reference', 'stale-source', 'unavailable-source', 'duplicate-reference', 'unknown-reference', 'readonly', 'project', 'scope', 'local-branch', 'version', 'definition-digest', 'execution-digest', 'graph-id', 'incarnation', 'actor', 'owner-branch', 'owner-workspace'])('refuses %s through the original closed Graph and owner contracts', mode => {
   const graph = templateGraph(), owner = { ...templateOwner }, node = graph.definition.nodes[1], values = node.parameters.parameters!;
   let nodeId = 'trim';
   switch (mode) {
@@ -45,8 +45,8 @@ it.each(['schema2', 'schema4', 'missing-node', 'node-name', 'disabled', 'wrong-k
     case 'model': node.parameters.model_id = 'model'; break;
     case 'cloud': node.parameters.allow_cloud = true; break;
     case 'prompt': node.parameters.prompt = 'generate'; break;
-    case 'gain': values.gain_db = -6; break;
-    case 'fades': values.fade_in_ms = 20; break;
+    case 'gain-low': values.gain_db = -61; break;
+    case 'fade-too-long': values.fade_in_ms = 801; break;
     case 'extra': (node.parameters as any).secret = 'unsupported'; break;
     case 'null-extra': values.gain_db = null; break;
     case 'missing-in': delete values.in_ms; break;
@@ -79,4 +79,23 @@ it.each(['schema2', 'schema4', 'missing-node', 'node-name', 'disabled', 'wrong-k
     case 'owner-workspace': owner.actorWorkspaceId = 'foreign'; break;
   }
   expect(() => capture(graph, nodeId, owner)).toThrow();
+});
+
+it.each([
+  {gain_db:0}, {gain_db:-60}, {gain_db:12}, {fade_in_ms:0,fade_out_ms:0},
+  {gain_db:-6,fade_in_ms:100,fade_out_ms:200}, {fade_in_ms:800},
+])('captures real optional effects without injecting absent fields: %j', effects => {
+  const graph=templateGraph();Object.assign(graph.definition.nodes[1].parameters.parameters!,effects);
+  const before=JSON.stringify(graph),result=capture(frozen(graph));
+  expect(result.parameters).toEqual({in_ms:100,out_ms:900,...effects});expect(Object.isFrozen(result.parameters)).toBe(true);expect(JSON.stringify(graph)).toBe(before);
+  for(const key of ['gain_db','fade_in_ms','fade_out_ms'])expect(Object.hasOwn(result.parameters,key)).toBe(Object.hasOwn(effects,key));
+});
+it.each([
+  {gain_db:null},{gain_db:true},{gain_db:NaN},{gain_db:Infinity},{gain_db:12.01},{gain_db:-60.01},
+  {fade_in_ms:null},{fade_in_ms:false},{fade_in_ms:0.5},{fade_in_ms:-1},{fade_in_ms:120001},
+  {fade_out_ms:NaN},{fade_out_ms:Infinity},{fade_out_ms:801},{fade_in_ms:500,fade_out_ms:301},
+  {sample_rate:48000},{channels:2},{output_format:'FLAC'},
+])('rejects unsupported or invalid effects through the original parser: %j', effects => {
+  const graph=templateGraph();Object.assign(graph.definition.nodes[1].parameters.parameters!,effects);
+  expect(()=>capture(graph)).toThrow();
 });
