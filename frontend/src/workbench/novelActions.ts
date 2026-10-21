@@ -8,7 +8,7 @@ import type {ActionRegistry} from './actions';
 
 /** FeatureLauncher / Panel ids that belong to the novel authoring surface. */
 export const NOVEL_PANEL_IDS = [
-  'history', 'creation', 'story', 'check', 'overview', 'workflow',
+  'write', 'history', 'creation', 'story', 'check', 'overview', 'workflow',
   'adaptation', 'screenplay', 'knowledge', 'research', 'agents', 'exports',
 ] as const;
 export type NovelPanelId = (typeof NOVEL_PANEL_IDS)[number];
@@ -27,7 +27,8 @@ export function registerNovelActionAliases(
     {id: 'novel.open.creationWorkbench', label: '打开：创作方案与工作台', panel: 'creation'},
     {id: 'novel.open.storyDatabase', label: '打开：故事资料库（大纲/角色/设定）', panel: 'story'},
     {id: 'novel.open.continuityCheck', label: '打开：一致性检查', panel: 'check'},
-    {id: 'novel.open.aiWritingSurface', label: '回到小说写作区（正文 + AI 写作）', panel: 'history'},
+    {id: 'novel.open.writingShell', label: '回到纯写作主面', panel: 'write'},
+    {id: 'novel.open.aiWritingSurface', label: '回到小说写作区（正文 + AI 写作）', panel: 'write'},
   ];
   for (const a of aliases) {
     undo.push(actions.register({

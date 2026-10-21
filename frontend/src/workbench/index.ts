@@ -2,3 +2,4 @@
 export * from './lifecycle'; export * from './actions'; export * from './panels'; export * from './layout';
 export {registerFeaturePanels} from './featureBridge'; export {registerDemoExtension, DEMO_PANEL_ID} from './demoExtension';
 export {isNovelPanel, NOVEL_PANEL_IDS, registerNovelActionAliases} from './novelActions';
+export {bindRestoreConfirmation, gateRestore, syncRestoreLifecycle, restoreLifecycleContext} from './revisionRestore';

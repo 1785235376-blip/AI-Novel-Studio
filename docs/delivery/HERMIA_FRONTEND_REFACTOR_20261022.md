@@ -127,3 +127,11 @@
 - 门禁：`vitest run src/workbench` → 15/15 PASS；`tsc -b` PASS。
 - 浏览器 E2E（hermia-workbench）因首页恢复/中断未计本夜正式 PASS；H-P0-02 恢复链代码路径在小说章节 `history` 面板，待补跑。
 - 未 push；未改 Vera 原型 / Lumen 文档。
+
+## § Atlas 0.2 slice · N-P0-02 / H-P0-02 / W-P0-03（本机）
+
+- **N-P0-02：** 冷启动 `panel=write`；小说中区不嵌媒体/NLE；`editor`→`write`。
+- **H-P0-02：** `revisionRestore` 绑定 lifecycle + 章节 CAS 字段；`ScopedRevisionHistory` 恢复前后 gate。
+- **W-P0-03：** ModuleSwitcher `NOVEL→IMAGE→VIDEO→AUDIO→EDIT→ASSETS`（+CONTROL/PLUGIN/WORKFLOW）；EDIT→NLE 壳；台账 `/workspace/hr/WORKSPACE_FE_INVENTORY.md`。
+- **不 push。**
+

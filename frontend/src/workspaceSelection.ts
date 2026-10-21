@@ -29,7 +29,7 @@ export function rememberLocalWorkspaceSelection(projectId: string, storage?: Pic
  * It is deliberately independent of the original workspace-selection schema.
  */
 const studioKey = 'studio.studio-selection.v1:local-author:file';
-export type LocalStudioModule = 'IMAGE' | 'ASSETS' | 'VIDEO' | 'AUDIO';
+export type LocalStudioModule = 'IMAGE' | 'ASSETS' | 'VIDEO' | 'AUDIO' | 'EDIT';
 type StudioSelection = {
   schema: 1; mode: 'local'; actor: 'local-author'; project_id: string;
   module: LocalStudioModule; asset_id?: string;
@@ -38,7 +38,7 @@ export type StudioSelectionRead = { state: 'EMPTY' | 'INVALID' | 'UNAVAILABLE' }
   | { state: 'SAVED'; projectId: string; module: LocalStudioModule; assetId?: string };
 const validStudioId = (value: unknown): value is string => validId(value) && !!value.trim() && !/[\u0000-\u001f\u007f]/.test(value);
 const validStudioModule = (value: unknown): value is LocalStudioModule =>
-  value === 'IMAGE' || value === 'ASSETS' || value === 'VIDEO' || value === 'AUDIO';
+  value === 'IMAGE' || value === 'ASSETS' || value === 'VIDEO' || value === 'AUDIO' || value === 'EDIT';
 const studioFields = ['schema', 'mode', 'actor', 'project_id', 'module', 'asset_id'];
 
 export function readLocalStudioSelection(projectId: string, storage?: Pick<Storage, 'getItem'>): StudioSelectionRead {

@@ -57,7 +57,7 @@ describe('approved optional ContextBar project noun', () => {
     act(() => root.render(<AppShell {...shellProps} module={module} />));
     expect(host.querySelector('.context-bar')?.textContent).toBe('创作空间：创作空间/小说：现有小说/故事线：主线/创作分支：当前草稿');
     expect([...host.querySelectorAll('[data-module-tab]')].map(tab => tab.getAttribute('data-module-tab')))
-      .toEqual(['NOVEL', 'IMAGE', 'VIDEO', 'ASSETS', 'AUDIO', 'CONTROL', 'PLUGIN', 'WORKFLOW']);
+      .toEqual(['NOVEL', 'IMAGE', 'VIDEO', 'AUDIO', 'EDIT', 'ASSETS']);
   });
 
   it('changes only the project noun when explicitly selected through AppShell', () => {

@@ -63,7 +63,7 @@ import { createStudioEntryClient } from '../onboarding/studioEntryClient';
 import { useStudioEntry } from '../onboarding/useStudioEntry';
 import './independentStudio.css';
 
-export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO'].includes(module);
+export const isManualStudioModule = (module: StudioModule): module is LocalStudioModule => ['IMAGE', 'ASSETS', 'VIDEO', 'AUDIO', 'EDIT'].includes(module);
 let studioObserver = 0;
 const signature = (projectId: string, context: CollaborationContext) => JSON.stringify([projectId, context.sessionToken, context.actor?.id, context.actor?.workspaceId, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
 function lineageAsset(asset: Asset): LineageAsset {
@@ -123,7 +123,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [pendingDeclaration, setPendingDeclaration] = useState<StudioAsset>(), [lineageDirty, setLineageDirty] = useState(false), [relationshipDirty, setRelationshipDirty] = useState(false), [formRevision, setFormRevision] = useState(0), [storage, setStorage] = useState<StudioStorage>();
   const [resume] = useState(() => !context.scope && !context.sessionToken && !context.actor
     ? readLocalStudioResume(projectId) : { state: 'EMPTY' as const });
-  const [workspaceView, setWorkspaceView] = useState<StudioWorkspaceView>(resume.state === 'SAVED' ? resume.location.view : 'ASSETS');
+  const [workspaceView, setWorkspaceView] = useState<StudioWorkspaceView>(resume.state === 'SAVED' ? resume.location.view : (module === 'EDIT' ? 'PRODUCTION' : 'ASSETS')); // [HERMIA-FE-20261022] EDIT cold → 制作操作/时间线
   const defaultCanvasChosen=useRef(resume.state==='SAVED');
   useEffect(()=>{
     if(defaultCanvasChosen.current||!overview)return;

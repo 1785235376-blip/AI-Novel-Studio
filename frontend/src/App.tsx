@@ -94,6 +94,8 @@ import { FeatureLauncher } from "./ui/FeatureLauncher";
 // [HERMIA-FE-20261022 M1-2] shared action/panel registry + command search
 import { useWorkbench } from "./workbench/useWorkbench";
 import { isNovelPanel } from "./workbench/novelActions";
+import { LifecycleTracker } from "./workbench/lifecycle";
+import { bindRestoreConfirmation, gateRestore, syncRestoreLifecycle } from "./workbench/revisionRestore";
 import { CommandSearch } from "./workbench/CommandSearch";
 import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
 import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
@@ -272,7 +274,7 @@ export default function App() {
     [saveState, setSaveState] = useState<SaveState>("saved"),
     [shellMessage, setShellMessage] = useState(""),
     [reorderingChapters, setReorderingChapters] = useState(false),
-    [panel, setPanel] = useState("history"),
+    [panel, setPanel] = useState("write"), // [HERMIA-FE-20261022] N-P0-02 cold start = pure Editor shell (not history)
     [conflict, setConflict] = useState<PersistentConflict>(),
     [tool, setTool] = useState("continue"),
     [instruction, setInstruction] = useState(""),
@@ -1536,7 +1538,7 @@ export default function App() {
         if (!current()) return;
         if (!safeBuffer()) { setShellMessage('核对搜索来源期间出现新输入，已保留草稿；请保存后再次打开。'); return; }
         const feature = target.feature || target.id;
-        const safePanels = new Set(['audiobook', 'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
+        const safePanels = new Set(['audiobook', 'overview', 'editor', 'write', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
         const experimental = EXPERIMENTAL_TABS.some(([key]) => key === feature);
         if (target.kind === 'feature' && !safePanels.has(feature)
           && !(experimental && experimentalFlags.data?.features[`experimental.${feature}`] === true)) return;
@@ -1555,7 +1557,7 @@ export default function App() {
         } else if (experimental) { setExperimentalTab(feature); setPanel('experimental'); }
         else {
           if (feature === 'story' && target.record_kind) setStoryTarget({ namespace: origin.namespace, novelId: destination, requestId: workspaceTicket, id: target.id, record_kind: target.record_kind });
-          setPanel(feature === 'editor' ? 'history' : feature);
+          setPanel(feature === 'editor' ? 'write' : feature);
         }
         setShellMessage('已通过原项目与来源权限核对，打开另一作品的搜索结果。未执行或重新提交任何任务。');
       })().catch(() => { if (current()) setShellMessage('搜索目标当前不可读或版本已变，未切换作品。请刷新结果并重新核对；当前草稿已保留。'); });
@@ -1646,8 +1648,8 @@ export default function App() {
       setExperimentalTab(feature); setPanel('experimental'); return;
     }
     if (feature === 'story' && target.record_kind) setStoryTarget({ namespace, novelId: s.novelId, requestId: workspaceTicket, id: target.id, record_kind: target.record_kind });
-    const safePanels = new Set(['audiobook', 'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
-    if (safePanels.has(feature)) setPanel(feature === 'editor' ? 'history' : feature);
+    const safePanels = new Set(['audiobook', 'overview', 'editor', 'write', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
+    if (safePanels.has(feature)) setPanel(feature === 'editor' ? 'write' : feature);
   }
   const openWorkspaceSearch = workspaceTools ? () => styleLeave.request(current => {
     if (!current()) return;
@@ -1952,6 +1954,15 @@ function Panel({
         <p className="notice">进入团队创作空间后可查看成员、权限和协作记录。</p>
       </section>
     );
+  // [HERMIA-FE-20261022 N-P0-02] Pure writing shell: no RevisionPanel, no media/canvas in novel center.
+  if (type === "write")
+    return (
+      <section className="panel" aria-label="写作下一步">
+        <h2>下一步</h2>
+        <p className="notice">在左侧选择或新建章节，在中间继续写作。AI 写作在检查器旁路；版本历史、故事资料与一致性检查从功能导航打开。</p>
+        <p className="notice">本区不嵌入图片 / 视频 / 剪辑画布（多工作区并列，媒体不进小说中区）。</p>
+      </section>
+    );
   if (type === "history")
     return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
   if (type === "story" && taskTarget?.authority === "world_rule") return <WorldRulesPanel novelId={novelId} requestedRuleId={taskTarget.id} />;
@@ -2247,13 +2258,14 @@ function ScopedRevisionHistory({ chapter, scope, onRestored, context, observerId
   const epoch = useRef(0);
   const mounted = useRef(true);
   const restorePending = useRef(false);
+  const restoreLife = useRef(new LifecycleTracker()); // [HERMIA-FE-20261022 H-P0-02]
   useLayoutEffect(() => {
     mounted.current = true;
     let observed = revisionStoreIdentity(useStudio.getState());
     // Invalidates even an A→B→A change batched into one React render.
     const unsubscribe = useStudio.subscribe(state => {
       const next = revisionStoreIdentity(state);
-      if (next !== observed) { observed = next; epoch.current += 1; }
+      if (next !== observed) { observed = next; epoch.current += 1; restoreLife.current.invalidate(); }
     });
     // StrictMode replays setup/cleanup while React Query reuses its pending
     // promise. Only identity changes advance the authority epoch; a genuine
@@ -2325,14 +2337,23 @@ function ScopedRevisionHistory({ chapter, scope, onRestored, context, observerId
       detailError={detail.error ? String(detail.error) : null}
       onSelectRevision={setSelected}
       onRestore={async (request) => {
+        // [HERMIA-FE-20261022 H-P0-02] Chapter-scoped confirm + lifecycle epoch (A→B→A safe).
+        const target = {novelId: chapter.novel_id, chapterId: chapter.id, revisionVersion: request.revisionVersion, expectedCurrentVersion: request.expectedCurrentVersion};
+        const token = syncRestoreLifecycle(restoreLife.current, target);
+        const binding = bindRestoreConfirmation(token, target);
         const ticket = epoch.current;
         if (!current(ticket) || restorePending.current) return;
+        const gate = gateRestore(binding, restoreLife.current, target);
+        if (!gate.ok) throw { kind: "error", message: gate.reason };
         restorePending.current = true;
         try {
           const restored = await api.restore(
             chapter.id, request.revisionVersion, request.expectedCurrentVersion, context,
           );
           if (!current(ticket)) return;
+          // Late result: re-gate after await (chapter/project may have switched).
+          const late = gateRestore(binding, restoreLife.current, target);
+          if (!late.ok || !current(ticket)) return;
           if (restored.id !== chapter.id || restored.novel_id !== chapter.novel_id)
             throw new Error("恢复结果与当前章节不一致，请刷新后检查。");
           onRestored(restored);

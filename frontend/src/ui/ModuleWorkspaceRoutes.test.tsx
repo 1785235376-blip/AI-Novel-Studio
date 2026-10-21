@@ -13,14 +13,22 @@ afterEach(()=>host?.remove());
 describe('ModuleWorkspaceRoutes',()=>{
   it('exposes media Provider configuration directly from the control workspace',async()=>{vi.spyOn(api,'assetProviders').mockResolvedValue({items:[]} as any);vi.spyOn(api,'videoProviders').mockResolvedValue({items:[]} as any);host=document.createElement('div');document.body.append(host);const root=createRoot(host);await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));const tab=[...host.querySelectorAll('button')].find(button=>button.textContent==='媒体 Provider')!;await act(async()=>{tab.click();await Promise.resolve()});expect(host.textContent).toContain('媒体 Provider');expect(host.querySelector('.media-provider-settings')).toBeTruthy();act(()=>root.unmount())});
   it('keeps the registered modules and renders the video workspace shell',()=>{
-    expect(STUDIO_MODULES.map((item)=>item.id)).toEqual(['NOVEL','IMAGE','VIDEO','ASSETS','AUDIO','CONTROL','PLUGIN','WORKFLOW']);
+    expect(STUDIO_MODULES.map((item)=>item.id)).toEqual(['NOVEL','IMAGE','VIDEO','AUDIO','EDIT','ASSETS']);
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author"/>));
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('VIDEO');
     expect(host.textContent).toContain('视频');
     act(()=>root.unmount());
   });
-  it.each(['IMAGE','VIDEO','AUDIO','WORKFLOW','ASSETS'] as const)('does not mount %s project panels without a novel',module=>{
+  it('renders EDIT nle shell when novel is open',()=>{
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    act(()=>root.render(<ModuleWorkspaceRoutes module="EDIT" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
+    expect(host.textContent).toContain('剪辑');
+    expect(host.querySelector('.edit-nle-shell')||host.textContent?.includes('多轨剪辑')).toBeTruthy();
+    act(()=>root.unmount());
+  });
+  it.each(['IMAGE','VIDEO','AUDIO','EDIT','WORKFLOW','ASSETS'] as const)('does not mount %s project panels without a novel',module=>{
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module={module} onModuleChange={vi.fn()} scope={{workspace:'w',project:'',storyline:'s',branch:'b'}} actor="author"/>));
     expect(host.textContent).toContain('请先打开小说项目');

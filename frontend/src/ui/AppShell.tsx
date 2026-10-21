@@ -7,7 +7,7 @@ import {
   Search,
 } from "lucide-react";
 import { IconButton } from "./primitives";
-import { STUDIO_MODULES } from "./moduleRegistry";
+import { STUDIO_MODULES, STUDIO_MODULE_OVERFLOW } from "./moduleRegistry";
 import type { StudioModule } from "./moduleRegistry";
 import {
   mergeTaskSummaries,
@@ -43,9 +43,10 @@ export function ModuleSwitcher({
 }) {
   const moveFocus = (current: StudioModule, delta: number) => {
     const index = STUDIO_MODULES.findIndex((item) => item.id === current);
+    const base = index < 0 ? 0 : index;
     const next =
       STUDIO_MODULES[
-        (index + delta + STUDIO_MODULES.length) % STUDIO_MODULES.length
+        (base + delta + STUDIO_MODULES.length) % STUDIO_MODULES.length
       ];
     onChange(next.id);
     requestAnimationFrame(() =>
@@ -254,7 +255,8 @@ export function AppShell({
     requestAnimationFrame(() => commandTrigger.current?.focus());
   };
   const commandText = commandQuery.toLowerCase();
-  const commands = STUDIO_MODULES.filter(
+  // [HERMIA-FE-20261022] Chrome=6; CONTROL/PLUGIN/WORKFLOW still command-reachable (Lumen §4).
+  const commands = [...STUDIO_MODULES, ...STUDIO_MODULE_OVERFLOW].filter(
     (item) =>
       item.label.toLowerCase().includes(commandText) ||
       item.id.toLowerCase().includes(commandText),

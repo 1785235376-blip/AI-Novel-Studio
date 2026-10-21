@@ -25,10 +25,11 @@ import {ModelCenter} from './ModelCenter';
 import type {LocalAiOnboardingOwner} from './LocalAiDiscovery';
 import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
 import {EmptyState} from './primitives';
+import {TimelineWorkspacePanel} from '../nle/TimelineWorkspacePanel';
 
 type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
 interface Props {localAiOnboarding?:LocalAiOnboardingOwner; module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void;}
-const moduleLabels: Record<WorkspaceModule, string> = { IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
+const moduleLabels: Record<WorkspaceModule, string> = { IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', EDIT: '剪辑', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
 function WorkspaceRail({ module }: { module: WorkspaceModule }) {
   return <nav className="workspace-rail" aria-label={`${moduleLabels[module]}工作区导航`}><div className="workspace-rail__eyebrow">当前工作区</div><strong>{moduleLabels[module]}</strong><button className="is-active" aria-current="page">工作区概览</button><button disabled title="最近编辑尚未开放">最近编辑</button><button disabled title="待处理任务尚未开放">待处理任务</button><div className="workspace-rail__future"><span>预留入口</span><small>AI Copilot</small><small>Provider 状态</small><small>审批队列</small></div></nav>;
 }
@@ -37,6 +38,7 @@ function WorkspaceInspector({ module, novelId }: { module: WorkspaceModule; nove
     IMAGE: { focus: '参考图、构图与一致性约束', slot: '预留：图片任务 / 资产预览' },
     VIDEO: { focus: '当前镜头、转场与时间线轨道', slot: '预留：Motion Task / 视频预览' },
     AUDIO: { focus: '声音档案、对白与配音批次', slot: '预留：音频波形 / Provider 任务' },
+    EDIT: { focus: '多轨时间线、片段剪辑与交付', slot: 'NLE TimelineWorkspace / StudioTimelineEditor' },
     CONTROL: { focus: '模型、Provider、凭据与路由策略', slot: '预留：主控对话 / 模型诊断' },
     PLUGIN: { focus: '插件能力与运行权限', slot: '预留：插件详情 / 权限审批' },
     WORKFLOW: { focus: 'Job 队列与执行状态', slot: '预留：运行时间线 / 重试操作' },
@@ -50,6 +52,19 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange,localAiO
   useEffect(()=>{onSurfaceChange?.(tab==='models'?'model-center':'settings')},[tab,onSurfaceChange]);
   return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<>{interopSettings}<AiControlCenter/></>:tab==='models'?<ModelCenter onboarding={localAiOnboarding}/>:<MediaProviderSettings/>}</div>;
 }
+
+/** [HERMIA-FE-20261022] EDIT module shell: mounts NLE TimelineWorkspacePanel (read-only empty timeline).
+ * Full mutate path remains IndependentStudioWorkspace → StudioTimelineEditor when independentStudios is on.
+ * Novel center must NOT embed this canvas (Atlas §0.2). */
+const EMPTY_EDIT_TIMELINE = {duration_ms: 5000, width: 1280, height: 720, fps: 24, tracks: [] as unknown[], captions: [] as unknown[]};
+function EditNleShell({novelId}:{novelId:string}){
+  return <div className="edit-nle-shell" aria-label="剪辑工作区">
+    <p className="notice">剪辑模块（EDIT）· NLE 时间线工作区。完整可写时间线在独立工作室制作操作中打开；此处为模块入口与只读壳，不写入、不嵌入小说中区。</p>
+    <TimelineWorkspacePanel projectId={novelId} identity={`edit-shell:${novelId}`} timeline={EMPTY_EDIT_TIMELINE}
+      selectedClipIds={[]} playheadMs={0} viewStartMs={0} viewScale={1} editable={false}
+      onSelectClips={()=>{}} onPlayhead={()=>{}} onView={()=>{}} onEdit={()=>{}} />
+  </div>;
+}
 export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   const [workflowInspection,setWorkflowInspection]=useState<WorkflowInspection>();
@@ -62,6 +77,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
     case 'IMAGE': main=novelId?<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId}/><VisionAnalysisPanel novelId={novelId}/><ImageGenerationPanel novelId={novelId} onInspect={setImageInspection}/></>:<EmptyState title="请先打开小说项目" detail="图片画布、参考图约束和生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<><MultimodalDirectorWorkspace mode="video" novelId={novelId}/><ScreenplayPanel novelId={novelId} onInspect={setVideoInspection}/></>:<EmptyState title="请先打开小说项目" detail="视频导演台、剧本与镜头任务需要绑定到一个小说项目。"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<><AudioGenerationPanel novelId={novelId}/><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="音效、音乐、配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
+    case 'EDIT': main=novelId?<EditNleShell novelId={novelId}/>:<EmptyState title="请先打开小说项目" detail="剪辑时间线需要绑定到一个小说/项目。NLE 不嵌入小说中区（多工作区并列）。"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;

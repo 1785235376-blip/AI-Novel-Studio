@@ -114,7 +114,8 @@ describe('novel action aliases (H-P0-01 / N-P0-02)', () => {
     expect(await a.execute('novel.open.revisionHistory', c)).toEqual({status: 'done', value: 'history'});
     expect(await a.execute('novel.open.creationWorkbench', c)).toEqual({status: 'done', value: 'creation'});
     expect(await a.execute('novel.open.continuityCheck', c)).toEqual({status: 'done', value: 'check'});
-    expect(await a.execute('novel.open.aiWritingSurface', c)).toEqual({status: 'done', value: 'history'});
-    expect(opened).toEqual(['history', 'creation', 'check', 'history']);
+    expect(await a.execute('novel.open.aiWritingSurface', c)).toEqual({status: 'done', value: 'write'});
+    expect(await a.execute('novel.open.writingShell', c)).toEqual({status: 'done', value: 'write'});
+    expect(opened).toEqual(['history', 'creation', 'check', 'write', 'write']);
   });
 });
