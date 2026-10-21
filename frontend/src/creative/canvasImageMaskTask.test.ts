@@ -1,5 +1,5 @@
 import {afterEach,expect,it,vi} from 'vitest';
-import {assertCanvasImageTaskCommand,canvasImageTaskJobMatches,captureCanvasImageTask,replaceCanvasImageTaskResult} from './canvasImageTask';
+import {assertCanvasImageTaskCommand,canvasImageTaskJobMatches,canvasImageTaskSource,captureCanvasImageTask,replaceCanvasImageTaskResult} from './canvasImageTask';
 import {cutoutAssets,cutoutCommand,cutoutJob,cutoutHash,cutoutSources} from './studioCpuCutout.testFixtures';
 import {CUTOUT_WEBP_OUTPUT,CUTOUT_WEBP_PROFILE} from './studioCutoutContract';
 import pngFixture from './fixtures/cpuCutout.mounted.json';
@@ -62,7 +62,7 @@ it.each(['unreviewed','canvas CAS','canvas digest','deleted card','replaced sour
  const f=fixture();if(kind==='unreviewed')f.job.status='AWAITING_REVIEW';if(kind==='canvas CAS')f.canvas.version++;if(kind==='canvas digest')f.canvas.definition_digest='f'.repeat(64);if(kind==='deleted card')f.canvas.definition.cards=[];if(kind==='replaced source')f.canvas.definition.cards[0].asset!.version++;if(kind==='scope')f.canvas.scope={mode:'local',novel_id:'foreign'};if(kind==='incarnation')f.job.command!.canvas_return!.incarnation='file:11111111-1111-4111-8111-111111111111';if(kind==='result digest')f.result.sha256='f'.repeat(64);if(kind==='result version')f.result.version=1;if(kind==='result deleted')f.result.deleted_at='deleted';if(kind==='wrong project')f.job.novel_id='foreign';expect(()=>replaceCanvasImageTaskResult(f.origin,f.canvas,f.job,f.result)).toThrow();
 });
 it.each([['PNG',pngFixture],['WEBP',webpFixture]] as const)('accepts original captured %s preview and Jobs with a precise card binding through the real SDK',async(_profile,native)=>{
- const source=structuredClone(native.source) as StudioAsset,canvas=canvasFor(source),origin=captureCanvasImageTask(canvas,'source-card',source,incarnation),command={...structuredClone(native.command),canvas_return:origin.binding} as MediaCommand,task={source:command.source_snapshots[0],returnBinding:origin.binding,isCurrent:()=>true};
+ const source=structuredClone(native.source) as StudioAsset,canvas=canvasFor(source),origin=captureCanvasImageTask(canvas,'source-card',source,incarnation),command={...structuredClone(native.command),canvas_return:origin.binding} as MediaCommand,task={source:canvasImageTaskSource(source)!,returnBinding:origin.binding,isCurrent:()=>true};
  const reply=(value:unknown)=>vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,status:200,json:async()=>structuredClone(value)})));
  const client=studioProductionClient(source.novel_id,{sessionToken:''});const preview=structuredClone(native.preview) as any;preview.command.canvas_return=origin.binding;reply(preview);expect(await client.preview(command)).toEqual(preview);
  for(const actual of [native.queued,native.executed,native.approved]){const row=structuredClone(actual) as unknown as ProductionJob;row.command!.canvas_return=origin.binding;reply(row);const decoded=await client.get('image',row.id);expect(canvasImageTaskJobMatches(task,decoded)).toBe(true);}
