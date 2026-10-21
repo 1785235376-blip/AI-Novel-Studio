@@ -294,7 +294,10 @@ class _MediaCommandShape(ExecutionModel):
             elif (self.operation_id != 'm8.audio.trim' or self.allow_cloud or self.provider_id is not None
                     or self.model_id is not None or self.prompt or len(self.source_snapshots) != 1
                     or image_snapshot(origin) != image_snapshot(self.source_snapshots[0])
-                    or set(self.parameters.model_dump(exclude_none=True)) != {'in_ms', 'out_ms'}
+                    or not {'in_ms', 'out_ms'} <= set(self.parameters.model_dump(exclude_none=True))
+                    or set(self.parameters.model_dump(exclude_none=True)) - {'in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms'}
+                    or any(getattr(self.parameters, key) is None for key in
+                        self.parameters.model_fields_set & {'gain_db', 'fade_in_ms', 'fade_out_ms'})
                     or self.image_source is not None or self.image_references or self.mask_source is not None
                     or self.video_reference is not None or self.video_frames is not None or self.audio_profile is not None
                     or self.storyboard_shot is not None or self.storyboard_speech is not None):

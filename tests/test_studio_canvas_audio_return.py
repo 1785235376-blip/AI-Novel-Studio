@@ -299,7 +299,7 @@ def test_bad_or_stale_audio_return_preview_never_creates_job(audio_canvas, chang
     elif change == 'prompt': value['prompt'] = 'generation request'
     elif change == 'operation': value['operation_id'] = 'm8.audio.music'
     elif change == 'format': value['parameters']['output_format'] = 'FLAC'
-    elif change == 'gain': value['parameters']['gain_db'] = 0
+    elif change == 'sample-rate': value['parameters']['sample_rate'] = 48000
     from app.services import studio_timeline_export as native
     monkeypatch.setattr(native, 'run_guarded_process', lambda *a, **k: pytest.fail('preview cannot execute'))
     with pytest.raises((ValueError, StaleSourceError, FileNotFoundError)): preview(e, value)

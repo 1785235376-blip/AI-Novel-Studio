@@ -68,3 +68,12 @@ Git 注释标签 `v0.1.0-alpha` 是本项目早期公开工程源码快照的锚
 ### Saved video-card CPU trim
 
 Studio can edit one saved video card with the original Timeline owner: explicit apply, preview-bound create/execute confirmations, local FFmpeg processing, candidate playback/review, exact-card CAS adoption, reopen recovery and canvas history restore. The fixed output is silent H.264 MP4 at 640x360/25fps, on a 40ms input grid, up to 120 seconds; source audio is not preserved. This is CPU editing, not video generation or a complete node editor. Source-generated frontend software fixtures are separate from the Python synthetic-video native FFmpeg test. Real model/GPU, external providers, PostgreSQL and live desktop Host E2E are not certified by this increment.
+
+
+### 双画布：源音轨、音频效果与历史差异
+
+已保存的视频卡片截取可明确选择保留所选范围内的**第一条源音轨**，经原 Timeline/FFmpeg 重新编码为 AAC；这不是无损复制，也不保留全部音轨。省略选项保持原静音行为，源视频没有音轨却要求保留时拒绝执行。音频卡片可编辑有界增益和线性淡入/淡出，输出仍为 48 kHz、双声道 PCM16 WAV；省略与明确 0 保持区分。修改后须重新预览并确认，入队与执行分别确认，不自动执行或采用结果。
+
+历史版本选择会显示资产 pin、卡片布局、分组、视窗等元数据差异，明确确认后由原 CAS owner 创建新版本；不会重新生成或回滚素材。调用者须维持原父 owner 合同：记录/定义改变时推进 owner token，不在同一 owner、同一 version/digest 下原地改写 pin。Panel 自身对这种违约原地 A→B→A 尚未持续观察排队闭包；父 owner-token 更替对照通过。现有证据没有证明标准入口 CAS 或权限绕过，不宣称 standalone Panel 覆盖任意原地写入。
+
+验证边界：本地已安装 FFmpeg 的自建短视频/WAV CPU 处理，以及 React/SDK 软件 HTTP 夹具检查。CPU 截取和效果处理不等于真实 TTS 或视频模型推理。真实 provider/模型/GPU、Host/native GUI、PostgreSQL、本批发布安装包与远端 CI 均未在本增量中验收（NOT_RUN）。UNKNOWN 不重放，候选仍须人工审核并显式采用到原卡片。

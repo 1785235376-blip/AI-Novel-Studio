@@ -1,3 +1,4 @@
+import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import type { ProductionRecipe } from './studioProductionClient';
 import { compileCanvasVideoTimeline } from './canvasVideoTrimTask';
 
@@ -134,15 +135,11 @@ export function buildStudioExecutionRecipeView({ recipe, operationId, current }:
     recipeId: text(recipe.image_recipe_id) ? recipe.image_recipe_id : text(recipe.video_recipe_id) ? recipe.video_recipe_id : null,
     notes };
   // This is the original CPU adapter's fixed mapping, not an editable workflow or execution evidence.
-  const parameters=recipe.parameters;
-  if(recipe.adapter==='LOCAL_FFMPEG'&&recipe.operation_id==='m8.audio.trim'&&recipe.output_profile==='PCM_S16LE_WAV_48000_STEREO'
-    &&record(parameters)&&Object.keys(parameters).length===2&&['in_ms','out_ms'].every(k=>own(parameters,k))
-    &&Number.isSafeInteger(parameters.in_ms)&&Number.isSafeInteger(parameters.out_ms)&&Number(parameters.in_ms)>=0
-    &&Number(parameters.out_ms)>Number(parameters.in_ms)&&Number(parameters.out_ms)-Number(parameters.in_ms)<=120000){
-    return {...result,visibility:'visible',steps:[{id:'local-ffmpeg-trim',classType:'LOCAL_FFMPEG',title:'按来源起止毫秒截取并输出 PCM16 WAV',known:true,
-      inputs:[{name:'in_ms',type:'INT',source:null,component:null,recordedValue:Number(parameters.in_ms)},
-        {name:'out_ms',type:'INT',source:null,component:null,recordedValue:Number(parameters.out_ms)}],outputs:['AUDIO_PCM_S16LE_WAV_48000_STEREO']}],
-      notes:[...notes,'这是原 FFmpeg 适配器的固定参数映射说明，不是可编辑节点图，也不代表已经执行。来源 pin 以原 Job 为准；执行后另核对真实时长、采样率、声道和输出摘要。不调用 TTS 或模型。']};
+  const parameters=checkedCanvasAudioTaskEnvelope(recipe.parameters);
+  if(recipe.adapter==='LOCAL_FFMPEG'&&recipe.operation_id==='m8.audio.trim'&&recipe.output_profile==='PCM_S16LE_WAV_48000_STEREO'&&parameters){
+    return {...result,visibility:'visible',steps:[{id:'local-ffmpeg-trim',classType:'LOCAL_FFMPEG',title:'截取音频、应用所选增益与淡入淡出并输出 PCM16 WAV',known:true,
+      inputs:Object.entries(parameters).map(([name,value])=>({name,type:name==='gain_db'?'FLOAT':'INT',source:null,component:null,recordedValue:value})),outputs:['AUDIO_PCM_S16LE_WAV_48000_STEREO']}],
+      notes:[...notes,'这是原 FFmpeg 适配器的参数映射说明。先应用所选增益，再按截取后起点和终点线性淡入淡出；留空沿用原行为，明确 0 保留在请求中。不是可编辑节点图，也不代表已经执行。来源 pin 以原 Job 为准；执行后核对真实测量和输出摘要，不调用 TTS 或模型。']};
   }
   // Explain only the closed single-video mapping actually emitted by the original Timeline adapter.
   if(recipe.adapter==='LOCAL_FFMPEG'&&recipe.operation_id==='m9.timeline.multitrack'&&recipe.output_profile==='DELIVERY_H264_MP4'){
@@ -154,22 +151,22 @@ export function buildStudioExecutionRecipeView({ recipe, operationId, current }:
       const source=clip.source_snapshot;
       if(source.kind!=='ASSET'||source.asset_kind!=='video'||typeof source.id!=='string'||typeof source.version!=='number'||typeof source.digest!=='string'
         ||typeof clip.in_ms!=='number'||typeof clip.out_ms!=='number')throw new Error();
-      const compiled=compileCanvasVideoTimeline({id:source.id,kind:'ASSET',asset_kind:'video',version:source.version,digest:source.digest},{in_ms:clip.in_ms,out_ms:clip.out_ms});
+      const compiled=compileCanvasVideoTimeline({id:source.id,kind:'ASSET',asset_kind:'video',version:source.version,digest:source.digest},{in_ms:clip.in_ms,out_ms:clip.out_ms,include_audio:clip.include_audio as boolean});
       const sorted=(value:unknown):unknown=>Array.isArray(value)?value.map(sorted):record(value)?Object.fromEntries(Object.keys(value).sort().map(key=>[key,sorted(value[key])])):value;
       if(JSON.stringify(sorted(compiled))!==JSON.stringify(sorted(timeline))||!record(recipe.export_profile)
         ||Object.keys(recipe.export_profile).length!==4||recipe.export_profile.preset!=='DELIVERY_H264_MP4'
         ||recipe.export_profile.video_bitrate_kbps!==400||recipe.export_profile.audio_bitrate_kbps!==96||recipe.export_profile.crf!==23)throw new Error();
-      return {...result,visibility:'visible',steps:[{id:'local-ffmpeg-video-trim',classType:'LOCAL_FFMPEG',title:'截取原视频画面并重新编码为静音 H.264 MP4',known:true,
+      return {...result,visibility:'visible',steps:[{id:'local-ffmpeg-video-trim',classType:'LOCAL_FFMPEG',title:clip.include_audio?'截取原视频与第一条源音轨并重新编码为 H.264 / AAC MP4':'截取原视频画面并重新编码为静音 H.264 MP4',known:true,
         inputs:[{name:'in_ms',type:'INT',source:null,component:null,recordedValue:Number(clip.in_ms)},
           {name:'out_ms',type:'INT',source:null,component:null,recordedValue:Number(clip.out_ms)},
           {name:'width',type:'INT',source:null,component:null,recordedValue:640},
           {name:'height',type:'INT',source:null,component:null,recordedValue:360},
           {name:'fps',type:'INT',source:null,component:null,recordedValue:25},
-          {name:'include_audio',type:'BOOLEAN',source:null,component:null,recordedValue:false},
+          {name:'include_audio',type:'BOOLEAN',source:null,component:null,recordedValue:clip.include_audio as boolean},
           {name:'video_bitrate_kbps',type:'INT',source:null,component:null,recordedValue:400},
           {name:'audio_bitrate_kbps',type:'INT',source:null,component:null,recordedValue:96},
           {name:'crf',type:'INT',source:null,component:null,recordedValue:23}],outputs:['VIDEO_H264_MP4']}],
-        notes:[...notes,'这是原 Timeline / FFmpeg 的单片段固定映射：640×360、25fps、40ms 时间网格，不保留源音轨。只说明已记录配置；真实帧数、时长和字节摘要以原 Job 执行后测量为准，不代表生成模型推理。']};
+        notes:[...notes,'这是原 Timeline / FFmpeg 的单片段固定映射：640×360、25fps、40ms 时间网格；明确保留音轨时选原第一条音轨并重编码 AAC，无源音轨拒绝执行。只说明已记录配置；真实帧数、时长和字节摘要以原 Job 执行后测量为准，不代表生成模型推理。']};
     }catch{return {...result,visibility:'hidden',steps:[],notes:[...notes,'当前本地视频时间线不是本面板支持的单片段映射；不推断其他步骤或编辑能力。']};}
   }
   // HTTP and A1111 have no internal workflow contract here, even if an extension happens to be named workflow.

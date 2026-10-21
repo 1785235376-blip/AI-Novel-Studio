@@ -1,3 +1,4 @@
+import {CanvasVideoAudioControls} from './CanvasVideoAudioControls';
 import {Badge,Button,Panel,StatusMessage} from '../ui/primitives';
 import {ExecutionImpactPanel} from '../experimental/executionImpact/ExecutionImpactPanel';
 import {ExecutionProvenancePanel} from '../experimental/executionProvenance/ExecutionProvenancePanel';
@@ -11,7 +12,7 @@ export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
       <p><Badge>单次任务草稿</Badge> 原位置 <code>{props.task.origin.canvasId}</code> · v{props.task.origin.canvasVersion} · 卡片 <code>{props.task.origin.cardId}</code></p>
       <p>只使用原视频 <code>{props.task.origin.source.asset_id}</code> · v{props.task.origin.source.version}，最多产生 1 个候选。应用配置只保存原时间线；预览、入队、实际执行、审核与原卡片采用分别明确确认。</p>
       <p>只修改本次任务，不修改共享工作流模板，也不把创作关系转换成执行节点。</p>
-      <StatusMessage>使用原本地 FFmpeg 重新编码为 640×360、25fps H.264 MP4；当前仅截取画面，原音轨不保留，输出使用静音音轨。起止时间以 40ms 为步长，最长 120 秒。不会调用生成模型；费用、运行时长及资源估算未知。</StatusMessage>
+      <StatusMessage>使用原本地 FFmpeg 重新编码为 640×360、25fps H.264 MP4；默认输出静音音轨；明确保留源音轨时，截取原第一条音轨并重新编码为 AAC。无可用源音轨时拒绝执行。起止时间以 40ms 为步长，最长 120 秒。不会调用生成模型；费用、运行时长及资源估算未知。</StatusMessage>
     </Panel>
     <Panel title="视频截取配置" className="studio-graph-run">
       {state.error&&<StatusMessage tone="error">{state.error}</StatusMessage>}
@@ -22,6 +23,7 @@ export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
         <label>来源起点（毫秒）<input type="number" min={0} step={40} value={state.draft.in_ms} onChange={event=>state.changeParameter('in_ms',event.target.value)}/></label>
         <label>来源终点（毫秒）<input type="number" min={40} step={40} value={state.draft.out_ms} onChange={event=>state.changeParameter('out_ms',event.target.value)}/></label>
       </fieldset>
+      <CanvasVideoAudioControls value={state.draft.include_audio===true} disabled={!state.canEdit} isCurrent={state.current} onChange={state.changeAudio}/>
       <div className="creative-actions">
         <Button disabled={!state.canUndo} onClick={state.undo}>撤销截取修改</Button><Button disabled={!state.canRedo} onClick={state.redo}>重做截取修改</Button>
         <Button disabled={!state.canApply} loading={state.pending==='SAVE'} onClick={()=>void state.apply()}>应用截取配置</Button>

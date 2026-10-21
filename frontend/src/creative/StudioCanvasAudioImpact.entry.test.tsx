@@ -13,10 +13,11 @@ import {studioProductionClient,type ProductionJob} from './studioProductionClien
 let state:StudioMediaExecutionController,props:StudioMediaExecutionProps,fetcher:ReturnType<typeof vi.fn>,lastRequest:string;
 const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
 const json=(value:unknown)=>new Response(JSON.stringify(value),{headers:{'Content-Type':'application/json'}});
-function receipt(kind:'preview'|'queued'|'executed',request:string){
+function receipt(kind:'preview'|'queued'|'executed',request:string,parameters?:Record<string,unknown>){
  const result:any=structuredClone(fixture[kind]);result.request_id=request;result.command.request_id=request;
  result.request_digest=hash('request:'+request);if(kind==='preview')result.preview_digest=hash('preview:'+request);
  else result.id=request===fixture.command.request_id?fixture.queued.id:'job-'+request;
+ if(parameters){Object.assign(result.command.parameters,parameters);result.execution_recipe.parameters={...parameters};}
  return result;
 }
 function Harness(){state=useStudioMediaExecution(props);return state.impact?<ExecutionImpactPanel input={state.impact.input} owner={state.impact}
@@ -31,8 +32,8 @@ beforeEach(()=>{
  fetcher=vi.fn(async(url:string,init:RequestInit={})=>{
   const body=init.body?JSON.parse(String(init.body)):undefined;
   if(url.endsWith('/providers'))return json(fixture.providers);
-  if(url.endsWith('/preview'))return json(receipt('preview',body.request_id));
-  if(url.endsWith('/jobs')&&init.method==='POST')return json(receipt('queued',body.command.request_id));
+  if(url.endsWith('/preview'))return json(receipt('preview',body.request_id,body.parameters));
+  if(url.endsWith('/jobs')&&init.method==='POST')return json(receipt('queued',body.command.request_id,body.command.parameters));
   if(url.endsWith('/execute'))return json(receipt('executed',lastRequest));
   if(url.includes('/jobs/audio/'))return json(receipt('queued',lastRequest));
   throw new Error('Unexpected real owner request '+(init.method||'GET')+' '+url);
@@ -61,7 +62,7 @@ it('enforces real create and execute even when calling controller actions direct
  await act(async()=>{await Promise.all([execute(),execute()]);});expect(count('/execute')).toBe(1);
  await act(async()=>{await execute();await create();});expect(count('/execute')).toBe(1);expect(count('/jobs')).toBe(1);
 });
-it('rechecks the persisted synthetic queued command through strict fresh preview without dispatch',async()=>{
+it('rechecks the persisted native queued command through strict fresh preview without dispatch',async()=>{
  await draft();await act(async()=>state.openJob(native.queued as unknown as ProductionJob));expect(state.selected?.status,state.error).toBe('QUEUED');
  expect(state.impact).toBeUndefined();await act(async()=>state.inspectExecution());expect(state.error).toBe('');expect(state.impact?.input.boundary.kind).toBe('EXECUTE');
  const body=JSON.parse(String(fetcher.mock.calls.find(([u])=>u.endsWith('/preview'))![1].body));expect(body.parameters).toEqual({in_ms:550,out_ms:850});expect(body.source_snapshots[0].reference_only).toBeUndefined();
@@ -73,4 +74,47 @@ it.each(['parameters','scope'])('retires audio create after observed %s A/B/A an
  else {const b=props.canvasAudioTrimTask!.returnBinding!,inc=b.incarnation;b.incarnation='file:00000000-0000-0000-0000-000000000001';await act(async()=>create());b.incarnation=inc;}
  await act(async()=>create());expect(count('/jobs')).toBe(0);expect(gate.current()).toBe(false);
  lastRequest='audio-fresh-'+mode;view.rerender(<Harness/>);await preview();await confirm('CREATE');await act(async()=>state.create());expect(count('/jobs')).toBe(1);
+});
+
+
+it('binds optional gain and fades to actual original create proof and rejects old confirmation after edits',async()=>{
+ await draft();act(()=>{state.changeParameter('gain_db','-6');state.changeParameter('fade_in_ms','100');state.changeParameter('fade_out_ms','100');});
+ await preview();await confirm('CREATE');const gate=state.impact!,create=state.create;
+ act(()=>state.changeParameter('gain_db','0'));act(()=>state.changeParameter('gain_db','-6'));
+ expect(gate.current()).toBe(false);await act(async()=>create());expect(count('/jobs')).toBe(0);
+ await preview();await confirm('CREATE');await act(async()=>state.create());expect(count('/jobs')).toBe(1);
+ const body=JSON.parse(String(fetcher.mock.calls.find(([u,i])=>u.endsWith('/jobs')&&i.method==='POST')![1].body));
+ expect(body.command.parameters).toEqual({in_ms:550,out_ms:850,gain_db:-6,fade_in_ms:100,fade_out_ms:100});
+ expect(state.selected?.command?.parameters.gain_db).toBe(-6);
+ expect(state.selected?.execution_recipe.parameters).toEqual(body.command.parameters);
+ expect(count('/execute')).toBe(0);
+});
+
+
+it.each(['omitted','explicit-zero','gain-only','gain-and-fades'] as const)('preserves %s through edit, create, Job reopen and exact execution re-preview',async mode=>{
+ let savedParameters:Record<string,unknown>|undefined;const original=fetcher.getMockImplementation()!;
+ fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{
+  const body=init.body?JSON.parse(String(init.body)):undefined;
+  if(url.endsWith('/jobs')&&init.method==='POST')savedParameters=structuredClone(body.command.parameters);
+  if(url.endsWith('/execute')||url.includes('/jobs/audio/'))return json(receipt(url.endsWith('/execute')?'executed':'queued',lastRequest,savedParameters));
+  return original(url,init);
+ });
+ const first=await draft();
+ if(mode!=='omitted')act(()=>{
+  state.changeParameter('gain_db',mode==='explicit-zero'?'0':'-3.5');
+  if(mode!=='gain-only'){state.changeParameter('fade_in_ms',mode==='explicit-zero'?'0':'50');state.changeParameter('fade_out_ms',mode==='explicit-zero'?'0':'75');}
+ });
+ const expected={in_ms:550,out_ms:850,...(mode==='omitted'?{}:mode==='explicit-zero'?{gain_db:0,fade_in_ms:0,fade_out_ms:0}:mode==='gain-only'?{gain_db:-3.5}:{gain_db:-3.5,fade_in_ms:50,fade_out_ms:75})};
+ await preview();expect(state.preview!.execution_recipe.parameters).toEqual(expected);await confirm('CREATE');await act(async()=>state.create());
+ expect(savedParameters).toEqual(expected);const saved=structuredClone(state.selected!);first.unmount();
+ render(<Harness/>);await waitFor(()=>expect(state.providerLoading).toBe(false));await act(async()=>state.openJob(saved));
+ expect(state.selected?.command?.parameters).toEqual(saved.command!.parameters);expect(state.impact).toBeUndefined();expect(count('/jobs')).toBe(1);expect(count('/execute')).toBe(0);
+ await act(async()=>state.inspectExecution());expect(state.error).toBe('');expect(state.impact?.input.boundary.kind).toBe('EXECUTE');
+ const request=JSON.parse(String(fetcher.mock.calls.filter(([url])=>url.endsWith('/preview')).at(-1)![1].body));
+ expect(request.parameters).toEqual(expected);expect(request.source_snapshots[0].reference_only).toBeUndefined();
+ expect(request.canvas_return).toEqual(saved.command!.canvas_return);expect(state.impact!.input.recipe).toEqual(saved.execution_recipe);
+ await act(async()=>state.action('execute'));expect(count('/execute')).toBe(0);
+ await confirm('EXECUTE');await act(async()=>Promise.all([state.action('execute'),state.action('execute')]));
+ expect(count('/jobs')).toBe(1);expect(count('/execute')).toBe(1);expect(state.selected?.status,state.error).toBe(fixture.executed.status);
+ await act(async()=>state.action('execute'));expect(count('/execute')).toBe(1);
 });

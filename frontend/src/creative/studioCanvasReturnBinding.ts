@@ -1,3 +1,4 @@
+import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import { checkedCanvasVideoTaskJob } from './canvasVideoTrimTask';
 import type { ProductionJob } from './studioProductionClient';
 import { ApiError } from '../api';
@@ -28,12 +29,9 @@ export function canvasReturnInCommand(command:unknown):CanvasReturnBinding|undef
   const binding=checkedCanvasReturnBinding(command.canvas_return),sources=command.source_snapshots;
   const pin=(v:unknown)=>object(v)&&['id','kind','version','digest','asset_kind'].every(k=>v[k]===(binding.source as unknown as Record<string,unknown>)[k]);
   if(binding.source.asset_kind==='audio'){
-    const raw=command.parameters, nullPlaceholders=new Set(['width','height','steps','seed','cfg','negative_prompt','size','quality','duration_seconds','frame_rate','voice_id','speech_rate']);
-    const parameters=object(raw)?Object.fromEntries(Object.entries(raw).filter(([key,value])=>value!==null||!nullPlaceholders.has(key))):raw;
+    const parameters=checkedCanvasAudioTaskEnvelope(command.parameters,true);
     if(command.operation_id!=='m8.audio.trim'||command.allow_cloud!==false||command.provider_id!=null||command.model_id!=null||command.prompt!==''
-      ||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!object(parameters)||Object.keys(parameters).length!==2
-      ||!['in_ms','out_ms'].every(k=>Object.hasOwn(parameters,k))||!Number.isSafeInteger(parameters.in_ms)||!Number.isSafeInteger(parameters.out_ms)
-      ||Number(parameters.in_ms)<0||Number(parameters.out_ms)<=Number(parameters.in_ms)||Number(parameters.out_ms)-Number(parameters.in_ms)>120000
+      ||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!parameters
       ||['image_source','image_references','mask_source','video_reference','video_frames','storyboard_shot','storyboard_speech','audio_profile','image_layers'].some(k=>Object.hasOwn(command,k)))invalid();
   }else if(command.operation_id!=='m5.image.i2i'||command.allow_cloud!==false||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!pin(command.image_source)
     ||command.mask_source!==undefined||command.image_references!==undefined&&(!Array.isArray(command.image_references)||command.image_references.length))invalid();
