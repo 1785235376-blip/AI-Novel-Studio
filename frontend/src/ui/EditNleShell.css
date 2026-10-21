@@ -1,0 +1,181 @@
+/* [HERMIA-FE-20261022 W-P0-06] CapCut/PR/AE density for EDIT module — compose, don't invent engine. */
+.edit-nle-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  height: 100%;
+}
+.edit-nle-shell__preview {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.2fr);
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.edit-nle-shell__monitor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 140px;
+  padding: var(--space-4);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 80%, #1a1a22), var(--color-bg-surface));
+  color: var(--color-text-primary);
+}
+.edit-nle-shell__monitor-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-shell__monitor strong {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+.edit-nle-shell__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+}
+.edit-nle-shell__sep {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-default);
+}
+.edit-nle-shell__hero {
+  flex: 1 1 auto;
+  min-height: 320px;
+  padding: var(--space-2);
+  border: var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-subtle);
+  overflow: auto;
+}
+.edit-nle-shell__hero .panel {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.edit-nle-shell__foot {
+  margin: 0;
+  font-size: 12px;
+}
+.edit-nle-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  min-height: 0;
+}
+.edit-nle-rail__eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-rail__hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-rail__bin {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.edit-nle-rail__bin > li {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+.edit-nle-rail__kind {
+  font-size: 10px;
+  font-weight: 650;
+  color: var(--color-accent-primary);
+}
+.edit-nle-rail__bin small {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.edit-nle-rail__future {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: var(--border-default);
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.edit-nle-inspector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+}
+.edit-nle-inspector__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-default);
+}
+.edit-nle-inspector__empty-cta {
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-accent-primary);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+}
+.edit-nle-inspector__empty-cta dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+}
+.edit-nle-inspector__empty-cta dt {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.edit-nle-inspector__empty-cta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Thicken track list toward horizontal timeline feel without engine rewrite */
+.edit-nle-shell__hero .nle-tracks__list {
+  grid-template-columns: 1fr;
+}
+.edit-nle-shell__hero .nle-track {
+  min-height: 72px;
+}
+.edit-nle-shell__hero .nle-track__clips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  min-width: 7rem;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent-subtle) 70%, var(--color-bg-surface));
+}

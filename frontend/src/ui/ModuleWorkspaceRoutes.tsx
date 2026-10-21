@@ -25,7 +25,7 @@ import {ModelCenter} from './ModelCenter';
 import type {LocalAiOnboardingOwner} from './LocalAiDiscovery';
 import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
 import {EmptyState} from './primitives';
-import {TimelineWorkspacePanel} from '../nle/TimelineWorkspacePanel';
+import {EditNleShell, EditNleMediaRail, EditNleInspector, demoEditTimeline} from './EditNleShell';
 
 type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
 interface Props {localAiOnboarding?:LocalAiOnboardingOwner; module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void;}
@@ -53,20 +53,13 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange,localAiO
   return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<>{interopSettings}<AiControlCenter/></>:tab==='models'?<ModelCenter onboarding={localAiOnboarding}/>:<MediaProviderSettings/>}</div>;
 }
 
-/** [HERMIA-FE-20261022] EDIT module shell: mounts NLE TimelineWorkspacePanel (read-only empty timeline).
- * Full mutate path remains IndependentStudioWorkspace → StudioTimelineEditor when independentStudios is on.
- * Novel center must NOT embed this canvas (Atlas §0.2). */
-const EMPTY_EDIT_TIMELINE = {duration_ms: 5000, width: 1280, height: 720, fps: 24, tracks: [] as unknown[], captions: [] as unknown[]};
-function EditNleShell({novelId}:{novelId:string}){
-  return <div className="edit-nle-shell" aria-label="剪辑工作区">
-    <p className="notice">剪辑模块（EDIT）· NLE 时间线工作区。完整可写时间线在独立工作室制作操作中打开；此处为模块入口与只读壳，不写入、不嵌入小说中区。</p>
-    <TimelineWorkspacePanel projectId={novelId} identity={`edit-shell:${novelId}`} timeline={EMPTY_EDIT_TIMELINE}
-      selectedClipIds={[]} playheadMs={0} viewStartMs={0} viewScale={1} editable={false}
-      onSelectClips={()=>{}} onPlayhead={()=>{}} onView={()=>{}} onEdit={()=>{}} />
-  </div>;
-}
 export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
+  // [HERMIA-FE-20261022 W-P0-06] EDIT session: playhead/selection shared with inspector (CapCut-density shell).
+  const editTimeline = novelId && module==='EDIT' ? demoEditTimeline(novelId) : null;
+  const [editPlayheadMs,setEditPlayheadMs]=useState(0);
+  const [editSelectedClipIds,setEditSelectedClipIds]=useState<string[]>(['c-v1']);
+
   const [workflowInspection,setWorkflowInspection]=useState<WorkflowInspection>();
   const [imageInspection,setImageInspection]=useState<ImageInspection>();
   const [videoInspection,setVideoInspection]=useState<VideoInspection>();
@@ -77,12 +70,15 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
     case 'IMAGE': main=novelId?<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId}/><VisionAnalysisPanel novelId={novelId}/><ImageGenerationPanel novelId={novelId} onInspect={setImageInspection}/></>:<EmptyState title="请先打开小说项目" detail="图片画布、参考图约束和生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<><MultimodalDirectorWorkspace mode="video" novelId={novelId}/><ScreenplayPanel novelId={novelId} onInspect={setVideoInspection}/></>:<EmptyState title="请先打开小说项目" detail="视频导演台、剧本与镜头任务需要绑定到一个小说项目。"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<><AudioGenerationPanel novelId={novelId}/><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="音效、音乐、配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
-    case 'EDIT': main=novelId?<EditNleShell novelId={novelId}/>:<EmptyState title="请先打开小说项目" detail="剪辑时间线需要绑定到一个小说/项目。NLE 不嵌入小说中区（多工作区并列）。"/>; status='剪辑工作区'; break;
+    case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<EmptyState title="请先打开小说项目" detail="剪辑时间线需要绑定到一个小说/项目。NLE 不嵌入小说中区（多工作区并列）。"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
     case 'ASSETS': main=novelId?<AssetLibraryPanel novelId={novelId} selectedAssetId={selectedAsset?.id} onSelectAsset={setSelectedAsset}/>:<EmptyState title="请先打开小说项目" detail="资产库中的文件和引用关系按小说项目隔离。"/>; status='资产库'; break;
   }
-  const inspector=module==='ASSETS'?<AssetInspector asset={selectedAsset} novelId={novelId}/>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:module==='VIDEO'?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:module==='AUDIO'?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
-  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={<WorkspaceRail module={module}/>} main={<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>} inspector={inspector} status={<>{status}{interopEntry}</>}/>;
+  const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<AssetInspector asset={selectedAsset} novelId={novelId}/>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:module==='VIDEO'?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:module==='AUDIO'?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
+  const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:<WorkspaceRail module={module}/>;
+  // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
+  const mainBody=module==='EDIT'?<div className="edit-nle-main">{main}</div>:<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
+  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>}/>;
 }

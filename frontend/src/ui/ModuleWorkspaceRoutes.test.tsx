@@ -20,12 +20,13 @@ describe('ModuleWorkspaceRoutes',()=>{
     expect(host.textContent).toContain('视频');
     act(()=>root.unmount());
   });
-  it('renders EDIT nle shell when novel is open',()=>{
+  it('renders EDIT CapCut-density nle shell when novel is open',()=>{
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module="EDIT" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
-    expect(host.textContent).toContain('剪辑');
-    expect(host.querySelector('.edit-nle-shell')||host.textContent?.includes('多轨剪辑')).toBeTruthy();
+    expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
+    expect(host.querySelector('.edit-nle-rail')||host.textContent?.includes('媒体池')).toBeTruthy();
+    expect(host.textContent).toMatch(/多轨|剪辑|时间线/);
     act(()=>root.unmount());
   });
   it.each(['IMAGE','VIDEO','AUDIO','EDIT','WORKFLOW','ASSETS'] as const)('does not mount %s project panels without a novel',module=>{

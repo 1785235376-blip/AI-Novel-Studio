@@ -42,6 +42,7 @@ import { ConflictDialog } from "./ConflictDialog";
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, StudioModule } from "./ui/AppShell";
+import { NovelWriterDock } from "./ui/NovelWriterDock";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { CreativeWorkspace } from "./creative/CreativeWorkspace";
@@ -1740,16 +1741,43 @@ export default function App() {
         }} />}
     </div>
   );
+  // [HERMIA-FE-20261022 W-P0-06] Right dock: outline / cast / AI — default expanded, no empty void.
+  const outlineItems = (chapters.data || []).slice(0, 12).map(c => ({
+    id: c.id,
+    label: `第 ${c.number} 章 · ${c.title || '未命名'}`,
+    hint: c.id === s.chapterId ? '当前正在写' : undefined,
+  }));
+  const castItems = [
+    ...(activeCharacterId ? [{id: activeCharacterId, label: '当前人物视角', hint: activeCharacterId}] : []),
+  ];
+  const draftReady = !!(job && job.status === 'SUCCEEDED' && job.output && !['CANCELLED', 'ACCEPTED', 'REJECTED'].includes(job.status));
+  const primaryCta = draftReady
+    ? {label: '采用草稿', onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
+    : chapter.data
+      ? {label: '继续写', onClick: () => {
+          const el = document.querySelector<HTMLElement>('.app-shell[data-module="NOVEL"] .ProseMirror, .app-shell[data-module="NOVEL"] .editor');
+          el?.focus?.();
+          el?.scrollIntoView?.({block: 'nearest'});
+        }}
+      : {label: '在左侧选择或新建章节', onClick: () => {
+          document.querySelector<HTMLElement>('.workspace-sidebar--novel')?.focus?.();
+        }, disabled: false};
   const inspector = (
-    <div className="novel-inspector-stack">
-      <section className="novel-inspector-context" aria-label="当前写作上下文"><span>当前章节</span><strong>{chapter.data?.title || "未选择章节"}</strong><small>{chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}</small></section>
-      {workspaceTools && <SampleJourneyGuide novelId={s.novelId} context={{ sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }} chapter={chapter.data} saved={saveState === 'saved'} onNavigate={feature => navigateWorkspace({ kind: 'feature', id: feature, feature })} />}
-      <WritingGoalPanel novelId={s.novelId} />
-      {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
-      {writingRecovery && chapter.data && <GenerationRecoveryPicker key={`${namespace}:${s.chapterId}:${scopeEpoch}`}
-        namespace={namespace} chapterId={s.chapterId} actorId={s.actor?.id} revision={generationRecoveryRevision} includeCurrent={generationRecoveryUnverified}
-        onRecover={reopenRetainedGeneration} />}
-      {experimentalFlags.data?.features['experimental.revision_intelligence_v2'] === true && chapter.data && <Button disabled={!selection.text || saveState !== 'saved'} onClick={() => styleLeave.request(current => { if (current()) { setExperimentalTab('revision_intelligence_v2'); setPanel('experimental'); } })}>修订选区与逐段接受</Button>}
+    <NovelWriterDock
+      chapterTitle={chapter.data?.title || "未选择章节"}
+      chapterMeta={chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}
+      saveLabel={saveDisplayLabel}
+      primaryCta={primaryCta}
+      secondaryLinks={[
+        {label: '生成草稿', onClick: () => { /* AiWritingPanel owns generate; scroll AI section */ document.querySelector('.novel-writer-dock__section--ai')?.scrollIntoView({block: 'nearest'}); }},
+        {label: '一致性检查', onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })},
+      ]}
+      outlineItems={outlineItems}
+      castItems={castItems}
+      onOpenStory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('story'); } })}
+      onOpenCheck={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
+      onOpenHistory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('history'); } })}
+      ai={<>
       <AiWritingPanel
       authorPreview={chapter.data ? {
         enabled: experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true,
@@ -1812,7 +1840,17 @@ export default function App() {
       onAccept={acceptGeneratedDraft}
       onReject={rejectGeneratedDraft}
       />
-    </div>
+      </>}
+      extras={<>
+      {workspaceTools && <SampleJourneyGuide novelId={s.novelId} context={{ sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }} chapter={chapter.data} saved={saveState === 'saved'} onNavigate={feature => navigateWorkspace({ kind: 'feature', id: feature, feature })} />}
+      <WritingGoalPanel novelId={s.novelId} />
+      {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
+      {writingRecovery && chapter.data && <GenerationRecoveryPicker key={`${namespace}:${s.chapterId}:${scopeEpoch}`}
+        namespace={namespace} chapterId={s.chapterId} actorId={s.actor?.id} revision={generationRecoveryRevision} includeCurrent={generationRecoveryUnverified}
+        onRecover={reopenRetainedGeneration} />}
+      {experimentalFlags.data?.features['experimental.revision_intelligence_v2'] === true && chapter.data && <Button disabled={!selection.text || saveState !== 'saved'} onClick={() => styleLeave.request(current => { if (current()) { setExperimentalTab('revision_intelligence_v2'); setPanel('experimental'); } })}>修订选区与逐段接受</Button>}
+      </>}
+    />
   );
   return (
     <>
@@ -1954,13 +1992,11 @@ function Panel({
         <p className="notice">进入团队创作空间后可查看成员、权限和协作记录。</p>
       </section>
     );
-  // [HERMIA-FE-20261022 N-P0-02] Pure writing shell: no RevisionPanel, no media/canvas in novel center.
+  // [HERMIA-FE-20261022 N-P0-02 / W-P0-06] Editor-first; next-step CTA lives in right dock (Lumen §4.4). No media in novel center.
   if (type === "write")
     return (
-      <section className="panel" aria-label="写作下一步">
-        <h2>下一步</h2>
-        <p className="notice">在左侧选择或新建章节，在中间继续写作。AI 写作在检查器旁路；版本历史、故事资料与一致性检查从功能导航打开。</p>
-        <p className="notice">本区不嵌入图片 / 视频 / 剪辑画布（多工作区并列，媒体不进小说中区）。</p>
+      <section className="panel novel-write-chrome" aria-label="写作主面提示">
+        <p className="notice">中区为正文编辑器。右侧为大纲 / 角色 / AI（可收至 0）。不嵌入图片、视频或剪辑画布。</p>
       </section>
     );
   if (type === "history")

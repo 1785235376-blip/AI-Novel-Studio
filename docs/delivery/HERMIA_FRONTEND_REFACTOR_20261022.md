@@ -135,3 +135,9 @@
 - **W-P0-03：** ModuleSwitcher `NOVEL→IMAGE→VIDEO→AUDIO→EDIT→ASSETS`（+CONTROL/PLUGIN/WORKFLOW）；EDIT→NLE 壳；台账 `/workspace/hr/WORKSPACE_FE_INVENTORY.md`。
 - **不 push。**
 
+## § W-P0-06 · EDIT CapCut 密度 + 小说右栏（本机）
+
+- **EDIT：** `EditNleShell` 组合 `nle/**`（监视器·工具条·缩放·TimelineWorkspacePanel hero·媒体池·ClipInspector）；不对齐引擎大重构；VIDEO≠EDIT。
+- **小说：** `NovelWriterDock`（Lumen §4.4）主 CTA + 大纲/角色/AI 默认可折叠展开；Editor 加宽；可经检视器收至 0；禁空 inspector。
+- 测试：workbench + EditNleShell + ModuleWorkspaceRoutes。**不 push。**
+

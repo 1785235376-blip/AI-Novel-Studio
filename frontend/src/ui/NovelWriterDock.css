@@ -1,0 +1,148 @@
+/* [HERMIA-FE-20261022 W-P0-06] Novel writer: widen editor, filled right dock, human comfort. */
+.app-shell[data-module="NOVEL"] .editor {
+  width: min(960px, calc(100% - var(--space-6)));
+  max-width: 100%;
+  margin-inline: auto;
+  padding: var(--space-8) var(--space-10);
+}
+.app-shell[data-module="NOVEL"] .main-workspace {
+  background: color-mix(in srgb, var(--color-bg-app) 55%, var(--color-bg-surface));
+}
+.app-shell[data-module="NOVEL"] .workspace.novel-writing-workspace {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.app-shell[data-module="NOVEL"] .writing-editor-row {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.app-shell[data-module="NOVEL"] .workspace-inspector {
+  background: var(--color-bg-surface);
+}
+.novel-writer-dock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 100%;
+}
+.novel-writer-dock__section {
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+}
+.novel-writer-dock__section > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border-bottom: var(--border-default);
+}
+.novel-writer-dock__section > summary::-webkit-details-marker { display: none; }
+.novel-writer-dock__section > summary::after {
+  content: "▾";
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.novel-writer-dock__section:not([open]) > summary::after { content: "▸"; }
+.novel-writer-dock__section > .novel-writer-dock__body {
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.novel-writer-dock__section--ai {
+  border-color: color-mix(in srgb, var(--color-accent-primary) 35%, var(--color-border-default));
+}
+.novel-writer-dock__empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+.novel-writer-dock__cast,
+.novel-writer-dock__outline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.novel-writer-dock__cast li,
+.novel-writer-dock__outline li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  border: var(--border-default);
+  font-size: 12px;
+}
+.novel-writer-dock__cast li button,
+.novel-writer-dock__outline li button {
+  all: unset;
+  cursor: pointer;
+  color: var(--color-accent-primary);
+  font-weight: 600;
+}
+.novel-writer-dock__cast li button:hover,
+.novel-writer-dock__outline li button:hover {
+  text-decoration: underline;
+}
+.novel-writer-dock__hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.novel-writer-dock__next {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-accent-subtle) 55%, var(--color-bg-surface));
+}
+.novel-writer-dock__primary {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+  font-weight: 650;
+  font-size: 14px;
+  cursor: pointer;
+}
+.novel-writer-dock__primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.novel-writer-dock__primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.novel-writer-dock__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.novel-writer-dock__link {
+  all: unset;
+  cursor: pointer;
+  color: var(--color-accent-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.novel-writer-dock__link:hover { text-decoration: underline; }
