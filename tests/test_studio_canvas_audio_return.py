@@ -112,7 +112,7 @@ def test_real_wav_original_job_review_exact_return_restore_and_reopen(audio_canv
         Path(os.environ['STUDIO_CAPTURE_AUDIO_CANVAS']).write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
-@pytest.mark.parametrize('change', ['null', 'kind', 'project', 'scope', 'incarnation', 'card', 'version', 'digest', 'pin', 'cloud', 'provider', 'prompt', 'operation', 'format', 'gain'])
+@pytest.mark.parametrize('change', ['null', 'kind', 'project', 'scope', 'incarnation', 'card', 'version', 'digest', 'pin', 'cloud', 'provider', 'prompt', 'operation', 'format', 'sample-rate'])
 def test_bad_or_stale_audio_return_preview_never_creates_job(audio_canvas, change, monkeypatch):
     e = audio_canvas; value = deepcopy(e.command); origin = value['canvas_return']
     if change == 'null': value['canvas_return'] = None
