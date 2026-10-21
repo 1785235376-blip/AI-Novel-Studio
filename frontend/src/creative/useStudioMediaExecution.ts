@@ -487,7 +487,15 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     edit(next);setSavedAudioDraft(undefined);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
     setNotice('已将模板版本明确提供的参数复制为本次任务草稿；后续局部覆盖不修改模板或原入队任务。');
   }
-  function changeOperation(operation: MediaOperation) { if (boundTask(latest.current)&&operation!==(boundTask(latest.current)?.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i'))return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(boundTask(latest.current)), operation, licenseNote: draftRef.current.licenseNote }); }
+  function changeOperation(operation: MediaOperation) {
+    const task=boundTask(latest.current);
+    if(task&&!(task.source.asset_kind==='audio'?operation==='m8.audio.trim':['m5.image.i2i','m5.image.cutout'].includes(operation)))return;
+    if(Object.hasOwn(MEDIA_OPERATION_LABELS,operation)){
+      const next={...initialDraft(task),operation,licenseNote:draftRef.current.licenseNote};
+      if(operation==='m5.image.cutout')delete next.imageSource;
+      edit(next);
+    }
+  }
   function changeRoute(route: MediaRoute) {
     const old = draftRef.current;
     if (!routeSelectable(old.operation) || !['local', 'cloud'].includes(route) || route === old.route) return;
@@ -591,6 +599,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     } finally { handoffFlight.current = false; if (alive.current) setHandoffPending(false); }
   }
   function selectSource(id: string, checked: boolean) {
+    if(latest.current.canvasImageTask)return;
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
     const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, kind) && (old.operation !== 'm5.image.cutout' || usableCutoutSource(asset)));
     if (old.operation === 'm5.image.cutout') {
@@ -648,6 +657,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     edit({ ...old, sources: [old.sources[0], { id: mask.id, kind: 'ASSET', version: mask.version, digest: mask.sha256, asset_kind: 'image' }] });
   }
   function refreshSources() {
+    if(latest.current.canvasImageTask)return;
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
     const sources: ProductionSource[] = [];
     for (const source of ['m5.image.cutout', 'm5.image.inpaint'].includes(old.operation) ? old.sources.slice(0, 1) : old.sources) {
@@ -692,7 +702,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       if (value === '') delete next[key]; else { const metadata = checkedImageReferenceMetadata({ [key]: value }, true); Object.assign(next, metadata); } return next; });
     edit({ ...old, imageReferences: refs, allowCloud: false });
   }
-  function clearSources() { edit({ ...draftRef.current, sources: [], lastFrame: undefined, imageSource: undefined, imageReferences: [], maskSource: undefined,
+  function clearSources() { if(latest.current.canvasImageTask)return;edit({ ...draftRef.current, sources: [], lastFrame: undefined, imageSource: undefined, imageReferences: [], maskSource: undefined,
     allowCloud: draftRef.current.imageSource || draftRef.current.imageReferences.length || ['m5.image.reference', 'm5.image.inpaint'].includes(draftRef.current.operation) ? false : draftRef.current.allowCloud }); }
   function clearInputs() { if (!current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     if (latest.current.preparedCommand) { if (selectedRef.current && ['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selectedRef.current.status)) return; latest.current.onPreparedClose?.(); return; }
@@ -792,6 +802,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         command.parameters=parameters;
         command.source_snapshots=[{...boundTask(latest.current)!.source}];
         delete command.source_snapshots[0].reference_only;
+      }
+      if(command.operation_id==='m5.image.cutout'){
+        // Re-preview the exact original ordered image/mask pins, not recorded-only markers.
+        command.source_snapshots=command.source_snapshots.map(source=>{const value={...source};delete value.reference_only;return value;});
       }
       const result=await latest.current.read(()=>value.client.preview(command));
       if(!live(value)||jobIdentity(selectedRef.current)!==identity||impactStamp()!==captured)return;

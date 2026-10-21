@@ -6,8 +6,10 @@ import type { CanvasImageTaskOrigin, CanvasImageTaskSession } from './canvasImag
 import type { StudioGraphEditorProps } from './useStudioGraphEditorController';
 import type { StudioAsset } from './studioClient';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
+import type { StudioMediaExecutionProps } from './useStudioMediaExecution';
 import type { StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
 export type StudioDualCanvasTaskProps={productionTaskSource?:StudioProductionClient;productionTaskLeaveGuard?:StudioProductionLeaveGuard;
+  productionTaskAssets?:StudioAsset[];onReadProductionTaskAssets?:()=>void;productionTaskCutoutExecution?:StudioMediaExecutionProps['cutoutExecution'];
   onCanvasTaskApproved?:(job:ProductionJob)=>void|Promise<void>;onCanvasTaskUnavailable?:()=>void};
 type Mode='CREATION'|'EXECUTION'|'COMPARE';
 /** Presentation and session intent only; original owners keep all persistence and execution. */
@@ -28,7 +30,7 @@ export function useStudioDualCanvasTask(props:StudioGraphEditorProps&StudioDualC
   function frame(creation:ReactNode,sharedExecution:ReactNode,inspector:ReactNode,blocked:boolean){
     const taskCurrent=()=>current()&&taskOwner.current===token&&taskRef.current===task;
     const visibleTask=taskCurrent()?task:undefined;
-    const taskContent=visibleTask&&props.productionTaskSource&&<StudioCanvasImageTaskPanel key={visibleTask.id} task={visibleTask} client={props.productionTaskSource} provenanceAssets={props.client}
+    const taskContent=visibleTask&&props.productionTaskSource&&<StudioCanvasImageTaskPanel key={visibleTask.id} task={visibleTask} client={props.productionTaskSource} provenanceAssets={props.client} taskAssets={props.productionTaskAssets} onReadTaskAssets={props.onReadProductionTaskAssets} cutoutExecution={props.productionTaskCutoutExecution}
       audioWorkflowTemplates={props.draftOwner&&props.client.graphs?{owner:props.draftOwner,
         list:async()=>{if(!taskCurrent())throw new Error('任务已改变。');const rows=await props.read(()=>props.client.graphs.list());if(!taskCurrent())throw new Error('任务已改变。');return rows.items;},
         read:id=>props.read(()=>readProjectTemplateSource(props.client,props.draftOwner!,id,()=>taskCurrent()&&!!visibleTask.isOriginCurrent()))}:undefined}

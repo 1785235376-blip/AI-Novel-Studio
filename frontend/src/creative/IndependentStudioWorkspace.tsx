@@ -324,7 +324,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (current()) setGraphLocation(previous => previous.graphId === selection.graphId && previous.runId === selection.runId ? previous : selection);
   }, [current]);
   const graph = useStudioGraphEditor({ active: !editorSession && graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, directorSource, onOpenStoryboard: (request, isOriginCurrent) => openStoryboard(request, isOriginCurrent), onOpenModels: () => navigate(() => onModuleChange('CONTROL')), onOpenBroker: onOpenBroker ? () => navigate(onOpenBroker) : undefined, providerSource: productionClient, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation,
-    productionTaskSource:productionClient,productionTaskLeaveGuard:leaveGuard,onCanvasTaskApproved:()=>productionApproved(),onCanvasTaskUnavailable:()=>deny(),
+    productionTaskSource:productionClient,productionTaskLeaveGuard:leaveGuard,productionTaskAssets:rows,onReadProductionTaskAssets:()=>{void loadProductionAssets();},productionTaskCutoutExecution:cutoutExecution,onCanvasTaskApproved:()=>productionApproved(),onCanvasTaskUnavailable:()=>deny(),
     draftOwner: studioGraphDraftOwner(projectId, overview?.project.incarnation, context, capturedHost.current),
     requestedGraphId: graphLocation.graphId, requestedRunId: graphLocation.runId, onSelectionChange: rememberGraphLocation, isBusy: operationPending });
   graphDirtyRef.current = graph.dirty;

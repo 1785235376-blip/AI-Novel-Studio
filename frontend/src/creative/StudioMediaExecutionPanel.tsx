@@ -34,7 +34,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   const cutout = draft.operation === 'm5.image.cutout';
   const composite = draft.operation === 'm5.image.composite';
   const inpaint = draft.operation === 'm5.image.inpaint', reference = draft.operation === 'm5.image.reference';
-  const sourceAssets = props.assets.filter(asset => asset.kind === state.requiredSourceKind && !asset.deleted_at && (!composite || usableCutoutSource(asset)) && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
+  const sourceAssets = props.assets.filter(asset => (!props.canvasImageTask||asset.id===props.canvasImageTask.source.id)&&asset.kind === state.requiredSourceKind && !asset.deleted_at && (!composite || usableCutoutSource(asset)) && (!(cutout || inpaint) || usableCutoutSource(asset) && !asset.manual_mask));
   const selectedIds = draft.sources.map(source => source.id), trim = draft.operation === 'm8.audio.trim';
   // Blank optional controls stay omitted; invalid edits remain visibly unverified.
   const audioTemplateCurrent: CanvasAudioTemplateParameters = {
@@ -91,10 +91,10 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {draft.derived_from&&<p>派生来源：原失败任务 <code>{draft.derived_from.job_id}</code> · v{draft.derived_from.job_version}；新请求仍须重新预览并确认。</p>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
-      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
-        {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
+      <label>操作<select disabled={!state.canEdit||!!props.canvasAudioTrimTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
+        {Object.entries(MEDIA_OPERATION_LABELS).filter(([id])=>!props.canvasImageTask||['m5.image.i2i','m5.image.cutout'].includes(id)).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
-      {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
+      {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。这需要用户明确提供并保存遮罩，不执行 AI 自动语义分割。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
       {composite && <fieldset disabled={!state.canEdit}><legend>双层 PNG · 从底到顶</legend>
         <p>选择两张同尺寸已保存 PNG（64–1024，宽高为 8 的倍数，每张最多 8 MiB）。使用编码色值上的 straight-alpha source-over；最终整数舍入，输出全透明像素清零 RGB。不进行颜色配置转换或模型调用。隐藏层仍核对原来源权限与版本。</p>
         {draft.sources.map((source, index) => <div key={source.id}>
@@ -118,11 +118,11 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       </>}
       {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : composite ? '选取 2 张' : '选取 1 个'}</legend>
         {!sourceAssets.length && <p>当前素材库没有对应类型的可用来源。</p>}
-        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" checked={cutout ? draft.sources[0]?.id === asset.id : state.imageInputs ? draft.imageSource?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
+        {sourceAssets.map(asset => <label key={asset.id}><input type="checkbox" disabled={!!props.canvasImageTask} checked={cutout ? draft.sources[0]?.id === asset.id : state.imageInputs ? draft.imageSource?.id === asset.id : selectedIds.includes(asset.id)} onChange={event => state.selectSource(asset.id, event.target.checked)} />{asset.filename} · v{asset.version}</label>)}
         {!!draft.sources.length && <><ul>{draft.sources.map(source => <li key={source.id}>已绑定来源 {props.assets.find(row => row.id === source.id)?.filename || source.id} · v{source.version}</li>)}</ul>
           {!state.freshSources && (!cutout || draft.sources.length === 2) && <StatusMessage tone="warning">来源已变化或不可用，先重新选取版本再预览。</StatusMessage>}
-          <Button disabled={!state.canEdit} onClick={state.refreshSources}>明确选取当前来源版本</Button>
-          <Button disabled={!state.canEdit} onClick={state.clearSources}>移除已选来源</Button>
+          <Button disabled={!state.canEdit||!!props.canvasImageTask} onClick={state.refreshSources}>明确选取当前来源版本</Button>
+          <Button disabled={!state.canEdit||!!props.canvasImageTask} onClick={state.clearSources}>移除已选来源</Button>
         </>}
       </fieldset>}
       {draft.operation === 'm7.video.i2v' && <fieldset disabled={!state.canEdit}><legend>视频首尾帧 · 真实双图绑定</legend>
