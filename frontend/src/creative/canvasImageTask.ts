@@ -3,6 +3,7 @@ import type { MediaCommand, ProductionJob, ProductionProvider, ProductionSource 
 import type { StudioAsset } from './studioClient';
 import { checkedCanvasReturnBinding, sameCanvasReturn, type CanvasReturnBinding } from './studioCanvasReturnBinding';
 import { checkedCutoutProof, CUTOUT_WEBP_OUTPUT, CUTOUT_WEBP_PROFILE, validCutoutParameters } from './studioCutoutContract';
+import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, IMAGE_COMPOSITE_OPERATION } from './studioImageCompositeContract';
 
 /** Session presentation over an optional immutable return binding in the original Job. */
 export type CanvasImageTaskOrigin = { projectId: string; canvasId: string; canvasVersion: number; canvasDigest: string; cardId: string; source: CanvasAssetReference; binding?:CanvasReturnBinding };
@@ -48,8 +49,19 @@ function cutoutCommandMatches(task:CanvasImageTaskBinding, command:MediaCommand,
     &&(!Object.hasOwn(command,'canvas_return')||sameCanvasReturn(command,command))
     &&(!task.returnBinding||sameCanvasReturn({...command,canvas_return:task.returnBinding},command));
 }
+function compositeCommandMatches(task:CanvasImageTaskBinding, command:MediaCommand):boolean {
+  const layers=checkedCompositeCommand(command),sources=command.source_snapshots;
+  return [0,1].every(index=>sameImagePin(sources[index],layers[index].source))
+    &&sources.filter(source=>sameImagePin(source,task.source)).length===1
+    &&(!Object.hasOwn(command,'canvas_return')||sameCanvasReturn(command,command))
+    &&(!task.returnBinding||sameCanvasReturn({...command,canvas_return:task.returnBinding},command));
+}
 export function assertCanvasImageTaskCommand(task: CanvasImageTaskBinding, command: MediaCommand, provider?: ProductionProvider) {
   if(!task.isCurrent())throw new Error('原作品位置已改变，请返回创作画布重新建立任务。');
+  if(command.operation_id===IMAGE_COMPOSITE_OPERATION){
+    if(provider!=null||!compositeCommandMatches(task,command))throw new Error('此卡片合成只支持原图片与明确选择的另一张 PNG 的本地 CPU 双层合成。');
+    return;
+  }
   if(command.operation_id==='m5.image.cutout'){
     if(provider!=null||!cutoutCommandMatches(task,command))throw new Error('此卡片抠图仅支持原图与明确选择的蒙版进行本地 CPU 处理，不会调用模型或发送云端。');
     return;
@@ -60,6 +72,16 @@ export function assertCanvasImageTaskCommand(task: CanvasImageTaskBinding, comma
 }
 export function canvasImageTaskJobMatches(task: CanvasImageTaskBinding, job: ProductionJob) {
   try{
+    if(job.operation_id===IMAGE_COMPOSITE_OPERATION){
+      const command=job.command;
+      if(job.owner!=='image'||job.provider!==null||!command||!compositeCommandMatches(task,command)||job.request_id!==command.request_id
+        ||job.automatic_replay!==false||job.remote_compute_may_continue!==false
+        ||!Array.isArray(job.sources)||job.sources.length!==2||![0,1].every(index=>sameImagePin(job.sources[index],command.source_snapshots[index]))
+        ||job.output_candidate!==null&&job.output_candidate?.kind!=='image')return false;
+      checkedCompositeRecipe(job.execution_recipe,command);
+      checkedCompositeProof(job.processing_proof,command,job.output_candidate);
+      return true;
+    }
     if(job.operation_id==='m5.image.cutout'){
       const command=job.command,recipe=job.execution_recipe;
       if(job.owner!=='image'||job.provider!==null||!command||!cutoutCommandMatches(task,command,true)||job.request_id!==command.request_id
