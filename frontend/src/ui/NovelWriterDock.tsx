@@ -1,5 +1,5 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
  * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
@@ -49,7 +49,7 @@ export function NovelWriterDock({
   extras?: ReactNode;
 }) {
   return (
-    <div className="novel-writer-dock" aria-label="写作右栏">
+    <div className="novel-writer-dock" aria-label="写作右栏" data-a11y-novel-dock="true">
       <section
         className="novel-inspector-context"
         aria-label="当前写作上下文"
@@ -67,6 +67,8 @@ export function NovelWriterDock({
         <button
           type="button"
           className="novel-writer-dock__primary"
+          data-primary-cta="true"
+          aria-keyshortcuts="Enter"
           disabled={primaryCta.disabled}
           onClick={primaryCta.onClick}
         >

@@ -38,4 +38,31 @@ describe('ModuleWorkspaceRoutes',()=>{
     expect(futureButtons).toHaveLength(2);expect(futureButtons.every(button=>button.disabled)).toBe(true);
     act(()=>root.unmount());
   });
+
+  it('X-UX-03: CONTROL overflow surface is honest and chrome stays 6', async () => {
+    vi.spyOn(api,'multimodalHealth').mockResolvedValue({});
+    vi.spyOn(api,'videoProviders').mockResolvedValue({items:[]});
+    vi.spyOn(api,'pluginRuntimeStatus').mockResolvedValue({execution_supported:false,sandbox:'none'});
+    vi.spyOn(api,'workflows').mockResolvedValue({items:[]});
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1" shellMode="pro"/>));
+    expect(host.querySelector('[data-overflow-surface="CONTROL"]')).toBeTruthy();
+    expect(host.querySelector('[data-capability-tone="neutral"]')).toBeTruthy();
+    expect(host.querySelector('[data-overflow-chrome="true"]')).toBeTruthy();
+    const tabs=[...host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')];
+    expect(tabs).toHaveLength(6);
+    expect(tabs.map(t=>t.getAttribute('data-module-tab'))).not.toContain('CONTROL');
+    act(()=>root.unmount());
+  });
+
+  it('X-UX-04: shellMode attribute survives module route (no project empty)', () => {
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    act(()=>root.render(<ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" shellMode="pro"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-shell-mode')).toBe('pro');
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('VIDEO');
+    act(()=>root.render(<ModuleWorkspaceRoutes module="AUDIO" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" shellMode="pro"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-shell-mode')).toBe('pro');
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('AUDIO');
+    act(()=>root.unmount());
+  });
 });

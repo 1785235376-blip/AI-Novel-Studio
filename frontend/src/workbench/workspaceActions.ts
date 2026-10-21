@@ -1,12 +1,13 @@
 /**
- * [HERMIA-FE-20261022] Overflow module discoverability (CONTROL / PLUGIN / WORKFLOW).
- * Not on default chrome; reachable via CommandSearch / ActionRegistry.
+ * [HERMIA-FE-20261022 X-UX-02] workspace.open.* for chrome + overflow modules.
+ * CONTROL / PLUGIN / WORKFLOW not on default chrome; still CommandSearch-reachable.
  * Does not invent backend — only navigates ModuleSwitcher targets.
  */
 import type {ActionRegistry} from './actions';
 import type {StudioModule} from '../ui/moduleRegistry';
 
 const OVERFLOW: Array<{id: string; label: string; module: StudioModule}> = [
+  {id: 'workspace.open.novel', label: '打开：小说写作台', module: 'NOVEL'},
   {id: 'workspace.open.control', label: '打开：AI 主控（模型 / Provider）', module: 'CONTROL'},
   {id: 'workspace.open.plugin', label: '打开：插件管理', module: 'PLUGIN'},
   {id: 'workspace.open.workflow', label: '打开：工作流编排工作区', module: 'WORKFLOW'},

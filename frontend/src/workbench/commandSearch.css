@@ -9,3 +9,7 @@
 .wb-command__list button{width:100%;text-align:left;background:none;border:0;padding:var(--space-2,8px);border-radius:var(--radius-sm,3px);font:inherit;color:var(--color-text-primary);cursor:pointer}
 .wb-command__list button:hover,.wb-command__list button:focus-visible{background:var(--color-selection-bg)}
 .wb-command__empty,.wb-command__msg{padding:var(--space-2,8px);color:var(--color-text-muted)}
+
+.wb-command__list button{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.wb-command__list button.is-active,.wb-command__list button[aria-selected="true"]{background:var(--color-selection-bg)}
+.wb-command__id{font-size:11px;color:var(--color-text-muted)}

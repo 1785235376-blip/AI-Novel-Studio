@@ -88,6 +88,8 @@ describe('NovelWriterDock Lumen §4.4', () => {
       />,
     ));
     expect(host.querySelector('.novel-writer-dock__primary')?.textContent).toBe('继续写');
+    expect(host.querySelector('[data-primary-cta="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-a11y-novel-dock="true"]')).toBeTruthy();
     expect(host.textContent).toContain('大纲');
     expect(host.textContent).toContain('AI 写作');
     expect(host.textContent).toContain('角色');

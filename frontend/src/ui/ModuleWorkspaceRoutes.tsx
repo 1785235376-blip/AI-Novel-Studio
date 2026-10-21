@@ -51,6 +51,21 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange,localAiO
   return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<>{interopSettings}<AiControlCenter/></>:tab==='models'?<ModelCenter onboarding={localAiOnboarding}/>:<MediaProviderSettings/>}</div>;
 }
 
+
+/** [HERMIA-FE-20261022 X-UX-03] Honest overflow surface — reachable ≠ chrome; ban fake green. */
+function OverflowSurfaceBanner({module}:{module:'CONTROL'|'PLUGIN'|'WORKFLOW'}){
+  const copy={
+    CONTROL:{title:'主控 · 溢出工作区',detail:'经命令面板 / 设置 /「更多」进入，不进默认 6 钮。模型与 Provider 状态读真实账本。'},
+    PLUGIN:{title:'插件 · 溢出工作区',detail:'经命令 /「更多」进入。execution_supported=false 时不得显示已连通绿标。'},
+    WORKFLOW:{title:'工作流 · 溢出工作区',detail:'经命令 /「更多」进入。编排面 ≠ 小说 AI 写作旁路。'},
+  }[module];
+  return <aside className="overflow-surface-banner" data-overflow-surface={module} data-capability-tone="neutral" aria-label={copy.title}>
+    <strong>{copy.title}</strong>
+    <p>{copy.detail}</p>
+    <small>[HERMIA-FE-20261022 X-UX-03] 铬条隐藏 ≠ 命令禁用 · 禁假绿</small>
+  </aside>;
+}
+
 export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange,shellMode='basic',onShellModeChange}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   // [HERMIA-FE-20261022 W-P0-06] EDIT session: playhead/selection shared with inspector (CapCut-density shell).
@@ -65,7 +80,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const [pluginInspection,setPluginInspection]=useState<PluginInspection>();
   let main:ReactNode; let status='工作区';
   switch(module){
-    case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
+    case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} shellMode={shellMode} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} shellMode={shellMode} onInspect={setVideoInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="VIDEO"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
     case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
@@ -77,6 +92,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<>{imageInspection?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:<ImageEmptyCta/>}</>:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>onModuleChange('EDIT')}/>}</>:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>onModuleChange('EDIT')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
   const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='IMAGE'&&novelId?<ImageWorkspaceRail/>:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail/>:<WorkspaceRail module={module}/>;
   // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
-  const mainBody=(module==='EDIT'||module==='IMAGE'||module==='VIDEO'||module==='AUDIO'||module==='ASSETS')?<div className="media-ws-main" data-module-shell={module}>{main}</div>:<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
+  const isOverflow = module==='CONTROL'||module==='PLUGIN'||module==='WORKFLOW';
+  const mainBody=(module==='EDIT'||module==='IMAGE'||module==='VIDEO'||module==='AUDIO'||module==='ASSETS')?<div className="media-ws-main" data-module-shell={module} data-shell-mode={shellMode}>{main}</div>:<>{isOverflow?<OverflowSurfaceBanner module={module}/>:null}<CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
   return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>} shellMode={shellMode} onShellModeChange={onShellModeChange}/>;
 }

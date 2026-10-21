@@ -470,3 +470,150 @@ describe("AppShell shellMode + writing ContextBar (H-P1-01 / N-UX-03)", () => {
   });
 });
 
+describe("AppShell X-UX-02/03/04/05 wave4", () => {
+  it("exposes 更多 overflow without adding to default 6 chrome tabs", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const change = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={change}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          shellMode="pro"
+        />,
+      ),
+    );
+    const tabs = [...host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')];
+    expect(tabs.map(t => t.getAttribute("data-module-tab"))).toEqual([
+      "NOVEL", "IMAGE", "VIDEO", "AUDIO", "EDIT", "ASSETS",
+    ]);
+    expect(host.querySelector('[data-overflow-chrome="true"]')).toBeTruthy();
+    act(() => host.querySelector<HTMLButtonElement>('[data-overflow-trigger="true"]')!.click());
+    expect(host.querySelector('[role="menu"]')).toBeTruthy();
+    act(() => host.querySelector<HTMLButtonElement>('[data-overflow-item="CONTROL"]')!.click());
+    expect(change).toHaveBeenCalledWith("CONTROL");
+    act(() => root.unmount());
+  });
+
+  it("keeps overflow module selected indicator without kicking to NOVEL", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="PLUGIN"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    expect(host.querySelector(".module-overflow")?.className).toContain("is-active");
+    expect(host.querySelector('[data-overflow-trigger="true"]')?.textContent).toContain("插件");
+    act(() => root.unmount());
+  });
+
+  it("global command lists mode toggles and CONTROL/PLUGIN (chrome hide ≠ disable)", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const change = vi.fn();
+    const onMode = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={change}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          shellMode="basic"
+          onShellModeChange={onMode}
+        />,
+      ),
+    );
+    act(() => host.querySelector<HTMLButtonElement>(".global-search")!.click());
+    const labels = [...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].map(
+      (b) => b.textContent || "",
+    );
+    expect(labels.some((t) => t.includes("专业模式"))).toBe(true);
+    expect(labels.some((t) => t.includes("普通模式"))).toBe(true);
+    expect(labels.some((t) => t.includes("主控") || t.includes("CONTROL"))).toBe(true);
+    expect(labels.some((t) => t.includes("插件"))).toBe(true);
+    const pro = [...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].find(
+      (b) => b.textContent?.includes("专业模式"),
+    )!;
+    act(() => pro.click());
+    expect(onMode).toHaveBeenCalledWith("pro");
+    act(() => root.unmount());
+  });
+
+  it("Esc closes inspector and restores focus to edge toggle (X-UX-05)", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    localStorage.setItem("studio-inspector-open", "1");
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    // Ensure open even if a prior test collapsed
+    if (host.querySelector("#workspace-inspector")?.getAttribute("aria-hidden") === "true") {
+      act(() => host.querySelector<HTMLButtonElement>(".inspector-edge-toggle")!.click());
+    }
+    expect(host.querySelector("#workspace-inspector")?.getAttribute("aria-hidden")).toBe("false");
+    act(() =>
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })),
+    );
+    expect(host.querySelector("#workspace-inspector")?.getAttribute("aria-hidden")).toBe("true");
+    act(() => root.unmount());
+  });
+
+  it("data-shell-mode persists attribute across module prop change (X-UX-04)", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const root = createRoot(host);
+    const base = {
+      onModuleChange: vi.fn(),
+      scope: { workspace: "w", project: "p", storyline: "s", branch: "b" },
+      actor: "author",
+      sidebar: "侧",
+      main: "主",
+      inspector: "检",
+      status: "ok",
+      shellMode: "pro" as const,
+    };
+    act(() => root.render(<AppShell module="NOVEL" {...base} />));
+    expect(host.querySelector(".app-shell")?.getAttribute("data-shell-mode")).toBe("pro");
+    act(() => root.render(<AppShell module="IMAGE" {...base} />));
+    expect(host.querySelector(".app-shell")?.getAttribute("data-shell-mode")).toBe("pro");
+    expect(host.querySelector(".app-shell")?.getAttribute("data-module")).toBe("IMAGE");
+    act(() => root.unmount());
+  });
+});

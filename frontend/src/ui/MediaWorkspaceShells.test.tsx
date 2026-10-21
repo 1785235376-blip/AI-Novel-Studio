@@ -154,3 +154,32 @@ describe('ModuleWorkspaceRoutes media shells', () => {
     act(() => root2.unmount());
   });
 });
+
+describe('X-UX-04 shellMode consistency', () => {
+  it('IMAGE pro canvas opens in pro and collapses in basic', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<ImageWorkspaceShell novelId="n1" shellMode="pro" onInspect={vi.fn()} />));
+    const pro = host.querySelector('[data-pro-canvas="true"]') as HTMLDetailsElement;
+    expect(pro).toBeTruthy();
+    expect(pro.open).toBe(true);
+    expect(host.querySelector('[data-shell-mode="pro"]')).toBeTruthy();
+    act(() => root.render(<ImageWorkspaceShell novelId="n1" shellMode="basic" onInspect={vi.fn()} />));
+    const basic = host.querySelector('[data-pro-canvas="true"]') as HTMLDetailsElement;
+    expect(basic.open).toBe(false);
+    expect(host.querySelector('[data-shell-mode="basic"]')).toBeTruthy();
+    act(() => root.unmount());
+  });
+
+  it('VIDEO director follows shellMode without inventing selection', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="basic" />));
+    expect(host.querySelector('[data-shell-mode="basic"]')).toBeTruthy();
+    expect(host.querySelector('[aria-label="③ 内置导演台"]')).toBeNull();
+    act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="pro" />));
+    expect(host.querySelector('[data-shell-mode="pro"]')).toBeTruthy();
+    expect(host.querySelector('[aria-label="③ 内置导演台"]')).toBeTruthy();
+    act(() => root.unmount());
+  });
+});

@@ -136,11 +136,15 @@ describe('workspace overflow module actions', () => {
     const {registerWorkspaceModuleActions} = await import('./workspaceActions');
     registerWorkspaceModuleActions(a, m => opened.push(m));
     const c = ctx(t, {targetId: null, permissions: new Set()});
+    expect(await a.execute('workspace.open.novel', c)).toEqual({status: 'done', value: 'NOVEL'});
     expect(await a.execute('workspace.open.control', c)).toEqual({status: 'done', value: 'CONTROL'});
     expect(await a.execute('workspace.open.plugin', c)).toEqual({status: 'done', value: 'PLUGIN'});
     expect(await a.execute('workspace.open.edit', c)).toEqual({status: 'done', value: 'EDIT'});
     expect(await a.execute('workspace.open.video', c)).toEqual({status: 'done', value: 'VIDEO'});
-    expect(opened).toEqual(['CONTROL', 'PLUGIN', 'EDIT', 'VIDEO']);
+    expect(opened).toEqual(['NOVEL', 'CONTROL', 'PLUGIN', 'EDIT', 'VIDEO']);
+    const listed = a.list('commandSearch', c).map(x => x.id);
+    expect(listed).toContain('workspace.open.workflow');
+    expect(listed).toContain('workspace.open.assets');
   });
 });
 

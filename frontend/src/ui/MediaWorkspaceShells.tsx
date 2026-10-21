@@ -7,7 +7,7 @@
  * W-UX-02: AUDIO waveform hero + Speech/AudioGen/Manifest + send-edit confirm; 0 fake NLE tracks.
  * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
  */
-import {useState, type ReactNode} from 'react';
+import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
 import {ImageGenerationPanel} from '../novel/ImageGenerationPanel';
 import {VisualContextPanel} from '../novel/VisualContextPanel';
@@ -68,15 +68,21 @@ const DEMO_SHOT_STRIP = [
 ] as const;
 
 export function ImageWorkspaceShell({
-  novelId, inspection, onInspect,
+  novelId, inspection, onInspect, shellMode = 'basic',
 }: {
   novelId: string;
   inspection?: ImageInspection;
   onInspect: (i?: ImageInspection) => void;
+  /** [HERMIA-FE-20261022 X-UX-04] basic collapses pro canvas; pro may pin open. */
+  shellMode?: 'basic' | 'pro';
 }) {
   const [subview, setSubview] = useState<'studio' | 'comic'>('studio');
+  const [proOpen, setProOpen] = useState(shellMode === 'pro');
+  useEffect(() => {
+    setProOpen(shellMode === 'pro');
+  }, [shellMode]);
   return (
-    <div className="media-ws" aria-label="图片工作区" data-image-subview={subview}>
+    <div className="media-ws" aria-label="图片工作区" data-image-subview={subview} data-shell-mode={shellMode}>
       <div className="media-ws__toolbar" role="toolbar" aria-label="图片子入口">
         <Button type="button" aria-pressed={subview === 'studio'} onClick={() => setSubview('studio')}>
           图片工作台
@@ -139,7 +145,12 @@ export function ImageWorkspaceShell({
               <VisionAnalysisPanel novelId={novelId} />
             </section>
           </div>
-          <details className="media-ws__pro">
+          <details
+            className="media-ws__pro"
+            data-pro-canvas="true"
+            open={proOpen}
+            onToggle={(e) => setProOpen((e.target as HTMLDetailsElement).open)}
+          >
             <summary>专业 · 创作画布（IMAGE 作用域 · 非视频三层）</summary>
             <MultimodalDirectorWorkspace mode="image" novelId={novelId} />
           </details>
@@ -398,9 +409,13 @@ export function VideoWorkspaceShell({
   const [scriptOpen, setScriptOpen] = useState(true);
   const [selectedShot, setSelectedShot] = useState<string>('s1');
   const [sendConfirm, setSendConfirm] = useState(false);
+  // [HERMIA-FE-20261022 X-UX-04] mode survives module hops; basic collapses director chrome
+  useEffect(() => {
+    setDirectorOpen(shellMode === 'pro');
+  }, [shellMode]);
 
   return (
-    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层" data-video-layers="script-canvas-director">
+    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层" data-video-layers="script-canvas-director" data-shell-mode={shellMode}>
       <div className="media-ws__toolbar" role="toolbar" aria-label="视频工具条">
         <Button type="button" aria-pressed={scriptOpen} onClick={() => setScriptOpen(v => !v)}>
           {scriptOpen ? '收起镜头脚本' : '镜头脚本'}

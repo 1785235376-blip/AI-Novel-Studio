@@ -239,3 +239,32 @@
 ### 门禁
 - 上述 vitest 子集 → **92 PASS**。
 - **不 push**；未改 `app/`。
+
+## § X-UX-02 / X-UX-03 / X-UX-04 / X-UX-05（第四波 · 横切）
+
+> [HERMIA-FE-20261022] · 基线父提交 `0cc90024` · **不 push**
+
+### X-UX-02 命令面板完整可搜
+- `CommandSearch`：一律 `actions.execute`（含 `workspace.open.*` / `layout.*` / FL `panel.open.*` / novel 别名）；label+id 多词匹配。
+- 不抢 AppShell 受保护 Ctrl+K；侧栏「搜索功能」独立 overlay。
+- 全局命令补「切换到普通/专业模式」；CONTROL/PLUGIN/WORKFLOW 仍可搜（铬条隐藏 ≠ 禁用）。
+- `workspace.open.novel` 补齐 chrome 工作区动作集。
+
+### X-UX-03 CONTROL / PLUGIN 表面可达且诚实
+- `ModuleOverflowMenu`（「更多」）挂 Header，列出 `STUDIO_MODULE_OVERFLOW`；**默认 6 钮不变**。
+- 当前已在溢出模块时，「更多」高亮并显示模块名（允许停留，不静默踢回 NOVEL）。
+- `OverflowSurfaceBanner`：中性 `data-capability-tone="neutral"` + 能力中心；禁假绿。
+
+### X-UX-04 basic|pro 跨工作区一致性
+- `data-shell-mode` 在 AppShell / media-ws-main / IMAGE / VIDEO 对齐。
+- IMAGE 专业画布、VIDEO 导演层随 mode 开合；切模块保留 mode（`useWorkbenchLayout`）。
+- 选区 / objectRef 规则未改。
+
+### X-UX-05 键盘 / 基础 a11y
+- CommandSearch：↑↓ / Enter / Esc；aria-activedescendant。
+- 检视器 Esc 关闭并回焦边缘钮；嵌套 dialog/menu 不抢 Esc。
+- 小说 dock 主 CTA `data-primary-cta`；溢出菜单 Esc。
+
+### 门禁
+- 上述 vitest 子集 → **104 PASS**。
+- **不 push**；未改 `app/`；**未做 N-UX-04**。

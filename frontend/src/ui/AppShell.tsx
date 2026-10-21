@@ -5,6 +5,7 @@ import {
   PanelRightClose,
   PanelRightOpen,
   Search,
+  MoreHorizontal,
 } from "lucide-react";
 import { IconButton } from "./primitives";
 import { STUDIO_MODULES, STUDIO_MODULE_OVERFLOW } from "./moduleRegistry";
@@ -95,6 +96,86 @@ export function ModuleSwitcher({
           <span>{label}</span>
         </button>
       ))}
+    </div>
+  );
+}
+
+/** [HERMIA-FE-20261022 X-UX-03] CONTROL/PLUGIN/WORKFLOW via 更多 — never default 6 chrome. */
+export function ModuleOverflowMenu({
+  value,
+  onChange,
+  shellMode = "basic",
+}: {
+  value: StudioModule;
+  onChange: (value: StudioModule) => void;
+  shellMode?: "basic" | "pro";
+}) {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const isOverflow = STUDIO_MODULE_OVERFLOW.some((item) => item.id === value);
+  const activeOverflow = STUDIO_MODULE_OVERFLOW.find((item) => item.id === value);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (event: MouseEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        setOpen(false);
+        requestAnimationFrame(() => trigger.current?.focus());
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return (
+    <div
+      className={`module-overflow${isOverflow ? " is-active" : ""}${shellMode === "pro" ? " is-pro" : ""}`}
+      ref={root}
+      data-overflow-chrome="true"
+    >
+      <button
+        ref={trigger}
+        type="button"
+        className={isOverflow ? "is-active" : ""}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={isOverflow ? `更多工作区（当前：${activeOverflow?.label}）` : "更多工作区"}
+        data-overflow-trigger="true"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <MoreHorizontal aria-hidden="true" size={16} />
+        <span>{isOverflow ? activeOverflow?.label : "更多"}</span>
+      </button>
+      {open && (
+        <div className="module-overflow__menu" role="menu" aria-label="溢出工作区">
+          <p className="module-overflow__hint">不在默认 6 钮 · 命令仍可搜</p>
+          {STUDIO_MODULE_OVERFLOW.map(({ id, icon, label }) => (
+            <button
+              key={id}
+              type="button"
+              role="menuitem"
+              data-overflow-item={id}
+              className={value === id ? "is-active" : ""}
+              aria-current={value === id ? "page" : undefined}
+              onClick={() => {
+                onChange(id);
+                setOpen(false);
+              }}
+            >
+              {icon}
+              <span>{label}</span>
+              <small>{id}</small>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -243,7 +324,14 @@ export function AppShell({
   useEffect(() => {
     if (!inspectorOpen || focusMode) return;
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setInspectorOpen(false);
+      if (event.key !== "Escape") return;
+      // Do not steal Esc from nested dialogs (command / failed tasks / overflow).
+      const t = event.target as HTMLElement | null;
+      if (t?.closest?.('[role="dialog"], [role="menu"], .wb-command__overlay, .command-overlay, .task-inspector-overlay, .module-overflow__menu')) return;
+      setInspectorOpen(false);
+      requestAnimationFrame(() =>
+        document.querySelector<HTMLButtonElement>(".inspector-edge-toggle")?.focus(),
+      );
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
@@ -313,6 +401,7 @@ export function AppShell({
       item.label.toLowerCase().includes(commandText) ||
       item.id.toLowerCase().includes(commandText),
   );
+  // [HERMIA-FE-20261022 X-UX-02] chrome-hidden + mode still searchable in global palette
   const utilityCommands = [
     {
       id: "inspector",
@@ -327,21 +416,33 @@ export function AppShell({
       action: openFailedTasks,
     },
     {
+      id: "mode-basic",
+      label: "切换到普通模式",
+      hint: "layout.basic",
+      action: () => onShellModeChange?.("basic"),
+    },
+    {
+      id: "mode-pro",
+      label: "切换到专业模式",
+      hint: "layout.pro",
+      action: () => onShellModeChange?.("pro"),
+    },
+    {
       id: "providers",
       label: "打开 Provider 控制中心",
-      hint: "主控",
+      hint: "主控 · CONTROL",
       action: () => onModuleChange("CONTROL"),
     },
     {
       id: "plugins",
       label: "打开插件管理",
-      hint: "插件",
+      hint: "插件 · PLUGIN",
       action: () => onModuleChange("PLUGIN"),
     },
     {
       id: "workflow-module",
       label: "打开工作流工作区",
-      hint: "工作流",
+      hint: "工作流 · WORKFLOW",
       action: () => onModuleChange("WORKFLOW"),
     },
   ].filter(
@@ -361,7 +462,7 @@ export function AppShell({
     const utility = utilityCommands[index - commands.length];
     if (utility) {
       utility.action();
-      if (utility.id === "inspector" || utility.id === "providers" || utility.id === "plugins" || utility.id === "workflow-module") {
+      if (utility.id === "inspector" || utility.id === "providers" || utility.id === "plugins" || utility.id === "workflow-module" || utility.id === "mode-basic" || utility.id === "mode-pro") {
         setCommandOpen(false);
         setCommandQuery("");
       }
@@ -392,6 +493,7 @@ export function AppShell({
           </span>
         </div>
         <ModuleSwitcher value={module} onChange={onModuleChange} />
+        <ModuleOverflowMenu value={module} onChange={onModuleChange} shellMode={shellMode} />
         <button
           ref={commandTrigger}
           className="global-search"

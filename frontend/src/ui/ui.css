@@ -25,3 +25,19 @@
 .context-bar__book-btn:hover{text-decoration:underline}
 .app-shell[data-shell-mode="basic"] .graph-canvas__minimap-row,
 .app-shell[data-shell-mode="basic"] [aria-label="显示小地图"]{display:none!important}
+
+/* [HERMIA-FE-20261022 X-UX-03] Overflow «更多» — not default 6 chrome */
+.module-overflow{position:relative;display:flex;align-self:stretch;align-items:center}
+.module-overflow>button{position:relative;display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-3);border:0;background:transparent;color:var(--color-text-secondary);cursor:pointer;min-height:100%;font:inherit}
+.module-overflow>button.is-active,.module-overflow.is-active>button{color:var(--color-accent-primary);background:var(--color-accent-subtle)}
+.module-overflow>button.is-active::after{content:"";position:absolute;inset:auto var(--space-3) 0;height:2px;background:var(--color-accent-primary)}
+.module-overflow__menu{position:absolute;top:100%;left:0;z-index:var(--z-dropdown,40);min-width:220px;padding:var(--space-2);background:var(--color-bg-elevated,var(--color-bg-surface));border:var(--border-default);border-radius:var(--radius-md);box-shadow:var(--shadow-floating)}
+.module-overflow__hint{margin:0 0 var(--space-2);padding:0 var(--space-2);font-size:11px;color:var(--color-text-muted)}
+.module-overflow__menu button{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-2) var(--space-3);border:0;border-radius:var(--radius-sm);background:transparent;color:var(--color-text-primary);font:inherit;cursor:pointer;text-align:left}
+.module-overflow__menu button small{margin-left:auto;color:var(--color-text-muted);font-size:11px}
+.module-overflow__menu button.is-active,.module-overflow__menu button:hover,.module-overflow__menu button:focus-visible{background:var(--color-selection-bg,var(--color-accent-subtle))}
+.module-overflow__menu svg{width:var(--icon-sm);height:var(--icon-sm)}
+.overflow-surface-banner{margin:0 0 var(--space-3);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.overflow-surface-banner strong{display:block;font-size:13px}
+.overflow-surface-banner p{margin:var(--space-1) 0 0;font-size:12px;color:var(--color-text-secondary)}
+.overflow-surface-banner[data-capability-tone="neutral"]{border-left:3px solid var(--color-border-strong, #888)}
