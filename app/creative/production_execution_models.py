@@ -1,7 +1,7 @@
 """Commands for explicit production execution, separate from advisory contracts."""
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, ClassVar
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
 from .production_contracts import ProductionSourceSnapshot, Name, Digest, PUBLIC_SCOPE_KEYS
 
@@ -24,6 +24,7 @@ class ProviderSelection(ExecutionModel):
 
 class CanvasReturnBinding(ExecutionModel):
     """Immutable return intent in the original Job command; never authority."""
+    allowed_asset_kinds: ClassVar[frozenset[str]] = frozenset({'image', 'audio'})
     contract: Literal['studio-canvas-return/1']
     project_id: Name
     scope: dict[str, str | None]
@@ -40,7 +41,7 @@ class CanvasReturnBinding(ExecutionModel):
                 or self.scope.get('mode') not in {'local', 'collaboration'}
                 or any(v is not None and not 1 <= len(v) <= 240 for v in self.scope.values())
                 or self.scope['mode'] == 'collaboration' and any(not self.scope.get(k) for k in ('workspace_id', 'storyline_id', 'branch_id'))
-                or self.source.kind != 'ASSET' or self.source.asset_kind not in {'image', 'audio'}):
+                or self.source.kind != 'ASSET' or self.source.asset_kind not in self.allowed_asset_kinds):
             raise ValueError('STUDIO_CANVAS_RETURN_BINDING_INVALID')
         return self
 

@@ -1,3 +1,4 @@
+import { StudioCanvasVideoTaskPanel } from './StudioCanvasVideoTaskPanel';
 import { useMemo, useState } from 'react';
 import { Badge, Panel } from '../ui/primitives';
 import { StudioMediaExecutionPanel } from './StudioMediaExecutionPanel';
@@ -12,7 +13,8 @@ import { ExecutionProvenancePanel } from '../experimental/executionProvenance/Ex
 export function StudioCanvasImageTaskPanel({task,provenanceAssets,...props}:Omit<StudioMediaExecutionProps,'assets'|'canvasImageTask'|'canvasAudioTrimTask'|'onJob'>&{task:CanvasImageTaskSession;provenanceAssets?:Pick<StudioClient,'asset'>}) {
   const [job,setJob]=useState<ProductionJob|undefined>(task.resumeJob);
   const audio=task.asset.kind==='audio';
-  const binding=useMemo(()=>({source:(audio?canvasAudioTrimTaskSource:canvasImageTaskSource)(task.origin.source),returnBinding:task.origin.binding,isCurrent:task.isOriginCurrent}),[task]);
+  const binding=useMemo(()=>task.asset.kind==='video'?undefined:({source:(audio?canvasAudioTrimTaskSource:canvasImageTaskSource)(task.origin.source),returnBinding:task.origin.binding,isCurrent:task.isOriginCurrent}),[task]);
+  if(task.asset.kind==='video')return <StudioCanvasVideoTaskPanel key={task.id} {...props} task={task} provenanceAssets={provenanceAssets}/>;
   return <section aria-label="所选卡片的执行画布">
     <Panel title={audio?"本次音频截取任务 · 影响范围":"本次图像任务 · 影响范围"}>
       <p><Badge>单次任务草稿</Badge> 原位置 <code>{task.origin.canvasId}</code> · v{task.origin.canvasVersion} · 卡片 <code>{task.origin.cardId}</code></p>

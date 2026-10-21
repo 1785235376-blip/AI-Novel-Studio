@@ -16,7 +16,7 @@ it.each(['prompt', 'provider', 'model', 'parameter', 'source version', 'source d
   if (name === 'prompt') value.command.prompt += ' changed';
   if (name === 'provider') value.command.provider_id = 'another-provider';
   if (name === 'model') value.command.model_id = 'another-model';
-  if (name === 'parameter') value.command.parameters.seed = 8;
+  if (name === 'parameter') Object.assign(value.command.parameters, { seed: 8 });
   if (name === 'source version') value.command.source_snapshots[0].version++;
   if (name === 'source digest') value.command.source_snapshots[0].digest = 'e'.repeat(64);
   if (name === 'recipe') value.recipe!.parameters = { steps: 37, seed: 100 };
@@ -27,7 +27,7 @@ it.each(['prompt', 'provider', 'model', 'parameter', 'source version', 'source d
   expect(await fingerprintExecutionImpact(executionImpactSnapshot(value))).not.toBe(original);
 });
 it('reports real parameter and source pin differences without changing or filling the original request', () => {
-  const input = impactInput();input.command.parameters.steps = 37;input.command.source_snapshots[0].version = 2;
+  const input = impactInput();Object.assign(input.command.parameters, { steps: 37 });input.command.source_snapshots[0].version = 2;
   const original = structuredClone(input), view = executionImpactSnapshot(input);
   expect(view.differences).toContainEqual({ path: 'command.parameters.steps', before: '20', after: '37', changed: true });
   expect(view.differences).toContainEqual({ path: 'command.source_snapshots[0].version', before: '1', after: '2', changed: true });

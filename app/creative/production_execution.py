@@ -701,6 +701,11 @@ class ProductionExecutionService:
     @staticmethod
     def view(row, owner):
         context = row.get("context", {})
+        if 'canvas_video' in context:
+            from .canvas_video_task import validate_context
+            validate_context(context)
+            if owner != 'timeline' or row.get('request_digest') != context['request_digest']:
+                raise ValueError('STUDIO_CANVAS_VIDEO_CONTEXT_CHANGED')
         binding = context.get("provider_binding")
         command = copy.deepcopy(context.get("command"))
         if command is not None:
@@ -711,6 +716,7 @@ class ProductionExecutionService:
             candidate = {"id": row["output_asset_id"], "version": row.get("candidate_asset_version", row.get("output_asset_version")), "digest": row.get("output_digest"),
                 "kind": "image" if owner == "image" else "audio"}
         return {"contract": "studio-production-job/1", "owner": owner,
+            **({'canvas_video': copy.deepcopy(context['canvas_video'])} if 'canvas_video' in context else {}),
             **({"processing_proof": copy.deepcopy(row.get("processing_proof"))} if context.get("operation_id") in {"m5.image.cutout", "m5.image.upscale", "m5.image.composite"} else {}),
             **{key: copy.deepcopy(row.get(key)) for key in ("id", "novel_id", "branch_id", "version", "status", "request_digest", "receipt_digest", "attempt", "created_at", "updated_at", "error_code", "review_state", "cancellation_mode", "needs_reconciliation", "execution_state")},
             "operation_id": row.get("context", {}).get("operation_id"), "output_candidate": candidate,
@@ -1283,6 +1289,9 @@ class ProductionExecutionService:
                     raise ValueError("CREATIVE_GRAPH_MEDIA_ASSET_GUARD_REQUIRED")
                 graph_asset_guard()
             timeline = self._timeline_context_current(nid, scope, actor, context, document)
+            if 'canvas_video' in context:
+                from .canvas_video_task import CanvasVideoTaskExecution
+                CanvasVideoTaskExecution(self).current(nid, scope, actor, context, guard, document=document)
             self._timeline_sources_current(nid, scope, timeline["timeline"], guard)
             row = self.video_owner.get_studio(nid, scope.get("branch_id"), actor, jid, context=context, guard=guard)
             if row["version"] != action.expected_version or row["request_digest"] != action.expected_request_digest:
@@ -1417,6 +1426,9 @@ class ProductionExecutionService:
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
+            if 'canvas_video' in context:
+                from .canvas_video_task import CanvasVideoTaskExecution
+                CanvasVideoTaskExecution(self).current(nid, scope, actor, context, guard, document=document)
             self._canvas_audio_return_current(nid, scope, actor, context, guard, document=document)
             if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 self._comic_owner().current(nid, scope, context, guard)
@@ -1849,6 +1861,18 @@ class ProductionExecutionService:
             result = self._timeline_view(row, scope)
             guard()
         return result
+
+    def canvas_video_preview(self, nid, scope, actor, value, guard):
+        from .canvas_video_task import CanvasVideoTaskExecution
+        return CanvasVideoTaskExecution(self).preview(nid, scope, actor, value, guard)
+
+    def canvas_video_queue(self, nid, scope, actor, value, guard):
+        from .canvas_video_task import CanvasVideoTaskExecution
+        return CanvasVideoTaskExecution(self).queue(nid, scope, actor, value, guard)
+
+    def canvas_video_execute(self, nid, scope, actor, jid, action, guard):
+        from .canvas_video_task import CanvasVideoTaskExecution
+        return CanvasVideoTaskExecution(self).execute(nid, scope, actor, jid, action, guard)
 
     def timeline_export_preview(self, nid, scope, actor, tid, value, guard):
         from ..services.studio_timeline_render import studio_sources, RENDER_TIMEOUT_SECONDS

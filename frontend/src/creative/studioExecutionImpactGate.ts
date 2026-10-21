@@ -1,3 +1,4 @@
+import type { CanvasVideoTaskPreview } from './canvasVideoTrimTask';
 import { isIssuedExecutionImpactConfirmation } from '../experimental/executionImpact/ExecutionImpactPanel';
 import { canonicalExecutionImpact, executionImpactSnapshot, fingerprintExecutionImpact,
   type ExecutionImpactConfirmation, type ExecutionImpactInput } from '../experimental/executionImpact/executionImpact';
@@ -5,7 +6,7 @@ import type { ProductionJob, ProductionPreview } from './studioProductionClient'
 
 export type StudioExecutionImpactInput = ExecutionImpactInput & {
   boundary: { kind: 'CREATE' | 'EXECUTE'; job?: Pick<ProductionJob, 'id' | 'owner' | 'version' | 'request_digest'> };
-  preview: ProductionPreview;
+  preview: ProductionPreview | CanvasVideoTaskPreview;
 };
 /** Ephemeral, single-use input review. Original owner still grants every action. */
 export function studioExecutionImpactGate(input: StudioExecutionImpactInput, latest: () => StudioExecutionImpactInput | undefined, guard: () => boolean) {

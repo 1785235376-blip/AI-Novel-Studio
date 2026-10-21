@@ -29,7 +29,7 @@ it.each(['prompt','provider','model','parameter','source pin','recipe','future b
   const f=setup();await acknowledge();const oldClick=retained(button());fireEvent.click(button());const oldProof=f.onConfirm.mock.calls[0][0] as ExecutionImpactConfirmation;
   const input=structuredClone(f.props.input);
   if(kind==='prompt')input.command.prompt+=' changed';if(kind==='provider')input.command.provider_id='next';if(kind==='model')input.command.model_id='next';
-  if(kind==='parameter')input.command.parameters.seed=42;if(kind==='source pin')input.command.source_snapshots[0].version=2;if(kind==='recipe')input.recipe!.parameters={steps:37};
+  if(kind==='parameter')Object.assign(input.command.parameters,{seed:42});if(kind==='source pin')input.command.source_snapshots[0].version=2;if(kind==='recipe')input.recipe!.parameters={steps:37};
   if(kind==='future binding')Object.assign(input.command,{canvas_return:{card_id:'another-card'}});
   f.rerender(<ExecutionImpactPanel {...f.props} input={input}/>);expect(oldProof.isCurrent()).toBe(false);
   f.rerender(<ExecutionImpactPanel {...f.props}/>);await act(async()=>oldClick());
@@ -42,7 +42,7 @@ it.each(['owner','current','permission'])('does not revive old confirmation afte
   expect(old.isCurrent()).toBe(false);expect(checkbox().checked).toBe(false);
 });
 it('refuses unrendered in-place mutation at the action boundary', async () => {
-  const f=setup();await acknowledge();const old=retained(button());f.props.input.command.parameters.seed=99;
+  const f=setup();await acknowledge();const old=retained(button());Object.assign(f.props.input.command.parameters,{seed:99});
   await act(async()=>old());expect(f.onConfirm).not.toHaveBeenCalled();
 });
 it('ignores a late fingerprint from an earlier input', async () => {

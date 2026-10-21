@@ -63,3 +63,8 @@ Git 注释标签 `v0.1.0-alpha` 是本项目早期公开工程源码快照的锚
 已保存音频卡片可沿原 AudioJob 编辑截取起止毫秒，在入队和实际执行前分别确认本次输入与影响范围。截取使用本机已安装的 FFmpeg，输出 PCM16 WAV；候选须显式审核，再核验并采用到记录中的原卡片。重开后读取原任务，不会自动执行或采用；来源或画布版本冲突会阻断回填。
 
 公开测试用源码合成短 WAV 与软件回执，不包含用户音频或录制输出。真实 CPU 截取验证不代表 TTS 模型、GPU、外部服务、PostgreSQL 或原生桌面已验收。
+
+
+### Saved video-card CPU trim
+
+Studio can edit one saved video card with the original Timeline owner: explicit apply, preview-bound create/execute confirmations, local FFmpeg processing, candidate playback/review, exact-card CAS adoption, reopen recovery and canvas history restore. The fixed output is silent H.264 MP4 at 640x360/25fps, on a 40ms input grid, up to 120 seconds; source audio is not preserved. This is CPU editing, not video generation or a complete node editor. Source-generated frontend software fixtures are separate from the Python synthetic-video native FFmpeg test. Real model/GPU, external providers, PostgreSQL and live desktop Host E2E are not certified by this increment.

@@ -70,6 +70,7 @@
     "app/creative/bible_projection.py",
     "app/creative/bible_workspace.py",
     "app/creative/camera_language.py",
+    "app/creative/canvas_video_task.py",
     "app/creative/canvas_view_api.py",
     "app/creative/canvas_view_models.py",
     "app/creative/canvas_views.py",

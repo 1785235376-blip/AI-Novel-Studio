@@ -13,6 +13,8 @@ from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAct
     TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
     TimelineWaveformPreview)
 
+from .canvas_video_task import CanvasVideoCommand, CanvasVideoQueue
+
 Owner = Literal["image", "audio", "video", "timeline"]
 
 
@@ -325,6 +327,24 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                     observe)
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
+
+    @router.post("/projects/{nid}/studio/production/canvas-video/preview")
+    def canvas_video_preview(nid: str, request: Request, body: CanvasVideoCommand,
+            x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.read",
+            lambda actor, scope, guard: service.canvas_video_preview(nid, scope, actor, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/canvas-video/queue", status_code=201)
+    def canvas_video_queue(nid: str, request: Request, body: CanvasVideoQueue,
+            x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.canvas_video_queue(nid, scope, actor, body, guard))
+
+    @router.post("/projects/{nid}/studio/production/canvas-video/jobs/{jid}/execute")
+    def canvas_video_execute(nid: str, jid: str, request: Request, body: MediaJobAction,
+            x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return call(request, nid, x_session_token, x_branch_id, "domain.write",
+            lambda actor, scope, guard: service.canvas_video_execute(nid, scope, actor, jid, body, guard))
 
     @router.get("/projects/{nid}/studio/production/timelines")
     def timelines(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
