@@ -1,3 +1,4 @@
+import { checkedCompositeLayers } from './studioImageCompositeContract';
 import { validCutoutParameters } from './studioCutoutContract';
 import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import { checkedCanvasVideoTaskJob } from './canvasVideoTrimTask';
@@ -34,6 +35,12 @@ export function canvasReturnInCommand(command:unknown):CanvasReturnBinding|undef
     if(command.operation_id!=='m8.audio.trim'||command.allow_cloud!==false||command.provider_id!=null||command.model_id!=null||command.prompt!==''
       ||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!parameters
       ||['image_source','image_references','mask_source','video_reference','video_frames','storyboard_shot','storyboard_speech','audio_profile','image_layers'].some(k=>Object.hasOwn(command,k)))invalid();
+  }else if(command.operation_id==='m5.image.composite'){
+    const layers=checkedCompositeLayers(command.image_layers);
+    if(command.allow_cloud!==false||command.provider_id!==null||command.model_id!==null||command.prompt!==''
+      ||!object(command.parameters)||Object.keys(command.parameters).length||!Array.isArray(sources)||sources.length!==2
+      ||sources.filter(pin).length!==1||![0,1].every(i=>object(sources[i])&&['id','kind','version','digest','asset_kind'].every(k=>sources[i][k]===(layers[i].source as unknown as Record<string,unknown>)[k]))
+      ||['image_source','image_references','mask_source','video_reference','video_frames','storyboard_shot','storyboard_speech','audio_profile','derived_from','template_ref'].some(k=>Object.hasOwn(command,k)))invalid();
   }else if(command.operation_id==='m5.image.cutout'){
     if(command.allow_cloud!==false||command.provider_id!==null||command.model_id!==null||command.prompt!==''||!validCutoutParameters(command.parameters)
       ||!Array.isArray(sources)||sources.length!==2||!pin(sources[0])||!object(sources[1])||sources[1].kind!=='ASSET'||sources[1].asset_kind!=='image'

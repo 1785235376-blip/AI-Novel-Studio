@@ -1,3 +1,4 @@
+import { canvasReturnInCommand, sameCanvasReturn } from './studioCanvasReturnBinding';
 import { ApiError } from '../api';
 import type { MediaCommand, ProductionRecipe, ProductionSource, RecordedMediaCommand } from './studioProductionClient';
 export const IMAGE_COMPOSITE_OPERATION = 'm5.image.composite' as const;
@@ -27,18 +28,19 @@ export function checkedCompositeLayers(v: unknown): ImageCompositeLayer[] {
   if (result[0].source.id === result[1].source.id) fail(); return result;
 }
 export function checkedCompositeCommand(v: unknown): ImageCompositeLayer[] {
-  const keys = ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_layers'];
+  const keys = ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_layers', ...(object(v)&&Object.hasOwn(v,'canvas_return')?['canvas_return']:[])];
   if (!object(v) || !closed(v, keys) || v.operation_id !== IMAGE_COMPOSITE_OPERATION || v.provider_id !== null || v.model_id !== null
     || v.prompt !== '' || v.allow_cloud !== false || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000 || !object(v.parameters) || Object.keys(v.parameters).length
     || !Array.isArray(v.source_snapshots) || v.source_snapshots.length !== 2) fail();
+  canvasReturnInCommand(v);
   const layers = checkedCompositeLayers(v.image_layers);
   if (JSON.stringify(layers.map(l => l.source)) !== JSON.stringify(v.source_snapshots.map(source))) fail(); return layers;
 }
 export function sameCompositeCommand(a: MediaCommand | RecordedMediaCommand, b: MediaCommand | RecordedMediaCommand | null) {
   if (a.operation_id !== IMAGE_COMPOSITE_OPERATION) return b?.image_layers === undefined;
   if (!b || b.operation_id !== a.operation_id || a.request_id !== b.request_id || a.license_note !== b.license_note) return false;
-  try { return JSON.stringify(checkedCompositeCommand(a)) === JSON.stringify(checkedCompositeCommand(b)); } catch { return false; }
+  try { return sameCanvasReturn(a,b) && JSON.stringify(checkedCompositeCommand(a)) === JSON.stringify(checkedCompositeCommand(b)); } catch { return false; }
 }
 export function checkedCompositeRecipe(v: unknown, command?: MediaCommand | RecordedMediaCommand): ProductionRecipe {
   const keys = ['contract', 'operation_id', 'adapter', 'recipe_digest', 'automatic_fallback', 'parameters', 'layers', 'algorithm', 'output_profile'];
