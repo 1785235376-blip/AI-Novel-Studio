@@ -139,7 +139,7 @@ def test_controls_are_closed_strict_and_finite_in_both_owners(parameters):
     with pytest.raises(AudiobookError): _body(payload)
 
 
-@pytest.mark.parametrize('key,value', [('gain_db', 0), ('sample_rate', 48000), ('channels', 2)])
+@pytest.mark.parametrize('key,value', [('output_format', 'FLAC'), ('sample_rate', 48000), ('channels', 2)])
 def test_graph_and_non_trim_operations_do_not_gain_new_controls(key, value):
     with pytest.raises(ValueError):
         MediaNodeParameters.model_validate({'operation_id': 'm8.audio.trim', 'parameters': {'in_ms': 0, 'out_ms': 10, key: value}})

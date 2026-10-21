@@ -522,7 +522,7 @@ class ProductionExecutionService:
     def preview(self, nid, scope, actor, value, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         command = MediaCommand.model_validate(value)
         if (graph_binding is not None and command.operation_id == "m8.audio.trim"
-                and any(getattr(command.parameters, key) is not None for key in ("gain_db", "sample_rate", "channels", "output_format", "fade_in_ms", "fade_out_ms", "target_peak_dbfs", "target_lufs", "denoise_profile"))):
+                and any(getattr(command.parameters, key) is not None for key in ("sample_rate", "channels", "output_format", "target_peak_dbfs", "target_lufs", "denoise_profile"))):
             raise ValueError("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY")
         if command.operation_id in {"m5.image.cutout", "m5.image.inpaint", "m5.image.composite"}: guard = self._cutout_guard(guard)
         with (self.store.existing_owner_only() if any(source.kind == "COMIC_PANEL" for source in command.source_snapshots) else nullcontext()):

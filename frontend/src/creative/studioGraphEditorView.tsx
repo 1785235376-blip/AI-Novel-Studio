@@ -103,7 +103,7 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       return <label key={name}>{label}<select value={String(value)} disabled={!editable} onChange={event => updateMediaParameter(name, event.target.value)}><option value="">服务商默认值</option>{options.map(option => <option key={option} value={option}>{option}</option>)}</select></label>;
     }
     const ranges: Record<string, [number, number, number]> = { width: [64, 2048, 8], height: [64, 2048, 8], steps: [1, 150, 1], seed: [0, 2147483647, 1], denoising_strength: [0.01, 1, 0.01],
-      duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1] }, range = ranges[name];
+      duration_seconds: [1, 600, 1], frame_rate: [1, 60, 1], speech_rate: [0.5, 2, 0.1], in_ms: [0, 600000, 1], out_ms: [1, 600000, 1], gain_db:[-60,12,0.1], fade_in_ms:[0,120000,1], fade_out_ms:[0,120000,1] }, range = ranges[name];
     return <label key={name}>{label}<input type={range ? 'number' : 'text'} min={range?.[0]} max={range?.[1]} step={range?.[2]} maxLength={name === 'voice_id' ? 240 : undefined}
       value={String(value)} disabled={!editable} onChange={event => updateMediaParameter(name, event.target.value)} /></label>;
   }

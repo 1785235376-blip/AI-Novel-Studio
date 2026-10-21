@@ -143,7 +143,7 @@ def test_disabled_current_template_node_is_not_an_admissible_task_template(task_
         preview(e)
 
 
-@pytest.mark.parametrize('parameters', [{'gain_db': -6}, {'fade_in_ms': 10}, {'fade_out_ms': 10}])
+@pytest.mark.parametrize('parameters', [{'sample_rate': 44100}, {'channels': 1}, {'target_peak_dbfs': -6}])
 def test_graph_template_does_not_gain_task_only_envelope_support(parameters):
     with pytest.raises(ValueError):
         MediaNodeParameters.model_validate({'operation_id': 'm8.audio.trim',
