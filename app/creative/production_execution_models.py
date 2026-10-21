@@ -232,6 +232,36 @@ class ImageCompositeLayer(ExecutionModel):
         return value
 
 
+class FailedCanvasAudioOrigin(ExecutionModel):
+    owner: Literal['audio']
+    job_id: Name
+    job_version: int = Field(ge=1)
+    request_id: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$')
+    request_digest: Digest
+    receipt_digest: Digest | None
+
+
+class CanvasAudioTemplateParameters(ExecutionModel):
+    in_ms: int = Field(ge=0, le=600000)
+    out_ms: int = Field(ge=1, le=600000)
+
+    @model_validator(mode='after')
+    def range(self):
+        if not 0 < self.out_ms - self.in_ms <= 120000:
+            raise ValueError('STUDIO_CANVAS_AUDIO_TEMPLATE_RANGE_INVALID')
+        return self
+
+
+class CanvasAudioWorkflowTemplateRef(ExecutionModel):
+    contract: Literal['studio-canvas-audio-template/1']
+    graph_id: Name
+    graph_version: int = Field(ge=1)
+    definition_digest: Digest
+    execution_digest: Digest
+    node_id: Name
+    parameters: CanvasAudioTemplateParameters
+
+
 class _MediaCommandShape(ExecutionModel):
     operation_id: MediaOperation
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
@@ -252,6 +282,14 @@ class _MediaCommandShape(ExecutionModel):
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
     image_layers: list[ImageCompositeLayer] | None = Field(default=None, min_length=2, max_length=2)
     canvas_return: CanvasReturnBinding | None = None
+    derived_from: FailedCanvasAudioOrigin | None = None
+    template_ref: CanvasAudioWorkflowTemplateRef | None = None
+
+    @field_validator('derived_from', 'template_ref', mode='before')
+    @classmethod
+    def explicit_task_provenance(cls, value):
+        if value is None: raise ValueError('STUDIO_CANVAS_AUDIO_PROVENANCE_INVALID')
+        return value
 
     @field_validator('canvas_return', mode='before')
     @classmethod
@@ -276,13 +314,17 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers", "canvas_return"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers", "canvas_return", "derived_from", "template_ref"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if (self.derived_from is not None or self.template_ref is not None) and (
+                self.canvas_return is None or self.canvas_return.source.asset_kind != 'audio'
+                or self.operation_id != 'm8.audio.trim'):
+            raise ValueError('STUDIO_CANVAS_AUDIO_PROVENANCE_CONTEXT_INVALID')
         if self.canvas_return is not None:
             origin = self.canvas_return.source
             if origin.asset_kind == 'image':

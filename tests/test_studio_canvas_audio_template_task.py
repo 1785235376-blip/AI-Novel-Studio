@@ -65,7 +65,11 @@ def test_original_graph_pin_task_override_and_queued_snapshot_survive_template_c
     assert changed['version'] == before['version'] + 1
     assert get(e, queued)['command'] == original
     # The already admitted request is rechecked against its original full snapshot.
-    assert preview(e)['command'] == original
+    rechecked = preview(e)['command']
+    # Original preview has known null defaults; Job.view omits them. Compare
+    # every effective parameter and all provenance/source fields exactly.
+    rechecked['parameters'] = {k: v for k, v in rechecked['parameters'].items() if v is not None}
+    assert rechecked == original
     assert queue(e) == queued
     fresh = deepcopy(e.command)
     fresh['request_id'] = 'new-task-old-template-pin'

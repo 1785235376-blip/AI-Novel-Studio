@@ -1,3 +1,4 @@
+import { readProjectTemplateSource } from './graphProjectTemplates';
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import { StudioCanvasImageTaskPanel } from './StudioCanvasImageTaskPanel';
@@ -28,6 +29,9 @@ export function useStudioDualCanvasTask(props:StudioGraphEditorProps&StudioDualC
     const taskCurrent=()=>current()&&taskOwner.current===token&&taskRef.current===task;
     const visibleTask=taskCurrent()?task:undefined;
     const taskContent=visibleTask&&props.productionTaskSource&&<StudioCanvasImageTaskPanel key={visibleTask.id} task={visibleTask} client={props.productionTaskSource} provenanceAssets={props.client}
+      audioWorkflowTemplates={props.draftOwner&&props.client.graphs?{owner:props.draftOwner,
+        list:async()=>{if(!taskCurrent())throw new Error('任务已改变。');const rows=await props.read(()=>props.client.graphs.list());if(!taskCurrent())throw new Error('任务已改变。');return rows.items;},
+        read:id=>props.read(()=>readProjectTemplateSource(props.client,props.draftOwner!,id,()=>taskCurrent()&&!!visibleTask.isOriginCurrent()))}:undefined}
       leaveGuard={props.productionTaskLeaveGuard} canMutate={props.canMutate&&!blocked} canReview={props.canReview&&!blocked} busy={props.busy} isBusy={props.isBusy}
       isCurrent={taskCurrent} read={props.read} mutate={props.mutate} onUnavailable={()=>props.onCanvasTaskUnavailable?.()}
       onDirtyChange={dirty=>{if(taskCurrent()){dirtyRef.current=dirty;setTaskDirty(dirty);}}}

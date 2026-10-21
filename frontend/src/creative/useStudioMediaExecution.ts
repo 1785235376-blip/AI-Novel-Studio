@@ -1,3 +1,7 @@
+import { checkedCanvasAudioProvenance, type FailedCanvasAudioOrigin, type CanvasAudioWorkflowTemplateRef } from './studioCanvasAudioProvenance';
+import { deriveFailedCanvasAudioCommand } from './taskRecovery';
+import type { StudioGraphDraftOwner } from './studioGraphLocalDraft';
+import type { StudioGraphRecord } from './studioGraphTypes';
 import { canonicalExecutionImpact, type ExecutionImpactConfirmation } from '../experimental/executionImpact/executionImpact';
 import { studioExecutionImpactGate, sameExecutionPreview, type StudioExecutionImpactGate, type StudioExecutionImpactInput } from './studioExecutionImpactGate';
 import { sameCompositeCommand } from './studioImageCompositeContract';
@@ -29,6 +33,7 @@ export type StudioMediaExecutionProps = {
   /** Optional single-card task fence. It owns no execution, storage or queue. */
   canvasImageTask?: CanvasImageTaskBinding;
   canvasAudioTrimTask?: CanvasAudioTrimTaskBinding;
+  audioWorkflowTemplates?: { owner:StudioGraphDraftOwner; list:()=>Promise<StudioGraphRecord[]>; read:(id:string)=>Promise<StudioGraphRecord> };
   /** Explicit read-only navigation; never grants review or execution authority. */
   onOpenApprovedAsset?: (job: ProductionJob) => void;
   externalJob?: ProductionJob;
@@ -56,7 +61,7 @@ export const MEDIA_STATUS_LABELS: Record<ProductionJob['status'], string> = {
 export type MediaParameter = 'scale' | 'width' | 'height' | 'steps' | 'seed' | 'negative_prompt' | 'size' | 'quality' | 'denoising_strength' | 'duration_seconds' | 'frame_rate' | 'voice_id' | 'speech_rate' | 'in_ms' | 'out_ms' | 'gain_db' | 'sample_rate' | 'channels' | 'output_format' | 'fade_in_ms' | 'fade_out_ms' | 'target_peak_dbfs' | 'target_lufs' | 'denoise_profile' | 'cutout_output';
 type MediaRoute = 'local' | 'cloud';
 const routeSelectable = (operation: MediaOperation) => (operation.startsWith('m5.image.') || operation.startsWith('m7.video.')) && !['m5.image.cutout', 'm5.image.upscale', 'm5.image.composite'].includes(operation);
-type Draft = { route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
+type Draft = { requestId?:string; derived_from?:FailedCanvasAudioOrigin; template_ref?:CanvasAudioWorkflowTemplateRef; route: MediaRoute; operation: MediaOperation; providerKey: string; prompt: string; parameters: Record<MediaParameter, string>; sources: ProductionSource[]; allowCloud: boolean; licenseNote: string;
   layerSettings?: Record<string, { visible: boolean; opacity: string }>;
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose']; lastFrame?: ProductionSource };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
@@ -233,6 +238,8 @@ function commandFor(draft: Draft, providers: ProductionProvider[], assets: Studi
     ] } : {}),
     ...checkedVideoReference(draft.videoReferencePurpose ? { source: sources[0], purpose: draft.videoReferencePurpose } : undefined, sources, draft.operation) };
   if(task?.returnBinding)command.canvas_return=structuredClone(task.returnBinding);
+  if(draft.derived_from)command.derived_from=structuredClone(draft.derived_from);
+  if(draft.template_ref)command.template_ref=structuredClone(draft.template_ref);
   if(task){if(task.source.asset_kind==='audio')assertCanvasAudioTrimTaskCommand(task,command);else assertCanvasImageTaskCommand(task,command,provider);}
   return command;
 }
@@ -292,7 +299,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     handoffStamp.current = nextHandoffStamp; handoffRequest.current = props.assetHandoff; handoffRevision.current++;
   }
   const canClosePrepared = canEdit && (!selected || !['UNKNOWN', 'RUNNING', 'SEND_RESERVED', 'REMOTE_RUNNING', 'RESULT_READY', 'REVIEWING'].includes(selected.status));
-  let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, 'shape_check',boundTask(props)); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
+  let inputError = ''; try { if (!props.preparedCommand) commandFor(draft, providers, props.assets, draft.requestId ?? (draft.derived_from?.request_id==='shape_check'?'shape_check_2':'shape_check'),boundTask(props)); } catch (reason) { inputError = reason instanceof Error ? reason.message : '请核对输入。'; }
 
   // Single-use confirmation for original, explicitly bound media-card tasks.
   const impactRequired = () => !!boundTask(latest.current) || !!previewRef.current?.command.canvas_return || !!selectedRef.current?.command?.canvas_return;
@@ -391,6 +398,27 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function edit(next: Draft) {
     if (latest.current.preparedCommand || !current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
     handoffRevision.current++; draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
+  }
+  function prepareFailedAudio(command:MediaCommand) {
+    const task=latest.current.canvasAudioTrimTask,job=selectedRef.current;
+    if(!task||!job||!canClosePrepared||!current()||busy()||!latest.current.canMutate||uncertainRef.current||creation.current?.uncertain)return;
+    // The module's callback carries no authority; recompute against the selected original receipt.
+    const expected=deriveFailedCanvasAudioCommand(job,task,command.request_id);
+    if(canonicalExecutionImpact(expected)!==canonicalExecutionImpact(command))throw invalid('失败派生输入已改变。');
+    const next=initialDraft(task);
+    for(const [key,value] of Object.entries(command.parameters))next.parameters[key as MediaParameter]=String(value);
+    next.licenseNote=command.license_note;next.requestId=command.request_id;
+    next.derived_from=structuredClone(command.derived_from!);if(command.template_ref)next.template_ref=structuredClone(command.template_ref);
+    edit(next);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
+    setNotice('已准备新身份的派生草稿，保留原失败记录；仍需重新预览、逐阶段确认和人工审核。');
+  }
+  function applyAudioTemplate(ref:CanvasAudioWorkflowTemplateRef) {
+    const task=latest.current.canvasAudioTrimTask;
+    if(!task||!latest.current.audioWorkflowTemplates||!!selectedRef.current||!canClosePrepared||!current()||busy()||!latest.current.canMutate||uncertainRef.current||creation.current?.uncertain||!task.isCurrent())return;
+    const next={...draftRef.current,parameters:{...draftRef.current.parameters,in_ms:String(ref.parameters.in_ms),out_ms:String(ref.parameters.out_ms)},template_ref:structuredClone(ref),requestId:undefined};
+    checkedCanvasAudioProvenance({operation_id:'m8.audio.trim',canvas_return:task.returnBinding,template_ref:ref});
+    edit(next);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
+    setNotice('已将模板版本的范围复制为本次任务草稿；后续局部覆盖不修改模板或原入队任务。');
   }
   function changeOperation(operation: MediaOperation) { if (boundTask(latest.current)&&operation!==(boundTask(latest.current)?.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i'))return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(boundTask(latest.current)), operation, licenseNote: draftRef.current.licenseNote }); }
   function changeRoute(route: MediaRoute) {
@@ -620,7 +648,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const value = begin('PREVIEW'); if (!value) return;
     const captured = inputKey(draftRef.current); clearPreview();
     try {
-      const command = latest.current.preparedCommand ? structuredClone(latest.current.preparedCommand) as MediaCommand : commandFor(draftRef.current, providersRef.current, latest.current.assets, crypto.randomUUID(),boundTask(latest.current));
+      const command = latest.current.preparedCommand ? structuredClone(latest.current.preparedCommand) as MediaCommand : commandFor(draftRef.current, providersRef.current, latest.current.assets, draftRef.current.requestId ?? crypto.randomUUID(),boundTask(latest.current));
       const result = await latest.current.read(() => value.client.preview(command));
       if (!live(value) || captured !== inputKey(draftRef.current) || !sourcesCurrent(command.source_snapshots, latest.current.assets, command.operation_id)) return;
       const chosen = providersRef.current.find(row => latest.current.preparedCommand ? row.operation_id === command.operation_id && row.provider_id === command.provider_id && row.model_id === command.model_id : mediaProviderKey(row) === draftRef.current.providerKey);
@@ -869,7 +897,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
     endFrameSource: draft.lastFrame, videoFrameCapabilities: provider?.video_frame_capabilities, selectEndFrame,
     routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
-    impact, confirmImpact, impactRequired:impactRequired(), inspectExecution,
+    impact, confirmImpact, impactRequired:impactRequired(), inspectExecution, prepareFailedAudio, applyAudioTemplate,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
 export type StudioMediaExecutionController = ReturnType<typeof useStudioMediaExecution>;

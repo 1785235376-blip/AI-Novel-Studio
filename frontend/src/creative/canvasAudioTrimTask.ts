@@ -1,3 +1,4 @@
+import { checkedCanvasAudioProvenance } from './studioCanvasAudioProvenance';
 import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import type { CanvasAssetReference, CanvasDefinition, CanvasViewRecord } from './studioCanvasViewClient';
 import type { MediaCommand, ProductionJob, ProductionSource, RecordedMediaCommand } from './studioProductionClient';
@@ -19,7 +20,7 @@ export type CanvasAudioTrimTaskSession = {
 
 const WAV_PROFILE = 'PCM_S16LE_WAV_48000_STEREO';
 const commandKeys = new Set(['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt',
-  'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'canvas_return']);
+  'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'canvas_return', 'derived_from', 'template_ref']);
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const canonical = (value: unknown) => JSON.stringify(value, (_key, v) => object(v)
   ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => a.localeCompare(b))) : v);
@@ -33,6 +34,7 @@ const exactSource = (sources: RecordedMediaCommand['source_snapshots'], source: 
 const trimParameters = checkedCanvasAudioTaskEnvelope;
 
 function trimCommandMatches(task: CanvasAudioTrimTaskBinding, command: RecordedMediaCommand, recorded = false): boolean {
+  checkedCanvasAudioProvenance(command);
   const parameters = trimParameters(command.parameters, recorded);
   if (command.operation_id !== 'm8.audio.trim' || command.prompt !== '' || command.provider_id != null
     || command.model_id != null || command.allow_cloud !== false

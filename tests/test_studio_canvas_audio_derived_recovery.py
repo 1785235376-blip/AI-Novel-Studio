@@ -96,7 +96,7 @@ def test_derived_preview_and_queue_preserve_failure_and_exact_envelope(audio_can
     captured = preview(e, value)
     assert len(rows(e)) == 1 and get(e, original) == original
     assert captured['command']['derived_from'] == value['derived_from']
-    assert captured['command']['parameters'] == e.command['parameters']
+    assert {k: v for k, v in captured['command']['parameters'].items() if v is not None} == e.command['parameters']
     assert captured['command']['canvas_return'] == original['command']['canvas_return']
     derived = queue(e, value)
     assert derived['id'] != original['id'] and derived['request_id'] != original['request_id']
@@ -218,7 +218,7 @@ def test_derived_draft_can_explicitly_change_local_envelope_before_new_preview(f
     original = deepcopy(e.failed)
     captured = preview(e, value)
     assert captured['command']['derived_from'] == value['derived_from']
-    assert captured['command']['parameters'] == value['parameters']
+    assert {k: v for k, v in captured['command']['parameters'].items() if v is not None} == value['parameters']
     assert captured['execution_recipe']['parameters'] == value['parameters']
     assert captured['command']['canvas_return'] == original['command']['canvas_return']
     assert get(e, original) == original and len(rows(e)) == 1

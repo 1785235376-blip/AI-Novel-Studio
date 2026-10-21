@@ -1,3 +1,4 @@
+import { CanvasBulkActionsPanel, type CanvasBulkOperation } from './canvasBulkActions';
 import { captureCanvasVideoTrimTask } from './canvasVideoTrimTask';
 import { useMediaCanvasRecovery } from './useMediaCanvasRecovery';
 import { focusCanvasCard, searchCanvasCards } from './mediaCanvasSearch';
@@ -42,6 +43,7 @@ export function MediaCanvasViewPanel(props: Props) {
   const [draft, setDraft] = useState(blank), [base, setBase] = useState<CanvasViewRecord>();
   const [rows, setRows] = useState<CanvasViewSummary[]>([]), [assets, setAssets] = useState<StudioAsset[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkOperation,setBulkOperation]=useState<CanvasBulkOperation|''>('');
   const selectionEpoch = useRef(0), selectionGeneration = selectionEpoch.current;
   const [selected, setSelected] = useState(''), [assetId, setAssetId] = useState(''), [query, setQuery] = useState('');
   const [pending, setPending] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
@@ -174,8 +176,15 @@ export function MediaCanvasViewPanel(props: Props) {
     <div className="creative-actions"><span>已选 {selection.length} 张卡片</span>
       <Button disabled={!editable} onClick={() => { if (!locked()) { selectionEpoch.current++; setSelectedIds(draft.cards.map(c => c.id)); setSelected(draft.cards[0]?.id ?? ''); } }}>选择全部卡片（含视口外）</Button>
       <Button disabled={pending} onClick={() => { if (current()) { selectionEpoch.current++; setSelectedIds([]); } }}>清空卡片多选</Button>
-      {([['left', '左对齐'], ['center', '水平居中'], ['top', '顶端对齐'], ['distribute', '水平等距']] as const).map(([mode, label]) => <Button key={mode} disabled={!editable || selection.length < (mode === 'distribute' ? 3 : 2)} onClick={() => edit(alignCanvasCards(draftRef.current, selection, mode))}>{label}所选卡片</Button>)}
+      {([['left', '左对齐'], ['center', '水平居中'], ['top', '顶端对齐'], ['distribute', '水平等距']] as const).map(([mode, label]) => <Button key={mode} disabled={!editable || selection.length < (mode === 'distribute' ? 3 : 2)} onClick={() => mode==='left'||mode==='top'?setBulkOperation(mode==='left'?'ALIGN_LEFT':'ALIGN_TOP'):edit(alignCanvasCards(draftRef.current, selection, mode))}>{label}所选卡片</Button>)}
     </div>
+    <label>多选操作影响预览<select disabled={!editable||!selection.length} value={bulkOperation} onChange={e=>setBulkOperation(e.target.value as CanvasBulkOperation|'')}>
+      <option value="">明确选择操作</option><option value="REMOVE_CARDS">移除所选引用卡片</option><option value="ALIGN_LEFT">所选卡片左对齐</option><option value="ALIGN_TOP">所选卡片顶端对齐</option></select></label>
+    {bulkOperation&&<CanvasBulkActionsPanel input={{definition:draft,base,selectedIds:selection,operation:bulkOperation,owner:props.draftOwner,current:current()}}
+      ownerToken={token} current={current()} busy={!editable} canApply={editable} isCurrent={current} onApply={next=>{
+        if(!current()||locked()||!live.current.canMutate)return false;
+        const changed=edit(next);if(changed){selectionEpoch.current++;setSelectedIds([]);setSelected('');setBulkOperation('');}return changed;
+      }}/>}
     {props.imageOutputHandoff && <GraphImageOutputStarterPanel owner={token} disabled={!textSourceCurrent()} isCurrent={textSourceCurrent} handoff={props.imageOutputHandoff} />}
     {props.imageGraphHandoff && <details><summary>选择双参考图片输入</summary><p>沿用卡片多选；这里仅选择已保存且元数据当前的图片，不移动视口或改写布局。显示查找结果前 20 张；上方查找可缩小范围。</p>
       {(query.trim() ? matches : draft.cards).filter(row => row.asset?.kind === 'image').slice(0,20).map(row => <label key={row.id}><input type="checkbox" aria-label={`图片输入 ${row.id}`} checked={selection.includes(row.id)} disabled={!imageChoiceAvailable || states.get(row.id)?.state !== 'CURRENT_METADATA'} onChange={() => { if (imageSourceCurrent() && live.current.imageGraphHandoff?.available) selectCard(row.id,true); }} />{row.id} · {row.asset?.asset_id}</label>)}

@@ -1,3 +1,5 @@
+import { CanvasAudioFailedRecoveryPanel } from './taskRecovery';
+import { CanvasAudioWorkflowTemplatePanel } from './workflowTaskTemplate/CanvasAudioWorkflowTemplatePanel';
 import { CanvasAudioTaskEnvelopeControls } from './CanvasAudioTaskEnvelopeControls';
 import { ExecutionImpactPanel } from '../experimental/executionImpact/ExecutionImpactPanel';
 import { IMAGE_REFERENCE_PURPOSES, IMAGE_REFERENCE_PURPOSE_LABELS } from './studioImageRuntimeContract';
@@ -64,6 +66,11 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消{handoffLabel}交接</Button>
       {state.handoffNotice && <StatusMessage>{state.handoffNotice}</StatusMessage>}
     </section>}
+    {props.canvasAudioTrimTask&&props.audioWorkflowTemplates&&<CanvasAudioWorkflowTemplatePanel owner={props.audioWorkflowTemplates.owner} ownerToken={props.client}
+      current={props.isCurrent()&&props.canvasAudioTrimTask.isCurrent()} busy={state.locked} canApply={state.canClosePrepared&&!state.selected}
+      isCurrent={()=>props.isCurrent()&&!!props.canvasAudioTrimTask?.isCurrent()} list={props.audioWorkflowTemplates.list} read={props.audioWorkflowTemplates.read} onApply={state.applyAudioTemplate}/>}
+    {draft.template_ref&&<p>本次草稿引用模板 <code>{draft.template_ref.graph_id}</code> · v{draft.template_ref.graph_version}；模板范围 {draft.template_ref.parameters.in_ms}–{draft.template_ref.parameters.out_ms} ms。本次参数可局部覆盖，原模板及已排队任务不变。</p>}
+    {draft.derived_from&&<p>派生来源：原失败任务 <code>{draft.derived_from.job_id}</code> · v{draft.derived_from.job_version}；新请求仍须重新预览并确认。</p>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
       <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
@@ -210,6 +217,10 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout-webp/1' && <details><summary>本地无损 WebP 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · WebP {job.processing_proof.output_bytes} 字节</p><p>解码 RGBA 摘要：<code>{job.processing_proof.rgba_sha256}</code></p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
+        {props.canvasAudioTrimTask&&['FAILED','UNKNOWN'].includes(job.status)&&<CanvasAudioFailedRecoveryPanel job={job} task={props.canvasAudioTrimTask} owner={props.client}
+          current={props.isCurrent()&&props.canvasAudioTrimTask.isCurrent()} busy={state.locked} canMutate={state.canClosePrepared}
+          isCurrent={()=>props.isCurrent()&&!!props.canvasAudioTrimTask?.isCurrent()} newRequestId={()=>crypto.randomUUID()}
+          onDerive={state.prepareFailedAudio} onRead={()=>state.openJob(job)}/>}
         {job.status === 'UNKNOWN' && <StatusMessage tone="warning">无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。</StatusMessage>}
         {job.status === 'REVIEWING' && <StatusMessage tone="warning">原审核可能已经提交。先读取任务和候选，再确认原审核；不会重新生成。</StatusMessage>}
         {job.error_code && <details><summary>任务回执细节</summary><p>{job.error_code}</p></details>}

@@ -548,6 +548,11 @@ class ProductionExecutionService:
         if graph_binding is not None:
             from .graph_media_binding import validate_graph_binding
             context["graph_binding"] = validate_graph_binding(graph_binding, context)
+        if command.derived_from is not None or command.template_ref is not None:
+            from .canvas_audio_task_provenance import validate_task_provenance
+            if graph_binding is not None or benchmark_binding is not None or batch_binding is not None:
+                raise ValueError('STUDIO_CANVAS_AUDIO_PROVENANCE_CONTEXT_INVALID')
+            validate_task_provenance(self, nid, scope, actor, command, context, guard)
         sources = [s.model_dump(exclude={"reference_only"}, exclude_none=True) for s in command.source_snapshots]
         if command.operation_id in {"m5.image.cutout", "m5.image.composite"} and graph_binding is not None:
             raise ValueError("STUDIO_IMAGE_CUTOUT_STANDALONE_ONLY")
@@ -741,7 +746,7 @@ class ProductionExecutionService:
         preview, context, command = self.preview(nid, scope, actor, body.command, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         if preview["preview_digest"] != body.reviewed_preview_digest:
             raise StaleSourceError("STUDIO_PRODUCTION_PREVIEW_CHANGED")
-        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return"})
+        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return", "derived_from", "template_ref"})
         payload["parameters"] = command.parameters.model_dump(exclude_none=True)
         # Keep the exact reviewed command for later egress and route rechecks.
         context["command"] = copy.deepcopy(preview["command"]) if command.operation_id in {"m5.image.cutout", "m5.image.composite"} else command.model_dump()

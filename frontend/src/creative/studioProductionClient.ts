@@ -1,3 +1,4 @@
+import { checkedCanvasAudioProvenance, sameCanvasAudioProvenance, type FailedCanvasAudioOrigin, type CanvasAudioWorkflowTemplateRef } from './studioCanvasAudioProvenance';
 import { checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
@@ -24,7 +25,7 @@ export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.referen
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
   parameters: Record<string, string | number>; source_snapshots: RecordedProductionSource[]; allow_cloud: boolean; license_note: string;
-  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; video_frames?: VideoFrame[]; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[]; canvas_return?: CanvasReturnBinding };
+  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; video_frames?: VideoFrame[]; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[]; derived_from?: FailedCanvasAudioOrigin; template_ref?: CanvasAudioWorkflowTemplateRef; canvas_return?: CanvasReturnBinding };
 export type RecordedProductionSource = ProductionSource | ComicImageSource | { id: string; kind: 'CREATIVE_DOCUMENT'; version: number; digest: string; reference_only?: true };
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
 export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities; video_frame_capabilities?: VideoFrameCapabilities;
@@ -145,8 +146,8 @@ function trimCommandShape(v: unknown, projected = false): asserts v is MediaComm
   if (!record(v) || v.operation_id !== 'm8.audio.trim' || v.provider_id != null || v.model_id != null || v.prompt !== '' || v.allow_cloud !== false
     || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000
-    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'audio_profile', 'canvas_return'].includes(key))) invalid();
-  canvasReturnInCommand(v);
+    || Object.keys(v).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'audio_profile', 'canvas_return', 'derived_from', 'template_ref'].includes(key))) invalid();
+  canvasReturnInCommand(v); checkedCanvasAudioProvenance(v);
   const parameters = trimParameters(v.parameters, projected);
   if (Object.hasOwn(v, 'audio_profile') && (v.audio_profile !== AUDIO_MP3_PROFILE || parameters.output_format !== 'MP3')) invalid();
   sources(v.source_snapshots, 1);
@@ -172,12 +173,12 @@ function trimRecipe(v: ProductionRecipe, command: unknown) {
   return recordedTrimRecipe(v, command);
 }
 function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCommand | null) {
-  return !!value && sameCanvasReturn(expected,value) && Object.hasOwn(expected, 'audio_profile') === Object.hasOwn(value, 'audio_profile') && expected.audio_profile === value.audio_profile
+  return !!value && sameCanvasAudioProvenance(expected,value) && sameCanvasReturn(expected,value) && Object.hasOwn(expected, 'audio_profile') === Object.hasOwn(value, 'audio_profile') && expected.audio_profile === value.audio_profile
     && sameCutoutCommand({ ...expected, provider_id: expected.provider_id ?? null, model_id: expected.model_id ?? null },
     { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
 }
 function commandScope(command: MediaCommand) {
-  canvasReturnInCommand(command);
+  canvasReturnInCommand(command); checkedCanvasAudioProvenance(command);
   cfgParameter(command.parameters, command.operation_id);
   if (command.operation_id === 'm5.image.composite') { checkedCompositeCommand(command); return; }
   if (command.image_layers !== undefined) invalid();
@@ -399,11 +400,12 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const c = v.command;
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
         || !record(c.parameters) || !Array.isArray(c.source_snapshots) || typeof c.allow_cloud !== 'boolean' || typeof c.license_note !== 'string' || c.license_note.length > 2000) invalid();
-      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'video_frames', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers', 'canvas_return'].includes(key))
+      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'video_frames', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers', 'canvas_return', 'derived_from', 'template_ref'].includes(key))
         || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key) || c.operation_id !== 'm8.audio.trim' && trimControlKeys.includes(key)
           || (typeof value === 'number' ? !Number.isFinite(value) : typeof value !== 'string' || value.length > 8000))) invalid();
       if (Object.hasOwn(c, 'audio_profile') && c.operation_id !== 'm8.audio.trim') invalid();
       sources(c.source_snapshots, 8);
+      checkedCanvasAudioProvenance(c);
       const canvasOrigin=canvasReturnInCommand(c);
       if(canvasOrigin&&(canvasOrigin.project_id!==v.novel_id||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==(v.branch_id??null)
         ||(canvasOrigin.source.asset_kind==='audio'

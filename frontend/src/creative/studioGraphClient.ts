@@ -186,7 +186,8 @@ function mediaParameterValues(value: unknown, operation: GraphMediaOperation | G
     if (!image || Object.keys(row).length !== 1 || row.scale !== 2 && row.scale !== 4) invalid(input);
     return { scale: row.scale };
   }
-  if (Object.keys(row).some(key => !mediaParameterKeys.includes(key) && !(image && key === 'denoising_strength'))) invalid(input);
+  // Original schema-3 trim records contain this server-emitted null placeholder.
+  if (Object.keys(row).some(key => !mediaParameterKeys.includes(key) && !(image && key === 'denoising_strength') && !(operation === 'm8.audio.trim' && key === 'cfg' && row[key] === null))) invalid(input);
   for (const [key, value] of Object.entries(row)) {
     if (value === null) { result[key] = null; continue; }
     if (image && key === 'denoising_strength') {

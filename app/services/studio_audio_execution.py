@@ -417,7 +417,7 @@ def _binding(value, body):
                 if (origin.incarnation != value['incarnation']
                         or ExperimentalStore.key(origin.project_id, origin.scope) != value['scope_key']):
                     raise ValueError('canvas return context')
-            projected = command.model_dump(exclude={"request_id", "allow_cloud", "license_note", "canvas_return"})
+            projected = command.model_dump(exclude={"request_id", "allow_cloud", "license_note", "canvas_return", "derived_from", "template_ref"})
             projected["parameters"] = command.parameters.model_dump(exclude_none=True)
             projected["source_snapshots"] = [source.model_dump(exclude={"reference_only"}, exclude_none=True)
                 for source in command.source_snapshots]
