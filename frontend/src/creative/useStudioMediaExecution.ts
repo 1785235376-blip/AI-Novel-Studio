@@ -41,7 +41,7 @@ export type StudioMediaExecutionProps = {
   onOpenApprovedAsset?: (job: ProductionJob) => void;
   externalJob?: ProductionJob;
   preparedCommand?: RecordedMediaCommand; preparedIsCurrent?: () => boolean; onPreparedClose?: () => void;
-  cutoutExecution?: { execute: (job: ProductionJob) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
+  cutoutExecution?: { execute: (job: ProductionJob, authorize: () => void) => Promise<ProductionJob>; control: (kind: 'read' | 'cancel', job: ProductionJob) => Promise<ProductionJob> };
 };
 const boundTask = (props: StudioMediaExecutionProps) => props.canvasAudioTrimTask ?? props.canvasImageTask;
 const canvasTaskJobMatches = (task: CanvasImageTaskBinding, job: ProductionJob) => task.source.asset_kind==='audio'
@@ -841,12 +841,16 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (localExecution) executingCutout.current = job;
     const responseFence = controlFence.current;
     try {
-      const result = await (localExecution ? localExecution.execute(job) : latest.current.mutate(() => {
+      const authorize=()=>{
         if(kind==='execute' && (impactGate || impactRequired())) {
           if(!live(value)||jobIdentity(selectedRef.current)!==jobIdentity(job))throw new ApiError({status:422,code:'STUDIO_EXECUTION_IMPACT_RETIRED',message:'原任务范围或版本已改变，未派发执行。'});
           consumeImpact('EXECUTE',impactGate);
         }
-        return value.client[kind](job);
+      };
+      // The original workspace invokes authorization inside its mutation lease,
+      // immediately before transport; pending CPU control keeps the same owner.
+      const result = await (localExecution ? localExecution.execute(job,authorize) : latest.current.mutate(() => {
+        authorize();return value.client[kind](job);
       })); if (!live(value)) return;
       if (localExecution && responseFence !== controlFence.current) {
         if (runningControlRef.current || uncertainRef.current || selectedRef.current?.version && result.version <= selectedRef.current.version) return;

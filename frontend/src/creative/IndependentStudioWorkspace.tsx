@@ -285,10 +285,10 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     && value.id === expected.id && value.novel_id === expected.novel_id && value.branch_id === expected.branch_id
     && value.request_id === expected.request_id && value.request_digest === expected.request_digest && value.version >= expected.version;
   const cutoutExecution = {
-    execute: (job: ProductionJob) => graphMutation(async () => {
+    execute: (job: ProductionJob, authorize: () => void) => graphMutation(async () => {
       if (!writable || !['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) || job.owner !== 'image' || job.status !== 'QUEUED') throw new Error('当前不能执行此本地任务。');
       const lease = { job } as NonNullable<typeof cutoutLease.current>; cutoutLease.current = lease;
-      try { return await productionClient.execute(job); }
+      try { authorize();return await productionClient.execute(job); }
       finally {
         // A late execute cannot release other workspace mutations while its
         // exact cancellation/read still owns the semaphore.
