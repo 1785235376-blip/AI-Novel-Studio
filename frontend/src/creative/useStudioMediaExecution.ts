@@ -415,10 +415,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function applyAudioTemplate(ref:CanvasAudioWorkflowTemplateRef) {
     const task=latest.current.canvasAudioTrimTask;
     if(!task||!latest.current.audioWorkflowTemplates||!!selectedRef.current||!canClosePrepared||!current()||busy()||!latest.current.canMutate||uncertainRef.current||creation.current?.uncertain||!task.isCurrent())return;
-    const next={...draftRef.current,parameters:{...draftRef.current.parameters,in_ms:String(ref.parameters.in_ms),out_ms:String(ref.parameters.out_ms)},template_ref:structuredClone(ref),requestId:undefined};
+    const next={...draftRef.current,parameters:{...draftRef.current.parameters,...Object.fromEntries(Object.entries(ref.parameters).map(([key,value])=>[key,String(value)]))},template_ref:structuredClone(ref),requestId:undefined};
     checkedCanvasAudioProvenance({operation_id:'m8.audio.trim',canvas_return:task.returnBinding,template_ref:ref});
     edit(next);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
-    setNotice('已将模板版本的范围复制为本次任务草稿；后续局部覆盖不修改模板或原入队任务。');
+    setNotice('已将模板版本明确提供的参数复制为本次任务草稿；后续局部覆盖不修改模板或原入队任务。');
   }
   function changeOperation(operation: MediaOperation) { if (boundTask(latest.current)&&operation!==(boundTask(latest.current)?.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i'))return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(boundTask(latest.current)), operation, licenseNote: draftRef.current.licenseNote }); }
   function changeRoute(route: MediaRoute) {

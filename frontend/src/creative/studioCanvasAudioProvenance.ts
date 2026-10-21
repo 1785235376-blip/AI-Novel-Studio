@@ -1,6 +1,6 @@
 import { ApiError } from '../api';
 export type FailedCanvasAudioOrigin = { owner:'audio'; job_id:string; job_version:number; request_id:string; request_digest:string; receipt_digest:string|null };
-export type CanvasAudioWorkflowTemplateRef = { contract:'studio-canvas-audio-template/1'; graph_id:string; graph_version:number; definition_digest:string; execution_digest:string; node_id:string; parameters:{in_ms:number;out_ms:number} };
+export type CanvasAudioWorkflowTemplateRef = { contract:'studio-canvas-audio-template/1'; graph_id:string; graph_version:number; definition_digest:string; execution_digest:string; node_id:string; parameters:{in_ms:number;out_ms:number;gain_db?:number;fade_in_ms?:number;fade_out_ms?:number} };
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const id=(v:unknown)=>typeof v==='string'&&/^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
 const graphName=(v:unknown)=>typeof v==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}$/.test(v);
@@ -21,7 +21,10 @@ export function checkedCanvasAudioProvenance(command:unknown){
   const p=command.template_ref;
   if(!object(p)||!exact(p,['contract','graph_id','graph_version','definition_digest','execution_digest','node_id','parameters'])||p.contract!=='studio-canvas-audio-template/1'||!graphName(p.graph_id)||!version(p.graph_version)||!hex(p.definition_digest)||!hex(p.execution_digest)||!graphName(p.node_id)||!object(p.parameters))invalid();
   const r=p.parameters;
-  if(!exact(r,['in_ms','out_ms'])||![r.in_ms,r.out_ms].every(v=>typeof v==='number'&&Number.isSafeInteger(v))||(r.in_ms as number)<0||(r.out_ms as number)>600000||(r.out_ms as number)-(r.in_ms as number)<=0||(r.out_ms as number)-(r.in_ms as number)>120000)invalid();
+  if(!Object.hasOwn(r,'in_ms')||!Object.hasOwn(r,'out_ms')||Object.keys(r).some(k=>!['in_ms','out_ms','gain_db','fade_in_ms','fade_out_ms'].includes(k))||![r.in_ms,r.out_ms].every(v=>typeof v==='number'&&Number.isSafeInteger(v))||(r.in_ms as number)<0||(r.out_ms as number)>600000||(r.out_ms as number)-(r.in_ms as number)<=0||(r.out_ms as number)-(r.in_ms as number)>120000)invalid();
+  if(Object.hasOwn(r,'gain_db')&&(typeof r.gain_db!=='number'||!Number.isFinite(r.gain_db)||r.gain_db< -60||r.gain_db>12))invalid();
+  for(const k of ['fade_in_ms','fade_out_ms'])if(Object.hasOwn(r,k)&&(typeof r[k]!=='number'||!Number.isSafeInteger(r[k])||(r[k] as number)<0||(r[k] as number)>120000))invalid();
+  if(Number(r.fade_in_ms??0)+Number(r.fade_out_ms??0)>(r.out_ms as number)-(r.in_ms as number))invalid();
  }
 }
 const canonical=(v:unknown):string=>JSON.stringify(v,(_k,x)=>object(x)?Object.fromEntries(Object.entries(x).sort(([a],[b])=>a.localeCompare(b))):x);

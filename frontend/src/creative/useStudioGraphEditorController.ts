@@ -774,7 +774,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     const next = { ...target.parameters.parameters };
     if (value === '') delete next[key];
     else if (['negative_prompt', 'voice_id', 'size', 'quality'].includes(key)) next[key] = value;
-    else { const parsed = Number(value); if (!Number.isFinite(parsed) || !['speech_rate', 'denoising_strength'].includes(key) && !Number.isSafeInteger(parsed)) return; next[key] = parsed; }
+    else { const parsed = Number(value); if (!Number.isFinite(parsed) || !['speech_rate', 'denoising_strength', 'gain_db'].includes(key) && !Number.isSafeInteger(parsed)) return; next[key] = parsed; }
     change({ ...draftRef.current, nodes: draftRef.current.nodes.map(row => row.id === target.id ? { ...row, parameters: { ...row.parameters, parameters: next } } : row) });
   }
   function clearUnsupportedMediaParameters() {
@@ -1038,7 +1038,7 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
 export type StudioGraphEditorController = ReturnType<typeof useStudioGraphEditorController>;
 export const GRAPH_MEDIA_PARAMETER_LABELS: Record<string, string> = { width: '宽度', height: '高度', steps: '采样步数', seed: '种子', negative_prompt: '负向提示词', size: '图片规格', quality: '图片质量',
   scale: '超分倍率（2 或 4）', denoising_strength: '重绘强度（大于 0 至 1）',
-  duration_seconds: '时长（秒）', frame_rate: '帧率', voice_id: '语音标识', speech_rate: '语速', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）' };
+  duration_seconds: '时长（秒）', frame_rate: '帧率', voice_id: '语音标识', speech_rate: '语速', gain_db:'增益（-60–12 dB，可选）', fade_in_ms:'淡入（毫秒，可选）', fade_out_ms:'淡出（毫秒，可选）', in_ms: '来源起点（毫秒）', out_ms: '来源终点（毫秒）' };
 export function graphMediaParameterNames(operation: GraphMediaOperation | GraphImageOperation | 'm5.image.upscale', image = false): string[] {
   if (operation === 'm5.image.upscale') return image ? ['scale'] : [];
   const imageParameters = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'];
@@ -1046,7 +1046,7 @@ export function graphMediaParameterNames(operation: GraphMediaOperation | GraphI
   return ({ 'm5.image.t2i': imageParameters, 'm5.image.i2i': imageParameters, 'm5.image.reference': imageParameters, 'm5.image.inpaint': imageParameters,
     'm7.video.t2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
     'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'], 'm8.audio.speech': ['voice_id', 'speech_rate'],
-    'm8.audio.music': ['duration_seconds', 'seed'], 'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'] } as Record<GraphMediaOperation | GraphImageOperation, string[]>)[operation];
+    'm8.audio.music': ['duration_seconds', 'seed'], 'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms'] } as Record<GraphMediaOperation | GraphImageOperation, string[]>)[operation];
 }
 
 /** Read-only configuration picker. The graph persists IDs, never this UI's route digest. */

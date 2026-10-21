@@ -40,7 +40,7 @@ def validate_task_provenance(service, nid, scope, actor, command, context, guard
         node = next((n for n in graph['definition']['nodes'] if n['id'] == pin.node_id), None)
         parameters = (node or {}).get('parameters', {})
         values = parameters.get('parameters', {})
-        known = {'in_ms', 'out_ms', 'width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate'}
+        known = {'in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms', 'width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate'}
         normalized = {k: v for k, v in values.items() if v is not None}
         if (graph['version'] != pin.graph_version or graph['definition_digest'] != pin.definition_digest
                 or graph['execution_digest'] != pin.execution_digest or graph.get('can_edit') is not True

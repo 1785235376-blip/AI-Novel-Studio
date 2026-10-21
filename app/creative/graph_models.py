@@ -317,7 +317,7 @@ class MediaNodeParameters(Strict):
             "m8.audio.speech": {"voice_id", "speech_rate"},
             "m8.audio.music": {"duration_seconds", "seed"},
             "m8.audio.effects": {"duration_seconds", "seed"},
-            "m8.audio.trim": {"in_ms", "out_ms"},
+            "m8.audio.trim": {"in_ms", "out_ms", "gain_db", "fade_in_ms", "fade_out_ms"},
         }[self.operation_id]
         if set(parameters) - allowed:
             raise ValueError("STUDIO_OPERATION_PARAMETER_UNSUPPORTED")
@@ -328,8 +328,11 @@ class MediaNodeParameters(Strict):
         if self.operation_id == "m8.audio.trim":
             if self.provider_id is not None or self.model_id is not None or self.allow_cloud or self.prompt:
                 raise ValueError("STUDIO_AUDIO_TRIM_LOCAL_ONLY")
+            if any(getattr(self.parameters, k) is None for k in self.parameters.model_fields_set & {'gain_db', 'fade_in_ms', 'fade_out_ms'}):
+                raise ValueError('STUDIO_AUDIO_TRIM_EFFECT_INVALID')
             start, end = self.parameters.in_ms, self.parameters.out_ms
-            if start is None or end is None or not 0 < end - start <= 120000:
+            if (start is None or end is None or not 0 < end - start <= 120000
+                    or (self.parameters.fade_in_ms or 0) + (self.parameters.fade_out_ms or 0) > end - start):
                 raise ValueError("STUDIO_AUDIO_TRIM_INPUT_REQUIRED")
         elif not self.provider_id or not self.model_id or self.provider_id == "auto":
             raise ValueError("STUDIO_EXPLICIT_PROVIDER_MODEL_PROMPT_REQUIRED")

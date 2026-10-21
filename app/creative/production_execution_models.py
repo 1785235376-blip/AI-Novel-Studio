@@ -68,6 +68,17 @@ class MediaParameters(ExecutionModel):
     in_ms: int | None = Field(default=None, ge=0, le=600000)
     out_ms: int | None = Field(default=None, ge=1, le=600000)
 
+    gain_db: float | None = Field(default=None, ge=-60, le=12)
+    fade_in_ms: int | None = Field(default=None, ge=0, le=120000)
+    fade_out_ms: int | None = Field(default=None, ge=0, le=120000)
+
+    @model_serializer(mode='wrap')
+    def original_graph_identity(self, handler):
+        value = handler(self)
+        for key in ('gain_db', 'fade_in_ms', 'fade_out_ms'):
+            if value.get(key) is None: value.pop(key, None)
+        return value
+
     @field_validator('cfg', mode='before')
     @classmethod
     def exact_cfg(cls, value):
@@ -79,7 +90,7 @@ class MediaParameters(ExecutionModel):
 
 
 class MediaExecutionParameters(MediaParameters):
-    """Standalone additions; the original Graph parameter schema stays closed."""
+    """Additional standalone operations over the common closed parameter fields."""
     cutout_output: Literal["WEBP_LOSSLESS_V1"] | None = None
     denoise_profile: Literal["STATIONARY_FFT_V1"] | None = None
     target_lufs: float | None = Field(default=None, ge=-30, le=-14)
@@ -245,9 +256,29 @@ class CanvasAudioTemplateParameters(ExecutionModel):
     in_ms: int = Field(ge=0, le=600000)
     out_ms: int = Field(ge=1, le=600000)
 
+    gain_db: float | None = Field(default=None, ge=-60, le=12)
+    fade_in_ms: int | None = Field(default=None, ge=0, le=120000)
+    fade_out_ms: int | None = Field(default=None, ge=0, le=120000)
+
+    @field_validator('gain_db', 'fade_in_ms', 'fade_out_ms', mode='before')
+    @classmethod
+    def effects(cls, value, info):
+        if (info.field_name == 'gain_db' and type(value) not in {int, float}
+                or info.field_name != 'gain_db' and type(value) is not int):
+            raise ValueError('STUDIO_CANVAS_AUDIO_TEMPLATE_PARAMETER_INVALID')
+        return value
+
+    @model_serializer(mode='wrap')
+    def original_template_identity(self, handler):
+        value = handler(self)
+        for key in ('gain_db', 'fade_in_ms', 'fade_out_ms'):
+            if value.get(key) is None: value.pop(key, None)
+        return value
+
     @model_validator(mode='after')
     def range(self):
-        if not 0 < self.out_ms - self.in_ms <= 120000:
+        if (not 0 < self.out_ms - self.in_ms <= 120000
+                or (self.fade_in_ms or 0) + (self.fade_out_ms or 0) > self.out_ms - self.in_ms):
             raise ValueError('STUDIO_CANVAS_AUDIO_TEMPLATE_RANGE_INVALID')
         return self
 

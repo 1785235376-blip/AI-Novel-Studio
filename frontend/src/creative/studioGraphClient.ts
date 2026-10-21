@@ -94,7 +94,7 @@ function nodePorts(kind: StudioGraphDefinitionId, mediaSchema: boolean, videoSch
   return ports[kind];
 }
 const mediaOperations: readonly GraphMediaOperation[] = GRAPH_MEDIA_OPERATIONS;
-const mediaParameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms'];
+const mediaParameterKeys = ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms'];
 const parametersForOperation: Record<GraphMediaOperation, readonly string[]> = {
   'm5.image.t2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
   'm5.image.i2i': ['width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality'],
@@ -102,7 +102,7 @@ const parametersForOperation: Record<GraphMediaOperation, readonly string[]> = {
   'm7.video.i2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm7.video.v2v': ['width', 'height', 'seed', 'negative_prompt', 'duration_seconds', 'frame_rate'],
   'm8.audio.speech': ['voice_id', 'speech_rate'], 'm8.audio.music': ['duration_seconds', 'seed'],
-  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms'],
+  'm8.audio.effects': ['duration_seconds', 'seed'], 'm8.audio.trim': ['in_ms', 'out_ms', 'gain_db', 'fade_in_ms', 'fade_out_ms'],
 };
 
 function invalid(input = false): never {
@@ -189,7 +189,7 @@ function mediaParameterValues(value: unknown, operation: GraphMediaOperation | G
   // Original schema-3 trim records contain this server-emitted null placeholder.
   if (Object.keys(row).some(key => !mediaParameterKeys.includes(key) && !(image && key === 'denoising_strength') && !(operation === 'm8.audio.trim' && key === 'cfg' && row[key] === null))) invalid(input);
   for (const [key, value] of Object.entries(row)) {
-    if (value === null) { result[key] = null; continue; }
+    if (value === null) { if(['gain_db','fade_in_ms','fade_out_ms'].includes(key))invalid(input);result[key] = null; continue; }
     if (image && key === 'denoising_strength') {
       if (!['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint'].includes(operation)) invalid(input);
       result[key] = number(value, Number.MIN_VALUE, 1, input); continue;
@@ -201,15 +201,17 @@ function mediaParameterValues(value: unknown, operation: GraphMediaOperation | G
       const options = key === 'size' ? ['auto', '1024x1024', '1536x1024', '1024x1536'] : ['auto', 'low', 'medium', 'high', 'standard', 'hd'];
       if (!options.includes(value as string)) invalid(input); result[key] = value as string;
     } else if (key === 'speech_rate') result[key] = number(value, 0.5, 2, input);
+    else if (key === 'gain_db') result[key] = number(value, -60, 12, input);
     else {
       const ranges: Record<string, [number, number]> = { width: [64, 2048], height: [64, 2048], steps: [1, 150], seed: [0, 2147483647],
-        duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000] };
+        duration_seconds: [1, 600], frame_rate: [1, 60], in_ms: [0, 600000], out_ms: [1, 600000], fade_in_ms:[0,120000], fade_out_ms:[0,120000] };
       const range = ranges[key]; if (!range) invalid(input); result[key] = integer(value, range[0], range[1], input);
       if (operation.startsWith('m5.') && ['width', 'height'].includes(key) && Number(result[key]) % 8 !== 0) invalid(input);
     }
   }
   if ((result.width != null) !== (result.height != null)) invalid(input);
   if (operation === 'm8.audio.trim' && (typeof result.in_ms !== 'number' || typeof result.out_ms !== 'number' || result.out_ms <= result.in_ms || result.out_ms - result.in_ms > 120000)) invalid(input);
+  if(operation==='m8.audio.trim'&&Number(result.fade_in_ms??0)+Number(result.fade_out_ms??0)>Number(result.out_ms)-Number(result.in_ms))invalid(input);
   return result;
 }
 function parameters(value: unknown, kind: StudioGraphDefinitionId, input = false, unavailable = false): StudioGraphParameters {
