@@ -38,7 +38,7 @@ export function canvasReturnInCommand(command:unknown):CanvasReturnBinding|undef
     if(command.allow_cloud!==false||command.provider_id!==null||command.model_id!==null||command.prompt!==''||!validCutoutParameters(command.parameters)
       ||!Array.isArray(sources)||sources.length!==2||!pin(sources[0])||!object(sources[1])||sources[1].kind!=='ASSET'||sources[1].asset_kind!=='image'
       ||!id(sources[1].id)||sources[1].id===binding.source.id||!Number.isSafeInteger(sources[1].version)||(sources[1].version as number)<1||!hex(sources[1].digest)
-      ||sources.some(s=>!object(s)||Object.keys(s).some(k=>!['id','kind','version','digest','asset_kind'].includes(k)))
+      ||sources.some(s=>!object(s)||s.reference_only!==undefined&&s.reference_only!==true||Object.keys(s).some(k=>!['id','kind','version','digest','asset_kind','reference_only'].includes(k)))
       ||['image_source','image_references','mask_source','video_reference','video_frames','storyboard_shot','storyboard_speech','audio_profile','image_layers','derived_from','template_ref'].some(k=>Object.hasOwn(command,k)))invalid();
   }else if(command.operation_id!=='m5.image.i2i'||command.allow_cloud!==false||!Array.isArray(sources)||sources.length!==1||!pin(sources[0])||!pin(command.image_source)
     ||command.mask_source!==undefined||command.image_references!==undefined&&(!Array.isArray(command.image_references)||command.image_references.length))invalid();
