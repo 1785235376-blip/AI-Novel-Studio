@@ -1,0 +1,2 @@
+import type {AudioDraftSummary} from './audioDraftSummary';
+export const audioDraftSummary = (id='saved-audio'): AudioDraftSummary => ({id,title:'已保存的本次音频输入',version:2,timelineDigest:'a'.repeat(64),draftDigest:'b'.repeat(64),requestId:'new-audio-request',sourceId:'original-audio',sourceVersion:3,canvasId:'original-canvas',canvasVersion:4,cardId:'audio-card',inMs:100,outMs:1100,gainDb:-6.5,fadeInMs:200,fadeOutMs:300,templateGraphId:'audio-template',templateVersion:5,parentJobId:'failed-audio',parentJobVersion:6});
