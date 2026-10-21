@@ -489,10 +489,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function changeOperation(operation: MediaOperation) {
     const task=boundTask(latest.current);
-    if(task&&!(task.source.asset_kind==='audio'?operation==='m8.audio.trim':['m5.image.i2i','m5.image.cutout'].includes(operation)))return;
+    if(task&&!(task.source.asset_kind==='audio'?operation==='m8.audio.trim':['m5.image.i2i','m5.image.cutout','m5.image.composite'].includes(operation)))return;
     if(Object.hasOwn(MEDIA_OPERATION_LABELS,operation)){
       const next={...initialDraft(task),operation,licenseNote:draftRef.current.licenseNote};
-      if(operation==='m5.image.cutout')delete next.imageSource;
+      if(['m5.image.cutout','m5.image.composite'].includes(operation))delete next.imageSource;
       edit(next);
     }
   }
@@ -599,9 +599,10 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     } finally { handoffFlight.current = false; if (alive.current) setHandoffPending(false); }
   }
   function selectSource(id: string, checked: boolean) {
-    if(latest.current.canvasImageTask)return;
+    const task=latest.current.canvasImageTask;
+    if(task&&(draftRef.current.operation!=='m5.image.composite'||id===task.source.id))return;
     const old = draftRef.current, kind = sourceKind(old.operation); if (!kind) return;
-    const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, kind) && (old.operation !== 'm5.image.cutout' || usableCutoutSource(asset)));
+    const row = latest.current.assets.find(asset => asset.id === id && usableAsset(asset, kind) && (!['m5.image.cutout','m5.image.composite'].includes(old.operation) || usableCutoutSource(asset)));
     if (old.operation === 'm5.image.cutout') {
       if (checked && !row) { setError('PNG 来源不可用，请重新读取素材。'); return; }
       edit({ ...old, sources: checked && row ? [{ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: 'image' }] : [] }); return;
@@ -803,8 +804,8 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         command.source_snapshots=[{...boundTask(latest.current)!.source}];
         delete command.source_snapshots[0].reference_only;
       }
-      if(command.operation_id==='m5.image.cutout'){
-        // Re-preview the exact original ordered image/mask pins, not recorded-only markers.
+      if(['m5.image.cutout','m5.image.composite'].includes(command.operation_id)){
+        // Re-preview the exact original ordered image inputs, not recorded-only markers.
         command.source_snapshots=command.source_snapshots.map(source=>{const value={...source};delete value.reference_only;return value;});
       }
       const result=await latest.current.read(()=>value.client.preview(command));
