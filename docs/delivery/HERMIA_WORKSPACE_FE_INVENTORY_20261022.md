@@ -60,3 +60,15 @@
 
 见 `/workspace/hr/NOVEL_FE_INVENTORY.md`：N-P0-02 冷启动 `panel=write`；版本恢复 H-P0-02；小说中区不嵌 EDIT。
 
+
+
+## 4. IMAGE / AUDIO / ASSETS 轻量壳 · [HERMIA-FE-20261022]
+
+| 模块 | 壳 | 对齐 | 备注 |
+|---|---|---|---|
+| IMAGE | `ui/MediaWorkspaceShells.tsx` ImageWorkspace* | `LUMEN_IMAGE_IA` | 预览 hero + Generation/Visual/Vision；专业画布折叠；≠ VIDEO/EDIT |
+| AUDIO | AudioWorkspace* | `LUMEN_AUDIO_IA` | 波形 hero + Speech/AudioGen/Manifest；显式「送去剪辑」 |
+| ASSETS | AssetsWorkspace* | `LUMEN_ASSETS_IA` | 浏览器 hero + AssetLibrary；引用语义；空选 CTA |
+| VIDEO | 仍 `MultimodalDirector` + Screenplay | `LUMEN_VIDEO_IA` | **未**复用 media-ws |
+| EDIT | `EditNleShell` | `LUMEN_EDIT_IA` + Vera W-P0-05 色板 | 暗色时间线 hero |
+

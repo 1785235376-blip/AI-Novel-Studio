@@ -146,3 +146,42 @@
   font-weight: 600;
 }
 .novel-writer-dock__link:hover { text-decoration: underline; }
+
+/* [HERMIA-FE-20261022] Align toward Vera novel-assist (W-P0-05): sticky head, tab feel, full-width prose elsewhere */
+.app-shell[data-module="NOVEL"] .editor {
+  width: min(100%, calc(100% - var(--space-4)));
+  max-width: 920px;
+  margin-inline: auto;
+  min-height: min(62vh, 560px);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+}
+.novel-writer-dock {
+  background: #fff;
+}
+.novel-writer-dock > .novel-inspector-context {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: var(--space-2) var(--space-3);
+  margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) var(--space-2);
+  background: var(--color-bg-subtle);
+  border-bottom: var(--border-default);
+}
+.novel-writer-dock__section > summary {
+  font-size: 12.5px;
+  border-bottom: 2px solid transparent;
+}
+.novel-writer-dock__section[open] > summary {
+  color: var(--color-accent-primary);
+  border-bottom-color: var(--color-accent-primary);
+  background: var(--color-accent-subtle);
+}
+.novel-writer-dock__cast li,
+.novel-writer-dock__outline li {
+  border-radius: 8px;
+}
+.app-shell[data-module="NOVEL"] .workspace-sidebar--novel {
+  /* Vera: narrower chapter rail feel */
+  max-width: 200px;
+}

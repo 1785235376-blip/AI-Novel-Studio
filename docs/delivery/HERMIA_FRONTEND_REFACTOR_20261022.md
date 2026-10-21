@@ -148,3 +148,9 @@
 - EDIT：双监视器（源/节目）+ 更密时间线 CSS；小说右栏大纲可点章节。
 - 门禁：workbench + EditNleShell + routes **42 PASS**。**不 push。**
 
+## § IMAGE / AUDIO / ASSETS 轻量壳 + Vera 对照（本机）
+
+- `MediaWorkspaceShells`：IMAGE 预览 hero · AUDIO 波形/送剪辑 · ASSETS 浏览器/引用 CTA。
+- VIDEO / EDIT 保持独立路由；EditNleShell / NovelWriterDock CSS 向 Vera W-P0-05（`11_workspace_edit_timeline` · `10_novel_writer*`）靠拢。
+- 门禁：workbench + MediaWorkspaceShells + EditNleShell + ModuleWorkspaceRoutes。**不 push。**
+

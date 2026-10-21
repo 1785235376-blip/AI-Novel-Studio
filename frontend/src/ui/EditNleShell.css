@@ -215,3 +215,84 @@
   display: inline-flex;
   align-items: center;
 }
+
+/* [HERMIA-FE-20261022] Align toward Vera W-P0-05 nle-* chrome (dark timeline hero). */
+.edit-nle-shell {
+  background: #eceef2;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.edit-nle-shell__preview {
+  grid-template-columns: minmax(160px, 0.9fr) minmax(220px, 1.2fr) minmax(200px, 0.95fr);
+  gap: 0;
+  background: #f7f8fa;
+  border-bottom: var(--border-default);
+}
+.edit-nle-shell__monitor {
+  min-height: 160px;
+  border-radius: 0;
+  border: 0;
+  border-right: var(--border-default);
+  background: #1a1d24;
+  color: #e8eaef;
+}
+.edit-nle-shell__monitor-label { color: #8b93a5; }
+.edit-nle-shell__monitor strong {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: #e8eaef;
+}
+.edit-nle-shell__monitor small { color: #9aa3b5; }
+.edit-nle-shell__monitor--source {
+  background: radial-gradient(ellipse at 50% 40%, #2a3140 0%, #14171e 70%);
+}
+.edit-nle-shell__toolbar {
+  border-radius: 0;
+  border: 0;
+  background: #2a303a;
+  color: #a8b0bc;
+}
+.edit-nle-shell__toolbar small { color: #a8b0bc; }
+.edit-nle-shell__hero {
+  background: #232830;
+  border: 0;
+  border-radius: 0;
+  color: #d7dbe3;
+  min-height: 400px;
+}
+.edit-nle-shell__hero .panel,
+.edit-nle-shell__hero .nle-workspace__scope,
+.edit-nle-shell__hero .nle-workspace__note,
+.edit-nle-shell__hero .nle-workspace__foot {
+  color: #a8b0bc;
+}
+.edit-nle-shell__hero .nle-ruler {
+  background: #1e232b;
+  border-color: #3a4250;
+}
+.edit-nle-shell__hero .nle-track {
+  background: #1e232b;
+  border-color: #3a4250;
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  background: color-mix(in srgb, #c9d8f5 55%, #2a303a);
+  border-color: #8eaee6;
+  color: #1a1d24;
+}
+.edit-nle-rail {
+  background: #fff;
+}
+.edit-nle-rail__bin > li {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.edit-nle-inspector__head {
+  background: var(--color-bg-subtle);
+}
+.edit-nle-shell__foot {
+  padding: var(--space-2) var(--space-3);
+  background: #1e232b;
+  color: #8b93a5;
+  border-top: 1px solid #3a4250;
+}
