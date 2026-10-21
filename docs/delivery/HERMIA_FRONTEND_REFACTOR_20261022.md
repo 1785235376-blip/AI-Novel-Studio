@@ -117,3 +117,13 @@
 - M0 能力账本：BLOCKED（需求资料未取得）。
 - M1 真实任务链迁移：未开始（未启动后端；需确定首条服务可用的链路）。
 - 建议下一切片：把 FeatureLauncher + 命令搜索接到 ActionRegistry（替换 App.tsx 中的字符串分支），并以“版本历史 → 恢复版本”这条已有链路做第一条真实接线，配合 Playwright 浏览器验证。
+
+
+## 10. 续：H-P0-01 / N-P0-02（同夜）
+- ActionRegistry 接入 FeatureLauncher + 侧栏「搜索功能」（不抢 AppShell Ctrl+K）。
+- `novelActions.ts`：小说别名动作；打开 history/creation/story/check 等强制 `commitStudioModule('NOVEL')`。
+- 冷启动已是 `studioModule=NOVEL` + `panel=history` → 同屏 ChapterTree + Editor + AiWriting + RevisionPanel（LUMEN_NOVEL_IA §3）。
+- 盘点：`/workspace/hr/NOVEL_FE_INVENTORY.md`（≥15 行）。
+- 门禁：`vitest run src/workbench` → 15/15 PASS；`tsc -b` PASS。
+- 浏览器 E2E（hermia-workbench）因首页恢复/中断未计本夜正式 PASS；H-P0-02 恢复链代码路径在小说章节 `history` 面板，待补跑。
+- 未 push；未改 Vera 原型 / Lumen 文档。

@@ -1,0 +1,11 @@
+/* [HERMIA-FE-20261022] Command search; DS-v1.0 tokens only. */
+.wb-command{position:relative;margin:var(--space-2,8px) 0}
+.wb-command__trigger{width:100%;justify-content:flex-start;gap:var(--space-2,8px)}
+.wb-command__trigger kbd{margin-left:auto;font:inherit;color:var(--color-text-muted);border:1px solid var(--color-border-default);border-radius:var(--radius-sm,3px);padding:0 var(--space-1,4px)}
+.wb-command__overlay{position:absolute;z-index:var(--z-dropdown,40);left:0;right:0;top:100%;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);border-radius:var(--radius-md,6px);box-shadow:var(--shadow-floating);padding:var(--space-2,8px)}
+.wb-command__input{width:100%;box-sizing:border-box;padding:var(--space-2,8px);border:1px solid var(--color-border-strong);border-radius:var(--radius-sm,3px);font:inherit}
+.wb-command__input:focus{outline:2px solid var(--color-border-focus);outline-offset:1px}
+.wb-command__list{list-style:none;margin:var(--space-2,8px) 0 0;padding:0;max-height:320px;overflow:auto}
+.wb-command__list button{width:100%;text-align:left;background:none;border:0;padding:var(--space-2,8px);border-radius:var(--radius-sm,3px);font:inherit;color:var(--color-text-primary);cursor:pointer}
+.wb-command__list button:hover,.wb-command__list button:focus-visible{background:var(--color-selection-bg)}
+.wb-command__empty,.wb-command__msg{padding:var(--space-2,8px);color:var(--color-text-muted)}

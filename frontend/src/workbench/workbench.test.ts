@@ -99,3 +99,22 @@ describe('extension proof (§7.4)', () => {
     expect(log).toEqual(['inspect:n1', 'dispose:dev.demo.extension#n1']); off(); expect(p.has(DEMO_PANEL_ID)).toBe(false);
   });
 });
+
+describe('novel action aliases (H-P0-01 / N-P0-02)', () => {
+  it('registers novel aliases that open history/creation/story/check', async () => {
+    const opened: string[] = [];
+    const t = new LifecycleTracker(); t.update({projectId: 'p'});
+    const p = new PanelRegistry(); const a = new ActionRegistry(t);
+    const {registerNovelActionAliases, isNovelPanel} = await import('./novelActions');
+    registerFeaturePanels(p, a, id => opened.push(id));
+    registerNovelActionAliases(a, id => opened.push(id));
+    expect(isNovelPanel('history')).toBe(true);
+    expect(isNovelPanel('diagnostics')).toBe(false);
+    const c = ctx(t, {targetId: null, permissions: new Set()});
+    expect(await a.execute('novel.open.revisionHistory', c)).toEqual({status: 'done', value: 'history'});
+    expect(await a.execute('novel.open.creationWorkbench', c)).toEqual({status: 'done', value: 'creation'});
+    expect(await a.execute('novel.open.continuityCheck', c)).toEqual({status: 'done', value: 'check'});
+    expect(await a.execute('novel.open.aiWritingSurface', c)).toEqual({status: 'done', value: 'history'});
+    expect(opened).toEqual(['history', 'creation', 'check', 'history']);
+  });
+});

@@ -91,6 +91,10 @@ import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
 import { ResearchPanel } from "./novel/ResearchPanel";
 import { ContinuityCheckPanel } from "./novel/ContinuityCheckPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
+// [HERMIA-FE-20261022 M1-2] shared action/panel registry + command search
+import { useWorkbench } from "./workbench/useWorkbench";
+import { isNovelPanel } from "./workbench/novelActions";
+import { CommandSearch } from "./workbench/CommandSearch";
 import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
 import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
 import { experimentalFeatures, experimentalClient } from "./experimental/api";
@@ -326,6 +330,21 @@ export default function App() {
     if (module === studioModule) { commitStudioModule(module); return; }
     styleLeave.request(current => { if (current()) commitStudioModule(module); });
   }, [studioModule, commitStudioModule, styleLeave.request]);
+
+  // [HERMIA-FE-20261022 M1-2] Legacy guarded navigation kept as the ONLY real navigation path;
+  // registry actions and command search call it, unknown ids fall back to it directly.
+  // [HERMIA-FE-20261022 H-P0-01] Novel panels always land in NOVEL so ChapterTree + AiWriting stay visible.
+  const legacySelectPanel = (next: string) => {
+    // Novel feature ids (history/creation/story/check/…) keep ChapterTree + AiWriting by forcing NOVEL.
+    const needsNovel = isNovelPanel(next);
+    if (next === panel && (!needsNovel || studioModule === 'NOVEL')) return;
+    styleLeave.request(current => {
+      if (!current()) return;
+      if (needsNovel) commitStudioModule('NOVEL');
+      if (next !== panel) setPanel(next);
+    });
+  };
+  const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null });
   const independentClient = useMemo(() => studioClient(s.novelId, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }), [studioEntry, studioEntryEpoch]);
   const studioProject = useQuery({ queryKey: ['independent-project', namespace, s.novelId, studioEntryInstance, studioEntryEpoch], queryFn: ({ signal }) => independentClient.overview(signal), enabled: independentStudios && !!s.novelId, retry: false });
   const neutralStudio = independentStudios && studioProject.data?.project?.id === s.novelId && studioProject.data.project.entry_kind === 'NEUTRAL_STUDIO';
@@ -1408,11 +1427,12 @@ export default function App() {
         />
       </div>
       <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>
+      <CommandSearch workbench={workbench} onLegacy={legacySelectPanel} />
       <FeatureLauncher
         selectedId={panel}
         extraGroups={hasExperimental ? EXPERIMENTAL_GROUPS : undefined}
         expandedGroups={featureGroups}
-        onSelect={next => { if (next !== panel) styleLeave.request(current => { if (current()) setPanel(next); }); }}
+        onSelect={next => { void workbench.open(next, legacySelectPanel); }}
         onToggleGroup={(id) => setFeatureGroups((current) => ({ ...current, [id]: !current[id] }))}
       />
     </div>
