@@ -7,7 +7,9 @@ from copy import deepcopy
 import base64
 import hashlib
 import json
-import math
+import io
+import struct
+import wave
 import os
 from pathlib import Path
 
@@ -295,22 +297,42 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
     row = runtime.preview(e.nid, e.scope, e.actor, row['id'], {
         'expected_version': row['version'], 'node_id': 'trim'}, lambda: None)
     captured = row['media_runtime']['nodes'][0]['preview']
-    assert captured['execution_recipe']['adapter'] == 'LOCAL_FFMPEG'
-    assert captured['execution_recipe']['parameters'] == TEMPLATE
+    actual_preview = captured['production_preview']
+    assert actual_preview['execution_recipe']['adapter'] == 'LOCAL_FFMPEG'
+    assert actual_preview['execution_recipe']['parameters'] == TEMPLATE
+    for value in (captured['command'], actual_preview['command']):
+        assert {k: v for k, v in value['parameters'].items() if v is not None} == TEMPLATE
     row = runtime.dispatch(e.nid, e.scope, e.actor, row['id'], {
         'expected_version': row['version'], 'node_id': 'trim',
         'reviewed_preview_digest': captured['preview_digest']}, lambda: None)
     queued = row['media_runtime']['nodes'][0]['execution']['job']
     assert queued['status'] == 'QUEUED'
-    assert queued['command']['parameters'] == TEMPLATE
+    assert queued['request_digest'] == actual_preview['request_digest']
     row = runtime.execute_job(e.nid, e.scope, e.actor, row['id'], {
         'expected_version': row['version'], 'node_id': 'trim',
         'expected_job_version': queued['version'], 'expected_request_digest': queued['request_digest']}, lambda: None)
     candidate = row['media_runtime']['nodes'][0]['execution']['job']
     assert row['current_node_id'] == 'review' and candidate['status'] == 'AWAITING_REVIEW'
-    assert candidate['execution_recipe']['parameters'] == TEMPLATE
-    assert candidate['media_measurement']['duration_ms'] == 1000
-    assert candidate['media_measurement']['profile_validation'] == 'PCM_DECODED'
+    # Public Graph receipts intentionally omit command/recipe/measurement. Read
+    # the original job using the original run binding, never widen that DTO.
+    stored = e.graph._owned(e.nid, e.scope, e.actor, e.graph.RUNS, row['id'])
+    binding = stored['media_executions']['trim']['graph_binding']
+    original = e.production.get(e.nid, e.scope, e.actor, 'audio', candidate['id'],
+                                lambda: None, graph_binding=binding)
+    assert original['execution_recipe']['parameters'] == TEMPLATE
+    assert original['media_measurement']['duration_ms'] == 1000
+    assert original['media_measurement']['profile_validation'] == 'PCM_DECODED'
+    meta, data = runtime.candidate(e.nid, e.scope, e.actor, row['id'], 'trim', lambda: None)
+    with wave.open(io.BytesIO(data), 'rb') as stream:
+        assert (stream.getframerate(), stream.getnchannels(), stream.getsampwidth(), stream.getnframes()) == (RATE, 2, 2, RATE)
+        pcm = stream.readframes(stream.getnframes())
+    samples = struct.unpack('<' + 'h' * (len(pcm) // 2), pcm)
+    assert samples[0::2] == samples[1::2]
+    plateau = AMPLITUDE * 10 ** (TEMPLATE['gain_db'] / 20)
+    maximum_error = max(abs(sample - plateau * min(1, (index * 1000 / RATE) / 200)
+        * min(1, (1000 - index * 1000 / RATE) / 300)) for index, sample in enumerate(samples[0::2]))
+    assert maximum_error <= 1.1
+    assert hashlib.sha256(data).hexdigest() == meta['sha256'] == candidate['output_candidate']['digest']
     with pytest.raises(FileNotFoundError):
         e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])
     row = runtime.review(e.nid, e.scope, e.actor, row['id'], {
@@ -318,5 +340,18 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
         'expected_job_version': candidate['version'], 'expected_request_digest': candidate['request_digest'],
         'reviewed_output_digest': candidate['output_candidate']['digest']}, lambda: None)
     assert row['status'] == 'SUCCEEDED' and row['reviewed']
-    assert e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])['version'] == 2
+    formal = e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])
+    assert formal['version'] == 2
     assert e.graph.get(e.nid, e.scope, e.actor, graph['id']) == graph
+    folder = os.environ.get('STUDIO_AUDIO_TEMPLATE_CAPTURE_DIR')
+    if folder:
+        path = Path(folder)
+        path.mkdir(parents=True, exist_ok=True)
+        evidence = {'contract': 'owned-original-graph-audio-effects-proof/1',
+            'real_cpu_ffmpeg': True, 'model_inference': False, 'graph': graph,
+            'preview': captured, 'queued_receipt': queued, 'executed_original_job': original,
+            'succeeded_run': row, 'formal': formal, 'independent_frames': len(samples) // 2,
+            'maximum_absolute_lsb_error': maximum_error,
+            'candidate_sha256': hashlib.sha256(data).hexdigest(),
+            'independent_pcm_sha256': hashlib.sha256(pcm).hexdigest()}
+        (path / 'native-original-graph-effects.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
