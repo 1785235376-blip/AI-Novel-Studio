@@ -358,7 +358,15 @@ class _MediaCommandShape(ExecutionModel):
             raise ValueError('STUDIO_CANVAS_AUDIO_PROVENANCE_CONTEXT_INVALID')
         if self.canvas_return is not None:
             origin = self.canvas_return.source
-            if origin.asset_kind == 'image' and self.operation_id == 'm5.image.cutout':
+            if origin.asset_kind == 'image' and self.operation_id == 'm5.image.composite':
+                if (self.allow_cloud or self.provider_id is not None or self.model_id is not None or self.prompt
+                        or len(self.source_snapshots) != 2
+                        or sum(image_snapshot(origin) == image_snapshot(source) for source in self.source_snapshots) != 1
+                        or self.image_source is not None or self.image_references is not None or self.mask_source is not None
+                        or self.video_reference is not None or self.video_frames is not None or self.audio_profile is not None
+                        or self.storyboard_shot is not None or self.storyboard_speech is not None):
+                    raise ValueError('STUDIO_CANVAS_RETURN_COMMAND_INVALID')
+            elif origin.asset_kind == 'image' and self.operation_id == 'm5.image.cutout':
                 if (self.allow_cloud or self.provider_id is not None or self.model_id is not None or self.prompt
                         or len(self.source_snapshots) != 2 or image_snapshot(origin) != image_snapshot(self.source_snapshots[0])
                         or self.image_source is not None or self.image_references is not None or self.mask_source is not None

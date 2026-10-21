@@ -581,10 +581,12 @@ class ProductionExecutionService:
                 and recipe.get('adapter') == 'COMFYUI_BUILTIN_IMAGE' and recipe.get('image_recipe_id') == 'comfy-sd-checkpoint-v1')
             cutout_route = (origin.source.asset_kind == 'image' and command.operation_id == 'm5.image.cutout'
                 and binding is None and recipe.get('adapter') == 'LOCAL_CPU_MASK')
+            composite_route = (origin.source.asset_kind == 'image' and command.operation_id == 'm5.image.composite'
+                and binding is None and recipe.get('adapter') == 'LOCAL_CPU_COMPOSITE')
             audio_route = (origin.source.asset_kind == 'audio' and command.operation_id == 'm8.audio.trim'
                 and binding is None and recipe.get('adapter') == 'LOCAL_FFMPEG')
             if (graph is None or graph_binding is not None or benchmark_binding is not None or batch_binding is not None
-                    or not (image_route or audio_route or cutout_route)):
+                    or not (image_route or audio_route or cutout_route or composite_route)):
                 raise ValueError('STUDIO_CANVAS_RETURN_CONTEXT_CHANGED')
             self._canvas_return_target(nid, scope, actor, origin, context, guard)
         context.update(request_id=command.request_id, operation_id=command.operation_id, sources=sources,
@@ -625,7 +627,7 @@ class ProductionExecutionService:
 
     def _canvas_return_current(self, nid, scope, actor, context, guard, *, document=None):
         command = context.get('command')
-        if isinstance(command, dict) and command.get('operation_id') in {'m8.audio.trim', 'm5.image.cutout'} and 'canvas_return' in command:
+        if isinstance(command, dict) and command.get('operation_id') in {'m8.audio.trim', 'm5.image.cutout', 'm5.image.composite'} and 'canvas_return' in command:
             checked = MediaCommand.model_validate(command)
             self._canvas_return_target(nid, scope, actor, checked.canvas_return, context, guard, document=document)
 

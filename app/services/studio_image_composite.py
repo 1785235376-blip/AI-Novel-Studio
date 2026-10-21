@@ -56,7 +56,7 @@ def validate_context(body, context):
     if not isinstance(command, dict) or not isinstance(context.get('execution_recipe'), dict):
         raise ValueError('STUDIO_IMAGE_COMPOSITE_BINDING_REQUIRED')
     checked = MediaCommand.model_validate(command)
-    expected = checked.model_dump(exclude={'source_snapshots', 'allow_cloud', 'license_note', 'request_id'})
+    expected = checked.model_dump(exclude={'source_snapshots', 'allow_cloud', 'license_note', 'request_id', 'canvas_return'})
     expected['parameters'] = checked.parameters.model_dump(exclude_none=True)
     if (expected != body or checked.operation_id != OPERATION
             or context['sources'] != [item['source'] for item in layers(body['image_layers'])]
