@@ -12,7 +12,7 @@ import type {CanvasViewRecord} from './studioCanvasViewClient';
 import '../ui/ui.css';import '../ui/fixture.css';import '../ui/desktop-craft.css';import './creative.css';
 declare global{interface Window{__maskNative:any;__maskCheck:any}}
 export function mount(){
- const n=window.__maskNative,binding=n.command.canvas_return,project=binding.project_id;
+ const n=window.__maskNative,binding=n.command.canvas_return,project=binding.project_id,composite=n.command.operation_id==='m5.image.composite';
  const calls={preview:0,create:0,execute:0,review:0,candidate:0,save:0,restore:0,get:0},commands:MediaCommand[]=[];
  let saved:MediaCommand|undefined,phase:'queued'|'executed'|'approved'='queued',canvas=structuredClone(n.canvas_before);
  const clone=<T,>(v:T):T=>structuredClone(v);
@@ -20,6 +20,7 @@ export function mount(){
  function receipt(kind:'preview'|'queued'|'executed'|'approved',command:MediaCommand){
   const row=clone(n[kind]);row.request_id=command.request_id;row.command=clone(command);
   row.command.source_snapshots=row.command.source_snapshots.map((s:any)=>({...s,reference_only:true}));
+  if(command.image_layers)row.execution_recipe.layers=clone(command.image_layers);
   return row;
  }
  window.fetch=async(input:RequestInfo|URL,init:RequestInit={})=>{
@@ -47,14 +48,14 @@ export function mount(){
  const read=async<T,>(f:()=>Promise<T>)=>f(),owner={};
  function Harness(){
   const [approved,setApproved]=useState<ProductionJob>(),[base,setBase]=useState<CanvasViewRecord>(clone(n.canvas_before)),[done,setDone]=useState(false);
-  return <AppShell module="IMAGE" onModuleChange={()=>{}} actor="本地组件检查" scope={{workspace:'创作工作区',project:'用户遮罩卡片任务',storyline:'主线',branch:'合成回执'}}
-   sidebar={<p>保存的图像卡片与手绘遮罩。UI 回执来自本轮自建像素样本；这里不运行处理器。</p>}
+  return <AppShell module="IMAGE" onModuleChange={()=>{}} actor="本地组件检查" scope={{workspace:'创作工作区',project:composite?'双层 PNG 卡片任务':'用户遮罩卡片任务',storyline:'主线',branch:'合成回执'}}
+   sidebar={<p>保存的图像卡片与用户明确选择的 CPU 输入。UI 回执来自本轮自建像素样本；这里不运行处理器。</p>}
    main={<div style={{height:'100%',overflow:'auto',minWidth:0}}><p aria-label="原卡片当前版本">原卡片画布 v{base.version}；另一张卡片及坐标保留。</p>
-    {!done&&<StudioCanvasImageTaskPanel task={task} taskAssets={[clone(n.source),clone(n.mask)]} client={production} canMutate canReview busy={false} isCurrent={()=>true} read={read} mutate={read} onDirtyChange={()=>{}} onUnavailable={()=>{}} onApproved={job=>setApproved(job)}/>}
+    {!done&&<StudioCanvasImageTaskPanel task={task} taskAssets={[clone(n.source),clone(n.mask??n.secondary)]} client={production} canMutate canReview busy={false} isCurrent={()=>true} read={read} mutate={read} onDirtyChange={()=>{}} onUnavailable={()=>{}} onApproved={job=>setApproved(job)}/>}
     {approved&&!done&&<CanvasImageTaskReturn task={task} approved={approved} client={client} production={production} disabled={false} canMutate isCurrent={()=>true} read={read} mutate={read} onAdopt={setBase} onUncertain={()=>{throw new Error('Unexpected fixture uncertainty');}} onComplete={()=>setDone(true)}/>}
     {done&&<MediaCanvasHistoryPanel base={base} client={client.graphs.canvasViews!} owner={owner} incarnation={binding.incarnation} canMutate externalDirty={false} busy={false} isCurrent={()=>true} read={read} mutate={read} onAdopt={setBase} onUncertain={()=>{throw new Error('Unexpected fixture history uncertainty');}}/>}
    </div>}
-   inspector={<p>用户提供二值 mask：白色保留，黑色透明。不执行 AI 自动语义分割。</p>} status="本地 UI 合成回执检查；真实 CPU 像素证据单列"/>;
+   inspector={<p>{composite?'双层同尺寸 PNG 固定在像素原点对齐；顺序、显隐与透明度来自原 CPU 合成配方。无位移、缩放或模型调用。':'用户提供二值 mask：白色保留，黑色透明。不执行 AI 自动语义分割。'}</p>} status="本地 UI 合成回执检查；真实 CPU 像素证据单列"/>;
  }
  createRoot(document.getElementById('root')!).render(<Harness/>);
 }
