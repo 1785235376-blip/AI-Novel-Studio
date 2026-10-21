@@ -9,7 +9,7 @@ from __future__ import annotations
 from copy import deepcopy
 from contextlib import contextmanager
 import math
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 from pydantic import Field, field_validator, model_validator
 
@@ -127,6 +127,47 @@ class CharacterEventData(StrictModel):
     location_id: str | None = None
 
 
+class CharacterReferenceView(StrictModel):
+    """One reviewed view image pointing at a formal Asset owner snapshot."""
+    view: Literal["FRONT", "SIDE", "BACK"]
+    asset_id: str = Field(min_length=1, max_length=160)
+    asset_version: int = Field(ge=1)
+    asset_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
+    provider_id: str = Field(min_length=1, max_length=160)
+    model_id: str = Field(min_length=1, max_length=160)
+    prompt: str = Field(default="", max_length=16000)
+    parameters: dict[str, Any] = Field(default_factory=dict, max_length=64)
+    reference_asset_ids: list[str] = Field(default_factory=list, max_length=50)
+
+
+class CharacterReferenceGroupData(StrictModel):
+    """The three-view character reference asset group, reviewed like other world records.
+
+    Views must be exactly FRONT/SIDE/BACK with distinct formal asset snapshots and
+    distinct original job request ids. The group pins the approved CHARACTER_VISUAL
+    record version+digest it was authored from. It does not write Canon by itself:
+    the normal world review step still decides whether the group becomes canon.
+    """
+    character_id: str = Field(min_length=1, max_length=160)
+    visual_record_id: str = Field(min_length=1, max_length=160)
+    visual_record_version: int = Field(ge=1)
+    visual_record_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    views: list[CharacterReferenceView] = Field(min_length=3, max_length=3)
+    consistency_confirmed: bool = False
+    asset_verification: Literal["SERVER_VERIFIED_FORMAL_ASSET_SNAPSHOTS", "UNVERIFIED"] = "UNVERIFIED"
+
+    @model_validator(mode="after")
+    def three_distinct_views(self):
+        if [view.view for view in self.views] != ["FRONT", "SIDE", "BACK"]:
+            raise ValueError("character reference group requires FRONT, SIDE, BACK in order")
+        if len({view.asset_id for view in self.views}) != 3 or len({view.request_id for view in self.views}) != 3:
+            raise ValueError("character reference group views require distinct assets and original requests")
+        if not self.consistency_confirmed:
+            raise ValueError("character reference group requires explicit user consistency confirmation")
+        return self
+
+
 class CharacterVisualData(StrictModel):
     """Authored visual identity for one existing character: the Character Bible's visual half.
 
@@ -167,10 +208,15 @@ DATA_MODELS = {"HISTORY": HistoryData, "GEOGRAPHY": GeographyData,
                "ABILITY_USE": AbilityUseData, "PSYCHOLOGY": PsychologyData,
                "RELATIONSHIP": RelationshipData, "CHARACTER_EVENT": CharacterEventData,
                "CHARACTER_VISUAL": CharacterVisualData, "SCENE_VISUAL": SceneVisualData}
+# Additive review-only kind kept outside the historic DATA_MODELS surface so the
+# original schema/kind contract remains byte-for-byte inspectable. It is still a
+# typed world record with its own model, references, review and Canon path.
+CHARACTER_REFERENCE_GROUP_KIND = "CHARACTER_REFERENCE_GROUP"
+TYPED_MODELS = {**DATA_MODELS, CHARACTER_REFERENCE_GROUP_KIND: CharacterReferenceGroupData}
 
 
 class WorldRecordIn(StrictModel):
-    kind: Literal["HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "ABILITY_USE", "PSYCHOLOGY", "RELATIONSHIP", "CHARACTER_EVENT", "CHARACTER_VISUAL", "SCENE_VISUAL"]
+    kind: Literal["HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "ABILITY_USE", "PSYCHOLOGY", "RELATIONSHIP", "CHARACTER_EVENT", "CHARACTER_VISUAL", "SCENE_VISUAL", "CHARACTER_REFERENCE_GROUP"]
     title: str = Field(min_length=1, max_length=240)
     chapter_id: str | None = None
     event_order: int = Field(default=0, ge=0)
@@ -178,7 +224,7 @@ class WorldRecordIn(StrictModel):
 
     @model_validator(mode="after")
     def typed_data(self):
-        self.data = DATA_MODELS[self.kind].model_validate(self.data).model_dump()
+        self.data = TYPED_MODELS[self.kind].model_validate(self.data).model_dump()
         if self.kind in {"ABILITY_USE", "PSYCHOLOGY", "RELATIONSHIP", "CHARACTER_EVENT"} and not self.chapter_id:
             raise ValueError(f"{self.kind} requires a real chapter reference")
         return self
@@ -192,6 +238,13 @@ class WorldService(DomainService):
     RECORDS = "world_records"
     CANON = "world_canon"
     supports_graph = False
+    #: Server-only verifier installed by the World HTTP composition. It must
+    #: re-read the original asset/production owners and return the sanitized
+    #: group data. Client-supplied verification markers are never trusted.
+    reference_group_verifier: Callable[[str, dict, str, dict], dict] | None = None
+    #: Context-manager factory installed by the World HTTP composition. It holds
+    #: the original asset/job lease through the durable World/Canon write.
+    reference_group_commit_guard: Callable[[str, dict, str, dict], Any] | None = None
 
     def _validate_create_capacity(self, state):
         pass
@@ -200,11 +253,11 @@ class WorldService(DomainService):
         pass
 
     def _visible_kind(self, row):
-        return not row.get("research_sources") and (self.supports_graph or row["kind"] in DATA_MODELS)
+        return not row.get("research_sources") and (self.supports_graph or row["kind"] in TYPED_MODELS)
 
     @staticmethod
     def _promotes_canon(row):
-        return row["kind"] in DATA_MODELS or (row["kind"] == "STORY_RELATION" and row["data"]["layer"] == "WORLD_FACT")
+        return row["kind"] in TYPED_MODELS or (row["kind"] == "STORY_RELATION" and row["data"]["layer"] == "WORLD_FACT")
 
     def _payload(self, value):
         return WorldRecordIn.model_validate(value.model_dump() if isinstance(value, WorldRecordIn) else value).model_dump()
@@ -260,6 +313,9 @@ class WorldService(DomainService):
             characters.append(data["character_id"])
         elif kind == "SCENE_VISUAL":
             locations.append(data["location_id"])
+        elif kind == "CHARACTER_REFERENCE_GROUP":
+            characters.append(data["character_id"])
+            dependencies.append((data["visual_record_id"], "CHARACTER_VISUAL"))
         else:
             # Fail closed: a new typed kind must declare its references explicitly
             # rather than silently falling into whichever branch happened to be last.
@@ -286,10 +342,17 @@ class WorldService(DomainService):
         if kind == "GEOGRAPHY" and data["supersedes_id"]:
             if require_row(state, self.RECORDS, data["supersedes_id"])["data"]["location_id"] != data["location_id"]:
                 raise ValueError("geography predecessor must identify the same location")
+        if kind == "CHARACTER_REFERENCE_GROUP":
+            visual = require_row(state, self.RECORDS, data["visual_record_id"])
+            if visual["data"]["character_id"] != data["character_id"]:
+                raise ValueError("character reference group character must match its visual record")
+            pinned = refs.get(data["visual_record_id"]) or {}
+            if visual["version"] != data["visual_record_version"] or pinned.get("digest") != data["visual_record_digest"]:
+                raise ValueError("character reference group must pin the current approved visual record version and digest")
         return links, entities, refs
 
     def _capture(self, nid, scope, payload, state):
-        if payload["kind"] not in DATA_MODELS:
+        if payload["kind"] not in TYPED_MODELS:
             from .story_graph import capture_graph
             return capture_graph(self, nid, scope, payload, state)
         sources = scoped_sources(self, nid, scope, [payload["chapter_id"]] if payload["chapter_id"] else [])
@@ -339,6 +402,20 @@ class WorldService(DomainService):
         state = self.store.read(nid, scope)
         return [self._decorate(nid, scope, row, state) for row in collection(state, self.RECORDS).values() if self._visible_kind(row)]
 
+    def record_digest(self, nid, scope, rid):
+        """Stable digest of one current world record, excluding mutable history/stale projection."""
+        row = self.record(nid, scope, rid)
+        clean = {key: value for key, value in row.items() if key not in ("history", "stale")}
+        return digest(clean)
+
+    def character_visual_pin(self, nid, scope, rid):
+        """Current approved visual record version+digest for a reference group pin."""
+        row = self.record(nid, scope, rid)
+        if row["kind"] != "CHARACTER_VISUAL" or row["status"] != "APPROVED":
+            raise ValueError("character reference group requires an approved CHARACTER_VISUAL record")
+        clean = {key: value for key, value in row.items() if key not in ("history", "stale")}
+        return {"character_id": row["data"]["character_id"], "version": row["version"], "digest": digest(clean)}
+
     def record(self, nid, scope, rid):
         self.novels.get(nid)
         state = self.store.read(nid, scope)
@@ -352,8 +429,19 @@ class WorldService(DomainService):
         with self.store.transaction(nid, scope) as state:
             yield state, {}
 
+    def _verified_reference_group_data(self, nid, scope, actor, data):
+        if self.reference_group_verifier is None:
+            raise ValueError("CHARACTER_REFERENCE_GROUP_SERVER_VERIFICATION_REQUIRED")
+        verified = self.reference_group_verifier(nid, scope, actor, deepcopy(data))
+        model = CharacterReferenceGroupData.model_validate(verified)
+        if model.asset_verification != "SERVER_VERIFIED_FORMAL_ASSET_SNAPSHOTS":
+            raise ValueError("CHARACTER_REFERENCE_GROUP_SERVER_VERIFICATION_REQUIRED")
+        return model.model_dump(mode="json")
+
     def create_record(self, nid, scope, actor, value, *, reauthorize=lambda: None):
         payload = self._payload(value)
+        if payload["kind"] == CHARACTER_REFERENCE_GROUP_KIND:
+            payload["data"] = self._verified_reference_group_data(nid, scope, actor, payload["data"])
         self.novels.get(nid)
         with self._creation_transaction(nid, scope) as (state, provenance):
             reauthorize()
@@ -394,6 +482,8 @@ class WorldService(DomainService):
         raw = value.model_dump() if isinstance(value, WorldRecordEditIn) else dict(value)
         expected = raw.pop("expected_version")
         payload = self._payload(raw)
+        if payload["kind"] == CHARACTER_REFERENCE_GROUP_KIND:
+            payload["data"] = self._verified_reference_group_data(nid, scope, actor, payload["data"])
         with self.store.transaction(nid, scope) as state:
             reauthorize()
             row = require_row(state, self.RECORDS, rid)
@@ -408,7 +498,23 @@ class WorldService(DomainService):
             return deepcopy(row)
 
     def review(self, nid, scope, actor, item_id, action, expected_version, *, reauthorize=lambda: None):
-        with self.store.transaction(nid, scope) as state:
+        approval_data = {}
+        final_guard = None
+        if action == "approve":
+            # Early server verification gives a clear client error for already
+            # stale records. It is NOT the atomic boundary: the commit guard
+            # below re-reads the same original owners while holding their lease
+            # through the World/Canon durable write.
+            current = self.record(nid, scope, item_id)
+            if current["kind"] == CHARACTER_REFERENCE_GROUP_KIND:
+                self._verified_reference_group_data(nid, scope, actor, current["data"])
+                if self.reference_group_commit_guard is None:
+                    raise ValueError("CHARACTER_REFERENCE_GROUP_ATOMIC_APPROVAL_REQUIRED")
+                approval_data["data"] = current["data"]
+                guard_hook = self.reference_group_commit_guard
+                def final_guard():
+                    return guard_hook(nid, scope, actor, approval_data["data"])
+        with self.store.transaction(nid, scope, final_guard=final_guard) as state:
             reauthorize()
             row = require_row(state, self.RECORDS, item_id)
             if not self._visible_kind(row): raise FileNotFoundError(item_id)
@@ -419,6 +525,8 @@ class WorldService(DomainService):
                 raise ValueError("invalid world review transition")
             if action == "approve":
                 self._assert_fresh(nid, scope, row, state)
+                if row["kind"] == CHARACTER_REFERENCE_GROUP_KIND:
+                    approval_data["data"] = deepcopy(row["data"])
             def update(target):
                 target.update(status=transitions[action][1], canon_state=("CANON" if self._promotes_canon(row) else "REVIEWED") if action == "approve" else "CANDIDATE")
             change_row(row, actor, expected_version, update)

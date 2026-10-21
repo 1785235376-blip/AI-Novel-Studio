@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import sys
 from contextlib import contextmanager
 from pathlib import Path
 from threading import local
@@ -89,7 +90,7 @@ class ExperimentalStore:
             return copy.deepcopy(self.validate(result[0], nid, scope) if result else self.empty(nid, scope))
 
     @contextmanager
-    def transaction(self, nid, scope):
+    def transaction(self, nid, scope, *, final_guard=None):
         key = self.key(nid, scope)
         if not hasattr(self._local, "active"):
             self._local.active = {}
@@ -105,22 +106,79 @@ class ExperimentalStore:
                 try:
                     yield doc
                     self.validate(doc, nid, scope)
-                    if canonical(doc) != before:
+                    if final_guard is not None:
+                        # Keep the original scope lock and the caller's final
+                        # owner/asset lease active through the durable write.
+                        with final_guard():
+                            if canonical(doc) != before:
+                                atomic_write(self.path(nid, scope), canonical(doc))
+                    elif canonical(doc) != before:
                         atomic_write(self.path(nid, scope), canonical(doc))
                 finally:
                     self._local.active.pop(key, None)
         else:
             from psycopg.types.json import Jsonb
-            with self._connect() as connection:
-                connection.execute("INSERT INTO experimental_scope_documents (scope_key, novel_id, scope, document) VALUES (%s, %s, %s, %s) ON CONFLICT (scope_key) DO NOTHING", (key, nid, Jsonb(scope), Jsonb(self.empty(nid, scope))))
-                result = connection.execute("SELECT document FROM experimental_scope_documents WHERE scope_key = %s FOR UPDATE", (key,)).fetchone()
-                doc = self.validate(result[0], nid, scope)
-                self._local.active[key] = doc
-                before = canonical(doc)
-                try:
-                    yield doc
-                    self.validate(doc, nid, scope)
-                    if canonical(doc) != before:
-                        connection.execute("UPDATE experimental_scope_documents SET document = %s, revision = revision + 1, updated_at = now() WHERE scope_key = %s", (Jsonb(doc), key))
-                finally:
-                    self._local.active.pop(key, None)
+            guard_context = None
+            guard_entered = False
+            error = (None, None, None)
+            try:
+                # The connection context owns commit/rollback in __exit__. The
+                # final guard must remain entered until AFTER that __exit__,
+                # not merely until the UPDATE statement returns. Enter the
+                # guard after the row lock is acquired, then release it only
+                # after the connection context has committed or rolled back.
+                with self._connect() as connection:
+                    connection.execute("INSERT INTO experimental_scope_documents (scope_key, novel_id, scope, document) VALUES (%s, %s, %s, %s) ON CONFLICT (scope_key) DO NOTHING", (key, nid, Jsonb(scope), Jsonb(self.empty(nid, scope))))
+                    result = connection.execute("SELECT document FROM experimental_scope_documents WHERE scope_key = %s FOR UPDATE", (key,)).fetchone()
+                    doc = self.validate(result[0], nid, scope)
+                    self._local.active[key] = doc
+                    before = canonical(doc)
+                    try:
+                        try:
+                            yield doc
+                        except BaseException as body_error:
+                            body_traceback = sys.exc_info()[2]
+                            # The body failed before a final binding existed.
+                            # Still enter the guard so it observes the original
+                            # exception and releases its lease on the rollback
+                            # path (the guard never verifies/commits content).
+                            if final_guard is not None:
+                                try:
+                                    guard_context = final_guard()
+                                    guard_context.__enter__()
+                                    guard_entered = True
+                                except BaseException as guard_error:
+                                    # A failing guard entry must not replace the
+                                    # caller-body failure: the body error stays
+                                    # primary, while the guard failure remains
+                                    # available as secondary diagnostics.
+                                    body_error.add_note(
+                                        'secondary final_guard entry failure: '
+                                        + type(guard_error).__name__ + ': ' + str(guard_error))
+                                    try:
+                                        body_error.__guard_entry_error__ = guard_error
+                                    except Exception:
+                                        pass
+                                    raise body_error.with_traceback(body_traceback)
+                            raise
+                        self.validate(doc, nid, scope)
+                        # The caller's transaction body has now selected the
+                        # exact record/Canon content to be committed (for World
+                        # approval this is the locked final row, not an earlier
+                        # pre-lock read). Enter the final guard only now, while
+                        # the row lock is still held, and keep it through the
+                        # connection commit/rollback below.
+                        if final_guard is not None:
+                            guard_context = final_guard()
+                            guard_context.__enter__()
+                            guard_entered = True
+                        if canonical(doc) != before:
+                            connection.execute("UPDATE experimental_scope_documents SET document = %s, revision = revision + 1, updated_at = now() WHERE scope_key = %s", (Jsonb(doc), key))
+                    finally:
+                        self._local.active.pop(key, None)
+            except BaseException:
+                error = sys.exc_info()
+                raise
+            finally:
+                if guard_entered:
+                    guard_context.__exit__(*error)
