@@ -3,3 +3,4 @@ export * from './lifecycle'; export * from './actions'; export * from './panels'
 export {registerFeaturePanels} from './featureBridge'; export {registerDemoExtension, DEMO_PANEL_ID} from './demoExtension';
 export {isNovelPanel, NOVEL_PANEL_IDS, registerNovelActionAliases, type NovelFocusTarget} from './novelActions';
 export {bindRestoreConfirmation, gateRestore, syncRestoreLifecycle, restoreLifecycleContext} from './revisionRestore';
+export {registerWorkspaceModuleActions} from './workspaceActions';

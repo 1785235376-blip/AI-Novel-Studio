@@ -72,3 +72,12 @@
 | VIDEO | 仍 `MultimodalDirector` + Screenplay | `LUMEN_VIDEO_IA` | **未**复用 media-ws |
 | EDIT | `EditNleShell` | `LUMEN_EDIT_IA` + Vera W-P0-05 色板 | 暗色时间线 hero |
 
+
+
+## 5. VIDEO 三层 · 溢出发现 · [HERMIA-FE-20261022]
+
+| 项 | 现状 |
+|---|---|
+| VIDEO | `VideoWorkspaceShell` 对齐 `LUMEN_VIDEO_IA` 三层 |
+| CONTROL/PLUGIN/WORKFLOW | 铬条外；`workspace.open.*` + AppShell 命令面板 |
+| 仍阻塞 | 新 FL id（bible 独立等）— 不编造；徽章诚实态需 ledger/Dot |

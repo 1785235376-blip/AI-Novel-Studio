@@ -361,7 +361,7 @@ export default function App() {
       el?.scrollIntoView?.({block: 'nearest'});
     }
   }, []);
-  const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null }, [], focusNovelSurface);
+  const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null }, [], focusNovelSurface, navigateStudioModule);
   const independentClient = useMemo(() => studioClient(s.novelId, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }), [studioEntry, studioEntryEpoch]);
   const studioProject = useQuery({ queryKey: ['independent-project', namespace, s.novelId, studioEntryInstance, studioEntryEpoch], queryFn: ({ signal }) => independentClient.overview(signal), enabled: independentStudios && !!s.novelId, retry: false });
   const neutralStudio = independentStudios && studioProject.data?.project?.id === s.novelId && studioProject.data.project.entry_kind === 'NEUTRAL_STUDIO';

@@ -12,6 +12,7 @@ import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace'
 import {SpeechSynthesisPanel} from '../novel/SpeechSynthesisPanel';
 import {AudioGenerationPanel} from '../novel/AudioGenerationPanel';
 import {AudiobookManifestPanel} from '../novel/AudiobookManifestPanel';
+import {ScreenplayPanel} from '../novel/ScreenplayPanel';
 import {AssetLibraryPanel} from '../novel/AssetLibraryPanel';
 import type {Asset} from '../api';
 import type {ImageInspection} from '../novel/ImageTaskInspector';
@@ -212,6 +213,90 @@ export function AssetsEmptyCta(): ReactNode {
 }
 
 // silence unused if tree-shaken — keep hook for future comic tab
-export function useMediaShellTab(initial: string) {
-  return useState(initial);
+
+
+export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) {
+  return (
+    <nav className="media-ws-rail" aria-label="视频工作区导航">
+      <div className="media-ws-rail__eyebrow">视频</div>
+      <strong>三层工作区</strong>
+      <ul>
+        <li>① 镜头脚本</li>
+        <li>② 无限画布</li>
+        <li>③ 内置导演台</li>
+      </ul>
+      {onSendToEdit && (
+        <button type="button" className="media-ws-rail__item" onClick={onSendToEdit}>送去剪辑（显式）</button>
+      )}
+      <p className="media-ws-rail__hint">VIDEO ≠ EDIT NLE · ≠ 小说写作台。导演仅属本工作区。</p>
+    </nav>
+  );
+}
+
+/** [HERMIA-FE-20261022] LUMEN_VIDEO_IA three layers — compose existing panels; no backend invent. */
+export function VideoWorkspaceShell({
+  novelId, onInspect, onSendToEdit,
+}: {
+  novelId: string;
+  onInspect?: (inspection: unknown) => void;
+  onSendToEdit?: () => void;
+}) {
+  const [directorOpen, setDirectorOpen] = useState(true);
+  const [scriptOpen, setScriptOpen] = useState(true);
+  return (
+    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层">
+      <div className="media-ws__toolbar" role="toolbar" aria-label="视频工具条">
+        <Button type="button" aria-pressed={scriptOpen} onClick={() => setScriptOpen(v => !v)}>
+          {scriptOpen ? '收起镜头脚本' : '镜头脚本'}
+        </Button>
+        <Button type="button" aria-pressed={directorOpen} onClick={() => setDirectorOpen(v => !v)}>
+          {directorOpen ? '收起导演台' : '导演台'}
+        </Button>
+        {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
+        <small>LUMEN_VIDEO_IA · 项目 {novelId}</small>
+      </div>
+
+      {scriptOpen && (
+        <section className="media-ws__layer media-ws__layer--script" aria-label="① 镜头脚本">
+          <span className="media-ws__hero-label">① 镜头脚本 · Shot 卡层</span>
+          <p className="media-ws__layer-note">分镜 / Shot 在画布上方；完整影视剧本可在下方展开，不替换无限画布。</p>
+          <div className="media-ws__panel">
+            <ScreenplayPanel novelId={novelId} onInspect={onInspect as never} />
+          </div>
+        </section>
+      )}
+
+      <section className="media-ws__hero media-ws__layer--canvas" aria-label="② 无限画布">
+        <span className="media-ws__hero-label">② 无限画布 · hero（VIDEO 作用域）</span>
+        <strong>创意编排主表面</strong>
+        <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph。</p>
+        <div className="media-ws__canvas-host">
+          <MultimodalDirectorWorkspace mode="video" novelId={novelId} />
+        </div>
+      </section>
+
+      {directorOpen && (
+        <section className="media-ws__layer media-ws__layer--director" aria-label="③ 内置导演台">
+          <span className="media-ws__hero-label">③ 内置导演台</span>
+          <div className="media-ws-cta">
+            <strong>导演下一步</strong>
+            <p>建议与采用确认在 MultimodalDirector（video）内完成。普通模式可收为入口；专业可钉住本层。</p>
+            <p className="media-ws-rail__hint">导演不挂小说主面；改镜头请留在视频工作区，成片组装请显式「送去剪辑」。</p>
+          </div>
+        </section>
+      )}
+
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022] 视频三层 · 禁止 NLE 冒充本区主 Tab。</p>
+    </div>
+  );
+}
+
+export function VideoEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): ReactNode {
+  return (
+    <div className="media-ws-cta" aria-label="视频下一步">
+      <strong>下一步</strong>
+      <p>暂无选中镜头任务。可在画布选节点、展开导演台，或送去剪辑做多轨。</p>
+      {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
+    </div>
+  );
 }

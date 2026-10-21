@@ -277,8 +277,20 @@ export function AppShell({
     {
       id: "providers",
       label: "打开 Provider 控制中心",
-      hint: "控制中心",
+      hint: "主控",
       action: () => onModuleChange("CONTROL"),
+    },
+    {
+      id: "plugins",
+      label: "打开插件管理",
+      hint: "插件",
+      action: () => onModuleChange("PLUGIN"),
+    },
+    {
+      id: "workflow-module",
+      label: "打开工作流工作区",
+      hint: "工作流",
+      action: () => onModuleChange("WORKFLOW"),
     },
   ].filter(
     (item) =>
@@ -297,7 +309,7 @@ export function AppShell({
     const utility = utilityCommands[index - commands.length];
     if (utility) {
       utility.action();
-      if (utility.id === "inspector" || utility.id === "providers") {
+      if (utility.id === "inspector" || utility.id === "providers" || utility.id === "plugins" || utility.id === "workflow-module") {
         setCommandOpen(false);
         setCommandQuery("");
       }

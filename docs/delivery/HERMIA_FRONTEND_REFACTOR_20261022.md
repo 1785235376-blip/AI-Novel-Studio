@@ -154,3 +154,9 @@
 - VIDEO / EDIT 保持独立路由；EditNleShell / NovelWriterDock CSS 向 Vera W-P0-05（`11_workspace_edit_timeline` · `10_novel_writer*`）靠拢。
 - 门禁：workbench + MediaWorkspaceShells + EditNleShell + ModuleWorkspaceRoutes。**不 push。**
 
+## § VIDEO 三层壳 + CONTROL/PLUGIN 命令可达（本机）
+
+- `VideoWorkspaceShell`：① 镜头脚本（Screenplay）② 画布 MultimodalDirector video ③ 导演 CTA；显式送剪辑；≠ NLE。
+- `workspace.open.control|plugin|workflow|…` Action + AppShell 命令「打开插件/工作流」。
+- 门禁 41 PASS。**不 push。** 余下 FL 缺口（bible 独立 id 等）需产品拍板，不瞎编。
+

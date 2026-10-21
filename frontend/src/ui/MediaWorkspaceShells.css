@@ -155,3 +155,35 @@
   font-weight: 650;
   padding: var(--space-2);
 }
+
+.media-ws--video .media-ws__layer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+.media-ws--video .media-ws__layer-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.media-ws--video .media-ws__layer--canvas {
+  min-height: 280px;
+}
+.media-ws--video .media-ws__canvas-host {
+  margin-top: var(--space-2);
+  min-height: 240px;
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: auto;
+  background: var(--color-bg-subtle);
+}
+.media-ws--video .media-ws__layer--script {
+  border-color: color-mix(in srgb, var(--color-accent-primary) 25%, var(--color-border-default));
+}
+.media-ws--video .media-ws__layer--director {
+  background: color-mix(in srgb, var(--color-accent-subtle) 40%, var(--color-bg-surface));
+}

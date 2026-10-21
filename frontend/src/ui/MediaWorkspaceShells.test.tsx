@@ -9,6 +9,7 @@ import {
   ImageWorkspaceShell, ImageWorkspaceRail, ImageEmptyCta,
   AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta,
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
+  VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta,
 } from './MediaWorkspaceShells';
 import {ModuleWorkspaceRoutes} from './ModuleWorkspaceRoutes';
 
@@ -61,6 +62,22 @@ describe('MediaWorkspaceShells', () => {
     act(() => root.unmount());
   });
 
+
+  it('VIDEO shell: three layers script/canvas/director; ≠ NLE', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <><VideoWorkspaceRail onSendToEdit={send} /><VideoWorkspaceShell novelId="n1" onSendToEdit={send} /><VideoEmptyCta onSendToEdit={send} /></>,
+    ));
+    expect(host.textContent).toContain('镜头脚本');
+    expect(host.textContent).toContain('无限画布');
+    expect(host.textContent).toContain('导演台');
+    expect(host.textContent).toContain('mock-director-video');
+    expect(host.textContent).toMatch(/送去剪辑/);
+    expect(host.textContent).toMatch(/VIDEO ≠ EDIT|≠ 剪辑|禁止 NLE/);
+    act(() => root.unmount());
+  });
   it('ASSETS shell: browser hero + library; reference semantics', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
@@ -87,14 +104,14 @@ describe('ModuleWorkspaceRoutes media shells', () => {
     act(() => root.unmount());
   });
 
-  it('keeps VIDEO distinct from IMAGE shell', () => {
+  it('keeps VIDEO three-layer shell distinct from IMAGE preview shell', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
     act(() => root.render(
       <ModuleWorkspaceRoutes module="IMAGE" onModuleChange={vi.fn()} scope={scope} actor="author" novelId="novel-1" />,
     ));
-    expect(host.querySelector('.media-ws')).toBeTruthy();
     expect(host.textContent).toContain('图像预览');
+    expect(host.querySelector('.media-ws--video')).toBeNull();
     act(() => root.unmount());
     host.remove();
     host = document.createElement('div'); document.body.append(host);
@@ -102,9 +119,10 @@ describe('ModuleWorkspaceRoutes media shells', () => {
     act(() => root2.render(
       <ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={scope} actor="author" novelId="novel-1" />,
     ));
-    expect(host.querySelector('.media-ws')).toBeNull();
-    expect(host.querySelector('[data-module-shell="IMAGE"]')).toBeNull();
-    expect(host.textContent).toMatch(/mock-director-video|mock-screenplay|视频/);
+    expect(host.querySelector('.media-ws--video')).toBeTruthy();
+    expect(host.textContent).toContain('镜头脚本');
+    expect(host.textContent).toContain('mock-director-video');
+    expect(host.textContent).not.toContain('图像预览 · hero');
     act(() => root2.unmount());
   });
 });

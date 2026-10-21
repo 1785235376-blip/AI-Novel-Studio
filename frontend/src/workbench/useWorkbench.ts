@@ -10,6 +10,8 @@ import {LifecycleTracker, type LifecycleContext} from './lifecycle';
 import {PanelRegistry} from './panels';
 import {registerFeaturePanels} from './featureBridge';
 import {registerNovelActionAliases, type NovelFocusTarget} from './novelActions';
+import {registerWorkspaceModuleActions} from './workspaceActions';
+import type {StudioModule} from '../ui/moduleRegistry';
 
 export type {NovelFocusTarget};
 
@@ -23,14 +25,17 @@ export function useWorkbench(
   life: LifecycleContext,
   permissions: readonly string[] = [],
   focusSurface?: (target: NovelFocusTarget) => void,
+  openModule?: (module: StudioModule) => void,
 ): Workbench {
   const nav = useRef(navigate); nav.current = navigate;
   const focus = useRef(focusSurface); focus.current = focusSurface;
+  const mod = useRef(openModule); mod.current = openModule;
   const wb = useMemo(() => {
     const isDev = Boolean((import.meta as {env?: {DEV?: boolean}}).env?.DEV);
     const tracker = new LifecycleTracker(); const panels = new PanelRegistry(isDev); const actions = new ActionRegistry(tracker, isDev);
     registerFeaturePanels(panels, actions, id => nav.current(id));
     registerNovelActionAliases(actions, id => nav.current(id), t => focus.current?.(t));
+    registerWorkspaceModuleActions(actions, m => mod.current?.(m));
     return {tracker, panels, actions};
   }, []);
   wb.tracker.update(life);

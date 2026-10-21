@@ -127,3 +127,19 @@ describe('novel action aliases (H-P0-01 / N-P0-02)', () => {
     expect(opened).toEqual(['history', 'creation', 'check', 'write', 'write', 'story', 'check', 'workflow', 'write', 'write']);
   });
 });
+
+describe('workspace overflow module actions', () => {
+  it('opens CONTROL/PLUGIN/EDIT via registry without inventing FL ids', async () => {
+    const opened: string[] = [];
+    const t = new LifecycleTracker(); t.update({projectId: 'p'});
+    const a = new ActionRegistry(t);
+    const {registerWorkspaceModuleActions} = await import('./workspaceActions');
+    registerWorkspaceModuleActions(a, m => opened.push(m));
+    const c = ctx(t, {targetId: null, permissions: new Set()});
+    expect(await a.execute('workspace.open.control', c)).toEqual({status: 'done', value: 'CONTROL'});
+    expect(await a.execute('workspace.open.plugin', c)).toEqual({status: 'done', value: 'PLUGIN'});
+    expect(await a.execute('workspace.open.edit', c)).toEqual({status: 'done', value: 'EDIT'});
+    expect(await a.execute('workspace.open.video', c)).toEqual({status: 'done', value: 'VIDEO'});
+    expect(opened).toEqual(['CONTROL', 'PLUGIN', 'EDIT', 'VIDEO']);
+  });
+});
