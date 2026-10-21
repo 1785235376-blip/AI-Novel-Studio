@@ -292,7 +292,12 @@ def test_saved_failed_derivation_rechecks_parent_and_preserves_original_record(f
     with pytest.raises(REJECTED):read(e,row)
     with pytest.raises(REJECTED):save(e,value,row)
     current=get(e,e.failed);assert current['status']=='UNKNOWN' and current['automatic_replay'] is False
-    assert len(rows(e))==1
+    # A completely fresh request with the UNKNOWN row's *current* version and
+    # receipt must also fail, isolating status from old-version rejection.
+    unknown_command=derived_command(e,current,request='current-unknown-cannot-derive')
+    fresh=inputs(e,request=unknown_command['request_id'],command=unknown_command)
+    with pytest.raises(REJECTED):save(e,fresh)
+    assert get(e,current)==current and len(rows(e))==1
 
 
 def test_final_denied_guard_rolls_back_saved_inputs_without_creating_job(effect_template, monkeypatch):
