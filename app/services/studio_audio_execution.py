@@ -37,6 +37,7 @@ PEAK_CONTROL = "target_peak_dbfs"
 LOUDNESS_CONTROL = "target_lufs"
 from .studio_audio_denoise import CONTROL as DENOISE_CONTROL
 TRIM_CONTROLS = {"gain_db", "sample_rate", "channels", "output_format", PEAK_CONTROL, LOUDNESS_CONTROL, DENOISE_CONTROL} | FADE_CONTROLS
+GRAPH_TRIM_CONTROLS = {"gain_db"} | FADE_CONTROLS
 AUDIO_MP3_PROFILE = "studio-audio-mp3/1"
 
 
@@ -342,7 +343,7 @@ def _binding(value, body):
         if value["graph_binding"] is None:
             raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
         validate_graph_binding(value["graph_binding"], value)
-        if body["operation_id"] == "m8.audio.trim" and (TRIM_CONTROLS - {"gain_db", "fade_in_ms", "fade_out_ms"}).intersection(body["parameters"]):
+        if body["operation_id"] == "m8.audio.trim" and (TRIM_CONTROLS - GRAPH_TRIM_CONTROLS).intersection(body["parameters"]):
             raise _error("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY", "新增音频控制仅支持独立音频制作入口", 400)
     if not isinstance(value["sources"], list) or value["sources"] != body["source_snapshots"]:
         raise _error("STUDIO_AUDIO_SOURCE_BINDING_MISMATCH", "当前来源与音频请求不一致", 409)
@@ -561,7 +562,8 @@ class StudioAudioExecution:
         if controlled_output and "measured" not in row:
             raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "新增音频控制的实际输出证明缺失", 409)
         if "measured" in row:
-            if body["operation_id"] != "m8.audio.trim" or "graph_binding" in binding:
+            if (body["operation_id"] != "m8.audio.trim"
+                    or "graph_binding" in binding and not GRAPH_TRIM_CONTROLS.intersection(body["parameters"])):
                 raise _error("STUDIO_AUDIO_MEASUREMENT_INVALID", "音频输出证明不属于此原操作", 409)
             measured = _trim_measurement(row["measured"], body["parameters"])
             if PEAK_CONTROL in body["parameters"] and measured["peak_normalization"]["source_sha256"] != binding["sources"][0]["digest"]:
@@ -789,7 +791,8 @@ class StudioAudioExecution:
                 measured = inspect_media(content, "audio", guard=inspection_current)
             output_digest = hashlib.sha256(content).hexdigest()
             output_proof = {}
-            if body["operation_id"] == "m8.audio.trim" and "graph_binding" not in binding:
+            if (body["operation_id"] == "m8.audio.trim"
+                    and ("graph_binding" not in binding or GRAPH_TRIM_CONTROLS.intersection(body["parameters"]))):
                 proof = {"duration_ms": measured["duration_ms"],
                     "byte_count": len(content), "sample_rate": measured["sample_rate"], "channels": measured["channels"],
                     "sample_width": measured["sample_width"], "container": "wav", "audio_codec": "pcm_s16le",

@@ -338,18 +338,19 @@ def test_fixed_native_arguments_never_accept_arbitrary_filters(audio, monkeypatc
     assert '-nostdin' in argv and kwargs['timeout'] == 50 and callable(kwargs['guard'])
 
 
-def test_graph_media_parameter_schema_is_not_expanded():
+def test_graph_media_parameter_schema_only_adds_supported_envelope_controls():
     schema = MediaNodeParameters.model_json_schema()
     fields = schema['$defs']['MediaParameters']['properties']
-    assert not {'gain_db', 'sample_rate', 'channels'}.intersection(fields)
-    assert set(fields) == set(MediaParameters().model_dump())
+    assert {'gain_db', 'fade_in_ms', 'fade_out_ms'}.issubset(fields)
+    assert not {'sample_rate', 'channels', 'output_format', 'target_lufs', 'target_peak_dbfs', 'denoise_profile'}.intersection(fields)
+    assert set(fields) == set(MediaParameters().model_dump()) | {'gain_db', 'fade_in_ms', 'fade_out_ms'}
 
 
 def test_original_audio_binding_rejects_new_graph_controls_even_on_internal_entry():
     from app.creative.graph_media_binding import make_graph_binding_digest
     from app.services.studio_audio_execution import _binding
     service = legacy_preview_service()
-    value = command(gain_db=0.0)
+    value = command(sample_rate=22050)
     _, context, parsed = service.preview('project', {}, 'author', value, lambda: None)
     graph = {'contract': 'creative-graph-media-binding/1', 'run_id': 'run', 'node_id': 'trim', 'graph_id': 'graph',
         'graph_version': 1, 'graph_digest': 'a' * 64, 'run_request_digest': 'b' * 64, 'input_digest': 'c' * 64,
