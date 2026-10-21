@@ -67,3 +67,7 @@ it.each([['PNG',pngFixture],['WEBP',webpFixture]] as const)('accepts original ca
  const client=studioProductionClient(source.novel_id,{sessionToken:''});const preview=structuredClone(native.preview) as any;preview.command.canvas_return=origin.binding;reply(preview);expect(await client.preview(command)).toEqual(preview);
  for(const actual of [native.queued,native.executed,native.approved]){const row=structuredClone(actual) as unknown as ProductionJob;row.command!.canvas_return=origin.binding;reply(row);const decoded=await client.get('image',row.id);expect(canvasImageTaskJobMatches(task,decoded)).toBe(true);}
 });
+
+it.each([0,1])('rejects a sparse recorded source array missing slot %s instead of skipping the source',index=>{
+ const f=fixture(false);delete f.job.sources[index];expect(f.job.sources.length).toBe(2);expect(canvasImageTaskJobMatches(f.task,f.job)).toBe(false);
+});

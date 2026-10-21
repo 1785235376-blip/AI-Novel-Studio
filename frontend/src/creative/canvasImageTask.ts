@@ -64,7 +64,7 @@ export function canvasImageTaskJobMatches(task: CanvasImageTaskBinding, job: Pro
       const command=job.command,recipe=job.execution_recipe;
       if(job.owner!=='image'||job.provider!==null||!command||!cutoutCommandMatches(task,command,true)||job.request_id!==command.request_id
         ||job.automatic_replay!==false||job.remote_compute_may_continue!==false
-        ||!Array.isArray(job.sources)||job.sources.length!==2||!job.sources.every((source,index)=>sameImagePin(source,command.source_snapshots[index]))
+        ||!Array.isArray(job.sources)||job.sources.length!==2||![0,1].every(index=>sameImagePin(job.sources[index],command.source_snapshots[index]))
         ||recipe.contract!=='studio-execution-recipe/1'||typeof recipe.recipe_digest!=='string'||!/^[a-f0-9]{64}$/.test(recipe.recipe_digest)
         ||recipe.operation_id!=='m5.image.cutout'||recipe.adapter!=='LOCAL_CPU_MASK'||recipe.automatic_fallback!==false
         ||recipe.output_profile!==(command.parameters.cutout_output===CUTOUT_WEBP_PROFILE?CUTOUT_WEBP_OUTPUT:'PNG_RGBA8_STORED_DEFLATE')
