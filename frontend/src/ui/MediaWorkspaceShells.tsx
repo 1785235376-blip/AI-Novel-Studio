@@ -1,7 +1,9 @@
 /**
- * [HERMIA-FE-20261022] Lightweight ModuleSwitcher shells for IMAGE / AUDIO / ASSETS.
- * Align LUMEN_IMAGE_IA · LUMEN_AUDIO_IA · LUMEN_ASSETS_IA. Compose existing panels; no backend invention.
- * VIDEO (三层) and EDIT (NLE) stay on their own routes — not reused here.
+ * [HERMIA-FE-20261022] Lightweight ModuleSwitcher shells for IMAGE / AUDIO / ASSETS / VIDEO.
+ * Align LUMEN_IMAGE_IA · LUMEN_AUDIO_IA · LUMEN_ASSETS_IA · LUMEN_VIDEO_IA.
+ * Compose existing panels; no backend invention.
+ * W-UX-01: IMAGE preview hero + comic sub-entry; pro canvas collapsed.
+ * W-UX-04: VIDEO three-layer thickening — Shot strip + canvas hero + director entry; ≠ EDIT.
  */
 import {useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -17,24 +19,51 @@ import {AssetLibraryPanel} from '../novel/AssetLibraryPanel';
 import type {Asset} from '../api';
 import type {ImageInspection} from '../novel/ImageTaskInspector';
 import type {AudioInspection} from '../novel/AudioTaskInspector';
-import type {StudioModule} from './moduleRegistry';
 import './MediaWorkspaceShells.css';
 
-export function ImageWorkspaceRail() {
+export function ImageWorkspaceRail({
+  subview = 'studio',
+  onSubviewChange,
+}: {
+  subview?: 'studio' | 'comic';
+  onSubviewChange?: (v: 'studio' | 'comic') => void;
+}) {
   return (
     <nav className="media-ws-rail" aria-label="图片工作区导航">
       <div className="media-ws-rail__eyebrow">图片</div>
       <strong>视觉素材</strong>
       <ul>
-        <li>参考图</li>
-        <li>生成任务</li>
-        <li>画面分析</li>
+        <li>
+          <button
+            type="button"
+            className="media-ws-rail__item"
+            aria-pressed={subview === 'studio'}
+            onClick={() => onSubviewChange?.('studio')}
+          >参考 / 生成 / 分析</button>
+        </li>
+        <li>
+          <button
+            type="button"
+            className="media-ws-rail__item"
+            aria-pressed={subview === 'comic'}
+            data-image-sub="comic"
+            onClick={() => onSubviewChange?.('comic')}
+          >漫画制作（子入口）</button>
+        </li>
       </ul>
       <p className="media-ws-rail__hint">漫画＝图片 › 子入口（不升顶栏）。≠ 视频三层 · ≠ 剪辑 NLE · 不进小说中区。</p>
       <p className="media-ws-rail__hint">专业可展开创作画布（仍属 IMAGE 作用域）。</p>
     </nav>
   );
 }
+
+/** Demo / empty shot cards for VIDEO script strip — UI discovery only; no invent write API. */
+const DEMO_SHOT_STRIP = [
+  {id: 's1', number: 1, title: '开场推门', dialogue: '……'},
+  {id: 's2', number: 2, title: '走廊回头', dialogue: '谁？'},
+  {id: 's3', number: 3, title: '窗外远景', dialogue: ''},
+  {id: 's4', number: 4, title: '切近特写', dialogue: '先别动。'},
+] as const;
 
 export function ImageWorkspaceShell({
   novelId, inspection, onInspect,
@@ -43,39 +72,78 @@ export function ImageWorkspaceShell({
   inspection?: ImageInspection;
   onInspect: (i?: ImageInspection) => void;
 }) {
+  const [subview, setSubview] = useState<'studio' | 'comic'>('studio');
   return (
-    <div className="media-ws" aria-label="图片工作区">
-      <div className="media-ws__hero" aria-label="图像预览">
-        <span className="media-ws__hero-label">图像预览 · hero</span>
-        {inspection?.assetUri ? (
-          <img className="media-ws__hero-preview" src={inspection.assetUri} alt="当前图片生成结果" referrerPolicy="no-referrer" />
-        ) : (
-          <>
-            <strong>{inspection ? `任务 ${inspection.status}` : '尚无预览'}</strong>
-            <p>提交生成或从历史选择真实结果。主表面是预览，不是视频导演台，也不是多轨时间线。</p>
-          </>
-        )}
-        <small>项目 {novelId} · LUMEN_IMAGE_IA</small>
+    <div className="media-ws" aria-label="图片工作区" data-image-subview={subview}>
+      <div className="media-ws__toolbar" role="toolbar" aria-label="图片子入口">
+        <Button type="button" aria-pressed={subview === 'studio'} onClick={() => setSubview('studio')}>
+          图片工作台
+        </Button>
+        <Button type="button" aria-pressed={subview === 'comic'} data-open-comic="true" onClick={() => setSubview('comic')}>
+          漫画制作
+        </Button>
+        <small>项目 {novelId} · LUMEN_IMAGE_IA · 漫画不升顶栏</small>
       </div>
-      <div className="media-ws__body media-ws__body--split">
-        <section className="media-ws__panel" aria-label="图片生成">
-          <h3>图片生成</h3>
-          <ImageGenerationPanel novelId={novelId} onInspect={onInspect} />
-        </section>
-        <section className="media-ws__panel" aria-label="视觉上下文">
-          <h3>参考 / 视觉上下文</h3>
-          <VisualContextPanel novelId={novelId} />
-        </section>
-        <section className="media-ws__panel" aria-label="画面分析">
-          <h3>画面分析</h3>
-          <VisionAnalysisPanel novelId={novelId} />
-        </section>
-      </div>
-      <details className="media-ws__pro">
-        <summary>专业 · 创作画布（IMAGE 作用域 · 非视频三层）</summary>
-        <MultimodalDirectorWorkspace mode="image" novelId={novelId} />
-      </details>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022] 图片 ≠ 小说中区 · ≠ VIDEO · ≠ EDIT。</p>
+
+      {subview === 'comic' ? (
+        <div className="media-ws__comic" aria-label="漫画子入口">
+          <div className="media-ws__hero media-ws__hero--comic" aria-label="漫画预览">
+            <span className="media-ws__hero-label">图片 › 漫画制作 · 子入口</span>
+            <strong>漫画分格 / 气泡 / 书册</strong>
+            <p>挂在图片工作区内，不升第 7 顶栏钮。完整漫画编辑器沿用原项目授权与 StudioComic 能力；此处为壳向发现入口（W-UX-01）。</p>
+            <small>≠ VIDEO 三层 · ≠ EDIT NLE · 不进小说中区</small>
+          </div>
+          <div className="media-ws-cta" aria-label="漫画下一步">
+            <strong>下一步</strong>
+            <p>可新建空白页、编辑分格或组织书册。需要独立工作室权限时，请从已授权项目打开漫画制作全屏面。</p>
+            <Button type="button" onClick={() => setSubview('studio')}>返回图片生成 / 参考</Button>
+          </div>
+          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-01] 漫画＝IMAGE 子入口。</p>
+        </div>
+      ) : (
+        <>
+          <div className="media-ws__hero" aria-label="图像预览">
+            <span className="media-ws__hero-label">图像预览 · hero</span>
+            {inspection?.assetUri ? (
+              <img className="media-ws__hero-preview" src={inspection.assetUri} alt="当前图片生成结果" referrerPolicy="no-referrer" />
+            ) : (
+              <>
+                <strong>{inspection ? `任务 ${inspection.status}` : '尚无预览'}</strong>
+                <p>提交生成或从历史选择真实结果。主表面是预览，不是视频导演台，也不是多轨时间线。</p>
+              </>
+            )}
+            <div className="media-ws__hero-actions">
+              {!inspection?.assetUri && (
+                <>
+                  <Button type="button" onClick={() => document.querySelector('.media-ws__panel[aria-label="图片生成"]')?.scrollIntoView({block: 'nearest'})}>新建生成</Button>
+                  <Button type="button" onClick={() => document.querySelector('.media-ws__panel[aria-label="视觉上下文"]')?.scrollIntoView({block: 'nearest'})}>加参考</Button>
+                  <Button type="button" data-open-comic="true" onClick={() => setSubview('comic')}>打开漫画</Button>
+                </>
+              )}
+            </div>
+            <small>项目 {novelId} · LUMEN_IMAGE_IA</small>
+          </div>
+          <div className="media-ws__body media-ws__body--split">
+            <section className="media-ws__panel" aria-label="图片生成">
+              <h3>图片生成</h3>
+              <ImageGenerationPanel novelId={novelId} onInspect={onInspect} />
+            </section>
+            <section className="media-ws__panel" aria-label="视觉上下文">
+              <h3>参考 / 视觉上下文</h3>
+              <VisualContextPanel novelId={novelId} />
+            </section>
+            <section className="media-ws__panel" aria-label="画面分析">
+              <h3>画面分析</h3>
+              <VisionAnalysisPanel novelId={novelId} />
+            </section>
+          </div>
+          <details className="media-ws__pro">
+            <summary>专业 · 创作画布（IMAGE 作用域 · 非视频三层）</summary>
+            <MultimodalDirectorWorkspace mode="image" novelId={novelId} />
+          </details>
+          <p className="media-ws__foot notice">[HERMIA-FE-20261022] 图片 ≠ 小说中区 · ≠ VIDEO · ≠ EDIT。</p>
+        </>
+      )}
     </div>
   );
 }
@@ -183,12 +251,21 @@ export function AssetsWorkspaceShell({
 }
 
 /** Empty-selection CTA blocks for inspectors (禁空白占位). */
-export function ImageEmptyCta({onScrollGenerate}: {onScrollGenerate?: () => void}): ReactNode {
+export function ImageEmptyCta({
+  onScrollGenerate,
+  onOpenComic,
+}: {
+  onScrollGenerate?: () => void;
+  onOpenComic?: () => void;
+}): ReactNode {
   return (
     <div className="media-ws-cta" aria-label="图片下一步">
       <strong>下一步</strong>
       <p>暂无选中任务。可新建生成、加参考，或打开漫画子入口（图片工作区内）。</p>
-      {onScrollGenerate && <Button type="button" onClick={onScrollGenerate}>去图片生成</Button>}
+      <div className="media-ws__hero-actions">
+        {onScrollGenerate && <Button type="button" onClick={onScrollGenerate}>去图片生成</Button>}
+        {onOpenComic && <Button type="button" data-open-comic="true" onClick={onOpenComic}>打开漫画</Button>}
+      </div>
     </div>
   );
 }
@@ -212,9 +289,6 @@ export function AssetsEmptyCta(): ReactNode {
   );
 }
 
-// silence unused if tree-shaken — keep hook for future comic tab
-
-
 export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) {
   return (
     <nav className="media-ws-rail" aria-label="视频工作区导航">
@@ -226,14 +300,16 @@ export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
         <li>③ 内置导演台</li>
       </ul>
       {onSendToEdit && (
-        <button type="button" className="media-ws-rail__item" onClick={onSendToEdit}>送去剪辑（显式）</button>
+        <button type="button" className="media-ws-rail__item media-ws-rail__item--send" onClick={onSendToEdit}>
+          送去剪辑（显式）
+        </button>
       )}
       <p className="media-ws-rail__hint">VIDEO ≠ EDIT NLE · ≠ 小说写作台。导演仅属本工作区。</p>
     </nav>
   );
 }
 
-/** [HERMIA-FE-20261022] LUMEN_VIDEO_IA three layers — compose existing panels; no backend invent. */
+/** [HERMIA-FE-20261022 W-UX-04] LUMEN_VIDEO_IA three layers thickened — Shot strip + canvas hero + director entry. */
 export function VideoWorkspaceShell({
   novelId, onInspect, onSendToEdit, shellMode = 'basic',
 }: {
@@ -245,23 +321,61 @@ export function VideoWorkspaceShell({
 }) {
   const [directorOpen, setDirectorOpen] = useState(shellMode === 'pro');
   const [scriptOpen, setScriptOpen] = useState(true);
+  const [selectedShot, setSelectedShot] = useState<string>('s1');
+  const [sendConfirm, setSendConfirm] = useState(false);
+
   return (
-    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层">
+    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层" data-video-layers="script-canvas-director">
       <div className="media-ws__toolbar" role="toolbar" aria-label="视频工具条">
         <Button type="button" aria-pressed={scriptOpen} onClick={() => setScriptOpen(v => !v)}>
           {scriptOpen ? '收起镜头脚本' : '镜头脚本'}
         </Button>
-        <Button type="button" aria-pressed={directorOpen} onClick={() => setDirectorOpen(v => !v)}>
-          {directorOpen ? '收起导演台' : '导演台'}
+        <Button type="button" aria-pressed={directorOpen} data-director-entry="true" onClick={() => setDirectorOpen(v => !v)}>
+          {directorOpen ? '收起导演台' : '打开内置导演台'}
         </Button>
-        {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
-        <small>LUMEN_VIDEO_IA · 项目 {novelId}</small>
+        {onSendToEdit && (
+          <Button
+            type="button"
+            className="media-ws__send-edit"
+            data-send-edit="true"
+            onClick={() => setSendConfirm(true)}
+          >送去剪辑</Button>
+        )}
+        <small>LUMEN_VIDEO_IA · 项目 {novelId} · ≠ EDIT NLE</small>
       </div>
+
+      {sendConfirm && onSendToEdit && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去剪辑确认">
+          <strong>显式交片 → 剪辑</strong>
+          <p>将离开视频三层，打开顶栏「剪辑」多轨 NLE。视频选区保留；不在本画布假装时间线。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" onClick={() => { setSendConfirm(false); onSendToEdit(); }}>确认送去剪辑</Button>
+            <Button type="button" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
+      )}
 
       {scriptOpen && (
         <section className="media-ws__layer media-ws__layer--script" aria-label="① 镜头脚本">
-          <span className="media-ws__hero-label">① 镜头脚本 · Shot 卡层</span>
-          <p className="media-ws__layer-note">分镜 / Shot 在画布上方；完整影视剧本可在下方展开，不替换无限画布。</p>
+          <span className="media-ws__hero-label">① 镜头脚本 · Shot 卡条</span>
+          <p className="media-ws__layer-note">分镜 / Shot 在画布上方；卡条为壳向发现（演示数据）。真实 Shot 写入走导演 / 剧本面板，不编造 API。</p>
+          <div className="media-ws__shot-strip" role="list" aria-label="Shot 卡条">
+            {DEMO_SHOT_STRIP.map(shot => (
+              <button
+                type="button"
+                key={shot.id}
+                role="listitem"
+                className={`media-ws__shot-card${selectedShot === shot.id ? ' is-selected' : ''}`}
+                aria-pressed={selectedShot === shot.id}
+                data-shot-id={shot.id}
+                onClick={() => setSelectedShot(shot.id)}
+              >
+                <span className="media-ws__shot-num">S{shot.number}</span>
+                <strong>{shot.title}</strong>
+                <small>{shot.dialogue || '（无对白）'}</small>
+              </button>
+            ))}
+          </div>
           <div className="media-ws__panel">
             <ScreenplayPanel novelId={novelId} onInspect={onInspect as never} />
           </div>
@@ -271,24 +385,38 @@ export function VideoWorkspaceShell({
       <section className="media-ws__hero media-ws__layer--canvas" aria-label="② 无限画布">
         <span className="media-ws__hero-label">② 无限画布 · hero（VIDEO 作用域）</span>
         <strong>创意编排主表面</strong>
-        <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph。</p>
+        <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph · 导演不挂小说。</p>
         <div className="media-ws__canvas-host">
           <MultimodalDirectorWorkspace mode="video" novelId={novelId} />
         </div>
       </section>
 
+      {!directorOpen && (
+        <div className="media-ws__director-entry" aria-label="导演台入口">
+          <strong>③ 内置导演台</strong>
+          <p>建议 → 确认采用；仅属视频工作区。普通模式可收为入口；专业可钉住。</p>
+          <Button type="button" data-director-entry="true" onClick={() => setDirectorOpen(true)}>打开内置导演台</Button>
+        </div>
+      )}
+
       {directorOpen && (
         <section className="media-ws__layer media-ws__layer--director" aria-label="③ 内置导演台">
-          <span className="media-ws__hero-label">③ 内置导演台</span>
+          <span className="media-ws__hero-label">③ 内置导演台 · 可识别入口</span>
           <div className="media-ws-cta">
             <strong>导演下一步</strong>
-            <p>建议与采用确认在 MultimodalDirector（video）内完成。普通模式可收为入口；专业可钉住本层。</p>
+            <p>建议与采用确认在 MultimodalDirector（video）内完成。选中 Shot：{selectedShot}（壳示意）。</p>
             <p className="media-ws-rail__hint">导演不挂小说主面；改镜头请留在视频工作区，成片组装请显式「送去剪辑」。</p>
+            <div className="media-ws__hero-actions">
+              <Button type="button" onClick={() => setDirectorOpen(false)}>收起导演台</Button>
+              {onSendToEdit && (
+                <Button type="button" data-send-edit="true" onClick={() => setSendConfirm(true)}>送去剪辑（交片）</Button>
+              )}
+            </div>
           </div>
         </section>
       )}
 
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022] 视频三层 · 禁止 NLE 冒充本区主 Tab。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-04] 视频三层加厚 · 禁止 NLE 冒充本区主 Tab。</p>
     </div>
   );
 }
@@ -297,8 +425,8 @@ export function VideoEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): Reac
   return (
     <div className="media-ws-cta" aria-label="视频下一步">
       <strong>下一步</strong>
-      <p>暂无选中镜头任务。可在画布选节点、展开导演台，或送去剪辑做多轨。</p>
-      {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
+      <p>暂无选中镜头任务。可在画布选节点、展开导演台，或显式送去剪辑做多轨。</p>
+      {onSendToEdit && <Button type="button" data-send-edit="true" onClick={onSendToEdit}>送去剪辑</Button>}
     </div>
   );
 }

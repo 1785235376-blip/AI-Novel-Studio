@@ -189,3 +189,29 @@
 ### 门禁
 - `vitest run src/workbench src/ui/EditNleShell.test.tsx src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx src/ui/ModuleWorkspaceRoutes.test.tsx src/ui/MediaWorkspaceShells.test.tsx` → **80 PASS**。
 - **不 push**；未改 `app/`。
+
+## § N-UX-02 / N-UX-05 / W-UX-01 / W-UX-04（第二波 · 小说优先再媒体）
+
+> [HERMIA-FE-20261022] · 基线父提交 `867151b4` · **不 push**
+
+### N-UX-02 AI 双入口澄清
+- dock：旁路标「生成候选」；链「打开工作流编排（非旁路）」；`data-dual-entry="ai-vs-workflow"`。
+- FL `workflow` hint：「编排面 · 非 AI 写作旁路」+ `feature-item--workflow` 边线；**不新 FL id**。
+
+### N-UX-05 第一梯队发现性
+- FL 顶条「第一梯队」：`story`/`check`/`creation`/`overview`/`history`（既有 id）。
+- dock 同屏快捷钮；check 标明 Continuity + PendingCanon 同屏。
+- 条目 T1 标记；生产组仍含 check。
+
+### W-UX-01 IMAGE 壳向 IA
+- 预览 hero 空选 CTA：新建生成 / 加参考 / 打开漫画。
+- 漫画＝图片 › 子入口（toolbar + rail）；不升顶栏；专业画布仍折叠。
+- ≠ VIDEO 三层 · ≠ EDIT NLE。
+
+### W-UX-04 VIDEO 三层加厚
+- Shot 卡条（壳向演示数据）在脚本层；画布 hero 加厚；导演入口可识别（basic 默认可收）。
+- 「送去剪辑」→ 显式确认壳再切 EDIT；≠ NLE 冒充。
+
+### 门禁
+- 上述 vitest 子集 → **90 PASS**。
+- **不 push**；未改 `app/`。

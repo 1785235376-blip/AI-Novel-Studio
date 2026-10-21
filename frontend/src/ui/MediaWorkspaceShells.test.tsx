@@ -31,15 +31,22 @@ vi.mock('../novel/ScreenplayPanel', () => ({ScreenplayPanel: () => <div>mock-scr
 vi.mock('./CapabilityStatusCenter', () => ({CapabilityStatusCenter: () => null}));
 
 describe('MediaWorkspaceShells', () => {
-  it('IMAGE shell: preview hero + generation panels; not NLE/video triad copy', () => {
+  it('IMAGE shell: preview hero + generation panels; comic sub-entry; not NLE/video triad', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
-    act(() => root.render(<><ImageWorkspaceRail /><ImageWorkspaceShell novelId="n1" onInspect={vi.fn()} /><ImageEmptyCta /></>));
+    act(() => root.render(<><ImageWorkspaceRail /><ImageWorkspaceShell novelId="n1" onInspect={vi.fn()} /><ImageEmptyCta onOpenComic={vi.fn()} /></>));
     expect(host.textContent).toContain('图像预览');
     expect(host.textContent).toContain('mock-image-gen');
     expect(host.textContent).toContain('mock-visual');
     expect(host.textContent).toMatch(/≠ 视频|≠ 剪辑|LUMEN_IMAGE/);
     expect(host.textContent).not.toContain('多轨时间线主表面');
+    expect(host.querySelector('[data-open-comic="true"]')).toBeTruthy();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-open-comic') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('漫画制作');
+    expect(host.textContent).toMatch(/子入口|不升/);
+    expect(host.querySelector('.media-ws--video')).toBeNull();
     act(() => root.unmount());
   });
 
@@ -63,7 +70,7 @@ describe('MediaWorkspaceShells', () => {
   });
 
 
-  it('VIDEO shell: three layers script/canvas/director; ≠ NLE', () => {
+  it('VIDEO shell: three layers script/canvas/director; Shot strip; explicit send-edit; ≠ NLE', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
     const send = vi.fn();
@@ -74,8 +81,18 @@ describe('MediaWorkspaceShells', () => {
     expect(host.textContent).toContain('无限画布');
     expect(host.textContent).toContain('导演台');
     expect(host.textContent).toContain('mock-director-video');
+    expect(host.querySelector('.media-ws__shot-strip')).toBeTruthy();
+    expect(host.querySelector('[data-shot-id="s1"]')).toBeTruthy();
     expect(host.textContent).toMatch(/送去剪辑/);
     expect(host.textContent).toMatch(/VIDEO ≠ EDIT|≠ 剪辑|禁止 NLE/);
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('显式交片');
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+    });
+    expect(send).toHaveBeenCalled();
     act(() => root.unmount());
   });
   it('ASSETS shell: browser hero + library; reference semantics', () => {

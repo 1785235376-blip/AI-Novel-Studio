@@ -84,4 +84,17 @@ describe('FeatureLauncher',()=>{
     fireEvent.keyDown(buttons[1],{key:'Home'});
     expect(document.activeElement).toBe(buttons[0]);
   });
+
+  it('N-UX-05 shows first-tier strip and N-UX-02 marks workflow as orchestration',()=>{
+    render(<Harness/>);
+    fireEvent.click(screen.getByRole('button',{name:'打开功能导航'}));
+    expect(screen.getByRole('group',{name:'第一梯队面板'})).toBeTruthy();
+    expect(screen.getByRole('button',{name:'第一梯队：故事资料库'})).toBeTruthy();
+    expect(screen.getByRole('button',{name:'第一梯队：一致性检查'})).toBeTruthy();
+    const workflow=screen.getByRole('button',{name:'工作流编排'});
+    expect(workflow.getAttribute('title')||'').toMatch(/非 AI 写作旁路|编排面/);
+    expect(workflow.className).toContain('feature-item--workflow');
+    fireEvent.click(screen.getByRole('button',{name:'第一梯队：一致性检查'}));
+    expect(screen.getByRole('button',{name:'一致性检查'}).getAttribute('aria-current')).toBe('page');
+  });
 });

@@ -1846,6 +1846,8 @@ export default function App() {
       onOpenStory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('story'); } })}
       onOpenCheck={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
       onOpenHistory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('history'); } })}
+      onOpenCreation={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('creation'); } })}
+      onOpenOverview={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } })}
       onOpenWorkflow={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('workflow'); } })}
       onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
       capabilityStatus="undetermined"

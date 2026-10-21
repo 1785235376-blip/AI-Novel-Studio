@@ -187,3 +187,23 @@
 .media-ws--video .media-ws__layer--director {
   background: color-mix(in srgb, var(--color-accent-subtle) 40%, var(--color-bg-surface));
 }
+
+/* [HERMIA-FE-20261022 W-UX-01 / W-UX-04] */
+.media-ws__hero-actions{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-2)}
+.media-ws__hero--comic{min-height:140px;border-style:dashed}
+.media-ws__comic{display:flex;flex-direction:column;gap:var(--space-3)}
+.media-ws__shot-strip{display:flex;gap:var(--space-2);overflow-x:auto;padding:var(--space-1) 0;scrollbar-width:thin}
+.media-ws__shot-card{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:120px;padding:var(--space-2);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle);color:var(--color-text-primary)}
+.media-ws__shot-card.is-selected,.media-ws__shot-card:hover{border-color:var(--color-selection-border);background:var(--color-accent-subtle)}
+.media-ws__shot-num{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--color-text-muted)}
+.media-ws__shot-card strong{font-size:12px}
+.media-ws__shot-card small{font-size:10px;color:var(--color-text-secondary)}
+.media-ws__send-confirm{padding:var(--space-3);border:var(--border-strong);border-radius:var(--radius-md);background:color-mix(in srgb,var(--color-accent-subtle) 55%,var(--color-bg-surface));display:flex;flex-direction:column;gap:var(--space-2)}
+.media-ws__send-confirm strong{font-size:13px}
+.media-ws__send-confirm p{margin:0;font-size:12px;color:var(--color-text-secondary);line-height:1.45}
+.media-ws__director-entry{display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.media-ws__director-entry strong{font-size:13px}
+.media-ws__director-entry p{margin:0;font-size:12px;color:var(--color-text-secondary)}
+.media-ws-rail__item--send{border-color:color-mix(in srgb,var(--color-accent-primary) 45%,var(--color-border-default))!important;font-weight:650}
+.media-ws--video .media-ws__layer--canvas{min-height:320px}
+.media-ws--video .media-ws__canvas-host{min-height:280px}

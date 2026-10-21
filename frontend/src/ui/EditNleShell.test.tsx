@@ -82,12 +82,54 @@ describe('NovelWriterDock Lumen §4.4', () => {
     expect(host.textContent).toContain('状态待核实');
     expect(host.textContent).toContain('AI 写作旁路');
     expect(host.textContent).toContain('工作流编排');
+    expect(host.textContent).toContain('生成候选');
+    expect(host.querySelector('[data-dual-entry="ai-vs-workflow"]')).toBeTruthy();
     expect(host.querySelector('[data-capability="undetermined"]')).toBeTruthy();
     expect(host.querySelector('[data-capability-tone="success"]')).toBeNull();
     act(() => {
       host.querySelector<HTMLButtonElement>('.novel-writer-dock__primary')!.click();
     });
     expect(primary).toHaveBeenCalled();
+    act(() => root.unmount());
+  });
+
+  it('N-UX-05 exposes first-tier panel links without new FL ids', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const openStory = vi.fn();
+    const openCheck = vi.fn();
+    const openCreation = vi.fn();
+    const openOverview = vi.fn();
+    const openHistory = vi.fn();
+    const openWorkflow = vi.fn();
+    act(() => root.render(
+      <NovelWriterDock
+        chapterTitle="第一章"
+        chapterMeta="第 1 章"
+        primaryCta={{label: '继续写', onClick: () => {}}}
+        outlineItems={[]}
+        castItems={[]}
+        onOpenStory={openStory}
+        onOpenCheck={openCheck}
+        onOpenCreation={openCreation}
+        onOpenOverview={openOverview}
+        onOpenHistory={openHistory}
+        onOpenWorkflow={openWorkflow}
+        ai={<p>AI</p>}
+      />,
+    ));
+    expect(host.querySelector('[aria-label="第一梯队面板"]')).toBeTruthy();
+    expect(host.querySelector('[data-tier1="story"]')).toBeTruthy();
+    expect(host.querySelector('[data-tier1="check"]')).toBeTruthy();
+    expect(host.querySelector('[data-tier1="creation"]')).toBeTruthy();
+    expect(host.querySelector('[data-tier1="overview"]')).toBeTruthy();
+    expect(host.querySelector('[data-tier1="history"]')).toBeTruthy();
+    act(() => { host.querySelector<HTMLButtonElement>('[data-tier1="check"]')!.click(); });
+    expect(openCheck).toHaveBeenCalled();
+    act(() => { host.querySelector<HTMLButtonElement>('[data-open="workflow"]')!.click(); });
+    expect(openWorkflow).toHaveBeenCalled();
+    expect(host.textContent).toContain('PendingCanon');
     act(() => root.unmount());
   });
 });

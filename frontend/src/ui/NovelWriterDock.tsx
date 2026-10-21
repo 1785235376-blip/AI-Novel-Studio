@@ -1,8 +1,9 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
- * N-UX-01: AI vs workflow dual-entry copy — no new FL ids.
+ * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
+ * N-UX-05: first-tier panel quick links (story/check/creation/overview/history).
  */
 import type {ReactNode} from 'react';
 import {CapabilityBadge} from './CapabilityBadge';
@@ -20,6 +21,8 @@ export function NovelWriterDock({
   onOpenStory,
   onOpenCheck,
   onOpenHistory,
+  onOpenCreation,
+  onOpenOverview,
   onOpenWorkflow,
   onSelectOutline,
   capabilityStatus = 'undetermined',
@@ -36,6 +39,8 @@ export function NovelWriterDock({
   onOpenStory?: () => void;
   onOpenCheck?: () => void;
   onOpenHistory?: () => void;
+  onOpenCreation?: () => void;
+  onOpenOverview?: () => void;
   /** Opens FL workflow surface — clearly ≠ AI writing bypass. */
   onOpenWorkflow?: () => void;
   onSelectOutline?: (id: string) => void;
@@ -77,6 +82,29 @@ export function NovelWriterDock({
           )}
         </div>
         <p className="novel-writer-dock__hint">不需要辅助时可点检视器边缘按钮将右栏收至 0，把空间还给正文（Lumen §4.4）。</p>
+      </section>
+
+      {/* [HERMIA-FE-20261022 N-UX-05] First-tier same-screen reach — existing FL ids only */}
+      <section className="novel-writer-dock__tier1" aria-label="第一梯队面板">
+        <span className="novel-writer-dock__tier1-label">第一梯队 · 同屏可达</span>
+        <div className="novel-writer-dock__tier1-links">
+          {onOpenStory && (
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenStory} data-tier1="story">故事资料库</button>
+          )}
+          {onOpenCheck && (
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenCheck} data-tier1="check">一致性 · Canon</button>
+          )}
+          {onOpenCreation && (
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenCreation} data-tier1="creation">创作方案</button>
+          )}
+          {onOpenOverview && (
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenOverview} data-tier1="overview">概览</button>
+          )}
+          {onOpenHistory && (
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenHistory} data-tier1="history">版本历史</button>
+          )}
+        </div>
+        <p className="novel-writer-dock__hint">「一致性 · Canon」打开 FL check：Continuity 与 PendingCanon 同屏（无新 FL id）。</p>
       </section>
 
       <details className="novel-writer-dock__section" open>
@@ -123,20 +151,21 @@ export function NovelWriterDock({
             <button type="button" className="ui-button" onClick={onOpenStory}>管理角色</button>
           )}
           {onOpenCheck && (
-            <button type="button" className="ui-button" onClick={onOpenCheck}>一致性检查</button>
+            <button type="button" className="ui-button" onClick={onOpenCheck}>一致性检查 · 待审 Canon</button>
           )}
         </div>
       </details>
 
       <details className="novel-writer-dock__section novel-writer-dock__section--ai" open>
-        <summary>AI 写作</summary>
+        <summary>AI 写作旁路</summary>
         <div className="novel-writer-dock__body">
-          <p className="novel-writer-dock__hint novel-writer-dock__dual-entry" role="note">
-            此处是 <strong>AI 写作旁路</strong>（生成 / 预览 / 采用候选）。功能导航里的「工作流编排」是另一套编排面，不是本旁路。
+          <p className="novel-writer-dock__hint novel-writer-dock__dual-entry" role="note" data-dual-entry="ai-vs-workflow">
+            <strong>生成候选</strong>走本旁路（生成 / 预览 / 采用）。
+            {' '}功能导航里的 <strong>工作流编排</strong> 是另一套编排面，二者并存、不混成一面。
             {onOpenWorkflow ? (
               <>
                 {' '}
-                <button type="button" className="novel-writer-dock__link" onClick={onOpenWorkflow}>打开工作流编排</button>
+                <button type="button" className="novel-writer-dock__link" onClick={onOpenWorkflow} data-open="workflow">打开工作流编排（非旁路）</button>
               </>
             ) : null}
           </p>
