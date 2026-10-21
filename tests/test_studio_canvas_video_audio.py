@@ -224,14 +224,15 @@ def test_mounted_video_audio_option_changes_decoded_output_and_preserves_review_
 
 def test_mounted_requested_audio_without_source_track_is_rejected_by_original_owner(video_client, render_calls, monkeypatch):
     e = video_client; _select_option(e, True)
-    failures = []; original_render = assembly.render_studio_timeline
+    from app.services import studio_timeline_render
+    failures = []; original_render = studio_timeline_render.render_studio_timeline
     def observed(*args, **kwargs):
         try:
             return original_render(*args, **kwargs)
         except Exception as error:
             failures.append(str(error))
             raise
-    monkeypatch.setattr(assembly, 'render_studio_timeline', observed)
+    monkeypatch.setattr(studio_timeline_render, 'render_studio_timeline', observed)
     queued = _queued(e)
     response = _execute(e, queued)
     # The native owner rejects during pre-render inspection, before publication.
@@ -252,7 +253,7 @@ def test_mounted_audio_option_is_strict_and_invalid_values_cannot_queue(video_cl
     response = e.client.post(e.base + '/canvas-video/queue', headers=e.headers,
         json={'command': value, 'reviewed_preview_digest': 'a' * 64})
     assert response.status_code == 422 and not render_calls
-    assert e.production.list(e.nid, e.scope, 'video-author', lambda: None)['items'] == []
+    assert e.production.list(e.nid, e.scope, 'local-author', lambda: None)['items'] == []
 
 
 @pytest.mark.parametrize('mutation', ['canvas-stale', 'source-pin', 'action-proof', 'preview-proof', 'unknown'])
@@ -264,8 +265,8 @@ def test_mounted_audio_retention_preserves_stale_pin_proof_unknown_fences(audio_
         assert fresh['preview_digest'] != captured['preview_digest']
         response = e.client.post(e.base + '/canvas-video/queue', headers=e.headers,
             json={'command': e.command, 'reviewed_preview_digest': captured['preview_digest']})
-        assert response.status_code == 422 and not render_calls
-        assert e.production.list(e.nid, e.scope, 'video-author', lambda: None)['items'] == []
+        assert response.status_code == 409 and response.json()['detail']['code']=='EXPERIMENTAL_SOURCE_STALE' and not render_calls
+        assert e.production.list(e.nid, e.scope, 'local-author', lambda: None)['items'] == []
         return
     queued = _queued(e, captured)
     if mutation == 'canvas-stale':
@@ -276,10 +277,10 @@ def test_mounted_audio_retention_preserves_stale_pin_proof_unknown_fences(audio_
         with e.studio._asset_scope(e.nid, e.scope):
             e.assets.update_metadata(e.source['id'], {'provider_id': 'fixture-metadata-change'}, expected_version=e.source['version'])
     elif mutation == 'unknown':
-        base = e.production._base(e.nid, e.scope, 'video-author', lambda: None)
-        raw = e.production.video_owner.get_studio(e.nid, e.scope.get('branch_id'), 'video-author', queued['id'], context=base, guard=lambda: None)
+        base = e.production._base(e.nid, e.scope, 'local-author', lambda: None)
+        raw = e.production.video_owner.get_studio(e.nid, e.scope.get('branch_id'), 'local-author', queued['id'], context={**base,'request_digest':queued['request_digest']}, guard=lambda: None)
         # Seed a durable uncertain state, without claiming a native failure occurred.
-        e.production.video_owner._studio_mutate(e.nid, e.scope.get('branch_id'), 'video-author', queued['id'], raw['version'],
+        e.production.video_owner._studio_mutate(e.nid, e.scope.get('branch_id'), 'local-author', queued['id'], raw['version'],
             lambda row: row.update(status='UNKNOWN', phase='RENDERING', automatic_retry=False), context=raw['context'])
         queued = _read(e, queued)
         assert queued['status'] == 'UNKNOWN' and queued['automatic_replay'] is False

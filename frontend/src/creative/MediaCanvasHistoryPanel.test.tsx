@@ -28,3 +28,30 @@ it('retains the history incarnation and refuses a late restore record after curr
  f.rerender(<MediaCanvasHistoryPanel {...f.props} incarnation="new-incarnation"/>);await act(async()=>finish(structuredClone(fixture.restored) as unknown as CanvasViewRecord));
  expect(f.props.onAdopt).not.toHaveBeenCalled();expect(f.props.onUncertain).toHaveBeenCalledTimes(1);expect(f.restore).toHaveBeenCalledTimes(1);
 });
+
+
+it('shows the original per-card metadata comparison before a successful explicit restore',async()=>{
+ const f=setup();await choose();expect(screen.getByRole('region',{name:'画布历史版本影响对比'})).toBeTruthy();
+ fireEvent.click(screen.getByLabelText('确认创建新的当前版本并退役旧预览'));
+ fireEvent.click(screen.getByRole('button',{name:'恢复此画布版本为新版本'}));
+ await act(async()=>{});expect(f.restore).toHaveBeenCalledTimes(1);expect(f.props.onAdopt).toHaveBeenCalledTimes(1);
+});
+it.each(['layout','pin','permission','client'])('rechecks %s at the actual scheduled restore callback before sending',async mode=>{
+ const f=setup();let release!:()=>Promise<void>;
+ f.props.mutate=<T,>(work:()=>Promise<T>)=>new Promise<T>((resolve,reject)=>{release=async()=>{try{resolve(await work());}catch(error){reject(error);}};});
+ f.rerender(<MediaCanvasHistoryPanel {...f.props}/>);await choose();fireEvent.click(screen.getByLabelText('确认创建新的当前版本并退役旧预览'));
+ fireEvent.click(screen.getByRole('button',{name:'恢复此画布版本为新版本'}));
+ if(mode==='layout')f.props.base.definition.cards[0].position.x++;
+ if(mode==='pin')f.props.base.definition.cards[0].asset!.version++;
+ if(mode==='permission')f.props.canMutate=false;
+ if(mode==='client')f.props.client={...f.props.client};
+ f.rerender(<MediaCanvasHistoryPanel {...f.props}/>);await act(async()=>release());
+ expect(f.restore).not.toHaveBeenCalled();expect(f.props.onAdopt).not.toHaveBeenCalled();expect(f.props.onUncertain).not.toHaveBeenCalled();
+});
+it('retires observed metadata A/B/A even when an old restore callback is retained',async()=>{
+ const f=setup();await choose();fireEvent.click(screen.getByLabelText('确认创建新的当前版本并退役旧预览'));
+ const old=retained(screen.getByRole('button',{name:'恢复此画布版本为新版本'}));
+ const x=f.props.base.definition.cards[0].position.x;f.props.base.definition.cards[0].position.x=x+1;
+ await act(async()=>old());f.props.base.definition.cards[0].position.x=x;await act(async()=>old());
+ expect(f.restore).not.toHaveBeenCalled();expect(f.props.onAdopt).not.toHaveBeenCalled();
+});

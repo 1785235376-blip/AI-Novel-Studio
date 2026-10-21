@@ -24,8 +24,8 @@ it.each(['card_id','canvas_digest','incarnation'])('rejects swapped native audio
  vi.stubGlobal('fetch',vi.fn(async(url:string)=>json(changed(url.endsWith('/preview')?native.preview:native.executed))));
  await expect(client.preview(fresh())).rejects.toBeDefined();await expect(client.execute(native.queued as unknown as ProductionJob)).rejects.toBeDefined();
 });
-it.each(['gain','format','model','cloud','source','project','unknown-null'])('blocks unsupported fresh audio %s before transport',async mode=>{
- const c:any=fresh();if(mode==='gain')c.parameters.gain_db=0;if(mode==='format')c.parameters.output_format='WAV';if(mode==='model')c.model_id='model';
+it.each(['sample-rate','format','model','cloud','source','project','unknown-null'])('blocks unsupported fresh audio %s before transport',async mode=>{
+ const c:any=fresh();if(mode==='sample-rate')c.parameters.sample_rate=48000;if(mode==='format')c.parameters.output_format='WAV';if(mode==='model')c.model_id='model';
  if(mode==='cloud')c.allow_cloud=true;if(mode==='source')c.source_snapshots[0].digest='b'.repeat(64);if(mode==='project')c.canvas_return.project_id='other';if(mode==='unknown-null')c.parameters.unrecognised=null;
  const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);await expect(studioProductionClient(native.canvas.project_id,{sessionToken:''}).preview(c)).rejects.toBeDefined();expect(fetcher).not.toHaveBeenCalled();
 });
@@ -40,4 +40,11 @@ it('explains only the known original local WAV mapping, retaining unknown/stale 
 it('keeps projection-only source markers out of fresh audio requests',async()=>{
  const command={...fresh(),source_snapshots:structuredClone(native.queued.command.source_snapshots)} as MediaCommand;
  const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);await expect(studioProductionClient(native.canvas.project_id,{sessionToken:''}).preview(command)).rejects.toBeDefined();expect(fetcher).not.toHaveBeenCalled();
+});
+
+it('explains the recorded original gain/fade mapping without claiming execution',()=>{
+ const recipe={...native.executed.execution_recipe,parameters:{in_ms:550,out_ms:850,gain_db:-6,fade_in_ms:100,fade_out_ms:100}} as ProductionRecipe;
+ const view=studioExecutionRecipeView({recipe,operationId:'m8.audio.trim',current:true});
+ expect(view.visibility).toBe('visible');expect(view.steps[0].inputs.map(i=>[i.name,i.recordedValue])).toEqual([['in_ms',550],['out_ms',850],['gain_db',-6],['fade_in_ms',100],['fade_out_ms',100]]);
+ expect(view.message).toContain('执行未验证');
 });

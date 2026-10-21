@@ -2,11 +2,12 @@ import type { CanvasAssetReference, CanvasDefinition, CanvasViewRecord } from '.
 import type { ProductionJob, ProductionRecipe, ProductionSource } from './studioProductionClient';
 import type { StudioAsset } from './studioClient';
 import type { CanvasReturnBinding } from './studioCanvasReturnBinding';
+import { checkedCanvasVideoAudioOption } from './canvasVideoAudio';
 import { checkedTimeline, type StudioVideoTimeline } from './studioTimelineTypes';
 
 export type CanvasVideoSource = ProductionSource & { asset_kind: 'video'; reference_only?: never };
 export type CanvasVideoReturnBinding = Omit<CanvasReturnBinding, 'source'> & { source: CanvasVideoSource };
-export type CanvasVideoTrimParameters = { in_ms: number; out_ms: number };
+export type CanvasVideoTrimParameters = { in_ms: number; out_ms: number; include_audio?: boolean };
 export type CanvasVideoTaskCommand = {
   contract: 'studio-canvas-video-trim/1'; operation_id: 'm9.timeline.multitrack'; request_id: string;
   provider_id: null; model_id: null; prompt: ''; allow_cloud: false; license_note: '';
@@ -52,11 +53,13 @@ function checkedSource(value: unknown): CanvasVideoSource {
   return structuredClone(value) as CanvasVideoSource;
 }
 function checkedParameters(value: unknown): CanvasVideoTrimParameters {
-  if (!exact(value, ['in_ms', 'out_ms']) || typeof value.in_ms !== 'number' || typeof value.out_ms !== 'number'
+  if (!object(value) || !Object.hasOwn(value,'in_ms') || !Object.hasOwn(value,'out_ms')
+    || Object.keys(value).some(key => !['in_ms','out_ms','include_audio'].includes(key)) || typeof value.in_ms !== 'number' || typeof value.out_ms !== 'number'
     || !Number.isSafeInteger(value.in_ms) || !Number.isSafeInteger(value.out_ms)
     || value.in_ms < 0 || value.out_ms <= value.in_ms || value.out_ms > 36_000_000
     || value.out_ms - value.in_ms > 120_000 || value.in_ms % 40 !== 0 || value.out_ms % 40 !== 0) invalid();
-  return { in_ms: value.in_ms, out_ms: value.out_ms };
+  const audio = checkedCanvasVideoAudioOption(value);
+  return { in_ms: value.in_ms, out_ms: value.out_ms, ...(audio === undefined ? {} : {include_audio:audio}) };
 }
 
 /** A video-specific additive origin parser. The old image/audio parser remains closed. */
@@ -73,13 +76,13 @@ export function checkedCanvasVideoReturnBinding(value: unknown): CanvasVideoRetu
   return { ...structuredClone(value), source: checkedSource(value.source) } as CanvasVideoReturnBinding;
 }
 
-/** Compile one real, silent video clip; no task or execution is created here. */
+/** Compile one real video clip with an explicit optional source-audio choice; no task or execution is created here. */
 export function compileCanvasVideoTimeline(source: ProductionSource, parameters: CanvasVideoTrimParameters): StudioVideoTimeline {
   const pin = checkedSource(source), range = checkedParameters(parameters);
   return checkedTimeline({ schema_version: 2, duration_ms: range.out_ms - range.in_ms, width: 640, height: 360, fps: 25,
     tracks: [{ id: 'canvas-video-track', kind: 'VIDEO', order: 0, role: 'PRIMARY', muted: false, gain_db: 0,
       clips: [{ id: 'canvas-video-clip', source_snapshot: pin, start_ms: 0, ...range, x: 0, y: 0, width: 640, height: 360,
-        speed_num: 1, speed_den: 1, muted: false, gain_db: 0, fade_in_ms: 0, fade_out_ms: 0, opacity: 1, include_audio: false }] }],
+        speed_num: 1, speed_den: 1, muted: false, gain_db: 0, fade_in_ms: 0, fade_out_ms: 0, opacity: 1, include_audio: range.include_audio === true }] }],
     captions: [] }) as StudioVideoTimeline;
 }
 

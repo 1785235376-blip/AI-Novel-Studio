@@ -2,8 +2,8 @@
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 // Explicit JSX extension uses TS/Vite's .jsx -> .tsx substitution on case-insensitive Windows.
-import { MediaCanvasHistoryCompare } from './MediaCanvasHistoryCompare.jsx';
-import type { MediaCanvasHistoryCompareProps } from './MediaCanvasHistoryCompare.jsx';
+import { MediaCanvasHistoryCompare } from './MediaCanvasHistoryComparePanel';
+import type { MediaCanvasHistoryCompareProps } from './MediaCanvasHistoryComparePanel';
 import type { CanvasDefinition, CanvasReferenceState } from './studioCanvasViewClient';
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });

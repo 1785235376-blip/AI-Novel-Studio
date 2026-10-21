@@ -183,7 +183,7 @@ it('rechecks decoded readiness at the actual review callback after a playback er
 });
 it('uses the visible panel through saved config, preview, queue, execute, digest review and explicit approval',async()=>{
   render(<StudioCanvasVideoTaskPanel {...props}/>);
-  expect(screen.getByText(/原音轨不保留/)).toBeTruthy();expect(client.timelineSave).not.toHaveBeenCalled();expect(client.canvasVideoQueue).not.toHaveBeenCalled();
+  expect(screen.getByText(/默认输出静音音轨/)).toBeTruthy();expect(client.timelineSave).not.toHaveBeenCalled();expect(client.canvasVideoQueue).not.toHaveBeenCalled();
   fireEvent.change(screen.getByLabelText('来源起点（毫秒）'),{target:{value:'1000'}});fireEvent.change(screen.getByLabelText('来源终点（毫秒）'),{target:{value:'1600'}});
   fireEvent.click(screen.getByRole('button',{name:'应用截取配置'}));await screen.findByText(/已应用到本次原时间线版本/);
   async function confirmVisible(){
@@ -200,4 +200,23 @@ it('uses the visible panel through saved config, preview, queue, execute, digest
   fireEvent.click(review);fireEvent.click(screen.getByRole('button',{name:'明确审核视频并入素材库'}));
   await waitFor(()=>expect(props.onApproved).toHaveBeenCalledTimes(1));expect(client.review).toHaveBeenCalledTimes(1);expect(client.canvasVideoExecute).toHaveBeenCalledTimes(1);
   expect(vi.mocked(props.onApproved!).mock.calls[0][0].status).toBe('APPROVED');
+});
+
+
+it('applies optional source audio through undo, new proof and a reopened original Job without replay',async()=>{
+ const view=await configured();expect(state.draft.include_audio).toBeUndefined();
+ act(()=>state.changeAudio(true));await act(async()=>state.apply());await inspected();await confirm('CREATE');
+ expect(latestCommand.parameters.include_audio).toBe(true);
+ expect((storedTimeline!.timeline.tracks[0].clips[0] as {include_audio:boolean}).include_audio).toBe(true);
+ const oldGate=state.impact!,oldCreate=state.create;
+ act(()=>state.changeAudio(false));expect(oldGate.current()).toBe(false);
+ act(()=>state.undo());expect(state.draft.include_audio).toBe(true);expect(oldGate.current()).toBe(false);
+ await act(async()=>oldCreate());expect(client.canvasVideoQueue).not.toHaveBeenCalled();
+ await act(async()=>state.apply());await inspected();await confirm('CREATE');await act(async()=>state.create());
+ expect(state.selected?.canvas_video?.parameters.include_audio).toBe(true);
+ const saved=clone(state.selected!);view.unmount();props.task={...props.task,resumeJob:saved};render(<Harness/>);
+ expect(state.draft.include_audio).toBe(true);expect(state.impact).toBeUndefined();expect(client.canvasVideoExecute).not.toHaveBeenCalled();
+ await act(async()=>state.readJob());expect(state.draft.include_audio).toBe(true);
+ await inspected();await confirm('EXECUTE');await act(async()=>state.execute());
+ expect(client.canvasVideoQueue).toHaveBeenCalledTimes(1);expect(client.canvasVideoExecute).toHaveBeenCalledTimes(1);
 });

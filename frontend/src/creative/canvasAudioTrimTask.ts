@@ -1,3 +1,4 @@
+import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import type { CanvasAssetReference, CanvasDefinition, CanvasViewRecord } from './studioCanvasViewClient';
 import type { MediaCommand, ProductionJob, ProductionSource, RecordedMediaCommand } from './studioProductionClient';
 import type { StudioAsset } from './studioClient';
@@ -19,8 +20,6 @@ export type CanvasAudioTrimTaskSession = {
 const WAV_PROFILE = 'PCM_S16LE_WAV_48000_STEREO';
 const commandKeys = new Set(['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt',
   'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'canvas_return']);
-const recordedNullParameters = new Set(['width', 'height', 'steps', 'seed', 'cfg', 'negative_prompt',
-  'size', 'quality', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate']);
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const canonical = (value: unknown) => JSON.stringify(value, (_key, v) => object(v)
   ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => a.localeCompare(b))) : v);
@@ -31,15 +30,7 @@ const exactSource = (sources: RecordedMediaCommand['source_snapshots'], source: 
   && sources[0].kind === 'ASSET' && sources[0].asset_kind === 'audio'
   && sources[0].id === source.id && sources[0].version === source.version && sources[0].digest === source.digest;
 
-function trimParameters(value: unknown, recorded: boolean) {
-  if (!object(value) || !Object.hasOwn(value, 'in_ms') || !Object.hasOwn(value, 'out_ms')
-    || Object.keys(value).some(key => key !== 'in_ms' && key !== 'out_ms'
-    && (!recorded || !recordedNullParameters.has(key) || value[key] !== null))) return;
-  const start = value.in_ms, end = value.out_ms;
-  if (typeof start !== 'number' || typeof end !== 'number' || !Number.isSafeInteger(start)
-    || !Number.isSafeInteger(end) || start < 0 || end <= start || end - start > 120_000) return;
-  return { in_ms: start, out_ms: end };
-}
+const trimParameters = checkedCanvasAudioTaskEnvelope;
 
 function trimCommandMatches(task: CanvasAudioTrimTaskBinding, command: RecordedMediaCommand, recorded = false): boolean {
   const parameters = trimParameters(command.parameters, recorded);

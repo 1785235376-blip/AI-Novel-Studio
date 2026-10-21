@@ -84,7 +84,7 @@ it.each(['retired', 'cloud', 'provider', 'model', 'prompt', 'other operation', '
     if (kind === 'video frames') f.command.video_frames = [];
     if (kind === 'storyboard') f.command.storyboard_speech = {} as MediaCommand['storyboard_speech'];
     if (kind === 'audio profile') f.command.audio_profile = 'studio-audio-mp3/1';
-    if (kind === 'extra parameter') f.command.parameters.gain_db = 0;
+    if (kind === 'extra parameter') f.command.parameters.sample_rate = 48000;
     if (kind === 'missing time') delete f.command.parameters.out_ms;
     if (kind === 'fractional') f.command.parameters.in_ms = .5;
     if (kind === 'negative') f.command.parameters.in_ms = -1;
@@ -182,4 +182,18 @@ it.each(['scope', 'incarnation', 'card', 'missing binding'] as const)('rejects a
   if (kind === 'card') f.job.command!.canvas_return!.card_id = 'other';
   if (kind === 'missing binding') delete f.job.command!.canvas_return;
   expect(() => replaceCanvasAudioTrimTaskResult(f.origin, f.canvas, f.job, f.result)).toThrow();
+});
+
+
+it('preserves optional canvas gain/fades in the original command and exact recipe, including explicit zero', () => {
+  const f=fixture(true);
+  Object.assign(f.command.parameters,{gain_db:-6,fade_in_ms:100,fade_out_ms:200});
+  f.job.command=structuredClone(f.command);f.job.execution_recipe.parameters={...f.command.parameters};
+  expect(()=>assertCanvasAudioTrimTaskCommand(f.binding,f.command)).not.toThrow();
+  expect(canvasAudioTrimTaskJobMatches(f.binding,f.job)).toBe(true);
+  f.job.execution_recipe.parameters={in_ms:250,out_ms:1250,gain_db:-5,fade_in_ms:100,fade_out_ms:200};
+  expect(canvasAudioTrimTaskJobMatches(f.binding,f.job)).toBe(false);
+  Object.assign(f.command.parameters,{gain_db:0,fade_in_ms:0,fade_out_ms:0});
+  f.job.command=structuredClone(f.command);f.job.execution_recipe.parameters={...f.command.parameters};
+  expect(canvasAudioTrimTaskJobMatches(f.binding,f.job)).toBe(true);
 });

@@ -14,7 +14,7 @@ export type StudioCanvasVideoTaskProps=Omit<StudioMediaExecutionProps,'assets'|'
   task:CanvasImageTaskSession;provenanceAssets?:Pick<StudioClient,'asset'>;onJob?:(job:ProductionJob)=>void;
 };
 type Timeline=Awaited<ReturnType<StudioProductionClient['timelineGet']>>;
-type Draft={in_ms:string;out_ms:string};
+type Draft={in_ms:string;out_ms:string;include_audio?:boolean};
 type Candidate={url:string;identity:string;generation:object;token:object};
 type Operation={token:object;revision:number;client:StudioProductionClient;kind:string};
 const canonical=canonicalExecutionImpact;
@@ -26,7 +26,7 @@ const invalid=(message:string)=>new ApiError({status:200,code:'STUDIO_RESPONSE_I
 /** Session presentation over the original Timeline/Job owners; no transport or queue lives here. */
 export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
   const initial=props.task.resumeJob?.canvas_video?.parameters;
-  const [draft,setDraft]=useState<Draft>({in_ms:String(initial?.in_ms??0),out_ms:String(initial?.out_ms??1000)});
+  const [draft,setDraft]=useState<Draft>({in_ms:String(initial?.in_ms??0),out_ms:String(initial?.out_ms??1000),...(initial?.include_audio===undefined?{}:{include_audio:initial.include_audio})});
   const [timeline,setTimeline]=useState<Timeline>(),[preview,setPreview]=useState<CanvasVideoTaskPreview>();
   const [selected,setSelected]=useState<ProductionJob|undefined>(props.task.resumeJob),[pending,setPending]=useState<string>();
   const [candidate,setCandidate]=useState<Candidate>(),[candidateReady,setCandidateReady]=useState(false),[previewConfirmed,setPreviewConfirmed]=useState(false),[reviewConfirmed,setReviewConfirmed]=useState(false);
@@ -82,13 +82,15 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
     if(record){history.current.past.push({...draftRef.current});history.current.past=history.current.past.slice(-20);history.current.future=[];}
     revision.current++;draftRef.current=next;setDraft(next);clearPreview();clearCandidate();request.current=undefined;dirty(true);
   }
-  function changeParameter(name:keyof Draft,value:string){edit({...draftRef.current,[name]:value});}
+  function changeParameter(name:'in_ms'|'out_ms',value:string){edit({...draftRef.current,[name]:value});}
+  function changeAudio(value:boolean){if(typeof value==='boolean')edit({...draftRef.current,include_audio:value});}
   const editable=()=>current()&&!busy()&&latest.current.canMutate&&!jobRef.current&&!uncertainRef.current;
   function undo(){if(!editable())return;const next=history.current.past.pop();if(!next)return;history.current.future.push({...draftRef.current});edit(next,false);}
   function redo(){if(!editable())return;const next=history.current.future.pop();if(!next)return;history.current.past.push({...draftRef.current});edit(next,false);}
   function parameters(){
     if(!draftRef.current.in_ms.trim()||!draftRef.current.out_ms.trim())throw new Error('请填写明确的整数毫秒起止时间。');
-    return {in_ms:Number(draftRef.current.in_ms),out_ms:Number(draftRef.current.out_ms)};
+    return {in_ms:Number(draftRef.current.in_ms),out_ms:Number(draftRef.current.out_ms),
+      ...(draftRef.current.include_audio===undefined?{}:{include_audio:draftRef.current.include_audio})};
   }
   function command():CanvasVideoTaskCommand{
     const row=timelineRef.current,binding=latest.current.task.origin.binding;
@@ -185,7 +187,8 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
         return {job:checked,timeline:source};
       });
       if(!live(value))return;adoptJob(row.job);timelineRef.current=row.timeline;setTimeline(row.timeline);
-      const next={in_ms:String(row.job.canvas_video.parameters.in_ms),out_ms:String(row.job.canvas_video.parameters.out_ms)};draftRef.current=next;setDraft(next);savedDraft.current=canonical(next);request.current=row.job.request_id;
+      const next={in_ms:String(row.job.canvas_video.parameters.in_ms),out_ms:String(row.job.canvas_video.parameters.out_ms),
+        ...(row.job.canvas_video.parameters.include_audio===undefined?{}:{include_audio:row.job.canvas_video.parameters.include_audio})};draftRef.current=next;setDraft(next);savedDraft.current=canonical(next);request.current=row.job.request_id;
       history.current={past:[],future:[]};markUncertain(['UNKNOWN','RUNNING','REVIEWING'].includes(row.job.status));dirty(false);setNotice('已读取原 Job 和保存配置；没有创建、执行、审核或采用。');
     }catch(reason){if(live(value))fail(reason,'原视频任务读取失败；不会重新发送。');}finally{finish(value);}
   }
@@ -239,6 +242,6 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
     canCreate:valid&&!locked&&!uncertain&&!selected&&previewConsent.current&&!!previewRef.current?.execution_available&&impact?.input.boundary.kind==='CREATE'&&impact.ready(),
     canExecute:valid&&!locked&&!uncertain&&selected?.status==='QUEUED'&&previewConsent.current&&impact?.input.boundary.kind==='EXECUTE'&&impact.ready(),
     canReview:valid&&props.canReview&&!locked&&!uncertain&&!!candidate&&decoded(candidate)&&reviewConsent.current,
-    previewConfirmed,reviewConfirmed,changeParameter,undo,redo,apply,inspect,confirmPreview,confirmImpact,create:()=>dispatch('CREATE'),execute:()=>dispatch('EXECUTE'),readJob,loadCandidate,confirmReview,review,mediaLoaded,mediaFailed};
+    previewConfirmed,reviewConfirmed,changeParameter,changeAudio,undo,redo,apply,inspect,confirmPreview,confirmImpact,create:()=>dispatch('CREATE'),execute:()=>dispatch('EXECUTE'),readJob,loadCandidate,confirmReview,review,mediaLoaded,mediaFailed};
 }
 export type StudioCanvasVideoTaskController=ReturnType<typeof useStudioCanvasVideoTask>;
