@@ -154,7 +154,7 @@ def test_original_card_binding_is_exact_before_any_job(card_cutout,monkeypatch,m
     else:origin['source']['digest']='f'*64
     no_render(monkeypatch)
     with pytest.raises(REJECTED):preview(e,value)
-    assert e.production.list(e.nid,e.scope,e.actor,lambda:None)['items']==[]
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 @pytest.mark.parametrize('index',[0,1])
@@ -166,7 +166,7 @@ def test_original_source_and_mask_snapshots_cannot_be_changed(card_cutout,monkey
     else:source['digest']='f'*64
     no_render(monkeypatch)
     with pytest.raises(REJECTED):preview(e,value)
-    assert e.production.list(e.nid,e.scope,e.actor,lambda:None)['items']==[]
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 @pytest.mark.parametrize('width',[64,72])
@@ -180,7 +180,7 @@ def test_authored_mask_for_other_source_or_dimensions_is_never_repaired_implicit
         'bitplane_base64':plane(width=width),'idempotency_key':'other-owned-mask'})['asset']
     value=deepcopy(e.command);value['source_snapshots'][1]=snapshot(painted);no_render(monkeypatch)
     with pytest.raises(ValueError):preview(e,value)
-    assert e.production.list(e.nid,e.scope,e.actor,lambda:None)['items']==[]
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 def test_png_lookalike_is_not_an_authored_mask(card_cutout,monkeypatch):
@@ -190,7 +190,7 @@ def test_png_lookalike_is_not_an_authored_mask(card_cutout,monkeypatch):
             'lookalike',required_features=('narrative_production_v2',))
     value=deepcopy(e.command);value['source_snapshots'][1]=snapshot(lookalike);no_render(monkeypatch)
     with pytest.raises(ValueError,match='IMAGE_MASK_ORIGIN_INVALID'):preview(e,value)
-    assert e.production.list(e.nid,e.scope,e.actor,lambda:None)['items']==[]
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 @pytest.mark.parametrize('stage',['queue','execute','review'])
@@ -289,9 +289,15 @@ def test_original_graph_cutout_entry_stays_unsupported(card_cutout,monkeypatch):
     e=card_cutout;no_render(monkeypatch)
     from app.creative.graph_models import MediaNodeParameters
     with pytest.raises(ValueError):MediaNodeParameters.model_validate({'operation_id':'m5.image.cutout'})
+    from app.creative.graph_media_binding import make_graph_binding_digest
+    _,context,_=e.production.preview(e.nid,e.scope,e.actor,e.command,lambda:None)
+    binding={'contract':'creative-graph-media-binding/1','run_id':'run','node_id':'cutout','graph_id':'graph',
+        'graph_version':1,'graph_digest':'a'*64,'run_request_digest':'b'*64,'input_digest':'c'*64,
+        'preview_run_version':1,'command_digest':'d'*64}
+    binding['attempt_digest']=make_graph_binding_digest(binding,context)
     with pytest.raises(ValueError,match='STUDIO_IMAGE_CUTOUT_STANDALONE_ONLY'):
-        e.production.preview(e.nid,e.scope,e.actor,e.command,lambda:None,graph_binding={})
-    assert e.production.list(e.nid,e.scope,e.actor,lambda:None)['items']==[]
+        e.production.preview(e.nid,e.scope,e.actor,e.command,lambda:None,graph_binding=binding)
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 def test_mounted_original_cutout_card_preview_execute_review_and_return(cpu_client,monkeypatch):
