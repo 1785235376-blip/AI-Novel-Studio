@@ -169,7 +169,12 @@ export function EditNleShell({
 
   return (
     <div className="edit-nle-shell" aria-label="剪辑工作区 · 多轨时间线">
-      <div className="edit-nle-shell__preview" aria-label="节目监视器">
+      <div className="edit-nle-shell__preview" aria-label="监视器与工具条">
+        <div className="edit-nle-shell__monitor edit-nle-shell__monitor--source">
+          <span className="edit-nle-shell__monitor-label">源监视器</span>
+          <strong>{selectedClipIds[0] || '—'}</strong>
+          <small>选中片段 · 只读演示</small>
+        </div>
         <div className="edit-nle-shell__monitor">
           <span className="edit-nle-shell__monitor-label">节目监视器</span>
           <strong>{(playheadMs / 1000).toFixed(2)}s</strong>

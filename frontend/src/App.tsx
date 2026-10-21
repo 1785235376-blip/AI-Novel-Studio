@@ -347,7 +347,21 @@ export default function App() {
       if (next !== panel) setPanel(next);
     });
   };
-  const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null });
+  // [HERMIA-FE-20261022 overnight] T1 focus hooks — no new FL ids (AiWriting/ChapterTree/Editor).
+  const focusNovelSurface = useCallback((target: 'aiWriting' | 'chapterTree' | 'editor') => {
+    if (target === 'aiWriting') {
+      document.querySelector<HTMLElement>('.novel-writer-dock__section--ai')?.scrollIntoView({block: 'nearest'});
+      document.querySelector<HTMLElement>('.novel-writer-dock__section--ai summary')?.focus?.();
+    } else if (target === 'chapterTree') {
+      document.querySelector<HTMLElement>('.workspace-sidebar--novel .tree, .workspace-sidebar--novel')?.scrollIntoView({block: 'nearest'});
+      (document.querySelector('.workspace-sidebar--novel button, .workspace-sidebar--novel [role="treeitem"]') as HTMLElement | null)?.focus?.();
+    } else {
+      const el = document.querySelector<HTMLElement>('.app-shell[data-module="NOVEL"] .ProseMirror, .app-shell[data-module="NOVEL"] .editor');
+      el?.focus?.();
+      el?.scrollIntoView?.({block: 'nearest'});
+    }
+  }, []);
+  const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null }, [], focusNovelSurface);
   const independentClient = useMemo(() => studioClient(s.novelId, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }), [studioEntry, studioEntryEpoch]);
   const studioProject = useQuery({ queryKey: ['independent-project', namespace, s.novelId, studioEntryInstance, studioEntryEpoch], queryFn: ({ signal }) => independentClient.overview(signal), enabled: independentStudios && !!s.novelId, retry: false });
   const neutralStudio = independentStudios && studioProject.data?.project?.id === s.novelId && studioProject.data.project.entry_kind === 'NEUTRAL_STUDIO';
@@ -1777,6 +1791,7 @@ export default function App() {
       onOpenStory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('story'); } })}
       onOpenCheck={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
       onOpenHistory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('history'); } })}
+      onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
       ai={<>
       <AiWritingPanel
       authorPreview={chapter.data ? {

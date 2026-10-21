@@ -141,3 +141,10 @@
 - **小说：** `NovelWriterDock`（Lumen §4.4）主 CTA + 大纲/角色/AI 默认可折叠展开；Editor 加宽；可经检视器收至 0；禁空 inspector。
 - 测试：workbench + EditNleShell + ModuleWorkspaceRoutes。**不 push。**
 
+## § Atlas 0.4 overnight · FL 可达 + EDIT 加厚（本机）
+
+- Action 别名扩：`storyPlanning` / `pendingCanon` / `workflowSurface` + `novel.focus.*`（不编新 FL id）。
+- FL `workflow` 文案 →「工作流编排」。
+- EDIT：双监视器（源/节目）+ 更密时间线 CSS；小说右栏大纲可点章节。
+- 门禁：workbench + EditNleShell + routes **42 PASS**。**不 push。**
+

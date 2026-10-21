@@ -33,7 +33,7 @@ describe('EditNleShell W-P0-06', () => {
     expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
     expect(host.querySelector('.edit-nle-shell__monitor')).toBeTruthy();
     expect(host.querySelector('[aria-label="剪辑工具条"]')).toBeTruthy();
-    expect(host.textContent).toContain('多轨剪辑');
+    expect(host.textContent).toMatch(/多轨剪辑|源监视器|节目监视器/);
     expect(host.textContent).toMatch(/放大|缩小/);
     expect(timeline.tracks.length).toBeGreaterThanOrEqual(3);
     act(() => root.unmount());

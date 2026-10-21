@@ -151,3 +151,16 @@
 ## 交叉：工作区台账
 
 见 `/workspace/hr/WORKSPACE_FE_INVENTORY.md`（W-P0-03 · EDIT/nle/CONTROL/PLUGIN）。
+
+
+---
+
+## 夜间补记 · Action 可达（不编 FL id）· [HERMIA-FE-20261022]
+
+| 缺口组件 | 处理 |
+|---|---|
+| AiWriting / ChapterTree / Editor | CommandSearch：`novel.focus.aiWriting` / `chapterTree` / `editor`（聚焦壳层，无新 FL id） |
+| StoryPlanning / PendingCanon | `novel.open.storyPlanning` → `story`；`novel.open.pendingCanon` → `check` |
+| FL `workflow` 文案 | 标签改为「工作流编排」（id 不变）≠ AiWriting 旁路 |
+| 右栏大纲 | `NovelWriterDock` 可点章节 → `setChapter` + `write` |
+

@@ -26,7 +26,7 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
     {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>},
     {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>},
     {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>},
-    {id:'workflow',label:'AI 写作流程',icon:<Workflow aria-hidden="true"/>},
+    {id:'workflow',label:'工作流编排',icon:<Workflow aria-hidden="true"/>},
   ]},
   {id:'production',label:'制作与分析',icon:<Film aria-hidden="true"/>,items:[
     {id:'check',label:'一致性检查',icon:<ScanSearch aria-hidden="true"/>},

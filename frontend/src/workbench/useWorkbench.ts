@@ -1,33 +1,38 @@
 /**
- * [HERMIA-FE-20261022 slice M1-2] React binding: one registry set per App mount.
+ * [HERMIA-FE-20261022 slice M1-2 / overnight] React binding: one registry set per App mount.
  * - Lifecycle epoch follows namespace/project/chapter/actor (A→B→A safe).
- * - `open(id, legacy)` routes through ActionRegistry `panel.open.<id>`; if that id is not
- *   registered (e.g. experimental groups) it falls back to the legacy path unchanged.
- * - The latest App navigation callback is read through a ref, so the guarded legacy
- *   flow (styleLeave.request → setPanel) stays the single real navigation path.
+ * - `open(id, legacy)` routes through ActionRegistry `panel.open.<id>`; unknown ids → legacy.
+ * - Novel focus targets (aiWriting / chapterTree / editor) do not invent FL ids.
  */
 import {useEffect, useMemo, useRef} from 'react';
 import {ActionRegistry, type ActionContext, type ExecuteResult} from './actions';
 import {LifecycleTracker, type LifecycleContext} from './lifecycle';
 import {PanelRegistry} from './panels';
 import {registerFeaturePanels} from './featureBridge';
-import {registerNovelActionAliases} from './novelActions';
+import {registerNovelActionAliases, type NovelFocusTarget} from './novelActions';
+
+export type {NovelFocusTarget};
 
 export interface Workbench {
   tracker: LifecycleTracker; panels: PanelRegistry; actions: ActionRegistry;
   context: (targetId?: string | null) => ActionContext;
   open: (featureId: string, legacy: (id: string) => void) => Promise<ExecuteResult | {status: 'legacy'}>;
 }
-export function useWorkbench(navigate: (featureId: string) => void, life: LifecycleContext, permissions: readonly string[] = []): Workbench {
+export function useWorkbench(
+  navigate: (featureId: string) => void,
+  life: LifecycleContext,
+  permissions: readonly string[] = [],
+  focusSurface?: (target: NovelFocusTarget) => void,
+): Workbench {
   const nav = useRef(navigate); nav.current = navigate;
+  const focus = useRef(focusSurface); focus.current = focusSurface;
   const wb = useMemo(() => {
     const isDev = Boolean((import.meta as {env?: {DEV?: boolean}}).env?.DEV);
     const tracker = new LifecycleTracker(); const panels = new PanelRegistry(isDev); const actions = new ActionRegistry(tracker, isDev);
     registerFeaturePanels(panels, actions, id => nav.current(id));
-    registerNovelActionAliases(actions, id => nav.current(id));
+    registerNovelActionAliases(actions, id => nav.current(id), t => focus.current?.(t));
     return {tracker, panels, actions};
   }, []);
-  // Update synchronously during render so any click after this render already sees the new epoch.
   wb.tracker.update(life);
   const perms = useRef(new Set(permissions)); perms.current = new Set(permissions);
   const api = useRef<Workbench>();

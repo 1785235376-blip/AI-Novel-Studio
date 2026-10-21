@@ -17,6 +17,7 @@ export function NovelWriterDock({
   onOpenStory,
   onOpenCheck,
   onOpenHistory,
+  onSelectOutline,
   ai,
   extras,
 }: {
@@ -30,6 +31,7 @@ export function NovelWriterDock({
   onOpenStory?: () => void;
   onOpenCheck?: () => void;
   onOpenHistory?: () => void;
+  onSelectOutline?: (id: string) => void;
   ai: ReactNode;
   extras?: ReactNode;
 }) {
@@ -70,7 +72,11 @@ export function NovelWriterDock({
             <ul className="novel-writer-dock__outline">
               {outlineItems.map(item => (
                 <li key={item.id}>
-                  <strong>{item.label}</strong>
+                  {onSelectOutline ? (
+                    <button type="button" onClick={() => onSelectOutline(item.id)}>{item.label}</button>
+                  ) : (
+                    <strong>{item.label}</strong>
+                  )}
                   {item.hint && <span className="novel-writer-dock__hint">{item.hint}</span>}
                 </li>
               ))}

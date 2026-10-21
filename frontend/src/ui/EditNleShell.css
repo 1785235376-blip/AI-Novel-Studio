@@ -179,3 +179,39 @@
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--color-accent-subtle) 70%, var(--color-bg-surface));
 }
+
+/* [HERMIA-FE-20261022 overnight] denser CapCut-like chrome */
+.edit-nle-shell__preview {
+  grid-template-columns: 1fr 1fr minmax(260px, 0.9fr);
+}
+.edit-nle-shell__monitor--source {
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-bg-subtle) 70%, #12141c), var(--color-bg-surface));
+  opacity: 0.95;
+}
+.edit-nle-shell__monitor--source .edit-nle-shell__monitor-label::after {
+  content: " · 源";
+}
+.edit-nle-main {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--layout-header-height, 56px) - var(--layout-context-height, 40px) - var(--layout-status-height, 36px) - 24px);
+}
+.edit-nle-shell__hero {
+  flex: 1 1 auto;
+  min-height: 380px;
+}
+.edit-nle-shell__hero .nle-ruler {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-bg-subtle);
+  padding-top: var(--space-2);
+}
+.edit-nle-shell__hero .nle-track__clips > li,
+.edit-nle-shell__hero .nle-track__clips code {
+  min-width: 9rem;
+  min-height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+}
