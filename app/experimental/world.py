@@ -9,9 +9,9 @@ from __future__ import annotations
 from copy import deepcopy
 from contextlib import contextmanager
 import math
-from typing import Any, Callable, Literal
+from typing import Annotated, Any, Callable, Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from .common import DomainService, StaleSourceError, new_row, change_row
 from .planning import StrictModel, collection, require_row, digest, entity_sources, scoped_sources
@@ -136,7 +136,8 @@ class CharacterReferenceView(StrictModel):
     request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$")
     provider_id: str = Field(min_length=1, max_length=160)
     model_id: str = Field(min_length=1, max_length=160)
-    prompt: str = Field(default="", max_length=16000)
+    # Provenance must preserve the strict original MediaCommand prompt verbatim.
+    prompt: Annotated[str, StringConstraints(strip_whitespace=False, strict=True)] = Field(default="", max_length=16000)
     parameters: dict[str, Any] = Field(default_factory=dict, max_length=64)
     reference_asset_ids: list[str] = Field(default_factory=list, max_length=50)
 
