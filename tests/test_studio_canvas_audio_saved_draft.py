@@ -32,6 +32,9 @@ from test_studio_canvas_audio_derived_recovery import failed_audio, derived_comm
 from test_studio_canvas_audio_return import audio_canvas, change_origin
 from test_v2_audio_wav_controls import production, preview, queue, run, get, review
 from test_v2_independent_workspace import rig, reopened, services
+from test_r3_mounted_contracts import checked, mounted, prefix
+from test_v2_independent_workspace_api import client
+from test_v2_audio_wav_controls_api import audio_client
 
 REJECTED = (ValueError, StaleSourceError, FileNotFoundError, AudiobookError, CapabilityVersionConflict)
 
@@ -171,6 +174,22 @@ def test_original_cas_history_preserves_metadata_and_conflicts_never_overwrite(e
     no_jobs(e)
 
 
+
+def test_generic_timeline_edit_keeps_saved_input_historical_until_explicit_audio_cas_save(effect_template,monkeypatch):
+    e=effect_template;value=inputs(e);first=save(e,value);no_native(monkeypatch)
+    changed_timeline=deepcopy(first['timeline']);changed_timeline['tracks'][0]['clips'][0]['gain_db']=-2
+    generic=e.production.timeline_save(e.nid,e.scope,e.actor,first['id'],{
+        'title':first['title'],'timeline':changed_timeline,'expected_version':first['version']},lambda:None)
+    assert generic['version']==first['version']+1
+    assert generic['canvas_audio_draft']==first['canvas_audio_draft']
+    assert generic['canvas_audio_draft']['timeline_snapshot']['version']!=generic['version']
+    assert generic['canvas_audio_draft']['timeline_snapshot']['digest']!=generic['timeline_digest']
+    assert read(e,generic)==generic
+    # Only an explicit audio-draft CAS save captures a new current input binding.
+    captured=save(e,value,generic);exact_saved(captured,value)
+    assert captured['version']==generic['version']+1
+    no_jobs(e)
+
 def test_concurrent_cas_only_one_audio_draft_writer_wins(effect_template, monkeypatch):
     e = effect_template; value = inputs(e); first = save(e, value); no_native(monkeypatch)
     gate = Barrier(2)
@@ -293,6 +312,45 @@ def test_corrupt_saved_metadata_digest_is_never_adopted(effect_template, monkeyp
     with pytest.raises(REJECTED):read(e,row)
     no_jobs(e)
 
+
+
+def test_mounted_original_timeline_save_get_refuses_saved_proof_and_cas_conflict_without_job(audio_client, monkeypatch):
+    e=audio_client
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES','narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2')
+    from app.creative.canvas_views import CreativeCanvasViews
+    from app.creative.graph_asset_inputs import GraphAssetInputs
+    graphs=e.experimental.creative_graph_service
+    # Match original audio-only Timeline mounted fixture: this adapter captures
+    # workspace/store at construction and must use the disposable original owner.
+    monkeypatch.setattr(e.production,'timeline_inputs',GraphAssetInputs(e.production))
+    monkeypatch.setattr(graphs,'store',e.studio.store);monkeypatch.setattr(graphs,'workspace',e.studio)
+    monkeypatch.setattr(graphs,'asset_inputs',GraphAssetInputs(graphs));monkeypatch.setattr(graphs,'canvas_views',CreativeCanvasViews(graphs));graphs.configure_media(e.production)
+    canvas=checked(e.client.post(e.studio_base+'/canvas-views',headers=e.headers,json={
+        'request_id':'api-audio-draft-card','definition':{'title':'Owned unqueued audio card','cards':[
+            {'id':'origin-audio','position':{'x':44,'y':66},'asset':reference(e.source)}]}}),201)
+    source={k:v for k,v in e.command['source_snapshots'][0].items() if k!='reference_only'}
+    value={'contract':'studio-canvas-audio-draft/1','request_id':'api-saved-unqueued-audio',
+        'parameters':{'in_ms':100,'out_ms':800,'gain_db':-3.5,'fade_in_ms':50,'fade_out_ms':100},
+        'source_snapshots':[source],'license_note':'Owned synthetic audio input',
+        'canvas_return':{'contract':'studio-canvas-return/1','project_id':e.nid,'scope':e.scope,
+            'incarnation':e.studio.store.incarnation(e.nid),'canvas_id':canvas['id'],'canvas_version':canvas['version'],
+            'canvas_digest':canvas['definition_digest'],'card_id':'origin-audio','source':source}}
+    no_native(monkeypatch)
+    response=e.client.post(e.base+'/timelines',headers=e.headers,json=body(value))
+    row=checked(response,201);exact_saved(row,value)
+    assert response.headers['cache-control']=='no-store'
+    assert checked(e.client.get(e.base+'/timelines/'+row['id'],headers=e.headers))==row
+    assert checked(e.client.get(e.base+'/jobs',headers=e.headers))['items']==[]
+    bad=body(value,row['version']);bad['canvas_audio_draft']['proof']={'confirmed':True}
+    rejected=e.client.put(e.base+'/timelines/'+row['id'],headers=e.headers,json=bad)
+    assert rejected.status_code==422,rejected.text
+    changed=deepcopy(value);changed['parameters']['gain_db']=-2
+    saved=checked(e.client.put(e.base+'/timelines/'+row['id'],headers=e.headers,json=body(changed,row['version'])))
+    assert saved['version']==row['version']+1;exact_saved(saved,changed)
+    conflict=e.client.put(e.base+'/timelines/'+row['id'],headers=e.headers,json=body(value,row['version']))
+    assert conflict.status_code in {409,422},conflict.text
+    assert checked(e.client.get(e.base+'/timelines/'+row['id'],headers=e.headers))==saved
+    assert checked(e.client.get(e.base+'/jobs',headers=e.headers))['items']==[]
 
 def _cold_file(request_path):
     payload=json.loads(Path(request_path).read_text(encoding='utf-8'))
