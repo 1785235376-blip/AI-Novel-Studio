@@ -49,14 +49,14 @@ beforeEach(()=>{
   if(url.endsWith('/jobs'))return json({items:job?[job]:[],product_acceptance:'LOCAL_REQUIRED'});
   if(url.endsWith('/execute')){job=receipt('executed',saved!);return json(job);}
   if(url.endsWith('/review')){job=receipt('approved',saved!);return json(job);}
-  if(url.endsWith('/candidate'))return {ok:true,status:200,headers:new Headers({'Content-Type':'image/png'}),blob:async()=>new NodeBlob([candidateBytes],{type:'image/png'})} as Response;
+  if(url.endsWith('/candidate'))return {ok:true,status:200,headers:new Headers({'Content-Type':'image/png'}),blob:async()=>new NodeBlob([candidateBytes],{type:'image/png'})} as unknown as Response;
   if(url.endsWith('/jobs/image/cutout-job'))return json(job);
   throw new Error('Unexpected original SDK fixture request '+url);
  });vi.stubGlobal('fetch',fetcher);
 });
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 const posts=(suffix:string)=>fetcher.mock.calls.filter(([u,i])=>u.endsWith(suffix)&&i.method==='POST');
-const click=(name:string)=>fireEvent.click(screen.getByRole('button',{name,exact:true}));
+const click=(name:string)=>fireEvent.click(screen.getByRole('button',{name}));
 async function hook(){const view=render(<HookHarness/>);await waitFor(()=>expect(state.providerLoading).toBe(false));act(()=>{state.changeOperation('m5.image.cutout');state.selectMask('mask');});expect(state.inputError).toBe('');return view;}
 async function confirm(kind:'CREATE'|'EXECUTE'){
  expect(state.impact?.input.boundary.kind).toBe(kind);const consent=screen.getByLabelText('已核对本次输入变化与影响范围');await waitFor(()=>expect((consent as HTMLInputElement).disabled).toBe(false));fireEvent.click(consent);click('确认本次输入核对');await waitFor(()=>expect(kind==='CREATE'?state.canCreate:state.canAction('execute')).toBe(true));
@@ -84,7 +84,7 @@ it('original CREATE and EXECUTE APIs reject bypasses and consume separate single
  await act(async()=>state.action('execute'));expect(posts('/execute')).toHaveLength(0);await executionReady();await act(async()=>Promise.all([state.action('execute'),state.action('execute')]));expect(posts('/execute')).toHaveLength(1);
 });
 it.each(['mask change','output profile'] as const)('retires CREATE proof after %s and does not revive across parameter ABA',async mode=>{
- const second=clone(props.assets[1]);second.id='mask-b';second.provenance={...second.provenance!,id:'mask-b'};props={...props,assets:[...props.assets,second]};await hook();await preview();await confirm('CREATE');const gate=state.impact!,create=state.create;
+ const second=clone(props.assets[1]);second.id='mask-b';second.provenance=Object.assign({},second.provenance!,{id:'mask-b'});props={...props,assets:[...props.assets,second]};await hook();await preview();await confirm('CREATE');const gate=state.impact!,create=state.create;
  act(()=>mode==='mask change'?state.selectMask('mask-b'):state.changeParameter('cutout_output','WEBP_LOSSLESS_V1'));act(()=>mode==='mask change'?state.selectMask('mask'):state.changeParameter('cutout_output',''));await act(async()=>create());expect(gate.current()).toBe(false);expect(state.preview).toBeUndefined();expect(posts('/jobs')).toHaveLength(0);
 });
 it.each(['source','mask'] as const)('refuses stale %s pin at queued execution',async which=>{
