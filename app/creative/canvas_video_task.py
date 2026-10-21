@@ -40,6 +40,22 @@ class CanvasVideoReturnBinding(CanvasReturnBinding):
 class VideoRange(ExecutionModel):
     in_ms: int = Field(ge=0, le=36_000_000)
     out_ms: int = Field(gt=0, le=36_000_000)
+    include_audio: bool | None = None
+
+    @field_validator('include_audio', mode='before')
+    @classmethod
+    def strict_audio_choice(cls, value):
+        # Omission preserves the old silent command identity. Explicit null is not a choice.
+        if type(value) is not bool:
+            raise ValueError('STUDIO_CANVAS_VIDEO_AUDIO_CHOICE_INVALID')
+        return value
+
+    @model_serializer(mode='wrap')
+    def preserve_silent_identity(self, handler):
+        value = handler(self)
+        if self.include_audio is None:
+            value.pop('include_audio', None)
+        return value
 
     @model_validator(mode='after')
     def frame_grid(self):
@@ -102,7 +118,7 @@ def compile_timeline(command):
                 'start_ms': 0, 'in_ms': parameters.in_ms, 'out_ms': parameters.out_ms,
                 'x': 0, 'y': 0, 'width': 640, 'height': 360, 'speed_num': 1, 'speed_den': 1,
                 'muted': False, 'gain_db': 0, 'fade_in_ms': 0, 'fade_out_ms': 0,
-                'opacity': 1, 'include_audio': False}]}], 'captions': []})
+                'opacity': 1, 'include_audio': parameters.include_audio is True}]}], 'captions': []})
 
 
 def export_profile():
