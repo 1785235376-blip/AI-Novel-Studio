@@ -412,7 +412,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if(canvasOrigin&&(canvasOrigin.project_id!==v.novel_id||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==(v.branch_id??null)
         ||(canvasOrigin.source.asset_kind==='audio'
           ? v.owner!=='audio'||v.provider!==null||executionRecipe.adapter!=='LOCAL_FFMPEG'||executionRecipe.output_profile!=='PCM_S16LE_WAV_48000_STEREO'
-          : !record(v.provider)||v.provider.local!==true||executionRecipe.adapter!=='COMFYUI_BUILTIN_IMAGE'||executionRecipe.image_recipe_id!=='comfy-sd-checkpoint-v1')))invalid();
+          : c.operation_id==='m5.image.cutout'
+            ? v.owner!=='image'||v.provider!==null||executionRecipe.adapter!=='LOCAL_CPU_MASK'
+            : !record(v.provider)||v.provider.local!==true||executionRecipe.adapter!=='COMFYUI_BUILTIN_IMAGE'||executionRecipe.image_recipe_id!=='comfy-sd-checkpoint-v1')))invalid();
       checkedVideoReference(c.video_reference, c.source_snapshots, String(c.operation_id));
       checkedVideoFrames(c.video_frames, c.source_snapshots, String(c.operation_id));
       storyboardShotFields(c.storyboard_shot, c.source_snapshots, String(c.operation_id));

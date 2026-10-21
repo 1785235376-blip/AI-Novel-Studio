@@ -625,7 +625,7 @@ class ProductionExecutionService:
 
     def _canvas_return_current(self, nid, scope, actor, context, guard, *, document=None):
         command = context.get('command')
-        if isinstance(command, dict) and command.get('operation_id') == 'm8.audio.trim' and 'canvas_return' in command:
+        if isinstance(command, dict) and command.get('operation_id') in {'m8.audio.trim', 'm5.image.cutout'} and 'canvas_return' in command:
             checked = MediaCommand.model_validate(command)
             self._canvas_return_target(nid, scope, actor, checked.canvas_return, context, guard, document=document)
 
