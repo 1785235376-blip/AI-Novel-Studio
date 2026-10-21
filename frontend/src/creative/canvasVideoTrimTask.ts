@@ -15,6 +15,17 @@ export type CanvasVideoTaskCommand = {
   parameters: CanvasVideoTrimParameters; source_snapshots: [CanvasVideoSource];
   timeline_snapshot: { id: string; version: number; digest: string }; canvas_return: CanvasVideoReturnBinding; derived_from?: FailedCanvasVideoOrigin;
 };
+export type CanvasVideoDraftInput = Pick<CanvasVideoTaskCommand,'request_id'|'parameters'|'source_snapshots'|'canvas_return'> & {
+  contract:'studio-canvas-video-draft/1';derived_from:FailedCanvasVideoOrigin;
+};
+export function checkedCanvasVideoDraftInput(value:unknown):CanvasVideoDraftInput{
+  if(!exact(value,['contract','request_id','parameters','source_snapshots','canvas_return','derived_from'])||value.contract!=='studio-canvas-video-draft/1')invalid();
+  const command=checkedCanvasVideoTaskCommand({...value,contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',
+    provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',timeline_snapshot:{id:'draft-validation',version:1,digest:'0'.repeat(64)}});
+  if(!command.derived_from)invalid();
+  return {contract:'studio-canvas-video-draft/1',request_id:command.request_id,parameters:command.parameters,
+    source_snapshots:command.source_snapshots,canvas_return:command.canvas_return,derived_from:command.derived_from};
+}
 export type CanvasVideoTaskPreview = {
   contract: 'studio-canvas-video-preview/1'; novel_id: string; branch_id: string | null;
   command: CanvasVideoTaskCommand; request_digest: string; preview_digest: string; execution_recipe: ProductionRecipe;

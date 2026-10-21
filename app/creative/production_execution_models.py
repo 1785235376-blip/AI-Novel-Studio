@@ -559,6 +559,21 @@ class TimelineSave(ExecutionModel):
     timeline: dict
     expected_version: int = Field(ge=0)
 
+    canvas_video_draft: dict | None = None
+
+    @field_validator('canvas_video_draft', mode='before')
+    @classmethod
+    def video_draft_input(cls, value):
+        if value is None: raise ValueError('STUDIO_CANVAS_VIDEO_DRAFT_INVALID')
+        from .canvas_video_draft import CanvasVideoDraft
+        return CanvasVideoDraft.model_validate(value).model_dump()
+
+    @model_serializer(mode='wrap')
+    def omit_video_draft(self, handler):
+        value = handler(self)
+        if self.canvas_video_draft is None: value.pop('canvas_video_draft', None)
+        return value
+
 
 class TimelineRender(ExecutionModel):
     expected_version: int = Field(ge=1)

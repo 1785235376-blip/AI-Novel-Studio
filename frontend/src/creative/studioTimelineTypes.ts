@@ -1,3 +1,4 @@
+import {checkedCanvasVideoTaskCommand,compileCanvasVideoTimeline,type CanvasVideoTaskCommand} from './canvasVideoTrimTask';
 import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
 import { checkedClipLinks } from './studioTimelineClipLinks';
@@ -23,7 +24,7 @@ export type TimelineTransferReceipt = { operation: 'TRANSFER_IMPORT'; request_id
   output_digest: string; preview_digest: string; format: 'OTIO' | 'SRT' | 'VTT'; transfer_input_digest: string; acknowledge_losses: boolean };
 export type TimelineEditReceipt = { request_id: string; request_digest: string; input_version: number; input_digest: string; output_digest: string };
 export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string;
-  transfer_receipt?: TimelineTransferReceipt; edit_receipt?: TimelineEditReceipt };
+  transfer_receipt?: TimelineTransferReceipt; edit_receipt?: TimelineEditReceipt; canvas_video_draft?:CanvasVideoTaskCommand; canvas_video_draft_digest?:string };
 export const TIMELINE_LIMITS = { duration: 600000, tracks: 8, kindTracks: 4, clips: 30, captions: 500, captionCharacters: 32000 } as const;
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, digest = /^[a-f0-9]{64}$/;
 
@@ -212,8 +213,17 @@ export function checkedTimelineRow(value: unknown, expectedId?: string): StudioT
         || r.output_digest !== row.timeline_digest || integer(r.input_version, 1, Number.MAX_SAFE_INTEGER) + 1 !== version || receipt) throw new Error();
       edit = r as unknown as TimelineEditReceipt;
     }
+    let videoDraft:CanvasVideoTaskCommand|undefined;
+    if(Object.hasOwn(row,'canvas_video_draft')||Object.hasOwn(row,'canvas_video_draft_digest')){
+      videoDraft=checkedCanvasVideoTaskCommand(row.canvas_video_draft);
+      if(!videoDraft.derived_from||typeof row.canvas_video_draft_digest!=='string'||!digest.test(row.canvas_video_draft_digest)
+        ||videoDraft.timeline_snapshot.id!==rowId||videoDraft.timeline_snapshot.version>version)throw new Error();
+      if(videoDraft.timeline_snapshot.version===version&&(videoDraft.timeline_snapshot.digest!==row.timeline_digest
+        ||JSON.stringify(checkedTimeline(compileCanvasVideoTimeline(videoDraft.source_snapshots[0],videoDraft.parameters)))!==JSON.stringify(input.timeline)))throw new Error();
+    }
     return { id: rowId, version, timeline_digest: row.timeline_digest, created_at: row.created_at, updated_at: row.updated_at, ...input,
-      ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { edit_receipt: edit } : {}) };
+      ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { edit_receipt: edit } : {}),
+      ...(videoDraft?{canvas_video_draft:videoDraft,canvas_video_draft_digest:row.canvas_video_draft_digest as string}:{}) };
   } catch {
     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '时间线回执字段无效，请读取服务端核对。' });
   }

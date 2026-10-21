@@ -82,7 +82,7 @@ export function SavedCanvasVideoDraftPanel(props:SavedCanvasVideoDraftPanelProps
     <div className="creative-actions"><Button disabled={blocked} loading={session.pending==='LIST'} onClick={()=>void list()}>读取已保存视频输入草稿</Button></div>
     {session.retired&&<StatusMessage tone="warning">当前项目、客户端或权限已改变，旧草稿确认已退役。</StatusMessage>}
     {batch&&validBatch&&<>
-      {!batch.rows.length?<p>没有当前版本可恢复的未入队视频派生输入。</p>:<label className="creative-field">已保存的视频输入草稿<select value={selected?.entry.view.id??''} disabled={blocked} onChange={event=>{
+      {!batch.rows.length?<p>没有当前版本可恢复的未入队视频派生输入。</p>:<label className="creative-field">已保存的视频输入草稿<select aria-label="已保存的视频输入草稿" value={selected?.entry.view.id??''} disabled={blocked} onChange={event=>{
         if(!current()||!batchCurrent(batch)||session.pending||live.current.busy)return;
         if(session.choice)session.choice.retired=true;const entry=batch.rows.find(row=>row.view.id===event.target.value);
         session.choice=entry?{entry,consent:false,used:false,retired:false}:undefined;session.error='';session.notice='';refresh(v=>v+1);

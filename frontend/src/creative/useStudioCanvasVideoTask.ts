@@ -41,7 +41,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
   const history=useRef<{past:Draft[];future:Draft[]}>({past:[],future:[]}),sent=useRef(new Set<string>());
   const assetStamp=()=>canonical({origin:latest.current.task.origin,asset:latest.current.task.asset});
   const methods=()=>[latest.current.client.canvasVideoPreview,latest.current.client.canvasVideoQueue,latest.current.client.canvasVideoExecute,
-    latest.current.client.timelineSave,latest.current.client.timelineGet,latest.current.client.get,latest.current.client.review,latest.current.client.candidate];
+    latest.current.client.timelineSave,latest.current.client.timelineGet,latest.current.client.get,latest.current.client.review,latest.current.client.candidate,latest.current.client.timelineList,latest.current.client.list];
   const stamp=assetStamp(),values=[props.client,props.task,props.canMutate,props.canReview,stamp,...methods()];
   const fence=useRef({values,token:{},stamp,retired:false});
   if(values.some((value,index)=>!Object.is(value,fence.current.values[index]))){
@@ -147,13 +147,61 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
     draftRef.current=next;setDraft(next);dirty(true);
     setNotice('已准备新身份的视频派生草稿；请明确应用到独立时间线，再预览、确认入队和确认执行。原失败任务保持不变。');
   }
+  async function listDrafts():Promise<Timeline[]>{
+    if(!current()||busy()||uncertainRef.current)throw retired();
+    const value=begin('DRAFT_LIST');if(!value)throw retired();
+    try{
+      const result=await latest.current.read(async()=>{
+        if(!live(value))throw retired();const rows=await value.client.timelineList();if(!live(value))throw retired();
+        const jobs=await value.client.list();if(!live(value))throw retired();
+        return rows.items.filter(row=>{
+          const c=row.canvas_video_draft;
+          return c?.derived_from&&c.timeline_snapshot.version===row.version&&c.timeline_snapshot.digest===row.timeline_digest
+            &&canonical(c.canvas_return)===canonical(latest.current.task.origin.binding)
+            &&canonical(c.source_snapshots[0])===canonical(canvasVideoTrimTaskSource(latest.current.task.origin.source))
+            &&!jobs.some(job=>job.request_id===c.request_id);
+        });
+      });
+      if(!live(value))throw retired();return result;
+    }finally{finish(value);}
+  }
+  async function resumeDraft(listed:Timeline){
+    if(!current()||busy()||!latest.current.canMutate||uncertainRef.current||jobRef.current&&jobRef.current.status!=='FAILED')throw retired();
+    if(!jobRef.current&&(revision.current>0||timelineRef.current||derivedOrigin.current))throw invalid('当前已有本次任务草稿；请保留当前输入，不会被另一个草稿覆盖。');
+    const expected=structuredClone(listed);
+    const value=begin('DRAFT_RESUME');if(!value)throw retired();
+    try{
+      const result=await latest.current.read(async()=>{
+        if(!live(value))throw retired();const row=await value.client.timelineGet(expected.id);if(!live(value))throw retired();
+        if(canonical(row)!==canonical(expected))throw invalid('所选草稿版本或输入已改变，请重新读取列表。');
+        const c=row.canvas_video_draft;
+        if(!c?.derived_from||c.timeline_snapshot.id!==row.id||c.timeline_snapshot.version!==row.version||c.timeline_snapshot.digest!==row.timeline_digest
+          ||canonical(c.canvas_return)!==canonical(latest.current.task.origin.binding)
+          ||canonical(row.timeline)!==canonical(compileCanvasVideoTimeline(c.source_snapshots[0],c.parameters)))throw retired();
+        const parent=checkedJob(await value.client.get('timeline',c.derived_from.job_id));if(!live(value))throw retired();
+        const original=deriveFailedCanvasVideoDraft(parent,{source:canvasVideoTrimTaskSource(latest.current.task.origin.source),returnBinding:latest.current.task.origin.binding,isCurrent:current},c.request_id);
+        if(canonical(original.derived_from)!==canonical(c.derived_from))throw invalid('原失败来源已改变，保留草稿但不能恢复派发。');
+        const jobs=await value.client.list();if(!live(value))throw retired();
+        if(jobs.some(job=>job.request_id===c.request_id))throw invalid('该请求已有原 Job；请读取原任务，不会作为未入队草稿再次发送。');
+        return {row,command:c,parent};
+      });
+      if(!live(value))throw retired();const c=result.command;
+      revision.current++;clearPreview();clearCandidate();
+      const next:Draft={in_ms:String(c.parameters.in_ms),out_ms:String(c.parameters.out_ms),...(c.parameters.include_audio===undefined?{}:{include_audio:c.parameters.include_audio})};
+      draftRef.current=next;setDraft(next);timelineRef.current=result.row;setTimeline(result.row);savedDraft.current=canonical(next);
+      request.current=c.request_id;derivedRequest.current=c.request_id;derivedOrigin.current=c.derived_from;setDerivedFrom(c.derived_from);derivedParent.current=structuredClone(result.parent);
+      jobRef.current=undefined;setSelected(undefined);attempt.current=undefined;history.current={past:[],future:[]};markUncertain(false);dirty(false);
+      setNotice('已恢复原 Timeline 版本中的输入草稿；没有恢复旧授权，仍需重新预览并分别确认入队和执行。');
+    }finally{finish(value);}
+  }
   async function apply(){
     if(!latest.current.canMutate||jobRef.current||uncertainRef.current)return;const value=begin('SAVE');if(!value)return;
     let sentMutation=false;
     try{
       const compiled=compileCanvasVideoTimeline(canvasVideoTrimTaskSource(latest.current.task.origin.source),parameters());
       const old=timelineRef.current;
-      const row=await latest.current.mutate(()=>{if(!live(value))throw retired();sentMutation=true;return value.client.timelineSave(old?.id,{title:'本次视频卡片截取',timeline:compiled,expected_version:old?.version??0});});
+      const metadata=derivedOrigin.current?{contract:'studio-canvas-video-draft/1' as const,request_id:derivedRequest.current!,parameters:parameters(),source_snapshots:[canvasVideoTrimTaskSource(latest.current.task.origin.source)] as [ReturnType<typeof canvasVideoTrimTaskSource>],canvas_return:latest.current.task.origin.binding! as CanvasVideoTaskCommand['canvas_return'],derived_from:derivedOrigin.current}:undefined;
+      const row=await latest.current.mutate(()=>{if(!live(value))throw retired();sentMutation=true;return value.client.timelineSave(old?.id,{title:'本次视频卡片截取',timeline:compiled,expected_version:old?.version??0,...(metadata?{canvas_video_draft:metadata}:{})});});
       if(!live(value))return;if(canonical(row.timeline)!==canonical(compiled))throw invalid('原时间线保存回执与截取配置不一致。');
       timelineRef.current=row;setTimeline(row);savedDraft.current=canonical(draftRef.current);request.current=derivedRequest.current??crypto.randomUUID();clearPreview();history.current={past:[],future:[]};dirty(false);setNotice('已应用到本次原时间线版本；尚未创建或执行 Job。');
     }catch(reason){if(live(value))fail(reason,'本次配置保存未确认，请读取原记录核对。',sentMutation);}finally{finish(value);}
@@ -255,7 +303,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
   }
   function mediaFailed(expected:Candidate|undefined=candidateRef.current){if(!current()||!expected||candidateRef.current!==expected)return;clearCandidate();setError('候选视频无法播放，当前不能审核，请重新读取原任务。');}
   const locked=busy(),valid=current(),impact=impactRef.current;
-  return {draft,timeline,derivedFrom,prepareFailedVideo,preview:previewRef.current===preview?preview:undefined,selected,pending,error,notice,uncertain,
+  return {draft,timeline,derivedFrom,prepareFailedVideo,listDrafts,resumeDraft,generation:token,preview:previewRef.current===preview?preview:undefined,selected,pending,error,notice,uncertain,
     candidate:candidate?.generation===token&&candidateRef.current===candidate?candidate:undefined,candidateReady:candidateReady&&!!candidate&&decodedCandidate.current===candidate.token,impact,locked,current,
     canEdit:valid&&props.canMutate&&!locked&&!selected&&!uncertain,canUndo:valid&&props.canMutate&&!locked&&!selected&&!uncertain&&history.current.past.length>0,
     canRedo:valid&&props.canMutate&&!locked&&!selected&&!uncertain&&history.current.future.length>0,canApply:valid&&props.canMutate&&!locked&&!selected&&!uncertain,

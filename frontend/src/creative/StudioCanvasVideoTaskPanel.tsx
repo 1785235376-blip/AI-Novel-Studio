@@ -1,3 +1,5 @@
+import {useMemo,useRef} from 'react';
+import {SavedCanvasVideoDraftPanel} from './videoDraftRecovery';
 import {CanvasVideoFailedRecoveryPanel} from './videoTaskRecovery';
 import {canvasVideoTrimTaskSource} from './canvasVideoTrimTask';
 import {CanvasVideoAudioControls} from './CanvasVideoAudioControls';
@@ -9,6 +11,8 @@ import {useStudioCanvasVideoTask,type StudioCanvasVideoTaskProps} from './useStu
 
 export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
   const state=useStudioCanvasVideoTask(props),job=state.selected,impact=state.impact,candidate=state.candidate;
+  const latest=useRef(state);latest.current=state;
+  const draftActions=useMemo(()=>({isCurrent:()=>latest.current.current(),onList:()=>latest.current.listDrafts(),onResume:(row:Parameters<typeof state.resumeDraft>[0])=>latest.current.resumeDraft(row)}),[props.client,props.task,state.generation]);
   return <section aria-label="所选卡片的执行画布">
     <Panel title="本次视频截取任务 · 影响范围">
       <p><Badge>单次任务草稿</Badge> 原位置 <code>{props.task.origin.canvasId}</code> · v{props.task.origin.canvasVersion} · 卡片 <code>{props.task.origin.cardId}</code></p>
@@ -16,6 +20,9 @@ export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
       <p>只修改本次任务，不修改共享工作流模板，也不把创作关系转换成执行节点。</p>
       <StatusMessage>使用原本地 FFmpeg 重新编码为 640×360、25fps H.264 MP4；默认输出静音音轨；明确保留源音轨时，截取原第一条音轨并重新编码为 AAC。无可用源音轨时拒绝执行。起止时间以 40ms 为步长，最长 120 秒。不会调用生成模型；费用、运行时长及资源估算未知。</StatusMessage>
     </Panel>
+    <SavedCanvasVideoDraftPanel owner={props.client} current={state.current()} canMutate={props.canMutate}
+      busy={props.busy||state.uncertain||state.locked&&!['DRAFT_LIST','DRAFT_RESUME'].includes(state.pending??'')}
+      isCurrent={draftActions.isCurrent} onList={draftActions.onList} onResume={draftActions.onResume}/>
     <Panel title="视频截取配置" className="studio-graph-run">
       {state.error&&<StatusMessage tone="error">{state.error}</StatusMessage>}
       {state.notice&&<StatusMessage>{state.notice}</StatusMessage>}

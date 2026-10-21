@@ -1413,6 +1413,11 @@ class ProductionExecutionService:
             receipt = validate_adoption_receipt(row, history=history)
             if receipt is not None:
                 result['video_adoption_receipt'] = receipt
+        if 'canvas_video_draft' in row or 'canvas_video_draft_digest' in row:
+            from .canvas_video_draft import saved
+            command = saved(row, history)
+            result['canvas_video_draft'] = command.model_dump()
+            result['canvas_video_draft_digest'] = row['canvas_video_draft_digest']
         return result
 
     @contextmanager
@@ -1718,8 +1723,14 @@ class ProductionExecutionService:
     def timeline_get(self, nid, scope, actor, tid, guard):
         context = self._base(nid, scope, actor, guard)
         row = self._owned_timeline(nid, scope, actor, tid, context, self.store.read(nid, scope))
+        result = self._timeline_view(row, scope)
+        if 'canvas_video_draft' in row:
+            from .canvas_video_draft import saved, recheck
+            command = saved(row)
+            if (command.timeline_snapshot.version, command.timeline_snapshot.digest) == (row['version'], row['timeline_digest']):
+                recheck(self, nid, scope, actor, command, guard)
         guard()
-        return self._timeline_view(row, scope)
+        return result
 
     def _owned_timeline(self, nid, scope, actor, tid, context, document):
         from ..services.studio_timeline_render import normalize_studio_timeline
@@ -1782,8 +1793,12 @@ class ProductionExecutionService:
         timeline = normalize_studio_timeline(body.timeline)
         source_authority = self.comic_handoff._source_authority(nid, scope, actor) if self.comic_handoff else None
         comic_sources = False
+        draft_command = None
         def current():
             guard()
+            if draft_command is not None:
+                from .canvas_video_draft import recheck
+                recheck(self, nid, scope, actor, draft_command, guard, document)
             if comic_sources and self.timeline_inputs.in_phase(nid, scope, actor):
                 if self.store._local.active.get(self.store.key(nid, scope)) is not document:
                     raise ValueError('COMIC_HANDOFF_SOURCE_PHASE_EXPIRED')
@@ -1801,6 +1816,9 @@ class ProductionExecutionService:
                 if len(row["history"]) >= 100: raise ValueError("STUDIO_TIMELINE_HISTORY_LIMIT")
                 change_row(row, actor, body.expected_version, lambda current: current.update(title=body.title, timeline=timeline,
                     timeline_digest=digest(timeline), last_edit=None))
+            if body.canvas_video_draft is not None:
+                from .canvas_video_draft import attach
+                draft_command = attach(self, nid, scope, actor, row, body.canvas_video_draft, guard, document)
             if len(canonical(collection).encode()) > 4 * 1024 * 1024: raise ValueError("STUDIO_TIMELINE_STORAGE_LIMIT")
             guard()
         return self.timeline_get(nid, scope, actor, row["id"], guard)

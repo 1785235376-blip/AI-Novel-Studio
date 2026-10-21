@@ -1,5 +1,5 @@
 import { checkedCanvasAudioProvenance, sameCanvasAudioProvenance, type FailedCanvasAudioOrigin, type CanvasAudioWorkflowTemplateRef } from './studioCanvasAudioProvenance';
-import { checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
+import { checkedCanvasVideoDraftInput, type CanvasVideoDraftInput, compileCanvasVideoTimeline, checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
 import { checkedStoryboardSpeechFields, sameStoryboardSpeech, type StoryboardSpeechPin } from './studioStoryboardSpeechContract';
@@ -470,7 +470,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (!record(v)) invalid(); scoped(v);
     if (!identifier(v.id) || !revision(v.version) || !hex(v.timeline_digest) || typeof v.title !== 'string' || v.title.length > 240 || !record(v.timeline)
       || !Array.isArray(v.timeline.tracks) || v.timeline.tracks.length > 8 || v.timeline.schema_version !== 3 && (!Array.isArray(v.timeline.captions) || v.timeline.captions.length > 500)) invalid();
-    return checkedTimelineRow(v);
+    const row=checkedTimelineRow(v),origin=row.canvas_video_draft?.canvas_return;
+    if(origin&&(origin.project_id!==projectId||(origin.scope.mode==='collaboration'?origin.scope.branch_id??null:null)!==branch))invalid();
+    return row;
   }
   async function action(owner: ProductionOwner, id: string, operation: 'execute' | 'refresh' | 'cancel' | 'reconcile' | 'review', body: ProductionAction & { reviewed_output_digest?: string }, expected?: ProductionJob) {
     const result = job(await transport.json<unknown>(`${jobUrl(owner, id)}/${operation}`, 'POST', body));
@@ -667,8 +669,15 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const input = checkedTimelineSourceRequest(source, body), row = timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/edit`, 'POST', input, undefined, input.request_id));
       return checkedTimelineSourceEffect(row, source, input);
     },
-    async timelineSave(id: string | undefined, body: { title: string; timeline: StudioTimeline; expected_version: number }) {
-      return timeline(await transport.json<unknown>(id ? `${base}/timelines/${encodeURIComponent(id)}` : `${base}/timelines`, id ? 'PUT' : 'POST', body));
+    async timelineSave(id: string | undefined, body: { title: string; timeline: StudioTimeline; expected_version: number; canvas_video_draft?:CanvasVideoDraftInput }) {
+      const draft=Object.hasOwn(body,'canvas_video_draft')?checkedCanvasVideoDraftInput(body.canvas_video_draft):undefined;
+      if(draft&&canvasVideoIdentity(checkedTimeline(body.timeline))!==canvasVideoIdentity(compileCanvasVideoTimeline(draft.source_snapshots[0],draft.parameters)))invalid();
+      const row=timeline(await transport.json<unknown>(id ? `${base}/timelines/${encodeURIComponent(id)}` : `${base}/timelines`, id ? 'PUT' : 'POST', body));
+      if(draft){
+        const expected=checkedCanvasVideoTaskCommand({...draft,contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}});
+        if(!row.canvas_video_draft||canvasVideoIdentity(row.canvas_video_draft)!==canvasVideoIdentity(expected))invalid();
+      }
+      return row;
     },
     async timelineRender(id: string, body: { expected_version: number; reviewed_timeline_digest: string; request_id: string }) {
       return job(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/render`, 'POST', body, undefined, body.request_id));

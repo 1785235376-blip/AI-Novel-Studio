@@ -1,6 +1,6 @@
 import {expect,it} from 'vitest';
 import native from './fixtures/canvasVideoTrim.native.json';
-import {checkedCanvasVideoTaskCommand,checkedCanvasVideoTaskPreview} from './canvasVideoTrimTask';
+import {checkedCanvasVideoDraftInput,checkedCanvasVideoTaskCommand,checkedCanvasVideoTaskPreview} from './canvasVideoTrimTask';
 const clone=<T,>(v:T):T=>structuredClone(v);
 const command=()=>({...clone(native.command),request_id:'explicit-child',derived_from:{owner:'timeline',job_id:native.queued.id,job_version:3,request_id:native.queued.request_id,request_digest:native.queued.request_digest,receipt_digest:null}});
 it('preserves the old omitted field byte structure and accepts the additive six-field origin',()=>{
@@ -27,4 +27,11 @@ it.each(['job_id','job_version','request_id','request_digest','receipt_digest'])
  const p:any={...clone(native.preview),command:clone(c)};
  p.command.derived_from[key]=key==='job_version'?4:key.includes('digest')?'a'.repeat(64):'other-parent';
  expect(()=>checkedCanvasVideoTaskPreview(p,c)).toThrow();
+});
+
+it.each(['null','proof','preview','extra-source','missing-origin'])('keeps saved draft inputs closed at %s',change=>{
+ const c:any=command();const input:any={contract:'studio-canvas-video-draft/1',request_id:c.request_id,parameters:c.parameters,source_snapshots:c.source_snapshots,canvas_return:c.canvas_return,derived_from:c.derived_from};
+ if(change==='null'){expect(()=>checkedCanvasVideoDraftInput(null)).toThrow();return;}
+ if(change==='proof')input.proof={confirmed:true};if(change==='preview')input.reviewed_preview_digest='a'.repeat(64);if(change==='extra-source')input.source_snapshots[0].reference_only=true;if(change==='missing-origin')delete input.derived_from;
+ expect(()=>checkedCanvasVideoDraftInput(input)).toThrow();
 });

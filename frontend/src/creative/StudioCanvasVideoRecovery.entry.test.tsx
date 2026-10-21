@@ -7,6 +7,7 @@ import native from './fixtures/canvasVideoTrim.native.json';
 import {ExecutionImpactPanel} from '../experimental/executionImpact/ExecutionImpactPanel';
 import {useStudioCanvasVideoTask,type StudioCanvasVideoTaskProps,type StudioCanvasVideoTaskController} from './useStudioCanvasVideoTask';
 import {compileCanvasVideoTimeline,type CanvasVideoTaskCommand} from './canvasVideoTrimTask';
+import {checkedTimelineRow} from './studioTimelineTypes';
 import {deriveFailedCanvasVideoDraft} from './videoTaskRecovery';
 import {studioProductionClient,type ProductionJob} from './studioProductionClient';
 const clone=<T,>(v:T):T=>structuredClone(v);
@@ -32,8 +33,10 @@ beforeEach(()=>{
  props={client:studioProductionClient(native.canvas.project_id,{sessionToken:''}),task:{id:'task',asset:clone(native.source_asset),origin:{projectId:b.project_id,canvasId:b.canvas_id,canvasVersion:b.canvas_version,canvasDigest:b.canvas_digest,cardId:b.card_id,source:{...clone(native.canvas.definition.cards[0].asset),kind:'video'},binding:b as any},resumeJob:parent,isOriginCurrent:()=>true},canMutate:true,canReview:true,busy:false,isCurrent:()=>true,read:f=>f(),mutate:f=>f(),onDirtyChange:vi.fn(),onUnavailable:vi.fn()};
  fetcher=vi.fn(async(url:string,init:RequestInit={})=>{
   const body=init.body?JSON.parse(String(init.body)):undefined;
-  if(url.endsWith('/timelines')&&init.method==='POST'){const row={...clone(native.timeline),id:'child-timeline',timeline:body.timeline,version:1,timeline_digest:hash(body.timeline)};timelines.set(row.id,row);return json(row);}
-  if(url.includes('/timelines/')&&init.method==='PUT'){const id=url.split('/').at(-1)!;const old=timelines.get(id)!;const row={...old,timeline:body.timeline,version:old.version+1,timeline_digest:hash(body.timeline)};timelines.set(id,row);return json(row);}
+  if(url.endsWith('/timelines')&&init.method==='POST'){const row={...clone(native.timeline),id:'child-timeline',timeline:body.timeline,version:1,timeline_digest:hash(body.timeline)};if(body.canvas_video_draft){const d=body.canvas_video_draft;(row as any).canvas_video_draft={...d,contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}};(row as any).canvas_video_draft_digest=hash((row as any).canvas_video_draft);}timelines.set(row.id,row);return json(row);}
+  if(url.includes('/timelines/')&&init.method==='PUT'){const id=url.split('/').at(-1)!;const old=timelines.get(id)!;const row={...old,timeline:body.timeline,version:old.version+1,timeline_digest:hash(body.timeline)};if(body.canvas_video_draft){const d=body.canvas_video_draft;(row as any).canvas_video_draft={...d,contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}};(row as any).canvas_video_draft_digest=hash((row as any).canvas_video_draft);}timelines.set(id,row);return json(row);}
+  if(url.endsWith('/timelines'))return json({items:[...timelines.values()]});
+  if(url.endsWith('/jobs'))return json({items:[parent,...(saved?[receipt('queued',saved)]:[])]});
   if(url.includes('/timelines/'))return json(timelines.get(url.split('/').at(-1)!));
   if(url.endsWith('/canvas-video/preview'))return json(receipt('preview',body));
   if(url.endsWith('/canvas-video/queue')){saved=clone(body.command);return json(receipt('queued',saved!));}
@@ -67,4 +70,46 @@ it('retires a derived CREATE proof after observed parameter ABA and permits a ne
 it('never derives UNKNOWN or accepts a captured FAILED draft after source/current ownership is lost',()=>{
  render(<Harness/>);const draft=deriveFailedCanvasVideoDraft(state.selected!,binding(),'explicit-child');const derive=state.prepareFailedVideo;parent.status='UNKNOWN';props.task.resumeJob=parent;props.task.isOriginCurrent=()=>false;act(()=>derive(draft));expect(state.selected?.id).toBe(parent.id);expect(fetcher).not.toHaveBeenCalled();
  expect(()=>deriveFailedCanvasVideoDraft(parent,binding(),'other-child')).toThrow();
+});
+
+it('persists only inputs on Apply and after reopening requires original reads and fresh preview/proof',async()=>{
+ const view=render(<Harness/>);derive();act(()=>state.changeParameter('out_ms','1800'));await act(async()=>state.apply());const stored=clone(state.timeline!);
+ expect(stored.canvas_video_draft?.parameters.out_ms).toBe(1800);expect(Object.keys(stored.canvas_video_draft!)).not.toContain('proof');expect(state.impact).toBeUndefined();
+ view.unmount();props={...props,client:studioProductionClient(native.canvas.project_id,{sessionToken:''}),task:{...props.task,resumeJob:undefined}};render(<Harness/>);
+ let rows:Awaited<ReturnType<typeof state.listDrafts>>=[];await act(async()=>{rows=await state.listDrafts();});expect(rows.map(r=>r.id)).toEqual([stored.id]);
+ const before=fetcher.mock.calls.length;await act(async()=>state.resumeDraft(rows[0]));expect(state.timeline?.id).toBe(stored.id);expect(state.draft.out_ms).toBe('1800');expect(state.impact).toBeUndefined();expect(state.preview).toBeUndefined();expect(fetcher.mock.calls.slice(before).every(([,i])=>!i.method||i.method==='GET')).toBe(true);
+ await act(async()=>state.create());expect(calls('/canvas-video/queue')).toHaveLength(0);await inspect();await confirm('CREATE');await act(async()=>state.create());expect(calls('/canvas-video/queue')).toHaveLength(1);expect(saved?.derived_from).toEqual(stored.canvas_video_draft?.derived_from);
+});
+it.each(['stale-row','parent-unknown','already-admitted'])('refuses restored draft at %s and keeps the session unchanged',async mutation=>{
+ const view=render(<Harness/>);derive();await act(async()=>state.apply());const stored=clone(state.timeline!);view.unmount();props={...props,task:{...props.task,resumeJob:undefined}};render(<Harness/>);
+ if(mutation==='stale-row'){const row=timelines.get(stored.id)!;row.version++;(row as any).canvas_video_draft.timeline_snapshot.version++;}
+ if(mutation==='parent-unknown')parent.status='UNKNOWN';
+ if(mutation==='already-admitted')saved=clone(stored.canvas_video_draft!);
+ await act(async()=>{await expect(state.resumeDraft(stored)).rejects.toBeTruthy();});expect(state.timeline).toBeUndefined();expect(state.selected).toBeUndefined();expect(state.preview).toBeUndefined();expect(calls('/canvas-video/queue')).toHaveLength(0);expect(calls('/execute')).toHaveLength(0);
+ if(mutation==='already-admitted'){let rows:any;await act(async()=>{rows=await state.listDrafts();});expect(rows).toEqual([]);}
+});
+it('rejects another saved draft over a local derived edit without writing or clearing its input',async()=>{
+ const view=render(<Harness/>);derive();await act(async()=>state.apply());const stored=clone(state.timeline!);view.unmount();props={...props,task:{...props.task,resumeJob:parent}};render(<Harness/>);derive();act(()=>state.changeParameter('out_ms','1840'));const count=fetcher.mock.calls.length;
+ await act(async()=>{await expect(state.resumeDraft(stored)).rejects.toBeTruthy();});expect(state.draft.out_ms).toBe('1840');expect(fetcher.mock.calls).toHaveLength(count);
+});
+
+it('retires a late saved-draft GET across client replacement before another read or adoption',async()=>{
+ const view=render(<Harness/>);derive();await act(async()=>state.apply());const stored=clone(state.timeline!);view.unmount();props={...props,task:{...props.task,resumeJob:undefined}};const mounted=render(<Harness/>);
+ let release!:(value:Response)=>void;const response=new Promise<Response>(r=>{release=r;});fetcher.mockImplementationOnce(()=>response);
+ let pending:Promise<void>;act(()=>{pending=state.resumeDraft(stored);});const before=fetcher.mock.calls.length;
+ props={...props,client:studioProductionClient(native.canvas.project_id,{sessionToken:''})};mounted.rerender(<Harness/>);
+ await act(async()=>{release(json(timelines.get(stored.id)));await expect(pending!).rejects.toBeTruthy();});expect(fetcher.mock.calls).toHaveLength(before);expect(state.timeline).toBeUndefined();expect(state.preview).toBeUndefined();
+});
+it('latches a changed task source observed during draft recovery even after source ABA',async()=>{
+ const view=render(<Harness/>);derive();await act(async()=>state.apply());const stored=clone(state.timeline!);view.unmount();props={...props,task:{...props.task,resumeJob:undefined}};render(<Harness/>);
+ const resume=state.resumeDraft;props.task.origin.source.version++;expect(state.current()).toBe(false);props.task.origin.source.version--;
+ await act(async()=>{await expect(resume(stored)).rejects.toBeTruthy();});expect(state.timeline).toBeUndefined();expect(calls('/canvas-video/queue')).toHaveLength(0);
+});
+
+it('captures the listed CAS pin before awaiting GET even if its caller mutates the same row to the newer server version',async()=>{
+ const view=render(<Harness/>);derive();await act(async()=>state.apply());const listed=clone(state.timeline!);view.unmount();props={...props,task:{...props.task,resumeJob:undefined}};render(<Harness/>);
+ const raw=clone(timelines.get(listed.id)!);raw.version++;(raw as any).canvas_video_draft.timeline_snapshot.version=raw.version;(raw as any).canvas_video_draft_digest=hash((raw as any).canvas_video_draft);
+ let release!:(value:Response)=>void;const response=new Promise<Response>(r=>{release=r;});fetcher.mockImplementationOnce(()=>response);
+ let pending:Promise<void>;act(()=>{pending=state.resumeDraft(listed);});Object.assign(listed,checkedTimelineRow(raw));
+ await act(async()=>{release(json(raw));await expect(pending!).rejects.toBeTruthy();});expect(state.timeline).toBeUndefined();expect(state.preview).toBeUndefined();
 });
