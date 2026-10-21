@@ -1,3 +1,5 @@
+import {StudioMediaExecutionPanel} from './StudioMediaExecutionPanel';
+import {compileCanvasAudioDraftTimeline,canvasAudioDraftFromCommand} from './studioCanvasAudioDraft';
 // @vitest-environment jsdom
 // Original controller + strict SDK with synthetic recorded responses; no inference.
 import { act,cleanup,fireEvent,render,screen,waitFor } from '@testing-library/react';
@@ -100,4 +102,70 @@ it('strict SDK rejects a template effect echo detached from the reviewed referen
  await mount();act(()=>state.applyAudioTemplate(effectRef()));const previous=fetcher.getMockImplementation()!;
  fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{if(url.endsWith('/preview')){const row=receipt('preview',JSON.parse(String(init.body)));row.command.template_ref.parameters.gain_db=-4;return json(row);}return previous(url,init);});
  await act(async()=>state.inspect());expect(state.preview).toBeUndefined();expect(state.canCreate).toBe(false);expect(calls('/jobs')).toHaveLength(0);
+});
+
+function draftTransport(){
+ let row:any;let tampered=false;let blockedGet:Promise<Response>|undefined;const prior=fetcher.getMockImplementation()!;
+ fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{
+  const body=init.body?JSON.parse(String(init.body)):undefined;
+  if(url.endsWith('/timelines')&&init.method==='GET')return json({items:row?[clone(row)]:[]});
+  if((url.endsWith('/timelines')&&init.method==='POST')||(url.endsWith('/timelines/audio-input')&&init.method==='PUT')){
+   if(body.expected_version!==(row?.version??0))return new Response(JSON.stringify({detail:'CAS conflict'}),{status:409,headers:{'Content-Type':'application/json'}});
+   const version=(row?.version??0)+1,timeline=clone(body.timeline),digest=hash(JSON.stringify(timeline));
+   row={contract:'studio-production-timeline/1',novel_id:native.canvas.project_id,branch_id:null,id:'audio-input',version,title:body.title,timeline,timeline_digest:digest,created_at:'2026-10-21T00:00:00Z',updated_at:'2026-10-21T00:00:00Z',
+    canvas_audio_draft:{...clone(body.canvas_audio_draft),timeline_snapshot:{id:'audio-input',version,digest}},canvas_audio_draft_digest:hash(JSON.stringify(body.canvas_audio_draft))};
+   const value=clone(row);if(tampered)value.canvas_audio_draft.parameters.gain_db=-2;return json(value);
+  }
+  if(url.endsWith('/timelines/audio-input')&&init.method==='GET')return blockedGet??json(row);
+  return prior(url,init);
+ });
+ return {row:()=>row,tamper:()=>{tampered=true;},block:(p:Promise<Response>)=>{blockedGet=p;}};
+}
+async function savedInput(){const transport=draftTransport(),view=await mount();act(()=>state.applyAudioTemplate(effectRef()));act(()=>{state.changeParameter('in_ms','550');state.changeParameter('out_ms','850');state.changeParameter('gain_db','-3.5');});await act(async()=>state.audioDraft.save());expect(state.error).toBe('');return {...transport,view};}
+it('saves applied audio inputs without proof, remounts, restores explicitly and requires fresh original CREATE/EXECUTE gates',async()=>{
+ const api=await savedInput();expect(state.audioDraft.saved?.version).toBe(1);expect(calls('/jobs')).toHaveLength(0);expect(calls('/preview')).toHaveLength(0);expect(calls('/execute')).toHaveLength(0);
+ expect(api.row().canvas_audio_draft.parameters).toEqual({in_ms:550,out_ms:850,gain_db:-3.5,fade_in_ms:100,fade_out_ms:200});expect(api.row().canvas_audio_draft.template_ref).toEqual(effectRef());
+ expect(Object.keys(api.row().canvas_audio_draft).some(k=>k.includes('proof')||k.includes('preview'))).toBe(false);
+ api.view.unmount();await mount();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});expect(rows).toHaveLength(1);expect(state.draft.template_ref).toBeUndefined();
+ await act(async()=>state.audioDraft.onResume(rows[0]));expect(state.error).toBe('');expect(state.draft.template_ref).toEqual(effectRef());expect(state.draft.parameters.gain_db).toBe('-3.5');expect(state.preview).toBeUndefined();expect(state.impact).toBeUndefined();expect(state.canCreate).toBe(false);expect(calls('/jobs')).toHaveLength(0);
+ await inspect();await act(async()=>state.create());expect(calls('/jobs')).toHaveLength(0);await confirm('CREATE');await act(async()=>state.create());expect(calls('/jobs')).toHaveLength(1);await act(async()=>state.inspectExecution());await confirm('EXECUTE');await act(async()=>state.action('execute'));expect(calls('/execute')).toHaveLength(1);
+});
+it('saves one CAS revision for duplicate clicks and keeps session input after a later CAS conflict',async()=>{
+ const api=await savedInput();act(()=>state.changeParameter('gain_db','-5'));await act(async()=>Promise.all([state.audioDraft.save(),state.audioDraft.save()]));expect(api.row().version).toBe(2);expect(state.audioDraft.saved?.version).toBe(2);
+ api.row().version++;act(()=>state.changeParameter('gain_db','-4'));await act(async()=>state.audioDraft.save());expect(state.error).not.toBe('');expect(state.draft.parameters.gain_db).toBe('-4');expect(state.audioDraft.saved?.version).toBe(2);expect(calls('/jobs')).toHaveLength(0);
+});
+it.each(['pin','client ABA','input ABA'] as const)('ignores a late saved-input read after %s and preserves session edits',async kind=>{
+ const api=await savedInput();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});let resolve!:(v:Response)=>void;api.block(new Promise(r=>{resolve=r;}));
+ let reading!:Promise<void>;act(()=>{reading=state.audioDraft.onResume(rows[0]);});
+ if(kind==='pin')sourceCurrent=false;
+ if(kind==='client ABA'){const original=props.client;props={...props,client:studioProductionClient('another-project',{sessionToken:''})};api.view.rerender(<Harness/>);props={...props,client:original};api.view.rerender(<Harness/>);}
+ if(kind==='input ABA'){const original=props.canvasAudioTrimTask!;props={...props,canvasAudioTrimTask:{...original,returnBinding:{...original.returnBinding!,card_id:'other'}}};api.view.rerender(<Harness/>);props={...props,canvasAudioTrimTask:original};api.view.rerender(<Harness/>);}
+ await act(async()=>{resolve(json(api.row()));await reading;});expect(state.notice).not.toContain('已恢复输入草稿');expect(calls('/jobs')).toHaveLength(0);expect(calls('/execute')).toHaveLength(0);
+});
+it('strict SDK refuses a changed saved-input echo and refuses proof-bearing draft input before sending',async()=>{
+ const api=draftTransport();api.tamper();await mount();act(()=>state.applyAudioTemplate(effectRef()));await act(async()=>state.audioDraft.save());expect(state.audioDraft.saved).toBeUndefined();expect(state.error).not.toBe('');
+ const input=canvasAudioDraftFromCommand({...clone(native.command),request_id:'save-only',parameters:{in_ms:550,out_ms:850}} as unknown as MediaCommand);fetcher.mockClear();
+ await expect(props.client.timelineSave(undefined,{title:'Input only',timeline:compileCanvasAudioDraftTimeline(input),expected_version:0,canvas_audio_draft:{...input,proof:{confirmed:true}}} as never)).rejects.toBeInstanceOf(Error);expect(fetcher).not.toHaveBeenCalled();
+});
+it('actual media panel lists and explicitly restores saved audio input without its own pending-state retiring the selection',async()=>{
+ const api=await savedInput();api.view.unmount();render(<StudioMediaExecutionPanel {...props}/>);
+ await waitFor(()=>expect((screen.getByRole('button',{name:'读取已保存音频输入草稿'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'读取已保存音频输入草稿'}));
+ const select=await screen.findByLabelText('已保存的音频输入草稿');fireEvent.change(select,{target:{value:'audio-input'}});
+ const check=await screen.findByLabelText('我已核对所选版本与来源，同意用已保存草稿替换当前会话输入');fireEvent.click(check);fireEvent.click(screen.getByRole('button',{name:'明确仅恢复音频输入草稿'}));
+ await waitFor(()=>expect((screen.getByLabelText('本任务增益（-60–12 dB，可选）') as HTMLInputElement).value).toBe('-3.5'));expect(calls('/jobs')).toHaveLength(0);expect(calls('/execute')).toHaveLength(0);
+});
+
+it('compares the full captured metadata before restoring even when the visible summary and echoed digest are unchanged',async()=>{
+ const api=await savedInput();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});api.row().canvas_audio_draft.template_ref.execution_digest='c'.repeat(64);
+ await act(async()=>{await expect(state.audioDraft.onResume(rows[0])).rejects.toBeInstanceOf(Error);});expect(state.notice).not.toContain('已恢复输入草稿');expect(state.canCreate).toBe(false);expect(calls('/jobs')).toHaveLength(0);
+});
+
+it('latches an observed client-method ABA and requires a new saved-input list before any restore read',async()=>{
+ await savedInput();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});const resume=state.audioDraft.onResume,original=props.client.timelineGet,changed=vi.fn();props.client.timelineGet=changed;
+ await act(async()=>resume(rows[0]));expect(changed).not.toHaveBeenCalled();props.client.timelineGet=original;const count=()=>fetcher.mock.calls.filter(([u,i])=>u.endsWith('/timelines/audio-input')&&i.method==='GET').length;
+ await act(async()=>resume(rows[0]));expect(count()).toBe(0);await act(async()=>{rows=await state.audioDraft.onList();});await act(async()=>state.audioDraft.onResume(rows[0]));expect(count()).toBe(1);
+});
+it('an observed false original source getter cannot revive a retained restore after returning true',async()=>{
+ await savedInput();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});const resume=state.audioDraft.onResume;sourceCurrent=false;expect(state.audioDraft.isCurrent()).toBe(false);sourceCurrent=true;
+ await act(async()=>resume(rows[0]));expect(fetcher.mock.calls.filter(([u,i])=>u.endsWith('/timelines/audio-input')&&i.method==='GET')).toHaveLength(0);expect(calls('/jobs')).toHaveLength(0);
 });

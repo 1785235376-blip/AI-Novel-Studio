@@ -1,3 +1,4 @@
+import {SavedCanvasAudioDraftPanel} from './audioDraftRecovery';
 import { CanvasAudioFailedRecoveryPanel } from './taskRecovery';
 import { CanvasAudioWorkflowTemplatePanel } from './workflowTaskTemplate/CanvasAudioWorkflowTemplatePanel';
 import { AudioTemplateParametersComparison } from './workflowTaskTemplate/CanvasAudioTemplateParameterComparison';
@@ -74,6 +75,14 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.handoffAsset && <><p>{state.handoffAsset.filename} · {state.handoffAsset.kind} · {state.handoffAsset.size} 字节</p><Button disabled={!state.canHandoff || state.handoffPending} onClick={() => void state.readHandoff(true)}>明确加入{handoffLabel}制作草稿</Button></>}
       <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消{handoffLabel}交接</Button>
       {state.handoffNotice && <StatusMessage>{state.handoffNotice}</StatusMessage>}
+    </section>}
+    {props.canvasAudioTrimTask&&<section aria-label="音频输入草稿保存与恢复">
+      <p>保存只记录本次已经应用的输入与来源；模板选择中尚未应用的内容仍是会话输入。不会保存执行确认或自动入队。</p>
+      <Button disabled={!state.audioDraft.canSave} loading={state.pending==='DRAFT_SAVE'} onClick={()=>void state.audioDraft.save()}>保存本次已应用音频草稿</Button>
+      {state.audioDraft.saved&&<p>原输入记录 <code>{state.audioDraft.saved.id}</code> · v{state.audioDraft.saved.version} · {state.audioDraft.savedCurrent?'本次已应用输入已保存':'当前会话输入尚未覆盖已保存版本'}</p>}
+      {state.audioDraft.saveUnknown&&<StatusMessage tone="warning">草稿保存结果尚未确认。请读取原记录核对，不会自动重新保存、入队或执行。</StatusMessage>}
+      <SavedCanvasAudioDraftPanel owner={props.client} current={props.isCurrent()&&props.canvasAudioTrimTask.isCurrent()} canMutate={props.canMutate} busy={props.busy||state.providerLoading||!!props.isBusy?.()||(state.locked&&!['DRAFT_LIST','DRAFT_GET'].includes(state.pending??''))}
+        sessionInputKey={state.audioDraft.sessionInputKey} isCurrent={state.audioDraft.isCurrent} onList={state.audioDraft.onList} onResume={state.audioDraft.onResume}/>
     </section>}
     {props.canvasAudioTrimTask&&props.audioWorkflowTemplates&&<CanvasAudioWorkflowTemplatePanel owner={props.audioWorkflowTemplates.owner} ownerToken={props.client}
       current={props.isCurrent()&&props.canvasAudioTrimTask.isCurrent()} busy={state.locked} canApply={state.canClosePrepared&&!state.selected}

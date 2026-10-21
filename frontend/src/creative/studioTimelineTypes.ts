@@ -1,3 +1,4 @@
+import {checkedSavedCanvasAudioDraft,compileCanvasAudioDraftTimeline,audioDraftIdentity,type SavedCanvasAudioDraft} from './studioCanvasAudioDraft';
 import {checkedCanvasVideoTaskCommand,compileCanvasVideoTimeline,type CanvasVideoTaskCommand} from './canvasVideoTrimTask';
 import { ApiError } from '../api';
 import type { StudioAsset } from './studioClient';
@@ -24,7 +25,7 @@ export type TimelineTransferReceipt = { operation: 'TRANSFER_IMPORT'; request_id
   output_digest: string; preview_digest: string; format: 'OTIO' | 'SRT' | 'VTT'; transfer_input_digest: string; acknowledge_losses: boolean };
 export type TimelineEditReceipt = { request_id: string; request_digest: string; input_version: number; input_digest: string; output_digest: string };
 export type StudioTimelineRow = StudioTimelineDraft & { id: string; version: number; timeline_digest: string; created_at: string; updated_at: string;
-  transfer_receipt?: TimelineTransferReceipt; edit_receipt?: TimelineEditReceipt; canvas_video_draft?:CanvasVideoTaskCommand; canvas_video_draft_digest?:string };
+  transfer_receipt?: TimelineTransferReceipt; edit_receipt?: TimelineEditReceipt; canvas_video_draft?:CanvasVideoTaskCommand; canvas_video_draft_digest?:string; canvas_audio_draft?:SavedCanvasAudioDraft; canvas_audio_draft_digest?:string };
 export const TIMELINE_LIMITS = { duration: 600000, tracks: 8, kindTracks: 4, clips: 30, captions: 500, captionCharacters: 32000 } as const;
 const identity = /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/, digest = /^[a-f0-9]{64}$/;
 
@@ -221,9 +222,18 @@ export function checkedTimelineRow(value: unknown, expectedId?: string): StudioT
       if(videoDraft.timeline_snapshot.version===version&&(videoDraft.timeline_snapshot.digest!==row.timeline_digest
         ||JSON.stringify(checkedTimeline(compileCanvasVideoTimeline(videoDraft.source_snapshots[0],videoDraft.parameters)))!==JSON.stringify(input.timeline)))throw new Error();
     }
+    let audioDraft:SavedCanvasAudioDraft|undefined;
+    if(Object.hasOwn(row,'canvas_audio_draft')||Object.hasOwn(row,'canvas_audio_draft_digest')){
+      audioDraft=checkedSavedCanvasAudioDraft(row.canvas_audio_draft);
+      if(videoDraft||typeof row.canvas_audio_draft_digest!=='string'||!digest.test(row.canvas_audio_draft_digest)
+        ||audioDraft.timeline_snapshot.id!==rowId||audioDraft.timeline_snapshot.version>version)throw new Error();
+      if(audioDraft.timeline_snapshot.version===version&&(audioDraft.timeline_snapshot.digest!==row.timeline_digest
+        ||audioDraftIdentity(checkedTimeline(compileCanvasAudioDraftTimeline(audioDraft)))!==audioDraftIdentity(input.timeline)))throw new Error();
+    }
     return { id: rowId, version, timeline_digest: row.timeline_digest, created_at: row.created_at, updated_at: row.updated_at, ...input,
       ...(receipt ? { transfer_receipt: receipt } : {}), ...(edit ? { edit_receipt: edit } : {}),
-      ...(videoDraft?{canvas_video_draft:videoDraft,canvas_video_draft_digest:row.canvas_video_draft_digest as string}:{}) };
+      ...(videoDraft?{canvas_video_draft:videoDraft,canvas_video_draft_digest:row.canvas_video_draft_digest as string}:{}),
+      ...(audioDraft?{canvas_audio_draft:audioDraft,canvas_audio_draft_digest:row.canvas_audio_draft_digest as string}:{}) };
   } catch {
     throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '时间线回执字段无效，请读取服务端核对。' });
   }

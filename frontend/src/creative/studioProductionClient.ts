@@ -1,3 +1,4 @@
+import {checkedCanvasAudioDraftInput,compileCanvasAudioDraftTimeline,audioDraftIdentity,type CanvasAudioDraftInput} from './studioCanvasAudioDraft';
 import { checkedCanvasAudioProvenance, sameCanvasAudioProvenance, type FailedCanvasAudioOrigin, type CanvasAudioWorkflowTemplateRef } from './studioCanvasAudioProvenance';
 import { checkedCanvasVideoDraftInput, type CanvasVideoDraftInput, compileCanvasVideoTimeline, checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
@@ -470,7 +471,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (!record(v)) invalid(); scoped(v);
     if (!identifier(v.id) || !revision(v.version) || !hex(v.timeline_digest) || typeof v.title !== 'string' || v.title.length > 240 || !record(v.timeline)
       || !Array.isArray(v.timeline.tracks) || v.timeline.tracks.length > 8 || v.timeline.schema_version !== 3 && (!Array.isArray(v.timeline.captions) || v.timeline.captions.length > 500)) invalid();
-    const row=checkedTimelineRow(v),origin=row.canvas_video_draft?.canvas_return;
+    const row=checkedTimelineRow(v),origin=row.canvas_video_draft?.canvas_return??row.canvas_audio_draft?.canvas_return;
     if(origin&&(origin.project_id!==projectId||(origin.scope.mode==='collaboration'?origin.scope.branch_id??null:null)!==branch))invalid();
     return row;
   }
@@ -669,13 +670,19 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const input = checkedTimelineSourceRequest(source, body), row = timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(source.id)}/edit`, 'POST', input, undefined, input.request_id));
       return checkedTimelineSourceEffect(row, source, input);
     },
-    async timelineSave(id: string | undefined, body: { title: string; timeline: StudioTimeline; expected_version: number; canvas_video_draft?:CanvasVideoDraftInput }) {
+    async timelineSave(id: string | undefined, body: { title: string; timeline: StudioTimeline; expected_version: number; canvas_video_draft?:CanvasVideoDraftInput; canvas_audio_draft?:CanvasAudioDraftInput }) {
       const draft=Object.hasOwn(body,'canvas_video_draft')?checkedCanvasVideoDraftInput(body.canvas_video_draft):undefined;
+      const audio=Object.hasOwn(body,'canvas_audio_draft')?checkedCanvasAudioDraftInput(body.canvas_audio_draft):undefined;
+      if(audio&&(draft||audioDraftIdentity(checkedTimeline(body.timeline))!==audioDraftIdentity(checkedTimeline(compileCanvasAudioDraftTimeline(audio)))))invalid();
       if(draft&&canvasVideoIdentity(checkedTimeline(body.timeline))!==canvasVideoIdentity(compileCanvasVideoTimeline(draft.source_snapshots[0],draft.parameters)))invalid();
       const row=timeline(await transport.json<unknown>(id ? `${base}/timelines/${encodeURIComponent(id)}` : `${base}/timelines`, id ? 'PUT' : 'POST', body));
       if(draft){
         const expected=checkedCanvasVideoTaskCommand({...draft,contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}});
         if(!row.canvas_video_draft||canvasVideoIdentity(row.canvas_video_draft)!==canvasVideoIdentity(expected))invalid();
+      }
+      if(audio){
+        const expected={...audio,timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}};
+        if(id&&row.id!==id||row.version!==body.expected_version+1||!row.canvas_audio_draft||audioDraftIdentity(row.canvas_audio_draft)!==audioDraftIdentity(expected))invalid();
       }
       return row;
     },

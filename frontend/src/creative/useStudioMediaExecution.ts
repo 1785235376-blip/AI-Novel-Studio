@@ -1,3 +1,6 @@
+import {audioDraftIdentity,canvasAudioDraftCommand,canvasAudioDraftFromCommand,compileCanvasAudioDraftTimeline} from './studioCanvasAudioDraft';
+import type {StudioTimelineRow} from './studioTimelineTypes';
+import type {AudioDraftSummary} from './audioDraftRecovery';
 import { checkedCanvasAudioProvenance, type FailedCanvasAudioOrigin, type CanvasAudioWorkflowTemplateRef } from './studioCanvasAudioProvenance';
 import { deriveFailedCanvasAudioCommand } from './taskRecovery';
 import type { StudioGraphDraftOwner } from './studioGraphLocalDraft';
@@ -66,7 +69,7 @@ type Draft = { requestId?:string; derived_from?:FailedCanvasAudioOrigin; templat
   imageSource?: ProductionSource; imageReferences: { source: ProductionSource; weight: string; purpose?: ImageReferencePurpose; source_note?: string }[]; maskSource?: ProductionSource; videoReferencePurpose?: VideoReference['purpose']; lastFrame?: ProductionSource };
 type Preview = { value: ProductionPreview; command: MediaCommand; input: string };
 type Candidate = { url: string; kind: 'image' | 'video' | 'audio'; binding: string };
-type Kind = 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
+type Kind = 'DRAFT_SAVE' | 'DRAFT_GET' | 'DRAFT_LIST' | 'PREVIEW' | 'CREATE' | 'LIST' | 'GET' | 'CANDIDATE' | 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review';
 type Operation = { id: number; kind: Kind; client: StudioProductionClient; controller: AbortController; canMutate: boolean; canReview: boolean };
 type Creation = { requestId: string; requestDigest: string; operation: MediaOperation; input: string; uncertain: boolean };
 const parameterNames: MediaParameter[] = ['scale', 'width', 'height', 'steps', 'seed', 'negative_prompt', 'size', 'quality', 'denoising_strength', 'duration_seconds', 'frame_rate', 'voice_id', 'speech_rate', 'in_ms', 'out_ms', 'gain_db', 'sample_rate', 'channels', 'output_format', 'fade_in_ms', 'fade_out_ms', 'target_peak_dbfs', 'target_lufs', 'denoise_profile', 'cutout_output'];
@@ -250,6 +253,12 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const [handoffPending, setHandoffPending] = useState(false), [handoffNotice, setHandoffNotice] = useState('');
   const handoffFlight = useRef(false), handoffConsumed = useRef<TimelineAssetHandoff>();
   const handoffRevision = useRef(0), handoffStamp = useRef(''), handoffRequest = useRef(props.assetHandoff);
+  const [savedAudioDraft,setSavedAudioDraft]=useState<{row:StudioTimelineRow;input:string}>();
+  const audioSaveUnknown=useRef(false);
+  const audioInputRevision=useRef(0);
+  const audioReadSet=useRef<{authority:object;stamp:string;revision:number;methods:unknown[];entries:Map<string,{summary:string;draft:string}>}>();
+  const audioMethods=useRef<{list:()=>Promise<AudioDraftSummary[]>;resume:(v:AudioDraftSummary)=>Promise<void>;current:()=>boolean}>();
+  const audioCallbacks=useRef({onList:()=>audioMethods.current!.list(),onResume:(v:AudioDraftSummary)=>audioMethods.current!.resume(v),isCurrent:()=>audioMethods.current!.current()});
   const [draft, setDraft] = useState<Draft>(()=>initialDraft(boundTask(props))), [providers, setProviders] = useState<ProductionProvider[]>([]);
   const [providerLoading, setProviderLoading] = useState(false), [jobs, setJobs] = useState<ProductionJob[]>([]), [selected, setSelected] = useState<ProductionJob>();
   const [preview, setPreview] = useState<Preview>(), [previewConsent, setPreviewConsent] = useState(''), [reviewConsent, setReviewConsent] = useState('');
@@ -289,7 +298,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const previewBinding = preview && preview.input === input && freshSources ? JSON.stringify([input, preview.value.preview_digest, preview.value.request_digest]) : '';
   const reviewBinding = reviewIdentity(selected), candidateVisible = owns && candidate?.binding === reviewBinding && jobSourcesFresh ? candidate : undefined;
   const repeatBlocked = !!selected && ['execute', 'refresh', 'reconcile', 'cancel', 'review'].some(kind => sentActions.current.has(actionIdentity(selected, kind)));
-  const dirty = owns && (input !== baseline.current || uncertain || repeatBlocked || !!pending && ['CREATE', 'review', 'execute', 'refresh', 'reconcile', 'cancel'].includes(pending));
+  const dirty = owns && (input !== baseline.current || uncertain || repeatBlocked || !!pending && ['CREATE', 'DRAFT_SAVE', 'review', 'execute', 'refresh', 'reconcile', 'cancel'].includes(pending));
   const locked = !owns || props.busy || !!runningControl || !!pending || !!props.isBusy?.();
   const canEdit = !locked && props.canMutate && !uncertain && !creation.current?.uncertain;
   const incomingAsset = props.assets.find(row => row.id === props.assetHandoff?.reference.asset_id);
@@ -372,7 +381,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (!alive.current) return;
     revoked.current = true; epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
     clearCandidate(); clearPreview(); selectedRef.current = undefined; setSelected(undefined); setJobs([]); setProviders([]); setPending(undefined); providerHandoffLoading.current = false; setProviderLoading(false);
-    const empty = initialDraft(boundTask(latest.current)); draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
+    const empty = initialDraft(boundTask(latest.current)); audioInputRevision.current++; draftRef.current = empty; setDraft(empty); creation.current = undefined; baseline.current = inputKey(empty);
     setDenied(true); setError('身份、权限或项目入口已经变化，请重新打开当前项目。'); latest.current.onDirtyChange(false); latest.current.onUnavailable();
   }
   function failure(reason: unknown, fallback: string, mutation = false) {
@@ -397,7 +406,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function edit(next: Draft) {
     if (latest.current.preparedCommand || !current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
-    handoffRevision.current++; draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
+    handoffRevision.current++; audioInputRevision.current++; draftRef.current = next; setDraft(next); clearPreview(); if (!creation.current?.uncertain) creation.current = undefined; setError(''); setNotice('');
   }
   function prepareFailedAudio(command:MediaCommand) {
     const task=latest.current.canvasAudioTrimTask,job=selectedRef.current;
@@ -409,15 +418,73 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     for(const [key,value] of Object.entries(command.parameters))next.parameters[key as MediaParameter]=String(value);
     next.licenseNote=command.license_note;next.requestId=command.request_id;
     next.derived_from=structuredClone(command.derived_from!);if(command.template_ref)next.template_ref=structuredClone(command.template_ref);
-    edit(next);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
+    edit(next);setSavedAudioDraft(undefined);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
     setNotice('已准备新身份的派生草稿，保留原失败记录；仍需重新预览、逐阶段确认和人工审核。');
   }
+  // These callbacks only recover inputs. Every create/execute still uses the original proof gate.
+  function audioDraftCurrent(){const p=latest.current;let valid=false;try{valid=current()&&!!p.canvasAudioTrimTask&&p.canvasAudioTrimTask.isCurrent()&&!p.preparedCommand;}catch{}if(!valid){audioAuthority.current.retired=true;audioReadSet.current=undefined;}return valid;}
+  const audioAuthorityValues=[props.client,props.client.timelineList,props.client.timelineGet,props.client.timelineSave,props.read,props.mutate,props.isCurrent,props.canMutate,props.busy,props.canvasAudioTrimTask,JSON.stringify(props.canvasAudioTrimTask)];
+  const audioAuthority=useRef({values:audioAuthorityValues,retired:false});
+  if(audioAuthorityValues.some((v,i)=>!Object.is(v,audioAuthority.current.values[i]))){audioAuthority.current.retired=true;audioAuthority.current={values:audioAuthorityValues,retired:false};}
+  function audioStateStamp(){const p=latest.current,t=p.canvasAudioTrimTask;return audioDraftIdentity([inputKey(draftRef.current),t?.source,t?.returnBinding,
+    t&&p.assets.filter(a=>a.id===t.source.id).map(a=>[a.id,a.version,a.sha256,a.deleted_at,a.kind])]);}
+  function audioCapture(op:Operation){return {op,authority:audioAuthority.current,stamp:audioStateStamp(),revision:audioInputRevision.current,
+    methods:[op.client.timelineList,op.client.timelineGet,op.client.timelineSave,latest.current.read,latest.current.mutate]};}
+  function audioLive(c:ReturnType<typeof audioCapture>){const p=latest.current;const m=[p.client.timelineList,p.client.timelineGet,p.client.timelineSave,p.read,p.mutate];
+    return live(c.op)&&audioDraftCurrent()&&!p.busy&&!p.isBusy?.()&&c.authority===audioAuthority.current&&!c.authority.retired&&c.stamp===audioStateStamp()&&c.revision===audioInputRevision.current&&c.methods.every((v,i)=>v===m[i]);}
+  function audioSummary(row:StudioTimelineRow):AudioDraftSummary|undefined{
+    const d=row.canvas_audio_draft,t=latest.current.canvasAudioTrimTask;if(!d||!t||!row.canvas_audio_draft_digest||d.timeline_snapshot.id!==row.id||d.timeline_snapshot.version!==row.version||d.timeline_snapshot.digest!==row.timeline_digest
+      ||audioDraftIdentity(d.canvas_return)!==audioDraftIdentity(t.returnBinding))return;
+    const v=d.parameters;
+    return {id:row.id,title:row.title,version:row.version,timelineDigest:row.timeline_digest,draftDigest:row.canvas_audio_draft_digest,requestId:d.request_id,
+      sourceId:d.source_snapshots[0].id,sourceVersion:d.source_snapshots[0].version,canvasId:d.canvas_return.canvas_id,canvasVersion:d.canvas_return.canvas_version,cardId:d.canvas_return.card_id,inMs:v.in_ms,outMs:v.out_ms,
+      ...(v.gain_db!==undefined?{gainDb:v.gain_db}:{}),...(v.fade_in_ms!==undefined?{fadeInMs:v.fade_in_ms}:{}),...(v.fade_out_ms!==undefined?{fadeOutMs:v.fade_out_ms}:{}),
+      ...(d.template_ref?{templateGraphId:d.template_ref.graph_id,templateVersion:d.template_ref.graph_version}:{}),...(d.derived_from?{parentJobId:d.derived_from.job_id,parentJobVersion:d.derived_from.job_version}:{})};
+  }
+  async function listAudioDrafts():Promise<AudioDraftSummary[]>{
+    if(!audioDraftCurrent()||busy()||providerHandoffLoading.current)return [];if(audioAuthority.current.retired)audioAuthority.current={values:audioAuthorityValues,retired:false};const op=begin('DRAFT_LIST');if(!op)return [];const captured=audioCapture(op);
+    try{const rows=await latest.current.read(()=>op.client.timelineList(op.controller.signal));if(!audioLive(captured))return [];
+      const summaries=rows.items.map(audioSummary).filter((v):v is AudioDraftSummary=>!!v);
+      if(new Set(summaries.map(v=>v.id)).size!==summaries.length)throw invalid('音频草稿列表存在重复记录。');
+      audioReadSet.current={authority:captured.authority,stamp:captured.stamp,revision:captured.revision,methods:captured.methods,entries:new Map(summaries.map(summary=>[summary.id,{summary:audioDraftIdentity(summary),draft:audioDraftIdentity(rows.items.find(row=>row.id===summary.id)!.canvas_audio_draft)}]))};
+      return summaries;
+    }catch(reason){if(audioLive(captured))failure(reason,'已保存音频草稿读取失败。');throw reason;}finally{finish(op);}
+  }
+  async function saveAudioDraft(){
+    if(!audioDraftCurrent()||busy()||!latest.current.canMutate||selectedRef.current||uncertainRef.current||creation.current?.uncertain||!sourcesCurrent(draftRef.current.sources,latest.current.assets,'m8.audio.trim'))return;
+    const task=latest.current.canvasAudioTrimTask!;
+    let value;try{const request=draftRef.current.requestId??crypto.randomUUID();const command=commandFor(draftRef.current,providersRef.current,latest.current.assets,request,task);value=canvasAudioDraftFromCommand(command);
+      edit({...draftRef.current,requestId:request});}catch(reason){failure(reason,'当前仅支持已应用的截取、增益与淡入淡出输入草稿。');return;}
+    if(audioAuthority.current.retired)audioAuthority.current={values:audioAuthorityValues,retired:false};
+    const op=begin('DRAFT_SAVE');if(!op)return;const captured=audioCapture(op),before=savedAudioDraft;
+    try{const row=await latest.current.mutate(()=>op.client.timelineSave(before?.row.id,{title:before?.row.title??'音频卡片任务草稿',timeline:compileCanvasAudioDraftTimeline(value),expected_version:before?.row.version??0,canvas_audio_draft:value}));
+      if(!audioLive(captured))return;if(!audioSummary(row))throw invalid('保存回执与原音频卡片不一致。');
+      clearPreview();clearCandidate();creation.current=undefined;baseline.current=inputKey(draftRef.current);setSavedAudioDraft({row,input:baseline.current});audioSaveUnknown.current=false;setNotice('已保存本次已应用输入及来源版本；未保存执行确认，也没有入队或处理音频。');
+    }catch(reason){if(audioLive(captured)){if(uncertainFailure(reason))audioSaveUnknown.current=true;failure(reason,'音频草稿保存未确认；保留当前输入，读取原记录核对。',true);}}finally{finish(op);}
+  }
+  async function resumeAudioDraft(summary:AudioDraftSummary){
+    if(!audioDraftCurrent()||busy()||!latest.current.canMutate||selectedRef.current||creation.current?.uncertain||uncertainRef.current&&!audioSaveUnknown.current)return;
+    const expected=audioDraftIdentity(summary),listed=audioReadSet.current,entry=listed?.entries.get(summary.id);
+    if(!listed||listed.authority!==audioAuthority.current||audioAuthority.current.retired||!listed.methods.every((v,i)=>v===[latest.current.client.timelineList,latest.current.client.timelineGet,latest.current.client.timelineSave,latest.current.read,latest.current.mutate][i])||listed.stamp!==audioStateStamp()||listed.revision!==audioInputRevision.current||entry?.summary!==expected){audioReadSet.current=undefined;return;}
+    const op=begin('DRAFT_GET');if(!op)return;const captured=audioCapture(op);
+    try{const row=await latest.current.read(()=>op.client.timelineGet(summary.id,op.controller.signal));if(!audioLive(captured))return;
+      if(audioDraftIdentity(audioSummary(row))!==expected||!row.canvas_audio_draft||audioDraftIdentity(row.canvas_audio_draft)!==entry.draft)throw invalid('已保存草稿版本、输入或原卡片已变化。');
+      const command=canvasAudioDraftCommand(row.canvas_audio_draft),task=latest.current.canvasAudioTrimTask!;assertCanvasAudioTrimTaskCommand(task,command);
+      const next=initialDraft(task);next.requestId=command.request_id;next.licenseNote=command.license_note;
+      for(const [key,value] of Object.entries(command.parameters))next.parameters[key as MediaParameter]=String(value);
+      if(command.template_ref)next.template_ref=structuredClone(command.template_ref);if(command.derived_from)next.derived_from=structuredClone(command.derived_from);
+      handoffRevision.current++;audioInputRevision.current++;draftRef.current=next;setDraft(next);clearPreview();clearCandidate();creation.current=undefined;executionPreview.current=undefined;impactState.current=undefined;
+      selectedRef.current=undefined;setSelected(undefined);markUncertain(false);audioSaveUnknown.current=false;baseline.current=inputKey(next);setSavedAudioDraft({row,input:baseline.current});
+      setNotice('已恢复输入草稿并重新核对原来源；旧执行确认已退役。请重新预览、逐阶段确认，未入队、执行或采用。');
+    }catch(reason){if(audioLive(captured))failure(reason,'音频草稿恢复未确认；当前会话输入保持。');throw reason;}finally{finish(op);}
+  }
+  audioMethods.current={list:listAudioDrafts,resume:resumeAudioDraft,current:audioDraftCurrent};
   function applyAudioTemplate(ref:CanvasAudioWorkflowTemplateRef) {
     const task=latest.current.canvasAudioTrimTask;
     if(!task||!latest.current.audioWorkflowTemplates||!!selectedRef.current||!canClosePrepared||!current()||busy()||!latest.current.canMutate||uncertainRef.current||creation.current?.uncertain||!task.isCurrent())return;
     const next={...draftRef.current,parameters:{...draftRef.current.parameters,...Object.fromEntries(Object.entries(ref.parameters).map(([key,value])=>[key,String(value)]))},template_ref:structuredClone(ref),requestId:undefined};
     checkedCanvasAudioProvenance({operation_id:'m8.audio.trim',canvas_return:task.returnBinding,template_ref:ref});
-    edit(next);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
+    edit(next);setSavedAudioDraft(undefined);clearCandidate();selectedRef.current=undefined;setSelected(undefined);
     setNotice('已将模板版本明确提供的参数复制为本次任务草稿；后续局部覆盖不修改模板或原入队任务。');
   }
   function changeOperation(operation: MediaOperation) { if (boundTask(latest.current)&&operation!==(boundTask(latest.current)?.source.asset_kind==='audio'?'m8.audio.trim':'m5.image.i2i'))return;if (Object.hasOwn(MEDIA_OPERATION_LABELS, operation)) edit({ ...initialDraft(boundTask(latest.current)), operation, licenseNote: draftRef.current.licenseNote }); }
@@ -857,7 +924,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     epoch.current++; providerEpoch.current++; slot.current?.controller.abort(); slot.current = undefined; providerRead.current?.abort();
     controlFence.current++; executingCutout.current = undefined; runningControlRef.current = undefined; setRunningControl(undefined);
     clearCandidate(); clearPreview(); owner.current = props.client; revoked.current = false; setDenied(false); setPending(undefined); setProviders([]); setJobs([]);
-    const empty = initialDraft(boundTask(latest.current)); draftRef.current = empty; setDraft(empty); baseline.current = inputKey(empty); selectedRef.current = undefined; setSelected(undefined);
+    const empty = initialDraft(boundTask(latest.current)); audioInputRevision.current++; draftRef.current = empty; setDraft(empty); baseline.current = inputKey(empty); selectedRef.current = undefined; setSelected(undefined);
     creation.current = undefined; sentActions.current.clear(); consumedExternal.current = ''; markUncertain(false); setError(''); setNotice('');
   }, [props.client]);
   useLayoutEffect(() => {
@@ -897,6 +964,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
     endFrameSource: draft.lastFrame, videoFrameCapabilities: provider?.video_frame_capabilities, selectEndFrame,
     routeSelectable: routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
+    audioDraft:{saved:owns?savedAudioDraft?.row:undefined,savedCurrent:!!savedAudioDraft&&savedAudioDraft.input===input,
+      saveUnknown:audioSaveUnknown.current,canSave:canEdit&&!providerLoading&&!selected&&!!props.canvasAudioTrimTask&&!inputError&&freshSources,
+      save:saveAudioDraft,...audioCallbacks.current,sessionInputKey:input},
     impact, confirmImpact, impactRequired:impactRequired(), inspectExecution, prepareFailedAudio, applyAudioTemplate,
     create, listJobs, openJob, canAction, action, loadCandidate, confirmReview, mediaFailed, downloadReceipt };
 }
