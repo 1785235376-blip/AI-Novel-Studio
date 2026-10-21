@@ -1418,6 +1418,11 @@ class ProductionExecutionService:
             command = saved(row, history)
             result['canvas_video_draft'] = command.model_dump()
             result['canvas_video_draft_digest'] = row['canvas_video_draft_digest']
+        if 'canvas_audio_draft' in row or 'canvas_audio_draft_digest' in row:
+            from .canvas_audio_draft import saved
+            saved(row, history)
+            result['canvas_audio_draft'] = copy.deepcopy(row['canvas_audio_draft'])
+            result['canvas_audio_draft_digest'] = row['canvas_audio_draft_digest']
         return result
 
     @contextmanager
@@ -1729,6 +1734,12 @@ class ProductionExecutionService:
             command = saved(row)
             if (command.timeline_snapshot.version, command.timeline_snapshot.digest) == (row['version'], row['timeline_digest']):
                 recheck(self, nid, scope, actor, command, guard)
+        if 'canvas_audio_draft' in row:
+            from .canvas_audio_draft import saved, recheck
+            value = saved(row)
+            snap = row['canvas_audio_draft']['timeline_snapshot']
+            if (snap['version'], snap['digest']) == (row['version'], row['timeline_digest']):
+                recheck(self, nid, scope, actor, value, guard)
         guard()
         return result
 
@@ -1794,11 +1805,15 @@ class ProductionExecutionService:
         source_authority = self.comic_handoff._source_authority(nid, scope, actor) if self.comic_handoff else None
         comic_sources = False
         draft_command = None
+        audio_draft_command = None
         def current():
             guard()
             if draft_command is not None:
                 from .canvas_video_draft import recheck
                 recheck(self, nid, scope, actor, draft_command, guard, document)
+            if audio_draft_command is not None:
+                from .canvas_audio_draft import recheck
+                recheck(self, nid, scope, actor, audio_draft_command, guard, document)
             if comic_sources and self.timeline_inputs.in_phase(nid, scope, actor):
                 if self.store._local.active.get(self.store.key(nid, scope)) is not document:
                     raise ValueError('COMIC_HANDOFF_SOURCE_PHASE_EXPIRED')
@@ -1819,6 +1834,9 @@ class ProductionExecutionService:
             if body.canvas_video_draft is not None:
                 from .canvas_video_draft import attach
                 draft_command = attach(self, nid, scope, actor, row, body.canvas_video_draft, guard, document)
+            if body.canvas_audio_draft is not None:
+                from .canvas_audio_draft import attach
+                audio_draft_command = attach(self, nid, scope, actor, row, body.canvas_audio_draft, guard, document)
             if len(canonical(collection).encode()) > 4 * 1024 * 1024: raise ValueError("STUDIO_TIMELINE_STORAGE_LIMIT")
             guard()
         return self.timeline_get(nid, scope, actor, row["id"], guard)

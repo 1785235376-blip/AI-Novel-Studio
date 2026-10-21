@@ -591,6 +591,20 @@ class TimelineSave(ExecutionModel):
     expected_version: int = Field(ge=0)
 
     canvas_video_draft: dict | None = None
+    canvas_audio_draft: dict | None = None
+
+    @field_validator("canvas_audio_draft", mode="before")
+    @classmethod
+    def audio_draft_input(cls, value):
+        if value is None: raise ValueError("STUDIO_CANVAS_AUDIO_DRAFT_INVALID")
+        from .canvas_audio_draft import CanvasAudioDraft
+        return CanvasAudioDraft.model_validate(value).model_dump()
+
+    @model_validator(mode="after")
+    def one_task_draft(self):
+        if self.canvas_audio_draft is not None and self.canvas_video_draft is not None:
+            raise ValueError("STUDIO_CANVAS_TASK_DRAFT_CONFLICT")
+        return self
 
     @field_validator('canvas_video_draft', mode='before')
     @classmethod
@@ -603,6 +617,7 @@ class TimelineSave(ExecutionModel):
     def omit_video_draft(self, handler):
         value = handler(self)
         if self.canvas_video_draft is None: value.pop('canvas_video_draft', None)
+        if self.canvas_audio_draft is None: value.pop('canvas_audio_draft', None)
         return value
 
 

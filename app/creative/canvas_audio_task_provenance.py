@@ -5,7 +5,7 @@ captured template version and local overrides even after a template is edited.
 """
 
 
-def validate_task_provenance(service, nid, scope, actor, command, context, guard):
+def validate_task_provenance(service, nid, scope, actor, command, context, guard, *, document=None):
     body = command.model_dump()
     audio = service._audio(scope, actor)
     # Only an exact already-persisted original request may use its frozen pins.
@@ -36,7 +36,19 @@ def validate_task_provenance(service, nid, scope, actor, command, context, guard
         graph_owner = getattr(service, 'graph_service', None)
         if graph_owner is None:
             raise ValueError('STUDIO_CANVAS_AUDIO_TEMPLATE_OWNER_REQUIRED')
-        graph = graph_owner.get(nid, scope, actor, pin.graph_id, guard)
+        if document is None:
+            graph = graph_owner.get(nid, scope, actor, pin.graph_id, guard)
+        else:
+            # The original source/asset phase is already leased by Timeline Save.
+            # Reuse original owned-record and asset validators without a second phase.
+            from .graph import GRAPHS
+            graph = graph_owner._owned(nid, scope, actor, GRAPHS, pin.graph_id, document)
+            if graph['definition']['schema_version'] != 3:
+                raise ValueError('STUDIO_CANVAS_AUDIO_TEMPLATE_CHANGED')
+            for ref in graph['definition']['nodes']:
+                if ref['definition_id'] == 'asset_reference':
+                    graph_owner.asset_inputs._read(nid, scope, ref['parameters'], guard)
+            graph = {**graph, 'can_edit':True, 'reference_states':[]} # Every original asset pin was checked above.
         node = next((n for n in graph['definition']['nodes'] if n['id'] == pin.node_id), None)
         parameters = (node or {}).get('parameters', {})
         values = parameters.get('parameters', {})
