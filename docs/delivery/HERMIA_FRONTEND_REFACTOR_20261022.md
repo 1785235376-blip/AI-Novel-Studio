@@ -160,3 +160,32 @@
 - `workspace.open.control|plugin|workflow|…` Action + AppShell 命令「打开插件/工作流」。
 - 门禁 41 PASS。**不 push。** 余下 FL 缺口（bible 独立 id 等）需产品拍板，不瞎编。
 
+
+## § N-UX-03 / H-P1-01 / H-P1-02 / N-UX-01（第一波 · 小说优先）
+
+> [HERMIA-FE-20261022] · 基线父提交 `64a8d6cb` · **不 push**
+
+### N-UX-03（= UX-N-01）小说满宽写作台
+- `NovelWriterDock`：CTA 状态机经 `decideNovelPrimaryCta`（采用 > 一致性 > 继续写 > 选章）；大纲/角色/AI 默认可折；禁留白。
+- `AppShell` ContextBar：可选 `writingContext`（书名《…》· 章 · 保存态 · 点开 overview）；省略时 legacy 标记稳定。
+- 检视器折叠：`studio-inspector-open` 持久化；默认展开（通宵策略）；`<1100` 仍强制收；收起后中区变宽 CSS。
+- 未改右栏默认策略（N-UX-04）；continuity 实时计数暂诚实为 0（待 query）。
+
+### H-P1-01 `layout.mode` basic|pro
+- `useWorkbenchLayout` + `loadLayout`/`saveLayout`/`layoutKey` 唯一真源。
+- Header「普通|专业」；`data-shell-mode`；命令 `layout.toggleMode` / `setMode.*` / `reset`。
+- basic：FL `production` 默认折叠；VIDEO 导演层默认收；MiniMap 铬条 CSS 隐藏（命令仍可）。
+- pro→basic：关闭创意工作台；若在 experimental/exec/director → 回 `write`，保留 selection。
+- 铬条仍终裁 **6 钮**。
+
+### H-P1-02 能力徽章禁假绿
+- `capabilityBadge.ts` / `CapabilityBadge`：`undetermined`→「状态待核实」· tone≠success；`connected` 仅明确接通。
+- 检视器 dock 上下文最小切口挂徽章；测覆盖映射与禁假绿。
+
+### N-UX-01 小说 FL 缺口最小可发现
+- **不编造**新 FL id；dock「故事规划」→ `story`；AI 旁路双入口文案 vs「工作流编排」；`onOpenWorkflow` 链既有 `workflow`。
+- 命令别名昨夜已齐（`novel.focus.*` / `storyPlanning` / `pendingCanon`）。
+
+### 门禁
+- `vitest run src/workbench src/ui/EditNleShell.test.tsx src/ui/AppShell.test.tsx src/ui/AppShell.projectNoun.test.tsx src/ui/ModuleWorkspaceRoutes.test.tsx src/ui/MediaWorkspaceShells.test.tsx` → **80 PASS**。
+- **不 push**；未改 `app/`。

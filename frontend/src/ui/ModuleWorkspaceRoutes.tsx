@@ -25,7 +25,7 @@ import {
 } from './MediaWorkspaceShells';
 
 type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
-interface Props {localAiOnboarding?:LocalAiOnboardingOwner; module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void;}
+interface Props {localAiOnboarding?:LocalAiOnboardingOwner; module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void; shellMode?:'basic'|'pro'; onShellModeChange?:(mode:'basic'|'pro')=>void;}
 const moduleLabels: Record<WorkspaceModule, string> = { IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', EDIT: '剪辑', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
 function WorkspaceRail({ module }: { module: WorkspaceModule }) {
   return <nav className="workspace-rail" aria-label={`${moduleLabels[module]}工作区导航`}><div className="workspace-rail__eyebrow">当前工作区</div><strong>{moduleLabels[module]}</strong><button className="is-active" aria-current="page">工作区概览</button><button disabled title="最近编辑尚未开放">最近编辑</button><button disabled title="待处理任务尚未开放">待处理任务</button><div className="workspace-rail__future"><span>预留入口</span><small>AI Copilot</small><small>Provider 状态</small><small>审批队列</small></div></nav>;
@@ -50,7 +50,7 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange,localAiO
   return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<>{interopSettings}<AiControlCenter/></>:tab==='models'?<ModelCenter onboarding={localAiOnboarding}/>:<MediaProviderSettings/>}</div>;
 }
 
-export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange}:Props){
+export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange,shellMode='basic',onShellModeChange}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   // [HERMIA-FE-20261022 W-P0-06] EDIT session: playhead/selection shared with inspector (CapCut-density shell).
   const editTimeline = novelId && module==='EDIT' ? demoEditTimeline(novelId) : null;
@@ -65,7 +65,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   let main:ReactNode; let status='工作区';
   switch(module){
     case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}}/>:<EmptyState title="请先打开小说项目" detail="图片预览、参考与生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
-    case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} onInspect={setVideoInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<EmptyState title="请先打开小说项目" detail="视频三层（镜头脚本/画布/导演）需要绑定到一个小说项目。"/>; status='视频工作区'; break;
+    case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} shellMode={shellMode} onInspect={setVideoInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<EmptyState title="请先打开小说项目" detail="视频三层（镜头脚本/画布/导演）需要绑定到一个小说项目。"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<EmptyState title="请先打开小说项目" detail="配音、音效与有声书需要绑定到一个小说项目。"/>; status='声音工作区'; break;
     case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<EmptyState title="请先打开小说项目" detail="剪辑时间线需要绑定到一个小说/项目。NLE 不嵌入小说中区（多工作区并列）。"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/>; status='AI 主控'; break;
@@ -77,5 +77,5 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='IMAGE'&&novelId?<ImageWorkspaceRail/>:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail/>:<WorkspaceRail module={module}/>;
   // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
   const mainBody=(module==='EDIT'||module==='IMAGE'||module==='VIDEO'||module==='AUDIO'||module==='ASSETS')?<div className="media-ws-main" data-module-shell={module}>{main}</div>:<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
-  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>}/>;
+  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>} shellMode={shellMode} onShellModeChange={onShellModeChange}/>;
 }

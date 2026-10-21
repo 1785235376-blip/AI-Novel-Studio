@@ -4,3 +4,6 @@ export {registerFeaturePanels} from './featureBridge'; export {registerDemoExten
 export {isNovelPanel, NOVEL_PANEL_IDS, registerNovelActionAliases, type NovelFocusTarget} from './novelActions';
 export {bindRestoreConfirmation, gateRestore, syncRestoreLifecycle, restoreLifecycleContext} from './revisionRestore';
 export {registerWorkspaceModuleActions} from './workspaceActions';
+export {capabilityBadgeView, capabilityFromLedgerCell, isFakeGreen} from './capabilityBadge';
+export {decideNovelPrimaryCta} from './novelCta';
+export {useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector, EXEC_OR_DIRECTOR_PANELS} from './useWorkbenchLayout';

@@ -235,13 +235,15 @@ export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
 
 /** [HERMIA-FE-20261022] LUMEN_VIDEO_IA three layers — compose existing panels; no backend invent. */
 export function VideoWorkspaceShell({
-  novelId, onInspect, onSendToEdit,
+  novelId, onInspect, onSendToEdit, shellMode = 'basic',
 }: {
   novelId: string;
   onInspect?: (inspection: unknown) => void;
   onSendToEdit?: () => void;
+  /** [HERMIA-FE-20261022 H-P1-01] basic hides director chrome by default (command still opens). */
+  shellMode?: 'basic' | 'pro';
 }) {
-  const [directorOpen, setDirectorOpen] = useState(true);
+  const [directorOpen, setDirectorOpen] = useState(shellMode === 'pro');
   const [scriptOpen, setScriptOpen] = useState(true);
   return (
     <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层">

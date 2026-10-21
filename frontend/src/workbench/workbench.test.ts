@@ -143,3 +143,39 @@ describe('workspace overflow module actions', () => {
     expect(opened).toEqual(['CONTROL', 'PLUGIN', 'EDIT', 'VIDEO']);
   });
 });
+
+
+describe('layout.mode H-P1-01', () => {
+  it('persists mode via layoutKey and keeps placements when flipping basic↔pro', () => {
+    const p = new PanelRegistry();
+    p.register({id: 'history', kind: 'feature', title: 'h', capability: 'undetermined', instancing: 'singleton', docks: ['main'], defaultDock: 'main'});
+    const st = new Mem();
+    saveLayout(st, scope, {schemaVersion: 2, mode: 'pro', maximized: null, placements: [{panelId: 'history', objectRef: null, dock: 'main'}]});
+    const loaded = loadLayout(st, scope, p).layout;
+    expect(loaded.mode).toBe('pro');
+    expect(loaded.placements).toHaveLength(1);
+    saveLayout(st, scope, {...loaded, mode: 'basic'});
+    expect(loadLayout(st, scope, p).layout).toMatchObject({mode: 'basic', placements: [{panelId: 'history'}]});
+  });
+  it('registers layout.toggleMode / setMode actions', async () => {
+    const t = new LifecycleTracker(); t.update({projectId: 'p'});
+    const a = new ActionRegistry(t);
+    let mode: 'basic' | 'pro' = 'basic';
+    const {registerLayoutActions} = await import('./useWorkbenchLayout');
+    registerLayoutActions(a, {getMode: () => mode, setMode: m => { mode = m; }});
+    const c = ctx(t, {targetId: null, permissions: new Set()});
+    expect(await a.execute('layout.setMode.pro', c)).toEqual({status: 'done', value: 'pro'});
+    expect(mode).toBe('pro');
+    expect(await a.execute('layout.toggleMode', c)).toEqual({status: 'done', value: 'basic'});
+    expect(mode).toBe('basic');
+  });
+});
+
+describe('shouldLeaveExecOrDirector', () => {
+  it('flags experimental / creative workbench for pro→basic', async () => {
+    const {shouldLeaveExecOrDirector} = await import('./useWorkbenchLayout');
+    expect(shouldLeaveExecOrDirector('write', false)).toBe(false);
+    expect(shouldLeaveExecOrDirector('experimental', false)).toBe(true);
+    expect(shouldLeaveExecOrDirector('write', true)).toBe(true);
+  });
+});

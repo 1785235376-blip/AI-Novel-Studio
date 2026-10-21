@@ -79,6 +79,11 @@ describe('NovelWriterDock Lumen §4.4', () => {
     expect(host.textContent).toContain('大纲');
     expect(host.textContent).toContain('AI 写作');
     expect(host.textContent).toContain('角色');
+    expect(host.textContent).toContain('状态待核实');
+    expect(host.textContent).toContain('AI 写作旁路');
+    expect(host.textContent).toContain('工作流编排');
+    expect(host.querySelector('[data-capability="undetermined"]')).toBeTruthy();
+    expect(host.querySelector('[data-capability-tone="success"]')).toBeNull();
     act(() => {
       host.querySelector<HTMLButtonElement>('.novel-writer-dock__primary')!.click();
     });

@@ -1,9 +1,12 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
+ * N-UX-01: AI vs workflow dual-entry copy — no new FL ids.
  */
 import type {ReactNode} from 'react';
+import {CapabilityBadge} from './CapabilityBadge';
+import type {CapabilityStatus} from '../workbench/panels';
 import './NovelWriterDock.css';
 
 export function NovelWriterDock({
@@ -17,7 +20,9 @@ export function NovelWriterDock({
   onOpenStory,
   onOpenCheck,
   onOpenHistory,
+  onOpenWorkflow,
   onSelectOutline,
+  capabilityStatus = 'undetermined',
   ai,
   extras,
 }: {
@@ -31,7 +36,10 @@ export function NovelWriterDock({
   onOpenStory?: () => void;
   onOpenCheck?: () => void;
   onOpenHistory?: () => void;
+  /** Opens FL workflow surface — clearly ≠ AI writing bypass. */
+  onOpenWorkflow?: () => void;
   onSelectOutline?: (id: string) => void;
+  capabilityStatus?: CapabilityStatus;
   ai: ReactNode;
   extras?: ReactNode;
 }) {
@@ -41,6 +49,9 @@ export function NovelWriterDock({
         <span>当前章节</span>
         <strong>{chapterTitle}</strong>
         <small>{chapterMeta}{saveLabel ? ` · ${saveLabel}` : ''}</small>
+        <div className="novel-writer-dock__badge-row">
+          <CapabilityBadge status={capabilityStatus} />
+        </div>
       </section>
 
       <section className="novel-writer-dock__next" aria-label="下一步">
@@ -58,6 +69,9 @@ export function NovelWriterDock({
               {link.label}
             </button>
           ))}
+          {onOpenStory && (
+            <button type="button" className="novel-writer-dock__link" onClick={onOpenStory}>故事规划</button>
+          )}
           {onOpenHistory && (
             <button type="button" className="novel-writer-dock__link" onClick={onOpenHistory}>版本历史</button>
           )}
@@ -85,7 +99,7 @@ export function NovelWriterDock({
             <p className="novel-writer-dock__empty">暂无大纲条目。可在故事资料库完善卷章；此处保留可读占位，禁止空白属性板。</p>
           )}
           {onOpenStory && (
-            <button type="button" className="ui-button" onClick={onOpenStory}>打开故事资料库</button>
+            <button type="button" className="ui-button" onClick={onOpenStory}>打开故事资料库 / 规划</button>
           )}
         </div>
       </details>
@@ -116,7 +130,18 @@ export function NovelWriterDock({
 
       <details className="novel-writer-dock__section novel-writer-dock__section--ai" open>
         <summary>AI 写作</summary>
-        <div className="novel-writer-dock__body">{ai}</div>
+        <div className="novel-writer-dock__body">
+          <p className="novel-writer-dock__hint novel-writer-dock__dual-entry" role="note">
+            此处是 <strong>AI 写作旁路</strong>（生成 / 预览 / 采用候选）。功能导航里的「工作流编排」是另一套编排面，不是本旁路。
+            {onOpenWorkflow ? (
+              <>
+                {' '}
+                <button type="button" className="novel-writer-dock__link" onClick={onOpenWorkflow}>打开工作流编排</button>
+              </>
+            ) : null}
+          </p>
+          {ai}
+        </div>
       </details>
 
       {extras ? (

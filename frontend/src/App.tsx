@@ -98,6 +98,10 @@ import { isNovelPanel } from "./workbench/novelActions";
 import { LifecycleTracker } from "./workbench/lifecycle";
 import { bindRestoreConfirmation, gateRestore, syncRestoreLifecycle } from "./workbench/revisionRestore";
 import { CommandSearch } from "./workbench/CommandSearch";
+import { useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector } from "./workbench/useWorkbenchLayout";
+import { decideNovelPrimaryCta } from "./workbench/novelCta";
+import { FEATURE_GROUP_DEFAULTS } from "./ui/FeatureLauncher";
+import { resetLayout, type LayoutScope } from "./workbench/layout";
 import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
 import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
 import { experimentalFeatures, experimentalClient } from "./experimental/api";
@@ -362,6 +366,49 @@ export default function App() {
     }
   }, []);
   const workbench = useWorkbench(legacySelectPanel, { projectId: s.novelId || null, clientId: namespace, documentId: s.chapterId || null, identity: s.actor?.id ?? null }, [], focusNovelSurface, navigateStudioModule);
+  // [HERMIA-FE-20261022 H-P1-01] layout.mode basic|pro — unique source loadLayout/saveLayout
+  const layoutScope = useMemo<LayoutScope>(() => ({
+    userId: s.actor?.id || 'local-author',
+    projectId: s.novelId || 'no-project',
+    projectInstanceId: namespace || 'default',
+  }), [s.actor?.id, s.novelId, namespace]);
+  const {mode: shellMode, setMode: setShellModeRaw} = useWorkbenchLayout(layoutScope, workbench.panels);
+  const applyShellMode = useCallback((mode: 'basic' | 'pro') => {
+    const prev = shellMode;
+    setShellModeRaw(mode);
+    // basic: collapse production FL group (S1); user may re-expand until next switch to basic
+    if (mode === 'basic') {
+      setFeatureGroups(current => ({...current, production: false}));
+    }
+    // pro→basic: leave exec/director chrome, keep selection / objectRef
+    if (prev === 'pro' && mode === 'basic') {
+      const leaveSurface = shouldLeaveExecOrDirector(panel, creativeWorkbenchOpen);
+      setCreativeWorkbenchOpen(false);
+      if (leaveSurface) {
+        styleLeave.request(current => {
+          if (!current()) return;
+          if (panel !== 'write') setPanel('write');
+        });
+      }
+    }
+  }, [shellMode, setShellModeRaw, panel, styleLeave, creativeWorkbenchOpen]);
+  // Cold start: if persisted mode is basic, fold production once shellMode known
+  useEffect(() => {
+    if (shellMode === 'basic') setFeatureGroups(current => current.production === false ? current : {...current, production: false});
+  }, [shellMode]);
+  useEffect(() => {
+    return registerLayoutActions(workbench.actions, {
+      getMode: () => shellMode,
+      setMode: applyShellMode,
+      reset: () => {
+        try {
+          resetLayout(window.localStorage, layoutScope);
+        } catch { /* ignore */ }
+        setShellModeRaw('basic');
+        setFeatureGroups({...FEATURE_GROUP_DEFAULTS, production: false});
+      },
+    });
+  }, [workbench.actions, shellMode, applyShellMode, layoutScope, setShellModeRaw]);
   const independentClient = useMemo(() => studioClient(s.novelId, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }), [studioEntry, studioEntryEpoch]);
   const studioProject = useQuery({ queryKey: ['independent-project', namespace, s.novelId, studioEntryInstance, studioEntryEpoch], queryFn: ({ signal }) => independentClient.overview(signal), enabled: independentStudios && !!s.novelId, retry: false });
   const neutralStudio = independentStudios && studioProject.data?.project?.id === s.novelId && studioProject.data.project.entry_kind === 'NEUTRAL_STUDIO';
@@ -1337,7 +1384,7 @@ export default function App() {
   const shellScope = selectedScopeLabels(scope, localNovelTitle);
   const currentStudioRequest = requestedStudioEntry.current === studioEntry && requestedStudioProject === s.novelId;
   if (independentStudios && isManualStudioModule(studioModule) && (neutralStudio || currentStudioRequest)) return <>{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={currentStudioRequest ? requestedStudioAsset : undefined} onModuleChange={navigateStudioModule} onOpenBroker={experimentalFlags.data?.features['experimental.model_broker_v2'] === true ? () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(false); setExperimentalTab('model_broker_v2'); setPanel('experimental'); } }) : undefined} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); requestedStudioEntry.current = undefined; studioEntryApplied.current = { ...studioEntryApplied.current, identity: '' }; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
-  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} /></>;
+  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} shellMode={shellMode} onShellModeChange={applyShellMode} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
     : "正在打开章节…";
@@ -1765,17 +1812,25 @@ export default function App() {
     ...(activeCharacterId ? [{id: activeCharacterId, label: '当前人物视角', hint: activeCharacterId}] : []),
   ];
   const draftReady = !!(job && job.status === 'SUCCEEDED' && job.output && !['CANCELLED', 'ACCEPTED', 'REJECTED'].includes(job.status));
-  const primaryCta = draftReady
-    ? {label: '采用草稿', onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
-    : chapter.data
-      ? {label: '继续写', onClick: () => {
-          const el = document.querySelector<HTMLElement>('.app-shell[data-module="NOVEL"] .ProseMirror, .app-shell[data-module="NOVEL"] .editor');
-          el?.focus?.();
-          el?.scrollIntoView?.({block: 'nearest'});
-        }}
-      : {label: '在左侧选择或新建章节', onClick: () => {
-          document.querySelector<HTMLElement>('.workspace-sidebar--novel')?.focus?.();
-        }, disabled: false};
+  // [HERMIA-FE-20261022 N-UX-03] CTA state machine — single solid primary
+  const ctaDecision = decideNovelPrimaryCta({
+    draftReady,
+    continuityWarningCount: 0, // live findings await Continuity query wiring (honest 0)
+    hasChapter: !!chapter.data,
+  });
+  const primaryCta = ctaDecision.kind === 'adopt'
+    ? {label: ctaDecision.label, onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
+    : ctaDecision.kind === 'continuity'
+      ? {label: ctaDecision.label, onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
+      : ctaDecision.kind === 'continue'
+        ? {label: ctaDecision.label, onClick: () => {
+            const el = document.querySelector<HTMLElement>('.app-shell[data-module="NOVEL"] .ProseMirror, .app-shell[data-module="NOVEL"] .editor');
+            el?.focus?.();
+            el?.scrollIntoView?.({block: 'nearest'});
+          }}
+        : {label: ctaDecision.label, onClick: () => {
+            document.querySelector<HTMLElement>('.workspace-sidebar--novel')?.focus?.();
+          }};
   const inspector = (
     <NovelWriterDock
       chapterTitle={chapter.data?.title || "未选择章节"}
@@ -1791,7 +1846,9 @@ export default function App() {
       onOpenStory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('story'); } })}
       onOpenCheck={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
       onOpenHistory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('history'); } })}
+      onOpenWorkflow={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('workflow'); } })}
       onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
+      capabilityStatus="undetermined"
       ai={<>
       <AiWritingPanel
       authorPreview={chapter.data ? {
@@ -1886,6 +1943,14 @@ export default function App() {
           onGlobalSearch={openWorkspaceSearch}
           focusMode={writingFocus && focusActive}
           onExitFocus={() => setFocusActive(false)}
+          shellMode={shellMode}
+          onShellModeChange={applyShellMode}
+          writingContext={{
+            bookTitle: localNovelTitle,
+            chapterLabel: chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : undefined,
+            saveLabel: chapter.data ? saveDisplayLabel : undefined,
+            onOpenOverview: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } }),
+          }}
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
           main={mainWorkspace}

@@ -185,3 +185,22 @@
   /* Vera: narrower chapter rail feel */
   max-width: 200px;
 }
+
+/* [HERMIA-FE-20261022 N-UX-03] Full-width prose when inspector collapsed; capability badge row */
+.app-shell[data-module="NOVEL"].is-inspector-collapsed .editor {
+  width: min(1100px, calc(100% - var(--space-4)));
+  max-width: 100%;
+}
+.novel-writer-dock__badge-row {
+  margin-top: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.novel-writer-dock__dual-entry {
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  border: var(--border-default);
+  line-height: 1.5;
+}

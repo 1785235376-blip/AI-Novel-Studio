@@ -99,8 +99,28 @@ export function ModuleSwitcher({
   );
 }
 
-export function ContextBar({ scope, projectNoun = "小说" }: { scope: ScopeLabels; projectNoun?: ProjectNoun }) {
+export interface WritingContextLabels {
+  /** Book / novel display title for author breadcrumb (N-UX-03). */
+  bookTitle?: string;
+  /** e.g. "第 3 章 · 夜雨" */
+  chapterLabel?: string;
+  saveLabel?: string;
+  onOpenOverview?: () => void;
+}
+
+export function ContextBar({
+  scope,
+  projectNoun = "小说",
+  writing,
+}: {
+  scope: ScopeLabels;
+  projectNoun?: ProjectNoun;
+  /** Optional novel writing breadcrumb — omitted keeps legacy markup byte-stable. */
+  writing?: WritingContextLabels;
+}) {
   const fallback = "未选择";
+  const book = writing?.bookTitle?.trim();
+  const chapter = writing?.chapterLabel?.trim();
   return (
     <nav className="context-bar" aria-label="当前创作范围">
       <span>创作空间：{scope.workspace || fallback}</span>
@@ -110,6 +130,22 @@ export function ContextBar({ scope, projectNoun = "小说" }: { scope: ScopeLabe
       <span>故事线：{scope.storyline || fallback}</span>
       <i>/</i>
       <span>创作分支：{scope.branch || fallback}</span>
+      {book ? (
+        <>
+          <i>/</i>
+          <span className="context-bar__book">
+            {writing?.onOpenOverview ? (
+              <button type="button" className="context-bar__book-btn" onClick={writing.onOpenOverview}>
+                {`《${book}》`}
+              </button>
+            ) : (
+              `《${book}》`
+            )}
+            {chapter ? ` · ${chapter}` : ''}
+            {writing?.saveLabel ? ` · ${writing.saveLabel}` : ''}
+          </span>
+        </>
+      ) : null}
     </nav>
   );
 }
@@ -128,6 +164,9 @@ export function AppShell({
   onGlobalSearch,
   focusMode = false,
   onExitFocus,
+  shellMode = 'basic',
+  onShellModeChange,
+  writingContext,
 }: {
   module: StudioModule;
   onModuleChange: (value: StudioModule) => void;
@@ -142,6 +181,10 @@ export function AppShell({
   onGlobalSearch?: () => void;
   focusMode?: boolean;
   onExitFocus?: () => void;
+  /** [HERMIA-FE-20261022 H-P1-01] Header 普通|专业 — unique source is layout.mode */
+  shellMode?: 'basic' | 'pro';
+  onShellModeChange?: (mode: 'basic' | 'pro') => void;
+  writingContext?: WritingContextLabels;
 }) {
   const searchAction = useRef(onGlobalSearch);
   searchAction.current = onGlobalSearch;
@@ -157,11 +200,17 @@ export function AppShell({
     Record<string, TaskSummary>
   >({});
   const [failedTasksOpen, setFailedTasksOpen] = useState(false);
-  const [inspectorOpen, setInspectorOpen] = useState(
-    () =>
-      typeof window === "undefined" ||
-      !window.matchMedia?.("(max-width: 1100px)").matches,
-  );
+  // [HERMIA-FE-20261022 N-UX-03] Persist fold; default expanded (overnight), narrow forces closed.
+  const [inspectorOpen, setInspectorOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    if (window.matchMedia?.("(max-width: 1100px)").matches) return false;
+    try {
+      const saved = localStorage.getItem("studio-inspector-open");
+      if (saved === "0") return false;
+      if (saved === "1") return true;
+    } catch { /* session-only ok */ }
+    return true;
+  });
   const [inspectorWidth, setInspectorWidth] = useState(() => {
     if (typeof window === "undefined") return 340;
     try {
@@ -188,6 +237,9 @@ export function AppShell({
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", stop);
   };
+  useEffect(() => {
+    try { localStorage.setItem("studio-inspector-open", inspectorOpen ? "1" : "0"); } catch { /* ignore */ }
+  }, [inspectorOpen]);
   useEffect(() => {
     if (!inspectorOpen || focusMode) return;
     const close = (event: KeyboardEvent) => {
@@ -327,6 +379,7 @@ export function AppShell({
       className={`app-shell${visibleInspector ? "" : " is-inspector-collapsed"}`}
       style={shellStyle}
       data-module={module}
+      data-shell-mode={shellMode}
     >
       <header className="global-header">
         <div className="product-mark" aria-label="AI Novel Studio">
@@ -349,6 +402,24 @@ export function AppShell({
           <span>搜索作品、章节与素材</span>
           <kbd>Ctrl K</kbd>
         </button>
+        <div className="shell-mode-toggle" role="group" aria-label="界面模式">
+          <button
+            type="button"
+            className={shellMode === "basic" ? "is-active" : ""}
+            aria-pressed={shellMode === "basic"}
+            onClick={() => onShellModeChange?.("basic")}
+          >
+            普通
+          </button>
+          <button
+            type="button"
+            className={shellMode === "pro" ? "is-active" : ""}
+            aria-pressed={shellMode === "pro"}
+            onClick={() => onShellModeChange?.("pro")}
+          >
+            专业
+          </button>
+        </div>
         <span className="current-actor">
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}
@@ -356,7 +427,7 @@ export function AppShell({
           <span>{actor}</span>
         </span>
       </header>
-      <ContextBar scope={scope} projectNoun={projectNoun} />
+      <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} />
       <main className="workspace-body">
         <aside
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}

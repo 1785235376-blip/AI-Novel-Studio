@@ -20,7 +20,7 @@ describe("ModuleSwitcher", () => {
       root = createRoot(host);
     act(() => root.render(<ModuleSwitcher value="NOVEL" onChange={change} />));
     const tabs = [...host.querySelectorAll('[role="tab"]')];
-    expect(tabs).toHaveLength(8);
+    expect(tabs).toHaveLength(6);
     expect(tabs[0].getAttribute("aria-selected")).toBe("true");
     expect(
       tabs.filter((tab) => tab.getAttribute("tabindex") === "0"),
@@ -404,3 +404,69 @@ it('U04 focus reuses inspector collapse while retaining editor and save errors',
   expect(host.textContent).toContain('Same assistance');
   act(() => root.unmount());
 });
+
+describe("AppShell shellMode + writing ContextBar (H-P1-01 / N-UX-03)", () => {
+  it("exposes 普通|专业 toggle bound to shellMode and writing breadcrumb", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const onMode = vi.fn();
+    const onOverview = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar={<nav>侧</nav>}
+          main={<article>主</article>}
+          inspector={<section>检</section>}
+          status="ok"
+          shellMode="basic"
+          onShellModeChange={onMode}
+          writingContext={{ bookTitle: "夜航船", chapterLabel: "第 1 章 · 开篇", saveLabel: "已保存", onOpenOverview: onOverview }}
+        />,
+      ),
+    );
+    expect(host.querySelector(".app-shell")?.getAttribute("data-shell-mode")).toBe("basic");
+    const pro = [...host.querySelectorAll(".shell-mode-toggle button")].find(b => b.textContent === "专业") as HTMLButtonElement;
+    expect(pro).toBeTruthy();
+    act(() => pro.click());
+    expect(onMode).toHaveBeenCalledWith("pro");
+    expect(host.textContent).toContain("《夜航船》");
+    expect(host.textContent).toContain("第 1 章 · 开篇");
+    act(() => {
+      host.querySelector<HTMLButtonElement>(".context-bar__book-btn")!.click();
+    });
+    expect(onOverview).toHaveBeenCalled();
+    act(() => root.unmount());
+  });
+  it("persists inspector fold preference to localStorage", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    localStorage.removeItem("studio-inspector-open");
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    const collapse = host.querySelector<HTMLButtonElement>(
+      '.workspace-inspector__controls [aria-label="收起侧栏"]',
+    )!;
+    act(() => collapse.click());
+    expect(localStorage.getItem("studio-inspector-open")).toBe("0");
+    act(() => root.unmount());
+  });
+});
+
