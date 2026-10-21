@@ -1,3 +1,5 @@
+import {CanvasVideoFailedRecoveryPanel} from './videoTaskRecovery';
+import {canvasVideoTrimTaskSource} from './canvasVideoTrimTask';
 import {CanvasVideoAudioControls} from './CanvasVideoAudioControls';
 import {Badge,Button,Panel,StatusMessage} from '../ui/primitives';
 import {ExecutionImpactPanel} from '../experimental/executionImpact/ExecutionImpactPanel';
@@ -19,6 +21,7 @@ export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
       {state.notice&&<StatusMessage>{state.notice}</StatusMessage>}
       {!state.current()&&<StatusMessage tone="warning">原卡片、范围、来源或权限已改变，请返回创作画布重新核对。旧确认不会恢复。</StatusMessage>}
       {state.uncertain&&<StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务记录；不会自动重试或采用。</StatusMessage>}
+      {state.derivedFrom&&<p>本次派生来源：<code>{state.derivedFrom.job_id}</code> · v{state.derivedFrom.job_version}。保留原请求与参数记录，本次配置另存独立时间线。</p>}
       <fieldset disabled={!state.canEdit}><legend>本次原视频范围</legend>
         <label>来源起点（毫秒）<input type="number" min={0} step={40} value={state.draft.in_ms} onChange={event=>state.changeParameter('in_ms',event.target.value)}/></label>
         <label>来源终点（毫秒）<input type="number" min={40} step={40} value={state.draft.out_ms} onChange={event=>state.changeParameter('out_ms',event.target.value)}/></label>
@@ -44,6 +47,9 @@ export function StudioCanvasVideoTaskPanel(props:StudioCanvasVideoTaskProps){
       {job&&<section aria-label="原视频任务回执"><p>原 Job <code>{job.id}</code> · v{job.version} · {job.status}</p>
         <p>请求 <code>{job.request_id}</code>。重新读取不会执行、审核或采用；UNKNOWN、失败和已完成任务不会从这里重放。</p>
         {job.status==='QUEUED'&&<p>执行前请再次读取原截取预览并核对本次输入。</p>}
+        {['FAILED','UNKNOWN'].includes(job.status)&&<CanvasVideoFailedRecoveryPanel job={job} task={{source:canvasVideoTrimTaskSource(props.task.origin.source),returnBinding:props.task.origin.binding,isCurrent:state.current}}
+          owner={props.client} current={state.current()} busy={state.locked||state.uncertain} canMutate={props.canMutate} isCurrent={state.current}
+          newRequestId={()=>crypto.randomUUID()} onDerive={state.prepareFailedVideo} onRead={state.readJob}/>}
         {['FAILED','UNKNOWN','RUNNING','REVIEWING','CANCELLED'].includes(job.status)&&<StatusMessage tone="warning">当前状态不能继续执行或重试，请通过原记录核对。</StatusMessage>}
         {job.media_measurement&&<p>实际输出：{job.media_measurement.duration_ms} 毫秒 · {job.media_measurement.width}×{job.media_measurement.height} · {job.media_measurement.fps} fps · {job.media_measurement.byte_count} 字节。</p>}
         {['SUCCEEDED','AWAITING_REVIEW'].includes(job.status)&&<Button disabled={state.locked||state.uncertain||!state.current()} onClick={()=>void state.loadCandidate()}>读取并核对候选视频</Button>}

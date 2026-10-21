@@ -13,7 +13,7 @@ type Props={client:StudioClient;production:StudioProductionClient;owner?:StudioG
   isCurrent:()=>boolean;read:<T>(f:()=>Promise<T>)=>Promise<T>;onResume:(canvas:CanvasViewRecord,asset:StudioAsset,job:ProductionJob,origin:CanvasImageTaskOrigin)=>void};
 const resumable=(job:ProductionJob)=>job.owner==='audio'&&job.operation_id==='m8.audio.trim'&&job.provider===null
   &&job.execution_recipe.adapter==='LOCAL_FFMPEG'&&job.execution_recipe.output_profile==='PCM_S16LE_WAV_48000_STEREO'
-  &&['QUEUED','FAILED','UNKNOWN'].includes(job.status)?(job.status!=='FAILED'||job.output_candidate===null):job.canvas_video!==undefined?['QUEUED','SUCCEEDED','APPROVED','AWAITING_REVIEW'].includes(job.status)&&(job.status==='QUEUED'||!!job.output_candidate):['APPROVED','AWAITING_REVIEW'].includes(job.status)&&!!job.output_candidate;
+  &&['QUEUED','FAILED','UNKNOWN'].includes(job.status)?(job.status!=='FAILED'||job.output_candidate===null):job.canvas_video!==undefined?['QUEUED','FAILED','UNKNOWN','SUCCEEDED','APPROVED','AWAITING_REVIEW'].includes(job.status)&&(job.status==='FAILED'?job.output_candidate===null&&job.media_measurement===null:['QUEUED','UNKNOWN'].includes(job.status)||!!job.output_candidate):['APPROVED','AWAITING_REVIEW'].includes(job.status)&&!!job.output_candidate;
 /** Reads the original Job's immutable command. No local storage or inferred target. */
 export function CanvasImageTaskRecovery(props:Props){
   const [rows,setRows]=useState<{token:object;jobs:ProductionJob[]}>(),[pending,setPending]=useState(false),[error,setError]=useState('');
@@ -51,7 +51,7 @@ export function CanvasImageTaskRecovery(props:Props){
   }
   return <details><summary>重开后恢复尚未采用的卡片结果</summary><section aria-label="持久卡片回流任务">
     <p>支持已绑定原位置的图像、音频截取和视频截取任务。只读取原 Job 中的版本化目标。旧任务没有绑定时不能猜测位置；读取和打开不会执行或自动采用。原位置冲突时保留候选。</p>
-    <p>本地音频截取也可重新核对原入队、失败或 UNKNOWN 记录。打开只读取；失败后须明确派生新身份草稿，UNKNOWN 只查询核对，绝不自动重发。</p>
+    <p>本地音频和视频截取也可重新核对原入队、失败或 UNKNOWN 记录。打开只读取；失败后须明确派生新身份草稿，UNKNOWN 只查询核对，绝不自动重发。</p>
     <Button disabled={props.disabled||pending||!props.owner} onClick={()=>void load()}>读取有原位置绑定的卡片结果</Button>
     {rows?.token===token&&<>{!rows.jobs.length&&<p>没有可恢复的待审核或已审核结果。其他状态及旧任务仍可从原任务记录核对，不会重发。</p>}<ul>{rows.jobs.map(job=><li key={job.id}><Button disabled={pending||props.disabled||!props.canMutate} onClick={()=>void resume(job)}>核验并恢复原卡片任务 · {job.id} · {job.status}</Button></li>)}</ul></>}
     {!props.owner&&<p>尚未取得当前项目代次，不能恢复精确回流意图。</p>}{error&&<StatusMessage tone="warning">{error}</StatusMessage>}

@@ -24,7 +24,7 @@ describe('original FAILED CanvasVideo draft preparation', () => {
   it('preserves the complete original collaboration scope and incarnation', () => {
     const { job, task } = recoveryFixture();
     job.branch_id = 'branch'; job.canvas_video.canvas_return.scope = { mode: 'collaboration', novel_id: 'project',
-      workspace_id: 'workspace', project_id: 'collab-project', storyline_id: 'storyline', branch_id: 'branch' };
+      workspace_id: 'workspace', project_id: 'collab-project', storyline_id: 'storyline', branch_id: 'branch' } as typeof job.canvas_video.canvas_return.scope;
     job.canvas_video.canvas_return.incarnation = 'postgres:00000000-0000-0000-0000-000000000002';
     task.returnBinding = structuredClone(job.canvas_video.canvas_return);
     expect(deriveFailedCanvasVideoDraft(job, task, 'new').canvas_return).toEqual(task.returnBinding);

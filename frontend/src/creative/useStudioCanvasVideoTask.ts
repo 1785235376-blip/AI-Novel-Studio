@@ -1,3 +1,4 @@
+import {deriveFailedCanvasVideoDraft,type FailedCanvasVideoDraft,type FailedCanvasVideoOrigin} from './videoTaskRecovery';
 import {useLayoutEffect,useRef,useState} from 'react';
 import {ApiError,apiErrorView} from '../api';
 import {canonicalExecutionImpact,type ExecutionImpactConfirmation} from '../experimental/executionImpact/executionImpact';
@@ -30,6 +31,8 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
   const [timeline,setTimeline]=useState<Timeline>(),[preview,setPreview]=useState<CanvasVideoTaskPreview>();
   const [selected,setSelected]=useState<ProductionJob|undefined>(props.task.resumeJob),[pending,setPending]=useState<string>();
   const [candidate,setCandidate]=useState<Candidate>(),[candidateReady,setCandidateReady]=useState(false),[previewConfirmed,setPreviewConfirmed]=useState(false),[reviewConfirmed,setReviewConfirmed]=useState(false);
+  const [derivedFrom,setDerivedFrom]=useState<FailedCanvasVideoOrigin|undefined>(props.task.resumeJob?.canvas_video?.derived_from);
+  const derivedOrigin=useRef(derivedFrom),derivedRequest=useRef<string>(),derivedParent=useRef<ProductionJob>();
   const [error,setError]=useState(''),[notice,setNotice]=useState(''),[uncertain,setUncertain]=useState(false),[,refresh]=useState(0);
   const latest=useRef(props);latest.current=props;
   const alive=useRef(true),draftRef=useRef(draft),timelineRef=useRef(timeline),previewRef=useRef(preview),jobRef=useRef(selected),candidateRef=useRef(candidate),decodedCandidate=useRef<object>();
@@ -98,7 +101,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
     return checkedCanvasVideoTaskCommand({contract:'studio-canvas-video-trim/1',operation_id:'m9.timeline.multitrack',request_id:request.current,
       provider_id:null,model_id:null,prompt:'',allow_cloud:false,license_note:'',parameters:parameters(),
       source_snapshots:[canvasVideoTrimTaskSource(latest.current.task.origin.source)],canvas_return:binding,
-      timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest}});
+      timeline_snapshot:{id:row.id,version:row.version,digest:row.timeline_digest},...(derivedOrigin.current?{derived_from:derivedOrigin.current}:{})});
   }
   function checkedJob(value:unknown){
     const row=checkedCanvasVideoTaskJob(value);
@@ -114,7 +117,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
       if(job&&(job.status!=='QUEUED'||job.request_digest!==value.request_digest||canonical(checkedJob(job).canvas_video)!==canonical(value.command)
         ||canonical(job.execution_recipe)!==canonical(value.execution_recipe)))return;
       return {scope:{novel_id:binding.project_id,branch_id:binding.scope.mode==='collaboration'?binding.scope.branch_id??null:null,incarnation:binding.incarnation},
-        command:value.command,recipe:value.execution_recipe,...(job?{previousJob:job}:{}),editScope:'TASK',
+        command:value.command,recipe:value.execution_recipe,...(job?{previousJob:job}:derivedParent.current?{previousJob:derivedParent.current}:{}),editScope:'TASK',
         boundary:job?{kind:'EXECUTE',job:{id:job.id,owner:job.owner,version:job.version,request_digest:job.request_digest}}:{kind:'CREATE'},preview:value};
     }catch{return;}
   }
@@ -127,6 +130,23 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
     if(impactRef.current!==gate||busy())return;if(await gate.confirm(proof)){if(impactRef.current===gate)refresh(v=>v+1);}
   }
   function confirmPreview(checked:boolean){if(!current()||busy())return;previewConsent.current=checked;setPreviewConfirmed(checked);if(!checked){clearPreview();}}
+  function prepareFailedVideo(value:FailedCanvasVideoDraft){
+    const job=jobRef.current;
+    if(!current()||busy()||!latest.current.canMutate||uncertainRef.current||!job||job.status!=='FAILED')return;
+    checkedJob(job);
+    const expected=deriveFailedCanvasVideoDraft(job,{source:canvasVideoTrimTaskSource(latest.current.task.origin.source),
+      returnBinding:latest.current.task.origin.binding,isCurrent:current},value.request_id);
+    if(canonical(value)!==canonical(expected))throw invalid('派生来源或新草稿已改变，请重新核对原失败记录。');
+    const next:Draft={in_ms:String(expected.parameters.in_ms),out_ms:String(expected.parameters.out_ms),
+      ...(expected.parameters.include_audio===undefined?{}:{include_audio:expected.parameters.include_audio})};
+    revision.current++;clearPreview();clearCandidate();
+    derivedOrigin.current=structuredClone(expected.derived_from);setDerivedFrom(derivedOrigin.current);
+    derivedRequest.current=expected.request_id;derivedParent.current=structuredClone(job);
+    request.current=undefined;attempt.current=undefined;savedDraft.current='';history.current={past:[],future:[]};
+    timelineRef.current=undefined;setTimeline(undefined);jobRef.current=undefined;setSelected(undefined);
+    draftRef.current=next;setDraft(next);dirty(true);
+    setNotice('已准备新身份的视频派生草稿；请明确应用到独立时间线，再预览、确认入队和确认执行。原失败任务保持不变。');
+  }
   async function apply(){
     if(!latest.current.canMutate||jobRef.current||uncertainRef.current)return;const value=begin('SAVE');if(!value)return;
     let sentMutation=false;
@@ -135,7 +155,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
       const old=timelineRef.current;
       const row=await latest.current.mutate(()=>{if(!live(value))throw retired();sentMutation=true;return value.client.timelineSave(old?.id,{title:'本次视频卡片截取',timeline:compiled,expected_version:old?.version??0});});
       if(!live(value))return;if(canonical(row.timeline)!==canonical(compiled))throw invalid('原时间线保存回执与截取配置不一致。');
-      timelineRef.current=row;setTimeline(row);savedDraft.current=canonical(draftRef.current);request.current=crypto.randomUUID();clearPreview();history.current={past:[],future:[]};dirty(false);setNotice('已应用到本次原时间线版本；尚未创建或执行 Job。');
+      timelineRef.current=row;setTimeline(row);savedDraft.current=canonical(draftRef.current);request.current=derivedRequest.current??crypto.randomUUID();clearPreview();history.current={past:[],future:[]};dirty(false);setNotice('已应用到本次原时间线版本；尚未创建或执行 Job。');
     }catch(reason){if(live(value))fail(reason,'本次配置保存未确认，请读取原记录核对。',sentMutation);}finally{finish(value);}
   }
   async function inspect(){
@@ -189,6 +209,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
       if(!live(value))return;adoptJob(row.job);timelineRef.current=row.timeline;setTimeline(row.timeline);
       const next={in_ms:String(row.job.canvas_video.parameters.in_ms),out_ms:String(row.job.canvas_video.parameters.out_ms),
         ...(row.job.canvas_video.parameters.include_audio===undefined?{}:{include_audio:row.job.canvas_video.parameters.include_audio})};draftRef.current=next;setDraft(next);savedDraft.current=canonical(next);request.current=row.job.request_id;
+      derivedOrigin.current=row.job.canvas_video.derived_from;setDerivedFrom(derivedOrigin.current);derivedRequest.current=row.job.request_id;derivedParent.current=undefined;
       history.current={past:[],future:[]};markUncertain(['UNKNOWN','RUNNING','REVIEWING'].includes(row.job.status));dirty(false);setNotice('已读取原 Job 和保存配置；没有创建、执行、审核或采用。');
     }catch(reason){if(live(value))fail(reason,'原视频任务读取失败；不会重新发送。');}finally{finish(value);}
   }
@@ -234,7 +255,7 @@ export function useStudioCanvasVideoTask(props:StudioCanvasVideoTaskProps){
   }
   function mediaFailed(expected:Candidate|undefined=candidateRef.current){if(!current()||!expected||candidateRef.current!==expected)return;clearCandidate();setError('候选视频无法播放，当前不能审核，请重新读取原任务。');}
   const locked=busy(),valid=current(),impact=impactRef.current;
-  return {draft,timeline,preview:previewRef.current===preview?preview:undefined,selected,pending,error,notice,uncertain,
+  return {draft,timeline,derivedFrom,prepareFailedVideo,preview:previewRef.current===preview?preview:undefined,selected,pending,error,notice,uncertain,
     candidate:candidate?.generation===token&&candidateRef.current===candidate?candidate:undefined,candidateReady:candidateReady&&!!candidate&&decodedCandidate.current===candidate.token,impact,locked,current,
     canEdit:valid&&props.canMutate&&!locked&&!selected&&!uncertain,canUndo:valid&&props.canMutate&&!locked&&!selected&&!uncertain&&history.current.past.length>0,
     canRedo:valid&&props.canMutate&&!locked&&!selected&&!uncertain&&history.current.future.length>0,canApply:valid&&props.canMutate&&!locked&&!selected&&!uncertain,

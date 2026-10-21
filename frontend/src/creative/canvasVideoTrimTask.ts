@@ -1,3 +1,4 @@
+import type { FailedCanvasVideoOrigin } from './videoTaskRecovery';
 import type { CanvasAssetReference, CanvasDefinition, CanvasViewRecord } from './studioCanvasViewClient';
 import type { ProductionJob, ProductionRecipe, ProductionSource } from './studioProductionClient';
 import type { StudioAsset } from './studioClient';
@@ -12,7 +13,7 @@ export type CanvasVideoTaskCommand = {
   contract: 'studio-canvas-video-trim/1'; operation_id: 'm9.timeline.multitrack'; request_id: string;
   provider_id: null; model_id: null; prompt: ''; allow_cloud: false; license_note: '';
   parameters: CanvasVideoTrimParameters; source_snapshots: [CanvasVideoSource];
-  timeline_snapshot: { id: string; version: number; digest: string }; canvas_return: CanvasVideoReturnBinding;
+  timeline_snapshot: { id: string; version: number; digest: string }; canvas_return: CanvasVideoReturnBinding; derived_from?: FailedCanvasVideoOrigin;
 };
 export type CanvasVideoTaskPreview = {
   contract: 'studio-canvas-video-preview/1'; novel_id: string; branch_id: string | null;
@@ -88,9 +89,15 @@ export function compileCanvasVideoTimeline(source: ProductionSource, parameters:
 
 export function checkedCanvasVideoTaskCommand(value: unknown): CanvasVideoTaskCommand {
   if (!exact(value, ['contract', 'operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'allow_cloud', 'license_note',
-    'parameters', 'source_snapshots', 'timeline_snapshot', 'canvas_return']) || value.contract !== 'studio-canvas-video-trim/1'
+    'parameters', 'source_snapshots', 'timeline_snapshot', 'canvas_return', ...(object(value)&&Object.hasOwn(value,'derived_from')?['derived_from']:[])]) || value.contract !== 'studio-canvas-video-trim/1'
     || value.operation_id !== 'm9.timeline.multitrack' || typeof value.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(value.request_id)
     || value.provider_id !== null || value.model_id !== null || value.prompt !== '' || value.allow_cloud !== false || value.license_note !== '') invalid();
+  if(Object.hasOwn(value,'derived_from')){
+    const parent=value.derived_from;
+    if(!exact(parent,['owner','job_id','job_version','request_id','request_digest','receipt_digest'])||parent.owner!=='timeline'
+      ||!id(parent.job_id)||!revision(parent.job_version)||typeof parent.request_id!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(parent.request_id)
+      ||parent.request_id===value.request_id||!digest(parent.request_digest)||parent.receipt_digest!==null&&!digest(parent.receipt_digest))invalid();
+  }
   const origin = checkedCanvasVideoReturnBinding(value.canvas_return), parameters = checkedParameters(value.parameters);
   if (!Array.isArray(value.source_snapshots) || value.source_snapshots.length !== 1) invalid();
   const source = checkedSource(value.source_snapshots[0]), snapshot = value.timeline_snapshot;

@@ -70,6 +70,15 @@ class TimelinePin(ExecutionModel):
     digest: Digest
 
 
+class FailedCanvasVideoOrigin(ExecutionModel):
+    owner: Literal['timeline']
+    job_id: Name
+    job_version: int = Field(ge=1, le=2**53-1)
+    request_id: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$')
+    request_digest: Digest
+    receipt_digest: Digest | None
+
+
 class CanvasVideoCommand(ExecutionModel):
     contract: Literal['studio-canvas-video-trim/1']
     operation_id: Literal['m9.timeline.multitrack']
@@ -83,6 +92,13 @@ class CanvasVideoCommand(ExecutionModel):
     source_snapshots: list[ProductionSourceSnapshot] = Field(min_length=1, max_length=1)
     timeline_snapshot: TimelinePin
     canvas_return: CanvasVideoReturnBinding
+    derived_from: FailedCanvasVideoOrigin | None = None
+
+    @field_validator('derived_from', mode='before')
+    @classmethod
+    def explicit_origin(cls, value):
+        if value is None: raise ValueError('STUDIO_CANVAS_VIDEO_DERIVED_ORIGIN_INVALID')
+        return value
 
     @field_validator('source_snapshots', mode='before')
     @classmethod
@@ -93,6 +109,8 @@ class CanvasVideoCommand(ExecutionModel):
 
     @model_validator(mode='after')
     def exact_source(self):
+        if self.derived_from is not None and self.request_id == self.derived_from.request_id:
+            raise ValueError('STUDIO_CANVAS_VIDEO_NEW_REQUEST_REQUIRED')
         if pin(self.source_snapshots[0]) != pin(self.canvas_return.source):
             raise ValueError('STUDIO_CANVAS_VIDEO_SOURCE_CHANGED')
         return self
@@ -101,6 +119,7 @@ class CanvasVideoCommand(ExecutionModel):
     def canonical_sources(self, handler):
         value = handler(self)
         value['source_snapshots'] = [pin(s) for s in self.source_snapshots]
+        if self.derived_from is None: value.pop('derived_from', None)
         return value
 
 
@@ -168,9 +187,33 @@ class CanvasVideoTaskExecution:
         guard()
         return command
 
+    def _derived_origin(self, nid, scope, actor, command, guard):
+        if command.derived_from is None:
+            return
+        origin = command.derived_from
+        row, context = self.owner._row(nid, scope, actor, 'timeline', origin.job_id, guard)
+        if row.get('kind') != 'STUDIO_TIMELINE' or 'canvas_video' not in context or context.get('graph_binding') is not None:
+            raise ValueError('STUDIO_CANVAS_VIDEO_DERIVED_ORIGIN_CHANGED')
+        parent = validate_context(context)
+        projection = self.owner.view(row, 'timeline')
+        if (projection['status'] != 'FAILED' or projection['version'] != origin.job_version
+                or projection['request_id'] != origin.request_id or projection['request_digest'] != origin.request_digest
+                or projection['receipt_digest'] != origin.receipt_digest
+                or projection['output_candidate'] is not None or projection['media_measurement'] is not None
+                or command.request_id == parent.request_id
+                or command.timeline_snapshot.id == parent.timeline_snapshot.id
+                or command.canvas_return.model_dump() != parent.canvas_return.model_dump()
+                or [pin(s) for s in command.source_snapshots] != [pin(s) for s in parent.source_snapshots]):
+            raise ValueError('STUDIO_CANVAS_VIDEO_DERIVED_ORIGIN_CHANGED')
+        # The original Job permanently captures its old Timeline recipe. Only
+        # the child's separate saved Timeline is executed/current-checked below.
+        # Later edits to the parent Timeline do not rewrite either Job.
+        guard()
+
     def prepare(self, nid, scope, actor, value, guard):
         command = CanvasVideoCommand.model_validate(value)
         context = self.owner._base(nid, scope, actor, guard)
+        self._derived_origin(nid, scope, actor, command, guard)
         wire = command.model_dump()
         context.update(request_id=command.request_id, operation_id=command.operation_id,
             sources=wire['source_snapshots'], timeline_snapshot=wire['timeline_snapshot'], provider_binding=None,
