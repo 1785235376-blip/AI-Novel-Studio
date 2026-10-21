@@ -100,7 +100,13 @@ def recheck(owner, nid, scope, actor, value, guard, document=None):
     if command.template_ref is not None or command.derived_from is not None:
         validate_task_provenance(owner, nid, scope, actor, command, context, guard, document=document)
     context.update(command=command.model_dump(), sources=[pin(s) for s in command.source_snapshots], operation_id=command.operation_id)
-    owner._sources_current(nid, scope, context, guard)
+    if document is None:
+        owner._sources_current(nid, scope, context, guard)
+    else:
+        if (not owner.timeline_inputs.in_phase(nid, scope, actor)
+                or owner.store._local.active.get(owner.store.key(nid, scope)) is not document):
+            raise ValueError('STUDIO_CANVAS_AUDIO_DRAFT_SOURCE_PHASE_CHANGED')
+        owner._timeline_sources_current(nid, scope, compile_timeline(value), guard)
     owner._canvas_return_target(nid, scope, actor, command.canvas_return, context, guard, document=document)
     if owner._binding(command) is not None or owner._recipe(command).get('adapter') != 'LOCAL_FFMPEG':
         raise ValueError('STUDIO_CANVAS_AUDIO_DRAFT_ROUTE_CHANGED')
