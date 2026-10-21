@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import {cleanup,render,screen,within} from '@testing-library/react';
 import {afterEach,expect,it} from 'vitest';
-import {CanvasAudioTemplateParameterComparison} from './CanvasAudioTemplateParameterComparison';
+import {AudioTemplateParametersComparison,CanvasAudioTemplateParameterComparison} from './CanvasAudioTemplateParameterComparison';
 afterEach(cleanup);
 it('shows all explicit source effects and the local values they will replace',()=>{
  render(<CanvasAudioTemplateParameterComparison source={{in_ms:100,out_ms:900,gain_db:-6,fade_in_ms:100,fade_out_ms:200}} current={{in_ms:0,out_ms:1000,gain_db:-3,fade_in_ms:50,fade_out_ms:50}}/>);
@@ -20,4 +20,28 @@ it('shows explicitly supplied zero as a real override and avoids guessing missin
 it('does not render arbitrary fields or nonnumeric current payloads',()=>{
  render(<CanvasAudioTemplateParameterComparison source={{in_ms:100,out_ms:900}} current={{in_ms:0,out_ms:1000,gain_db:'sk-private-value',token:'secret'} as any}/>);
  expect(screen.queryByText(/sk-private/)).toBeNull();expect(screen.queryByText('secret')).toBeNull();expect(screen.getByText('尚未核对')).toBeTruthy();
+});
+
+it('compares applied template parameters with real task overrides without promising another copy',()=>{
+ render(<AudioTemplateParametersComparison templateParameters={{in_ms:100,out_ms:900,gain_db:-6,fade_in_ms:100,fade_out_ms:200}} currentParameters={{in_ms:100,out_ms:900,gain_db:-3,fade_in_ms:100,fade_out_ms:200}}/>);
+ const table=screen.getByRole('table',{name:'已应用模板与本次任务参数对照'});
+ expect(within(table).getAllByRole('row')).toHaveLength(6);
+ expect(within(table).getAllByText('与源模板一致')).toHaveLength(4);
+ expect(within(screen.getByRole('row',{name:/增益/})).getByText('仅本次任务覆盖')).toBeTruthy();
+ expect(screen.queryByText(/本次覆盖）/)).toBeNull();
+});
+it('keeps omitted template effects distinct from explicit zero in applied comparison',()=>{
+ render(<AudioTemplateParametersComparison templateParameters={{in_ms:0,out_ms:800,gain_db:0}} currentParameters={{in_ms:0,out_ms:800,gain_db:0,fade_in_ms:50,fade_out_ms:0}}/>);
+ expect(screen.getAllByText('与源模板一致')).toHaveLength(3);
+ expect(screen.getAllByText('模板未提供 · 保留本次值')).toHaveLength(2);
+});
+it('does not claim omission or invalid current values match an applied template',()=>{
+ render(<AudioTemplateParametersComparison templateParameters={{in_ms:0,out_ms:800,gain_db:-6}} currentParameters={{in_ms:0,out_ms:800,gain_db:NaN,fade_in_ms:null,fade_out_ms:'secret'} as any}/>);
+ expect(screen.getAllByText('尚未核对当前值')).toHaveLength(3);
+ expect(screen.queryByText('secret')).toBeNull();
+});
+it('shows all applied current values as unverified when no task snapshot was supplied',()=>{
+ render(<AudioTemplateParametersComparison templateParameters={{in_ms:0,out_ms:800}}/>);
+ expect(screen.getAllByText('尚未核对当前值')).toHaveLength(5);
+ expect(screen.queryByText('与源模板一致')).toBeNull();
 });

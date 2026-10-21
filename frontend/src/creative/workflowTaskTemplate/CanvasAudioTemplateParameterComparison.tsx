@@ -20,3 +20,27 @@ export function CanvasAudioTemplateParameterComparison({ source, current }: { so
     })}</tbody>
   </table>;
 }
+
+/** Applied template provenance: compare the pinned source with actual task overrides. */
+export function AudioTemplateParametersComparison({ templateParameters, currentParameters }: {
+  templateParameters: CanvasAudioTemplateParameters;
+  currentParameters?: CanvasAudioTemplateParameters;
+}) {
+  return <table aria-label="已应用模板与本次任务参数对照">
+    <thead><tr><th scope="col">参数</th><th scope="col">源模板版本值</th><th scope="col">本次任务当前值</th><th scope="col">本次覆盖状态</th></tr></thead>
+    <tbody>{fields.map(([key, label, unit]) => {
+      const supplied = Object.hasOwn(templateParameters, key);
+      const present = !!currentParameters && Object.hasOwn(currentParameters, key);
+      const value = currentParameters?.[key];
+      const valid = typeof value === 'number' && Number.isFinite(value);
+      const status = !present || !valid ? '尚未核对当前值'
+        : !supplied ? '模板未提供 · 保留本次值'
+        : value === templateParameters[key] ? '与源模板一致' : '仅本次任务覆盖';
+      return <tr key={key}><th scope="row">{label}</th>
+        <td>{supplied ? shown(templateParameters[key], unit) : '未提供'}</td>
+        <td>{present ? shown(value, unit) : '未提供当前值'}</td>
+        <td>{status}</td>
+      </tr>;
+    })}</tbody>
+  </table>;
+}
