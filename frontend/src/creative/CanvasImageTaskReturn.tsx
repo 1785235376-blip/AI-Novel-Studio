@@ -1,3 +1,4 @@
+import { checkedCanvasVideoReturnBinding, replaceCanvasVideoTrimTaskResult } from './canvasVideoTrimTask';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, StatusMessage } from '../ui/primitives';
 import { replaceCanvasAudioTrimTaskResult } from './canvasAudioTrimTask';
@@ -17,6 +18,12 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
   const token=fence.current.token,current=()=>alive.current&&token===fence.current.token&&live.current.canMutate&&live.current.isCurrent()&&live.current.task.isOriginCurrent();
   useLayoutEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
   const visible=proof?.token===token?proof:undefined;
+  function replacement(canvas: CanvasViewRecord, job: ProductionJob, asset: StudioAsset) {
+    if(props.task.asset.kind==='video')return replaceCanvasVideoTrimTaskResult({...props.task.origin,
+      binding:checkedCanvasVideoReturnBinding(props.task.origin.binding)},canvas,job,asset);
+    return (props.task.asset.kind==='audio'?replaceCanvasAudioTrimTaskResult:replaceCanvasImageTaskResult)(props.task.origin,canvas,job,asset);
+  }
+
   async function inspect(){
     if(!current()||running.current||props.disabled||uncertain)return;running.current=true;setBusy(true);setError('');proofRef.current=undefined;approvedRef.current=undefined;setProof(undefined);setConsent(false);
     try{
@@ -29,7 +36,7 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
         const binding=props.task.origin.binding;
         if(binding){const history=await props.client.graphs.canvasViews!.history(binding.canvas_id);
           if(!sameCanvasReturnScope(binding,canvas.project_id,canvas.scope,history.incarnation)||history.current_version!==canvas.version||history.current_definition_digest!==canvas.definition_digest)throw new Error('原项目代次、范围或画布版本已改变，不能采用。');}
-        (props.task.asset.kind==='audio'?replaceCanvasAudioTrimTaskResult:replaceCanvasImageTaskResult)(props.task.origin,canvas,job,asset);return {token,canvas,job,asset};
+        replacement(canvas,job,asset);return {token,canvas,job,asset};
       });
       if(current())setProof(value);
     }catch(reason){if(current())setError(reason instanceof Error?reason.message:'原位置或正式结果未通过核验。');}
@@ -39,9 +46,9 @@ export function CanvasImageTaskReturn(props:{task:CanvasImageTaskSession;approve
     if(!current()||running.current||props.disabled||uncertain||!visible||proofRef.current!==visible||approvedRef.current!==visible||!consent)return;
     running.current=true;setBusy(true);proofRef.current=undefined;approvedRef.current=undefined;setProof(undefined);setConsent(false);
     try{
-      const definition=(props.task.asset.kind==='audio'?replaceCanvasAudioTrimTaskResult:replaceCanvasImageTaskResult)(props.task.origin,visible.canvas,visible.job,visible.asset);
+      const definition=replacement(visible.canvas,visible.job,visible.asset);
       const binding=props.task.origin.binding;
-      const row=await props.mutate(()=>props.client.graphs.canvasViews!.save(visible.canvas.id,visible.canvas.version,definition,binding?{expected_incarnation:binding.incarnation,expected_definition_digest:binding.canvas_digest,expected_card:{card_id:binding.card_id,source:props.task.origin.source}}:undefined));
+      const row=await props.mutate(()=>{if(!current())throw new Error('原位置采用确认已退役。');return props.client.graphs.canvasViews!.save(visible.canvas.id,visible.canvas.version,definition,binding?{expected_incarnation:binding.incarnation,expected_definition_digest:binding.canvas_digest,expected_card:{card_id:binding.card_id,source:props.task.origin.source}}:undefined);});
       if(current()){props.onAdopt(row);props.onComplete();}
       else if(alive.current){setUncertain(true);props.onUncertain();setError('原位置或权限在回填期间改变，保存结果待核对。请重新读取原画布，不会重试。');}
     }catch(reason){setUncertain(true);props.onUncertain();if(alive.current)setError('回填结果待核对，请重新读取原画布；不会自动重试。'+(reason instanceof Error?reason.message:''));}

@@ -1,3 +1,5 @@
+import { checkedCanvasVideoTaskJob } from './canvasVideoTrimTask';
+import type { ProductionJob } from './studioProductionClient';
 import { ApiError } from '../api';
 import type { StudioGraphScope } from './studioGraphTypes';
 import type { ProductionSource } from './studioProductionClient';
@@ -42,3 +44,14 @@ export const sameCanvasReturn=(a:unknown,b:unknown)=>{
 };
 export const sameCanvasReturnScope=(binding:CanvasReturnBinding,projectId:string,scope:StudioGraphScope,incarnation:string|undefined)=>
   binding.project_id===projectId&&binding.incarnation===incarnation&&canonical(binding.scope)===canonical(scope);
+
+/** New Timeline capsule remains distinct from the legacy MediaCommand contract. */
+export function canvasReturnInJob(job: ProductionJob): CanvasReturnBinding | undefined {
+  return Object.hasOwn(job, 'canvas_video') ? checkedCanvasVideoTaskJob(job).canvas_video.canvas_return : canvasReturnInCommand(job.command);
+}
+export function sameCanvasReturnJob(left: ProductionJob, right: ProductionJob): boolean {
+  if (left.canvas_video !== undefined || right.canvas_video !== undefined) {
+    return !!left.canvas_video && !!right.canvas_video && canonical(checkedCanvasVideoTaskJob(left).canvas_video) === canonical(checkedCanvasVideoTaskJob(right).canvas_video);
+  }
+  return sameCanvasReturn(left.command, right.command);
+}

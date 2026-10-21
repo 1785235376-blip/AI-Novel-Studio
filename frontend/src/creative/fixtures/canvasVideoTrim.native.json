@@ -1,0 +1,1827 @@
+{
+  "contract": "synthetic-video-card-bridge-proof/1",
+  "real_cpu_ffmpeg": true,
+  "model_called": false,
+  "source": {
+    "width": 64,
+    "height": 64,
+    "fps": "10/1",
+    "codec": "mpeg4",
+    "duration_ms": 2000,
+    "decoded_frames": 20,
+    "center_rgb": [
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        253,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ]
+    ],
+    "byte_count": 1267,
+    "sha256": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+  },
+  "output": {
+    "width": 640,
+    "height": 360,
+    "fps": "25/1",
+    "codec": "h264",
+    "duration_ms": 600,
+    "decoded_frames": 15,
+    "center_rgb": [
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ],
+      [
+        0,
+        0,
+        254
+      ]
+    ],
+    "byte_count": 3340,
+    "sha256": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f"
+  },
+  "preview": {
+    "contract": "studio-canvas-video-preview/1",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "command": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "execution_available": true,
+    "automatic_dispatch": false,
+    "product_acceptance": "LOCAL_REQUIRED",
+    "preview_digest": "6f1d1318e6347538790edf157213208ba2f5a917d94cdae9335931c918aba4a6"
+  },
+  "queued": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "canvas_video": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "receipt_digest": "4cfa1009deb4104df79791402a22f5fbdfb3cd1046f411ed5fcaede28371d620",
+    "attempt": null,
+    "created_at": "2026-10-21T00:16:38.199834+00:00",
+    "updated_at": "2026-10-21T00:16:38.200840+00:00",
+    "error_code": null,
+    "review_state": "HUMAN_REVIEW_REQUIRED",
+    "cancellation_mode": null,
+    "needs_reconciliation": false,
+    "execution_state": "QUEUED",
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": null,
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "sources": [
+      {
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+        "asset_kind": "video"
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "saved-video-trim",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "source_asset": {
+    "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "filename": "synthetic-red-blue.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 1267,
+    "sha256": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+    "branch_id": null,
+    "created_at": "2026-10-21T00:16:37.751064+00:00",
+    "updated_at": "2026-10-21T00:16:37.751064+00:00",
+    "version": 1,
+    "deleted_at": null,
+    "idempotency_key": "865b2fdec3f24ff39e34ef891194072a",
+    "provenance": {
+      "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+      "label": "synthetic-red-blue.mp4",
+      "kind": "video",
+      "version": 1,
+      "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "UNDECLARED",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "",
+      "parents": [],
+      "sources": [],
+      "producer": {
+        "declared_by": null,
+        "provider_id": null,
+        "model_id": null
+      },
+      "generation": null,
+      "declaration_history_versions": [],
+      "stale": false,
+      "source_task_id": null
+    },
+    "relationships": []
+  },
+  "timeline": {
+    "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "title": "Single saved video task",
+    "version": 1,
+    "timeline_digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d",
+    "timeline": {
+      "captions": [],
+      "duration_ms": 600,
+      "fps": 25,
+      "height": 360,
+      "schema_version": 2,
+      "tracks": [
+        {
+          "clips": [
+            {
+              "fade_in_ms": 0,
+              "fade_out_ms": 0,
+              "gain_db": 0.0,
+              "height": 360,
+              "id": "canvas-video-clip",
+              "in_ms": 1000,
+              "include_audio": false,
+              "muted": false,
+              "opacity": 1.0,
+              "out_ms": 1600,
+              "source_snapshot": {
+                "asset_kind": "video",
+                "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+                "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                "kind": "ASSET",
+                "version": 1
+              },
+              "speed_den": 1,
+              "speed_num": 1,
+              "start_ms": 0,
+              "width": 640,
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "gain_db": 0.0,
+          "id": "canvas-video-track",
+          "kind": "VIDEO",
+          "muted": false,
+          "order": 0,
+          "role": "PRIMARY"
+        }
+      ],
+      "width": 640
+    },
+    "created_at": "2026-10-21T00:16:37.802068+00:00",
+    "updated_at": "2026-10-21T00:16:37.802068+00:00",
+    "branch_id": null
+  },
+  "command": {
+    "contract": "studio-canvas-video-trim/1",
+    "operation_id": "m9.timeline.multitrack",
+    "request_id": "saved-video-trim",
+    "provider_id": null,
+    "model_id": null,
+    "prompt": "",
+    "allow_cloud": false,
+    "license_note": "",
+    "parameters": {
+      "in_ms": 1000,
+      "out_ms": 1600
+    },
+    "source_snapshots": [
+      {
+        "kind": "ASSET",
+        "asset_kind": "video",
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+      }
+    ],
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "canvas_return": {
+      "contract": "studio-canvas-return/1",
+      "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+      "scope": {
+        "mode": "local",
+        "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+      },
+      "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+      "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+      "canvas_version": 1,
+      "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+      "card_id": "origin-video",
+      "source": {
+        "kind": "ASSET",
+        "asset_kind": "video",
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+      }
+    }
+  },
+  "candidate_base64": "AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAdFbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAlgAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAA1p0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAlgAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAoAAAAFoAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAJYAAAEAAABAAAAAALSbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAyAAAAHgBVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAACfW1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAj1zdGJsAAAAwXN0c2QAAAAAAAAAAQAAALFhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAoABaABIAAAASAAAAAAAAAABFUxhdmM2Mi4yOC4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAAN2F2Y0MBZAAe/+EAGmdkAB6s2UCgL/lwEQAAAwABAAADADIPFi2WAQAGaOvjyyLA/fj4AAAAABBwYXNwAAAAAQAAAAEAAAAUYnRydAABhqAABhqAAAAAAAAAABhzdHRzAAAAAAAAAAEAAAAPAAACAAAAABRzdHNzAAAAAAAAAAEAAAABAAAAiGN0dHMAAAAAAAAADwAAAAEAAAQAAAAAAQAACgAAAAABAAAEAAAAAAEAAAAAAAAAAQAAAgAAAAABAAAKAAAAAAEAAAQAAAAAAQAAAAAAAAABAAACAAAAAAEAAAoAAAAAAQAABAAAAAABAAAAAAAAAAEAAAIAAAAAAQAABgAAAAABAAACAAAAAChzdHNjAAAAAAAAAAIAAAABAAAAAgAAAAEAAAACAAAAAQAAAAEAAABQc3RzegAAAAAAAAAAAAAADwAAA7UAAAAVAAAAEgAAABIAAAASAAAAGwAAABQAAAASAAAAEgAAABoAAAAUAAAAEgAAABIAAAAbAAAAEgAAAEhzdGNvAAAAAAAAAA4AAAd1AAALVgAAC3QAAAuSAAALsAAAC9cAAAv3AAAMFQAADDMAAAxTAAAMcwAADJEAAAyvAAAM1gAAAxV0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAACAAAAAAAAAlgAAAAAAAAAAAAAAAEBAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAJYAAAEAAABAAAAAAKNbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAC7gAAAdIBVxAAAAAAALWhkbHIAAAAAAAAAAHNvdW4AAAAAAAAAAAAAAABTb3VuZEhhbmRsZXIAAAACOG1pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAcZHJlZgAAAAAAAAABAAAADHVybCAAAAABAAAB/HN0YmwAAAB+c3RzZAAAAAAAAAABAAAAbm1wNGEAAAAAAAAAAQAAAAAAAAAAAAIAEAAAAAC7gAAAAAAANmVzZHMAAAAAA4CAgCUAAgAEgICAF0AVAAAAAAF3AAAACegFgICABRGQVuUABoCAgAECAAAAFGJ0cnQAAAAAAAF3AAAACegAAAAgc3R0cwAAAAAAAAACAAAAHQAABAAAAAABAAAAgAAAAExzdHNjAAAAAAAAAAUAAAABAAAAAQAAAAEAAAACAAAAAgAAAAEAAAAJAAAAAQAAAAEAAAAKAAAAAgAAAAEAAAAOAAAABgAAAAEAAACMc3RzegAAAAAAAAAAAAAAHgAAABcAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAEhzdGNvAAAAAAAAAA4AAAs/AAALaAAAC4YAAAukAAALywAAC+sAAAwJAAAMJwAADE0AAAxnAAAMhQAADKMAAAzKAAAM6AAAABpzZ3BkAQAAAHJvbGwAAAACAAAAAf//AAAAHHNiZ3AAAAAAcm9sbAAAAAEAAAAeAAAAAQAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNjIuMTIuMTAyAAAACGZyZWUAAAWfbWRhdAAAAvAGBf//7NxF6b3m2Ui3lizYINkj7u94MjY0IC0gY29yZSAxNjUgcjMyMjMgMDQ4MGNiMCAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMjUgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0xIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDM6MHgxMTMgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTEgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiBiX2FkYXB0PTEgYl9iaWFzPTAgZGlyZWN0PTEgd2VpZ2h0Yj0xIG9wZW5fZ29wPTAgd2VpZ2h0cD0yIGtleWludD0yNTAga2V5aW50X21pbj0yNSBzY2VuZWN1dD00MCBpbnRyYV9yZWZyZXNoPTAgcmNfbG9va2FoZWFkPTQwIHJjPWNyZiBtYnRyZWU9MSBjcmY9MjMuMCBxY29tcD0wLjYwIHFwbWluPTAgcXBtYXg9NjkgcXBzdGVwPTQgdmJ2X21heHJhdGU9NDAwIHZidl9idWZzaXplPTgwMCBjcmZfbWF4PTAuMCBuYWxfaHJkPW5vbmUgZmlsbGVyPTAgaXBfcmF0aW89MS40MCBhcT0xOjEuMDAAgAAAAL1liIQAO//+906/AptUwioDklcK9sqkJllfMADV+Jlt94WpiErwNRclAhG+ZnDs484/Z93lFFVdQNUk2TAAAAMAAD0MiRPYx64RW6/E3u/1NsRkbmj/yKw0Sr/cFfYzgenMkyLyauo9mGbUAACp7irFQO9JeX8SgiRkVMsw+Hc0adyqKaX9FFIXK1Tr81UcE1cHo1e7g1mVA1pno1dMVD10hrKvbWVo2srBtZVPQ/ieh/d6fNR7oe4AAyAlZxkAAAARQZokbEN//qeEAAADAAADAcfeAgBMYXZjNjIuMjguMTAyAEIgCMEYOAAAAA5BnkJ4hf8AAAMAAAMBDyEQBGCMHCEQBGCMHAAAAA4BnmF0Qr8AAAMAAAMBdyEQBGCMHCEQBGCMHAAAAA4BnmNqQr8AAAMAAAMBdyEQBGCMHCEQBGCMHAAAABdBmmhJqEFomUwIb//+p4QAAAMAAAMBxyEQBGCMHCEQBGCMHAAAABBBnoZFESwv/wAAAwAAAwEPIRAEYIwcIRAEYIwcAAAADgGepXRCvwAAAwAAAwF3IRAEYIwcIRAEYIwcAAAADgGep2pCvwAAAwAAAwF3IRAEYIwcIRAEYIwcAAAAFkGarEmoQWyZTAhn//6eEAAAAwAABvQhEARgjBwAAAAQQZ7KRRUsL/8AAAMAAAMBDyEQBGCMHCEQBGCMHAAAAA4Bnul0Qr8AAAMAAAMBdyEQBGCMHCEQBGCMHAAAAA4BnutqQr8AAAMAAAMBdyEQBGCMHCEQBGCMHAAAABdBmu5JqEFsmUwUTCv//jhAAAADAAAbMSEQBGCMHCEQBGCMHAAAAA4Bnw1qQr8AAAMAAAMBdyEQBGCMHCEQBGCMHCEQBGCMHCEQBGCMHCEQBGCMHCEQBGCMHA==",
+  "get_queued": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "canvas_video": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "receipt_digest": "4cfa1009deb4104df79791402a22f5fbdfb3cd1046f411ed5fcaede28371d620",
+    "attempt": null,
+    "created_at": "2026-10-21T00:16:38.199834+00:00",
+    "updated_at": "2026-10-21T00:16:38.200840+00:00",
+    "error_code": null,
+    "review_state": "HUMAN_REVIEW_REQUIRED",
+    "cancellation_mode": null,
+    "needs_reconciliation": false,
+    "execution_state": "QUEUED",
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": null,
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "sources": [
+      {
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+        "asset_kind": "video"
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "saved-video-trim",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "list_queued": {
+    "items": [
+      {
+        "contract": "studio-production-job/1",
+        "owner": "timeline",
+        "canvas_video": {
+          "contract": "studio-canvas-video-trim/1",
+          "operation_id": "m9.timeline.multitrack",
+          "request_id": "saved-video-trim",
+          "provider_id": null,
+          "model_id": null,
+          "prompt": "",
+          "allow_cloud": false,
+          "license_note": "",
+          "parameters": {
+            "in_ms": 1000,
+            "out_ms": 1600
+          },
+          "source_snapshots": [
+            {
+              "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+              "asset_kind": "video"
+            }
+          ],
+          "timeline_snapshot": {
+            "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+            "version": 1,
+            "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+          },
+          "canvas_return": {
+            "contract": "studio-canvas-return/1",
+            "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+            "scope": {
+              "mode": "local",
+              "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+            },
+            "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+            "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+            "canvas_version": 1,
+            "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+            "card_id": "origin-video",
+            "source": {
+              "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+              "kind": "ASSET",
+              "version": 1,
+              "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+              "asset_kind": "video"
+            }
+          }
+        },
+        "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+        "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "branch_id": null,
+        "version": 1,
+        "status": "QUEUED",
+        "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+        "receipt_digest": "4cfa1009deb4104df79791402a22f5fbdfb3cd1046f411ed5fcaede28371d620",
+        "attempt": null,
+        "created_at": "2026-10-21T00:16:38.199834+00:00",
+        "updated_at": "2026-10-21T00:16:38.200840+00:00",
+        "error_code": null,
+        "review_state": "HUMAN_REVIEW_REQUIRED",
+        "cancellation_mode": null,
+        "needs_reconciliation": false,
+        "execution_state": "QUEUED",
+        "operation_id": "m9.timeline.multitrack",
+        "output_candidate": null,
+        "timeline_snapshot": {
+          "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+          "version": 1,
+          "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+        },
+        "sources": [
+          {
+            "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "kind": "ASSET",
+            "version": 1,
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "asset_kind": "video"
+          }
+        ],
+        "command": null,
+        "provider": null,
+        "execution_recipe": {
+          "contract": "studio-execution-recipe/1",
+          "operation_id": "m9.timeline.multitrack",
+          "adapter": "LOCAL_FFMPEG",
+          "output_profile": "DELIVERY_H264_MP4",
+          "timeline": {
+            "schema_version": 2,
+            "duration_ms": 600,
+            "width": 640,
+            "height": 360,
+            "fps": 25,
+            "tracks": [
+              {
+                "id": "canvas-video-track",
+                "kind": "VIDEO",
+                "order": 0,
+                "role": "PRIMARY",
+                "muted": false,
+                "gain_db": 0.0,
+                "clips": [
+                  {
+                    "id": "canvas-video-clip",
+                    "source_snapshot": {
+                      "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                      "kind": "ASSET",
+                      "asset_kind": "video",
+                      "version": 1,
+                      "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                    },
+                    "start_ms": 0,
+                    "in_ms": 1000,
+                    "out_ms": 1600,
+                    "speed_num": 1,
+                    "speed_den": 1,
+                    "muted": false,
+                    "gain_db": 0.0,
+                    "fade_in_ms": 0,
+                    "fade_out_ms": 0,
+                    "x": 0,
+                    "y": 0,
+                    "width": 640,
+                    "height": 360,
+                    "opacity": 1.0,
+                    "include_audio": false
+                  }
+                ]
+              }
+            ],
+            "captions": []
+          },
+          "export_profile": {
+            "preset": "DELIVERY_H264_MP4",
+            "video_bitrate_kbps": 400,
+            "audio_bitrate_kbps": 96,
+            "crf": 23
+          },
+          "automatic_fallback": false,
+          "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+        },
+        "media_measurement": null,
+        "approved_asset_version": null,
+        "request_id": "saved-video-trim",
+        "product_acceptance": "LOCAL_REQUIRED",
+        "automatic_replay": false,
+        "remote_compute_may_continue": false
+      }
+    ],
+    "product_acceptance": "LOCAL_REQUIRED"
+  },
+  "get": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "canvas_video": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "receipt_digest": "e9682ad59f061310034c72902ff46181afd00b893ec779e71b1cd3666e166d30",
+    "attempt": null,
+    "created_at": "2026-10-21T00:16:38.199834+00:00",
+    "updated_at": "2026-10-21T00:16:41.538249+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": false,
+    "execution_state": "APPROVED",
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "250107b7-19bd-444c-a1bf-02665695f820",
+      "version": 1,
+      "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "sources": [
+      {
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+        "asset_kind": "video"
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "media_measurement": {
+      "duration_ms": 600,
+      "byte_count": 3340,
+      "width": 640,
+      "height": 360,
+      "fps": 25.0,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4",
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      }
+    },
+    "approved_asset_version": 2,
+    "request_id": "saved-video-trim",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "executed": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "canvas_video": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "version": 5,
+    "status": "SUCCEEDED",
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "receipt_digest": "4448a12aee76ff57530a136310ea5a5f1347cc929125a1cab7805e46076fb8d8",
+    "attempt": null,
+    "created_at": "2026-10-21T00:16:38.199834+00:00",
+    "updated_at": "2026-10-21T00:16:41.108570+00:00",
+    "error_code": null,
+    "review_state": "HUMAN_REVIEW_REQUIRED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "250107b7-19bd-444c-a1bf-02665695f820",
+      "version": 1,
+      "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "sources": [
+      {
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+        "asset_kind": "video"
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "media_measurement": {
+      "duration_ms": 600,
+      "byte_count": 3340,
+      "width": 640,
+      "height": 360,
+      "fps": 25.0,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4",
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      }
+    },
+    "approved_asset_version": null,
+    "request_id": "saved-video-trim",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "approved": {
+    "contract": "studio-production-job/1",
+    "owner": "timeline",
+    "canvas_video": {
+      "contract": "studio-canvas-video-trim/1",
+      "operation_id": "m9.timeline.multitrack",
+      "request_id": "saved-video-trim",
+      "provider_id": null,
+      "model_id": null,
+      "prompt": "",
+      "allow_cloud": false,
+      "license_note": "",
+      "parameters": {
+        "in_ms": 1000,
+        "out_ms": 1600
+      },
+      "source_snapshots": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      ],
+      "timeline_snapshot": {
+        "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+        "version": 1,
+        "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+      },
+      "canvas_return": {
+        "contract": "studio-canvas-return/1",
+        "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+        "scope": {
+          "mode": "local",
+          "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+        },
+        "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+        "canvas_id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+        "canvas_version": 1,
+        "canvas_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "card_id": "origin-video",
+        "source": {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "kind": "ASSET",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "asset_kind": "video"
+        }
+      }
+    },
+    "id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "branch_id": null,
+    "version": 7,
+    "status": "APPROVED",
+    "request_digest": "19d7e18b46000fe9bbbbabf8a008adf75e991cda463d994c57f4d65461ac3a2c",
+    "receipt_digest": "e9682ad59f061310034c72902ff46181afd00b893ec779e71b1cd3666e166d30",
+    "attempt": null,
+    "created_at": "2026-10-21T00:16:38.199834+00:00",
+    "updated_at": "2026-10-21T00:16:41.538249+00:00",
+    "error_code": null,
+    "review_state": "ORIGINAL_OWNER_REVIEWED",
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m9.timeline.multitrack",
+    "output_candidate": {
+      "id": "250107b7-19bd-444c-a1bf-02665695f820",
+      "version": 1,
+      "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+      "kind": "video"
+    },
+    "timeline_snapshot": {
+      "id": "55eaf158-169c-4936-9777-dd7806f694c4",
+      "version": 1,
+      "digest": "a38dd5b173d3dc1e0eac41044db1c6e097716cbbf1b92808616286f8d86c489d"
+    },
+    "sources": [
+      {
+        "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+        "kind": "ASSET",
+        "version": 1,
+        "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+        "asset_kind": "video"
+      }
+    ],
+    "command": null,
+    "provider": null,
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m9.timeline.multitrack",
+      "adapter": "LOCAL_FFMPEG",
+      "output_profile": "DELIVERY_H264_MP4",
+      "timeline": {
+        "schema_version": 2,
+        "duration_ms": 600,
+        "width": 640,
+        "height": 360,
+        "fps": 25,
+        "tracks": [
+          {
+            "id": "canvas-video-track",
+            "kind": "VIDEO",
+            "order": 0,
+            "role": "PRIMARY",
+            "muted": false,
+            "gain_db": 0.0,
+            "clips": [
+              {
+                "id": "canvas-video-clip",
+                "source_snapshot": {
+                  "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                  "kind": "ASSET",
+                  "asset_kind": "video",
+                  "version": 1,
+                  "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9"
+                },
+                "start_ms": 0,
+                "in_ms": 1000,
+                "out_ms": 1600,
+                "speed_num": 1,
+                "speed_den": 1,
+                "muted": false,
+                "gain_db": 0.0,
+                "fade_in_ms": 0,
+                "fade_out_ms": 0,
+                "x": 0,
+                "y": 0,
+                "width": 640,
+                "height": 360,
+                "opacity": 1.0,
+                "include_audio": false
+              }
+            ]
+          }
+        ],
+        "captions": []
+      },
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      },
+      "automatic_fallback": false,
+      "recipe_digest": "4a87e50ddede1ac1dc8462341bfab7d17781a24d719138c9a21550fbf063e11b"
+    },
+    "media_measurement": {
+      "duration_ms": 600,
+      "byte_count": 3340,
+      "width": 640,
+      "height": 360,
+      "fps": 25.0,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "container": "mp4",
+      "profile_validation": "NATIVE_FFPROBE_EXACT",
+      "render_profile": "STUDIO_MULTITRACK_LOCAL_FFMPEG_DELIVERY_H264_MP4",
+      "export_profile": {
+        "preset": "DELIVERY_H264_MP4",
+        "video_bitrate_kbps": 400,
+        "audio_bitrate_kbps": 96,
+        "crf": 23
+      }
+    },
+    "approved_asset_version": 2,
+    "request_id": "saved-video-trim",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "canvas": {
+    "id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+    "version": 1,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "kind": "video",
+            "version": 1
+          },
+          "id": "origin-video",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "kind": "video",
+            "version": 1
+          },
+          "id": "another-video",
+          "position": {
+            "x": 760.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Saved synthetic video cards",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+    "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+    },
+    "created_at": "2026-10-21T00:16:37.769042+00:00",
+    "updated_at": "2026-10-21T00:16:37.769042+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-video",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-red-blue.mp4"
+      },
+      {
+        "card_id": "another-video",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-red-blue.mp4"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 0,
+      "record_bytes": 1276
+    }
+  },
+  "returned": {
+    "id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+    "version": 2,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "250107b7-19bd-444c-a1bf-02665695f820",
+            "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+            "kind": "video",
+            "version": 2
+          },
+          "id": "origin-video",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "kind": "video",
+            "version": 1
+          },
+          "id": "another-video",
+          "position": {
+            "x": 760.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Saved synthetic video cards",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "4242702eed1fffec30992ee929bc6209e1f1100c83a3ba06125a21b15ee25b86",
+    "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+    },
+    "created_at": "2026-10-21T00:16:37.769042+00:00",
+    "updated_at": "2026-10-21T00:16:41.555216+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-video",
+        "state": "CURRENT_METADATA",
+        "filename": "studio-timeline-7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd.mp4"
+      },
+      {
+        "card_id": "another-video",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-red-blue.mp4"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 1,
+      "record_bytes": 2539
+    }
+  },
+  "restored": {
+    "id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+    "version": 3,
+    "definition": {
+      "cards": [
+        {
+          "asset": {
+            "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "kind": "video",
+            "version": 1
+          },
+          "id": "origin-video",
+          "position": {
+            "x": 44.0,
+            "y": 66.0
+          }
+        },
+        {
+          "asset": {
+            "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+            "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+            "kind": "video",
+            "version": 1
+          },
+          "id": "another-video",
+          "position": {
+            "x": 760.0,
+            "y": 120.0
+          }
+        }
+      ],
+      "schema_version": 1,
+      "title": "Saved synthetic video cards",
+      "viewport": {
+        "x": 0.0,
+        "y": 0.0,
+        "zoom": 1.0
+      }
+    },
+    "definition_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+    "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+    },
+    "created_at": "2026-10-21T00:16:37.769042+00:00",
+    "updated_at": "2026-10-21T00:16:41.592221+00:00",
+    "reference_states": [
+      {
+        "card_id": "origin-video",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-red-blue.mp4"
+      },
+      {
+        "card_id": "another-video",
+        "state": "CURRENT_METADATA",
+        "filename": "synthetic-red-blue.mp4"
+      }
+    ],
+    "execution_authority": false,
+    "binary_content_verified": false,
+    "capacity": {
+      "history_used": 2,
+      "record_bytes": 3803
+    }
+  },
+  "history": {
+    "project_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "scope": {
+      "mode": "local",
+      "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79"
+    },
+    "id": "6eaeb76b-c114-4d21-8878-6bc4691c599d",
+    "incarnation": "file:2267744b-9f3a-480d-8a03-5cedd8e0280b",
+    "current_version": 2,
+    "current_definition_digest": "4242702eed1fffec30992ee929bc6209e1f1100c83a3ba06125a21b15ee25b86",
+    "items": [
+      {
+        "version": 1,
+        "definition_digest": "1c9bae0748eb147fbd0c69f182f38f11769267ead980c64e80f4688e3a887473",
+        "created_at": "2026-10-21T00:16:37.769042+00:00",
+        "updated_at": "2026-10-21T00:16:37.769042+00:00",
+        "definition": {
+          "cards": [
+            {
+              "asset": {
+                "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+                "kind": "video",
+                "version": 1
+              },
+              "id": "origin-video",
+              "position": {
+                "x": 44.0,
+                "y": 66.0
+              }
+            },
+            {
+              "asset": {
+                "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+                "kind": "video",
+                "version": 1
+              },
+              "id": "another-video",
+              "position": {
+                "x": 760.0,
+                "y": 120.0
+              }
+            }
+          ],
+          "schema_version": 1,
+          "title": "Saved synthetic video cards",
+          "viewport": {
+            "x": 0.0,
+            "y": 0.0,
+            "zoom": 1.0
+          }
+        },
+        "reference_states": [
+          {
+            "card_id": "origin-video",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-red-blue.mp4"
+          },
+          {
+            "card_id": "another-video",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-red-blue.mp4"
+          }
+        ],
+        "can_restore": true
+      },
+      {
+        "version": 2,
+        "definition_digest": "4242702eed1fffec30992ee929bc6209e1f1100c83a3ba06125a21b15ee25b86",
+        "created_at": "2026-10-21T00:16:37.769042+00:00",
+        "updated_at": "2026-10-21T00:16:41.555216+00:00",
+        "definition": {
+          "cards": [
+            {
+              "asset": {
+                "asset_id": "250107b7-19bd-444c-a1bf-02665695f820",
+                "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+                "kind": "video",
+                "version": 2
+              },
+              "id": "origin-video",
+              "position": {
+                "x": 44.0,
+                "y": 66.0
+              }
+            },
+            {
+              "asset": {
+                "asset_id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+                "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+                "kind": "video",
+                "version": 1
+              },
+              "id": "another-video",
+              "position": {
+                "x": 760.0,
+                "y": 120.0
+              }
+            }
+          ],
+          "schema_version": 1,
+          "title": "Saved synthetic video cards",
+          "viewport": {
+            "x": 0.0,
+            "y": 0.0,
+            "zoom": 1.0
+          }
+        },
+        "reference_states": [
+          {
+            "card_id": "origin-video",
+            "state": "CURRENT_METADATA",
+            "filename": "studio-timeline-7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd.mp4"
+          },
+          {
+            "card_id": "another-video",
+            "state": "CURRENT_METADATA",
+            "filename": "synthetic-red-blue.mp4"
+          }
+        ],
+        "can_restore": false
+      }
+    ],
+    "restore_policy": "CURRENT_METADATA_ONLY",
+    "execution_authority": false,
+    "binary_content_verified": false
+  },
+  "formal_asset": {
+    "id": "250107b7-19bd-444c-a1bf-02665695f820",
+    "novel_id": "v2-independent-1ab735d0e5f24d74b543249db8013d79",
+    "filename": "studio-timeline-7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd.mp4",
+    "kind": "video",
+    "media_type": "video/mp4",
+    "size": 3340,
+    "sha256": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+    "branch_id": null,
+    "source_job_id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+    "provider_id": null,
+    "model_id": null,
+    "created_at": "2026-10-21T00:16:41.077158+00:00",
+    "updated_at": "2026-10-21T00:16:41.533735+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "studio-production:0d2e2cccee1338bc9b1900c452dac8a27278a48af9be19c280bacca28577e465",
+    "approved_at": "2026-10-21T00:16:41.533735+00:00",
+    "provenance": {
+      "id": "250107b7-19bd-444c-a1bf-02665695f820",
+      "label": "studio-timeline-7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd.mp4",
+      "kind": "video",
+      "version": 2,
+      "digest": "99fc22e95a3d3e777a19b769230cb79871d93e24756fdbfeceab715872e8582f",
+      "deleted": false,
+      "integrity": "VERIFIED",
+      "origin": "DERIVED_PROCESSING",
+      "license": {
+        "label": "UNSPECIFIED",
+        "source": "",
+        "note": ""
+      },
+      "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION",
+      "operation": "m9.timeline.multitrack",
+      "parents": [
+        {
+          "id": "2db4c6a2-2d93-4a50-bdcd-e359676c4007",
+          "label": "synthetic-red-blue.mp4",
+          "version": 1,
+          "digest": "3da17d09386defb7ccbd0dd91b6962addaa633da4757a49dd452337e671792c9",
+          "state": "CURRENT"
+        }
+      ],
+      "sources": [],
+      "stale": false,
+      "source_task_id": "7f2fd39fcf1db6717002a17a6cbf16b8dbf5525d571946ffcdc3c5941ee780bd",
+      "generation": null,
+      "reference_only": true,
+      "product_acceptance": "LOCAL_REQUIRED"
+    },
+    "relationships": []
+  }
+}

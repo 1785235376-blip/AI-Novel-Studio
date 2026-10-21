@@ -1,6 +1,6 @@
 import type { StudioAsset } from '../../creative/studioClient';
 import type { ProductionJob } from '../../creative/studioProductionClient';
-import { canvasReturnInCommand, type CanvasReturnBinding } from '../../creative/studioCanvasReturnBinding';
+import { canvasReturnInJob, type CanvasReturnBinding } from '../../creative/studioCanvasReturnBinding';
 
 export type ExecutionSelection = {
   projectId: string; branchId: string | null; identity: string;
@@ -83,7 +83,7 @@ function recoveryReason(job: ProductionJob): string {
 export function projectExecution(job: ProductionJob): ExecutionProjection {
   validJob(job);
   const parameters: ExecutionProjection['parameters'] = [];
-  for (const [name, value] of Object.entries(job.command?.parameters ?? {})) {
+  for (const [name, value] of Object.entries(job.canvas_video?.parameters ?? job.command?.parameters ?? {})) {
     if (numericParameters.has(name) && typeof value === 'number' && Number.isFinite(value)
       || Object.hasOwn(enumParameters, name) && typeof value === 'string' && enumParameters[name].includes(value)) {
       parameters.push({ name, value: String(value) });
@@ -109,7 +109,7 @@ export function projectExecution(job: ProductionJob): ExecutionProjection {
       : ['LOCAL_CPU_MASK', 'LOCAL_FFMPEG', 'LOCAL_CPU_COMPOSITE'].includes(job.execution_recipe?.adapter)
         ? '原记录声明本地媒体处理；该路线不使用生成模型。'
       : '原回执未提供可确认的模型路线；不会补造来源或内部节点。';
-  const canvasReturn = canvasReturnInCommand(job.command) ?? null;
+  const canvasReturn = canvasReturnInJob(job) ?? null;
   if (canvasReturn && (canvasReturn.project_id !== job.novel_id || (canvasReturn.scope.mode === 'collaboration' ? canvasReturn.scope.branch_id : null) !== job.branch_id
     || ![canvasReturn.canvas_id, canvasReturn.card_id, canvasReturn.source.id].every(id)
     || !sources.some(source => source.kind === canvasReturn.source.kind && source.id === canvasReturn.source.id

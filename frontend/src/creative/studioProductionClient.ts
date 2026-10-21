@@ -1,3 +1,4 @@
+import { checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
 import { checkedStoryboardSpeechFields, sameStoryboardSpeech, type StoryboardSpeechPin } from './studioStoryboardSpeechContract';
@@ -62,6 +63,7 @@ export type ProductionJob = { contract: 'studio-production-job/1'; owner: Produc
   timeline_snapshot: { id: string; version: number; digest: string } | null;
   sources: RecordedProductionSource[];
   command: RecordedMediaCommand | null;
+  canvas_video?: CanvasVideoTaskCommand;
   provider: { provider_id: string; model_id: string; local: boolean; route_digest: string } | null;
   execution_recipe: ProductionRecipe; approved_asset_version: number | null;
   media_measurement?: TimelineMediaMeasurement | null; processing_proof?: CutoutProcessingProof | ImageUpscaleProof | ImageCompositeProof | null;
@@ -352,7 +354,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
     if (Object.keys(v).some(key => !['contract', 'owner', 'id', 'novel_id', 'branch_id', 'version', 'status', 'request_digest', 'receipt_digest',
       'attempt', 'created_at', 'updated_at', 'error_code', 'review_state', 'cancellation_mode', 'needs_reconciliation', 'execution_state', 'operation_id',
       'output_candidate', 'timeline_snapshot', 'sources', 'command', 'provider', 'execution_recipe', 'approved_asset_version', 'request_id',
-      'product_acceptance', 'automatic_replay', 'remote_compute_may_continue', 'media_measurement', 'processing_proof'].includes(key))) invalid();
+      'product_acceptance', 'automatic_replay', 'remote_compute_may_continue', 'media_measurement', 'processing_proof', 'canvas_video'].includes(key))) invalid();
     if (v.contract !== 'studio-production-job/1' || !owners.includes(v.owner as ProductionOwner) || !identifier(v.id) || !revision(v.version)
       || !states.includes(String(v.status)) || !hex(v.request_digest) || (v.receipt_digest !== null && !hex(v.receipt_digest))
       || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
@@ -459,6 +461,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
         || Object.keys(v.provider).some(key => !['provider_id', 'model_id', 'route_digest', 'local'].includes(key))) invalid();
     }
     if (!['m5.image.cutout', 'm5.image.upscale', 'm5.image.composite'].includes(String(v.operation_id)) && v.processing_proof != null) invalid();
+    if (Object.hasOwn(v, 'canvas_video')) checkedCanvasVideoTaskJob(v);
     return v as unknown as ProductionJob;
   }
   function timeline(v: unknown): StudioTimelineRow {
@@ -481,9 +484,51 @@ export function studioProductionClient(projectId: string, context: Collaboration
       || !sameCutoutCommand(expected.command, result.command) || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
     if (expected?.operation_id === 'm8.audio.trim' && (result.version < expected.version || !expected.command
       || !sameTrimCommand(expected.command, result.command) || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
+    if (expected && (expected.canvas_video !== undefined || result.canvas_video !== undefined)
+      && (result.version < expected.version || !expected.canvas_video || !result.canvas_video
+        || canvasVideoIdentity(expected.canvas_video) !== canvasVideoIdentity(result.canvas_video)
+        || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
     return result;
   }
+  function canvasVideoIdentity(value: unknown) {
+    return JSON.stringify(value, (_key, item) => record(item)
+      ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
+  }
+  function canvasVideoScope(value: CanvasVideoTaskCommand) {
+    const command = checkedCanvasVideoTaskCommand(value);
+    if (command.canvas_return.project_id !== projectId
+      || (command.canvas_return.scope.mode === 'collaboration' ? command.canvas_return.scope.branch_id : null) !== branch) invalid();
+    return command;
+  }
   return {
+    async canvasVideoPreview(value: CanvasVideoTaskCommand) {
+      const command = canvasVideoScope(value);
+      const raw = await transport.json<unknown>(`${base}/canvas-video/preview`, 'POST', command);
+      const result = checkedCanvasVideoTaskPreview(raw, command);
+      if (result.novel_id !== projectId || result.branch_id !== branch) invalid();
+      return result;
+    },
+    async canvasVideoQueue(value: CanvasVideoTaskCommand, reviewed_preview_digest: string) {
+      const command = canvasVideoScope(value);
+      if (!hex(reviewed_preview_digest)) invalid();
+      const result = job(await transport.json<unknown>(`${base}/canvas-video/queue`, 'POST',
+        { command, reviewed_preview_digest }, undefined, command.request_id));
+      if (!result.canvas_video || canvasVideoIdentity(result.canvas_video) !== canvasVideoIdentity(command)
+        || result.request_id !== command.request_id) invalid();
+      return result;
+    },
+    async canvasVideoExecute(value: ProductionJob) {
+      const expected = checkedCanvasVideoTaskJob(value);
+      canvasVideoScope(expected.canvas_video);
+      if (expected.status !== 'QUEUED') invalid();
+      const result = job(await transport.json<unknown>(`${base}/canvas-video/jobs/${encodeURIComponent(expected.id)}/execute`, 'POST',
+        { expected_version: expected.version, expected_request_digest: expected.request_digest }));
+      if (result.owner !== expected.owner || result.id !== expected.id || result.request_digest !== expected.request_digest
+        || result.version <= expected.version || !result.canvas_video
+        || canvasVideoIdentity(result.canvas_video) !== canvasVideoIdentity(expected.canvas_video)
+        || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest) invalid();
+      return result;
+    },
     async providers(signal?: AbortSignal): Promise<ProductionProvider[]> {
       const v = await transport.json<unknown>(`${base}/providers`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 200 || v.health_probed !== false || v.credentials_read !== false) invalid();

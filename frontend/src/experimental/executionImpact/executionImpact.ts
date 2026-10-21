@@ -1,8 +1,9 @@
+import type { CanvasVideoTaskCommand } from '../../creative/canvasVideoTrimTask';
 import type { MediaCommand, ProductionJob, ProductionRecipe } from '../../creative/studioProductionClient';
 
 export type ExecutionImpactInput = {
   scope: Pick<ProductionJob, 'novel_id' | 'branch_id'> & { incarnation: string };
-  command: MediaCommand;
+  command: MediaCommand | CanvasVideoTaskCommand;
   recipe?: ProductionRecipe;
   previousJob?: ProductionJob;
   editScope: 'TASK' | 'SHARED_TEMPLATE';
@@ -73,9 +74,10 @@ export function executionImpactSnapshot(input: ExecutionImpactInput): ExecutionI
         after: nextValue ?? '本次未提供', changed: known ? oldValue !== nextValue : null });
     }
   }
-  compare(previous?.command ?? undefined, value.command, 'command', !!previous?.command);
+  const previousCommand = previous?.canvas_video ?? previous?.command;
+  compare(previousCommand ?? undefined, value.command, 'command', !!previousCommand);
   compare(previous?.execution_recipe, value.recipe, 'recipe', !!previous?.execution_recipe && !!value.recipe);
-  return { canonical, differences, previousCommandAvailable: !!previous?.command, recipeAvailable: !!value.recipe,
+  return { canonical, differences, previousCommandAvailable: !!previousCommand, recipeAvailable: !!value.recipe,
     taskOnly: value.editScope === 'TASK' };
 }
 
