@@ -177,7 +177,7 @@ def test_authored_mask_for_other_source_or_dimensions_is_never_repaired_implicit
             'image/png','image','another-source-'+str(width),required_features=('narrative_production_v2',))
     painted=e.service.author_mask(e.nid,e.scope,e.actor,other['id'],{'contract':'manual-binary-mask/1',
         'source_version':other['version'],'source_sha256':other['sha256'],'width':width,'height':64,
-        'bitplane_base64':plane(width=width),'idempotency_key':'other-owned-mask'})['asset']
+        'bitplane_base64':plane(width=width),'idempotency_key':'other-owned-mask'},lambda:None)['asset']
     value=deepcopy(e.command);value['source_snapshots'][1]=snapshot(painted);no_render(monkeypatch)
     with pytest.raises(ValueError):preview(e,value)
     assert not list(e.root.rglob('image-jobs/*.json'))
@@ -206,6 +206,19 @@ def test_source_and_mask_revision_after_preview_never_refresh_implicitly(card_cu
         elif stage=='execute':run(e,row)
         else:review(e,row)
     assert len(e.service.list_assets(e.nid,e.scope)['items'])==2
+
+
+@pytest.mark.parametrize('change',['version','deleted-card','replaced-card'])
+def test_original_queue_atomic_phase_rechecks_card_after_preview(card_cutout,monkeypatch,change):
+    e=card_cutout;captured=preview(e);original=ImageJobService.create_studio
+    def changed(owner,*args,**kwargs):
+        change_card(e,change)
+        return original(owner,*args,**kwargs)
+    monkeypatch.setattr(ImageJobService,'create_studio',changed);no_render(monkeypatch)
+    with pytest.raises(REJECTED):
+        e.production.create(e.nid,e.scope,e.actor,{'command':e.command,
+            'reviewed_preview_digest':captured['preview_digest']},lambda:None)
+    assert not list(e.root.rglob('image-jobs/*.json'))
 
 
 @pytest.mark.parametrize('stage',['execute','review'])
