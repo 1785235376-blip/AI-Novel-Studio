@@ -98,17 +98,18 @@ function sources(v: unknown, limit: number): asserts v is RecordedProductionSour
 }
 
 function cutoutCommand(v: unknown, recorded = false): asserts v is MediaCommand {
-  const keys = ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note'];
+  const keys = ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', ...(record(v)&&Object.hasOwn(v,'canvas_return')?['canvas_return']:[])];
   if (!record(v) || Object.keys(v).length !== keys.length || keys.some(key => !Object.hasOwn(v, key)) || v.operation_id !== 'm5.image.cutout'
     || v.provider_id !== null || v.model_id !== null || v.prompt !== '' || v.allow_cloud !== false || !validCutoutParameters(v.parameters)
     || typeof v.request_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(v.request_id)
     || typeof v.license_note !== 'string' || v.license_note.length > 2000) invalid();
+  canvasReturnInCommand(v);
   sources(v.source_snapshots, 2);
   if (v.source_snapshots.length !== 2 || v.source_snapshots[0].id === v.source_snapshots[1].id
     || v.source_snapshots.some(source => source.kind !== 'ASSET' || source.asset_kind !== 'image' || !recorded && source.reference_only !== undefined)) invalid();
 }
 function sameCutoutCommand(expected: RecordedMediaCommand, value: RecordedMediaCommand | null) {
-  return !!value && ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'allow_cloud', 'license_note'].every(key =>
+  return !!value && expected.parameters.cutout_output===value.parameters.cutout_output && sameCanvasReturn(expected,value) && ['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'allow_cloud', 'license_note'].every(key =>
     expected[key as keyof RecordedMediaCommand] === value[key as keyof RecordedMediaCommand])
     && value.source_snapshots.length === expected.source_snapshots.length && value.source_snapshots.every((source, index) =>
       ['id', 'kind', 'version', 'digest', 'asset_kind'].every(key => (source as Record<string, unknown>)[key]
