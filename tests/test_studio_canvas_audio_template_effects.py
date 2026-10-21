@@ -25,6 +25,9 @@ from test_studio_canvas_audio_envelope import envelope_canvas, decode, return_bo
 from test_studio_canvas_audio_return import change_origin
 from test_v2_audio_wav_controls import production, preview, queue, run, get, review
 from test_v2_independent_workspace import rig, reopened
+from test_r3_mounted_contracts import checked, mounted, prefix
+from test_v2_independent_workspace_api import client
+from test_v2_audio_wav_controls_api import audio_client
 
 
 EFFECTS = ('gain_db', 'fade_in_ms', 'fade_out_ms')
@@ -289,8 +292,7 @@ def test_late_cpu_result_becomes_unknown_and_is_never_replayed(effect_template, 
     assert len(e.service.list_assets(e.nid, e.scope)['items']) == 1
 
 
-def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_explicit(envelope_canvas):
-    e = envelope_canvas
+def queued_original_graph(e):
     from test_v2_graph_image_nodes import create_run
     graph, row = create_run(e, e.graph, definition(e, TEMPLATE, runnable=True))
     runtime = e.graph.media_runtime
@@ -308,6 +310,43 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
     queued = row['media_runtime']['nodes'][0]['execution']['job']
     assert queued['status'] == 'QUEUED'
     assert queued['request_digest'] == actual_preview['request_digest']
+    return graph, row, captured, queued
+
+
+def test_original_audiojob_graph_guard_keeps_other_controls_standalone(envelope_canvas, monkeypatch):
+    e = envelope_canvas
+    no_native(monkeypatch)
+    _, row, _, queued = queued_original_graph(e)
+    stored = e.graph._owned(e.nid, e.scope, e.actor, e.graph.RUNS, row['id'])
+    binding = stored['media_executions']['trim']['graph_binding']
+    original, context = e.production._row(e.nid, e.scope, e.actor, 'audio', queued['id'],
+                                         lambda: None, graph_binding=binding)
+    from app.services.studio_audio_execution import _body, _binding
+    body = _body(original['_studio_body'])
+    assert context['graph_binding'] == binding
+    assert _binding(context, body) == context  # This is a real admitted original binding.
+    for extra in ({'sample_rate': 44100}, {'channels': 1}, {'output_format': 'FLAC'}):
+        changed = deepcopy(body)
+        changed['parameters'].update(extra)
+        # Each is valid for a standalone original AudioJob. The same actual
+        # Graph binding must still reject these capabilities at its own guard.
+        with pytest.raises(AudiobookError) as failure:
+            _binding(context, _body(changed))
+        assert failure.value.code == 'STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY'
+    assert get_graph_job(e, row, queued)['status'] == 'QUEUED'
+
+
+def get_graph_job(e, row, receipt):
+    stored = e.graph._owned(e.nid, e.scope, e.actor, e.graph.RUNS, row['id'])
+    return e.production.get(e.nid, e.scope, e.actor, 'audio', receipt['id'], lambda: None,
+                            graph_binding=stored['media_executions']['trim']['graph_binding'])
+
+
+@pytest.mark.parametrize('outcome', ['approved', 'missing-measured'])
+def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_explicit(envelope_canvas, outcome):
+    e = envelope_canvas
+    graph, row, captured, queued = queued_original_graph(e)
+    runtime = e.graph.media_runtime
     row = runtime.execute_job(e.nid, e.scope, e.actor, row['id'], {
         'expected_version': row['version'], 'node_id': 'trim',
         'expected_job_version': queued['version'], 'expected_request_digest': queued['request_digest']}, lambda: None)
@@ -315,13 +354,15 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
     assert row['current_node_id'] == 'review' and candidate['status'] == 'AWAITING_REVIEW'
     # Public Graph receipts intentionally omit command/recipe/measurement. Read
     # the original job using the original run binding, never widen that DTO.
-    stored = e.graph._owned(e.nid, e.scope, e.actor, e.graph.RUNS, row['id'])
-    binding = stored['media_executions']['trim']['graph_binding']
-    original = e.production.get(e.nid, e.scope, e.actor, 'audio', candidate['id'],
-                                lambda: None, graph_binding=binding)
+    original = get_graph_job(e, row, candidate)
     assert original['execution_recipe']['parameters'] == TEMPLATE
-    assert original['media_measurement']['duration_ms'] == 1000
-    assert original['media_measurement']['profile_validation'] == 'PCM_DECODED'
+    assert original['media_measurement'] is None  # Original Graph public projection stays unchanged.
+    stored = e.graph._owned(e.nid, e.scope, e.actor, e.graph.RUNS, row['id'])
+    raw, _ = e.production._row(e.nid, e.scope, e.actor, 'audio', candidate['id'], lambda: None,
+                              graph_binding=stored['media_executions']['trim']['graph_binding'])
+    measured = raw['measured']
+    assert measured['duration_ms'] == 1000 and measured['profile_validation'] == 'PCM_DECODED'
+    assert measured['sample_rate'] == RATE and measured['channels'] == 2
     meta, data = runtime.candidate(e.nid, e.scope, e.actor, row['id'], 'trim', lambda: None)
     with wave.open(io.BytesIO(data), 'rb') as stream:
         assert (stream.getframerate(), stream.getnchannels(), stream.getsampwidth(), stream.getnframes()) == (RATE, 2, 2, RATE)
@@ -335,10 +376,25 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
     assert hashlib.sha256(data).hexdigest() == meta['sha256'] == candidate['output_candidate']['digest']
     with pytest.raises(FileNotFoundError):
         e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])
-    row = runtime.review(e.nid, e.scope, e.actor, row['id'], {
-        'expected_version': row['version'], 'node_id': 'review',
+    review_body = {'expected_version': row['version'], 'node_id': 'review',
         'expected_job_version': candidate['version'], 'expected_request_digest': candidate['request_digest'],
-        'reviewed_output_digest': candidate['output_candidate']['digest']}, lambda: None)
+        'reviewed_output_digest': candidate['output_candidate']['digest']}
+    if outcome == 'missing-measured':
+        audio = e.production._audio(e.scope, e.actor)
+        state = audio.store.load(e.nid, include_studio=True)
+        persisted = next(job for job in state['jobs'] if job['id'] == candidate['id'])
+        persisted.pop('measured')
+        audio.store.save(e.nid, state, include_studio=True)
+        with pytest.raises(AudiobookError) as failure:
+            get_graph_job(e, row, candidate)
+        assert failure.value.code == 'STUDIO_AUDIO_MEASUREMENT_INVALID'
+        with pytest.raises(AudiobookError) as failure:
+            runtime.review(e.nid, e.scope, e.actor, row['id'], review_body, lambda: None)
+        assert failure.value.code == 'STUDIO_AUDIO_MEASUREMENT_INVALID'
+        with pytest.raises(FileNotFoundError):
+            e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])
+        return
+    row = runtime.review(e.nid, e.scope, e.actor, row['id'], review_body, lambda: None)
     assert row['status'] == 'SUCCEEDED' and row['reviewed']
     formal = e.service.asset(e.nid, e.scope, candidate['output_candidate']['id'])
     assert formal['version'] == 2
@@ -350,8 +406,65 @@ def test_original_graph_runtime_executes_supported_envelope_and_keeps_review_exp
         evidence = {'contract': 'owned-original-graph-audio-effects-proof/1',
             'real_cpu_ffmpeg': True, 'model_inference': False, 'graph': graph,
             'preview': captured, 'queued_receipt': queued, 'executed_original_job': original,
-            'succeeded_run': row, 'formal': formal, 'independent_frames': len(samples) // 2,
+            'succeeded_run': row, 'formal': formal, 'original_audio_measurement': measured,
+            'independent_frames': len(samples) // 2,
             'maximum_absolute_lsb_error': maximum_error,
             'candidate_sha256': hashlib.sha256(data).hexdigest(),
             'independent_pcm_sha256': hashlib.sha256(pcm).hexdigest()}
         (path / 'native-original-graph-effects.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
+
+
+
+def test_mounted_original_preview_and_jobs_echo_template_effects_and_reject_tampering(audio_client, monkeypatch):
+    e = audio_client
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2')
+    from app.creative.canvas_views import CreativeCanvasViews
+    from app.creative.graph_asset_inputs import GraphAssetInputs
+    graphs = e.experimental.creative_graph_service
+    monkeypatch.setattr(graphs, 'store', e.studio.store)
+    monkeypatch.setattr(graphs, 'workspace', e.studio)
+    monkeypatch.setattr(graphs, 'asset_inputs', GraphAssetInputs(graphs))
+    monkeypatch.setattr(graphs, 'canvas_views', CreativeCanvasViews(graphs))
+    graphs.configure_media(e.production)
+    params = {**TEMPLATE, 'in_ms': 100, 'out_ms': 800}
+    graph = checked(e.client.post(e.studio_base + '/graphs', headers=e.headers, json={
+        'request_id': 'api-owned-envelope-template', 'expected_version': 0,
+        'definition': definition(e, params)}), 201)
+    canvas = checked(e.client.post(e.studio_base + '/canvas-views', headers=e.headers, json={
+        'request_id': 'api-owned-envelope-card', 'definition': {'title': 'Owned API audio task',
+            'cards': [{'id': 'origin-audio', 'position': {'x': 40, 'y': 60}, 'asset': reference(e.source)}]}}), 201)
+    e.command['parameters'] = {**params, 'gain_db': -3, 'fade_in_ms': 50, 'fade_out_ms': 100}
+    e.command['template_ref'] = pin(graph)
+    source = e.command['source_snapshots'][0]
+    e.command['canvas_return'] = {'contract': 'studio-canvas-return/1', 'project_id': e.nid,
+        'scope': e.scope, 'incarnation': e.studio.store.incarnation(e.nid), 'canvas_id': canvas['id'],
+        'canvas_version': canvas['version'], 'canvas_digest': canvas['definition_digest'],
+        'card_id': 'origin-audio', 'source': source}
+    no_native(monkeypatch)
+    response = e.client.post(e.base + '/preview', headers=e.headers, json=e.command)
+    captured = checked(response)
+    assert captured['command']['template_ref'] == pin(graph)
+    assert captured['execution_recipe']['parameters'] == e.command['parameters']
+    assert response.headers['cache-control'] == 'no-store'
+    queued = checked(e.client.post(e.base + '/jobs', headers=e.headers, json={
+        'command': e.command, 'reviewed_preview_digest': captured['preview_digest']}), 201)
+    expected = deepcopy(e.command)
+    # The mounted typed source contract has always added this literal marker.
+    expected['source_snapshots'] = [{**source, 'reference_only': True} for source in expected['source_snapshots']]
+    assert queued['status'] == 'QUEUED' and queued['command'] == expected
+    assert queued['execution_recipe']['parameters'] == e.command['parameters']
+    assert checked(e.client.get(e.base + '/jobs/audio/' + queued['id'], headers=e.headers)) == queued
+    bad = deepcopy(e.command)
+    bad['request_id'] = 'api-tampered-template-effects'
+    bad['template_ref']['parameters']['gain_db'] = -5
+    rejected = e.client.post(e.base + '/preview', headers=e.headers, json=bad)
+    assert rejected.status_code == 422, rejected.text
+    assert rejected.json()['detail'] == {'code': 'EXPERIMENTAL_INVALID',
+                                         'message': 'STUDIO_CANVAS_AUDIO_TEMPLATE_CHANGED'}
+    rejected_create = e.client.post(e.base + '/jobs', headers=e.headers, json={
+        'command': bad, 'reviewed_preview_digest': captured['preview_digest']})
+    assert rejected_create.status_code == 422, rejected_create.text
+    assert rejected_create.json()['detail']['message'] == 'STUDIO_CANVAS_AUDIO_TEMPLATE_CHANGED'
+    current = checked(e.client.get(e.base + '/jobs', headers=e.headers))
+    assert [row['id'] for row in current['items']] == [queued['id']]
+    assert checked(e.client.get(e.base + '/jobs/audio/' + queued['id'], headers=e.headers)) == queued
