@@ -27,6 +27,7 @@ export function mount(){
  };
  (window as any).__cycle2={calls,commands};
  const graph=templateGraph();graph.project_id=binding.project_id;graph.scope=binding.scope;graph.definition.nodes=graph.definition.nodes.slice(0,2);
+ if(new URLSearchParams(location.search).has('template-effects'))graph.definition.nodes[1].parameters.parameters={in_ms:100,out_ms:900,gain_db:-6.5,fade_in_ms:100,fade_out_ms:200};
  const owner={projectId:binding.project_id,incarnation:binding.incarnation,actorId:'local-check',actorWorkspaceId:'',mode:'local' as const,workspaceId:'',storylineId:'',branchId:''};
  const task={source:binding.source,returnBinding:binding,isCurrent:()=>true};
  const host=document.createElement('div');document.body.replaceChildren(host);

@@ -77,3 +77,27 @@ it('does not confuse the draft shape-check placeholder with a failed parent requ
  origin.request_id='shape_check';origin.command!.request_id='shape_check';await mount();await act(async()=>state.openJob(origin));
  const command=deriveFailedCanvasAudioCommand(state.selected!,props.canvasAudioTrimTask!,request);act(()=>state.prepareFailedAudio(command));expect(state.inputError).toBe('');expect(state.canInspect).toBe(true);expect(calls('/jobs')).toHaveLength(0);
 });
+
+const effectRef=():CanvasAudioWorkflowTemplateRef=>({contract:'studio-canvas-audio-template/1',graph_id:'effects-template',graph_version:3,definition_digest:'a'.repeat(64),execution_digest:'b'.repeat(64),node_id:'trim',parameters:{in_ms:100,out_ms:900,gain_db:-6.5,fade_in_ms:100,fade_out_ms:200}});
+it('copies real template effects into the original command, keeps local overrides and re-previews all fields before execute',async()=>{
+ const ref=effectRef();await mount();act(()=>state.applyAudioTemplate(ref));expect(state.draft.parameters.gain_db).toBe('-6.5');expect(state.draft.parameters.fade_in_ms).toBe('100');expect(state.draft.parameters.fade_out_ms).toBe('200');
+ act(()=>{state.changeParameter('in_ms','550');state.changeParameter('out_ms','850');state.changeParameter('gain_db','-3.5');});expect(ref.parameters.gain_db).toBe(-6.5);
+ await inspect();await act(async()=>state.create());expect(calls('/jobs')).toHaveLength(0);await confirm('CREATE');await act(async()=>state.create());
+ expect(saved!.parameters).toEqual({in_ms:550,out_ms:850,gain_db:-3.5,fade_in_ms:100,fade_out_ms:200});expect(saved!.template_ref).toEqual(ref);
+ await act(async()=>state.inspectExecution());expect(state.error).toBe('');const command=JSON.parse(String(calls('/preview').at(-1)![1].body));expect(command.parameters).toEqual(saved!.parameters);expect(command.template_ref).toEqual(ref);
+ await confirm('EXECUTE');await act(async()=>Promise.all([state.action('execute'),state.action('execute')]));expect(calls('/execute')).toHaveLength(1);expect(ref.parameters.gain_db).toBe(-6.5);
+});
+it('keeps existing task effects when an old range-only template does not specify them',async()=>{
+ await mount();act(()=>{state.changeParameter('gain_db','-4.5');state.changeParameter('fade_in_ms','10');state.changeParameter('fade_out_ms','20');});const ref=effectRef();delete ref.parameters.gain_db;delete ref.parameters.fade_in_ms;delete ref.parameters.fade_out_ms;
+ act(()=>state.applyAudioTemplate(ref));expect(state.draft.parameters.gain_db).toBe('-4.5');expect(state.draft.parameters.fade_in_ms).toBe('10');expect(state.draft.parameters.fade_out_ms).toBe('20');expect(state.draft.template_ref!.parameters).toEqual({in_ms:100,out_ms:900});
+});
+it('retires a confirmed template effect request across gain ABA and needs a new explicit confirmation',async()=>{
+ await mount();act(()=>state.applyAudioTemplate(effectRef()));await inspect();await confirm('CREATE');const create=state.create,gate=state.impact!;
+ act(()=>state.changeParameter('gain_db','-5'));act(()=>state.changeParameter('gain_db','-6.5'));await act(async()=>create());expect(gate.current()).toBe(false);expect(calls('/jobs')).toHaveLength(0);
+ await inspect();await confirm('CREATE');await act(async()=>state.create());expect(calls('/jobs')).toHaveLength(1);
+});
+it('strict SDK rejects a template effect echo detached from the reviewed reference',async()=>{
+ await mount();act(()=>state.applyAudioTemplate(effectRef()));const previous=fetcher.getMockImplementation()!;
+ fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{if(url.endsWith('/preview')){const row=receipt('preview',JSON.parse(String(init.body)));row.command.template_ref.parameters.gain_db=-4;return json(row);}return previous(url,init);});
+ await act(async()=>state.inspect());expect(state.preview).toBeUndefined();expect(state.canCreate).toBe(false);expect(calls('/jobs')).toHaveLength(0);
+});
