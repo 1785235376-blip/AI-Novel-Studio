@@ -169,3 +169,10 @@ it('an observed false original source getter cannot revive a retained restore af
  await savedInput();let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});const resume=state.audioDraft.onResume;sourceCurrent=false;expect(state.audioDraft.isCurrent()).toBe(false);sourceCurrent=true;
  await act(async()=>resume(rows[0]));expect(fetcher.mock.calls.filter(([u,i])=>u.endsWith('/timelines/audio-input')&&i.method==='GET')).toHaveLength(0);expect(calls('/jobs')).toHaveLength(0);
 });
+
+it('an uncertain input Save is not retried; explicit original read resolves it without granting any execution proof',async()=>{
+ const api=draftTransport(),prior=fetcher.getMockImplementation()!;let fail=true;
+ fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{const response=await prior(url,init);if(fail&&url.endsWith('/timelines')&&init.method==='POST'){fail=false;return new Response(JSON.stringify({detail:'synthetic response lost'}),{status:503,headers:{'Content-Type':'application/json'}});}return response;});
+ await mount();act(()=>state.applyAudioTemplate(effectRef()));await act(async()=>state.audioDraft.save());expect(api.row()).toBeTruthy();expect(state.uncertain).toBe(true);expect(state.audioDraft.saveUnknown).toBe(true);
+ await act(async()=>state.audioDraft.save());expect(calls('/timelines')).toHaveLength(1);let rows:any[]=[];await act(async()=>{rows=await state.audioDraft.onList();});await act(async()=>state.audioDraft.onResume(rows[0]));expect(state.uncertain).toBe(false);expect(state.preview).toBeUndefined();expect(state.canCreate).toBe(false);expect(calls('/jobs')).toHaveLength(0);expect(calls('/execute')).toHaveLength(0);
+});
