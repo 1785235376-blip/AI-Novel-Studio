@@ -215,3 +215,27 @@
 ### 门禁
 - 上述 vitest 子集 → **90 PASS**。
 - **不 push**；未改 `app/`。
+
+## § W-UX-02 / W-UX-03 / W-UX-05 / X-UX-01（第三波 · 媒体壳 + 诚实空态）
+
+> [HERMIA-FE-20261022] · 基线父提交 `b54a75a1` · **不 push**
+
+### W-UX-02 AUDIO 壳
+- 波形/配音 hero + 播放头示意；Speech / AudioGen / AudiobookManifest 焦点钮。
+- 「送去剪辑」→ 显式确认壳再切 EDIT；`data-nle-tracks="0"`；≠ NLE。
+
+### W-UX-03 ASSETS 壳
+- 浏览器 hero + 血缘/版本摘要；拖入＝引用 chip；空选诚实 CTA。
+- 标明 ≠ IMAGE 生图台 · ≠ EDIT 媒体池主面。
+
+### W-UX-05 EDIT NLE 密度再抛光
+- 双监视器（源/节目）+ 入出点 + 吸附开关 + 轨/片段摘要；媒体池引用角标。
+- **小切口**；复用 `nle/**`，不大拆；仍只读演示壳；≠ VIDEO 假轨。
+
+### X-UX-01 空/错/载诚实文案
+- 新 `WorkspaceHonestEmpty`：no_project / no_chapter / no_track / load_failed / loading / empty_library / empty_selection。
+- 六工作区无项目空态改挂该组件；小说 dock 无章 / 空大纲标 `data-honest-kind`；禁假绿。
+
+### 门禁
+- 上述 vitest 子集 → **92 PASS**。
+- **不 push**；未改 `app/`。

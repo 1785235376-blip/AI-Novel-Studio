@@ -50,7 +50,7 @@ describe('MediaWorkspaceShells', () => {
     act(() => root.unmount());
   });
 
-  it('AUDIO shell: waveform hero + speech/gen/manifest; send-to-edit; ≠ NLE', () => {
+  it('AUDIO shell: waveform hero + speech/gen/manifest; send-confirm; 0 fake NLE tracks', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
     const send = vi.fn();
@@ -60,10 +60,17 @@ describe('MediaWorkspaceShells', () => {
     expect(host.textContent).toContain('波形');
     expect(host.textContent).toContain('mock-speech');
     expect(host.textContent).toContain('mock-audiobook');
+    expect(host.textContent).toContain('Speech');
+    expect(host.textContent).toContain('Audiobook');
+    expect(host.querySelector('[data-nle-tracks="0"]')).toBeTruthy();
     expect(host.textContent).toMatch(/送去剪辑/);
-    expect(host.textContent).toMatch(/AUDIO ≠ EDIT|≠ 剪辑/);
+    expect(host.textContent).toMatch(/AUDIO ≠ EDIT|≠ 剪辑|0 条假 NLE|0 假轨/);
     act(() => {
-      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('送去剪辑'))?.click();
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('显式交片');
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
     });
     expect(send).toHaveBeenCalled();
     act(() => root.unmount());
@@ -95,7 +102,7 @@ describe('MediaWorkspaceShells', () => {
     expect(send).toHaveBeenCalled();
     act(() => root.unmount());
   });
-  it('ASSETS shell: browser hero + library; reference semantics', () => {
+  it('ASSETS shell: browser hero + library; lineage summary; drag=reference; ≠ IMAGE desk', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
     act(() => root.render(
@@ -104,6 +111,10 @@ describe('MediaWorkspaceShells', () => {
     expect(host.textContent).toContain('资产浏览器');
     expect(host.textContent).toContain('mock-asset-library');
     expect(host.textContent).toMatch(/引用/);
+    expect(host.textContent).toContain('血缘');
+    expect(host.querySelector('[data-drag-semantics="reference"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/不是生图台|≠ IMAGE/);
+    expect(host.textContent).toMatch(/诚实|未选中/);
     act(() => root.unmount());
   });
 });

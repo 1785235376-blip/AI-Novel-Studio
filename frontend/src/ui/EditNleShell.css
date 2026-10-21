@@ -296,3 +296,41 @@
   color: #8b93a5;
   border-top: 1px solid #3a4250;
 }
+
+/* [HERMIA-FE-20261022 W-UX-05] density polish — dual monitors / tracks / pool */
+.edit-nle-shell[data-edit-density="w-ux-05"] .edit-nle-shell__hero {
+  min-height: 420px;
+}
+.edit-nle-shell__track-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid #3a4250;
+  background: #1a1e26;
+  color: #c5cad4;
+  font-size: 12px;
+}
+.edit-nle-shell__track-meta small {
+  color: #8b93a5;
+}
+.edit-nle-rail__ref {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-accent-primary);
+  letter-spacing: 0.04em;
+}
+.edit-nle-rail__bin > li {
+  position: relative;
+  padding-right: 2.5rem;
+}
+.edit-nle-rail__bin > li .edit-nle-rail__ref {
+  position: absolute;
+  right: var(--space-2);
+  top: var(--space-2);
+}
+.edit-nle-shell__toolbar button[aria-pressed="true"] {
+  outline: 1px solid color-mix(in srgb, #8eaee6 70%, transparent);
+}

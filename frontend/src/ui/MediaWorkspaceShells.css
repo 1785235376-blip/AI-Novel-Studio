@@ -207,3 +207,53 @@
 .media-ws-rail__item--send{border-color:color-mix(in srgb,var(--color-accent-primary) 45%,var(--color-border-default))!important;font-weight:650}
 .media-ws--video .media-ws__layer--canvas{min-height:320px}
 .media-ws--video .media-ws__canvas-host{min-height:280px}
+
+/* [HERMIA-FE-20261022 W-UX-02 / W-UX-03] */
+.media-ws--audio .media-ws__hero--audio { min-height: 180px; }
+.media-ws-wave { position: relative; overflow: hidden; }
+.media-ws-wave__playhead {
+  position: absolute;
+  top: 0; bottom: 0; left: 28%;
+  width: 2px;
+  background: var(--color-accent-primary);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent-primary) 60%, transparent);
+}
+.media-ws__panel.is-focus {
+  border-color: color-mix(in srgb, var(--color-accent-primary) 45%, var(--color-border-default));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent-primary) 25%, transparent);
+}
+.media-ws__ref-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: var(--border-default);
+  background: var(--color-bg-surface);
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--color-text-secondary);
+  width: fit-content;
+}
+.media-ws--assets .media-ws__body--assets {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr);
+  gap: var(--space-3);
+}
+.media-ws__lineage-facts {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+.media-ws__lineage-facts dt {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.media-ws__lineage-facts dd {
+  margin: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 900px) {
+  .media-ws--assets .media-ws__body--assets { grid-template-columns: 1fr; }
+}

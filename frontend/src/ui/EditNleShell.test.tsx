@@ -33,9 +33,19 @@ describe('EditNleShell W-P0-06', () => {
     expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
     expect(host.querySelector('.edit-nle-shell__monitor')).toBeTruthy();
     expect(host.querySelector('[aria-label="剪辑工具条"]')).toBeTruthy();
-    expect(host.textContent).toMatch(/多轨剪辑|源监视器|节目监视器/);
+    expect(host.querySelector('[data-monitor="source"]')).toBeTruthy();
+    expect(host.querySelector('[data-monitor="program"]')).toBeTruthy();
+    expect(host.querySelector('[data-edit-density="w-ux-05"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/多轨|源监视器|节目监视器/);
     expect(host.textContent).toMatch(/放大|缩小/);
+    expect(host.textContent).toMatch(/入点|出点|吸附/);
+    expect(host.querySelector('[data-timeline-hero="true"]')).toBeTruthy();
     expect(timeline.tracks.length).toBeGreaterThanOrEqual(3);
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-mark') === 'in')?.click();
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-snap-toggle') === 'true')?.click();
+    });
+    expect(host.textContent).toMatch(/In 1200|吸附关/);
     act(() => root.unmount());
   });
 
@@ -52,6 +62,8 @@ describe('EditNleShell W-P0-06', () => {
     ));
     expect(host.textContent).toContain('媒体池');
     expect(host.textContent).toContain('避免空白占位');
+    expect(host.textContent).toContain('引用');
+    expect(host.querySelector('[data-drag-semantics="reference"]')).toBeTruthy();
     expect(host.textContent).not.toMatch(/^\s*$/);
     act(() => root.unmount());
   });

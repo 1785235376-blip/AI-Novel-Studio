@@ -50,7 +50,11 @@ export function NovelWriterDock({
 }) {
   return (
     <div className="novel-writer-dock" aria-label="写作右栏">
-      <section className="novel-inspector-context" aria-label="当前写作上下文">
+      <section
+        className="novel-inspector-context"
+        aria-label="当前写作上下文"
+        data-honest-kind={(!chapterTitle || chapterTitle === '未选择章节') ? 'no_chapter' : undefined}
+      >
         <span>当前章节</span>
         <strong>{chapterTitle}</strong>
         <small>{chapterMeta}{saveLabel ? ` · ${saveLabel}` : ''}</small>
@@ -124,7 +128,7 @@ export function NovelWriterDock({
               ))}
             </ul>
           ) : (
-            <p className="novel-writer-dock__empty">暂无大纲条目。可在故事资料库完善卷章；此处保留可读占位，禁止空白属性板。</p>
+            <p className="novel-writer-dock__empty" data-honest-kind="empty_selection">暂无大纲条目。可在故事资料库完善卷章；此处保留可读占位，禁止空白属性板（X-UX-01 诚实空态）。</p>
           )}
           {onOpenStory && (
             <button type="button" className="ui-button" onClick={onOpenStory}>打开故事资料库 / 规划</button>

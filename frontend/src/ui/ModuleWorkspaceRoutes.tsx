@@ -16,6 +16,7 @@ import {MediaProviderSettings} from './MediaProviderSettings';
 import {ModelCenter} from './ModelCenter';
 import type {LocalAiOnboardingOwner} from './LocalAiDiscovery';
 import {EmptyState} from './primitives';
+import {WorkspaceHonestEmpty} from './WorkspaceHonestEmpty';
 import {EditNleShell, EditNleMediaRail, EditNleInspector, demoEditTimeline} from './EditNleShell';
 import {
   ImageWorkspaceShell, ImageWorkspaceRail, ImageEmptyCta,
@@ -64,14 +65,14 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const [pluginInspection,setPluginInspection]=useState<PluginInspection>();
   let main:ReactNode; let status='工作区';
   switch(module){
-    case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}}/>:<EmptyState title="请先打开小说项目" detail="图片预览、参考与生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
-    case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} shellMode={shellMode} onInspect={setVideoInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<EmptyState title="请先打开小说项目" detail="视频三层（镜头脚本/画布/导演）需要绑定到一个小说项目。"/>; status='视频工作区'; break;
-    case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<EmptyState title="请先打开小说项目" detail="配音、音效与有声书需要绑定到一个小说项目。"/>; status='声音工作区'; break;
-    case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<EmptyState title="请先打开小说项目" detail="剪辑时间线需要绑定到一个小说/项目。NLE 不嵌入小说中区（多工作区并列）。"/>; status='剪辑工作区'; break;
+    case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
+    case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} shellMode={shellMode} onInspect={setVideoInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="VIDEO"/>; status='视频工作区'; break;
+    case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>onModuleChange('EDIT')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
+    case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
-    case 'ASSETS': main=novelId?<AssetsWorkspaceShell novelId={novelId} selectedAssetId={selectedAsset?.id} onSelectAsset={setSelectedAsset}/>:<EmptyState title="请先打开小说项目" detail="资产库中的文件和引用关系按小说项目隔离。"/>; status='资产库'; break;
+    case 'ASSETS': main=novelId?<AssetsWorkspaceShell novelId={novelId} selectedAssetId={selectedAsset?.id} selectedAsset={selectedAsset} onSelectAsset={setSelectedAsset}/>:<WorkspaceHonestEmpty kind="no_project" workspace="ASSETS"/>; status='资产库'; break;
   }
   const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<>{imageInspection?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:<ImageEmptyCta/>}</>:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>onModuleChange('EDIT')}/>}</>:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>onModuleChange('EDIT')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
   const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='IMAGE'&&novelId?<ImageWorkspaceRail/>:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail/>:<WorkspaceRail module={module}/>;

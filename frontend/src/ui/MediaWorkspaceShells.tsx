@@ -4,6 +4,8 @@
  * Compose existing panels; no backend invention.
  * W-UX-01: IMAGE preview hero + comic sub-entry; pro canvas collapsed.
  * W-UX-04: VIDEO three-layer thickening — Shot strip + canvas hero + director entry; ≠ EDIT.
+ * W-UX-02: AUDIO waveform hero + Speech/AudioGen/Manifest + send-edit confirm; 0 fake NLE tracks.
+ * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
  */
 import {useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -166,6 +168,7 @@ export function AudioWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
   );
 }
 
+/** [HERMIA-FE-20261022 W-UX-02] AUDIO = waveform/dubbing workspace; ≠ EDIT NLE (0 fake tracks). */
 export function AudioWorkspaceShell({
   novelId, onInspect, onSendToEdit,
 }: {
@@ -173,35 +176,71 @@ export function AudioWorkspaceShell({
   onInspect: (i: AudioInspection) => void;
   onSendToEdit?: () => void;
 }) {
+  const [focus, setFocus] = useState<'speech' | 'gen' | 'manifest'>('speech');
+  const [sendConfirm, setSendConfirm] = useState(false);
+
   return (
-    <div className="media-ws" aria-label="声音工作区">
-      <div className="media-ws__hero" aria-label="波形与配音检听">
-        <span className="media-ws__hero-label">波形 / 配音 · hero</span>
-        <div className="media-ws-wave" aria-hidden="true" />
+    <div
+      className="media-ws media-ws--audio"
+      aria-label="声音工作区"
+      data-audio-hero="waveform"
+      data-nle-tracks="0"
+    >
+      <div className="media-ws__hero media-ws__hero--audio" aria-label="波形与配音检听">
+        <span className="media-ws__hero-label">波形 / 配音 · hero · 非 NLE</span>
+        <div className="media-ws-wave" aria-hidden="true">
+          <span className="media-ws-wave__playhead" />
+        </div>
         <strong>检听工作区</strong>
-        <p>单条或批次波形示意。多轨对齐画面与成片导出请显式前往「剪辑」。</p>
-        <small>项目 {novelId} · LUMEN_AUDIO_IA</small>
+        <p>单条或批次波形示意（本区检听）。多轨对齐画面、字幕轨与成片导出请显式「送去剪辑」——本壳 <strong>0 条假 NLE 轨</strong>。</p>
+        <div className="media-ws__hero-actions">
+          <Button type="button" aria-pressed={focus === 'speech'} data-audio-focus="speech" onClick={() => setFocus('speech')}>Speech 配音</Button>
+          <Button type="button" aria-pressed={focus === 'gen'} data-audio-focus="gen" onClick={() => setFocus('gen')}>AudioGen 音效</Button>
+          <Button type="button" aria-pressed={focus === 'manifest'} data-audio-focus="manifest" onClick={() => setFocus('manifest')}>Audiobook 清单</Button>
+        </div>
+        <small>项目 {novelId} · LUMEN_AUDIO_IA · AUDIO ≠ EDIT</small>
       </div>
       <div className="media-ws__toolbar" role="toolbar" aria-label="声音工具条">
         <Button type="button" disabled title="检听控件随真实音频结果启用">播放</Button>
         <Button type="button" disabled title="选区示意">选区</Button>
-        {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
+        <Button type="button" disabled title="增益示意（非 NLE 轨控）">增益</Button>
+        {onSendToEdit && (
+          <Button
+            type="button"
+            className="media-ws__send-edit"
+            data-send-edit="true"
+            onClick={() => setSendConfirm(true)}
+          >送去剪辑</Button>
+        )}
+        <small>假 NLE 轨：0</small>
       </div>
-      <div className="media-ws__body media-ws__body--split">
-        <section className="media-ws__panel" aria-label="语音合成">
-          <h3>语音合成</h3>
+
+      {sendConfirm && onSendToEdit && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去剪辑确认">
+          <strong>显式交片 → 剪辑</strong>
+          <p>将离开声音配音工作区，打开顶栏「剪辑」多轨 NLE。声音侧选区保留；不在本区假装时间线。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" onClick={() => { setSendConfirm(false); onSendToEdit(); }}>确认送去剪辑</Button>
+            <Button type="button" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
+      )}
+
+      <div className="media-ws__body media-ws__body--split" data-audio-focus={focus}>
+        <section className={`media-ws__panel${focus === 'speech' ? ' is-focus' : ''}`} aria-label="语音合成" data-panel="speech">
+          <h3>SpeechSynthesis · 语音合成</h3>
           <SpeechSynthesisPanel novelId={novelId} onInspect={onInspect} />
         </section>
-        <section className="media-ws__panel" aria-label="音效生成">
-          <h3>音效 / 音乐</h3>
+        <section className={`media-ws__panel${focus === 'gen' ? ' is-focus' : ''}`} aria-label="音效生成" data-panel="gen">
+          <h3>AudioGeneration · 音效 / 音乐</h3>
           <AudioGenerationPanel novelId={novelId} />
         </section>
-        <section className="media-ws__panel" aria-label="有声书">
-          <h3>有声书清单</h3>
+        <section className={`media-ws__panel${focus === 'manifest' ? ' is-focus' : ''}`} aria-label="有声书" data-panel="manifest">
+          <h3>AudiobookManifest · 有声书清单</h3>
           <AudiobookManifestPanel novelId={novelId} onInspect={onInspect} />
         </section>
       </div>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022] 声音 ≠ 剪辑 NLE · 交片须显式导航。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-02] 声音 ≠ 剪辑 NLE · 0 假轨 · 交片须显式确认。</p>
     </div>
   );
 }
@@ -221,31 +260,65 @@ export function AssetsWorkspaceRail() {
   );
 }
 
+/** [HERMIA-FE-20261022 W-UX-03] ASSETS = shared browser + inspector; drag=reference; ≠ IMAGE desk. */
 export function AssetsWorkspaceShell({
-  novelId, selectedAssetId, onSelectAsset,
+  novelId, selectedAssetId, onSelectAsset, selectedAsset,
 }: {
   novelId: string;
   selectedAssetId?: string;
   onSelectAsset: (asset: Asset | undefined) => void;
+  /** Optional selected asset for inline lineage/version summary (honest when absent). */
+  selectedAsset?: Asset;
 }) {
+  const lineageCount = selectedAsset?.relationships?.length ?? 0;
+  const version = selectedAsset?.version ?? selectedAsset?.provenance?.version;
+  const hasSelection = Boolean(selectedAssetId || selectedAsset);
+
   return (
-    <div className="media-ws" aria-label="资产工作区">
-      <div className="media-ws__hero" aria-label="资产浏览器说明">
+    <div
+      className="media-ws media-ws--assets"
+      aria-label="资产工作区"
+      data-assets-hero="browser"
+      data-drag-semantics="reference"
+    >
+      <div className="media-ws__hero media-ws__hero--assets" aria-label="资产浏览器">
         <span className="media-ws__hero-label">资产浏览器 · hero</span>
-        <strong>共享库</strong>
-        <p>查找、筛选、检视与建立引用。生图主路径在「图片」；多轨在「剪辑」。</p>
-        <small>项目 {novelId} · LUMEN_ASSETS_IA · 引用语义</small>
+        <strong>共享库 · 查找与引用</strong>
+        <p>网格/列表浏览、筛选与检视。拖出到其它模块＝<strong>建立引用</strong>（不复制源文件、不自动开花钱任务）。生图主路径在「图片」；多轨在「剪辑」——本区不是生图台。</p>
+        <div className="media-ws__ref-chip" aria-label="拖入语义">拖入＝引用 · 非复制</div>
+        <small>项目 {novelId} · LUMEN_ASSETS_IA</small>
       </div>
-      <div className="media-ws__body">
+
+      <div className="media-ws__toolbar" role="toolbar" aria-label="资产工具条">
+        <span className="media-ws__ref-chip">引用语义可见</span>
+        <small>{hasSelection ? `已选 ${selectedAssetId || selectedAsset?.id}` : '未选中 · 见右栏 CTA'}</small>
+      </div>
+
+      <div className="media-ws__body media-ws__body--assets">
         <section className="media-ws__panel" aria-label="资产库">
+          <h3>浏览器</h3>
           <AssetLibraryPanel
             novelId={novelId}
             selectedAssetId={selectedAssetId}
             onSelectAsset={onSelectAsset}
           />
         </section>
+        <aside className="media-ws__panel media-ws__lineage" aria-label="血缘与版本摘要">
+          <h3>血缘 / 版本摘要</h3>
+          {hasSelection && selectedAsset ? (
+            <dl className="media-ws__lineage-facts">
+              <div><dt>文件</dt><dd title={selectedAsset.filename}>{selectedAsset.filename}</dd></div>
+              <div><dt>版本</dt><dd>{version != null ? `v${version}` : '未记录（诚实 partial）'}</dd></div>
+              <div><dt>关系条数</dt><dd>{lineageCount === 0 ? '0（无已声明关系）' : lineageCount}</dd></div>
+              <div><dt>来源</dt><dd>{selectedAsset.provenance?.origin || '未声明'}</dd></div>
+              <div><dt>完整性</dt><dd>{selectedAsset.provenance?.integrity || '未核实'}</dd></div>
+            </dl>
+          ) : (
+            <p className="media-ws-rail__hint">未选中资产时不假装有血缘。选中后显示版本与关系摘要；缺字段标 partial，不编造 API。</p>
+          )}
+        </aside>
       </div>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022] ASSETS＝共享引用层，≠ IMAGE 生图台 ≠ EDIT 媒体池主面。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-03] ASSETS＝共享引用层 · ≠ IMAGE 生图台 · ≠ EDIT 媒体池主面。</p>
     </div>
   );
 }
@@ -272,19 +345,21 @@ export function ImageEmptyCta({
 
 export function AudioEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): ReactNode {
   return (
-    <div className="media-ws-cta" aria-label="声音下一步">
+    <div className="media-ws-cta" aria-label="声音下一步" data-honest-kind="empty_selection">
       <strong>下一步</strong>
-      <p>暂无选中声音任务。可新建配音 / 音效 / 有声书条目；成片组装请送去剪辑。</p>
-      {onSendToEdit && <Button type="button" onClick={onSendToEdit}>送去剪辑</Button>}
+      <p>暂无选中声音任务。可新建配音 / 音效 / 有声书条目；成片组装请显式送去剪辑（本区无假 NLE 轨）。</p>
+      {onSendToEdit && <Button type="button" data-send-edit="true" onClick={onSendToEdit}>送去剪辑</Button>}
     </div>
   );
 }
 
-export function AssetsEmptyCta(): ReactNode {
+export function AssetsEmptyCta({onImportHint}: {onImportHint?: () => void} = {}): ReactNode {
   return (
-    <div className="media-ws-cta" aria-label="资产下一步">
+    <div className="media-ws-cta" aria-label="资产下一步" data-honest-kind="empty_selection">
       <strong>下一步</strong>
-      <p>未选中资产。可导入或筛选库；拖出到其它模块＝引用，不复制。</p>
+      <p>未选中资产。可导入或筛选库；拖出到其它模块＝引用，不复制。库为空时也是诚实 0 条，不是假绿「已就绪」。</p>
+      <div className="media-ws__ref-chip">拖入＝引用</div>
+      {onImportHint && <Button type="button" onClick={onImportHint}>导入 / 筛选引导</Button>}
     </div>
   );
 }
