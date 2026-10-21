@@ -133,3 +133,18 @@ it('original Return component explicitly adopts reviewed composite with captured
 it('original Return refuses changed canvas versions and preserves formal output without writing a guessed target',async()=>{
  const v=await returning(true);click('核验原位置与正式审核结果');await screen.findByText('原画布、卡片或素材版本已改变；不会回填当前选中的其他位置。');expect(screen.queryByLabelText('确认只采用到上述原卡片')).toBeNull();expect(v.adopt).not.toHaveBeenCalled();expect(fetcher.mock.calls.filter(([url,init])=>url===v.path&&init.method==='PUT')).toHaveLength(0);expect(job!.status).toBe('APPROVED');
 });
+
+it('composite capacity refuses a third PNG with a two-image message and no preview or dispatch',async()=>{
+ props.assets.push({...clone(props.assets[1]),id:'third-png',filename:'third.png'});
+ render(<TaskHarness/>);const operation=screen.getByLabelText('操作');await waitFor(()=>expect((operation as HTMLSelectElement).disabled).toBe(false));fireEvent.change(operation,{target:{value:'m5.image.composite'}});
+ fireEvent.click(screen.getByLabelText(actual.assets[1].filename+' · v1'));fireEvent.click(screen.getByLabelText('third.png · v1'));
+ expect(screen.getAllByText(/已绑定来源/)).toHaveLength(2);expect(screen.getByText('双层合成最多选取两张图片。')).toBeTruthy();
+ expect((screen.getByLabelText('third.png · v1') as HTMLInputElement).checked).toBe(false);expect(posts('/preview')).toHaveLength(0);expect(posts('/jobs')).toHaveLength(0);expect(posts('/execute')).toHaveLength(0);
+});
+it('legacy image-reference capacity retains five images and its five-image message',async()=>{
+ props={...props,canvasImageTask:undefined,assets:Array.from({length:6},(_,i)=>({...clone(actual.assets[0]),id:'legacy-ref-'+i,filename:'legacy-ref-'+i+'.png'}))};
+ render(<HookHarness/>);await waitFor(()=>expect(state.providerLoading).toBe(false));act(()=>state.changeOperation('m5.image.i2i'));
+ for(const asset of props.assets.slice(0,5))act(()=>state.selectSource(asset.id,true));
+ const sources=clone(state.draft.sources);expect(sources).toHaveLength(5);act(()=>state.selectSource(props.assets[5].id,true));
+ expect(state.draft.sources).toEqual(sources);expect(state.error).toBe('最多选取五张参考图片。');expect(posts('/preview')).toHaveLength(0);expect(posts('/jobs')).toHaveLength(0);expect(posts('/execute')).toHaveLength(0);
+});

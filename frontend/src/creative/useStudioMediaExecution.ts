@@ -626,7 +626,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     let sources = old.sources.filter(source => source.id !== id);
     if (checked && row) {
       if (!['m5.image.i2i', 'm5.image.composite'].includes(old.operation)) sources = [];
-      if (sources.length >= (old.operation === 'm5.image.composite' ? 2 : 5)) { setError('最多选取五张参考图片。'); return; }
+      if (sources.length >= (old.operation === 'm5.image.composite' ? 2 : 5)) { setError(old.operation === 'm5.image.composite' ? '双层合成最多选取两张图片。' : '最多选取五张参考图片。'); return; }
       sources.push({ id: row.id, kind: 'ASSET', version: row.version, digest: row.sha256, asset_kind: kind });
     }
     edit({ ...old, sources });
