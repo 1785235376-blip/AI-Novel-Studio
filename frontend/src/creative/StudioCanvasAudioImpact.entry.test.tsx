@@ -89,3 +89,32 @@ it('binds optional gain and fades to actual original create proof and rejects ol
  expect(state.selected?.execution_recipe.parameters).toEqual(body.command.parameters);
  expect(count('/execute')).toBe(0);
 });
+
+
+it.each(['omitted','explicit-zero','gain-only','gain-and-fades'] as const)('preserves %s through edit, create, Job reopen and exact execution re-preview',async mode=>{
+ let savedParameters:Record<string,unknown>|undefined;const original=fetcher.getMockImplementation()!;
+ fetcher.mockImplementation(async(url:string,init:RequestInit={})=>{
+  const body=init.body?JSON.parse(String(init.body)):undefined;
+  if(url.endsWith('/jobs')&&init.method==='POST')savedParameters=structuredClone(body.command.parameters);
+  if(url.endsWith('/execute')||url.includes('/jobs/audio/'))return json(receipt(url.endsWith('/execute')?'executed':'queued',lastRequest,savedParameters));
+  return original(url,init);
+ });
+ const first=await draft();
+ if(mode!=='omitted')act(()=>{
+  state.changeParameter('gain_db',mode==='explicit-zero'?'0':'-3.5');
+  if(mode!=='gain-only'){state.changeParameter('fade_in_ms',mode==='explicit-zero'?'0':'50');state.changeParameter('fade_out_ms',mode==='explicit-zero'?'0':'75');}
+ });
+ const expected={in_ms:550,out_ms:850,...(mode==='omitted'?{}:mode==='explicit-zero'?{gain_db:0,fade_in_ms:0,fade_out_ms:0}:mode==='gain-only'?{gain_db:-3.5}:{gain_db:-3.5,fade_in_ms:50,fade_out_ms:75})};
+ await preview();expect(state.preview!.execution_recipe.parameters).toEqual(expected);await confirm('CREATE');await act(async()=>state.create());
+ expect(savedParameters).toEqual(expected);const saved=structuredClone(state.selected!);first.unmount();
+ render(<Harness/>);await waitFor(()=>expect(state.providerLoading).toBe(false));await act(async()=>state.openJob(saved));
+ expect(state.selected?.command?.parameters).toEqual(saved.command!.parameters);expect(state.impact).toBeUndefined();expect(count('/jobs')).toBe(1);expect(count('/execute')).toBe(0);
+ await act(async()=>state.inspectExecution());expect(state.error).toBe('');expect(state.impact?.input.boundary.kind).toBe('EXECUTE');
+ const request=JSON.parse(String(fetcher.mock.calls.filter(([url])=>url.endsWith('/preview')).at(-1)![1].body));
+ expect(request.parameters).toEqual(expected);expect(request.source_snapshots[0].reference_only).toBeUndefined();
+ expect(request.canvas_return).toEqual(saved.command!.canvas_return);expect(state.impact!.input.recipe).toEqual(saved.execution_recipe);
+ await act(async()=>state.action('execute'));expect(count('/execute')).toBe(0);
+ await confirm('EXECUTE');await act(async()=>Promise.all([state.action('execute'),state.action('execute')]));
+ expect(count('/jobs')).toBe(1);expect(count('/execute')).toBe(1);expect(state.selected?.status,state.error).toBe(fixture.executed.status);
+ await act(async()=>state.action('execute'));expect(count('/execute')).toBe(1);
+});

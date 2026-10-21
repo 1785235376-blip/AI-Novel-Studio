@@ -1,6 +1,7 @@
 import { canonicalExecutionImpact, type ExecutionImpactConfirmation } from '../experimental/executionImpact/executionImpact';
 import { studioExecutionImpactGate, sameExecutionPreview, type StudioExecutionImpactGate, type StudioExecutionImpactInput } from './studioExecutionImpactGate';
 import { sameCompositeCommand } from './studioImageCompositeContract';
+import { checkedCanvasAudioTaskEnvelope } from './canvasAudioTaskEnvelope';
 import { assertCanvasAudioTrimTaskCommand, canvasAudioTrimTaskJobMatches, type CanvasAudioTrimTaskBinding } from './canvasAudioTrimTask';
 import { assertCanvasImageTaskCommand, canvasImageTaskJobMatches, type CanvasImageTaskBinding } from './canvasImageTask';
 import { useStudioProductionLeaveRisk, type StudioProductionLeaveGuard } from './studioProductionLeaveRisk';
@@ -691,7 +692,9 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
       const command=structuredClone(job.command!) as MediaCommand;
       if(boundTask(latest.current)?.source.asset_kind==='audio'){
         // Re-preview the already matched original AudioJob; projection-only markers are not fresh inputs.
-        command.parameters={in_ms:Number(job.command!.parameters.in_ms),out_ms:Number(job.command!.parameters.out_ms)};
+        const parameters=checkedCanvasAudioTaskEnvelope(job.command!.parameters,true);
+        if(!parameters)throw invalid('原入队音频参数不符合本次卡片处理范围，不能重新预览执行。');
+        command.parameters=parameters;
         command.source_snapshots=[{...boundTask(latest.current)!.source}];
         delete command.source_snapshots[0].reference_only;
       }
