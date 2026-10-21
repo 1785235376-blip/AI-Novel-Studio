@@ -342,7 +342,7 @@ def _binding(value, body):
         if value["graph_binding"] is None:
             raise ValueError("CREATIVE_GRAPH_MEDIA_BINDING_INVALID")
         validate_graph_binding(value["graph_binding"], value)
-        if body["operation_id"] == "m8.audio.trim" and TRIM_CONTROLS.intersection(body["parameters"]):
+        if body["operation_id"] == "m8.audio.trim" and (TRIM_CONTROLS - {"gain_db", "fade_in_ms", "fade_out_ms"}).intersection(body["parameters"]):
             raise _error("STUDIO_AUDIO_CONTROLS_STANDALONE_ONLY", "新增音频控制仅支持独立音频制作入口", 400)
     if not isinstance(value["sources"], list) or value["sources"] != body["source_snapshots"]:
         raise _error("STUDIO_AUDIO_SOURCE_BINDING_MISMATCH", "当前来源与音频请求不一致", 409)
@@ -555,7 +555,7 @@ class StudioAudioExecution:
             self._receipt(historical_receipt)
             if row.get("receipt_digest") != historical_receipt["receipt_digest"]:
                 raise _error("STUDIO_AUDIO_JOB_BINDING_CHANGED", "原音频持久回执已变化，不能继续执行", 409)
-        controlled_output = (body["operation_id"] == "m8.audio.trim" and (TRIM_CONTROLS.intersection(body["parameters"]) or origin is not None)
+        controlled_output = (body["operation_id"] == "m8.audio.trim" and ((TRIM_CONTROLS - {"gain_db", "fade_in_ms", "fade_out_ms"}).intersection(body["parameters"]) or origin is not None)
             and (row.get("publication_ready") is not None or row.get("publication_state") in {"RESERVED", "VERIFIED"}
                  or row.get("output_asset_id") is not None or row.get("status") in {"AWAITING_REVIEW", "REVIEWING", "APPROVED"}))
         if controlled_output and "measured" not in row:
