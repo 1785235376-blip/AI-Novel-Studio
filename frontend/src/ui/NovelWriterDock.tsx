@@ -1,10 +1,11 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08 / N-UX-09] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08 / N-UX-09 / N-UX-10] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
  * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
  * N-UX-05: first-tier panel quick links (story/check/creation/overview/history).
  * N-UX-08: CTA state machine kinds (continue/adopt/continuity) via data-cta-kind.
+ * N-UX-10: 设定/世界观入口 → FL story / World*；文案明确 ≠ 分镜 Bible。
  */
 import type {ReactNode} from 'react';
 import {CapabilityBadge} from './CapabilityBadge';
@@ -83,7 +84,10 @@ export function NovelWriterDock({
             </button>
           ))}
           {onOpenStory && (
-            <button type="button" className="novel-writer-dock__link" onClick={onOpenStory}>故事规划</button>
+            <button type="button" className="novel-writer-dock__link" onClick={onOpenStory} data-open="story-planning">故事规划</button>
+          )}
+          {onOpenStory && (
+            <button type="button" className="novel-writer-dock__link" onClick={onOpenStory} data-open="story-world">世界观 / 设定</button>
           )}
           {onOpenHistory && (
             <button type="button" className="novel-writer-dock__link" onClick={onOpenHistory}>版本历史</button>
@@ -97,7 +101,7 @@ export function NovelWriterDock({
         <span className="novel-writer-dock__tier1-label">第一梯队 · 同屏可达</span>
         <div className="novel-writer-dock__tier1-links">
           {onOpenStory && (
-            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenStory} data-tier1="story">故事资料库</button>
+            <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenStory} data-tier1="story" data-novel-path="story-world" title="小说设定与世界观（story / World*），不是分镜 Bible">故事资料 · 设定</button>
           )}
           {onOpenCheck && (
             <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenCheck} data-tier1="check">一致性 · Canon</button>
@@ -112,6 +116,7 @@ export function NovelWriterDock({
             <button type="button" className="novel-writer-dock__tier1-btn" onClick={onOpenHistory} data-tier1="history">版本历史</button>
           )}
         </div>
+        <p className="novel-writer-dock__hint">「故事资料 · 设定」打开 FL <strong>story</strong>（规划 / World* / 角色），小说设定主路径；分镜侧 Bible 不在此入口（N-UX-10 · 无新 FL id）。</p>
         <p className="novel-writer-dock__hint">「一致性 · Canon」打开 FL check：Continuity 与 PendingCanon 同屏（无新 FL id）。</p>
       </section>
 
@@ -135,7 +140,7 @@ export function NovelWriterDock({
             <p className="novel-writer-dock__empty" data-honest-kind="empty_selection">暂无大纲条目。可在故事资料库完善卷章；此处保留可读占位，禁止空白属性板（X-UX-01 诚实空态）。</p>
           )}
           {onOpenStory && (
-            <button type="button" className="ui-button" onClick={onOpenStory}>打开故事资料库 / 规划</button>
+            <button type="button" className="ui-button" onClick={onOpenStory} data-open="story-database">打开故事资料库 / 设定（World*）</button>
           )}
         </div>
       </details>
@@ -156,7 +161,10 @@ export function NovelWriterDock({
             <p className="novel-writer-dock__empty">本章尚未挂接角色。写作右栏始终保留此区；需要时打开故事资料库。</p>
           )}
           {onOpenStory && (
-            <button type="button" className="ui-button" onClick={onOpenStory}>管理角色</button>
+            <button type="button" className="ui-button" onClick={onOpenStory} data-open="story-characters">管理角色</button>
+          )}
+          {onOpenStory && (
+            <button type="button" className="ui-button" onClick={onOpenStory} data-open="story-world">打开世界观设定（≠ 分镜 Bible）</button>
           )}
           {onOpenCheck && (
             <button type="button" className="ui-button" onClick={onOpenCheck}>一致性检查 · 待审 Canon</button>

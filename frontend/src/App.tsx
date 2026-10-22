@@ -2124,10 +2124,11 @@ function Panel({
     return novelId ? (
       <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} novelId={novelId} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} onOpenStorySourceChapter={onOpenStorySourceChapter} />
     ) : (
-      <section className="panel">
+      <section className="panel" data-novel-path="story-world">
         <h2>故事资料库</h2>
         <p className="notice">
-          请先打开小说项目，再查看人物、世界设定和大纲。
+          {/* [HERMIA-FE-20261022 N-UX-10] */}
+          请先打开小说项目，再查看人物、世界观设定（World*）和大纲。此为小说设定主路径（FL story）；分镜 Bible 不在此面。
         </p>
       </section>
     );
@@ -2313,6 +2314,10 @@ export function StoryDatabasePanel({
   })});
     return (
       <>
+        {/* [HERMIA-FE-20261022 N-UX-10] novel 设定/World* — not storyboard BibleWorkspace */}
+        <p className="notice" role="note" data-novel-path="story-world">
+          小说设定与世界观（FL <strong>story</strong> · World* / 规划 / 角色）。分镜侧 Bible 契约面不在此路径；勿从 VIDEO/分镜入口找小说设定。
+        </p>
         {targetState && <p className="notice" role="status">{targetState}</p>}
         <StoryPlanningWorkspace
           novelTitle={novel.data?.title||"当前小说"}

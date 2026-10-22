@@ -23,12 +23,13 @@ export interface FeatureGroupDefinition {
 /**
  * The feature IDs are part of the existing panel contract. Keep them stable:
  * App.tsx and its domain panels use these values to select the active surface.
- * [HERMIA-FE-20261022 N-UX-02/05] hints + T1 marks — no new FL ids.
+ * [HERMIA-FE-20261022 N-UX-02/05/10] hints + T1 marks — no new FL ids.
+ * N-UX-10: story = novel 设定/World* path; ≠ storyboard BibleWorkspace.
  */
 export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   {id:'create',label:'创作',icon:<PenLine aria-hidden="true"/>,items:[
     {id:'creation',label:'创作方案与风格',icon:<PenLine aria-hidden="true"/>,tier:'t1',hint:'方案审阅后可用于写作'},
-    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>,tier:'t1',hint:'规划 · 设定 · bible（含故事规划）'},
+    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>,tier:'t1',hint:'小说设定 · 世界观 World*（经 story，≠ 分镜 Bible）'},
     {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>,tier:'t1',hint:'本书是什么'},
     {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>,tier:'t1',hint:'版本 / 恢复'},
     {id:'workflow',label:'工作流编排',icon:<Workflow aria-hidden="true"/>,tier:'t3',hint:'编排面 · 非 AI 写作旁路'},

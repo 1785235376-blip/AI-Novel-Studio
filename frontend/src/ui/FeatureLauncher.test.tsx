@@ -97,4 +97,16 @@ describe('FeatureLauncher',()=>{
     fireEvent.click(screen.getByRole('button',{name:'第一梯队：一致性检查'}));
     expect(screen.getByRole('button',{name:'一致性检查'}).getAttribute('aria-current')).toBe('page');
   });
+
+  it('N-UX-10 story hint points to novel World* not storyboard Bible',()=>{
+    render(<Harness/>);
+    fireEvent.click(screen.getByRole('button',{name:'打开功能导航'}));
+    const story=screen.getByRole('button',{name:'故事资料库'});
+    const hint=story.getAttribute('title')||'';
+    expect(hint).toMatch(/World\*|世界观|小说设定/);
+    expect(hint).toMatch(/≠\s*分镜\s*Bible|分镜 Bible/);
+    expect(hint).not.toMatch(/^规划 · 设定 · bible/);
+    // Stable FL id — no invented bible/world FL
+    expect(story.getAttribute('data-feature-id')).toBe('story');
+  });
 });

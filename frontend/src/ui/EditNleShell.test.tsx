@@ -248,4 +248,32 @@ describe('NovelWriterDock Lumen §4.4', () => {
     expect(host.textContent).toContain('PendingCanon');
     act(() => root.unmount());
   });
+
+  it('N-UX-10 novel settings entry opens story path not storyboard bible', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const openStory = vi.fn();
+    act(() => root.render(
+      <NovelWriterDock
+        chapterTitle="第一章"
+        chapterMeta="第 1 章"
+        primaryCta={{label: '继续写', onClick: () => {}}}
+        outlineItems={[]}
+        castItems={[]}
+        onOpenStory={openStory}
+        ai={<p>AI</p>}
+      />,
+    ));
+    const worldLink = host.querySelector<HTMLButtonElement>('[data-open="story-world"]');
+    expect(worldLink).toBeTruthy();
+    expect(worldLink!.textContent || '').toMatch(/世界观|设定/);
+    act(() => { worldLink!.click(); });
+    expect(openStory).toHaveBeenCalled();
+    const tier1 = host.querySelector<HTMLButtonElement>('[data-tier1="story"]');
+    expect(tier1?.getAttribute('data-novel-path')).toBe('story-world');
+    expect(host.textContent).toMatch(/≠ 分镜 Bible|不是分镜 Bible|分镜侧 Bible/);
+    expect(host.textContent).not.toMatch(/打开分镜 Bible|StoryboardWorkspace/);
+    act(() => root.unmount());
+  });
 });

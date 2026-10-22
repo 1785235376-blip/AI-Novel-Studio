@@ -140,12 +140,14 @@ describe('novel action aliases (H-P0-01 / N-P0-02)', () => {
     expect(await a.execute('novel.open.aiWritingSurface', c)).toEqual({status: 'done', value: 'write'});
     expect(await a.execute('novel.open.writingShell', c)).toEqual({status: 'done', value: 'write'});
     expect(await a.execute('novel.open.storyPlanning', c)).toEqual({status: 'done', value: 'story'});
+    expect(await a.execute('novel.open.worldBuilding', c)).toEqual({status: 'done', value: 'story'});
+    expect(await a.execute('novel.open.novelSettings', c)).toEqual({status: 'done', value: 'story'});
     expect(await a.execute('novel.open.pendingCanon', c)).toEqual({status: 'done', value: 'check'});
     expect(await a.execute('novel.open.workflowSurface', c)).toEqual({status: 'done', value: 'workflow'});
     expect(await a.execute('novel.focus.aiWriting', c)).toEqual({status: 'done', value: 'aiWriting'});
     expect(await a.execute('novel.focus.editor', c)).toEqual({status: 'done', value: 'editor'});
     expect(focused).toEqual(['aiWriting', 'editor']);
-    expect(opened).toEqual(['history', 'creation', 'check', 'write', 'write', 'story', 'check', 'workflow', 'write', 'write']);
+    expect(opened).toEqual(['history', 'creation', 'check', 'write', 'write', 'story', 'story', 'story', 'check', 'workflow', 'write', 'write']);
   });
 });
 
