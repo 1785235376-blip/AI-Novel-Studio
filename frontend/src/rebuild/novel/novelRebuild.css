@@ -1,0 +1,108 @@
+/* [HERMIA-FE-20261022 REBUILD-W3] 小说工作区 — 按 PoemSeed_V2_HiFi_Prototype.html 的 aside.left / .novel-desk / .novel-assist 重写。
+   字体统一为原型字体栈；正文用原型宋体栈；去掉 780px 居中限制，正文全宽。 */
+html .app-shell[data-module="NOVEL"],html .app-shell[data-module="NOVEL"] *{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif}
+html .app-shell[data-module="NOVEL"] kbd{font-family:inherit}
+
+/* 徽标 / 按钮 */
+.nv-badge{display:inline-flex;align-items:center;flex:none;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:600;line-height:1.6;border:1px solid transparent;white-space:nowrap}
+.nv-badge--ok{background:color-mix(in srgb,var(--color-status-success) 16%,transparent);color:var(--color-status-success)}
+.nv-badge--part{background:color-mix(in srgb,var(--color-status-warning) 16%,transparent);color:var(--color-status-warning)}
+.nv-badge--local{background:color-mix(in srgb,var(--color-status-info) 16%,transparent);color:var(--color-status-info)}
+.nv-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-bg-elevated);color:var(--color-text-primary);font-size:12px;line-height:1.5;cursor:pointer;transition:background 140ms,border-color 140ms}
+.nv-btn:hover:not(:disabled){border-color:var(--color-accent-primary)}
+.nv-btn:disabled{opacity:.5;cursor:not-allowed}
+.nv-btn--primary{background:var(--color-accent-primary);border-color:var(--color-accent-primary);color:var(--color-text-inverse);font-weight:600}
+.nv-btn--primary:hover:not(:disabled){background:var(--color-accent-hover)}
+.nv-link{border:0;background:none;padding:2px 0;color:var(--color-accent-primary);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.nv-hint{margin:0;font-size:12px;line-height:1.5;color:var(--color-text-muted)}
+.nv-row{display:flex;gap:6px;flex-wrap:wrap}
+.nv-spacer{flex:1}
+.nv-hide{display:none!important}
+
+/* ---------- 左栏 ---------- */
+html .app-shell .workspace-sidebar--novel{padding:0;overflow:auto;background:var(--color-bg-surface)}
+.nv-rail{display:flex;flex-direction:column;padding:12px 8px 16px;gap:2px;min-height:100%}
+.nv-rail__h{margin:10px 6px 6px;font-size:12px;font-weight:600;color:var(--color-text-muted)}
+.nv-rail__h:first-child{margin-top:2px}
+.nv-rail__tree{display:flex;flex-direction:column;gap:1px}
+.nv-rail__vol{font-size:11px;color:var(--color-text-muted);padding:6px 8px}
+.nv-rail__muted{margin:4px 8px;font-size:12px;color:var(--color-text-muted)}
+.nv-rail__item{display:flex;align-items:center;gap:6px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--color-text-primary);font-size:13px;text-align:left;cursor:pointer;transition:background 140ms}
+.nv-rail__item:hover:not(:disabled){background:var(--color-bg-subtle)}
+.nv-rail__item[aria-selected="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
+.nv-rail__item:disabled{opacity:.5;cursor:not-allowed}
+.nv-rail__ic{width:12px;flex:none;color:var(--color-text-muted)}
+.nv-rail__label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-rail__item .nv-badge{margin-left:auto}
+.nv-rail__new{margin:8px 0;width:100%;padding:5px 10px;border:1px dashed var(--color-border-strong);border-radius:6px;background:none;color:var(--color-text-secondary);font-size:12px;cursor:pointer}
+.nv-rail__new:hover{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
+.nv-rail__more{margin:4px 0 0;border-top:1px solid var(--color-border-default);padding-top:6px}
+.nv-rail__more>summary{cursor:pointer;padding:4px 8px;font-size:12px;color:var(--color-text-muted);list-style:none}
+.nv-rail__more>summary::before{content:"▸ ";}
+.nv-rail__more[open]>summary::before{content:"▾ ";}
+.nv-rail__more-body{padding:6px 2px}
+.nv-rail .creative-workbench-entry{margin-bottom:8px}
+
+/* ---------- 中栏写作台 ---------- */
+html .app-shell[data-module="NOVEL"] .main-workspace{display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--color-bg-subtle)}
+html .app-shell[data-module="NOVEL"] .novel-writing-workspace{display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;padding:0;gap:0;background:var(--color-bg-subtle)}
+.nv-desk__head{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-surface);flex:none;flex-wrap:wrap}
+.nv-desk__head h2{margin:0;font-size:16px;font-weight:650;color:var(--color-text-primary)}
+html .app-shell[data-module="NOVEL"] .novel-workspace-chrome{flex:none;margin:0;padding:0;border:0;background:none}
+html .app-shell[data-module="NOVEL"] .nv-desk__tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;padding:6px 18px;min-height:0;border:0;border-bottom:1px solid var(--color-border-default);border-radius:0;background:var(--color-bg-subtle);box-shadow:none;position:static}
+html .app-shell[data-module="NOVEL"] .nv-desk__tools .novel-editor-metadata{display:flex;align-items:center;gap:10px;flex:1;min-width:0;color:var(--color-text-muted);font-size:12px}
+html .app-shell[data-module="NOVEL"] .nv-desk__tools .writing-goal{display:flex;align-items:center;gap:8px;font-size:12px}
+html .app-shell[data-module="NOVEL"] .workspace-resume-summary{margin:8px 18px 0}
+html .app-shell[data-module="NOVEL"] .nv-desk__body{flex:1;display:flex;flex-direction:column;min-height:0;padding:16px 20px 32px;background:var(--color-bg-subtle)}
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor{width:100%!important;max-width:none!important;margin:0!important;min-height:min(62vh,560px);flex:1;padding:28px 36px 40px!important;background:var(--color-bg-editor,var(--color-bg-surface));border:1px solid var(--color-border-default);border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror,
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror *{font-family:"Songti SC","Noto Serif CJK SC","SimSun",serif}
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror{font-size:17px;line-height:1.85;min-height:calc(62vh - 80px)}
+html .app-shell[data-module="NOVEL"] .nv-desk__body>.notice{margin:0;padding:24px;border:1px dashed var(--color-border-strong);border-radius:10px;background:var(--color-bg-surface)}
+.nv-desk__panel{flex:none;padding:20px 24px;background:var(--color-bg-subtle)}
+.nv-desk__panel--empty:empty,.nv-desk__panel--empty:not(:has(*)){display:none}
+html .app-shell[data-module="NOVEL"] .nv-desk__panel>.panel{margin:0;max-width:none}
+
+/* 空项目起步 */
+.nv-start{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:48px 24px;min-height:min(62vh,560px)}
+.nv-start h2{margin:0;font-size:22px;font-weight:650;color:var(--color-text-primary)}
+.nv-start>p{margin:0 0 14px;font-size:12.5px;color:var(--color-text-muted)}
+.nv-start__grid{display:grid;grid-template-columns:repeat(3,minmax(180px,220px));gap:12px}
+.nv-start__card{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-surface);color:var(--color-text-primary);text-align:left;cursor:pointer;transition:border-color 140ms,transform 220ms cubic-bezier(.22,1,.36,1)}
+.nv-start__card:hover{border-color:var(--color-accent-primary);transform:translateY(-1px)}
+.nv-start__card b{font-size:14px}
+.nv-start__card small{font-size:12px;color:var(--color-text-muted)}
+.nv-start__sample{margin-top:12px}
+
+/* ---------- 右栏 ---------- */
+html .app-shell[data-module="NOVEL"] .workspace-inspector{padding:0;background:var(--color-bg-surface)}
+.nv-assist{display:flex;flex-direction:column;gap:10px;padding:12px}
+.nv-assist__ctx{display:flex;flex-direction:column;gap:3px;padding:12px;border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-subtle)}
+.nv-assist__ctx>span{font-size:11px;color:var(--color-text-muted)}
+.nv-assist__ctx strong{font-size:14px;color:var(--color-text-primary)}
+.nv-assist__ctx small{font-size:12px;color:var(--color-text-secondary)}
+.nv-assist__badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.nv-assist__next{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-subtle)}
+.nv-assist__next h4{margin:0;font-size:12px;font-weight:600;color:var(--color-text-secondary)}
+.nv-assist__primary{justify-content:center;padding:8px 12px;font-size:13px}
+.nv-assist__links{display:flex;gap:10px;flex-wrap:wrap}
+.nv-sec{border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-surface);overflow:hidden}
+.nv-sec>summary{cursor:pointer;padding:9px 12px;font-size:12.5px;font-weight:600;color:var(--color-text-primary);list-style:none;display:flex;align-items:center}
+.nv-sec>summary::after{content:"▾";margin-left:auto;color:var(--color-text-muted);font-size:11px}
+.nv-sec:not([open])>summary::after{content:"▸"}
+.nv-sec__body{display:flex;flex-direction:column;gap:8px;padding:0 12px 12px}
+.nv-sec__body .nv-btn{align-self:flex-start}
+.nv-outline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nv-outline li{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--color-border-default);border-radius:8px;background:var(--color-bg-elevated)}
+.nv-outline__btn{border:0;background:none;padding:0;text-align:left;color:var(--color-text-primary);font-size:12.5px;cursor:pointer}
+.nv-outline__btn:hover{color:var(--color-accent-primary)}
+
+/* ---------- 上下文条右侧 ---------- */
+html .app-shell .context-bar__save-location{flex:none;padding:2px 9px;border-radius:999px;background:var(--color-accent-subtle);color:var(--color-accent-primary);font-size:11.5px;font-weight:600}
+html .app-shell .context-bar__review{flex:none;margin-left:6px;padding:3px 10px;border:1px solid var(--color-border-strong);border-radius:6px;background:var(--color-bg-elevated);color:var(--color-text-primary);font-size:12px;cursor:pointer}
+html .app-shell .context-bar__review:hover{border-color:var(--color-accent-primary)}
+/* [HERMIA-FE-20261022 REBUILD-W3] 上下文条右对齐；写作台头部给侧栏开关留位 */
+html .app-shell .context-bar--writing{width:100%}
+html .app-shell .context-bar__spacer{flex:1 1 auto!important;min-width:12px}
+html .app-shell .context-bar__save-location{margin-left:auto}
+.nv-desk__head{padding-right:52px}

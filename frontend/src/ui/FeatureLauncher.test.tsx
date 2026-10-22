@@ -92,7 +92,7 @@ describe('FeatureLauncher',()=>{
     expect(screen.getByRole('button',{name:'第一梯队：故事资料库'})).toBeTruthy();
     expect(screen.getByRole('button',{name:'第一梯队：一致性检查'})).toBeTruthy();
     const workflow=screen.getByRole('button',{name:'工作流编排'});
-    expect(workflow.getAttribute('title')||'').toMatch(/非 AI 写作旁路|编排面/);
+    expect(workflow.getAttribute('title')||'').toMatch(/非 AI 写作旁路|编排面|多步骤编排/); // [HERMIA-FE-20261022 REBUILD-W3] 文案去内部名
     expect(workflow.className).toContain('feature-item--workflow');
     fireEvent.click(screen.getByRole('button',{name:'第一梯队：一致性检查'}));
     expect(screen.getByRole('button',{name:'一致性检查'}).getAttribute('aria-current')).toBe('page');
@@ -104,7 +104,8 @@ describe('FeatureLauncher',()=>{
     const story=screen.getByRole('button',{name:'故事资料库'});
     const hint=story.getAttribute('title')||'';
     expect(hint).toMatch(/World\*|世界观|小说设定/);
-    expect(hint).toMatch(/≠\s*分镜\s*Bible|分镜 Bible/);
+    // [HERMIA-FE-20261022 REBUILD-W3] 作者可见提示不再出现「分镜 Bible」等内部说明
+    expect(hint).not.toMatch(/Bible|World\*/);
     expect(hint).not.toMatch(/^规划 · 设定 · bible/);
     // Stable FL id — no invented bible/world FL
     expect(story.getAttribute('data-feature-id')).toBe('story');

@@ -1,7 +1,7 @@
 /* [HERMIA-FE-20261022 REBUILD-W2] 原型外壳 — 以 PoemSeed_V2_HiFi_Prototype.html 为准：
    56px 顶栏 / 44px 上下文条 / 248·1fr·340 三栏贴边 / 32px 状态栏；13px 字号；紧凑分段导航；不折行。
    仅换外壳视觉，不改数据、hooks 与模块功能。`html .app-shell` 前缀保证覆盖旧外壳样式。 */
-html .app-shell{font:13px/1.5 "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;grid-template-rows:56px 44px minmax(0,1fr) 32px;background:var(--color-bg-app)}
+html .app-shell{font:13px/1.5 "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;grid-template-rows:52px 40px minmax(0,1fr) 32px;background:var(--color-bg-app)}
 
 /* ---------- 顶栏 header.gh ---------- */
 html .app-shell .global-header{display:flex;align-items:center;gap:12px;padding:0 16px;min-width:0;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);box-shadow:none;white-space:nowrap}

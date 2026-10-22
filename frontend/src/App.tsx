@@ -42,7 +42,6 @@ import { ConflictDialog } from "./ConflictDialog";
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
-import { NovelWriterDock } from "./ui/NovelWriterDock";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { EMPTY_EDITOR_SELECTION, shouldRestoreNovelWriteOnEnter } from "./ui/moduleSwitchIsolation";
@@ -130,6 +129,10 @@ import "./ui/ui.css";
 import "./ui/FeatureLauncher.css";
 import "./experimental/workspaceResume.css";
 import "./rebuild/protoShell.css"; // [HERMIA-FE-20261022 REBUILD-W2] 原型外壳，最后加载
+import { NovelStructureRail, type RailPanel } from "./rebuild/novel/NovelStructureRail"; // [HERMIA-FE-20261022 REBUILD-W3]
+import { NovelAssist } from "./rebuild/novel/NovelAssist"; // [HERMIA-FE-20261022 REBUILD-W3]
+import { NovelStartEmpty } from "./rebuild/novel/NovelStartEmpty"; // [HERMIA-FE-20261022 REBUILD-W3]
+import "./rebuild/novel/novelRebuild.css"; // [HERMIA-FE-20261022 REBUILD-W3] 小说工作区按原型重做
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
   c.setQueryData<Novel[]>(["novels"], (x) =>
     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
@@ -331,7 +334,9 @@ export default function App() {
     [variantDrafts, setVariantDrafts] = useState<AiVariantDraft[]>([]),
     [activeVariant, setActiveVariant] = useState(0);
   // [HERMIA-FE-20261022] H-UX-START-01 · cold-start six-module gate (session; #skip)
-  const [startGateOpen, setStartGateOpen] = useState(() => shouldOpenModuleStartGate());
+  // [HERMIA-FE-20261022 REBUILD-W3] /novels 是明确的写作入口：不弹起步弹窗，不自动跳到媒体工作区；?novel=<id> 可直接打开某部作品
+  const novelsRoute = typeof location !== 'undefined' && location.pathname.startsWith('/novels');
+  const [startGateOpen, setStartGateOpen] = useState(() => shouldOpenModuleStartGate() && !novelsRoute);
   const commitStudioModule = useCallback((module: StudioModule) => {
     if (!mounted.current || studioEntryApplied.current !== studioEntry
         || revisionStoreIdentity({ ...useStudio.getState(), chapterId: '' }) !== studioEntry.identity) return;
@@ -427,7 +432,7 @@ export default function App() {
   useEffect(() => {
     if (!independentStudios || !s.novelId || studioEntryApplied.current !== studioEntry
         || studioEntry.applied || !studioProject.isSuccess || studioProject.data?.project.id !== s.novelId) return;
-    if (!neutralStudio || studioEntry.explicit) { studioEntry.applied = true; return; }
+    if (!neutralStudio || studioEntry.explicit || novelsRoute) { studioEntry.applied = true; return; }
     void styleLeave.request(current => {
       if (!current() || studioEntryApplied.current !== studioEntry || studioEntry.explicit) return;
       studioEntry.applied = true;
@@ -488,7 +493,13 @@ export default function App() {
     queryFn: api.novels,
     refetchOnMount: workspaceTools ? 'always' : true,
     enabled: !packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope),
-  });
+  });  useEffect(() => { // [HERMIA-FE-20261022 REBUILD-W3]
+    if (!novelsRoute || !novels.data) return;
+    const wanted = new URLSearchParams(location.search).get('novel');
+    if (wanted && wanted !== useStudio.getState().novelId && novels.data.some(row => row.id === wanted)) s.setNovel(wanted);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [novelsRoute, novels.data]);
+
   const mediaTasks = useQuery({
     queryKey: ["media-tasks", s.novelId],
     queryFn: () => api.mediaTasks(s.novelId),
@@ -643,6 +654,9 @@ export default function App() {
     // Wait for current server flags and the original project inventory. A hint
     // cannot select a foreign/missing project or redirect an authenticated scope.
     if (packagedHost || !shouldLoadLocalNovels(s.sessionToken, s.scope) || experimentalFlags.isPending) return;
+    const routeNovel = novelsRoute ? new URLSearchParams(location.search).get('novel') : null; // [HERMIA-FE-20261022 REBUILD-W3]
+    const routeHit = routeNovel && novels.data?.some(row => row.id === routeNovel) ? routeNovel : undefined;
+    if (routeHit && !s.novelId) { s.setNovel(routeHit); return; }
     if (!workspaceTools && !independentStudios) { if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id); return; }
     if (novels.isFetching || !novels.isSuccess) return;
     if (s.novelId) {
@@ -1435,11 +1449,42 @@ export default function App() {
   const writingGoalValue = writingGoal.data && [writingGoal.data.current_words, writingGoal.data.target_words,
     writingGoal.data.current_chapters, writingGoal.data.target_chapters, writingGoal.data.words_progress]
     .every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0) ? writingGoal.data : undefined;
+  // [HERMIA-FE-20261022 REBUILD-W3] 左栏按原型：作品结构 + 小说面板（带状态标签）；旧章节管理与全部功能收起
+  const novelRailPanels: RailPanel[] = [
+    { id: 'write', label: '写作台', status: 'ok' },
+    { id: 'overview', label: '总览', status: 'ok' },
+    { id: 'story', label: '故事规划 · 人物 · 世界观', status: 'ok' },
+    { id: 'check', label: '一致性 · 待审设定', status: 'ok' },
+    { id: 'creation', label: '创作方案', status: 'ok' },
+    { id: 'history', label: '版本历史', status: 'ok', disabled: !chapter.data, title: chapter.data ? undefined : '先打开一个章节' },
+    { id: 'research', label: '资料研究', status: 'ok' },
+    { id: 'knowledge', label: '导入', status: 'ok' },
+    { id: 'exports', label: '导出', status: 'ok' },
+    { id: 'screenplay', label: '影视剧本', status: 'part' },
+    { id: 'adaptation', label: '改编', status: 'part' },
+    { id: 'workflow', label: '工作流', status: 'part' },
+    { id: 'agents', label: 'AI 任务', status: 'part' },
+  ];
+  const openNovelPanel = (id: string) => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel(id); } });
+  const createNextChapter = async () => {
+    const title = `第 ${(chapters.data?.length || 0) + 1} 章`;
+    try {
+      const created = scope ? await api.scopedCreateChapter(scope, title) : await api.createChapter(s.novelId, title);
+      await chapters.refetch(); await writingGoal.refetch(); s.setChapter(created.id); setPanel('write');
+    } catch { setShellMessage('新建章节失败，请稍后重试。'); }
+  };
   const sidebar = (
-    <div className="tree sidebar-layout">
-      <div className="novel-sidebar-heading"><span>小说结构</span><strong>章节导航</strong></div>
-      <div className="sidebar-chapter-scroll" data-testid="chapter-tree-scroll">
-        {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <div className="creative-workbench-entry"><Button disabled={composing} onClick={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(true); } })}>打开 V2 创作工作台</Button></div>}
+    <NovelStructureRail
+      chapters={(chapters.data || []).map(c => ({ id: c.id, number: c.number, title: c.title, wordCount: c.word_count, status: c.id === s.chapterId ? saveDisplayLabel : undefined }))}
+      selectedId={s.chapterId}
+      loading={chapters.isLoading}
+      error={chapters.error ? String(chapters.error) : null}
+      onSelect={id => { s.setChapter(id); if (panel !== 'write') openNovelPanel('write'); }}
+      onCreate={s.novelId ? () => { void createNextChapter(); } : undefined}
+      panels={novelRailPanels}
+      activePanel={panel}
+      onOpenPanel={openNovelPanel}
+      manage={<div className="tree sidebar-layout" data-testid="chapter-tree-scroll">
         <ChapterTree
           chapters={(chapters.data || []).map((c) => ({
             id: c.id,
@@ -1529,8 +1574,9 @@ export default function App() {
             }
           }}
         />
-      </div>
-      <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>
+      </div>}
+      more={<>
+        {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <div className="creative-workbench-entry"><Button disabled={composing} onClick={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(true); } })}>打开 V2 创作工作台</Button></div>}
       <CommandSearch workbench={workbench} onLegacy={legacySelectPanel} />
       <FeatureLauncher
         selectedId={panel}
@@ -1539,7 +1585,8 @@ export default function App() {
         onSelect={next => { void workbench.open(next, legacySelectPanel); }}
         onToggleGroup={(id) => setFeatureGroups((current) => ({ ...current, [id]: !current[id] }))}
       />
-    </div>
+      </>}
+    />
   );
   function openStorySourceChapter(chapterId: string, signal?: AbortSignal) {
     if (!chapterId || signal?.aborted || panel !== 'story' || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
@@ -1760,10 +1807,18 @@ export default function App() {
   const mainWorkspace = (
     <div className="workspace novel-writing-workspace">
       {!(creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true) && styleLeave.dialog}
-      <div className="novel-workspace-chrome">
-      <div className="editorbar">
+      {/* [HERMIA-FE-20261022 REBUILD-W3] 写作台头部按原型 nd-head / nd-tools */}
+      <div className="nv-desk__head">
+        <h2>{chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : (panel === 'write' ? '未选择章节' : (novelRailPanels.find(p => p.id === panel)?.label || '小说'))}</h2>
+        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--ok">写作台</span> : null}
+        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--local">版本 {chapter.data.version}</span> : null}
+        <span className="nv-spacer" />
+        {panel !== 'write' ? <button type="button" className="nv-btn" data-back-to-writer="true" onClick={() => openNovelPanel('write')}>回写作台</button> : null}
+        {panel === 'write' && chapter.data ? <button type="button" className="nv-btn" onClick={() => openNovelPanel('history')}>版本历史</button> : null}
+      </div>
+      <div className={panel === 'write' ? 'novel-workspace-chrome' : 'novel-workspace-chrome nv-hide'}>
+      <div className={chapter.data ? 'editorbar nv-desk__tools' : 'editorbar nv-desk__tools nv-hide'}>
         <div className="novel-editor-metadata">
-        <div className="editorbar__identity"><span>当前章节</span><b>{chapter.data?.title || "未选择章节"}</b></div>
         <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
         {writingGoal.data && !writingGoalValue && <p className="notice" role="status">写作目标数据不完整，请刷新后重试。正文仍可编辑和保存。</p>}
         {writingGoalValue && (
@@ -1803,7 +1858,7 @@ export default function App() {
         本机草稿写入失败。当前修改仅在此页面内存中，关闭、刷新或断电可能丢失。请导出当前草稿。
       </section>}
       </div>
-      <div className={writingFocus && referencesVisible ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
+      <div className={`${writingFocus && referencesVisible ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'} nv-desk__body${panel === 'write' ? '' : ' nv-hide'}`}>
       {chapter.data && hydratedIdentity === editorIdentity ? (
         <ChapterEditor
           writingPreferences={writingFocus ? writingPreferences : undefined}
@@ -1816,6 +1871,16 @@ export default function App() {
           onAnchorChange={workspaceTools || writingFocus ? anchor => setEditorAnchor({ identity: editorIdentity, anchor }) : undefined}
           restoreAnchor={pendingAnchor && pendingAnchor.chapterId === s.chapterId && pendingAnchor.namespace === namespace && pendingAnchor.version === chapter.data.version && saveState === 'saved' ? pendingAnchor : undefined}
         />
+      ) : chapters.isSuccess && (chapters.data || []).length === 0 && !corruptDraft && s.novelId ? (
+        // [HERMIA-FE-20261022 REBUILD-W3] 空项目：原型「你想从哪里开始？」
+        <NovelStartEmpty choices={[
+          { id: 'write', title: '我想写作', desc: '新建第一章，开始写正文', onClick: () => { void createNextChapter(); } },
+          { id: 'story', title: '先做故事规划', desc: '人物、世界观与大纲', onClick: () => openNovelPanel('story') },
+          { id: 'import', title: '导入已有稿件', desc: '把已有文本导入为章节', onClick: () => openNovelPanel('knowledge') },
+          { id: 'IMAGE', title: '我想做图', desc: '图像、参考素材与比较', onClick: () => navigateStudioModule('IMAGE') },
+          { id: 'VIDEO', title: '我想做视频', desc: '镜头、图生视频与时间线', onClick: () => navigateStudioModule('VIDEO') },
+          { id: 'AUDIO', title: '我想处理音频', desc: '配音、音效与字幕', onClick: () => navigateStudioModule('AUDIO') },
+        ]} />
       ) : (
         <section className="notice" aria-live="polite">
           <strong>{corruptDraft?.identity === editorIdentity ? '请先处理草稿恢复候选' : '当前还没有打开的章节'}</strong>
@@ -1824,6 +1889,7 @@ export default function App() {
       )}
       {writingFocus && referencesVisible && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
       </div>
+      <div className={panel === 'write' ? 'nv-desk__panel nv-desk__panel--empty' : 'nv-desk__panel'}>
       {panel === 'settings' && localTutor.settings}
       {panel === 'agents' && interopTask && <section className="panel" aria-label="已授权的 Tutor 任务目标"><h2>任务详情 · 只读</h2><p>任务：{interopTask.id}</p><p>状态：{interopTask.status}</p><p>章节：{interopTask.chapterId || '无'}</p><p>状态来自原任务服务；未重新运行或接受任何生成。</p></section>}
       {panel === "experimental" ? <ExperimentalWorkbench leaveGuard={styleLeave} key={`${namespace}:${s.novelId}`} novelId={s.novelId} requestedTask={(workspaceTools || taskTarget?.authority === 'planning_proposal' || taskTarget?.authority === 'simulator_run') && taskTarget?.namespace === namespace && taskTarget.novelId === s.novelId ? taskTarget : undefined} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} workspaceView={{ focus_active: focusActive, references_visible: referencesVisible }} onWorkspaceViewChange={view => { if (!workspaceTools || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setFocusActive(view.focus_active); setReferencesVisible(view.references_visible); }} onWorkspaceSaved={() => { void lastWorkspace.refetch(); }} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
@@ -1841,6 +1907,7 @@ export default function App() {
             current && current.version > restored.version ? current : restored);
           void qc.invalidateQueries({ queryKey: ["chapters", namespace, s.novelId] });
         }} />}
+      </div>
     </div>
   );
   // [HERMIA-FE-20261022 W-P0-06] Right dock: outline / cast / AI — default expanded, no empty void.
@@ -1849,9 +1916,6 @@ export default function App() {
     label: `第 ${c.number} 章 · ${c.title || '未命名'}`,
     hint: c.id === s.chapterId ? '当前正在写' : undefined,
   }));
-  const castItems = [
-    ...(activeCharacterId ? [{id: activeCharacterId, label: '当前人物视角', hint: activeCharacterId}] : []),
-  ];
   const draftReady = !!(job && job.status === 'SUCCEEDED' && job.output && !['CANCELLED', 'ACCEPTED', 'REJECTED'].includes(job.status));
   // [HERMIA-FE-20261022 N-UX-08] CTA state machine — adopt > continuity > continue; count is honest (error/loading → 0)
   const continuityWarningCount = countOpenContinuityWarnings(continuityFindingsQ.data);
@@ -1873,34 +1937,30 @@ export default function App() {
         : {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => {
             document.querySelector<HTMLElement>('.workspace-sidebar--novel')?.focus?.();
           }};
+  const novelSaveLocation = scope ? '保存位置：协作服务' : '保存位置：本机'; // [HERMIA-FE-20261022 REBUILD-W3]
   const inspector = (
-    <NovelWriterDock
-      chapterTitle={chapter.data?.title || "未选择章节"}
-      chapterMeta={chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}
-      saveLabel={saveDisplayLabel}
-      primaryCta={primaryCta}
-      secondaryLinks={[
-        {label: '生成草稿', onClick: () => { /* AiWritingPanel owns generate; scroll AI section */ document.querySelector('.novel-writer-dock__section--ai')?.scrollIntoView({block: 'nearest'}); }},
-        {label: '一致性检查', onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })},
+    <NovelAssist
+      // [HERMIA-FE-20261022 REBUILD-W3] 右栏按原型：当前章节 / 下一步 / 大纲 / 角色 / AI 写作
+      saveLocation={novelSaveLocation}
+      links={[
+        { id: 'draft', label: '生成草稿', onClick: () => { document.querySelector('.novel-writer-dock__section--ai')?.scrollIntoView({block: 'nearest'}); } },
+        ...(['story-planning', 'continuity', 'pending-canon'] as NovelSecondaryEntryId[]).map(id => ({ id, label: novelSecondaryEntry(id).label, onClick: () => styleLeave.request(current => {
+          if (!current()) return;
+          const entry = novelSecondaryEntry(id);
+          commitStudioModule('NOVEL'); setPanel(entry.panel);
+          window.setTimeout(() => scrollNovelSecondaryAnchor(entry.anchor), 80);
+        }) })),
+        ...(chapter.data ? [{ id: 'history', label: '版本历史', onClick: () => openNovelPanel('history') }] : []),
       ]}
+      onOpenStory={() => openNovelPanel('story')}
+      onOpenCheck={() => openNovelPanel('check')}
+      chapterTitle={chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : "未选择章节"}
+      chapterMeta={chapter.data ? `${text.trim().length} 字 · 版本 ${chapter.data.version}` : "从左侧作品结构选择或新建章节"}
+      saveLabel={chapter.data ? saveDisplayLabel : undefined}
+      primaryCta={primaryCta}
       outlineItems={outlineItems}
-      castItems={castItems}
-      onOpenStory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('story'); } })}
-      onOpenCheck={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
-      onOpenHistory={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('history'); } })}
-      onOpenCreation={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('creation'); } })}
-      onOpenOverview={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } })}
-      onOpenWorkflow={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('workflow'); } })}
-      onOpenSecondaryEntry={(id: NovelSecondaryEntryId) => styleLeave.request(current => {
-        // [HERMIA-FE-20261022 N-UX-11] secondary CTA → existing FL story|check + anchor scroll; primary CTA untouched
-        if (!current()) return;
-        const entry = novelSecondaryEntry(id);
-        commitStudioModule('NOVEL');
-        setPanel(entry.panel);
-        window.setTimeout(() => scrollNovelSecondaryAnchor(entry.anchor), 80);
-      })}
+      castNote={activeCharacterId ? `当前人物视角：${activeCharacterId}` : undefined}
       onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
-      capabilityStatus="undetermined"
       ai={<>
       <AiWritingPanel
       authorPreview={chapter.data ? {
@@ -2006,6 +2066,10 @@ export default function App() {
             onOpenOverview: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } }),
             // [HERMIA-FE-20261022 N-UX-09] Sink primary CTA to ContextBar when right dock width → 0
             collapsedCta: { label: primaryCta.label, kind: primaryCta.kind, onClick: primaryCta.onClick, disabled: primaryCta.disabled },
+            // [HERMIA-FE-20261022 REBUILD-W3] 上下文条：保存位置 + 任务 / 候选 / 审核（打开一致性与待审设定）
+            saveLocation: novelSaveLocation,
+            onOpenReview: () => openNovelPanel('check'),
+            reviewCount: continuityWarningCount || undefined,
           }}
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
@@ -2132,12 +2196,8 @@ function Panel({
       </section>
     );
   // [HERMIA-FE-20261022 N-P0-02 / W-P0-06] Editor-first; next-step CTA lives in right dock (Lumen §4.4). No media in novel center.
-  if (type === "write")
-    return (
-      <section className="panel novel-write-chrome" aria-label="写作主面提示">
-        <p className="notice">中区为正文编辑器。右侧为大纲 / 角色 / AI（可收至 0）。不嵌入图片、视频或剪辑画布。</p>
-      </section>
-    );
+  // [HERMIA-FE-20261022 REBUILD-W3] 写作台本身就是中栏正文，不再显示说明卡
+  if (type === "write") return null;
   if (type === "history")
     return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
   if (type === "story" && taskTarget?.authority === "world_rule") return <WorldRulesPanel novelId={novelId} requestedRuleId={taskTarget.id} />;
@@ -2149,7 +2209,7 @@ function Panel({
         <h2>故事资料库</h2>
         <p className="notice">
           {/* [HERMIA-FE-20261022 N-UX-10] */}
-          请先打开小说项目，再查看人物、世界观设定（World*）和大纲。此为小说设定主路径（FL story）；分镜 Bible 不在此面。
+          请先打开一部小说，再查看人物、世界观设定和大纲。
         </p>
       </section>
     );

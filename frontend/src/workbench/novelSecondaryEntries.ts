@@ -1,6 +1,7 @@
 /**
  * [HERMIA-FE-20261022 N-UX-11] Novel secondary discoverability entries.
  * PendingCanon / Continuity / StoryPlanning → existing FL panels only (story | check).
+ * [HERMIA-FE-20261022 REBUILD-W3] 作者可见文案改为纯中文。
  * Does NOT invent FeatureLauncher ids. Primary CTA remains N-UX-08 writing state machine.
  */
 export type NovelSecondaryEntryId = 'story-planning' | 'continuity' | 'pending-canon';
@@ -20,21 +21,21 @@ export type NovelSecondaryEntry = {
 export const NOVEL_SECONDARY_ENTRIES: readonly NovelSecondaryEntry[] = [
   {
     id: 'story-planning',
-    label: 'StoryPlanning · 故事规划',
+    label: '故事规划',
     panel: 'story',
     anchor: 'story-planning',
     actionId: 'novel.open.storyPlanning',
   },
   {
     id: 'continuity',
-    label: 'Continuity · 一致性',
+    label: '一致性检查',
     panel: 'check',
     anchor: 'continuity',
     actionId: 'novel.open.continuityCheck',
   },
   {
     id: 'pending-canon',
-    label: 'PendingCanon · 待审 Canon',
+    label: '待审设定',
     panel: 'check',
     anchor: 'pending-canon',
     actionId: 'novel.open.pendingCanon',

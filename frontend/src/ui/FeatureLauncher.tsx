@@ -29,13 +29,13 @@ export interface FeatureGroupDefinition {
 export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   {id:'create',label:'创作',icon:<PenLine aria-hidden="true"/>,items:[
     {id:'creation',label:'创作方案与风格',icon:<PenLine aria-hidden="true"/>,tier:'t1',hint:'方案审阅后可用于写作'},
-    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>,tier:'t1',hint:'StoryPlanning · 设定 · World*（经 story，≠ 分镜 Bible）'},
+    {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>,tier:'t1',hint:'故事规划 · 人物 · 世界观'},
     {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>,tier:'t1',hint:'本书是什么'},
     {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>,tier:'t1',hint:'版本 / 恢复'},
-    {id:'workflow',label:'工作流编排',icon:<Workflow aria-hidden="true"/>,tier:'t3',hint:'编排面 · 非 AI 写作旁路'},
+    {id:'workflow',label:'工作流编排',icon:<Workflow aria-hidden="true"/>,tier:'t3',hint:'多步骤编排'},
   ]},
   {id:'production',label:'制作与分析',icon:<Film aria-hidden="true"/>,items:[
-    {id:'check',label:'一致性检查',icon:<ScanSearch aria-hidden="true"/>,tier:'t1',hint:'Continuity + PendingCanon（同屏）'},
+    {id:'check',label:'一致性检查',icon:<ScanSearch aria-hidden="true"/>,tier:'t1',hint:'一致性与待审设定'},
     {id:'adaptation',label:'智能改编',icon:<WandSparkles aria-hidden="true"/>},
     {id:'screenplay',label:'影视剧本',icon:<Film aria-hidden="true"/>},
     {id:'assets',label:'资产库',icon:<FolderOpen aria-hidden="true"/>},
@@ -45,7 +45,7 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   ]},
   {id:'collaboration',label:'协作',icon:<UsersRound aria-hidden="true"/>,items:[
     {id:'comments',label:'评论与审核',icon:<ClipboardList aria-hidden="true"/>},
-    {id:'agents',label:'Agent 团队',icon:<Users aria-hidden="true"/>},
+    {id:'agents',label:'AI 团队',icon:<Users aria-hidden="true"/>},
     {id:'members',label:'团队成员',icon:<UsersRound aria-hidden="true"/>},
     {id:'permissions',label:'权限设置',icon:<Shield aria-hidden="true"/>},
   ]},
@@ -59,6 +59,7 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
 ];
 
 /** First-tier panel ids (LUMEN_NOVEL_IA §2–3) — discoverability only; stable FL ids. */
+// [HERMIA-FE-20261022 REBUILD-W3] hints 去掉内部英文名
 export const NOVEL_TIER1_FEATURE_IDS = ['story','check','creation','overview','history'] as const;
 
 export const FEATURE_GROUP_DEFAULTS:Record<string,boolean>={create:true,production:true,collaboration:false,system:false};
@@ -179,7 +180,7 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
       </header>
       {/* [HERMIA-FE-20261022 N-UX-05] First-tier discoverability strip — existing FL ids only */}
       <div className="feature-launcher__tier1" role="group" aria-label="第一梯队面板">
-        <span className="feature-launcher__tier1-label">第一梯队</span>
+        <span className="feature-launcher__tier1-label">常用</span>
         <div className="feature-launcher__tier1-items">
           {t1.map(item=>(
             <button
@@ -195,7 +196,7 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
             >{item.label}</button>
           ))}
         </div>
-        <p className="feature-launcher__tier1-note">一致性含 Continuity / 待审 Canon 同屏；AI 写作旁路在右栏，≠「工作流编排」。</p>
+        <p className="feature-launcher__tier1-note">一致性检查里可同时处理待审设定；AI 写作在右栏。</p>
       </div>
       <div className="feature-launcher__scroll">
         {groups.map(group=>{

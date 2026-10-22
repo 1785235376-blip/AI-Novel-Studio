@@ -348,6 +348,11 @@ export interface WritingContextLabels {
   onOpenOverview?: () => void;
   /** [HERMIA-FE-20261022 N-UX-09] Primary CTA sunk into ContextBar when inspector folded. */
   collapsedCta?: { label: string; kind?: string; onClick: () => void; disabled?: boolean };
+  /** [HERMIA-FE-20261022 REBUILD-W3] 原型上下文条右侧「保存位置」徽标 */
+  saveLocation?: string;
+  /** [HERMIA-FE-20261022 REBUILD-W3] 原型上下文条右侧「任务 / 候选 / 审核」 */
+  onOpenReview?: () => void;
+  reviewCount?: number;
 }
 
 export function ContextBar({
@@ -420,6 +425,13 @@ export function ContextBar({
             onClick={writing.collapsedCta.onClick}
           >
             {writing.collapsedCta.label}
+          </button>
+        ) : null}
+        {writing.saveLocation || writing.onOpenReview ? <span className="context-bar__spacer" style={{ flex: 1 }} /> : null}
+        {writing.saveLocation ? <span className="context-bar__save-location" data-save-location="true">{writing.saveLocation}</span> : null}
+        {writing.onOpenReview ? (
+          <button type="button" className="context-bar__review" data-context-review="true" onClick={writing.onOpenReview}>
+            {`任务 / 候选 / 审核${writing.reviewCount ? ` ${writing.reviewCount}` : ''}`}
           </button>
         ) : null}
       </nav>
