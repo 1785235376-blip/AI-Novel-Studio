@@ -1930,6 +1930,7 @@ export default function App() {
         void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });
       }} revisionGeneration={{ enabled: experimentalFlags.data?.features['experimental.selection_assistant_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true, novelId: s.novelId, context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, providerId:s.textModel?.providerId, modelId:s.textModel?.modelId, profile:s.mode }} onOpenGeneration={openExistingGeneration} onUseStyle={id => styleLeave.request(current => { if (!current()) return; if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setCharacterViewpoint(undefined); s.setWritingInputs({ ...s.writingInputs, styleProfileId: id }); setPanel('history'); })} activeCharacterId={activeCharacterId} onExitCharacter={() => setCharacterViewpoint(undefined)} onUseCharacter={characterMind ? (characterId, chapterId, sceneId) => styleLeave.request(current => { if (!current()) return; if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; if (chapterId !== s.chapterId) { s.setChapter(chapterId); setShellMessage('已打开人物视角对应章节，请再次核对知识后选择人物视角。'); return; } setCharacterViewpoint({ identity: namespace, chapterId, characterId, sceneId, epoch: scopeEpoch }); setPanel('history'); }) : undefined} /> : <Panel key={`${namespace}:${s.novelId}`} type={panel} taskTarget={workspaceTools && taskTarget?.namespace === namespace && taskTarget.novelId === s.novelId ? taskTarget : undefined} storyTarget={workspaceTools && storyTarget?.namespace === namespace && storyTarget.novelId === s.novelId ? storyTarget : undefined} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter} onOpenStorySourceChapter={openStorySourceChapter}
         onOpenStudioModule={navigateStudioModule}
+        pro={shellMode === 'pro' /* [HERMIA-FE-20261022 U5] */}
         onRestored={(restored) => {
           // Feed the existing hydration path. It retains drafts and creates a
           // persistent conflict when a restored server version overtakes them.
@@ -2216,7 +2217,10 @@ function Panel({
   onOpenStorySourceChapter,
   onRestored,
   onOpenStudioModule,
+  pro = true,
 }: {
+  /** [HERMIA-FE-20261022 U5] 普通模式隐藏专业检查 */
+  pro?: boolean;
   type: string;
   storyTarget?: StorySearchTarget;
   taskTarget?: { id: string; authority?: string; parent_id?: string; version?: number };
@@ -2246,7 +2250,7 @@ function Panel({
   if (type === "story" && taskTarget?.authority === "world_rule") return <WorldRulesPanel novelId={novelId} requestedRuleId={taskTarget.id} />;
   if (type === "story")
     return novelId ? (
-      <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} novelId={novelId} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} onOpenStorySourceChapter={onOpenStorySourceChapter} />
+      <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} novelId={novelId} pro={pro} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} onOpenStorySourceChapter={onOpenStorySourceChapter} />
     ) : (
       <section className="panel" data-novel-path="story-world">
         <h2>故事资料库</h2>
@@ -2334,6 +2338,7 @@ function RuntimeDiagnosticsPanel({ scope }: { scope?: Scope }) {
   );
 }
 export function StoryDatabasePanel({
+  pro = true,
   chapter,
   novelId,
   target,
@@ -2341,6 +2346,7 @@ export function StoryDatabasePanel({
   onOpenChapter,
   onOpenStorySourceChapter,
 }: {
+  pro?: boolean;
   chapter?: Chapter;
   novelId?: string;
   target?: StorySearchTarget;
@@ -2484,7 +2490,7 @@ export function StoryDatabasePanel({
         {kind==="characters"&&!scope&&<>
           <CharacterEditor novelId={storyNovelId} value={selectedCharacter} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} saving={saveCharacter.isPending} onSave={async(value)=>{await saveCharacter.mutateAsync(value);}}/>
           <CharacterEvolutionPanel novelId={storyNovelId} characterId={selectedCharacter?.id as string|undefined} characterName={selectedCharacter?.name as string|undefined}/>
-          {chapter&&<CharacterConsistencyPanel novelId={storyNovelId} draft={chapter.content||''} chapter={chapter.number} characters={(queries[0].data||[]) as any[]}/>}
+          {pro&&chapter&&<CharacterConsistencyPanel novelId={storyNovelId} draft={chapter.content||''} chapter={chapter.number} characters={(queries[0].data||[]) as any[]}/>}
           {selectedCharacter?.id&&<EntityAssetPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
           {selectedCharacter?.id&&<VisionAnalysisPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
           {selectedCharacter?.id&&<SpeechSynthesisPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
