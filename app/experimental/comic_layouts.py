@@ -520,7 +520,14 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 or proof.get('receipt_digest') != digest(receipt)):
             raise ValueError('COMIC_USE_ORIGINAL_GENERATION_REVIEW')
 
-    def _asset(self, nid, scope, actor, aid, *, approved=True, pixel_budget=None):
+    def _asset(self, nid, scope, actor, aid, *, approved=True, pixel_budget=None, author_media=False):
+        if author_media:
+            # Explicitly imported author media is unapproved by design; use the
+            # original legacy Asset reader under the original project binding.
+            if getattr(self.assets._scope, 'binding', None) is not None:
+                return self._read_asset(nid, scope, actor, aid, approved=False, pixel_budget=pixel_budget)
+            with self._studio_asset_scope(nid, scope):
+                return self._read_asset(nid, scope, actor, aid, approved=False, pixel_budget=pixel_budget)
         # Original unbound uploads retain their namespace. A second read uses
         # only the actual current project owner; no asset self-declaration can
         # select an incarnation, and private candidates never enter Comic.
@@ -655,7 +662,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 'appearance_reference_policy': 'ORIGINAL_APPROVED_ASSET_VERSION_PINNED',
                 'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
 
-    def _payload(self, nid, scope, actor, value, *, bind_independent=True):
+    def _payload(self, nid, scope, actor, value, *, bind_independent=True, allow_unapproved_assets=False):
         body = LayoutIn.model_validate(value); document = body.model_dump()
         director = None if self._source_free_access.get() else self._director()
         self._admit_document(document)
@@ -673,7 +680,8 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
             # Legacy validation order stays unchanged. Opted-in reference layers
             # bound each distinct source before decoding; repeated pins reuse it.
             if pixel_budget is None or aid not in assets:
-                asset, _ = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
+                asset, _ = self._asset(nid, scope, actor, aid, approved=not allow_unapproved_assets,
+                    pixel_budget=pixel_budget, author_media=allow_unapproved_assets)
                 assets[aid] = self._binding(asset)
             if version != assets[aid]['version']: raise StaleSourceError(code)
         for panel in body.panels:
@@ -688,9 +696,12 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 if item['target_id'] in assets and assets[item['target_id']] != binding:
                     raise ValueError('COMIC_RASTER_BINDING_CONFLICT')
                 assets[item['target_id']] = binding
-        return {**({'project_incarnation': self._independent_identity(nid)} if independent and bind_independent else {}), 'document': document, 'screenplay_version': source['edit_version'] if source is not None else None, 'source_evidence': director.evidence(nid, scope, source) if source is not None else {'sources': {}, 'privacy': {}},
+        payload = {**({'project_incarnation': self._independent_identity(nid)} if independent and bind_independent else {}), 'document': document, 'screenplay_version': source['edit_version'] if source is not None else None, 'source_evidence': director.evidence(nid, scope, source) if source is not None else {'sources': {}, 'privacy': {}},
                 'character_sources': character_sources, 'asset_sources': assets,
                 'scene_ids': {p.id: shots[p.shot_id].get('scene_id') if p.shot_id in shots else None for p in body.panels}, 'status': 'DRAFT', 'approval': None}
+        if allow_unapproved_assets:
+            payload['_author_media_import'] = True
+        return payload
 
     def _current(self, nid, scope, actor, row):
         self._admit_row(row)
@@ -719,7 +730,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                     raise StaleSourceError('COMIC_RASTER_REFERENCE_CONFLICT')
                 current_binding = {**self._binding(asset), 'origin_kind': 'REVIEWED_ORA_RASTER'}
             else:
-                asset, data = self._asset(nid, scope, actor, aid, pixel_budget=pixel_budget)
+                asset, data = self._asset(nid, scope, actor, aid, approved=not row.get('_author_media_import', False), pixel_budget=pixel_budget, author_media=row.get('_author_media_import', False))
                 current_binding = self._binding(asset)
             if current_binding != binding: raise StaleSourceError('COMIC_ASSET_CHANGED')
             images[aid] = data
@@ -759,7 +770,8 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
                 raise ValueError('COMIC_SOURCE_MODE_IMMUTABLE_CREATE_NEW_LAYOUT')
         if body.source_mode == 'INDEPENDENT':
             # Only a valid explicit create may establish the original project epoch.
-            payload = self._payload(nid, scope, actor, body, bind_independent=False)
+            payload = self._payload(nid, scope, actor, body, bind_independent=False,
+                allow_unapproved_assets=bool(rid and original.get('_author_media_import')))
             guard()
             with self._independent_transaction(nid, scope, create=rid is None) as state:
                 guard()
