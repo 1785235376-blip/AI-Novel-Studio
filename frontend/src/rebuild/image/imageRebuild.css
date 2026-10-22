@@ -81,3 +81,4 @@ html .app-shell[data-module="IMAGE"] .media-ws-main{flex:1;min-height:0;display:
 .comic-cell .bub{cursor:grab;touch-action:none;user-select:none;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35)}
 .comic-cell .bub:active{cursor:grabbing}
 .comic-cell .bub:focus-visible{outline:2px solid var(--color-accent-primary)}
+.img-canvaswrap--rcv > .dual-cv{flex:1} /* [HERMIA-FE-20261022 U2] */

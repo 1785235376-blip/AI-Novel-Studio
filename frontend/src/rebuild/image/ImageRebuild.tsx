@@ -10,18 +10,20 @@ import {VisualContextPanel} from '../../novel/VisualContextPanel';
 import {VisionAnalysisPanel} from '../../novel/VisionAnalysisPanel';
 import {MultimodalDirectorWorkspace} from '../../novel/MultimodalDirectorWorkspace';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
+import {ComicView} from '../comic/ComicView';
+import {DualCanvas} from '../canvas/DualCanvas';
 import {safeImagePreviewUri} from '../../novel/ImageInfiniteCanvas';
 import type {ImageInspection} from '../../novel/ImageTaskInspector';
 import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
 import '../novel/novelRebuild.css';
 import './imageRebuild.css';
 
-export type ImageView = 'browse' | 'gen' | 'canvas' | 'comic';
+export type ImageView = 'browse' | 'gen' | 'canvas' | 'comic' | 'dual'; // [HERMIA-FE-20261022 U2] + 双画布
 type Provider = {provider_id: string; display_name?: string; configured: boolean; registered: boolean; reachable?: boolean};
 type Item = {id: string; name: string; sub: string; uri?: string; kind: 'gen' | 'ref'};
 type Job = {id: string; status?: string; prompt?: string};
 
-const VIEW_LABEL: Record<ImageView, string> = {browse: '浏览', canvas: '图片画布', gen: '生成', comic: '漫画制作'};
+const VIEW_LABEL: Record<ImageView, string> = {browse: '浏览', canvas: '图片画布', gen: '生成', comic: '漫画制作', dual: '双画布'};
 const JOB_STATUS: Record<string, string> = {QUEUED: '排队', RUNNING: '进行中', SUCCEEDED: '已完成', FAILED: '失败', CANCELLED: '已取消'};
 
 export function useImageData(novelId: string) {
@@ -70,6 +72,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
       <span className="nv-spacer" />
       <button type="button" className="nv-btn" aria-pressed={view === 'browse'} data-image-sub="studio" onClick={() => onViewChange('browse')}>图片工作台</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => onViewChange('gen')}>生成</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => onViewChange('comic')}>漫画制作</button>
     </div>
@@ -77,7 +80,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const chrome = (
     <>
       <NovelOrient storageKey="studio-image-orient-dismissed" what="这部作品的参考图、角色定妆和关键帧" can="写一句描述生成候选，或放参考图约束一致性" effect="生成会调用你在 AI 主控里接好的生图模型，派发前会再确认" />
-      <NovelModTabs tabs={(['browse', 'canvas', 'gen', 'comic'] as ImageView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => onViewChange(id)}))} />
+      <NovelModTabs tabs={(['browse', 'canvas', 'dual', 'gen', 'comic'] as ImageView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => onViewChange(id)}))} />
     </>
   );
 
@@ -90,6 +93,16 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
       <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><RebuildCanvas kind="image" scope={novelId} label="图片画布" /></div>
       <details className="img-canvas-pro"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details>
+    </div>
+  );
+
+  if (view === 'dual') return (
+    <div className="img-ws" data-img-view="dual" aria-label="图片工作区">
+      {chrome}
+      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>双画布</h2><span className="nv-badge nv-badge--part">本机草稿</span><span className="nv-spacer" />
+        <button type="button" className="nv-btn" onClick={() => onViewChange('canvas')}>只看图片画布</button>
+        <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button></div>
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><DualCanvas scope={novelId} /></div>
     </div>
   );
 
@@ -191,76 +204,6 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   );
 }
 
-// [HERMIA-FE-20261022 U1] 气泡带位置（格内百分比），可拖动；只存本页草稿状态
-type Bubble = {id: string; text: string; x: number; y: number};
-type Cell = {id: string; bubbles: Bubble[]};
+// [HERMIA-FE-20261022 U2] 漫画视图移到 ../comic/ComicView（分格模板 + 气泡样式）；保留 U1 的 comicCellSpans 供旧测试
 /** 分格网格：两列；格数为奇数时最后一格跨整行，偶数时全部两两填满（修 4 格右下角缺块）。 */
 export function comicCellSpans(count: number): boolean[] { return Array.from({length: count}, (_, i) => count % 2 === 1 && i === count - 1 && count > 1); }
-function ComicBubble({b, onMove, onEdit}: {b: Bubble; onMove: (x: number, y: number) => void; onEdit: (t: string) => void}) {
-  const st = useRef<null | {sx: number; sy: number; ox: number; oy: number; w: number; h: number}>(null);
-  return <span className="bub" role="button" tabIndex={0} aria-label={`气泡：${b.text}（拖动移动，双击改写）`} data-bubble-id={b.id}
-    style={{left: `${b.x}%`, top: `${b.y}%`}}
-    onClick={e => e.stopPropagation()}
-    onDoubleClick={e => { e.stopPropagation(); const t = window.prompt('改写台词', b.text); if (t != null && t.trim()) onEdit(t.trim()); }}
-    onPointerDown={e => { e.stopPropagation(); const cell = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect(); st.current = {sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, w: cell.width || 1, h: cell.height || 1}; try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* jsdom */ } }}
-    onPointerMove={e => { const d = st.current; if (!d) return; onMove(Math.max(0, Math.min(85, d.ox + (e.clientX - d.sx) / d.w * 100)), Math.max(0, Math.min(88, d.oy + (e.clientY - d.sy) / d.h * 100))); }}
-    onPointerUp={() => { st.current = null; }}
-    onKeyDown={e => { const k = {ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2]}[e.key]; if (k) { e.preventDefault(); onMove(Math.max(0, Math.min(85, b.x + k[0])), Math.max(0, Math.min(88, b.y + k[1]))); } }}>{b.text}</span>;
-}
-function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onBack: () => void; onGen: () => void}) {
-  const [pages, setPages] = useState<{id: string; label: string; cells: Cell[]}[]>([{id: 'p1', label: '第 1 页', cells: [{id: 'c1', bubbles: []}, {id: 'c2', bubbles: []}, {id: 'c3', bubbles: []}]}]);
-  const [pageId, setPageId] = useState('p1');
-  const [cellId, setCellId] = useState('c1');
-  const page = pages.find(p => p.id === pageId) ?? pages[0]!;
-  const mut = (fn: (cells: Cell[]) => Cell[]) => setPages(ps => ps.map(p => p.id === page.id ? {...p, cells: fn(p.cells)} : p));
-  return (
-    <div className="img-ws" data-img-view="comic" aria-label="图片 › 漫画制作">
-      {chrome}
-      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>图片 › 漫画制作</h2><span className="nv-badge nv-badge--part">本地草稿</span><span className="nv-spacer" />
-        <button type="button" className="nv-btn" data-image-sub="studio" onClick={onBack}>回预览</button>
-        <button type="button" className="nv-btn" onClick={onGen}>生图</button></div>
-      <div className="mw-split">
-        <nav className="mw-left" aria-label="漫画页">
-          <div className="mw-lh">漫画页 / 分格</div>
-          <div className="mw-tree">
-            {pages.map(p => <button key={p.id} type="button" aria-selected={p.id === page.id} onClick={() => setPageId(p.id)}><span className="ic">▦</span><span>{p.label}<span className="sub">{p.cells.length} 格 · 本地草稿</span></span></button>)}
-            <button type="button" className="nv-rail__new" onClick={() => { const id = `p${pages.length + 1}`; setPages(ps => [...ps, {id, label: `第 ${ps.length + 1} 页`, cells: [{id: 'c1', bubbles: []}]}]); setPageId(id); }}>＋ 新页</button>
-          </div>
-          <p className="mw-muted">分格和气泡现在只存在本页面，刷新会丢失；保存到作品的接口状态待核实。</p>
-        </nav>
-        <section className="mw-hero" aria-label="漫画页预览">
-          <div className="hero-tools"><b>当前页 · {page.label}</b><span className="nv-spacer" />
-            <button type="button" className="nv-btn" id="comicAddPanel" onClick={() => mut(cs => [...cs, {id: `c${cs.length + 1}`, bubbles: []}])}>＋ 分格</button>
-            <button type="button" className="nv-btn" id="comicBubble" onClick={() => mut(cs => cs.map(c => c.id === cellId ? {...c, bubbles: [...c.bubbles, {id: `b${Date.now().toString(36)}${c.bubbles.length}`, text: '双击改写台词', x: 6, y: 6 + (c.bubbles.length % 4) * 18}]} : c))}>＋ 气泡</button></div>
-          <div className="hero-stage">
-            <div className="comic-page">
-              {(() => { const spans = comicCellSpans(page.cells.length); 
-                return page.cells.map((c, i) => <div key={c.id} role="button" tabIndex={0} className={`comic-cell${spans[i] ? ' c3' : ''}`} data-cell-span={spans[i] ? 'full' : 'half'} aria-pressed={c.id === cellId} aria-label={`第 ${i + 1} 格`}
-                  onClick={() => setCellId(c.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setCellId(c.id); }}>
-                  {c.bubbles.map(b => <ComicBubble key={b.id} b={b}
-                    onMove={(x, y) => mut(cs => cs.map(cc => cc.id === c.id ? {...cc, bubbles: cc.bubbles.map(bb => bb.id === b.id ? {...bb, x, y} : bb)} : cc))}
-                    onEdit={t => mut(cs => cs.map(cc => cc.id === c.id ? {...cc, bubbles: cc.bubbles.map(bb => bb.id === b.id ? {...bb, text: t} : bb)} : cc))} />)}
-                  <span className="cell-n">{i + 1}</span></div>); })()}
-            </div>
-          </div>
-          <div className="comic-strip" role="tablist" aria-label="漫画页条">{pages.map(p => <button key={p.id} type="button" role="tab" aria-selected={p.id === page.id} onClick={() => setPageId(p.id)}>{p.label}</button>)}</div>
-        </section>
-        <aside className="mw-right" aria-label="下一步 · 漫画">
-          <div className="mw-rh">下一步 · 漫画</div>
-          <div className="mw-rb">
-            <div className="sec"><h4>逐格生成</h4>
-              <p className="nv-hint">选中第 {Math.max(1, page.cells.findIndex(c => c.id === cellId) + 1)} 格。</p>
-              <button type="button" className="nv-btn nv-btn--primary img-gen-btn" id="comicGenCell" disabled>生成当前格候选…</button>
-              <p className="nv-hint">逐格生成还没接通，先在「生成」里出图再放进分格。</p>
-            </div>
-            <div className="sec"><h4>书册 / 导出</h4>
-              <button type="button" className="nv-btn img-gen-btn" id="comicExport" disabled>导出页预览…</button>
-              <p className="nv-hint">导出状态待核实。</p>
-              <button type="button" className="nv-btn img-gen-btn" onClick={onBack}>用预览检视原图</button>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
-}

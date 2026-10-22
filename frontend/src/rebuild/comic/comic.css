@@ -1,0 +1,55 @@
+/* [HERMIA-FE-20261022 U2] 漫画分格模板 + 气泡样式 */
+.comic-page{gap:7px;grid-auto-rows:unset}
+.comic-cell{min-height:0}
+.comic-cell--slant{border:none;border-radius:0;background:linear-gradient(160deg,#41536a,#2a3444)}
+.comic-cell--slant + .comic-cell--slant{background:linear-gradient(200deg,#3a4a5c,#26303e)}
+.comic-cell--inset{justify-self:end;align-self:end;width:42%;height:34%;margin:0 6% 6% 0;z-index:2;border:2px solid #0d0f12;box-shadow:0 0 0 3px var(--color-bg-elevated);background:linear-gradient(160deg,#55677d,#36414f)}
+.comic-cell--bleed{margin:-10px -10px 0;border:none;border-radius:8px 8px 0 0;background:linear-gradient(170deg,#4a5d74,#222a35)}
+.comic-cell[aria-pressed="true"].comic-cell--slant{filter:brightness(1.25)}
+.cm-hint{font-size:11px;color:var(--color-text-muted);margin-left:8px}
+.cm-tpls{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 10px}
+.cm-tpls button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border:1px solid var(--color-border-default);border-radius:6px;background:var(--color-bg-elevated);color:var(--color-text-secondary);font-size:11px;cursor:pointer}
+.cm-tpls button[aria-checked="true"]{border-color:var(--color-accent-primary);color:var(--color-text-primary);box-shadow:0 0 0 1px var(--color-accent-primary)}
+.cm-thumb{display:grid;gap:2px;width:34px;height:44px;padding:2px;background:#e8eaef;border-radius:2px}
+.cm-thumb i{background:#4a5568;min-height:0}
+.cm-thumb i.cm-p--inset{justify-self:end;align-self:end;width:45%;height:36%;margin:0 8% 8% 0;background:#8796ab;outline:1px solid #e8eaef}
+.cm-thumb i.cm-p--bleed{margin:-2px -2px 0;background:#2d3748}
+.comic-strip button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.comic-strip .cm-thumb{width:28px;height:36px}
+.cm-f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--color-text-secondary);margin:8px 0}
+.cm-f textarea{font:inherit;padding:6px;border-radius:6px;border:1px solid var(--color-border-default);background:var(--color-bg-elevated);color:var(--color-text-primary);resize:vertical}
+.cm-chips{display:flex;flex-wrap:wrap;gap:4px}
+.cm-chips button{font-size:11px;padding:3px 7px;border-radius:999px;border:1px solid var(--color-border-default);background:var(--color-bg-elevated);color:var(--color-text-secondary);cursor:pointer}
+.cm-chips button[aria-pressed="true"]{border-color:var(--color-accent-primary);color:var(--color-text-primary);background:color-mix(in srgb,var(--color-accent-primary) 18%,transparent)}
+.cm-chk{display:flex;gap:6px;align-items:center;font-size:12px;margin:6px 0 10px}
+/* 气泡 */
+.comic-cell .bub{position:absolute;box-sizing:border-box;cursor:grab;user-select:none;touch-action:none;max-width:none;z-index:3;text-align:center}
+.comic-cell .bub[aria-pressed="true"]{outline:2px dashed var(--color-accent-primary);outline-offset:3px}
+.bub--v{writing-mode:vertical-rl;text-orientation:upright;padding:8px 5px !important;letter-spacing:1px}
+.bub--speech{border-radius:50%/42% !important;padding:7px 10px !important}
+.bub--whisper{border-style:dashed !important;border-radius:50%/42% !important;padding:7px 10px !important;color:#3b4252 !important;font-size:10.5px !important}
+.bub--thought{border-radius:50% !important;padding:9px 11px !important}
+.bub--thought::before,.bub--thought::after{content:"";position:absolute;background:#e8eaef;border:1.5px solid #0d0f12;border-radius:50%}
+.bub--thought::before{width:10px;height:10px;left:14%;bottom:-13px}
+.bub--thought::after{width:6px;height:6px;left:6%;bottom:-21px}
+.bub--shout{border:none !important;border-radius:0 !important;padding:16px 18px !important;font-weight:800;background:#fff6a8 !important;
+  clip-path:polygon(50% 0,58% 14%,72% 3%,73% 20%,92% 12%,84% 32%,100% 38%,86% 50%,100% 64%,82% 68%,90% 88%,70% 80%,64% 100%,52% 84%,40% 100%,34% 82%,14% 92%,20% 70%,0 64%,14% 50%,2% 36%,18% 30%,10% 10%,30% 18%,32% 2%,44% 14%)}
+.bub--caption{border-radius:2px !important;background:#f7efc9 !important;text-align:left !important;font-size:10.5px !important;padding:5px 8px !important}
+.bub--sfx{background:transparent !important;border:none !important;padding:0 !important;font-size:26px !important;font-weight:900;color:#ffd84a !important;-webkit-text-stroke:1.5px #0d0f12;transform:rotate(-10deg);line-height:1 !important}
+/* 尾巴：边框三角 + 内填三角 */
+.bub[class*="bub-tail--"]::before,.bub[class*="bub-tail--"]::after{content:"";position:absolute;width:0;height:0;border-style:solid}
+.bub-tail--bl::before{left:18%;bottom:-11px;border-width:11px 4px 0 8px;border-color:#0d0f12 transparent transparent}
+.bub-tail--bl::after{left:calc(18% + 1.5px);bottom:-7.5px;border-width:8px 3px 0 6px;border-color:#e8eaef transparent transparent}
+.bub-tail--br::before{right:18%;bottom:-11px;border-width:11px 8px 0 4px;border-color:#0d0f12 transparent transparent}
+.bub-tail--br::after{right:calc(18% + 1.5px);bottom:-7.5px;border-width:8px 6px 0 3px;border-color:#e8eaef transparent transparent}
+.bub-tail--tl::before{left:18%;top:-11px;border-width:0 4px 11px 8px;border-color:transparent transparent #0d0f12}
+.bub-tail--tl::after{left:calc(18% + 1.5px);top:-7.5px;border-width:0 3px 8px 6px;border-color:transparent transparent #e8eaef}
+.bub-tail--tr::before{right:18%;top:-11px;border-width:0 8px 11px 4px;border-color:transparent transparent #0d0f12}
+.bub-tail--tr::after{right:calc(18% + 1.5px);top:-7.5px;border-width:0 6px 8px 3px;border-color:transparent transparent #e8eaef}
+.bub-tail--l::before{left:-11px;top:40%;border-width:4px 11px 6px 0;border-color:transparent #0d0f12 transparent transparent}
+.bub-tail--l::after{left:-7.5px;top:calc(40% + 1px);border-width:3px 8px 4px 0;border-color:transparent #e8eaef transparent transparent}
+.bub-tail--r::before{right:-11px;top:40%;border-width:4px 0 6px 11px;border-color:transparent transparent transparent #0d0f12}
+.bub-tail--r::after{right:-7.5px;top:calc(40% + 1px);border-width:3px 0 4px 8px;border-color:transparent transparent transparent #e8eaef}
+.bub--whisper[class*="bub-tail--"]::before{opacity:.6}
+.bub--shout[class*="bub-tail--"]::before,.bub--shout[class*="bub-tail--"]::after{display:none}
+.bub-size{position:absolute;right:-5px;bottom:-5px;width:9px;height:9px;background:var(--color-accent-primary);border:1px solid #fff;border-radius:2px;cursor:nwse-resize;writing-mode:horizontal-tb}
