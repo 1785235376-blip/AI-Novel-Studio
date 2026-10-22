@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 /**
  * [HERMIA-FE-20261022] IMAGE / AUDIO / ASSETS lightweight shells (Lumen IA).
+ * W-UX-10: IMAGE comic sub-entry + thicker hero.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
@@ -38,7 +39,7 @@ describe('MediaWorkspaceShells', () => {
     expect(host.textContent).toContain('图像预览');
     expect(host.textContent).toContain('mock-image-gen');
     expect(host.textContent).toContain('mock-visual');
-    expect(host.textContent).toMatch(/≠ 视频|≠ 剪辑|LUMEN_IMAGE/);
+    expect(host.textContent).toMatch(/≠ 视频|≠ 剪辑|LUMEN_IMAGE|≠ VIDEO|≠ EDIT|≠ NLE/);
     expect(host.textContent).not.toContain('多轨时间线主表面');
     expect(host.querySelector('[data-open-comic="true"]')).toBeTruthy();
     act(() => {
@@ -47,6 +48,100 @@ describe('MediaWorkspaceShells', () => {
     expect(host.textContent).toContain('漫画制作');
     expect(host.textContent).toMatch(/子入口|不升/);
     expect(host.querySelector('.media-ws--video')).toBeNull();
+    act(() => root.unmount());
+  });
+
+  it('W-UX-10 IMAGE comic sub-entry clickable from rail+toolbar; thicker hero; ≠ VIDEO/EDIT; no fake ready', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const onSubview = vi.fn();
+    act(() => root.render(
+      <>
+        <ImageWorkspaceRail subview="studio" onSubviewChange={onSubview} />
+        <ImageWorkspaceShell novelId="n1" onInspect={vi.fn()} subview="studio" onSubviewChange={onSubview} />
+      </>,
+    ));
+    // Thicker studio hero
+    expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-hero-cta="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-cta="generate"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-cta="comic"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-badge="boundary"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-badge="no-chrome7"]')).toBeTruthy();
+    expect(host.querySelectorAll('[data-image-thumb]').length).toBeGreaterThanOrEqual(3);
+    expect(host.textContent).toMatch(/≠ VIDEO|≠ EDIT|≠ NLE/);
+    expect(host.querySelector('[data-video-layer]')).toBeNull();
+    expect(host.querySelector('[data-nle-tracks]')).toBeNull();
+    expect(host.querySelectorAll('.nle-row').length).toBe(0);
+    expect(host.textContent).not.toMatch(/已就绪/);
+
+    // Rail comic entry
+    act(() => {
+      (host.querySelector('[data-image-sub="comic"]') as HTMLButtonElement)?.click();
+    });
+    expect(onSubview).toHaveBeenCalledWith('comic');
+
+    // Controlled comic surface
+    act(() => root.render(
+      <>
+        <ImageWorkspaceRail subview="comic" onSubviewChange={onSubview} />
+        <ImageWorkspaceShell novelId="n1" onInspect={vi.fn()} subview="comic" onSubviewChange={onSubview} />
+      </>,
+    ));
+    expect(host.querySelector('[data-image-comic="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-hero="comic"]')).toBeTruthy();
+    expect(host.querySelector('.media-ws__comic-page')).toBeTruthy();
+    expect(host.querySelectorAll('.media-ws__comic-cell').length).toBeGreaterThanOrEqual(3);
+    expect(host.querySelectorAll('[data-comic-page-tab]').length).toBe(4);
+    expect(host.textContent).toMatch(/不升|子入口/);
+    expect(host.textContent).toMatch(/≠ VIDEO|≠ EDIT|≠ NLE/);
+    expect(host.textContent).not.toMatch(/已就绪/);
+
+    // Page strip switchable
+    act(() => {
+      (host.querySelector('[data-comic-page-tab="p2"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-comic-page="p2"]')).toBeTruthy();
+    expect(host.textContent).toContain('第 2 页');
+
+    // Honest gen notice (not fake ready)
+    act(() => {
+      (host.querySelector('[data-comic-action="gen-cell"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-comic-notice="true"]')?.textContent).toMatch(/待接通|未派发/);
+    expect(host.querySelector('[data-comic-notice="true"]')?.textContent).not.toMatch(/已就绪/);
+
+    // Return path
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('返回图片生成'))?.click();
+    });
+    expect(onSubview).toHaveBeenCalledWith('studio');
+    act(() => root.unmount());
+  });
+
+  it('W-UX-10 ModuleWorkspaceRoutes syncs IMAGE rail ↔ shell comic subview', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const scope = {workspace: 'w', project: 'p', storyline: 's', branch: 'b'};
+    act(() => root.render(
+      <ModuleWorkspaceRoutes module="IMAGE" onModuleChange={vi.fn()} scope={scope} actor="author" novelId="novel-1" />,
+    ));
+    expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('IMAGE');
+    // chrome stays 6 modules — IMAGE workspace, not a 7th top button
+    const chrome = host.querySelector('[data-module-switcher], [aria-label*="模块"], .module-switcher, nav[aria-label*="工作区"]');
+    void chrome;
+    act(() => {
+      (host.querySelector('.media-ws-rail [data-image-sub="comic"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-image-subview="comic"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-comic="true"]')).toBeTruthy();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('返回图片生成'))?.click();
+    });
+    expect(host.querySelector('[data-image-subview="studio"]')).toBeTruthy();
+    expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
+    expect(host.querySelector('[data-video-layer]')).toBeNull();
     act(() => root.unmount());
   });
 

@@ -7,6 +7,7 @@
  * W-UX-08: VIDEO Shot hero bar independent of Screenplay; read-only DirectorShot* fields; ≠ NLE.
  * W-UX-02: AUDIO waveform hero + Speech/AudioGen/Manifest + send-edit confirm; 0 fake NLE tracks.
  * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
+ * W-UX-10: IMAGE comic sub-entry clickable (rail+toolbar, no 7th chrome) + preview/comic hero thicker; ≠ VIDEO/EDIT.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -141,69 +142,161 @@ export function VideoShotHeroStrip({
   );
 }
 
+/** [HERMIA-FE-20261022 W-UX-10] Demo comic pages — UI discovery only; no invent gen API / fake ready. */
+const DEMO_COMIC_PAGES: readonly {id: string; label: string}[] = [
+  {id: 'p1', label: '第 1 页'},
+  {id: 'p2', label: '第 2 页'},
+  {id: 'p3', label: '第 3 页'},
+  {id: 'p4', label: '封面'},
+];
+
+const DEMO_IMAGE_THUMBS: readonly {id: string; name: string; kind: string; tone: 'fog' | 'portrait' | 'frame'}[] = [
+  {id: 'img1', name: '雾港参考_01', kind: '参考 · 演示', tone: 'fog'},
+  {id: 'img2', name: '林砚定妆 v3', kind: '角色 · 演示', tone: 'portrait'},
+  {id: 'img3', name: '码头关键帧', kind: '候选 · 演示', tone: 'frame'},
+];
+
 export function ImageWorkspaceShell({
   novelId, inspection, onInspect, shellMode = 'basic',
+  subview: subviewProp,
+  onSubviewChange,
 }: {
   novelId: string;
   inspection?: ImageInspection;
   onInspect: (i?: ImageInspection) => void;
   /** [HERMIA-FE-20261022 X-UX-04] basic collapses pro canvas; pro may pin open. */
   shellMode?: 'basic' | 'pro';
+  /** [HERMIA-FE-20261022 W-UX-10] Controlled subview so Rail/toolbar/EmptyCta stay in sync. */
+  subview?: 'studio' | 'comic';
+  onSubviewChange?: (v: 'studio' | 'comic') => void;
 }) {
-  const [subview, setSubview] = useState<'studio' | 'comic'>('studio');
+  const [subviewLocal, setSubviewLocal] = useState<'studio' | 'comic'>('studio');
+  const subview = subviewProp ?? subviewLocal;
+  const setSubview = (v: 'studio' | 'comic') => {
+    if (subviewProp === undefined) setSubviewLocal(v);
+    onSubviewChange?.(v);
+  };
   const [proOpen, setProOpen] = useState(shellMode === 'pro');
+  const [comicPage, setComicPage] = useState('p1');
+  const [comicNotice, setComicNotice] = useState<string | null>(null);
+  const [thumbSel, setThumbSel] = useState(DEMO_IMAGE_THUMBS[0]!.id);
   useEffect(() => {
     setProOpen(shellMode === 'pro');
   }, [shellMode]);
+  const scrollPanel = (label: string) => {
+    document.querySelector(`.media-ws__panel[aria-label="${label}"]`)?.scrollIntoView({block: 'nearest'});
+  };
+  const selectedThumb = DEMO_IMAGE_THUMBS.find(t => t.id === thumbSel) ?? DEMO_IMAGE_THUMBS[0]!;
+  const pageLabel = DEMO_COMIC_PAGES.find(p => p.id === comicPage)?.label ?? '第 1 页';
   return (
     <div className="media-ws" aria-label="图片工作区" data-image-subview={subview} data-shell-mode={shellMode}>
       <div className="media-ws__toolbar" role="toolbar" aria-label="图片子入口">
-        <Button type="button" aria-pressed={subview === 'studio'} onClick={() => setSubview('studio')}>
+        <Button type="button" aria-pressed={subview === 'studio'} data-image-sub="studio" onClick={() => setSubview('studio')}>
           图片工作台
         </Button>
-        <Button type="button" aria-pressed={subview === 'comic'} data-open-comic="true" onClick={() => setSubview('comic')}>
+        <Button type="button" aria-pressed={subview === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => setSubview('comic')}>
           漫画制作
         </Button>
-        <small>项目 {novelId} · LUMEN_IMAGE_IA · 漫画不升顶栏</small>
+        <span className="media-ws__shot-hero-badge" data-image-badge="no-chrome7">子入口 · 不升顶栏</span>
+        <span className="media-ws__shot-hero-badge" data-image-badge="boundary">≠ VIDEO · ≠ NLE</span>
+        <small>项目 {novelId} · LUMEN_IMAGE_IA · W-UX-10</small>
       </div>
 
       {subview === 'comic' ? (
-        <div className="media-ws__comic" aria-label="漫画子入口">
-          <div className="media-ws__hero media-ws__hero--comic" aria-label="漫画预览">
-            <span className="media-ws__hero-label">图片 › 漫画制作 · 子入口</span>
-            <strong>漫画分格 / 气泡 / 书册</strong>
-            <p>挂在图片工作区内，不升第 7 顶栏钮。完整漫画编辑器沿用原项目授权与 StudioComic 能力；此处为壳向发现入口（W-UX-01）。</p>
-            <small>≠ VIDEO 三层 · ≠ EDIT NLE · 不进小说中区</small>
+        <div className="media-ws__comic" aria-label="漫画子入口" data-image-comic="true">
+          <div className="media-ws__hero media-ws__hero--comic media-ws__hero--thick" aria-label="漫画预览" data-image-hero="comic">
+            <div className="media-ws__shot-hero-head">
+              <span className="media-ws__hero-label">图片 › 漫画制作 · 子入口</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="comic">IMAGE-COMIC-01</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="no-chrome7">不升第 7 顶栏钮</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="boundary">≠ VIDEO 三层 · ≠ EDIT NLE</span>
+            </div>
+            <div className="media-ws__comic-tools" aria-label="漫画页工具">
+              <strong>当前页 · {pageLabel}</strong>
+              <span className="media-ws__shot-status media-ws__shot-status--draft">分格/气泡 · 演示</span>
+              <div className="media-ws__hero-actions">
+                <Button type="button" data-comic-action="add-panel" onClick={() => setComicNotice('已添加分格草稿（本地演示 · 未接通写库）')}>＋ 分格</Button>
+                <Button type="button" data-comic-action="add-bubble" onClick={() => setComicNotice('已添加气泡（本地演示 · 未接通写库）')}>＋ 气泡</Button>
+                <Button type="button" data-image-sub="studio" onClick={() => setSubview('studio')}>回预览</Button>
+              </div>
+            </div>
+            <div className="media-ws__comic-stage" aria-label="漫画页预览">
+              <div className="media-ws__comic-page" data-comic-page={comicPage}>
+                <div className="media-ws__comic-cell"><span className="media-ws__comic-bub" data-bub="tl">雾又厚了……</span></div>
+                <div className="media-ws__comic-cell media-ws__comic-cell--c2"><span className="media-ws__comic-bub media-ws__comic-bub--br" data-bub="br">你也收到信了？</span></div>
+                <div className="media-ws__comic-cell media-ws__comic-cell--wide"><span className="media-ws__comic-bub media-ws__comic-bub--mid" data-bub="mid">码头的灯还在亮。</span></div>
+              </div>
+            </div>
+            <div className="media-ws__comic-strip" role="tablist" aria-label="漫画页条">
+              {DEMO_COMIC_PAGES.map(p => (
+                <button
+                  type="button"
+                  key={p.id}
+                  role="tab"
+                  aria-selected={comicPage === p.id}
+                  data-comic-page-tab={p.id}
+                  className={comicPage === p.id ? 'is-selected' : undefined}
+                  onClick={() => { setComicPage(p.id); setComicNotice(null); }}
+                >{p.label}</button>
+              ))}
+            </div>
+            {comicNotice && <p className="media-ws__comic-notice" data-comic-notice="true" role="status">{comicNotice}</p>}
+            <p className="media-ws__layer-note">对照 LUMEN_IMAGE_IA · Vera image_comic：分格/气泡/页条为壳向发现；逐格生成待接通，禁假绿就绪标。</p>
           </div>
           <div className="media-ws-cta" aria-label="漫画下一步">
-            <strong>下一步</strong>
-            <p>可新建空白页、编辑分格或组织书册。需要独立工作室权限时，请从已授权项目打开漫画制作全屏面。</p>
-            <Button type="button" onClick={() => setSubview('studio')}>返回图片生成 / 参考</Button>
+            <strong>下一步 · 漫画</strong>
+            <p>可切换页条、加分格/气泡草稿，或返回图片预览。完整 StudioComic 全屏面仍走已授权项目；本壳不升顶栏、不嵌小说中区。</p>
+            <div className="media-ws__hero-actions">
+              <Button type="button" data-comic-action="gen-cell" onClick={() => setComicNotice('逐格生成待接通（B06）· 未派发 · 非假绿接通')}>生成当前格候选…</Button>
+              <Button type="button" data-image-sub="studio" onClick={() => setSubview('studio')}>返回图片生成 / 参考</Button>
+            </div>
           </div>
-          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-01] 漫画＝IMAGE 子入口。</p>
+          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-10] 漫画＝IMAGE 子入口（rail+toolbar）· 不升顶栏 · ≠ VIDEO · ≠ EDIT。</p>
         </div>
       ) : (
         <>
-          <div className="media-ws__hero" aria-label="图像预览">
-            <span className="media-ws__hero-label">图像预览 · hero</span>
-            {inspection?.assetUri ? (
-              <img className="media-ws__hero-preview" src={inspection.assetUri} alt="当前图片生成结果" referrerPolicy="no-referrer" />
-            ) : (
-              <>
-                <strong>{inspection ? `任务 ${inspection.status}` : '尚无预览'}</strong>
-                <p>提交生成或从历史选择真实结果。主表面是预览，不是视频导演台，也不是多轨时间线。</p>
-              </>
-            )}
-            <div className="media-ws__hero-actions">
-              {!inspection?.assetUri && (
-                <>
-                  <Button type="button" onClick={() => document.querySelector('.media-ws__panel[aria-label="图片生成"]')?.scrollIntoView({block: 'nearest'})}>新建生成</Button>
-                  <Button type="button" onClick={() => document.querySelector('.media-ws__panel[aria-label="视觉上下文"]')?.scrollIntoView({block: 'nearest'})}>加参考</Button>
-                  <Button type="button" data-open-comic="true" onClick={() => setSubview('comic')}>打开漫画</Button>
-                </>
+          <div className="media-ws__hero media-ws__hero--thick" aria-label="图像预览" data-image-hero="preview">
+            <div className="media-ws__shot-hero-head">
+              <span className="media-ws__hero-label">图像预览 · hero</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="hero">预览 hero</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="boundary">≠ VIDEO 三层 · ≠ EDIT NLE</span>
+              <span className="media-ws__shot-hero-badge" data-image-badge="no-chrome7">漫画不升顶栏</span>
+            </div>
+            <div className="media-ws__image-stage" aria-label="当前图预览台">
+              {inspection?.assetUri ? (
+                <img className="media-ws__hero-preview" src={inspection.assetUri} alt="当前图片生成结果" referrerPolicy="no-referrer" />
+              ) : (
+                <div className={`media-ws__image-placeholder media-ws__image-placeholder--${selectedThumb.tone}`} data-image-demo-thumb={selectedThumb.id}>
+                  <span className="media-ws__ref-chip">参考叠看 · 演示</span>
+                  <strong>{inspection ? `任务 ${inspection.status}` : selectedThumb.name}</strong>
+                  <p>{inspection ? '等待真实结果 URI；不假装已出图。' : `${selectedThumb.kind} · 提交生成或从历史选择真实结果。`}</p>
+                  <small>主表面是预览，不是视频导演台，也不是多轨时间线。</small>
+                </div>
               )}
             </div>
-            <small>项目 {novelId} · LUMEN_IMAGE_IA</small>
+            <div className="media-ws__hero-actions" aria-label="预览下一步 CTA" data-image-hero-cta="true">
+              <Button type="button" data-image-cta="generate" onClick={() => scrollPanel('图片生成')}>新建生成</Button>
+              <Button type="button" data-image-cta="reference" onClick={() => scrollPanel('视觉上下文')}>加参考</Button>
+              <Button type="button" data-open-comic="true" data-image-cta="comic" onClick={() => setSubview('comic')}>打开漫画</Button>
+            </div>
+            <div className="media-ws__image-thumbs" role="list" aria-label="预览缩略条（演示）">
+              {DEMO_IMAGE_THUMBS.map(t => (
+                <button
+                  type="button"
+                  key={t.id}
+                  role="listitem"
+                  className={`media-ws__image-thumb${thumbSel === t.id ? ' is-selected' : ''}`}
+                  aria-pressed={thumbSel === t.id}
+                  data-image-thumb={t.id}
+                  onClick={() => setThumbSel(t.id)}
+                >
+                  <span className={`media-ws__image-thumb-swatch media-ws__image-thumb-swatch--${t.tone}`} />
+                  <strong>{t.name}</strong>
+                  <small>{t.kind}</small>
+                </button>
+              ))}
+            </div>
+            <small>项目 {novelId} · LUMEN_IMAGE_IA · W-UX-10 · 禁假绿</small>
           </div>
           <div className="media-ws__body media-ws__body--split">
             <section className="media-ws__panel" aria-label="图片生成">
@@ -228,7 +321,7 @@ export function ImageWorkspaceShell({
             <summary>专业 · 创作画布（IMAGE 作用域 · 非视频三层）</summary>
             <MultimodalDirectorWorkspace mode="image" novelId={novelId} />
           </details>
-          <p className="media-ws__foot notice">[HERMIA-FE-20261022] 图片 ≠ 小说中区 · ≠ VIDEO · ≠ EDIT。</p>
+          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-10] 图片 ≠ 小说中区 · ≠ VIDEO 三层 · ≠ EDIT NLE · 漫画不升顶栏。</p>
         </>
       )}
     </div>
