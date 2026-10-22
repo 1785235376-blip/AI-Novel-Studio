@@ -61,6 +61,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const [sendConfirm, setSendConfirm] = useState(false);
   const [proOpen, setProOpen] = useState(shellMode === 'pro');
   useEffect(() => setProOpen(shellMode === 'pro'), [shellMode]);
+  // [HERMIA-FE-20261022 U3] 双画布 / 专业工具只在专业模式；普通模式停在双画布时回到默认「浏览」
+  const isPro = shellMode === 'pro';
+  useEffect(() => { if (!isPro && view === 'dual') onViewChange('browse'); }, [isPro, view, onViewChange]);
   const loaded = gens !== null && refs !== null;
   const ready = (providers || []).filter(p => p.configured && p.registered && p.reachable !== false);
   const canGen = ready.length > 0;
@@ -72,7 +75,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
       <span className="nv-spacer" />
       <button type="button" className="nv-btn" aria-pressed={view === 'browse'} data-image-sub="studio" onClick={() => onViewChange('browse')}>图片工作台</button>
-      <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button>
+      {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button> : null}
       <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => onViewChange('gen')}>生成</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => onViewChange('comic')}>漫画制作</button>
     </div>
@@ -80,7 +83,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const chrome = (
     <>
       <NovelOrient storageKey="studio-image-orient-dismissed" what="这部作品的参考图、角色定妆和关键帧" can="写一句描述生成候选，或放参考图约束一致性" effect="生成会调用你在 AI 主控里接好的生图模型，派发前会再确认" />
-      <NovelModTabs tabs={(['browse', 'canvas', 'dual', 'gen', 'comic'] as ImageView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => onViewChange(id)}))} />
+      <NovelModTabs tabs={((isPro ? ['browse', 'canvas', 'dual', 'gen', 'comic'] : ['browse', 'canvas', 'gen', 'comic']) as ImageView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => onViewChange(id)}))} />
     </>
   );
 
@@ -92,11 +95,11 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
         <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>漫画制作</button></div>
       {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
       <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><RebuildCanvas kind="image" scope={novelId} label="图片画布" /></div>
-      <details className="img-canvas-pro"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details>
+      {isPro ? <details className="img-canvas-pro" data-pro-only="true"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details> : null}
     </div>
   );
 
-  if (view === 'dual') return (
+  if (view === 'dual' && isPro) return (
     <div className="img-ws" data-img-view="dual" aria-label="图片工作区">
       {chrome}
       <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>双画布</h2><span className="nv-badge nv-badge--part">本机草稿</span><span className="nv-spacer" />
@@ -109,7 +112,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   if (view === 'comic') return <ComicView chrome={chrome} onBack={() => onViewChange('browse')} onGen={() => onViewChange('gen')} />;
 
   return (
-    <div className="img-ws" data-img-view={view} aria-label="图片工作区">
+    <div className="img-ws" data-img-view={view === 'dual' ? 'browse' : view} aria-label="图片工作区">
       {chrome}
       {head(view === 'gen' ? '图片 · 生成' : '图片 · 浏览 / 预览')}
       <div className="mw-split">
