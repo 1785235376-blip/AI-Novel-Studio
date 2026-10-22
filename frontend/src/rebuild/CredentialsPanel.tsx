@@ -5,6 +5,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/rea
 import { StateTag, WithQuery } from './primitives';
 import './rebuild.css';
 import { rb, rbError, CREDENTIAL_PROVIDERS, type CredentialStatus } from './rebuildApi';
+import { runtimeCodeLabel } from '../ui/runtimeCodeLabels'; // [HERMIA-FE-20261022 R7-FIX3]
 
 const NAMES: Record<string, string> = { openai: 'OpenAI', claude: 'Claude', gemini: 'Gemini', deepseek: 'DeepSeek', 'aliyun-bailian': '阿里云百炼', siliconflow: '硅基流动', kling: '可灵', runway: 'Runway', minimax: 'MiniMax', seedance: 'Seedance' };
 
@@ -42,7 +43,7 @@ function CredentialsPanelInner() {
       <h2 className="rb-h">能力状态</h2>
       {health.isError ? <StateTag tone="err">模型中心：{rbError(health.error)}</StateTag>
         : !h ? <StateTag tone="muted">读取中</StateTag>
-        : <><StateTag tone={h.status === 'READY' ? 'ok' : 'warn'}>模型中心 {h.status === 'READY' ? '就绪' : h.status}</StateTag>
+        : <><StateTag tone={h.status === 'READY' ? 'ok' : 'warn'}>模型中心 {runtimeCodeLabel(h.status, '状态未知')}</StateTag>
             <StateTag tone="muted">可用模型 {h.ready_models}/{h.models}</StateTag><StateTag tone="muted">运行时 {h.runtimes}</StateTag>
             {h.mutation_authorization && !h.mutation_authorization.can_mutate ? <StateTag tone="warn">修改模型需登录会话</StateTag> : null}</>}
     </div>

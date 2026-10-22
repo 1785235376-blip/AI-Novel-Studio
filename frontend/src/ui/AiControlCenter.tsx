@@ -5,6 +5,7 @@ import { useStudio } from '../store';
 import { Badge, Button, Panel } from './primitives';
 import './AiControlCenter.css';
 import {CloudPromptConsent,useScopedRequestConsent,cloudPromptReviewMessage} from '../useScopedRequestConsent';
+import {runtimeCodeLabel,vaultDegradedNote,readinessStatusLabel} from './runtimeCodeLabels'; // [HERMIA-FE-20261022 R7-FIX3]
 
 type Provider = { id: string; name: string; roles: string };
 const providers: Provider[] = [
@@ -65,21 +66,21 @@ export function AiControlCenter() {
       <div className="ai-control-center__readiness-head">
         {readiness?.status==='READY'?<CheckCircle2 size={18}/>:readiness?.status==='BLOCKED'?<XCircle size={18}/>:<AlertTriangle size={18}/>}
         <div><h3>发布就绪门禁</h3><span>{readinessError?'读取失败':readiness?.status==='READY'?'可以进入发布验收':readiness?.status==='BLOCKED'?'存在发布阻断项':readiness?.status==='DEGRADED'?'开发可用，尚未达到发布标准':'正在读取真实运行时状态'}</span></div>
-        <Badge tone={readiness?.status==='READY'?'success':readiness?.status==='BLOCKED'?'error':'warning'}>{readinessError?'未知':readiness?.status||'读取中'}</Badge>
+        <Badge tone={readiness?.status==='READY'?'success':readiness?.status==='BLOCKED'?'error':'warning'}>{readinessStatusLabel(readiness?.status,readinessError)}</Badge>
       </div>
       {readiness&&<div className="ai-control-center__readiness-grid">
         <div><span>凭据库</span><strong>{readiness.checks.vault.persistent?`${readiness.checks.vault.backend} · 持久化`:`${readiness.checks.vault.backend} · 仅当前进程`}</strong></div>
         <div><span>Session 边界</span><strong>{readiness.checks.session_boundary.status==='PASS'?'有效':'不完整'}</strong></div>
         <div><span>Provider</span><strong>{readiness.checks.providers.status==='PASS'?'全部就绪':'部分配置'}</strong></div>
-        <div><span>插件执行</span><strong>延期 · DENY_ALL</strong></div>
+        <div><span>插件执行</span><strong>延期 · 全部拒绝</strong></div>{/* [HERMIA-FE-20261022 R7-FIX3] */}
       </div>}
-      {readiness?.blockers.length?<div className="ai-control-center__readiness-list"><strong>阻断</strong>{readiness.blockers.map(item=><code key={item}>{item}</code>)}</div>:null}
-      {readiness?.warnings.length?<div className="ai-control-center__readiness-list"><strong>警告</strong>{readiness.warnings.map(item=><code key={item}>{item}</code>)}</div>:null}
+      {readiness?.blockers.length?<div className="ai-control-center__readiness-list"><strong>阻断</strong>{readiness.blockers.map(item=><code key={item}>{runtimeCodeLabel(item,'发布阻断项')}</code>)}</div>:null}
+      {readiness?.warnings.length?<div className="ai-control-center__readiness-list"><strong>警告</strong>{readiness.warnings.map(item=><code key={item}>{runtimeCodeLabel(item,'发布警告')}</code>)}</div>:null}
     </section>
     <div className="ai-control-center__providers">{providers.map(p => {const status=credentialStatuses[p.id];const temporary=Boolean(status?.configured&&!status.persistent);return <article className="ai-control-center__provider" key={p.id}>
       <div className="ai-control-center__head"><KeyRound size={17} /><div><h3>{p.name}</h3><span>{p.roles}</span></div><Badge tone={temporary?'warning':status?.configured?'success':'neutral'}>{temporary?'仅当前进程':status?.configured?'已持久保存':'未配置'}</Badge></div>
       <div className="ai-control-center__actions"><input type="password" value={keys[p.id] || ''} onChange={e => setKeys(v => ({ ...v, [p.id]: e.target.value }))} placeholder="输入 API Key / Token" autoComplete="off" /><Button onClick={() => save(p.id)}>保存</Button><Button onClick={() => test(p.id)} title="测试连接" aria-label={`测试 ${p.name} 连接`}><TestTube2 size={15} /></Button>{status?.configured && <Button onClick={() => remove(p.id)} title="删除凭据" aria-label={`删除 ${p.name} 凭据`}><Trash2 size={15} /></Button>}</div>
-      {status?.degraded_reason&&<small role="status">系统凭据库不可用：{status.degraded_reason}。当前凭据不会跨进程保留。</small>}{states[p.id] && <small>{states[p.id]}</small>}
+      {status?.degraded_reason&&<small role="status">{vaultDegradedNote(status.degraded_reason)}</small>}{states[p.id] && <small>{states[p.id]}</small>}
     </article>})}</div>
     <section className="ai-control-center__status"><h3>能力状态</h3><p><ShieldCheck size={15} /> 主控问答：<strong>只读模式</strong></p><p>DeepSeek Harness：<strong>{harnessProcess.running ? `进程运行中（PID ${harnessProcess.pid}）` : harness.reachable ? (harness.compatible === false ? '版本不兼容' : '服务已连接') : '未运行'}</strong></p><div className="ai-control-center__harness-actions"><Button onClick={startHarness} disabled={harnessProcess.running || !preferences.harness_enabled || harness.compatible === false}>启动 Harness</Button><Button onClick={stopHarness} disabled={!harnessProcess.running}>停止 Harness</Button></div>{harnessProcess.last_action && <small>最近动作：{harnessProcess.last_action === 'started' ? '启动' : '停止'}{harnessProcess.last_action_at ? ` · ${new Date(harnessProcess.last_action_at).toLocaleString()}` : ''}</small>}<p>文本模型：{models.length ? `${models.filter(m => m.available).length} 个可用` : '未读取'}</p><p>图片 / 视觉 / 配音：{media ? '已读取运行时状态' : '未读取'}</p><p>视频：配置入口已保留，具体可用性取决于 Provider 健康检查。</p></section>
     <section className="ai-control-center__audit">

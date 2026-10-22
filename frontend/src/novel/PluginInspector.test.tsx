@@ -117,7 +117,9 @@ it("keeps a legacy inspection payload compatible", () => {
   expect(screen.getByText("declarative")).toBeTruthy();
   expect(screen.getByText(/未声明（未验证发布者）/)).toBeTruthy();
   expect(screen.getAllByText(/代码执行：当前禁止/).length).toBeGreaterThan(0);
-  expect(screen.getAllByText("DENY_ALL").length).toBeGreaterThan(0);
+  // [HERMIA-FE-20261022 R7-FIX3]
+  expect(screen.queryByText("DENY_ALL")).toBeNull();
+  expect(screen.getAllByText("全部拒绝").length).toBeGreaterThan(0);
   expect(screen.getByText("清单未激活，声明式资源不可展示。")).toBeTruthy();
 });
 

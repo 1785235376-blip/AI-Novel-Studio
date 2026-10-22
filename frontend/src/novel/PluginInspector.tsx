@@ -3,6 +3,7 @@ import { KeyRound, Plug, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { Badge, Button, EmptyState } from "../ui/primitives";
 import { KIND_LABEL, formatResourceKinds, publisherLabel, type PluginCatalogSummary } from "./PluginManagerPanel";
+import { pluginRuntimeBoundaryLabel } from "../ui/runtimeCodeLabels"; // [HERMIA-FE-20261022 R7-FIX3]
 import { PluginResourceDetail } from "./PluginResourceDetail";
 import { resourceDetailPin } from "./pluginResourceDetailContract";
 import "./PluginInspector.css";
@@ -116,7 +117,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
       </header>
       <div className="plugin-inspector__boundary">
         <ShieldCheck aria-hidden="true" size={16}/>
-        <span>代码执行：当前禁止 · 沙箱：{inspection.sandbox || "未读取"} · 隔离：{inspection.isolation || "DENY_ALL"}</span>
+        <span>代码执行：当前禁止 · 沙箱：{pluginRuntimeBoundaryLabel("sandbox", inspection.sandbox)} · 隔离：{pluginRuntimeBoundaryLabel("isolation", inspection.isolation)}</span>
       </div>
       <dl className="plugin-inspector__facts">
         <div><dt>清单版本</dt><dd>{inspection.manifestVersion || "1.0"}</dd></div>
@@ -126,7 +127,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
         <div><dt>能力</dt><dd>{inspection.capabilities?.join("、") || "无"}</dd></div>
         <div><dt>请求权限</dt><dd>{inspection.requestedPermissions?.join("、") || "无"}</dd></div>
         <div><dt>已授予</dt><dd>{inspection.grantedPermissions?.join("、") || "无"}</dd></div>
-        <div><dt>隔离策略</dt><dd>{inspection.isolation || "DENY_ALL"}</dd></div>
+        <div><dt>隔离策略</dt><dd>{pluginRuntimeBoundaryLabel("isolation", inspection.isolation)}</dd></div>
         <div><dt>声明式资源</dt><dd>{count} 个{count ? ` · ${formatResourceKinds(kinds)}` : ""} · {validationLabel}</dd></div>
         <div><dt>插件代码可执行</dt><dd>否</dd></div>
       </dl>

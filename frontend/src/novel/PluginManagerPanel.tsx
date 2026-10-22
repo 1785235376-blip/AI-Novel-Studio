@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CircleOff, Plug, RefreshCw, Search, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { Badge, Button, EmptyState, Panel, StatusMessage } from "../ui/primitives";
+import { pluginRuntimeBoundaryLabel } from "../ui/runtimeCodeLabels"; // [HERMIA-FE-20261022 R7-FIX3]
 import "./PluginManagerPanel.css";
 import type { PluginInspection } from "./PluginInspector";
 
@@ -277,8 +278,8 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
           <p>插件默认拒绝权限。当前激活仅表示清单可用，不代表插件代码能够执行。</p>
         </div>
         <dl>
-          <div><dt>沙箱</dt><dd>{runtime?.sandbox || "未读取"}</dd></div>
-          <div><dt>隔离策略</dt><dd>{runtime?.isolation || "DENY_ALL"}</dd></div>
+          <div><dt>沙箱</dt><dd>{pluginRuntimeBoundaryLabel("sandbox", runtime?.sandbox)}</dd></div>
+          <div><dt>隔离策略</dt><dd>{pluginRuntimeBoundaryLabel("isolation", runtime?.isolation)}</dd></div>
           <div><dt>图片 Provider</dt><dd>{health ? health.image_providers?.length || 0 : "未读取"}</dd></div>
           <div><dt>视频配置</dt><dd>{health ? health.video_provider_configs || 0 : "未读取"}</dd></div>
         </dl>
