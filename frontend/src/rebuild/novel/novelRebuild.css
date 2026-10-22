@@ -174,3 +174,7 @@ html .app-shell[data-module="NOVEL"] .nv-assist{padding:10px 12px;gap:8px}
 .nv-assist__links{gap:4px 10px}
 .nv-ai-quick .nv-btn{padding:3px 8px}
 .nv-desk__body>.nv-empty{flex:1;padding:0}.nv-empty__prose{min-height:min(62vh,560px)} /* [HERMIA-FE-20261022 R1] */
+/* [HERMIA-FE-20261022 R2] 正文章节标题按原型降字号（原 34px/700 → 原型写作区量级） */
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h1{font-size:20px;font-weight:650;line-height:1.5;margin:0 0 .8em}
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h2{font-size:18px;font-weight:650;line-height:1.5;margin:0 0 .7em}
+html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h3{font-size:17px;font-weight:600;line-height:1.5}
