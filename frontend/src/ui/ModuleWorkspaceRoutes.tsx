@@ -87,6 +87,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const [imageSubview,setImageSubview]=useState<'studio'|'comic'>('studio');
   useEffect(()=>{ if(module!=='IMAGE') setImageSubview('studio'); },[module]);
   // [HERMIA-FE-20261022 W-UX-14] Explicit send→EDIT records a media-pool handoff source strip.
+  // [HERMIA-FE-20261022 X-UX-10] Hand-off smoke covers IMAGE→VIDEO · AUDIO→EDIT · ASSETS→* (see handoffSmoke.xUx10.test.tsx).
   const sendToEdit = (source: EditHandoffSource, label: string) => {
     pushEditHandoff({source, label, novelId});
     onModuleChange('EDIT');
