@@ -1,5 +1,6 @@
 import {useEffect, useState, type ReactNode} from 'react';
 import { CredentialsPanel } from '../rebuild/CredentialsPanel'; // [HERMIA-FE-20261022 REBUILD-2]
+import { LocalInteropPanel } from '../rebuild/LocalInteropPanel'; // [HERMIA-FE-20261022 REBUILD-5]
 import type {Asset} from '../api';
 import {AppShell, type ScopeLabels, type StudioModule, type ProjectNoun} from './AppShell';
 import {PluginManagerPanel} from '../novel/PluginManagerPanel';
@@ -107,7 +108,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
     case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>sendToEdit('AUDIO','声音检听 / 交片')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
     case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<>{/* [HERMIA-FE-20261022 REBUILD-2] 密钥与能力状态 */}<CredentialsPanel/><ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/></>; status='AI 主控'; break;
-    case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
+    case 'PLUGIN': main=<>{/* [HERMIA-FE-20261022 REBUILD-5] 连接本地软件 */}<LocalInteropPanel/><PluginManagerPanel onInspect={setPluginInspection}/></>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
     case 'ASSETS': main=novelId?<AssetsWorkspaceShell novelId={novelId} selectedAssetId={selectedAsset?.id} selectedAsset={selectedAsset} onSelectAsset={setSelectedAsset} onSendToModule={sendAssetsToModule}/>:<WorkspaceHonestEmpty kind="no_project" workspace="ASSETS"/>; status='资产库'; break;
   }
