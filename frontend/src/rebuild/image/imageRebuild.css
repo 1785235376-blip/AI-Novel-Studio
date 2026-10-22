@@ -75,3 +75,9 @@ html .app-shell[data-module="IMAGE"] .media-ws-main{flex:1;min-height:0;display:
 .img-canvas-pro{border-top:1px solid var(--color-border-default);background:var(--color-bg-surface)}
 .img-canvas-pro>summary{cursor:pointer;padding:6px 12px;font-size:12px;color:var(--color-text-muted)}
 .img-canvas-pro__body{max-height:50vh;overflow:auto}
+/* [HERMIA-FE-20261022 U1] 漫画：偶数格两两填满、奇数格末格跨行；气泡可拖动 */
+.comic-page{grid-template-columns:1fr 1fr}
+.comic-cell{display:block;min-height:0;text-align:left}
+.comic-cell .bub{cursor:grab;touch-action:none;user-select:none;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.comic-cell .bub:active{cursor:grabbing}
+.comic-cell .bub:focus-visible{outline:2px solid var(--color-accent-primary)}

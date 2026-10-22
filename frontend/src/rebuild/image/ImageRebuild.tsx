@@ -2,7 +2,7 @@
    + 折叠「专业 · 创作画布」+ 漫画子视图 + 图片画布视图。数据全部来自真实接口：
    /api/novels/{nid}/image-generations · image-jobs · visual-references · /api/asset-providers。
    没有接口支撑的（漫画分格/气泡、逐格生成）只做本地草稿并写「状态待核实」，不显示已就绪。 */
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {api, type VisualReference} from '../../api';
 import {Drawer} from '../primitives';
 import {ImageGenerationPanel} from '../../novel/ImageGenerationPanel';
@@ -191,7 +191,22 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   );
 }
 
-type Cell = {id: string; bubbles: string[]};
+// [HERMIA-FE-20261022 U1] 气泡带位置（格内百分比），可拖动；只存本页草稿状态
+type Bubble = {id: string; text: string; x: number; y: number};
+type Cell = {id: string; bubbles: Bubble[]};
+/** 分格网格：两列；格数为奇数时最后一格跨整行，偶数时全部两两填满（修 4 格右下角缺块）。 */
+export function comicCellSpans(count: number): boolean[] { return Array.from({length: count}, (_, i) => count % 2 === 1 && i === count - 1 && count > 1); }
+function ComicBubble({b, onMove, onEdit}: {b: Bubble; onMove: (x: number, y: number) => void; onEdit: (t: string) => void}) {
+  const st = useRef<null | {sx: number; sy: number; ox: number; oy: number; w: number; h: number}>(null);
+  return <span className="bub" role="button" tabIndex={0} aria-label={`气泡：${b.text}（拖动移动，双击改写）`} data-bubble-id={b.id}
+    style={{left: `${b.x}%`, top: `${b.y}%`}}
+    onClick={e => e.stopPropagation()}
+    onDoubleClick={e => { e.stopPropagation(); const t = window.prompt('改写台词', b.text); if (t != null && t.trim()) onEdit(t.trim()); }}
+    onPointerDown={e => { e.stopPropagation(); const cell = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect(); st.current = {sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, w: cell.width || 1, h: cell.height || 1}; try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* jsdom */ } }}
+    onPointerMove={e => { const d = st.current; if (!d) return; onMove(Math.max(0, Math.min(85, d.ox + (e.clientX - d.sx) / d.w * 100)), Math.max(0, Math.min(88, d.oy + (e.clientY - d.sy) / d.h * 100))); }}
+    onPointerUp={() => { st.current = null; }}
+    onKeyDown={e => { const k = {ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2]}[e.key]; if (k) { e.preventDefault(); onMove(Math.max(0, Math.min(85, b.x + k[0])), Math.max(0, Math.min(88, b.y + k[1]))); } }}>{b.text}</span>;
+}
 function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onBack: () => void; onGen: () => void}) {
   const [pages, setPages] = useState<{id: string; label: string; cells: Cell[]}[]>([{id: 'p1', label: '第 1 页', cells: [{id: 'c1', bubbles: []}, {id: 'c2', bubbles: []}, {id: 'c3', bubbles: []}]}]);
   const [pageId, setPageId] = useState('p1');
@@ -216,12 +231,16 @@ function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onBack: ()
         <section className="mw-hero" aria-label="漫画页预览">
           <div className="hero-tools"><b>当前页 · {page.label}</b><span className="nv-spacer" />
             <button type="button" className="nv-btn" id="comicAddPanel" onClick={() => mut(cs => [...cs, {id: `c${cs.length + 1}`, bubbles: []}])}>＋ 分格</button>
-            <button type="button" className="nv-btn" id="comicBubble" onClick={() => mut(cs => cs.map(c => c.id === cellId ? {...c, bubbles: [...c.bubbles, '双击改写台词']} : c))}>＋ 气泡</button></div>
+            <button type="button" className="nv-btn" id="comicBubble" onClick={() => mut(cs => cs.map(c => c.id === cellId ? {...c, bubbles: [...c.bubbles, {id: `b${Date.now().toString(36)}${c.bubbles.length}`, text: '双击改写台词', x: 6, y: 6 + (c.bubbles.length % 4) * 18}]} : c))}>＋ 气泡</button></div>
           <div className="hero-stage">
             <div className="comic-page">
-              {page.cells.map((c, i) => <button key={c.id} type="button" className={`comic-cell${i === 2 ? ' c3' : ''}`} aria-pressed={c.id === cellId} onClick={() => setCellId(c.id)}>
-                {c.bubbles.map((b, j) => <span key={j} className="bub" style={{top: 8 + j * 28, left: 8}}>{b}</span>)}
-                <span className="cell-n">{i + 1}</span></button>)}
+              {(() => { const spans = comicCellSpans(page.cells.length); 
+                return page.cells.map((c, i) => <div key={c.id} role="button" tabIndex={0} className={`comic-cell${spans[i] ? ' c3' : ''}`} data-cell-span={spans[i] ? 'full' : 'half'} aria-pressed={c.id === cellId} aria-label={`第 ${i + 1} 格`}
+                  onClick={() => setCellId(c.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setCellId(c.id); }}>
+                  {c.bubbles.map(b => <ComicBubble key={b.id} b={b}
+                    onMove={(x, y) => mut(cs => cs.map(cc => cc.id === c.id ? {...cc, bubbles: cc.bubbles.map(bb => bb.id === b.id ? {...bb, x, y} : bb)} : cc))}
+                    onEdit={t => mut(cs => cs.map(cc => cc.id === c.id ? {...cc, bubbles: cc.bubbles.map(bb => bb.id === b.id ? {...bb, text: t} : bb)} : cc))} />)}
+                  <span className="cell-n">{i + 1}</span></div>); })()}
             </div>
           </div>
           <div className="comic-strip" role="tablist" aria-label="漫画页条">{pages.map(p => <button key={p.id} type="button" role="tab" aria-selected={p.id === page.id} onClick={() => setPageId(p.id)}>{p.label}</button>)}</div>
