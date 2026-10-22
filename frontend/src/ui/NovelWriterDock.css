@@ -251,3 +251,43 @@
   background: var(--color-bg-editor);
   color: var(--color-text-primary);
 }
+
+/* [HERMIA-FE-20261022 N-UX-11] Secondary discoverability strip — not primary CTA */
+.novel-writer-dock__sec{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-2);
+  padding:var(--space-3);
+  border:var(--border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-subtle);
+}
+.novel-writer-dock__sec-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--color-text-muted);
+}
+.novel-writer-dock__sec-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--space-1);
+}
+.novel-writer-dock__sec-btn{
+  all:unset;
+  cursor:pointer;
+  padding:4px 8px;
+  border-radius:var(--radius-sm);
+  border:1px dashed color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+  background:var(--color-bg-surface);
+  font-size:11px;
+  font-weight:600;
+  color:var(--color-text-secondary);
+}
+.novel-writer-dock__sec-btn:hover{
+  border-style:solid;
+  border-color:var(--color-selection-border);
+  color:var(--color-accent-primary);
+  background:var(--color-accent-subtle);
+}

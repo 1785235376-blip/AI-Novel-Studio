@@ -60,6 +60,7 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
   const overdue = result?.foreshadowing?.overdue || [];
   if (!projectId) return <EmptyState title="未选择小说" detail="先打开一部小说再做一致性检查。" />;
   return (
+    <div data-novel-anchor="continuity">
     <Panel title="一致性检查" actions={<Badge tone="info">{result?.execution_label || "契约校验，未调用模型"}</Badge>}>
       {!chapter ? (
         <EmptyState title="请先选择章节" detail="主路径会读取当前章节正文和故事资料库，不再要求粘贴 JSON。" />
@@ -131,5 +132,6 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
         <Button onClick={runJson} disabled={!projectId}>运行 JSON 检查</Button>
       </details>
     </Panel>
+    </div>
   );
 }

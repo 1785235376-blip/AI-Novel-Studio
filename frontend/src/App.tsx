@@ -102,6 +102,7 @@ import { bindRestoreConfirmation, gateRestore, syncRestoreLifecycle } from "./wo
 import { CommandSearch } from "./workbench/CommandSearch";
 import { useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector } from "./workbench/useWorkbenchLayout";
 import { decideNovelPrimaryCta, countOpenContinuityWarnings } from "./workbench/novelCta"; // [HERMIA-FE-20261022 N-UX-08]
+import { novelSecondaryEntry, scrollNovelSecondaryAnchor, type NovelSecondaryEntryId } from "./workbench/novelSecondaryEntries"; // [HERMIA-FE-20261022 N-UX-11]
 import { FEATURE_GROUP_DEFAULTS } from "./ui/FeatureLauncher";
 import { resetLayout, type LayoutScope } from "./workbench/layout";
 import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
@@ -1889,6 +1890,14 @@ export default function App() {
       onOpenCreation={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('creation'); } })}
       onOpenOverview={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } })}
       onOpenWorkflow={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('workflow'); } })}
+      onOpenSecondaryEntry={(id: NovelSecondaryEntryId) => styleLeave.request(current => {
+        // [HERMIA-FE-20261022 N-UX-11] secondary CTA → existing FL story|check + anchor scroll; primary CTA untouched
+        if (!current()) return;
+        const entry = novelSecondaryEntry(id);
+        commitStudioModule('NOVEL');
+        setPanel(entry.panel);
+        window.setTimeout(() => scrollNovelSecondaryAnchor(entry.anchor), 80);
+      })}
       onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
       capabilityStatus="undetermined"
       ai={<>

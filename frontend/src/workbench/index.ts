@@ -7,3 +7,4 @@ export {registerWorkspaceModuleActions} from './workspaceActions';
 export {capabilityBadgeView, capabilityFromLedgerCell, isFakeGreen} from './capabilityBadge';
 export {decideNovelPrimaryCta, countOpenContinuityWarnings, type NovelCtaKind, type NovelCtaDecision} from './novelCta';
 export {useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector, EXEC_OR_DIRECTOR_PANELS} from './useWorkbenchLayout';
+export {NOVEL_SECONDARY_ENTRIES, novelSecondaryEntry, scrollNovelSecondaryAnchor, type NovelSecondaryEntryId, type NovelSecondaryEntry} from './novelSecondaryEntries';

@@ -27,7 +27,7 @@ function CanonBody({projectId,chapterId,context,namespace}:{projectId:string;cha
   const blocked=action.busy||rows.isLoading||!!rows.error||withheld;
   function edit(row:CanonReview){setSelected(row);setPreviewDirty(false);if(row.source)setSourceId(row.source.chapter_id);setConfirmed(false);setOperation(crypto.randomUUID());}
   async function preview(row:CanonReview,explicitSource=false){await action.run(async current=>{const fresh=await client.preview(row.id,explicitSource?(sourceId.trim()||undefined):undefined);if(current())edit(fresh);});}
-  return <section aria-label="原始 Canon 候选审阅"><h3>原始 Canon 候选审阅</h3>
+  return <section aria-label="原始 Canon 候选审阅" data-novel-anchor="pending-canon"><h3>原始 Canon 候选审阅</h3>
     {flags.isLoading&&<StatusMessage>正在读取 Canon 审阅状态…</StatusMessage>}
     {!flags.isLoading&&!flags.error&&!enabled&&<StatusMessage>版本化 Canon 审阅未启用。</StatusMessage>}
     {error&&<StatusMessage tone="error">{safeError}</StatusMessage>}

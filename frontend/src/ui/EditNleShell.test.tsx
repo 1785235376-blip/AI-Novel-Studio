@@ -359,4 +359,49 @@ describe('NovelWriterDock Lumen §4.4', () => {
     expect(host.textContent).not.toMatch(/打开分镜 Bible|StoryboardWorkspace/);
     act(() => root.unmount());
   });
+
+  it('N-UX-11 exposes StoryPlanning / Continuity / PendingCanon secondary CTAs without stealing primary', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const openSec = vi.fn();
+    const primary = vi.fn();
+    act(() => root.render(
+      <NovelWriterDock
+        chapterTitle="第一章"
+        chapterMeta="第 1 章"
+        primaryCta={{label: '继续写', kind: 'continue', onClick: primary}}
+        outlineItems={[]}
+        castItems={[]}
+        onOpenSecondaryEntry={openSec}
+        ai={<p>AI</p>}
+      />,
+    ));
+    expect(host.querySelector('[data-novel-sec-entries="true"]')).toBeTruthy();
+    const planning = host.querySelectorAll<HTMLButtonElement>('[data-sec-cta="story-planning"]');
+    const continuity = host.querySelectorAll<HTMLButtonElement>('[data-sec-cta="continuity"]');
+    const pending = host.querySelectorAll<HTMLButtonElement>('[data-sec-cta="pending-canon"]');
+    expect(planning.length).toBeGreaterThan(0);
+    expect(continuity.length).toBeGreaterThan(0);
+    expect(pending.length).toBeGreaterThan(0);
+    expect(planning[0].getAttribute('data-fl-panel')).toBe('story');
+    expect(continuity[0].getAttribute('data-fl-panel')).toBe('check');
+    expect(pending[0].getAttribute('data-fl-panel')).toBe('check');
+    const primaryBtn = host.querySelector<HTMLButtonElement>('[data-primary-cta="true"]');
+    expect(primaryBtn?.getAttribute('data-cta-kind')).toBe('continue');
+    expect(primaryBtn?.textContent).toBe('继续写');
+    act(() => { planning[0].click(); });
+    act(() => { continuity[0].click(); });
+    act(() => { pending[0].click(); });
+    expect(openSec.mock.calls.map((c: string[]) => c[0])).toEqual([
+      'story-planning',
+      'continuity',
+      'pending-canon',
+    ]);
+    // primary still independent
+    act(() => { primaryBtn!.click(); });
+    expect(primary).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toMatch(/主按钮仍是写作态机|无新 FL id/);
+    act(() => root.unmount());
+  });
 });

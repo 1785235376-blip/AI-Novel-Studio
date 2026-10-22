@@ -1,15 +1,17 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08 / N-UX-09 / N-UX-10] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08 / N-UX-09 / N-UX-10 / N-UX-11] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
  * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
  * N-UX-05: first-tier panel quick links (story/check/creation/overview/history).
  * N-UX-08: CTA state machine kinds (continue/adopt/continuity) via data-cta-kind.
- * N-UX-10: 设定/世界观入口 → FL story / World*；文案明确 ≠ 分镜 Bible。
+ * N-UX-10: 设定/世界观入口 → FL story / World*；文案明确 ≠ 分镜 Bible.
+ * N-UX-11: 次入口 StoryPlanning / Continuity / PendingCanon（命令+次 CTA；不抢主 CTA；无新 FL id）。
  */
 import type {ReactNode} from 'react';
 import {CapabilityBadge} from './CapabilityBadge';
 import type {CapabilityStatus} from '../workbench/panels';
+import {NOVEL_SECONDARY_ENTRIES, type NovelSecondaryEntryId} from '../workbench/novelSecondaryEntries';
 import './NovelWriterDock.css';
 
 export function NovelWriterDock({
@@ -26,6 +28,7 @@ export function NovelWriterDock({
   onOpenCreation,
   onOpenOverview,
   onOpenWorkflow,
+  onOpenSecondaryEntry,
   onSelectOutline,
   capabilityStatus = 'undetermined',
   ai,
@@ -45,11 +48,23 @@ export function NovelWriterDock({
   onOpenOverview?: () => void;
   /** Opens FL workflow surface — clearly ≠ AI writing bypass. */
   onOpenWorkflow?: () => void;
+  /** N-UX-11: open StoryPlanning / Continuity / PendingCanon via existing story|check. */
+  onOpenSecondaryEntry?: (id: NovelSecondaryEntryId) => void;
   onSelectOutline?: (id: string) => void;
   capabilityStatus?: CapabilityStatus;
   ai: ReactNode;
   extras?: ReactNode;
 }) {
+  const openSec = (id: NovelSecondaryEntryId) => {
+    if (onOpenSecondaryEntry) {
+      onOpenSecondaryEntry(id);
+      return;
+    }
+    // Fallback: map to story/check without inventing FL ids
+    if (id === 'story-planning') onOpenStory?.();
+    else onOpenCheck?.();
+  };
+
   return (
     <div className="novel-writer-dock" aria-label="写作右栏" data-a11y-novel-dock="true">
       <section
@@ -94,6 +109,29 @@ export function NovelWriterDock({
           )}
         </div>
         <p className="novel-writer-dock__hint">不需要辅助时可点边缘按钮将右栏收至 0（宽屏默认展开；&lt;1280 默认折、&lt;1100 强制抽屉；折叠态会记住）。收起后主按钮沉到顶栏写作条（N-UX-09 / Lumen §4.4）。</p>
+      </section>
+
+      {/* [HERMIA-FE-20261022 N-UX-11] Secondary discoverability — does not replace primary CTA */}
+      <section className="novel-writer-dock__sec" aria-label="小说次入口" data-novel-sec-entries="true">
+        <span className="novel-writer-dock__sec-label">次入口 · 命令亦可搜</span>
+        <div className="novel-writer-dock__sec-links">
+          {NOVEL_SECONDARY_ENTRIES.map(entry => (
+            <button
+              key={entry.id}
+              type="button"
+              className="novel-writer-dock__sec-btn"
+              data-sec-cta={entry.id}
+              data-fl-panel={entry.panel}
+              title={`${entry.label}（FL ${entry.panel} · ${entry.actionId}）`}
+              onClick={() => openSec(entry.id)}
+            >
+              {entry.label}
+            </button>
+          ))}
+        </div>
+        <p className="novel-writer-dock__hint">
+          StoryPlanning → FL <strong>story</strong>；Continuity / PendingCanon → FL <strong>check</strong> 同屏（无新 FL id）。主按钮仍是写作态机（继续写 / 采用草稿 / 看一致性）。
+        </p>
       </section>
 
       {/* [HERMIA-FE-20261022 N-UX-05] First-tier same-screen reach — existing FL ids only */}
@@ -142,6 +180,7 @@ export function NovelWriterDock({
           {onOpenStory && (
             <button type="button" className="ui-button" onClick={onOpenStory} data-open="story-database">打开故事资料库 / 设定（World*）</button>
           )}
+          <button type="button" className="ui-button" data-sec-cta="story-planning" data-fl-panel="story" onClick={() => openSec('story-planning')}>打开 StoryPlanning（经 story）</button>
         </div>
       </details>
 
@@ -166,9 +205,8 @@ export function NovelWriterDock({
           {onOpenStory && (
             <button type="button" className="ui-button" onClick={onOpenStory} data-open="story-world">打开世界观设定（≠ 分镜 Bible）</button>
           )}
-          {onOpenCheck && (
-            <button type="button" className="ui-button" onClick={onOpenCheck}>一致性检查 · 待审 Canon</button>
-          )}
+          <button type="button" className="ui-button" data-sec-cta="continuity" data-fl-panel="check" onClick={() => openSec('continuity')}>打开 Continuity（经 check）</button>
+          <button type="button" className="ui-button" data-sec-cta="pending-canon" data-fl-panel="check" onClick={() => openSec('pending-canon')}>打开 PendingCanon（经 check）</button>
         </div>
       </details>
 
