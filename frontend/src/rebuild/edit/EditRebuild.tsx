@@ -28,10 +28,12 @@ export function placeClip(clips: LocalClip[], h: EditHandoffItem, dur = 5): Loca
   return {key: `${h.id}-${clips.length}`, track, start: end, dur, kind, name: `${EDIT_HANDOFF_SOURCE_LABEL[h.source]} · ${h.label}`};
 }
 
-export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}: {
+export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handoffs: handoffsOverride}: {
   novelId: string; shellMode?: 'basic' | 'pro'; editable: false; onBackToVideo?: () => void; handoffs?: EditHandoffItem[];
 }) {
   const [view, setView] = useState<EditView>('tl');
+  // [HERMIA-FE-20261022 U4] 普通：预览 + 三条基础轨（V1/A1/字幕）；专业：完整 V1–V3/A1–A2 + 检视器参数 + 快捷键提示。仍只读本地编排（editable={false}）。
+  const isPro = shellMode === 'pro';
   const handoffs = useMemo(() => handoffsOverride ?? editHandoffsForNovel(novelId), [handoffsOverride, novelId]);
   const [binTab, setBinTab] = useState<BinTab>(() => handoffs.length && handoffs.every(h => binTabOf(h) === 'audio') ? 'audio' : 'video');
   const [binOpen, setBinOpen] = useState(true);
@@ -47,7 +49,7 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
   const duration = Math.max(20, clips.reduce((m, c) => Math.max(m, c.start + c.dur), 0));
   const cur = clips.find(c => c.key === sel) ?? null;
   const px = (zoom / 100) * 40;
-  const rows = clips.length ? FULL_TRACKS : EMPTY_TRACKS;
+  const rows = isPro && clips.length ? FULL_TRACKS : EMPTY_TRACKS;
 
   useEffect(() => {
     if (!playing) return;
@@ -102,9 +104,9 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
   const insp = cur ? (
     <><div className="insp-h">片段检视</div><div className="insp-b">
       <dl className="kv"><dt>名称</dt><dd>{cur.name}</dd><dt>轨道</dt><dd>{cur.track === 'S1' ? '字幕' : cur.track}</dd>
-        <dt>入点</dt><dd>{fmtTc(cur.start)}</dd><dt>出点</dt><dd>{fmtTc(cur.start + cur.dur)}</dd><dt>速度</dt><dd>100%</dd>
-        {cur.kind === 'a' ? <><dt>音量</dt><dd>0 dB</dd></> : <><dt>透明度</dt><dd>100%</dd></>}</dl>
-      <p className="edr-note" data-w-ux="09" data-writable="false">速度、透明度、音量暂时只能看，改动和保存的接口还待核实。</p>
+        <dt>入点</dt><dd>{fmtTc(cur.start)}</dd><dt>出点</dt><dd>{fmtTc(cur.start + cur.dur)}</dd>
+        {isPro ? <><dt>速度</dt><dd>100%</dd>{cur.kind === 'a' ? <><dt>音量</dt><dd>0 dB</dd></> : <><dt>透明度</dt><dd>100%</dd></>}</> : null}</dl>
+      {isPro ? <p className="edr-note" data-w-ux="09" data-writable="false" data-pro-only="inspector-params">速度、透明度、音量暂时只能看，改动和保存的接口还待核实。</p> : null}
     </div></>
   ) : (
     <><div className="insp-h">序列属性</div><div className="insp-b">
@@ -139,7 +141,8 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
     <div className="nle-tl" aria-label="多轨时间线" data-timeline-hero="true">
       <div className="nle-track-meta"><span>{rows.length} 轨 · {clips.length} 片段</span><small>视频 / 音频 / 字幕并行</small></div>
       <div className="nle-tl-tools"><span>工具</span><button type="button" className="nv-btn" id="nleCut" disabled={!cur} onClick={cut} title="在播放头处切开选中片段（C）">切割</button>
-        <span>{snap ? '吸附开 · 对齐片段边缘' : '吸附关'}</span></div>
+        <span>{snap ? '吸附开 · 对齐片段边缘' : '吸附关'}</span>
+        {isPro ? <span data-pro-only="shortcuts" className="nle-keys">快捷键：空格 播放 · I 入点 · O 出点 · C 切割</span> : null}</div>
       <div className="nle-scroll">
         <div className="nle-board" id="nleBoard" style={{width: Math.max(960, duration * px + 80), ['--nle-step' as string]: `${px}px`}}>
           <div className="nle-ruler" id="nleRuler" onMouseDown={scrub}>{ticks}</div>
@@ -181,7 +184,7 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
   );
 
   return (
-    <div className="edr nle" tabIndex={-1} onKeyDown={onKey} data-edit-view={view} data-nle-tracks={rows.length} data-snap={snap ? 'on' : 'off'} data-writable="false" aria-label="剪辑工作区">
+    <div className="edr nle" tabIndex={-1} onKeyDown={onKey} data-shell-mode={shellMode} data-edit-view={view} data-nle-tracks={rows.length} data-snap={snap ? 'on' : 'off'} data-writable="false" aria-label="剪辑工作区">
       <NovelOrient storageKey="studio-edit-orient-dismissed" what="这部作品的成片剪辑" can="把镜头和声音放上多轨时间线、切割、打入出点" effect="现在只在本页编排，不会保存；成片导出还没接好" />
       <NovelModTabs tabs={(['tl', 'media', 'export'] as EditView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
       <div className="nle-top" role="toolbar" aria-label="剪辑工具">

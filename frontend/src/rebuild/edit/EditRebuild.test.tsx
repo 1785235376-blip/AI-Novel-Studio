@@ -8,9 +8,9 @@ import type {EditHandoffItem} from '../../ui/editHandoff';
 
 let host: HTMLDivElement; let root: Root;
 const h = (source: EditHandoffItem['source'], label: string): EditHandoffItem => ({id: `eh-${source}-${label}`, source, label, novelId: 'n1', at: 1});
-function mount(handoffs: EditHandoffItem[] = [], onBackToVideo = vi.fn()) {
+function mount(handoffs: EditHandoffItem[] = [], onBackToVideo = vi.fn(), shellMode: 'basic' | 'pro' = 'basic') {
   host = document.createElement('div'); document.body.append(host); root = createRoot(host);
-  act(() => root.render(<EditRebuild novelId="n1" editable={false} handoffs={handoffs} onBackToVideo={onBackToVideo} />));
+  act(() => root.render(<EditRebuild novelId="n1" shellMode={shellMode} editable={false} handoffs={handoffs} onBackToVideo={onBackToVideo} />));
   return onBackToVideo;
 }
 const q = (s: string) => host.querySelector(s) as HTMLElement | null;
@@ -38,7 +38,7 @@ describe('EditRebuild', () => {
     act(() => q('[data-bin-place="true"]')!.click());
     expect(host.querySelectorAll('.clip').length).toBe(1);
     expect(host.textContent).toContain('片段检视');
-    expect(host.querySelectorAll('.nle-row').length).toBe(6);
+    expect(host.querySelectorAll('.nle-row').length).toBe(3); // [U4] 普通只三条基础轨
     act(() => (q('[data-bintab="audio"]') as HTMLButtonElement).click());
     expect(q('[data-handoff-source="AUDIO"]')).toBeTruthy();
   });
@@ -54,5 +54,16 @@ describe('EditRebuild', () => {
     expect(placeClip([a], h('IMAGE', 'y')).start).toBe(5);
     expect(placeClip([a], h('AUDIO', 'z')).track).toBe('A1');
     expect(fmtTc(65.5)).toBe('01:05.50');
+  });
+  it('[U4] mode gating: normal = V1/A1/字幕, no params/shortcuts; pro = 6 tracks + params + shortcut hints', () => {
+    for (const mode of ['basic', 'pro'] as const) {
+      mount([h('VIDEO', '镜头一')], vi.fn(), mode);
+      act(() => q('[data-handoff-source="VIDEO"]')!.click()); act(() => q('[data-bin-place="true"]')!.click());
+      const tracks = [...host.querySelectorAll('.nle-row')].map(r => r.getAttribute('data-track'));
+      if (mode === 'basic') { expect(tracks).toEqual(['V1', 'A1', 'S1']); expect(q('[data-pro-only]')).toBeNull(); expect(host.textContent).not.toContain('透明度'); }
+      else { expect(tracks).toEqual(['V1', 'V2', 'V3', 'A1', 'A2', 'S1']); expect(q('[data-pro-only="shortcuts"]')).toBeTruthy(); expect(host.textContent).toContain('透明度'); }
+      expect(q('[data-writable="false"]')).toBeTruthy();
+      act(() => root.unmount()); host.remove();
+    }
   });
 });
