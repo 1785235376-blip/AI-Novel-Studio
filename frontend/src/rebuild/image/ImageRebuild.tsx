@@ -111,7 +111,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
           </div>
         </nav>
 
-        <section className="mw-hero" aria-label="图像预览">
+        <section className="mw-hero" aria-label="图像预览" data-image-hero="preview">
           <div className="hero-tools">
             <b>{view === 'gen' ? '生成检视' : '图像预览'}</b>
             <span className="nv-spacer" />
@@ -163,7 +163,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
             {shellMode === 'pro' ? <details className="sec"><summary><h4>画面分析</h4></summary><VisionAnalysisPanel novelId={novelId} /></details> : null}
             <div className="mw-cta">
               <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>打开漫画制作</button>
-              {onSendToVideo ? <button type="button" className="nv-btn" data-send-video="true" disabled={!cur} onClick={() => setSendConfirm(true)}>送去视频当参考…</button> : null}
+              {onSendToVideo ? <button type="button" className="nv-btn" data-send-video="true" data-image-cta="send-video" onClick={() => setSendConfirm(true)}>送去视频当参考…</button> : null}
               <button type="button" className="nv-btn" onClick={onOpenAssets}>在资产中查看引用</button>
             </div>
           </div>
@@ -178,10 +178,10 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       {drawer === 'gen' ? <Drawer title="生成候选" onClose={() => { setDrawer(null); reload(); }}><ImageGenerationPanel novelId={novelId} initialPrompt={prompt || undefined} onInspect={onInspect} /></Drawer> : null}
       {drawer === 'refs' ? <Drawer title="参考与视觉上下文" onClose={() => { setDrawer(null); reload(); }}><VisualContextPanel novelId={novelId} /></Drawer> : null}
       {sendConfirm && onSendToVideo ? (
-        <div className="img-confirm" role="dialog" aria-label="送去视频当参考确认">
-          <strong>把「{cur?.name}」送去视频当参考？</strong>
-          <p>会切到视频工作区，这张图作为参考候选，不会自动写进任何镜头。</p>
-          <div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" onClick={() => { setSendConfirm(false); onSendToVideo(); }}>确认送去</button><button type="button" className="nv-btn" onClick={() => setSendConfirm(false)}>取消</button></div>
+        <div className="img-confirm" role="dialog" aria-label="送去视频当参考确认" data-send-video-dialog="true">
+          <strong>{cur ? `把「${cur.name}」送去视频当参考？` : '切到视频工作区？'}</strong>
+          <p>{cur ? '会切到视频工作区，这张图作为参考候选，不会自动写进任何镜头。' : '当前没有选中的图片，只会切换到视频工作区，不带任何参考。'}</p>
+          <div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" data-send-video-confirm="true" onClick={() => { setSendConfirm(false); onSendToVideo(); }}>确认送去</button><button type="button" className="nv-btn" data-send-video-cancel="true" onClick={() => setSendConfirm(false)}>取消</button></div>
         </div>
       ) : null}
     </div>

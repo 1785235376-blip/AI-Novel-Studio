@@ -132,20 +132,17 @@ describe('MediaWorkspaceShells', () => {
     act(() => root.render(
       <ModuleWorkspaceRoutes module="IMAGE" onModuleChange={vi.fn()} scope={scope} actor="author" novelId="novel-1" />,
     ));
+    // [HERMIA-FE-20261022 R2] 图片页按原型重做：旧左栏 rail 不再挂载，子视图切换走模块头「漫画制作」/「回预览」。
     expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('IMAGE');
-    // chrome stays 6 modules — IMAGE workspace, not a 7th top button
-    const chrome = host.querySelector('[data-module-switcher], [aria-label*="模块"], .module-switcher, nav[aria-label*="工作区"]');
-    void chrome;
     act(() => {
-      (host.querySelector('.media-ws-rail [data-image-sub="comic"]') as HTMLButtonElement)?.click();
+      (host.querySelector('.mw-head [data-image-sub="comic"]') as HTMLButtonElement)?.click();
     });
-    expect(host.querySelector('[data-image-subview="comic"]')).toBeTruthy();
-    expect(host.querySelector('[data-image-comic="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-img-view="comic"]')).toBeTruthy();
     act(() => {
-      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('返回图片生成'))?.click();
+      (host.querySelector('.mw-head [data-image-sub="studio"]') as HTMLButtonElement)?.click();
     });
-    expect(host.querySelector('[data-image-subview="studio"]')).toBeTruthy();
+    expect(host.querySelector('[data-img-view="browse"]')).toBeTruthy();
     expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
     expect(host.querySelector('[data-video-layer]')).toBeNull();
     act(() => root.unmount());
