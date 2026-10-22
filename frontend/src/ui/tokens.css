@@ -98,4 +98,17 @@
   --control-height-md: 34px;
   --control-height-lg: 40px;
   --focus-ring: 0 0 0 3px rgb(77 184 196 / 28%);
+
+  /* [LUMEN-FE] §3.1 semantic aliases → existing --color-* (do not change terminal hex above) */
+  --surface-chrome: var(--color-bg-app);
+  --surface-canvas: var(--color-canvas-bg);
+  --surface-panel: var(--color-bg-surface);
+  --surface-elevated: var(--color-bg-elevated);
+  --surface-editor-paper: var(--color-bg-editor);
+  /* text-* / accent short names: no in-repo conflict with other --* defs; map to color-* */
+  --text-primary: var(--color-text-primary);
+  --text-muted: var(--color-text-muted);
+  --border-subtle: var(--color-border-default);
+  --accent: var(--color-accent-primary);
 }
+

@@ -34,4 +34,16 @@ describe('T-DARK dark theme tokens contract [HERMIA-FE-20261022]', () => {
     expect(ui).toContain('prefers-reduced-motion');
     expect(ui).toContain('hermia-panel-in');
   });
+
+  it('Lumen §3.1 semantic aliases map to --color-* terminals', () => {
+    expect(tokens).toMatch(/--surface-chrome:\s*var\(--color-bg-app\)/);
+    expect(tokens).toMatch(/--surface-canvas:\s*var\(--color-canvas-bg\)/);
+    expect(tokens).toMatch(/--surface-panel:\s*var\(--color-bg-surface\)/);
+    expect(tokens).toMatch(/--surface-elevated:\s*var\(--color-bg-elevated\)/);
+    expect(tokens).toMatch(/--surface-editor-paper:\s*var\(--color-bg-editor\)/);
+    expect(tokens).toMatch(/--text-primary:\s*var\(--color-text-primary\)/);
+    expect(tokens).toMatch(/--text-muted:\s*var\(--color-text-muted\)/);
+    expect(tokens).toMatch(/--border-subtle:\s*var\(--color-border-default\)/);
+    expect(tokens).toMatch(/--accent:\s*var\(--color-accent-primary\)/);
+  });
 });
