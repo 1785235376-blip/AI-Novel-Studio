@@ -41,7 +41,7 @@ import {
 import { ConflictDialog } from "./ConflictDialog";
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
-import { AppShell, StudioModule } from "./ui/AppShell";
+import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
 import { NovelWriterDock } from "./ui/NovelWriterDock";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
@@ -1829,6 +1829,7 @@ export default function App() {
         qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
         void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });
       }} revisionGeneration={{ enabled: experimentalFlags.data?.features['experimental.selection_assistant_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true, novelId: s.novelId, context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, providerId:s.textModel?.providerId, modelId:s.textModel?.modelId, profile:s.mode }} onOpenGeneration={openExistingGeneration} onUseStyle={id => styleLeave.request(current => { if (!current()) return; if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setCharacterViewpoint(undefined); s.setWritingInputs({ ...s.writingInputs, styleProfileId: id }); setPanel('history'); })} activeCharacterId={activeCharacterId} onExitCharacter={() => setCharacterViewpoint(undefined)} onUseCharacter={characterMind ? (characterId, chapterId, sceneId) => styleLeave.request(current => { if (!current()) return; if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; if (chapterId !== s.chapterId) { s.setChapter(chapterId); setShellMessage('已打开人物视角对应章节，请再次核对知识后选择人物视角。'); return; } setCharacterViewpoint({ identity: namespace, chapterId, characterId, sceneId, epoch: scopeEpoch }); setPanel('history'); }) : undefined} /> : <Panel key={`${namespace}:${s.novelId}`} type={panel} taskTarget={workspaceTools && taskTarget?.namespace === namespace && taskTarget.novelId === s.novelId ? taskTarget : undefined} storyTarget={workspaceTools && storyTarget?.namespace === namespace && storyTarget.novelId === s.novelId ? storyTarget : undefined} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter} onOpenStorySourceChapter={openStorySourceChapter}
+        onOpenStudioModule={navigateStudioModule}
         onRestored={(restored) => {
           // Feed the existing hydration path. It retains drafts and creates a
           // persistent conflict when a restored server version overtakes them.
@@ -2097,6 +2098,7 @@ function Panel({
   onOpenChapter,
   onOpenStorySourceChapter,
   onRestored,
+  onOpenStudioModule,
 }: {
   type: string;
   storyTarget?: StorySearchTarget;
@@ -2108,6 +2110,8 @@ function Panel({
   onOpenStorySourceChapter: (id:string, signal?:AbortSignal)=>void;
   onRestored: (chapter: Chapter) => void;
   sessionToken: string;
+  /** [HERMIA-FE-20261022 X-UX-09] settings gateway → CONTROL/PLUGIN */
+  onOpenStudioModule?: (module: StudioModule) => void;
 }) {
   const queryClient = useQueryClient();
   if (!scope && ["members", "permissions", "audit", "snapshots"].includes(type))
@@ -2155,7 +2159,13 @@ function Panel({
   if (type === "knowledge") return <NovelImportPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} requestContext={{sessionToken,scope}} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
   if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} onPlanningApplied={() => { for (const queryKey of [["novel-detail",novelId],["novel-outline",novelId],["story-database"],["world-rules",novelId],["ai-context-preview"],["ai-context-preview-world-rules"],["ai-context-preview-canon"]]) void queryClient.invalidateQueries({queryKey}); }} />;
   if (type === "research") return <ResearchPanel novelId={novelId} />;
-  if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
+  if (type === "settings") return (
+    <SettingsPathGateway onOpenModule={onOpenStudioModule}>
+      <AiControlCenter />
+      <MediaProviderSettings />
+      <VideoCallbackSecurityStatus />
+    </SettingsPathGateway>
+  );
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
   return (
     <CollaborationPanel type={type} scope={scope} chapterId={chapter?.id} />

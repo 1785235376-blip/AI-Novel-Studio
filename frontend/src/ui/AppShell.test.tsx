@@ -2,7 +2,7 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AppShell, ModuleSwitcher, moduleForTaskSource } from "./AppShell";
+import { AppShell, ModuleSwitcher, moduleForTaskSource, SettingsPathGateway } from "./AppShell";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
 beforeEach(() => {
@@ -769,6 +769,118 @@ describe("AppShell N-UX-09 fold persistence + narrow", () => {
     expect(sunk?.getAttribute("data-cta-kind")).toBe("continue");
     act(() => sunk!.click());
     expect(onCta).toHaveBeenCalled();
+    act(() => root.unmount());
+  });
+});
+
+describe("AppShell X-UX-09 settings path", () => {
+  it("Header 设置 opens CONTROL without growing chrome past 6", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const change = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={change}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          shellMode="basic"
+        />,
+      ),
+    );
+    const tabs = [...host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')];
+    expect(tabs.map((t) => t.getAttribute("data-module-tab"))).toEqual([
+      "NOVEL", "IMAGE", "VIDEO", "AUDIO", "EDIT", "ASSETS",
+    ]);
+    expect(host.querySelector('[data-settings-chrome="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-x-ux-09="settings"]')).toBeTruthy();
+    act(() => host.querySelector<HTMLButtonElement>('[data-settings-trigger="true"]')!.click());
+    expect(host.querySelector('[aria-label="设置与溢出工作区"]')).toBeTruthy();
+    act(() => host.querySelector<HTMLButtonElement>('[data-settings-open="CONTROL"]')!.click());
+    expect(change).toHaveBeenCalledWith("CONTROL");
+    act(() => root.unmount());
+  });
+
+  it("pro「更多」still reaches PLUGIN; chrome stays 6", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const change = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="IMAGE"
+          onModuleChange={change}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          shellMode="pro"
+        />,
+      ),
+    );
+    expect(host.querySelector('[data-overflow-trigger="true"]')?.textContent).toContain("专业更多");
+    expect(host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')).toHaveLength(6);
+    act(() => host.querySelector<HTMLButtonElement>('[data-overflow-trigger="true"]')!.click());
+    act(() => host.querySelector<HTMLButtonElement>('[data-overflow-item="PLUGIN"]')!.click());
+    expect(change).toHaveBeenCalledWith("PLUGIN");
+    act(() => root.unmount());
+  });
+
+  it("command utility lists 打开设置（AI 主控）", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const change = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={change}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    act(() => host.querySelector<HTMLButtonElement>(".global-search")!.click());
+    const btn = [...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].find(
+      (b) => b.textContent?.includes("打开设置"),
+    );
+    expect(btn).toBeTruthy();
+    act(() => btn!.click());
+    expect(change).toHaveBeenCalledWith("CONTROL");
+    act(() => root.unmount());
+  });
+
+  it("SettingsPathGateway exposes CONTROL/PLUGIN CTAs without fake green", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const open = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <SettingsPathGateway onOpenModule={open}>
+          <p>inline settings body</p>
+        </SettingsPathGateway>,
+      ),
+    );
+    const gate = host.querySelector('[data-settings-path="novel-panel"]')!;
+    expect(gate.getAttribute("data-capability-tone")).toBe("neutral");
+    expect(gate.textContent).not.toMatch(/已就绪|已连通/);
+    act(() => host.querySelector<HTMLButtonElement>('[data-settings-open="PLUGIN"]')!.click());
+    expect(open).toHaveBeenCalledWith("PLUGIN");
     act(() => root.unmount());
   });
 });

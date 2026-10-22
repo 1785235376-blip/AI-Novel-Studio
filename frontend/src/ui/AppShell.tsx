@@ -6,6 +6,7 @@ import {
   PanelRightOpen,
   Search,
   MoreHorizontal,
+  Settings2,
 } from "lucide-react";
 import { IconButton } from "./primitives";
 import { ThemeToggle } from "./ThemeToggle";
@@ -106,7 +107,7 @@ export function ModuleSwitcher({
   );
 }
 
-/** [HERMIA-FE-20261022 X-UX-03] CONTROL/PLUGIN/WORKFLOW via 更多 — never default 6 chrome. */
+/** [HERMIA-FE-20261022 X-UX-03/09] CONTROL/PLUGIN/WORKFLOW via 更多 — never default 6 chrome. */
 export function ModuleOverflowMenu({
   value,
   onChange,
@@ -121,6 +122,11 @@ export function ModuleOverflowMenu({
   const trigger = useRef<HTMLButtonElement>(null);
   const isOverflow = STUDIO_MODULE_OVERFLOW.some((item) => item.id === value);
   const activeOverflow = STUDIO_MODULE_OVERFLOW.find((item) => item.id === value);
+  const triggerLabel = isOverflow
+    ? activeOverflow?.label
+    : shellMode === "pro"
+      ? "专业更多"
+      : "更多";
   useEffect(() => {
     if (!open) return;
     const onDoc = (event: MouseEvent) => {
@@ -145,6 +151,8 @@ export function ModuleOverflowMenu({
       className={`module-overflow${isOverflow ? " is-active" : ""}${shellMode === "pro" ? " is-pro" : ""}`}
       ref={root}
       data-overflow-chrome="true"
+      data-settings-path="overflow"
+      data-x-ux-09="overflow"
     >
       <button
         ref={trigger}
@@ -152,22 +160,31 @@ export function ModuleOverflowMenu({
         className={isOverflow ? "is-active" : ""}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={isOverflow ? `更多工作区（当前：${activeOverflow?.label}）` : "更多工作区"}
+        aria-label={
+          isOverflow
+            ? `${shellMode === "pro" ? "专业" : ""}更多工作区（当前：${activeOverflow?.label}）`
+            : shellMode === "pro"
+              ? "专业更多工作区"
+              : "更多工作区"
+        }
         data-overflow-trigger="true"
         onClick={() => setOpen((v) => !v)}
       >
         <MoreHorizontal aria-hidden="true" size={16} />
-        <span>{isOverflow ? activeOverflow?.label : "更多"}</span>
+        <span>{triggerLabel}</span>
       </button>
       {open && (
         <div className="module-overflow__menu" role="menu" aria-label="溢出工作区">
-          <p className="module-overflow__hint">不在默认 6 钮 · 命令仍可搜</p>
+          <p className="module-overflow__hint">
+            设置 · 命令 ·「更多」均可 · 不进默认 6 钮 · 禁假绿
+          </p>
           {STUDIO_MODULE_OVERFLOW.map(({ id, icon, label }) => (
             <button
               key={id}
               type="button"
               role="menuitem"
               data-overflow-item={id}
+              data-settings-open={id}
               className={value === id ? "is-active" : ""}
               aria-current={value === id ? "page" : undefined}
               onClick={() => {
@@ -183,6 +200,141 @@ export function ModuleOverflowMenu({
         </div>
       )}
     </div>
+  );
+}
+
+/** [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN/WORKFLOW；不进默认 6 钮。 */
+export function ShellSettingsMenu({
+  value,
+  onChange,
+  shellMode = "basic",
+}: {
+  value: StudioModule;
+  onChange: (value: StudioModule) => void;
+  shellMode?: "basic" | "pro";
+}) {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const isOverflow = STUDIO_MODULE_OVERFLOW.some((item) => item.id === value);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (event: MouseEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        setOpen(false);
+        requestAnimationFrame(() => trigger.current?.focus());
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return (
+    <div
+      className={`shell-settings${isOverflow ? " is-active" : ""}${shellMode === "pro" ? " is-pro" : ""}`}
+      ref={root}
+      data-settings-chrome="true"
+      data-settings-path="header"
+      data-x-ux-09="settings"
+      data-capability-tone="neutral"
+    >
+      <button
+        ref={trigger}
+        type="button"
+        className={isOverflow ? "is-active" : ""}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="打开设置（AI 主控与插件）"
+        data-settings-trigger="true"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Settings2 aria-hidden="true" size={16} />
+        <span>设置</span>
+      </button>
+      {open && (
+        <div className="shell-settings__menu" role="menu" aria-label="设置与溢出工作区">
+          <p className="shell-settings__hint">
+            AI 主控 / 插件经设置或「更多」进入 · 铬条仍 6 · 状态读账本（禁假绿）
+          </p>
+          {STUDIO_MODULE_OVERFLOW.map(({ id, icon, label }) => (
+            <button
+              key={id}
+              type="button"
+              role="menuitem"
+              data-settings-open={id}
+              className={value === id ? "is-active" : ""}
+              aria-current={value === id ? "page" : undefined}
+              onClick={() => {
+                onChange(id);
+                setOpen(false);
+              }}
+            >
+              {icon}
+              <span>{id === "CONTROL" ? "AI 主控" : id === "PLUGIN" ? "插件管理" : label}</span>
+              <small>{id}</small>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** [HERMIA-FE-20261022 X-UX-09] Novel FL「设置」面板网关 → 显式打开 CONTROL/PLUGIN。 */
+export function SettingsPathGateway({
+  onOpenModule,
+  children,
+}: {
+  onOpenModule?: (module: StudioModule) => void;
+  children?: ReactNode;
+}) {
+  return (
+    <section
+      className="settings-path-gateway"
+      data-settings-path="novel-panel"
+      data-x-ux-09="gateway"
+      data-capability-tone="neutral"
+      aria-label="设置路径"
+    >
+      <header className="settings-path-gateway__head">
+        <strong>设置 · 发现路径</strong>
+        <p>
+          AI 主控与插件不在默认 6 钮。可经 Header「设置」、「更多」或命令打开完整工作区。
+        </p>
+        <div className="settings-path-gateway__actions" role="group" aria-label="打开溢出工作区">
+          <button
+            type="button"
+            data-settings-open="CONTROL"
+            onClick={() => onOpenModule?.("CONTROL")}
+          >
+            打开 AI 主控
+          </button>
+          <button
+            type="button"
+            data-settings-open="PLUGIN"
+            onClick={() => onOpenModule?.("PLUGIN")}
+          >
+            打开插件
+          </button>
+          <button
+            type="button"
+            data-settings-open="WORKFLOW"
+            onClick={() => onOpenModule?.("WORKFLOW")}
+          >
+            打开工作流
+          </button>
+        </div>
+        <small>禁假绿 · 连通态以真实账本为准</small>
+      </header>
+      {children}
+    </section>
   );
 }
 
@@ -480,6 +632,12 @@ export function AppShell({
       action: () => onShellModeChange?.("pro"),
     },
     {
+      id: "settings-hub",
+      label: "打开设置（AI 主控）",
+      hint: "设置 · CONTROL · X-UX-09",
+      action: () => onModuleChange("CONTROL"),
+    },
+    {
       id: "providers",
       label: "打开 Provider 控制中心",
       hint: "主控 · CONTROL",
@@ -514,7 +672,7 @@ export function AppShell({
     const utility = utilityCommands[index - commands.length];
     if (utility) {
       utility.action();
-      if (utility.id === "inspector" || utility.id === "providers" || utility.id === "plugins" || utility.id === "workflow-module" || utility.id === "mode-basic" || utility.id === "mode-pro") {
+      if (utility.id === "inspector" || utility.id === "providers" || utility.id === "plugins" || utility.id === "workflow-module" || utility.id === "settings-hub" || utility.id === "mode-basic" || utility.id === "mode-pro") {
         setCommandOpen(false);
         setCommandQuery("");
       }
@@ -578,6 +736,8 @@ export function AppShell({
         </div>
         {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
         <ThemeToggle />
+        {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
+        <ShellSettingsMenu value={module} onChange={onModuleChange} shellMode={shellMode} />
         <span className="current-actor">
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}

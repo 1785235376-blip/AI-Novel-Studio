@@ -48,13 +48,31 @@
 .module-overflow__menu button small{margin-left:auto;color:var(--color-text-muted);font-size:11px}
 .module-overflow__menu button.is-active,.module-overflow__menu button:hover,.module-overflow__menu button:focus-visible{background:var(--color-selection-bg,var(--color-accent-subtle))}
 .module-overflow__menu svg{width:var(--icon-sm);height:var(--icon-sm)}
+/* [HERMIA-FE-20261022 X-UX-09] Header 设置 / novel settings gateway — not chrome 6 */
+.shell-settings{position:relative;display:flex;align-self:stretch;align-items:center;margin-left:var(--space-1)}
+.shell-settings>button{position:relative;display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-3);border:0;background:transparent;color:var(--color-text-secondary);cursor:pointer;min-height:100%;font:inherit}
+.shell-settings>button.is-active,.shell-settings.is-active>button{color:var(--color-accent-primary);background:var(--color-accent-subtle)}
+.shell-settings__menu{position:absolute;top:100%;right:0;z-index:var(--z-dropdown,40);min-width:240px;padding:var(--space-2);background:var(--color-bg-elevated,var(--color-bg-surface));border:var(--border-default);border-radius:var(--radius-md);box-shadow:var(--shadow-floating)}
+.shell-settings__hint{margin:0 0 var(--space-2);padding:0 var(--space-2);font-size:11px;color:var(--color-text-muted);line-height:1.4}
+.shell-settings__menu button{display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-2) var(--space-3);border:0;border-radius:var(--radius-sm);background:transparent;color:var(--color-text-primary);font:inherit;cursor:pointer;text-align:left}
+.shell-settings__menu button small{margin-left:auto;color:var(--color-text-muted);font-size:11px}
+.shell-settings__menu button.is-active,.shell-settings__menu button:hover,.shell-settings__menu button:focus-visible{background:var(--color-selection-bg,var(--color-accent-subtle))}
+.shell-settings__menu svg{width:var(--icon-sm);height:var(--icon-sm)}
+.settings-path-gateway{display:flex;flex-direction:column;gap:var(--space-4)}
+.settings-path-gateway__head{padding:var(--space-4);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.settings-path-gateway__head strong{display:block;margin-bottom:var(--space-2)}
+.settings-path-gateway__head p{margin:0 0 var(--space-3);color:var(--color-text-secondary);font-size:13px;line-height:1.45}
+.settings-path-gateway__head small{display:block;margin-top:var(--space-2);color:var(--color-text-muted);font-size:11px}
+.settings-path-gateway__actions{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.settings-path-gateway__actions button{padding:var(--space-2) var(--space-3);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit;cursor:pointer}
+.settings-path-gateway__actions button:hover,.settings-path-gateway__actions button:focus-visible{border-color:var(--color-accent-primary);color:var(--color-accent-primary)}
 .overflow-surface-banner{margin:0 0 var(--space-3);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
 .overflow-surface-banner strong{display:block;font-size:13px}
 .overflow-surface-banner p{margin:var(--space-1) 0 0;font-size:12px;color:var(--color-text-secondary)}
 .overflow-surface-banner[data-capability-tone="neutral"]{border-left:3px solid var(--color-border-strong, #888)}
 
 /* [HERMIA-FE-20261022] T-DARK-03 premium motion — menus / mode / panels */
-.module-overflow__menu,.feature-launcher__overlay,.command-palette{
+.module-overflow__menu,.shell-settings__menu,.feature-launcher__overlay,.command-palette{
   animation:hermia-panel-in var(--motion-panel) var(--ease-emphasized) both;
 }
 .shell-mode-toggle button{
@@ -75,6 +93,6 @@
   to{opacity:1;transform:translateY(0)}
 }
 @media(prefers-reduced-motion:reduce){
-  .module-overflow__menu,.feature-launcher__overlay,.command-palette{animation:none}
+  .module-overflow__menu,.shell-settings__menu,.feature-launcher__overlay,.command-palette{animation:none}
   .shell-mode-toggle button:hover:not(.is-active){transform:none}
 }

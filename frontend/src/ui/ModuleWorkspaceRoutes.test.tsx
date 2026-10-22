@@ -49,9 +49,29 @@ describe('ModuleWorkspaceRoutes',()=>{
     expect(host.querySelector('[data-overflow-surface="CONTROL"]')).toBeTruthy();
     expect(host.querySelector('[data-capability-tone="neutral"]')).toBeTruthy();
     expect(host.querySelector('[data-overflow-chrome="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-settings-chrome="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-x-ux-09="surface"]')).toBeTruthy();
+    expect(host.textContent || '').not.toMatch(/已就绪|已连通绿/);
     const tabs=[...host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')];
     expect(tabs).toHaveLength(6);
     expect(tabs.map(t=>t.getAttribute('data-module-tab'))).not.toContain('CONTROL');
+    expect(tabs.map(t=>t.getAttribute('data-module-tab'))).not.toContain('PLUGIN');
+    act(()=>root.unmount());
+  });
+
+  it('X-UX-09: Header 设置 from CONTROL route opens PLUGIN; chrome still 6', async () => {
+    vi.spyOn(api,'multimodalHealth').mockResolvedValue({});
+    vi.spyOn(api,'videoProviders').mockResolvedValue({items:[]});
+    vi.spyOn(api,'pluginRuntimeStatus').mockResolvedValue({execution_supported:false,sandbox:'none'});
+    vi.spyOn(api,'workflows').mockResolvedValue({items:[]});
+    host=document.createElement('div');document.body.append(host);
+    const change=vi.fn();
+    const root=createRoot(host);
+    await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={change} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1" shellMode="basic"/>));
+    act(()=>host.querySelector<HTMLButtonElement>('[data-settings-trigger="true"]')!.click());
+    act(()=>host.querySelector<HTMLButtonElement>('.shell-settings__menu [data-settings-open="PLUGIN"]')!.click());
+    expect(change).toHaveBeenCalledWith('PLUGIN');
+    expect(host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')).toHaveLength(6);
     act(()=>root.unmount());
   });
 

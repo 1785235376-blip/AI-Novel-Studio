@@ -53,17 +53,17 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange,localAiO
 }
 
 
-/** [HERMIA-FE-20261022 X-UX-03] Honest overflow surface — reachable ≠ chrome; ban fake green. */
+/** [HERMIA-FE-20261022 X-UX-03/09] Honest overflow surface — Header 设置 /「更多」/ 命令可达；ban fake green. */
 function OverflowSurfaceBanner({module}:{module:'CONTROL'|'PLUGIN'|'WORKFLOW'}){
   const copy={
-    CONTROL:{title:'主控 · 溢出工作区',detail:'经命令面板 / 设置 /「更多」进入，不进默认 6 钮。模型与 Provider 状态读真实账本。'},
-    PLUGIN:{title:'插件 · 溢出工作区',detail:'经命令 /「更多」进入。execution_supported=false 时不得显示已连通绿标。'},
-    WORKFLOW:{title:'工作流 · 溢出工作区',detail:'经命令 /「更多」进入。编排面 ≠ 小说 AI 写作旁路。'},
+    CONTROL:{title:'主控 · 溢出工作区',detail:'经 Header「设置」/ 命令面板 /「更多」进入，不进默认 6 钮。模型与 Provider 状态读真实账本。'},
+    PLUGIN:{title:'插件 · 溢出工作区',detail:'经 Header「设置」/ 命令 /「更多」进入。execution_supported=false 时不得显示已连通绿标。'},
+    WORKFLOW:{title:'工作流 · 溢出工作区',detail:'经 Header「设置」/ 命令 /「更多」进入。编排面 ≠ 小说 AI 写作旁路。'},
   }[module];
-  return <aside className="overflow-surface-banner" data-overflow-surface={module} data-capability-tone="neutral" aria-label={copy.title}>
+  return <aside className="overflow-surface-banner" data-overflow-surface={module} data-capability-tone="neutral" data-x-ux-09="surface" aria-label={copy.title}>
     <strong>{copy.title}</strong>
     <p>{copy.detail}</p>
-    <small>[HERMIA-FE-20261022 X-UX-03] 铬条隐藏 ≠ 命令禁用 · 禁假绿</small>
+    <small>[HERMIA-FE-20261022 X-UX-09] 设置+更多双路径 · 铬条隐藏 ≠ 禁用 · 禁假绿</small>
   </aside>;
 }
 
