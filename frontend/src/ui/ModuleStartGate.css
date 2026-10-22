@@ -1,0 +1,144 @@
+/* [HERMIA-FE-20261022] H-UX-START-01 · six-module start gate · theme tokens only */
+.module-start-gate {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-dialog, 100) + 20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6, 24px);
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    color-mix(in srgb, var(--color-accent-primary, #3d9ead) 18%, transparent) 0%,
+    var(--color-bg-app, #0d0f12) 62%
+  );
+  color: var(--color-text-primary);
+}
+
+.module-start-gate__panel {
+  width: min(720px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  text-align: center;
+}
+
+.module-start-gate__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.module-start-gate h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.module-start-gate__lead {
+  margin: 0;
+  max-width: 36em;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-secondary, var(--color-text-muted));
+}
+
+.module-start-gate__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3, 12px);
+  width: 100%;
+  margin-top: var(--space-2, 8px);
+}
+
+.module-start-gate__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  padding: var(--space-4, 16px);
+  border-radius: var(--radius-lg, 8px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color var(--motion-fast, 140ms) var(--ease-standard, ease),
+    background var(--motion-fast, 140ms) var(--ease-standard, ease);
+}
+
+.module-start-gate__card:hover,
+.module-start-gate__card:focus-visible {
+  border-color: var(--color-accent-primary, #3d9ead);
+  outline: none;
+  background: var(--color-bg-elevated, var(--color-bg-surface));
+}
+
+.module-start-gate__icon {
+  display: inline-flex;
+  width: var(--icon-md, 20px);
+  height: var(--icon-md, 20px);
+  color: var(--color-accent-primary, #3d9ead);
+  margin-bottom: 2px;
+}
+
+.module-start-gate__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.module-start-gate__card b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.module-start-gate__card p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.module-start-gate__skip {
+  margin-top: var(--space-2, 8px);
+  padding: 8px 14px;
+  border: 0;
+  border-radius: var(--radius-md, 6px);
+  background: transparent;
+  color: var(--color-text-secondary, var(--color-text-muted));
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.module-start-gate__skip:hover,
+.module-start-gate__skip:focus-visible {
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .module-start-gate__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .module-start-gate__cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .module-start-gate__card {
+    transition: none;
+  }
+}

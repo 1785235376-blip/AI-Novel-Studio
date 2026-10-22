@@ -45,6 +45,7 @@ import { AppShell, StudioModule } from "./ui/AppShell";
 import { NovelWriterDock } from "./ui/NovelWriterDock";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
+import { ModuleStartGate, markModuleStartGateDismissed, shouldOpenModuleStartGate } from "./ui/ModuleStartGate"; // [HERMIA-FE-20261022] H-UX-START-01
 import { CreativeWorkspace } from "./creative/CreativeWorkspace";
 import { BlankProjectEntry } from './creative/BlankProjectEntry';
 import { IndependentStudioWorkspace, isManualStudioModule } from './creative/IndependentStudioWorkspace';
@@ -326,6 +327,8 @@ export default function App() {
     [generationRecovering, setGenerationRecovering] = useState(false),
     [variantDrafts, setVariantDrafts] = useState<AiVariantDraft[]>([]),
     [activeVariant, setActiveVariant] = useState(0);
+  // [HERMIA-FE-20261022] H-UX-START-01 · cold-start six-module gate (session; #skip)
+  const [startGateOpen, setStartGateOpen] = useState(() => shouldOpenModuleStartGate());
   const commitStudioModule = useCallback((module: StudioModule) => {
     if (!mounted.current || studioEntryApplied.current !== studioEntry
         || revisionStoreIdentity({ ...useStudio.getState(), chapterId: '' }) !== studioEntry.identity) return;
@@ -1391,8 +1394,28 @@ export default function App() {
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = selectedScopeLabels(scope, localNovelTitle);
   const currentStudioRequest = requestedStudioEntry.current === studioEntry && requestedStudioProject === s.novelId;
-  if (independentStudios && isManualStudioModule(studioModule) && (neutralStudio || currentStudioRequest)) return <>{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={currentStudioRequest ? requestedStudioAsset : undefined} onModuleChange={navigateStudioModule} onOpenBroker={experimentalFlags.data?.features['experimental.model_broker_v2'] === true ? () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(false); setExperimentalTab('model_broker_v2'); setPanel('experimental'); } }) : undefined} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); requestedStudioEntry.current = undefined; studioEntryApplied.current = { ...studioEntryApplied.current, identity: '' }; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
-  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} shellMode={shellMode} onShellModeChange={applyShellMode} /></>;
+  // [HERMIA-FE-20261022] H-UX-START-01 · overlay; skip/NOVEL → write; media modules never land in novel center
+  const dismissStartGate = () => { markModuleStartGateDismissed(); setStartGateOpen(false); };
+  const moduleStartGate = startGateOpen ? (
+    <ModuleStartGate
+      onPick={(module) => {
+        dismissStartGate();
+        if (module === "NOVEL") {
+          commitStudioModule("NOVEL");
+          setPanel("write");
+        } else {
+          commitStudioModule(module);
+        }
+      }}
+      onSkip={() => {
+        dismissStartGate();
+        commitStudioModule("NOVEL");
+        setPanel("write");
+      }}
+    />
+  ) : null;
+  if (independentStudios && isManualStudioModule(studioModule) && (neutralStudio || currentStudioRequest)) return <>{moduleStartGate}{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={currentStudioRequest ? requestedStudioAsset : undefined} onModuleChange={navigateStudioModule} onOpenBroker={experimentalFlags.data?.features['experimental.model_broker_v2'] === true ? () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(false); setExperimentalTab('model_broker_v2'); setPanel('experimental'); } }) : undefined} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); requestedStudioEntry.current = undefined; studioEntryApplied.current = { ...studioEntryApplied.current, identity: '' }; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
+  if (studioModule !== "NOVEL") return <>{moduleStartGate}{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} shellMode={shellMode} onShellModeChange={applyShellMode} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
     : "正在打开章节…";
@@ -1937,6 +1960,7 @@ export default function App() {
   );
   return (
     <>
+      {moduleStartGate}
       {localTutor.dialog}
       {
         creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true ? <CreativeWorkspace navigationConfirmation={styleLeave.dialog}
