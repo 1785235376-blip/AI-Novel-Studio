@@ -286,11 +286,11 @@ export function useStudioGraphEditorController({ active, denied, identity, clien
     scope: verificationScope, isCurrent: isVerificationCurrent,
     available: insertionCurrent(insertionScope) && !insertionRef.current && !!catalog && draft.schema_version >= 3
       && graphCatalogForSchema(catalog.definitions, draft.schema_version).some(row => row.id === 'asset_reference'),
-    insert: (reference, scope) => {
+    insert: (reference, scope, position) => {
       if (scope !== verificationScope || !isVerificationCurrent() || !insertionCurrent(insertionScope) || insertionRef.current || !catalog) return false;
-      try { const next = appendCanvasAssetNode(draftRef.current, catalog, reference); change(next.definition);
+      try { const next = appendCanvasAssetNode(draftRef.current, catalog, reference, undefined, position); change(next.definition);
         if (draftRef.current !== next.definition) return false;
-        setSelected([next.nodeId]); setNotice('已从素材画布加入版本固定的引用节点，尚未保存或执行。'); return true;
+        setSelected([next.nodeId]); setNotice('已加入版本固定的素材引用节点（未复制文件、未开任务），尚未保存或执行。'); return true;
       } catch { setError('素材引用与目标图格式或容量不匹配，未改动原图。'); return false; }
     },
   };

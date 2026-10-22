@@ -77,3 +77,28 @@ it('does not restore focus after owner ABA even with identical identifiers', () 
   rerender(<GraphCanvas {...props} interactionKey="B"/>); rerender(<GraphCanvas {...props}/>);
   const button = screen.getByRole('button', { name: '放大节点图' }); button.focus(); restore(); expect(document.activeElement).toBe(button);
 });
+
+it('opens insertion with A key and reports display/exec status split', () => {
+  const { props } = setup();
+  area().focus();
+  fireEvent.keyDown(area(), { key: 'a' });
+  expect(props.onRequestInsertion).toHaveBeenCalledTimes(1);
+  const status = document.querySelector('.graph-canvas__count')!;
+  expect(status.getAttribute('data-budget-split')).toBe('true');
+  expect(status.getAttribute('data-display-nodes')).toBeTruthy();
+  expect(status.getAttribute('data-executable-nodes')).toBeTruthy();
+  expect(status.textContent).toMatch(/展示|已选/);
+});
+
+it('accepts asset drop as reference payload only', () => {
+  const onAssetDrop = vi.fn(() => true);
+  const { props } = setup({ onAssetDrop, removalDefinitions: modelCatalog().definitions });
+  const dt = { getData: (type: string) => type.includes('asset-ref') || type === 'text/plain'
+    ? JSON.stringify({ asset_id: 'a1', version: 1, digest: 'd', kind: 'image' }) : '',
+    types: ['application/x-poemseed-asset-ref'], dropEffect: 'none' as string };
+  fireEvent.dragOver(area(), { dataTransfer: dt });
+  fireEvent.drop(area(), { clientX: 300, clientY: 200, dataTransfer: dt });
+  expect(onAssetDrop).toHaveBeenCalledWith(expect.objectContaining({ x: expect.any(Number), y: expect.any(Number) }),
+    { asset_id: 'a1', version: 1, digest: 'd', kind: 'image' });
+  expect(props.onDefinitionChange).not.toHaveBeenCalled();
+});

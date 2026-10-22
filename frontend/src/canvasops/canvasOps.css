@@ -39,3 +39,32 @@
 .canvas-ops__counts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; font-size: 12px; }
 .canvas-ops__counts li { display: inline-flex; align-items: center; gap: var(--space-1); }
 .canvas-ops__empty { margin: 0; padding: var(--space-3); color: var(--color-text-secondary); font-size: 12px; }
+
+/* [HERMIA-FE-20261022] H-P1-03 minimal add-node menu */
+.canvas-ops__add-menu {
+  position: absolute;
+  z-index: 6;
+  width: min(320px, calc(100% - var(--space-4)));
+  max-height: min(420px, 70vh);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md, 0 8px 24px color-mix(in srgb, var(--color-text-primary) 18%, transparent));
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+.canvas-ops__add-menu-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.canvas-ops__add-menu-head strong { flex: 1 1 auto; font-size: 13px; }
+.graph-canvas { position: relative; }
+.graph-canvas__viewport.is-asset-drop-target { outline: 2px dashed var(--color-accent-primary); outline-offset: -4px; }
+.graph-canvas__count[data-budget-split='true'] { max-width: 100%; }

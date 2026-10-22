@@ -17,6 +17,7 @@ import { GraphVisualGroups } from './GraphVisualGroups';
 import './graphCanvas.css';
 import { GraphNoteEditor, GraphNoteCards } from './GraphCanvasNotes';
 import { GraphNodeRemovalPreview, useGraphNodeRemoval } from './GraphNodeRemovalControl';
+import { ADD_NODE_MIME_ASSET_REF, graphDisplayExecCounts, parseAssetDropPayload, type AddNodeAssetDropPayload } from '../canvasops/addNodeMenu';
 
 export type { GraphCanvasNodeDefinition, GraphCanvasPort } from './graphCanvasGeometry';
 export type GraphCanvasPortSelection = { nodeId: string; portId: string; direction: 'input' | 'output' };
@@ -34,6 +35,8 @@ export type GraphCanvasProps = {
   insertionScope?: object;
   onInsertionInteraction?: () => void;
   onRequestInsertion?: (position: StudioGraphPosition, scope: object, restoreFocus: () => void) => boolean;
+  /** [HERMIA-FE-20261022] H-P1-03：拖入素材＝引用；payload 仅 pin，不复制文件。 */
+  onAssetDrop?: (position: StudioGraphPosition, payload: AddNodeAssetDropPayload) => boolean;
   onConnectionStage?: (source: GraphCanvasPortSelection, target: GraphCanvasPortSelection, scope: object) => boolean;
   protectedNodeIds?: readonly string[];
   /** Exact versioned catalog is required for structural removal analysis. */
@@ -71,7 +74,7 @@ type ConnectionPreview = { start: StudioGraphPosition; end: StudioGraphPosition;
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id, index) => id === b[index]);
 
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
-  onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onInsertionInteraction, protectedNodeIds = [],
+  onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onAssetDrop, onInsertionInteraction, protectedNodeIds = [],
   removalDefinitions = [], removalOwner, removalDisabled = false, isRemovalCurrent,
   connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
@@ -425,6 +428,14 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     if (event.key === 'Escape') { event.preventDefault(); if (removal.candidate) { removal.cancel(); return; } if (validAlignment) { setAlignment(null); return; } if (gesture.current) cancelGesture(); else onSelectionChange([]); return; }
     if (busy) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') { event.preventDefault(); onSelectionChange(definition.nodes.map(node => node.id)); return; }
+    // [HERMIA-FE-20261022] H-P1-03：A 打开加节点（与原型一致；Ctrl/⌘+A 仍为全选）
+    if ((event.key === 'a' || event.key === 'A') && !event.altKey && !event.ctrlKey && !event.metaKey && !event.repeat
+      && event.target === viewportRef.current && onRequestInsertion) {
+      const rect = viewportRef.current.getBoundingClientRect();
+      if (Number.isFinite(rect.width) && Number.isFinite(rect.height) && rect.width > 0 && rect.height > 0
+        && requestInsertion({ x: rect.width / 2, y: rect.height / 2 })) event.preventDefault();
+      return;
+    }
     if (blocked || gesture.current) return;
     if ((event.key === 'Delete' || event.key === 'Backspace') && removable.length) { event.preventDefault(); deleteSelected(); return; }
     if (!selected.length || event.altKey || event.ctrlKey || event.metaKey || (event.target instanceof Element && event.target.closest('[data-graph-port]'))) return;
@@ -443,7 +454,14 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       <Button type="button" variant="ghost" aria-label="缩小节点图" disabled={blocked || visible.viewport.zoom <= GRAPH_MIN_ZOOM} onClick={() => zoomBy(1 / 1.2)}><ZoomOut size={16} /></Button>
       <output aria-label="节点图缩放">{Math.round(visible.viewport.zoom * 100)}%</output>
       <Button type="button" variant="ghost" aria-label="放大节点图" disabled={blocked || visible.viewport.zoom >= GRAPH_MAX_ZOOM} onClick={() => zoomBy(1.2)}><ZoomIn size={16} /></Button>
-      <span className="graph-canvas__count" role="status">{selected.length ? `已选 ${selected.length} 个节点` : `${definition.nodes.length} 个节点 · ${definition.edges.length} 条连接`}</span>
+      {(() => {
+        const budget = graphDisplayExecCounts(definition.nodes, removalDefinitions.length ? removalDefinitions : nodeDefinitions, renderedNodes.length);
+        return <span className="graph-canvas__count" role="status" data-budget-split="true" data-display-nodes={budget.display} data-frame-nodes={budget.frame} data-executable-nodes={budget.executable}>
+          {selected.length
+            ? `已选 ${selected.length} 个节点`
+            : `展示 ${budget.display} · 本帧 ${budget.frame} · 可执行 ${budget.executable} · 连线 ${definition.edges.length}`}
+        </span>;
+      })()}
       <Button type="button" variant="ghost" aria-label="显示小地图" aria-pressed={showMiniMap} onKeyDown={event => event.stopPropagation()} onClick={() => updateView({ show_minimap: !showMiniMap })}>小地图</Button>
       {readonly && <Badge>只读</Badge>}
       <Button type="button" variant="ghost" aria-label="删除所选图节点" disabled={blocked || removalDisabled || !!activeGesture || !removable.length} title={selected.length && !removable.length ? '已保存的来源引用只能移动或停用' : '预览移除所选节点及其连接的结构影响'} onClick={deleteSelected}><Trash2 size={16} /></Button>
@@ -548,7 +566,30 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
     <div ref={viewportRef} className={`graph-canvas__viewport${tool === 'pan' ? ' is-pan-tool' : ''}${activeGesture === 'pan' ? ' is-panning' : ''}`}
       style={{ backgroundImage: showGrid ? undefined : 'none', backgroundSize: `${gridStep * visible.viewport.zoom}px ${gridStep * visible.viewport.zoom}px`,
         backgroundPosition: `${visible.viewport.x - gridStep * visible.viewport.zoom / 2}px ${visible.viewport.y - gridStep * visible.viewport.zoom / 2}px` }}
-      tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId} aria-keyshortcuts={onRequestInsertion ? "Shift+F10" : undefined}
+      tabIndex={0} role="group" aria-label="节点图交互区域" aria-describedby={descriptionId}
+      aria-keyshortcuts={onRequestInsertion ? "Shift+F10 A" : undefined}
+      data-drag-semantics={onAssetDrop ? 'reference' : undefined}
+      onDragOver={event => {
+        if (!onAssetDrop || blocked || gesture.current) return;
+        const types = event.dataTransfer?.types;
+        if (!types || !(types.contains?.(ADD_NODE_MIME_ASSET_REF) || [...types].includes(ADD_NODE_MIME_ASSET_REF) || [...types].includes('text/plain'))) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'link';
+        event.currentTarget.classList.add('is-asset-drop-target');
+      }}
+      onDragLeave={event => { event.currentTarget.classList.remove('is-asset-drop-target'); }}
+      onDrop={event => {
+        event.currentTarget.classList.remove('is-asset-drop-target');
+        if (!onAssetDrop || blocked || gesture.current) return;
+        const raw = event.dataTransfer.getData(ADD_NODE_MIME_ASSET_REF) || event.dataTransfer.getData('text/plain');
+        const payload = parseAssetDropPayload(raw);
+        if (!payload) return;
+        event.preventDefault();
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (!Number.isFinite(rect.left) || !Number.isFinite(rect.top) || rect.width <= 0 || rect.height <= 0) return;
+        const world = graphScreenToWorld({ x: event.clientX - rect.left, y: event.clientY - rect.top }, definition.viewport);
+        onAssetDrop({ x: clampGraphPosition(world.x), y: clampGraphPosition(world.y) }, payload);
+      }}
       onContextMenu={event => {
         // Only the blank viewport/world owns this action; preserve native menus
         // and all controls, node/port/annotation/connection pointer behavior.
@@ -655,7 +696,17 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         })}
       </div>
       {marquee && <div className="graph-canvas__marquee" data-testid="graph-selection-marquee" style={marquee} />}
-      {!definition.nodes.length && !definition.presentation?.notes?.length && <p className="graph-canvas__empty">从节点目录添加第一个节点，再选择输入和输出端口连接。</p>}
+      {!definition.nodes.length && !definition.presentation?.notes?.length && <div className="graph-canvas__empty">
+        <p>从节点目录添加第一个节点，再选择输入和输出端口连接。</p>
+        {onRequestInsertion && !blocked && <Button type="button" variant="primary" data-add-first-node="true"
+          onPointerDown={event => event.stopPropagation()}
+          onClick={() => {
+            const rect = viewportRef.current?.getBoundingClientRect();
+            if (!rect || rect.width <= 0 || rect.height <= 0) return;
+            requestInsertion({ x: rect.width / 2, y: rect.height / 2 });
+          }}>添加第一个节点</Button>}
+        <p className="graph-canvas__help" style={{ border: 0 }}>右键空白 / A / Shift+F10 · 拖入素材＝引用</p>
+      </div>}
     </div>
     {(connectionPreview || connectionMessage) && <p className="graph-canvas__help" role="status" aria-live="polite">
       {connectionPreview ? connectionPreview.issue || '拖到兼容端口以选择连接；松开后仍需点击“连接所选端口”。' : connectionMessage}
@@ -685,7 +736,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       </Button>
       <p id={`${descriptionId}-minimap`} className="graph-canvas__help">小地图：全图节点与当前视口。点击定位；方向键平移，Shift 加速；Enter / 空格居中。蓝色节点表示已选。{blocked ? '当前不可修改视图。' : ''}</p>
     </div>}
-    <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。选中节点后可用方向键移动、Delete 预览移除影响，Esc 取消操作。</p>
+    <p id={descriptionId} className="graph-canvas__help">拖动节点移动；空白处框选；Shift 多选；Alt 拖动或平移工具移动视图；Ctrl / ⌘ + 滚轮缩放。空白处右键、A 或 Shift+F10 打开加节点；拖入素材＝引用（不复制）。选中节点后可用方向键移动、Delete 预览移除影响，Esc 取消操作。状态栏区分展示节点数与可执行节点数，不代表无限执行。</p>
     <ul className="sr-only" aria-label="节点图连接">{edgeDescriptions}</ul>
   </section>;
 }

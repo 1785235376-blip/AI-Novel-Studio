@@ -23,39 +23,43 @@ async function setup() {
   vi.spyOn(viewport(), 'getBoundingClientRect').mockReturnValue({ left: 40, top: 20, width: 800, height: 400, x: 40, y: 20, right: 840, bottom: 420, toJSON: () => ({}) });
   return { save, create, createRun };
 }
-it('reuses exactly one searchable palette, requires explicit Add, and preserves explicit Save', async () => {
+it('opens one minimal add-node menu on blank insert, adds at drop point, and preserves explicit Save', async () => {
   const { save, create, createRun } = await setup();
   fireEvent.contextMenu(viewport(), { clientX: 240, clientY: 140 });
-  const search = screen.getByRole('searchbox', { name: '搜索节点' }); expect(document.activeElement).toBe(search);
-  expect(screen.getAllByRole('searchbox', { name: '搜索节点' })).toHaveLength(1);
+  const menu = screen.getByRole('dialog', { name: '加节点最小菜单' });
+  const search = within(menu).getByRole('searchbox', { name: '搜索加节点类型' });
+  expect(document.activeElement).toBe(search);
+  expect(screen.getAllByRole('dialog', { name: '加节点最小菜单' })).toHaveLength(1);
+  // 轨上「搜索节点」仍可存在，但不作为空白插入的第二入口
   fireEvent.change(search, { target: { value: 'text_input' } });
-  fireEvent.click(palette().getByRole('button', { name: /text_input/ }));
-  expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLength(0);
-  fireEvent.keyDown(search, { key: 'Enter' }); expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLength(0);
-  fireEvent.click(add());
+  fireEvent.click(within(menu).getByRole('button', { name: /text_input/ }));
   const node = document.querySelector<HTMLElement>('[data-graph-node-id]')!;
-  expect(node.style.left).toBe('200px'); expect(node.style.top).toBe('120px'); expect(document.activeElement).toBe(viewport());
-  expect(palette().queryByRole('button', { name: '取消指定位置添加' })).toBeNull();
+  expect(node.style.left).toBe('200px'); expect(node.style.top).toBe('120px');
+  expect(screen.queryByRole('dialog', { name: '加节点最小菜单' })).toBeNull();
   expect(save).not.toHaveBeenCalled(); expect(create).not.toHaveBeenCalled(); expect(createRun).not.toHaveBeenCalled();
 });
 it('explains and disables positioned v1 implicit upgrade without changing schema', async () => {
   await setup(); fireEvent.contextMenu(viewport(), { clientX: 240, clientY: 140 });
-  fireEvent.change(screen.getByRole('searchbox', { name: '搜索节点' }), { target: { value: 'text_generate' } });
-  fireEvent.click(palette().getByRole('button', { name: /text_generate/ }));
-  expect(palette().getByText(/指定位置添加不会自动升级 v1/)).toBeTruthy(); expect(add().disabled).toBe(true);
-  fireEvent.click(add()); expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLength(0);
+  const menu = screen.getByRole('dialog', { name: '加节点最小菜单' });
+  fireEvent.change(within(menu).getByRole('searchbox', { name: '搜索加节点类型' }), { target: { value: 'text_generate' } });
+  fireEvent.click(within(menu).getByRole('button', { name: /text_generate/ }));
+  expect(within(menu).getByText(/指定位置添加不会自动升级 v1/)).toBeTruthy();
+  expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLength(0);
 });
 it('ignores IME Escape, cancels on ordinary Escape and returns focus', async () => {
   await setup(); viewport().focus(); fireEvent.keyDown(viewport(), { key: 'F10', shiftKey: true });
-  const search = screen.getByRole('searchbox', { name: '搜索节点' });
-  fireEvent.keyDown(search, { key: 'Escape', isComposing: true }); expect(palette().getByRole('button', { name: '取消指定位置添加' })).toBeTruthy();
-  fireEvent.keyDown(search, { key: 'Escape', keyCode: 229 }); expect(palette().getByRole('button', { name: '取消指定位置添加' })).toBeTruthy();
-  fireEvent.keyDown(search, { key: 'Escape' }); expect(palette().queryByRole('button', { name: '取消指定位置添加' })).toBeNull();
+  const menu = screen.getByRole('dialog', { name: '加节点最小菜单' });
+  const search = within(menu).getByRole('searchbox', { name: '搜索加节点类型' });
+  fireEvent.keyDown(search, { key: 'Escape', isComposing: true }); expect(screen.getByRole('dialog', { name: '加节点最小菜单' })).toBeTruthy();
+  fireEvent.keyDown(search, { key: 'Escape', keyCode: 229 }); expect(screen.getByRole('dialog', { name: '加节点最小菜单' })).toBeTruthy();
+  fireEvent.keyDown(search, { key: 'Escape' }); expect(screen.queryByRole('dialog', { name: '加节点最小菜单' })).toBeNull();
   expect(document.activeElement).toBe(viewport()); expect(document.querySelectorAll('[data-graph-node-id]')).toHaveLength(0);
 });
 it('keeps expired point disabled until explicit cancellation, restoring same-owner focus', async () => {
   await setup(); fireEvent.contextMenu(viewport(), { clientX: 240, clientY: 140 });
   fireEvent.change(screen.getByLabelText('创作图标题'), { target: { value: 'Changed title' } });
+  // 失效后最小菜单关闭，轨上插入条提示失效
+  expect(screen.queryByRole('dialog', { name: '加节点最小菜单' })).toBeNull();
   expect(palette().getByText(/指定位置已失效/)).toBeTruthy(); expect(add().disabled).toBe(true);
   const cancel = palette().getByRole('button', { name: '取消指定位置添加' }); cancel.focus(); fireEvent.click(cancel);
   expect(document.activeElement).toBe(viewport()); expect(add().disabled).toBe(false);

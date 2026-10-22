@@ -33,7 +33,10 @@ import { GraphPlanningFork } from './GraphPlanningFork';
 // original controls above stay intact and the rail only calls the controller's own
 // callbacks, so connectivity legality remains `connectionIssue`'s alone.
 import { CanvasOpsRail } from '../canvasops/CanvasOpsRail';
+import { StudioGraphAddNodeHost } from '../canvasops/GraphAddNodeMenu';
+import { ADD_NODE_NEEDS_SOURCE } from '../canvasops/addNodeMenu';
 import type { LocalCanvasState } from '../canvasops/canvasOpsTypes';
+import type { CanvasAssetReference } from './studioCanvasViewClient';
 import './studioGraph.css';
 import { StudioGraphRecipeParameterPanel } from './StudioGraphRecipeParameterPanel';
 
@@ -184,11 +187,11 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <Button disabled={!structureEditable || !sourcePort || !targetPort || draft.edges.length >= catalog.limits.edges} onClick={connect}>连接所选端口</Button></section>
       {/* The controller's catalog is a union that differs only in the optional video-graph
           capability flags; the rail reads `definitions` / `limits` / `media_limits` only. */}
-      {canvas && <CanvasOpsRail insertion={controller.positionedInsertion ? {
+      {canvas && <CanvasOpsRail
+        /* [HERMIA-FE-20261022] H-P1-03：空白处加节点改走画布上最小菜单，避免第二套搜索面板抢焦 */
+        insertion={controller.positionedInsertion && controller.insertionExpired ? {
         token: controller.positionedInsertion, position: controller.positionedInsertion.position,
-        issue: controller.insertionExpired ? '指定位置已失效；请取消或在当前画布重新选择位置。' : kind === 'text_generate' && draft.schema_version === 1
-          ? '指定位置添加不会自动升级 v1 图格式；请取消后使用原添加流程明确处理图格式。'
-          : assetLoading || planningLoading || shotLoading || timelineEditor.loading ? '来源正在读取，请等待完成后明确选择。' : undefined,
+        issue: '指定位置已失效；请取消或在当前画布重新选择位置。',
         onCancel: () => controller.cancelPositionedInsertion(controller.positionedInsertion!),
       } : undefined} catalog={catalog as StudioGraphCatalog} definition={draft} base={base?.definition} selected={selected}
         past={past.length} future={future.length} editable={structureEditable} protectedNodeIds={protectedNodes} kind={kind}
@@ -228,14 +231,46 @@ export function studioGraphEditorView(controller: StudioGraphEditorController, p
       <GraphProjectTemplateTools definition={draft} base={base} selected={selected} catalog={catalog} owner={props.draftOwner} fenceOwner={controller.insertionScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => current() && !props.isBusy?.()} readSource={id => props.read(() => { if (!props.draftOwner) throw new Error('项目身份未核对。'); return readProjectTemplateSource(props.client, props.draftOwner, id, current); })} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       <GraphTextTemplateTools definition={draft} catalog={catalog} owner={controller.templateScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => controller.templateCurrent() && !props.isBusy?.()} onApply={(definition, ids) => { change(definition); setSelected(ids); }} />
       {videoGraph && <GraphSelectedVideoBindingPanel binding={controller.selectedVideoBinding} />}
+      <div className="studio-graph-canvas-host" style={{ position: 'relative', minWidth: 0, minHeight: 0 }}>
+      {/* [HERMIA-FE-20261022] H-P1-03：空白处指定位置后弹出最小菜单（创作过滤）；拖入＝引用 */}
+      {canvas && controller.positionedInsertion && !controller.insertionExpired && <StudioGraphAddNodeHost
+        open
+        anchor={{ left: 16, top: 56 }}
+        catalog={catalog as StudioGraphCatalog}
+        definition={draft}
+        editable={structureEditable}
+        issue={kind === 'text_generate' && draft.schema_version === 1
+          ? '指定位置添加不会自动升级 v1 图格式；请取消后使用原添加流程明确处理图格式。'
+          : assetLoading || planningLoading || shotLoading || timelineEditor.loading ? '来源正在读取，请等待完成后明确选择。' : undefined}
+        onCancel={() => controller.cancelPositionedInsertion(controller.positionedInsertion!)}
+        onPick={picked => {
+          setKind(picked);
+          if (picked === 'asset_reference') void loadAssets();
+          if (ADD_NODE_NEEDS_SOURCE.has(picked)) return;
+          // 与原 palette 一致：v1 指定位置不会隐式升级 text_generate
+          if (picked === 'text_generate' && draft.schema_version === 1) return;
+          if (assetLoading || planningLoading || shotLoading || timelineEditor.loading) return;
+          addNode(controller.positionedInsertion);
+        }}
+      />}
       <GraphCanvas insertionScope={canvas ? controller.insertionScope : undefined}
         removalDefinitions={catalog.definitions} removalOwner={controller.insertionScope} removalDisabled={timelineEditor.formDirty}
         isRemovalCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()}
         onInsertionInteraction={canvas ? controller.invalidatePositionedInsertion : undefined}
-        onRequestInsertion={canvas ? controller.requestPositionedInsertion : undefined} connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}
+        onRequestInsertion={canvas ? controller.requestPositionedInsertion : undefined}
+        onAssetDrop={canvas ? (position, payload) => {
+          if (!controller.canvasAssetHandoff.available || !controller.canvasAssetHandoff.isCurrent()) return false;
+          if (payload.kind !== 'image' && payload.kind !== 'video' && payload.kind !== 'audio') return false;
+          const reference: CanvasAssetReference = {
+            asset_id: payload.asset_id, version: payload.version, digest: payload.digest, kind: payload.kind,
+          };
+          return controller.canvasAssetHandoff.insert(reference, controller.canvasAssetHandoff.scope, position);
+        } : undefined}
+        connectionScope={controller.connectionScope} onConnectionStage={controller.stageConnection}
         connectionIssue={(source, target) => connectionIssue(draft, catalog.definitions, { id: 'pending-connection',
           source_node_id: source.nodeId, source_port: source.portId, target_node_id: target.nodeId, target_port: target.portId })}
         preferencesSource={base} connectionNodeIds={connectionNodeIds(sourcePort, targetPort)} definition={draft} nodeDefinitions={catalog.definitions} selectedNodeIds={selected} onSelectionChange={setSelected} onDefinitionChange={change} readonly={!editable} busy={busy} protectedNodeIds={protectedNodes} interactionKey={`${identity}:${base?.id || 'new'}`} onPortSelect={port => controller.selectConnectionPort(port, controller.connectionScope)} />
+      </div>
       <GraphConnectionList definition={draft} definitions={catalog.definitions} owner={controller.insertionScope} disabled={!structureEditable || timelineEditor.formDirty} isCurrent={() => controller.isPlanningForkCurrent() && current() && props.active && !props.isBusy?.()} onChange={change} />
       <GraphConnectionReplacement definition={draft} catalog={catalog} owner={controller.connectionReplacementScope}
         disabled={!structureEditable || timelineEditor.formDirty || checking || !!controller.positionedInsertion}
