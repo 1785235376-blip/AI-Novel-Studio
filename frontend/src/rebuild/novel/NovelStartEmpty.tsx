@@ -1,20 +1,18 @@
-/* [HERMIA-FE-20261022 REBUILD-W3] 空项目起步 — 原型「你想从哪里开始？」。只做导航，不自动执行任务。 */
-export type StartChoice = {id: string; title: string; desc: string; onClick: () => void; disabled?: boolean};
+/* [HERMIA-FE-20261022 R1] 空项目 — 按原型写作台空态：不另起大标题页，正文区显示「请先在左侧选择或新建章节」，
+   附「＋ 新建章节」与少量去向链接（只导航，不自动执行任务）。 */
+export type StartChoice = {id: string; title: string; desc?: string; onClick: () => void; disabled?: boolean};
 
-export function NovelStartEmpty({choices, onOpenSample, sampleLabel}: {choices: StartChoice[]; onOpenSample?: () => void; sampleLabel?: string}) {
+export function NovelStartEmpty({choices, onCreate, creating}: {choices: StartChoice[]; onCreate?: () => void; creating?: boolean}) {
   return (
-    <section className="nv-start" aria-label="你想从哪里开始？" data-rebuild="novel-start">
-      <h2>你想从哪里开始？</h2>
-      <p>选择只影响打开哪个工作区，不会删除内容，也不会自动执行任何任务。</p>
-      <div className="nv-start__grid">
-        {choices.map(c => (
-          <button key={c.id} type="button" className="nv-start__card" data-start={c.id} disabled={c.disabled} onClick={c.onClick}>
-            <b>{c.title}</b>
-            <small>{c.desc}</small>
-          </button>
-        ))}
+    <section className="nv-empty" aria-label="还没有章节" data-rebuild="novel-start">
+      <div className="nv-empty__prose">
+        <p className="nv-empty__ph">请先在左侧选择或新建章节</p>
+        <p className="nv-hint">这部作品还没有章节。新建后就可以在这里写正文，内容自动保存。</p>
+        {onCreate ? <button type="button" className="nv-btn nv-btn--primary" data-start="write" disabled={creating} onClick={onCreate}>＋ 新建章节</button> : null}
+        <div className="nv-empty__links">
+          {choices.map(c => <button key={c.id} type="button" className="nv-link" data-start={c.id} disabled={c.disabled} title={c.desc} onClick={c.onClick}>{c.title}</button>)}
+        </div>
       </div>
-      {onOpenSample ? <button type="button" className="nv-link nv-start__sample" onClick={onOpenSample}>{sampleLabel || '直接打开示例作品'}</button> : null}
     </section>
   );
 }

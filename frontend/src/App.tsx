@@ -129,8 +129,9 @@ import "./ui/ui.css";
 import "./ui/FeatureLauncher.css";
 import "./experimental/workspaceResume.css";
 import "./rebuild/protoShell.css"; // [HERMIA-FE-20261022 REBUILD-W2] 原型外壳，最后加载
-import { NovelStructureRail, type RailPanel } from "./rebuild/novel/NovelStructureRail"; // [HERMIA-FE-20261022 REBUILD-W3]
-import { NovelAssist } from "./rebuild/novel/NovelAssist"; // [HERMIA-FE-20261022 REBUILD-W3]
+import { NovelStructureRail, NovelChapterColumn, type RailPanel } from "./rebuild/novel/NovelStructureRail"; // [HERMIA-FE-20261022 REBUILD-W3] [HERMIA-FE-20261022 R1]
+import { NovelOrient, NovelModTabs } from "./rebuild/novel/NovelOrient"; // [HERMIA-FE-20261022 R1]
+import { NovelAssist, type QuickOp } from "./rebuild/novel/NovelAssist"; // [HERMIA-FE-20261022 REBUILD-W3]
 import { NovelStartEmpty } from "./rebuild/novel/NovelStartEmpty"; // [HERMIA-FE-20261022 REBUILD-W3]
 import "./rebuild/novel/novelRebuild.css"; // [HERMIA-FE-20261022 REBUILD-W3] 小说工作区按原型重做
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
@@ -336,6 +337,7 @@ export default function App() {
   // [HERMIA-FE-20261022] H-UX-START-01 · cold-start six-module gate (session; #skip)
   // [HERMIA-FE-20261022 REBUILD-W3] /novels 是明确的写作入口：不弹起步弹窗，不自动跳到媒体工作区；?novel=<id> 可直接打开某部作品
   const novelsRoute = typeof location !== 'undefined' && location.pathname.startsWith('/novels');
+  const [aiQuickOp, setAiQuickOp] = useState<{ op: QuickOp; nonce: number }>(); // [HERMIA-FE-20261022 R1] 右栏 AI 快捷入口
   const [startGateOpen, setStartGateOpen] = useState(() => shouldOpenModuleStartGate() && !novelsRoute);
   const commitStudioModule = useCallback((module: StudioModule) => {
     if (!mounted.current || studioEntryApplied.current !== studioEntry
@@ -1450,16 +1452,17 @@ export default function App() {
     writingGoal.data.current_chapters, writingGoal.data.target_chapters, writingGoal.data.words_progress]
     .every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0) ? writingGoal.data : undefined;
   // [HERMIA-FE-20261022 REBUILD-W3] 左栏按原型：作品结构 + 小说面板（带状态标签）；旧章节管理与全部功能收起
+  // [HERMIA-FE-20261022 R1] 状态词按原型；「已接通」只给读写都走后端的面板，其余如实「部分实现」
   const novelRailPanels: RailPanel[] = [
-    { id: 'write', label: '写作台', status: 'ok' },
     { id: 'overview', label: '总览', status: 'ok' },
-    { id: 'story', label: '故事规划 · 人物 · 世界观', status: 'ok' },
+    { id: 'write', label: '写作台', status: 'ok' },
+    { id: 'story', label: '大纲 · 人物 · 世界观', status: 'ok' },
     { id: 'check', label: '一致性 · 待审设定', status: 'ok' },
-    { id: 'creation', label: '创作方案', status: 'ok' },
-    { id: 'history', label: '版本历史', status: 'ok', disabled: !chapter.data, title: chapter.data ? undefined : '先打开一个章节' },
-    { id: 'research', label: '资料研究', status: 'ok' },
-    { id: 'knowledge', label: '导入', status: 'ok' },
-    { id: 'exports', label: '导出', status: 'ok' },
+    { id: 'history', label: '版本 / 修订', status: 'ok', disabled: !chapter.data, title: chapter.data ? undefined : '先打开一个章节' },
+    { id: 'creation', label: '创作方案', status: 'part' },
+    { id: 'knowledge', label: '导入', status: 'part' },
+    { id: 'exports', label: '导出', status: 'part', title: '可导出与下载；取消 / 重试还没接上' },
+    { id: 'research', label: '研究', status: 'part' },
     { id: 'screenplay', label: '影视剧本', status: 'part' },
     { id: 'adaptation', label: '改编', status: 'part' },
     { id: 'workflow', label: '工作流', status: 'part' },
@@ -1473,9 +1476,26 @@ export default function App() {
       await chapters.refetch(); await writingGoal.refetch(); s.setChapter(created.id); setPanel('write');
     } catch { setShellMessage('新建章节失败，请稍后重试。'); }
   };
+  const novelRailChapters = (chapters.data || []).map(c => ({ id: c.id, number: c.number, title: c.title, wordCount: c.word_count, status: c.id === s.chapterId ? saveDisplayLabel : undefined })); // [HERMIA-FE-20261022 R1]
+  // [HERMIA-FE-20261022 R1] 原型 WS.NOVEL tabs，只放能落到现有面板的页签（圣经无独立面板，不放）
+  const openNovelEntry = (id: NovelSecondaryEntryId) => styleLeave.request(current => {
+    if (!current()) return;
+    const entry = novelSecondaryEntry(id);
+    commitStudioModule('NOVEL'); setPanel(entry.panel);
+    window.setTimeout(() => scrollNovelSecondaryAnchor(entry.anchor), 80);
+  });
+  const novelModTabs = [
+    { id: 'overview', label: '总览', selected: panel === 'overview', onClick: () => openNovelPanel('overview') },
+    { id: 'writer', label: '写作台', selected: panel === 'write', onClick: () => openNovelPanel('write') },
+    { id: 'outline', label: '大纲', selected: panel === 'story', onClick: () => openNovelEntry('story-planning') },
+    { id: 'cast', label: '人物', onClick: () => openNovelPanel('story') },
+    { id: 'canon', label: '设定', onClick: () => openNovelEntry('pending-canon') },
+    { id: 'continuity', label: '一致性', selected: panel === 'check', onClick: () => openNovelEntry('continuity') },
+    { id: 'revision', label: '版本', selected: panel === 'history', disabled: !chapter.data, onClick: () => openNovelPanel('history') },
+  ];
   const sidebar = (
     <NovelStructureRail
-      chapters={(chapters.data || []).map(c => ({ id: c.id, number: c.number, title: c.title, wordCount: c.word_count, status: c.id === s.chapterId ? saveDisplayLabel : undefined }))}
+      chapters={novelRailChapters}
       selectedId={s.chapterId}
       loading={chapters.isLoading}
       error={chapters.error ? String(chapters.error) : null}
@@ -1484,7 +1504,10 @@ export default function App() {
       panels={novelRailPanels}
       activePanel={panel}
       onOpenPanel={openNovelPanel}
-      manage={<div className="tree sidebar-layout" data-testid="chapter-tree-scroll">
+      more={<div className="tree sidebar-layout">
+      {/* [HERMIA-FE-20261022 R1] 章节管理 + 全部功能统一收进「更多」 */}
+      <div className="sidebar-chapter-scroll" data-testid="chapter-tree-scroll">
+        {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <div className="creative-workbench-entry"><Button disabled={composing} onClick={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(true); } })}>打开 V2 创作工作台</Button></div>}
         <ChapterTree
           chapters={(chapters.data || []).map((c) => ({
             id: c.id,
@@ -1574,9 +1597,7 @@ export default function App() {
             }
           }}
         />
-      </div>}
-      more={<>
-        {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <div className="creative-workbench-entry"><Button disabled={composing} onClick={() => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setCreativeWorkbenchOpen(true); } })}>打开 V2 创作工作台</Button></div>}
+      </div>
       <CommandSearch workbench={workbench} onLegacy={legacySelectPanel} />
       <FeatureLauncher
         selectedId={panel}
@@ -1585,7 +1606,7 @@ export default function App() {
         onSelect={next => { void workbench.open(next, legacySelectPanel); }}
         onToggleGroup={(id) => setFeatureGroups((current) => ({ ...current, [id]: !current[id] }))}
       />
-      </>}
+      </div>}
     />
   );
   function openStorySourceChapter(chapterId: string, signal?: AbortSignal) {
@@ -1807,6 +1828,16 @@ export default function App() {
   const mainWorkspace = (
     <div className="workspace novel-writing-workspace">
       {!(creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true) && styleLeave.dialog}
+      {/* [HERMIA-FE-20261022 R1] 原型模块页签条 + 168px 独立章节列 + 写作台 */}
+      <NovelModTabs tabs={novelModTabs} />
+      <div className="nv-stage">
+      {panel === 'write' ? <NovelChapterColumn
+        chapters={novelRailChapters}
+        selectedId={s.chapterId}
+        onSelect={id => s.setChapter(id)}
+        onCreate={s.novelId ? () => { void createNextChapter(); } : undefined}
+      /> : null}
+      <div className="nv-desk">
       {/* [HERMIA-FE-20261022 REBUILD-W3] 写作台头部按原型 nd-head / nd-tools */}
       <div className="nv-desk__head">
         <h2>{chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : (panel === 'write' ? '未选择章节' : (novelRailPanels.find(p => p.id === panel)?.label || '小说'))}</h2>
@@ -1873,13 +1904,10 @@ export default function App() {
         />
       ) : chapters.isSuccess && (chapters.data || []).length === 0 && !corruptDraft && s.novelId ? (
         // [HERMIA-FE-20261022 REBUILD-W3] 空项目：原型「你想从哪里开始？」
-        <NovelStartEmpty choices={[
-          { id: 'write', title: '我想写作', desc: '新建第一章，开始写正文', onClick: () => { void createNextChapter(); } },
+        // [HERMIA-FE-20261022 R1] 空项目按原型写作台空态（不另起大标题页）
+        <NovelStartEmpty onCreate={() => { void createNextChapter(); }} choices={[
           { id: 'story', title: '先做故事规划', desc: '人物、世界观与大纲', onClick: () => openNovelPanel('story') },
           { id: 'import', title: '导入已有稿件', desc: '把已有文本导入为章节', onClick: () => openNovelPanel('knowledge') },
-          { id: 'IMAGE', title: '我想做图', desc: '图像、参考素材与比较', onClick: () => navigateStudioModule('IMAGE') },
-          { id: 'VIDEO', title: '我想做视频', desc: '镜头、图生视频与时间线', onClick: () => navigateStudioModule('VIDEO') },
-          { id: 'AUDIO', title: '我想处理音频', desc: '配音、音效与字幕', onClick: () => navigateStudioModule('AUDIO') },
         ]} />
       ) : (
         <section className="notice" aria-live="polite">
@@ -1907,6 +1935,8 @@ export default function App() {
             current && current.version > restored.version ? current : restored);
           void qc.invalidateQueries({ queryKey: ["chapters", namespace, s.novelId] });
         }} />}
+      </div>
+      </div>
       </div>
     </div>
   );
@@ -1960,9 +1990,13 @@ export default function App() {
       primaryCta={primaryCta}
       outlineItems={outlineItems}
       castNote={activeCharacterId ? `当前人物视角：${activeCharacterId}` : undefined}
+      hasChapter={!!chapter.data}
+      onQuickOp={op => setAiQuickOp(prev => ({ op, nonce: (prev?.nonce || 0) + 1 }))}
+      aiStatus={draftReady ? '有候选待你确认' : undefined}
       onSelectOutline={(id) => styleLeave.request(current => { if (current()) { s.setChapter(id); commitStudioModule('NOVEL'); setPanel('write'); } })}
       ai={<>
       <AiWritingPanel
+      requestedOperation={aiQuickOp}
       authorPreview={chapter.data ? {
         enabled: experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true,
         chapterId: chapter.data.id, chapterVersion: chapter.data.version, source: selection.text,
@@ -2073,6 +2107,11 @@ export default function App() {
           }}
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
+          banner={studioModule === 'NOVEL' ? <NovelOrient
+            what={novels.data?.find(n => n.id === s.novelId)?.title ? `《${novels.data?.find(n => n.id === s.novelId)?.title}》${chapter.data ? ` · 第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : ''}` : '还没有打开作品'}
+            can="写作台改章 · AI 生成先成候选、你采用后才进正文 · 设定需审核才进正典"
+            effect={`${novelSaveLocation.replace('保存位置：', '自动保存到')}；采用候选不会覆盖已批准设定`}
+          /> : undefined}
           main={mainWorkspace}
           inspector={inspector}
           status={

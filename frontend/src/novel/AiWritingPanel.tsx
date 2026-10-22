@@ -298,7 +298,10 @@ export function AiWritingPanel({
   onReject,
   onRetry,
   onResolveConflict,
+  requestedOperation,
 }: {
+  /** [HERMIA-FE-20261022 R1] 右栏快捷入口预选写作方式；只切换方式，不自动生成。 */
+  requestedOperation?: { op: AiOperation; nonce: number };
   novelId?: string;
   chapterNumber?: number;
   contextTarget?: ContextPreviewTarget;
@@ -351,6 +354,9 @@ export function AiWritingPanel({
     [instruction, setInstruction] = useState(""),
     [style, setStyle] = useState(""),
     [variantCount, setVariantCount] = useState(1);
+  // [HERMIA-FE-20261022 R1] 快捷入口只预选方式（生成中不切换）
+  useEffect(() => { if (requestedOperation && !generating && !cancelling) setOperation(requestedOperation.op); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedOperation?.nonce]);
   const scopeOwner = JSON.stringify([novelId, authorPreview?.context.sessionToken, authorPreview?.context.scope, authorPreview?.context.actor]);
   const [requestScopeState, setRequestScopeState] = useState<{ owner: string; value: AuthorRequestScope }>({ owner: scopeOwner, value: defaultAuthorRequestScope });
   const requestScope = requestScopeState.owner === scopeOwner ? requestScopeState.value : defaultAuthorRequestScope;

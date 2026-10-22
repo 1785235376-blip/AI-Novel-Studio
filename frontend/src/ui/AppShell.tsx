@@ -467,7 +467,10 @@ export function AppShell({
   shellMode = 'basic',
   onShellModeChange,
   writingContext,
+  banner,
 }: {
+  /** [HERMIA-FE-20261022 R1] 三栏上方整宽指引行（小说 #orient） */
+  banner?: ReactNode;
   module: StudioModule;
   onModuleChange: (value: StudioModule) => void;
   scope: ScopeLabels;
@@ -752,7 +755,7 @@ export function AppShell({
           </button>
         </div>
         {/* [HERMIA-FE-20261022 REBUILD] 导出/资料/任务 — prototype header tools */}
-        <RebuildHeaderTools module={module} />
+        <RebuildHeaderTools module={module} activeTaskCount={taskTotal.running + taskTotal.queued} />
         {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
         <ThemeToggle />
         {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
@@ -766,6 +769,7 @@ export function AppShell({
       </header>
       <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} showCollapsedCta={!visibleInspector && module === "NOVEL"} />
       <main className="workspace-body">
+        {banner ? <div className="workspace-banner">{banner}</div> : null}
         <aside
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}
         >

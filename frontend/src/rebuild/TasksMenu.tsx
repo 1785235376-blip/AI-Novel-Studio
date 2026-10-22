@@ -49,6 +49,7 @@ export function TasksBody({ novelId, initialTab = 'tasks' }: { novelId: string; 
   </div>;
 }
 
-export function TasksMenu({ novelId }: { novelId: string }) {
-  return <Popover label="任务" testId="rb-tasks">{() => <WithQuery><TasksBody novelId={novelId} /></WithQuery>}</Popover>;
+// [HERMIA-FE-20261022 R1] 任务计数徽标：用外壳已有的任务汇总（运行 + 排队），不额外发请求；0 或未知时不显示数字。
+export function TasksMenu({ novelId, count }: { novelId: string; count?: number }) {
+  return <Popover label="任务" count={count || undefined} testId="rb-tasks">{() => <WithQuery><TasksBody novelId={novelId} /></WithQuery>}</Popover>;
 }
