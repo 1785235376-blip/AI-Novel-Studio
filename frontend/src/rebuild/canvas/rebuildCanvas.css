@@ -30,3 +30,16 @@
 .rcv-menu button:hover,.rcv-menu button:focus-visible{background:#2a3a40;outline:none}
 .rcv-menu button i{width:8px;height:8px;border-radius:2px;flex:none}
 .rcv-menu .none{font-size:12px;color:#8a93a5;margin:6px}
+/* [HERMIA-FE-20261022 U2] 双画布 */
+.dual-cv{display:flex;flex-direction:column;min-height:0;flex:1;height:100%}
+.dual-cv__bar{display:flex;align-items:center;gap:10px;padding:6px 12px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-surface);flex:none;flex-wrap:wrap}
+.dual-cv__seg{display:inline-flex;border:1px solid var(--color-border-default);border-radius:6px;overflow:hidden}
+.dual-cv__seg button{border:none;background:transparent;color:var(--color-text-secondary);font-size:12px;padding:5px 12px;cursor:pointer}
+.dual-cv__seg button+button{border-left:1px solid var(--color-border-default)}
+.dual-cv__seg button[aria-pressed="true"]{background:var(--color-accent-primary);color:#fff}
+.dual-cv__hint,.dual-cv__note{font-size:11.5px;color:var(--color-text-muted)}
+.dual-cv__note{color:var(--color-text-secondary)}
+.dual-cv__panes{flex:1;min-height:0;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;background:#000}
+.dual-cv__pane{position:relative;min-height:0;min-width:0;display:flex;flex-direction:column}
+.dual-cv__pane > :last-child{flex:1;min-height:0}
+.dual-cv__lab{position:absolute;left:10px;top:8px;z-index:4;font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(20,24,30,.8);color:#cfd6e0;border:1px solid #2d3440;pointer-events:none}

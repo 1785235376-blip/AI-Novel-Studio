@@ -13,10 +13,11 @@ import '../image/imageRebuild.css';
 import './videoRebuild.css';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import type {CvGraph} from '../canvas/RebuildCanvas';
+import {DualCanvas} from '../canvas/DualCanvas';
 
-export type VideoView = 'studio' | 'script' | 'gen';
+export type VideoView = 'studio' | 'script' | 'gen' | 'dual'; // [HERMIA-FE-20261022 U2] + 双画布
 type Shot = {key: string; n: number; title: string; size: string; dialogue: string; status: string; hasFrame: boolean};
-const VIEW_LABEL: Record<VideoView, string> = {studio: '视频工作室', script: '镜头脚本', gen: '图生视频'};
+const VIEW_LABEL: Record<VideoView, string> = {studio: '视频工作室', script: '镜头脚本', gen: '图生视频', dual: '双画布'};
 const STATUS: Record<string, string> = {APPROVED: '已确认', DRAFT: '草稿', PENDING: '待处理'};
 
 export function shotsFromScreenplays(list: any[] | null): Shot[] {
@@ -61,7 +62,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
 
   const head = (
     <div className="mw-head" role="toolbar" aria-label="视频子入口">
-      <h2>{view === 'studio' ? '视频工作室' : view === 'script' ? '视频 › 分镜表' : '视频 › 图生视频'}</h2>
+      <h2>{view === 'studio' ? '视频工作室' : view === 'script' ? '视频 › 分镜表' : view === 'dual' ? '视频 › 双画布' : '视频 › 图生视频'}</h2>
       <span className="nv-badge nv-badge--off">{plays === null ? '镜头 · 读取中' : `镜头 · ${shots.length}`}</span>
       <span className="nv-spacer" />
       {view === 'studio' ? <>
@@ -69,6 +70,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         <button type="button" className="nv-btn" id="vidToggleDirector" aria-pressed={dirOpen} onClick={() => setDirOpen(o => !o)}>{dirOpen ? '收起导演台' : '导演台'}</button>
       </> : <button type="button" className="nv-btn" onClick={() => setView('studio')}>回视频工作室</button>}
       <button type="button" className="nv-btn nv-btn--primary" id="vidSendEdit" data-send-edit="true" onClick={askSend}>送去剪辑</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => setView('dual')}>双画布</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'script'} onClick={() => setView('script')}>分镜表</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => setView('gen')}>图生视频</button>
     </div>
@@ -106,7 +108,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
 
   const chrome = <>
     <NovelOrient storageKey="studio-video-orient-dismissed" what="这一章的镜头、画面关系和导演建议" can="拆镜头、在画布上连参考、采用导演建议" effect="这里不剪成片；准备好后「送去剪辑」" />
-    <NovelModTabs tabs={(['studio', 'script', 'gen'] as VideoView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
+    <NovelModTabs tabs={(['studio', 'dual', 'script', 'gen'] as VideoView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
   </>;
 
   let main: React.ReactNode;
@@ -119,6 +121,9 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         </tbody></table>}
       <div className="nv-row vid-sub-foot"><button type="button" className="nv-btn" onClick={addShot}>编辑剧本与镜头…</button></div>
     </div>
+  );
+  else if (view === 'dual') main = (
+    <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualCanvas scope={novelId} initial="split" videoSeed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
   );
   else if (view === 'gen') main = (
     <div className="vid-main vid-sub">

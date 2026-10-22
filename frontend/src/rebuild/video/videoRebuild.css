@@ -57,3 +57,4 @@ html .app-shell[data-module="VIDEO"] .media-ws-main{flex:1;min-height:0;display:
 .vid-sub-foot{margin-top:12px}
 .vid-ws .img-confirm{position:absolute;right:16px;top:56px;z-index:5}
 @media (max-width:1100px){.vid-body{grid-template-columns:0 1fr}.vid-rail{display:none}}
+.vid-dual{display:flex;flex-direction:column;min-height:0;padding:0} /* [HERMIA-FE-20261022 U2] */
