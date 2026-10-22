@@ -1,7 +1,7 @@
 /* [HERMIA-FE-20261022 REBUILD-SHELL] Prototype shell primitives (PoemSeed_V2_HiFi_Prototype.html):
    one quiet popover, one right drawer, one panel card, honest state tags. Uses tokens.css so
    浅色/深色 both follow html[data-theme]. */
-.rb-trigger{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--color-border-default);background:transparent;color:var(--color-text-secondary);font:inherit;font-size:12.5px;cursor:pointer;transition:background .16s,color .16s,border-color .16s}
+.rb-trigger{flex-shrink:0;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--color-border-default);background:transparent;color:var(--color-text-secondary);font:inherit;font-size:12.5px;cursor:pointer;transition:background .16s,color .16s,border-color .16s}
 .rb-trigger:hover,.rb-trigger[aria-expanded="true"]{background:var(--color-bg-subtle);color:var(--color-text-primary);border-color:var(--color-border-strong)}
 .rb-trigger__count{min-width:16px;padding:0 4px;border-radius:8px;background:var(--color-accent-subtle);color:var(--color-text-primary);font-size:11px;text-align:center}
 .rb-anchor{position:relative;display:inline-flex}

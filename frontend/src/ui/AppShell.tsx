@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { IconButton } from "./primitives";
 import { ThemeToggle } from "./ThemeToggle";
+import { RebuildHeaderTools } from "../rebuild/HeaderTools"; // [HERMIA-FE-20261022 REBUILD]
 import {
   VIEWPORT_FORCE_DRAWER,
   resolveInspectorOpenPreference,
@@ -734,6 +735,8 @@ export function AppShell({
             专业
           </button>
         </div>
+        {/* [HERMIA-FE-20261022 REBUILD] 导出/资料/任务 — prototype header tools */}
+        <RebuildHeaderTools module={module} />
         {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
         <ThemeToggle />
         {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
