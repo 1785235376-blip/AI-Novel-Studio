@@ -4,6 +4,7 @@
  * Compose existing panels; no backend invention.
  * W-UX-01: IMAGE preview hero + comic sub-entry; pro canvas collapsed.
  * W-UX-04: VIDEO three-layer thickening — Shot strip + canvas hero + director entry; ≠ EDIT.
+ * W-UX-08: VIDEO Shot hero bar independent of Screenplay; read-only DirectorShot* fields; ≠ NLE.
  * W-UX-02: AUDIO waveform hero + Speech/AudioGen/Manifest + send-edit confirm; 0 fake NLE tracks.
  * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
  */
@@ -12,7 +13,7 @@ import {Button} from './primitives';
 import {ImageGenerationPanel} from '../novel/ImageGenerationPanel';
 import {VisualContextPanel} from '../novel/VisualContextPanel';
 import {VisionAnalysisPanel} from '../novel/VisionAnalysisPanel';
-import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
+import {MultimodalDirectorWorkspace, type DirectorShot} from '../novel/MultimodalDirectorWorkspace';
 import {SpeechSynthesisPanel} from '../novel/SpeechSynthesisPanel';
 import {AudioGenerationPanel} from '../novel/AudioGenerationPanel';
 import {AudiobookManifestPanel} from '../novel/AudiobookManifestPanel';
@@ -59,13 +60,86 @@ export function ImageWorkspaceRail({
   );
 }
 
-/** Demo / empty shot cards for VIDEO script strip — UI discovery only; no invent write API. */
-const DEMO_SHOT_STRIP = [
-  {id: 's1', number: 1, title: '开场推门', dialogue: '……'},
-  {id: 's2', number: 2, title: '走廊回头', dialogue: '谁？'},
-  {id: 's3', number: 3, title: '窗外远景', dialogue: ''},
-  {id: 's4', number: 4, title: '切近特写', dialogue: '先别动。'},
-] as const;
+/**
+ * [HERMIA-FE-20261022 W-UX-08] Demo Shot strip — UI discovery only.
+ * Shape mirrors DirectorShot (name/duration/camera/action/dialogue); no invent write API.
+ * status = honest demo labels (候选/草稿/演示), never fake「已就绪」green.
+ */
+type VideoShotHeroItem = {
+  id: string;
+  number: number;
+  status: 'demo' | 'candidate' | 'draft';
+  shot: Pick<DirectorShot, 'name' | 'duration' | 'camera' | 'action' | 'dialogue'>;
+};
+
+const DEMO_SHOT_STRIP: readonly VideoShotHeroItem[] = [
+  {id: 's1', number: 1, status: 'candidate', shot: {name: '开场推门', duration: '3s', camera: '中景推进', action: '手推门缝，走廊漏光', dialogue: '……'}},
+  {id: 's2', number: 2, status: 'candidate', shot: {name: '走廊回头', duration: '2s', camera: '近景', action: '脚步停，回头', dialogue: '谁？'}},
+  {id: 's3', number: 3, status: 'draft', shot: {name: '窗外远景', duration: '4s', camera: '远景', action: '窗外星光缓慢移动', dialogue: ''}},
+  {id: 's4', number: 4, status: 'demo', shot: {name: '切近特写', duration: '2s', camera: '特写', action: '瞳孔映出门缝光', dialogue: '先别动。'}},
+];
+
+const SHOT_STATUS_LABEL: Record<VideoShotHeroItem['status'], string> = {
+  demo: '演示',
+  candidate: '候选',
+  draft: '草稿',
+};
+
+/** [HERMIA-FE-20261022 W-UX-08] Independent Shot hero — ≠ Screenplay paste; read-only DirectorShot fields. */
+export function VideoShotHeroStrip({
+  shots = DEMO_SHOT_STRIP,
+  selectedId,
+  onSelect,
+}: {
+  shots?: readonly VideoShotHeroItem[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  const selected = shots.find(s => s.id === selectedId) ?? shots[0];
+  return (
+    <div className="media-ws__shot-hero" data-shot-hero="true" aria-label="Shot 英雄条">
+      <div className="media-ws__shot-hero-head">
+        <span className="media-ws__hero-label">① 镜头脚本 · Shot 英雄条</span>
+        <span className="media-ws__shot-hero-badge" data-shot-hero-badge="true">≠ 影视剧本 · ≠ NLE</span>
+      </div>
+      <p className="media-ws__layer-note">
+        分镜卡 / Shot 列表为本层英雄区（对照 LUMEN_VIDEO_IA · Vera V-P1-02）。
+        字段对齐 <code>DirectorShot</code> 只读发现；完整可写卡在导演台 Multimodal，不在本条编造写入。
+      </p>
+      <div className="media-ws__shot-strip" role="list" aria-label="Shot 卡条">
+        {shots.map(item => (
+          <button
+            type="button"
+            key={item.id}
+            role="listitem"
+            className={`media-ws__shot-card${selectedId === item.id ? ' is-selected' : ''}`}
+            aria-pressed={selectedId === item.id}
+            data-shot-id={item.id}
+            data-shot-status={item.status}
+            onClick={() => onSelect(item.id)}
+          >
+            <span className="media-ws__shot-num">S{item.number}</span>
+            <strong>{item.shot.name}</strong>
+            <small>{item.shot.camera} · {item.shot.duration}</small>
+            <small>{item.shot.dialogue || '（无对白）'}</small>
+            <span className={`media-ws__shot-status media-ws__shot-status--${item.status}`}>
+              {SHOT_STATUS_LABEL[item.status]}
+            </span>
+          </button>
+        ))}
+      </div>
+      {selected && (
+        <dl className="media-ws__shot-readonly" data-director-shot-readonly="true" aria-label="选中镜头只读摘要">
+          <div><dt>名称</dt><dd>{selected.shot.name}</dd></div>
+          <div><dt>时长</dt><dd>{selected.shot.duration}</dd></div>
+          <div><dt>运镜</dt><dd>{selected.shot.camera}</dd></div>
+          <div><dt>动作</dt><dd>{selected.shot.action}</dd></div>
+          <div><dt>对白</dt><dd>{selected.shot.dialogue || '（无）'}</dd></div>
+        </dl>
+      )}
+    </div>
+  );
+}
 
 export function ImageWorkspaceShell({
   novelId, inspection, onInspect, shellMode = 'basic',
@@ -381,7 +455,7 @@ export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
       <div className="media-ws-rail__eyebrow">视频</div>
       <strong>三层工作区</strong>
       <ul>
-        <li>① 镜头脚本</li>
+        <li>① 镜头脚本 · Shot 英雄条</li>
         <li>② 无限画布</li>
         <li>③ 内置导演台</li>
       </ul>
@@ -395,7 +469,7 @@ export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
   );
 }
 
-/** [HERMIA-FE-20261022 W-UX-04] LUMEN_VIDEO_IA three layers thickened — Shot strip + canvas hero + director entry. */
+/** [HERMIA-FE-20261022 W-UX-08] LUMEN_VIDEO_IA — Shot hero independent of Screenplay; three layers; send-edit explicit. */
 export function VideoWorkspaceShell({
   novelId, onInspect, onSendToEdit, shellMode = 'basic',
 }: {
@@ -446,33 +520,21 @@ export function VideoWorkspaceShell({
       )}
 
       {scriptOpen && (
-        <section className="media-ws__layer media-ws__layer--script" aria-label="① 镜头脚本">
-          <span className="media-ws__hero-label">① 镜头脚本 · Shot 卡条</span>
-          <p className="media-ws__layer-note">分镜 / Shot 在画布上方；卡条为壳向发现（演示数据）。真实 Shot 写入走导演 / 剧本面板，不编造 API。</p>
-          <div className="media-ws__shot-strip" role="list" aria-label="Shot 卡条">
-            {DEMO_SHOT_STRIP.map(shot => (
-              <button
-                type="button"
-                key={shot.id}
-                role="listitem"
-                className={`media-ws__shot-card${selectedShot === shot.id ? ' is-selected' : ''}`}
-                aria-pressed={selectedShot === shot.id}
-                data-shot-id={shot.id}
-                onClick={() => setSelectedShot(shot.id)}
-              >
-                <span className="media-ws__shot-num">S{shot.number}</span>
-                <strong>{shot.title}</strong>
-                <small>{shot.dialogue || '（无对白）'}</small>
-              </button>
-            ))}
-          </div>
-          <div className="media-ws__panel">
-            <ScreenplayPanel novelId={novelId} onInspect={onInspect as never} />
-          </div>
+        <section className="media-ws__layer media-ws__layer--script" aria-label="① 镜头脚本" data-video-layer="script">
+          <VideoShotHeroStrip selectedId={selectedShot} onSelect={setSelectedShot} />
+          <details className="media-ws__screenplay-outbound" data-screenplay-outbound="true">
+            <summary>影视剧本 · 外出（≠ Shot 英雄条 · 不替换画布）</summary>
+            <p className="media-ws__layer-note">
+              完整影视剧本可侧开/外出；LUMEN_VIDEO_IA：脚本层＝Shot 卡，Screenplay 不糊进英雄条。
+            </p>
+            <div className="media-ws__panel">
+              <ScreenplayPanel novelId={novelId} onInspect={onInspect as never} />
+            </div>
+          </details>
         </section>
       )}
 
-      <section className="media-ws__hero media-ws__layer--canvas" aria-label="② 无限画布">
+      <section className="media-ws__hero media-ws__layer--canvas" aria-label="② 无限画布" data-video-layer="canvas">
         <span className="media-ws__hero-label">② 无限画布 · hero（VIDEO 作用域）</span>
         <strong>创意编排主表面</strong>
         <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph · 导演不挂小说。</p>
@@ -490,7 +552,7 @@ export function VideoWorkspaceShell({
       )}
 
       {directorOpen && (
-        <section className="media-ws__layer media-ws__layer--director" aria-label="③ 内置导演台">
+        <section className="media-ws__layer media-ws__layer--director" aria-label="③ 内置导演台" data-video-layer="director">
           <span className="media-ws__hero-label">③ 内置导演台 · 可识别入口</span>
           <div className="media-ws-cta">
             <strong>导演下一步</strong>
@@ -506,7 +568,7 @@ export function VideoWorkspaceShell({
         </section>
       )}
 
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-04] 视频三层加厚 · 禁止 NLE 冒充本区主 Tab。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-08] Shot 英雄条独立 · 三层可辨 · 禁止 NLE 冒充本区主 Tab · 禁假绿。</p>
     </div>
   );
 }

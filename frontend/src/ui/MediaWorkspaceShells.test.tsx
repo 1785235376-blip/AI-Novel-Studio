@@ -9,7 +9,7 @@ import {
   ImageWorkspaceShell, ImageWorkspaceRail, ImageEmptyCta,
   AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta,
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
-  VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta,
+  VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta, VideoShotHeroStrip,
 } from './MediaWorkspaceShells';
 import {ModuleWorkspaceRoutes} from './ModuleWorkspaceRoutes';
 
@@ -102,6 +102,63 @@ describe('MediaWorkspaceShells', () => {
     expect(send).toHaveBeenCalled();
     act(() => root.unmount());
   });
+
+  it('W-UX-08 VIDEO Shot hero independent of Screenplay; read-only DirectorShot; ≠ NLE; no fake ready', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <VideoWorkspaceShell novelId="n1" onSendToEdit={send} shellMode="basic" />,
+    ));
+    const hero = host.querySelector('[data-shot-hero="true"]');
+    expect(hero).toBeTruthy();
+    expect(host.querySelector('[data-video-layer="script"]')).toBeTruthy();
+    expect(host.querySelector('[data-video-layer="canvas"]')).toBeTruthy();
+    // director collapsed in basic — entry still names layer ③
+    expect(host.textContent).toContain('③ 内置导演台');
+    expect(host.querySelector('[data-director-shot-readonly="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-screenplay-outbound="true"]')).toBeTruthy();
+    // Screenplay not mashed inside Shot hero
+    expect(hero!.querySelector('[data-screenplay-outbound="true"]')).toBeNull();
+    expect(hero!.textContent).not.toContain('mock-screenplay');
+    expect(host.textContent).toMatch(/≠ 影视剧本/);
+    expect(host.textContent).toMatch(/候选|草稿|演示/);
+    expect(host.textContent).not.toMatch(/已就绪/);
+    expect(host.querySelectorAll('.nle-row').length).toBe(0);
+    expect(host.querySelector('[data-nle-tracks]')).toBeNull();
+    // select another shot updates readonly summary
+    act(() => {
+      (host.querySelector('[data-shot-id="s3"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-director-shot-readonly="true"]')?.textContent).toContain('窗外远景');
+    // send-edit still explicit confirm
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('显式交片');
+    expect(send).not.toHaveBeenCalled();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-08 VideoShotHeroStrip exposes DirectorShot-aligned read-only fields', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const onSelect = vi.fn();
+    act(() => root.render(<VideoShotHeroStrip selectedId="s2" onSelect={onSelect} />));
+    expect(host.querySelector('[data-shot-hero="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-shot-id="s2"]')?.getAttribute('aria-pressed')).toBe('true');
+    expect(host.querySelector('[data-director-shot-readonly="true"]')?.textContent).toMatch(/走廊回头/);
+    expect(host.querySelector('[data-director-shot-readonly="true"]')?.textContent).toMatch(/运镜|近景/);
+    act(() => {
+      (host.querySelector('[data-shot-id="s1"]') as HTMLButtonElement)?.click();
+    });
+    expect(onSelect).toHaveBeenCalledWith('s1');
+    act(() => root.unmount());
+  });
   it('ASSETS shell: browser hero + library; lineage summary; drag=reference; ≠ IMAGE desk', () => {
     host = document.createElement('div'); document.body.append(host);
     const root = createRoot(host);
@@ -149,6 +206,7 @@ describe('ModuleWorkspaceRoutes media shells', () => {
     ));
     expect(host.querySelector('.media-ws--video')).toBeTruthy();
     expect(host.textContent).toContain('镜头脚本');
+    expect(host.querySelector('[data-shot-hero="true"]')).toBeTruthy();
     expect(host.textContent).toContain('mock-director-video');
     expect(host.textContent).not.toContain('图像预览 · hero');
     act(() => root2.unmount());
