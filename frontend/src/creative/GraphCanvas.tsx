@@ -48,6 +48,8 @@ export type GraphCanvasProps = {
   connectionNodeIds?: readonly string[];
   /** Change with the active project/actor owner, even when the definition identity is reused. */
   interactionKey?: string | number;
+  /** [HERMIA-FE-20261022] H-UX-F7-02：空态作用域标签（当前模块名）；仅文案，不改图数据。 */
+  scopeLabel?: string;
   /** Original loaded record identity: refresh/adoption resets temporary preferences even for the same graph/version. */
   preferencesSource?: object;
   readonly?: boolean;
@@ -76,7 +78,7 @@ const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.l
 export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSelectionChange, onDefinitionChange,
   onPortSelect, connectionIssue, connectionScope, onConnectionStage, insertionScope, onRequestInsertion, onAssetDrop, onInsertionInteraction, protectedNodeIds = [],
   removalDefinitions = [], removalOwner, removalDisabled = false, isRemovalCurrent,
-  connectionNodeIds = [], interactionKey, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
+  connectionNodeIds = [], interactionKey, scopeLabel, preferencesSource, readonly = false, busy = false }: GraphCanvasProps) {
   const blocked = readonly || busy;
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   useEffect(() => { setSelectedNote(null); }, [interactionKey, preferencesSource]);
@@ -696,9 +698,12 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
         })}
       </div>
       {marquee && <div className="graph-canvas__marquee" data-testid="graph-selection-marquee" style={marquee} />}
-      {!definition.nodes.length && !definition.presentation?.notes?.length && <div className="graph-canvas__empty">
+      {!definition.nodes.length && !definition.presentation?.notes?.length && <div className="graph-canvas__empty" data-graph-empty="true">
+        {/* [HERMIA-FE-20261022] H-UX-F7-02：诚实空态 + 仅当前模块作用域 */}
+        <p><strong>画布还是空的</strong> · 尚无节点（未生成任何内容）</p>
         <p>从节点目录添加第一个节点，再选择输入和输出端口连接。</p>
-        {onRequestInsertion && !blocked && <Button type="button" variant="primary" data-add-first-node="true"
+        <p className="graph-canvas__scope" data-graph-scope="current-module">作用域：仅当前模块{scopeLabel ? `（${scopeLabel}）` : ''} · 不影响其他模块的画布</p>
+        {onRequestInsertion && !blocked && <Button type="button" variant="primary" data-add-first-node="true" style={{ pointerEvents: 'auto' }}
           onPointerDown={event => event.stopPropagation()}
           onClick={() => {
             const rect = viewportRef.current?.getBoundingClientRect();

@@ -102,3 +102,20 @@ it('accepts asset drop as reference payload only', () => {
     { asset_id: 'a1', version: 1, digest: 'd', kind: 'image' });
   expect(props.onDefinitionChange).not.toHaveBeenCalled();
 });
+
+// [HERMIA-FE-20261022] H-UX-F7-02
+it('shows honest empty state with current-module scope and first-node CTA reusing H-P1-03 insertion', () => {
+  const definition = { ...modelGraph().definition, nodes: [], edges: [], presentation: undefined } as GraphCanvasProps['definition'];
+  const { props } = setup({ definition, scopeLabel: '视频' });
+  expect(document.querySelector('[data-graph-empty]')!.textContent).toMatch(/尚无节点/);
+  expect(document.querySelector('[data-graph-scope="current-module"]')!.textContent).toBe('作用域：仅当前模块（视频） · 不影响其他模块的画布');
+  fireEvent.click(document.querySelector('[data-add-first-node]')!);
+  expect(props.onRequestInsertion).toHaveBeenCalledWith({ x: 400, y: 200 }, props.insertionScope, expect.any(Function));
+  expect(props.onDefinitionChange).not.toHaveBeenCalled();
+});
+it('hides first-node CTA when readonly but keeps scope note', () => {
+  const definition = { ...modelGraph().definition, nodes: [], edges: [], presentation: undefined } as GraphCanvasProps['definition'];
+  setup({ definition, readonly: true });
+  expect(document.querySelector('[data-add-first-node]')).toBeNull();
+  expect(document.querySelector('[data-graph-scope]')!.textContent).toMatch(/仅当前模块/);
+});
