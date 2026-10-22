@@ -696,17 +696,21 @@ export function AppShell({
       data-inspector-fold="n-ux-09"
     >
       <header className="global-header">
-        <div className="product-mark" aria-label="AI Novel Studio">
-          <span className="product-mark__icon">
+        {/* [HERMIA-FE-20261022 REBUILD-W2] 原型外壳：logo · 模块分段 · spacer · 搜索 · 模式 · 工具 · 明暗 · 设置 */}
+        <div className="product-mark" aria-label="PoemSeed Studio" data-proto-shell="logo">
+          <span className="product-mark__icon" aria-hidden="true">
             <BookOpenText aria-hidden="true" />
           </span>
           <span className="product-mark__name">
-            <strong>AI Novel</strong>
-            <small>Studio</small>
+            <strong>PoemSeed Studio</strong>
           </span>
         </div>
         <ModuleSwitcher value={module} onChange={onModuleChange} />
-        <ModuleOverflowMenu value={module} onChange={onModuleChange} shellMode={shellMode} />
+        {/* [HERMIA-FE-20261022 REBUILD-W2] 「更多」仅专业模式或当前处于溢出模块时显示（原型 pro-only）；主控/插件始终经设置与 Ctrl K */}
+        {shellMode === "pro" || STUDIO_MODULE_OVERFLOW.some((item) => item.id === module) ? (
+          <ModuleOverflowMenu value={module} onChange={onModuleChange} shellMode={shellMode} />
+        ) : null}
+        <span className="proto-spacer" aria-hidden="true" />
         <button
           ref={commandTrigger}
           className="global-search"
@@ -714,7 +718,7 @@ export function AppShell({
           onClick={openSearch}
         >
           <Search aria-hidden="true" />
-          <span>搜索作品、章节与素材</span>
+          <span>搜索功能、章节或命令</span>
           <kbd>Ctrl K</kbd>
         </button>
         <div className="shell-mode-toggle" role="group" aria-label="界面模式">

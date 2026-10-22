@@ -129,6 +129,7 @@ import "./collaboration.css";
 import "./ui/ui.css";
 import "./ui/FeatureLauncher.css";
 import "./experimental/workspaceResume.css";
+import "./rebuild/protoShell.css"; // [HERMIA-FE-20261022 REBUILD-W2] 原型外壳，最后加载
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
   c.setQueryData<Novel[]>(["novels"], (x) =>
     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
