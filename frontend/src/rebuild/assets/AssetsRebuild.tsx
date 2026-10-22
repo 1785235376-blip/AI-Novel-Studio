@@ -31,10 +31,13 @@ const originLabel = (o?: string) => !o ? '未声明' : /upload|import|local/i.te
 const sizeLabel = (n?: number) => !n ? '—' : n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(1)} KB` : `${(n / 1048576).toFixed(1)} MB`;
 const KIND_IC: Record<string, string> = {图像: '▣', 音频: '♪', 视频: '▶', 其他: '·'};
 
-export function AssetsRebuild({novelId, onSelectAsset, onSendToModule}: {
-  novelId: string; onSelectAsset?: (a: Asset | undefined) => void; onSendToModule?: (m: AssetsSendTarget) => void;
+export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSendToModule}: {
+  novelId: string; shellMode?: 'basic' | 'pro'; onSelectAsset?: (a: Asset | undefined) => void; onSendToModule?: (m: AssetsSendTarget) => void;
 }) {
   const [view, setView] = useState<AssetsView>('lib');
+  // [HERMIA-FE-20261022 U4] 普通：网格 + 导入 + 送到模块；专业另有 引用关系 / 血缘与版本 / 回收站。专业→普通回落资产库，选中不丢。
+  const isPro = shellMode === 'pro';
+  useEffect(() => { if (!isPro && (view === 'refs' || view === 'trash')) setView('lib'); }, [isPro, view]);
   const [filter, setFilter] = useState<Filter>('all');
   const [items, setItems] = useState<Asset[] | null>(null);
   const [err, setErr] = useState('');
@@ -90,7 +93,7 @@ export function AssetsRebuild({novelId, onSelectAsset, onSendToModule}: {
       <span className="ref-badge">拖入＝引用 · 不复制</span>
       <span className="nv-spacer" />
       {view !== 'lib' ? <button type="button" className="nv-btn" onClick={() => setView('lib')}>回资产库</button> : null}
-      <button type="button" className="nv-btn" aria-pressed={view === 'refs'} onClick={() => setView('refs')}>引用关系</button>
+      {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'refs'} onClick={() => setView('refs')}>引用关系</button> : null}
       <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>导入…</button>
     </div>
   );
@@ -102,8 +105,8 @@ export function AssetsRebuild({novelId, onSelectAsset, onSendToModule}: {
         {([['all', '全部资产'], ['图像', '图像'], ['音频', '音频'], ['视频', '视频'], ['其他', '文档 / 其他']] as [Filter, string][]).map(([f, l]) =>
           <button key={f} type="button" role="option" data-astf={f} aria-selected={view === 'lib' && filter === f} onClick={() => { setFilter(f); setView('lib'); }}>
             <span className="ic">{f === 'all' ? '◫' : KIND_IC[f]}</span><span>{l}{loaded ? <span className="sub">{counts[f] || 0} 个</span> : null}</span></button>)}
-        <button type="button" role="option" data-astf="trash" aria-selected={view === 'trash'} onClick={() => setView('trash')}>
-          <span className="ic">⌫</span><span>回收站{trash ? <span className="sub">{trash.length} 个</span> : null}</span></button>
+        {isPro ? <button type="button" role="option" data-astf="trash" aria-selected={view === 'trash'} onClick={() => setView('trash')}>
+          <span className="ic">⌫</span><span>回收站{trash ? <span className="sub">{trash.length} 个</span> : null}</span></button> : null}
       </div>
       <div className="mw-lh">标签</div>
       <p className="mw-muted">资产还没有标签。</p>
@@ -139,19 +142,19 @@ export function AssetsRebuild({novelId, onSelectAsset, onSendToModule}: {
   );
 
   const right = cur ? (
-    <div className="mw-right" aria-label="血缘与版本摘要"><div className="mw-rh">血缘 / 版本摘要</div><div className="mw-rb">
+    <div className="mw-right" aria-label="血缘与版本摘要"><div className="mw-rh">{isPro ? '血缘 / 版本摘要' : '资产信息'}</div><div className="mw-rb">
       {thumb(cur, 88)}
       <dl className="ast-lineage-facts">
         <div><dt>文件</dt><dd title={cur.filename}>{cur.filename}</dd></div>
-        <div><dt>版本</dt><dd>{cur.version ?? cur.provenance?.version ? `v${cur.version ?? cur.provenance?.version}` : '未记录'}</dd></div>
+        {isPro ? <><div><dt>版本</dt><dd>{cur.version ?? cur.provenance?.version ? `v${cur.version ?? cur.provenance?.version}` : '未记录'}</dd></div>
         <div><dt>来源</dt><dd>{originLabel(cur.provenance?.origin)}</dd></div>
         <div><dt>完整性</dt><dd>{integrityLabel(cur.provenance?.integrity)}</dd></div>
-        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? '暂时查不到' : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div>
+        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? '暂时查不到' : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div></> : <div><dt>类型</dt><dd>{assetKind(cur)} · {sizeLabel(cur.size)}</dd></div>}
       </dl>
-      <div className="sec"><h4>血缘摘要</h4>
+      {isPro ? <div className="sec" data-pro-only="lineage"><h4>血缘摘要</h4>
         <div className="lineage">{(cur.relationships || []).length ? (cur.relationships || []).slice(0, 4).map((r: any, i) => <div key={i} className="ln">→ {r?.target?.label || r?.label || '关联对象'}</div>)
           : <div className="ln">没有记录过来源或去向。</div>}</div>
-        <button type="button" className="nv-btn" style={{width: '100%', marginTop: 6}} onClick={() => setView('refs')}>打开完整血缘</button></div>
+        <button type="button" className="nv-btn" style={{width: '100%', marginTop: 6}} onClick={() => setView('refs')}>打开完整血缘</button></div> : null}
       <div className="mw-cta">
         <button type="button" className="nv-btn nv-btn--primary" id="astSend" style={{width: '100%'}} onClick={() => setSend('pick')}>送到模块…</button>
         <button type="button" className="nv-btn" onClick={() => setSend('IMAGE')}>在图片中打开</button>
@@ -236,9 +239,9 @@ export function AssetsRebuild({novelId, onSelectAsset, onSendToModule}: {
   ) : null;
 
   return (
-    <div className="ast-ws" data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label="资产工作区">
+    <div className="ast-ws" data-shell-mode={shellMode} data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label="资产工作区">
       <NovelOrient storageKey="studio-assets-orient-dismissed" what="这部作品的图片、视频、声音和文档" can="导入、筛选、看来源和使用处、送到其它模块" effect="送出去的是引用，不复制文件" />
-      <NovelModTabs tabs={(['lib', 'refs', 'import'] as AssetsView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id || (id === 'lib' && view === 'trash'), onClick: () => setView(id)}))} />
+      <NovelModTabs tabs={((isPro ? ['lib', 'refs', 'import'] : ['lib', 'import']) as AssetsView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id || (id === 'lib' && view === 'trash'), onClick: () => setView(id)}))} />
       {head}
       <div className="mw-split">{view === 'lib' ? <>{left}{grid}{right}</> : view === 'refs' ? refsView : view === 'import' ? importView : trashView}</div>
       {note ? <p className="ast-note" role="status">{note}</p> : null}

@@ -25,7 +25,7 @@ describe('AssetsRebuild', () => {
   });
   it('select: lineage facts in Chinese, used-in from references, no ids/hashes on screen', async () => {
     assets = [A];
-    render(<AssetsRebuild novelId="n1" />);
+    render(<AssetsRebuild novelId="n1" shellMode="pro" />);
     fireEvent.click(await screen.findByText('雾港参考.jpg'));
     expect(screen.getByText('部分')).toBeTruthy();
     expect(screen.getByText('本地导入')).toBeTruthy();
@@ -45,7 +45,7 @@ describe('AssetsRebuild', () => {
   });
   it('filter empty + trash restore uses real endpoint', async () => {
     assets = [A]; trash = [{...A, id: 't1', filename: '旧图.png'}];
-    render(<AssetsRebuild novelId="n1" />);
+    render(<AssetsRebuild novelId="n1" shellMode="pro" />);
     await screen.findByText('雾港参考.jpg');
     fireEvent.click(document.querySelector('.ast-filters [data-astf="音频"]')!);
     expect(screen.getByText('这个类型下还没有资产。')).toBeTruthy();
@@ -56,5 +56,22 @@ describe('AssetsRebuild', () => {
   it('helpers', () => {
     expect(assetKind({kind: 'file', media_type: 'audio/flac'})).toBe('音频');
     expect([integrityLabel('ok'), integrityLabel('partial'), integrityLabel(undefined)]).toEqual(['已校验', '部分', '未核实']);
+  });
+  it('[U4] mode gating: normal hides 引用关系/回收站/血缘; pro shows them; pro→normal falls back to 资产库 keeping selection', async () => {
+    assets = [A];
+    const {rerender} = render(<AssetsRebuild novelId="n1" shellMode="basic" />);
+    fireEvent.click(await screen.findByText('雾港参考.jpg'));
+    expect(screen.queryByRole('button', {name: '引用关系'})).toBeNull();
+    expect(document.querySelector('[data-astf="trash"]')).toBeNull();
+    expect(document.querySelector('[data-pro-only="lineage"]')).toBeNull();
+    expect(screen.getByText('资产信息')).toBeTruthy();
+    expect(document.querySelector('#astSend')).toBeTruthy();
+    rerender(<AssetsRebuild novelId="n1" shellMode="pro" />);
+    expect(document.querySelector('[data-pro-only="lineage"]')).toBeTruthy();
+    fireEvent.click(document.querySelector('[data-astf="trash"]')!);
+    expect(document.querySelector('.ast-ws')?.getAttribute('data-ast-view')).toBe('trash');
+    rerender(<AssetsRebuild novelId="n1" shellMode="basic" />);
+    await waitFor(() => expect(document.querySelector('.ast-ws')?.getAttribute('data-ast-view')).toBe('lib'));
+    expect(document.querySelector('.ast-tile[aria-selected="true"]')).toBeTruthy();
   });
 });
