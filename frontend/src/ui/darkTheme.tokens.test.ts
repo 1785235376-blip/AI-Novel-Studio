@@ -9,12 +9,13 @@ const compact = (v: string) => v.replace(/\s+/g, '');
 
 describe('T-DARK dark theme tokens contract [HERMIA-FE-20261022]', () => {
   it('T-DARK-01 defaults to dark color-scheme and CapCut-like surfaces', () => {
+    // :root / [data-theme=dark] keep dark as product default
+    expect(tokens).toMatch(/:root\s*,\s*\[data-theme=["']dark["']\]/);
     expect(tokens).toMatch(/color-scheme:\s*dark/);
     expect(tokens).toMatch(/--color-bg-app:\s*#0d0f12/);
     expect(tokens).toMatch(/--color-bg-surface:\s*#161a20/);
     expect(tokens).toMatch(/--color-bg-editor:\s*#1a1d21/);
     expect(tokens).toMatch(/--color-accent-primary:\s*#4db8c4/);
-    expect(tokens).not.toMatch(/color-scheme:\s*light/);
   });
 
   it('T-DARK-02 exposes canvas tokens and graph/placeholder use them', () => {
@@ -45,5 +46,13 @@ describe('T-DARK dark theme tokens contract [HERMIA-FE-20261022]', () => {
     expect(tokens).toMatch(/--text-muted:\s*var\(--color-text-muted\)/);
     expect(tokens).toMatch(/--border-subtle:\s*var\(--color-border-default\)/);
     expect(tokens).toMatch(/--accent:\s*var\(--color-accent-primary\)/);
+  });
+
+  it('t71u light theme override under [data-theme=light]', () => {
+    expect(tokens).toMatch(/\[data-theme=["']light["']\]/);
+    expect(tokens).toMatch(/color-scheme:\s*light/);
+    expect(tokens).toMatch(/--color-bg-app:\s*#e8f1f3/);
+    expect(tokens).toMatch(/--color-canvas-bg:\s*#f0f3f5/);
+    expect(tokens).toMatch(/--color-canvas-grid:\s*#d5dde1/);
   });
 });

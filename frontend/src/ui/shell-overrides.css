@@ -1,12 +1,12 @@
 /* Desktop viewport contract: the shell owns scrolling inside its panels. */
 /* [HERMIA-FE-20261022] T-DARK-01 sync root to dark app */
+/* [HERMIA-FE-20261022] color-scheme follows tokens.css / data-theme (t71u) */
 html,
 body,
 #root {
   margin: 0;
   background: var(--color-bg-app);
   color: var(--color-text-primary);
-  color-scheme: dark;
 }
 
 .app-shell {

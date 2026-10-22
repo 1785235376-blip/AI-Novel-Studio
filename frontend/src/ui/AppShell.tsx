@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { IconButton } from "./primitives";
+import { ThemeToggle } from "./ThemeToggle";
 import { STUDIO_MODULES, STUDIO_MODULE_OVERFLOW } from "./moduleRegistry";
 import type { StudioModule } from "./moduleRegistry";
 import {
@@ -522,6 +523,8 @@ export function AppShell({
             专业
           </button>
         </div>
+        {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
+        <ThemeToggle />
         <span className="current-actor">
           <span className="current-actor__avatar" aria-hidden="true">
             {actorInitial}

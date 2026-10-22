@@ -1,3 +1,5 @@
 import React, { lazy, Suspense } from 'react';import ReactDOM from 'react-dom/client';import {QueryClient,QueryClientProvider} from '@tanstack/react-query';import './ui/ui.css';import './ui/fixture.css';import './ui/desktop-craft.css';import {sendHostPing} from './packagedHost';import DesignSystemFixture from './ui/DesignSystemFixture';
+import {bootstrapStudioTheme} from './ui/theme';
+bootstrapStudioTheme(); /* [HERMIA-FE-20261022] t71u before paint */
 const App=lazy(()=>import('./App')),Health=lazy(()=>import('./Health'));
 const Page=location.pathname==='/health'?Health:location.pathname==='/ui-fixture'?DesignSystemFixture:App;ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><QueryClientProvider client={new QueryClient()}><Suspense fallback={<main className="ui-empty" role="status">正在加载…</main>}><Page/></Suspense></QueryClientProvider></React.StrictMode>);sendHostPing();
