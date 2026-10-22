@@ -8,6 +8,7 @@ import {WorkflowPanel} from '../novel/WorkflowPanel';
 import {AgentQueuePanel} from '../novel/AgentQueuePanel';
 import {AssetInspector} from '../novel/AssetInspector';
 import {WorkflowInspector, type WorkflowInspection} from '../novel/WorkflowInspector';
+import {ImageRebuild, type ImageView} from '../rebuild/image/ImageRebuild'; // [HERMIA-FE-20261022 R2]
 import {ImageTaskInspector, type ImageInspection} from '../novel/ImageTaskInspector';
 import {VideoTaskInspector, type VideoInspection} from '../novel/VideoTaskInspector';
 import {AudioTaskInspector, type AudioInspection} from '../novel/AudioTaskInspector';
@@ -22,7 +23,7 @@ import {WorkspaceHonestEmpty} from './WorkspaceHonestEmpty';
 import {EditNleShell, EditNleMediaRail, EditNleInspector, demoEditTimeline} from './EditNleShell';
 import {pushEditHandoff, type EditHandoffSource} from './editHandoff';
 import {
-  ImageWorkspaceShell, ImageWorkspaceRail, ImageEmptyCta,
+  
   AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta,
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
   VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta,
@@ -88,6 +89,9 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   // [HERMIA-FE-20261022 W-UX-13] IMAGE onSendToVideo → onModuleChange('VIDEO') after explicit confirm.
   const [imageSubview,setImageSubview]=useState<'studio'|'comic'>('studio');
   useEffect(()=>{ if(module!=='IMAGE') setImageSubview('studio'); },[module]);
+  // [HERMIA-FE-20261022 R2] 图片页按原型重做：视图 浏览/图片画布/生成/漫画制作；旧 ImageWorkspaceShell/Rail/EmptyCta 不再挂载（代码保留）。
+  const [imageView,setImageView]=useState<ImageView>('browse');
+  useEffect(()=>{ if(module!=='IMAGE') setImageView('browse'); },[module]);
   // [HERMIA-FE-20261022 W-UX-14] Explicit send→EDIT records a media-pool handoff source strip.
   // [HERMIA-FE-20261022 X-UX-10] Hand-off smoke covers IMAGE→VIDEO · AUDIO→EDIT · ASSETS→* (see handoffSmoke.xUx10.test.tsx).
   const sendToEdit = (source: EditHandoffSource, label: string) => {
@@ -103,7 +107,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   };
   let main:ReactNode; let status='工作区';
   switch(module){
-    case 'IMAGE': main=novelId?<ImageWorkspaceShell novelId={novelId} shellMode={shellMode} inspection={imageInspection} onInspect={i=>{if(i)setImageInspection(i);}} subview={imageSubview} onSubviewChange={setImageSubview} onSendToVideo={()=>onModuleChange('VIDEO')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
+    case 'IMAGE': main=novelId?<ImageRebuild novelId={novelId} view={imageView} onViewChange={setImageView} shellMode={shellMode} onInspect={i=>{if(i)setImageInspection(i);}} onSendToVideo={()=>onModuleChange('VIDEO')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<VideoWorkspaceShell novelId={novelId} shellMode={shellMode} onInspect={setVideoInspection} onSendToEdit={()=>sendToEdit('VIDEO','视频镜头 / 交片')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="VIDEO"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<AudioWorkspaceShell novelId={novelId} onInspect={setAudioInspection} onSendToEdit={()=>sendToEdit('AUDIO','声音检听 / 交片')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
     case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
@@ -112,8 +116,8 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
     case 'ASSETS': main=novelId?<AssetsWorkspaceShell novelId={novelId} selectedAssetId={selectedAsset?.id} selectedAsset={selectedAsset} onSelectAsset={setSelectedAsset} onSendToModule={sendAssetsToModule}/>:<WorkspaceHonestEmpty kind="no_project" workspace="ASSETS"/>; status='资产库'; break;
   }
-  const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta onSendToModule={sendAssetsToModule}/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<>{imageInspection?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:<ImageEmptyCta onOpenComic={()=>setImageSubview('comic')} onScrollGenerate={()=>document.querySelector('.media-ws__panel[aria-label="图片生成"]')?.scrollIntoView({block:'nearest'})} onSendToVideo={()=>onModuleChange('VIDEO')}/>}</>:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>sendToEdit('VIDEO','视频空态 · 送剪辑')}/>}</>:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>sendToEdit('AUDIO','声音空态 · 送剪辑')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
-  const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>sendToEdit('VIDEO','视频轨 · 送剪辑')}/>:module==='IMAGE'&&novelId?<ImageWorkspaceRail subview={imageSubview} onSubviewChange={setImageSubview} onSendToVideo={()=>onModuleChange('VIDEO')}/>:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>sendToEdit('AUDIO','声音轨 · 送剪辑')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail onSendToModule={sendAssetsToModule}/>:<WorkspaceRail module={module}/>;
+  const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta onSendToModule={sendAssetsToModule}/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?null:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>sendToEdit('VIDEO','视频空态 · 送剪辑')}/>}</>:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>sendToEdit('AUDIO','声音空态 · 送剪辑')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
+  const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>sendToEdit('VIDEO','视频轨 · 送剪辑')}/>:module==='IMAGE'?null:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>sendToEdit('AUDIO','声音轨 · 送剪辑')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail onSendToModule={sendAssetsToModule}/>:<WorkspaceRail module={module}/>;
   // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
   const isOverflow = module==='CONTROL'||module==='PLUGIN'||module==='WORKFLOW';
   const shell = mediaShellForModule(module);

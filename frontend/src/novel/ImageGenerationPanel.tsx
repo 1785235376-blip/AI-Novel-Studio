@@ -36,13 +36,16 @@ export function ImageGenerationPanel({
   characterId,
   sceneId,
   onInspect,
+  initialPrompt,
 }: {
+  /** [HERMIA-FE-20261022 R2] 图片页右栏写的提示词带进完整生成面板 */
+  initialPrompt?: string;
   novelId?: string;
   characterId?: string;
   sceneId?: string;
   onInspect?: (inspection?: ImageInspection) => void;
 }) {
-  const [prompt, setPrompt] = useState("生成适合小说设定的角色或场景概念图。");
+  const [prompt, setPrompt] = useState(initialPrompt || "生成适合小说设定的角色或场景概念图。");
   const [referenceInput, setReferenceInput] = useState("");
   const [canvasReferences,setCanvasReferences]=useState<string[]>([]);
   const [uri, setUri] = useState(""),

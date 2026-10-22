@@ -3,10 +3,9 @@
 import {useState} from 'react';
 
 const KEY = 'studio-novel-orient-dismissed';
-const read = () => { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } };
 
-export function NovelOrient({what, can, effect}: {what: string; can: string; effect: string}) {
-  const [hidden, setHidden] = useState(read);
+export function NovelOrient({what, can, effect, storageKey = KEY}: {what: string; can: string; effect: string; /** [HERMIA-FE-20261022 R2] 每个模块各自记住收起 */ storageKey?: string}) {
+  const [hidden, setHidden] = useState(() => { try { return localStorage.getItem(storageKey) === '1'; } catch { return false; } });
   if (hidden) return null;
   return (
     <div className="nv-orient" id="orient" role="region" aria-label="当前创作指引">
@@ -16,7 +15,7 @@ export function NovelOrient({what, can, effect}: {what: string; can: string; eff
         <span><b>现在能做什么</b>：{can}</span>
         <span><b>操作会影响什么</b>：{effect}</span>
       </div>
-      <button type="button" className="nv-orient__dismiss" aria-label="收起指引" onClick={() => { try { localStorage.setItem(KEY, '1'); } catch { /* 存不了就只本次收起 */ } setHidden(true); }}>收起</button>
+      <button type="button" className="nv-orient__dismiss" aria-label="收起指引" onClick={() => { try { localStorage.setItem(storageKey, '1'); } catch { /* 存不了就只本次收起 */ } setHidden(true); }}>收起</button>
     </div>
   );
 }
