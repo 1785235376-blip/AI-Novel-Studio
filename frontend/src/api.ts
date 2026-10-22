@@ -92,7 +92,8 @@ export function apiErrorView(error:unknown,fallback='操作失败'):{message:str
   }
   return {message:problem.message||fallback,code:problem.code,requestId:problem.request_id,details};
 }
-async function call<T>(url:string,init?:RequestInit,contextOverride?:CollaborationContext):Promise<T>{
+// [HERMIA-FE-20261022 REBUILD-SHELL] exported for rebuild/rebuildApi.ts (same headers/errors as api.*)
+export async function call<T>(url:string,init?:RequestInit,contextOverride?:CollaborationContext):Promise<T>{
  const context=contextOverride??collaboration;
  const scope=context.scope;
  const headers:Record<string,string>={'Content-Type':'application/json',...(init?.headers as Record<string,string>||{})};
