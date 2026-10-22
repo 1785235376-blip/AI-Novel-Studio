@@ -42,3 +42,13 @@ describe('ImageRebuild 双画布门控', () => {
     }
   });
 });
+describe('[U4] 图片 普通/专业', () => {
+  it('basic gen: no 多图约束 / 画面分析 / 批量; pro canvas has 多图约束; no 批量生成 entry in either mode (no capability)', () => {
+    vi.stubGlobal('fetch', vi.fn(() => json([])));
+    const r = render(<ImageRebuild novelId="n1" view="gen" onViewChange={() => {}} shellMode="basic" />);
+    expect(document.body.textContent).not.toMatch(/多图约束|画面分析|批量/);
+    r.rerender(<ImageRebuild novelId="n1" view="canvas" onViewChange={() => {}} shellMode="pro" />);
+    expect(document.body.textContent).toContain('多图约束');
+    expect(document.body.textContent).not.toContain('批量生成');
+  });
+});

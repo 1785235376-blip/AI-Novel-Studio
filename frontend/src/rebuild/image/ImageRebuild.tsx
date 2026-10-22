@@ -63,6 +63,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   useEffect(() => setProOpen(shellMode === 'pro'), [shellMode]);
   // [HERMIA-FE-20261022 U3] 双画布 / 专业工具只在专业模式；普通模式停在双画布时回到默认「浏览」
   const isPro = shellMode === 'pro';
+  // [HERMIA-FE-20261022 U4] 普通：浏览/生成/漫画 + 单画布；专业另有 双画布、多图约束、JSON 导入导出、画面分析。批量生成：后端无批量出图能力，入口隐藏（不做假按钮）。
   useEffect(() => { if (!isPro && view === 'dual') onViewChange('browse'); }, [isPro, view, onViewChange]);
   const loaded = gens !== null && refs !== null;
   const ready = (providers || []).filter(p => p.configured && p.registered && p.reachable !== false);
