@@ -2,7 +2,7 @@
 .comic-page{gap:7px;grid-auto-rows:unset}
 .comic-cell{min-height:0}
 .comic-cell--slant{border:none;border-radius:0;background:linear-gradient(160deg,#41536a,#2a3444)}
-.comic-cell--slant + .comic-cell--slant{background:linear-gradient(200deg,#3a4a5c,#26303e)}
+.comic-cell--slant:nth-child(2){background:linear-gradient(200deg,#3a4a5c,#26303e)}
 .comic-cell--inset{justify-self:end;align-self:end;width:42%;height:34%;margin:0 6% 6% 0;z-index:2;border:2px solid #0d0f12;box-shadow:0 0 0 3px var(--color-bg-elevated);background:linear-gradient(160deg,#55677d,#36414f)}
 .comic-cell--bleed{margin:-10px -10px 0;border:none;border-radius:8px 8px 0 0;background:linear-gradient(170deg,#4a5d74,#222a35)}
 .comic-cell[aria-pressed="true"].comic-cell--slant{filter:brightness(1.25)}

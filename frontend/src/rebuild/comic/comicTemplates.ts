@@ -7,10 +7,11 @@ export const COMIC_TEMPLATES: ComicTemplate[] = [
   {id: 'grid4', label: '四格均分', hint: '四格漫画 / 节奏平稳', cols: '1fr 1fr', rows: '1fr 1fr', panels: [{area: A(1, 1, 2, 2)}, {area: A(1, 2, 2, 3)}, {area: A(2, 1, 3, 2)}, {area: A(2, 2, 3, 3)}]},
   {id: 'big1small2', label: '一大两小', hint: '重点画面在上，反应在下', cols: '1fr 1fr', rows: '1.8fr 1fr', panels: [{area: A(1, 1, 2, 3)}, {area: A(2, 1, 3, 2)}, {area: A(2, 2, 3, 3)}]},
   {id: 'establish3', label: '建立镜头 + 三格', hint: '顶部宽景交代场景', cols: '1fr 1fr 1fr', rows: '1.2fr 1fr', panels: [{area: A(1, 1, 2, 4)}, {area: A(2, 1, 3, 2)}, {area: A(2, 2, 3, 3)}, {area: A(2, 3, 3, 4)}]},
-  {id: 'diagonal', label: '斜切分格', hint: '动作 / 冲突，斜向分隔线', cols: '1fr 1fr', rows: '2fr 1fr', panels: [
-    {area: A(1, 1, 2, 3), clip: 'polygon(0 0,100% 0,100% 38%,0 60%)'},
-    {area: A(1, 1, 2, 3), clip: 'polygon(0 66%,100% 44%,100% 100%,0 100%)'},
-    {area: A(2, 1, 3, 2)}, {area: A(2, 2, 3, 3)}]},
+  // 斜切：两格的盒子只在中间一行重叠，各自 clip 出平行斜边，保证斜向留白与其他格一致、点击区域不被对方盖住
+  {id: 'diagonal', label: '斜切分格', hint: '动作 / 冲突，斜向分隔线', cols: '1fr 1fr', rows: '1fr .5fr 1fr 1.1fr', panels: [
+    {area: A(1, 1, 3, 3), clip: 'polygon(0 0,100% 0,100% 67%,0 100%)'},
+    {area: A(2, 1, 4, 3), clip: 'polygon(0 39%,100% 5%,100% 100%,0 100%)'},
+    {area: A(4, 1, 5, 2)}, {area: A(4, 2, 5, 3)}]},
   {id: 'tallLeft', label: '左竖长 + 右三格', hint: '人物全身 / 下落感', cols: '1.1fr 1fr', rows: '1fr 1fr 1fr', panels: [{area: A(1, 1, 4, 2)}, {area: A(1, 2, 2, 3)}, {area: A(2, 2, 3, 3)}, {area: A(3, 2, 4, 3)}]},
   {id: 'tiers3', label: '三段不等高', hint: '窄-宽-中，控制阅读停顿', cols: '1fr 1fr', rows: '0.8fr 1.6fr 1fr', panels: [{area: A(1, 1, 2, 3)}, {area: A(2, 1, 3, 3)}, {area: A(3, 1, 4, 2)}, {area: A(3, 2, 4, 3)}]},
   {id: 'irregular6', label: '不规则六格', hint: '对话密集的常规页', cols: '1fr 1fr 1fr', rows: '1fr 1.3fr 1fr', panels: [{area: A(1, 1, 2, 3)}, {area: A(1, 3, 2, 4)}, {area: A(2, 1, 4, 2)}, {area: A(2, 2, 3, 4)}, {area: A(3, 2, 4, 3)}, {area: A(3, 3, 4, 4)}]},

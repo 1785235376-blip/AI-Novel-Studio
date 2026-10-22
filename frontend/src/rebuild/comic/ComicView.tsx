@@ -6,6 +6,14 @@ import './comic.css';
 
 type Page = {id: string; label: string; tpl: string; cells: Bubble[][]};
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+/** [HERMIA-FE-20261022 U2] 按气泡实际尺寸夹住位置：x ≤ (格宽-泡宽)/格宽·100，y 同理，避免宽气泡被格子裁掉文字。 */
+export function bubbleBounds(cellW: number, cellH: number, bubW: number, bubH: number) {
+  return {maxX: Math.max(0, (cellW - bubW) / (cellW || 1) * 100), maxY: Math.max(0, (cellH - bubH) / (cellH || 1) * 100)};
+}
+function measure(el: HTMLElement) {
+  const c = (el.closest('.comic-cell') as HTMLElement | null)?.getBoundingClientRect(); const r = el.getBoundingClientRect();
+  return {w: c?.width || 1, h: c?.height || 1, ...bubbleBounds(c?.width || 1, c?.height || 1, r.width, r.height)};
+}
 const newPage = (n: number, tpl = 'big1small2'): Page => ({id: `p${n}`, label: `第 ${n} 页`, tpl, cells: templateById(tpl).panels.map(() => [])});
 
 export function TemplateThumb({t}: {t: ComicTemplate}) {
@@ -14,15 +22,15 @@ export function TemplateThumb({t}: {t: ComicTemplate}) {
 }
 
 function ComicBubble({b, sel, onSel, onChange, onDelete}: {b: Bubble; sel: boolean; onSel: () => void; onChange: (p: Partial<Bubble>) => void; onDelete: () => void}) {
-  const st = useRef<null | {mode: 'move' | 'size'; sx: number; sy: number; ox: number; oy: number; ow: number; w: number; h: number}>(null);
+  const st = useRef<null | {mode: 'move' | 'size'; sx: number; sy: number; ox: number; oy: number; ow: number; w: number; h: number; maxX: number; maxY: number}>(null);
   const start = (mode: 'move' | 'size') => (e: React.PointerEvent<HTMLElement>) => {
     e.stopPropagation(); onSel();
-    const host = (e.currentTarget.closest('.comic-cell') as HTMLElement | null)?.getBoundingClientRect();
-    st.current = {mode, sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, ow: b.w, w: host?.width || 1, h: host?.height || 1};
+    const el = (e.currentTarget.closest('.bub') as HTMLElement) || e.currentTarget; const m = measure(el);
+    st.current = {mode, sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, ow: b.w, w: m.w, h: m.h, maxX: m.maxX, maxY: m.maxY};
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* jsdom */ }
   };
   const move = (e: React.PointerEvent) => { const d = st.current; if (!d) return; const dx = (e.clientX - d.sx) / d.w * 100, dy = (e.clientY - d.sy) / d.h * 100;
-    if (d.mode === 'move') onChange({x: clamp(d.ox + dx, 0, 92), y: clamp(d.oy + dy, 0, 92)}); else onChange({w: clamp(d.ow + dx, 14, 95)}); };
+    if (d.mode === 'move') onChange({x: clamp(d.ox + dx, 0, d.maxX), y: clamp(d.oy + dy, 0, d.maxY)}); else onChange({w: clamp(d.ow + dx, 14, Math.max(14, 100 - b.x))}); };
   return <span className={`bub bub--${b.kind}${hasTail(b.kind) && b.tail !== 'none' ? ` bub-tail--${b.tail}` : ''}${b.vertical ? ' bub--v' : ''}`}
     role="button" tabIndex={0} aria-pressed={sel} data-bubble-id={b.id} data-bubble-kind={b.kind}
     aria-label={`气泡（${BUBBLE_KINDS.find(k => k.id === b.kind)?.label}）：${b.text}。拖动移动，双击改写，Delete 删除`}
@@ -32,7 +40,7 @@ function ComicBubble({b, sel, onSel, onChange, onDelete}: {b: Bubble; sel: boole
     onPointerDown={start('move')} onPointerMove={move} onPointerUp={() => { st.current = null; }}
     onKeyDown={e => { if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); onDelete(); return; }
       const k = ({ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2]} as Record<string, number[]>)[e.key];
-      if (k) { e.preventDefault(); onChange({x: clamp(b.x + k[0]!, 0, 92), y: clamp(b.y + k[1]!, 0, 92)}); } }}>
+      if (k) { e.preventDefault(); const m = measure(e.currentTarget); onChange({x: clamp(b.x + k[0]!, 0, m.maxX), y: clamp(b.y + k[1]!, 0, m.maxY)}); } }}>
     <span className="bub-t">{b.text}</span>
     {sel ? <span className="bub-size" role="presentation" title="拖动调整大小" onPointerDown={start('size')} onPointerMove={move} onPointerUp={() => { st.current = null; }} /> : null}
   </span>;
@@ -52,7 +60,7 @@ export function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onB
   const del = (id: string) => { setCells(cs => cs.map(c => c.filter(b => b.id !== id))); setBubSel(null); };
   const chooseTpl = (id: string) => { setPage(p => ({...p, tpl: id, cells: remapCells(p.cells, templateById(id).panels.length)})); setCellIx(0); };
   const addBubble = () => { const id = `b${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
-    setCells(cs => cs.map((c, i) => i === cellIx ? [...c, {id, text: DEFAULT_TEXT[kind], x: 8, y: 8 + (c.length % 4) * 18, w: kind === 'sfx' ? 30 : 48, kind, tail: kind === 'shout' ? 'br' : 'bl'}] : c)); setBubSel(id); };
+    setCells(cs => cs.map((c, i) => i === cellIx ? [...c, {id, text: DEFAULT_TEXT[kind], x: tpl.panels[cellIx]?.clip ? 30 : 8, y: (tpl.panels[cellIx]?.clip ? 45 : 8) + (c.length % 3) * 16, w: kind === 'sfx' ? 30 : 48, kind, tail: kind === 'shout' ? 'br' : 'bl'}] : c)); setBubSel(id); };
   const sb = page.cells.flat().find(b => b.id === bubSel) || null;
   return (
     <div className="img-ws" data-img-view="comic" aria-label="图片 › 漫画制作">
@@ -96,7 +104,7 @@ export function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onB
               <label className="cm-f">台词<textarea aria-label="气泡台词" value={sb.text} rows={2} onChange={e => patch(sb.id, {text: e.target.value})} /></label>
               <div className="cm-f">样式<div className="cm-chips">{BUBBLE_KINDS.map(k => <button key={k.id} type="button" aria-pressed={sb.kind === k.id} onClick={() => patch(sb.id, {kind: k.id})}>{k.label}</button>)}</div></div>
               {hasTail(sb.kind) ? <div className="cm-f">尾巴方向<div className="cm-chips">{TAIL_DIRS.map(t => <button key={t.id} type="button" aria-pressed={sb.tail === t.id} data-tail={t.id} onClick={() => patch(sb.id, {tail: t.id})}>{t.label}</button>)}</div></div> : null}
-              <label className="cm-f">宽度 {Math.round(sb.w)}%<input type="range" min={14} max={95} value={sb.w} aria-label="气泡宽度" onChange={e => patch(sb.id, {w: +e.target.value})} /></label>
+              <label className="cm-f">宽度 {Math.round(sb.w)}%<input type="range" min={14} max={95} value={sb.w} aria-label="气泡宽度" onChange={e => patch(sb.id, {w: Math.min(+e.target.value, Math.max(14, 100 - sb.x))})} /></label>
               <label className="cm-chk"><input type="checkbox" checked={!!sb.vertical} onChange={e => patch(sb.id, {vertical: e.target.checked})} /> 竖排文字</label>
               <button type="button" className="nv-btn img-gen-btn" data-bubble-delete="true" onClick={() => del(sb.id)}>删除气泡</button>
               <p className="nv-hint">拖气泡移动，拖右下角小方块改大小；选中后按 Delete 也能删除。</p>

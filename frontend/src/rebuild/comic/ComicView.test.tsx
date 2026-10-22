@@ -2,7 +2,7 @@
 // @vitest-environment jsdom
 import {describe, it, expect, vi} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
-import {ComicView} from './ComicView';
+import {ComicView, bubbleBounds} from './ComicView';
 import {COMIC_TEMPLATES, remapCells} from './comicTemplates';
 import {DualCanvas} from '../canvas/DualCanvas';
 
@@ -47,5 +47,21 @@ describe('DualCanvas', () => {
     expect(screen.getByLabelText('执行画布', {selector: 'div.dual-cv__pane'})).toBeTruthy();
     fireEvent.click(screen.getByRole('button', {name: '执行画布'}));
     expect(document.querySelector('[data-dual-mode="execution"]')).toBeTruthy();
+  });
+});
+
+describe('bubble clamp (Vera must-fix)', () => {
+  it('clamps by real bubble size so wide bubbles stay inside the cell', () => {
+    expect(bubbleBounds(200, 100, 150, 40)).toEqual({maxX: 25, maxY: 60});
+    expect(bubbleBounds(100, 100, 120, 20).maxX).toBe(0);
+  });
+  it('keyboard nudge stops at cell edge minus bubble width', () => {
+    const {container} = render(<ComicView chrome={null} onBack={() => {}} onGen={() => {}} />);
+    fireEvent.click(container.querySelector('#comicBubble')!);
+    const cell = container.querySelector('.comic-cell') as HTMLElement, bub = container.querySelector('.bub') as HTMLElement;
+    cell.getBoundingClientRect = () => ({width: 200, height: 100, left: 0, top: 0, right: 200, bottom: 100, x: 0, y: 0, toJSON() {}}) as DOMRect;
+    bub.getBoundingClientRect = () => ({width: 150, height: 40, left: 0, top: 0, right: 150, bottom: 40, x: 0, y: 0, toJSON() {}}) as DOMRect;
+    for (let i = 0; i < 40; i++) fireEvent.keyDown(bub, {key: 'ArrowRight'});
+    expect(parseFloat(bub.style.left)).toBeLessThanOrEqual(25);
   });
 });
