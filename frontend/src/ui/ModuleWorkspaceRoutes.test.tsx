@@ -46,11 +46,12 @@ describe('ModuleWorkspaceRoutes',()=>{
     vi.spyOn(api,'workflows').mockResolvedValue({items:[]});
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1" shellMode="pro"/>));
-    expect(host.querySelector('[data-overflow-surface="CONTROL"]')).toBeTruthy();
-    expect(host.querySelector('[data-capability-tone="neutral"]')).toBeTruthy();
+    // [HERMIA-FE-20261022 R7] 主控改为原型单页：不再挂溢出横幅，也不再有三页签
+    expect(host.querySelector('[data-hub="control"]')).toBeTruthy();
+    expect(host.querySelector('[data-overflow-surface="CONTROL"]')).toBeNull();
+    expect(host.querySelector('[role="tablist"][aria-label="主控设置"]')?.closest('details')?.open ?? true).not.toBe(true);
     expect(host.querySelector('[data-overflow-chrome="true"]')).toBeTruthy();
     expect(host.querySelector('[data-settings-chrome="true"]')).toBeTruthy();
-    expect(host.querySelector('[data-x-ux-09="surface"]')).toBeTruthy();
     expect(host.textContent || '').not.toMatch(/已就绪|已连通绿/);
     const tabs=[...host.querySelectorAll('[role="tablist"][aria-label="创作模块"] [role="tab"]')];
     expect(tabs).toHaveLength(6);

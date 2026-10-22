@@ -1,0 +1,26 @@
+/* [HERMIA-FE-20261022 R7] 主控 / 插件 — 按原型 .ws-full / .ws-head / .sec / .model-row / .plug-row 移植；单栏全页，全局左右栏收 0，溢出横幅与能力大块隐藏。 */
+html .app-shell[data-module="CONTROL"] .workspace-body,html .app-shell[data-module="PLUGIN"] .workspace-body,html .app-shell.is-inspector-collapsed[data-module="CONTROL"] .workspace-body,html .app-shell.is-inspector-collapsed[data-module="PLUGIN"] .workspace-body{grid-template-columns:minmax(0,1fr)!important;padding:0;gap:0}
+html .app-shell[data-module="CONTROL"] :is(.workspace-sidebar,.workspace-inspector,.inspector-edge-toggle,.overflow-surface-banner),html .app-shell[data-module="PLUGIN"] :is(.workspace-sidebar,.workspace-inspector,.inspector-edge-toggle,.overflow-surface-banner){display:none!important}
+html .app-shell[data-module="CONTROL"] .main-workspace,html .app-shell[data-module="PLUGIN"] .main-workspace{padding:0;border:0;border-radius:0;overflow:hidden;background:var(--color-bg-app);display:flex;flex-direction:column}
+.ws-full.hub-ws{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;background:var(--color-bg-app);color:var(--color-text-primary)}
+.hub-ws .ws-head{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);flex:none;flex-wrap:wrap}
+.hub-ws .ws-head h2{margin:0;font-size:15px;font-weight:650}
+.hub-ws .ws-body{flex:1;overflow:auto;padding:16px;min-height:0}
+.hub-ws .ws-body>*{max-width:980px}
+.hub-sec{border:1px solid var(--color-border-default);border-radius:10px;padding:14px;margin-bottom:14px;background:var(--color-bg-surface)}
+.hub-sec h4{margin:0 0 6px;font-size:13px;display:inline}.hub-sec>h4{display:block}
+.hub-adv summary{cursor:pointer;list-style:none}
+.hub-note{font-size:12px;color:var(--color-text-secondary);background:var(--color-bg-subtle);border-left:3px solid var(--color-border-default);padding:6px 8px;border-radius:2px;margin:6px 0}
+.hub-note--info{border-color:var(--color-info,#58a6ff)}.hub-note--warn{border-color:var(--color-warning,#d29922);background:rgba(210,153,34,.12)}
+.hub-muted{font-size:12px;color:var(--color-text-muted);margin:0 0 6px}
+.hub-empty{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px dashed var(--color-border-default);border-radius:8px;margin-bottom:8px}.hub-empty p{margin:0;font-size:12.5px}
+.hub-group{margin-top:8px}.hub-gh{font-size:11px;color:var(--color-text-muted);margin:4px 0}
+.model-row,.plug-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--color-border-default);font-size:12.5px}
+.model-row b{flex:0 1 260px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plug-row .grow{flex:1;min-width:0}.plug-row b{font-size:13px}
+.plug-detail{font-size:12px;color:var(--color-text-secondary);padding:6px 0 10px}
+.hub-where{font-size:11px;color:var(--color-text-muted);min-width:72px;text-align:left}
+.hub-badge{display:inline-flex;align-items:center;font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.hub-badge--ok{background:rgba(46,160,67,.15);color:#3fb950}.hub-badge--part{background:rgba(210,153,34,.15);color:#d29922}.hub-badge--off{background:var(--color-bg-subtle);color:var(--color-text-muted)}.hub-badge--local{background:rgba(56,139,253,.15);color:#58a6ff}
+.hub-kv{display:grid;grid-template-columns:96px 1fr;gap:4px 8px;font-size:12px;margin:0 0 8px}.hub-kv dt{color:var(--color-text-muted)}.hub-kv dd{margin:0}
+.hub-ws .rb-panel{border:0;padding:0;background:none;box-shadow:none}
