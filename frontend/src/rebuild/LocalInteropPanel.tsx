@@ -21,7 +21,7 @@ function Body() {
   const status = useQuery({ queryKey: ['rb', 'interop-status', session?.session_id || ''], queryFn: () => client.status(undefined, session?.session_id), retry: false });
   const connect = useMutation({
     mutationFn: () => client.connect({ request_id: newInteropRequestId(), endpoint: endpoint.trim().replace(/\/$/, ''), project_id: novelId, module: 'plugin', surface: 'plugin-page' }),
-    onSuccess: s => { setSession(s); setNote({ tone: s.mode === 'MOCK_ONLY' ? 'warn' : 'ok', text: s.mode === 'MOCK_ONLY' ? `已连接（模拟模式）：${s.product?.name || '本地软件'}` : `已连接：${s.product?.name || '本地软件'}` }); qc.invalidateQueries({ queryKey: ['rb', 'interop-status'] }); },
+    onSuccess: s => { setSession(s); setNote({ tone: s.mode === 'MOCK_ONLY' ? 'warn' : 'ok', text: s.mode === 'MOCK_ONLY' ? `已连接（模拟模式）：${s.product?.display_name || '本地软件'}` : `已连接：${s.product?.display_name || '本地软件'}` }); qc.invalidateQueries({ queryKey: ['rb', 'interop-status'] }); },
     onError: e => setNote({ tone: 'err', text: `连接失败：${interopErrorMessage(e)}` }),
   });
   const disconnect = useMutation({ mutationFn: () => client.disconnect(session!.session_id), onSettled: () => { setSession(null); setNote({ tone: 'warn', text: '已断开' }); } });
