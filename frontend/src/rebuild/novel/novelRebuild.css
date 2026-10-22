@@ -178,3 +178,24 @@ html .app-shell[data-module="NOVEL"] .nv-assist{padding:10px 12px;gap:8px}
 html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h1{font-size:20px;font-weight:650;line-height:1.5;margin:0 0 .8em}
 html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h2{font-size:18px;font-weight:650;line-height:1.5;margin:0 0 .7em}
 html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h3{font-size:17px;font-weight:600;line-height:1.5}
+
+/* [HERMIA-FE-20261022 U1] 左栏「更多」里嵌的旧章节管理/功能导航改为静态纵向堆叠：
+   不再 absolute 压住作品结构卡；章节名不被截成「3··」；功能导航弹层相对按钮向上展开 */
+.nv-rail__more-body .sidebar-layout,.app-shell .workspace-sidebar--novel .nv-rail__more-body>.sidebar-layout{position:static;display:flex;flex-direction:column;gap:8px;height:auto;min-height:0;overflow:visible}
+.nv-rail__more-body .sidebar-chapter-scroll{flex:none;height:auto;max-height:none;overflow:visible;padding:0}
+.nv-rail__more-body .novel-chapter-tree{padding:8px}
+.nv-rail__more-body .novel-chapter-tree>header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}
+.nv-rail__more-body .novel-chapter-tree>header h2{margin:0;font-size:12px;white-space:nowrap}
+.nv-rail__more-body .novel-tree-row{display:flex;align-items:center;gap:4px;min-width:0}
+.nv-rail__more-body .novel-tree-select{flex:1 1 auto;min-width:0;text-align:left}
+.nv-rail__more-body .novel-tree-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-rail__more-body .novel-tree-row .ui-badge{display:none}
+.nv-rail__more-body .novel-tree-actions{flex:none;display:flex;gap:0}
+.nv-rail__more-body .wb-command{position:static}
+.nv-rail__more-body .feature-launcher{position:relative;left:auto;right:auto;bottom:auto;padding-top:6px}
+.app-shell .nv-rail__more-body nav.feature-launcher__overlay{position:absolute;left:0;right:0;width:auto;bottom:calc(100% + 6px)}
+.nv-rail__more-body .novel-tree-actions{position:absolute;right:4px;opacity:0;transition:opacity 120ms;background:var(--color-bg-surface);border-radius:4px}
+.nv-rail__more-body .novel-tree-row{position:relative}
+.nv-rail__more-body .novel-tree-row:hover .novel-tree-actions,.nv-rail__more-body .novel-tree-row:focus-within .novel-tree-actions{opacity:1}
+.nv-rail__more-body .novel-tree-title{white-space:normal;word-break:break-all}
+.nv-rail__more-body .novel-tree-row:not(:hover):not(:focus-within) .novel-tree-actions{visibility:hidden}
