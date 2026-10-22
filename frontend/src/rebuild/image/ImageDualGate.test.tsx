@@ -23,4 +23,22 @@ describe('ImageRebuild 双画布门控', () => {
     expect(document.querySelector('[data-pro-only]')).not.toBeNull();
     expect(document.body.textContent).toContain('双画布');
   });
+  // [HERMIA-FE-20261022 U3b]
+  it('basic browse hides 「专业 · 创作画布」 fold; pro shows it', () => {
+    vi.stubGlobal('fetch', vi.fn(() => json([])));
+    const r = render(<ImageRebuild novelId="n1" view="browse" onViewChange={() => {}} shellMode="basic" />);
+    expect(document.querySelector('details.img-pro')).toBeNull();
+    expect(document.body.textContent).not.toContain('专业 · 创作画布');
+    r.rerender(<ImageRebuild novelId="n1" view="browse" onViewChange={() => {}} shellMode="pro" />);
+    expect(document.querySelector('details.img-pro')).not.toBeNull();
+  });
+  it('canvas header has no 「专业」 badge in either mode', () => {
+    vi.stubGlobal('fetch', vi.fn(() => json([])));
+    for (const m of ['basic', 'pro'] as const) {
+      render(<ImageRebuild novelId="n1" view="canvas" onViewChange={() => {}} shellMode={m} />);
+      const head = document.querySelector('.mw-head[aria-label="图片子入口"]')!;
+      expect(head.querySelector('.nv-badge')).toBeNull();
+      cleanup();
+    }
+  });
 });

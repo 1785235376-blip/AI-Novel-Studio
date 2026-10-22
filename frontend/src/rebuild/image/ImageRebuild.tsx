@@ -90,7 +90,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   if (view === 'canvas') return (
     <div className="img-ws" data-img-view="canvas" aria-label="图片工作区">
       {chrome}
-      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>图片画布</h2><span className="nv-badge nv-badge--off">专业</span><span className="nv-spacer" />
+      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>图片画布</h2>{/* [HERMIA-FE-20261022 U3b] 去掉「专业」小标：画布普通/专业都有，小标两种模式都不准确 */}<span className="nv-spacer" />
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button>
         <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>漫画制作</button></div>
       {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
@@ -188,11 +188,12 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
           </div>
         </aside>
       </div>
-      <details className="img-pro" open={proOpen} onToggle={e => setProOpen((e.target as HTMLDetailsElement).open)}>
+      {/* [HERMIA-FE-20261022 U3b] 「专业 · 创作画布」折叠只在专业模式渲染，普通模式彻底不显示 */}
+      {isPro ? <details className="img-pro" open={proOpen} onToggle={e => setProOpen((e.target as HTMLDetailsElement).open)}>
         <summary>专业 · 创作画布</summary>
         <div className="img-pro-body">参考与生成节点放在黑色无限画布上，只属于图片，不进小说正文。
           <div><button type="button" className="nv-btn" onClick={() => onViewChange('canvas')}>打开图片画布</button></div></div>
-      </details>
+      </details> : null}
 
       {drawer === 'gen' ? <Drawer title="生成候选" onClose={() => { setDrawer(null); reload(); }}><ImageGenerationPanel novelId={novelId} initialPrompt={prompt || undefined} onInspect={onInspect} /></Drawer> : null}
       {drawer === 'refs' ? <Drawer title="参考与视觉上下文" onClose={() => { setDrawer(null); reload(); }}><VisualContextPanel novelId={novelId} /></Drawer> : null}
