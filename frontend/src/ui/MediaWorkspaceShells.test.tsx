@@ -4,6 +4,7 @@
  * W-UX-10: IMAGE comic sub-entry + thicker hero.
  * W-UX-11: AUDIO single-clip listen + send-edit confirm aligned with VIDEO.
  * W-UX-12: ASSETS SendTo IMAGE/VIDEO/AUDIO/EDIT + empty/lineage honest.
+ * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
@@ -400,6 +401,98 @@ describe('MediaWorkspaceShells', () => {
     expect(host.querySelector('[data-lineage="empty"]')).toBeTruthy();
     expect(host.querySelector('[data-lineage-empty="true"]')).toBeTruthy();
     expect(host.textContent).toMatch(/血缘 · 诚实空|无已声明关系/);
+    expect(host.textContent).not.toMatch(/已就绪/);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-13 IMAGE send-to-video requires explicit confirm; cancel stays IMAGE; ≠ novel/≠ NLE', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <>
+        <ImageWorkspaceRail onSendToVideo={send} />
+        <ImageWorkspaceShell novelId="n1" onInspect={vi.fn()} onSendToVideo={send} />
+        <ImageEmptyCta onSendToVideo={send} />
+      </>,
+    ));
+    expect(host.querySelectorAll('[data-send-video="true"]').length).toBeGreaterThanOrEqual(2);
+    expect(host.textContent).toMatch(/送去视频当参考/);
+    expect(host.textContent).toMatch(/≠ 小说|不进小说|≠ EDIT|≠ NLE|≠ 剪辑/);
+    expect(host.querySelector('[data-video-layer]')).toBeNull();
+    expect(host.querySelector('[data-nle-tracks]')).toBeNull();
+    expect(host.querySelectorAll('.nle-row').length).toBe(0);
+    expect(host.textContent).not.toMatch(/已就绪/);
+
+    // click CTA → dialog, callback NOT yet
+    act(() => {
+      (host.querySelector('[data-image-cta="send-video"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).not.toHaveBeenCalled();
+    expect(host.querySelector('[data-send-video-dialog="true"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/显式手递 → 视频当参考/);
+
+    // cancel → stay, no switch
+    act(() => {
+      (host.querySelector('[data-send-video-cancel="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).not.toHaveBeenCalled();
+    expect(host.querySelector('[data-send-video-dialog="true"]')).toBeNull();
+
+    // confirm → VIDEO callback only
+    act(() => {
+      (host.querySelector('[data-image-cta="send-video"]') as HTMLButtonElement)?.click();
+    });
+    act(() => {
+      (host.querySelector('[data-send-video-confirm="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+
+    // EmptyCta / Rail path also confirm-first
+    act(() => {
+      const btns = [...host.querySelectorAll('[data-send-video="true"]')] as HTMLButtonElement[];
+      btns[btns.length - 1]?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    act(() => {
+      (host.querySelector('[data-send-video-confirm="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(2);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-13 ModuleWorkspaceRoutes IMAGE confirm → onModuleChange(VIDEO); cancel keeps IMAGE', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const onModuleChange = vi.fn();
+    const scope = {workspace: 'w', project: 'p', storyline: 's', branch: 'b'};
+    act(() => root.render(
+      <ModuleWorkspaceRoutes module="IMAGE" onModuleChange={onModuleChange} scope={scope} actor="author" novelId="novel-1" />,
+    ));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('IMAGE');
+    expect(host.querySelector('[data-image-hero="preview"]')).toBeTruthy();
+    expect(host.querySelector('[data-send-video="true"]')).toBeTruthy();
+
+    act(() => {
+      (host.querySelector('[data-image-cta="send-video"]') as HTMLButtonElement)?.click();
+    });
+    expect(onModuleChange).not.toHaveBeenCalled();
+    act(() => {
+      (host.querySelector('[data-send-video-cancel="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(onModuleChange).not.toHaveBeenCalled();
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('IMAGE');
+
+    act(() => {
+      (host.querySelector('[data-image-cta="send-video"]') as HTMLButtonElement)?.click();
+    });
+    act(() => {
+      (host.querySelector('[data-send-video-confirm="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(onModuleChange).toHaveBeenCalledWith('VIDEO');
+    expect(onModuleChange).not.toHaveBeenCalledWith('NOVEL');
+    expect(onModuleChange).not.toHaveBeenCalledWith('EDIT');
+    expect(host.querySelector('[data-nle-tracks]')).toBeNull();
     expect(host.textContent).not.toMatch(/已就绪/);
     act(() => root.unmount());
   });

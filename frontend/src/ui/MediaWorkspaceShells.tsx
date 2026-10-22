@@ -10,6 +10,7 @@
  * W-UX-10: IMAGE comic sub-entry clickable (rail+toolbar, no 7th chrome) + preview/comic hero thicker; ≠ VIDEO/EDIT.
  * W-UX-11: AUDIO single-clip listen visible + send-edit confirm copy aligned with VIDEO; 0 NLE tracks.
  * W-UX-12: ASSETS SendTo explicit IMAGE/VIDEO/AUDIO/EDIT + empty-selection honest CTA; lineage empty honest.
+ * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE; ≠ novel / ≠ NLE; no fake green.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -30,12 +31,16 @@ import './MediaWorkspaceShells.css';
 export function ImageWorkspaceRail({
   subview = 'studio',
   onSubviewChange,
+  onSendToVideo,
 }: {
   subview?: 'studio' | 'comic';
   onSubviewChange?: (v: 'studio' | 'comic') => void;
+  /** [HERMIA-FE-20261022 W-UX-13] Explicit handoff IMAGE → VIDEO as reference (confirm first). */
+  onSendToVideo?: () => void;
 }) {
+  const [sendConfirm, setSendConfirm] = useState(false);
   return (
-    <nav className="media-ws-rail" aria-label="图片工作区导航">
+    <nav className="media-ws-rail" aria-label="图片工作区导航" data-image-rail="true">
       <div className="media-ws-rail__eyebrow">图片</div>
       <strong>视觉素材</strong>
       <ul>
@@ -59,6 +64,24 @@ export function ImageWorkspaceRail({
       </ul>
       <p className="media-ws-rail__hint">漫画＝图片 › 子入口（不升顶栏）。≠ 视频三层 · ≠ 剪辑 NLE · 不进小说中区。</p>
       <p className="media-ws-rail__hint">专业可展开创作画布（仍属 IMAGE 作用域）。</p>
+      {onSendToVideo && (
+        <button
+          type="button"
+          className="media-ws-rail__item media-ws-rail__item--send"
+          data-send-video="true"
+          onClick={() => setSendConfirm(true)}
+        >送去视频当参考（显式）</button>
+      )}
+      {sendConfirm && onSendToVideo && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去视频当参考确认" data-send-video-dialog="true">
+          <strong>显式手递 → 视频当参考</strong>
+          <p>将离开图片工作区，打开顶栏「视频」镜头/画布工作区，以当前图为参考候选。不进小说中区；本动作 ≠ 剪辑 NLE。图片侧选区保留；不会静默写入任何镜头。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" data-send-video-confirm="true" onClick={() => { setSendConfirm(false); onSendToVideo(); }}>确认送去视频当参考</Button>
+            <Button type="button" data-send-video-cancel="true" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -162,6 +185,7 @@ export function ImageWorkspaceShell({
   novelId, inspection, onInspect, shellMode = 'basic',
   subview: subviewProp,
   onSubviewChange,
+  onSendToVideo,
 }: {
   novelId: string;
   inspection?: ImageInspection;
@@ -171,6 +195,8 @@ export function ImageWorkspaceShell({
   /** [HERMIA-FE-20261022 W-UX-10] Controlled subview so Rail/toolbar/EmptyCta stay in sync. */
   subview?: 'studio' | 'comic';
   onSubviewChange?: (v: 'studio' | 'comic') => void;
+  /** [HERMIA-FE-20261022 W-UX-13] Explicit confirm → VIDEO as reference; cancel stays IMAGE. */
+  onSendToVideo?: () => void;
 }) {
   const [subviewLocal, setSubviewLocal] = useState<'studio' | 'comic'>('studio');
   const subview = subviewProp ?? subviewLocal;
@@ -182,6 +208,7 @@ export function ImageWorkspaceShell({
   const [comicPage, setComicPage] = useState('p1');
   const [comicNotice, setComicNotice] = useState<string | null>(null);
   const [thumbSel, setThumbSel] = useState(DEMO_IMAGE_THUMBS[0]!.id);
+  const [sendConfirm, setSendConfirm] = useState(false);
   useEffect(() => {
     setProOpen(shellMode === 'pro');
   }, [shellMode]);
@@ -280,7 +307,20 @@ export function ImageWorkspaceShell({
               <Button type="button" data-image-cta="generate" onClick={() => scrollPanel('图片生成')}>新建生成</Button>
               <Button type="button" data-image-cta="reference" onClick={() => scrollPanel('视觉上下文')}>加参考</Button>
               <Button type="button" data-open-comic="true" data-image-cta="comic" onClick={() => setSubview('comic')}>打开漫画</Button>
+              {onSendToVideo && (
+                <Button type="button" data-send-video="true" data-image-cta="send-video" onClick={() => setSendConfirm(true)}>送去视频当参考</Button>
+              )}
             </div>
+            {sendConfirm && onSendToVideo && (
+              <div className="media-ws__send-confirm" role="dialog" aria-label="送去视频当参考确认" data-send-video-dialog="true">
+                <strong>显式手递 → 视频当参考</strong>
+                <p>将离开图片工作区，打开顶栏「视频」镜头/画布工作区，以当前图为参考候选。不进小说中区；本动作 ≠ 剪辑 NLE。图片侧选区保留；不会静默写入任何镜头、不假装已生成视频。</p>
+                <div className="media-ws__hero-actions">
+                  <Button type="button" data-send-video-confirm="true" onClick={() => { setSendConfirm(false); onSendToVideo(); }}>确认送去视频当参考</Button>
+                  <Button type="button" data-send-video-cancel="true" onClick={() => setSendConfirm(false)}>取消</Button>
+                </div>
+              </div>
+            )}
             <div className="media-ws__image-thumbs" role="list" aria-label="预览缩略条（演示）">
               {DEMO_IMAGE_THUMBS.map(t => (
                 <button
@@ -323,7 +363,7 @@ export function ImageWorkspaceShell({
             <summary>专业 · 创作画布（IMAGE 作用域 · 非视频三层）</summary>
             <MultimodalDirectorWorkspace mode="image" novelId={novelId} />
           </details>
-          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-10] 图片 ≠ 小说中区 · ≠ VIDEO 三层 · ≠ EDIT NLE · 漫画不升顶栏。</p>
+          <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-13] 送视频当参考须显式确认 · ≠ 小说中区 · ≠ EDIT NLE · 禁假绿 · 漫画不升顶栏。</p>
         </>
       )}
     </div>
@@ -792,21 +832,38 @@ export function AssetsWorkspaceShell({
 }
 
 /** Empty-selection CTA blocks for inspectors (禁空白占位). */
+/** [HERMIA-FE-20261022 W-UX-13] Empty CTA also exposes send-to-video confirm (never silent switch). */
 export function ImageEmptyCta({
   onScrollGenerate,
   onOpenComic,
+  onSendToVideo,
 }: {
   onScrollGenerate?: () => void;
   onOpenComic?: () => void;
+  onSendToVideo?: () => void;
 }): ReactNode {
+  const [sendConfirm, setSendConfirm] = useState(false);
   return (
-    <div className="media-ws-cta" aria-label="图片下一步">
+    <div className="media-ws-cta" aria-label="图片下一步" data-honest-kind="empty_selection">
       <strong>下一步</strong>
-      <p>暂无选中任务。可新建生成、加参考，或打开漫画子入口（图片工作区内）。</p>
+      <p>暂无选中任务。可新建生成、加参考、打开漫画子入口，或显式「送去视频当参考」（确认后切 VIDEO，不进小说中区 / 不进 NLE）。</p>
       <div className="media-ws__hero-actions">
         {onScrollGenerate && <Button type="button" onClick={onScrollGenerate}>去图片生成</Button>}
         {onOpenComic && <Button type="button" data-open-comic="true" onClick={onOpenComic}>打开漫画</Button>}
+        {onSendToVideo && (
+          <Button type="button" data-send-video="true" onClick={() => setSendConfirm(true)}>送去视频当参考</Button>
+        )}
       </div>
+      {sendConfirm && onSendToVideo && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去视频当参考确认" data-send-video-dialog="true">
+          <strong>显式手递 → 视频当参考</strong>
+          <p>将离开图片工作区，打开顶栏「视频」镜头/画布工作区。不进小说中区；≠ 剪辑 NLE。取消则留在图片。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" data-send-video-confirm="true" onClick={() => { setSendConfirm(false); onSendToVideo(); }}>确认送去视频当参考</Button>
+            <Button type="button" data-send-video-cancel="true" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
