@@ -28,6 +28,12 @@
 .context-bar__chapter{color:var(--color-text-primary);font-weight:600}
 .context-bar__save{color:var(--color-text-muted)}
 .context-bar__hint{color:var(--color-accent-primary)}
+/* [HERMIA-FE-20261022 N-UX-09] ContextBar sunk CTA + folded inspector occupies 0 width (no empty shell) */
+.context-bar__cta{margin-left:auto;flex:0 0 auto;min-height:28px;padding:0 12px;border:1px solid var(--color-accent-primary);border-radius:var(--radius-sm);background:var(--color-accent-primary);color:var(--color-text-inverse);font-size:12px;font-weight:650;cursor:pointer}
+.context-bar__cta:hover:not(:disabled){background:var(--color-accent-hover)}
+.context-bar__cta:disabled{opacity:.55;cursor:not-allowed}
+.app-shell.is-inspector-collapsed .workspace-inspector{display:none;width:0;min-width:0;max-width:0;padding:0;border:0;overflow:hidden;pointer-events:none}
+
 .app-shell[data-shell-mode="basic"] .graph-canvas__minimap-row,
 .app-shell[data-shell-mode="basic"] [aria-label="显示小地图"]{display:none!important}
 

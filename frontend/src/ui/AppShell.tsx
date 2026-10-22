@@ -9,6 +9,11 @@ import {
 } from "lucide-react";
 import { IconButton } from "./primitives";
 import { ThemeToggle } from "./ThemeToggle";
+import {
+  VIEWPORT_FORCE_DRAWER,
+  resolveInspectorOpenPreference,
+  readInspectorOpenSaved,
+} from "../workbench/layout";
 import { STUDIO_MODULES, STUDIO_MODULE_OVERFLOW } from "./moduleRegistry";
 import type { StudioModule } from "./moduleRegistry";
 import {
@@ -188,17 +193,22 @@ export interface WritingContextLabels {
   chapterLabel?: string;
   saveLabel?: string;
   onOpenOverview?: () => void;
+  /** [HERMIA-FE-20261022 N-UX-09] Primary CTA sunk into ContextBar when inspector folded. */
+  collapsedCta?: { label: string; kind?: string; onClick: () => void; disabled?: boolean };
 }
 
 export function ContextBar({
   scope,
   projectNoun = "小说",
   writing,
+  showCollapsedCta = false,
 }: {
   scope: ScopeLabels;
   projectNoun?: ProjectNoun;
   /** Optional novel writing breadcrumb — omitted keeps legacy markup byte-stable. */
   writing?: WritingContextLabels;
+  /** [HERMIA-FE-20261022 N-UX-09] When inspector width is 0, surface primary CTA here. */
+  showCollapsedCta?: boolean;
 }) {
   const fallback = "未选择";
   // [HERMIA-FE-20261022 N-UX-08] Author-first when writing: 《书名》·小说·章序 — ban pure 项目腔
@@ -246,6 +256,18 @@ export function ContextBar({
             <i>·</i>
             <span className="context-bar__hint">点此完善概览</span>
           </>
+        ) : null}
+        {showCollapsedCta && writing.collapsedCta ? (
+          <button
+            type="button"
+            className="context-bar__cta"
+            data-context-cta="true"
+            data-cta-kind={writing.collapsedCta.kind || undefined}
+            disabled={writing.collapsedCta.disabled}
+            onClick={writing.collapsedCta.onClick}
+          >
+            {writing.collapsedCta.label}
+          </button>
         ) : null}
       </nav>
     );
@@ -313,16 +335,13 @@ export function AppShell({
     Record<string, TaskSummary>
   >({});
   const [failedTasksOpen, setFailedTasksOpen] = useState(false);
-  // [HERMIA-FE-20261022 N-UX-03] Persist fold; default expanded (overnight), narrow forces closed.
+  // [HERMIA-FE-20261022 N-UX-09] Persist fold; ≥1280 overnight expanded; <1280 soft fold; <1100 force drawer.
+  // Does NOT change N-UX-04 product default (still expanded on wide / no saved).
   const [inspectorOpen, setInspectorOpen] = useState(() => {
     if (typeof window === "undefined") return true;
-    if (window.matchMedia?.("(max-width: 1100px)").matches) return false;
-    try {
-      const saved = localStorage.getItem("studio-inspector-open");
-      if (saved === "0") return false;
-      if (saved === "1") return true;
-    } catch { /* session-only ok */ }
-    return true;
+    const saved = readInspectorOpenSaved(window.localStorage);
+    const width = typeof window.innerWidth === "number" ? window.innerWidth : VIEWPORT_FORCE_DRAWER;
+    return resolveInspectorOpenPreference({ viewportWidth: width, saved });
   });
   const [inspectorWidth, setInspectorWidth] = useState(() => {
     if (typeof window === "undefined") return 340;
@@ -369,7 +388,8 @@ export function AppShell({
     return () => window.removeEventListener("keydown", close);
   }, [inspectorOpen, focusMode]);
   useEffect(() => {
-    const compact = window.matchMedia?.("(max-width: 1100px)");
+    // Force-drawer only at <1100 — soft <1280 is init/default, not a live force-close (keeps user open).
+    const compact = window.matchMedia?.(`(max-width: ${VIEWPORT_FORCE_DRAWER}px)`);
     if (!compact) return;
     const followViewport = (event: MediaQueryListEvent) => {
       if (event.matches) setInspectorOpen(false);
@@ -513,6 +533,8 @@ export function AppShell({
       style={shellStyle}
       data-module={module}
       data-shell-mode={shellMode}
+      data-inspector-open={visibleInspector ? "true" : "false"}
+      data-inspector-fold="n-ux-09"
     >
       <header className="global-header">
         <div className="product-mark" aria-label="AI Novel Studio">
@@ -563,7 +585,7 @@ export function AppShell({
           <span>{actor}</span>
         </span>
       </header>
-      <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} />
+      <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} showCollapsedCta={!visibleInspector && module === "NOVEL"} />
       <main className="workspace-body">
         <aside
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}

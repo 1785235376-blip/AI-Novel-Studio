@@ -1,5 +1,5 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08 / N-UX-09] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
  * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
@@ -89,7 +89,7 @@ export function NovelWriterDock({
             <button type="button" className="novel-writer-dock__link" onClick={onOpenHistory}>版本历史</button>
           )}
         </div>
-        <p className="novel-writer-dock__hint">不需要辅助时可点检视器边缘按钮将右栏收至 0，把空间还给正文（Lumen §4.4）。</p>
+        <p className="novel-writer-dock__hint">不需要辅助时可点边缘按钮将右栏收至 0（宽屏默认展开；&lt;1280 默认折、&lt;1100 强制抽屉；折叠态会记住）。收起后主按钮沉到顶栏写作条（N-UX-09 / Lumen §4.4）。</p>
       </section>
 
       {/* [HERMIA-FE-20261022 N-UX-05] First-tier same-screen reach — existing FL ids only */}

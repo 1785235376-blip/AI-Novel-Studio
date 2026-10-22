@@ -60,8 +60,39 @@ export function saveLayout(st: StorageLike, scope: LayoutScope, layout: Workbenc
 }
 /** Resets UI only. Deliberately touches nothing but the layout key. */
 export function resetLayout(st: StorageLike, scope: LayoutScope): WorkbenchLayout { st.removeItem(layoutKey(scope)); return structuredClone(DEFAULT_LAYOUT); }
-/** Narrow screens: collapse side docks instead of dropping them. */
+
+/** [HERMIA-FE-20261022 N-UX-09] LUMEN_NOVEL_IA §4.4 narrow breakpoints — soft ≠ force. */
+export const VIEWPORT_SOFT_COLLAPSE = 1280;
+/** Below this: inspector is a forced drawer and starts closed. */
+export const VIEWPORT_FORCE_DRAWER = 1100;
+
+/**
+ * [HERMIA-FE-20261022 N-UX-09] Resolve novel/shell inspector open preference.
+ * - ≥1280: overnight default **expanded** (saved "0" honored) — does **not** change N-UX-04 product default
+ * - <1280: soft default **folded** (saved "1" honored so refresh keeps open)
+ * - <1100: force closed (drawer CSS); ignore saved until viewport widens
+ */
+export function resolveInspectorOpenPreference(input: {
+  viewportWidth: number;
+  saved: '0' | '1' | null;
+}): boolean {
+  const w = Number.isFinite(input.viewportWidth) ? input.viewportWidth : VIEWPORT_SOFT_COLLAPSE;
+  if (w < VIEWPORT_FORCE_DRAWER) return false;
+  if (w < VIEWPORT_SOFT_COLLAPSE) return input.saved === '1';
+  return input.saved !== '0';
+}
+
+export function readInspectorOpenSaved(st: StorageLike | null): '0' | '1' | null {
+  if (!st) return null;
+  try {
+    const v = st.getItem('studio-inspector-open');
+    if (v === '0' || v === '1') return v;
+  } catch { /* session-only */ }
+  return null;
+}
+
+/** [HERMIA-FE-20261022 N-UX-09] Narrow screens: collapse side docks instead of dropping them (<1280 soft). */
 export function adaptToViewport(l: WorkbenchLayout, width: number): WorkbenchLayout {
-  if (width >= 1280) return l;
+  if (width >= VIEWPORT_SOFT_COLLAPSE) return l;
   return {...l, placements: l.placements.map(p => p.dock === 'main' ? p : {...p, collapsed: true})};
 }

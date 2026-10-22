@@ -1986,6 +1986,8 @@ export default function App() {
             chapterLabel: chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : undefined,
             saveLabel: chapter.data ? saveDisplayLabel : undefined,
             onOpenOverview: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } }),
+            // [HERMIA-FE-20261022 N-UX-09] Sink primary CTA to ContextBar when right dock width → 0
+            collapsedCta: { label: primaryCta.label, kind: primaryCta.kind, onClick: primaryCta.onClick, disabled: primaryCta.disabled },
           }}
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}

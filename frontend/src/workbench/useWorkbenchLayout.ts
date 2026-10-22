@@ -1,6 +1,8 @@
 /**
- * [HERMIA-FE-20261022 H-P1-01] layout.mode basic|pro — single source via loadLayout/saveLayout.
+ * [HERMIA-FE-20261022 H-P1-01 / N-UX-09] layout.mode basic|pro — single source via loadLayout/saveLayout.
  * Switching mode must not clear selection / panel (caller enforces pro→basic Tab rule).
+ * N-UX-09: side-dock soft collapse uses adaptToViewport / VIEWPORT_* in layout.ts;
+ * AppShell inspector fold preference shares resolveInspectorOpenPreference (≠ N-UX-04 default).
  */
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {

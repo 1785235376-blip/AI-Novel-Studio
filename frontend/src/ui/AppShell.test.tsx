@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppShell, ModuleSwitcher, moduleForTaskSource } from "./AppShell";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
+beforeEach(() => {
+  // [HERMIA-FE-20261022 N-UX-09] Wide viewport = overnight expanded default for existing shells.
+  Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: 1440 });
+});
 afterEach(() => host?.remove());
 it('maps every published task family without sending unknown failures to video',()=>{
   expect(moduleForTaskSource('plugin')).toBe('PLUGIN');
@@ -645,6 +649,126 @@ describe("AppShell X-UX-02/03/04/05 wave4", () => {
     act(() => root.render(<AppShell module="IMAGE" {...base} />));
     expect(host.querySelector(".app-shell")?.getAttribute("data-shell-mode")).toBe("pro");
     expect(host.querySelector(".app-shell")?.getAttribute("data-module")).toBe("IMAGE");
+    act(() => root.unmount());
+  });
+});
+
+describe("AppShell N-UX-09 fold persistence + narrow", () => {
+  it("defaults expanded at wide with no saved preference (≠ N-UX-04 flip)", () => {
+    localStorage.removeItem("studio-inspector-open");
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
+    host = document.createElement("div");
+    document.body.append(host);
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    expect(host.querySelector(".app-shell")?.getAttribute("data-inspector-open")).toBe("true");
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(false);
+    act(() => root.unmount());
+  });
+
+  it("soft-defaults folded at <1280 when no saved preference", () => {
+    localStorage.removeItem("studio-inspector-open");
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1200 });
+    host = document.createElement("div");
+    document.body.append(host);
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(true);
+    expect(host.querySelector(".app-shell")?.getAttribute("data-inspector-open")).toBe("false");
+    // Folded inspector must not leave an empty shell node taking layout width.
+    expect(host.querySelector("#workspace-inspector")?.getAttribute("aria-hidden")).toBe("true");
+    act(() => root.unmount());
+  });
+
+  it("force-defaults folded at <1100 even if saved open", () => {
+    localStorage.setItem("studio-inspector-open", "1");
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1000 });
+    host = document.createElement("div");
+    document.body.append(host);
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+        />,
+      ),
+    );
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(true);
+    act(() => root.unmount());
+  });
+
+  it("honors saved open on soft-narrow <1280 and sinks CTA into ContextBar when folded", () => {
+    localStorage.setItem("studio-inspector-open", "1");
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1200 });
+    host = document.createElement("div");
+    document.body.append(host);
+    const onCta = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          writingContext={{
+            bookTitle: "夜航船",
+            chapterLabel: "第 1 章",
+            collapsedCta: { label: "继续写", kind: "continue", onClick: onCta },
+          }}
+        />,
+      ),
+    );
+    // Soft-narrow + saved open → inspector visible; no sunk CTA yet
+    expect(host.querySelector(".app-shell")?.getAttribute("data-inspector-open")).toBe("true");
+    expect(host.querySelector("[data-context-cta]")).toBeNull();
+    act(() =>
+      host.querySelector<HTMLButtonElement>('.workspace-inspector__controls [aria-label="收起侧栏"]')!.click(),
+    );
+    expect(localStorage.getItem("studio-inspector-open")).toBe("0");
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(true);
+    const sunk = host.querySelector<HTMLButtonElement>("[data-context-cta=\"true\"]");
+    expect(sunk?.textContent).toBe("继续写");
+    expect(sunk?.getAttribute("data-cta-kind")).toBe("continue");
+    act(() => sunk!.click());
+    expect(onCta).toHaveBeenCalled();
     act(() => root.unmount());
   });
 });

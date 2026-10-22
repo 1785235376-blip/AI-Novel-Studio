@@ -1,6 +1,6 @@
 // [HERMIA-FE-20261022] Contract tests for workbench core. Real logic, no network mocks.
 import {describe, expect, it} from 'vitest';
-import {LifecycleTracker, bindConfirmation, checkConfirmation, guardLate, ActionRegistry, PanelRegistry, loadLayout, saveLayout, resetLayout, layoutKey, adaptToViewport, registerDemoExtension, registerFeaturePanels, DEMO_PANEL_ID, shouldHandleShortcut, type ActionContext} from './index';
+import {LifecycleTracker, bindConfirmation, checkConfirmation, guardLate, ActionRegistry, PanelRegistry, loadLayout, saveLayout, resetLayout, layoutKey, adaptToViewport, resolveInspectorOpenPreference, VIEWPORT_SOFT_COLLAPSE, VIEWPORT_FORCE_DRAWER, registerDemoExtension, registerFeaturePanels, DEMO_PANEL_ID, shouldHandleShortcut, type ActionContext} from './index';
 import {FEATURE_GROUPS} from '../ui/FeatureLauncher';
 
 class Mem { m = new Map<string, string>(); getItem(k: string) { return this.m.get(k) ?? null; } setItem(k: string, v: string) { this.m.set(k, v); } removeItem(k: string) { this.m.delete(k); } }
@@ -84,6 +84,27 @@ describe('panels + layout (§7.1)', () => {
     const st = new Mem(); st.setItem(layoutKey(scope), JSON.stringify({schemaVersion: 1, panels: [{id: 'history', zone: 'right'}, {id: 'gone', zone: 'left'}]}));
     const r = loadLayout(st, scope, p); expect(r.droppedPanels).toEqual(['gone']); expect(r.layout.placements[0].dock).toBe('right');
     expect(adaptToViewport(r.layout, 1024).placements[0].collapsed).toBe(true);
+    expect(adaptToViewport(r.layout, VIEWPORT_SOFT_COLLAPSE).placements[0].collapsed).toBeUndefined();
+    expect(adaptToViewport(r.layout, VIEWPORT_SOFT_COLLAPSE - 1).placements[0].collapsed).toBe(true);
+  });
+});
+
+describe('N-UX-09 inspector fold policy (§4.4)', () => {
+  it('keeps overnight default expanded at ≥1280 and does not flip N-UX-04', () => {
+    expect(resolveInspectorOpenPreference({viewportWidth: 1440, saved: null})).toBe(true);
+    expect(resolveInspectorOpenPreference({viewportWidth: VIEWPORT_SOFT_COLLAPSE, saved: null})).toBe(true);
+    expect(resolveInspectorOpenPreference({viewportWidth: 1440, saved: '0'})).toBe(false);
+    expect(resolveInspectorOpenPreference({viewportWidth: 1440, saved: '1'})).toBe(true);
+  });
+  it('soft-folds below 1280 but honors explicit open persistence', () => {
+    expect(resolveInspectorOpenPreference({viewportWidth: VIEWPORT_SOFT_COLLAPSE - 1, saved: null})).toBe(false);
+    expect(resolveInspectorOpenPreference({viewportWidth: 1200, saved: '0'})).toBe(false);
+    expect(resolveInspectorOpenPreference({viewportWidth: 1200, saved: '1'})).toBe(true);
+  });
+  it('force-closes below 1100 regardless of saved', () => {
+    expect(VIEWPORT_FORCE_DRAWER).toBe(1100);
+    expect(resolveInspectorOpenPreference({viewportWidth: VIEWPORT_FORCE_DRAWER - 1, saved: '1'})).toBe(false);
+    expect(resolveInspectorOpenPreference({viewportWidth: 800, saved: null})).toBe(false);
   });
 });
 
