@@ -19,7 +19,7 @@ export function pluginState(p: any): {label: '已启用' | '已安装' | '未审
   const granted = new Set<string>(Array.isArray(p?.granted_permissions) ? p.granted_permissions : []);
   const reviewed = p?.validated !== false
     && (status === 'PERMISSIONS_REVIEWED' || status === 'DISABLED')
-    && !!p?.permission_review && typeof p.permission_review === 'object'
+    && !!p?.permission_review && typeof p.permission_review === 'object' && Object.keys(p.permission_review).length > 0 /* [HERMIA-FE-20261022 R7-FIX2] 空 review 视为未审核 */
     && req.every(x => granted.has(x));
   if (!reviewed) return {label: '未审核', tone: 'off', canEnable: false};
   return {label: '已安装', tone: 'part', canEnable: true};

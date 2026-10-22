@@ -69,5 +69,8 @@ describe('PluginsRebuild', () => {
     expect(pluginState({...base, status: 'REVIEW_REQUIRED', validated: false}).canEnable).toBe(false);
     expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {reviewed_by: 'u'}}).canEnable).toBe(false);
     expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {reviewed_by: 'u'}, granted_permissions: ['fs.read']}).canEnable).toBe(true);
+    // [HERMIA-FE-20261022 R7-FIX2] 空 permission_review 视为未审核
+    expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {}, granted_permissions: ['fs.read']}).canEnable).toBe(false);
+    expect(pluginState({...base, status: 'DISABLED', permission_review: {}, granted_permissions: ['fs.read']}).label).toBe('未审核');
   });
 });

@@ -47,7 +47,7 @@ export function rbError(err: unknown): string {
     if (err.status === 401 || code === 'SESSION_REQUIRED') return '需要登录会话';
     if (err.status === 403) return '没有权限';
     if (/[\u4e00-\u9fff]/.test(err.problem.message || '')) return err.problem.message;
-    return `后端返回错误 ${err.status}${code && code !== 'HTTP_ERROR' ? ` · ${code}` : ''}`;
+    return `后端返回错误（${err.status}）`; // [HERMIA-FE-20261022 R7-FIX2] 不露原始错误码
   }
   return '后端不可用（无法连接）';
 }

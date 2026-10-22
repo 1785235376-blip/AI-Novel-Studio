@@ -69,7 +69,7 @@ export function ControlRebuild({advanced, onOpenWorkflow}: {advanced?: ReactNode
           {groups.map(([g, rs]) => <div key={g} className="hub-group"><div className="hub-gh">{g}</div>
             {rs.map(r => <div key={r.key} className="model-row" data-hub-row={r.group}>
               <b>{r.name}</b>
-              {r.simulated ? <Badge tone="part">模拟</Badge> : <Badge tone={r.configured && r.verified ? 'ok' : r.configured ? 'part' : 'off'}>{r.configured ? '已配置' : '未配置'}</Badge>/* [HERMIA-FE-20261022 R7-FIX] 未验证/连不上时「已配置」用中性色，不给绿 */}
+              {r.simulated ? <Badge tone="part">模拟</Badge> : <Badge tone={r.configured && r.verified ? 'ok' : 'off' /* [HERMIA-FE-20261022 R7-FIX2] 未验证用灰色 */}>{r.configured ? '已配置' : '未配置'}</Badge>/* [HERMIA-FE-20261022 R7-FIX] 未验证/连不上时「已配置」用中性色，不给绿 */}
               <Badge tone={r.verified ? 'ok' : 'off'}>{r.verified ? '已验证' : r.verified === false ? '连不上' : '未验证'}</Badge>
               <span className="hub-where">{r.where}</span></div>)}
           </div>)}

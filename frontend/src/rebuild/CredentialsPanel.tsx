@@ -46,7 +46,8 @@ function CredentialsPanelInner() {
             <StateTag tone="muted">可用模型 {h.ready_models}/{h.models}</StateTag><StateTag tone="muted">运行时 {h.runtimes}</StateTag>
             {h.mutation_authorization && !h.mutation_authorization.can_mutate ? <StateTag tone="warn">修改模型需登录会话</StateTag> : null}</>}
     </div>
-    {anyDegraded ? <p className="rb-note" data-tone="err">系统密钥库不可用（{anyDegraded.degraded_reason || 'degraded'}）：密钥只存在内存，重启后丢失。</p> : null}
+    {/* [HERMIA-FE-20261022 R7-FIX2] 不露原始错误码 */}
+    {anyDegraded ? <p className="rb-note" data-tone="err">系统密钥库不可用：密钥只存在内存，重启后丢失。</p> : null}
     <h2 className="rb-h">密钥</h2>
     <ul className="rb-list">{CREDENTIAL_PROVIDERS.map((p, i) => <ProviderRow key={p} provider={p} status={creds[i].data} error={creds[i].error} />)}</ul>
   </section>;
