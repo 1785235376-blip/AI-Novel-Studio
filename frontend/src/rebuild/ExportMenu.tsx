@@ -1,7 +1,7 @@
 // [HERMIA-FE-20261022 REBUILD-1] 导出：小说导出 GET /novels/{nid}/export + 成片导出 /exports（列表/新建/下载）。
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Popover, StateTag, Tabs, downloadText, type Tone } from './primitives';
+import { WithQuery, Popover, StateTag, Tabs, downloadText, type Tone } from './primitives';
 import { rb, rbError, NOVEL_EXPORT_FORMATS, RENDER_EXPORT_FORMATS, type ExportJob } from './rebuildApi';
 
 const jobTone = (s: string): Tone => s === 'completed' || s === 'succeeded' ? 'ok' : s === 'failed' || s === 'cancelled' ? 'err' : 'warn';
@@ -49,5 +49,5 @@ export function ExportBody({ novelId, initialTab = 'novel' }: { novelId: string;
 }
 
 export function ExportMenu({ novelId, initialTab }: { novelId: string; initialTab?: 'novel' | 'render' }) {
-  return <Popover label="导出" testId="rb-export">{() => <ExportBody novelId={novelId} initialTab={initialTab} />}</Popover>;
+  return <Popover label="导出" testId="rb-export">{() => <WithQuery><ExportBody novelId={novelId} initialTab={initialTab} /></WithQuery>}</Popover>;
 }

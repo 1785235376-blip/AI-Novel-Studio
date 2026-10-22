@@ -38,3 +38,14 @@ export function downloadText(filename: string, content: string, type = 'text/pla
   const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
+// [HERMIA-FE-20261022 REBUILD] Use the app QueryClient when mounted inside it; otherwise (isolated
+// routes/tests) provide a private one so rebuild panels never crash their host.
+import { QueryClient, QueryClientContext, QueryClientProvider } from '@tanstack/react-query';
+import { useContext } from 'react';
+let fallbackClient: QueryClient | null = null;
+export function WithQuery({ children }: { children: ReactNode }) {
+  const existing = useContext(QueryClientContext);
+  if (existing) return <>{children}</>;
+  fallbackClient ??= new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return <QueryClientProvider client={fallbackClient}>{children}</QueryClientProvider>;
+}
