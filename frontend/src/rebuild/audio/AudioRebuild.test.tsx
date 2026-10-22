@@ -45,4 +45,17 @@ describe('AudioRebuild', () => {
     expect(audioItemsFrom([{voice: 'v'}], {chapters: [{chapter_id: 'c', title: 'T', audio_count: 2}]}).map(i => i.kind)).toEqual(['人声', '有声书']);
     expect(bookProgress({chapters: [{audio_count: 1}, {production_status: 'QUEUED'}]})).toEqual({total: 2, done: 1, queued: 1});
   });
+  it('[U4] mode gating: normal hides 配音/混音台/选区/增益; pro shows them; pro→normal falls back to 声音库', async () => {
+    speech = [{voice: 'alloy', audio_uri: '/a.mp3'}];
+    const {rerender} = render(<AudioRebuild novelId="n1" shellMode="pro" />);
+    fireEvent.click(await screen.findByRole('option', {name: /配音 1/}));
+    expect(document.querySelector('#audSelRegion')).toBeTruthy();
+    fireEvent.click(screen.getAllByRole('button', {name: '混音台'})[0]);
+    expect(document.querySelector('.aud-ws')?.getAttribute('data-aud-view')).toBe('mix');
+    rerender(<AudioRebuild novelId="n1" shellMode="basic" />);
+    await waitFor(() => expect(document.querySelector('.aud-ws')?.getAttribute('data-aud-view')).toBe('lib'));
+    expect(document.querySelector('#audSelRegion')).toBeNull();
+    expect(screen.queryByRole('button', {name: '混音台'})).toBeNull();
+    expect(screen.getByRole('option', {name: /配音 1/}).getAttribute('aria-selected')).toBe('true');
+  });
 });

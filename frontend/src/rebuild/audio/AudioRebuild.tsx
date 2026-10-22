@@ -34,10 +34,14 @@ export function bookProgress(manifest: any) {
 }
 const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
-export function AudioRebuild({novelId, onSendToEdit, onOpenAssets, onOpenControl}: {
+export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpenAssets, onOpenControl}: {
   novelId: string; shellMode?: 'basic' | 'pro'; onSendToEdit?: () => void; onOpenAssets?: () => void; onOpenControl?: () => void;
 }) {
   const [view, setView] = useState<AudioView>('lib');
+  // [HERMIA-FE-20261022 U4] 普通：声音库 + 试听 + 送剪辑；专业另有 配音导演 / 混音台 / 选区·增益。专业→普通回落声音库，数据不丢。
+  const isPro = shellMode === 'pro';
+  const views: AudioView[] = isPro ? ['lib', 'tts', 'mix'] : ['lib'];
+  useEffect(() => { if (!isPro && view !== 'lib') setView('lib'); }, [isPro, view]);
   const [speech, setSpeech] = useState<any[] | null>(null);
   const [manifest, setManifest] = useState<any>(null);
   const [providers, setProviders] = useState<any[] | null>(null);
@@ -73,7 +77,7 @@ export function AudioRebuild({novelId, onSendToEdit, onOpenAssets, onOpenControl
       <h2>声音 · {VIEW_LABEL[view]}</h2>
       <span className="nv-badge nv-badge--off">{loaded ? `${items.length} 条` : '读取中'}</span>
       <span className="nv-spacer" />
-      {(['lib', 'tts', 'mix'] as AudioView[]).map(v => <button key={v} type="button" className="nv-btn" aria-pressed={view === v} onClick={() => { setView(v); if (v === 'tts') setFocus('speech'); }}>{VIEW_LABEL[v]}</button>)}
+      {isPro && views.map(v => <button key={v} type="button" className="nv-btn" aria-pressed={view === v} onClick={() => { setView(v); if (v === 'tts') setFocus('speech'); }}>{VIEW_LABEL[v]}</button>)}
       {cur ? <button type="button" className="nv-btn nv-btn--primary" data-send-edit="audio" onClick={askSend}>送到剪辑…</button>
         : <><button type="button" className="nv-btn nv-btn--primary" data-aud-primary="new-speech" onClick={() => open('speech')}>新建配音</button>
           <button type="button" className="nv-btn" data-send-edit="audio" onClick={askSend}>送到剪辑…</button></>}
@@ -114,8 +118,8 @@ export function AudioRebuild({novelId, onSendToEdit, onOpenAssets, onOpenControl
             <div className="wave-bar">
               <button type="button" className="nv-btn" id="audPlay" disabled={!cur?.uri} aria-label={playing ? '暂停' : '播放'} onClick={togglePlay}>{playing ? '❚❚' : '▶'}</button>
               <span className="tc" id="audTc">{fmt(t.pos)} / {fmt(t.dur)}</span>
-              <button type="button" className="nv-btn" id="audSelRegion" disabled={!cur?.uri} title="只在本地试听，不保存">选区</button>
-              <button type="button" className="nv-btn" id="audGain" disabled={!cur?.uri} title="只在本地试听，不保存">增益 0 dB</button>
+              {isPro ? <><button type="button" className="nv-btn" id="audSelRegion" disabled={!cur?.uri} title="只在本地试听，不保存">选区</button>
+              <button type="button" className="nv-btn" id="audGain" disabled={!cur?.uri} title="只在本地试听，不保存">增益 0 dB</button></> : null}
             </div>
             <div className="aud-focus" role="toolbar" aria-label="声音焦点">
               {([['speech', '配音'], ['gen', '音效'], ['manifest', '有声书清单']] as [Focus, string][]).map(([f, l]) =>
@@ -146,7 +150,7 @@ export function AudioRebuild({novelId, onSendToEdit, onOpenAssets, onOpenControl
         </div>
         <div className="nv-row"><button type="button" className="nv-btn" onClick={askSend}>送去剪辑（显式确认）</button>
           <button type="button" className="nv-btn" onClick={onOpenAssets}>在资产中查看</button>
-          <button type="button" className="nv-btn" onClick={() => setView('mix')}>混音台</button></div>
+          {isPro ? <button type="button" className="nv-btn" data-pro-only="true" onClick={() => setView('mix')}>混音台</button> : null}</div>
       </div></div>
   ) : (
     <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb">
@@ -173,9 +177,9 @@ export function AudioRebuild({novelId, onSendToEdit, onOpenAssets, onOpenControl
   ) : null;
 
   return (
-    <div className="aud-ws" data-aud-view={view} data-nle-tracks="0" aria-label="声音工作区">
+    <div className="aud-ws" data-shell-mode={shellMode} data-aud-view={view} data-nle-tracks="0" aria-label="声音工作区">
       <NovelOrient storageKey="studio-audio-orient-dismissed" what="这部作品的配音、音效和有声书" can="试听、合成配音、生成音效、看有声书进度" effect="这里不做多轨剪辑；准备好后「送去剪辑」" />
-      <NovelModTabs tabs={(['lib', 'tts', 'mix'] as AudioView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
+      {isPro ? <NovelModTabs tabs={views.map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} /> : null}
       {head}
       <div className="mw-split">{left}{view === 'mix' ? mix : hero}{rightSel}</div>
       {confirm}
