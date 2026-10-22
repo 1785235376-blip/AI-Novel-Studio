@@ -9,6 +9,7 @@
  * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
  * W-UX-10: IMAGE comic sub-entry clickable (rail+toolbar, no 7th chrome) + preview/comic hero thicker; ≠ VIDEO/EDIT.
  * W-UX-11: AUDIO single-clip listen visible + send-edit confirm copy aligned with VIDEO; 0 NLE tracks.
+ * W-UX-12: ASSETS SendTo explicit IMAGE/VIDEO/AUDIO/EDIT + empty-selection honest CTA; lineage empty honest.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -561,9 +562,85 @@ export function AudioWorkspaceShell({
   );
 }
 
-export function AssetsWorkspaceRail() {
+/** [HERMIA-FE-20261022 W-UX-12] ASSETS SendTo targets = ModuleSwitcher IMAGE/VIDEO/AUDIO/EDIT (never NOVEL). */
+export type AssetsSendTarget = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'EDIT';
+export const ASSETS_SEND_TARGETS = ['IMAGE', 'VIDEO', 'AUDIO', 'EDIT'] as const;
+const ASSETS_SEND_LABELS: Record<AssetsSendTarget, string> = {
+  IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', EDIT: '剪辑',
+};
+const ASSETS_SEND_CONFIRM: Record<AssetsSendTarget, {title: string; body: string}> = {
+  IMAGE: {
+    title: '显式手递 → 图片',
+    body: '将打开顶栏「图片」工作区。资产侧选区保留；引用＝不复制源文件。本区不是生图台，生图主路径在图片。',
+  },
+  VIDEO: {
+    title: '显式手递 → 视频',
+    body: '将打开顶栏「视频」镜头/画布工作区。资产侧选区保留；不会静默写入任何镜头。',
+  },
+  AUDIO: {
+    title: '显式手递 → 声音',
+    body: '将打开顶栏「声音」检听工作区。资产侧选区保留；本区不假装 NLE 轨。',
+  },
+  EDIT: {
+    title: '显式手递 → 剪辑',
+    body: '将打开顶栏「剪辑」多轨 NLE。资产侧选区保留；不会自动加入任何轨道，需在剪辑侧再确认。',
+  },
+};
+
+function AssetsSendToStrip({
+  hasSelection,
+  pending,
+  onPick,
+  onConfirm,
+  onCancel,
+}: {
+  hasSelection: boolean;
+  pending: AssetsSendTarget | null;
+  onPick: (t: AssetsSendTarget) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
   return (
-    <nav className="media-ws-rail" aria-label="资产工作区导航">
+    <div className="media-ws__assets-send" data-assets-send="true" aria-label="送到其它模块">
+      <div className="media-ws__assets-send-head">
+        <strong>SendTo · 显式切模块</strong>
+        <small>{hasSelection ? '携带当前引用（不复制）' : '未选中 · 仅切换工作区，不携带引用'}</small>
+      </div>
+      <div className="media-ws__hero-actions" role="group" aria-label="SendTo 目标">
+        {ASSETS_SEND_TARGETS.map(t => (
+          <Button
+            key={t}
+            type="button"
+            data-assets-send-target={t}
+            aria-pressed={pending === t}
+            onClick={() => onPick(t)}
+          >送到{ASSETS_SEND_LABELS[t]}</Button>
+        ))}
+      </div>
+      {pending && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label={`${ASSETS_SEND_LABELS[pending]}确认`}>
+          <strong>{ASSETS_SEND_CONFIRM[pending].title}</strong>
+          <p>{ASSETS_SEND_CONFIRM[pending].body}</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" data-assets-send-confirm={pending} onClick={onConfirm}>
+              确认打开「{ASSETS_SEND_LABELS[pending]}」
+            </Button>
+            <Button type="button" data-assets-send-cancel="true" onClick={onCancel}>取消</Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AssetsWorkspaceRail({
+  onSendToModule,
+}: {
+  onSendToModule?: (module: AssetsSendTarget) => void;
+} = {}) {
+  const [pending, setPending] = useState<AssetsSendTarget | null>(null);
+  return (
+    <nav className="media-ws-rail" aria-label="资产工作区导航" data-assets-rail="true">
       <div className="media-ws-rail__eyebrow">资产</div>
       <strong>共享引用层</strong>
       <ul>
@@ -572,23 +649,58 @@ export function AssetsWorkspaceRail() {
         <li>集合 / 标签（示意）</li>
       </ul>
       <p className="media-ws-rail__hint">拖入＝引用，不复制源文件，不自动开任务。非创作强制上游。</p>
+      {onSendToModule && (
+        <div className="media-ws-rail__send" data-assets-rail-send="true">
+          <span className="media-ws-rail__send-label">SendTo</span>
+          {ASSETS_SEND_TARGETS.map(t => (
+            <button
+              key={t}
+              type="button"
+              className="media-ws-rail__item media-ws-rail__item--send"
+              data-assets-send-target={t}
+              onClick={() => setPending(t)}
+            >送到{ASSETS_SEND_LABELS[t]}</button>
+          ))}
+        </div>
+      )}
+      {pending && onSendToModule && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label={`${ASSETS_SEND_LABELS[pending]}确认`}>
+          <strong>{ASSETS_SEND_CONFIRM[pending].title}</strong>
+          <p>{ASSETS_SEND_CONFIRM[pending].body}</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" data-assets-send-confirm={pending} onClick={() => { const t = pending; setPending(null); onSendToModule(t); }}>
+              确认打开「{ASSETS_SEND_LABELS[pending]}」
+            </Button>
+            <Button type="button" data-assets-send-cancel="true" onClick={() => setPending(null)}>取消</Button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
 
-/** [HERMIA-FE-20261022 W-UX-03] ASSETS = shared browser + inspector; drag=reference; ≠ IMAGE desk. */
+/** [HERMIA-FE-20261022 W-UX-03 / W-UX-12] ASSETS = shared browser + SendTo + honest empty / lineage. */
 export function AssetsWorkspaceShell({
-  novelId, selectedAssetId, onSelectAsset, selectedAsset,
+  novelId, selectedAssetId, onSelectAsset, selectedAsset, onSendToModule,
 }: {
   novelId: string;
   selectedAssetId?: string;
   onSelectAsset: (asset: Asset | undefined) => void;
   /** Optional selected asset for inline lineage/version summary (honest when absent). */
   selectedAsset?: Asset;
+  /** Explicit module switch IMAGE/VIDEO/AUDIO/EDIT (never NOVEL / CONTROL / PLUGIN). */
+  onSendToModule?: (module: AssetsSendTarget) => void;
 }) {
   const lineageCount = selectedAsset?.relationships?.length ?? 0;
   const version = selectedAsset?.version ?? selectedAsset?.provenance?.version;
   const hasSelection = Boolean(selectedAssetId || selectedAsset);
+  const [pending, setPending] = useState<AssetsSendTarget | null>(null);
+
+  const lineageState = !hasSelection
+    ? 'none'
+    : lineageCount === 0
+      ? 'empty'
+      : 'partial';
 
   return (
     <div
@@ -596,18 +708,34 @@ export function AssetsWorkspaceShell({
       aria-label="资产工作区"
       data-assets-hero="browser"
       data-drag-semantics="reference"
+      data-assets-selection={hasSelection ? 'selected' : 'empty'}
+      data-lineage={lineageState}
+      data-capability-tone="neutral"
     >
       <div className="media-ws__hero media-ws__hero--assets" aria-label="资产浏览器">
-        <span className="media-ws__hero-label">资产浏览器 · hero</span>
+        <div className="media-ws__shot-hero-head">
+          <span className="media-ws__hero-label">资产浏览器 · hero</span>
+          <span className="media-ws__shot-hero-badge" data-assets-badge="boundary">ASSETS ≠ IMAGE 生图台</span>
+          <span className="media-ws__shot-hero-badge" data-assets-badge="honest">演示 · 禁假绿</span>
+        </div>
         <strong>共享库 · 查找与引用</strong>
         <p>网格/列表浏览、筛选与检视。拖出到其它模块＝<strong>建立引用</strong>（不复制源文件、不自动开花钱任务）。生图主路径在「图片」；多轨在「剪辑」——本区不是生图台。</p>
         <div className="media-ws__ref-chip" aria-label="拖入语义">拖入＝引用 · 非复制</div>
-        <small>项目 {novelId} · LUMEN_ASSETS_IA</small>
+        {onSendToModule && (
+          <AssetsSendToStrip
+            hasSelection={hasSelection}
+            pending={pending}
+            onPick={t => setPending(t)}
+            onConfirm={() => { if (!pending) return; const t = pending; setPending(null); onSendToModule(t); }}
+            onCancel={() => setPending(null)}
+          />
+        )}
+        <small>项目 {novelId} · LUMEN_ASSETS_IA · W-UX-12</small>
       </div>
 
       <div className="media-ws__toolbar" role="toolbar" aria-label="资产工具条">
         <span className="media-ws__ref-chip">引用语义可见</span>
-        <small>{hasSelection ? `已选 ${selectedAssetId || selectedAsset?.id}` : '未选中 · 见右栏 CTA'}</small>
+        <small>{hasSelection ? `已选 ${selectedAssetId || selectedAsset?.id}` : '未选中 · 诚实空态 CTA（禁空白壳）'}</small>
       </div>
 
       <div className="media-ws__body media-ws__body--assets">
@@ -619,22 +747,46 @@ export function AssetsWorkspaceShell({
             onSelectAsset={onSelectAsset}
           />
         </section>
-        <aside className="media-ws__panel media-ws__lineage" aria-label="血缘与版本摘要">
+        <aside
+          className="media-ws__panel media-ws__lineage"
+          aria-label="血缘与版本摘要"
+          data-lineage={lineageState}
+          data-honest-kind={lineageState === 'none' ? 'empty_selection' : lineageState === 'empty' ? 'lineage_empty' : undefined}
+          data-capability-tone="neutral"
+        >
           <h3>血缘 / 版本摘要</h3>
           {hasSelection && selectedAsset ? (
-            <dl className="media-ws__lineage-facts">
-              <div><dt>文件</dt><dd title={selectedAsset.filename}>{selectedAsset.filename}</dd></div>
-              <div><dt>版本</dt><dd>{version != null ? `v${version}` : '未记录（诚实 partial）'}</dd></div>
-              <div><dt>关系条数</dt><dd>{lineageCount === 0 ? '0（无已声明关系）' : lineageCount}</dd></div>
-              <div><dt>来源</dt><dd>{selectedAsset.provenance?.origin || '未声明'}</dd></div>
-              <div><dt>完整性</dt><dd>{selectedAsset.provenance?.integrity || '未核实'}</dd></div>
-            </dl>
+            <>
+              <dl className="media-ws__lineage-facts">
+                <div><dt>文件</dt><dd title={selectedAsset.filename}>{selectedAsset.filename}</dd></div>
+                <div><dt>版本</dt><dd>{version != null ? `v${version}` : '未记录（诚实 partial）'}</dd></div>
+                <div><dt>来源</dt><dd>{selectedAsset.provenance?.origin || '未声明'}</dd></div>
+                <div><dt>完整性</dt><dd>{selectedAsset.provenance?.integrity || '未核实'}</dd></div>
+              </dl>
+              {lineageCount === 0 ? (
+                <div className="media-ws__lineage-empty" data-lineage-empty="true" data-capability-tone="neutral">
+                  <strong>血缘 · 诚实空</strong>
+                  <p>无已声明关系（0 条）。缺后端字段时标 partial，不编造血缘 API，不显示就绪绿标。</p>
+                </div>
+              ) : (
+                <dl className="media-ws__lineage-facts" data-lineage-count={lineageCount}>
+                  <div><dt>关系条数</dt><dd>{lineageCount}（已声明 · 非授权/非执行）</dd></div>
+                </dl>
+              )}
+            </>
           ) : (
-            <p className="media-ws-rail__hint">未选中资产时不假装有血缘。选中后显示版本与关系摘要；缺字段标 partial，不编造 API。</p>
+            <div
+              className="media-ws__lineage-empty media-ws__lineage-empty--selection"
+              data-honest-kind="empty_selection"
+              data-capability-tone="neutral"
+            >
+              <strong>未选中 · 诚实空态</strong>
+              <p>不假装有血缘或版本。请在左侧浏览器点选一条资产，或用导入 / 筛选引导。禁空白占位壳，禁假绿就绪标。</p>
+            </div>
           )}
         </aside>
       </div>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-03] ASSETS＝共享引用层 · ≠ IMAGE 生图台 · ≠ EDIT 媒体池主面。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-12] SendTo→图/视/声/剪 · 空选诚实 CTA · 血缘无数据诚实空 · ≠ 小说中区 · 禁假绿。</p>
     </div>
   );
 }
@@ -682,13 +834,28 @@ export function AudioEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): Reac
   );
 }
 
-export function AssetsEmptyCta({onImportHint}: {onImportHint?: () => void} = {}): ReactNode {
+export function AssetsEmptyCta({
+  onImportHint, onSendToModule,
+}: {
+  onImportHint?: () => void;
+  onSendToModule?: (module: AssetsSendTarget) => void;
+} = {}): ReactNode {
+  const [pending, setPending] = useState<AssetsSendTarget | null>(null);
   return (
-    <div className="media-ws-cta" aria-label="资产下一步" data-honest-kind="empty_selection">
+    <div className="media-ws-cta" aria-label="资产下一步" data-honest-kind="empty_selection" data-capability-tone="neutral">
       <strong>下一步</strong>
-      <p>未选中资产。可导入或筛选库；拖出到其它模块＝引用，不复制。库为空时也是诚实 0 条，不是假绿「已就绪」。</p>
+      <p>未选中资产。可导入或筛选库；拖出到其它模块＝引用，不复制。库为空时也是诚实 0 条，不是假绿就绪标。禁空白占位壳。</p>
       <div className="media-ws__ref-chip">拖入＝引用</div>
       {onImportHint && <Button type="button" onClick={onImportHint}>导入 / 筛选引导</Button>}
+      {onSendToModule && (
+        <AssetsSendToStrip
+          hasSelection={false}
+          pending={pending}
+          onPick={t => setPending(t)}
+          onConfirm={() => { if (!pending) return; const t = pending; setPending(null); onSendToModule(t); }}
+          onCancel={() => setPending(null)}
+        />
+      )}
     </div>
   );
 }

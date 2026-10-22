@@ -3,6 +3,7 @@
  * [HERMIA-FE-20261022] IMAGE / AUDIO / ASSETS lightweight shells (Lumen IA).
  * W-UX-10: IMAGE comic sub-entry + thicker hero.
  * W-UX-11: AUDIO single-clip listen + send-edit confirm aligned with VIDEO.
+ * W-UX-12: ASSETS SendTo IMAGE/VIDEO/AUDIO/EDIT + empty/lineage honest.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
@@ -337,6 +338,69 @@ describe('MediaWorkspaceShells', () => {
     expect(host.querySelector('[data-drag-semantics="reference"]')).toBeTruthy();
     expect(host.textContent).toMatch(/不是生图台|≠ IMAGE/);
     expect(host.textContent).toMatch(/诚实|未选中/);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-12 ASSETS SendTo explicitly switches IMAGE/VIDEO/AUDIO/EDIT after confirm', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <><AssetsWorkspaceRail onSendToModule={send} /><AssetsWorkspaceShell novelId="n1" onSelectAsset={vi.fn()} onSendToModule={send} /><AssetsEmptyCta onSendToModule={send} /></>,
+    ));
+    expect(host.querySelector('[data-assets-send="true"]')).toBeTruthy();
+    for (const t of ['IMAGE', 'VIDEO', 'AUDIO', 'EDIT'] as const) {
+      expect(host.querySelector(`[data-assets-send-target="${t}"]`)).toBeTruthy();
+    }
+    // pick IMAGE → confirm required before switch
+    act(() => {
+      (host.querySelector('[data-assets-send-target="IMAGE"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).not.toHaveBeenCalled();
+    expect(host.textContent).toMatch(/显式手递 → 图片/);
+    act(() => {
+      (host.querySelector('[data-assets-send-confirm="IMAGE"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).toHaveBeenCalledWith('IMAGE');
+    // VIDEO via empty CTA
+    act(() => {
+      const targets = [...host.querySelectorAll('[data-assets-send-target="VIDEO"]')] as HTMLButtonElement[];
+      targets[targets.length - 1]?.click();
+    });
+    act(() => {
+      (host.querySelector('[data-assets-send-confirm="VIDEO"]') as HTMLButtonElement)?.click();
+    });
+    expect(send).toHaveBeenCalledWith('VIDEO');
+    // never NOVEL
+    expect(send.mock.calls.every(([m]) => m !== 'NOVEL')).toBe(true);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-12 empty selection + lineage empty are honest (no blank shell / no fake ready)', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(
+      <AssetsWorkspaceShell novelId="n1" onSelectAsset={vi.fn()} />,
+    ));
+    expect(host.querySelector('[data-assets-selection="empty"]')).toBeTruthy();
+    expect(host.querySelector('[data-lineage="none"]')).toBeTruthy();
+    expect(host.querySelector('[data-honest-kind="empty_selection"]')).toBeTruthy();
+    expect(host.querySelector('[data-capability-tone="neutral"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/诚实空态|未选中/);
+    expect(host.textContent).not.toMatch(/已就绪/);
+    // selected asset with zero relationships → lineage empty honest
+    const asset = {
+      id: 'a1', novel_id: 'n1', filename: 'demo.png', kind: 'image', media_type: 'image/png',
+      size: 1, sha256: 'abc', created_at: '', updated_at: '', relationships: [],
+    };
+    act(() => root.render(
+      <AssetsWorkspaceShell novelId="n1" selectedAssetId="a1" selectedAsset={asset as any} onSelectAsset={vi.fn()} />,
+    ));
+    expect(host.querySelector('[data-assets-selection="selected"]')).toBeTruthy();
+    expect(host.querySelector('[data-lineage="empty"]')).toBeTruthy();
+    expect(host.querySelector('[data-lineage-empty="true"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/血缘 · 诚实空|无已声明关系/);
+    expect(host.textContent).not.toMatch(/已就绪/);
     act(() => root.unmount());
   });
 });

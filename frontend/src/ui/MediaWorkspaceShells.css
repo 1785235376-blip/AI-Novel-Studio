@@ -624,3 +624,57 @@
 @media (max-width: 900px) {
   .media-ws--assets .media-ws__body--assets { grid-template-columns: 1fr; }
 }
+
+/* [HERMIA-FE-20261022 W-UX-12] ASSETS SendTo + honest empty / lineage */
+.media-ws__assets-send {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.media-ws__assets-send-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.media-ws__assets-send-head strong { font-size: 13px; }
+.media-ws__assets-send-head small {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+.media-ws__lineage-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.media-ws__lineage-empty strong { font-size: 13px; }
+.media-ws__lineage-empty p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+.media-ws__lineage-empty--selection {
+  min-height: 96px;
+}
+.media-ws-rail__send {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+.media-ws-rail__send-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
