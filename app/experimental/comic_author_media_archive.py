@@ -150,7 +150,7 @@ def decode(raw):
             if not isinstance(manifest,dict) or set(manifest) != {"contract","book","pages","assets"} or manifest["contract"] != CONTRACT: _fail()
             entries=manifest["pages"]; assets=manifest["assets"]
             if not isinstance(entries,list) or not 1 <= len(entries) <= MAX_PAGES: _fail()
-            if not isinstance(assets,dict) or len(assets) > MAX_ASSETS: _fail()
+            if not isinstance(assets,dict) or not 1 <= len(assets) <= MAX_ASSETS: _fail()
             expected={"manifest.json"}|{e.get("path") for e in entries}|{a.get("path") for a in assets.values()}
             if expected != set(names): _fail()
             page_docs=[]; asset_data={}; total_png=0
@@ -158,7 +158,7 @@ def decode(raw):
                 if not re.fullmatch(r"asset_[0-9]{3}",alias) or not isinstance(entry,dict) or set(entry) != {"path","bytes","sha256","width","height"}: _fail()
                 if entry["path"] != f"assets/{int(alias[-3:]):03}.png": _fail()
                 content=archive.read(entry["path"])
-                if len(content) != entry["bytes"] or hashlib.sha256(content).hexdigest() != entry["sha256"]: _fail()
+                if len(content) != entry["bytes"] or len(content) > MAX_ASSET_BYTES or hashlib.sha256(content).hexdigest() != entry["sha256"]: _fail()
                 w,h=_png(content)
                 if (w,h) != (entry["width"],entry["height"]) or total_png+len(content) > MAX_TOTAL_PNG: _fail()
                 total_png += len(content); asset_data[alias]={"bytes":content,"width":w,"height":h,"sha256":entry["sha256"]}
@@ -171,6 +171,14 @@ def decode(raw):
                 content=archive.read(entry["path"])
                 if len(content) != entry["bytes"] or hashlib.sha256(content).hexdigest() != entry["sha256"]: _fail()
                 page_docs.append(_document(_json(content)))
+            referenced=set()
+            for doc in page_docs:
+                for panel in doc["panels"]:
+                    if panel.get("asset_id") is not None:
+                        alias=panel["asset_id"]
+                        if alias not in asset_data or panel.get("expected_asset_version") != 1: _fail()
+                        referenced.add(alias)
+            if referenced != set(asset_data): _fail()
             return book,page_docs,asset_data
     except Exception: _fail()
 
@@ -209,7 +217,7 @@ def _receipt(row,key,actor,scope,incarnation):
             or not re.fullmatch(r"[a-f0-9]{32}",row.get("request_key","")) or not re.fullmatch(r"[a-f0-9]{64}",row.get("archive_sha256",""))
             or key != digest([actor,scope,incarnation,row.get("request_key")]) or not isinstance(row["book_id"],str)
             or not isinstance(row["page_ids"],list) or not 1 <= len(row["page_ids"]) <= MAX_PAGES or len(set(row["page_ids"])) != len(row["page_ids"])
-            or not isinstance(row["asset_ids"],list) or not 1 <= len(row["asset_ids"]) <= MAX_ASSETS or len(set(row["asset_ids"])) != len(row["asset_ids"])): _fail()
+            or not isinstance(row["asset_ids"],list) or len(row["asset_ids"]) > MAX_ASSETS or len(set(row["asset_ids"])) != len(row["asset_ids"])): _fail()
     return row
 
 def inspect_archive(service,nid,scope,actor,raw,guard):
@@ -227,6 +235,8 @@ def _create_assets(service,nid,scope,actor,sha,assets,guard):
     with service._studio_asset_scope(nid,scope):
         for alias,info in sorted(assets.items()):
             guard()
+            if len(info["bytes"]) > MAX_ASSET_BYTES: _fail()
+            _png(info["bytes"])
             row=service.assets.create(nid,f"author-media-{alias}.png",base64.b64encode(info["bytes"]).decode(),"image/png","image",
                 f"comic-media-author:{sha}:{alias}",branch_id=scope.get("branch_id"),guard=guard)
             if row["sha256"] != info["sha256"]: _fail()

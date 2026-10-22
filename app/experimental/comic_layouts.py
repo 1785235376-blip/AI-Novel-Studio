@@ -841,8 +841,17 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         self._current(nid, scope, actor, target)
         return self.save(nid, scope, actor, target['document'], guard, rid, expected_version)
 
+    def _assert_author_media_assets_reviewed(self, nid, scope, actor, row):
+        if not row.get('_author_media_import'):
+            return
+        for aid in row['asset_sources']:
+            asset, _ = self._asset(nid, scope, actor, aid, author_media=True)
+            if not asset.get('approved_at'):
+                raise ValueError('COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED')
+
     def preflight(self, nid, scope, actor, rid, expected_version):
         row = self._row(nid, scope, actor, rid); check_version(row, expected_version)
+        self._assert_author_media_assets_reviewed(nid, scope, actor, row)
         images = self._current(nid, scope, actor, row)
         report, _ = compose(row['document'], images)
         binding = {'layout_id': rid, 'actor': actor, 'scope': scope, 'document': row['document'], 'source_evidence': row['source_evidence'],
@@ -864,6 +873,7 @@ class ComicLayoutsService(ComicCollectionsMixin, DomainService):
         from .comic_publication import _render_work, _full_page
         from .comic_publication_budget import consume
         row = self._row(context['nid'], context['scope'], context['actor'], plan['page_id'])
+        self._assert_author_media_assets_reviewed(context['nid'], context['scope'], context['actor'], row)
         images = {aid: self.assets.page_source_content(grant, request, aid, max_bytes=self.assets.MAX_BYTES)
                   for aid in plan['assets']}
         report, _ = compose(row['document'], images)

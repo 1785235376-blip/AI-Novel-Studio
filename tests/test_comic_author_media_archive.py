@@ -51,6 +51,50 @@ def test_mounted_media_archive_api_both_prefixes(mounted):
     assert restored.json()["result_state"]=="UNREVIEWED_EDITABLE_DRAFTS"
 
 
+def _raw(e,s,book):
+    preview=a.export_preview(s,e.nid,e.scope,"local-author",book["id"],a.ExportPreviewIn(expected_version=1),lambda:None)
+    return a.export_archive(s,e.nid,e.scope,"local-author",book["id"],a.ExportIn(expected_version=1,export_digest=preview["export_digest"],acknowledge_author_content=True),lambda:None)
+def _unpack(raw):
+    with zipfile.ZipFile(io.BytesIO(raw)) as z: return {n:z.read(n) for n in z.namelist()}
+def _pack(files):
+    stream=io.BytesIO()
+    with zipfile.ZipFile(stream,"w",compression=zipfile.ZIP_STORED) as z:
+        for n,d in files.items(): z.writestr(zipfile.ZipInfo(n),d)
+    return stream.getvalue()
+def _refresh_page(files, mutator):
+    doc=json.loads(files["pages/000.json"]); mutator(doc); files["pages/000.json"]=json.dumps(doc,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+    m=json.loads(files["manifest.json"]); m["pages"][0]["bytes"]=len(files["pages/000.json"]); m["pages"][0]["sha256"]=hashlib.sha256(files["pages/000.json"]).hexdigest(); files["manifest.json"]=json.dumps(m,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+
+def test_f1_approval_and_export_reject_unreviewed_imported_assets(mounted):
+    e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book)
+    report=a.inspect_archive(s,e.nid,e.scope,"local-author",raw,lambda:None)
+    body={"archive_base64":base64.b64encode(raw).decode(),"archive_sha256":hashlib.sha256(raw).hexdigest(),
+          "inspection_digest":report["inspection_digest"],"request_key":uuid.uuid4().hex,"acknowledge_restore_drafts":True}
+    result=a.restore_archive(s,e.nid,e.scope,"local-author",raw,a.RestoreIn.model_validate(body),lambda:None)
+    rid=result["pages"][0]["id"]
+    with pytest.raises(ValueError) as exc: s.preflight(e.nid,e.scope,"local-author",rid,1)
+    assert str(exc.value)=="COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED"
+    with pytest.raises(ValueError): s.export(e.nid,e.scope,"local-author",rid,1)
+    assert all(x.get("approved_at") is None for x in e.assets.list(e.nid) if x["id"] not in {asset["id"]})
+
+def test_f3_f4_limits_and_alias_preflight_without_staging(mounted):
+    e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book); files=_unpack(raw)
+    # F3: a PNG over the per-asset limit must be rejected in decode/inspect.
+    big=b"\x89PNG\r\n\x1a\n" + b"x"*(a.MAX_ASSET_BYTES+1)
+    files2=dict(files); files2["assets/000.png"]=big
+    m=json.loads(files2["manifest.json"]); m["assets"]["asset_000"]["bytes"]=len(big); m["assets"]["asset_000"]["sha256"]=hashlib.sha256(big).hexdigest(); files2["manifest.json"]=json.dumps(m,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+    before=e.assets.list(e.nid)
+    with pytest.raises(ValueError): a.inspect_archive(s,e.nid,e.scope,"local-author",_pack(files2),lambda:None)
+    # F4: unknown alias must fail before Asset staging.
+    files3=dict(files); _refresh_page(files3,lambda d:d["panels"][0].update(asset_id="asset_999"))
+    with pytest.raises(ValueError): a.inspect_archive(s,e.nid,e.scope,"local-author",_pack(files3),lambda:None)
+    # F2: a receipt with no assets is not a supported profile; reject before staging.
+    files4=dict(files); files4.pop("assets/000.png")
+    m=json.loads(files4["manifest.json"]); m["assets"]={}; files4["manifest.json"]=json.dumps(m,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+    _refresh_page(files4,lambda d:(d["panels"][0].pop("asset_id",None),d["panels"][0].pop("expected_asset_version",None)))
+    with pytest.raises(ValueError): a.inspect_archive(s,e.nid,e.scope,"local-author",_pack(files4),lambda:None)
+    assert e.assets.list(e.nid)==before
+
 def test_media_export_inspect_restore_reopen_and_explicit_import(mounted):
     e=mounted; s,page,book,asset=source(e)
     preview=a.export_preview(s,e.nid,e.scope,"local-author",book["id"],a.ExportPreviewIn(expected_version=1),lambda:None)
