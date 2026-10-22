@@ -161,33 +161,35 @@ describe('X-UX-10 handoff smoke paths', () => {
     act(() => root.unmount());
   });
 
+  // [HERMIA-FE-20261022 R6] 资产改挂 AssetsRebuild：选中一个真实资产 → 右栏「送到模块…」→ 选目标 → 确认后才切模块。
   it.each(['IMAGE', 'VIDEO', 'AUDIO', 'EDIT'] as const)(
     'ASSETS→%s: confirm switches; never NOVEL; EDIT also records handoff',
-    (target) => {
+    async (target) => {
       clearEditHandoffs();
+      const asset = {id: 'ast-1', novel_id: NOVEL, filename: '雾港参考.jpg', kind: 'image', media_type: 'image/jpeg', size: 10, sha256: 'x', created_at: '', updated_at: ''};
+      vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(new Response(JSON.stringify(
+        url.includes('asset-trash') ? {items: [], total: 0} : url.includes('/references') ? {items: [], total: 0} : /\/assets(\?|$)/.test(url) ? [asset] : {}),
+        {status: 200, headers: {'Content-Type': 'application/json'}}))));
       const root = mount('ASSETS', 'pro');
       expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('ASSETS');
-      expect(host.querySelector('[data-assets-send="true"]') || host.querySelector('[data-assets-rail-send="true"]')).toBeTruthy();
-
-      act(() => {
-        (host.querySelector(`[data-assets-send-target="${target}"]`) as HTMLButtonElement)?.click();
-      });
+      for (let i = 0; i < 40 && !host.querySelector('.ast-tile'); i++) await act(async () => { await new Promise(r => setTimeout(r, 10)); });
+      act(() => { (host.querySelector('.ast-tile') as HTMLButtonElement).click(); });
+      act(() => { (host.querySelector('#astSend') as HTMLButtonElement).click(); });
+      act(() => { (host.querySelector(`[data-ast-send-target="${target}"]`) as HTMLButtonElement).click(); });
       expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('ASSETS');
-      expect(host.querySelector(`[data-assets-send-confirm="${target}"]`)).toBeTruthy();
-
-      act(() => {
-        (host.querySelector(`[data-assets-send-confirm="${target}"]`) as HTMLButtonElement)?.click();
-      });
+      expect(host.querySelector('[data-ast-send-confirm="true"]')).toBeTruthy();
+      act(() => { (host.querySelector('[data-ast-send-confirm="true"]') as HTMLButtonElement).click(); });
       expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe(target);
       expect(host.querySelector(`[data-module-shell="${target}"]`)).toBeTruthy();
       expect(host.querySelector('[data-module-shell="ASSETS"]')).toBeNull();
       if (target === 'EDIT') {
         expect(host.querySelector('[data-edit-handoff="received"]')).toBeTruthy();
         expect(host.querySelector('[data-handoff-source="ASSETS"]')).toBeTruthy();
-        expect(readEditHandoffs().some(h => h.source === 'ASSETS')).toBe(true);
+        expect(readEditHandoffs().some(h => h.source === 'ASSETS' && h.label === '雾港参考.jpg')).toBe(true);
       }
       assertNoNovelCenterLeak();
       act(() => root.unmount());
+      vi.unstubAllGlobals();
     },
   );
 });
