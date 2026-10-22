@@ -122,4 +122,14 @@ describe('ModuleWorkspaceRoutes',()=>{
     act(()=>root.unmount());
   });
 
+  it('[HERMIA-FE-20261022 U5b] IMAGE returns to 漫画制作 when the novel last left it there; leaving keeps 浏览 fallback',async()=>{
+    vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({items:[]}),{status:200,headers:{'content-type':'application/json'}})));
+    sessionStorage.clear(); sessionStorage.setItem('hermia-comic-draft:novel-1',JSON.stringify({view:'comic'}));
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    await act(async()=>root.render(<ModuleWorkspaceRoutes module="IMAGE" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
+    expect(host.querySelector('#comicBubble')).toBeTruthy();
+    sessionStorage.setItem('hermia-comic-draft:novel-2',JSON.stringify({view:'browse'}));
+    await act(async()=>root.render(<ModuleWorkspaceRoutes module="IMAGE" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-2"/>));
+    act(()=>root.unmount()); sessionStorage.clear(); vi.unstubAllGlobals();
+  });
 });

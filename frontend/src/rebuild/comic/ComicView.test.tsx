@@ -3,7 +3,7 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 beforeEach(() => sessionStorage.clear()); // [HERMIA-FE-20261022 U5]
 import {render, screen, fireEvent} from '@testing-library/react';
-import {ComicView, bubbleBounds, visibleBounds} from './ComicView';
+import {ComicView, bubbleBounds, visibleBounds, comicDraftKey, restoreSelection, saveImageSubview, loadImageSubview} from './ComicView';
 import {COMIC_TEMPLATES, remapCells} from './comicTemplates';
 import {DualCanvas} from '../canvas/DualCanvas';
 
@@ -106,5 +106,32 @@ describe('[HERMIA-FE-20261022 U5] comic draft survives unmount', () => {
     const c = render(<ComicView novelId="n2" chrome={null} onBack={() => {}} onGen={() => {}} />);
     expect(c.container.querySelectorAll('.bub').length).toBe(0); c.unmount();
     sessionStorage.clear();
+  });
+});
+
+describe('[HERMIA-FE-20261022 U5b] comic selection + subview survive unmount', () => {
+  it('restores current cell and selected bubble', () => {
+    const a = render(<ComicView novelId="n1" chrome={null} onBack={() => {}} onGen={() => {}} />);
+    const cells = a.container.querySelectorAll('.comic-cell');
+    fireEvent.click(cells[cells.length - 1]!);
+    fireEvent.click(a.container.querySelector('#comicBubble')!);
+    const ix = cells.length - 1;
+    const bid = a.container.querySelector('.bub')!.getAttribute('data-bubble-id');
+    a.unmount();
+    const d = JSON.parse(sessionStorage.getItem(comicDraftKey('n1'))!);
+    expect(d.cellIx).toBe(ix); expect(d.bubSel).toBe(bid); expect(d.view).toBe('comic');
+    const b = render(<ComicView novelId="n1" chrome={null} onBack={() => {}} onGen={() => {}} />);
+    expect(b.container.querySelectorAll('.comic-cell')[ix]!.getAttribute('aria-pressed')).toBe('true');
+    expect(b.container.querySelector(`[data-bubble-id="${bid}"]`)!.getAttribute('aria-pressed')).toBe('true');
+    b.unmount();
+  });
+  it('validates stale indexes', () => {
+    const d = {pages: [{id: 'p1', label: 'x', tpl: 'big1small2', cells: [[], [], []]}], pageId: 'p1', cellIx: 99, bubSel: 'gone'} as any;
+    expect(restoreSelection(d, 'p1')).toEqual({cellIx: 0, bubSel: null});
+    expect(restoreSelection(null, 'p1')).toEqual({cellIx: 0, bubSel: null});
+  });
+  it('subview save/load per novel', () => {
+    saveImageSubview('n1', 'comic'); expect(loadImageSubview('n1')).toBe('comic'); expect(loadImageSubview('n2')).toBeNull();
+    saveImageSubview('n1', 'browse'); expect(loadImageSubview('n1')).toBe('browse');
   });
 });

@@ -9,6 +9,7 @@ import {AgentQueuePanel} from '../novel/AgentQueuePanel';
 import {AssetInspector} from '../novel/AssetInspector';
 import {WorkflowInspector, type WorkflowInspection} from '../novel/WorkflowInspector';
 import {ImageRebuild, type ImageView} from '../rebuild/image/ImageRebuild'; // [HERMIA-FE-20261022 R2]
+import {saveImageSubview, loadImageSubview} from '../rebuild/comic/ComicView'; // [HERMIA-FE-20261022 U5b]
 import {VideoRebuild} from '../rebuild/video/VideoRebuild'; // [HERMIA-FE-20261022 R3]
 import {AudioRebuild} from '../rebuild/audio/AudioRebuild'; // [HERMIA-FE-20261022 R4]
 import {EditRebuild} from '../rebuild/edit/EditRebuild'; // [HERMIA-FE-20261022 R5]
@@ -94,7 +95,9 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   useEffect(()=>{ if(module!=='IMAGE') setImageSubview('studio'); },[module]);
   // [HERMIA-FE-20261022 R2] 图片页按原型重做：视图 浏览/图片画布/生成/漫画制作；旧 ImageWorkspaceShell/Rail/EmptyCta 不再挂载（代码保留）。
   const [imageView,setImageView]=useState<ImageView>('browse');
-  useEffect(()=>{ if(module!=='IMAGE') setImageView('browse'); },[module]);
+  // [HERMIA-FE-20261022 U5b] 离开图片仍回落 browse（状态隔离）；回到图片时若本作品上次停在漫画制作则恢复。
+  useEffect(()=>{ if(module!=='IMAGE') setImageView('browse'); else if(novelId&&loadImageSubview(novelId)==='comic') setImageView('comic'); },[module,novelId]);
+  const changeImageView=(v:ImageView)=>{ if(novelId) saveImageSubview(novelId,v); setImageView(v); };
   // [HERMIA-FE-20261022 W-UX-14] Explicit send→EDIT records a media-pool handoff source strip.
   // [HERMIA-FE-20261022 X-UX-10] Hand-off smoke covers IMAGE→VIDEO · AUDIO→EDIT · ASSETS→* (see handoffSmoke.xUx10.test.tsx).
   const sendToEdit = (source: EditHandoffSource, label: string) => {
@@ -110,7 +113,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   };
   let main:ReactNode; let status='工作区';
   switch(module){
-    case 'IMAGE': main=novelId?<ImageRebuild novelId={novelId} view={imageView} onViewChange={setImageView} shellMode={shellMode} onInspect={i=>{if(i)setImageInspection(i);}} onSendToVideo={()=>onModuleChange('VIDEO')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
+    case 'IMAGE': main=novelId?<ImageRebuild novelId={novelId} view={imageView} onViewChange={changeImageView} shellMode={shellMode} onInspect={i=>{if(i)setImageInspection(i);}} onSendToVideo={()=>onModuleChange('VIDEO')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<VideoRebuild novelId={novelId} shellMode={shellMode} onSendToEdit={()=>sendToEdit('VIDEO','视频镜头 / 交片')} onOpenControl={()=>onModuleChange('CONTROL')}/>/* [HERMIA-FE-20261022 R3] 旧 VideoWorkspaceShell 退役 */:<WorkspaceHonestEmpty kind="no_project" workspace="VIDEO"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<AudioRebuild novelId={novelId} shellMode={shellMode} onSendToEdit={()=>sendToEdit('AUDIO','声音检听 / 交片')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>/* [HERMIA-FE-20261022 R4] 旧 AudioWorkspaceShell 退役 */:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
     case 'EDIT': main=novelId?<EditRebuild novelId={novelId} shellMode={shellMode} editable={false} onBackToVideo={()=>onModuleChange('VIDEO')}/>/* [HERMIA-FE-20261022 R5] 旧 EditNleShell 退役（代码保留）；默认仍是只读本地编排，不切 PRODUCTION */:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;

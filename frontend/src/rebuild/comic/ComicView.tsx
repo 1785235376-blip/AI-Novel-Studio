@@ -60,15 +60,36 @@ function ComicBubble({b, sel, onSel, onChange, onDelete}: {b: Bubble; sel: boole
 
 /** [HERMIA-FE-20261022 U5] 漫画草稿暂存到 sessionStorage（按作品），切模块再回来不丢；仍不发写请求、不进服务端。 */
 export const comicDraftKey = (novelId?: string) => `hermia-comic-draft:${novelId || 'local'}`;
-function loadDraft(novelId?: string): {pages: Page[]; pageId: string} | null {
+// [HERMIA-FE-20261022 U5b] 草稿另存 cellIx / bubSel / view（图片子视图），切模块回来停在原格、原气泡、漫画制作。
+type Draft = {pages: Page[]; pageId: string; cellIx?: number; bubSel?: string | null; view?: string};
+function loadDraft(novelId?: string): Draft | null {
   try { const d = JSON.parse(sessionStorage.getItem(comicDraftKey(novelId)) || 'null'); return d && Array.isArray(d.pages) && d.pages.length ? d : null; } catch { return null; }
 }
+/** [HERMIA-FE-20261022 U5b] 记住/读取本作品图片页的子视图（只为 comic 恢复用；没有草稿时也能记）。 */
+export function saveImageSubview(novelId: string | undefined, view: string) {
+  try { const d = JSON.parse(sessionStorage.getItem(comicDraftKey(novelId)) || 'null') || {};
+    sessionStorage.setItem(comicDraftKey(novelId), JSON.stringify({...d, view})); } catch { /* ignore */ }
+}
+export function loadImageSubview(novelId?: string): string | null {
+  try { const d = JSON.parse(sessionStorage.getItem(comicDraftKey(novelId)) || 'null'); return d && typeof d.view === 'string' ? d.view : null; } catch { return null; }
+}
+/** 恢复选中态时校验：页、格、气泡都必须还在，否则回落。 */
+export function restoreSelection(d: Draft | null, pageId: string): {cellIx: number; bubSel: string | null} {
+  const page = d?.pages.find(p => p.id === pageId) ?? d?.pages[0];
+  if (!d || !page) return {cellIx: 0, bubSel: null};
+  const n = templateById(page.tpl).panels.length;
+  const cellIx = Number.isInteger(d.cellIx) && d.cellIx! >= 0 && d.cellIx! < n ? d.cellIx! : 0;
+  const bubSel = d.bubSel && (page.cells ?? []).flat().some(b => b?.id === d.bubSel) ? d.bubSel : null;
+  return {cellIx, bubSel};
+}
 export function ComicView({chrome, onBack, onGen, novelId}: {chrome: React.ReactNode; onBack: () => void; onGen: () => void; novelId?: string}) {
-  const [pages, setPages] = useState<Page[]>(() => loadDraft(novelId)?.pages ?? [newPage(1)]);
-  const [pageId, setPageId] = useState(() => loadDraft(novelId)?.pageId ?? 'p1');
-  useEffect(() => { try { sessionStorage.setItem(comicDraftKey(novelId), JSON.stringify({pages, pageId})); } catch { /* 配额/隐私模式 */ } }, [novelId, pages, pageId]);
-  const [cellIx, setCellIx] = useState(0);
-  const [bubSel, setBubSel] = useState<string | null>(null);
+  const [init] = useState(() => { const d = loadDraft(novelId); const pid = d?.pages.some(p => p.id === d.pageId) ? d.pageId : d?.pages[0]?.id ?? 'p1'; return {d, pid, ...restoreSelection(d, pid)}; });
+  const [pages, setPages] = useState<Page[]>(() => init.d?.pages ?? [newPage(1)]);
+  const [pageId, setPageId] = useState(init.pid);
+  const [cellIx, setCellIx] = useState(init.cellIx);
+  const [bubSel, setBubSel] = useState<string | null>(init.bubSel);
+  // [HERMIA-FE-20261022 U5b] 挂载中即视为在漫画制作；离开由父级 saveImageSubview 改写 view。
+  useEffect(() => { try { sessionStorage.setItem(comicDraftKey(novelId), JSON.stringify({pages, pageId, cellIx, bubSel, view: 'comic'})); } catch { /* 配额/隐私模式 */ } }, [novelId, pages, pageId, cellIx, bubSel]);
   const [kind, setKind] = useState<BubbleKind>('speech');
   const page = pages.find(p => p.id === pageId) ?? pages[0]!;
   const tpl = templateById(page.tpl);
