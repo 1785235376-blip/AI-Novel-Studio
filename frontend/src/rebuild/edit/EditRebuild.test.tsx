@@ -26,7 +26,8 @@ describe('EditRebuild', () => {
     expect([...host.querySelectorAll('.nle-row')].map(r => r.getAttribute('data-track'))).toEqual(['V1', 'A1', 'S1']);
     expect(host.textContent).toContain('把镜头或声音拖到这里开始剪');
     expect(host.textContent).toContain('还没有可用素材');
-    expect(host.textContent).toContain('点一个片段看它的入出点和音量');
+    expect(host.textContent).toContain('点一个片段看它的入出点。'); // [HERMIA-FE-20261022 U5] 普通模式不提音量
+    expect(host.textContent).not.toContain('入出点和音量');
     expect(q('[data-writable="false"]')).toBeTruthy();
     act(() => btn('回视频改镜头')!.click()); expect(back).toHaveBeenCalled();
   });

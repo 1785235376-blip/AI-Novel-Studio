@@ -110,7 +110,7 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
     </div></>
   ) : (
     <><div className="insp-h">序列属性</div><div className="insp-b">
-      <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="EDIT"><h4>尚未选中片段</h4><p>点一个片段看它的入出点和音量。</p></div>
+      <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="EDIT"><h4>尚未选中片段</h4><p>{isPro ? '点一个片段看它的入出点和音量。' : '点一个片段看它的入出点。' /* [HERMIA-FE-20261022 U5] */}</p></div>
       <dl className="kv" style={{marginTop: 8}}><dt>时长</dt><dd>{fmtTc(clips.length ? duration : 0)}</dd>
         <dt>入 / 出</dt><dd>{mark.in == null ? '—' : fmtTc(mark.in)} → {mark.out == null ? '—' : fmtTc(mark.out)}</dd>
         <dt>画面</dt><dd>1920×1080 · 24 fps</dd><dt>轨道 / 片段</dt><dd>{rows.length} / {clips.length}</dd></dl>
