@@ -412,3 +412,40 @@
   font-size: 11px;
   color: var(--color-text-muted);
 }
+
+/* [HERMIA-FE-20261022 W-UX-14] Media-pool handoff honest empty + source strip */
+.edit-nle-rail__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+}
+.edit-nle-rail__empty[data-capability-tone="neutral"] {
+  border-left: 3px solid var(--color-border-strong, var(--color-border-default));
+}
+.edit-nle-rail__empty strong {
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+.edit-nle-rail__empty p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.edit-nle-rail__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.edit-nle-rail__bin > li[data-handoff-source] {
+  border-left: 3px solid var(--color-accent-primary);
+}

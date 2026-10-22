@@ -1,16 +1,17 @@
 // @vitest-environment jsdom
 /**
- * [HERMIA-FE-20261022 W-P0-06 / W-UX-09] EDIT shell density + honest readonly / writable-path discovery.
+ * [HERMIA-FE-20261022 W-P0-06 / W-UX-09 / W-UX-14] EDIT shell density + honest readonly + handoff pool.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {EditNleShell, EditNleMediaRail, EditNleInspector, EditNleReadonlyHonesty, demoEditTimeline} from './EditNleShell';
+import {clearEditHandoffs, pushEditHandoff, type EditHandoffItem} from './editHandoff';
 import {NovelWriterDock} from './NovelWriterDock';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
-afterEach(() => host?.remove());
+afterEach(() => { host?.remove(); clearEditHandoffs(); });
 
 describe('EditNleShell W-P0-06', () => {
   it('renders hero timeline, monitor, toolbar, zoom — not a toy strip', () => {
@@ -62,8 +63,9 @@ describe('EditNleShell W-P0-06', () => {
     ));
     expect(host.textContent).toContain('媒体池');
     expect(host.textContent).toContain('避免空白占位');
-    expect(host.textContent).toContain('引用');
+    expect(host.textContent).toContain('尚未接收手递');
     expect(host.querySelector('[data-drag-semantics="reference"]')).toBeTruthy();
+    expect(host.querySelector('[data-edit-handoff="empty"]')).toBeTruthy();
     expect(host.textContent).not.toMatch(/^\s*$/);
     act(() => root.unmount());
   });
@@ -140,6 +142,87 @@ describe('EditNleShell W-UX-09 honest readonly + writable path', () => {
     expect(host.textContent).toMatch(/制作操作/);
     expect(host.textContent).toMatch(/StudioTimelineEditor/);
     expect(host.textContent).toMatch(/导出真链路未接通/);
+    act(() => root.unmount());
+  });
+});
+
+
+describe('EditNleShell W-UX-14 media-pool handoff honesty', () => {
+  it('shows honest empty「尚未接收手递」with no fake bin materials', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<EditNleMediaRail novelId="n1" handoffs={[]} />));
+    expect(host.querySelector('[data-w-ux="14"]')).toBeTruthy();
+    expect(host.querySelector('[data-edit-handoff="empty"]')).toBeTruthy();
+    expect(host.querySelector('[data-honest-kind="no_handoff"]')).toBeTruthy();
+    expect(host.querySelector('[data-capability-tone="neutral"]')).toBeTruthy();
+    expect(host.textContent).toContain('尚未接收手递');
+    expect(host.querySelector('[data-handoff-bin="true"]')).toBeNull();
+    expect(host.querySelectorAll('[data-media-bin]').length).toBe(0);
+    expect(host.textContent).not.toMatch(/已就绪|假素材已导入/);
+    act(() => root.unmount());
+  });
+
+  it('renders source strips after handoff (AUDIO/VIDEO/ASSETS)', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const handoffs: EditHandoffItem[] = [
+      {id: 'eh-a', source: 'AUDIO', label: '旁白检听交片', at: 1},
+      {id: 'eh-v', source: 'VIDEO', label: '镜头交片', at: 2},
+      {id: 'eh-s', source: 'ASSETS', label: 'clip.mp4', novelId: 'n1', at: 3},
+    ];
+    act(() => root.render(<EditNleMediaRail novelId="n1" handoffs={handoffs} />));
+    expect(host.querySelector('[data-edit-handoff="received"]')).toBeTruthy();
+    expect(host.querySelector('[data-handoff-count="3"]')).toBeTruthy();
+    expect(host.querySelectorAll('[data-handoff-source-strip="true"]').length).toBe(3);
+    expect(host.querySelector('[data-handoff-source="AUDIO"]')).toBeTruthy();
+    expect(host.querySelector('[data-handoff-source="VIDEO"]')).toBeTruthy();
+    expect(host.querySelector('[data-handoff-source="ASSETS"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/来源 · 声音/);
+    expect(host.textContent).toMatch(/来源 · 视频/);
+    expect(host.textContent).toMatch(/来源 · 资产/);
+    expect(host.textContent).toMatch(/引用 · 手递/);
+    expect(host.textContent).not.toContain('尚未接收手递');
+    act(() => root.unmount());
+  });
+
+  it('pushEditHandoff feeds the rail via session inbox', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    pushEditHandoff({source: 'AUDIO', label: '声音轨 · 送剪辑', novelId: 'n1'});
+    act(() => root.render(<EditNleMediaRail novelId="n1" />));
+    expect(host.querySelector('[data-edit-handoff="received"]')).toBeTruthy();
+    expect(host.querySelector('[data-handoff-source="AUDIO"]')).toBeTruthy();
+    expect(host.textContent).toContain('声音轨 · 送剪辑');
+    act(() => root.unmount());
+  });
+
+  it('keeps W-UX-09 demo-readonly honesty when pool is empty or filled', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const timeline = demoEditTimeline('novel-demo');
+    act(() => root.render(
+      <>
+        <EditNleShell
+          novelId="novel-demo"
+          timeline={timeline}
+          playheadMs={0}
+          onPlayhead={() => {}}
+          selectedClipIds={[]}
+          onSelectClips={() => {}}
+        />
+        <EditNleMediaRail novelId="novel-demo" handoffs={[]} />
+      </>,
+    ));
+    expect(host.querySelector('[data-w-ux="09"]')).toBeTruthy();
+    expect(host.querySelector('.edit-nle-shell')?.getAttribute('data-writable')).toBe('false');
+    expect(host.querySelector('[data-honest-badge="demo-readonly"]')).toBeTruthy();
+    expect(host.querySelector('[data-w-ux="14"]')).toBeTruthy();
+    expect(host.querySelector('[data-w-ux-09-rail="true"]')).toBeTruthy();
     act(() => root.unmount());
   });
 });

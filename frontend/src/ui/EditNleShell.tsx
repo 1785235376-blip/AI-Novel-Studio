@@ -1,10 +1,11 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / W-UX-05 / W-UX-09] CapCut/PR/AE-density EDIT workspace shell.
+ * [HERMIA-FE-20261022 W-P0-06 / W-UX-05 / W-UX-09 / W-UX-14] CapCut/PR/AE-density EDIT workspace shell.
  * Composes existing nle/** panels; does NOT rewrite timeline engine internals.
  * Demo sequence is local UI state only (read-only shell when no production client).
  * W-UX-05: dual monitors / multi-track / zoom / media pool / inspector polish — small cut.
  * W-UX-09: honest demo-readonly badge + discoverable IndependentStudio/PRODUCTION write path
  *   (does NOT change default ModuleWorkspaceRoutes landing to PRODUCTION).
+ * W-UX-14: media pool shows handoff source strips OR honest empty「尚未接收手递」(no fake bin).
  */
 import {useCallback, useMemo, useState} from 'react';
 import {Button} from './primitives';
@@ -14,6 +15,11 @@ import {ExportDeliveryPanel} from '../nle/ExportDeliveryPanel';
 import {checkedTimeline} from '../creative/studioTimelineTypes';
 import {NLE_VIEW_SCALE_MAX, NLE_VIEW_SCALE_MIN, timelineUsage, timebaseOf, zoomWindow} from '../nle/timelineOps';
 import './EditNleShell.css';
+import {
+  EDIT_HANDOFF_SOURCE_LABEL,
+  editHandoffsForNovel,
+  type EditHandoffItem,
+} from './editHandoff';
 
 const DIGEST = 'a'.repeat(64);
 
@@ -66,14 +72,6 @@ export function demoEditTimeline(novelId: string) {
   });
 }
 
-const MEDIA_BIN = [
-  {id: 'shot-a', kind: '视频', label: '镜头 A · 开场'},
-  {id: 'shot-b', kind: '视频', label: '镜头 B · 对白'},
-  {id: 'overlay', kind: '图片', label: '叠层 · 角标'},
-  {id: 'vo', kind: '音频', label: '旁白轨'},
-  {id: 'bgm', kind: '音频', label: '背景音乐'},
-];
-
 /** [HERMIA-FE-20261022 W-UX-09] Honest demo-readonly + writable-path discovery (G-EDIT-02). */
 export function EditNleReadonlyHonesty({
   onOpenWritablePath,
@@ -121,29 +119,71 @@ export function EditNleReadonlyHonesty({
   );
 }
 
-export function EditNleMediaRail({novelId}: {novelId: string}) {
+/** [HERMIA-FE-20261022 W-UX-14] Media pool = handoff source strips OR honest empty「尚未接收手递」. */
+export function EditNleMediaRail({
+  novelId,
+  handoffs,
+}: {
+  novelId: string;
+  /** Optional override for tests; default reads session inbox. */
+  handoffs?: EditHandoffItem[];
+}) {
+  const items = handoffs ?? editHandoffsForNovel(novelId);
+  const hasHandoff = items.length > 0;
   return (
-    <nav className="edit-nle-rail" aria-label="剪辑媒体池" data-drag-semantics="reference">
+    <nav
+      className="edit-nle-rail"
+      aria-label="剪辑媒体池"
+      data-drag-semantics="reference"
+      data-w-ux="14"
+      data-edit-handoff={hasHandoff ? 'received' : 'empty'}
+      data-handoff-count={String(items.length)}
+    >
       <div className="edit-nle-rail__eyebrow">媒体池</div>
-      <strong>序列 · 演示（只读）</strong>
+      <strong>手递收件 · 演示（只读）</strong>
       <p className="edit-nle-rail__hint" data-writable-path="rail-hint">
-        拖入时间线＝引用资产，不复制源文件。本池为演示示意，不可写入轨。
+        拖入时间线＝引用资产，不复制源文件。本池只展示跨模块显式手递，不伪造素材。
         可写路径：独立工作室 →「制作操作」（PRODUCTION）→ StudioTimelineEditor。≠ VIDEO 假轨。
       </p>
-      <ul className="edit-nle-rail__bin">
-        {MEDIA_BIN.map(item => (
-          <li key={item.id} draggable={false} data-media-bin={item.id} title="拖入＝引用（演示壳示意）">
-            <span className="edit-nle-rail__kind">{item.kind}</span>
-            <span>{item.label}</span>
-            <small>{novelId.slice(0, 8)}…/{item.id}</small>
-            <em className="edit-nle-rail__ref">引用</em>
-          </li>
-        ))}
-      </ul>
+      {hasHandoff ? (
+        <ul className="edit-nle-rail__bin" data-handoff-bin="true" aria-label="已接收手递">
+          {items.map(item => (
+            <li
+              key={item.id}
+              draggable={false}
+              data-media-bin={item.id}
+              data-handoff-source={item.source}
+              data-handoff-id={item.id}
+              title="手递引用（演示壳 · 不入真轨）"
+            >
+              <span className="edit-nle-rail__source" data-handoff-source-strip="true">
+                来源 · {EDIT_HANDOFF_SOURCE_LABEL[item.source]}
+              </span>
+              <span className="edit-nle-rail__kind">{EDIT_HANDOFF_SOURCE_LABEL[item.source]}</span>
+              <span>{item.label}</span>
+              <small>{novelId.slice(0, 8)}…/{item.id}</small>
+              <em className="edit-nle-rail__ref">引用 · 手递</em>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div
+          className="edit-nle-rail__empty"
+          data-honest-kind="no_handoff"
+          data-capability-tone="neutral"
+          aria-label="尚未接收手递"
+        >
+          <strong>尚未接收手递</strong>
+          <p>
+            媒体池为空：还没有从声音 / 视频 / 资产（或图片经资产）显式「送去剪辑」的条目。
+            不显示假素材占位。请在源工作区确认送剪辑后再回来查看来源条。
+          </p>
+        </div>
+      )}
       <div className="edit-nle-rail__future">
         <span>序列树</span>
-        <small>主序列（演示）</small>
-        <small>待导入 · 需项目素材（诚实空）</small>
+        <small>主序列（演示时间线 · 非手递）</small>
+        <small data-w-ux-09-rail="true">W-UX-09 演示只读壳仍生效 · 默认可写未改</small>
       </div>
     </nav>
   );
