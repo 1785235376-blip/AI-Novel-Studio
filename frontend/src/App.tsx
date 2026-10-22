@@ -45,6 +45,7 @@ import { AppShell, StudioModule } from "./ui/AppShell";
 import { NovelWriterDock } from "./ui/NovelWriterDock";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
+import { EMPTY_EDITOR_SELECTION, shouldRestoreNovelWriteOnEnter } from "./ui/moduleSwitchIsolation";
 import { ModuleStartGate, markModuleStartGateDismissed, shouldOpenModuleStartGate } from "./ui/ModuleStartGate"; // [HERMIA-FE-20261022] H-UX-START-01
 import { CreativeWorkspace } from "./creative/CreativeWorkspace";
 import { BlankProjectEntry } from './creative/BlankProjectEntry';
@@ -334,8 +335,14 @@ export default function App() {
         || revisionStoreIdentity({ ...useStudio.getState(), chapterId: '' }) !== studioEntry.identity) return;
     // Clicking the current module is explicit too; React may not render again.
     studioEntry.explicit = true;
+    // [HERMIA-FE-20261022 X-UX-08] media/NLE → NOVEL restores write 四象限; clear selection so it does not leak into other modules
+    const restoreWrite = shouldRestoreNovelWriteOnEnter(studioModule, module);
     setStudioModule(module);
-  }, [studioEntry]);
+    if (restoreWrite) {
+      setPanel("write");
+      setSelection({ ...EMPTY_EDITOR_SELECTION });
+    }
+  }, [studioEntry, studioModule]);
   const navigateStudioModule = useCallback((module: StudioModule) => {
     if (module === studioModule) { commitStudioModule(module); return; }
     styleLeave.request(current => { if (current()) commitStudioModule(module); });

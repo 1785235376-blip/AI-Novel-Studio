@@ -24,6 +24,7 @@ import {
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
   VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta,
 } from './MediaWorkspaceShells';
+import { mediaShellForModule } from './moduleSwitchIsolation';
 
 type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
 interface Props {localAiOnboarding?:LocalAiOnboardingOwner; module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void; shellMode?:'basic'|'pro'; onShellModeChange?:(mode:'basic'|'pro')=>void;}
@@ -67,6 +68,8 @@ function OverflowSurfaceBanner({module}:{module:'CONTROL'|'PLUGIN'|'WORKFLOW'}){
 }
 
 export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange,shellMode='basic',onShellModeChange}:Props){
+  // [HERMIA-FE-20261022 X-UX-08] This route tree mounts ONLY when App studioModule !== NOVEL.
+  // Per-module main/inspector/sidebar switch below — selection buckets do not cross into novel center.
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   // [HERMIA-FE-20261022 W-P0-06] EDIT session: playhead/selection shared with inspector (CapCut-density shell).
   const editTimeline = novelId && module==='EDIT' ? demoEditTimeline(novelId) : null;
@@ -93,6 +96,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?<VideoWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='IMAGE'&&novelId?<ImageWorkspaceRail/>:module==='AUDIO'&&novelId?<AudioWorkspaceRail onSendToEdit={()=>onModuleChange('EDIT')}/>:module==='ASSETS'&&novelId?<AssetsWorkspaceRail/>:<WorkspaceRail module={module}/>;
   // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
   const isOverflow = module==='CONTROL'||module==='PLUGIN'||module==='WORKFLOW';
-  const mainBody=(module==='EDIT'||module==='IMAGE'||module==='VIDEO'||module==='AUDIO'||module==='ASSETS')?<div className="media-ws-main" data-module-shell={module} data-shell-mode={shellMode}>{main}</div>:<>{isOverflow?<OverflowSurfaceBanner module={module}/>:null}<CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
+  const shell = mediaShellForModule(module);
+  const mainBody=shell?<div className="media-ws-main" data-module-shell={shell} data-shell-mode={shellMode} data-x-ux-isolation="per-module">{main}</div>:<>{isOverflow?<OverflowSurfaceBanner module={module}/>:null}<CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
   return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>} shellMode={shellMode} onShellModeChange={onShellModeChange}/>;
 }

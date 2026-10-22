@@ -65,4 +65,40 @@ describe('ModuleWorkspaceRoutes',()=>{
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('AUDIO');
     act(()=>root.unmount());
   });
+
+  it('X-UX-08: VIDEO→EDIT isolates shells; media/NLE never mounts novel-write-chrome', () => {
+    // VIDEO without novelId still wraps media-ws-main (honest empty) — no QC dependency.
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    act(()=>root.render(<ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('VIDEO');
+    expect(host.querySelector('[data-module-shell="VIDEO"]')).toBeTruthy();
+    expect(host.querySelector('[data-x-ux-isolation="per-module"]')).toBeTruthy();
+    expect(host.querySelector('.edit-nle-shell')).toBeNull();
+    expect(host.querySelector('.edit-nle-shell__hero')).toBeNull();
+    expect(host.querySelector('.novel-write-chrome')).toBeNull();
+    expect(host.querySelector('[data-module-shell="EDIT"]')).toBeNull();
+
+    // EDIT with novel mounts CapCut NLE hero; VIDEO marker must be gone.
+    act(()=>root.render(<ModuleWorkspaceRoutes module="EDIT" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
+    expect(host.querySelector('[data-module-shell="EDIT"]')).toBeTruthy();
+    expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
+    expect(host.querySelector('[data-module-shell="VIDEO"]')).toBeNull();
+    expect(host.querySelector('.novel-write-chrome')).toBeNull();
+    expect(host.textContent).not.toMatch(/中区为正文编辑器/);
+    act(()=>root.unmount());
+  });
+
+  it.each(['IMAGE','VIDEO','AUDIO','EDIT','ASSETS'] as const)('X-UX-08: %s route never mounts novel-write-chrome', module=>{
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    // no novelId → honest empty still tagged data-module-shell; avoids QC-heavy panels
+    act(()=>root.render(<ModuleWorkspaceRoutes module={module} onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author"/>));
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe(module);
+    expect(host.querySelector(`[data-module-shell="${module}"]`)).toBeTruthy();
+    expect(host.querySelector('.novel-write-chrome')).toBeNull();
+    expect(host.querySelector('.edit-nle-shell')).toBeNull();
+    expect(host.querySelector('.app-shell')?.getAttribute('data-module')).not.toBe('NOVEL');
+    act(()=>root.unmount());
+  });
+
 });
