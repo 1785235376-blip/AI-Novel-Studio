@@ -25,7 +25,9 @@ export function pluginState(p: any): {label: '已启用' | '已安装' | '未审
   return {label: '已安装', tone: 'part', canEnable: true};
 }
 
-export function PluginsRebuild() {
+export function PluginsRebuild({shellMode = 'basic'}: {shellMode?: 'basic' | 'pro'} = {}) {
+  // [HERMIA-FE-20261022 U4] 普通：本地软件 + 插件列表（启用/停用）；专业另有每个插件的「权限设置」。
+  const isPro = shellMode === 'pro';
   const [list, setList] = useState<any[] | null>(null);
   const [meta, setMeta] = useState<{exec: boolean} | null>(null);
   const [err, setErr] = useState('');
@@ -41,7 +43,7 @@ export function PluginsRebuild() {
     catch (e) { setNote(`操作失败：${rbError(e)}`); }
   }
   return (
-    <div className="ws-full hub-ws" data-hub="plugins" aria-label="插件">
+    <div className="ws-full hub-ws" data-hub="plugins" data-shell-mode={shellMode} aria-label="插件">
       <div className="ws-head"><h2>插件</h2><span className="nv-spacer" />
         <button type="button" className="nv-btn nv-btn--primary" id="plugInstall" onClick={() => setDrawer(true)}>安装插件…</button></div>
       <div className="ws-body plug-hub">
@@ -57,9 +59,9 @@ export function PluginsRebuild() {
             : list.map(p => { const s = pluginState(p); return <div key={p.id} className="plug-row-wrap">
               <div className="plug-row"><div className="grow"><b>{p.name || '未命名插件'}</b><div className="hub-muted">{s.label === '未审核' ? '未审核 · 不能启用' : s.label === '已启用' ? '已启用' : '已安装 · 已审核'}{p.version ? ` · 第 ${p.version} 版` : ''}</div></div>
                 <span className={`hub-badge hub-badge--${s.tone}`}>{s.label}</span>
-                <button type="button" className="nv-btn" onClick={() => setOpen(o => o === p.id ? null : p.id)}>{open === p.id ? '收起' : '设置'}</button>
+                {isPro ? <button type="button" className="nv-btn" data-pro-only="plugin-perms" onClick={() => setOpen(o => o === p.id ? null : p.id)}>{open === p.id ? '收起' : '权限设置'}</button> : null}
                 <button type="button" className="nv-btn" disabled={s.label !== '已启用' && !s.canEnable} onClick={() => void toggle(p)}>{s.label === '已启用' ? '停用' : '启用'}</button></div>
-              {open === p.id ? <div className="plug-detail">{p.description || '这个插件没有写说明。'}{p.permissions ? <> · 权限：{Object.keys(p.permissions).length ? '已按项授权' : '默认全部拒绝'}</> : null}</div> : null}
+              {isPro && open === p.id ? <div className="plug-detail">{p.description || '这个插件没有写说明。'}{p.permissions ? <> · 权限：{Object.keys(p.permissions).length ? '已按项授权' : '默认全部拒绝'}</> : null}</div> : null}
             </div>; })}
           <div className="hub-note hub-note--warn">未审核、未安装的插件如实标出来，不会显示成可用。{meta && !meta.exec ? '现在后端只做插件登记和审核，插件里的工具还不能真正运行。' : ''}</div>
         </section>

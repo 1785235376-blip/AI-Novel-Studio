@@ -26,7 +26,9 @@ export function hubRowsFrom(d: {text?: Record<string, any> | null; models?: any[
 
 const Badge = ({tone, children}: {tone: 'ok' | 'part' | 'off' | 'local'; children: ReactNode}) => <span className={`hub-badge hub-badge--${tone}`}>{children}</span>;
 
-export function ControlRebuild({advanced, onOpenWorkflow}: {advanced?: ReactNode; onOpenWorkflow?: () => void}) {
+export function ControlRebuild({advanced, onOpenWorkflow, shellMode = 'basic'}: {advanced?: ReactNode; onOpenWorkflow?: () => void; shellMode?: 'basic' | 'pro'}) {
+  // [HERMIA-FE-20261022 U4] 普通：连接状态 + 密钥 + 「验证连接」；专业另有 预算与任务 和「高级」（路由、预算、插件权限）。
+  const isPro = shellMode === 'pro';
   const [data, setData] = useState<Parameters<typeof hubRowsFrom>[0] | null>(null);
   const [queue, setQueue] = useState<{n: number} | {err: string} | null>(null);
   const [checking, setChecking] = useState(false);
@@ -55,7 +57,7 @@ export function ControlRebuild({advanced, onOpenWorkflow}: {advanced?: ReactNode
   const anyVerified = rows.some(r => r.verified === true);
 
   return (
-    <div className="ws-full hub-ws" data-hub="control" aria-label="AI 主控">
+    <div className="ws-full hub-ws" data-hub="control" data-shell-mode={shellMode} aria-label="AI 主控">
       <div className="ws-head"><h2>AI 主控</h2><span className="nv-spacer" />
         <button type="button" className="nv-btn nv-btn--primary" id="aiVerify" disabled={checking} onClick={() => void verify()}>{checking ? '验证中…' : '验证连接'}</button></div>
       <div className="ws-body ai-hub">
@@ -74,16 +76,16 @@ export function ControlRebuild({advanced, onOpenWorkflow}: {advanced?: ReactNode
               <span className="hub-where">{r.where}</span></div>)}
           </div>)}
         </section>
-        <section className="hub-sec" aria-label="预算与任务"><h4>预算与任务</h4>
+        {isPro ? <section className="hub-sec" aria-label="预算与任务" data-pro-only="budget"><h4>预算与任务</h4>
           <dl className="hub-kv"><dt>本会话预算</dt><dd>本地优先 · 云端额度未授权，不会自动扣费</dd>
             <dt>排队任务</dt><dd>{queue === null ? '读取中…' : 'err' in queue ? `暂时看不到（${queue.err}）` : queue.n === 0 ? '现在没有在跑的任务。' : `${queue.n} 个`}</dd></dl>
           <div className="nv-row"><button type="button" className="nv-btn" onClick={onOpenWorkflow}>打开工作流编排</button></div>
           <div className="hub-note hub-note--warn">没验证的服务、要本机运行但没启动的服务，都会拒绝派发，不会假装成功。</div>
-        </section>
+        </section> : null}
         <section className="hub-sec" id="hub-keys" aria-label="密钥"><h4>密钥</h4>
           <p className="hub-muted">密钥只写不回显。保存后可以点「测试」确认能不能连上。</p>
           <CredentialsPanel /></section>
-        {advanced ? <details className="hub-sec hub-adv"><summary><h4>高级 · 本机模型管理与媒体服务细节</h4></summary>{advanced}</details> : null}
+        {isPro && advanced ? <details className="hub-sec hub-adv"><summary><h4>高级 · 本机模型管理与媒体服务细节</h4></summary>{advanced}</details> : null}
       </div>
     </div>
   );

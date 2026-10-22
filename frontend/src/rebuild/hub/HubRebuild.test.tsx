@@ -20,7 +20,7 @@ beforeEach(() => { vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); calls.length = 0; plugins = []; });
 describe('ControlRebuild', () => {
   it('single page with sections; simulated services never green; yellow strip when nothing verified', async () => {
-    render(<ControlRebuild />);
+    render(<ControlRebuild shellMode="pro" />);
     await screen.findByText('Qwen 27B');
     for (const h of ['模型与提供方', '预算与任务', '密钥']) expect(screen.getAllByText(h).length).toBeGreaterThan(0);
     expect(document.querySelectorAll('[role=tab]')).toHaveLength(0);
@@ -72,5 +72,25 @@ describe('PluginsRebuild', () => {
     // [HERMIA-FE-20261022 R7-FIX2] 空 permission_review 视为未审核
     expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {}, granted_permissions: ['fs.read']}).canEnable).toBe(false);
     expect(pluginState({...base, status: 'DISABLED', permission_review: {}, granted_permissions: ['fs.read']}).label).toBe('未审核');
+  });
+});
+describe('[U4] 主控/插件 mode gating', () => {
+  it('normal: status + 验证连接 only; pro: 预算与任务 + 高级 + plugin permission settings', async () => {
+    const {rerender} = render(<ControlRebuild shellMode="basic" advanced={<div>ADV</div>} />);
+    await screen.findByText('模型与提供方');
+    expect(document.querySelector('#aiVerify')).toBeTruthy();
+    expect(screen.queryByText('预算与任务')).toBeNull();
+    expect(document.querySelector('.hub-adv')).toBeNull();
+    rerender(<ControlRebuild shellMode="pro" advanced={<div>ADV</div>} />);
+    expect(screen.getAllByText('预算与任务').length).toBeGreaterThan(0);
+    expect(document.querySelector('.hub-adv')).toBeTruthy();
+    cleanup();
+    const plugin = {id: 'p1', name: '示例插件', status: 'REGISTERED'};
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify({items: [plugin], execution_supported: false}), {status: 200, headers: {'Content-Type': 'application/json'}}))));
+    const r2 = render(<PluginsRebuild shellMode="basic" />);
+    await screen.findByText('示例插件');
+    expect(document.querySelector('[data-pro-only="plugin-perms"]')).toBeNull();
+    r2.rerender(<PluginsRebuild shellMode="pro" />);
+    expect(document.querySelector('[data-pro-only="plugin-perms"]')).toBeTruthy();
   });
 });
