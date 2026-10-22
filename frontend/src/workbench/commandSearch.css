@@ -13,3 +13,8 @@
 .wb-command__list button{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .wb-command__list button.is-active,.wb-command__list button[aria-selected="true"]{background:var(--color-selection-bg)}
 .wb-command__id{font-size:11px;color:var(--color-text-muted)}
+
+/* [HERMIA-FE-20261022 X-UX-11] command groups */
+.wb-command__group { list-style: none; }
+.wb-command__group > ul { list-style: none; margin: 0; padding: 0; }
+.wb-command__group-label { font-size: 11px; letter-spacing: .04em; opacity: .7; padding: 6px 10px 2px; }

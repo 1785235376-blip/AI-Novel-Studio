@@ -18,6 +18,18 @@ function matchesQuery(label: string, id: string, q: string): boolean {
   return needle.split(/\s+/).every(part => hay.includes(part));
 }
 
+// [HERMIA-FE-20261022 X-UX-11] Display-only grouping (写作 / 媒体 / 壳·设置). Every listed action
+// lands in exactly one group (unknown ids fall back to 壳·设置), so no command becomes unreachable.
+export type CommandGroup = '写作' | '媒体' | '壳·设置';
+export const COMMAND_GROUP_ORDER: CommandGroup[] = ['写作', '媒体', '壳·设置'];
+const MEDIA_WORKSPACES = new Set(['image', 'video', 'audio', 'edit', 'assets']);
+export function commandGroupOf(id: string): CommandGroup {
+  if (id.startsWith('novel.') || id.startsWith('panel.open.') || id === 'workspace.open.novel') return '写作';
+  const ws = /^workspace\.open\.(.+)$/.exec(id);
+  if (ws && MEDIA_WORKSPACES.has(ws[1])) return '媒体';
+  return '壳·设置';
+}
+
 export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLegacy: (id: string) => void}) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
@@ -36,9 +48,13 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
   }, [open]);
   const ctx = workbench.context();
   const items = useMemo(
-    () => workbench.actions.list('commandSearch', ctx).filter(a => matchesQuery(a.label, a.id, q)),
+    () => {
+      const listed = workbench.actions.list('commandSearch', ctx).filter(a => matchesQuery(a.label, a.id, q));
+      // [HERMIA-FE-20261022 X-UX-11] stable sort by group so ↑/↓ order matches the visual groups.
+      return COMMAND_GROUP_ORDER.flatMap(g => listed.filter(a => commandGroupOf(a.id) === g));
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- list is cheap; epoch covers lifecycle
-    [workbench, q, ctx.token.epoch],
+    [workbench, q, ctx.token.epoch, open], // [HERMIA-FE-20261022 X-UX-11] refresh on open so late-registered actions are listed
   );
   useEffect(() => { setActive(0); }, [q]);
 
@@ -79,10 +95,16 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
   return <div className="wb-command">
     <Button ref={trigger} variant="ghost" className="wb-command__trigger" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}><Search aria-hidden="true" size={16}/>搜索功能</Button>
     {open && <div className="wb-command__overlay" role="dialog" aria-modal="true" aria-label="搜索功能与命令" onKeyDown={onListKey}>
-      <input ref={input} className="wb-command__input" aria-label="搜索功能" aria-controls="wb-command-list" aria-activedescendant={items[active] ? `wb-cmd-${items[active].id}` : undefined} placeholder="输入功能名称，例如：版本历史 / 主控 / 专业" value={q} onChange={e => setQ(e.target.value)}
-        onKeyDown={onListKey}/>
+      <input ref={input} className="wb-command__input" aria-label="搜索功能" aria-controls="wb-command-list" aria-activedescendant={items[active] ? `wb-cmd-${items[active].id}` : undefined} placeholder="输入功能名称，例如：版本历史 / 主控 / 专业" value={q} onChange={e => setQ(e.target.value)}/>
+      {/* [HERMIA-FE-20261022 X-UX-11] input keys bubble to the overlay handler once (was handled twice → ↓ skipped an item). */}
       <ul id="wb-command-list" className="wb-command__list" role="listbox" aria-label="匹配的功能">
-        {items.map((a, index) => (
+        {COMMAND_GROUP_ORDER.map(g => {
+          const groupItems = items.filter(a => commandGroupOf(a.id) === g);
+          if (!groupItems.length) return null;
+          return <li key={g} role="presentation" className="wb-command__group">
+            <div className="wb-command__group-label" id={`wb-cmd-group-${g}`} aria-hidden="true">{g}</div>
+            <ul role="group" aria-label={g} data-command-group={g}>
+              {groupItems.map(a => { const index = items.indexOf(a); return (
           <li key={a.id}>
             <button
               type="button"
@@ -98,8 +120,14 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
               <small className="wb-command__id">{a.id}</small>
             </button>
           </li>
-        ))}
-        {!items.length && <li className="wb-command__empty">没有匹配的功能</li>}
+); })}
+            </ul>
+          </li>;
+        })}
+        {/* [HERMIA-FE-20261022 X-UX-11] honest empty state: says what was searched, no fake suggestions. */}
+        {!items.length && <li className="wb-command__empty" role="presentation" data-testid="command-search-empty">
+          {q.trim() ? <>没有与「{q.trim()}」匹配的功能。可尝试更短的关键词，或按功能 ID（如 history、plugin）搜索。</> : '当前没有可用的命令。'}
+        </li>}
       </ul>
       {msg && <p role="status" className="wb-command__msg">{msg}</p>}
     </div>}

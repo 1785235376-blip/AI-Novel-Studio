@@ -5,7 +5,7 @@ import {act, cleanup, fireEvent, render, screen} from '@testing-library/react';
 afterEach(cleanup);
 import {useEffect, useRef, useState} from 'react';
 import {useWorkbench} from './useWorkbench';
-import {CommandSearch} from './CommandSearch';
+import {CommandSearch, commandGroupOf, COMMAND_GROUP_ORDER} from './CommandSearch';
 import {registerLayoutActions} from './useWorkbenchLayout';
 import type {StudioModule} from '../ui/moduleRegistry';
 
@@ -94,5 +94,50 @@ describe('CommandSearch wiring', () => {
     fireEvent.keyDown(input, {key: 'ArrowDown'});
     await act(async () => { fireEvent.keyDown(input, {key: 'Enter'}); });
     expect(openModule).toHaveBeenCalled();
+  });
+});
+
+// [HERMIA-FE-20261022 X-UX-11] groups + honest empty state + reachability
+describe('X-UX-11 CommandSearch groups', () => {
+  it('maps ids into 写作 / 媒体 / 壳·设置 with safe fallback', () => {
+    expect(commandGroupOf('novel.open.overview')).toBe('写作');
+    expect(commandGroupOf('panel.open.history')).toBe('写作');
+    expect(commandGroupOf('workspace.open.novel')).toBe('写作');
+    for (const m of ['image', 'video', 'audio', 'edit', 'assets']) expect(commandGroupOf(`workspace.open.${m}`)).toBe('媒体');
+    expect(commandGroupOf('workspace.open.control')).toBe('壳·设置');
+    expect(commandGroupOf('layout.reset')).toBe('壳·设置');
+    expect(commandGroupOf('something.unknown')).toBe('壳·设置');
+  });
+  it('renders group headers in order and every listed action stays reachable as an option', () => {
+    let wbRef: ReturnType<typeof useWorkbench> | undefined;
+    function H() {
+      const wb = useWorkbench(() => {}, {projectId: 'p1'}); wbRef = wb;
+      useEffect(() => registerLayoutActions(wb.actions, {getMode: () => 'basic', setMode: () => {}}), [wb.actions]);
+      return <CommandSearch workbench={wb} onLegacy={() => {}}/>;
+    }
+    render(<H/>);
+    fireEvent.click(screen.getByRole('button', {name: /搜索功能/}));
+    const groups = screen.getAllByRole('group').map(g => g.getAttribute('data-command-group'));
+    expect(groups).toEqual(COMMAND_GROUP_ORDER.filter(g => groups.includes(g)));
+    expect(groups).toEqual(expect.arrayContaining(['写作', '媒体', '壳·设置']));
+    const listed = wbRef!.actions.list('commandSearch', wbRef!.context()).map(a => a.id).sort();
+    const shown = screen.getAllByRole('option').map(o => o.getAttribute('data-action-id')).sort();
+    expect(shown).toEqual(listed);
+  });
+  it('ArrowDown order follows grouped visual order', () => {
+    render(<Harness nav={vi.fn()} project="p1"/>);
+    fireEvent.click(screen.getByRole('button', {name: /搜索功能/}));
+    const opts = screen.getAllByRole('option');
+    fireEvent.keyDown(screen.getByRole('textbox'), {key: 'ArrowDown'});
+    expect(screen.getAllByRole('option')[1].getAttribute('aria-selected')).toBe('true');
+    expect(opts[0].closest('[role="group"]')!.getAttribute('data-command-group')).toBe('写作');
+  });
+  it('no results shows honest empty state naming the query and no options', () => {
+    render(<Harness nav={vi.fn()} project="p1"/>);
+    fireEvent.click(screen.getByRole('button', {name: /搜索功能/}));
+    fireEvent.change(screen.getByRole('textbox', {name: '搜索功能'}), {target: {value: 'zzqqxx不存在'}});
+    expect(screen.queryAllByRole('option')).toHaveLength(0);
+    expect(screen.queryAllByRole('group')).toHaveLength(0);
+    expect(screen.getByTestId('command-search-empty').textContent).toContain('zzqqxx不存在');
   });
 });
