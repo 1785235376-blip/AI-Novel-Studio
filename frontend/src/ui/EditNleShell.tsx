@@ -1,8 +1,10 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / W-UX-05] CapCut/PR/AE-density EDIT workspace shell.
+ * [HERMIA-FE-20261022 W-P0-06 / W-UX-05 / W-UX-09] CapCut/PR/AE-density EDIT workspace shell.
  * Composes existing nle/** panels; does NOT rewrite timeline engine internals.
  * Demo sequence is local UI state only (read-only shell when no production client).
  * W-UX-05: dual monitors / multi-track / zoom / media pool / inspector polish — small cut.
+ * W-UX-09: honest demo-readonly badge + discoverable IndependentStudio/PRODUCTION write path
+ *   (does NOT change default ModuleWorkspaceRoutes landing to PRODUCTION).
  */
 import {useCallback, useMemo, useState} from 'react';
 import {Button} from './primitives';
@@ -72,12 +74,62 @@ const MEDIA_BIN = [
   {id: 'bgm', kind: '音频', label: '背景音乐'},
 ];
 
+/** [HERMIA-FE-20261022 W-UX-09] Honest demo-readonly + writable-path discovery (G-EDIT-02). */
+export function EditNleReadonlyHonesty({
+  onOpenWritablePath,
+}: {
+  onOpenWritablePath?: () => void;
+}) {
+  return (
+    <aside
+      className="edit-nle-honesty"
+      data-edit-shell-mode="demo-readonly"
+      data-writable="false"
+      data-capability-tone="neutral"
+      data-w-ux="09"
+      aria-label="剪辑壳诚实说明"
+    >
+      <div className="edit-nle-honesty__row">
+        <span className="edit-nle-honesty__badge" data-honest-badge="demo-readonly">演示 · 只读</span>
+        <strong>当前顶栏「剪辑」是演示壳，不是可写 NLE</strong>
+      </div>
+      <p>
+        可 scrub / 选中示意；入出点与吸附仅本地 UI，
+        <em>不会</em>真实 trim / split / 持久化。禁假绿就绪态；本壳不是可写引擎。≠ VIDEO 画布假轨。
+      </p>
+      <details className="edit-nle-honesty__path" data-writable-path="discover" open>
+        <summary>如何打开可写剪辑（IndependentStudio · 制作操作）</summary>
+        <ol>
+          <li>打开已启用独立工作室的项目（NEUTRAL_STUDIO · experimental.narrative_production_v2）。</li>
+          <li>在独立工作室顶栏点「制作操作」（PRODUCTION 视图）— 正式 NLE 面。</li>
+          <li>可写引擎：<code>StudioTimelineEditor</code> + <code>nle/**</code>（真 trim / 导出仍受权限与账本约束，未接通不装绿）。</li>
+        </ol>
+        <p className="edit-nle-honesty__note">
+          默认顶栏剪辑仍落本演示壳；是否默认切 PRODUCTION 待产品拍板（晨报 Q3）。本票不改默认落地。
+        </p>
+        {onOpenWritablePath ? (
+          <Button type="button" data-open-writable-nle="true" onClick={onOpenWritablePath}>
+            打开独立工作室制作操作
+          </Button>
+        ) : (
+          <small data-writable-path-status="guidance-only">
+            本壳不自动跳转；请从已授权的独立工作室项目进入「制作操作」。
+          </small>
+        )}
+      </details>
+    </aside>
+  );
+}
+
 export function EditNleMediaRail({novelId}: {novelId: string}) {
   return (
     <nav className="edit-nle-rail" aria-label="剪辑媒体池" data-drag-semantics="reference">
       <div className="edit-nle-rail__eyebrow">媒体池</div>
-      <strong>序列 · 演示</strong>
-      <p className="edit-nle-rail__hint">拖入时间线＝引用资产，不复制源文件。完整可写路径在独立工作室「制作操作」。≠ VIDEO 假轨。</p>
+      <strong>序列 · 演示（只读）</strong>
+      <p className="edit-nle-rail__hint" data-writable-path="rail-hint">
+        拖入时间线＝引用资产，不复制源文件。本池为演示示意，不可写入轨。
+        可写路径：独立工作室 →「制作操作」（PRODUCTION）→ StudioTimelineEditor。≠ VIDEO 假轨。
+      </p>
       <ul className="edit-nle-rail__bin">
         {MEDIA_BIN.map(item => (
           <li key={item.id} draggable={false} data-media-bin={item.id} title="拖入＝引用（演示壳示意）">
@@ -124,12 +176,13 @@ export function EditNleInspector({
         />
       ) : (
         <section className="edit-nle-inspector__empty-cta" aria-label="序列下一步" data-honest-kind="empty_selection">
-          <p>在时间线上点选片段以查看入出点、增益与链接。无选中时保留序列出口，避免空白占位。</p>
+          <p>在时间线上点选片段以查看入出点、增益与链接。无选中时保留序列出口，避免空白占位。本检视器为只读演示。</p>
           <dl>
             <div><dt>项目</dt><dd>{novelId}</dd></div>
             <div><dt>时长</dt><dd>{timeline.duration_ms} ms · {timeline.fps} fps</dd></div>
             <div><dt>轨道 / 片段</dt><dd>{timeline.tracks.length} / {usage.clips}</dd></div>
-            <div><dt>下一步</dt><dd>导入媒体 · 从视频送入 · 或导出成片</dd></div>
+            <div><dt>下一步</dt><dd>导入媒体 · 从视频送入 · 或导出成片（导出真链路未接通）</dd></div>
+            <div data-writable-path="inspector-hint"><dt>可写剪辑</dt><dd>独立工作室「制作操作」· StudioTimelineEditor（非本演示壳）</dd></div>
           </dl>
         </section>
       )}
@@ -139,7 +192,7 @@ export function EditNleInspector({
 }
 
 export function EditNleShell({
-  novelId, timeline, playheadMs, onPlayhead, selectedClipIds, onSelectClips,
+  novelId, timeline, playheadMs, onPlayhead, selectedClipIds, onSelectClips, onOpenWritablePath,
 }: {
   novelId: string;
   timeline: ReturnType<typeof demoEditTimeline>;
@@ -147,6 +200,8 @@ export function EditNleShell({
   onPlayhead: (ms: number) => void;
   selectedClipIds: string[];
   onSelectClips: (ids: string[]) => void;
+  /** Optional: parent may navigate to IndependentStudio PRODUCTION. Guidance always visible. */
+  onOpenWritablePath?: () => void;
 }) {
   const timebase = useMemo(() => timebaseOf(timeline), [timeline]);
   const usage = useMemo(() => timelineUsage(timeline), [timeline]);
@@ -179,9 +234,12 @@ export function EditNleShell({
       className="edit-nle-shell"
       aria-label="剪辑工作区 · 多轨时间线"
       data-edit-density="w-ux-05"
+      data-edit-shell-mode="demo-readonly"
+      data-writable="false"
       data-nle-tracks={timeline.tracks.length}
       data-snap={snap ? 'on' : 'off'}
     >
+      <EditNleReadonlyHonesty onOpenWritablePath={onOpenWritablePath} />
       <div className="edit-nle-shell__preview" aria-label="监视器与工具条">
         <div className="edit-nle-shell__monitor edit-nle-shell__monitor--source" data-monitor="source">
           <span className="edit-nle-shell__monitor-label">源监视器</span>
@@ -199,8 +257,8 @@ export function EditNleShell({
           <Button type="button" onClick={() => scrub(40)}>▶ 帧</Button>
           <Button type="button" onClick={() => scrub(1000)}>+1s</Button>
           <span className="edit-nle-shell__sep" />
-          <Button type="button" data-mark="in" onClick={() => setMarkInMs(playheadMs)} title="入点">I 入点</Button>
-          <Button type="button" data-mark="out" onClick={() => setMarkOutMs(playheadMs)} title="出点">O 出点</Button>
+          <Button type="button" data-mark="in" data-demo-only="true" onClick={() => setMarkInMs(playheadMs)} title="入点（演示 · 不 trim）">I 入点</Button>
+          <Button type="button" data-mark="out" data-demo-only="true" onClick={() => setMarkOutMs(playheadMs)} title="出点（演示 · 不 trim）">O 出点</Button>
           <Button type="button" aria-pressed={snap} data-snap-toggle="true" onClick={() => setSnap(v => !v)}>
             {snap ? '吸附开' : '吸附关'}
           </Button>
@@ -236,7 +294,7 @@ export function EditNleShell({
         />
       </div>
       <p className="edit-nle-shell__foot notice">
-        [HERMIA-FE-20261022 W-UX-05] 剪辑 ≠ 视频画布。双监视器·入出点·吸附·缩放再抛光；复用 nle/** 不大拆。可写引擎仍走 IndependentStudio。不嵌入小说中区。
+        [HERMIA-FE-20261022 W-UX-09] 剪辑 ≠ 视频画布。本壳演示只读（editable=false）；可写路径见上方「独立工作室 · 制作操作」。复用 nle/** 不大拆；不改默认 PRODUCTION 落地。不嵌入小说中区。
       </p>
     </div>
   );

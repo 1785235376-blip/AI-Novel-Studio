@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 /**
- * [HERMIA-FE-20261022 W-P0-06] EDIT shell density — CapCut/PR/AE layout composing nle/**.
+ * [HERMIA-FE-20261022 W-P0-06 / W-UX-09] EDIT shell density + honest readonly / writable-path discovery.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import {EditNleShell, EditNleMediaRail, EditNleInspector, demoEditTimeline} from './EditNleShell';
+import {EditNleShell, EditNleMediaRail, EditNleInspector, EditNleReadonlyHonesty, demoEditTimeline} from './EditNleShell';
 import {NovelWriterDock} from './NovelWriterDock';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -65,6 +65,81 @@ describe('EditNleShell W-P0-06', () => {
     expect(host.textContent).toContain('引用');
     expect(host.querySelector('[data-drag-semantics="reference"]')).toBeTruthy();
     expect(host.textContent).not.toMatch(/^\s*$/);
+    act(() => root.unmount());
+  });
+});
+
+
+describe('EditNleShell W-UX-09 honest readonly + writable path', () => {
+  it('marks demo-readonly shell and exposes IndependentStudio write-path discovery', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const timeline = demoEditTimeline('novel-demo');
+    act(() => root.render(
+      <EditNleShell
+        novelId="novel-demo"
+        timeline={timeline}
+        playheadMs={0}
+        onPlayhead={() => {}}
+        selectedClipIds={[]}
+        onSelectClips={() => {}}
+      />,
+    ));
+    const shell = host.querySelector('.edit-nle-shell');
+    expect(shell?.getAttribute('data-edit-shell-mode')).toBe('demo-readonly');
+    expect(shell?.getAttribute('data-writable')).toBe('false');
+    const honesty = host.querySelector('[data-w-ux="09"]');
+    expect(honesty).toBeTruthy();
+    expect(honesty?.getAttribute('data-capability-tone')).toBe('neutral');
+    expect(honesty?.getAttribute('data-edit-shell-mode')).toBe('demo-readonly');
+    expect(host.querySelector('[data-honest-badge="demo-readonly"]')?.textContent).toMatch(/演示/);
+    expect(host.querySelector('[data-writable-path="discover"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/IndependentStudio|制作操作/);
+    expect(host.textContent).toMatch(/StudioTimelineEditor/);
+    expect(host.textContent).toMatch(/不会.*trim|不 trim|不可.*trim|不会真实 trim/i);
+    expect(host.textContent).not.toMatch(/可写已接通/);
+    expect(host.querySelector('[data-honest-badge="demo-readonly"]')).toBeTruthy();
+    // honesty copy may mention banned phrases as negation; assert no success tone instead of raw substring ban
+    expect(host.querySelector('[data-capability-tone="success"]')).toBeNull();
+    expect(host.querySelector('[data-open-writable-nle="true"]')).toBeNull();
+    expect(host.querySelector('[data-writable-path-status="guidance-only"]')).toBeTruthy();
+    expect(host.querySelector('[data-mark="in"]')?.getAttribute('data-demo-only')).toBe('true');
+    act(() => root.unmount());
+  });
+
+  it('wires optional onOpenWritablePath without changing default landing', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const open = vi.fn();
+    act(() => root.render(
+      <EditNleReadonlyHonesty onOpenWritablePath={open} />,
+    ));
+    const btn = host.querySelector<HTMLButtonElement>('[data-open-writable-nle="true"]');
+    expect(btn).toBeTruthy();
+    expect(host.querySelector('[data-writable-path-status="guidance-only"]')).toBeNull();
+    act(() => { btn!.click(); });
+    expect(open).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+  });
+
+  it('media rail and inspector surface writable-path hints', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const timeline = demoEditTimeline('n1');
+    act(() => root.render(
+      <>
+        <EditNleMediaRail novelId="n1" />
+        <EditNleInspector novelId="n1" timeline={timeline} selectedClipIds={[]} playheadMs={0} editable={false} />
+      </>,
+    ));
+    expect(host.querySelector('[data-writable-path="rail-hint"]')).toBeTruthy();
+    expect(host.querySelector('[data-writable-path="inspector-hint"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/制作操作/);
+    expect(host.textContent).toMatch(/StudioTimelineEditor/);
+    expect(host.textContent).toMatch(/导出真链路未接通/);
     act(() => root.unmount());
   });
 });

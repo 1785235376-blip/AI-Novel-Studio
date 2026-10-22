@@ -335,3 +335,80 @@
 .edit-nle-shell__toolbar button[aria-pressed="true"] {
   outline: 1px solid color-mix(in srgb, #8eaee6 70%, transparent);
 }
+
+/* [HERMIA-FE-20261022 W-UX-09] Honest demo-readonly banner + writable-path discovery */
+.edit-nle-honesty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-left: 3px solid var(--color-border-strong, #888);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty[data-capability-tone="neutral"] {
+  /* ban success/green — intentional neutral chrome */
+}
+.edit-nle-honesty__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.edit-nle-honesty__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: var(--border-default);
+  background: var(--color-bg-surface);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty__path {
+  margin: 0;
+  padding: var(--space-2);
+  border: var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+}
+.edit-nle-honesty__path summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.edit-nle-honesty__path ol {
+  margin: var(--space-2) 0;
+  padding-left: 1.25rem;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.edit-nle-honesty__path code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+.edit-nle-honesty__note {
+  margin: 0 0 var(--space-2) !important;
+  font-size: 11px !important;
+  color: var(--color-text-muted) !important;
+}
+.edit-nle-honesty [data-writable-path-status="guidance-only"] {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
