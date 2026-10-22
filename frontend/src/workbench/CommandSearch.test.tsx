@@ -141,3 +141,21 @@ describe('X-UX-11 CommandSearch groups', () => {
     expect(screen.getByTestId('command-search-empty').textContent).toContain('zzqqxx不存在');
   });
 });
+
+// [HERMIA-FE-20261022 X-UX-11-FIX] visibility: overlay must be a viewport-centered fixed panel, not anchored under the sidebar trigger.
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+describe('CommandSearch overlay visibility', () => {
+  it('portals to body and CSS fixes it centered and clamped to viewport', () => {
+    render(<Harness nav={vi.fn()} project="p1"/>);
+    fireEvent.click(screen.getByRole('button', {name: /搜索功能/}));
+    const ov = screen.getByTestId('command-search-overlay');
+    expect(ov.parentElement).toBe(document.body);
+    const css = readFileSync(resolve(__dirname, 'commandSearch.css'), 'utf8');
+    const rule = /\.wb-command__overlay\{([^}]*)\}/.exec(css)![1];
+    expect(rule).toContain('position:fixed');
+    expect(rule).not.toContain('top:100%');
+    expect(rule).toMatch(/max-height:calc\(100vh/);
+    expect(rule).toContain('translateX(-50%)');
+  });
+});

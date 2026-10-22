@@ -10,6 +10,7 @@ import {Search} from 'lucide-react';
 import {Button} from '../ui/primitives';
 import type {Workbench} from './useWorkbench';
 import './commandSearch.css';
+import {createPortal} from 'react-dom'; // [HERMIA-FE-20261022 X-UX-11-FIX] overlay portals to body so it is never clipped/off-screen
 
 function matchesQuery(label: string, id: string, q: string): boolean {
   const needle = q.trim().toLowerCase();
@@ -94,7 +95,7 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
 
   return <div className="wb-command">
     <Button ref={trigger} variant="ghost" className="wb-command__trigger" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}><Search aria-hidden="true" size={16}/>搜索功能</Button>
-    {open && <div className="wb-command__overlay" role="dialog" aria-modal="true" aria-label="搜索功能与命令" onKeyDown={onListKey}>
+    {open && createPortal(<div className="wb-command__overlay" data-testid="command-search-overlay" role="dialog" aria-modal="true" aria-label="搜索功能与命令" onKeyDown={onListKey}>
       <input ref={input} className="wb-command__input" aria-label="搜索功能" aria-controls="wb-command-list" aria-activedescendant={items[active] ? `wb-cmd-${items[active].id}` : undefined} placeholder="输入功能名称，例如：版本历史 / 主控 / 专业" value={q} onChange={e => setQ(e.target.value)}/>
       {/* [HERMIA-FE-20261022 X-UX-11] input keys bubble to the overlay handler once (was handled twice → ↓ skipped an item). */}
       <ul id="wb-command-list" className="wb-command__list" role="listbox" aria-label="匹配的功能">
@@ -130,6 +131,6 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
         </li>}
       </ul>
       {msg && <p role="status" className="wb-command__msg">{msg}</p>}
-    </div>}
+    </div>, document.body)}
   </div>;
 }
