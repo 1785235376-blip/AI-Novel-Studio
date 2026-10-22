@@ -1,9 +1,10 @@
 /**
- * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05] Novel right dock (LUMEN_NOVEL_IA §4.4).
+ * [HERMIA-FE-20261022 W-P0-06 / N-UX-03 / N-UX-01 / N-UX-02 / N-UX-05 / X-UX-05 / N-UX-08] Novel right dock (LUMEN_NOVEL_IA §4.4).
  * Useful content OR collapse to 0 via AppShell inspector toggle — never empty void.
  * Editor-first: one solid primary CTA + outline / cast / AI sections (default open).
  * N-UX-02: AI bypass vs workflow dual-entry tightened — no new FL ids.
  * N-UX-05: first-tier panel quick links (story/check/creation/overview/history).
+ * N-UX-08: CTA state machine kinds (continue/adopt/continuity) via data-cta-kind.
  */
 import type {ReactNode} from 'react';
 import {CapabilityBadge} from './CapabilityBadge';
@@ -32,7 +33,7 @@ export function NovelWriterDock({
   chapterTitle: string;
   chapterMeta: string;
   saveLabel?: string;
-  primaryCta: {label: string; onClick: () => void; disabled?: boolean};
+  primaryCta: {label: string; onClick: () => void; disabled?: boolean; kind?: string};
   secondaryLinks?: Array<{label: string; onClick: () => void}>;
   outlineItems: Array<{id: string; label: string; hint?: string}>;
   castItems: Array<{id: string; label: string; hint?: string}>;
@@ -68,6 +69,7 @@ export function NovelWriterDock({
           type="button"
           className="novel-writer-dock__primary"
           data-primary-cta="true"
+          data-cta-kind={primaryCta.kind || undefined}
           aria-keyshortcuts="Enter"
           disabled={primaryCta.disabled}
           onClick={primaryCta.onClick}

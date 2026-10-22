@@ -5,5 +5,5 @@ export {isNovelPanel, NOVEL_PANEL_IDS, registerNovelActionAliases, type NovelFoc
 export {bindRestoreConfirmation, gateRestore, syncRestoreLifecycle, restoreLifecycleContext} from './revisionRestore';
 export {registerWorkspaceModuleActions} from './workspaceActions';
 export {capabilityBadgeView, capabilityFromLedgerCell, isFakeGreen} from './capabilityBadge';
-export {decideNovelPrimaryCta} from './novelCta';
+export {decideNovelPrimaryCta, countOpenContinuityWarnings, type NovelCtaKind, type NovelCtaDecision} from './novelCta';
 export {useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector, EXEC_OR_DIRECTOR_PANELS} from './useWorkbenchLayout';

@@ -23,6 +23,11 @@
 .context-bar__book{color:var(--color-text-primary);font-weight:600}
 .context-bar__book-btn{all:unset;cursor:pointer;color:var(--color-accent-primary);font-weight:650}
 .context-bar__book-btn:hover{text-decoration:underline}
+/* [HERMIA-FE-20261022 N-UX-08] Author-first writing ContextBar */
+.context-bar--writing{color:var(--color-text-secondary)}
+.context-bar__chapter{color:var(--color-text-primary);font-weight:600}
+.context-bar__save{color:var(--color-text-muted)}
+.context-bar__hint{color:var(--color-accent-primary)}
 .app-shell[data-shell-mode="basic"] .graph-canvas__minimap-row,
 .app-shell[data-shell-mode="basic"] [aria-label="显示小地图"]{display:none!important}
 

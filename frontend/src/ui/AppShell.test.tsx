@@ -405,7 +405,7 @@ it('U04 focus reuses inspector collapse while retaining editor and save errors',
   act(() => root.unmount());
 });
 
-describe("AppShell shellMode + writing ContextBar (H-P1-01 / N-UX-03)", () => {
+describe("AppShell shellMode + writing ContextBar (H-P1-01 / N-UX-03 / N-UX-08)", () => {
   it("exposes 普通|专业 toggle bound to shellMode and writing breadcrumb", () => {
     host = document.createElement("div");
     document.body.append(host);
@@ -436,10 +436,41 @@ describe("AppShell shellMode + writing ContextBar (H-P1-01 / N-UX-03)", () => {
     expect(onMode).toHaveBeenCalledWith("pro");
     expect(host.textContent).toContain("《夜航船》");
     expect(host.textContent).toContain("第 1 章 · 开篇");
+    // [HERMIA-FE-20261022 N-UX-08] author language — no pure 项目腔
+    expect(host.querySelector('[data-author-context="true"]')).toBeTruthy();
+    expect(host.textContent).not.toContain("故事线：");
+    expect(host.textContent).not.toContain("创作分支：");
+    expect(host.textContent).not.toContain("创作空间：");
     act(() => {
       host.querySelector<HTMLButtonElement>(".context-bar__book-btn")!.click();
     });
     expect(onOverview).toHaveBeenCalled();
+    act(() => root.unmount());
+  });
+  it("N-UX-08 unnamed book uses 未命名小说 author hint", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    const onOverview = vi.fn();
+    const root = createRoot(host);
+    act(() =>
+      root.render(
+        <AppShell
+          module="NOVEL"
+          onModuleChange={vi.fn()}
+          scope={{ workspace: "w", project: "p", storyline: "s", branch: "b" }}
+          actor="author"
+          sidebar="侧"
+          main="主"
+          inspector="检"
+          status="ok"
+          writingContext={{ chapterLabel: "第 2 章 · 夜雨", onOpenOverview: onOverview }}
+        />,
+      ),
+    );
+    expect(host.textContent).toContain("《未命名小说》");
+    expect(host.textContent).toContain("点此完善概览");
+    expect(host.textContent).toContain("第 2 章 · 夜雨");
+    expect(host.textContent).not.toContain("故事线：");
     act(() => root.unmount());
   });
   it("persists inspector fold preference to localStorage", () => {

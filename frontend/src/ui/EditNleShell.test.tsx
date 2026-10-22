@@ -107,6 +107,33 @@ describe('NovelWriterDock Lumen §4.4', () => {
     act(() => root.unmount());
   });
 
+  it('N-UX-08 exposes three CTA kinds via data-cta-kind', () => {
+    host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    const cases = [
+      {kind: 'continue', label: '继续写'},
+      {kind: 'adopt', label: '采用草稿'},
+      {kind: 'continuity', label: '看一致性'},
+    ] as const;
+    for (const c of cases) {
+      act(() => root.render(
+        <NovelWriterDock
+          chapterTitle="第一章"
+          chapterMeta="第 1 章"
+          primaryCta={{label: c.label, kind: c.kind, onClick: () => {}}}
+          outlineItems={[]}
+          castItems={[]}
+          ai={<p>AI</p>}
+        />,
+      ));
+      const btn = host.querySelector<HTMLButtonElement>('[data-primary-cta="true"]');
+      expect(btn?.getAttribute('data-cta-kind')).toBe(c.kind);
+      expect(btn?.textContent).toBe(c.label);
+    }
+    act(() => root.unmount());
+  });
+
   it('N-UX-05 exposes first-tier panel links without new FL ids', () => {
     host = document.createElement('div');
     document.body.append(host);

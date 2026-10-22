@@ -182,7 +182,7 @@ export function ModuleOverflowMenu({
 }
 
 export interface WritingContextLabels {
-  /** Book / novel display title for author breadcrumb (N-UX-03). */
+  /** Book / novel display title for author breadcrumb (N-UX-03 / N-UX-08). */
   bookTitle?: string;
   /** e.g. "第 3 章 · 夜雨" */
   chapterLabel?: string;
@@ -201,8 +201,55 @@ export function ContextBar({
   writing?: WritingContextLabels;
 }) {
   const fallback = "未选择";
-  const book = writing?.bookTitle?.trim();
-  const chapter = writing?.chapterLabel?.trim();
+  // [HERMIA-FE-20261022 N-UX-08] Author-first when writing: 《书名》·小说·章序 — ban pure 项目腔
+  if (writing) {
+    const book = writing.bookTitle?.trim() || "未命名小说";
+    const chapter = writing.chapterLabel?.trim();
+    const save = writing.saveLabel?.trim();
+    const unnamed = !writing.bookTitle?.trim();
+    return (
+      <nav
+        className="context-bar context-bar--writing"
+        aria-label="当前写作范围"
+        data-author-context="true"
+      >
+        <span className="context-bar__book">
+          {writing.onOpenOverview ? (
+            <button
+              type="button"
+              className="context-bar__book-btn"
+              onClick={writing.onOpenOverview}
+              aria-label={unnamed ? "未命名小说 · 点此完善概览" : `打开《${book}》概览`}
+            >
+              {`《${book}》`}
+            </button>
+          ) : (
+            `《${book}》`
+          )}
+        </span>
+        <i>·</i>
+        <span>{projectNoun || "小说"}</span>
+        {chapter ? (
+          <>
+            <i>·</i>
+            <span className="context-bar__chapter">{chapter}</span>
+          </>
+        ) : null}
+        {save ? (
+          <>
+            <i>·</i>
+            <span className="context-bar__save">{save}</span>
+          </>
+        ) : null}
+        {unnamed && writing.onOpenOverview ? (
+          <>
+            <i>·</i>
+            <span className="context-bar__hint">点此完善概览</span>
+          </>
+        ) : null}
+      </nav>
+    );
+  }
   return (
     <nav className="context-bar" aria-label="当前创作范围">
       <span>创作空间：{scope.workspace || fallback}</span>
@@ -212,22 +259,6 @@ export function ContextBar({
       <span>故事线：{scope.storyline || fallback}</span>
       <i>/</i>
       <span>创作分支：{scope.branch || fallback}</span>
-      {book ? (
-        <>
-          <i>/</i>
-          <span className="context-bar__book">
-            {writing?.onOpenOverview ? (
-              <button type="button" className="context-bar__book-btn" onClick={writing.onOpenOverview}>
-                {`《${book}》`}
-              </button>
-            ) : (
-              `《${book}》`
-            )}
-            {chapter ? ` · ${chapter}` : ''}
-            {writing?.saveLabel ? ` · ${writing.saveLabel}` : ''}
-          </span>
-        </>
-      ) : null}
     </nav>
   );
 }

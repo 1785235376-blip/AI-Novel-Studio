@@ -99,7 +99,7 @@ import { LifecycleTracker } from "./workbench/lifecycle";
 import { bindRestoreConfirmation, gateRestore, syncRestoreLifecycle } from "./workbench/revisionRestore";
 import { CommandSearch } from "./workbench/CommandSearch";
 import { useWorkbenchLayout, registerLayoutActions, shouldLeaveExecOrDirector } from "./workbench/useWorkbenchLayout";
-import { decideNovelPrimaryCta } from "./workbench/novelCta";
+import { decideNovelPrimaryCta, countOpenContinuityWarnings } from "./workbench/novelCta"; // [HERMIA-FE-20261022 N-UX-08]
 import { FEATURE_GROUP_DEFAULTS } from "./ui/FeatureLauncher";
 import { resetLayout, type LayoutScope } from "./workbench/layout";
 import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
@@ -494,6 +494,14 @@ export default function App() {
     queryFn: () =>
       s.scope ? api.scopedChapters(s.scope) : api.chapters(s.novelId),
     enabled: !!s.novelId,
+  });
+  // [HERMIA-FE-20261022 N-UX-08] Honest continuity open-count for CTA (shared key with ContinuityCheckPanel)
+  const continuityFindingsQ = useQuery({
+    queryKey: ["continuity-findings", s.novelId],
+    queryFn: () => api.continuityFindings(s.novelId),
+    enabled: !!s.novelId,
+    retry: false,
+    staleTime: 30000,
   });
   const writingGoal = useQuery({
     queryKey: ["writing-goal", s.novelId],
@@ -1812,23 +1820,24 @@ export default function App() {
     ...(activeCharacterId ? [{id: activeCharacterId, label: '当前人物视角', hint: activeCharacterId}] : []),
   ];
   const draftReady = !!(job && job.status === 'SUCCEEDED' && job.output && !['CANCELLED', 'ACCEPTED', 'REJECTED'].includes(job.status));
-  // [HERMIA-FE-20261022 N-UX-03] CTA state machine — single solid primary
+  // [HERMIA-FE-20261022 N-UX-08] CTA state machine — adopt > continuity > continue; count is honest (error/loading → 0)
+  const continuityWarningCount = countOpenContinuityWarnings(continuityFindingsQ.data);
   const ctaDecision = decideNovelPrimaryCta({
     draftReady,
-    continuityWarningCount: 0, // live findings await Continuity query wiring (honest 0)
+    continuityWarningCount,
     hasChapter: !!chapter.data,
   });
   const primaryCta = ctaDecision.kind === 'adopt'
-    ? {label: ctaDecision.label, onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
+    ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
     : ctaDecision.kind === 'continuity'
-      ? {label: ctaDecision.label, onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
+      ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
       : ctaDecision.kind === 'continue'
-        ? {label: ctaDecision.label, onClick: () => {
+        ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => {
             const el = document.querySelector<HTMLElement>('.app-shell[data-module="NOVEL"] .ProseMirror, .app-shell[data-module="NOVEL"] .editor');
             el?.focus?.();
             el?.scrollIntoView?.({block: 'nearest'});
           }}
-        : {label: ctaDecision.label, onClick: () => {
+        : {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => {
             document.querySelector<HTMLElement>('.workspace-sidebar--novel')?.focus?.();
           }};
   const inspector = (
@@ -1948,7 +1957,8 @@ export default function App() {
           shellMode={shellMode}
           onShellModeChange={applyShellMode}
           writingContext={{
-            bookTitle: localNovelTitle,
+            // [HERMIA-FE-20261022 N-UX-08] Author book title; empty → ContextBar「未命名小说」
+            bookTitle: novels.data?.find((n) => n.id === s.novelId)?.title?.trim() || undefined,
             chapterLabel: chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : undefined,
             saveLabel: chapter.data ? saveDisplayLabel : undefined,
             onOpenOverview: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('overview'); } }),
