@@ -12,6 +12,7 @@
  * W-UX-12: ASSETS SendTo explicit IMAGE/VIDEO/AUDIO/EDIT + empty-selection honest CTA; lineage empty honest.
  * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE; ≠ novel / ≠ NLE; no fake green.
  * W-UX-15: VIDEO director-layer pin persists across module hops (session) + shell copy ≠ MultimodalDirector slogans.
+ * W-UX-16: AUDIO multi-item batch list → select → single listen (W-UX-11 stage); 0 NLE; send-edit confirm unchanged.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -412,8 +413,8 @@ export function AudioWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
 }
 
 /**
- * [HERMIA-FE-20261022 W-UX-11] Demo audio clips — single-item listen discovery only.
- * No invent playback / NLE track API; status never fake「已就绪」.
+ * [HERMIA-FE-20261022 W-UX-11 / W-UX-16] Demo audio clips — batch list discovery;
+ * select one → single listen. No invent playback / NLE track API; status never fake「已就绪」.
  */
 type AudioClipDemo = {
   id: string;
@@ -422,12 +423,16 @@ type AudioClipDemo = {
   duration: string;
   status: 'demo' | 'candidate' | 'draft';
   note: string;
+  batch?: string;
 };
 
 const DEMO_AUDIO_CLIPS: readonly AudioClipDemo[] = [
-  {id: 'a1', kind: 'speech', title: '第1章 · 开场对白', duration: '0:12', status: 'candidate', note: 'TTS 草稿 · 未接通真音频'},
-  {id: 'a2', kind: 'sfx', title: '门缝风声', duration: '0:04', status: 'demo', note: '音效示意 · 本地检听'},
-  {id: 'a3', kind: 'audiobook', title: '有声书 · 章节点', duration: '3:20', status: 'draft', note: '清单条目 · 待生成'},
+  {id: 'a1', kind: 'speech', title: '第1章 · 开场对白', duration: '0:12', status: 'candidate', note: 'TTS 草稿 · 未接通真音频', batch: 'batch-01'},
+  {id: 'a2', kind: 'sfx', title: '门缝风声', duration: '0:04', status: 'demo', note: '音效示意 · 本地检听', batch: 'batch-01'},
+  {id: 'a3', kind: 'audiobook', title: '有声书 · 章节点', duration: '3:20', status: 'draft', note: '清单条目 · 待生成', batch: 'batch-01'},
+  {id: 'a4', kind: 'speech', title: '第1章 · 旁白过场', duration: '0:18', status: 'draft', note: '旁白草稿 · 未接通', batch: 'batch-01'},
+  {id: 'a5', kind: 'sfx', title: '雨打窗台', duration: '0:08', status: 'candidate', note: '环境音候选 · 示意', batch: 'batch-02'},
+  {id: 'a6', kind: 'audiobook', title: '有声书 · 人物独白', duration: '2:05', status: 'demo', note: '清单演示 · 未生成', batch: 'batch-02'},
 ];
 
 const AUDIO_KIND_LABEL: Record<AudioClipDemo['kind'], string> = {
@@ -442,7 +447,9 @@ const AUDIO_STATUS_LABEL: Record<AudioClipDemo['status'], string> = {
   draft: '草稿',
 };
 
-/** [HERMIA-FE-20261022 W-UX-11] Single-clip listen strip — ≠ NLE multi-track hero. */
+type AudioKindFilter = 'all' | AudioClipDemo['kind'];
+
+/** [HERMIA-FE-20261022 W-UX-16] Multi-item batch list → select one → single listen (W-UX-11 stage). ≠ NLE. */
 export function AudioListenStrip({
   clips = DEMO_AUDIO_CLIPS,
   selectedId,
@@ -452,33 +459,78 @@ export function AudioListenStrip({
   selectedId: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const [kindFilter, setKindFilter] = useState<AudioKindFilter>('all');
+  const filtered = kindFilter === 'all' ? clips : clips.filter(c => c.kind === kindFilter);
+  const filters: {id: AudioKindFilter; label: string}[] = [
+    {id: 'all', label: '全部'},
+    {id: 'speech', label: '人声'},
+    {id: 'sfx', label: '音效'},
+    {id: 'audiobook', label: '有声书'},
+  ];
+
   return (
-    <div className="media-ws__audio-strip" role="list" aria-label="声音条目（单条检听）" data-audio-strip="true">
-      {clips.map(clip => (
-        <button
-          type="button"
-          key={clip.id}
-          role="listitem"
-          className={`media-ws__audio-clip${selectedId === clip.id ? ' is-selected' : ''}`}
-          aria-pressed={selectedId === clip.id}
-          data-audio-clip={clip.id}
-          data-audio-kind={clip.kind}
-          data-audio-status={clip.status}
-          onClick={() => onSelect(selectedId === clip.id ? null : clip.id)}
-        >
-          <span className="media-ws__audio-kind">{AUDIO_KIND_LABEL[clip.kind]}</span>
-          <strong>{clip.title}</strong>
-          <small>{clip.duration}</small>
-          <span className={`media-ws__shot-status media-ws__shot-status--${clip.status}`}>
-            {AUDIO_STATUS_LABEL[clip.status]}
-          </span>
-        </button>
-      ))}
+    <div
+      className="media-ws__audio-batch"
+      data-audio-list="batch"
+      data-audio-strip="true"
+      data-audio-filter={kindFilter}
+      data-audio-count={String(filtered.length)}
+    >
+      <div className="media-ws__audio-batch-head">
+        <div className="media-ws__audio-batch-title">
+          <strong>声音清单</strong>
+          <small data-audio-batch-meta="true">
+            {filtered.length}/{clips.length} 条 · 选中后单条检听 · 0 NLE
+          </small>
+        </div>
+        <div className="media-ws__audio-batch-filters" role="toolbar" aria-label="清单类型筛选">
+          {filters.map(f => (
+            <button
+              type="button"
+              key={f.id}
+              className={`media-ws__audio-filter${kindFilter === f.id ? ' is-active' : ''}`}
+              aria-pressed={kindFilter === f.id}
+              data-audio-filter-btn={f.id}
+              onClick={() => setKindFilter(f.id)}
+            >{f.label}</button>
+          ))}
+        </div>
+      </div>
+      {filtered.length === 0 ? (
+        <div className="media-ws__audio-list media-ws__audio-list--empty" role="status" data-audio-list-empty="true" data-honest-kind="empty_filter">
+          <p>该类型下暂无条目。切换「全部」或其它类型；空筛选是诚实空，不是假绿「已就绪」。</p>
+        </div>
+      ) : (
+        <div className="media-ws__audio-list" role="list" aria-label="声音多条清单（选中单条检听）">
+          {filtered.map(clip => (
+            <button
+              type="button"
+              key={clip.id}
+              role="listitem"
+              className={`media-ws__audio-clip media-ws__audio-row${selectedId === clip.id ? ' is-selected' : ''}`}
+              aria-pressed={selectedId === clip.id}
+              data-audio-clip={clip.id}
+              data-audio-kind={clip.kind}
+              data-audio-status={clip.status}
+              data-audio-batch={clip.batch || ''}
+              onClick={() => onSelect(selectedId === clip.id ? null : clip.id)}
+            >
+              <span className="media-ws__audio-kind">{AUDIO_KIND_LABEL[clip.kind]}</span>
+              <strong>{clip.title}</strong>
+              <small className="media-ws__audio-dur">{clip.duration}</small>
+              <span className={`media-ws__shot-status media-ws__shot-status--${clip.status}`}>
+                {AUDIO_STATUS_LABEL[clip.status]}
+              </span>
+              <span className="media-ws__audio-note">{clip.note}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-/** [HERMIA-FE-20261022 W-UX-11] AUDIO = single-clip waveform listen; send-edit confirm = VIDEO copy; 0 NLE. */
+/** [HERMIA-FE-20261022 W-UX-11 / W-UX-16] AUDIO = batch list → single-clip listen; send-edit confirm = VIDEO; 0 NLE. */
 export function AudioWorkspaceShell({
   novelId, onInspect, onSendToEdit,
 }: {
@@ -504,18 +556,21 @@ export function AudioWorkspaceShell({
       aria-label="声音工作区"
       data-audio-hero="waveform"
       data-audio-listen="single"
+      data-audio-list="batch"
       data-nle-tracks="0"
       data-audio-listening={listening ? 'true' : 'false'}
     >
       <div className="media-ws__hero media-ws__hero--audio media-ws__hero--thick" aria-label="波形与配音检听">
         <div className="media-ws__shot-hero-head">
-          <span className="media-ws__hero-label">波形 / 配音 · 单条检听 · 非 NLE</span>
+          <span className="media-ws__hero-label">波形 / 配音 · 多条清单 → 单条检听 · 非 NLE</span>
           <span className="media-ws__shot-hero-badge" data-audio-badge="boundary">AUDIO ≠ EDIT · 0 轨</span>
           <span className="media-ws__shot-hero-badge" data-audio-badge="honest">演示 · 未接通真音频</span>
+          <span className="media-ws__shot-hero-badge" data-audio-badge="batch">批次清单</span>
         </div>
         <strong>检听工作区</strong>
         <p>
-          选一条人声 / 音效 / 有声书条目做本区检听（单条波形）。多轨对齐画面、字幕轨与成片导出请显式「送去剪辑」——本壳 <strong>0 条假 NLE 轨</strong>。
+          在下方<strong>多条声音清单</strong>里选一条（人声 / 音效 / 有声书）做本区<strong>单条</strong>波形检听。
+          多轨对齐画面、字幕轨与成片导出请显式「送去剪辑」——本壳 <strong>0 条假 NLE 轨</strong>。
         </p>
         <AudioListenStrip selectedId={selectedClipId} onSelect={selectClip} />
         {selected ? (
@@ -547,7 +602,7 @@ export function AudioWorkspaceShell({
           </div>
         ) : (
           <div className="media-ws__audio-listen media-ws__audio-listen--empty" data-audio-listen-stage="empty" data-honest-kind="empty_selection">
-            <p>未选中声音条目。点上方条目可检听单条波形；无条目时也是诚实空，不是假绿「已就绪」。</p>
+            <p>未选中声音条目。点上方清单可选中一条做单条检听；无选中时也是诚实空，不是假绿「已就绪」。</p>
           </div>
         )}
         <div className="media-ws__hero-actions">
@@ -555,7 +610,7 @@ export function AudioWorkspaceShell({
           <Button type="button" aria-pressed={focus === 'gen'} data-audio-focus="gen" onClick={() => setFocus('gen')}>AudioGen 音效</Button>
           <Button type="button" aria-pressed={focus === 'manifest'} data-audio-focus="manifest" onClick={() => setFocus('manifest')}>Audiobook 清单</Button>
         </div>
-        <small>项目 {novelId} · LUMEN_AUDIO_IA · W-UX-11 · AUDIO ≠ EDIT</small>
+        <small>项目 {novelId} · LUMEN_AUDIO_IA · W-UX-16 · AUDIO ≠ EDIT</small>
       </div>
       <div className="media-ws__toolbar" role="toolbar" aria-label="声音工具条">
         <Button
@@ -604,7 +659,7 @@ export function AudioWorkspaceShell({
           <AudiobookManifestPanel novelId={novelId} onInspect={onInspect} />
         </section>
       </div>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-11] 单条检听可见 · 送剪辑确认语对齐 VIDEO · 0 假 NLE 轨 · 禁假绿。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-16] 多条清单选中→单条检听 · 送剪辑显式确认 · 0 假 NLE 轨 · 禁假绿。</p>
     </div>
   );
 }

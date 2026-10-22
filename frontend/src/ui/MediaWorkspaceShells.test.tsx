@@ -6,6 +6,7 @@
  * W-UX-12: ASSETS SendTo IMAGE/VIDEO/AUDIO/EDIT + empty/lineage honest.
  * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE.
  * W-UX-15: VIDEO director pin session + shell ≠ Multimodal slogans.
+ * W-UX-16: AUDIO multi-item batch list → single listen; 0 NLE; send-edit confirm.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
@@ -238,6 +239,79 @@ describe('MediaWorkspaceShells', () => {
     });
     expect(send).not.toHaveBeenCalled();
     expect(host.textContent).toContain('显式交片 → 剪辑');
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-16 AUDIO multi-item batch list → select → single listen; 0 NLE; send-edit confirm; no fake ready', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <AudioWorkspaceShell novelId="n1" onInspect={vi.fn()} onSendToEdit={send} />,
+    ));
+    // batch list surface
+    expect(host.querySelector('[data-audio-list="batch"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-listen="single"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-batch-meta="true"]')?.textContent).toMatch(/单条检听|0 NLE/);
+    expect(host.querySelectorAll('.media-ws__audio-list [data-audio-clip]').length).toBeGreaterThanOrEqual(6);
+    expect(host.querySelector('[data-audio-clip="a4"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-clip="a6"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-badge="batch"]')).toBeTruthy();
+    // kind filter
+    expect(host.querySelector('[data-audio-filter-btn="speech"]')).toBeTruthy();
+    act(() => {
+      (host.querySelector('[data-audio-filter-btn="sfx"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-filter="sfx"]')).toBeTruthy();
+    const list = host.querySelector('.media-ws__audio-list');
+    expect(list?.querySelector('[data-audio-clip="a2"]')).toBeTruthy();
+    expect(list?.querySelector('[data-audio-clip="a5"]')).toBeTruthy();
+    expect(list?.querySelector('[data-audio-clip="a1"]')).toBeNull();
+    // select sfx → single listen stage (W-UX-11)
+    act(() => {
+      (list?.querySelector('[data-audio-clip="a5"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listen-stage="true"]')?.getAttribute('data-audio-clip')).toBe('a5');
+    expect(host.querySelector('[data-audio-listen-meta="true"]')?.textContent).toContain('雨打窗台');
+    // no fake-green status badges (copy may mention「已就绪」only as negation)
+    expect(host.textContent).toMatch(/演示|候选|草稿|未接通/);
+    expect([...host.querySelectorAll('[data-audio-status]')].every(
+      el => ['demo', 'candidate', 'draft'].includes(el.getAttribute('data-audio-status') || ''),
+    )).toBe(true);
+    act(() => {
+      (host.querySelector('[data-audio-play="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listening="true"]')).toBeTruthy();
+    // clear → honest empty
+    act(() => {
+      (host.querySelector('[data-audio-clear="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listen-stage="empty"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/未选中声音条目|诚实空/);
+    expect(host.textContent).toMatch(/不是假绿/);
+    // 0 NLE
+    expect(host.querySelector('[data-nle-tracks="0"]')).toBeTruthy();
+    expect(host.querySelectorAll('.nle-row').length).toBe(0);
+    expect(host.querySelector('[data-nle-tracks]:not([data-nle-tracks="0"])')).toBeNull();
+    // send-edit still explicit confirm (unchanged copy)
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('显式交片 → 剪辑');
+    expect(host.textContent).toMatch(/打开顶栏「剪辑」多轨 NLE/);
+    expect(host.textContent).toMatch(/声音侧选区保留|不在本区假装时间线/);
+    expect(send).not.toHaveBeenCalled();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('取消'))?.click();
+    });
+    expect(send).not.toHaveBeenCalled();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
     act(() => {
       [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
     });
