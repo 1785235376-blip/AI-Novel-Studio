@@ -36,7 +36,8 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   const [view, setView] = useState<VideoView>('studio');
   // [HERMIA-FE-20261022 U3] 双画布只在专业模式；普通模式停在双画布时回到默认「视频工作室」
   const isPro = shellMode === 'pro';
-  useEffect(() => { if (!isPro && view === 'dual') setView('studio'); }, [isPro, view]);
+  // [HERMIA-FE-20261022 U4] 普通：镜头卡 + 单画布 + 导演台 + 基础分镜表；专业另有 双画布 / 分镜表高级列 / 图生视频参数。专业→普通回落视频工作室。
+  useEffect(() => { if (!isPro && (view === 'dual' || view === 'gen')) setView('studio'); }, [isPro, view]);
   const [plays, setPlays] = useState<any[] | null>(null);
   const [providers, setProviders] = useState<any[] | null>(null);
   const [tick, setTick] = useState(0);
@@ -75,7 +76,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <button type="button" className="nv-btn nv-btn--primary" id="vidSendEdit" data-send-edit="true" onClick={askSend}>送去剪辑</button>
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => setView('dual')}>双画布</button> : null}
       <button type="button" className="nv-btn" aria-pressed={view === 'script'} onClick={() => setView('script')}>分镜表</button>
-      <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => setView('gen')}>图生视频</button>
+      {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'gen'} data-pro-only="i2v" onClick={() => setView('gen')}>图生视频</button> : null}
     </div>
   );
 
@@ -111,16 +112,16 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
 
   const chrome = <>
     <NovelOrient storageKey="studio-video-orient-dismissed" what="这一章的镜头、画面关系和导演建议" can="拆镜头、在画布上连参考、采用导演建议" effect="这里不剪成片；准备好后「送去剪辑」" />
-    <NovelModTabs tabs={((isPro ? ['studio', 'dual', 'script', 'gen'] : ['studio', 'script', 'gen']) as VideoView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
+    <NovelModTabs tabs={((isPro ? ['studio', 'dual', 'script', 'gen'] : ['studio', 'script']) as VideoView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
   </>;
 
   let main: React.ReactNode;
   if (view === 'script') main = (
     <div className="vid-main vid-sub">
       {shots.length === 0 ? <div className="img-empty"><h3>分镜表还是空的</h3><p>{emptyLine}</p><div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" onClick={addShot}>＋ 镜头</button><button type="button" className="nv-btn" onClick={addShot}>从剧本拆镜头</button></div></div> :
-        <table className="vid-table"><thead><tr><th>镜头</th><th>景别</th><th>内容</th><th>状态</th><th /></tr></thead><tbody>
-          {shots.map(s => <tr key={s.key}><td>镜头 {s.n}</td><td>{s.size}</td><td>{s.title}{s.dialogue ? ` · ${s.dialogue}` : ''}</td><td>{s.status}</td>
-            <td><button type="button" className="nv-btn" disabled={!s.hasFrame} onClick={() => { setSel(s.key); setView('studio'); }}>{s.hasFrame ? '在画布查看' : '缺少关键帧'}</button></td></tr>)}
+        <table className="vid-table" data-cols={isPro ? 'advanced' : 'basic'}><thead><tr><th>镜头</th>{isPro ? <th>景别</th> : null}<th>内容</th><th>状态</th>{isPro ? <th /> : null}</tr></thead><tbody>
+          {shots.map(s => <tr key={s.key}><td>镜头 {s.n}</td>{isPro ? <td>{s.size}</td> : null}<td>{s.title}{isPro && s.dialogue ? ` · ${s.dialogue}` : ''}</td><td>{s.status}</td>
+            {isPro ? <td><button type="button" className="nv-btn" disabled={!s.hasFrame} onClick={() => { setSel(s.key); setView('studio'); }}>{s.hasFrame ? '在画布查看' : '缺少关键帧'}</button></td> : null}</tr>)}
         </tbody></table>}
       <div className="nv-row vid-sub-foot"><button type="button" className="nv-btn" onClick={addShot}>编辑剧本与镜头…</button></div>
     </div>
@@ -128,7 +129,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   else if (view === 'dual' && isPro) main = (
     <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualCanvas scope={novelId} initial="split" videoSeed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
   );
-  else if (view === 'gen') main = (
+  else if (view === 'gen' && isPro) main = (
     <div className="vid-main vid-sub">
       <div className="img-empty"><h3>从关键帧生成片段</h3>
         <p>{providers === null ? '正在检查视频服务…' : ready.length ? `可用视频服务 ${ready.length} 个，派发前会再确认模型和费用。` : '需要先在 AI 主控里接好视频服务。'}</p>
@@ -176,7 +177,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   );
 
   return (
-    <div className={cls} data-video-layers="script-canvas-director" data-vid-view={view} aria-label="视频工作区">
+    <div className={cls} data-video-layers="script-canvas-director" data-shell-mode={shellMode} data-vid-view={view} aria-label="视频工作区">
       {chrome}{head}
       <div className="vid-body">{rail}{main}</div>
       {confirm}{drawers}

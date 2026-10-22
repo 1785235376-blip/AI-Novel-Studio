@@ -9,7 +9,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 describe('VideoRebuild 图生视频', () => {
   it('no ready provider: 生成候选… disabled with AI 主控 reason', async () => {
     stub([{provider_id: 'mock-director-video', available: false, registered: true}]);
-    render(<VideoRebuild novelId="n1" />);
+    render(<VideoRebuild novelId="n1" shellMode="pro" />);
     fireEvent.click(screen.getAllByRole('button', {name: '图生视频'})[0]);
     await screen.findByText('需要先在 AI 主控里接好视频服务。');
     expect((document.querySelector('#vidGenGo') as HTMLButtonElement).disabled).toBe(true);
@@ -17,7 +17,7 @@ describe('VideoRebuild 图生视频', () => {
   });
   it('ready provider counted; still disabled without keyframe', async () => {
     stub([{provider_id: 'mock-director-video', available: true, registered: true}]);
-    render(<VideoRebuild novelId="n1" />);
+    render(<VideoRebuild novelId="n1" shellMode="pro" />);
     fireEvent.click(screen.getAllByRole('button', {name: '图生视频'})[0]);
     await screen.findByText(/可用视频服务 1 个/);
     expect((document.querySelector('#vidGenGo') as HTMLButtonElement).disabled).toBe(true);
