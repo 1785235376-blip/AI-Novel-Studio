@@ -48,11 +48,17 @@ describe('T-DARK dark theme tokens contract [HERMIA-FE-20261022]', () => {
     expect(tokens).toMatch(/--accent:\s*var\(--color-accent-primary\)/);
   });
 
-  it('t71u light theme override under [data-theme=light]', () => {
+  it('t72u light contrast under [data-theme=light] [HERMIA-FE-20261022]', () => {
     expect(tokens).toMatch(/\[data-theme=["']light["']\]/);
     expect(tokens).toMatch(/color-scheme:\s*light/);
-    expect(tokens).toMatch(/--color-bg-app:\s*#e8f1f3/);
-    expect(tokens).toMatch(/--color-canvas-bg:\s*#f0f3f5/);
-    expect(tokens).toMatch(/--color-canvas-grid:\s*#d5dde1/);
+    expect(tokens).toMatch(/--color-bg-app:\s*#f2f3f5/);
+    expect(tokens).toMatch(/--color-bg-editor:\s*#fafbfc/);
+    expect(tokens).toMatch(/--color-text-primary:\s*#1a1d21/);
+    expect(tokens).toMatch(/--color-text-secondary:\s*#3a404a/);
+    expect(tokens).toMatch(/--color-text-muted:\s*#5a6270/);
+    expect(tokens).toMatch(/--color-accent-primary:\s*#0d6b74/);
+    expect(tokens).toMatch(/--color-accent-subtle:\s*#e6f0f1/);
+    expect(tokens).toMatch(/--color-canvas-bg:\s*#eef0f2/);
+    expect(tokens).toMatch(/--color-canvas-grid:\s*#d4d8de/);
   });
 });

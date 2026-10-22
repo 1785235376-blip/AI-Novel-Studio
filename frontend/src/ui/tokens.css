@@ -112,48 +112,48 @@
   --focus-ring: 0 0 0 3px rgb(77 184 196 / 28%);
 }
 
-/* Light = DS-v1.0 cool neutrals + light grey canvas grid */
+/* [HERMIA-FE-20261022] t72u light contrast — near-black ink, desat teal, no cyan wash */
 [data-theme="light"] {
   color-scheme: light;
 
-  --color-bg-app: #e8f1f3;
-  --color-bg-surface: #f8fbfc;
-  --color-bg-subtle: #edf6f7;
+  --color-bg-app: #f2f3f5;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: #eceef1;
   --color-bg-elevated: #ffffff;
-  --color-bg-editor: #ffffff;
+  --color-bg-editor: #fafbfc;
 
-  --color-canvas-bg: #f0f3f5;
-  --color-canvas-grid: #d5dde1;
+  --color-canvas-bg: #eef0f2;
+  --color-canvas-grid: #d4d8de;
 
-  --color-text-primary: #113056;
-  --color-text-secondary: #3f5d70;
-  --color-text-muted: #6d8791;
-  --color-text-inverse: #f8fbfc;
+  --color-text-primary: #1a1d21;
+  --color-text-secondary: #3a404a;
+  --color-text-muted: #5a6270;
+  --color-text-inverse: #ffffff;
 
-  --color-border-default: #c7dfe3;
-  --color-border-strong: #9fc7ce;
-  --color-border-focus: #113056;
+  --color-border-default: #d5d9e0;
+  --color-border-strong: #b4bbc6;
+  --color-border-focus: #0d6b74;
 
-  --color-accent-primary: #113056;
-  --color-accent-hover: #0b2747;
-  --color-accent-active: #081d36;
-  --color-accent-subtle: #d7f0f2;
+  --color-accent-primary: #0d6b74;
+  --color-accent-hover: #0a555c;
+  --color-accent-active: #084850;
+  --color-accent-subtle: #e6f0f1;
 
-  --color-status-success: #15803d;
-  --color-status-warning: #b45309;
-  --color-status-error: #b91c1c;
-  --color-status-info: #0369a1;
-  --color-status-bar: #c9d4da;
-  --color-status-signal: #3cc6aa;
+  --color-status-success: #166534;
+  --color-status-warning: #92400e;
+  --color-status-error: #991b1b;
+  --color-status-info: #075985;
+  --color-status-bar: #c5cad3;
+  --color-status-signal: #0f7a6a;
 
-  --color-selection-bg: #c9e9ed;
-  --color-selection-border: #91cfd5;
+  --color-selection-bg: #e2ecee;
+  --color-selection-border: #a8c5c9;
 
-  --color-overlay: rgb(23 32 39 / 40%);
+  --color-overlay: rgb(26 29 33 / 40%);
 
-  --shadow-xs: 0 1px 2px rgb(23 32 39 / 8%);
-  --shadow-floating: 0 8px 24px rgb(23 32 39 / 12%);
-  --shadow-dialog: 0 20px 56px rgb(23 32 39 / 20%);
+  --shadow-xs: 0 1px 2px rgb(26 29 33 / 6%);
+  --shadow-floating: 0 8px 24px rgb(26 29 33 / 10%);
+  --shadow-dialog: 0 20px 56px rgb(26 29 33 / 18%);
 
-  --focus-ring: 0 0 0 3px rgb(49 95 189 / 20%);
+  --focus-ring: 0 0 0 3px rgb(13 107 116 / 22%);
 }
