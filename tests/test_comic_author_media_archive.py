@@ -2,6 +2,7 @@
 import base64, copy, hashlib, io, json, uuid, zipfile
 import pytest
 from app.experimental import comic_author_media_archive as a
+from app.experimental.media import digest
 from app.experimental.comic_layouts import ComicLayoutsService
 from app.experimental.store import ExperimentalStore
 from app.creative.project_store import CreativeProjectStore
@@ -75,7 +76,20 @@ def test_f1_approval_and_export_reject_unreviewed_imported_assets(mounted):
     with pytest.raises(ValueError) as exc: s.preflight(e.nid,e.scope,"local-author",rid,1)
     assert str(exc.value)=="COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED"
     with pytest.raises(ValueError): s.export(e.nid,e.scope,"local-author",rid,1)
+    with pytest.raises(ValueError): s.approve(e.nid,e.scope,"local-author",rid,1,'0'*64,True)
     assert all(x.get("approved_at") is None for x in e.assets.list(e.nid) if x["id"] not in {asset["id"]})
+
+def test_legacy_empty_receipt_is_tolerated_and_does_not_poison_inspect(mounted):
+    e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book)
+    incarnation=s._independent_identity(e.nid); actor="local-author"; request_key=uuid.uuid4().hex
+    key=digest([actor,e.scope,incarnation,request_key])
+    with s.store.transaction(e.nid,e.scope) as state:
+        state["collections"].setdefault(a.RECEIPTS,{})[key]={"contract":a.CONTRACT,"actor":actor,
+            "scope":dict(e.scope),"incarnation":incarnation,"request_key":request_key,
+            "archive_sha256":"0"*64,"book_id":book["id"],"page_ids":[page["id"]],"asset_ids":[]}
+    report=a.inspect_archive(s,e.nid,e.scope,actor,raw,lambda:None)
+    assert report["page_count"]==1 and report["asset_count"]==1
+
 
 def test_f3_f4_limits_and_alias_preflight_without_staging(mounted):
     e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book); files=_unpack(raw)
