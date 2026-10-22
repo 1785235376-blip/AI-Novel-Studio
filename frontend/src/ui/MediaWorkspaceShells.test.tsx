@@ -599,10 +599,11 @@ describe('ModuleWorkspaceRoutes media shells', () => {
     act(() => root2.render(
       <ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={scope} actor="author" novelId="novel-1" />,
     ));
-    expect(host.querySelector('.media-ws--video')).toBeTruthy();
+    // [HERMIA-FE-20261022 R3] 路由改挂 VideoRebuild（原型三层 .vid-ws），旧 VideoWorkspaceShell 仍由下方单测覆盖
+    expect(host.querySelector('.vid-ws[data-video-layers="script-canvas-director"]')).toBeTruthy();
     expect(host.textContent).toContain('镜头脚本');
-    expect(host.querySelector('[data-shot-hero="true"]')).toBeTruthy();
-    expect(host.textContent).toContain('mock-director-video');
+    expect(host.querySelector('#vidSendEdit.nv-btn--primary')).toBeTruthy();
+    expect(host.querySelectorAll('.nv-btn--primary[data-send-edit], #vidSendEditRail.nv-btn--primary, #vidSendEditDir.nv-btn--primary').length).toBe(1);
     expect(host.textContent).not.toContain('图像预览 · hero');
     act(() => root2.unmount());
   });

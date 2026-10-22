@@ -158,7 +158,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
             </div>
             <div className="sec"><h4>视觉上下文</h4>
               <dl className="kv"><dt>主参考</dt><dd>{refSel || '无'}</dd><dt>参考数</dt><dd>{refs ? refs.length : '…'}</dd><dt>角色一致性</dt><dd><span className="nv-badge nv-badge--off">状态待核实</span></dd></dl>
-              <button type="button" className="nv-link" onClick={() => setDrawer('refs')}>管理参考…</button>
+              {/* [HERMIA-FE-20261022 R3] 去掉原型没有的「管理参考…」，参考入口统一走中区「加参考」 */}
             </div>
             {shellMode === 'pro' ? <details className="sec"><summary><h4>画面分析</h4></summary><VisionAnalysisPanel novelId={novelId} /></details> : null}
             <div className="mw-cta">
