@@ -5,7 +5,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {WithQuery} from '../primitives';
 import {ExportBody} from '../ExportMenu';
-import {NovelModTabs} from '../novel/NovelOrient';
+import {NovelOrient, NovelModTabs} from '../novel/NovelOrient'; // [HERMIA-FE-20261022 R6] 补原型 44px 指引行
 import {EDIT_HANDOFF_SOURCE_LABEL, editHandoffsForNovel, type EditHandoffItem} from '../../ui/editHandoff';
 import '../novel/novelRebuild.css';
 import '../image/imageRebuild.css';
@@ -153,7 +153,7 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
                 title={c.name} onClick={() => setSel(s => s === c.key ? null : c.key)}>{c.name}</button>)}</div>
             </div>; })}
           {clips.length === 0 ? <div className="tl-empty" data-edit-empty="timeline"><span>把镜头或声音拖到这里开始剪。也可以从视频页一键送来。</span>
-            <div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" onClick={onBackToVideo}>从视频送入</button>
+            <div className="nv-row"><button type="button" className="nv-btn" onClick={onBackToVideo}>从视频送入</button>{/* [HERMIA-FE-20261022 R6] 空时间线不再用主色（一页一主＝导出成片…） */}
               <button type="button" className="nv-btn" onClick={() => setView('media')}>导入媒体</button></div></div> : null}
         </div>
       </div>
@@ -182,6 +182,7 @@ export function EditRebuild({novelId, onBackToVideo, handoffs: handoffsOverride}
 
   return (
     <div className="edr nle" tabIndex={-1} onKeyDown={onKey} data-edit-view={view} data-nle-tracks={rows.length} data-snap={snap ? 'on' : 'off'} data-writable="false" aria-label="剪辑工作区">
+      <NovelOrient storageKey="studio-edit-orient-dismissed" what="这部作品的成片剪辑" can="把镜头和声音放上多轨时间线、切割、打入出点" effect="现在只在本页编排，不会保存；成片导出还没接好" />
       <NovelModTabs tabs={(['tl', 'media', 'export'] as EditView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} />
       <div className="nle-top" role="toolbar" aria-label="剪辑工具">
         <h2>剪辑 · {VIEW_LABEL[view]}</h2>
