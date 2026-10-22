@@ -137,13 +137,14 @@ describe('X-UX-10 handoff smoke paths', () => {
     expect(readEditHandoffs()).toHaveLength(0);
 
     act(() => {
-      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+      // [HERMIA-FE-20261022 R4] 声音改挂 AudioRebuild：#audSendEdit → 确认框 → 确认送去
+      (host.querySelector('#audSendEdit') as HTMLButtonElement)?.click();
     });
-    expect(host.textContent).toContain('显式交片 → 剪辑');
+    expect(host.querySelector('[data-send-edit-dialog="true"]')).toBeTruthy();
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('AUDIO');
 
     act(() => {
-      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+      (host.querySelector('[data-send-edit-confirm="true"]') as HTMLButtonElement)?.click();
     });
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
     expect(host.querySelector('[data-module-shell="EDIT"]')).toBeTruthy();

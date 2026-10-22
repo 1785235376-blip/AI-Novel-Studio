@@ -1,0 +1,26 @@
+/* [HERMIA-FE-20261022 R4] 声音模块 — 按原型 .aud-ws / .wave-stage 样式移植；全局左右栏收为 0，由模块自画三栏。 */
+html .app-shell[data-module="AUDIO"] .workspace-body,html .app-shell.is-inspector-collapsed[data-module="AUDIO"] .workspace-body{grid-template-columns:minmax(0,1fr)!important;padding:0;gap:0}
+html .app-shell[data-module="AUDIO"] .workspace-sidebar,html .app-shell[data-module="AUDIO"] .workspace-inspector,html .app-shell[data-module="AUDIO"] .inspector-edge-toggle{display:none!important}
+html .app-shell[data-module="AUDIO"] .main-workspace{padding:0;border:0;border-radius:0;overflow:hidden;background:var(--color-bg-app);display:flex;flex-direction:column}
+html .app-shell[data-module="AUDIO"] .media-ws-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.aud-ws{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;background:var(--color-bg-app);color:var(--color-text-primary);position:relative}
+.aud-ws .mw-head{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);flex:none;flex-wrap:wrap}
+.aud-ws .mw-head h2{margin:0;font-size:14px;font-weight:650}
+.aud-ws .nv-btn[aria-pressed="true"]{border-color:var(--color-accent-primary);color:var(--color-accent-primary);background:var(--color-selection-bg)}
+.aud-left-note{margin:8px;padding:8px;border-radius:6px;background:var(--color-bg-subtle);font-size:11px;line-height:1.5;color:var(--color-text-muted)}
+.wave-stage{width:min(100%,640px);background:#1a1e26;border-radius:10px;border:1px solid #2e3542;padding:16px 18px 14px;color:#d7dbe3;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.wave-stage .w-meta{display:flex;justify-content:space-between;font-size:11.5px;color:#9aa3b5;margin-bottom:8px}
+.wave-stage .w-note{margin:6px 0 0;font-size:11.5px;color:#9aa3b5}
+.wave-svg{width:100%;height:96px;display:block}
+.wave-svg .base{stroke:#3a4250;stroke-width:1;stroke-dasharray:4 4}
+.wave-svg .play{stroke:#e24b4b;stroke-width:2}
+.wave-bar{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:#b8c0cc}
+.wave-bar .tc{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-width:72px;text-align:center;background:#2a303a;border-radius:4px;padding:2px 6px;border:1px solid #3a4250}
+.aud-focus{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.aud-batch{border:1px solid var(--color-border-default);border-radius:8px;padding:8px 10px;background:var(--color-bg-subtle);font-size:12px;margin-bottom:8px}
+.aud-batch b{display:block;margin-bottom:2px}
+.aud-panel .nv-btn{width:100%}
+.aud-panel.is-focus{border-color:var(--color-accent-primary);box-shadow:0 0 0 1px var(--color-selection-bg)}
+.aud-sec-primary:not(:disabled){background:var(--color-accent-primary);color:var(--color-text-on-accent,#fff);border-color:var(--color-accent-primary)}
+.aud-ws .ws-honest-empty{display:flex;flex-direction:column;gap:8px}
+.aud-ws .ws-honest-empty h4{margin:0;font-size:13px}.aud-ws .ws-honest-empty p{margin:0;font-size:12px;color:var(--color-text-secondary)}
