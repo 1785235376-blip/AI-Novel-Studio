@@ -8,6 +8,7 @@
  * W-UX-02: AUDIO waveform hero + Speech/AudioGen/Manifest + send-edit confirm; 0 fake NLE tracks.
  * W-UX-03: ASSETS browser hero + Inspector lineage/version summary; drag=reference; ≠ IMAGE desk.
  * W-UX-10: IMAGE comic sub-entry clickable (rail+toolbar, no 7th chrome) + preview/comic hero thicker; ≠ VIDEO/EDIT.
+ * W-UX-11: AUDIO single-clip listen visible + send-edit confirm copy aligned with VIDEO; 0 NLE tracks.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -329,6 +330,7 @@ export function ImageWorkspaceShell({
 }
 
 export function AudioWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) {
+  const [sendConfirm, setSendConfirm] = useState(false);
   return (
     <nav className="media-ws-rail" aria-label="声音工作区导航">
       <div className="media-ws-rail__eyebrow">声音</div>
@@ -339,14 +341,96 @@ export function AudioWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
         <li>有声书清单</li>
       </ul>
       {onSendToEdit && (
-        <button type="button" className="media-ws-rail__item" onClick={onSendToEdit}>送去剪辑（显式）</button>
+        <button
+          type="button"
+          className="media-ws-rail__item media-ws-rail__item--send"
+          data-send-edit="true"
+          onClick={() => setSendConfirm(true)}
+        >送去剪辑（显式）</button>
+      )}
+      {sendConfirm && onSendToEdit && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去剪辑确认">
+          <strong>显式交片 → 剪辑</strong>
+          <p>将离开声音配音工作区，打开顶栏「剪辑」多轨 NLE。声音侧选区保留；不在本区假装时间线。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" onClick={() => { setSendConfirm(false); onSendToEdit(); }}>确认送去剪辑</Button>
+            <Button type="button" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
       )}
       <p className="media-ws-rail__hint">AUDIO ≠ EDIT：本区是波形/配音工作区，不做多轨 NLE hero。</p>
     </nav>
   );
 }
 
-/** [HERMIA-FE-20261022 W-UX-02] AUDIO = waveform/dubbing workspace; ≠ EDIT NLE (0 fake tracks). */
+/**
+ * [HERMIA-FE-20261022 W-UX-11] Demo audio clips — single-item listen discovery only.
+ * No invent playback / NLE track API; status never fake「已就绪」.
+ */
+type AudioClipDemo = {
+  id: string;
+  kind: 'speech' | 'sfx' | 'audiobook';
+  title: string;
+  duration: string;
+  status: 'demo' | 'candidate' | 'draft';
+  note: string;
+};
+
+const DEMO_AUDIO_CLIPS: readonly AudioClipDemo[] = [
+  {id: 'a1', kind: 'speech', title: '第1章 · 开场对白', duration: '0:12', status: 'candidate', note: 'TTS 草稿 · 未接通真音频'},
+  {id: 'a2', kind: 'sfx', title: '门缝风声', duration: '0:04', status: 'demo', note: '音效示意 · 本地检听'},
+  {id: 'a3', kind: 'audiobook', title: '有声书 · 章节点', duration: '3:20', status: 'draft', note: '清单条目 · 待生成'},
+];
+
+const AUDIO_KIND_LABEL: Record<AudioClipDemo['kind'], string> = {
+  speech: '人声',
+  sfx: '音效',
+  audiobook: '有声书',
+};
+
+const AUDIO_STATUS_LABEL: Record<AudioClipDemo['status'], string> = {
+  demo: '演示',
+  candidate: '候选',
+  draft: '草稿',
+};
+
+/** [HERMIA-FE-20261022 W-UX-11] Single-clip listen strip — ≠ NLE multi-track hero. */
+export function AudioListenStrip({
+  clips = DEMO_AUDIO_CLIPS,
+  selectedId,
+  onSelect,
+}: {
+  clips?: readonly AudioClipDemo[];
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
+}) {
+  return (
+    <div className="media-ws__audio-strip" role="list" aria-label="声音条目（单条检听）" data-audio-strip="true">
+      {clips.map(clip => (
+        <button
+          type="button"
+          key={clip.id}
+          role="listitem"
+          className={`media-ws__audio-clip${selectedId === clip.id ? ' is-selected' : ''}`}
+          aria-pressed={selectedId === clip.id}
+          data-audio-clip={clip.id}
+          data-audio-kind={clip.kind}
+          data-audio-status={clip.status}
+          onClick={() => onSelect(selectedId === clip.id ? null : clip.id)}
+        >
+          <span className="media-ws__audio-kind">{AUDIO_KIND_LABEL[clip.kind]}</span>
+          <strong>{clip.title}</strong>
+          <small>{clip.duration}</small>
+          <span className={`media-ws__shot-status media-ws__shot-status--${clip.status}`}>
+            {AUDIO_STATUS_LABEL[clip.status]}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** [HERMIA-FE-20261022 W-UX-11] AUDIO = single-clip waveform listen; send-edit confirm = VIDEO copy; 0 NLE. */
 export function AudioWorkspaceShell({
   novelId, onInspect, onSendToEdit,
 }: {
@@ -356,30 +440,84 @@ export function AudioWorkspaceShell({
 }) {
   const [focus, setFocus] = useState<'speech' | 'gen' | 'manifest'>('speech');
   const [sendConfirm, setSendConfirm] = useState(false);
+  const [selectedClipId, setSelectedClipId] = useState<string | null>('a1');
+  const [listening, setListening] = useState(false);
+  const selected = DEMO_AUDIO_CLIPS.find(c => c.id === selectedClipId) ?? null;
+
+  // Clearing selection stops local listen demo
+  const selectClip = (id: string | null) => {
+    setSelectedClipId(id);
+    if (!id) setListening(false);
+  };
 
   return (
     <div
       className="media-ws media-ws--audio"
       aria-label="声音工作区"
       data-audio-hero="waveform"
+      data-audio-listen="single"
       data-nle-tracks="0"
+      data-audio-listening={listening ? 'true' : 'false'}
     >
-      <div className="media-ws__hero media-ws__hero--audio" aria-label="波形与配音检听">
-        <span className="media-ws__hero-label">波形 / 配音 · hero · 非 NLE</span>
-        <div className="media-ws-wave" aria-hidden="true">
-          <span className="media-ws-wave__playhead" />
+      <div className="media-ws__hero media-ws__hero--audio media-ws__hero--thick" aria-label="波形与配音检听">
+        <div className="media-ws__shot-hero-head">
+          <span className="media-ws__hero-label">波形 / 配音 · 单条检听 · 非 NLE</span>
+          <span className="media-ws__shot-hero-badge" data-audio-badge="boundary">AUDIO ≠ EDIT · 0 轨</span>
+          <span className="media-ws__shot-hero-badge" data-audio-badge="honest">演示 · 未接通真音频</span>
         </div>
         <strong>检听工作区</strong>
-        <p>单条或批次波形示意（本区检听）。多轨对齐画面、字幕轨与成片导出请显式「送去剪辑」——本壳 <strong>0 条假 NLE 轨</strong>。</p>
+        <p>
+          选一条人声 / 音效 / 有声书条目做本区检听（单条波形）。多轨对齐画面、字幕轨与成片导出请显式「送去剪辑」——本壳 <strong>0 条假 NLE 轨</strong>。
+        </p>
+        <AudioListenStrip selectedId={selectedClipId} onSelect={selectClip} />
+        {selected ? (
+          <div
+            className="media-ws__audio-listen"
+            aria-label="单条检听台"
+            data-audio-listen-stage="true"
+            data-audio-clip={selected.id}
+          >
+            <div className={`media-ws-wave${listening ? ' is-listening' : ''}`} aria-hidden="true">
+              <span className="media-ws-wave__playhead" />
+            </div>
+            <dl className="media-ws__audio-listen-meta" data-audio-listen-meta="true">
+              <div><dt>条目</dt><dd>{selected.title}</dd></div>
+              <div><dt>类型</dt><dd>{AUDIO_KIND_LABEL[selected.kind]}</dd></div>
+              <div><dt>时长</dt><dd>{selected.duration}</dd></div>
+              <div><dt>状态</dt><dd>{AUDIO_STATUS_LABEL[selected.status]} · {selected.note}</dd></div>
+            </dl>
+            <div className="media-ws__hero-actions">
+              <Button
+                type="button"
+                data-audio-play="true"
+                aria-pressed={listening}
+                onClick={() => setListening(v => !v)}
+              >{listening ? '停止检听示意' : '播放检听示意'}</Button>
+              <Button type="button" data-audio-clear="true" onClick={() => selectClip(null)}>清除选中</Button>
+            </div>
+            <small>检听＝本区示意，不写 NLE 轨 · 项目 {novelId}</small>
+          </div>
+        ) : (
+          <div className="media-ws__audio-listen media-ws__audio-listen--empty" data-audio-listen-stage="empty" data-honest-kind="empty_selection">
+            <p>未选中声音条目。点上方条目可检听单条波形；无条目时也是诚实空，不是假绿「已就绪」。</p>
+          </div>
+        )}
         <div className="media-ws__hero-actions">
           <Button type="button" aria-pressed={focus === 'speech'} data-audio-focus="speech" onClick={() => setFocus('speech')}>Speech 配音</Button>
           <Button type="button" aria-pressed={focus === 'gen'} data-audio-focus="gen" onClick={() => setFocus('gen')}>AudioGen 音效</Button>
           <Button type="button" aria-pressed={focus === 'manifest'} data-audio-focus="manifest" onClick={() => setFocus('manifest')}>Audiobook 清单</Button>
         </div>
-        <small>项目 {novelId} · LUMEN_AUDIO_IA · AUDIO ≠ EDIT</small>
+        <small>项目 {novelId} · LUMEN_AUDIO_IA · W-UX-11 · AUDIO ≠ EDIT</small>
       </div>
       <div className="media-ws__toolbar" role="toolbar" aria-label="声音工具条">
-        <Button type="button" disabled title="检听控件随真实音频结果启用">播放</Button>
+        <Button
+          type="button"
+          disabled={!selected}
+          data-audio-play="toolbar"
+          title={selected ? '检听示意（未接通真音频）' : '先选一条声音条目'}
+          aria-pressed={listening}
+          onClick={() => selected && setListening(v => !v)}
+        >{listening ? '停止' : '播放'}</Button>
         <Button type="button" disabled title="选区示意">选区</Button>
         <Button type="button" disabled title="增益示意（非 NLE 轨控）">增益</Button>
         {onSendToEdit && (
@@ -390,7 +528,7 @@ export function AudioWorkspaceShell({
             onClick={() => setSendConfirm(true)}
           >送去剪辑</Button>
         )}
-        <small>假 NLE 轨：0</small>
+        <small>假 NLE 轨：0 · 选中 {selected ? selected.id : '无'}</small>
       </div>
 
       {sendConfirm && onSendToEdit && (
@@ -418,7 +556,7 @@ export function AudioWorkspaceShell({
           <AudiobookManifestPanel novelId={novelId} onInspect={onInspect} />
         </section>
       </div>
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-02] 声音 ≠ 剪辑 NLE · 0 假轨 · 交片须显式确认。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-11] 单条检听可见 · 送剪辑确认语对齐 VIDEO · 0 假 NLE 轨 · 禁假绿。</p>
     </div>
   );
 }
@@ -522,11 +660,24 @@ export function ImageEmptyCta({
 }
 
 export function AudioEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): ReactNode {
+  const [sendConfirm, setSendConfirm] = useState(false);
   return (
     <div className="media-ws-cta" aria-label="声音下一步" data-honest-kind="empty_selection">
       <strong>下一步</strong>
       <p>暂无选中声音任务。可新建配音 / 音效 / 有声书条目；成片组装请显式送去剪辑（本区无假 NLE 轨）。</p>
-      {onSendToEdit && <Button type="button" data-send-edit="true" onClick={onSendToEdit}>送去剪辑</Button>}
+      {onSendToEdit && (
+        <Button type="button" data-send-edit="true" onClick={() => setSendConfirm(true)}>送去剪辑</Button>
+      )}
+      {sendConfirm && onSendToEdit && (
+        <div className="media-ws__send-confirm" role="dialog" aria-label="送去剪辑确认">
+          <strong>显式交片 → 剪辑</strong>
+          <p>将离开声音配音工作区，打开顶栏「剪辑」多轨 NLE。声音侧选区保留；不在本区假装时间线。</p>
+          <div className="media-ws__hero-actions">
+            <Button type="button" onClick={() => { setSendConfirm(false); onSendToEdit(); }}>确认送去剪辑</Button>
+            <Button type="button" onClick={() => setSendConfirm(false)}>取消</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

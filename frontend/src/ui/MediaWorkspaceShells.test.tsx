@@ -2,13 +2,14 @@
 /**
  * [HERMIA-FE-20261022] IMAGE / AUDIO / ASSETS lightweight shells (Lumen IA).
  * W-UX-10: IMAGE comic sub-entry + thicker hero.
+ * W-UX-11: AUDIO single-clip listen + send-edit confirm aligned with VIDEO.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {
   ImageWorkspaceShell, ImageWorkspaceRail, ImageEmptyCta,
-  AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta,
+  AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta, AudioListenStrip,
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
   VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta, VideoShotHeroStrip,
 } from './MediaWorkspaceShells';
@@ -164,10 +165,79 @@ describe('MediaWorkspaceShells', () => {
       [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
     });
     expect(host.textContent).toContain('显式交片');
+    expect(send).not.toHaveBeenCalled();
     act(() => {
       [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
     });
     expect(send).toHaveBeenCalled();
+    act(() => root.unmount());
+  });
+
+  it('W-UX-11 AUDIO single-clip listen visible; send-confirm copy = VIDEO; 0 NLE; no fake ready', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <AudioWorkspaceShell novelId="n1" onInspect={vi.fn()} onSendToEdit={send} />,
+    ));
+    expect(host.querySelector('[data-audio-listen="single"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-strip="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-clip="a1"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-listen-stage="true"]')).toBeTruthy();
+    expect(host.querySelector('[data-audio-listen-meta="true"]')?.textContent).toContain('开场对白');
+    expect(host.querySelector('[data-nle-tracks="0"]')).toBeTruthy();
+    expect(host.querySelectorAll('.nle-row').length).toBe(0);
+    expect(host.querySelector('[data-nle-tracks]:not([data-nle-tracks="0"])')).toBeNull();
+    expect(host.textContent).not.toMatch(/已就绪/);
+    expect(host.textContent).toMatch(/演示|候选|草稿|未接通/);
+    // play listen demo
+    act(() => {
+      (host.querySelector('[data-audio-play="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listening="true"]')).toBeTruthy();
+    // clear → honest empty
+    act(() => {
+      (host.querySelector('[data-audio-clear="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listen-stage="empty"]')).toBeTruthy();
+    expect(host.textContent).toMatch(/未选中声音条目|诚实空/);
+    // reselect another clip
+    act(() => {
+      (host.querySelector('[data-audio-clip="a2"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-audio-listen-stage="true"]')?.getAttribute('data-audio-clip')).toBe('a2');
+    // send-edit: confirm first (same copy shape as VIDEO)
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(host.textContent).toContain('显式交片 → 剪辑');
+    expect(host.textContent).toMatch(/打开顶栏「剪辑」多轨 NLE/);
+    expect(host.textContent).toMatch(/声音侧选区保留|不在本区假装时间线/);
+    expect(send).not.toHaveBeenCalled();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+  });
+
+  it('W-UX-11 AudioEmptyCta / Rail require explicit confirm before onSendToEdit', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    const send = vi.fn();
+    act(() => root.render(
+      <><AudioWorkspaceRail onSendToEdit={send} /><AudioEmptyCta onSendToEdit={send} /><AudioListenStrip selectedId={null} onSelect={vi.fn()} /></>,
+    ));
+    expect(host.querySelector('[data-audio-strip="true"]')).toBeTruthy();
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.getAttribute('data-send-edit') === 'true')?.click();
+    });
+    expect(send).not.toHaveBeenCalled();
+    expect(host.textContent).toContain('显式交片 → 剪辑');
+    act(() => {
+      [...host.querySelectorAll('button')].find(b => b.textContent?.includes('确认送去剪辑'))?.click();
+    });
+    expect(send).toHaveBeenCalledTimes(1);
     act(() => root.unmount());
   });
 
