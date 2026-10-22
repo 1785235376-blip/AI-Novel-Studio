@@ -84,3 +84,4 @@ html .app-shell[data-module="EDIT"] .media-ws-main{flex:1;min-height:0;display:f
 .edr .edr-sub .card{border:1px solid var(--color-border-default);border-radius:8px;padding:12px;background:var(--color-bg-surface);max-width:720px}
 .edr .nle-mon .mon-bar .nv-btn{background:#2a303a;border-color:#3a4250;color:#e8eaef}
 .edr .nle-tl-tools .nv-btn{background:#2a303a;border-color:#3a4250;color:#c5ccd8}
+.edr .nle-upper{height:min(38vh,320px);min-height:220px}
