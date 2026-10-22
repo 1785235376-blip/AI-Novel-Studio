@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useStudio } from '../store';
 import { ExportMenu } from './ExportMenu';
 import { ResearchDrawer } from './ResearchDrawer';
+import { TasksMenu } from './TasksMenu';
 
 export function RebuildHeaderTools({ module }: { module: string }) {
   const novelId = useStudio(s => s.novelId);
@@ -11,6 +12,7 @@ export function RebuildHeaderTools({ module }: { module: string }) {
     {module === 'NOVEL' ? <ExportMenu novelId={novelId} initialTab="novel" /> : null}
     {module === 'EDIT' || module === 'VIDEO' ? <ExportMenu novelId={novelId} initialTab="render" /> : null}
     {module === 'NOVEL' ? <button type="button" className="rb-trigger" aria-expanded={research} onClick={() => setResearch(v => !v)}>资料</button> : null}
+    <TasksMenu novelId={novelId} />
     {research && module === 'NOVEL' ? <ResearchDrawer novelId={novelId} onClose={() => setResearch(false)} /> : null}
   </div>;
 }

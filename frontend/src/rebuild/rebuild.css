@@ -34,3 +34,6 @@
 @keyframes rb-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 @keyframes rb-slide{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.rb-pop,.rb-drawer{animation:none}}
+/* [HERMIA-FE-20261022 REBUILD-4] Header fit: tools take room from the search pill, never push 设置/作者 off-screen. */
+.global-header .global-search{flex:0 1 auto;min-width:44px;width:min(180px,11vw)}
+.global-header .rb-header-tools{flex:none}
