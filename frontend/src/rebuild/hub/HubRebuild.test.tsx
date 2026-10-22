@@ -51,13 +51,23 @@ describe('PluginsRebuild', () => {
     expect(screen.getByText('mock-plugin-manager')).toBeTruthy();
   });
   it('unreviewed plugin cannot be enabled; enable hits real endpoint', async () => {
-    plugins = [{id: 'p-1', name: '排版辅助', validated: true}, {id: 'p-2', name: '镜头包', validated: false}];
+    plugins = [{id: 'p-1', name: '排版辅助', status: 'PERMISSIONS_REVIEWED', permission_review: {reviewed_by: 'u'}, requested_permissions: ['a'], granted_permissions: ['a']}, {id: 'p-2', name: '镜头包', status: 'REVIEW_REQUIRED', validated: false}];
     render(<PluginsRebuild />);
     await screen.findByText('排版辅助');
     const btns = screen.getAllByRole('button', {name: '启用'}) as HTMLButtonElement[];
     expect(btns[1].disabled).toBe(true);
     fireEvent.click(btns[0]);
     await waitFor(() => expect(calls).toContain('POST /api/plugins/p-1/enable'));
-    expect(pluginState({enabled: true}).label).toBe('已启用');
+    expect(pluginState({status: 'MANIFEST_ACTIVE'}).label).toBe('已启用');
+  });
+  // [HERMIA-FE-20261022 R7-FIX] 后端真实返回结构：REGISTERED / REVIEW_REQUIRED / UNAVAILABLE / 未知 一律未审核、禁用
+  it('default-distrust with real backend /api/plugins shape', () => {
+    const base = {id: 'x', name: 'n', default_policy: 'DENY', execution_supported: false, publisher_verified: false, publisher_trust: 'unverified', permission_review: null, requested_permissions: ['fs.read'], granted_permissions: [], rollback_available: false, version: 1};
+    for (const status of ['REGISTERED', 'REVIEW_REQUIRED', 'UNAVAILABLE', 'WHATEVER', undefined]) {
+      expect(pluginState({...base, status})).toEqual({label: '未审核', tone: 'off', canEnable: false});
+    }
+    expect(pluginState({...base, status: 'REVIEW_REQUIRED', validated: false}).canEnable).toBe(false);
+    expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {reviewed_by: 'u'}}).canEnable).toBe(false);
+    expect(pluginState({...base, status: 'PERMISSIONS_REVIEWED', permission_review: {reviewed_by: 'u'}, granted_permissions: ['fs.read']}).canEnable).toBe(true);
   });
 });

@@ -9,9 +9,18 @@ import {LocalInteropPanel} from '../LocalInteropPanel';
 import {PluginManagerPanel} from '../../novel/PluginManagerPanel';
 import './hubRebuild.css';
 
+/* [HERMIA-FE-20261022 R7-FIX] 默认不信任：后端 v1_capability_service 登记后为 REGISTERED（permission_review=None），
+   身份缺失为 REVIEW_REQUIRED（validated=false）；只有 set_plugin_permissions 后的 PERMISSIONS_REVIEWED（带 permission_review、
+   所请求权限全部授予）或已激活后停用的 DISABLED（带 permission_review）才允许启用；MANIFEST_ACTIVE 视为已启用。其余一律「未审核」。 */
 export function pluginState(p: any): {label: '已启用' | '已安装' | '未审核'; tone: 'ok' | 'part' | 'off'; canEnable: boolean} {
-  const reviewed = p?.validated !== false && !/INVALID|REJECT|PENDING/i.test(String(p?.validation_status || p?.status || ''));
-  if (p?.enabled) return {label: '已启用', tone: 'ok', canEnable: false};
+  const status = String(p?.status || '').toUpperCase();
+  if (p?.validated !== false && (status === 'MANIFEST_ACTIVE' || (p?.enabled === true && !status))) return {label: '已启用', tone: 'ok', canEnable: false};
+  const req: string[] = Array.isArray(p?.requested_permissions) ? p.requested_permissions : [];
+  const granted = new Set<string>(Array.isArray(p?.granted_permissions) ? p.granted_permissions : []);
+  const reviewed = p?.validated !== false
+    && (status === 'PERMISSIONS_REVIEWED' || status === 'DISABLED')
+    && !!p?.permission_review && typeof p.permission_review === 'object'
+    && req.every(x => granted.has(x));
   if (!reviewed) return {label: '未审核', tone: 'off', canEnable: false};
   return {label: '已安装', tone: 'part', canEnable: true};
 }
@@ -28,7 +37,7 @@ export function PluginsRebuild() {
   }, []);
   useEffect(load, [load]);
   async function toggle(p: any) {
-    try { await (p.enabled ? api.disablePlugin(p.id) : api.enablePlugin(p.id)); setNote(p.enabled ? `已停用「${p.name || '插件'}」` : `已启用「${p.name || '插件'}」`); load(); }
+    try { const on = pluginState(p).label === '已启用'; await (on ? api.disablePlugin(p.id) : api.enablePlugin(p.id)); setNote(on ? `已停用「${p.name || '插件'}」` : `已启用「${p.name || '插件'}」`); load(); }
     catch (e) { setNote(`操作失败：${rbError(e)}`); }
   }
   return (
@@ -49,7 +58,7 @@ export function PluginsRebuild() {
               <div className="plug-row"><div className="grow"><b>{p.name || '未命名插件'}</b><div className="hub-muted">{s.label === '未审核' ? '未审核 · 不能启用' : s.label === '已启用' ? '已启用' : '已安装 · 已审核'}{p.version ? ` · 第 ${p.version} 版` : ''}</div></div>
                 <span className={`hub-badge hub-badge--${s.tone}`}>{s.label}</span>
                 <button type="button" className="nv-btn" onClick={() => setOpen(o => o === p.id ? null : p.id)}>{open === p.id ? '收起' : '设置'}</button>
-                <button type="button" className="nv-btn" disabled={!p.enabled && !s.canEnable} onClick={() => void toggle(p)}>{p.enabled ? '停用' : '启用'}</button></div>
+                <button type="button" className="nv-btn" disabled={s.label !== '已启用' && !s.canEnable} onClick={() => void toggle(p)}>{s.label === '已启用' ? '停用' : '启用'}</button></div>
               {open === p.id ? <div className="plug-detail">{p.description || '这个插件没有写说明。'}{p.permissions ? <> · 权限：{Object.keys(p.permissions).length ? '已按项授权' : '默认全部拒绝'}</> : null}</div> : null}
             </div>; })}
           <div className="hub-note hub-note--warn">未审核、未安装的插件如实标出来，不会显示成可用。{meta && !meta.exec ? '现在后端只做插件登记和审核，插件里的工具还不能真正运行。' : ''}</div>
