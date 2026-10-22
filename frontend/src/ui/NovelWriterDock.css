@@ -156,8 +156,9 @@
   border-radius: 10px;
   box-shadow: 0 1px 2px color-mix(in srgb, var(--color-text-primary) 6%, transparent);
 }
+/* [HERMIA-FE-20261022] T-DARK-01 */
 .novel-writer-dock {
-  background: #fff;
+  background: var(--color-bg-surface);
 }
 .novel-writer-dock > .novel-inspector-context {
   position: sticky;
@@ -242,4 +243,11 @@
   border-color:var(--color-selection-border);
   background:var(--color-accent-subtle);
   color:var(--color-accent-primary);
+}
+
+/* [HERMIA-FE-20261022] T-DARK-01 novel editor paper contrast */
+.app-shell[data-module="NOVEL"] .editor,
+.app-shell[data-module="NOVEL"] .editor .ProseMirror {
+  background: var(--color-bg-editor);
+  color: var(--color-text-primary);
 }

@@ -16,7 +16,7 @@
   border: var(--border-strong);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(165deg, color-mix(in srgb, var(--color-bg-subtle) 75%, #161820), var(--color-bg-surface));
+    linear-gradient(165deg, color-mix(in srgb, var(--color-canvas-bg) 70%, var(--color-bg-subtle)), var(--color-bg-surface));
 }
 .media-ws__hero-label {
   font-size: 10px;
@@ -40,7 +40,7 @@
   max-height: 220px;
   object-fit: contain;
   border-radius: var(--radius-md);
-  background: #0a0a0e;
+  background: var(--color-canvas-bg);
 }
 .media-ws__toolbar {
   display: flex;
@@ -173,13 +173,16 @@
 .media-ws--video .media-ws__layer--canvas {
   min-height: 280px;
 }
+/* [HERMIA-FE-20261022] T-DARK-02 video canvas host */
 .media-ws--video .media-ws__canvas-host {
   margin-top: var(--space-2);
   min-height: 240px;
   border: var(--border-default);
   border-radius: var(--radius-md);
   overflow: auto;
-  background: var(--color-bg-subtle);
+  background-color: var(--color-canvas-bg);
+  background-image: radial-gradient(var(--color-canvas-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 .media-ws--video .media-ws__layer--script {
   border-color: color-mix(in srgb, var(--color-accent-primary) 25%, var(--color-border-default));

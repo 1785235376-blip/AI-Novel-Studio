@@ -30,3 +30,27 @@
 .app-shell .novel-ai-panel{gap:var(--space-3)}.app-shell .novel-ai-panel>header{position:sticky;top:0;z-index:1;background:var(--color-bg-surface)}.app-shell .novel-ai-panel label{margin:0;color:var(--color-text-secondary);font-size:11px;font-weight:600}.app-shell .novel-ai-panel textarea{line-height:1.55}.app-shell .novel-ai-status{padding:var(--space-3);border:0;border-left:3px solid var(--color-border-strong);background:var(--color-bg-subtle)}.app-shell .novel-ai-status--ready,.app-shell .novel-ai-status--result-ready{border-left-color:var(--color-status-success)}.app-shell .novel-ai-status--failed,.app-shell .novel-ai-status--unavailable{border-left-color:var(--color-status-error)}
 .feature-launcher__toggle{border-color:transparent;background:var(--color-bg-subtle);font-weight:650}.feature-launcher__toggle:hover{border-color:var(--color-border-default);background:var(--color-bg-surface)}.feature-launcher__overlay{backdrop-filter:blur(8px)}
 @media(max-width:1250px){.product-mark{min-width:auto}.product-mark__name small{display:none}.module-switcher button{min-width:66px}.current-actor>span:last-child{display:none}}
+
+/* [HERMIA-FE-20261022] T-DARK-03 desktop craft motion polish */
+.global-header,.context-bar,.status-bar{
+  transition:background var(--motion-panel) var(--ease-emphasized),border-color var(--motion-standard) var(--ease-standard),color var(--motion-standard) var(--ease-standard);
+}
+.module-switcher button.is-active::after{
+  transition:inset var(--motion-panel) var(--ease-emphasized),opacity var(--motion-standard) var(--ease-emphasized);
+}
+.ui-button,.ui-icon-button{
+  transition:background var(--motion-standard) var(--ease-emphasized),border-color var(--motion-standard) var(--ease-emphasized),color var(--motion-standard) var(--ease-emphasized),transform var(--motion-fast) var(--ease-emphasized),opacity var(--motion-fast) var(--ease-emphasized),box-shadow var(--motion-standard) var(--ease-emphasized);
+}
+.ui-button:hover:not(:disabled),.ui-icon-button:hover:not(:disabled){
+  opacity:.96;
+}
+.app-shell .editor{
+  background:var(--color-bg-editor,var(--color-bg-surface));
+  transition:background var(--motion-panel) var(--ease-emphasized),box-shadow var(--motion-panel) var(--ease-emphasized);
+}
+.feature-launcher__overlay,.module-overflow__menu{
+  transform-origin:bottom left;
+}
+@media(prefers-reduced-motion:reduce){
+  .global-header,.context-bar,.status-bar,.ui-button,.ui-icon-button,.app-shell .editor{transition-duration:.01ms!important}
+}

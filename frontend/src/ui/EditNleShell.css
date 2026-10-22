@@ -217,15 +217,16 @@
 }
 
 /* [HERMIA-FE-20261022] Align toward Vera W-P0-05 nle-* chrome (dark timeline hero). */
+/* [HERMIA-FE-20261022] T-DARK-01 */
 .edit-nle-shell {
-  background: #eceef2;
+  background: var(--color-bg-app);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
 .edit-nle-shell__preview {
   grid-template-columns: minmax(160px, 0.9fr) minmax(220px, 1.2fr) minmax(200px, 0.95fr);
   gap: 0;
-  background: #f7f8fa;
+  background: var(--color-bg-subtle);
   border-bottom: var(--border-default);
 }
 .edit-nle-shell__monitor {
@@ -281,7 +282,7 @@
   color: #1a1d24;
 }
 .edit-nle-rail {
-  background: #fff;
+  background: var(--color-bg-surface);
 }
 .edit-nle-rail__bin > li {
   border-radius: 8px;

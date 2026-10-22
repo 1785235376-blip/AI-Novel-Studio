@@ -268,3 +268,24 @@
 ### 门禁
 - 上述 vitest 子集 → **104 PASS**。
 - **不 push**；未改 `app/`；**未做 N-UX-04**。
+
+## § T-DARK-01 / T-DARK-02 / T-DARK-03（剪映深色 + ComfyUI 画布 + 高级动效）
+
+> [HERMIA-FE-20261022] · 基线父提交 `9fb6e9c0` · **不 push**
+
+### T-DARK-01 壳层剪映式深色
+- `:root` 默认 `color-scheme: dark`；bg/text/border/accent 语义变量改深色值。
+- html/body/#root 同步 app 底；status-bar 改 elevated 深色铬条。
+- NovelWriterDock / EditNle 外壳浅色硬编码改 token；小说 `--color-bg-editor`。
+
+### T-DARK-02 无限画布 ComfyUI 黑
+- 新增 `--color-canvas-bg` / `--color-canvas-grid`。
+- `graph-canvas__viewport`、placeholder-canvas、VIDEO canvas-host：近黑底 + 低对比点阵。
+
+### T-DARK-03 高级动效
+- `--motion-panel` · `--ease-emphasized`；菜单/命令面板 soft fade+slide。
+- hover 微位移 / opacity；**尊重** `prefers-reduced-motion: reduce`。
+
+### 门禁
+- workbench UI 子集 + `darkTheme.tokens.test.ts` → **107 PASS**。
+- **不 push**；未改 `app/`；能力徽章仍禁假绿。

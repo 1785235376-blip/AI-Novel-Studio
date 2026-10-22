@@ -1,18 +1,101 @@
+/* [HERMIA-FE-20261022] T-DARK-01 CapCut / 剪映式深色默认 + T-DARK-02 canvas + T-DARK-03 motion */
 :root {
-  color-scheme:light;
-  --color-bg-app:#e8f1f3;--color-bg-surface:#f8fbfc;--color-bg-subtle:#edf6f7;--color-bg-elevated:#ffffff;
-  --color-text-primary:#113056;--color-text-secondary:#3f5d70;--color-text-muted:#6d8791;--color-text-inverse:#f8fbfc;
-  --color-border-default:#c7dfe3;--color-border-strong:#9fc7ce;--color-border-focus:#113056;
-  --color-accent-primary:#113056;--color-accent-hover:#0b2747;--color-accent-active:#081d36;--color-accent-subtle:#d7f0f2;
-  --color-status-success:#15803d;--color-status-warning:#b45309;--color-status-error:#b91c1c;--color-status-info:#0369a1;--color-status-bar:#c9d4da;--color-status-signal:#3cc6aa;
-  --color-selection-bg:#c9e9ed;--color-selection-border:#91cfd5;
-  --font-ui:"Segoe UI Variable","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;--font-editor:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;--font-mono:"Cascadia Mono","SFMono-Regular",Consolas,monospace;
-  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
-  --radius-sm:3px;--radius-md:6px;--radius-lg:8px;--radius-round:999px;
-  --border-default:1px solid var(--color-border-default);--border-strong:1px solid var(--color-border-strong);
-  --shadow-floating:0 8px 24px rgb(23 32 39 / 12%);--shadow-dialog:0 20px 56px rgb(23 32 39 / 20%);
-  --layout-header-height:56px;--layout-context-height:44px;--layout-sidebar-width:248px;--layout-inspector-width:340px;--layout-inspector-min:280px;--layout-inspector-max:480px;--layout-status-height:32px;--layout-workspace-min:480px;--layout-content-gap:12px;
-  --z-dropdown:40;--z-overlay:80;--z-dialog:100;--motion-fast:120ms;--motion-standard:180ms;
-  --icon-xs:12px;--icon-sm:16px;--icon-md:20px;--icon-lg:24px;
-  --control-height-sm:28px;--control-height-md:34px;--control-height-lg:40px;--focus-ring:0 0 0 3px rgb(49 95 189 / 20%);--motion-slow:260ms;--ease-standard:cubic-bezier(.2,.8,.2,1);
+  color-scheme: dark;
+
+  /* App chrome — near-black / deep grey (剪映感) */
+  --color-bg-app: #0d0f12;
+  --color-bg-surface: #161a20;
+  --color-bg-subtle: #12151a;
+  --color-bg-elevated: #1c2129;
+
+  /* Novel / TipTap paper — slightly lighter than pure black for readable prose */
+  --color-bg-editor: #1a1d21;
+
+  /* Infinite canvas (ComfyUI black) */
+  --color-canvas-bg: #0b0b0b;
+  --color-canvas-grid: #1a1a1a;
+
+  --color-text-primary: #e8eaef;
+  --color-text-secondary: #a8b0bc;
+  --color-text-muted: #6b7385;
+  --color-text-inverse: #0d0f12;
+
+  --color-border-default: #2a303c;
+  --color-border-strong: #3a4250;
+  --color-border-focus: #4db8c4;
+
+  /* Cool cyan accent — not neon */
+  --color-accent-primary: #4db8c4;
+  --color-accent-hover: #5ec4cf;
+  --color-accent-active: #3aa3af;
+  --color-accent-subtle: #1a2c32;
+
+  --color-status-success: #3dd68c;
+  --color-status-warning: #e6a23c;
+  --color-status-error: #f07178;
+  --color-status-info: #5b9fd4;
+  --color-status-bar: #8b93a5;
+  --color-status-signal: #3cc6aa;
+
+  --color-selection-bg: #1e3a40;
+  --color-selection-border: #3a8f9a;
+
+  --color-overlay: rgb(0 0 0 / 55%);
+
+  --font-ui: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  --font-editor: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-round: 999px;
+
+  --border-default: 1px solid var(--color-border-default);
+  --border-strong: 1px solid var(--color-border-strong);
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 35%);
+  --shadow-floating: 0 8px 28px rgb(0 0 0 / 45%);
+  --shadow-dialog: 0 24px 64px rgb(0 0 0 / 55%);
+
+  --layout-header-height: 56px;
+  --layout-context-height: 44px;
+  --layout-sidebar-width: 248px;
+  --layout-inspector-width: 340px;
+  --layout-inspector-min: 280px;
+  --layout-inspector-max: 480px;
+  --layout-status-height: 32px;
+  --layout-workspace-min: 480px;
+  --layout-content-gap: 12px;
+
+  --z-dropdown: 40;
+  --z-overlay: 80;
+  --z-dialog: 100;
+
+  /* T-DARK-03 motion — premium ease, longer panels */
+  --motion-fast: 140ms;
+  --motion-standard: 220ms;
+  --motion-slow: 320ms;
+  --motion-panel: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --icon-xs: 12px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+
+  --control-height-sm: 28px;
+  --control-height-md: 34px;
+  --control-height-lg: 40px;
+  --focus-ring: 0 0 0 3px rgb(77 184 196 / 28%);
 }

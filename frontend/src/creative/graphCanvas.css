@@ -1,3 +1,4 @@
+/* [HERMIA-FE-20261022] T-DARK-02 ComfyUI black canvas viewport */
 .graph-canvas{display:flex;flex-direction:column;min-width:0;min-height:0;border:var(--border-default);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-bg-surface);color:var(--color-text-primary);font-family:var(--font-ui)}
 .graph-canvas__toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-1);padding:var(--space-2);border-bottom:var(--border-default);background:var(--color-bg-surface)}
 .graph-canvas__toolbar .ui-button{display:inline-flex;align-items:center;justify-content:center;min-height:var(--control-height-sm);padding:var(--space-1) var(--space-2)}
@@ -5,7 +6,7 @@
 .graph-canvas__tools{display:flex;gap:var(--space-1);padding-right:var(--space-2);margin-right:var(--space-1);border-right:var(--border-default)}
 .graph-canvas__toolbar output{min-width:var(--space-12);text-align:center;font-size:12px;font-variant-numeric:tabular-nums}
 .graph-canvas__count{margin-left:auto;padding:0 var(--space-2);color:var(--color-text-secondary);font-size:12px}
-.graph-canvas__viewport{position:relative;flex:1;min-width:0;min-height:calc(var(--space-12) * 8);overflow:hidden;touch-action:none;user-select:none;background:var(--color-bg-subtle);background-image:radial-gradient(var(--color-border-default) 1px,transparent 1px);background-size:var(--space-6) var(--space-6)}
+.graph-canvas__viewport{position:relative;flex:1;min-width:0;min-height:calc(var(--space-12) * 8);overflow:hidden;touch-action:none;user-select:none;background:var(--color-canvas-bg);background-image:radial-gradient(var(--color-canvas-grid) 1px,transparent 1px);background-size:var(--space-6) var(--space-6)}
 .graph-canvas__viewport:focus-visible,.graph-canvas .ui-button:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:-2px}
 .graph-canvas__viewport.is-pan-tool{cursor:grab}.graph-canvas__viewport.is-panning{cursor:grabbing}
 .graph-canvas__world{position:absolute;inset:0;transform-origin:0 0;pointer-events:none}
@@ -42,7 +43,7 @@
 .graph-canvas__navigator select{max-width:calc(var(--space-12) * 4);min-height:var(--control-height-sm);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);font:inherit}
 
 .graph-canvas__minimap-row{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-top:var(--border-default)}
-.graph-canvas__minimap.ui-button{display:block;flex:none;width:calc(var(--space-12) * 4);height:calc(var(--space-12) * 2.5);padding:0;overflow:hidden;border:var(--border-default);background:var(--color-bg-subtle)}
+.graph-canvas__minimap.ui-button{display:block;flex:none;width:calc(var(--space-12) * 4);height:calc(var(--space-12) * 2.5);padding:0;overflow:hidden;border:var(--border-default);background:var(--color-canvas-bg)}
 .graph-canvas__minimap svg{display:block;width:100%;height:100%}
 .graph-canvas__minimap-nodes{fill:var(--color-text-muted)}
 .graph-canvas__minimap-selected{fill:var(--color-accent-primary)}
