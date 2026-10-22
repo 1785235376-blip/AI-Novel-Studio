@@ -11,6 +11,8 @@ import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
 import '../novel/novelRebuild.css';
 import '../image/imageRebuild.css';
 import './videoRebuild.css';
+import {RebuildCanvas} from '../canvas/RebuildCanvas';
+import type {CvGraph} from '../canvas/RebuildCanvas';
 
 export type VideoView = 'studio' | 'script' | 'gen';
 type Shot = {key: string; n: number; title: string; size: string; dialogue: string; status: string; hasFrame: boolean};
@@ -49,6 +51,8 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   const [sendConfirm, setSendConfirm] = useState(false);
   const ready = (providers || []).filter(p => p.available && p.registered && p.reachable !== false);
   const loaded = plays !== null;
+  // [HERMIA-FE-20261022 U1] 镜头 → 画布种子：storyboard_shot 节点按顺序连线（仅本机草稿，不写服务端）
+  const shotSeed = useMemo<CvGraph>(() => ({nodes: shots.map((s, i) => ({id: `shot-${s.key}`, t: "storyboard_shot" as const, x: i * 230, y: 60 + (i % 2) * 40, title: `镜头 ${s.n} · ${s.title}`})), edges: shots.slice(1).map((s, i) => ({id: `se-${s.key}`, a: `shot-${shots[i].key}`, b: `shot-${s.key}`}))}), [shots]);
   const addShot = () => setDrawer('screenplay');
   const askSend = () => setSendConfirm(true);
 
@@ -143,13 +147,8 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <section className="vid-layer vid-layer--canvas" aria-label="② 无限画布">
         <div className="vl-h"><span className="lab">② 无限画布</span><span className="nv-spacer" /><span className="vl-meta">节点 · 素材引用 · 关系边</span></div>
         <div className="vid-canvas-host" id="vidCanvasHost" data-surface="canvas">
-          {shots.length === 0 ? <p className="vid-canvas-empty">{loaded ? '还没有镜头，画布是空的。' : '读取中…'}</p> :
-            <svg id="vidCv" role="application" aria-label="视频无限画布" viewBox={`0 0 ${Math.max(900, 40 + shots.length * 210)} 300`} preserveAspectRatio="xMinYMin meet">
-              <defs><marker id="vidArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9aa3b2" /></marker></defs>
-              {shots.slice(1).map((s, i) => <path key={`e${s.key}`} className="vid-edge" d={`M${40 + i * 210 + 140},82 L${40 + (i + 1) * 210},82`} />)}
-              {shots.map((s, i) => <g key={s.key} className="vid-node" data-sel={cur?.key === s.key} transform={`translate(${40 + i * 210},50)`} onClick={() => setSel(s.key)}>
-                <rect width="140" height="64" rx="8" /><text className="title" x="12" y="24">镜头 {s.n}</text><text className="sub" x="12" y="44">{s.size} · {s.title.slice(0, 6)}</text></g>)}
-            </svg>}
+          {/* [HERMIA-FE-20261022 U1] 换成共用黑色无限画布：右键空白加节点；镜头作为初始种子（仅首次，之后按本机草稿） */}
+          {loaded ? <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}
         </div>
       </section>
       <section className="vid-layer vid-layer--director" aria-label="③ 内置导演台">

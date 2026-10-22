@@ -9,6 +9,7 @@ import {ImageGenerationPanel} from '../../novel/ImageGenerationPanel';
 import {VisualContextPanel} from '../../novel/VisualContextPanel';
 import {VisionAnalysisPanel} from '../../novel/VisionAnalysisPanel';
 import {MultimodalDirectorWorkspace} from '../../novel/MultimodalDirectorWorkspace';
+import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import {safeImagePreviewUri} from '../../novel/ImageInfiniteCanvas';
 import type {ImageInspection} from '../../novel/ImageTaskInspector';
 import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
@@ -86,7 +87,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>图片画布</h2><span className="nv-badge nv-badge--off">专业</span><span className="nv-spacer" />
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button>
         <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>漫画制作</button></div>
-      <div className="img-canvaswrap" data-surface="canvas"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div>
+      {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><RebuildCanvas kind="image" scope={novelId} label="图片画布" /></div>
+      <details className="img-canvas-pro"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details>
     </div>
   );
 

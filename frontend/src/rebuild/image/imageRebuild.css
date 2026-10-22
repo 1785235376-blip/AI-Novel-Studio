@@ -70,3 +70,8 @@ html .app-shell[data-module="IMAGE"] .media-ws-main{flex:1;min-height:0;display:
 .img-ws .mw-head .nv-btn,.mw-hero .hero-tools .nv-btn{padding:2px 10px} /* [HERMIA-FE-20261022 R2] 原型 .btn.sm 高度 */
 /* [HERMIA-FE-20261022 R3] 漫画子视图正文 11px 对齐原型 */
 .img-ws[data-img-view="comic"] .nv-hint,.img-ws[data-img-view="comic"] .mw-muted{font-size:11px}
+/* [HERMIA-FE-20261022 U1] 图片画布：黑色无限画布占满，专业工具折叠在下 */
+.img-canvaswrap--rcv{display:flex;overflow:hidden;min-height:420px}
+.img-canvas-pro{border-top:1px solid var(--color-border-default);background:var(--color-bg-surface)}
+.img-canvas-pro>summary{cursor:pointer;padding:6px 12px;font-size:12px;color:var(--color-text-muted)}
+.img-canvas-pro__body{max-height:50vh;overflow:auto}
