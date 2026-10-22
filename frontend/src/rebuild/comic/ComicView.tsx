@@ -1,6 +1,6 @@
 // [HERMIA-FE-20261022 U2] 漫画制作：每页可选分格模板（不同形状/斜切/嵌入/出血），六种气泡 + 尾巴方向 + 缩放 + 删除 + 竖排。
-// 仍是本页草稿：不发写请求，刷新即丢（页面写明）。保存接口已列入给 dot 的需求。
-import {useRef, useState} from 'react';
+// 仍是本地草稿：不发写请求；U5 起暂存 sessionStorage，关标签页即丢（页面写明）。保存接口已列入给 dot 的需求。
+import {useEffect, useRef, useState} from 'react';
 import {COMIC_TEMPLATES, templateById, remapCells, BUBBLE_KINDS, TAIL_DIRS, DEFAULT_TEXT, hasTail, type Bubble, type BubbleKind, type ComicTemplate} from './comicTemplates';
 import './comic.css';
 
@@ -10,9 +10,21 @@ const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 export function bubbleBounds(cellW: number, cellH: number, bubW: number, bubH: number) {
   return {maxX: Math.max(0, (cellW - bubW) / (cellW || 1) * 100), maxY: Math.max(0, (cellH - bubH) / (cellH || 1) * 100)};
 }
-function measure(el: HTMLElement) {
+/** [HERMIA-FE-20261022 U5] 按“实际可见外框”夹紧：取气泡框与文字（含旋转后外框，getBoundingClientRect 已含 transform）的并集，
+ *  再按其相对布局原点（left/top 百分比）的外伸量算出 x/y 的上下限。旋转的拟声字、文字比框宽的旁白都不会被格子裁掉。 */
+export function visibleBounds(cell: {left: number; top: number; width: number; height: number}, origin: {x: number; y: number}, vis: {left: number; top: number; right: number; bottom: number}) {
+  const W = cell.width || 1, H = cell.height || 1;
+  const ox = cell.left + origin.x / 100 * W, oy = cell.top + origin.y / 100 * H;
+  const lo = Math.max(0, ox - vis.left), ro = vis.right - ox, to = Math.max(0, oy - vis.top), bo = vis.bottom - oy;
+  const minX = lo / W * 100, minY = to / H * 100;
+  return {minX, minY, maxX: Math.max(minX, (W - ro) / W * 100), maxY: Math.max(minY, (H - bo) / H * 100)};
+}
+function measure(el: HTMLElement, b: {x: number; y: number}) {
   const c = (el.closest('.comic-cell') as HTMLElement | null)?.getBoundingClientRect(); const r = el.getBoundingClientRect();
-  return {w: c?.width || 1, h: c?.height || 1, ...bubbleBounds(c?.width || 1, c?.height || 1, r.width, r.height)};
+  const t = (el.querySelector('.bub-t') as HTMLElement | null)?.getBoundingClientRect();
+  const vis = t && t.width ? {left: Math.min(r.left, t.left), top: Math.min(r.top, t.top), right: Math.max(r.right, t.right), bottom: Math.max(r.bottom, t.bottom)} : r;
+  const cell = c ? {left: c.left, top: c.top, width: c.width || 1, height: c.height || 1} : {left: 0, top: 0, width: 1, height: 1};
+  return {w: cell.width, h: cell.height, ...visibleBounds(cell, b, vis)};
 }
 const newPage = (n: number, tpl = 'big1small2'): Page => ({id: `p${n}`, label: `第 ${n} 页`, tpl, cells: templateById(tpl).panels.map(() => [])});
 
@@ -22,15 +34,15 @@ export function TemplateThumb({t}: {t: ComicTemplate}) {
 }
 
 function ComicBubble({b, sel, onSel, onChange, onDelete}: {b: Bubble; sel: boolean; onSel: () => void; onChange: (p: Partial<Bubble>) => void; onDelete: () => void}) {
-  const st = useRef<null | {mode: 'move' | 'size'; sx: number; sy: number; ox: number; oy: number; ow: number; w: number; h: number; maxX: number; maxY: number}>(null);
+  const st = useRef<null | {mode: 'move' | 'size'; sx: number; sy: number; ox: number; oy: number; ow: number; w: number; h: number; minX: number; minY: number; maxX: number; maxY: number}>(null);
   const start = (mode: 'move' | 'size') => (e: React.PointerEvent<HTMLElement>) => {
     e.stopPropagation(); onSel();
-    const el = (e.currentTarget.closest('.bub') as HTMLElement) || e.currentTarget; const m = measure(el);
-    st.current = {mode, sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, ow: b.w, w: m.w, h: m.h, maxX: m.maxX, maxY: m.maxY};
+    const el = (e.currentTarget.closest('.bub') as HTMLElement) || e.currentTarget; const m = measure(el, b);
+    st.current = {mode, sx: e.clientX, sy: e.clientY, ox: b.x, oy: b.y, ow: b.w, w: m.w, h: m.h, minX: m.minX, minY: m.minY, maxX: m.maxX, maxY: m.maxY};
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* jsdom */ }
   };
   const move = (e: React.PointerEvent) => { const d = st.current; if (!d) return; const dx = (e.clientX - d.sx) / d.w * 100, dy = (e.clientY - d.sy) / d.h * 100;
-    if (d.mode === 'move') onChange({x: clamp(d.ox + dx, 0, d.maxX), y: clamp(d.oy + dy, 0, d.maxY)}); else onChange({w: clamp(d.ow + dx, 14, Math.max(14, 100 - b.x))}); };
+    if (d.mode === 'move') onChange({x: clamp(d.ox + dx, d.minX, d.maxX), y: clamp(d.oy + dy, d.minY, d.maxY)}); else onChange({w: clamp(d.ow + dx, 14, Math.max(14, 100 - b.x))}); };
   return <span className={`bub bub--${b.kind}${hasTail(b.kind) && b.tail !== 'none' ? ` bub-tail--${b.tail}` : ''}${b.vertical ? ' bub--v' : ''}`}
     role="button" tabIndex={0} aria-pressed={sel} data-bubble-id={b.id} data-bubble-kind={b.kind}
     aria-label={`气泡（${BUBBLE_KINDS.find(k => k.id === b.kind)?.label}）：${b.text}。拖动移动，双击改写，Delete 删除`}
@@ -40,15 +52,21 @@ function ComicBubble({b, sel, onSel, onChange, onDelete}: {b: Bubble; sel: boole
     onPointerDown={start('move')} onPointerMove={move} onPointerUp={() => { st.current = null; }}
     onKeyDown={e => { if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); onDelete(); return; }
       const k = ({ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2]} as Record<string, number[]>)[e.key];
-      if (k) { e.preventDefault(); const m = measure(e.currentTarget); onChange({x: clamp(b.x + k[0]!, 0, m.maxX), y: clamp(b.y + k[1]!, 0, m.maxY)}); } }}>
+      if (k) { e.preventDefault(); const m = measure(e.currentTarget, b); onChange({x: clamp(b.x + k[0]!, m.minX, m.maxX), y: clamp(b.y + k[1]!, m.minY, m.maxY)}); } }}>
     <span className="bub-t">{b.text}</span>
     {sel ? <span className="bub-size" role="presentation" title="拖动调整大小" onPointerDown={start('size')} onPointerMove={move} onPointerUp={() => { st.current = null; }} /> : null}
   </span>;
 }
 
-export function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onBack: () => void; onGen: () => void}) {
-  const [pages, setPages] = useState<Page[]>([newPage(1)]);
-  const [pageId, setPageId] = useState('p1');
+/** [HERMIA-FE-20261022 U5] 漫画草稿暂存到 sessionStorage（按作品），切模块再回来不丢；仍不发写请求、不进服务端。 */
+export const comicDraftKey = (novelId?: string) => `hermia-comic-draft:${novelId || 'local'}`;
+function loadDraft(novelId?: string): {pages: Page[]; pageId: string} | null {
+  try { const d = JSON.parse(sessionStorage.getItem(comicDraftKey(novelId)) || 'null'); return d && Array.isArray(d.pages) && d.pages.length ? d : null; } catch { return null; }
+}
+export function ComicView({chrome, onBack, onGen, novelId}: {chrome: React.ReactNode; onBack: () => void; onGen: () => void; novelId?: string}) {
+  const [pages, setPages] = useState<Page[]>(() => loadDraft(novelId)?.pages ?? [newPage(1)]);
+  const [pageId, setPageId] = useState(() => loadDraft(novelId)?.pageId ?? 'p1');
+  useEffect(() => { try { sessionStorage.setItem(comicDraftKey(novelId), JSON.stringify({pages, pageId})); } catch { /* 配额/隐私模式 */ } }, [novelId, pages, pageId]);
   const [cellIx, setCellIx] = useState(0);
   const [bubSel, setBubSel] = useState<string | null>(null);
   const [kind, setKind] = useState<BubbleKind>('speech');
@@ -80,7 +98,7 @@ export function ComicView({chrome, onBack, onGen}: {chrome: React.ReactNode; onB
             {COMIC_TEMPLATES.map(t => <button key={t.id} type="button" role="radio" aria-checked={t.id === page.tpl} data-tpl={t.id} title={t.hint} onClick={() => chooseTpl(t.id)}>
               <TemplateThumb t={t} /><span>{t.label}</span></button>)}
           </div>
-          <p className="mw-muted">分格和气泡只存在本页面，刷新会丢失；保存到作品的接口还没接通。换模板不会丢台词：格子变少时，多出的气泡并到最后一格。</p>
+          <p className="mw-muted">分格和气泡只暂存在本浏览器标签页（切模块不丢，关掉标签页就没了），没有保存到服务端；保存到作品的接口还没接通。换模板不会丢台词：格子变少时，多出的气泡并到最后一格。</p>
         </nav>
         <section className="mw-hero" aria-label="漫画页预览">
           <div className="hero-tools"><b>{page.label} · {tpl.label}</b><span className="cm-hint">{tpl.hint}</span><span className="nv-spacer" />

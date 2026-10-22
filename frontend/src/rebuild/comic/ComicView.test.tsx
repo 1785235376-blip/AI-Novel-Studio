@@ -1,8 +1,9 @@
 // [HERMIA-FE-20261022 U2] 分格模板 / 气泡样式 / 双画布
 // @vitest-environment jsdom
-import {describe, it, expect, vi} from 'vitest';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
+beforeEach(() => sessionStorage.clear()); // [HERMIA-FE-20261022 U5]
 import {render, screen, fireEvent} from '@testing-library/react';
-import {ComicView, bubbleBounds} from './ComicView';
+import {ComicView, bubbleBounds, visibleBounds} from './ComicView';
 import {COMIC_TEMPLATES, remapCells} from './comicTemplates';
 import {DualCanvas} from '../canvas/DualCanvas';
 
@@ -60,8 +61,50 @@ describe('bubble clamp (Vera must-fix)', () => {
     fireEvent.click(container.querySelector('#comicBubble')!);
     const cell = container.querySelector('.comic-cell') as HTMLElement, bub = container.querySelector('.bub') as HTMLElement;
     cell.getBoundingClientRect = () => ({width: 200, height: 100, left: 0, top: 0, right: 200, bottom: 100, x: 0, y: 0, toJSON() {}}) as DOMRect;
-    bub.getBoundingClientRect = () => ({width: 150, height: 40, left: 0, top: 0, right: 150, bottom: 40, x: 0, y: 0, toJSON() {}}) as DOMRect;
+    bub.getBoundingClientRect = () => { const l = parseFloat(bub.style.left) * 2, t = parseFloat(bub.style.top); return ({width: 150, height: 40, left: l, top: t, right: l + 150, bottom: t + 40, x: l, y: t, toJSON() {}}) as DOMRect; };
     for (let i = 0; i < 40; i++) fireEvent.keyDown(bub, {key: 'ArrowRight'});
     expect(parseFloat(bub.style.left)).toBeLessThanOrEqual(25);
+  });
+});
+
+describe('[HERMIA-FE-20261022 U5] visible-bounds clamp', () => {
+  const cell = {left: 0, top: 0, width: 127, height: 100};
+  it('caption text wider than its box: clamps by text extent, last char stays inside', () => {
+    // box 60px wide at x=0, but text overflows to 90px
+    const m = visibleBounds(cell, {x: 0, y: 0}, {left: 0, top: 0, right: 90, bottom: 20});
+    expect(m.maxX).toBeCloseTo((127 - 90) / 127 * 100);
+    const x = Math.min(100, m.maxX); expect(x / 100 * 127 + 90).toBeLessThanOrEqual(127);
+  });
+  it('rotated SFX: rotated bbox above origin raises minY and lowers maxY', () => {
+    // origin at y=0, rotated glyphs poke 8px above and 5px left of the layout box
+    const m = visibleBounds(cell, {x: 10, y: 0}, {left: 12.7 - 5, top: -8, right: 12.7 + 50, bottom: 30});
+    expect(m.minY).toBeCloseTo(8); expect(m.minX).toBeCloseTo(5 / 127 * 100);
+    expect(m.maxY).toBeCloseTo(70);
+  });
+  it('drag/keyboard uses union of box and .bub-t rect', () => {
+    const {container} = render(<ComicView chrome={null} onBack={() => {}} onGen={() => {}} />);
+    fireEvent.click(container.querySelector('#comicBubble')!);
+    const cellEl = container.querySelector('.comic-cell') as HTMLElement, bub = container.querySelector('.bub') as HTMLElement, txt = bub.querySelector('.bub-t') as HTMLElement;
+    cellEl.getBoundingClientRect = () => ({width: 127, height: 100, left: 0, top: 0, right: 127, bottom: 100, x: 0, y: 0, toJSON() {}}) as DOMRect;
+    const at = (w: number, h: number) => () => { const l = parseFloat(bub.style.left) * 1.27, t = parseFloat(bub.style.top); return ({width: w, height: h, left: l, top: t, right: l + w, bottom: t + h, x: l, y: t, toJSON() {}}) as DOMRect; };
+    bub.getBoundingClientRect = at(60, 20); txt.getBoundingClientRect = at(90, 20);
+    for (let i = 0; i < 60; i++) { fireEvent.keyDown(bub, {key: 'ArrowRight'}); fireEvent.keyDown(bub, {key: 'ArrowDown'}); }
+    expect(parseFloat(bub.style.left) * 1.27 + 90).toBeLessThanOrEqual(127.01);
+    expect(parseFloat(bub.style.top) + 20).toBeLessThanOrEqual(100.01);
+  });
+});
+
+describe('[HERMIA-FE-20261022 U5] comic draft survives unmount', () => {
+  it('restores pages/bubbles from sessionStorage per novel, no network', () => {
+    sessionStorage.clear();
+    const a = render(<ComicView novelId="n1" chrome={null} onBack={() => {}} onGen={() => {}} />);
+    fireEvent.click(a.container.querySelector('#comicBubble')!);
+    expect(a.container.querySelectorAll('.bub').length).toBe(1);
+    a.unmount();
+    const b = render(<ComicView novelId="n1" chrome={null} onBack={() => {}} onGen={() => {}} />);
+    expect(b.container.querySelectorAll('.bub').length).toBe(1); b.unmount();
+    const c = render(<ComicView novelId="n2" chrome={null} onBack={() => {}} onGen={() => {}} />);
+    expect(c.container.querySelectorAll('.bub').length).toBe(0); c.unmount();
+    sessionStorage.clear();
   });
 });

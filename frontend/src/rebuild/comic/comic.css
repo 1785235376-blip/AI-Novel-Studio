@@ -53,3 +53,7 @@
 .bub--whisper[class*="bub-tail--"]::before{opacity:.6}
 .bub--shout[class*="bub-tail--"]::before,.bub--shout[class*="bub-tail--"]::after{display:none}
 .bub-size{position:absolute;right:-5px;bottom:-5px;width:9px;height:9px;background:var(--color-accent-primary);border:1px solid #fff;border-radius:2px;cursor:nwse-resize;writing-mode:horizontal-tb}
+
+/* [HERMIA-FE-20261022 U5] 横排台词在气泡宽度内换行，不再比框宽 */
+.comic-cell .bub:not(.bub--v):not(.bub--sfx) .bub-t{display:block;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.comic-cell .bub--sfx{white-space:nowrap}

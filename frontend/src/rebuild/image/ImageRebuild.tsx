@@ -110,7 +110,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
     </div>
   );
 
-  if (view === 'comic') return <ComicView chrome={chrome} onBack={() => onViewChange('browse')} onGen={() => onViewChange('gen')} />;
+  if (view === 'comic') return <ComicView novelId={novelId} chrome={chrome} onBack={() => onViewChange('browse')} onGen={() => onViewChange('gen')} />;
 
   return (
     <div className="img-ws" data-img-view={view === 'dual' ? 'browse' : view} aria-label="图片工作区">
