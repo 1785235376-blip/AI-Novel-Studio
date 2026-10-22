@@ -46,6 +46,7 @@ export function rbError(err: unknown): string {
     if (err.status === 404) return '后端没有这个接口（404）';
     if (err.status === 401 || code === 'SESSION_REQUIRED') return '需要登录会话';
     if (err.status === 403) return '没有权限';
+    if (/[\u4e00-\u9fff]/.test(err.problem.message || '')) return err.problem.message;
     return `后端返回错误 ${err.status}${code && code !== 'HTTP_ERROR' ? ` · ${code}` : ''}`;
   }
   return '后端不可用（无法连接）';

@@ -1,5 +1,6 @@
 // [HERMIA-FE-20261022 REBUILD-SHELL] Popover / Drawer / StateTag — prototype shell primitives.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import './rebuild.css';
 
 export function Popover({ label, count, children, testId }: { label: string; count?: number; children: (close: () => void) => ReactNode; testId?: string }) {
@@ -22,10 +23,11 @@ export function Popover({ label, count, children, testId }: { label: string; cou
 
 export function Drawer({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   useEffect(() => { const key = (ev: KeyboardEvent) => { if (ev.key === 'Escape') onClose(); }; document.addEventListener('keydown', key); return () => document.removeEventListener('keydown', key); }, [onClose]);
-  return <aside className="rb-drawer" role="complementary" aria-label={title}>
+  // Portal: header creates a stacking context; drawer must sit above the inspector.
+  return createPortal(<aside className="rb-drawer" role="complementary" aria-label={title}>
     <header className="rb-drawer__head"><h2 className="rb-h">{title}</h2><button type="button" className="rb-btn" onClick={onClose} aria-label={`关闭${title}`}>关闭</button></header>
     <div className="rb-drawer__body">{children}</div>
-  </aside>;
+  </aside>, document.body);
 }
 
 export type Tone = 'ok' | 'warn' | 'err' | 'muted';
