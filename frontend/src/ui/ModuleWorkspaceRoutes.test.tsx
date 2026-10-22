@@ -24,8 +24,8 @@ describe('ModuleWorkspaceRoutes',()=>{
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module="EDIT" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
-    expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
-    expect(host.querySelector('.edit-nle-rail')||host.textContent?.includes('媒体池')).toBeTruthy();
+    expect(host.querySelector('.nle-tl[data-timeline-hero="true"]')).toBeTruthy(); // [HERMIA-FE-20261022 R5]
+    expect(host.querySelector('#nleBin')||host.textContent?.includes('媒体池')).toBeTruthy(); // [HERMIA-FE-20261022 R5]
     expect(host.textContent).toMatch(/多轨|剪辑|时间线/);
     act(()=>root.unmount());
   });
@@ -102,7 +102,7 @@ describe('ModuleWorkspaceRoutes',()=>{
     act(()=>root.render(<ModuleWorkspaceRoutes module="EDIT" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
     expect(host.querySelector('[data-module-shell="EDIT"]')).toBeTruthy();
-    expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
+    expect(host.querySelector('.nle-tl[data-timeline-hero="true"]')).toBeTruthy(); // [HERMIA-FE-20261022 R5]
     expect(host.querySelector('[data-module-shell="VIDEO"]')).toBeNull();
     expect(host.querySelector('.novel-write-chrome')).toBeNull();
     expect(host.textContent).not.toMatch(/中区为正文编辑器/);

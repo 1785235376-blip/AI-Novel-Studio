@@ -148,14 +148,15 @@ describe('X-UX-10 handoff smoke paths', () => {
     });
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('EDIT');
     expect(host.querySelector('[data-module-shell="EDIT"]')).toBeTruthy();
-    expect(host.querySelector('.edit-nle-shell__hero')).toBeTruthy();
+    // [HERMIA-FE-20261022 R5] 剪辑改挂 EditRebuild：下段整宽时间线 + 上段媒体池
+    expect(host.querySelector('.nle-tl[data-timeline-hero="true"]')).toBeTruthy();
     expect(host.querySelector('[data-edit-handoff="received"]')).toBeTruthy();
     expect(host.querySelector('[data-handoff-source="AUDIO"]')).toBeTruthy();
     expect(host.querySelector('[data-handoff-source-strip="true"]')).toBeTruthy();
     const inbox = readEditHandoffs();
     expect(inbox.some(h => h.source === 'AUDIO' && h.novelId === NOVEL)).toBe(true);
     // W-UX-09 demo-readonly still on
-    expect(host.querySelector('[data-honest-badge="demo-readonly"]') || host.querySelector('[data-w-ux="09"]')).toBeTruthy();
+    expect(host.querySelector('[data-honest-badge="demo-readonly"]') || host.querySelector('[data-w-ux="09"]') || host.querySelector('[data-writable="false"]')).toBeTruthy();
     assertNoNovelCenterLeak();
     act(() => root.unmount());
   });

@@ -11,6 +11,7 @@ import {WorkflowInspector, type WorkflowInspection} from '../novel/WorkflowInspe
 import {ImageRebuild, type ImageView} from '../rebuild/image/ImageRebuild'; // [HERMIA-FE-20261022 R2]
 import {VideoRebuild} from '../rebuild/video/VideoRebuild'; // [HERMIA-FE-20261022 R3]
 import {AudioRebuild} from '../rebuild/audio/AudioRebuild'; // [HERMIA-FE-20261022 R4]
+import {EditRebuild} from '../rebuild/edit/EditRebuild'; // [HERMIA-FE-20261022 R5]
 import {ImageTaskInspector, type ImageInspection} from '../novel/ImageTaskInspector';
 import {VideoTaskInspector, type VideoInspection} from '../novel/VideoTaskInspector';
 import {AudioTaskInspector, type AudioInspection} from '../novel/AudioTaskInspector';
@@ -22,7 +23,6 @@ import {ModelCenter} from './ModelCenter';
 import type {LocalAiOnboardingOwner} from './LocalAiDiscovery';
 import {EmptyState} from './primitives';
 import {WorkspaceHonestEmpty} from './WorkspaceHonestEmpty';
-import {EditNleShell, EditNleMediaRail, EditNleInspector, demoEditTimeline} from './EditNleShell';
 import {pushEditHandoff, type EditHandoffSource} from './editHandoff';
 import {
   
@@ -78,9 +78,7 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   // Per-module main/inspector/sidebar switch below — selection buckets do not cross into novel center.
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   // [HERMIA-FE-20261022 W-P0-06] EDIT session: playhead/selection shared with inspector (CapCut-density shell).
-  const editTimeline = novelId && module==='EDIT' ? demoEditTimeline(novelId) : null;
-  const [editPlayheadMs,setEditPlayheadMs]=useState(0);
-  const [editSelectedClipIds,setEditSelectedClipIds]=useState<string[]>(['c-v1']);
+  // [HERMIA-FE-20261022 R5] 剪辑不再挂演示时间线数据；EditRebuild 自管本地编排状态。
 
   const [workflowInspection,setWorkflowInspection]=useState<WorkflowInspection>();
   const [imageInspection,setImageInspection]=useState<ImageInspection>();
@@ -112,14 +110,14 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
     case 'IMAGE': main=novelId?<ImageRebuild novelId={novelId} view={imageView} onViewChange={setImageView} shellMode={shellMode} onInspect={i=>{if(i)setImageInspection(i);}} onSendToVideo={()=>onModuleChange('VIDEO')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>:<WorkspaceHonestEmpty kind="no_project" workspace="IMAGE"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<VideoRebuild novelId={novelId} shellMode={shellMode} onSendToEdit={()=>sendToEdit('VIDEO','视频镜头 / 交片')} onOpenControl={()=>onModuleChange('CONTROL')}/>/* [HERMIA-FE-20261022 R3] 旧 VideoWorkspaceShell 退役 */:<WorkspaceHonestEmpty kind="no_project" workspace="VIDEO"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<AudioRebuild novelId={novelId} shellMode={shellMode} onSendToEdit={()=>sendToEdit('AUDIO','声音检听 / 交片')} onOpenAssets={()=>onModuleChange('ASSETS')} onOpenControl={()=>onModuleChange('CONTROL')}/>/* [HERMIA-FE-20261022 R4] 旧 AudioWorkspaceShell 退役 */:<WorkspaceHonestEmpty kind="no_project" workspace="AUDIO"/>; status='声音工作区'; break;
-    case 'EDIT': main=novelId&&editTimeline?<EditNleShell novelId={novelId} timeline={editTimeline} playheadMs={editPlayheadMs} onPlayhead={setEditPlayheadMs} selectedClipIds={editSelectedClipIds} onSelectClips={setEditSelectedClipIds}/>:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
+    case 'EDIT': main=novelId?<EditRebuild novelId={novelId} shellMode={shellMode} editable={false} onBackToVideo={()=>onModuleChange('VIDEO')}/>/* [HERMIA-FE-20261022 R5] 旧 EditNleShell 退役（代码保留）；默认仍是只读本地编排，不切 PRODUCTION */:<WorkspaceHonestEmpty kind="no_project" workspace="EDIT"/>; status='剪辑工作区'; break;
     case 'CONTROL': main=<>{/* [HERMIA-FE-20261022 REBUILD-2] 密钥与能力状态 */}<CredentialsPanel/><ControlWorkspace localAiOnboarding={localAiOnboarding} interopSettings={interopSettings} requestedTab={controlTab} onSurfaceChange={onControlSurfaceChange}/></>; status='AI 主控'; break;
     case 'PLUGIN': main=<>{/* [HERMIA-FE-20261022 REBUILD-5] 连接本地软件 */}<LocalInteropPanel/><PluginManagerPanel onInspect={setPluginInspection}/></>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
     case 'ASSETS': main=novelId?<AssetsWorkspaceShell novelId={novelId} selectedAssetId={selectedAsset?.id} selectedAsset={selectedAsset} onSelectAsset={setSelectedAsset} onSendToModule={sendAssetsToModule}/>:<WorkspaceHonestEmpty kind="no_project" workspace="ASSETS"/>; status='资产库'; break;
   }
-  const inspector=module==='EDIT'&&novelId&&editTimeline?<EditNleInspector novelId={novelId} timeline={editTimeline} selectedClipIds={editSelectedClipIds} playheadMs={editPlayheadMs} editable={false}/>:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta onSendToModule={sendAssetsToModule}/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?null:module==='VIDEO'&&novelId?null/* [HERMIA-FE-20261022 R3] 视频无右栏 */:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>sendToEdit('VIDEO','视频空态 · 送剪辑')}/>}</>:module==='AUDIO'&&novelId?null/* [HERMIA-FE-20261022 R4] 右栏由 AudioRebuild 自画 */:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>sendToEdit('AUDIO','声音空态 · 送剪辑')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
-  const sidebar=module==='EDIT'&&novelId?<EditNleMediaRail novelId={novelId}/>:module==='VIDEO'&&novelId?null/* [HERMIA-FE-20261022 R3] 左栏由 VideoRebuild 自画 */:module==='IMAGE'&&novelId?null:module==='AUDIO'&&novelId?null/* [HERMIA-FE-20261022 R4] */:module==='ASSETS'&&novelId?<AssetsWorkspaceRail onSendToModule={sendAssetsToModule}/>:<WorkspaceRail module={module}/>;
+  const inspector=module==='EDIT'&&novelId?null/* [HERMIA-FE-20261022 R5] 检视器由 EditRebuild 自画（editable={false}） */:module==='ASSETS'?<>{selectedAsset?<AssetInspector asset={selectedAsset} novelId={novelId}/>:<AssetsEmptyCta onSendToModule={sendAssetsToModule}/>}</>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?null:module==='VIDEO'&&novelId?null/* [HERMIA-FE-20261022 R3] 视频无右栏 */:module==='VIDEO'?<>{videoInspection?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:<VideoEmptyCta onSendToEdit={()=>sendToEdit('VIDEO','视频空态 · 送剪辑')}/>}</>:module==='AUDIO'&&novelId?null/* [HERMIA-FE-20261022 R4] 右栏由 AudioRebuild 自画 */:module==='AUDIO'?<>{audioInspection?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:<AudioEmptyCta onSendToEdit={()=>sendToEdit('AUDIO','声音空态 · 送剪辑')}/>}</>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
+  const sidebar=module==='EDIT'&&novelId?null/* [HERMIA-FE-20261022 R5] 媒体池由 EditRebuild 自画 */:module==='VIDEO'&&novelId?null/* [HERMIA-FE-20261022 R3] 左栏由 VideoRebuild 自画 */:module==='IMAGE'&&novelId?null:module==='AUDIO'&&novelId?null/* [HERMIA-FE-20261022 R4] */:module==='ASSETS'&&novelId?<AssetsWorkspaceRail onSendToModule={sendAssetsToModule}/>:<WorkspaceRail module={module}/>;
   // EDIT: skip bulky CapabilityStatusCenter above hero timeline (status stays in bar); other modules unchanged.
   const isOverflow = module==='CONTROL'||module==='PLUGIN'||module==='WORKFLOW';
   const shell = mediaShellForModule(module);
