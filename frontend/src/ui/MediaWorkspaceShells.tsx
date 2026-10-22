@@ -11,6 +11,7 @@
  * W-UX-11: AUDIO single-clip listen visible + send-edit confirm copy aligned with VIDEO; 0 NLE tracks.
  * W-UX-12: ASSETS SendTo explicit IMAGE/VIDEO/AUDIO/EDIT + empty-selection honest CTA; lineage empty honest.
  * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE; ≠ novel / ≠ NLE; no fake green.
+ * W-UX-15: VIDEO director-layer pin persists across module hops (session) + shell copy ≠ MultimodalDirector slogans.
  */
 import {useEffect, useState, type ReactNode} from 'react';
 import {Button} from './primitives';
@@ -26,7 +27,13 @@ import {AssetLibraryPanel} from '../novel/AssetLibraryPanel';
 import type {Asset} from '../api';
 import type {ImageInspection} from '../novel/ImageTaskInspector';
 import type {AudioInspection} from '../novel/AudioTaskInspector';
+import {
+  resolveVideoDirectorOpen,
+  writeVideoDirectorPin,
+} from './videoDirectorPin';
 import './MediaWorkspaceShells.css';
+
+export {clearVideoDirectorPins, resolveVideoDirectorOpen, writeVideoDirectorPin} from './videoDirectorPin';
 
 export function ImageWorkspaceRail({
   subview = 'studio',
@@ -130,7 +137,7 @@ export function VideoShotHeroStrip({
       </div>
       <p className="media-ws__layer-note">
         分镜卡 / Shot 列表为本层英雄区（对照 LUMEN_VIDEO_IA · Vera V-P1-02）。
-        字段对齐 <code>DirectorShot</code> 只读发现；完整可写卡在导演台 Multimodal，不在本条编造写入。
+        字段对齐 <code>DirectorShot</code> 只读发现；完整可写卡在 Multimodal 面板，不在本条编造写入。
       </p>
       <div className="media-ws__shot-strip" role="list" aria-label="Shot 卡条">
         {shots.map(item => (
@@ -925,19 +932,19 @@ export function VideoWorkspaceRail({onSendToEdit}: {onSendToEdit?: () => void}) 
       <ul>
         <li>① 镜头脚本 · Shot 英雄条</li>
         <li>② 无限画布</li>
-        <li>③ 内置导演台</li>
+        <li>③ 导演层（开合钉态）</li>
       </ul>
       {onSendToEdit && (
         <button type="button" className="media-ws-rail__item media-ws-rail__item--send" onClick={onSendToEdit}>
           送去剪辑（显式）
         </button>
       )}
-      <p className="media-ws-rail__hint">VIDEO ≠ EDIT NLE · ≠ 小说写作台。导演仅属本工作区。</p>
+      <p className="media-ws-rail__hint">VIDEO ≠ EDIT NLE · ≠ 小说写作台。导演层仅属本工作区；口号归 Multimodal 面板。</p>
     </nav>
   );
 }
 
-/** [HERMIA-FE-20261022 W-UX-08] LUMEN_VIDEO_IA — Shot hero independent of Screenplay; three layers; send-edit explicit. */
+/** [HERMIA-FE-20261022 W-UX-08 / W-UX-15] LUMEN_VIDEO_IA — Shot hero; three layers; director pin session; shell ≠ Multimodal slogans. */
 export function VideoWorkspaceShell({
   novelId, onInspect, onSendToEdit, shellMode = 'basic',
 }: {
@@ -947,23 +954,48 @@ export function VideoWorkspaceShell({
   /** [HERMIA-FE-20261022 H-P1-01] basic hides director chrome by default (command still opens). */
   shellMode?: 'basic' | 'pro';
 }) {
-  const [directorOpen, setDirectorOpen] = useState(shellMode === 'pro');
+  // [HERMIA-FE-20261022 W-UX-15] session pin wins; else shellMode default (X-UX-04 still holds when unset)
+  const initial = resolveVideoDirectorOpen(novelId, shellMode);
+  const [directorOpen, setDirectorOpen] = useState(initial.open);
+  const [pinSource, setPinSource] = useState<'session' | 'shellMode'>(initial.source);
   const [scriptOpen, setScriptOpen] = useState(true);
   const [selectedShot, setSelectedShot] = useState<string>('s1');
   const [sendConfirm, setSendConfirm] = useState(false);
-  // [HERMIA-FE-20261022 X-UX-04] mode survives module hops; basic collapses director chrome
+
   useEffect(() => {
-    setDirectorOpen(shellMode === 'pro');
-  }, [shellMode]);
+    const resolved = resolveVideoDirectorOpen(novelId, shellMode);
+    setDirectorOpen(resolved.open);
+    setPinSource(resolved.source);
+  }, [novelId, shellMode]);
+
+  const setDirectorPinned = (open: boolean) => {
+    writeVideoDirectorPin(novelId, open);
+    setDirectorOpen(open);
+    setPinSource('session');
+  };
 
   return (
-    <div className="media-ws media-ws--video" aria-label="视频工作区 · 三层" data-video-layers="script-canvas-director" data-shell-mode={shellMode}>
+    <div
+      className="media-ws media-ws--video"
+      aria-label="视频工作区 · 三层"
+      data-video-layers="script-canvas-director"
+      data-shell-mode={shellMode}
+      data-w-ux="15"
+      data-director-pin={directorOpen ? 'open' : 'collapsed'}
+      data-director-pin-source={pinSource}
+    >
       <div className="media-ws__toolbar" role="toolbar" aria-label="视频工具条">
         <Button type="button" aria-pressed={scriptOpen} onClick={() => setScriptOpen(v => !v)}>
           {scriptOpen ? '收起镜头脚本' : '镜头脚本'}
         </Button>
-        <Button type="button" aria-pressed={directorOpen} data-director-entry="true" onClick={() => setDirectorOpen(v => !v)}>
-          {directorOpen ? '收起导演台' : '打开内置导演台'}
+        <Button
+          type="button"
+          aria-pressed={directorOpen}
+          data-director-entry="true"
+          data-director-pin-toggle="true"
+          onClick={() => setDirectorPinned(!directorOpen)}
+        >
+          {directorOpen ? '收起导演层' : '钉住导演层'}
         </Button>
         {onSendToEdit && (
           <Button
@@ -973,7 +1005,7 @@ export function VideoWorkspaceShell({
             onClick={() => setSendConfirm(true)}
           >送去剪辑</Button>
         )}
-        <small>LUMEN_VIDEO_IA · 项目 {novelId} · ≠ EDIT NLE</small>
+        <small>LUMEN_VIDEO_IA · 项目 {novelId} · ≠ EDIT NLE · W-UX-15</small>
       </div>
 
       {sendConfirm && onSendToEdit && (
@@ -1005,29 +1037,37 @@ export function VideoWorkspaceShell({
       <section className="media-ws__hero media-ws__layer--canvas" aria-label="② 无限画布" data-video-layer="canvas">
         <span className="media-ws__hero-label">② 无限画布 · hero（VIDEO 作用域）</span>
         <strong>创意编排主表面</strong>
-        <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph · 导演不挂小说。</p>
-        <div className="media-ws__canvas-host">
+        <p>节点与素材引用。≠ 剪辑多轨 · ≠ 全 Studio mega-graph · 不挂小说中区。</p>
+        <p className="media-ws-rail__hint" data-director-dedupe="canvas">
+          Multimodal 面板自带标题与操作；壳层不重复其口号。选中 Shot：{selectedShot}（壳示意）。
+        </p>
+        <div className="media-ws__canvas-host" data-multimodal-host="video">
           <MultimodalDirectorWorkspace mode="video" novelId={novelId} />
         </div>
       </section>
 
       {!directorOpen && (
-        <div className="media-ws__director-entry" aria-label="导演台入口">
-          <strong>③ 内置导演台</strong>
-          <p>建议 → 确认采用；仅属视频工作区。普通模式可收为入口；专业可钉住。</p>
-          <Button type="button" data-director-entry="true" onClick={() => setDirectorOpen(true)}>打开内置导演台</Button>
+        <div className="media-ws__director-entry" aria-label="导演层入口" data-director-pin="collapsed">
+          <strong>③ 导演层</strong>
+          <p data-director-dedupe="entry">开合钉态仅记本会话；内容在上方 Multimodal 面板，壳层不另喊口号。</p>
+          <Button type="button" data-director-entry="true" data-director-pin-toggle="true" onClick={() => setDirectorPinned(true)}>钉住导演层</Button>
         </div>
       )}
 
       {directorOpen && (
-        <section className="media-ws__layer media-ws__layer--director" aria-label="③ 内置导演台" data-video-layer="director">
-          <span className="media-ws__hero-label">③ 内置导演台 · 可识别入口</span>
-          <div className="media-ws-cta">
-            <strong>导演下一步</strong>
-            <p>建议与采用确认在 MultimodalDirector（video）内完成。选中 Shot：{selectedShot}（壳示意）。</p>
-            <p className="media-ws-rail__hint">导演不挂小说主面；改镜头请留在视频工作区，成片组装请显式「送去剪辑」。</p>
+        <section
+          className="media-ws__layer media-ws__layer--director"
+          aria-label="③ 导演层"
+          data-video-layer="director"
+          data-director-pin="open"
+        >
+          <span className="media-ws__hero-label">③ 导演层 · 钉态开</span>
+          <div className="media-ws-cta" data-director-dedupe="layer">
+            <strong>层开合（壳）</strong>
+            <p>镜头建议 / 采用确认只在 Multimodal 面板内；本层不复述其标题口号。钉态跨切模块回视频仍保留（session）。</p>
+            <p className="media-ws-rail__hint">≠ 小说主面 · 成片组装请显式「送去剪辑」· 不碰 Dot 写入。</p>
             <div className="media-ws__hero-actions">
-              <Button type="button" onClick={() => setDirectorOpen(false)}>收起导演台</Button>
+              <Button type="button" data-director-pin-toggle="true" onClick={() => setDirectorPinned(false)}>收起导演层</Button>
               {onSendToEdit && (
                 <Button type="button" data-send-edit="true" onClick={() => setSendConfirm(true)}>送去剪辑（交片）</Button>
               )}
@@ -1036,7 +1076,7 @@ export function VideoWorkspaceShell({
         </section>
       )}
 
-      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-08] Shot 英雄条独立 · 三层可辨 · 禁止 NLE 冒充本区主 Tab · 禁假绿。</p>
+      <p className="media-ws__foot notice">[HERMIA-FE-20261022 W-UX-15] 导演层钉态 session · 壳文案≠Multimodal 口号 · Shot 英雄条独立 · 禁假绿 · 不碰 Dot。</p>
     </div>
   );
 }
@@ -1045,7 +1085,7 @@ export function VideoEmptyCta({onSendToEdit}: {onSendToEdit?: () => void}): Reac
   return (
     <div className="media-ws-cta" aria-label="视频下一步">
       <strong>下一步</strong>
-      <p>暂无选中镜头任务。可在画布选节点、展开导演台，或显式送去剪辑做多轨。</p>
+      <p>暂无选中镜头任务。可在画布选节点、钉住导演层，或显式送去剪辑做多轨。</p>
       {onSendToEdit && <Button type="button" data-send-edit="true" onClick={onSendToEdit}>送去剪辑</Button>}
     </div>
   );

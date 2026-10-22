@@ -5,6 +5,7 @@
  * W-UX-11: AUDIO single-clip listen + send-edit confirm aligned with VIDEO.
  * W-UX-12: ASSETS SendTo IMAGE/VIDEO/AUDIO/EDIT + empty/lineage honest.
  * W-UX-13: IMAGE「送去视频当参考」explicit confirm → VIDEO; cancel stays IMAGE.
+ * W-UX-15: VIDEO director pin session + shell ≠ Multimodal slogans.
  */
 import {act} from 'react';
 import {createRoot} from 'react-dom/client';
@@ -14,12 +15,13 @@ import {
   AudioWorkspaceShell, AudioWorkspaceRail, AudioEmptyCta, AudioListenStrip,
   AssetsWorkspaceShell, AssetsWorkspaceRail, AssetsEmptyCta,
   VideoWorkspaceShell, VideoWorkspaceRail, VideoEmptyCta, VideoShotHeroStrip,
+  clearVideoDirectorPins,
 } from './MediaWorkspaceShells';
 import {ModuleWorkspaceRoutes} from './ModuleWorkspaceRoutes';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
-afterEach(() => { host?.remove(); });
+afterEach(() => { host?.remove(); clearVideoDirectorPins(); });
 
 vi.mock('../novel/ImageGenerationPanel', () => ({ImageGenerationPanel: () => <div>mock-image-gen</div>}));
 vi.mock('../novel/VisualContextPanel', () => ({VisualContextPanel: () => <div>mock-visual</div>}));
@@ -253,7 +255,7 @@ describe('MediaWorkspaceShells', () => {
     ));
     expect(host.textContent).toContain('镜头脚本');
     expect(host.textContent).toContain('无限画布');
-    expect(host.textContent).toContain('导演台');
+    expect(host.textContent).toContain('导演层');
     expect(host.textContent).toContain('mock-director-video');
     expect(host.querySelector('.media-ws__shot-strip')).toBeTruthy();
     expect(host.querySelector('[data-shot-id="s1"]')).toBeTruthy();
@@ -282,7 +284,7 @@ describe('MediaWorkspaceShells', () => {
     expect(host.querySelector('[data-video-layer="script"]')).toBeTruthy();
     expect(host.querySelector('[data-video-layer="canvas"]')).toBeTruthy();
     // director collapsed in basic — entry still names layer ③
-    expect(host.textContent).toContain('③ 内置导演台');
+    expect(host.textContent).toContain('③ 导演层');
     expect(host.querySelector('[data-director-shot-readonly="true"]')).toBeTruthy();
     expect(host.querySelector('[data-screenplay-outbound="true"]')).toBeTruthy();
     // Screenplay not mashed inside Shot hero
@@ -535,6 +537,84 @@ describe('ModuleWorkspaceRoutes media shells', () => {
   });
 });
 
+
+describe('W-UX-15 VIDEO director pin + Multimodal dedupe', () => {
+  it('persists open pin across unmount/remount (module-hop simulation)', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="basic" />));
+    expect(host.querySelector('[data-director-pin="collapsed"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-pin-source="shellMode"]')).toBeTruthy();
+    act(() => {
+      (host.querySelector('[data-director-pin-toggle="true"]') as HTMLButtonElement)?.click();
+    });
+    expect(host.querySelector('[data-director-pin="open"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-pin-source="session"]')).toBeTruthy();
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeTruthy();
+    act(() => root.unmount());
+    host.remove();
+    host = document.createElement('div'); document.body.append(host);
+    const root2 = createRoot(host);
+    act(() => root2.render(<VideoWorkspaceShell novelId="n1" shellMode="basic" />));
+    // pin survives remount even though shellMode is still basic
+    expect(host.querySelector('[data-director-pin="open"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-pin-source="session"]')).toBeTruthy();
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeTruthy();
+    act(() => root2.unmount());
+  });
+
+  it('persists collapsed pin when user closes then remounts from pro default', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<VideoWorkspaceShell novelId="n2" shellMode="pro" />));
+    expect(host.querySelector('[data-director-pin="open"]')).toBeTruthy();
+    act(() => {
+      ([...host.querySelectorAll('[data-director-pin-toggle="true"]')]
+        .find(b => b.textContent?.includes('收起')) as HTMLButtonElement | undefined)?.click();
+    });
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeNull();
+    expect(host.querySelector('[data-director-pin="collapsed"]')).toBeTruthy();
+    act(() => root.unmount());
+    host.remove();
+    host = document.createElement('div'); document.body.append(host);
+    const root2 = createRoot(host);
+    act(() => root2.render(<VideoWorkspaceShell novelId="n2" shellMode="pro" />));
+    // user collapsed wins over pro default
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeNull();
+    expect(host.querySelector('[data-director-pin-source="session"]')).toBeTruthy();
+    act(() => root2.unmount());
+  });
+
+  it('shell copy does not repeat Multimodal 导演 slogans (导演下一步 / 视频导演台 / 建议→确认采用)', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="pro" />));
+    expect(host.querySelector('[data-w-ux="15"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-dedupe="layer"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-dedupe="canvas"]')).toBeTruthy();
+    expect(host.querySelector('[data-multimodal-host="video"]')).toBeTruthy();
+    expect(host.textContent).toContain('mock-director-video');
+    expect(host.textContent).not.toContain('导演下一步');
+    expect(host.textContent).not.toMatch(/建议\s*→\s*确认采用/);
+    expect(host.textContent).not.toContain('视频导演台');
+    expect(host.textContent).not.toContain('内置导演台');
+    expect(host.textContent).toContain('导演层');
+    expect(host.textContent).not.toMatch(/已就绪/);
+    act(() => root.unmount());
+  });
+
+  it('X-UX-04 still: unset pin follows shellMode basic→pro', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host);
+    act(() => root.render(<VideoWorkspaceShell novelId="fresh" shellMode="basic" />));
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeNull();
+    act(() => root.render(<VideoWorkspaceShell novelId="fresh" shellMode="pro" />));
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeTruthy();
+    expect(host.querySelector('[data-director-pin-source="shellMode"]')).toBeTruthy();
+    act(() => root.unmount());
+  });
+});
+
 describe('X-UX-04 shellMode consistency', () => {
   it('IMAGE pro canvas opens in pro and collapses in basic', () => {
     host = document.createElement('div'); document.body.append(host);
@@ -556,10 +636,10 @@ describe('X-UX-04 shellMode consistency', () => {
     const root = createRoot(host);
     act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="basic" />));
     expect(host.querySelector('[data-shell-mode="basic"]')).toBeTruthy();
-    expect(host.querySelector('[aria-label="③ 内置导演台"]')).toBeNull();
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeNull();
     act(() => root.render(<VideoWorkspaceShell novelId="n1" shellMode="pro" />));
     expect(host.querySelector('[data-shell-mode="pro"]')).toBeTruthy();
-    expect(host.querySelector('[aria-label="③ 内置导演台"]')).toBeTruthy();
+    expect(host.querySelector('[aria-label="③ 导演层"]')).toBeTruthy();
     act(() => root.unmount());
   });
 });
