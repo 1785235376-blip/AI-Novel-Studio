@@ -71,3 +71,24 @@ Code commit: e66d2f38 (tree 6463745f597e7d426b0c6fd839a3d3e96671401c). Pre-fix b
 | NH | in-flight guard + ≥300ms busy; Ctrl/⌘ in conflict text; float → dock drag-back | — | PASS (unit: slice2fix.test.tsx) | logs/m1s2fix-layout-vitest.log |
 
 Tests: layout set 10 files / 111 passed; regression set 59/60 files, 472/472 tests passed (1 file = pre-existing LocalAiBrowserJourneyContracts load failure, missing e2e spec); tsc 6 errors = unchanged pre-existing baseline.
+
+## M1-s3 / M2 start [HERMIA-FE-20261023 M1-s3]
+Commits: 664d8aad (Vera M1-s2fix review append, author "Vera (review)"); 630448ec (tree 6a8e507f1d4e1af3b8d7734b8a4ed88acb4b9a0d) palette; f144f5a3 (tree af6f80afd99b8b5ff596f09fd353d4486f8aa065) real panels. Browser: http://127.0.0.1:4299/?uw=1 + backend 8000, /usr/bin/google-chrome, raw logs/m1s3-browser.json (script logs/m1s3-browser.mjs). Self-verified by Hermia — Vera independent re-check NOT_RUN.
+
+| # | Item | Status | Evidence |
+|---|---|---|---|
+| P3-1 | Palette shows no raw action id as visible text (49 legacy + layout) | PASS (unit + browser 3 viewports) | CommandSearch.m1s3.test.tsx; m1s3_{1366,1440,1920}_palette.png |
+| P3-2 | ids still match in search (panel.open.history, "open history") | PASS (unit) | CommandSearch.m1s3.test.tsx |
+| P3-3 | layout.* in 「布局」 group, not 壳·设置 | PASS (unit + browser: groups 写作:1, 布局:4 in ?uw=1) | m1s3-browser.json |
+| M2-01 | Outline panel = existing NovelStructureRail, registered via PanelRegistry, real GET data (雾港: 来信/灯塔/雾中码头) | PASS (browser 1366/1440/1920) | m1s3_*_real_panels.png |
+| M2-02 | Inspector shows selected chapter real props (标题/章节/字数/状态 中文/版本); empty state before selection | PASS | m1s3_*_real_panels.png |
+| M2-03 | loading / error / empty / not-connected states honest | PASS (unit: not-connected via fetch TypeError; empty) · loading/error browser NOT_RUN | novelPreviewPanels.test.tsx |
+| M2-04 | Redock inspector right→bottom→left keeps unsaved title (same DOM node in unit) | PASS (unit + browser 3 viewports) | m1s3_*_redock_dirty.png |
+| M2-05 | Dirty close → 取消/放弃修改/保存并关闭; cancel keeps draft; discard closes | PASS (unit + browser) | m1s3_*_dirty_close_confirm.png |
+| M2-06 | Switching chapter/novel while dirty is blocked with notice (not silently dropped) | PASS (unit) · browser NOT_RUN | novelPreviewPanels.test.tsx |
+| M2-07 | novel.chapter.rename via ActionRegistry; success only from server Chapter (version bump); 409 → error, panel stays open, never "已保存" | PASS (unit, mocked fetch) · real-backend save NOT_RUN (would write; deliberately not run) | novelPreviewPanels.test.tsx |
+| M2-08 | novel.chapters.refresh via ActionRegistry, GET-only, real refetch result | PASS (unit + browser) | m1s3-browser.json |
+| M2-09 | Load + all browser steps issue no non-GET requests; no page errors; no horizontal overflow | PASS (3 viewports) | m1s3-browser.json |
+| M2-10 | Legacy UI without ?uw=1 unchanged (no dock-layout, no non-GET) | PASS (smoke, 1366 only; full 18-page compare NOT_RUN) | m1s3_legacy_noflag.png |
+
+Tests: layout set (src/workspace) 11 files / 120 passed; regression (src/workbench src/App.test.tsx src/ui src/rebuild) 60/61 files, 475/475 passed (1 = pre-existing LocalAiBrowserJourneyContracts load failure); tsc 6 errors = baseline. Full vitest NOT_RUN.

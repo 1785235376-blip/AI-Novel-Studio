@@ -50,3 +50,13 @@ Commits: fe2e82f0 (Vera review append, unchanged, author "Vera (review)"); e66d2
 - NH: MIN_BUSY_MS=300 + pending guard until settle; displayShortcut → Ctrl+Alt+S / ⌘⌥…; floats can be dragged back into allowed dock zones.
 Results: layout 111/111; regression 472/472 tests (1 pre-existing file load failure); tsc 6 (baseline). Browser 1366 all 4 PASS.
 Known/remaining: CommandSearch shows raw action id in <small> (existing component behavior); pre-existing tsc errors & LocalAiBrowserJourneyContracts missing spec; nothing pushed.
+
+## M1-s3 / M2 start [HERMIA-FE-20261023 M1-s3]
+Commits: 664d8aad (Vera review append, unchanged); 630448ec (tree 6a8e507f1d4e1af3b8d7734b8a4ed88acb4b9a0d); f144f5a3 (tree af6f80afd99b8b5ff596f09fd353d4486f8aa065). Nothing pushed; main untouched; untracked frontend/package-lock.json kept.
+- Task 1 (Vera P3): workbench/CommandSearch.tsx minimal edit — removed <small className="wb-command__id"> from options (matchesQuery still uses id); added group 「布局」 (layout.* → 布局), order 写作/媒体/布局/壳·设置. workbench/** is otherwise untouched; this edit is the requested P3 fix in the component that owns the palette. Existing CommandSearch.test expectation for layout.reset updated 壳·设置→布局.
+- Task 2: new workspace/panels/novelPreviewPanels.tsx — PanelRegistry defs (outline connected, inspector partial); OutlinePanel reuses rebuild/novel/NovelStructureRail (imported, not copied) + novel select (defaults to 雾港); InspectorPanel with title edit registered via api.registerDirty; actions novel.chapter.rename (api.renameChapter POST, optimistic version, success = server Chapter) and novel.chapters.refresh (GET refetch). UnifiedWorkspacePreview: renderPanel routes outline/inspector to real panels; other panels say 「预览里尚未接入实际功能」; titles 作品结构 / 章节属性 (panel ids unchanged → persisted layouts compatible); selection switch blocked while inspector dirty.
+- App.tsx / IndependentStudioWorkspace / SDK / controllers: NOT modified.
+- slice2fix.test.tsx: wrapped preview in QueryClientProvider (preview now uses react-query, as main.tsx provides); assertions unchanged.
+- Mutation check: isDirty→false breaks 2 tests; ignoring non-done save result breaks 1 test.
+Results: layout 120/120; regression 475/475 (1 pre-existing load failure); tsc 6 (baseline); browser 1366/1440/1920 all checks PASS, 0 non-GET.
+Remaining: Vera independent re-check; full vitest (gate ≤307); real-backend save path not exercised in browser (writes); loading/error states only in unit; creative/execution/tasks panels still not connected; inspector copy says 「在左侧」 even when outline is redocked (S3); legacy 18-page compare not rerun.
