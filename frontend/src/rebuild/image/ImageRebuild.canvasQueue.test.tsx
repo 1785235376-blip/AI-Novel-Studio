@@ -59,7 +59,7 @@ describe('ImageRebuild canvas-to-queue wiring', () => {
     const posts = fetcher.mock.calls.filter(([, init]) => init?.method === 'POST');
     expect(posts).toHaveLength(1);
     expect(posts[0][0]).toBe('/api/novels/novel-a/image-jobs');
-    expect(JSON.parse(String(posts[0][1].body))).toMatchObject({novel_id: 'novel-a', provider_id: 'fixture-local', model_id: 'fixture-model', prompt: '本次确认的灯塔画面'});
+    expect(JSON.parse(String(posts[0][1]?.body))).toMatchObject({novel_id: 'novel-a', provider_id: 'fixture-local', model_id: 'fixture-model', prompt: '本次确认的灯塔画面'});
     expect(fetcher.mock.calls.some(([url]) => /\/(?:execute|accept)(?:\?|$)/.test(String(url)))).toBe(false);
     fireEvent.click(within(drawer).getByRole('button', {name: '关闭节点任务参数'}));
     expect(screen.queryByRole('complementary', {name: '画布图片任务'})).toBeNull();

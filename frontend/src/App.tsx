@@ -1951,7 +1951,7 @@ export default function App() {
     label: `第 ${c.number} 章 · ${c.title || '未命名'}`,
     hint: c.id === s.chapterId ? '当前正在写' : undefined,
   }));
-  const draftReady = !!(job && job.status === 'SUCCEEDED' && job.output && !['CANCELLED', 'ACCEPTED', 'REJECTED'].includes(job.status));
+  const draftReady = !!(job && draftStateFromGeneration(job.status) === 'ready' && job.output);
   // [HERMIA-FE-20261022 N-UX-08] CTA state machine — adopt > continuity > continue; count is honest (error/loading → 0)
   const continuityWarningCount = countOpenContinuityWarnings(continuityFindingsQ.data);
   const ctaDecision = decideNovelPrimaryCta({
@@ -1960,7 +1960,7 @@ export default function App() {
     hasChapter: !!chapter.data,
   });
   const primaryCta = ctaDecision.kind === 'adopt'
-    ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => { void acceptGeneratedDraft(); }, disabled: draftAction === 'accept'}
+    ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => { if (draftReady && job) void acceptGeneratedDraft(job); }, disabled: draftAction === 'accept'}
     : ctaDecision.kind === 'continuity'
       ? {label: ctaDecision.label, kind: ctaDecision.kind, onClick: () => styleLeave.request(current => { if (current()) { commitStudioModule('NOVEL'); setPanel('check'); } })}
       : ctaDecision.kind === 'continue'

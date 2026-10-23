@@ -51,10 +51,11 @@ function HandoffHarness({
   initial,
   shellMode = 'pro',
 }: {
-  initial: StudioModule;
+  initial: Exclude<StudioModule, 'NOVEL'>;
   shellMode?: 'basic' | 'pro';
 }) {
   const [module, setModule] = useState<StudioModule>(initial);
+  if (module === 'NOVEL') return <div data-testid="unexpected-novel-handoff">Unexpected novel destination</div>;
   return (
     <ModuleWorkspaceRoutes
       module={module}
@@ -67,7 +68,7 @@ function HandoffHarness({
   );
 }
 
-function mount(initial: StudioModule, shellMode: 'basic' | 'pro' = 'pro') {
+function mount(initial: Exclude<StudioModule, 'NOVEL'>, shellMode: 'basic' | 'pro' = 'pro') {
   host = document.createElement('div');
   document.body.append(host);
   const root = createRoot(host);

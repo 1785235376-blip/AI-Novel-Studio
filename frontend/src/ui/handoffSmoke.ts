@@ -18,9 +18,9 @@ export const X_UX_10_HANDOFF_PATHS = [
 export type XUx10HandoffPath = (typeof X_UX_10_HANDOFF_PATHS)[number];
 
 /** Modules that must keep shellMode on .app-shell / .media-ws-main across switches. */
-export const X_UX_10_SHELL_MODE_MODULES: readonly StudioModule[] = [
+export const X_UX_10_SHELL_MODE_MODULES = [
   'IMAGE', 'VIDEO', 'AUDIO', 'EDIT', 'ASSETS',
-] as const;
+] as const satisfies readonly Exclude<StudioModule, 'NOVEL'>[];
 
 /** Copy / markers that must never appear in honest hand-off UX. */
 /** Honest copy may say「禁假绿」; forbid readiness claims only. */
