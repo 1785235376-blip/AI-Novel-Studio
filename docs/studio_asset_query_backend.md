@@ -1,7 +1,7 @@
 # Studio 资产查询后端交接
 
 基线：`work/hermia-frontend-refactor-20261022` / `6ba25ad7a47ed7677c32483b5234b656a3c0c2ed`。
-沿用现有 `GET /api/projects/{nid}/studio/assets`，未新增端点、迁移、写操作或身份体系；未修改前端、生成节点、任务队列与任务状态。
+沿用现有 `GET /api/projects/{nid}/studio/assets`，未新增端点、资产写入接口、正式源数据迁移或身份体系；未修改前端、生成节点、任务队列与任务状态。
 
 ## 请求与兼容性
 
@@ -12,8 +12,10 @@
 | `limit` | 分页时 50 | 整数 1–100 |
 | `offset` | 分页时 0 | 整数 0–1,000,000 |
 | `include_deleted` | `false` | 原有布尔参数；`true` 包含当前可见的已软删除记录 |
+| `page_mode` | 不启用 | 显式 `cursor` 启用元数据游标；与任何 offset 互斥 |
+| `cursor` | 首屏不传 | 仅游标模式可传；不透明、有签名、最多 2,048 ASCII 字符，固定 900 秒期限 |
 
-`q` 与 `kind` 取交集。不传 `limit` 和 `offset` 时，保持原 `{ "items": [...] }` 契约，包括只传关键词/类型的情况。显式传入其中任一分页参数才返回分页 envelope；`offset=0` 也会启用分页。错误不会自动截断或钳制为合法值。
+`q` 与 `kind` 取交集。未启用游标且不传 `limit` 和 `offset` 时，保持原 `{ "items": [...] }` 契约，包括只传关键词/类型的情况。显式传入其中任一分页参数才返回 offset envelope；`offset=0` 也会启用分页。错误不会自动截断或钳制为合法值。
 
 重复标量参数沿既有规则取最后一个值；分页线值沿 Pydantic 的整数解码规则，`1.0`/`0.0` 分别解码为整数 1/0，非整数 `1.5` 非法。关键词长度在去空白之前检查。以上规则不是新一轮额外收紧。
 
@@ -59,6 +61,14 @@ X-Branch-ID: <当前已授权分支；仅协作模式需要>
 M0 修复后，查询解码在原 `invoke` 的项目/权限/分支/功能检查之后运行；拒绝访问与非法查询同时出现时，保留原 400/401/403/404 拒绝状态，已获准读取的请求才进入上述 422 校验。原分支的 41 项通过未覆盖六种组合优先级回归，不等于这些组合也通过。首次访问项目可能沿现有机制初始化 incarnation/锁文件；零源写入测试以已经初始化并预热的项目为基线。
 
 现有功能开关、会话、成员资格、`domain.read` 权限、分支和项目生命周期验证保持原义；未启用/不存在的资源及拒绝访问沿原 401/403/404 约定，协作模式缺少分支头仍为 400 `BRANCH_SCOPE_REQUIRED`。拒绝访问不是空素材库。查询不把调用者身份透传成新的私密资产授权，原列表隐藏的个人候选资产继续隐藏，计数也不暴露它们。响应保留 `Cache-Control: no-store`。
+
+## M2 游标模式
+
+`?page_mode=cursor&q=cover&kind=image&limit=20` 返回 `{items,total,limit,has_more,next_cursor,projection:"asset-metadata/1"}`；后续页保留相同规范化条件和 limit，添加 cursor。每项仅有 `id/filename/kind/media_type/size/sha256/version/created_at/updated_at/deleted_at`，缺失可选字段为 null。此明确的新投影不含 provenance/relationships，不读取资产内容；需要内容或完整关系时使用既有单资产接口。原无分页/offset 投影不变。
+
+排序仍为 `(created_at,id)` 升序。token 绑定实际项目 incarnation/分支/调用者、条件、功能集合、排序/投影版本与资产源版本；不是权限凭证，每页重走原授权。稳定数据集遍历无重无漏；源插入/删除/重命名/类型变化或过期返回409 `ASSET_QUERY_RESTART_REQUIRED`，整页无 items/total；篡改、跨项目/条件/调用者复用返回固定422。版本覆盖整个资产根目录，其他范围变化也可能保守触发重启。前端收到409须丢弃token从首屏重启。
+
+读前后核对源版本，不承诺跨owner原子快照。最后版本检查或最后权限guard之后到响应发出之间仍存在并发窗口。密钥在重建/重开时保留，缺少安全POSIX文件原语的平台明确503不可用。详细合同、key生命周期与验收见 `docs/delivery/ASSET_QUERY_SCALE_M2_20261023.md`。
 
 ## 前端接入与未完成项
 

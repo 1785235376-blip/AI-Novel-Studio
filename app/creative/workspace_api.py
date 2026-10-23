@@ -362,8 +362,13 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         def read(actor, scope, guard):
             query, include_deleted = StudioAssetQuery.from_query_params(request.query_params)
             from ..services.asset_query_index import AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable
+            from .asset_query_cursor import AssetQueryCursorRestart, AssetQueryCursorUnavailable
             try:
-                return service.list_assets(nid, scope, include_deleted=include_deleted, query=query)
+                return service.list_assets(nid, scope, include_deleted=include_deleted, query=query, actor_id=actor)
+            except (AssetQueryCursorRestart, AssetQueryCursorUnavailable) as exc:
+                guard()
+                status = 409 if isinstance(exc, AssetQueryCursorRestart) else 503
+                raise HTTPException(status, {"code": str(exc)}, headers={"Cache-Control": "no-store"}) from None
             except (AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable) as exc:
                 guard()
                 status = 409 if isinstance(exc, AssetQueryChanged) else 503

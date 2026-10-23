@@ -307,9 +307,9 @@ class IndependentWorkspaceService:
             return None
         return {"license": license_value, "operation": evidence["operation"]}
 
-    def list_assets(self, nid, scope, *, include_deleted=False, query: StudioAssetQuery | None = None):
+    def list_assets(self, nid, scope, *, include_deleted=False, query: StudioAssetQuery | None = None, actor_id=None):
         from .asset_query_service import list_assets
-        return list_assets(self, nid, scope, include_deleted=include_deleted, query=query or StudioAssetQuery())
+        return list_assets(self, nid, scope, include_deleted=include_deleted, query=query or StudioAssetQuery(), actor_id=actor_id)
 
     def asset_index(self, nid, scope, *, include_deleted=False):
         """Bounded metadata-only asset index under the original asset lease.
