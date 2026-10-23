@@ -361,7 +361,17 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def read(actor, scope, guard):
             query, include_deleted = StudioAssetQuery.from_query_params(request.query_params)
-            return service.list_assets(nid, scope, include_deleted=include_deleted, query=query)
+            from ..services.asset_query_index import AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable
+            try:
+                return service.list_assets(nid, scope, include_deleted=include_deleted, query=query)
+            except (AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable) as exc:
+                guard()
+                status = 409 if isinstance(exc, AssetQueryChanged) else 503
+                raise HTTPException(status, {"code": str(exc)}, headers={"Cache-Control": "no-store"}) from None
+            except OSError:
+                guard()
+                raise HTTPException(503, {"code": "ASSET_QUERY_INDEX_UNAVAILABLE"},
+                                    headers={"Cache-Control": "no-store"}) from None
         return invoke(nid, x_session_token, x_branch_id, "domain.read",
                       read)
 

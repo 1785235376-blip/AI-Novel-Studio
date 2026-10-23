@@ -38,6 +38,8 @@ class IndependentWorkspaceService:
         self.relationships = AssetRelationshipAdapter(self)
         from .storage_admission import StudioStorageAdmission
         self.storage_admission = StudioStorageAdmission(self)
+        from ..services.asset_query_index import FileAssetQueryIndex
+        self.query_index = FileAssetQueryIndex(self.assets.root)
 
     @staticmethod
     def _preferences(document):
@@ -143,8 +145,11 @@ class IndependentWorkspaceService:
 
     def _row(self, nid, scope, aid, *, deleted=False, actor_id=None):
         row = self.assets.get(aid, branch_id=scope.get("branch_id"), include_deleted=deleted, actor_id=actor_id)
+        return self._validate_asset_row(nid, scope, row)
+
+    def _validate_asset_row(self, nid, scope, row):
         if row["novel_id"] != nid or row.get("branch_id") != scope.get("branch_id"):
-            raise FileNotFoundError(aid)
+            raise FileNotFoundError(row["id"])
         # Legacy metadata is permissive; the new CAS surface must never adopt
         # a corrupted/coerced counter as an authoritative asset revision.
         if type(row.get("version")) is not int or row["version"] < 1:
@@ -303,25 +308,8 @@ class IndependentWorkspaceService:
         return {"license": license_value, "operation": evidence["operation"]}
 
     def list_assets(self, nid, scope, *, include_deleted=False, query: StudioAssetQuery | None = None):
-        query = query or StudioAssetQuery()
-        keyword = (query.q or "").strip().casefold()
-        with self._asset_scope(nid, scope):
-            # The original owner applies scope, feature, private-owner and
-            # deletion visibility BEFORE filtering/counting. Its ascending
-            # (created_at, id) order includes a deterministic tie breaker.
-            rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=include_deleted)
-            rows = [self._row(nid, scope, row["id"], deleted=include_deleted) for row in rows
-                    if (query.kind is None or row.get("kind") == query.kind)
-                    and (not keyword or keyword in str(row.get("filename", "")).casefold())]
-            paging = query.limit is not None or query.offset is not None
-            total = len(rows)
-            limit, offset = query.limit if query.limit is not None else 50, query.offset or 0
-            if paging:
-                rows = rows[offset:offset + limit]
-            result = {"items": [self._view(nid, scope, row) for row in rows]}
-            if paging:
-                result.update(total=total, limit=limit, offset=offset, has_more=offset + len(rows) < total)
-            return result
+        from .asset_query_service import list_assets
+        return list_assets(self, nid, scope, include_deleted=include_deleted, query=query or StudioAssetQuery())
 
     def asset_index(self, nid, scope, *, include_deleted=False):
         """Bounded metadata-only asset index under the original asset lease.
