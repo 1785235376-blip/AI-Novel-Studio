@@ -12,10 +12,11 @@ import hmac
 from contextlib import contextmanager, ExitStack
 from urllib.parse import quote
 from .idempotency import IdempotencyStore
-from fastapi import APIRouter,HTTPException,Query,Header,Depends,Request
+from fastapi import APIRouter,HTTPException,Query,Header,Depends,Request,Body
 from fastapi.responses import StreamingResponse,Response
 from starlette.concurrency import run_in_threadpool
-from pydantic import BaseModel,Field,field_validator
+from pydantic import BaseModel,Field,field_validator,ValidationError
+from typing import Any
 from .config import settings
 from .jobs import jobs
 from .runtime import runtime
@@ -165,6 +166,17 @@ class ImageEditIn(ImageGenerateIn):
     size:str="auto"
     quality:str="auto"
     output_format:str="png"
+class ImageJobExecuteIn(BaseModel):
+    model_config = {"extra": "forbid"}
+    confirmed:bool=Field(strict=True)
+    expected_request_sha256:str=Field(pattern=r"^[a-f0-9]{64}$")
+    expected_attempt:int=Field(strict=True,ge=0)
+    expected_updated_at:str=Field(min_length=1,max_length=80)
+    @field_validator("confirmed")
+    @classmethod
+    def explicit_confirmation(cls,value):
+        if value is not True: raise ValueError("explicit confirmation required")
+        return value
 class SpeechSynthesizeIn(ManualEgressIn): provider_id:str="auto"; model_id:str=""; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
 class AudioGenerateIn(ManualEgressIn):
     provider_id:str="auto"
@@ -2412,7 +2424,7 @@ def vision_analyze(body:VisionAnalyzeIn,x_session_token:str|None=Header(None),x_
     except HTTPException: raise
     except Exception:
         raise HTTPException(502,{'code':'VISION_ANALYZE_FAILED','message':'图片分析失败'})
-from .services.image_job_service import ImageJobService
+from .services.image_job_service import ImageJobService, ImageJobConfirmationConflict
 image_job_service=ImageJobService(settings.data_path())
 
 def _image_branch(branch_id): return branch_id if settings.enable_collaboration_runtime else None
@@ -2423,9 +2435,11 @@ def _image_jobs(session_token):
     return image_job_service.for_actor(actor.actor_id)
 
 @router.get("/novels/{nid}/image-jobs")
-def list_image_jobs(nid:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+def list_image_jobs(nid:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None),execution_confirmation:str|None=Query(default=None)):
     _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
-    return {'items':_image_jobs(x_session_token).list(nid,_image_branch(x_branch_id))}
+    result = {'items':_image_jobs(x_session_token).list(nid,_image_branch(x_branch_id))}
+    if execution_confirmation == '1': result['execution_confirmation'] = 'legacy-image-confirmation/1'
+    return result
 
 @router.post("/novels/{nid}/image-jobs",status_code=202)
 def create_image_job(nid:str,body:ImageEditIn|ImageGenerateIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key"),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -2441,10 +2455,17 @@ def create_image_job(nid:str,body:ImageEditIn|ImageGenerateIn,idempotency_key:st
     except ValueError as exc: raise HTTPException(400,{'code':'IMAGE_JOB_INVALID','message':str(exc)})
 
 @router.post("/novels/{nid}/image-jobs/{job_id}/execute")
-def execute_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+def execute_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None),body:Any=Body(default=None)):
     _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import asset_provider_registry
-    return guard(_image_jobs(x_session_token).execute,nid,_image_branch(x_branch_id),job_id,asset_provider_registry,lambda: _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id),lambda job,provider: _assert_manual_media_egress(job,provider,x_session_token,x_branch_id))
+    expectation = None
+    if body is not None:
+        try: expectation = ImageJobExecuteIn.model_validate(body).model_dump(exclude={"confirmed"})
+        except ValidationError: raise HTTPException(422,{"code":"IMAGE_JOB_CONFIRMATION_INVALID","message":"执行确认信息无效，请重新核对原任务。"})
+    try:
+        return guard(lambda: _image_jobs(x_session_token).execute(nid,_image_branch(x_branch_id),job_id,asset_provider_registry,lambda: _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id),lambda job,provider: _assert_manual_media_egress(job,provider,x_session_token,x_branch_id),expectation=expectation))
+    except ImageJobConfirmationConflict:
+        raise HTTPException(409,{"code":"IMAGE_JOB_CONFIRMATION_STALE","message":"原任务已变化，请重新读取并确认；未派发本次执行。"})
 
 @router.post("/novels/{nid}/image-jobs/{job_id}/cancel")
 def cancel_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):

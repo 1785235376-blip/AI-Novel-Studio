@@ -114,6 +114,6 @@ function CanvasImageQueueSession({novelId, nodeId, prompt, onClose, isSourceCurr
     </select></label>
     <label>模型<input aria-label="画布任务模型" value={modelId} disabled={!provider || !configured(provider)} onChange={event => { inputRevision.current += 1; setModelId(event.target.value); }}/></label>
     {provider && !local && <CloudPromptConsent target={`${provider.display_name || providerId} / ${modelId || '未选择模型'}`} checked={consent.allowed} onChange={allowed => { inputRevision.current += 1; consent.setAllowed(allowed); }}/>}
-    <ImageQueuePanel novelId={novelId} draft={draft} local={local} creationDisabled={!canCreate} canCreateNow={canCreateNow} requestedTaskId={binding?.taskId} onTaskCreated={rememberCreatedTask}/>
+    <ImageQueuePanel novelId={novelId} draft={draft} local={local} creationDisabled={!canCreate} canCreateNow={canCreateNow} executionSourceRevision={revision} isExecutionSourceCurrent={()=>capturedScope()&&inputRevision.current===revision&&(!isSourceCurrent||isSourceCurrent())} requestedTaskId={binding?.taskId} onTaskCreated={rememberCreatedTask}/>
   </Panel>;
 }

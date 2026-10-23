@@ -20,6 +20,10 @@ _LOCKS_GUARD = threading.Lock()
 _ACTIVE: dict[str, set[str]] = {}
 
 
+class ImageJobConfirmationConflict(RuntimeError):
+    """An explicit execution confirmation no longer matches the original row."""
+
+
 class ImageJobService:
     """Persistent image review queue. Provider results remain unapproved until accept."""
     def __init__(self, root: Path):
@@ -123,7 +127,7 @@ class ImageJobService:
             return row
         return self._mutate(novel_id,branch_id,change)
 
-    def execute(self, novel_id, branch_id, job_id, registry, check_authority=None, check_egress=None):
+    def execute(self, novel_id, branch_id, job_id, registry, check_authority=None, check_egress=None, *, expectation=None):
         def same_attempt(current, claimed):
             return (current.get('status') == 'RUNNING'
                     and current.get('execution_token') == claimed.get('execution_token')
@@ -135,6 +139,15 @@ class ImageJobService:
         def claim(rows):
             row=self._find(rows,job_id)
             if row.get('contract') == 'studio-image-execution/1': raise ValueError('STUDIO_IMAGE_ORIGINAL_OWNER_ACTION_REQUIRED')
+            if expectation is not None:
+                payload = {key: row.get(key) for key in ('prompt','provider_id','model_id','parameters','character_id','scene_id','images','size','quality','output_format','allow_cloud_prompt') if key in row}
+                digest = hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
+                if (row.get('status') != 'QUEUED'
+                    or row.get('request_sha256') != expectation.get('expected_request_sha256')
+                    or digest != expectation.get('expected_request_sha256')
+                    or row.get('attempt') != expectation.get('expected_attempt')
+                    or row.get('updated_at') != expectation.get('expected_updated_at')):
+                    raise ImageJobConfirmationConflict('IMAGE_JOB_CONFIRMATION_STALE')
             if row['status']!='QUEUED': raise ValueError('IMAGE_JOB_NOT_QUEUED')
             if row.get('owner_actor_id') != self.owner_actor_id or row.get('novel_id') != novel_id or row.get('branch_id') != branch_id:
                 raise ValueError('IMAGE_JOB_SCOPE_CHANGED')
