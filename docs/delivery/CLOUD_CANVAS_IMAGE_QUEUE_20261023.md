@@ -1,5 +1,7 @@
 # Cloud image-node queue slice
 
+This records the first slice at `4b5c8aa259c4432102e9e6d2a173ec52c789ad94`. For the subsequent independent review, lifecycle fixes, status-readback checks, type-check classification and branch handoff, see [the follow-up delivery record](CLOUD_CANVAS_QUEUE_REVIEW_20261023.md). Counts and the no-push statement below describe that first checkpoint.
+
 The professional image dual canvas previously kept node labels and connections in browser storage, with no path from a selected node to a persistent task. An `image_generate` node now has a separate prompt draft and an explicit action that opens the existing image-job queue. A server-returned job ID is shown after the author chooses a service/model and saves the request. Opening the panel never creates or executes a task.
 
 ## Source and scope
