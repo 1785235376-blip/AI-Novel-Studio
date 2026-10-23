@@ -58,3 +58,16 @@ Tests: layout 51/51 (logs/m1fix-layout-vitest.log); regression set 12 files 142/
 | S2-2 | main ≥320×200 after resizer/border/toolbar | unit; browser 1366 max sides main 320×524; 800×600 max bottom main 320×200; no h-overflow | PASS |
 | S2-3 | layout actions via ActionRegistry (stable ids, disabled reason, running, double-trigger guard, shortcut conflict, no shortcut in text inputs) | actions/layoutActions.test.ts + slice2.test.tsx | PASS (unit) |
 | MF-2 | main min browser | m1s2-s2-browser.json | PASS (browser, by Hermia; Vera re-check pending) |
+
+## M1-s2fix — Vera M1-s2 MUST-FIX re-verification [HERMIA-FE-20261023 M1-s2fix]
+Code commit: e66d2f38 (tree 6463745f597e7d426b0c6fd839a3d3e96671401c). Pre-fix base cbf4a3ed (Vera review committed as fe2e82f0). Browser: 1366×768, http://127.0.0.1:4299/?uw=1, raw: logs/m1s2fix-browser.json (script logs/m1s2fix-browser.mjs).
+
+| # | Item | Pre-fix (Vera @ cbf4a3ed) | Post-fix | Evidence |
+|---|---|---|---|---|
+| MF1 | Empty dock zone drop indicator | FAIL: indicator = whole root [0,0,1366,768] | PASS: empty-left indicator [0,63,273,705] (20% strip below toolbar), class uw-drop-indicator--zone, bg accent @14% alpha; no root fallback | screenshots/m1s2fix_1_empty_zone_indicator.png; slice2fix.test.tsx |
+| MF2 | Esc cancels drag | FAIL: no cancel | PASS: Esc removes indicator+ghosts; pointerup afterwards leaves inspector dock=right | m1s2fix_2_esc_cancel.png |
+| MF3 | layout.reset available() | FAIL: never disabled | PASS: default → disabled, reason 「已经是默认布局」 (title + aria-describedby); after change → enabled; after reset → disabled again | m1s2fix_3_reset_disabled.png, m1s2fix_4_after_palette_reset.png |
+| MF4 | ?uw=1 Ctrl+K palette lists/triggers 4 layout actions | FAIL: no palette | PASS: Ctrl+K opens existing CommandSearch with layout.reset / reopenPanel / toggleCollapse / switchSplit; choosing reset opens confirm, 恢复默认 restores outline→left | m1s2fix_4_ctrlk_palette.png, m1s2fix_4_reset_confirm.png |
+| NH | in-flight guard + ≥300ms busy; Ctrl/⌘ in conflict text; float → dock drag-back | — | PASS (unit: slice2fix.test.tsx) | logs/m1s2fix-layout-vitest.log |
+
+Tests: layout set 10 files / 111 passed; regression set 59/60 files, 472/472 tests passed (1 file = pre-existing LocalAiBrowserJourneyContracts load failure, missing e2e spec); tsc 6 errors = unchanged pre-existing baseline.

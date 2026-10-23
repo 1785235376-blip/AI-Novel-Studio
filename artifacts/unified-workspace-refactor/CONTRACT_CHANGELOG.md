@@ -16,3 +16,12 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - New in workspace/actions: ShortcutTable (claim/release/lookup, conflict → shortcut dropped, action still registered), RESERVED_SHORTCUTS (Mod+K), registerLayoutActions, actionIdForKey.
 - DockLayout: new optional props actionRegistry, shortcutTable.
 - layout/model: Viewport.reserveTop? (optional); dock action index = precise insertion index; exported dropIndexFromPoint, dropAxis, mainArea.
+
+## M1-s2fix [HERMIA-FE-20261023 M1-s2fix] — e66d2f38 (tree 6463745f597e7d426b0c6fd839a3d3e96671401c)
+- DockLayout new optional props: tracker?, actionOptions? ({minBusyMs}), toolbarStart?: ReactNode (rendered first in toolbar).
+- LayoutActionHost.isDefault?(): boolean — drives layout.reset available().
+- layoutActions: export MIN_BUSY_MS=300, displayShortcut(s, apple), LayoutActionOptions{minBusyMs} on layoutActionDefinitions/registerLayoutActions.
+- model.ts: export emptyZoneBox(zone, root, top) (main → null).
+- UnifiedWorkspacePreview: SPECS exported as PREVIEW_SPECS.
+- DOM: data-zone-box on left/right/bottom, .uw-zone-ghost[data-testid=zone-ghost-<z>], #uw-reset-reason[data-testid=reset-reason].
+- Test expectation changes (assertions kept): DockLayout.test M1-06 and M1-08 wait 320ms for busy guard; N3 switches split to split-h first so reset is enabled; slice2.test conflict text expects 'Ctrl+Alt+S'.

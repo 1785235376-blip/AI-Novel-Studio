@@ -40,3 +40,13 @@ Results: layout 51/51, regression 142/142, tsc no new errors.
 - Tests: tsc 6 errors = baseline (logs/m1s2-tsc.log); src/workspace 98/98 (logs/m1s2-layout-vitest.log); regression workbench+App+ui+rebuild 472/472 tests, 1 suite fails to load at baseline too (LocalAiBrowserJourneyContracts: missing tests/e2e/v2-local-ai-files-live.spec.ts) (logs/m1s2-regression-vitest.log).
 - Browser: logs/m1s2-s2-browser.json; screenshots/m1s2_s2_{maxsides_1366x768,maxbottom_800x600,dropindicator_*,afterdrop_*}.png.
 - Remaining: N4 CSS-zoom float clamp, N5 exec canvas entry, real panel content (placeholders only), Vera browser re-check, wiring beyond ?uw=1, the pre-existing missing e2e spec.
+
+## M1-s2fix [HERMIA-FE-20261023 M1-s2fix]
+Commits: fe2e82f0 (Vera review append, unchanged, author "Vera (review)"); e66d2f38 (tree 6463745f597e7d426b0c6fd839a3d3e96671401c) code+tests+evidence.
+- MF1: computeDrop never falls back to root; uses real zone box (data-zone-box) or model.emptyZoneBox (left/right 20%, bottom lower 25%). Ghost .uw-zone-ghost per empty zone during drag; translucent zone indicator.
+- MF2: capture-phase Escape clears drag/target; floating panel restored to drag origin.
+- MF3: LayoutActionHost.isDefault() (signature vs post-reset signature) → reset disabled with 「已经是默认布局」.
+- MF4: UnifiedWorkspacePreview mounts the existing workbench CommandSearch (registry-fed) in DockLayout toolbarStart with hint 「Ctrl／⌘+K」; window Ctrl/⌘+K opens it. App.tsx untouched.
+- NH: MIN_BUSY_MS=300 + pending guard until settle; displayShortcut → Ctrl+Alt+S / ⌘⌥…; floats can be dragged back into allowed dock zones.
+Results: layout 111/111; regression 472/472 tests (1 pre-existing file load failure); tsc 6 (baseline). Browser 1366 all 4 PASS.
+Known/remaining: CommandSearch shows raw action id in <small> (existing component behavior); pre-existing tsc errors & LocalAiBrowserJourneyContracts missing spec; nothing pushed.
