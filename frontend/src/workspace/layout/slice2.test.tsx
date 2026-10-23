@@ -143,7 +143,7 @@ describe('M1-s2 DockLayout: toolbar + shortcuts through ActionRegistry', () => {
   it('a shortcut conflict is reported in Chinese and the action keeps working without a key', async () => {
     const table = new ShortcutTable({'Mod+K': 'command-search', 'Mod+Alt+S': '其他功能'});
     setup(table); await flush();
-    expect(screen.getByRole('status').textContent).toContain('快捷键 Mod+Alt+S 已被占用');
+    expect(screen.getByRole('status').textContent).toContain('快捷键 Ctrl+Alt+S 已被占用');
     fireEvent.keyDown(window, {key: 's', code: 'KeyS', ctrlKey: true, altKey: true});
     expect(screen.getByTestId('main-zone').dataset.split).toBe('single');
     fireEvent.change(screen.getByLabelText('分屏方式'), {target: {value: 'split-v'}});

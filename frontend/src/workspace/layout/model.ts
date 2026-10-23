@@ -285,3 +285,17 @@ export function dropIndexFromPoint(axis: 'x' | 'y', point: {x: number; y: number
   }
   return others.length;
 }
+
+/**
+ * [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 1: drop box for an EMPTY dock zone. Matches the zoneFromPoint hit region
+ * (left/right = outer 20% of the body, bottom = lower 25% between them) so the indicator is exactly where a drop
+ * lands. Never the whole root. `top` is the body top (below the toolbar).
+ */
+export function emptyZoneBox(zone: DockZone, root: {width: number; height: number}, top = 0): SlotRect | null {
+  const w = root.width, h = root.height;
+  const side = Math.round(w * 0.2), bottomTop = Math.max(top, Math.round(h * 0.75));
+  if (zone === 'left') return {left: 0, top, width: side, height: Math.max(0, h - top)};
+  if (zone === 'right') return {left: w - side, top, width: side, height: Math.max(0, h - top)};
+  if (zone === 'bottom') return {left: side, top: bottomTop, width: Math.max(0, w - 2 * side), height: Math.max(0, h - bottomTop)};
+  return null;
+}

@@ -86,7 +86,8 @@ describe('DockLayout interactions', () => {
   it('M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates', async () => {
     setup();
     for (let i = 0; i < 5; i++) {
-      await act(async () => {});
+      // [HERMIA-FE-20261023 M1-s2fix] reopen stays pending MIN_BUSY_MS (double-trigger guard); next iteration waits it out.
+      await act(async () => { await new Promise(r => setTimeout(r, i ? 320 : 0)); });
       fireEvent.click(screen.getByRole('button', {name: '关闭「任务」'}));
       expect(screen.queryByTestId('panel-tasks')).toBeNull();
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -107,7 +108,7 @@ describe('DockLayout interactions', () => {
     fireEvent.click(screen.getByRole('button', {name: '恢复默认布局'}));
     fireEvent.click(screen.getByRole('button', {name: '取消'}));
     expect(screen.getByTestId('panel-tasks').dataset.dock).toBe('left');
-    await act(async () => {}); // [HERMIA-FE-20261023 M1-s2] separate user event
+    await act(async () => { await new Promise(r => setTimeout(r, 320)); }); // [HERMIA-FE-20261023 M1-s2fix] past MIN_BUSY_MS
     fireEvent.click(screen.getByRole('button', {name: '恢复默认布局'}));
     fireEvent.click(screen.getByRole('button', {name: '恢复默认'}));
     expect(screen.getByTestId('panel-tasks').dataset.dock).toBe('bottom');
@@ -276,6 +277,8 @@ describe('M1-fix: N2 persistence writes only on real layout change', () => {
 describe('M1-fix: N3 modal dialog keyboard', () => {
   it('Esc cancels, Tab is trapped, focus returns to the trigger', () => {
     setup();
+    // [HERMIA-FE-20261023 M1-s2fix] reset is disabled on the default layout (MUST-FIX 3); make it non-default first.
+    fireEvent.change(screen.getByLabelText('分屏方式'), {target: {value: 'split-h'}});
     const trigger = screen.getByText('恢复默认布局');
     trigger.focus(); fireEvent.click(trigger);
     const dlg = screen.getByRole('dialog');

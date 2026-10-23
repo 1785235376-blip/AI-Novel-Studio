@@ -37,3 +37,8 @@
 .uw-drop-indicator[data-allowed="false"]{background:var(--color-border-strong)}
 .uw-drop-indicator--zone{background:var(--color-accent-subtle);outline:2px dashed var(--color-accent-primary);outline-offset:-2px}
 .uw-drop-note{position:absolute;left:50%;top:8px;transform:translateX(-50%);padding:4px 10px;border-radius:6px;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);z-index:9999}
+/* [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 1: zone overlay is translucent and limited to the target box. */
+.uw-drop-indicator--zone{background:color-mix(in srgb,var(--color-accent-primary) 14%,transparent)}
+.uw-drop-indicator--zone[data-allowed="false"]{background:color-mix(in srgb,var(--color-border-strong) 18%,transparent);outline-color:var(--color-border-strong)}
+.uw-zone-ghost{position:absolute;pointer-events:none;border:1px dashed var(--color-border-default);border-radius:4px;z-index:9998}
+.uw-toolbar__hint{color:var(--color-text-secondary);font-size:12px}

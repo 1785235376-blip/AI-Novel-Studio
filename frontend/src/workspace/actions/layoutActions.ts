@@ -78,18 +78,36 @@ export interface LayoutActionHost {
   dispatch(a: LayoutAction): void;
   /** Opens the 恢复默认布局 confirm dialog; the reset itself only happens on confirm. */
   requestReset(): void;
+  /** [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 3: true when the current layout already equals the default. */
+  isDefault?(): boolean;
+}
+
+/** [HERMIA-FE-20261023 M1-s2fix] Minimum time an action stays pending (aria-busy, duplicate guard), so two real
+ * key presses a few ms apart execute once and the running state is actually visible. */
+export const MIN_BUSY_MS = 300;
+
+/** [HERMIA-FE-20261023 M1-s2fix] Human shortcut text: Mod→Ctrl (⌘ on Apple), Alt→Alt (⌥ on Apple). Never shows raw tokens. */
+export function displayShortcut(s: string, apple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '')): string {
+  return normalizeShortcut(s).split('+').map(p => p === 'Mod' ? (apple ? '⌘' : 'Ctrl') : p === 'Alt' ? (apple ? '⌥' : 'Alt') : p === 'Shift' ? (apple ? '⇧' : 'Shift') : p).join(apple ? '' : '+');
 }
 
 /** Run synchronously (state changes inside the triggering event), but satisfy ActionDefinition.run's Promise type. */
-const sync = (fn: (ctx: ActionContext) => unknown) => (ctx: ActionContext): Promise<unknown> => {
-  try { return Promise.resolve(fn(ctx)); } catch (e) { return Promise.reject(e); }
+// [HERMIA-FE-20261023 M1-s2fix] state change still happens synchronously inside the triggering event; the returned
+// promise settles after minBusyMs so ActionRegistry keeps the pending key (double-trigger guard + visible busy state).
+const makeSync = (minBusyMs: number) => (fn: (ctx: ActionContext) => unknown) => (ctx: ActionContext): Promise<unknown> => {
+  let v: unknown;
+  try { v = fn(ctx); } catch (e) { return Promise.reject(e); }
+  if (minBusyMs <= 0) return Promise.resolve(v);
+  return new Promise(res => setTimeout(() => res(v), minBusyMs));
 };
 const yes: Availability = {enabled: true};
 const SPLIT_ORDER: readonly SplitMode[] = SPLIT_MODES;
 // run bodies are synchronous: ActionRegistry.execute calls run synchronously and keeps the pending key until the
 // awaited result settles (next microtask), so a same-tick double trigger is still reported as 'duplicate'.
 
-export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Partial<Record<LayoutActionId, string>> = DEFAULT_LAYOUT_SHORTCUTS): ActionDefinition[] {
+export interface LayoutActionOptions { minBusyMs?: number; }
+export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Partial<Record<LayoutActionId, string>> = DEFAULT_LAYOUT_SHORTCUTS, opts: LayoutActionOptions = {}): ActionDefinition[] {
+  const sync = makeSync(opts.minBusyMs ?? MIN_BUSY_MS);
   const st = () => host.getState();
   const reopenTarget = (ctx: ActionContext): string | null => {
     const closed = closedPanels(st()).map(f => f.id).filter(id => host.specs.some(s => s.id === id));
@@ -104,6 +122,7 @@ export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Parti
   return [
     {
       id: LAYOUT_ACTION_IDS.reset, label: '恢复默认布局', surfaces: ['toolbar', 'shortcut', 'commandSearch'], shortcut: shortcuts['layout.reset'],
+      available: () => host.isDefault?.() ? {enabled: false, reason: '已经是默认布局'} : yes,
       // Confirmation is the DockLayout dialog (contract §2); this action only opens it.
       run: sync(() => { host.requestReset(); return 'confirm-opened'; }),
     },
@@ -134,9 +153,9 @@ export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Parti
 export interface RegisteredLayoutActions { dispose(): void; conflicts: {actionId: string; shortcut: string; conflictWith: string}[]; }
 
 /** Registers into the existing ActionRegistry. A conflicting shortcut is dropped (action still registered, no key). */
-export function registerLayoutActions(registry: ActionRegistry, table: ShortcutTable, host: LayoutActionHost, shortcuts?: Partial<Record<LayoutActionId, string>>): RegisteredLayoutActions {
+export function registerLayoutActions(registry: ActionRegistry, table: ShortcutTable, host: LayoutActionHost, shortcuts?: Partial<Record<LayoutActionId, string>>, opts?: LayoutActionOptions): RegisteredLayoutActions {
   const conflicts: RegisteredLayoutActions['conflicts'] = []; const undo: (() => void)[] = [];
-  for (const def of layoutActionDefinitions(host, shortcuts)) {
+  for (const def of layoutActionDefinitions(host, shortcuts, opts)) {
     let d = def;
     if (def.shortcut) {
       const c = table.claim(def.shortcut, def.id);
