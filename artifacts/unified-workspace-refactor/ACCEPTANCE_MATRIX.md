@@ -105,3 +105,11 @@ Tests: layout set (src/workspace) 11 files / 120 passed; regression (src/workben
 | M2-13 | dead .wb-command__id CSS | present | removed | commandSearch.css |
 | REG | regression set + tsc | — | 600/600 tests (1 pre-existing file error); tsc 6 (unchanged) | logs/m1s3fix-* |
 | FULL | full vitest ≤307 | — | NOT_RUN | — |
+
+## M1-s3fix2 [HERMIA-FE-20261023 M1-s3fix2]
+- Review append (Vera, unchanged): e5ca8efe. Code commit: e1b91f2582e72a75b25e2828265a7a4d2d8f39de (tree ad6c012251c614eb77045bdfb02898d08a2ee10c). Base 81a65eb8.
+- MUST-FIX (Vera, 81a65eb8): title-match rule now test-guarded — new test "higher version but different title → unconfirmed, never 已保存, stays dirty". Mutation (remove `&& c.title === i.title`) → that test FAILS (1/16); restored → 16/16. Log: logs/m1s3fix2-mutation.log. Status: PASS (self), pending Vera recheck.
+- P3 network: fetch reject → RenameNetworkError → 「保存失败：网络错误，修改还在。」 (non-JSON SyntaxError still → unconfirmed text). Test added. PASS (self).
+- P3 「。。」: close-confirm alert strips trailing 。 from error before appending 。. Test asserts no 「。。」; mutation (revert) → test FAILS. PASS (self).
+- Tests: src/workspace/panels 16/16; regression set (src/workspace src/workbench src/App.test.tsx src/ui src/rebuild) 603/603 tests passed, 1 file fails to load (LocalAiBrowserJourneyContracts, pre-existing missing e2e file). tsc: 6 errors (unchanged baseline). Full vitest NOT_RUN (Vera to run; gate ≤307).
+- Logs: logs/m1s3fix2-targeted.log, -mutation.log, -regression.log, -tsc.log. Not pushed; main untouched.

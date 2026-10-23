@@ -68,3 +68,11 @@ Base e3b92bd6 → Vera review append committed unchanged as db9a5a7d (author 'Ve
 - Removed dead `.wb-command__id` CSS.
 - Old UI command palette: 「布局」 group contained layout.toggleMode / layout.setMode.* (普通/专业). Now those are in 壳·设置; 布局 holds only layout actions. New test renders the old palette with layout.reset and asserts 布局 has no mode switch.
 - Verification: targeted 29/29; regression set (src/workspace src/workbench src/App.test.tsx src/ui src/rebuild) 600/600 tests, 71/72 files — the 1 failing file is pre-existing LocalAiBrowserJourneyContracts (missing e2e file, 0 tests). tsc: 6 errors, same pre-existing set. Logs: logs/m1s3fix-vitest-regression.log, logs/m1s3fix-tsc.log. Full vitest vs 307 threshold: NOT_RUN (for Vera).
+
+## M1-s3fix2 [HERMIA-FE-20261023 M1-s3fix2]
+- Review append (Vera, unchanged): e5ca8efe. Code commit: e1b91f2582e72a75b25e2828265a7a4d2d8f39de (tree ad6c012251c614eb77045bdfb02898d08a2ee10c). Base 81a65eb8.
+- MUST-FIX (Vera, 81a65eb8): title-match rule now test-guarded — new test "higher version but different title → unconfirmed, never 已保存, stays dirty". Mutation (remove `&& c.title === i.title`) → that test FAILS (1/16); restored → 16/16. Log: logs/m1s3fix2-mutation.log. Status: PASS (self), pending Vera recheck.
+- P3 network: fetch reject → RenameNetworkError → 「保存失败：网络错误，修改还在。」 (non-JSON SyntaxError still → unconfirmed text). Test added. PASS (self).
+- P3 「。。」: close-confirm alert strips trailing 。 from error before appending 。. Test asserts no 「。。」; mutation (revert) → test FAILS. PASS (self).
+- Tests: src/workspace/panels 16/16; regression set (src/workspace src/workbench src/App.test.tsx src/ui src/rebuild) 603/603 tests passed, 1 file fails to load (LocalAiBrowserJourneyContracts, pre-existing missing e2e file). tsc: 6 errors (unchanged baseline). Full vitest NOT_RUN (Vera to run; gate ≤307).
+- Logs: logs/m1s3fix2-targeted.log, -mutation.log, -regression.log, -tsc.log. Not pushed; main untouched.
