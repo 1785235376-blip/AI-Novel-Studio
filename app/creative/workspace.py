@@ -20,7 +20,7 @@ from ..experimental.production_lineage import LicenseDeclaration
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .project_store import BINDING
-from .workspace_models import ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
+from .workspace_models import ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask, StudioAssetQuery, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
 
 PREFERENCES = "creative_project_preferences_v2"
 FLAG = "narrative_production_v2"
@@ -302,10 +302,26 @@ class IndependentWorkspaceService:
             return None
         return {"license": license_value, "operation": evidence["operation"]}
 
-    def list_assets(self, nid, scope, *, include_deleted=False):
+    def list_assets(self, nid, scope, *, include_deleted=False, query: StudioAssetQuery | None = None):
+        query = query or StudioAssetQuery()
+        keyword = (query.q or "").strip().casefold()
         with self._asset_scope(nid, scope):
+            # The original owner applies scope, feature, private-owner and
+            # deletion visibility BEFORE filtering/counting. Its ascending
+            # (created_at, id) order includes a deterministic tie breaker.
             rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=include_deleted)
-            return {"items": [self._view(nid, scope, self._row(nid, scope, row["id"], deleted=include_deleted)) for row in rows]}
+            rows = [self._row(nid, scope, row["id"], deleted=include_deleted) for row in rows
+                    if (query.kind is None or row.get("kind") == query.kind)
+                    and (not keyword or keyword in str(row.get("filename", "")).casefold())]
+            paging = query.limit is not None or query.offset is not None
+            total = len(rows)
+            limit, offset = query.limit if query.limit is not None else 50, query.offset or 0
+            if paging:
+                rows = rows[offset:offset + limit]
+            result = {"items": [self._view(nid, scope, row) for row in rows]}
+            if paging:
+                result.update(total=total, limit=limit, offset=offset, has_more=offset + len(rows) < total)
+            return result
 
     def asset_index(self, nid, scope, *, include_deleted=False):
         """Bounded metadata-only asset index under the original asset lease.

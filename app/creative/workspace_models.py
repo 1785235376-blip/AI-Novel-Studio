@@ -5,7 +5,7 @@ execution decision may be based on them.
 """
 from typing import Literal
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field, field_validator, model_validator
 
 from ..experimental.media import StrictModel
 from ..experimental.production_lineage import LineageInput
@@ -46,6 +46,24 @@ class WorkspacePreferences(StrictModel):
 
 class WorkspacePreferencesUpdate(WorkspacePreferences):
     expected_version: int = Field(ge=0, strict=True)
+
+
+StudioAssetKind = Literal["image", "video", "audio", "model", "text", "prompt"]
+
+
+class StudioAssetQuery(StrictModel):
+    """Read-only filters over existing Studio metadata, with opt-in paging."""
+    q: str | None = Field(default=None, max_length=255)
+    kind: StudioAssetKind | None = None
+    limit: int | None = Field(default=None, ge=1, le=100, strict=True)
+    offset: int | None = Field(default=None, ge=0, le=1_000_000, strict=True)
+
+    @field_validator("q", mode="before")
+    @classmethod
+    def safe_keyword(cls, value):
+        if isinstance(value, str) and any(ord(char) < 32 or ord(char) == 127 for char in value):
+            raise ValueError("ASSET_QUERY_INVALID")
+        return value
 
 
 class ManualAssetImport(StrictModel):
