@@ -145,3 +145,93 @@ tsc：应用补丁后仍是 6 个基线错误（App.tsx 行号 +7），没有新
 **命令面板显示原始 action id 的严重度：P3，非阻塞。** `CommandSearch` 用 `<small class="wb-command__id">` 显示 id，这段代码自 9fb6e9c0 就有；6ba25ad7 与 3b2e92d4 之间 `workbench/` 没有改动。旧 UI（不带 ?uw=1）点「搜索功能」打开的命令面板同样显示 49 条原始 id，例如「打开：故事资料库 | panel.open.story」。id 用 11px 灰字显示在每个中文名称下方，用户能看到。不在 M1 范围内，建议另开一个小项：去掉显示，但保留 id 参与搜索匹配（`matchesQuery` 已经包含 id）。另外，布局动作在命令面板里归在「壳·设置」组，建议归到「布局」组（nit）。
 
 证据：/workspace/hr/vera-compare/m1s2fix/（fix.json、reg.json、*-empty-*.png、*-palette*.png、legacy-palette-rawid.png、legacy-3b2e92d4/），以及 vitest-3b2e92d4.json。
+
+## [VERA-FE] M1-s3 复审 — HEAD e3b92bd6（只读；临时 worktree 已删除；证据 /workspace/hr/vera-compare/m1s3/）
+
+**结论：MUST-FIX**（1 个 P2：保存的“成功”判定与声明不一致；其余项通过）
+
+### 通过项
+- **CommandSearch**
+  - 在 ?uw=1（5 项）和旧 UI（49 项）里，`.wb-command__id` 都是 0，列表文本里也没有任何原始 id。
+  - 按 id 搜 `panel.open.history`、`layout.reset`，以及 `open history`，都能命中。
+  - 新增分组「布局」：?uw=1 中有 4 项；旧 UI 中 写作 37 / 媒体 5 / 布局 4 / 壳·设置 3。
+  - 所有权表的例外合理：这是 Vera 提出的 P3 修复，只改了拥有该面板的组件，属于最小改动。
+  - 改动的那条断言（layout.reset：壳·设置→布局）是本意内的重新分组，合理。
+  - nit：旧 UI 的「布局」组实际装的是 普通/专业 模式切换（layout.setMode.*），名称略牵强；commandSearch.css 里的 `.wb-command__id` 规则已成死代码。
+- **真实面板**（1366 / 1440 / 1920 / 1440@1.25，四档结果一致）
+  - 「作品结构」复用 NovelStructureRail：3 章，选中联动正常。
+  - 「章节属性」的章号、字数、状态（草稿）、版本与 GET 返回一致。
+  - 改标题后出现脏标记；脏状态下切换章节会被阻止，并显示中文提示。
+  - 停靠到 left / bottom / float / right 以及切换 split-h 后，草稿都还在、脏标记不丢。
+  - 关闭时弹出确认框，三个按钮的行为：
+    - 「取消」：草稿保留；
+    - 「放弃修改」：面板关闭，不发写请求；
+    - 「保存并关闭」：发出 1 次 POST 后关闭。
+- **改名（Playwright 拦截，所有非 GET 都被 fulfill/abort，不会到达 8000）**
+  - 请求为 `POST /api/chapters/73586d65:1/rename`，body `{"title":…,"version":2}`。
+  - 返回新版本 3：显示「已保存（版本 3）」。
+  - 409：显示「章节已被其他地方修改，请刷新后再改。」，保持脏状态。
+  - 500 / 网络错误：显示「保存失败，请重试。」，保持脏状态。
+  - 刷新只发 `GET /api/novels/73586d65/chapters`，显示「已刷新」。
+- **旧 UI**
+  - 18 页对比 3b2e92d4：结构 diff 为 0，文本 diff 为 0；像素只有 IMAGE 页一处 3px 竖条（滚动条或动画噪声）。
+  - U4 快扫写请求为 0；全程 GET-only。
+- **变异测试**（基线为 24/24 通过）
+
+  | 变异 | 测试结果 |
+  |---|---|
+  | isDirty→false | 2 条失败 |
+  | 409 分支失效 | 1 条失败 |
+  | 不使用返回的新版本 | 1 条失败 |
+  | 重新显示 id | 1 条失败 |
+  | 从 matchesQuery 去掉 id | 3 条失败 |
+
+- **Hermia 自报数字复核**：layout 120/120 ✔，tsc 6 ✔；regression 475 子集未单独复跑，由全量覆盖。
+
+### MUST-FIX（P2）：只有返回新版本才算保存成功，代码并未实现
+- InspectorPanel 只要拿到 2xx JSON 就算成功，没有校验返回的 version 是否大于提交时的 version。实测：
+  - 返回相同版本：显示「已保存（版本 2）」，草稿被清空，脏标记消失，属于假成功。
+  - 返回里没有 version：显示「已保存（版本 undefined）」，同样是假成功。
+  - 返回 204：没有任何提示，保持脏状态，属于静默失败。
+- 建议修复：
+  - 要求 `saved?.version > input.version`，否则显示中文错误、保持脏状态；
+  - 204 或异常响应也给出错误提示；
+  - 补上这 3 个用例。
+- IMPLEMENTATION_REPORT 里写的是 “success = server Chapter”，与 “new version” 的声明不一致。
+
+### 文案 nit（S3，确认存在）
+- 把「作品结构」停靠到右侧后，「章节属性」空态仍写「在左侧「作品结构」里选一个章节」。
+- 建议改为不带方位，例如「在「作品结构」里选一个章节」。不阻塞。
+
+### 全量 vitest（单独运行，机器空闲，load 约 1）
+- 首跑：309/11344，Identity 8，调整后 309。新增 2 条失败：
+  - GraphImageOutputStarter.additive「retires the sealed plan…」
+  - StoryFactDownstreamImpact「…selected-A click after selection asset-B-ABA」
+
+  两条各单独跑 3 次都通过，只剩基线中已有的 4 条失败。
+- 重跑：308/11344，Identity 8。新增 1 条不同的失败：GraphDirectorImage.integration「protects IMAGE cost…」。
+- 三条都在本轮未改动的文件里，且每次都不同，判断为环境抖动，与本改动无关。
+- 但按规则，raw 308 仍超过门槛 307，记为门槛未严格达标（不归因于本次改动）。
+- **App\* 问题**：6ba25ad7 / 42167577 / cbf4a3ed / 3b2e92d4 / e3b92bd6 五个版本的 App\* 失败都是 125 条，13 个文件逐个计数完全相同：
+
+  | 文件 | 失败数 |
+  |---|---|
+  | AppAdaptationNavigation | 12 |
+  | AppAuthorTaskNavigation.additive | 1 |
+  | AppAuthorTaskNavigation | 10 |
+  | AppBrokerRecovery | 4 |
+  | AppDraftRecovery | 21 |
+  | AppModuleNavigationIntent | 2 |
+  | AppProductionReceiptNavigation | 2 |
+  | AppRevisionHistory | 6 |
+  | AppStorySourceNavigation | 9 |
+  | AppStyleComparisonNavigation | 1 |
+  | AppStyleDNANavigation | 20 |
+  | AppWorkspaceResume | 33 |
+  | AppWritingGoalRecovery | 4 |
+
+  本轮没有新增或修复的 App\* 失败。
+
+### 清理
+- vite 4399 已停止；vera-wt-s4 已经 `worktree remove` 并 prune。
+- 4299 与 8000 仍返回 200；wt 仅有未跟踪的 package-lock.json，未提交任何内容。
