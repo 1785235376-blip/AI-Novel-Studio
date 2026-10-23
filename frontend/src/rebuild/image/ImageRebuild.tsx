@@ -71,7 +71,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       setCanvasTask({scope: canvasTaskScope, novelId, nodeId: node.id, prompt: node.prompt?.trim() || '', isSourceCurrent});
     }
   };
-  const renderCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean) => <CanvasNodeTaskStatus novelId={novelId} nodeId={node.id} onOpen={() => openCanvasTask(node, isSourceCurrent)}/>;
+  const renderCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number) => <CanvasNodeTaskStatus novelId={novelId} nodeId={node.id} nodePrompt={node.prompt || ''} sourceRevision={sourceRevision} isSourceCurrent={isSourceCurrent} onOpen={() => openCanvasTask(node, isSourceCurrent)}/>;
   useEffect(() => setCanvasTask(undefined), [novelId, canvasTaskScope, view]);
   const canvasTaskDrawer = canvasTask?.scope === canvasTaskScope && canvasTask.novelId === novelId ? <Drawer title="画布图片任务" onClose={() => setCanvasTask(undefined)}>
     <CanvasImageQueue novelId={novelId} nodeId={canvasTask.nodeId} prompt={canvasTask.prompt} isSourceCurrent={canvasTask.isSourceCurrent} onClose={() => setCanvasTask(undefined)}/>

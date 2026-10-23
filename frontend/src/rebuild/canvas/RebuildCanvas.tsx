@@ -38,7 +38,7 @@ function load(key: string, seed: CvGraph): CvGraph {
 }
 
 type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
-  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean) => ReactNode};
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number) => ReactNode};
 
 // A new owner must load its own draft before any persistence effect runs.
 export function RebuildCanvas(props: RebuildCanvasProps) {
@@ -56,6 +56,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const svgRef = useRef<SVGSVGElement>(null);
   const active = useRef(true);
   const removedNodes = useRef(new Set<string>());
+  const promptRevisions = useRef(new Map<string, number>());
   const liveGraph = useRef(g); liveGraph.current = g;
   const selectedTask = useRef<CvNode>();
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
@@ -128,6 +129,9 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const sourceCurrent = (nodeId: string) => () => active.current && !removedNodes.current.has(nodeId)
     && liveGraph.current.nodes.filter(node => node.id === nodeId).length === 1
     && liveGraph.current.nodes.some(node => node.id === nodeId && node.t === 'image_generate');
+  const promptRevision = imageTaskNode ? promptRevisions.current.get(imageTaskNode.id) || 0 : 0;
+  const readSourceCurrent = (nodeId: string, revision: number) => () => sourceCurrent(nodeId)()
+    && (promptRevisions.current.get(nodeId) || 0) === revision;
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
@@ -172,13 +176,13 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
     {imageTaskNode ? <Panel title="所选图片节点参数" aria-label="所选图片节点参数" style={{flexShrink: 0}}>
       <p>节点：{imageTaskNode.title}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
       <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
-        onChange={event => { const prompt = event.target.value; setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
+        onChange={event => { const prompt = event.target.value; promptRevisions.current.set(imageTaskNode.id, (promptRevisions.current.get(imageTaskNode.id) || 0) + 1); setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
       <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {
         if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) {
           onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()}, sourceCurrent(imageTaskNode.id));
         }
       }}>为此节点准备图片任务</Button>
-      {renderImageTaskBinding?.(imageTaskNode, sourceCurrent(imageTaskNode.id))}
+      {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision)}
       <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
     </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage>视频节点的任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage> : null}
     </div>

@@ -16,7 +16,7 @@ export function useCanvasTaskBinding(novelId: string, nodeId: string) {
   const hostEpoch = useLocalHostSession(state => state.epoch);
   const clientEpoch = useSyncExternalStore(subscribeCollaborationContext, getCollaborationEpoch, getCollaborationEpoch);
   const [scopeEpoch, setScopeEpoch] = useState(0);
-  const [, setStorageRevision] = useState(0);
+  const [storageRevision, setStorageRevision] = useState(0);
   useEffect(() => {
     let observed = identity(useStudio.getState());
     return useStudio.subscribe(state => {
@@ -28,6 +28,6 @@ export function useCanvasTaskBinding(novelId: string, nodeId: string) {
   const owner = captureCanvasTaskOwner(novelId);
   const binding = owner ? readCanvasTaskBinding(owner, nodeId) : undefined;
   const sessionKey = JSON.stringify([owner ? canvasTaskBindingKey(owner, nodeId) : null, scopeKey,
-    scopeEpoch, hostEpoch, clientEpoch, binding?.taskId]);
+    scopeEpoch, hostEpoch, clientEpoch, binding?.taskId, storageRevision]);
   return {owner, binding, sessionKey};
 }
