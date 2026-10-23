@@ -1,5 +1,7 @@
 # Original-node image candidate inspection
 
+Historical checkpoint: the [subsequent File/API content handoff](CLOUD_CANVAS_FILE_CANDIDATE_20261023.md) supersedes the raw-URI preview behavior below. Current node previews use strict inline data or the original asset content API; the original queue comparison is metadata-only.
+
 An original image-generation node can now show the completed task's candidate source information and explicitly preview its result. The panel uses only the existing authorized image-job owner. Opening the node reads metadata; clicking **预览原任务候选结果** re-reads the exact original job and compares the observed snapshot before attaching an image URI. No execute, retry, accept, asset-write or graph-write operation is added to this path.
 
 The fixed clean start and observed remote HEAD were `3e0876eccccb439ce23e520805cf58c82b6b35cc`, tree `c1e32721a5d9d38f0f88ec8c354cb7495f1d7e00`. The checked code/test snapshot is `d5774f9953ebf75efe8c16067700649d75061ed3`, tree `7ce675d43a8ecc926f07af8258bb7e8f540ad80e`. Source is GitHub-derived cloud work; no Windows source or migration-package contents were used. The preceding [node-binding record](CLOUD_CANVAS_NODE_BINDING_20261023.md) remains a historical checkpoint.
