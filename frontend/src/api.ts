@@ -63,8 +63,11 @@ export type AgentContextPreview={context_contract_version?:string;agent_id?:stri
 import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from './localHostSession';
 import {isPackagedDesktopHost} from './packagedHost';
 let collaboration:CollaborationContext={sessionToken:''};
-export function setCollaborationContext(value:CollaborationContext){if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
+let collaborationEpoch=0;
+export function setCollaborationContext(value:CollaborationContext){collaborationEpoch+=1;if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
 export function getCollaborationContext(){return collaboration}
+/** In-memory retirement marker; contains no credential and also detects A/B/A client rebinding. */
+export function getCollaborationEpoch(){return collaborationEpoch}
 export function requestToken(context:CollaborationContext,url:string){
  if(context.sessionToken)return context.sessionToken;
  if(context.scope||context.actor||isPackagedDesktopHost()||/^\/api\/(?:v1\/)?(?:collaboration|packaged)\//.test(url))return '';
