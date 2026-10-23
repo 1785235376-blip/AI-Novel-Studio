@@ -45,7 +45,8 @@ export function pickDefaultNovel(novels: Novel[]): Novel | undefined {
 // (same version, missing version, 204/empty body, non-JSON) is NOT a save: the draft stays dirty.
 export const RENAME_UNCONFIRMED_TEXT = '保存没有确认，服务器未返回新版本，修改还在。';
 // [HERMIA-FE-20261023 M1-s3fix2] fetch rejection (network down) is a real failure, not "no new version".
-export const RENAME_NETWORK_TEXT = '保存失败：网络错误，修改还在。';
+// [HERMIA-FE-20261023 M1-flaky2] P4: status line aligned with the close-confirm dialog wording (sentence break, 「面板里」).
+export const RENAME_NETWORK_TEXT = '保存失败：网络错误。修改还在面板里。';
 export class RenameNetworkError extends Error { constructor() { super(RENAME_NETWORK_TEXT); this.name = 'RenameNetworkError'; } }
 export class RenameUnconfirmedError extends Error { constructor() { super(RENAME_UNCONFIRMED_TEXT); this.name = 'RenameUnconfirmedError'; } }
 export function isConfirmedRename(saved: unknown, i: {chapterId: string; title: string; version: number}): saved is Chapter {

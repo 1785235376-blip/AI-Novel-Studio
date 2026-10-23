@@ -150,7 +150,7 @@ describe('novel preview panels', () => {
     mount(); const insp = await selectCh1();
     fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
     await act(async () => { fireEvent.click(within(insp).getByRole('button', {name: '保存标题'})); });
-    expect(await within(insp).findByText('保存失败：网络错误，修改还在。')).toBeTruthy();
+    expect(await within(insp).findByText('保存失败：网络错误。修改还在面板里。')).toBeTruthy(); // [HERMIA-FE-20261023 M1-flaky2] P4 exact text
     expect(screen.queryByText(/服务器未返回新版本/)).toBeNull();
     expect(screen.queryByText(/已保存/)).toBeNull();
     expect(screen.getByTestId('uw-inspector-dirty')).toBeTruthy();
