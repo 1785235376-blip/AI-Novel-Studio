@@ -18,14 +18,14 @@ const row = (changes: Record<string, unknown> = {}) => ({
 });
 
 describe('original image-job candidate observation', () => {
-  it('projects only verified provenance and an in-memory preview URI, without reading or executing anything', () => {
+  it('keeps an unapproved network source opaque without creating a preview route, read or execution', () => {
     const fetcher = vi.fn(); vi.stubGlobal('fetch', fetcher);
     try {
       const candidate = checkedCanvasTaskCandidate(binding, row({execution_token: 'not-for-display', secret: 'unrelated-response-field', version: 99}));
       expect(candidate).toEqual({jobId: 'server-job', novelId: 'project-a', nodeId: 'image-node',
         providerId: 'local-provider', modelId: 'original-model', prompt: 'Original queued prompt\n第二行', requestSha256: 'a'.repeat(64),
         attempt: 1, updatedAt: '2026-10-23T13:00:00.123456+00:00', approvalStatus: 'PENDING',
-        sourceUri: row().asset_uri, previewUri: row().asset_uri});
+        sourceUri: row().asset_uri, previewKind: undefined, previewUri: undefined});
       expect(Object.isFrozen(candidate)).toBe(true);
       expect(candidate).not.toHaveProperty('execution_token');
       expect(candidate).not.toHaveProperty('secret');
@@ -75,19 +75,23 @@ describe('original image-job candidate observation', () => {
     } finally { setCollaborationContext(previous); }
   });
 
-  it('reports approved state only with the server-returned asset ID', () => {
+  it('routes approved results only through their original asset ID, even for an inline source', () => {
     expect(checkedCanvasTaskCandidate(binding, row({approval_status: 'APPROVED'}))).toBeUndefined();
-    const candidate = checkedCanvasTaskCandidate(binding, row({approval_status: 'APPROVED', asset_id: 'approved-asset'}));
-    expect(candidate?.approvalStatus).toBe('APPROVED');
-    expect(candidate?.assetId).toBe('approved-asset');
+    for (const source of [row().asset_uri, 'data:image/png;base64,YWJj', undefined]) {
+      const candidate = checkedCanvasTaskCandidate(binding, row({approval_status: 'APPROVED', asset_id: 'approved-asset', asset_uri: source}));
+      expect(candidate?.approvalStatus).toBe('APPROVED');
+      expect(candidate?.assetId).toBe('approved-asset');
+      expect(candidate?.previewKind).toBe('asset');
+      expect(candidate?.previewUri).toBeUndefined();
+      expect(candidate?.sourceUri).toBe(source);
+    }
   });
 
-  it.each([
-    'https://results.invalid/ready.png?signature=fixture', 'http://127.0.0.1:8188/view?filename=ready.png',
-    '/api/assets/read-only-asset/download?novel_id=project-a', 'blob:https://studio.invalid/browser-owned-image',
-    'data:image/png;base64,iVBORw0KGgo=',
-  ])('allows existing supported URI syntax only as a possible explicit preview: %s', uri => {
+  it.each(['png', 'jpeg', 'jpg', 'webp', 'gif'])('allows pending %s only as embedded raster/base64 syntax, not media verification', kind => {
+    // Synthetic base64 text deliberately establishes only syntax, not image contents.
+    const uri = `data:image/${kind};base64,YWJj`;
     const candidate = checkedCanvasTaskCandidate(binding, row({asset_uri: uri}));
+    expect(candidate?.previewKind).toBe('inline');
     expect(candidate?.previewUri).toBe(uri);
   });
 
@@ -96,9 +100,23 @@ describe('original image-job candidate observation', () => {
     '//other.invalid/image.png', '/\\other.invalid/image.png', '/path\nwith-control.png',
     'https://user:password@results.invalid/image.png', 'https://results.invalid/with\\backslash.png',
     'blob:https://user:password@results.invalid/image', 'data:image/png;base64,invalid%%', 'blob:not-a-valid-origin',
-  ])('retains verified completion provenance without inventing an unsafe/missing preview: %s', uri => {
+    'https://results.invalid/ready.png?signature=fixture', 'http://127.0.0.1:8188/view?filename=ready.png',
+    '/api/assets/read-only-asset/download?novel_id=project-a', 'blob:https://studio.invalid/browser-owned-image',
+    'data:image/png;base64,abc', 'data:image/png;base64,A===', 'data:image/png;base64,YW\nJj', 'data:image/png;base64,YWJ\n',
+    ' data:image/png;base64,YWJj', 'data:image/png;base64,YWJj ', 'data:image/png;charset=utf-8;base64,YWJj',
+    'data:image/png;base64,',
+  ])('retains pending provenance without a direct network/blob/path or malformed inline preview: %s', uri => {
     const candidate = checkedCanvasTaskCandidate(binding, row({asset_uri: uri}));
     expect(candidate?.jobId).toBe('server-job');
+    expect(candidate?.previewKind).toBeUndefined();
+    expect(candidate?.previewUri).toBeUndefined();
+  });
+
+  it('keeps the original36MiB source-URI ceiling without decoding or writing media', () => {
+    const source = 'data:image/png;base64,' + 'A'.repeat(36 * 1024 * 1024);
+    const candidate = checkedCanvasTaskCandidate(binding, row({asset_uri: source}));
+    expect(candidate?.sourceUri).toBe(source);
+    expect(candidate?.previewKind).toBeUndefined();
     expect(candidate?.previewUri).toBeUndefined();
   });
 

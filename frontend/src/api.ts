@@ -1,3 +1,4 @@
+import {cancelResponseBody,checkBlobReadLimit,readBoundedResponseBlob} from './boundedResponseBlob';
 export type VisualReference={id:string;novel_id:string;asset_id?:string;entity_type:string;entity_id:string;notes:string;status:string;version:number;approval_status?:'DRAFT'|'APPROVED';approval?:{approved_by:string;approved_at:string;asset_sha256:string;asset_version:number;memory_version:number}|null};
 export type VisualReferenceSearch={items:{id:string;version:number;entity_type:string;entity_id:string;asset_id:string;score:number;matched_terms:string[];provenance:{asset_sha256:string;asset_version:number;memory_version:number};searchable:Record<string,unknown>}[];total:number;indexed_count:number;excluded:{id:string;reason:string}[];retrieval_mode:'LEXICAL_METADATA';inference_performed:false;embeddings_available:false};
 export type AssetReferences={asset_id:string;items:{collection:string;id:string;field:string;version:number;status:string}[];total:number;coverage:string[];other_project_references_scanned:false;deletion_policy:string};
@@ -110,7 +111,9 @@ export async function call<T>(url:string,init?:RequestInit,contextOverride?:Coll
  if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??raw?.error?.message??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
  return r.status===204?undefined as T:r.json();
 }
-async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit):Promise<Blob>{
+export type AssetDownloadOptions=RequestInit&{maxBytes?:number};
+async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit,maxBytes?:number):Promise<Blob>{
+ if(maxBytes!==undefined)checkBlobReadLimit({maxBytes});
  const context=contextOverride??collaboration;
  const scope=context.scope;
  const headers:Record<string,string>={'X-Request-ID':globalThis.crypto?.randomUUID?.()||`desktop-${Date.now()}-${Math.random().toString(16).slice(2)}`};
@@ -118,6 +121,10 @@ async function downloadCall(url:string,extraHeaders:Record<string,string>={},con
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  Object.assign(headers,extraHeaders);
  const r=await fetch(url,{...init,headers});
+ if(maxBytes!==undefined){
+  if(!r.ok){cancelResponseBody(r);throw new ApiError({status:r.status,code:r.status===403?'FORBIDDEN':'ASSET_PREVIEW_UNAVAILABLE',message:'资产预览读取失败。'})}
+  return readBoundedResponseBlob(r,{maxBytes});
+ }
  if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
  return r.blob();
 }
@@ -187,7 +194,7 @@ export const api={
  uploadAsset:(novelId:string,body:{filename:string;content_base64:string;media_type?:string;kind?:string})=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets`,{method:'POST',body:JSON.stringify({novel_id:novelId,...body})}),
  asset:(assetId:string)=>call<Asset>(`/api/assets/${encodeURIComponent(assetId)}`),
  assetDownloadUrl:(assetId:string,novelId:string)=>`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`,
- assetDownload:(assetId:string,novelId:string)=>downloadCall(`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`),
+ assetDownload:(assetId:string,novelId:string,context?:CollaborationContext,options?:AssetDownloadOptions)=>{const {maxBytes,...init}=options||{};return downloadCall(`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`,{},context,init,maxBytes)},
 
 assetTrash:(novelId:string)=>call<{items:Asset[];total:number}>(`/api/novels/${encodeURIComponent(novelId)}/asset-trash`),
 restoreAsset:(novelId:string,assetId:string)=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets/${encodeURIComponent(assetId)}/restore`,{method:'POST'}),
@@ -322,7 +329,7 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
  updateMotionPrivacy:(nid:string,sid:string,tid:string,privacyLevel:string,promptSha256:string,requestSha256?:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(sid)}/motion-tasks/${encodeURIComponent(tid)}/privacy`,{method:'PUT',body:JSON.stringify({privacy_level:privacyLevel,prompt_sha256:promptSha256,request_sha256:requestSha256})}),
  videoAssemblies:(nid:string,screenplayId:string)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(screenplayId)}/video-assemblies`),
  createVideoAssembly:(nid:string,screenplayId:string,clips:{asset_id:string;start_ms:number;end_ms:number|null}[])=>call<any>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(screenplayId)}/video-assemblies`,{method:'POST',body:JSON.stringify({clips})}),
- imageJobs:(nid:string)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`),
+ imageJobs:(nid:string,context?:CollaborationContext)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`,undefined,context),
  createImageJob:(nid:string,body:any)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`,{method:'POST',body:JSON.stringify(body)}),
  executeImageJob:(nid:string,id:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/execute`,{method:'POST'}),
  cancelImageJob:(nid:string,id:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/cancel`,{method:'POST'}),

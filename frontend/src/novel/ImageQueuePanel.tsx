@@ -1,7 +1,6 @@
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {api,apiErrorView,ApiError,getCollaborationContext,getCollaborationEpoch,subscribeCollaborationContext} from '../api';
 import {Badge,Button,Panel,StatusMessage} from '../ui/primitives';
-import {safeImagePreviewUri} from './ImageInfiniteCanvas';
 import {useScopedRequestConsent} from '../useScopedRequestConsent';
 import {useLocalHostSession} from '../localHostSession';
 
@@ -40,6 +39,6 @@ export function ImageQueuePanel({novelId,draft,local,requestedTaskId,creationDis
     {(['FAILED','CANCELLED'].includes(job.status)||job.recoverable)&&<Button variant="ghost" disabled={!!busy} onClick={()=>novelId&&void run(job.id,()=>api.retryImageJob(novelId,job.id))}>重新排队</Button>}
     {job.status==='SUCCEEDED'&&<><Button variant="ghost" aria-pressed={selected.includes(job.id)} onClick={()=>toggle(job.id)}>对比结果</Button><Button disabled={!!busy||job.approval_status==='APPROVED'} onClick={()=>novelId&&void run(job.id,()=>api.acceptImageJob(novelId,job.id))}>{job.approval_status==='APPROVED'?'已接受入库':'接受并入库'}</Button></>}
    </div></article>)}
-   {selected.length>0&&<section aria-label="图片结果对比">{selected.map(id=>{const job=jobs.find(row=>row.id===id),uri=safeImagePreviewUri(job?.asset_uri||'');return uri?<figure key={id}><img src={uri} alt={`对比结果 ${id}`} referrerPolicy="no-referrer" style={{maxWidth:'100%',maxHeight:240}}/><figcaption>{job.provider_id}/{job.model_id}</figcaption></figure>:<p key={id}>结果地址不可预览。</p>})}</section>}
+   {selected.length>0&&<section aria-label="图片结果对比"><StatusMessage>本对比区仅显示任务来源。原结果链接不会直接加载；请从已关联的原节点核对来源并显式预览可用图片。</StatusMessage>{selected.map(id=>{const job=jobs.find(row=>row.id===id);return job?<p key={id}>{job.id} · {job.provider_id}/{job.model_id} · {job.approval_status==='APPROVED'?'已接受入库':'尚未接受入库'}</p>:<p key={id}>原任务当前不可读。</p>})}</section>}
  </Panel>;
 }
