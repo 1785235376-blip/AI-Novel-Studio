@@ -5,7 +5,7 @@ execution decision may be based on them.
 """
 from typing import Literal
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from ..experimental.media import StrictModel
 from ..experimental.production_lineage import LineageInput
@@ -46,6 +46,69 @@ class WorkspacePreferences(StrictModel):
 
 class WorkspacePreferencesUpdate(WorkspacePreferences):
     expected_version: int = Field(ge=0, strict=True)
+
+
+StudioAssetKind = Literal["image", "video", "audio", "model", "text", "prompt"]
+
+
+class StudioAssetQuery(StrictModel):
+    """Read-only filters over existing Studio metadata, with opt-in paging."""
+    q: str | None = Field(default=None, max_length=255)
+    kind: StudioAssetKind | None = None
+    limit: int | None = Field(default=None, ge=1, le=100, strict=True)
+    offset: int | None = Field(default=None, ge=0, le=1_000_000, strict=True)
+    page_mode: Literal["cursor"] | None = None
+    cursor: str | None = Field(default=None, min_length=1, max_length=2048)
+
+    @field_validator("cursor", mode="before")
+    @classmethod
+    def raw_cursor(cls, value):
+        # StrictModel trims strings; enforce the token wire bound beforehand.
+        if value is not None and (not isinstance(value, str) or not value.isascii()
+                or not 1 <= len(value) <= 2048 or any(ord(c) <= 32 or ord(c) == 127 for c in value)):
+            raise ValueError("ASSET_QUERY_INVALID")
+        return value
+
+    @model_validator(mode="after")
+    def pagination_mode(self):
+        if ((self.page_mode == "cursor" and self.offset is not None)
+                or (self.cursor is not None and self.page_mode != "cursor")):
+            raise ValueError("ASSET_QUERY_INVALID")
+        return self
+
+    @classmethod
+    def from_query_params(cls, params):
+        """Decode only after the original route authority has admitted a read.
+
+        QueryParams.get keeps the existing last-scalar-wins contract. Pydantic
+        wire decoding retains integral decimal strings (e.g. 1.0); the internal
+        DTO remains strict. Check the raw keyword bound before whitespace trim.
+        """
+        try:
+            q = params.get("q")
+            if q is not None and len(q) > 255:
+                raise ValueError("ASSET_QUERY_INVALID")
+            query = cls(q=q, kind=params.get("kind"), page_mode=params.get("page_mode"), cursor=params.get("cursor"),
+                        limit=TypeAdapter(int).validate_python(params["limit"]) if "limit" in params else None,
+                        offset=TypeAdapter(int).validate_python(params["offset"]) if "offset" in params else None)
+            deleted = TypeAdapter(bool).validate_python(params.get("include_deleted", "false"))
+            return query, deleted
+        except ValueError:
+            raise ValueError("ASSET_QUERY_INVALID") from None
+
+    @classmethod
+    def openapi_parameters(cls):
+        properties = cls.model_json_schema()["properties"]
+        properties["include_deleted"] = {"type": "boolean", "default": False}
+        return [{"name": name, "in": "query", "required": False, "schema": schema}
+                for name, schema in properties.items()]
+
+    @field_validator("q", mode="before")
+    @classmethod
+    def safe_keyword(cls, value):
+        if isinstance(value, str) and any(ord(char) < 32 or ord(char) == 127 for char in value):
+            raise ValueError("ASSET_QUERY_INVALID")
+        return value
 
 
 class ManualAssetImport(StrictModel):

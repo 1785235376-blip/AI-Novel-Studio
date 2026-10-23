@@ -19,6 +19,7 @@ from pathlib import Path
 
 from ..repository import atomic_write, now
 from ..repositories.file.mutation_coordinator import workspace_mutation
+from .asset_query_budget import current_query_budget
 
 
 class AssetIntegrityError(ValueError):
@@ -164,7 +165,18 @@ class AssetLibraryService:
 
     def _load(self, asset_id: str) -> dict:
         try:
-            meta = json.loads(self._meta_path(asset_id).read_text(encoding="utf-8"))
+            path = self._meta_path(asset_id)
+            budget = current_query_budget()
+            if budget is not None:
+                budget.charge(path)
+                with path.open(encoding="utf-8") as stream:
+                    raw = stream.read(1024 * 1024 + 1)
+                if len(raw.encode("utf-8")) > 1024 * 1024:
+                    from .asset_query_index import AssetQueryBudgetExceeded
+                    raise AssetQueryBudgetExceeded()
+            else:
+                raw = path.read_text(encoding="utf-8")
+            meta = json.loads(raw)
         except FileNotFoundError:
             raise FileNotFoundError(asset_id) from None
         except (UnicodeError, json.JSONDecodeError) as exc:
@@ -1021,6 +1033,9 @@ class AssetLibraryService:
         return meta
 
     def _verified_content(self, meta: dict, *, max_bytes=None, guard=lambda: None) -> bytes:
+        budget = current_query_budget()
+        if budget is not None:
+            budget.charge(self._bin_path(meta["id"]), content=True)
         if max_bytes is not None:
             return self._verified_bounded_content(meta, max_bytes, guard)
         path = self._bin_path(meta["id"])

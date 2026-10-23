@@ -20,7 +20,7 @@ from ..experimental.production_lineage import LicenseDeclaration
 from ..media_files import inspect_image, inspect_media
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .project_store import BINDING
-from .workspace_models import ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
+from .workspace_models import ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask, StudioAssetQuery, StudioLineageInput, WorkspacePreferences, WorkspacePreferencesUpdate
 
 PREFERENCES = "creative_project_preferences_v2"
 FLAG = "narrative_production_v2"
@@ -38,6 +38,8 @@ class IndependentWorkspaceService:
         self.relationships = AssetRelationshipAdapter(self)
         from .storage_admission import StudioStorageAdmission
         self.storage_admission = StudioStorageAdmission(self)
+        from ..services.asset_query_index import FileAssetQueryIndex
+        self.query_index = FileAssetQueryIndex(self.assets.root)
 
     @staticmethod
     def _preferences(document):
@@ -143,8 +145,11 @@ class IndependentWorkspaceService:
 
     def _row(self, nid, scope, aid, *, deleted=False, actor_id=None):
         row = self.assets.get(aid, branch_id=scope.get("branch_id"), include_deleted=deleted, actor_id=actor_id)
+        return self._validate_asset_row(nid, scope, row)
+
+    def _validate_asset_row(self, nid, scope, row):
         if row["novel_id"] != nid or row.get("branch_id") != scope.get("branch_id"):
-            raise FileNotFoundError(aid)
+            raise FileNotFoundError(row["id"])
         # Legacy metadata is permissive; the new CAS surface must never adopt
         # a corrupted/coerced counter as an authoritative asset revision.
         if type(row.get("version")) is not int or row["version"] < 1:
@@ -302,10 +307,9 @@ class IndependentWorkspaceService:
             return None
         return {"license": license_value, "operation": evidence["operation"]}
 
-    def list_assets(self, nid, scope, *, include_deleted=False):
-        with self._asset_scope(nid, scope):
-            rows = self.assets.list(nid, branch_id=scope.get("branch_id"), include_deleted=include_deleted)
-            return {"items": [self._view(nid, scope, self._row(nid, scope, row["id"], deleted=include_deleted)) for row in rows]}
+    def list_assets(self, nid, scope, *, include_deleted=False, query: StudioAssetQuery | None = None, actor_id=None):
+        from .asset_query_service import list_assets
+        return list_assets(self, nid, scope, include_deleted=include_deleted, query=query or StudioAssetQuery(), actor_id=actor_id)
 
     def asset_index(self, nid, scope, *, include_deleted=False):
         """Bounded metadata-only asset index under the original asset lease.

@@ -12,7 +12,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute, api_ca
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
 from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
-                               StudioLineageInput, WorkspacePreferencesUpdate)
+                               StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
 
 
 def is_independent_studio_route(method, normalized_path):
@@ -56,6 +56,20 @@ def is_independent_studio_route(method, normalized_path):
         "PUT": root + r"/graphs/[^/]+",
     }
     return method in graph_patterns and re.fullmatch(graph_patterns[method], normalized_path) is not None
+
+
+class AssetQueryRoute(PrivateProductionRoute):
+    """Keep invalid search input out of validation responses on this GET only."""
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            try:
+                return await handler(request)
+            except RequestValidationError:
+                raise HTTPException(422, {"code": "EXPERIMENTAL_INVALID", "message": "ASSET_QUERY_INVALID"},
+                                    headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}) from None
+        return checked
 
 
 class ManualMaskRoute(PrivateProductionRoute):
@@ -339,11 +353,34 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.preferences(nid, scope, actor, body, guard))
 
-    @router.get("/projects/{nid}/studio/assets")
-    def assets(nid: str, include_deleted: bool = False,
+    asset_query_router = APIRouter(route_class=AssetQueryRoute)
+
+    @asset_query_router.get("/projects/{nid}/studio/assets",
+                            openapi_extra={"parameters": StudioAssetQuery.openapi_parameters()})
+    def assets(nid: str, request: Request,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def read(actor, scope, guard):
+            query, include_deleted = StudioAssetQuery.from_query_params(request.query_params)
+            from ..services.asset_query_index import AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable
+            from .asset_query_cursor import AssetQueryCursorRestart, AssetQueryCursorUnavailable
+            try:
+                return service.list_assets(nid, scope, include_deleted=include_deleted, query=query, actor_id=actor)
+            except (AssetQueryCursorRestart, AssetQueryCursorUnavailable) as exc:
+                guard()
+                status = 409 if isinstance(exc, AssetQueryCursorRestart) else 503
+                raise HTTPException(status, {"code": str(exc)}, headers={"Cache-Control": "no-store"}) from None
+            except (AssetQueryBudgetExceeded, AssetQueryChanged, AssetQueryUnavailable) as exc:
+                guard()
+                status = 409 if isinstance(exc, AssetQueryChanged) else 503
+                raise HTTPException(status, {"code": str(exc)}, headers={"Cache-Control": "no-store"}) from None
+            except OSError:
+                guard()
+                raise HTTPException(503, {"code": "ASSET_QUERY_INDEX_UNAVAILABLE"},
+                                    headers={"Cache-Control": "no-store"}) from None
         return invoke(nid, x_session_token, x_branch_id, "domain.read",
-                      lambda actor, scope, guard: service.list_assets(nid, scope, include_deleted=include_deleted))
+                      read)
+
+    router.include_router(asset_query_router)
 
     @router.post("/projects/{nid}/studio/assets", status_code=201)
     def upload(nid: str, body: ManualAssetImport,
