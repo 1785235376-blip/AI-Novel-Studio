@@ -1,5 +1,7 @@
 # Original image-node task reopening
 
+This records the binding checkpoint at `3e0876eccccb439ce23e520805cf58c82b6b35cc`. A subsequent slice adds explicit read-only candidate inspection; see [the candidate-preview delivery record](CLOUD_CANVAS_CANDIDATE_PREVIEW_20261023.md). The candidate-preview exclusion below describes this earlier slice.
+
 A saved image queue task can now be reopened from its original node in either the image canvas or the professional dual canvas. Only a successful explicit queue POST can establish the UI association. The returned project, service, model and prompt must match the captured request, and collaboration responses must also match the current branch. After that check, the browser stores the returned job ID with the node ID and non-secret owner fields. It does not store task status, prompt, token or credentials in this association.
 
 The fixed starting point was GitHub branch `cloud/canvas-task-20261023` at `4311d7c36b0da0e71e717304d210985aaad9b434`, tree `7c5e167a849e24291f0c376b280265346b5393b6`, with a clean worktree and matching remote HEAD. Implementation is in `20e2eb9d` and `5b1b8b0b`; the final checked source snapshot is `d4124cb8c8af128c7f75ad944df311c1cba1e370`, tree `4a9402e185dfff902151eddc191b68348d2ede7c`. The earlier [queue review](CLOUD_CANVAS_QUEUE_REVIEW_20261023.md) remains the record of its preceding checkpoint.
