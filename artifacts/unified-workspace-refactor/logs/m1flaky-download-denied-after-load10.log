@@ -1,24 +1,30 @@
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 606ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 605ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 674ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 667ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 404ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 403ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 480ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 480ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 574ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 573ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 525ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 524ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 499ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 498ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 568ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 567ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 489ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 486ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 509ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 508ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 530ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 529ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 478ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 477ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 687ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 686ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 583ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 582ms
       Tests  1 passed | 7 skipped (8)
- ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 609ms
-   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 608ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 543ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 542ms
+      Tests  1 passed | 7 skipped (8)
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 561ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 560ms
+      Tests  1 passed | 7 skipped (8)
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests | 7 skipped) 594ms
+   ✓ independent studio original owner integration > clears private selected data when the authoritative download is denied 593ms
       Tests  1 passed | 7 skipped (8)
