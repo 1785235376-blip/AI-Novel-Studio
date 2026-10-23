@@ -2,6 +2,8 @@
 
 This ledger follows the GitHub-derived cloud branch through the explicit-execution slice starting at `8738ecb2ecd667dd9d401c4c16c2136f812e2a17`. It describes the Rebuild image-node / original legacy image-job path. The separate `studio-image-execution/1` contract is not silently mixed into it. Existing interfaces are distinguished from verification of an actual provider run.
 
+The [explicit execution handoff](CLOUD_EXPLICIT_IMAGE_EXECUTION_20261023.md) records the current confirmation, conditional claim and unknown-outcome recovery behavior.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |
