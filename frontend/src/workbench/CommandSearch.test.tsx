@@ -105,7 +105,7 @@ describe('X-UX-11 CommandSearch groups', () => {
     expect(commandGroupOf('workspace.open.novel')).toBe('写作');
     for (const m of ['image', 'video', 'audio', 'edit', 'assets']) expect(commandGroupOf(`workspace.open.${m}`)).toBe('媒体');
     expect(commandGroupOf('workspace.open.control')).toBe('壳·设置');
-    expect(commandGroupOf('layout.reset')).toBe('壳·设置');
+    expect(commandGroupOf('layout.reset')).toBe('布局'); // [HERMIA-FE-20261023 M1-s3]
     expect(commandGroupOf('something.unknown')).toBe('壳·设置');
   });
   it('renders group headers in order and every listed action stays reachable as an option', () => {

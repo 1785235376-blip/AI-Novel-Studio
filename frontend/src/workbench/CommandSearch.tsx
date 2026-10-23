@@ -21,13 +21,15 @@ function matchesQuery(label: string, id: string, q: string): boolean {
 
 // [HERMIA-FE-20261022 X-UX-11] Display-only grouping (写作 / 媒体 / 壳·设置). Every listed action
 // lands in exactly one group (unknown ids fall back to 壳·设置), so no command becomes unreachable.
-export type CommandGroup = '写作' | '媒体' | '壳·设置';
-export const COMMAND_GROUP_ORDER: CommandGroup[] = ['写作', '媒体', '壳·设置'];
+// [HERMIA-FE-20261023 M1-s3] layout.* now has its own 「布局」 group (was 壳·设置).
+export type CommandGroup = '写作' | '媒体' | '布局' | '壳·设置';
+export const COMMAND_GROUP_ORDER: CommandGroup[] = ['写作', '媒体', '布局', '壳·设置'];
 const MEDIA_WORKSPACES = new Set(['image', 'video', 'audio', 'edit', 'assets']);
 export function commandGroupOf(id: string): CommandGroup {
   if (id.startsWith('novel.') || id.startsWith('panel.open.') || id === 'workspace.open.novel') return '写作';
   const ws = /^workspace\.open\.(.+)$/.exec(id);
   if (ws && MEDIA_WORKSPACES.has(ws[1])) return '媒体';
+  if (id.startsWith('layout.')) return '布局';
   return '壳·设置';
 }
 
@@ -117,8 +119,8 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
               onMouseEnter={() => setActive(index)}
               onClick={() => void run(a.id)}
             >
+              {/* [HERMIA-FE-20261023 M1-s3] internal id no longer shown as visible text; it still matches in search (matchesQuery). */}
               <span>{a.label}</span>
-              <small className="wb-command__id">{a.id}</small>
             </button>
           </li>
 ); })}
