@@ -133,6 +133,40 @@ describe('novel preview panels', () => {
       expect((within(insp).getByLabelText('章节标题') as HTMLInputElement).value).toBe('新标题');
     });
   }
+  // [HERMIA-FE-20261023 M1-s3fix2] Vera MUST-FIX: title guard must be test-protected.
+  it('rename with higher version but different title → unconfirmed, never 已保存, stays dirty', async () => {
+    renameImpl = b => json(ch(1, '别的标题', b.version + 1));
+    mount(); const insp = await selectCh1();
+    fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
+    await act(async () => { fireEvent.click(within(insp).getByRole('button', {name: '保存标题'})); });
+    expect(await within(insp).findByText(/保存没有确认，服务器未返回新版本，修改还在/)).toBeTruthy();
+    expect(screen.queryByText(/已保存/)).toBeNull();
+    expect(screen.getByTestId('uw-inspector-dirty')).toBeTruthy();
+    expect((within(insp).getByLabelText('章节标题') as HTMLInputElement).value).toBe('新标题');
+  });
+  // [HERMIA-FE-20261023 M1-s3fix2] P3: network failure has its own Chinese text.
+  it('rename network failure (fetch reject) → 保存失败：网络错误, stays dirty', async () => {
+    renameImpl = () => { throw new TypeError('Failed to fetch'); };
+    mount(); const insp = await selectCh1();
+    fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
+    await act(async () => { fireEvent.click(within(insp).getByRole('button', {name: '保存标题'})); });
+    expect(await within(insp).findByText('保存失败：网络错误，修改还在。')).toBeTruthy();
+    expect(screen.queryByText(/服务器未返回新版本/)).toBeNull();
+    expect(screen.queryByText(/已保存/)).toBeNull();
+    expect(screen.getByTestId('uw-inspector-dirty')).toBeTruthy();
+  });
+  // [HERMIA-FE-20261023 M1-s3fix2] P3: close-confirm error text has no 「。。」.
+  it('close confirm save error has no double period', async () => {
+    renameImpl = b => json(ch(1, b.title, b.version));
+    mount(); const insp = await selectCh1();
+    fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
+    fireEvent.click(screen.getByLabelText('关闭「章节属性」'));
+    await act(async () => { fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', {name: '保存并关闭'})); });
+    const alert = await within(screen.getByRole('dialog')).findByRole('alert');
+    expect(alert.textContent).toContain('保存失败：');
+    expect(alert.textContent).not.toContain('。。');
+    expect(screen.getByTestId('panel-inspector')).toBeTruthy();
+  });
   it('refresh action is GET-only and reports real result', async () => {
     mount(); await waitFor(() => within(outline()).getByText(/第 1 章/));
     const before = calls.length;

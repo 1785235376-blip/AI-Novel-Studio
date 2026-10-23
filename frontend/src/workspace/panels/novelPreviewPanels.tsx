@@ -44,6 +44,9 @@ export function pickDefaultNovel(novels: Novel[]): Novel | undefined {
 // numeric version strictly greater than the one we sent (and the requested title). Anything else
 // (same version, missing version, 204/empty body, non-JSON) is NOT a save: the draft stays dirty.
 export const RENAME_UNCONFIRMED_TEXT = '保存没有确认，服务器未返回新版本，修改还在。';
+// [HERMIA-FE-20261023 M1-s3fix2] fetch rejection (network down) is a real failure, not "no new version".
+export const RENAME_NETWORK_TEXT = '保存失败：网络错误，修改还在。';
+export class RenameNetworkError extends Error { constructor() { super(RENAME_NETWORK_TEXT); this.name = 'RenameNetworkError'; } }
 export class RenameUnconfirmedError extends Error { constructor() { super(RENAME_UNCONFIRMED_TEXT); this.name = 'RenameUnconfirmedError'; } }
 export function isConfirmedRename(saved: unknown, i: {chapterId: string; title: string; version: number}): saved is Chapter {
   if (!saved || typeof saved !== 'object') return false;
@@ -68,7 +71,11 @@ export function registerNovelPreviewActions(reg: ActionRegistry, qc: QueryClient
         const i = ctx.input as RenameInput;
         let saved: unknown;
         try { saved = await api.renameChapter(i.chapterId, i.title.trim(), i.version); }
-        catch (e) { if (e instanceof ApiError) throw e; throw new RenameUnconfirmedError(); } // non-JSON body
+        catch (e) {
+          if (e instanceof ApiError) throw e;
+          if (e instanceof SyntaxError) throw new RenameUnconfirmedError(); // non-JSON body
+          throw new RenameNetworkError(); // fetch rejected / network error [HERMIA-FE-20261023 M1-s3fix2]
+        }
         if (!isConfirmedRename(saved, {...i, title: i.title.trim()})) throw new RenameUnconfirmedError();
         // Real success source: the server's returned chapter (new version). Refresh the list from the server.
         await qc.invalidateQueries({queryKey: chaptersKey(i.novelId)});
@@ -145,7 +152,8 @@ export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions,
       if (r.status !== 'done') {
         const text = r.status === 'blocked' ? r.reason : r.status === 'error'
           ? (r.error instanceof ApiError && r.error.status === 409 ? '章节已被其他地方修改，请刷新后再改。'
-            : r.error instanceof RenameUnconfirmedError ? RENAME_UNCONFIRMED_TEXT : '保存失败，请重试。')
+            : r.error instanceof RenameUnconfirmedError ? RENAME_UNCONFIRMED_TEXT
+            : r.error instanceof RenameNetworkError ? RENAME_NETWORK_TEXT : '保存失败，请重试。')
           : r.status === 'duplicate' ? '正在保存，请稍候。' : '项目已切换，本次保存未生效。';
         setMsg({kind: 'err', text}); throw new Error(text);
       }

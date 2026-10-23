@@ -418,7 +418,7 @@ export function DockLayout(props: DockLayoutProps) {
       {guard.pending && pendingSpec && (
         <ModalDialog label={`关闭「${pendingSpec.title}」`} onCancel={guard.cancel}>
           <p>「{pendingSpec.title}」有未保存的修改。</p>
-          {guard.pending.error && <p role="alert">保存失败：{guard.pending.error}。修改仍在面板里，没有保存。</p>}
+          {guard.pending.error && <p role="alert">保存失败：{String(guard.pending.error).replace(/[。.\s]+$/u, '')}。修改仍在面板里，没有保存。</p>}
           <div className="uw-dialog__actions">
             <button type="button" className="uw-btn" autoFocus onClick={guard.cancel}>取消</button>
             <button type="button" className="uw-btn" onClick={guard.discard}>放弃修改</button>
