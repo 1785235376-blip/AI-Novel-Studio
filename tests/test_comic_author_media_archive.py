@@ -1,5 +1,6 @@
 """Media author archive service tests on the original Comic/Asset owners."""
-import base64, copy, hashlib, io, json, uuid, zipfile
+import base64, copy, hashlib, io, json, os, subprocess, sys, uuid, zipfile
+from pathlib import Path
 import pytest
 from app.experimental import comic_author_media_archive as a
 from app.experimental.media import digest
@@ -72,13 +73,14 @@ def test_f1_approval_and_export_reject_unreviewed_imported_assets(mounted):
     body={"archive_base64":base64.b64encode(raw).decode(),"archive_sha256":hashlib.sha256(raw).hexdigest(),
           "inspection_digest":report["inspection_digest"],"request_key":uuid.uuid4().hex,"acknowledge_restore_drafts":True}
     result=a.restore_archive(s,e.nid,e.scope,"local-author",raw,a.RestoreIn.model_validate(body),lambda:None)
-    rid=result["pages"][0]["id"]
+    rid=result["pages"][0]["id"]; before=_file_snapshot(e.root)
     with pytest.raises(ValueError) as exc: s.preflight(e.nid,e.scope,"local-author",rid,1)
     assert str(exc.value)=="COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED"
     with pytest.raises(ValueError) as exc: s.export(e.nid,e.scope,"local-author",rid,1)
     assert str(exc.value)=="COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED"
     with pytest.raises(ValueError) as exc: s.approve(e.nid,e.scope,"local-author",rid,1,'0'*64,True)
     assert str(exc.value)=="COMIC_AUTHOR_MEDIA_ASSET_REVIEW_REQUIRED"
+    assert _file_snapshot(e.root)==before
     assert all(x.get("approved_at") is None for x in e.assets.list(e.nid) if x["id"] not in {asset["id"]})
 
 def test_legacy_empty_receipt_is_tolerated_and_does_not_poison_inspect(mounted):
@@ -126,7 +128,7 @@ def _forged_restore_body(e,s,raw):
     return a.RestoreIn(archive_base64=base64.b64encode(raw).decode(),archive_sha256=sha,
         inspection_digest=token,request_key=uuid.uuid4().hex,acknowledge_restore_drafts=True)
 
-def test_three_old_ready_tokens_direct_restore_reject_with_zero_file_changes(mounted):
+def test_forged_tokens_for_invalid_archives_direct_restore_reject_with_zero_file_changes(mounted):
     e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book); files=_unpack(raw)
     over=dict(files); over["assets/000.png"]=b"\x89PNG\r\n\x1a\n"+b"x"*(a.MAX_ASSET_BYTES+1)
     m=json.loads(over["manifest.json"]); m["assets"]["asset_000"]["bytes"]=len(over["assets/000.png"]); m["assets"]["asset_000"]["sha256"]=hashlib.sha256(over["assets/000.png"]).hexdigest(); over["manifest.json"]=json.dumps(m,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
@@ -151,6 +153,16 @@ def test_exact_8mb_valid_png_roundtrip(mounted):
     exported=_raw(e,s,restored["book"])
     with zipfile.ZipFile(io.BytesIO(exported)) as z: assert z.read("assets/000.png")==big
     assert a.inspect_archive(s,e.nid,e.scope,"local-author",exported,lambda:None)["page_count"]==1
+
+def test_assetless_and_malformed_overlimit_are_not_legacy_ready_fixtures(mounted):
+    # Frozen 137 required >=3 ZIP entries and valid Pillow verify/load; these
+    # malformed fixtures could not have received a legacy READY token.
+    e=mounted; s,page,book,asset=source(e); raw=_raw(e,s,book); files=_unpack(raw)
+    assetless=dict(files); assetless.pop("assets/000.png")
+    m=json.loads(assetless["manifest.json"]); m["assets"]={}; assetless["manifest.json"]=json.dumps(m,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+    before=_file_snapshot(e.root)
+    with pytest.raises(ValueError): a.inspect_archive(s,e.nid,e.scope,"local-author",_pack(assetless),lambda:None)
+    assert _file_snapshot(e.root)==before
 
 def test_media_export_inspect_restore_reopen_and_explicit_import(mounted):
     e=mounted; s,page,book,asset=source(e)
