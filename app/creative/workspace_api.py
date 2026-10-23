@@ -12,7 +12,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute, api_ca
 from .workspace import FLAG
 from .storage_admission import StudioStorageCapacityError
 from .workspace_models import (AssetRelationshipIn, AssetVersion, BlankProjectIn, ManualModelReferenceImport, ManualAssetImport, ManualBinaryMask,
-                               StudioAssetKind, StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
+                               StudioAssetQuery, StudioLineageInput, WorkspacePreferencesUpdate)
 
 
 def is_independent_studio_route(method, normalized_path):
@@ -355,16 +355,12 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
 
     asset_query_router = APIRouter(route_class=AssetQueryRoute)
 
-    @asset_query_router.get("/projects/{nid}/studio/assets")
-    def assets(nid: str, include_deleted: bool = False,
-               q: str | None = Query(None, max_length=255), kind: StudioAssetKind | None = None,
-               limit: int | None = Query(None, ge=1, le=100), offset: int | None = Query(None, ge=0, le=1_000_000),
+    @asset_query_router.get("/projects/{nid}/studio/assets",
+                            openapi_extra={"parameters": StudioAssetQuery.openapi_parameters()})
+    def assets(nid: str, request: Request,
                x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def read(actor, scope, guard):
-            try:
-                query = StudioAssetQuery(q=q, kind=kind, limit=limit, offset=offset)
-            except ValueError:
-                raise ValueError("ASSET_QUERY_INVALID") from None
+            query, include_deleted = StudioAssetQuery.from_query_params(request.query_params)
             return service.list_assets(nid, scope, include_deleted=include_deleted, query=query)
         return invoke(nid, x_session_token, x_branch_id, "domain.read",
                       read)
