@@ -1,0 +1,146 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 427ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 553ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 963ms
+ ✓ src/ui/AppShell.test.tsx (35 tests) 756ms
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (66 tests) 1588ms
+ ✓ src/ui/MediaWorkspaceShells.test.tsx (25 tests) 573ms
+ ✓ src/ui/EditNleShell.test.tsx (14 tests) 405ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 1293ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 303ms
+ ✓ src/ui/handoffSmoke.xUx10.test.tsx (10 tests) 779ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 3168ms
+   ✓ DockLayout interactions > M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates 1539ms
+   ✓ DockLayout interactions > M1-08 reset default asks first, then restores layout but keeps draft text 445ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (19 tests) 643ms
+ ✓ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (14 tests) 1233ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 640ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true) 316ms
+ ✓ src/workspace/layout/slice2fix.test.tsx (13 tests) 1296ms
+   ✓ MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions > Ctrl+K opens the shared registry palette with the 4 layout actions; running split works 360ms
+   ✓ nice-to-have: double-trigger guard + visible busy; shortcut text localized > two real key presses ~50ms apart execute once; aria-busy visible meanwhile 454ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 376ms
+ ✓ src/workspace/panels/novelPreviewPanels.test.tsx (13 tests) 960ms
+ ✓ src/workbench/CommandSearch.test.tsx (12 tests) 586ms
+ ✓ src/rebuild/hub/HubRebuild.test.tsx (7 tests) 399ms
+ ✓ src/rebuild/comic/ComicView.test.tsx (13 tests) 786ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 246ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 12ms
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx (0 test)
+ ✓ src/rebuild/assets/AssetsRebuild.test.tsx (6 tests) 411ms
+stderr | src/rebuild/edit/EditRebuild.test.tsx > EditRebuild > top/bottom split, only primary is 导出成片…, empty timeline has 3 tracks + honest copy
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/rebuild/edit/EditRebuild.test.tsx > EditRebuild > handoff appears in pool; 放到时间线 places a local clip and selects it; cut splits at playhead
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/rebuild/edit/EditRebuild.test.tsx > EditRebuild > export subview: MP4 disabled with reason; no internal ids on screen
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+stderr | src/rebuild/edit/EditRebuild.test.tsx > EditRebuild > [U4] mode gating: normal = V1/A1/字幕, no params/shortcuts; pro = 6 tracks + params + shortcut hints
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+ ✓ src/rebuild/edit/EditRebuild.test.tsx (5 tests) 244ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 119ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 154ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (10 tests) 221ms
+ ✓ src/ui/FeatureLauncher.test.tsx (7 tests) 944ms
+ ✓ src/rebuild/audio/AudioRebuild.test.tsx (5 tests) 293ms
+ ✓ src/rebuild/hub/MediaSimple.test.tsx (3 tests) 247ms
+ ✓ src/ui/ModelCenterLegacyOwner.test.tsx (4 tests) 300ms
+ ✓ src/ui/ModelCenterOnboarding.test.tsx (3 tests) 261ms
+ ✓ src/ui/ModuleStartGate.test.tsx (6 tests) 68ms
+ ✓ src/rebuild/image/ImageDualGate.test.tsx (5 tests) 258ms
+ ✓ src/workbench/CommandSearch.m1s3.test.tsx (4 tests) 398ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 101ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 54ms
+ ✓ src/rebuild/CredentialsPanel.test.tsx (3 tests) 326ms
+ ✓ src/rebuild/LocalInteropPanel.test.tsx (4 tests) 164ms
+ ✓ src/rebuild/ResearchDrawer.test.tsx (4 tests) 304ms
+stderr | src/rebuild/ExportMenu.test.tsx > ExportBody > novel export calls GET /novels/{nid}/export with format and reports download
+Error: Not implemented: navigation (except hash changes)
+    at module.exports (/workspace/hr/wt/frontend/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at navigateFetch (/workspace/hr/wt/frontend/node_modules/jsdom/lib/jsdom/living/window/navigation.js:77:3)
+    at exports.navigate (/workspace/hr/wt/frontend/node_modules/jsdom/lib/jsdom/living/window/navigation.js:55:3)
+    at Timeout._onTimeout (/workspace/hr/wt/frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLHyperlinkElementUtils-impl.js:81:7)
+    at listOnTimeout (node:internal/timers:581:17)
+    at processTimers (node:internal/timers:519:7) undefined
+
+ ✓ src/rebuild/ExportMenu.test.tsx (4 tests) 202ms
+ ✓ src/rebuild/video/VideoDualGate.test.tsx (3 tests) 226ms
+ ✓ src/rebuild/TasksMenu.test.tsx (2 tests) 129ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 135ms
+ ✓ src/ui/WorkspaceHonestEmpty.test.tsx (2 tests) 38ms
+ ✓ src/ui/ThemeToggle.test.tsx (2 tests) 30ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 5ms
+ ✓ src/rebuild/canvas/RebuildCanvas.test.tsx (2 tests) 113ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 9ms
+ ✓ src/ui/videoDirectorPin.test.ts (3 tests) 4ms
+ ✓ src/ui/editHandoff.test.ts (2 tests) 5ms
+ ✓ src/rebuild/primitives.test.tsx (4 tests) 110ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 19ms
+ ✓ src/rebuild/video/VideoRebuild.test.tsx (2 tests) 187ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 20ms
+ ✓ src/workbench/workbench.test.ts (18 tests) 17ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 16ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 59ms
+ ✓ src/ui/darkTheme.tokens.test.ts (5 tests) 5ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 48ms
+ ✓ src/workbench/revisionRestore.test.ts (5 tests) 4ms
+ ✓ src/ui/moduleSwitchIsolation.test.ts (4 tests) 5ms
+ ✓ src/workbench/capabilityBadge.test.ts (4 tests) 5ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 6ms
+ ✓ src/workbench/novelCta.test.ts (3 tests) 3ms
+ ✓ src/ui/runtimeCodeLabels.test.ts (4 tests) 4ms
+ ✓ src/ui/scopeLabels.test.ts (4 tests) 4ms
+ ✓ src/rebuild/novel/novelMode.test.ts (2 tests) 4ms
+ ✓ src/workbench/novelSecondaryEntries.test.ts (2 tests) 4ms
+ ✓ src/ui/ModuleStartGate.wiring.test.ts (1 test) 3ms
+ ✓ src/rebuild/image/comicLayout.test.ts (1 test) 2ms
+ ✓ src/workspace/actions/layoutActions.test.ts (10 tests) 1820ms
+   ✓ availability / disabled reason / execution > reopen + collapse + split + reset outcomes 1209ms
+   ✓ reopen after close > reopens the requested closed panel, blocks a non-closed one 301ms
+   ✓ running state + double-trigger guard > same-tick second trigger is a duplicate and has no side effect; pending clears after 302ms
+ ✓ src/App.test.tsx (12 tests) 14ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiBrowserJourneyContracts.test.tsx [ src/ui/LocalAiBrowserJourneyContracts.test.tsx ]
+Error: ENOENT: no such file or directory, open '/workspace/hr/wt/frontend/tests/e2e/v2-local-ai-files-live.spec.ts'
+ ❯ src/ui/LocalAiBrowserJourneyContracts.test.tsx:20:22
+     18| vi.mock('./CapabilityStatusCenter', () => ({CapabilityStatusCenter: ()…
+     19| 
+     20| const filesJourney = readFileSync(resolve(process.cwd(), 'tests/e2e/v2…
+       |                      ^
+     21| const legacyJourney = readFileSync(resolve(process.cwd(), 'tests/e2e/v…
+     22| const fetchMock = vi.fn();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 71 passed (72)
+      Tests  600 passed (600)
+   Start at  20:21:50
+   Duration  19.00s (transform 8.65s, setup 1.54s, collect 23.98s, tests 25.17s, environment 24.86s, prepare 4.50s)
+

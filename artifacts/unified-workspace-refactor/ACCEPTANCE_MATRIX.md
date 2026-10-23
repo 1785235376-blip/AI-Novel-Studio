@@ -86,9 +86,22 @@ Commits: 664d8aad (Vera M1-s2fix review append, author "Vera (review)"); 630448e
 | M2-04 | Redock inspector right→bottom→left keeps unsaved title (same DOM node in unit) | PASS (unit + browser 3 viewports) | m1s3_*_redock_dirty.png |
 | M2-05 | Dirty close → 取消/放弃修改/保存并关闭; cancel keeps draft; discard closes | PASS (unit + browser) | m1s3_*_dirty_close_confirm.png |
 | M2-06 | Switching chapter/novel while dirty is blocked with notice (not silently dropped) | PASS (unit) · browser NOT_RUN | novelPreviewPanels.test.tsx |
-| M2-07 | novel.chapter.rename via ActionRegistry; success only from server Chapter (version bump); 409 → error, panel stays open, never "已保存" | PASS (unit, mocked fetch) · real-backend save NOT_RUN (would write; deliberately not run) | novelPreviewPanels.test.tsx |
+| M2-07 | novel.chapter.rename via ActionRegistry; success only from server Chapter with version > sent + title match (M1-s3fix: was any 2xx JSON — Vera MUST-FIX); 409 → error, panel stays open, never "已保存" | PASS (unit, mocked fetch) · real-backend save NOT_RUN (would write; deliberately not run) | novelPreviewPanels.test.tsx |
 | M2-08 | novel.chapters.refresh via ActionRegistry, GET-only, real refetch result | PASS (unit + browser) | m1s3-browser.json |
 | M2-09 | Load + all browser steps issue no non-GET requests; no page errors; no horizontal overflow | PASS (3 viewports) | m1s3-browser.json |
 | M2-10 | Legacy UI without ?uw=1 unchanged (no dock-layout, no non-GET) | PASS (smoke, 1366 only; full 18-page compare NOT_RUN) | m1s3_legacy_noflag.png |
 
 Tests: layout set (src/workspace) 11 files / 120 passed; regression (src/workbench src/App.test.tsx src/ui src/rebuild) 60/61 files, 475/475 passed (1 = pre-existing LocalAiBrowserJourneyContracts load failure); tsc 6 errors = baseline. Full vitest NOT_RUN.
+
+## M1-s3fix [HERMIA-FE-20261023 M1-s3fix] — code b7e98c69a497568e79e394bd026e0d17246e6d9b (tree 852fa1edb7988470dfc9f155c01f3b35ce5741f2)
+| ID | Item | Before (e3b92bd6) | After | Evidence |
+|---|---|---|---|---|
+| M2-07a | rename returns same version | FAIL (「已保存（版本 2）」) | PASS (unit) · browser NOT_RUN | novelPreviewPanels.test.tsx |
+| M2-07b | rename returns no version | FAIL (「已保存（版本 undefined）」) | PASS (unit) · browser NOT_RUN | same |
+| M2-07c | rename returns 204 | FAIL (silent) | PASS (unit) · browser NOT_RUN | same |
+| M2-07d | rename returns non-JSON | not tested | PASS (unit) | same |
+| M2-11 | inspector empty text direction-free | S3 (「在左侧」) | PASS | novelPreviewPanels.tsx |
+| M2-12 | old palette 「布局」 only layout.*; 普通/专业 in 壳·设置 | FAIL (mode toggle in 布局) | PASS (unit) | CommandSearch.m1s3.test.tsx |
+| M2-13 | dead .wb-command__id CSS | present | removed | commandSearch.css |
+| REG | regression set + tsc | — | 600/600 tests (1 pre-existing file error); tsc 6 (unchanged) | logs/m1s3fix-* |
+| FULL | full vitest ≤307 | — | NOT_RUN | — |
