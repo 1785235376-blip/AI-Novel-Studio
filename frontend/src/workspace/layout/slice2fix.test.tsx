@@ -7,6 +7,9 @@ import {emptyZoneBox} from './model';
 import {MemStorage, SCOPE, SPECS} from './testSpecs';
 import {displayShortcut} from '../actions/layoutActions';
 import {UnifiedWorkspacePreview} from '../UnifiedWorkspacePreview';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+// [HERMIA-FE-20261023 M1-s3] preview now hosts real react-query panels → wrap in a provider (same as main.tsx). Assertions unchanged.
+const withQc = (n: JSX.Element) => <QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}>{n}</QueryClientProvider>;
 
 afterEach(() => { cleanup(); localStorage.clear(); });
 if (typeof window !== 'undefined' && !('PointerEvent' in window)) {
@@ -123,7 +126,7 @@ describe('MUST-FIX 3: reset disabled when already default', () => {
 
 describe('MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions', () => {
   it('Ctrl+K opens the shared registry palette with the 4 layout actions; running split works', async () => {
-    render(<UnifiedWorkspacePreview />); await flush();
+    render(withQc(<UnifiedWorkspacePreview />)); await flush();
     fireEvent.keyDown(window, {key: 'k', ctrlKey: true});
     const overlay = await screen.findByTestId('command-search-overlay');
     for (const id of ['layout.reset', 'layout.reopenPanel', 'layout.toggleCollapse', 'layout.switchSplit'])
@@ -133,7 +136,7 @@ describe('MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs la
     await waitFor(() => expect(screen.queryByTestId('command-search-overlay')).toBeNull(), {timeout: 2000});
   });
   it('a disabled action from the palette reports its Chinese reason and changes nothing', async () => {
-    render(<UnifiedWorkspacePreview />); await flush();
+    render(withQc(<UnifiedWorkspacePreview />)); await flush();
     fireEvent.keyDown(window, {key: 'k', metaKey: true});
     const overlay = await screen.findByTestId('command-search-overlay');
     fireEvent.click(overlay.querySelector<HTMLElement>('[data-action-id="layout.reset"]')!);
