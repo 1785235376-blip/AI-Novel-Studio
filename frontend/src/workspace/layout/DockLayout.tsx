@@ -418,7 +418,7 @@ export function DockLayout(props: DockLayoutProps) {
       {guard.pending && pendingSpec && (
         <ModalDialog label={`关闭「${pendingSpec.title}」`} onCancel={guard.cancel}>
           <p>「{pendingSpec.title}」有未保存的修改。</p>
-          {guard.pending.error && <p role="alert">保存失败：{String(guard.pending.error).replace(/[。.\s]+$/u, '')}。修改仍在面板里，没有保存。</p>}
+          {guard.pending.error && <p role="alert">{closeConfirmErrorText(guard.pending.error)}</p>}
           <div className="uw-dialog__actions">
             <button type="button" className="uw-btn" autoFocus onClick={guard.cancel}>取消</button>
             <button type="button" className="uw-btn" onClick={guard.discard}>放弃修改</button>
@@ -428,4 +428,13 @@ export function DockLayout(props: DockLayoutProps) {
       )}
     </div>
   );
+}
+
+// [HERMIA-FE-20261023 M1-flaky] P3: dedupe 「保存失败：」 prefix and drop the error's own 「修改还在」 tail so the dialog reads as one sentence.
+export function closeConfirmErrorText(err: unknown): string {
+  let msg = String(err instanceof Error ? err.message : err).trim();
+  msg = msg.replace(/^(Error:\s*)?(保存失败[：:]\s*)+/u, '');
+  msg = msg.replace(/[，,]?\s*修改(还在|仍在)[^。]*[。.]?\s*$/u, '');
+  msg = msg.replace(/[。.\s]+$/u, '');
+  return `保存失败：${msg || '未知错误'}。修改仍在面板里，没有保存。`;
 }

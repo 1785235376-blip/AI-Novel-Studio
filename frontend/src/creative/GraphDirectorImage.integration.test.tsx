@@ -7,6 +7,8 @@ import type { DirectorImageClient } from './directorImageClient';
 import type { StudioClient } from './studioClient';
 import { imageGraphCatalog, imageGraphRecord } from './studioImageGraph.testFixtures';
 import { imageAsset, imagePending, imagePreview, imageRegistration, imageReview, imageSnapshot, imageSourceDocument, imageStatus } from './directorImage.testFixtures';
+// [HERMIA-FE-20261023 M1-flaky] Root cause: these long jsdom integration flows take 3-5s unloaded and exceed vitest's default 5000ms testTimeout under full-suite CPU load. Budget raised per file; no assertion, step or mock changed.
+vi.setConfig({ testTimeout: 30000 });
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const change = (label: string, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
 function setup() {

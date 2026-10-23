@@ -128,8 +128,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   useEffect(()=>{
     if(defaultCanvasChosen.current||!overview)return;
     defaultCanvasChosen.current=true;
-    if(module==='IMAGE'&&overview.project.entry_kind==='NEUTRAL_STUDIO')setWorkspaceView(view=>view==='ASSETS'?'GRAPH':view);
-  },[module,overview]);
+    // [HERMIA-FE-20261023 M1-flaky] An explicit asset deep link (requestedAssetId) keeps the cold ASSETS view; previously the GRAPH default raced the deep link, so whether the asset was shown depended on timing.
+    if(module==='IMAGE'&&overview.project.entry_kind==='NEUTRAL_STUDIO'&&!requestedAssetId)setWorkspaceView(view=>view==='ASSETS'?'GRAPH':view);
+  },[module,overview,requestedAssetId]);
   const [productionStage, setProductionStage] = useState<StudioWorkspaceStage>(resume.state === 'SAVED' ? resume.location.stage : 'M4');
   const [graphLocation, setGraphLocation] = useState<Pick<StudioWorkspaceLocation, 'graphId' | 'runId'>>(resume.state === 'SAVED'
     ? { graphId: resume.location.graphId, runId: resume.location.runId } : {});

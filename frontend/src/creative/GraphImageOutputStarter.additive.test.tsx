@@ -10,6 +10,8 @@ import {imageGraphCatalog,imageGraphRecord} from './studioImageGraph.testFixture
 import {modelCatalog} from './studioGraphModel.testFixtures';
 import {useStudioGraphEditorController,type StudioGraphEditorController,type StudioGraphEditorProps} from './useStudioGraphEditorController';
 import {useStudioGraphEditor} from './useStudioGraphEditor';
+// [HERMIA-FE-20261023 M1-flaky] Root cause: these long jsdom integration flows take 3-5s unloaded and exceed vitest's default 5000ms testTimeout under full-suite CPU load. Budget raised per file; no assertion, step or mock changed.
+vi.setConfig({ testTimeout: 30000 });
 afterEach(cleanup);
 const empty=()=>({...blankGraph(),schema_version:4 as const});
 const request=(count:ImageOutputCount=2):ImageOutputRequest=>({count,prompt:'雨后城市，保留作者人物设定',supplements:Array.from({length:count},(_,index)=>`第${index+1}份：作者补充场景说明`)});

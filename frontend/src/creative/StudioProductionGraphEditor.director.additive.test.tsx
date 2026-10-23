@@ -19,6 +19,8 @@ vi.mock('./client', async original => ({ ...await original<typeof import('./clie
 import type { PlanningDocument } from './studioProductionGraphContract';
 
 import { studioProductionClient } from './studioProductionClient';
+// [HERMIA-FE-20261023 M1-flaky] Root cause: these long jsdom integration flows take 3-5s unloaded and exceed vitest's default 5000ms testTimeout under full-suite CPU load. Budget raised per file; no assertion, step or mock changed.
+vi.setConfig({ testTimeout: 30000 });
 
 vi.mock('./studioProductionClient', async original => ({ ...await original<typeof import('./studioProductionClient')>(), studioProductionClient: vi.fn() }));
 const pickerRow = { operation_id: 'm5.image.upscale' as const, provider_id: 'enabled-comfy', model_id: 'installed-upscaler', local: true, route_digest: 'a'.repeat(64), capability: 'MEDIA', supported_parameters: [], readiness: 'CONFIGURED_NOT_VERIFIED' as const };

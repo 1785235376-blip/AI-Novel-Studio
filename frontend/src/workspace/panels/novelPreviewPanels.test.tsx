@@ -167,6 +167,17 @@ describe('novel preview panels', () => {
     expect(alert.textContent).not.toContain('。。');
     expect(screen.getByTestId('panel-inspector')).toBeTruthy();
   });
+  // [HERMIA-FE-20261023 M1-flaky] P3: network failure in close-confirm shows one deduped sentence.
+  it('close confirm network failure shows exact deduped text', async () => {
+    renameImpl = () => { throw new TypeError('Failed to fetch'); };
+    mount(); const insp = await selectCh1();
+    fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
+    fireEvent.click(screen.getByLabelText('关闭「章节属性」'));
+    await act(async () => { fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', {name: '保存并关闭'})); });
+    const alert = await within(screen.getByRole('dialog')).findByRole('alert');
+    expect(alert.textContent).toBe('保存失败：网络错误。修改仍在面板里，没有保存。');
+    expect(screen.getByTestId('panel-inspector')).toBeTruthy();
+  });
   it('refresh action is GET-only and reports real result', async () => {
     mount(); await waitFor(() => within(outline()).getByText(/第 1 章/));
     const before = calls.length;
