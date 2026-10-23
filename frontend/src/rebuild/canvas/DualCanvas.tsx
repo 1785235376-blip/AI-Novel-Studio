@@ -1,7 +1,7 @@
 // [HERMIA-FE-20261022 U2] 双画布：原型「编排 · 创作画布 / 执行画布 / 对照分屏」与旧 creative/useStudioDualCanvasTask 的同一概念。
 // 创作画布 = 图片画布（参考、提示词、风格、出图）；执行画布 = 视频画布（镜头、导演备注、生成视频、送剪辑）。
 // 对照分屏左右并排；选中创作画布节点可「送到执行画布」，在执行画布生成一个引用节点。仍是本机草稿，不写服务端。
-import {useCallback, useState} from 'react';
+import {useCallback, useState, type ReactNode} from 'react';
 import {RebuildCanvas, canvasStorageKey, type CvNode, type CvGraph} from './RebuildCanvas';
 
 type Mode = 'creation' | 'execution' | 'split';
@@ -14,12 +14,13 @@ export function linkToExecution(scope: string, n: CvNode): void {
   try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
 }
 
-type DualCanvasProps = {scope: string; initial?: Mode; videoSeed?: CvGraph; onImageTaskIntent?: (node: CvNode) => void};
+type DualCanvasProps = {scope: string; initial?: Mode; videoSeed?: CvGraph;
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean) => ReactNode};
 export function DualCanvas(props: DualCanvasProps) {
   return <DualCanvasSession key={props.scope} {...props} />;
 }
 
-function DualCanvasSession({scope, initial = 'split', videoSeed, onImageTaskIntent}: DualCanvasProps) {
+function DualCanvasSession({scope, initial = 'split', videoSeed, onImageTaskIntent, renderImageTaskBinding}: DualCanvasProps) {
   const [mode, setMode] = useState<Mode>(initial);
   const [sel, setSel] = useState<CvNode | null>(null);
   const [rev, setRev] = useState(0);
@@ -40,7 +41,7 @@ function DualCanvasSession({scope, initial = 'split', videoSeed, onImageTaskInte
           {sel ? `送「${sel.title.slice(0, 10)}」到执行画布 →` : '选中创作节点后可送到执行画布'}</button>
       </div>
       <div className="dual-cv__panes">
-        {mode !== 'execution' ? <div className="dual-cv__pane" aria-label="创作画布"><div className="dual-cv__lab">创作画布 · 图片</div><RebuildCanvas kind="image" scope={scope} label="创作画布" onSelect={onSel} onImageTaskIntent={onImageTaskIntent} /></div> : null}
+        {mode !== 'execution' ? <div className="dual-cv__pane" aria-label="创作画布"><div className="dual-cv__lab">创作画布 · 图片</div><RebuildCanvas kind="image" scope={scope} label="创作画布" onSelect={onSel} onImageTaskIntent={onImageTaskIntent} renderImageTaskBinding={renderImageTaskBinding} /></div> : null}
         {mode !== 'creation' ? <div className="dual-cv__pane" aria-label="执行画布"><div className="dual-cv__lab">执行画布 · 视频镜头</div><RebuildCanvas key={rev} kind="video" scope={scope} label="执行画布" seed={videoSeed} /></div> : null}
       </div>
     </section>

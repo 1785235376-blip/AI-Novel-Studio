@@ -3,7 +3,7 @@
    - 右键空白处 → 在点击位置弹「添加节点」菜单（类型取自现存 StudioGraphDefinitionId 目录，按画布过滤）；右键节点 → 删除。
    - 持久化：前端还没有可直接写入的画布图接口接到这里，所以只存本机浏览器 localStorage，并在画布上写明「仅本机草稿」。不发任何写请求。 */
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE} from 'react';
+import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNode} from 'react';
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
@@ -37,14 +37,15 @@ function load(key: string, seed: CvGraph): CvGraph {
   return seed;
 }
 
-type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void; onImageTaskIntent?: (node: CvNode) => void};
+type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean) => ReactNode};
 
 // A new owner must load its own draft before any persistence effect runs.
 export function RebuildCanvas(props: RebuildCanvasProps) {
   return <RebuildCanvasSession key={canvasStorageKey(props.kind, props.scope)} {...props} />;
 }
 
-function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIntent}: RebuildCanvasProps) {
+function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
   const key = canvasStorageKey(kind, scope);
   const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
   const [vp, setVp] = useState({x: 40, y: 40, k: 1});
@@ -54,6 +55,8 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const active = useRef(true);
+  const removedNodes = useRef(new Set<string>());
+  const liveGraph = useRef(g); liveGraph.current = g;
   const selectedTask = useRef<CvNode>();
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
   useLayoutEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
@@ -77,7 +80,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
     const n: CvNode = {id: uid('n'), t: t.id, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10, title: `新${t.label}`};
     setG(c => ({...c, nodes: [...c.nodes, n]})); setSel(n.id); setMenu(null);
   };
-  const delNode = (id: string) => { setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
+  const delNode = (id: string) => { removedNodes.current.add(id); setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
 
   const onDown = (e: RPE<SVGSVGElement>) => {
     if (e.button !== 0) return; setMenu(null);
@@ -122,6 +125,9 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const imageTaskNode = kind === 'image' && selectedNode?.t === 'image_generate' ? selectedNode : undefined;
   selectedTask.current = imageTaskNode;
   const taskPrompt = typeof imageTaskNode?.prompt === 'string' ? imageTaskNode.prompt : '';
+  const sourceCurrent = (nodeId: string) => () => active.current && !removedNodes.current.has(nodeId)
+    && liveGraph.current.nodes.filter(node => node.id === nodeId).length === 1
+    && liveGraph.current.nodes.some(node => node.id === nodeId && node.t === 'image_generate');
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
@@ -168,8 +174,11 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
       <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
         onChange={event => { const prompt = event.target.value; setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
       <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {
-        if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()});
+        if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) {
+          onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()}, sourceCurrent(imageTaskNode.id));
+        }
       }}>为此节点准备图片任务</Button>
+      {renderImageTaskBinding?.(imageTaskNode, sourceCurrent(imageTaskNode.id))}
       <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
     </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage>视频节点的任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage> : null}
     </div>
