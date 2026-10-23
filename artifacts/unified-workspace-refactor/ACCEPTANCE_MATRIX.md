@@ -6,7 +6,7 @@ Level: U = unit (pure), C = component (RTL/jsdom, mocked geometry). PASS here me
 
 | ID | behaviour | level | status |
 |---|---|---|---|
-| M1-01 | panel drag / float move, stays in viewport | U+C | PARTIAL (float move OK; docked drag = zone drop, no precise reorder) |
+| M1-01 | panel drag / float move, stays in viewport | U+C | PASS @6930d5c9 [M1-s2]: insertion index from pointer + drop indicator (data-zone/index/allowed); unit slice2.test.tsx; browser m1s2-s2-browser.json (indicator main#1, drop applied) |
 | M1-02 | resize with min/max, pointer + keyboard | U+C | Vera@7de42fe8: FAIL (MF-2) → fixed 865233eb (unit); browser re-check pending Vera |
 | M1-03 | drag to dock zone | C | PASS |
 | M1-04 | redock, old relation removed | U+C | Vera@7de42fe8: FAIL (MF-1) → fixed 865233eb (jsdom); browser re-check pending Vera |
@@ -50,3 +50,11 @@ Candidate: 865233eb92d8351014deef8569fac690b38322d6 (tree 04c3d939e7792b02d121f3
 | N4 CSS zoom float clamp | — | not fixed | OPEN (deferred, BLOCKERS.md) |
 | N5 exec canvas discoverability | — | not fixed | OPEN (deferred, BLOCKERS.md) |
 Tests: layout 51/51 (logs/m1fix-layout-vitest.log); regression set 12 files 142/142 (logs/m1fix-regression-vitest.log); tsc 6 errors = baseline, none in src/workspace/layout (logs/m1fix-tsc.log). Full vitest NOT_RUN (Vera to run).
+
+## M1-s2 additions [HERMIA-FE-20261023 M1-s2] — commit 6930d5c9 (tree 2c971da8b4ae2bd23d490047d8ded8d1d0c5588e)
+| ID | Item | Evidence | Status |
+|---|---|---|---|
+| S2-1 | precise dock drop index + indicator | slice2.test.tsx; browser 1366/1920 indicator zone=main index=1 | PASS |
+| S2-2 | main ≥320×200 after resizer/border/toolbar | unit; browser 1366 max sides main 320×524; 800×600 max bottom main 320×200; no h-overflow | PASS |
+| S2-3 | layout actions via ActionRegistry (stable ids, disabled reason, running, double-trigger guard, shortcut conflict, no shortcut in text inputs) | actions/layoutActions.test.ts + slice2.test.tsx | PASS (unit) |
+| MF-2 | main min browser | m1s2-s2-browser.json | PASS (browser, by Hermia; Vera re-check pending) |

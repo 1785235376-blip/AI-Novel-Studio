@@ -29,3 +29,14 @@ Commits: e120843f (tree 3890be21aab330ad53bcf61b52a6585d8af95552) Vera's review 
 - N3: ModalDialog — Esc cancels, Tab trap, focus returns to trigger.
 - Not done: N4 (CSS zoom float clamp), N5 (exec canvas entry), browser re-run of MF-1/MF-2, full vitest, product wiring.
 Results: layout 51/51, regression 142/142, tsc no new errors.
+
+## M1-s2 — preview wiring + slice 2 [HERMIA-FE-20261023 M1-s2]
+- 774219ce: Vera's INDEPENDENT_REVIEW append, committed unchanged (author Vera (review)).
+- e5524578 (tree 8af6b28d1dfd5d9c862110ebc3e5d44f799ed18e): applied patch 0001; DockLayout is opt-in at `?uw=1`, legacy UI unchanged otherwise. Screenshots: screenshots/m1s2_stepA_{uw,legacy}_{1366x768,1440x900,1920x1080}.png; no page errors, no writes, no h-overflow.
+- 6930d5c9 (tree 2c971da8b4ae2bd23d490047d8ded8d1d0c5588e): slice 2.
+  - Precise drop: dropIndexFromPoint over the zone's panel rects (dragged panel excluded); indicator + Chinese note when the zone is not allowed.
+  - Main min: RESIZER_PX 5 / BORDER_PX 1 / dock chrome and measured toolbar height (Viewport.reserveTop) subtracted in crossLimit/fitMain.
+  - Actions: layout.reset / layout.reopenPanel / layout.toggleCollapse / layout.switchSplit registered in the existing workbench ActionRegistry (unmodified); new ShortcutTable for conflict detection (Mod+K reserved); shortcuts skipped in text inputs/IME via shouldHandleShortcut; running = aria-busy; blocked reasons go to the status line in Chinese. Preview placeholders show titles, not ids.
+- Tests: tsc 6 errors = baseline (logs/m1s2-tsc.log); src/workspace 98/98 (logs/m1s2-layout-vitest.log); regression workbench+App+ui+rebuild 472/472 tests, 1 suite fails to load at baseline too (LocalAiBrowserJourneyContracts: missing tests/e2e/v2-local-ai-files-live.spec.ts) (logs/m1s2-regression-vitest.log).
+- Browser: logs/m1s2-s2-browser.json; screenshots/m1s2_s2_{maxsides_1366x768,maxbottom_800x600,dropindicator_*,afterdrop_*}.png.
+- Remaining: N4 CSS-zoom float clamp, N5 exec canvas entry, real panel content (placeholders only), Vera browser re-check, wiring beyond ?uw=1, the pre-existing missing e2e spec.

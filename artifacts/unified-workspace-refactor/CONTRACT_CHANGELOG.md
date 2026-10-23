@@ -10,3 +10,9 @@
 - Legacy keys read-only migration sources; nothing deleted.
 - Panel API: registerDirty for dirty-close guard.
 No change to workbench/layout.ts, panels.ts, actions.ts contracts.
+
+## M1-s2 [HERMIA-FE-20261023 M1-s2] — 6930d5c9
+- §2 actions: layout actions are now registered in workbench ActionRegistry (ids layout.reset, layout.reopenPanel, layout.toggleCollapse, layout.switchSplit; default Mod+Alt+0/O/C/S). actions.ts unchanged.
+- New in workspace/actions: ShortcutTable (claim/release/lookup, conflict → shortcut dropped, action still registered), RESERVED_SHORTCUTS (Mod+K), registerLayoutActions, actionIdForKey.
+- DockLayout: new optional props actionRegistry, shortcutTable.
+- layout/model: Viewport.reserveTop? (optional); dock action index = precise insertion index; exported dropIndexFromPoint, dropAxis, mainArea.
