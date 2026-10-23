@@ -135,6 +135,7 @@ import { NovelAssist, type QuickOp } from "./rebuild/novel/NovelAssist"; // [HER
 import { gateNovel, novelPanelAllowed, NOVEL_PRO_PANELS, NOVEL_PRO_TABS, NOVEL_PRO_LINKS } from "./rebuild/novel/novelMode"; // [HERMIA-FE-20261022 U4]
 import { NovelStartEmpty } from "./rebuild/novel/NovelStartEmpty"; // [HERMIA-FE-20261022 REBUILD-W3]
 import "./rebuild/novel/novelRebuild.css"; // [HERMIA-FE-20261022 REBUILD-W3] 小说工作区按原型重做
+import { UnifiedWorkspacePreview, unifiedWorkspacePreviewEnabled } from "./workspace/UnifiedWorkspacePreview"; // [HERMIA-FE-20261023 M1] opt-in preview
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
   c.setQueryData<Novel[]>(["novels"], (x) =>
     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
@@ -179,6 +180,12 @@ export async function recoverGenerationJob(
 type GenerationOrigin = { namespace: string; chapterId: string; novelId: string; identity: string; epoch: number; serial: number; baseVersion?: number; context: CollaborationContext };
 type GenerationObservation = GenerationOrigin & { active: boolean; sources: Set<EventSource> };
 export default function App() {
+  // [HERMIA-FE-20261023 M1] opt-in only (?uw=1). Value is fixed for the page load, so hook order stays stable.
+  if (unifiedWorkspacePreviewEnabled()) return <UnifiedWorkspacePreview />;
+  return <LegacyApp />;
+}
+
+function LegacyApp() {
   const packagedHost = isPackagedDesktopHost();
   const qc = useQueryClient(),
     s = useStudio(),
