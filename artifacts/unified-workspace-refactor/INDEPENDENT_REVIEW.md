@@ -311,3 +311,64 @@ nit（P3）：
   - src/creative 没有改动。两次超出的都是不同的 flaky 用例，属于不可归因；严格按原始数字 308 > 307，门槛未达标。
 - P3：网络失败后的关闭确认框前缀重复：「保存失败：保存失败：网络错误，修改还在。修改仍在面板里，没有保存。」。建议去掉重复前缀，并合并「修改还在 / 修改仍在」。
 - 证据：vera-compare/m1s3fix2/
+
+## M1-flaky (f8124581) [VERA-FE]
+
+复审对象：f8124581（代码提交 7e96d0ba，tree 485ed7b5 已核对；f8124581 只在 7e96d0ba 上加了文档和日志，frontend/ 和 7e96d0ba 完全一致）。在临时 worktree 里 npm ci，单独起 vite 4399（独立缓存）。Playwright 拦截了全部非 GET 请求，记录到的写请求为 0。没有碰 :8000 mock、Hermia 的 :4299 和后端。证据在 /workspace/hr/vera-compare/m1flaky/。
+
+**结论：按"三次全量取最好一次，调整后 ≤307"的规则判 PASS；按旧门槛（一次全量 + 一次重试）不通过。代码层面没有 MUST-FIX。**
+
+1. **P3 关闭确认文案：通过**
+   - 浏览器 1440，断网场景，弹窗正文正好是「保存失败：网络错误。修改仍在面板里，没有保存。」，前缀不再重复，也没有「修改还在」。
+   - 测试用 toBe 断言整句。
+   - 变异：把文案改回带「修改还在。」，测试按预期失败；还原后通过。
+   - 备注（P4，不阻塞）：面板内的状态行仍是「保存失败：网络错误，修改还在。」，这次只要求改弹窗，这里没改。
+
+2. **四个文件加 30s 超时：通过**
+   - 和 3490d0a7 的 diff 只有一行注释加 `vi.setConfig({ testTimeout: 30000 })`，没有删改断言、步骤或 mock。
+   - download-denied 用例：findBy 等待改为 10s，用例超时改为 30s，断言本身没动。
+
+3. **产品改动 IndependentStudioWorkspace.tsx：通过**
+   - 改法：首次 overview 到达时，如果带 requestedAssetId，就不再把 ASSETS 切成 GRAPH。defaultCanvasChosen 这个 ref 保证只判断一次，之后 requestedAssetId 变化不会再强制切视图。已保存的 resume 现场原本就跳过这个逻辑，不受影响。
+   - 浏览器在 1366、1440、1920 三个宽度下，用路由打桩的独立项目 520adfa2 测试，只拦截读、不写：
+     - 带资产深链：停在「素材工作区」，资产 reference.png 被读取并显示。
+     - 不带资产：仍默认进「创作图」，和改前一致。
+     - 无效资产 id：停在素材工作区，提示「记录不可用，或此功能尚未启用。」，页面没有崩。
+     - 下载 403：显示「当前会话无权访问此项目」。
+     - 深链之后切到「制作操作」再切回「素材工作区」，正常。
+     - 浏览器后退、前进、刷新后都回到素材工作区。
+     - 各视口都没有横向溢出，也没有 pageerror。
+   - 变异：回退修复，download-denied 隔离跑 3/3 失败；带修复 3/3 通过。
+   - 附带效果：IndependentStudioManualMask 在 3490d0a7 上 11 项失败，现在只剩 2 项。
+
+4. **旧 UI（不带 ?uw=1）：通过**
+   - 普通和专业两种模式共 18 页，文本 hash 和之前的 legacy 证据（m1s3fix/legacy-81a65eb8）18/18 一致，非 GET 请求 0。
+   - P3 场景截图和 m1s3fix2 对照：只有弹窗文案按预期变了。
+
+5. **全量 vitest 三次 + tsc**
+
+   | 次 | 原始失败 | IndependentStudioIdentity | 调整后 |
+   |---|---|---|---|
+   | 1 | 308 | 8 | 308 |
+   | 2 | 308 | 8 | 308 |
+   | 3 | 307 | 8 | 307 |
+
+   - 总数都是 11353。
+   - 旧门槛：第 1 次 308，重试 308，不通过。
+   - 三取最好：第 3 次 307，通过。
+   - 各次多出的失败：
+     - 第 1 次：PluginResourceDetail.additive「writing_presets only on explicit request」，隔离 3/3 通过。
+     - 第 2 次：AppProjectStory「actual App navigation opens the project Story database」，隔离 3/3 通过。
+   - 目标 flaky 用例在三次全量里全部通过，包括 download-denied。四个目标文件里剩下的失败是原有的，三次都一样。
+   - tsc 6 个错误，和基线一致。
+
+6. **新问题：环境漂移，需要跟进，不是这次提交引起的**
+   - ComicLayoutsPanel（9 项）和 VoiceSubtitlePanels（1 项），共 10 项，现在稳定失败。
+   - 报错是 "Unable to find role=img"，以及 jsdom Blob 的 "object.stream is not a function"。
+   - 我同时在 3490d0a7 上重跑了一次全量：318 / ISI 8 / 调整后 318（上一轮是 308），这 10 项同样失败，Hermia 的 m1flaky-full-1/2 里也有。所以这是同一环境下两个版本共有的环境变化。
+   - 同一环境下比较，f8124581 比 3490d0a7 少了约 10–11 个失败。
+   - 但门槛余量其实是靠这次修好的 ManualMask 抵掉的，建议 Hermia 查清 ComicLayouts 的环境原因（jsdom/undici 的 Blob）。
+
+7. **和 Hermia 证据交叉核对**
+   - m1flaky-full-1/2 是 307 和 308，和我的三次一致。
+   - REGRESSION_M1_FLAKY.md 说"相比基线修好 11 个"，但没提到这 10 个新出现的 ComicLayouts/Voice 失败，建议补上。
