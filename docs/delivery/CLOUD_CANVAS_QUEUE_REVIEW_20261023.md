@@ -1,5 +1,7 @@
 # Cloud canvas queue review and handoff
 
+This records the review checkpoint at `4311d7c36b0da0e71e717304d210985aaad9b434`. The next slice adds owner-scoped browser node/task association and restores the declared dependency environment; see [the node-binding delivery record](CLOUD_CANVAS_NODE_BINDING_20261023.md) for its current verification. The 274-diagnostic environment below is a historical observation.
+
 The selected image node can prepare a prompt for the existing persistent image queue. Saving requires an explicit service/model choice and, where applicable, current cloud-prompt consent. A saved task displays the server's job ID. Reading, saving, cancelling and executing remain separate actions; opening or reopening the panel does not execute a job.
 
 This follow-up starts at `4b5c8aa259c4432102e9e6d2a173ec52c789ad94`, tree `71b13a6d2a9e01ad4f269e64c9e7e3d3e716fd51`, with a clean worktree. Its parent is the GitHub Hermia baseline `6ba25ad7a47ed7677c32483b5234b656a3c0c2ed`. All changes derive from GitHub source in the selected cloud environment; no Windows source, local migration package, private local history, model or credential is included. The first-slice behavior and observed remote heads are recorded in [the original delivery record](CLOUD_CANVAS_IMAGE_QUEUE_20261023.md).
