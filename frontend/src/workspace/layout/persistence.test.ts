@@ -119,3 +119,16 @@ describe('layout persistence v3', () => {
     expect(loadWorkspaceLayout(st, {...SCOPE, projectId: 'p2'}, SPECS, VP).state.frames.tasks.open).toBe(true);
   });
 });
+
+// [HERMIA-FE-20261023 M1-fix] N1: legacy AppShell inspector keys are a fallback, never an overlay on v2.
+import {legacyWorkbenchKeyV2} from './persistence';
+describe('M1-fix N1', () => {
+  it('workbench v2 wins over studio-inspector-* keys', () => {
+    const st = new MemStorage();
+    saveLayout(st, SCOPE, {schemaVersion: 2, mode: 'pro', maximized: null, placements: [{panelId: 'inspector', objectRef: null, dock: 'left', size: 300, collapsed: false}]});
+    expect(st.getItem(legacyWorkbenchKeyV2(SCOPE))).not.toBeNull();
+    st.setItem('studio-inspector-width', '560'); st.setItem('studio-inspector-open', '0');
+    const l = loadWorkspaceLayout(st, SCOPE, SPECS, VP, {inspectorPanelId: 'inspector'});
+    expect(l.state.frames.inspector).toMatchObject({dock: 'left', size: 300, collapsed: false});
+  });
+});

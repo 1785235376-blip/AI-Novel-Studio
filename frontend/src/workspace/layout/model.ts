@@ -59,6 +59,44 @@ export function maxSizeFor(spec: LayoutPanelSpec, dock: DockZone, vp: Viewport):
   return Math.min(spec.maxSize ?? Infinity, vpMax);
 }
 
+// [HERMIA-FE-20261023 M1-fix] MF-2: the main area keeps MAIN_MIN_WIDTH × MAIN_MIN_HEIGHT against the SUM of docked
+// side columns (left + right) and the bottom strip. Per-panel clampSize alone allowed 60% + 60% > 100%.
+export const MAIN_MIN_WIDTH = 320;
+export const MAIN_MIN_HEIGHT = 200;
+/** Effective width a dock column occupies (column width = widest open, expanded panel in it). */
+export function columnExtent(frames: Record<string, PanelFrame>, dock: DockZone, exceptId?: string): number {
+  let w = 0;
+  for (const f of Object.values(frames)) if (f.dock === dock && f.open && !f.collapsed && f.id !== exceptId) w = Math.max(w, f.size);
+  return w;
+}
+/** Upper bound for a docked side/bottom panel so the main area keeps its minimum given the other docks. */
+export function crossLimit(frames: Record<string, PanelFrame>, id: string, dock: DockZone, vp: Viewport): number {
+  if (dock === 'left' || dock === 'right') return vp.width - MAIN_MIN_WIDTH - columnExtent(frames, dock === 'left' ? 'right' : 'left');
+  if (dock === 'bottom') return vp.height - MAIN_MIN_HEIGHT;
+  return Infinity;
+}
+/** Shrink docked panels (others before `keepId`) until main keeps its minimum; never below a panel's minSize. */
+export function fitMain(frames: Record<string, PanelFrame>, specs: readonly LayoutPanelSpec[], vp: Viewport, keepId?: string): Record<string, PanelFrame> {
+  const out = {...frames};
+  const min = (id: string) => specs.find(s => s.id === id)?.minSize ?? 0;
+  const shrink = (pred: (f: PanelFrame) => boolean, by: number) => {
+    for (const f of Object.values(out)) if (pred(f)) { const ns = Math.max(min(f.id), f.size - by); if (ns !== f.size) out[f.id] = {...f, size: ns}; }
+  };
+  const live = (f: PanelFrame) => f.open && !f.collapsed;
+  for (const pass of [false, true]) { // pass 1 spares keepId, pass 2 may shrink it too
+    const over = columnExtent(out, 'left') + columnExtent(out, 'right') + MAIN_MIN_WIDTH - vp.width;
+    if (over <= 0) break;
+    const L = columnExtent(out, 'left', pass ? undefined : keepId); const R = columnExtent(out, 'right', pass ? undefined : keepId);
+    const first: DockZone = L >= R ? 'left' : 'right'; const second: DockZone = first === 'left' ? 'right' : 'left';
+    shrink(f => f.dock === first && live(f) && (pass || f.id !== keepId), over);
+    const over2 = columnExtent(out, 'left') + columnExtent(out, 'right') + MAIN_MIN_WIDTH - vp.width;
+    if (over2 > 0) shrink(f => f.dock === second && live(f) && (pass || f.id !== keepId), over2);
+  }
+  const hMax = vp.height - MAIN_MIN_HEIGHT;
+  for (const f of Object.values(out)) if (f.dock === 'bottom' && f.size > hMax) out[f.id] = {...f, size: Math.max(min(f.id), hMax)};
+  return out;
+}
+
 export function clampSize(spec: LayoutPanelSpec, dock: DockZone, size: number, vp: Viewport): number {
   const s = Number.isFinite(size) ? size : spec.defaultSize;
   return Math.round(Math.max(spec.minSize, Math.min(maxSizeFor(spec, dock, vp), s)));
@@ -125,7 +163,8 @@ export function layoutReducer(env: ReducerEnv) {
       case 'replace': return action.state;
       case 'reset': {
         // Unknown-panel configs survive reset (preserved bag); business data is never in layout state.
-        return createDefaultLayout(env.specs, vp, state.preserved);
+        const d = createDefaultLayout(env.specs, vp, state.preserved);
+        return {...d, frames: fitMain(d.frames, env.specs, vp)};
       }
       case 'split':
         return SPLIT_MODES.includes(action.mode) && action.mode !== state.split ? {...state, split: action.mode} : state;
@@ -137,7 +176,10 @@ export function layoutReducer(env: ReducerEnv) {
           const floatRect = f.floatRect ? clampRect(s, f.floatRect, vp) : undefined;
           if (size !== f.size || JSON.stringify(floatRect) !== JSON.stringify(f.floatRect)) { frames[f.id] = {...f, size, ...(floatRect ? {floatRect} : {})}; changed = true; }
         }
-        return changed ? {...state, frames} : state;
+        // [HERMIA-FE-20261023 M1-fix] MF-2: viewport shrink re-fits side columns so main keeps its minimum.
+        const fitted = fitMain(frames, env.specs, vp);
+        if (JSON.stringify(fitted) !== JSON.stringify(frames)) changed = true;
+        return changed ? {...state, frames: fitted} : state;
       }
     }
     const spec = specOf(env, action.id); const cur = state.frames[action.id];
@@ -153,10 +195,11 @@ export function layoutReducer(env: ReducerEnv) {
         if (action.dock === 'float') next.floatRect = clampRect(spec, cur.floatRect ?? {x: 80, y: 80, w: cur.size, h: 320}, vp);
         frames[cur.id] = next;
         if (cur.dock !== action.dock) frames = reorder(frames, cur.dock);
-        return bump(state, cur.id, frames);
+        return bump(state, cur.id, fitMain(frames, env.specs, vp, cur.id)); // [HERMIA-FE-20261023 M1-fix] MF-2
       }
       case 'resize': {
-        const size = clampSize(spec, cur.dock, action.size, vp);
+        // [HERMIA-FE-20261023 M1-fix] MF-2: also bounded by the opposite column + main minimum.
+        const size = Math.max(spec.minSize, Math.min(clampSize(spec, cur.dock, action.size, vp), crossLimit(state.frames, cur.id, cur.dock, vp)));
         return size === cur.size ? state : {...state, frames: {...state.frames, [cur.id]: {...cur, size}}};
       }
       case 'moveFloat': case 'resizeFloat': {
@@ -166,14 +209,14 @@ export function layoutReducer(env: ReducerEnv) {
       }
       case 'collapse': {
         const collapsed = action.collapsed ?? !cur.collapsed;
-        return collapsed === cur.collapsed ? state : {...state, frames: {...state.frames, [cur.id]: {...cur, collapsed}}};
+        return collapsed === cur.collapsed ? state : {...state, frames: fitMain({...state.frames, [cur.id]: {...cur, collapsed}}, env.specs, vp, cur.id)};
       }
       case 'close':
         if (!cur.open) return state;
         return {...state, frames: {...state.frames, [cur.id]: {...cur, open: false}}, focusId: state.focusId === cur.id ? null : state.focusId};
       case 'reopen':
         // Keyed by id: reopening never creates a second instance.
-        return bump(state, cur.id, {...state.frames, [cur.id]: {...cur, open: true, collapsed: false}});
+        return bump(state, cur.id, fitMain({...state.frames, [cur.id]: {...cur, open: true, collapsed: false}}, env.specs, vp, cur.id));
       case 'focus':
         return state.focusId === cur.id && cur.z === state.zTop ? state : bump(state, cur.id, state.frames);
     }

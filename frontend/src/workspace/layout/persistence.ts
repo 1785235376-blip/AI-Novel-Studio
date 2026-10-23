@@ -186,7 +186,9 @@ export function loadWorkspaceLayout(st: StorageLike, scope: LayoutScope, specs: 
   }
   const inspectorId = opts.inspectorPanelId;
   const spec = inspectorId ? specs.find(s => s.id === inspectorId) : undefined;
-  if (spec && spec.docks.includes('right')) {
+  // [HERMIA-FE-20261023 M1-fix] N1: fallback chain, not an overlay — AppShell inspector keys apply only when no
+  // workbench v2/v1 layout was migrated (contract §4 order: v3 → workbench v2 → v1 → inspector keys → default).
+  if (!state && spec && spec.docks.includes('right')) {
     const w = safeGet(st, LEGACY_INSPECTOR_WIDTH_KEY, diags); const open = safeGet(st, LEGACY_INSPECTOR_OPEN_KEY, diags);
     if (w != null || open != null) {
       state ??= createDefaultLayout(specs, vp);

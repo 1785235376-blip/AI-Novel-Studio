@@ -217,3 +217,73 @@ describe('DockLayout interactions', () => {
     add.mockRestore(); rem.mockRestore();
   });
 });
+
+// [HERMIA-FE-20261023 M1-fix] Regression tests for Vera's MF-1 / N2 / N3.
+describe('M1-fix: panel content survives layout changes (MF-1)', () => {
+  const type = (v: string) => fireEvent.change(screen.getByLabelText('草稿'), {target: {value: v}});
+  it('redock to bottom / float / left keeps unsaved input (no remount)', () => {
+    setup(); type('abc');
+    for (const d of ['bottom', 'float', 'left', 'right']) {
+      fireEvent.change(screen.getByLabelText('「属性」停靠位置'), {target: {value: d}});
+      expect(screen.getByTestId('panel-inspector').dataset.dock).toBe(d);
+      expect((screen.getByLabelText('草稿') as HTMLTextAreaElement).value).toBe('abc');
+    }
+  });
+  it('pointer-drag redock keeps unsaved input', () => {
+    setup(); type('xyz');
+    fireEvent.pointerDown(screen.getByTestId('drag-inspector'), {clientX: 900, clientY: 300});
+    fireEvent.pointerMove(window, {clientX: 500, clientY: 790});
+    fireEvent.pointerUp(window, {clientX: 500, clientY: 790});
+    expect(screen.getByTestId('panel-inspector').dataset.dock).toBe('bottom');
+    expect((screen.getByLabelText('草稿') as HTMLTextAreaElement).value).toBe('xyz');
+  });
+  it('single-column main switch keeps the hidden panel state', () => {
+    const storage = new MemStorage();
+    render(<DockLayout specs={SPECS} scope={SCOPE} storage={storage} viewport={VP}
+      renderPanel={(id, api) => id === 'canvas' ? <Editor api={api} save={async () => {}} /> : <p>{id} 内容</p>} />);
+    type('main draft');
+    fireEvent.change(screen.getByLabelText('切换中间面板'), {target: {value: 'exec'}});
+    expect(screen.queryByLabelText('草稿')).toBeNull(); // hidden, not visible
+    fireEvent.change(screen.getByLabelText('切换中间面板'), {target: {value: 'canvas'}});
+    expect((screen.getByLabelText('草稿') as HTMLTextAreaElement).value).toBe('main draft');
+  });
+  it('explicit close still goes through the dirty guard', () => {
+    setup(); type('abc');
+    fireEvent.click(screen.getByLabelText('关闭「属性」'));
+    expect(screen.getByRole('dialog')).toBeTruthy();
+  });
+});
+
+describe('M1-fix: N2 persistence writes only on real layout change', () => {
+  it('after corrupt load, focus / header click does not overwrite the original key', () => {
+    const storage = new MemStorage(); storage.setItem(workspaceLayoutKey(SCOPE), '{bad json');
+    setup({storage});
+    fireEvent.pointerDown(screen.getByTestId('drag-outline'), {clientX: 10, clientY: 10});
+    fireEvent.pointerUp(window, {clientX: 10, clientY: 10});
+    fireEvent.focus(screen.getByTestId('panel-outline'));
+    expect(storage.getItem(workspaceLayoutKey(SCOPE))).toBe('{bad json');
+    expect(storage.getItem(workspaceLayoutBackupKey(SCOPE))).toBe('{bad json');
+    fireEvent.click(screen.getAllByText('折叠')[0]);
+    expect(saved(storage).version).toBe(3);
+    expect(storage.getItem(workspaceLayoutBackupKey(SCOPE))).toBe('{bad json');
+  });
+});
+
+describe('M1-fix: N3 modal dialog keyboard', () => {
+  it('Esc cancels, Tab is trapped, focus returns to the trigger', () => {
+    setup();
+    const trigger = screen.getByText('恢复默认布局');
+    trigger.focus(); fireEvent.click(trigger);
+    const dlg = screen.getByRole('dialog');
+    const btns = within(dlg).getAllByRole('button');
+    expect(document.activeElement).toBe(btns[0]);
+    btns[btns.length - 1].focus();
+    fireEvent.keyDown(btns[btns.length - 1], {key: 'Tab'});
+    expect(document.activeElement).toBe(btns[0]);
+    fireEvent.keyDown(btns[0], {key: 'Tab', shiftKey: true});
+    expect(document.activeElement).toBe(btns[btns.length - 1]);
+    fireEvent.keyDown(dlg, {key: 'Escape'});
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+});

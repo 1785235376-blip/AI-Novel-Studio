@@ -18,7 +18,8 @@ describe('layout model', () => {
     expect(r(base(), {type: 'resize', id: 'inspector', size: 10}).frames.inspector.size).toBe(240);
     expect(r(base(), {type: 'resize', id: 'inspector', size: 9999}).frames.inspector.size).toBe(560);
     const small = layoutReducer({specs: SPECS, viewport: {width: 600, height: 400}});
-    expect(small(base(), {type: 'resize', id: 'outline', size: 9999}).frames.outline.size).toBe(360);
+    // [HERMIA-FE-20261023 M1-fix] MF-2: at 600px the 60% cap (360) is now also bounded by main≥320 + inspector 340 → minSize.
+    expect(small(base(), {type: 'resize', id: 'outline', size: 9999}).frames.outline.size).toBe(180);
     expect(r(base(), {type: 'resize', id: 'outline', size: NaN}).frames.outline.size).toBe(248);
   });
   it('M1-03/M1-04 dock and redock: old relation removed, orders compacted', () => {
@@ -63,11 +64,49 @@ describe('layout model', () => {
   it('viewport shrink re-clamps sizes', () => {
     const s = r(base(), {type: 'resize', id: 'inspector', size: 560});
     const small = layoutReducer({specs: SPECS, viewport: {width: 500, height: 400}});
-    expect(small(s, {type: 'viewport'}).frames.inspector.size).toBe(300);
+    // [HERMIA-FE-20261023 M1-fix] MF-2: 500px cannot fit main 320 + both columns → shrink to minSize (240), was 300.
+    expect(small(s, {type: 'viewport'}).frames.inspector.size).toBe(240);
   });
   it('zoneFromPoint', () => {
     const rect = {left: 0, top: 0, width: 1000, height: 800};
     expect(zoneFromPoint(10, 300, rect)).toBe('left'); expect(zoneFromPoint(990, 300, rect)).toBe('right');
     expect(zoneFromPoint(500, 790, rect)).toBe('bottom'); expect(zoneFromPoint(500, 300, rect)).toBe('main');
+  });
+});
+
+// [HERMIA-FE-20261023 M1-fix] MF-2: main keeps MAIN_MIN_WIDTH against the SUM of side columns.
+import {columnExtent, MAIN_MIN_WIDTH, MAIN_MIN_HEIGHT} from './model';
+describe('M1-fix MF-2 main-area minimum', () => {
+  const mainW = (s: LayoutState, w: number) => w - columnExtent(s.frames, 'left') - columnExtent(s.frames, 'right');
+  it('1366 scenario: max outline + max inspector never leaves main < 320', () => {
+    const vp = {width: 1366, height: 768}; const rr = layoutReducer({specs: SPECS, viewport: vp});
+    let s = createDefaultLayout(SPECS, vp);
+    s = rr(s, {type: 'resize', id: 'outline', size: 99999});
+    s = rr(s, {type: 'resize', id: 'inspector', size: 99999});
+    expect(mainW(s, 1366)).toBeGreaterThanOrEqual(MAIN_MIN_WIDTH);
+    s = rr(s, {type: 'resize', id: 'outline', size: 99999});
+    expect(mainW(s, 1366)).toBeGreaterThanOrEqual(MAIN_MIN_WIDTH);
+  });
+  it('combined widths fit for random resize/dock sequences across viewports', () => {
+    for (const w of [1024, 1366, 1440, 1920]) {
+      const vp = {width: w, height: 800}; const rr = layoutReducer({specs: SPECS, viewport: vp});
+      let s = createDefaultLayout(SPECS, vp);
+      const ids = ['outline', 'inspector', 'tasks'];
+      for (let i = 0; i < 60; i++) {
+        const id = ids[i % 3];
+        s = i % 4 === 3 ? rr(s, {type: 'dock', id, dock: (['left', 'right'] as const)[i % 2]}) : rr(s, {type: 'resize', id, size: 100 + (i * 397) % 2000});
+        expect(mainW(s, w)).toBeGreaterThanOrEqual(MAIN_MIN_WIDTH);
+      }
+    }
+  });
+  it('viewport shrink re-fits side columns; bottom keeps main min height', () => {
+    const big = layoutReducer({specs: SPECS, viewport: {width: 1920, height: 1080}});
+    let s = createDefaultLayout(SPECS, {width: 1920, height: 1080});
+    s = big(s, {type: 'resize', id: 'outline', size: 1000}); s = big(s, {type: 'resize', id: 'inspector', size: 560});
+    s = big(s, {type: 'resize', id: 'tasks', size: 5000});
+    const small = layoutReducer({specs: SPECS, viewport: {width: 1024, height: 600}});
+    s = small(s, {type: 'viewport'});
+    expect(mainW(s, 1024)).toBeGreaterThanOrEqual(MAIN_MIN_WIDTH);
+    expect(s.frames.tasks.size).toBeLessThanOrEqual(600 - MAIN_MIN_HEIGHT);
   });
 });

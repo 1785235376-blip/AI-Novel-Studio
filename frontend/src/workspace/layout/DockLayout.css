@@ -30,3 +30,5 @@
 .uw-dialog{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.35);z-index:10000}
 .uw-dialog__card{min-width:300px;max-width:min(480px,90%);padding:16px;border-radius:10px;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);display:grid;gap:12px}
 .uw-dialog__actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.uw-panel__host{display:contents} /* [HERMIA-FE-20261023 M1-fix] MF-1 stable content host */
+.uw-panel__content{display:contents}
