@@ -10,7 +10,7 @@ afterEach(cleanup);
 
 function H() {
   const wb = useWorkbench(() => {}, {projectId: 'p1'});
-  useEffect(() => registerLayoutActions(wb.actions, {getMode: () => 'basic', setMode: () => {}}), [wb.actions]);
+  useEffect(() => registerLayoutActions(wb.actions, {getMode: () => 'basic', setMode: () => {}, reset: () => {}}), [wb.actions]);
   return <CommandSearch workbench={wb} onLegacy={() => {}}/>;
 }
 const open = () => fireEvent.click(screen.getByRole('button', {name: /搜索功能/}));
@@ -41,6 +41,19 @@ describe('CommandSearch M1-s3', () => {
     expect(commandGroupOf('workspace.open.control')).toBe('壳·设置');
     render(<H/>); open();
     const shell = screen.queryByRole('group', {name: '壳·设置'});
-    if (shell) for (const o of within(shell).queryAllByRole('option')) expect(o.getAttribute('data-action-id')!.startsWith('layout.')).toBe(false);
+    if (shell) for (const o of within(shell).queryAllByRole('option')) {
+      const id = o.getAttribute('data-action-id')!;
+      // [M1-s3fix] only the 普通/专业 mode switches may live in 壳·设置
+      if (id.startsWith('layout.')) expect(id === 'layout.toggleMode' || id.startsWith('layout.setMode.')).toBe(true);
+    }
+  });
+  it('[M1-s3fix] 「布局」 group contains only layout actions, mode toggle is in 壳·设置', () => {
+    for (const id of ['layout.toggleMode', 'layout.setMode.basic', 'layout.setMode.pro']) expect(commandGroupOf(id)).toBe('壳·设置');
+    render(<H/>); open();
+    const lay = screen.getByRole('group', {name: '布局'});
+    const ids = within(lay).getAllByRole('option').map(o => o.getAttribute('data-action-id')!);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) { expect(id.startsWith('layout.')).toBe(true); expect(id).not.toMatch(/Mode/); }
+    expect(lay.textContent).not.toMatch(/普通|专业/);
   });
 });

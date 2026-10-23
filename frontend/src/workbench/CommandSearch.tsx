@@ -29,6 +29,8 @@ export function commandGroupOf(id: string): CommandGroup {
   if (id.startsWith('novel.') || id.startsWith('panel.open.') || id === 'workspace.open.novel') return '写作';
   const ws = /^workspace\.open\.(.+)$/.exec(id);
   if (ws && MEDIA_WORKSPACES.has(ws[1])) return '媒体';
+  // [HERMIA-FE-20261023 M1-s3fix] 普通/专业 mode switches are settings, not layout: keep them in 壳·设置.
+  if (id === 'layout.toggleMode' || id.startsWith('layout.setMode.')) return '壳·设置';
   if (id.startsWith('layout.')) return '布局';
   return '壳·设置';
 }

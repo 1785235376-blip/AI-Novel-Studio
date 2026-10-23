@@ -115,6 +115,24 @@ describe('novel preview panels', () => {
     expect(screen.queryByText(/已保存/)).toBeNull();
     expect((screen.getByLabelText('章节标题') as HTMLInputElement).value).toBe('新标题');
   });
+  // [HERMIA-FE-20261023 M1-s3fix] Vera MUST-FIX: a 2xx without a newer server version is NOT a save.
+  for (const [name, impl] of [
+    ['same version', (b: {title: string; version: number}) => json(ch(1, b.title, b.version))],
+    ['no version', (b: {title: string; version: number}) => { const {version: _v, ...rest} = ch(1, b.title); return json(rest); }],
+    ['204 empty body', () => new Response(null, {status: 204})],
+    ['non-JSON body', () => new Response('ok', {status: 200, headers: {'Content-Type': 'text/plain'}})],
+  ] as const) {
+    it(`rename unconfirmed (${name}) → Chinese error, stays dirty, never 已保存`, async () => {
+      renameImpl = impl as typeof renameImpl;
+      mount(); const insp = await selectCh1();
+      fireEvent.change(within(insp).getByLabelText('章节标题'), {target: {value: '新标题'}});
+      await act(async () => { fireEvent.click(within(insp).getByRole('button', {name: '保存标题'})); });
+      expect(await within(insp).findByText(/保存没有确认，服务器未返回新版本，修改还在/)).toBeTruthy();
+      expect(screen.queryByText(/已保存/)).toBeNull();
+      expect(screen.getByTestId('uw-inspector-dirty')).toBeTruthy();
+      expect((within(insp).getByLabelText('章节标题') as HTMLInputElement).value).toBe('新标题');
+    });
+  }
   it('refresh action is GET-only and reports real result', async () => {
     mount(); await waitFor(() => within(outline()).getByText(/第 1 章/));
     const before = calls.length;

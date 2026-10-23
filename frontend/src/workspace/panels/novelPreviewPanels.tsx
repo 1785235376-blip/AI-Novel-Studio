@@ -40,6 +40,17 @@ export function pickDefaultNovel(novels: Novel[]): Novel | undefined {
   return novels.find(n => n.title.includes('雾港')) ?? novels.find(n => n.chapter_count > 0) ?? novels[0];
 }
 
+// [HERMIA-FE-20261023 M1-s3fix] Rename is confirmed only when the server returns the chapter JSON with a
+// numeric version strictly greater than the one we sent (and the requested title). Anything else
+// (same version, missing version, 204/empty body, non-JSON) is NOT a save: the draft stays dirty.
+export const RENAME_UNCONFIRMED_TEXT = '保存没有确认，服务器未返回新版本，修改还在。';
+export class RenameUnconfirmedError extends Error { constructor() { super(RENAME_UNCONFIRMED_TEXT); this.name = 'RenameUnconfirmedError'; } }
+export function isConfirmedRename(saved: unknown, i: {chapterId: string; title: string; version: number}): saved is Chapter {
+  if (!saved || typeof saved !== 'object') return false;
+  const c = saved as Partial<Chapter>;
+  return typeof c.version === 'number' && Number.isFinite(c.version) && c.version > i.version
+    && (c.id === undefined || c.id === i.chapterId) && c.title === i.title;
+}
 export type RenameInput = {chapterId: string; novelId: string; title: string; version: number};
 /** Registers the two real business actions. Returns an unregister function. */
 export function registerNovelPreviewActions(reg: ActionRegistry, qc: QueryClient, getNovelId: () => string | null): () => void {
@@ -55,7 +66,10 @@ export function registerNovelPreviewActions(reg: ActionRegistry, qc: QueryClient
       },
       run: async ctx => {
         const i = ctx.input as RenameInput;
-        const saved = await api.renameChapter(i.chapterId, i.title.trim(), i.version);
+        let saved: unknown;
+        try { saved = await api.renameChapter(i.chapterId, i.title.trim(), i.version); }
+        catch (e) { if (e instanceof ApiError) throw e; throw new RenameUnconfirmedError(); } // non-JSON body
+        if (!isConfirmedRename(saved, {...i, title: i.title.trim()})) throw new RenameUnconfirmedError();
         // Real success source: the server's returned chapter (new version). Refresh the list from the server.
         await qc.invalidateQueries({queryKey: chaptersKey(i.novelId)});
         return saved;
@@ -130,7 +144,8 @@ export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions,
       const r = await actions.execute(NOVEL_ACTION_IDS.rename, ctx({chapterId: c.id, novelId: n, title: d.title, version: c.version} satisfies RenameInput));
       if (r.status !== 'done') {
         const text = r.status === 'blocked' ? r.reason : r.status === 'error'
-          ? (r.error instanceof ApiError && r.error.status === 409 ? '章节已被其他地方修改，请刷新后再改。' : '保存失败，请重试。')
+          ? (r.error instanceof ApiError && r.error.status === 409 ? '章节已被其他地方修改，请刷新后再改。'
+            : r.error instanceof RenameUnconfirmedError ? RENAME_UNCONFIRMED_TEXT : '保存失败，请重试。')
           : r.status === 'duplicate' ? '正在保存，请稍候。' : '项目已切换，本次保存未生效。';
         setMsg({kind: 'err', text}); throw new Error(text);
       }
@@ -149,7 +164,7 @@ export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions,
   if (!novelId) return <p className="uw-state" data-state="empty">还没有选中作品。</p>;
   if (chapters.isLoading) return <p className="uw-state" role="status" data-state="loading">正在读取章节…</p>;
   if (chapters.error) { const k = classifyError(chapters.error); return <p className="uw-state" role="alert" data-state={k}>{ERR_TEXT[k]}</p>; }
-  if (!chapter) return <p className="uw-state" data-state="empty" data-testid="uw-inspector-empty">在左侧「作品结构」里选一个章节，这里会显示它的属性。</p>;
+  if (!chapter) return <p className="uw-state" data-state="empty" data-testid="uw-inspector-empty">在「作品结构」里选一个章节，这里会显示它的属性。</p>;
   const title = draft && draft.id === chapter.id ? draft.title : chapter.title;
   return <form data-testid="uw-inspector" style={{display: 'grid', gap: 8, padding: 12}} onSubmit={e => { e.preventDefault(); void save().catch(() => {}); }}>
     <label style={{display: 'grid', gap: 4}}>章节标题
