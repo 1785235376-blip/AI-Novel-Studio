@@ -372,3 +372,18 @@ nit（P3）：
 7. **和 Hermia 证据交叉核对**
    - m1flaky-full-1/2 是 307 和 308，和我的三次一致。
    - REGRESSION_M1_FLAKY.md 说"相比基线修好 11 个"，但没提到这 10 个新出现的 ComicLayouts/Voice 失败，建议补上。
+
+## M1-flaky2 (f3e0b496) — Vera 独立复核 [VERA-FE]
+
+- 基线：HEAD f3e0b496，代码 dc1d4350，tree 26b512e4 已校验；临时 worktree /tmp/vera-m1f2，独立 vite :4399，所有非 GET 请求均被拦截，没有向 :8000 写入。相对 f8124581 只改了 novelPreviewPanels.tsx/.test.tsx 两个文件，没有 polyfill，也没有改 vitest setup/config。
+- P4：浏览器 1440 实测，面板状态行逐字为「保存失败：网络错误。修改还在面板里。」（按钮保存与关闭确认两条路径一致）；P3 对话框文案「保存失败：网络错误。修改仍在面板里，没有保存。」未变。测试用 findByText 做全字符串精确匹配：变异（删掉末尾「。」）后 1 failed，恢复后 17/17 通过。✅
+- Node 结论：engines 为 ">=22.14.0 <25"；Node 20.19.2 是 apt 版，没有内置 undici（process.versions.undici 为 undefined），用的是系统 undici 7.3.0。/tmp 下的 Node 22.14.0 二进制 sha256 与官方 tarball 一致，其内置 undici 为 6.21.1。ComicLayoutsPanel* 与 VoiceSubtitlePanels 共 9 个测试文件：Node 20 下 10 failed/78（object.stream is not a function），Node 22 下 78/78 通过。REGRESSION_M1_FLAKY.md 列出的 10 项与此一致。**确认**。
+- 全量 vitest（raw / ISI / adjusted，ISI 按基线 8 计）：
+  - Node 20：308/8/308，308/8/308（AssetLibraryPanel.navigation 有一次 file-load 失败，总数 11346），311/8/311。旧门槛（≤307，可重试一次）：❌；三次取最好（308）：❌。
+  - Node 22.14：297/8/297，299/10/297，297/8/297。两种口径均 ✅。
+- 抖动项：Node 20 并集比三次共有多 7 项，Node 22 多 2 项（都是 ISI）。这 7 项单独各重跑 3 次全部通过。单跑时 StudioProductionGraphEditor 和 ComicLayoutsPanel.geometry 各有 1 项失败，那是三次共有的固定失败，不属于抖动。ISI 单跑 3 次结果为 10/8/8，确实有抖动。
+- 建议的 Node 22 新基线：三次共有的固定失败 298 项（297 个测试加 1 个 file-load 项 LocalAiBrowserJourneyContracts），清单见 vera-compare/m1flaky2/persistent-node22.json。
+- tsc：Node 20 与 Node 22 都是 6 个错误，与基线和 Hermia 的 m1flaky2-tsc.log 完全一致。
+- 交叉核对 Hermia 的 m1flaky2-full-node22-1：raw 302。我们的 298 项固定失败全部包含在内；多出的 4 项（CreativeWorkspace、IndependentStudioGraphWorkspace.presentation、ComicPublicationPanel、WorkspaceToolsPanel）在我们的三次运行中都没有出现，判断为抖动。Hermia 在 Node 20 下的 307/310/307 与我们的 308/308/311 同处一个区间。
+- 结论：P4 通过，Node 根因确认。按旧门槛，Node 20 不达标（308 比 307 多 1，但多出来的只是抖动与环境差异，没有任何新的真实回归）。建议把门槛切换到 Node 22.14（符合 engines），以 297 adjusted / 298 项固定失败作为新基线，ISI 仍按 8 计，并允许重试一次。
+- 证据目录：/workspace/hr/vera-compare/m1flaky2/。本节未提交。
