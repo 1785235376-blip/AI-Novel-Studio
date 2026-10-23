@@ -14,7 +14,12 @@ export function linkToExecution(scope: string, n: CvNode): void {
   try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
 }
 
-export function DualCanvas({scope, initial = 'split', videoSeed}: {scope: string; initial?: Mode; videoSeed?: CvGraph}) {
+type DualCanvasProps = {scope: string; initial?: Mode; videoSeed?: CvGraph; onImageTaskIntent?: (node: CvNode) => void};
+export function DualCanvas(props: DualCanvasProps) {
+  return <DualCanvasSession key={props.scope} {...props} />;
+}
+
+function DualCanvasSession({scope, initial = 'split', videoSeed, onImageTaskIntent}: DualCanvasProps) {
   const [mode, setMode] = useState<Mode>(initial);
   const [sel, setSel] = useState<CvNode | null>(null);
   const [rev, setRev] = useState(0);
@@ -28,14 +33,14 @@ export function DualCanvas({scope, initial = 'split', videoSeed}: {scope: string
           {([['creation', '创作画布'], ['execution', '执行画布'], ['split', '对照分屏']] as [Mode, string][]).map(([m, l]) =>
             <button key={m} type="button" aria-pressed={mode === m} data-dual={m} onClick={() => setMode(m)}>{l}</button>)}
         </div>
-        <span className="dual-cv__hint">左边组织素材和画面（图片），右边排镜头和生成（视频）。</span>
+        <span className="dual-cv__hint">两侧图结构仍是本机草稿，不是已保存的服务端图。图片任务需另行确认；视频节点尚未接入执行。</span>
         <span className="nv-spacer" />
         {note ? <span className="dual-cv__note" role="status">{note}</span> : null}
         <button type="button" className="nv-btn" data-dual-link="true" disabled={!sel || mode === 'execution'} title={sel ? '' : '先在创作画布选中一个节点'} onClick={send}>
           {sel ? `送「${sel.title.slice(0, 10)}」到执行画布 →` : '选中创作节点后可送到执行画布'}</button>
       </div>
       <div className="dual-cv__panes">
-        {mode !== 'execution' ? <div className="dual-cv__pane" aria-label="创作画布"><div className="dual-cv__lab">创作画布 · 图片</div><RebuildCanvas kind="image" scope={scope} label="创作画布" onSelect={onSel} /></div> : null}
+        {mode !== 'execution' ? <div className="dual-cv__pane" aria-label="创作画布"><div className="dual-cv__lab">创作画布 · 图片</div><RebuildCanvas kind="image" scope={scope} label="创作画布" onSelect={onSel} onImageTaskIntent={onImageTaskIntent} /></div> : null}
         {mode !== 'creation' ? <div className="dual-cv__pane" aria-label="执行画布"><div className="dual-cv__lab">执行画布 · 视频镜头</div><RebuildCanvas key={rev} kind="video" scope={scope} label="执行画布" seed={videoSeed} /></div> : null}
       </div>
     </section>

@@ -12,6 +12,8 @@ import {MultimodalDirectorWorkspace} from '../../novel/MultimodalDirectorWorkspa
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import {ComicView} from '../comic/ComicView';
 import {DualCanvas} from '../canvas/DualCanvas';
+import {CanvasImageQueue} from './CanvasImageQueue';
+import {useScopedRequestConsent} from '../../useScopedRequestConsent';
 import {safeImagePreviewUri} from '../../novel/ImageInfiniteCanvas';
 import type {ImageInspection} from '../../novel/ImageTaskInspector';
 import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
@@ -59,6 +61,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const [refSel, setRefSel] = useState('');
   const [drawer, setDrawer] = useState<null | 'gen' | 'refs'>(null);
   const [sendConfirm, setSendConfirm] = useState(false);
+  const {scopeKey: canvasTaskScope} = useScopedRequestConsent([]);
+  const [canvasTask, setCanvasTask] = useState<{scope: string; novelId: string; nodeId: string; prompt: string}>();
+  useEffect(() => setCanvasTask(undefined), [novelId, canvasTaskScope]);
   const [proOpen, setProOpen] = useState(shellMode === 'pro');
   useEffect(() => setProOpen(shellMode === 'pro'), [shellMode]);
   // [HERMIA-FE-20261022 U3] 双画布 / 专业工具只在专业模式；普通模式停在双画布时回到默认「浏览」
@@ -106,7 +111,12 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>双画布</h2><span className="nv-badge nv-badge--part">本机草稿</span><span className="nv-spacer" />
         <button type="button" className="nv-btn" onClick={() => onViewChange('canvas')}>只看图片画布</button>
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button></div>
-      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><DualCanvas scope={novelId} /></div>
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><DualCanvas scope={novelId} onImageTaskIntent={node => {
+        if (node.t === 'image_generate' && node.prompt?.trim()) setCanvasTask({scope: canvasTaskScope, novelId, nodeId: node.id, prompt: node.prompt.trim()});
+      }} /></div>
+      {canvasTask?.scope === canvasTaskScope && canvasTask.novelId === novelId ? <Drawer title="画布图片任务" onClose={() => setCanvasTask(undefined)}>
+        <CanvasImageQueue novelId={novelId} nodeId={canvasTask.nodeId} prompt={canvasTask.prompt} onClose={() => setCanvasTask(undefined)}/>
+      </Drawer> : null}
     </div>
   );
 

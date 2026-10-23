@@ -2,14 +2,15 @@
    - 点阵网格、节点卡（左色条 + 标题 + 类型 + 本地标）、左右端口、贝塞尔连线、滚轮缩放、空白拖拽平移、拖动节点、从输出端口拖线连接。
    - 右键空白处 → 在点击位置弹「添加节点」菜单（类型取自现存 StudioGraphDefinitionId 目录，按画布过滤）；右键节点 → 删除。
    - 持久化：前端还没有可直接写入的画布图接口接到这里，所以只存本机浏览器 localStorage，并在画布上写明「仅本机草稿」。不发任何写请求。 */
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE} from 'react';
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
+import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
 
 export type CanvasKind = 'image' | 'video';
 export type NodeType = {id: StudioGraphDefinitionId; label: string; color: string; icon: string; ins: boolean; outs: boolean};
-export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string};
+export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string; prompt?: string};
 export type CvEdge = {id: string; a: string; b: string};
 export type CvGraph = {nodes: CvNode[]; edges: CvEdge[]};
 
@@ -36,7 +37,14 @@ function load(key: string, seed: CvGraph): CvGraph {
   return seed;
 }
 
-export function RebuildCanvas({kind, scope, seed, label, onSelect}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void}) {
+type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void; onImageTaskIntent?: (node: CvNode) => void};
+
+// A new owner must load its own draft before any persistence effect runs.
+export function RebuildCanvas(props: RebuildCanvasProps) {
+  return <RebuildCanvasSession key={canvasStorageKey(props.kind, props.scope)} {...props} />;
+}
+
+function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIntent}: RebuildCanvasProps) {
   const key = canvasStorageKey(kind, scope);
   const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
   const [vp, setVp] = useState({x: 40, y: 40, k: 1});
@@ -45,7 +53,10 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect}: {kind: Canva
   const [q, setQ] = useState('');
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const active = useRef(true);
+  const selectedTask = useRef<CvNode>();
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
+  useLayoutEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);
   useEffect(() => { onSelect?.(g.nodes.find(n => n.id === sel) || null); }, [sel, g.nodes, onSelect]);
 
@@ -107,11 +118,16 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect}: {kind: Canva
   const by = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const curve = (x1: number, y1: number, x2: number, y2: number) => { const m = Math.max(40, Math.abs(x2 - x1) / 2); return `M${x1},${y1} C${x1 + m},${y1} ${x2 - m},${y2} ${x2},${y2}`; };
   const types = NODE_TYPES[kind].filter(t => !q || t.label.includes(q));
+  const selectedNode = g.nodes.find(n => n.id === sel);
+  const imageTaskNode = kind === 'image' && selectedNode?.t === 'image_generate' ? selectedNode : undefined;
+  selectedTask.current = imageTaskNode;
+  const taskPrompt = typeof imageTaskNode?.prompt === 'string' ? imageTaskNode.prompt : '';
 
   return (
+    <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
-      <span className="rcv-local" title="还没有接到服务端画布图接口；切换作品或清浏览器数据会丢">仅本机草稿 · 未同步服务端</span>
+      <span className="rcv-local" title="图结构与提示词按作品保存在此浏览器；不是已保存的服务端图，清除浏览器数据会丢失">仅本机草稿 · 未同步服务端</span>
       <svg ref={svgRef} className="rcv-svg" role="application" aria-label={kind === 'image' ? '图片无限画布' : '视频无限画布'} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel}
         onKeyDown={e => { if ((e.key === 'Delete' || e.key === 'Backspace') && sel) delNode(sel); }}>
@@ -146,6 +162,16 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect}: {kind: Canva
             {types.length === 0 ? <p className="none">没有匹配的类型</p> : null}</div>
         </>}
       </div> : null}
+    </div>
+    {imageTaskNode ? <Panel title="所选图片节点参数" aria-label="所选图片节点参数" style={{flexShrink: 0}}>
+      <p>节点：{imageTaskNode.title}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
+      <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
+        onChange={event => { const prompt = event.target.value; setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
+      <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {
+        if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()});
+      }}>为此节点准备图片任务</Button>
+      <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
+    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage>视频节点的任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage> : null}
     </div>
   );
 }
