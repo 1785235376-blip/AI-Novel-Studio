@@ -9,3 +9,10 @@
 5. No independent review: Vera not launched.
 6. 6 pre-existing tsc errors in untouched files (see BASELINE_REPORT item 12).
 7. Model identity: cannot be verified from inside the bot.
+
+
+## Open after M1-fix [HERMIA-FE-20261023 M1-fix]
+- N4 (S3): with CSS `zoom` only, useViewport reads innerWidth unscaled, so float clamp can place panels outside. Real browser zoom (DSF) is fine per Vera. Deferred.
+- N5 (S3): exec canvas hidden by default in preview; reachable only via 「中间显示」. Deferred to D (discoverability).
+- N6: one-off 404 on first 1366 load, not reproduced. Watch.
+- Browser re-verification of MF-1/MF-2 and full vitest run pending Vera.
