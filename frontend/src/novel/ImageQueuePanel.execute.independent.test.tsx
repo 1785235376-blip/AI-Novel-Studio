@@ -266,7 +266,7 @@ describe('independent explicit original image-job execution', () => {
     fireEvent.click(confirm); await act(async () => {}); expect(executePosts(fetcher)).toHaveLength(0);
   });
 
-  it.each(['empty timestamp', 'unknown field'])('preserves and blocks a corrupt %s pending marker instead of clearing it to admit execution', async corruption => {
+  it.each(['empty timestamp', 'unknown field', 'array-hash'])('preserves and blocks a corrupt %s pending marker instead of clearing it to admit execution', async corruption => {
     host(); const {fetcher} = http({execute: async () => {throw new TypeError('Fixture unknown execution outcome');}});
     let view = render(panel()); const {check, confirm} = await prepare(); fireEvent.click(check); fireEvent.click(confirm);
     await waitFor(() => expect(executePosts(fetcher)).toHaveLength(1)); await act(async () => {});
@@ -277,7 +277,8 @@ describe('independent explicit original image-job execution', () => {
     // The unknown-field case also differs from the current expectation, proving
     // corrupt records cannot be treated as valid obsolete markers and removed.
     const corrupt = JSON.stringify({...original, ...(corruption === 'empty timestamp'
-      ? {updatedAt: ''} : {updatedAt: '2026-10-23T15:03:00Z', unexpected_field: true})});
+      ? {updatedAt: ''} : corruption === 'array-hash' ? {requestSha256: [original.requestSha256]}
+        : {updatedAt: '2026-10-23T15:03:00Z', unexpected_field: true})});
     localStorage.setItem(key, corrupt);
     view.unmount(); view = render(panel()); await attemptConfirmation();
     expect(executePosts(fetcher)).toHaveLength(1);

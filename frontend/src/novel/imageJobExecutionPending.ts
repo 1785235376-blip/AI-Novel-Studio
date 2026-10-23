@@ -14,7 +14,7 @@ export function readImageExecutionPending(owner: CanvasTaskOwner, jobId: string)
     const value = JSON.parse(raw) as Pending;
     if (!value || typeof value !== 'object' || Array.isArray(value)
       || Object.keys(value).sort().join(',') !== 'attempt,jobId,operation,requestSha256,schema_version,updatedAt'
-      || value.schema_version !== 1 || value.jobId !== jobId || !/^[a-f0-9]{64}$/.test(value.requestSha256)
+      || value.schema_version !== 1 || value.jobId !== jobId || typeof value.requestSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(value.requestSha256)
       || !Number.isSafeInteger(value.attempt) || value.attempt < 0 || typeof value.updatedAt !== 'string' || value.updatedAt.length > 80
       || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(value.updatedAt) || !Number.isFinite(Date.parse(value.updatedAt))
       || typeof value.operation !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(value.operation)) return {kind: 'unavailable'};
