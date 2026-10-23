@@ -81,6 +81,12 @@ class FileAssetQueryIndex:
     MAX_METADATA_BYTES = 1024 * 1024
     MAX_SOURCE_BYTES = 256 * 1024 * 1024
     MAX_INDEX_BYTES = 512 * 1024 * 1024
+    MAX_INDEX_DIRECTORY_ENTRIES = 128
+    MAX_INDEX_DIRECTORY_BYTES = MAX_INDEX_BYTES * 4
+    MAX_INDEX_JOURNAL_HEADROOM_BYTES = 32 * 1024 * 1024
+    # Capacity for first cursor provisioning belongs to the same bounded store.
+    # The identity marker is currently 88 bytes; reserve room for its framing.
+    CURSOR_RESERVED_FILES = {"cursor.key": 32, "cursor.identity": 128}
     MAX_OPERATION_SECONDS = 30.0
     COLUMNS = ("name", "fingerprint", "asset_id", "novel_id", "binding",
                "filename_folded", "kind", "created_at", "payload")
@@ -141,7 +147,51 @@ class FileAssetQueryIndex:
         except OSError:
             raise AssetQueryUnavailable() from None
 
+    def _directory_usage(self, deadline, *, reserve_bytes=0, reserve_entries=0):
+        """Bound retained crash evidence without deleting prior artifacts.
+
+        Before rebuilding, reserve a full staging database and rollback journal.
+        Unknown ordinary files, cursor key files and interrupted builds all count.
+        Missing cursor files retain capacity before their first provisioning.
+        The original asset lease serializes cooperating derived-directory writers.
+        This is a capacity preflight and observed-size check, not an OS quota;
+        reserved journal headroom allows for SQLite page/sector framing overhead.
+        """
+        entries, size = reserve_entries, reserve_bytes
+        missing_cursor = dict(self.CURSOR_RESERVED_FILES)
+        try:
+            with os.scandir(self.directory) as directory:
+                for entry in directory:
+                    self._check_time(deadline)
+                    entries += 1
+                    if entries > self.MAX_INDEX_DIRECTORY_ENTRIES:
+                        raise AssetQueryBudgetExceeded()
+                    info = entry.stat(follow_symlinks=False)
+                    if not stat.S_ISREG(info.st_mode):
+                        raise AssetQueryUnavailable()
+                    missing_cursor.pop(entry.name, None)
+                    size += info.st_size
+                    if size > self.MAX_INDEX_DIRECTORY_BYTES:
+                        raise AssetQueryBudgetExceeded()
+        except OSError:
+            raise AssetQueryUnavailable() from None
+        entries += len(missing_cursor)
+        size += sum(missing_cursor.values())
+        if entries > self.MAX_INDEX_DIRECTORY_ENTRIES or size > self.MAX_INDEX_DIRECTORY_BYTES:
+            raise AssetQueryBudgetExceeded()
+
     def _index_identity(self):
+        # Canonical databases are published only after a closed DELETE-journal
+        # transaction. A live sidecar can never belong to this publication path.
+        # Reject it even when the main file stat still matches the warm cache.
+        for suffix in ("-wal", "-shm", "-journal"):
+            try:
+                Path(str(self.path) + suffix).lstat()
+            except FileNotFoundError:
+                continue
+            except OSError:
+                raise AssetQueryUnavailable() from None
+            raise AssetQueryUnavailable()
         try:
             info = self.path.lstat()
         except FileNotFoundError:
@@ -156,7 +206,7 @@ class FileAssetQueryIndex:
 
     def _connect(self, path, *, readonly=False):
         if readonly:
-            connection = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)
+            connection = sqlite3.connect(path.resolve().as_uri() + "?mode=ro&immutable=1", uri=True, timeout=5)
         else:
             connection = sqlite3.connect(path, timeout=5)
         # Bound SQLite's own cell/row allocation before a damaged cell can be
@@ -265,6 +315,9 @@ class FileAssetQueryIndex:
         staging = self.directory / ("building-" + uuid.uuid4().hex + ".sqlite3")
         connection = None
         try:
+            self._directory_usage(deadline, reserve_bytes=(self.MAX_INDEX_BYTES * 2
+                                                          + self.MAX_INDEX_JOURNAL_HEADROOM_BYTES),
+                                  reserve_entries=2)
             descriptor = os.open(staging, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
             os.close(descriptor)
             connection = self._connect(staging)
@@ -287,6 +340,10 @@ class FileAssetQueryIndex:
                     CREATE INDEX scoped_order ON sources(novel_id, binding, created_at, asset_id);
                     CREATE INDEX scoped_kind_order ON sources(novel_id, binding, kind, created_at, asset_id);
                 """)
+            # SQLite bounds the staging DB while growing, before the final
+            # filesystem size check. Backup itself is bounded by the old DB cap.
+            page_size = connection.execute("PRAGMA page_size").fetchone()[0]
+            connection.execute(f"PRAGMA max_page_count={self.MAX_INDEX_BYTES // page_size}")
             existing = dict(connection.execute("SELECT name, fingerprint FROM sources"))
             connection.execute("BEGIN IMMEDIATE")
             current_names = set()
@@ -319,6 +376,7 @@ class FileAssetQueryIndex:
             connection = None
             if staging.stat().st_size > self.MAX_INDEX_BYTES:
                 raise AssetQueryBudgetExceeded()
+            self._directory_usage(deadline)
             with staging.open("rb") as handle:
                 os.fsync(handle.fileno())
             os.replace(staging, self.path)
@@ -334,8 +392,13 @@ class FileAssetQueryIndex:
             identity = self._index_identity()
             self._verified_identity, self._verified_revision = identity, revision
             return identity
-        except (sqlite3.DatabaseError, OSError, UnicodeError):
+        except (sqlite3.DatabaseError, OSError, UnicodeError) as error:
             self._check_time(deadline)
+            # SQLite uses SQLITE_FULL for both the configured page ceiling and
+            # exhausted host storage. Both are a safe capacity-budget failure;
+            # the driver does not reliably distinguish the underlying cause.
+            if isinstance(error, sqlite3.DatabaseError) and getattr(error, "sqlite_errorcode", None) == sqlite3.SQLITE_FULL:
+                raise AssetQueryBudgetExceeded() from None
             raise AssetQueryUnavailable() from None
         finally:
             if connection is not None:
@@ -353,6 +416,7 @@ class FileAssetQueryIndex:
         fingerprints = self._scan(deadline)
         revision = _revision(fingerprints)
         self._ensure_directory()
+        self._directory_usage(deadline)
         identity = self._index_identity()
         reuse = False
         if identity is not None:
@@ -400,6 +464,7 @@ class FileAssetQueryIndex:
 
     def verify(self, snapshot, *, deadline=None):
         deadline = self._deadline() if deadline is None else deadline
+        self._directory_usage(deadline)
         if (self._index_identity() != snapshot.index_identity
                 or self._scan(deadline) != snapshot.fingerprints):
             raise AssetQueryChanged()

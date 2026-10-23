@@ -54,6 +54,8 @@ X-Branch-ID: <当前已授权分支；仅协作模式需要>
 
 索引缺失/格式旧/损坏时在相同预算内重建，异常或不安全路径返回 503 `ASSET_QUERY_INDEX_UNAVAILABLE`；查询期间发现相关版本变化返回 409 `ASSET_QUERY_RESTART_REQUIRED`。错误不带资产计数/标识/路径，仍遵循 M0 拒绝优先级与 no-store。SQLite 内部 I/O 不包含在 Python 源文件读取计数中；索引大小另行记录。完整投影关联的其他 owner 延续原读取机制，不承诺跨 owner 原子快照或统一内存上限；测量内存是样本实测值，不能外推为硬上限。
 
+M3 对派生目录另设128 entries / 2 GiB容量检查，保留cursor文件名额与重建staging/journal余量；SQLite staging最大512 MiB。连续中断的旧文件不自动删除，空间不足明确拒绝；canonical WAL/journal不被默默复用。源上限针对整个Asset根目录，30秒协作预算不含取得租约的等待；不承诺操作系统物理配额或阻塞I/O墙钟上限。恢复流程见 `docs/delivery/ASSET_QUERY_SCALE_M3_20261023.md`。
+
 ## 错误与安全边界
 
 非法类型、超长/控制字符关键词、负数/越界/非整数分页及非法原有布尔参数：HTTP 422，`code=EXPERIMENTAL_INVALID`，固定 `message=ASSET_QUERY_INVALID`。局部校验不回显请求值、磁盘路径或内部异常。主应用仍使用既有统一错误 envelope（含 `detail`、`code`、`message`、`details`、`request_id`）。

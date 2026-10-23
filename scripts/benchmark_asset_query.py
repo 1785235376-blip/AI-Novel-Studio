@@ -2,6 +2,7 @@
 
 Run with the repository's development Python environment, for example:
     python scripts/benchmark_asset_query.py --sizes 100 1000 10000
+    python scripts/benchmark_asset_query.py --cursor-only --sizes 10000
 
 The driver only creates fresh synthetic stores below .runtime/asset-scale. It
 never reuses a user data directory. Fixture construction copies one real owner
@@ -16,8 +17,10 @@ from __future__ import annotations
 import argparse
 import base64
 import copy
+import hashlib
 import importlib.metadata
 import json
+import logging
 import os
 from pathlib import Path
 import resource
@@ -33,6 +36,10 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 KINDS = ("image", "video", "audio", "model", "text", "prompt")
 PROJECT = "asset-query-benchmark"
+MEASURED_SOURCES = ("app/creative/workspace.py", "app/creative/asset_query_service.py",
+    "app/creative/asset_query_cursor.py", "app/services/asset_library_service.py",
+    "app/services/asset_query_index.py", "app/services/asset_query_budget.py",
+    "scripts/benchmark_asset_query.py")
 
 
 def configure(root: Path) -> None:
@@ -84,7 +91,8 @@ class FileAudit:
 
     def reset(self) -> None:
         self.counts = dict(directory_enumerations=0, metadata_reads=0, content_reads=0,
-                           metadata_writes=0, content_writes=0, index_connections=0)
+                           metadata_writes=0, content_writes=0, index_connections=0,
+                           derived_directory_enumerations=0)
 
     def observe(self, event, args):
         if not self.active:
@@ -95,8 +103,11 @@ class FileAudit:
                 self.counts["index_connections"] += 1
         elif event == "os.scandir":
             path = args[0]
-            if isinstance(path, (str, bytes, os.PathLike)) and os.fsencode(path) == self.asset_root:
-                self.counts["directory_enumerations"] += 1
+            if isinstance(path, (str, bytes, os.PathLike)):
+                if os.fsencode(path) == self.asset_root:
+                    self.counts["directory_enumerations"] += 1
+                elif os.fsencode(path) == os.path.join(self.asset_root, b".asset-query-index"):
+                    self.counts["derived_directory_enumerations"] += 1
         elif event == "open":
             path, _mode, flags = args
             if not isinstance(path, (str, bytes, os.PathLike)):
@@ -115,13 +126,29 @@ class FileAudit:
                 self.counts[prefix + "_reads"] += 1
 
 
-def measure(root: Path, count: int, *, reopen: bool = False) -> list[dict]:
+def measure(root: Path, count: int, *, reopen: bool = False, cursor_only: bool = False) -> list[dict]:
     marker = root / ".asset-query-benchmark.json"
     if not marker.is_file() or json.loads(marker.read_text())["records"] != count:
         raise ValueError("benchmark fixture marker is missing or mismatched")
     configure(root)
     from fastapi.testclient import TestClient
     from app.main import app
+
+    def verify_source():
+        expected = json.loads(os.environ.get("ASSET_QUERY_BENCHMARK_EXPECTED_SOURCES", "{}"))
+        for name, digest in expected.items():
+            path = REPO / name
+            if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                raise RuntimeError("benchmark source changed during measurement")
+            module = sys.modules.get(name.removesuffix(".py").replace("/", "."))
+            if module is not None and Path(module.__file__).resolve() != path:
+                raise RuntimeError("benchmark imported a module from a different source directory")
+
+    verify_source()
+    if cursor_only:
+        # httpx INFO logs contain the query string; tokens stay only in this
+        # fresh synthetic store and are never emitted in measurement output.
+        logging.getLogger("httpx").setLevel(logging.WARNING)
 
     audit = FileAudit(root / "assets")
     scenarios = [
@@ -134,6 +161,18 @@ def measure(root: Path, count: int, *, reopen: bool = False) -> list[dict]:
     scenarios += [("legacy_unpaged", {})]
     if reopen:
         scenarios = [("cold_process_persistent_index", {"limit": 50, "offset": 0})]
+    cursor_state = root / ".asset-query-cursor-state.json"
+    state, first_ids, continuation = {}, [], None
+    if cursor_only:
+        common = {"page_mode": "cursor", "limit": 50}
+        scenarios = [("cold_cursor_first_page", dict(common)),
+            ("hot_cursor_first_page", dict(common)),
+            ("cursor_continuation_page_2", dict(common)),
+            ("cursor_low_hit_keyword_kind", dict(common, q="needle", kind="image")),
+            ("cursor_exact_total_no_results", dict(common, q="benchmark-no-such-filename"))]
+        if reopen:
+            state = json.loads(cursor_state.read_text())
+            scenarios = [("cold_process_cursor_continuation_page_3", dict(common, cursor=state["cursor"]))]
     rows = []
     index_directory = root / "assets" / ".asset-query-index"
 
@@ -142,6 +181,9 @@ def measure(root: Path, count: int, *, reopen: bool = False) -> list[dict]:
 
     with TestClient(app) as client:
         for label, query in scenarios:
+            if label == "cursor_continuation_page_2":
+                query["cursor"] = continuation
+            verify_source()
             audit.reset()
             index_bytes_before = index_size()
             tracemalloc.start()
@@ -155,29 +197,71 @@ def measure(root: Path, count: int, *, reopen: bool = False) -> list[dict]:
                 elapsed = time.perf_counter() - started
                 _, peak = tracemalloc.get_traced_memory()
                 tracemalloc.stop()
-            rows.append({"scenario": label, "records": count, "query": query,
+            verify_source()
+            if cursor_only:
+                if response.status_code != 200 or body.get("projection") != "asset-metadata/1":
+                    raise RuntimeError("cursor benchmark did not return the metadata projection")
+                if audit.counts["content_reads"] or audit.counts["metadata_writes"] or audit.counts["content_writes"]:
+                    raise RuntimeError("cursor benchmark read content or wrote source assets")
+                expected_total, start = count, 0
+                if label == "cursor_continuation_page_2":
+                    start = 50
+                elif reopen:
+                    start = 100
+                expected_indices = list(range(start, min(start + 50, count)))
+                if label == "cursor_low_hit_keyword_kind":
+                    expected_indices = list(range(0, count, 3000))
+                    expected_total = len(expected_indices)
+                    expected_indices = expected_indices[:50]
+                elif label == "cursor_exact_total_no_results":
+                    expected_indices, expected_total = [], 0
+                filenames = [f"{'needle' if i % 1000 == 0 else 'asset'}-{KINDS[i % 6]}-{i:08d}.bin"
+                             for i in expected_indices]
+                if body.get("total") != expected_total or [item["filename"] for item in body["items"]] != filenames:
+                    raise RuntimeError("cursor benchmark returned an inaccurate total or page")
+                ids = [item["id"] for item in body["items"]]
+                if label == "cold_cursor_first_page":
+                    first_ids, continuation = ids, body.get("next_cursor")
+                elif label == "hot_cursor_first_page" and ids != first_ids:
+                    raise RuntimeError("cursor first page was unstable")
+                elif label == "cursor_continuation_page_2":
+                    if set(ids) & set(first_ids) or not body.get("next_cursor"):
+                        raise RuntimeError("cursor continuation repeated a row or missed a successor")
+                    state = {"cursor": body["next_cursor"], "seen_ids": first_ids + ids}
+                elif reopen and set(ids) & set(state["seen_ids"]):
+                    raise RuntimeError("cross-process cursor continuation repeated a row")
+            rows.append({"scenario": label, "records": count,
+                "query": {key: "<redacted>" if key == "cursor" else value for key, value in query.items()},
                 "http_status": response.status_code,
                 "returned": len(body.get("items", [])), "total": body.get("total"),
                 "error_code": body.get("code"), "elapsed_seconds": round(elapsed, 6),
                 "python_peak_bytes": peak, "process_max_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                 "derived_index_bytes_before": index_bytes_before, "derived_index_bytes_after": index_size(),
                 **audit.counts})
+    if cursor_only and not reopen:
+        descriptor = os.open(cursor_state, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        with os.fdopen(descriptor, "w") as handle:
+            json.dump(state, handle)
     return rows
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--sizes", nargs="+", type=int, default=[100, 1000, 10000])
+    parser.add_argument("--sizes", nargs="+", type=int)
+    parser.add_argument("--cursor-only", action="store_true", help="measure only new metadata cursor scenarios (default 10000 rows)")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--worker", choices=("prepare", "measure", "reopen"))
     parser.add_argument("--root", type=Path)
     args = parser.parse_args()
+    args.sizes = args.sizes or ([10000] if args.cursor_only else [100, 1000, 10000])
     if any(size < 1 or size > 100_000 for size in args.sizes):
         parser.error("sample sizes must be within 1..100000")
+    if args.cursor_only and min(args.sizes) < 101:
+        parser.error("cursor-only samples need at least 101 rows for real third-page continuation")
     if args.worker:
         if args.root is None or not args.root.resolve().is_relative_to(REPO / ".runtime" / "asset-scale"):
             parser.error("worker roots must be synthetic .runtime/asset-scale directories")
-        result = prepare(args.root.resolve(), args.sizes[0]) if args.worker == "prepare" else measure(args.root.resolve(), args.sizes[0], reopen=args.worker == "reopen")
+        result = prepare(args.root.resolve(), args.sizes[0]) if args.worker == "prepare" else measure(args.root.resolve(), args.sizes[0], reopen=args.worker == "reopen", cursor_only=args.cursor_only)
         print(json.dumps(result, ensure_ascii=False))
         return
     base = REPO / ".runtime" / "asset-scale"
@@ -191,12 +275,19 @@ def main() -> None:
             "36-byte synthetic content validates population scaling and read counts, not maximum-sized media page cost.",
             "Audit and tracemalloc instrumentation affect timings; process max RSS is a process lifetime high-water mark."],
         "samples": []}
+    worker_environment = dict(os.environ)
+    if args.cursor_only:
+        result["mode"] = "cursor-only"
+        result["source_files_sha256"] = {name: hashlib.sha256((REPO / name).read_bytes()).hexdigest()
+                                          for name in MEASURED_SOURCES}
+        worker_environment["ASSET_QUERY_BENCHMARK_EXPECTED_SOURCES"] = json.dumps(result["source_files_sha256"])
     for count in args.sizes:
         root = Path(tempfile.mkdtemp(prefix=f"benchmark-{count}-", dir=base))
         payload = {"records": count, "synthetic_store": str(root.relative_to(REPO))}
         for worker in ("prepare", "measure", "reopen"):
-            completed = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--worker", worker,
-                "--root", str(root), "--sizes", str(count)], cwd=REPO, text=True,
+            command = [sys.executable, str(Path(__file__).resolve()), "--worker", worker,
+                "--root", str(root), "--sizes", str(count)] + (["--cursor-only"] if args.cursor_only else [])
+            completed = subprocess.run(command, cwd=REPO, text=True, env=worker_environment,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
             payload[worker] = json.loads(completed.stdout)
         result["samples"].append(payload)

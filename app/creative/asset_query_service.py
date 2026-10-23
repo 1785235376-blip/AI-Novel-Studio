@@ -80,9 +80,9 @@ def list_assets(service, nid, scope, *, include_deleted, query, actor_id=None):
             items.append(metadata_projection(row) if cursor_mode
                          else service._view(nid, scope, row))
         index.verify(snapshot, deadline=budget.deadline)
+        if flags != sorted(enabled_flags()):
+            raise AssetQueryChanged()
         if cursor_mode:
-            if flags != sorted(enabled_flags()):
-                raise AssetQueryChanged()
             if position is not None:
                 # Check the fixed TTL again even on the last page, which does
                 # not mint a successor token and therefore never calls encode.

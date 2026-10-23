@@ -205,6 +205,20 @@ def test_damaged_derived_filter_cannot_silently_hide_source_match(rig):
     assert source_snapshot(rig.root) == before
 
 
+def test_offset_total_rejects_feature_visibility_change_before_return(rig, monkeypatch):
+    row = rig.seed("visibility-change.png", required_features=("asset_lineage_v2",))
+    assert ids(get(rig, {"limit": 1})) == [row["id"]]
+    original_verify = rig.workspace.query_index.verify
+
+    def change_visibility_after_verify(snapshot, **kwargs):
+        original_verify(snapshot, **kwargs)
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2")
+
+    monkeypatch.setattr(rig.workspace.query_index, "verify", change_visibility_after_verify)
+    assert_safe_failure(rig, get(rig, {"limit": 1}), 409,
+                        "ASSET_QUERY_RESTART_REQUIRED", [row["id"]])
+
+
 def test_injected_content_io_failure_returns_fixed_error_without_path(rig, monkeypatch):
     row = rig.seed("io-failure.png")
     assert ids(get(rig, {"limit": 1})) == [row["id"]]
