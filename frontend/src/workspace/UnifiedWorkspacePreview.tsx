@@ -13,10 +13,11 @@ const SPECS: LayoutPanelSpec[] = [
   { id: "tasks", title: "任务", defaultDock: "bottom", docks: ["bottom", "right", "left"], defaultSize: 200, minSize: 120 },
 ];
 
+// [HERMIA-FE-20261023 M1-s2] placeholder shows panel titles, never raw ids.
 export function UnifiedWorkspacePreview() {
   return (
     <DockLayout specs={SPECS} scope={{ userId: "local", projectId: "preview", projectInstanceId: "preview" }}
       storage={window.localStorage} loadOptions={{ inspectorPanelId: "inspector" }}
-      renderPanel={(id) => <p style={{ padding: 12 }}>{id}（M1 预览占位，未接入业务控制器）</p>} />
+      renderPanel={(id) => <p style={{ padding: 12 }}>{SPECS.find((x) => x.id === id)?.title ?? "面板"}（预览占位，尚未接入实际功能）</p>} />
   );
 }

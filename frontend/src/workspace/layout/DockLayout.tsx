@@ -7,8 +7,11 @@
 import {useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import type {LayoutScope, StorageLike} from '../../workbench/layout';
+import {ActionRegistry, type ActionContext, type ExecuteResult} from '../../workbench/actions';
+import {LifecycleTracker} from '../../workbench/lifecycle';
+import {actionIdForKey, LAYOUT_ACTION_IDS, registerLayoutActions, ShortcutTable, type LayoutActionId} from '../actions/layoutActions';
 import {
-  closedPanels, layoutReducer, panelsIn, zoneFromPoint,
+  closedPanels, dropAxis, dropIndexFromPoint, layoutReducer, panelsIn, zoneFromPoint,
   type DockZone, type LayoutAction, type LayoutPanelSpec, type LayoutState, type PanelFrame, type SplitMode, type Viewport,
 } from './model';
 import {loadWorkspaceLayout, saveWorkspaceLayout, type LoadOptions, type LoadResult} from './persistence';
@@ -25,11 +28,15 @@ export interface DockLayoutProps {
   viewport?: Viewport;
   loadOptions?: LoadOptions;
   onLoad?: (r: LoadResult) => void;
+  /** [HERMIA-FE-20261023 M1-s2] Optional shared registry / shortcut table (host app). Defaults to a private pair. */
+  actionRegistry?: ActionRegistry;
+  shortcutTable?: ShortcutTable;
 }
 
 const DOCK_LABEL: Record<DockZone, string> = {left: '左侧', main: '中间', right: '右侧', bottom: '底部', float: '浮动'};
 const SPLIT_LABEL: Record<SplitMode, string> = {single: '单栏', 'split-h': '左右分屏', 'split-v': '上下分屏'};
 const KEY_STEP = 16;
+interface DropTarget { zone: DockZone; index: number; allowed: boolean; axis: 'x' | 'y'; line: {left: number; top: number; width: number; height: number}; empty: boolean; }
 
 /** [HERMIA-FE-20261023 M1-fix] N2: layout signature without focus / z-order, which are not layout changes. */
 function layoutSignature(s: LayoutState): string {
@@ -94,7 +101,18 @@ function useViewport(fixed?: Viewport): Viewport {
 
 export function DockLayout(props: DockLayoutProps) {
   const {specs, scope, storage, renderPanel} = props;
-  const viewport = useViewport(props.viewport);
+  const rawViewport = useViewport(props.viewport);
+  // [HERMIA-FE-20261023 M1-s2] measured toolbar height is reserved so main keeps MAIN_MIN_HEIGHT for real.
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarH, setToolbarH] = useState(0);
+  useLayoutEffect(() => {
+    const el = toolbarRef.current; if (!el) return;
+    const m = () => setToolbarH(Math.ceil(el.getBoundingClientRect().height));
+    m();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(m); ro.observe(el); return () => ro.disconnect();
+  }, []);
+  const viewport = useMemo<Viewport>(() => ({...rawViewport, reserveTop: toolbarH}), [rawViewport, toolbarH]);
   const envRef = useRef({specs, viewport}); envRef.current = {specs, viewport};
   const reducer = useMemo(() => (s: LayoutState, a: Parameters<ReturnType<typeof layoutReducer>>[1]) => layoutReducer(envRef.current)(s, a), []);
   const initial = useMemo<LoadResult>(() => storage
@@ -119,7 +137,7 @@ export function DockLayout(props: DockLayoutProps) {
   useEffect(() => { props.onLoad?.(initial); rawDispatch({type: 'replace', state: initial.state}); userTouched.current = false; lastSig.current = layoutSignature(initial.state); },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [initial]);
-  useEffect(() => { rawDispatch({type: 'viewport'}); }, [viewport.width, viewport.height]);
+  useEffect(() => { rawDispatch({type: 'viewport'}); }, [viewport.width, viewport.height, viewport.reserveTop]);
 
   useEffect(() => {
     if (!storage || !userTouched.current) return;
@@ -133,20 +151,88 @@ export function DockLayout(props: DockLayoutProps) {
   const close = useCallback((id: string) => dispatch({type: 'close', id}), []);
   const guard = useDirtyCloseGuard(close);
 
+  // [HERMIA-FE-20261023 M1-s2] layout actions via the existing workbench ActionRegistry.
+  const [tracker] = useState(() => new LifecycleTracker());
+  const registry = useMemo(() => props.actionRegistry ?? new ActionRegistry(tracker), [props.actionRegistry, tracker]);
+  const table = useMemo(() => props.shortcutTable ?? new ShortcutTable(), [props.shortcutTable]);
+  const [, setPendingTick] = useState(0);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
+  const [shortcutConflicts, setShortcutConflicts] = useState<string[]>([]);
+  useEffect(() => {
+    const reg = registerLayoutActions(registry, table, {
+      getState: () => stateRef.current, specs, dispatch, requestReset: () => setConfirmReset(true),
+    });
+    setShortcutConflicts(reg.conflicts.map(c => `快捷键 ${c.shortcut} 已被占用，「${registry.get(c.actionId)?.label ?? ''}」未绑定快捷键`));
+    return reg.dispose;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registry, table]);
+  const actionCtx = (targetId: string | null = null, input?: unknown): ActionContext =>
+    ({token: tracker.current(), targetId, targetVersion: null, permissions: new Set<string>(), input});
+  const availability = (id: LayoutActionId, targetId: string | null = null, input?: unknown) =>
+    registry.get(id) ? registry.availability(id, actionCtx(targetId, input)) : {enabled: false as const, reason: '动作未注册'};
+  const runAction = async (id: LayoutActionId, targetId: string | null = null, input?: unknown): Promise<ExecuteResult> => {
+    const p = registry.execute(id, actionCtx(targetId, input));
+    setPendingTick(n => n + 1);
+    const r = await p;
+    setPendingTick(n => n + 1);
+    if (r.status === 'blocked') setActionMsg(r.reason);
+    else if (r.status === 'error') setActionMsg(`操作没有完成：${r.error instanceof Error ? r.error.message : '未知原因'}`);
+    else setActionMsg(null);
+    return r;
+  };
+  useEffect(() => {
+    const ids = Object.values(LAYOUT_ACTION_IDS);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      const id = actionIdForKey(e, table, ids) as LayoutActionId | null; if (!id) return;
+      e.preventDefault();
+      void runAction(id, id === LAYOUT_ACTION_IDS.toggleCollapse ? stateRef.current.focusId : null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registry, table]);
+  const pendingOf = (id: LayoutActionId, targetId: string | null = null) => registry.isPending(id, targetId);
+
   // ---- pointer drag (header) ----
   const drag = useRef<{id: string; startX: number; startY: number; ox: number; oy: number; floating: boolean} | null>(null);
-  const [dragZone, setDragZone] = useState<DockZone | null>(null);
+  const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  const dragZone = dropTarget?.zone ?? null;
+  const stateRef = useRef(state); stateRef.current = state;
+  // [HERMIA-FE-20261023 M1-s2] precise drop: zone from pointer, insertion index from the zone's other panels' rects.
+  const computeDrop = (id: string, x: number, y: number): DropTarget | null => {
+    const root = rootRef.current; if (!root) return null;
+    const rr = root.getBoundingClientRect();
+    const zone = zoneFromPoint(x, y, rr);
+    const spec = specs.find(s => s.id === id);
+    const allowed = !!spec?.docks.includes(zone);
+    const axis = dropAxis(zone, stateRef.current.split);
+    const others = Array.from(root.querySelectorAll<HTMLElement>(`section.uw-panel[data-dock="${zone}"]`)).filter(el => el.dataset.panelId !== id);
+    const rects = others.map(el => el.getBoundingClientRect());
+    const index = dropIndexFromPoint(axis, {x, y}, rects);
+    let line: {left: number; top: number; width: number; height: number};
+    if (!rects.length) {
+      const zr = root.querySelector<HTMLElement>(`[data-zone-box="${zone}"]`)?.getBoundingClientRect() ?? rr;
+      line = {left: zr.left - rr.left, top: zr.top - rr.top, width: zr.width, height: zr.height};
+    } else {
+      const ref = rects[Math.min(index, rects.length - 1)]; const after = index >= rects.length;
+      line = axis === 'y'
+        ? {left: ref.left - rr.left, top: (after ? ref.bottom : ref.top) - rr.top - 1, width: ref.width, height: 3}
+        : {left: (after ? ref.right : ref.left) - rr.left - 1, top: ref.top - rr.top, width: 3, height: ref.height};
+    }
+    return {zone, index, allowed, axis, line, empty: !rects.length};
+  };
   useEffect(() => {
     const move = (e: PointerEvent) => {
       const d = drag.current; if (!d) return;
       if (d.floating) dispatch({type: 'moveFloat', id: d.id, x: d.ox + e.clientX - d.startX, y: d.oy + e.clientY - d.startY});
-      else if (rootRef.current) setDragZone(zoneFromPoint(e.clientX, e.clientY, rootRef.current.getBoundingClientRect()));
+      else setDropTarget(computeDrop(d.id, e.clientX, e.clientY));
     };
     const up = (e: PointerEvent) => {
-      const d = drag.current; if (!d) return; drag.current = null; setDragZone(null);
+      const d = drag.current; if (!d) return; drag.current = null; setDropTarget(null);
       if (d.floating || !rootRef.current) return;
       if (Math.abs(e.clientX - d.startX) + Math.abs(e.clientY - d.startY) < 4) return; // click, not drag
-      dispatch({type: 'dock', id: d.id, dock: zoneFromPoint(e.clientX, e.clientY, rootRef.current.getBoundingClientRect())});
+      const t = computeDrop(d.id, e.clientX, e.clientY);
+      if (t && t.allowed) dispatch({type: 'dock', id: d.id, dock: t.zone, index: t.index});
     };
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
     return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
@@ -204,12 +290,13 @@ export function DockLayout(props: DockLayoutProps) {
       ? {left: f.floatRect.x, top: f.floatRect.y, width: f.floatRect.w, height: f.floatRect.h, zIndex: 100 + f.z}
       : f.dock === 'left' || f.dock === 'right' ? {width: f.collapsed ? undefined : f.size} : f.dock === 'bottom' ? {height: f.collapsed ? undefined : f.size} : undefined;
     return (
-      <section key={f.id} role="region" aria-label={spec.title} tabIndex={-1} data-testid={`panel-${f.id}`} data-dock={f.dock}
+      <section key={f.id} role="region" aria-label={spec.title} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
         data-collapsed={f.collapsed} data-focused={state.focusId === f.id} data-z={f.z}
         className={`uw-panel${f.dock === 'float' ? ' uw-float' : ''}`} style={style} onFocusCapture={() => dispatch({type: 'focus', id: f.id})}>
         <header className="uw-panel__head" data-testid={`drag-${f.id}`} onPointerDown={startDrag(f)}>
           <span className="uw-panel__title">{spec.title}</span>
-          <button type="button" className="uw-btn" aria-expanded={!f.collapsed} onClick={() => dispatch({type: 'collapse', id: f.id})}>{f.collapsed ? '展开' : '折叠'}</button>
+          <button type="button" className="uw-btn" aria-expanded={!f.collapsed} data-action-id={LAYOUT_ACTION_IDS.toggleCollapse}
+            aria-busy={pendingOf(LAYOUT_ACTION_IDS.toggleCollapse, f.id) || undefined} onClick={() => { void runAction(LAYOUT_ACTION_IDS.toggleCollapse, f.id); }}>{f.collapsed ? '展开' : '折叠'}</button>
           <select className="uw-select" aria-label={`「${spec.title}」停靠位置`} value={f.dock} onChange={e => dispatch({type: 'dock', id: f.id, dock: e.target.value as DockZone})}>
             {spec.docks.map(d => <option key={d} value={d}>{DOCK_LABEL[d]}</option>)}
           </select>
@@ -228,6 +315,7 @@ export function DockLayout(props: DockLayoutProps) {
   const visibleMain = state.split === 'single' ? main.slice(0, 1) : main.slice(0, 2);
   const hiddenMain = main.slice(visibleMain.length);
   const closed = closedPanels(state);
+  const reopenAv = availability(LAYOUT_ACTION_IDS.reopen);
   const pendingSpec = guard.pending ? specOf(guard.pending.panelId) : null;
   const recovered = initial.source === 'fallback-corrupt';
   const status = !saveStatus.ok ? saveStatus : recovered
@@ -236,23 +324,28 @@ export function DockLayout(props: DockLayoutProps) {
 
   return (
     <div className="uw-layout" ref={rootRef} data-testid="dock-layout" data-source={initial.source}>
-      <div className="uw-toolbar" role="toolbar" aria-label="布局">
-        <label>布局 <select className="uw-select" aria-label="分屏方式" value={state.split} onChange={e => dispatch({type: 'split', mode: e.target.value as SplitMode})}>
+      <div className="uw-toolbar" role="toolbar" aria-label="布局" ref={toolbarRef}>
+        <label>布局 <select className="uw-select" aria-label="分屏方式" data-action-id={LAYOUT_ACTION_IDS.split} value={state.split}
+          aria-busy={pendingOf(LAYOUT_ACTION_IDS.split) || undefined} onChange={e => { void runAction(LAYOUT_ACTION_IDS.split, null, e.target.value as SplitMode); }}>
           {(Object.keys(SPLIT_LABEL) as SplitMode[]).map(m => <option key={m} value={m}>{SPLIT_LABEL[m]}</option>)}
         </select></label>
-        <label>重新打开 <select className="uw-select" aria-label="重新打开面板" value="" disabled={!closed.length} onChange={e => { if (e.target.value) dispatch({type: 'reopen', id: e.target.value}); }}>
-          <option value="">{closed.length ? '选择面板…' : '没有已关闭的面板'}</option>
+        <label>重新打开 <select className="uw-select" aria-label="重新打开面板" data-action-id={LAYOUT_ACTION_IDS.reopen} value=""
+          disabled={!reopenAv.enabled} aria-busy={pendingOf(LAYOUT_ACTION_IDS.reopen) || undefined} title={reopenAv.enabled ? undefined : reopenAv.reason}
+          onChange={e => { if (e.target.value) void runAction(LAYOUT_ACTION_IDS.reopen, e.target.value, e.target.value); }}>
+          <option value="">{reopenAv.enabled ? '选择面板…' : reopenAv.reason}</option>
           {closed.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
         </select></label>
         {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>
           <option value="">选择…</option>{hiddenMain.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
         </select></label>}
-        <button type="button" className="uw-btn" onClick={() => setConfirmReset(true)}>恢复默认布局</button>
-        <span className="uw-toolbar__status" role="status" data-tone={status.ok ? undefined : 'warn'}>{status.text}</span>
+        <button type="button" className="uw-btn" data-action-id={LAYOUT_ACTION_IDS.reset} aria-busy={pendingOf(LAYOUT_ACTION_IDS.reset) || undefined}
+          onClick={() => { void runAction(LAYOUT_ACTION_IDS.reset); }}>恢复默认布局</button>
+        <span className="uw-toolbar__status" role="status" data-tone={status.ok && !actionMsg && !shortcutConflicts.length ? undefined : 'warn'}>
+          {[actionMsg, ...shortcutConflicts, status.text].filter(Boolean).join('；')}</span>
       </div>
       <div className="uw-body">
         {left.length > 0 && <div className="uw-col uw-col--left" style={{display: 'flex', flexDirection: 'row'}}><div className="uw-col">{left.map(f => panel(f))}</div>{left[0] && resizeHandle(left[0])}</div>}
-        <div className="uw-main" data-split={state.split} data-testid="main-zone">
+        <div className="uw-main" data-split={state.split} data-testid="main-zone" data-zone-box="main">
           {visibleMain.map(f => panel(f))}
         </div>
         {right.length > 0 && <div className="uw-col uw-col--right" style={{display: 'flex', flexDirection: 'row'}}>{right[0] && resizeHandle(right[0])}<div className="uw-col">{right.map(f => panel(f))}</div></div>}
@@ -266,6 +359,12 @@ export function DockLayout(props: DockLayoutProps) {
           host, f.id);
       })}
       {dragZone && <div className="uw-dropzones" data-testid="drop-hint" data-zone={dragZone} aria-hidden="true" />}
+      {dropTarget && (
+        <div className={`uw-drop-indicator${dropTarget.empty ? ' uw-drop-indicator--zone' : ''}`} data-testid="drop-indicator" aria-hidden="true"
+          data-zone={dropTarget.zone} data-index={dropTarget.index} data-allowed={dropTarget.allowed} data-axis={dropTarget.axis}
+          style={{left: dropTarget.line.left, top: dropTarget.line.top, width: dropTarget.line.width, height: dropTarget.line.height}} />
+      )}
+      {dropTarget && !dropTarget.allowed && <div className="uw-drop-note" role="status">这个面板不能放到{DOCK_LABEL[dropTarget.zone]}</div>}
       {confirmReset && (
         <ModalDialog label="恢复默认布局" onCancel={() => setConfirmReset(false)}>
           <p>只恢复面板位置和大小，不会删除作品、草稿或任务。</p>

@@ -12,7 +12,9 @@ export type SplitMode = 'single' | 'split-h' | 'split-v';
 export const SPLIT_MODES: readonly SplitMode[] = ['single', 'split-h', 'split-v'];
 
 export interface Rect { x: number; y: number; w: number; h: number; }
-export interface Viewport { width: number; height: number; }
+export interface Viewport { width: number; height: number;
+  /** [HERMIA-FE-20261023 M1-s2] px above the dock body (layout toolbar), measured by DockLayout. Default 0. */
+  reserveTop?: number; }
 
 /** Static, registry-side description of a panel the layout may host. */
 export interface LayoutPanelSpec {
@@ -63,6 +65,29 @@ export function maxSizeFor(spec: LayoutPanelSpec, dock: DockZone, vp: Viewport):
 // side columns (left + right) and the bottom strip. Per-panel clampSize alone allowed 60% + 60% > 100%.
 export const MAIN_MIN_WIDTH = 320;
 export const MAIN_MIN_HEIGHT = 200;
+// [HERMIA-FE-20261023 M1-s2] Vera minor: subtract real chrome. Each present side column / bottom strip renders one
+// resize handle (5px, .uw-resize) + one 1px border (.uw-col--left/right, .uw-bottom). Keep in sync with DockLayout.css.
+export const RESIZER_PX = 5;
+export const BORDER_PX = 1;
+export const DOCK_CHROME_PX = RESIZER_PX + BORDER_PX;
+function hasLive(frames: Record<string, PanelFrame>, dock: DockZone): boolean {
+  return Object.values(frames).some(f => f.dock === dock && f.open);
+}
+/** Horizontal px used by side-column chrome (handles + borders) for columns that are rendered. */
+export function sideChrome(frames: Record<string, PanelFrame>): number {
+  return (hasLive(frames, 'left') ? DOCK_CHROME_PX : 0) + (hasLive(frames, 'right') ? DOCK_CHROME_PX : 0);
+}
+/** Max bottom-strip height so the main area keeps MAIN_MIN_HEIGHT under the toolbar and bottom chrome. */
+export function bottomLimit(frames: Record<string, PanelFrame>, vp: Viewport): number {
+  return vp.height - (vp.reserveTop ?? 0) - MAIN_MIN_HEIGHT - (hasLive(frames, 'bottom') ? DOCK_CHROME_PX : 0);
+}
+/** Real main-area size implied by a layout state (used by tests and diagnostics). */
+export function mainArea(frames: Record<string, PanelFrame>, vp: Viewport): {width: number; height: number} {
+  return {
+    width: vp.width - columnExtent(frames, 'left') - columnExtent(frames, 'right') - sideChrome(frames),
+    height: vp.height - (vp.reserveTop ?? 0) - columnExtent(frames, 'bottom') - (hasLive(frames, 'bottom') ? DOCK_CHROME_PX : 0),
+  };
+}
 /** Effective width a dock column occupies (column width = widest open, expanded panel in it). */
 export function columnExtent(frames: Record<string, PanelFrame>, dock: DockZone, exceptId?: string): number {
   let w = 0;
@@ -71,8 +96,8 @@ export function columnExtent(frames: Record<string, PanelFrame>, dock: DockZone,
 }
 /** Upper bound for a docked side/bottom panel so the main area keeps its minimum given the other docks. */
 export function crossLimit(frames: Record<string, PanelFrame>, id: string, dock: DockZone, vp: Viewport): number {
-  if (dock === 'left' || dock === 'right') return vp.width - MAIN_MIN_WIDTH - columnExtent(frames, dock === 'left' ? 'right' : 'left');
-  if (dock === 'bottom') return vp.height - MAIN_MIN_HEIGHT;
+  if (dock === 'left' || dock === 'right') return vp.width - MAIN_MIN_WIDTH - columnExtent(frames, dock === 'left' ? 'right' : 'left') - sideChrome(frames);
+  if (dock === 'bottom') return bottomLimit(frames, vp);
   return Infinity;
 }
 /** Shrink docked panels (others before `keepId`) until main keeps its minimum; never below a panel's minSize. */
@@ -84,15 +109,15 @@ export function fitMain(frames: Record<string, PanelFrame>, specs: readonly Layo
   };
   const live = (f: PanelFrame) => f.open && !f.collapsed;
   for (const pass of [false, true]) { // pass 1 spares keepId, pass 2 may shrink it too
-    const over = columnExtent(out, 'left') + columnExtent(out, 'right') + MAIN_MIN_WIDTH - vp.width;
+    const over = columnExtent(out, 'left') + columnExtent(out, 'right') + sideChrome(out) + MAIN_MIN_WIDTH - vp.width;
     if (over <= 0) break;
     const L = columnExtent(out, 'left', pass ? undefined : keepId); const R = columnExtent(out, 'right', pass ? undefined : keepId);
     const first: DockZone = L >= R ? 'left' : 'right'; const second: DockZone = first === 'left' ? 'right' : 'left';
     shrink(f => f.dock === first && live(f) && (pass || f.id !== keepId), over);
-    const over2 = columnExtent(out, 'left') + columnExtent(out, 'right') + MAIN_MIN_WIDTH - vp.width;
+    const over2 = columnExtent(out, 'left') + columnExtent(out, 'right') + sideChrome(out) + MAIN_MIN_WIDTH - vp.width;
     if (over2 > 0) shrink(f => f.dock === second && live(f) && (pass || f.id !== keepId), over2);
   }
-  const hMax = vp.height - MAIN_MIN_HEIGHT;
+  const hMax = bottomLimit(out, vp);
   for (const f of Object.values(out)) if (f.dock === 'bottom' && f.size > hMax) out[f.id] = {...f, size: Math.max(min(f.id), hMax)};
   return out;
 }
@@ -238,4 +263,25 @@ export function zoneFromPoint(x: number, y: number, rect: {left: number; top: nu
   if (rx > 0.8) return 'right';
   if (ry > 0.75) return 'bottom';
   return 'main';
+}
+
+/**
+ * [HERMIA-FE-20261023 M1-s2] Precise drop: insertion index inside a dock zone from the pointer position and the
+ * on-screen rects of the zone's OTHER panels (dragged panel excluded), in display order. Columns (left/right, main in
+ * split-v) stack vertically; bottom strip and main in split-h/single flow horizontally. Index is in the same
+ * "others" space the 'dock' reducer uses, so the result can be dispatched as-is.
+ */
+export interface SlotRect { left: number; top: number; width: number; height: number; }
+export function dropAxis(dock: DockZone, split: SplitMode): 'x' | 'y' {
+  if (dock === 'left' || dock === 'right') return 'y';
+  if (dock === 'main') return split === 'split-v' ? 'y' : 'x';
+  return 'x';
+}
+export function dropIndexFromPoint(axis: 'x' | 'y', point: {x: number; y: number}, others: readonly SlotRect[]): number {
+  for (let i = 0; i < others.length; i++) {
+    const r = others[i];
+    const mid = axis === 'y' ? r.top + r.height / 2 : r.left + r.width / 2;
+    if ((axis === 'y' ? point.y : point.x) < mid) return i;
+  }
+  return others.length;
 }

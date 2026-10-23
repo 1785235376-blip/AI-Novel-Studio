@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 28ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 9ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 9ms
+ ✓ src/workspace/actions/layoutActions.test.ts (10 tests) 12ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 114ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 15ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 216ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 256ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 874ms
+
+ Test Files  9 passed (9)
+      Tests  98 passed (98)
+   Start at  18:44:02
+   Duration  1.99s (transform 668ms, setup 155ms, collect 1.74s, tests 1.53s, environment 2.57s, prepare 574ms)
+

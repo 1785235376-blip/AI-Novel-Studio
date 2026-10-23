@@ -81,9 +81,12 @@ describe('DockLayout interactions', () => {
     fireEvent.click(within(panel).getByRole('button', {name: '展开'}));
     expect((screen.getByLabelText('草稿') as HTMLTextAreaElement).value).toBe('未保存的一句');
   });
-  it('M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates', () => {
+  // [HERMIA-FE-20261023 M1-s2] toolbar goes through ActionRegistry; its pending key clears on the next microtask,
+  // so rapid separate user events are flushed (as a browser event loop would) instead of counting as a double trigger.
+  it('M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates', async () => {
     setup();
     for (let i = 0; i < 5; i++) {
+      await act(async () => {});
       fireEvent.click(screen.getByRole('button', {name: '关闭「任务」'}));
       expect(screen.queryByTestId('panel-tasks')).toBeNull();
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -97,13 +100,14 @@ describe('DockLayout interactions', () => {
     fireEvent.change(screen.getByLabelText('分屏方式'), {target: {value: 'split-h'}});
     expect(within(screen.getByTestId('main-zone')).getAllByRole('region').map(r => r.getAttribute('aria-label'))).toEqual(['创作画布', '执行画布']);
   });
-  it('M1-08 reset default asks first, then restores layout but keeps draft text', () => {
+  it('M1-08 reset default asks first, then restores layout but keeps draft text', async () => {
     setup();
     fireEvent.change(screen.getByLabelText('草稿'), {target: {value: 'keep me'}});
     fireEvent.change(screen.getByLabelText('「任务」停靠位置'), {target: {value: 'left'}});
     fireEvent.click(screen.getByRole('button', {name: '恢复默认布局'}));
     fireEvent.click(screen.getByRole('button', {name: '取消'}));
     expect(screen.getByTestId('panel-tasks').dataset.dock).toBe('left');
+    await act(async () => {}); // [HERMIA-FE-20261023 M1-s2] separate user event
     fireEvent.click(screen.getByRole('button', {name: '恢复默认布局'}));
     fireEvent.click(screen.getByRole('button', {name: '恢复默认'}));
     expect(screen.getByTestId('panel-tasks').dataset.dock).toBe('bottom');
