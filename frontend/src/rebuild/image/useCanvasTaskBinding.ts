@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {getCollaborationEpoch} from '../../api';
+import {useEffect, useState, useSyncExternalStore} from 'react';
+import {getCollaborationEpoch, subscribeCollaborationContext} from '../../api';
 import {useLocalHostSession} from '../../localHostSession';
 import {useStudio} from '../../store';
 import {useScopedRequestConsent} from '../../useScopedRequestConsent';
@@ -14,6 +14,7 @@ const identity = (state: ReturnType<typeof useStudio.getState>) => JSON.stringif
 export function useCanvasTaskBinding(novelId: string, nodeId: string) {
   const {scopeKey} = useScopedRequestConsent([]);
   const hostEpoch = useLocalHostSession(state => state.epoch);
+  const clientEpoch = useSyncExternalStore(subscribeCollaborationContext, getCollaborationEpoch, getCollaborationEpoch);
   const [scopeEpoch, setScopeEpoch] = useState(0);
   const [, setStorageRevision] = useState(0);
   useEffect(() => {
@@ -27,6 +28,6 @@ export function useCanvasTaskBinding(novelId: string, nodeId: string) {
   const owner = captureCanvasTaskOwner(novelId);
   const binding = owner ? readCanvasTaskBinding(owner, nodeId) : undefined;
   const sessionKey = JSON.stringify([owner ? canvasTaskBindingKey(owner, nodeId) : null, scopeKey,
-    scopeEpoch, hostEpoch, getCollaborationEpoch(), binding?.taskId]);
+    scopeEpoch, hostEpoch, clientEpoch, binding?.taskId]);
   return {owner, binding, sessionKey};
 }

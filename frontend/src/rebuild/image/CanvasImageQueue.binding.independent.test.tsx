@@ -5,9 +5,11 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {setCollaborationContext} from '../../api';
 import {bindLocalHostSession, useLocalHostSession} from '../../localHostSession';
 import {useStudio} from '../../store';
+import {ImageQueuePanel} from '../../novel/ImageQueuePanel';
 import {canvasStorageKey} from '../canvas/RebuildCanvas';
 import {canvasTaskBindingKey, captureCanvasTaskOwner, readCanvasTaskBinding, writeCanvasTaskBinding} from './canvasTaskBinding';
 import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
+import {CanvasImageQueue} from './CanvasImageQueue';
 import {ImageRebuild} from './ImageRebuild';
 
 const project = 'binding-project', nodeId = 'binding-image-node';
@@ -283,14 +285,17 @@ describe('independent original image-node task binding', () => {
 
   it('retires a pending status read through an API-only A/B/A transport change', async () => {
     host(); seed(); bindFixture();
-    let finish!: (value: Response) => void;
-    const fetcher = vi.fn(() => new Promise<Response>(resolve => {finish = resolve;}));
+    let reads = 0, finishOld!: (value: Response) => void;
+    const fetcher = vi.fn(() => ++reads === 1 ? new Promise<Response>(resolve => {finishOld = resolve;})
+      : Promise.resolve(json({items: [row('RUNNING')]})));
     vi.stubGlobal('fetch', fetcher);
     render(<CanvasNodeTaskStatus novelId={project} nodeId={nodeId}/>);
-    await waitFor(() => expect(finish).toBeTypeOf('function'));
-    setCollaborationContext({sessionToken: '', localHostToken: 'other-fixture-client'});
-    setCollaborationContext({sessionToken: ''});
-    await act(async () => {finish(json({items: [row('SUCCEEDED')]}));});
+    await waitFor(() => expect(finishOld).toBeTypeOf('function'));
+    act(() => {
+      setCollaborationContext({sessionToken: '', localHostToken: 'other-fixture-client'});
+      setCollaborationContext({sessionToken: ''});
+    });
+    await act(async () => {finishOld(json({items: [row('SUCCEEDED')]}));});
     expect(screen.queryByText('SUCCEEDED')).toBeNull();
     expect(posts(fetcher)).toHaveLength(0);
   });
@@ -350,5 +355,65 @@ describe('independent original image-node task binding', () => {
     await screen.findByText(/任务回执/);
     expect(readCanvasTaskBinding(captureCanvasTaskOwner(project)!, nodeId)).toBeUndefined();
     expect(posts(fetcher)).toHaveLength(1);
+  });
+
+  it('API-only owner rerender does not re-adopt old provider metadata and prompt for a new transport owner', async () => {
+    seed();
+    const actor = {id: 'binding-author-a', displayName: 'Fixture author', workspaceId: 'binding-workspace'};
+    const scope = {workspaceId: 'binding-workspace', projectId: project, storylineId: 'binding-story', branchId: 'binding-branch-a'};
+    useStudio.getState().setCollaboration('fixture-client-a', actor, scope);
+    const {fetcher} = queueFixture();
+    render(<CanvasImageQueue novelId={project} nodeId={nodeId} prompt={originalPrompt} onClose={() => {}}/>);
+    await screen.findByRole('option', {name: provider.display_name});
+    fireEvent.change(screen.getByLabelText('画布任务图片服务'), {target: {value: provider.provider_id}});
+    expect((screen.getByLabelText('画布任务模型') as HTMLInputElement).value).toBe(provider.default_model);
+    act(() => setCollaborationContext({sessionToken: 'fixture-client-b', actor: {...actor, id: 'binding-author-b'}, scope: {...scope, branchId: 'binding-branch-b'}}));
+    // Updating a field rerenders the old panel without a store identity change.
+    fireEvent.change(screen.getByLabelText('画布任务模型'), {target: {value: 'edited-fixture-model'}});
+    fireEvent.click(screen.getByRole('button', {name: '保存到生成队列'}));
+    await act(async () => {});
+    expect(useStudio.getState().actor?.id).toBe(actor.id);
+    expect(posts(fetcher)).toHaveLength(0);
+  });
+
+  it('API-only owner notification immediately retires a previously displayed original status under a new transport owner', async () => {
+    seed();
+    const actor = {id: 'binding-author-a', displayName: 'Fixture author', workspaceId: 'binding-workspace'};
+    const scope = {workspaceId: 'binding-workspace', projectId: project, storylineId: 'binding-story', branchId: 'binding-branch-a'};
+    useStudio.getState().setCollaboration('fixture-client-a', actor, scope);
+    bindFixture();
+    const fetcher = vi.fn(async () => json({items: [row('RUNNING', {branch_id: scope.branchId})]}));
+    vi.stubGlobal('fetch', fetcher);
+    render(<CanvasNodeTaskStatus novelId={project} nodeId={nodeId}/>);
+    await expectServerStatus(screen.getByRole('region', {name: '原节点图片任务'}), 'RUNNING');
+    act(() => setCollaborationContext({sessionToken: 'fixture-client-b', actor: {...actor, id: 'binding-author-b'}, scope: {...scope, branchId: 'binding-branch-b'}}));
+    expect(screen.queryByText('RUNNING')).toBeNull();
+    expect(screen.queryByText(`原入队任务 ID：${taskId}`)).toBeNull();
+    expect(jobGetCount(fetcher)).toBe(1);
+    expect(posts(fetcher)).toHaveLength(0);
+  });
+
+  it('standalone queue client notification clears old jobs and prevents reads or writes after parameter rerender', async () => {
+    const actor = {id: 'binding-author-a', displayName: 'Fixture author', workspaceId: 'binding-workspace'};
+    const scope = {workspaceId: 'binding-workspace', projectId: project, storylineId: 'binding-story', branchId: 'binding-branch-a'};
+    useStudio.getState().setCollaboration('fixture-client-a', actor, scope);
+    const {state, fetcher} = queueFixture(); state.jobs = [row()];
+    const draft = {provider_id: provider.provider_id, model_id: provider.default_model, prompt: originalPrompt};
+    render(<ImageQueuePanel novelId={project} draft={draft} local/>);
+    await screen.findByText(`任务 ID：${taskId}`);
+    const readsBefore = jobGetCount(fetcher);
+    act(() => setCollaborationContext({sessionToken: 'fixture-client-b', actor: {...actor, id: 'binding-author-b'}, scope: {...scope, branchId: 'binding-branch-b'}}));
+    expect(screen.queryByText(`任务 ID：${taskId}`)).toBeNull();
+    expect(screen.getByText(/图片任务客户端已切换/)).toBeTruthy();
+    const save = screen.getByRole('button', {name: '保存到生成队列'}) as HTMLButtonElement;
+    expect(save.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('队列图片宽度'), {target: {value: '768'}});
+    expect((screen.getByRole('button', {name: '保存到生成队列'}) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', {name: '保存到生成队列'}));
+    fireEvent.click(screen.getByRole('button', {name: '刷新任务'}));
+    await act(async () => {});
+    expect(screen.queryByText(`任务 ID：${taskId}`)).toBeNull();
+    expect(jobGetCount(fetcher)).toBe(readsBefore);
+    expect(posts(fetcher)).toHaveLength(0);
   });
 });

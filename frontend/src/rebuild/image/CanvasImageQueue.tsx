@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {api, getCollaborationContext, getCollaborationEpoch} from '../../api';
+import {useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import {api, getCollaborationContext, getCollaborationEpoch, subscribeCollaborationContext} from '../../api';
 import {ImageQueuePanel} from '../../novel/ImageQueuePanel';
 import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import {CloudPromptConsent, useScopedRequestConsent} from '../../useScopedRequestConsent';
@@ -29,6 +29,7 @@ const identity = (state: ReturnType<typeof useStudio.getState>) => JSON.stringif
 export function CanvasImageQueue(props: Props) {
   const {scopeKey} = useScopedRequestConsent([]);
   const hostEpoch = useLocalHostSession(state => state.epoch);
+  const clientEpoch = useSyncExternalStore(subscribeCollaborationContext, getCollaborationEpoch, getCollaborationEpoch);
   const [scopeEpoch, setScopeEpoch] = useState(0);
   useEffect(() => {
     let observed = identity(useStudio.getState());
@@ -41,7 +42,7 @@ export function CanvasImageQueue(props: Props) {
       }
     });
   }, []);
-  return <CanvasImageQueueSession key={JSON.stringify([scopeKey, scopeEpoch, hostEpoch, props.novelId, props.nodeId, props.prompt])} {...props} />;
+  return <CanvasImageQueueSession key={JSON.stringify([scopeKey, scopeEpoch, hostEpoch, clientEpoch, props.novelId, props.nodeId, props.prompt])} {...props} />;
 }
 
 function CanvasImageQueueSession({novelId, nodeId, prompt, onClose, isSourceCurrent}: Props) {

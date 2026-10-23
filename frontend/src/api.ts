@@ -64,10 +64,12 @@ import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from '.
 import {isPackagedDesktopHost} from './packagedHost';
 let collaboration:CollaborationContext={sessionToken:''};
 let collaborationEpoch=0;
-export function setCollaborationContext(value:CollaborationContext){collaborationEpoch+=1;if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
+const collaborationListeners=new Set<()=>void>();
+export function setCollaborationContext(value:CollaborationContext){collaborationEpoch+=1;if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value;for(const listener of collaborationListeners)listener()}
 export function getCollaborationContext(){return collaboration}
 /** In-memory retirement marker; contains no credential and also detects A/B/A client rebinding. */
 export function getCollaborationEpoch(){return collaborationEpoch}
+export function subscribeCollaborationContext(listener:()=>void){collaborationListeners.add(listener);return()=>{collaborationListeners.delete(listener)}}
 export function requestToken(context:CollaborationContext,url:string){
  if(context.sessionToken)return context.sessionToken;
  if(context.scope||context.actor||isPackagedDesktopHost()||/^\/api\/(?:v1\/)?(?:collaboration|packaged)\//.test(url))return '';
