@@ -213,23 +213,35 @@ describe('independent image queue boundary review', () => {
   });
 
   it('drops deferred private provider and jobs across API-only A/B/A back to the same client context object', async () => {
-    let finishProviders!: (response: Response) => void, finishJobs!: (response: Response) => void;
+    let finishInitialProviders!: (response: Response) => void, finishInitialJobs!: (response: Response) => void;
+    let providerReads = 0, jobReads = 0;
     const fetcher = vi.fn((url: string, init: RequestInit = {}): Promise<Response> => {
-      if (url === '/api/asset-providers') return new Promise(resolve => {finishProviders = resolve;});
-      if (url === '/api/novels/review-project/image-jobs') return new Promise(resolve => {finishJobs = resolve;});
+      if (url === '/api/asset-providers') return ++providerReads === 1
+        ? new Promise(resolve => {finishInitialProviders = resolve;})
+        : Promise.resolve(json({items: [provider('review-current-service')]}));
+      if (url === '/api/novels/review-project/image-jobs') return ++jobReads === 1
+        ? new Promise(resolve => {finishInitialJobs = resolve;})
+        : Promise.resolve(json({items: []}));
       throw new Error(`Unexpected review fixture request ${init.method || 'GET'} ${url}`);
     });
     vi.stubGlobal('fetch', fetcher);
     render(<CanvasImageQueue {...props}/>);
     const originalContext = getCollaborationContext();
+    expect(providerReads).toBe(1);
+    expect(jobReads).toBe(1);
     act(() => {
       setCollaborationContext({sessionToken: 'review-api-only-transient'});
       setCollaborationContext(originalContext);
     });
+    expect(getCollaborationContext()).toBe(originalContext);
+    await screen.findByRole('option', {name: 'review-current-service'});
+    expect(providerReads).toBeGreaterThan(1);
+    expect(jobReads).toBeGreaterThan(1);
     await act(async () => {
-      finishProviders(json({items: [provider('review-api-aba-private-service')]}));
-      finishJobs(json({items: [{...job, id: 'review-api-aba-private-job', prompt: 'Private API ABA prompt'}]}));
+      finishInitialProviders(json({items: [provider('review-api-aba-private-service')]}));
+      finishInitialJobs(json({items: [{...job, id: 'review-api-aba-private-job', prompt: 'Private API ABA prompt'}]}));
     });
+    expect(screen.getByRole('option', {name: 'review-current-service'})).toBeTruthy();
     expect(screen.queryByRole('option', {name: 'review-api-aba-private-service'})).toBeNull();
     expect(screen.queryAllByText(/review-api-aba-private-job|Private API ABA prompt/)).toHaveLength(0);
     expect(commandPosts(fetcher)).toHaveLength(0);
