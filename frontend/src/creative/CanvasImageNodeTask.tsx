@@ -171,7 +171,7 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
       read={read} mutate={mutate} onDirtyChange={value => { childDirtyRef.current=value;setChildDirty(value); }}
       externalJob={job} onUnavailable={() => { first.current={};setError('原生产任务权限或身份已改变，请重新打开项目。'); }}
       onJob={value => { if (!current() || !bindingRef.current) return; assertCanvasImageNodeJob(bindingRef.current,value);clearProof();jobRef.current=value;setJob(value); }}
-      onApproved={value => { if (!current() || !bindingRef.current) return;assertCanvasImageNodeJob(bindingRef.current,value);clearProof();jobRef.current=value;setJob(value); }}/>
+      onApproved={value => { if (!current() || !bindingRef.current) return;assertCanvasImageNodeJob(bindingRef.current,value);clearProof();jobRef.current=value;setJob(value); }}/>}
     {approved && task && !saved && <Panel title="采用到原节点作品位置">
       <p>原生产 owner 已记录人工审核。这里重新核对来源元数据，不代替候选预览或审核；保存后固定回到原节点坐标。</p>
       <Button disabled={!current() || !props.canMutate || busy || uncertain || childDirty} onClick={() => void inspect()}>核对正式结果与原节点位置</Button>
