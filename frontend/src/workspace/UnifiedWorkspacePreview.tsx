@@ -1,5 +1,5 @@
 // [HERMIA-FE-20261023 M1, applied M1-s2] Opt-in preview host for DockLayout (?uw=1 only).
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {createPreviewPanelRegistry, InspectorPanel, OutlinePanel, pickDefaultNovel, registerNovelPreviewActions, useNovels} from './panels/novelPreviewPanels';
 import {DockLayout, type LayoutPanelSpec} from './layout';
@@ -14,6 +14,7 @@ import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions,
 import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanvas';
 import {CanvasNodeInspector, readCanvasNode, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
+import {DraftStore, useBeforeUnloadGuard} from './state/draftStore'; // [HERMIA-FE-20261024 M5-s1]
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
@@ -51,9 +52,14 @@ export function UnifiedWorkspacePreview() {
   const qc = useQueryClient();
   const novels = useNovels();
   const [novelId, setNovelId] = useState<string | null>(null);
+  const nodeDirtyRef = useRef<{current: boolean}>({current: false});
   const [chapterId, setChapterId] = useState<string | null>(null);
   const [blocked, setBlocked] = useState<string | null>(null);
   const inspectorDirty = useRef(false);
+  // [HERMIA-FE-20261024 M5-s1] drafts survive redock/collapse/tab switch; beforeunload only while dirty.
+  const drafts = useMemo(() => new DraftStore(), []);
+  const anyDirty = useCallback(() => drafts.anyDirty() || inspectorDirty.current || nodeDirtyRef.current.current, [drafts]);
+  useBeforeUnloadGuard(anyDirty, drafts);
   const novelRef = useRef(novelId); novelRef.current = novelId;
   useEffect(() => { if (!novelId && novels.data?.length) setNovelId(pickDefaultNovel(novels.data)?.id ?? null); }, [novels.data, novelId]);
   useEffect(() => registerNovelPreviewActions(shared.actions, qc, () => novelRef.current), [shared.actions, qc]);
@@ -71,6 +77,7 @@ export function UnifiedWorkspacePreview() {
   const nodeDirty = useRef(false);
   // [HERMIA-FE-20261024 M3-s1fix] MUST-FIX: viewport memory keyed by novelId (a reset in an effect ran after the new project's canvas had
   // already remounted with the old viewport). Switching back to a project restores its own viewport.
+  nodeDirtyRef.current = nodeDirty; // [HERMIA-FE-20261024 M5-s1]
   const vps = useRef<Record<string, Partial<Record<CanvasKind, CvViewport>>>>({});
   const vpOf = (k: CanvasKind) => (novelId ? vps.current[novelId]?.[k] : undefined);
   const setVpOf = (k: CanvasKind, v: CvViewport) => { const n = novelRef.current; if (n) vps.current[n] = {...vps.current[n], [k]: v}; };
@@ -80,6 +87,9 @@ export function UnifiedWorkspacePreview() {
   const onExecRevealed = useCallback(() => setRevealExec(false), []); // [HERMIA-FE-20261024 M3-s1fix2] one-shot: consumed by the canvas
   // [HERMIA-FE-20261024 M3-s1fix] true only for the remount right after a send
   useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; setRevealExec(false); setPickBlocked(null); }, [novelId]);
+  // [HERMIA-FE-20261024 M5-s1] project switch bumps the lifecycle epoch: in-flight registry actions from the previous
+  // project resolve as 'stale' and are not applied. Layout-effect so it lands before any new-project action runs.
+  useLayoutEffect(() => { shared.tracker.update({projectId: novelId}); }, [shared, novelId]);
   useEffect(() => registerCanvasNodeActions(shared.actions), [shared.actions]);
   const lastPick = useRef<CanvasPick | null>(null);
   const [pickBlocked, setPickBlocked] = useState<string | null>(null); // [HERMIA-FE-20261024 M3-s1fix]
@@ -95,7 +105,7 @@ export function UnifiedWorkspacePreview() {
     if (n || lastPick.current?.kind === kind) lastPick.current = n ? next : null;
     if (next?.kind === cur?.kind && next?.id === cur?.id) return;
     // [HERMIA-FE-20261024 M3-s1fix] the notice names what is dirty and is shown inside the inspector too (visible from the execution tab).
-    if (nodeDirty.current || inspectorDirty.current) { const t = `${dirtyName()}有未保存的修改，请先保存或放弃；属性面板仍显示原对象。`; setStudioMsg(t); setPickBlocked(t); return; }
+    if (anyDirty()) /* [HERMIA-FE-20261024 MERGE] M5 anyDirty (incl. drafts) + M3-s1fix named notice */ { const t = `${dirtyName()}有未保存的修改，请先保存或放弃；属性面板仍显示原对象。`; setStudioMsg(t); setPickBlocked(t); return; }
     inspectRef.current = next; setInspect(next); setPickBlocked(null);
   };
   // stable handlers (RebuildCanvas re-fires onSelect when the callback identity changes)
@@ -138,7 +148,7 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
   const guardSwitch = (apply: () => void) => {
-    if (inspectorDirty.current || nodeDirty.current) { setBlocked(`${dirtyName()}里有未保存的标题修改，请先保存或放弃后再切换。`); return; }
+    if (anyDirty()) /* [HERMIA-FE-20261024 MERGE] */ { setBlocked(`${dirtyName()}里有未保存的标题修改，请先保存或放弃后再切换。`); return; }
     setBlocked(null); setPickBlocked(null); apply();
   };
   const ctx = useCallback((input?: unknown) => ({...shared.workbench.context(chapterId), input}), [shared.workbench, chapterId]);
@@ -146,9 +156,9 @@ export function UnifiedWorkspacePreview() {
     if (id === 'outline') return <OutlinePanel novelId={novelId} novels={novels} onNovel={v => guardSwitch(() => { setNovelId(v); setChapterId(null); })}
       selectedId={chapterId ?? undefined} onSelect={v => guardSwitch(() => setChapterId(v))} blockedNotice={blocked} ctx={() => ctx()} actions={shared.actions} />;
     if (id === 'inspector' && inspect && novelId) return <>{pickBlocked && <p role="status" className="uw-state" data-testid="uw-inspector-blocked">{pickBlocked}</p>}<CanvasNodeInspector pick={inspect} scope={novelId} actions={shared.actions} ctx={ctx} api={api}
-      dirtyRef={nodeDirty} onSaved={k => { if (k === 'video') setRevealExec(false); (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1); }} onBack={() => setInspect(null)}
+      dirtyRef={nodeDirty} onSaved={k => { if (k === 'video') setRevealExec(false); (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1); }} drafts={drafts} onBack={() => setInspect(null)}
       onSettled={() => { setPickBlocked(null); const lp = lastPick.current; if (lp && (lp.kind !== inspectRef.current?.kind || lp.id !== inspectRef.current?.id)) { inspectRef.current = lp; setInspect(lp); } }} /></>;
-    if (id === 'inspector') return <>{pickBlocked && <p role="status" className="uw-state" data-testid="uw-inspector-blocked">{pickBlocked}</p>}<InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} /></>;
+    if (id === 'inspector') return <>{pickBlocked && <p role="status" className="uw-state" data-testid="uw-inspector-blocked">{pickBlocked}</p>}<InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} drafts={drafts} /></>;
     if (id === 'creative') {
       const av = shared.actions.availability(STUDIO_ACTION_IDS.sendToExecution, shared.workbench.context(null));
       const busy = shared.actions.isPending(STUDIO_ACTION_IDS.sendToExecution, null);

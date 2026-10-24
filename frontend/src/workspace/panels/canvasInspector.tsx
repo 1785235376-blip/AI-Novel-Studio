@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from 'react';
 import type {ActionContext, ActionRegistry} from '../../workbench/actions';
 import {canvasStorageKey, NODE_TYPES, type CanvasKind, type CvGraph, type CvNode} from '../../rebuild/canvas/RebuildCanvas';
 import type {PanelRenderApi} from '../layout/DockLayout';
+import {DraftStore, nodeDraftKey, useDraft} from '../state/draftStore'; // [HERMIA-FE-20261024 M5-s1]
 
 export const CANVAS_NODE_ACTION_ID = 'uw.canvas.renameNode';
 export type CanvasPick = {kind: CanvasKind; id: string};
@@ -39,15 +40,20 @@ export function registerCanvasNodeActions(actions: ActionRegistry): () => void {
   });
 }
 
-export function CanvasNodeInspector({pick, scope, actions, ctx, api, dirtyRef, onSaved, onBack, onSettled}: {
+export function CanvasNodeInspector({pick, scope, actions, ctx, api, dirtyRef, onSaved, onBack, onSettled, drafts}: {
   pick: CanvasPick; scope: string; actions: ActionRegistry; ctx: (input?: unknown) => ActionContext; api: PanelRenderApi;
-  dirtyRef: {current: boolean}; onSaved: (kind: CanvasKind) => void; onBack: () => void; onSettled?: () => void;
+  dirtyRef: {current: boolean}; onSaved: (kind: CanvasKind) => void; onBack: () => void; onSettled?: () => void; drafts?: DraftStore;
 }) {
   const info = readCanvasNode(pick.kind, scope, pick.id);
-  const [draft, setDraft] = useState<string | null>(null);
+  // [HERMIA-FE-20261024 M5-s1] draft lives in the host store (keyed scope+canvas+node) so redock/tab switch keeps it.
+  const localDrafts = useRef<DraftStore | null>(null);
+  const store = drafts ?? (localDrafts.current ??= new DraftStore());
+  const [stored, setStored] = useDraft(store, nodeDraftKey(scope, pick.kind, pick.id));
+  const draft = stored ? stored.value : null;
+  const setDraft = (v: string | null) => setStored(v === null ? null : {value: v, base: stored?.base ?? info?.node.title ?? ''});
   const [msg, setMsg] = useState<{kind: 'ok' | 'err'; text: string} | null>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { setDraft(null); setMsg(null); }, [pick.kind, pick.id, scope]);
+  useEffect(() => { setMsg(null); }, [pick.kind, pick.id, scope]);
   const dirty = draft !== null && !!info && draft !== info.node.title;
   dirtyRef.current = dirty;
   useEffect(() => () => { dirtyRef.current = false; }, [dirtyRef]);
@@ -62,10 +68,11 @@ export function CanvasNodeInspector({pick, scope, actions, ctx, api, dirtyRef, o
           : r.status === 'duplicate' ? '正在保存，请稍候。' : '项目已切换，本次保存未生效。';
         setMsg({kind: 'err', text}); throw new Error(text);
       }
-      setDraft(null); setMsg({kind: 'ok', text: '已保存到本机草稿（未同步服务端）'}); dirtyRef.current = false; onSaved(p.kind); onSettled?.();
+      { const k = nodeDraftKey(s, p.kind, p.id); if (store.get(k)?.value === d) store.set(k, null); }
+      setMsg({kind: 'ok', text: '已保存到本机草稿（未同步服务端）'}); dirtyRef.current = false; onSaved(p.kind); onSettled?.();
     } finally { setSaving(false); }
   };
-  useEffect(() => api.registerDirty({isDirty: () => dirtyRef.current, save, discard: () => setDraft(null)}),
+  useEffect(() => api.registerDirty({isDirty: () => dirtyRef.current, save, discard: () => { const {pick: p, scope: s} = live.current; store.set(nodeDraftKey(s, p.kind, p.id), null); }}),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reads through live ref
     [api]);
   const head = <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>

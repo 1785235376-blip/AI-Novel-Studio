@@ -606,6 +606,38 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - P3：跳转链接获得焦点时会盖住左上角的「搜索功能」按钮，这时用鼠标点不到它（只在获得焦点的那一刻发生）。可以把链接往右挪，或在失焦时立即收起。
 - P3（不属于本次改动）：作品结构面板里旧组件 .nv-rail 有 3 处颜色对比度不足（axe serious）。
 
+## [VERA-FE] M5-s1（abfe866a）
+
+- 基线 3520d679，HEAD abfe866a，tree a976e97d ✓；代码 diff 仅 frontend/src/workspace/（另有 M5_REPORT.md 文档）✓
+- 环境：临时 worktree /tmp/vera-m5s1，Node 22.14，vite :4399，所有非 GET 拦截（rename 由 route mock 应答，未转发）；证据 vera-compare/m5s1/
+
+### 浏览器（1366，route mock）
+| 项 | 结果 |
+|---|---|
+| beforeunload 干净时 | 本组件未挂监听（基线 1 个为页面其它来源），dispatch 不 preventDefault ✓ |
+| 变脏 | 监听 +1，preventDefault=true，close(runBeforeUnload) 弹 beforeunload 对话框 ✓ |
+| 放弃修改后 | **监听仍挂着**（计数不降），但 handler 内 isDirty 判定→不拦截；功能等价，属“仅脏时挂载”未严格满足（LOW，见下） |
+| 乱序：A→B→A，B 的旧响应 4s 后回 STALE 数据 | 雾港大纲不出现 STALE ✓（query key 按作品隔离）；回到 B 时才显示其自身数据 ✓ |
+| 慢保存 3s 中途继续编辑 | 输入框保存中可编辑；保存后值保留"来信XY"、仍脏、提示 已保存（版本 3），版本更新 ✓ |
+| 脏时切换作品 | 被拦截并提示 ✓ |
+| 写挂起 >20s | 20.0s 出现「保存超时…不确定是否已保存。修改还在面板里…」(role=alert)，草稿保留、仍脏、beforeunload 仍生效，未宣称成功/失败 ✓ |
+| 读挂起 >15s | 显示「读取超时：服务器长时间没有回应，请稍后重试。」✓；但同时显示「还没有章节。」空态，易误导（LOW） |
+| 模型调用 / 非 GET 透传 | 0 / 0 ✓ |
+
+### 变异（src/workspace 基线 172/172）
+- Hermia 11 个：M2,M4–M9,M11 杀死；M3、M10 存活（同报告）。**M1（删除 host 的 tracker.update 项目切换标 stale）在我这里存活，与 M5_REPORT“M1 已杀”不符。** 原因：m5s1.test.tsx 中 stale 用例只测 LifecycleTracker/ActionRegistry 单元，未经 host 接线。
+- 自加：V2 总是挂载且总是拦截→杀；V2b 总是挂载但 handler 判脏→存活（与上面浏览器观察一致）；V3 章节保存无条件清草稿→杀；V4 节点保存无条件清草稿→存活；V5 isLatest 恒真→杀；V6 写超时标为 read→存活（等价，UI 文案由 instanceof 决定）。
+- 裁定：M3 接受（当前流程等价）；M10 接受（等价）；M1 不接受。
+
+### 运行
+- 定向子集（workspace/workbench/rebuild/taskcenter）：57 文件 477/477 ✓；tsc：6 errors（与基线一致）✓
+- 全量：待合并后跑（pending）
+
+### 结论：MUST-FIX
+1. 【MUST】补 host 级测试：发起动作→切换作品→断言 stale（使 M1 被杀），并更正 M5_REPORT 中 M1 的记录。
+2. 【LOW】useBeforeUnloadGuard 放弃修改后监听未卸载（dirtyNow 快照在 inspectorDirty ref 更新前计算，之后无 store 通知）；补“监听挂载数”测试（V2b）。
+3. 【LOW】节点检视器条件清草稿无测试（V4）；读超时时不应同时显示“还没有章节。”
+
 ## M3-s1fix (8563bd54) — [VERA-FE] 独立复核
 
 结论：**MUST-FIX**（P1：真实浏览器里发送后自动平移从不生效）
@@ -622,6 +654,31 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - **4 Hermia 的工作**：8 个变异我自己重跑全部被杀（m3s1fix.test.tsx 共 5 个测试；她日志中的“(12)”与报告第 174 行的 5 不一致，P3）。IMPLEMENTATION_REPORT 第 153 行已更正 ✓。第 155 行仍写“发送保持视口”，已过时（P3）。patches/m3s1fix-shared-nonentry.patch 与 RebuildCanvas diff 完全一致；DualCanvas、ImageRebuild、VideoRebuild 都不传 revealLast，重复点击上报是幂等的，默认行为不变 ✓。
 - **5 测试**：子集 workspace/rebuild/taskcenter 50 个文件 420/420 ✓；tsc 6（基线）✓；旧 UI 18 页与 legacy-81a65eb8 逐字节对比 18/18 SAME ✓（401 与基线相同）。**全量 vitest：PENDING（合并后跑）**。
 - 证据：/workspace/hr/vera-compare/m3s1fix/（browser/check.json、probe.json、blocked.json、截图、mutations.log、subset.log、tsc.log、legacy/run）。
+
+## M5-s1fix (937448a0) — [VERA-FE] 独立复核
+
+结论：**MUST-FIX（仅补测试，P2）**。行为全部正确，但“当前项目刷新失败必须报错”没有测试守护（变异 V9 存活）。
+
+- 树：937448a0 tree 7347a568 ✓。临时 worktree /tmp/vera-m5s1fix，vite :4499，非 GET 全部拦截（passNonGet=[]，model=[]）。
+- **1 宿主级 stale 测试：PASS**。测试 render 真实的 `<UnifiedWorkspacePreview/>`（QueryClientProvider），只 stub 了 fetch，没有 mock 掉 host、tracker 或 actions。流程：n1 刷新挂起 → 切到 n2 → n1 迟到 → 断言无 已刷新/刷新失败/STALE，且仍为 n2。变异 M1（去掉 tracker.update）现在被杀 ✓。M5_REPORT 第 20 行已更正 M1（承认之前误报为 killed）✓。
+- **2 stale 失败静默丢弃：行为可接受**。只有 epoch 变化（换项目，A→B→A 也会递增）时才返回 stale；当前项目自己的失败仍然是 `error`。浏览器验证：
+  - 当前项目刷新 500 → 显示 alert「读取失败，请稍后重试。」和 status「刷新失败，请重试」，章节列表保留 ✓。
+  - 雾港刷新 3s 后 500，期间切到 空画布工作室 → 无「刷新失败」，仍停在 520adfa2 ✓。
+  - 小风险（可接受）：A 发起刷新 → 切 B → 切回 A，旧请求的失败会被丢弃；但切回 A 时 query 会重新读取，读取本身的错误仍由 alert 显示。
+  - **缺口（P2，需补）**：变异 V9「把 error 也当 stale 丢弃」在 src/workspace/state 18/18 全部通过，存活。请补一个宿主级测试：当前项目刷新失败 → 断言出现「刷新失败，请重试」。
+- **3 低优先级项：PASS**。
+  - beforeunload（浏览器计数 add−remove，页面基线为 1）：干净 1 → 脏 2 → 放弃后 1（M5-s1 时为 2）✓；慢保存期间继续输入，保存后仍为 2 并拦截（还有新草稿）。新测试也是按 add/remove 计数 ✓。
+  - 我之前存活的变异 V4「节点保存总是清草稿」现在被杀 ✓。
+  - 读取超时与 500 都不再显示「还没有章节。」；空的成功读取仍显示「还没有章节。」✓。
+  - P3：变异 V10「只要有 errKind 就隐藏章节列表」存活。浏览器中刷新失败时列表保留是正确的，但没有测试锁住这一点。
+- **4 变异**（src/workspace/state，基线 18/18）：Hermia 的 M1、V2b、V4、V7、V8 全部被杀；我的 V2b（总挂监听、处理器内判脏）和 V2c（不再重算脏状态）被杀；V9、V10 存活（见上）。浏览器复跑 m5s1：
+  - 乱序响应：无 STALE 泄漏 ✓
+  - 慢保存期间编辑：输入保留为 来信XY 且仍为脏、版本 3、切换被拒 ✓
+  - 写入超时：20.0s 显示「保存超时…不确定是否已保存」，草稿保留 ✓
+  - 读取超时：14.9s 显示「读取超时」✓
+  - 模型调用 0 ✓
+- **5 测试**：子集 workspace/rebuild/taskcenter/workbench 57 个文件 481/481 ✓；tsc 6（基线）✓。**全量 vitest：PENDING（合并后跑）**。
+- 证据：/workspace/hr/vera-compare/m5s1fix/（browser/check.json + 截图、mutations.log、mut.py、subset.log、tsc.log）。
 
 ## [VERA-FE] M4-s1fix（ae916e14）
 
@@ -704,3 +761,16 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - axe 1366：范围内 color-contrast×3（.nv-rail，已知）；整页 document-title/html-has-lang/page-has-heading-one/region×4——与 m4s1fix 基线完全一致，无新增 ✓
 
 ### 结论：PASS
+
+## M5-s1fix2 (834b8588) — [VERA-FE] 独立复核
+
+结论：**PASS**
+
+- 树：834b8588 tree be1ee435 ✓。相对 937448a0 只改了 m5s1.test.tsx（+8，新增 1 个测试）、M5_REPORT/INDEPENDENT_REVIEW（文档），以及 novelPreviewPanels.tsx 中的一行 JSX 注释（运行逻辑不变）。
+- 新测试 render 真实的 `<UnifiedWorkspacePreview/>`，只用 `fetch.mockImplementationOnce` 让下一次章节读取返回 500，host、tracker、actions 都没有被 mock。断言：出现「刷新失败，请重试」，不出现「已刷新」，「雾港·第一章」仍在列表中 ✓。
+- 变异（src/workspace/state，基线 19/19）：
+  - P2 V9「刷新 stale||error 都丢弃」→ 新测试失败（被杀）✓
+  - P3 V10「只要有错误就隐藏章节列表」→ 新测试失败（被杀）✓
+  - 变异后均已用 git checkout 还原。
+- 子集 workspace/rebuild/taskcenter/workbench 57 个文件 482/482 ✓；tsc 6（基线）✓。代码未变，所以不重跑浏览器。**全量 vitest：PENDING（合并后跑）**。
+- 证据：/workspace/hr/vera-compare/m5s1fix2/（diff.patch、mutations.log、subset.log、tsc.log）。
