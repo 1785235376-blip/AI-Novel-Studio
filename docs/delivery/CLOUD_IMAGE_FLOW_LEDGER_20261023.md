@@ -6,6 +6,8 @@ The [explicit execution handoff](CLOUD_EXPLICIT_IMAGE_EXECUTION_20261023.md) rec
 
 The October 24 [approved-image node adoption slice](CLOUD_APPROVED_IMAGE_NODE_ADOPTION_20261024.md) adds explicit viewed-content confirmation and a version/digest-bound browser-node asset association. This is separate from the original server acceptance record. The subsequent [browser history and explicit restoration slice](CLOUD_IMAGE_ADOPTION_HISTORY_20261024.md) preserves local operation history and can restore only a still-matching old pin as a new explicit local event.
 
+The [saved-canvas contract check](CLOUD_SAVED_CANVAS_CONTRACT_BOUNDARY_20261024.md) verifies the existing display owner and strengthens its generic Save guards. Rebuild/legacy-result admission and node mapping remain incompatible and unimplemented; manual-card File evidence is kept separate from formal generated-result acceptance.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |
