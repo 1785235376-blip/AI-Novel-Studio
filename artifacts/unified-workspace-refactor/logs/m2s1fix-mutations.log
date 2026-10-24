@@ -1,0 +1,47 @@
+== remove-delay-send
+   × 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate) 9ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate)
+      Tests  1 failed | 9 passed (10)
+== remove-delay-show
+   × 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate) 8ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate)
+      Tests  1 failed | 9 passed (10)
+== minBusy-0
+   × 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > uses 300ms by default 7ms
+   × 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate) 5003ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > uses 300ms by default
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate)
+      Tests  2 failed | 8 passed (10)
+== delay-zero
+   × 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate) 5007ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > 300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS) > two triggers 100ms apart run once (second is duplicate)
+      Tests  1 failed | 9 passed (10)
+== link-x-220
+   × sent node lands inside the execution viewport > linkToExecution places every new node inside the default view of a 320×280 (minimum) execution panel 33ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > sent node lands inside the execution viewport > linkToExecution places every new node inside the default view of a 320×280 (minimum) execution panel
+      Tests  1 failed | 9 passed (10)
+== no-microtask-dedupe
+      Tests  10 passed (10)
+== no-focus
+   × uw preview integration > Mod+Alt+T moves DOM focus into the task panel 2054ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > uw preview integration > Mod+Alt+T moves DOM focus into the task panel
+      Tests  1 failed | 9 passed (10)
+== no-aria-disabled
+   × uw preview integration > palette: 显示面板 listed; disabled items carry aria-disabled + reason; enabled ones do not 194ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > uw preview integration > palette: 显示面板 listed; disabled items carry aria-disabled + reason; enabled ones do not
+      Tests  1 failed | 9 passed (10)
+== revert-useTaskCenter-to-HEAD (original synchronous mount read)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > uw preview integration > task center reads tasks exactly once on mount, even under StrictMode
+- Expected
++ Received
+ FAIL  src/workspace/panels/m2s1fix.test.tsx > uw preview integration > TaskCenterPanel alone under StrictMode: one read
+      Tests  2 failed | 8 passed (10)
+note: 'no-microtask-dedupe' survives as an equivalent mutant (the loaded.current guard inside the microtask already dedupes the second StrictMode pass); the full revert above kills both StrictMode tests.

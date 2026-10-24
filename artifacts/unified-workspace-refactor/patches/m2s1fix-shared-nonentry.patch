@@ -1,0 +1,69 @@
+diff --git a/frontend/src/rebuild/canvas/DualCanvas.tsx b/frontend/src/rebuild/canvas/DualCanvas.tsx
+index a2d516e2..f0aca34a 100644
+--- a/frontend/src/rebuild/canvas/DualCanvas.tsx
++++ b/frontend/src/rebuild/canvas/DualCanvas.tsx
+@@ -5,12 +5,16 @@ import {useCallback, useState} from 'react';
+ import {RebuildCanvas, canvasStorageKey, type CvNode, type CvGraph} from './RebuildCanvas';
+ 
+ type Mode = 'creation' | 'execution' | 'split';
++/** [HERMIA-FE-20261024 M2-s1fix] world position of sent reference nodes (inside the default execution viewport). */
++export const LINK_X = 20, LINK_Y0 = 20, LINK_DY = 70;
+ export function linkToExecution(scope: string, n: CvNode): void {
+   const key = canvasStorageKey('video', scope);
+   let g: CvGraph = {nodes: [], edges: []};
+   try { const raw = localStorage.getItem(key); if (raw) g = JSON.parse(raw); } catch { /* ignore */ }
+-  const y = 40 + (g.nodes.length % 5) * 80;
+-  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x: -220, y, title: `参考 · ${n.title}`}];
++  // [HERMIA-FE-20261024 M2-s1fix] was x:-220 (off-view: the execution canvas remounts at viewport {x:40,y:40,k:1}, so the
++  // node showed only ~5px). Place it inside that default view: screen x 60..240, y 60..260 — fits the 320×280 panel minimum.
++  const y = LINK_Y0 + (g.nodes.length % 3) * LINK_DY;
++  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x: LINK_X, y, title: `参考 · ${n.title}`}];
+   try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
+ }
+ 
+diff --git a/frontend/src/taskcenter/useTaskCenter.ts b/frontend/src/taskcenter/useTaskCenter.ts
+index f5ecb1e9..8ddaee14 100644
+--- a/frontend/src/taskcenter/useTaskCenter.ts
++++ b/frontend/src/taskcenter/useTaskCenter.ts
+@@ -185,8 +185,16 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
+   useEffect(() => {
+     if (!props.active || props.denied) return;
+     if (loaded.current[queue] === desired) return;
+-    loaded.current[queue] = desired;
+-    if (queue === 'TASKS') void readTasks(); else void readInbox();
++    // [HERMIA-FE-20261024 M2-s1fix] dedupe the mount read: StrictMode (dev) runs mount effects twice and the unmount
++    // cleanup aborts the first request, so the read is deferred one microtask and cancelled by the effect cleanup.
++    // Still exactly one on-demand read per identity/queue/filter; no polling.
++    let cancelled = false;
++    queueMicrotask(() => {
++      if (cancelled || loaded.current[queue] === desired) return;
++      loaded.current[queue] = desired;
++      if (queue === 'TASKS') void readTasks(); else void readInbox();
++    });
++    return () => { cancelled = true; };
+   }, [desired, props.active, props.denied, queue, readTasks, readInbox]);
+ 
+   const setQueue = useCallback((next: TaskCenterQueue) => { if (alive.current) setQueueState(next); }, []);
+diff --git a/frontend/src/workbench/CommandSearch.tsx b/frontend/src/workbench/CommandSearch.tsx
+index 14e31b90..2de33204 100644
+--- a/frontend/src/workbench/CommandSearch.tsx
++++ b/frontend/src/workbench/CommandSearch.tsx
+@@ -109,13 +109,17 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
+           return <li key={g} role="presentation" className="wb-command__group">
+             <div className="wb-command__group-label" id={`wb-cmd-group-${g}`} aria-hidden="true">{g}</div>
+             <ul role="group" aria-label={g} data-command-group={g}>
+-              {groupItems.map(a => { const index = items.indexOf(a); return (
++              {groupItems.map(a => { const index = items.indexOf(a);
++                // [HERMIA-FE-20261024 M2-s1fix] disabled items are announced (aria-disabled + reason) but stay focusable; Enter still explains why.
++                const av = workbench.actions.availability(a.id, ctx); return (
+           <li key={a.id}>
+             <button
+               type="button"
+               id={`wb-cmd-${a.id}`}
+               role="option"
+               aria-selected={index === active}
++              aria-disabled={av.enabled ? undefined : true}
++              title={av.enabled ? undefined : av.reason}
+               data-action-id={a.id}
+               className={index === active ? 'is-active' : undefined}
+               onMouseEnter={() => setActive(index)}

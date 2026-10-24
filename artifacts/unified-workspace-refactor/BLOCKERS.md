@@ -16,3 +16,6 @@
 - N5 (S3): exec canvas hidden by default in preview; reachable only via 「中间显示」. **RESOLVED in M2-s1 822b89ec**: toolbar 执行画布 button, main-panel tabs, Mod+Alt+E (layout.showPanel reopens even if closed).
 - N6: one-off 404 on first 1366 load, not reproduced. Watch.
 - Browser re-verification of MF-1/MF-2 and full vitest run pending Vera.
+
+## [HERMIA-FE-20261024 M2-s1fix]
+- Vera M2-s1 lows resolved in 98a9dead: sent node off-view (x:-220 → inside view), palette aria-disabled, task center double GET on mount (StrictMode), layout.showPanel in the palette (Mod+Alt+P), focus to the task panel after Mod+Alt+T.
