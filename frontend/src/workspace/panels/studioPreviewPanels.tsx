@@ -39,17 +39,17 @@ const NO_NOVEL = '还没有选中作品';
 // [HERMIA-FE-20261024 M3-s1] both canvases report selection; `revision` remounts after an inspector write, and the
 // host-held viewport/selection are fed back so a remount keeps pan/zoom + selection. Each canvas keeps its own state.
 type CanvasPanelProps = {novelId: string | null; revision?: number; onSelect?: (n: CvNode | null) => void; selectedId?: string | null;
-  viewport?: CvViewport; onViewport?: (vp: CvViewport) => void};
+  viewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean}; // [HERMIA-FE-20261024 M3-s1fix] revealLast
 export function CreativeCanvasPanel({novelId, revision = 0, onSelect, selectedId, viewport, onViewport}: CanvasPanelProps) {
   if (!novelId) return <p style={{padding: 12}} data-state="empty">{NO_NOVEL}，选中作品后显示它的创作画布（本机草稿）。</p>;
   return <div data-testid="uw-creative-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={`${novelId}:${revision}`} kind="image" scope={novelId} label="创作画布"
     onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} /></div>;
 }
 
-export function ExecutionCanvasPanel({novelId, revision = 0, onSelect, selectedId, viewport, onViewport}: CanvasPanelProps) {
+export function ExecutionCanvasPanel({novelId, revision = 0, onSelect, selectedId, viewport, onViewport, revealLast}: CanvasPanelProps) {
   if (!novelId) return <p style={{padding: 12}} data-state="empty">{NO_NOVEL}，选中作品后显示它的执行画布（本机草稿）。</p>;
   return <div data-testid="uw-execution-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={`${novelId}:${revision}`} kind="video" scope={novelId} label="执行画布"
-    onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} /></div>;
+    onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} revealLast={revealLast} /></div>;
 }
 
 export function TasksPanel({novelId, active}: {novelId: string | null; active: boolean}) {

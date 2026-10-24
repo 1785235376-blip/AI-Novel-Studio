@@ -12,7 +12,7 @@ import {actionIdForKey, LAYOUT_ACTION_IDS, ShortcutTable} from './actions/layout
 // [HERMIA-FE-20261024 M2-s1] remaining placeholders replaced by real existing components + their registry actions.
 import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions, STUDIO_ACTION_IDS, STUDIO_PREVIEW_PANELS, TasksPanel} from './panels/studioPreviewPanels';
 import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanvas';
-import {CanvasNodeInspector, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
+import {CanvasNodeInspector, readCanvasNode, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
@@ -69,20 +69,32 @@ export function UnifiedWorkspacePreview() {
   const inspectRef = useRef(inspect); inspectRef.current = inspect;
   const [creativeRev, setCreativeRev] = useState(0);
   const nodeDirty = useRef(false);
-  const vps = useRef<Partial<Record<CanvasKind, CvViewport>>>({});
-  const onCreativeVp = useCallback((v: CvViewport) => { vps.current.image = v; }, []);
-  const onExecVp = useCallback((v: CvViewport) => { vps.current.video = v; }, []);
-  useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; vps.current = {}; }, [novelId]);
+  // [HERMIA-FE-20261024 M3-s1fix] MUST-FIX: viewport memory keyed by novelId (a reset in an effect ran after the new project's canvas had
+  // already remounted with the old viewport). Switching back to a project restores its own viewport.
+  const vps = useRef<Record<string, Partial<Record<CanvasKind, CvViewport>>>>({});
+  const vpOf = (k: CanvasKind) => (novelId ? vps.current[novelId]?.[k] : undefined);
+  const setVpOf = (k: CanvasKind, v: CvViewport) => { const n = novelRef.current; if (n) vps.current[n] = {...vps.current[n], [k]: v}; };
+  const onCreativeVp = useCallback((v: CvViewport) => setVpOf('image', v), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const onExecVp = useCallback((v: CvViewport) => setVpOf('video', v), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [revealExec, setRevealExec] = useState(false); // [HERMIA-FE-20261024 M3-s1fix] true only for the remount right after a send
+  useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; setRevealExec(false); setPickBlocked(null); }, [novelId]);
   useEffect(() => registerCanvasNodeActions(shared.actions), [shared.actions]);
   const lastPick = useRef<CanvasPick | null>(null);
+  const [pickBlocked, setPickBlocked] = useState<string | null>(null); // [HERMIA-FE-20261024 M3-s1fix]
+  const nodeTitle = inspect && novelId ? readCanvasNode(inspect.kind, novelId, inspect.id)?.node.title ?? null : null;
+  const dirtyName = () => (nodeDirty.current && inspectRef.current && novelRef.current
+    ? `节点「${readCanvasNode(inspectRef.current.kind, novelRef.current, inspectRef.current.id)?.node.title ?? inspectRef.current.id}」` : '「章节属性」');
+  // [HERMIA-FE-20261024 M3-s1fix] the inspector panel title names the node while one is shown (DockLayout's dirty prompt uses this title).
+  const specs = useMemo(() => PREVIEW_SPECS.map(x => x.id === 'inspector' && inspect ? {...x, title: `节点「${nodeTitle ?? inspect.id}」属性`} : x), [inspect, nodeTitle]);
   const pickImpl = (kind: CanvasKind, n: CvNode | null) => {
     (kind === 'image' ? setSelNode : setExecSel)(n);
     const cur = inspectRef.current;
     const next = n ? {kind, id: n.id} : (cur?.kind === kind ? null : cur);
     if (n || lastPick.current?.kind === kind) lastPick.current = n ? next : null;
     if (next?.kind === cur?.kind && next?.id === cur?.id) return;
-    if (nodeDirty.current || inspectorDirty.current) { setStudioMsg('属性面板里有未保存的修改，请先保存或放弃；属性面板仍显示原对象。'); return; }
-    inspectRef.current = next; setInspect(next);
+    // [HERMIA-FE-20261024 M3-s1fix] the notice names what is dirty and is shown inside the inspector too (visible from the execution tab).
+    if (nodeDirty.current || inspectorDirty.current) { const t = `${dirtyName()}有未保存的修改，请先保存或放弃；属性面板仍显示原对象。`; setStudioMsg(t); setPickBlocked(t); return; }
+    inspectRef.current = next; setInspect(next); setPickBlocked(null);
   };
   // stable handlers (RebuildCanvas re-fires onSelect when the callback identity changes)
   const pickRef = useRef(pickImpl); pickRef.current = pickImpl;
@@ -91,7 +103,7 @@ export function UnifiedWorkspacePreview() {
   useEffect(() => {
     const r = registerStudioPreviewActions(shared.actions, shared.table, {
       getNovelId: () => novelRef.current, getSelectedNode: () => selRef.current,
-      onLinked: n => { setExecRev(v => v + 1); setStudioMsg(`已把「${n.title}」送到执行画布（本机草稿）。`); },
+      onLinked: n => { setRevealExec(true); setExecRev(v => v + 1); setStudioMsg(`已把「${n.title}」送到执行画布（本机草稿）。`); },
       showPanel: async id => {
         const res = await shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context(id), input: id});
         if (res.status !== 'done') throw new Error(res.status === 'blocked' ? res.reason : res.status);
@@ -124,17 +136,17 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
   const guardSwitch = (apply: () => void) => {
-    if (inspectorDirty.current || nodeDirty.current) { setBlocked('「章节属性」里有未保存的标题修改，请先保存或放弃后再切换。'); return; }
-    setBlocked(null); apply();
+    if (inspectorDirty.current || nodeDirty.current) { setBlocked(`${dirtyName()}里有未保存的标题修改，请先保存或放弃后再切换。`); return; }
+    setBlocked(null); setPickBlocked(null); apply();
   };
   const ctx = useCallback((input?: unknown) => ({...shared.workbench.context(chapterId), input}), [shared.workbench, chapterId]);
   const renderPanel = (id: string, api: PanelRenderApi) => {
     if (id === 'outline') return <OutlinePanel novelId={novelId} novels={novels} onNovel={v => guardSwitch(() => { setNovelId(v); setChapterId(null); })}
       selectedId={chapterId ?? undefined} onSelect={v => guardSwitch(() => setChapterId(v))} blockedNotice={blocked} ctx={() => ctx()} actions={shared.actions} />;
-    if (id === 'inspector' && inspect && novelId) return <CanvasNodeInspector pick={inspect} scope={novelId} actions={shared.actions} ctx={ctx} api={api}
-      dirtyRef={nodeDirty} onSaved={k => (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1)} onBack={() => setInspect(null)}
-      onSettled={() => { const lp = lastPick.current; if (lp && (lp.kind !== inspectRef.current?.kind || lp.id !== inspectRef.current?.id)) { inspectRef.current = lp; setInspect(lp); } }} />;
-    if (id === 'inspector') return <InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} />;
+    if (id === 'inspector' && inspect && novelId) return <>{pickBlocked && <p role="status" className="uw-state" data-testid="uw-inspector-blocked">{pickBlocked}</p>}<CanvasNodeInspector pick={inspect} scope={novelId} actions={shared.actions} ctx={ctx} api={api}
+      dirtyRef={nodeDirty} onSaved={k => { if (k === 'video') setRevealExec(false); (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1); }} onBack={() => setInspect(null)}
+      onSettled={() => { setPickBlocked(null); const lp = lastPick.current; if (lp && (lp.kind !== inspectRef.current?.kind || lp.id !== inspectRef.current?.id)) { inspectRef.current = lp; setInspect(lp); } }} /></>;
+    if (id === 'inspector') return <>{pickBlocked && <p role="status" className="uw-state" data-testid="uw-inspector-blocked">{pickBlocked}</p>}<InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} /></>;
     if (id === 'creative') {
       const av = shared.actions.availability(STUDIO_ACTION_IDS.sendToExecution, shared.workbench.context(null));
       const busy = shared.actions.isPending(STUDIO_ACTION_IDS.sendToExecution, null);
@@ -144,10 +156,10 @@ export function UnifiedWorkspacePreview() {
             title={av.enabled ? '把选中的节点作为参考放到执行画布' : av.reason} onClick={() => void runStudio(STUDIO_ACTION_IDS.sendToExecution)}>送到执行画布</button>
           {!av.enabled && <small data-testid="uw-send-reason">{av.reason}</small>}
         </div>
-        <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vps.current.image} onViewport={onCreativeVp} /></div>
+        <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></div>
       </div>;
     }
-    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vps.current.video} onViewport={onExecVp} />;
+    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} />;
     if (id === 'tasks') return <TasksPanel novelId={novelId} active />;
     return <p style={{ padding: 12 }} data-state="not-connected">{PREVIEW_SPECS.find((x) => x.id === id)?.title ?? "面板"}：预览里尚未接入实际功能。</p>;
   };
@@ -162,7 +174,7 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   return (
-      <DockLayout specs={PREVIEW_SPECS} scope={{ userId: "local", projectId: "preview", projectInstanceId: "preview" }}
+      <DockLayout specs={specs} scope={{ userId: "local", projectId: "preview", projectInstanceId: "preview" }}
         storage={window.localStorage} loadOptions={{ inspectorPanelId: "inspector" }}
         actionRegistry={shared.actions} shortcutTable={shared.table} tracker={shared.tracker}
         toolbarStart={<span ref={host} data-testid="uw-command-host" style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>

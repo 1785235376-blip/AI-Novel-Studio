@@ -1,0 +1,61 @@
+diff --git a/frontend/src/rebuild/canvas/RebuildCanvas.tsx b/frontend/src/rebuild/canvas/RebuildCanvas.tsx
+index a9487e24..e4d078ac 100644
+--- a/frontend/src/rebuild/canvas/RebuildCanvas.tsx
++++ b/frontend/src/rebuild/canvas/RebuildCanvas.tsx
+@@ -2,7 +2,7 @@
+    - 点阵网格、节点卡（左色条 + 标题 + 类型 + 本地标）、左右端口、贝塞尔连线、滚轮缩放、空白拖拽平移、拖动节点、从输出端口拖线连接。
+    - 右键空白处 → 在点击位置弹「添加节点」菜单（类型取自现存 StudioGraphDefinitionId 目录，按画布过滤）；右键节点 → 删除。
+    - 持久化：前端还没有可直接写入的画布图接口接到这里，所以只存本机浏览器 localStorage，并在画布上写明「仅本机草稿」。不发任何写请求。 */
+-import {useCallback, useEffect, useRef, useState} from 'react';
++import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+ import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE} from 'react';
+ import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
+ import './rebuildCanvas.css';
+@@ -27,6 +27,7 @@ export const NODE_TYPES: Record<CanvasKind, NodeType[]> = {
+   ],
+ };
+ const NW = 180, NH = 60;
++const REVEAL_W = 186; // [HERMIA-FE-20261024 M3-s1fix] rendered box incl. border/ports (Chrome)
+ const typeOf = (k: CanvasKind, t: string) => NODE_TYPES[k].find(x => x.id === t);
+ let seq = 0; const uid = (p: string) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
+ export const canvasStorageKey = (k: CanvasKind, scope: string) => `poemseed.rebuild.canvas.${k}.${scope}`;
+@@ -39,8 +40,8 @@ function load(key: string, seed: CvGraph): CvGraph {
+ export type CvViewport = {x: number; y: number; k: number};
+ // [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
+ // (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
+-export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+-  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void}) {
++export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
++  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean}) {
+   const key = canvasStorageKey(kind, scope);
+   const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
+   const [vp, setVp] = useState<CvViewport>(() => initialViewport ?? {x: 40, y: 40, k: 1});
+@@ -50,6 +51,18 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
+   const [q, setQ] = useState('');
+   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
+   const svgRef = useRef<SVGSVGElement>(null);
++  // [HERMIA-FE-20261024 M3-s1fix] revealLast: on mount, if the last node is outside the visible svg, pan just enough to show it (zoom kept).
++  useLayoutEffect(() => {
++    const r = svgRef.current?.getBoundingClientRect(); const n = g.nodes[g.nodes.length - 1];
++    if (!revealLast || !n || !r || !r.width || !r.height) return;
++    setVp(v => {
++      const M = 16, l = v.x + n.x * v.k, t = v.y + n.y * v.k, rr = l + REVEAL_W * v.k, b = t + NH * v.k;
++      const dx = l < M ? M - l : rr > r.width - M ? (r.width - M) - rr : 0;
++      const dy = t < M ? M - t : b > r.height - M ? (r.height - M) - b : 0;
++      return dx || dy ? {...v, x: v.x + dx, y: v.y + dy} : v;
++    });
++  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only
++  }, []);
+   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
+   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);
+   useEffect(() => { onSelect?.(g.nodes.find(n => n.id === sel) || null); }, [sel, g.nodes, onSelect]);
+@@ -79,7 +92,8 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
+     const {wx, wy} = world(e.clientX, e.clientY);
+     try { (e.currentTarget as Element).setPointerCapture?.(e.pointerId); } catch { /* jsdom */ }
+     if (port) { setLink({from: port.getAttribute('data-for')!, x: wx, y: wy}); return; }
+-    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
++    // [HERMIA-FE-20261024 M3-s1fix] re-clicking the already-selected node re-reports it (host may be showing the other canvas's node).
++    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id === sel) onSelect?.(n); setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
+     setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
+   };
+   const onMove = (e: RPE<SVGSVGElement>) => {

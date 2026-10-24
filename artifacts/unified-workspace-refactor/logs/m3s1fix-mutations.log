@@ -1,0 +1,8 @@
+== reveal: no pan ->       Tests  2 failed | 10 passed (12)
+== host does not pass revealLast ->       Tests  1 failed | 11 passed (12)
+== viewport memory not keyed by novel (single bucket) ->       Tests  2 failed | 10 passed (12)
+== setter writes single bucket ->       Tests  2 failed | 10 passed (12)
+== static inspector title ->       Tests  1 failed | 11 passed (12)
+== dirty notice says 章节属性 ->       Tests  1 failed | 11 passed (12)
+== no re-report on re-click ->       Tests  1 failed | 11 passed (12)
+== no blocked notice in inspector ->       Tests  1 failed | 11 passed (12)
