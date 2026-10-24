@@ -564,3 +564,20 @@ nit（P3）：
     - IndependentStudioIdentity 的 2 条（第 2、3 次），是已知问题。单独跑时该文件仍是基线的 8 条失败。
     - StudioCanvasVideoTask.integration 1 条（只在第 3 次出现，Test timed out in 5000ms）。机器负载 25–46，有别人的 vitest 在跑。单独跑 5 次：前 3 次是超时、失败、超时（外层 300s timeout），负载下降后第 4、5 次连续通过。不在改动范围内。
 - tsc：6 个错误，与基线一致。workspace 和 workbench 测试 23 个文件、206 个用例全部通过。
+
+## M3-s1fix (8563bd54) — [VERA-FE] 独立复核
+
+结论：**MUST-FIX**（P1：真实浏览器里发送后自动平移从不生效）
+
+- 代码树：310840ef tree 88358e6a；`git diff 310840ef 8563bd54 -- frontend` 为空（8563bd54 只改文档）。临时 worktree /tmp/vera-m3s1fix，vite :4499，所有非 GET 请求都被拦截（writes=[]，无模型请求）。
+- **1 按 novelId 记视口：PASS**（uw，1366/1920）。在 A 平移后：创作画布 translate(-260,40)，执行画布 translate(-320,40)。切到 B 时两块都是默认 translate(40,40)；切回 A 时两块都恢复为 A 的值。B 自身的平移也是独立保存的。变异“去掉按 novel 分桶”（读、写各一处）都被杀。
+- **2 发送后显示最后一个节点：FAIL（P1）**。1366/1920 下先把执行画布平移到 translate(-320,40)，再发送 1/6/12 次，tf 始终不变，最后节点不在视口内（1366 s1 lastInView=false，s6 false）。放大到 1.1 并平移开后再发送，1366 下第 13、14 个节点在视口外，tf 不变。
+  - 根因（临时插桩 console 证实，已还原）：执行画布在切到执行 tab 时挂载，revealLast=true，但 mount-only useLayoutEffect 读到的 svg getBoundingClientRect 是 **0×0**（面板此时尚未布局），于是命中 `!r.width` 提前 return，之后不再重试。
+  - jsdom 单测 mock 了 rect，所以测不出这个问题。变异“reveal 永不执行”和“去掉平移”在单测中都被杀，但真实 UI 等同于这两个变异。
+  - 建议：在 ResizeObserver 或首个非零尺寸时执行一次 reveal（一次性），并加一个 rect 先为 0 后为非零的测试。
+  - 不跳动：tab 往返（未发送）时 tf 不变 ✓。但这一项因为 reveal 从不触发而无从验证；修复后需复测“手动平移后切 tab 是否被 revealExec 拉回”（revealExec 只在换作品或保存视频后才复位，存在跳动风险）。
+  - 旧 DualCanvas（1366）：12 次发送后 tf 保持 (40,40)，与 M3-s1 时一致，不受影响 ✓。
+- **3 低优先级项：PASS**。标题显示为 `节点「新文本输入」属性`。先选执行节点，再点已选中的创作节点，检查器切回创作画布节点 ✓。执行 tab 中脏状态下改选会显示 uw-inspector-blocked：“节点「参考 · 新文本输入」有未保存的修改…”，属性面板保持原对象；点“放弃”后提示消失，可以正常改选 ✓。
+- **4 Hermia 的工作**：8 个变异我自己重跑全部被杀（m3s1fix.test.tsx 共 5 个测试；她日志中的“(12)”与报告第 174 行的 5 不一致，P3）。IMPLEMENTATION_REPORT 第 153 行已更正 ✓。第 155 行仍写“发送保持视口”，已过时（P3）。patches/m3s1fix-shared-nonentry.patch 与 RebuildCanvas diff 完全一致；DualCanvas、ImageRebuild、VideoRebuild 都不传 revealLast，重复点击上报是幂等的，默认行为不变 ✓。
+- **5 测试**：子集 workspace/rebuild/taskcenter 50 个文件 420/420 ✓；tsc 6（基线）✓；旧 UI 18 页与 legacy-81a65eb8 逐字节对比 18/18 SAME ✓（401 与基线相同）。**全量 vitest：PENDING（合并后跑）**。
+- 证据：/workspace/hr/vera-compare/m3s1fix/（browser/check.json、probe.json、blocked.json、截图、mutations.log、subset.log、tsc.log、legacy/run）。
