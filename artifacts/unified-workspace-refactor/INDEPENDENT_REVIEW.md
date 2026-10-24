@@ -440,3 +440,64 @@ nit（P3）：
 - 低：任务中心加载时有 2 次 GET，和「只在切换时读取」的文案不一致（都是 GET，无害）。
 - 低：Mod+Alt+T 之后焦点为 null。
 - 低：IndependentStudioIdentity 有 2 项时序 flaky，需要关注。
+
+## M2-s1fix (8adb5dec) — Vera 独立复核 [VERA-FE]
+
+环境：临时 worktree /tmp/vera-m2s1fix 固定在 8adb5dec。注意：所给 tree fa0afbbf 是代码提交 98a9dead 的 tree；HEAD 本身的 tree 是 aa4d272a。98a9dead..HEAD 之间 frontend/ 无改动，所以被测代码就是 fa0afbbf ✓。复制未跟踪的 lock 后 npm ci；自建 vite :4399（独立缓存）；Playwright 拦截全部非 GET；Node 22.14。只按自己记录的 PID/PGID 停止进程（全量开始前没有我的 vitest 在跑），每次全量都加了 timeout。没有提交、没有推送，没有碰 :4299 和 :8000。证据目录：/workspace/hr/vera-compare/m2s1fix/。
+
+**结论：PASS（无 MUST-FIX）**。有一个中优先级问题：送出第 4 个及以后的节点时，会与前面的节点完全重叠。
+
+1. **300ms 防抖**（mutations.log，22 个相关测试，基线全部通过）：
+   - 我自己的变异全部被抓到：去掉 show 的 delay、去掉 send 的 delay、两个都去掉、minBusy=0、去掉 registry 去重。
+   - Hermia 的变异我全部复现：x=-220、去掉 aria-disabled、去掉 focus、把 useTaskCenter 回退到 6b8a9642，都被抓到。
+   - 另外加了一个：把 Mod+Alt+P 置空，被 2 个测试抓到。
+   - 存活的弱变异：去掉 microtask 里的 cancelled 判断（Hermia 的 no-microtask-dedupe 与此同类）。原因是 loaded.current 已经起到了去重作用。唯一的影响是：如果在一个 microtask 内切换了队列或过滤条件，过期的回调可能多发一次 GET。不会写数据，判定为低。
+2. **送出节点的位置**（1366/1440/1920，uw 和旧版「视频 › 专业 › 双画布」都测了）：
+   - 节点落在 world 坐标 (20, 20/90/160)，屏幕上是 (60, 60/130/200)，宽 186，全部完整在视口内 ✓。
+   - 先缩放画布再送出：执行画布会重新挂载，视口回到默认值，新旧节点仍然都可见 ✓。副作用是用户调好的平移/缩放会丢失（这是既有行为）。另外，我脚本里的平移拖拽实际几乎没有生效（屏幕 x 只从 60 变到 29），平移前的状态等于没真正测到；但每次送出都会重置视口，所以送出后的结果不受影响。
+   - **n%3 会重叠**：送 5 次时，第 4 个完全盖住第 1 个、第 5 个盖住第 2 个；送 6 次时，第 6 个盖住第 3 个（重叠 186×60，100%）。uw 和旧画布表现相同。建议按 floor(n/3) 做 x 方向偏移，或者给 y 加偏移。判定为中。
+   - 旧双画布的其他部分没有变化：工具栏文字、两个 pane、送出后的提示文案都和之前一致；写请求 0，页面错误 0。
+3. **layout.showPanel**：
+   - 命令面板里有「显示面板（切到下一个主区面板）」，可用。执行后标签从 creative 切到 execution。
+   - Mod+Alt+P 会在主区面板之间来回切换，不会打开对话框，URL 不变。
+   - 在源码里搜索，这个组合键只被注册了一次。
+   - 焦点在章节标题输入框时按下，不触发，焦点和输入框的值都不变 ✓。
+4. **aria-disabled**：命令面板中 4 个不可用项（reset、reopenPanel、toggleCollapse、sendToExecution）都带有 aria-disabled="true" 和原因 title；可用项都没有这个属性 ✓。
+5. **任务中心**：挂载时只发 1 次 GET（之前是 2 次）；关闭后用 Mod+Alt+T 重新打开，也是 1 次 ✓。
+6. **焦点**：按 Mod+Alt+T 后，焦点落在 section[data-panel-id=tasks] 上 ✓。
+7. **补丁复核**：
+   - patches/m2s1fix-shared-nonentry.patch 与 `git diff 6b8a9642 HEAD` 中 DualCanvas.tsx、useTaskCenter.ts、CommandSearch.tsx 三个文件的改动逐字节一致。改动很小，都带 [HERMIA-FE-20261024 M2-s1fix] 标记，没有无关改动。
+   - 对其他使用这些共享文件的地方的影响：
+     - DualCanvas 也被 ImageRebuild/VideoRebuild 使用：只改变了送出位置。
+     - useTaskCenter 也被旧 TaskCenter 使用：挂载时的读取推迟一个 microtask，旧 UI 18 页无差异，taskcenter 测试通过。
+     - CommandSearch 也被 App 的旧命令面板使用：只多了 aria-disabled 和 title，是纯增量。
+   - 判定为可以接受。
+8. **旧 UI 18 页**（对比 legacy-81a65eb8）：
+   - 18 页对 18 页，diff 为空，settings 相同，非 GET 为 0。
+   - 控制台错误 18 条，全部是 401；基线是 19 条（多 1 条 404）。
+   - 这 18 页不包含送出后的状态，所以送出位置的变化只在上面第 2 项里测了。
+9. **全量 vitest**（Node 22.14，3 次）：
+
+| run | raw | ISI | adjusted | total |
+|---|---|---|---|---|
+| 1 | 300 | 10 | 298 | 11375 |
+| 2 | 297 | 8 | 297 | 11375 |
+| 3 | 299 | 10 | 297 | 11375 |
+
+   - 门槛 (a)：三次取最好 297 ≤ 297，**PASS**。
+   - 门槛 (b)：第 1 次 298 超出，用一次重试后 297，**PASS**（重试已用掉）。
+   - 加载失败的文件：只有 LocalAiBrowserJourneyContracts，三次都失败，属于基线。
+   - 三次都失败的有 298 项，与 persistent-node22.json **完全一致**：没有新增，也没有修复。
+   - 不稳定项：
+     - IndependentStudioIdentity 的 2 项：在第 1、3 次全量中失败；单独重跑 3 次，每次都只有 8 项失败（全是基线里的稳定失败），这 2 项都通过了。
+     - TaskCenter.additive 的 1 项：在第 1 次全量中失败，单独重跑 3/3 通过。它在 m2s1 也出现过，那时 useTaskCenter 还没改，所以不是这次改动引入的。
+     - StudioModelCameraWorkspace：Hermia 的第 1 次全量里失败过，我单独重跑 3/3 通过。
+   - total 比上一轮多 10 个测试，就是新增的 m2s1fix.test.tsx。
+   - tsc 6 个错误，与 m2s1 和 Hermia 的结果一致；workspace/workbench 测试 198/198 通过。
+   - 交叉核对 Hermia 的 m2s1fix 三次全量：298/297/297，与报告一致。
+
+**问题（按优先级）**
+- 中：送出第 4 个节点起会与前面的节点完全重叠（n%3），uw 和旧双画布都存在。
+- 低：送出会重置执行画布的视口，用户的平移/缩放会丢失（既有行为）。
+- 低：useTaskCenter 的 cancelled 判断没有测试覆盖（属于弱变异）。
+- 低：IndependentStudioIdentity 有 2 项时序 flaky，继续观察。
