@@ -16,7 +16,8 @@ This report collects the full-suite gate history. Raw counts come from the logs 
 | M2-s1fix @98a9dead | 22.14 | 11375 | 298 / 297 / 297 | 8 / 8 / 8 | 298 / 297 / 297 | ≤297 | PASS | logs/m2s1fix-full-node22-{1,2,3}.json |
 | M3-s1 @2abedfb3 | 22.14 | 11384 | 299 / 299 / 297 | 10 / 10 / 8 | 297 / 297 / 297 | ≤297 | PASS | logs/m3s1-full-node22-{1,2,3}.json |
 | MERGE @6652a661 (run by Vera) | 22.14 | 11423 | 297 / 299 / 305 | 8 / 10 / 10 | 297 / 297 / 303 | ≤297 | PASS | INDEPENDENT_REVIEW.md "Merge (6652a661)" §6; Vera's evidence is at /workspace/hr/vera-compare/merge-6652a661/ |
-| M6 (this commit) | 22.14 | — | — | — | — | ≤297 | NOT_RUN | targeted only, per the brief |
+| M6 @c3939f22 (run by Vera) | 22.14 | 11424 | 297 / 299 / 298 | 8 / 10 / 8 | 297 / 297 / 298 | ≤297 | PASS | INDEPENDENT_REVIEW.md "M6 (c3939f22)"; /workspace/hr/vera-compare/m6/full-node22-{1,2,3}.json |
+| M6-fix (tests + docs only) | 22.14 | — | — | — | — | ≤297 | NOT_RUN | targeted only |
 
 \* In M2-s1 run 2, 3 files failed to collect (vitest worker fetch timeouts), so that run is not comparable. Runs that overlapped by accident (logs/overlap/) and the pre-type-fix run are excluded.
 
@@ -30,3 +31,6 @@ Slices without a row (M1-s2/s3 fixes, M2-s1fix2, M3-s1fix/fix2, M4-*, M5-*) ran 
 - `vitest run src/workspace src/workbench src/rebuild src/taskcenter`: 63 files, 503/503 passed (the merge had 62 files and 502 tests; M6 adds problemText.m6.test.tsx).
 - `tsc --noEmit -p .`: 6 errors, the known baseline.
 - Mutation check: restoring `message · code` in TaskList.tsx makes TaskCenter.test.tsx fail (1 test), so the mutant is killed. The file was restored afterwards.
+
+## M6-fix targeted [HERMIA-FE-20261024 M6-fix]
+- Targeted run: see IMPLEMENTATION_REPORT M6-fix. Vera's M6 run: the 298 persistent failures match the baseline. The flakes (2 ISI, plus receiptCompanion) were each rerun 3×, and all passed 3/3.

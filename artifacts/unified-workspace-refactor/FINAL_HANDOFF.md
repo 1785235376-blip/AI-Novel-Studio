@@ -21,7 +21,7 @@
 - M6: TaskCenter alerts without raw codes, a host tidy, and this review package.
 
 ## Acceptance
-The consolidated matrix is in ACCEPTANCE_MATRIX.md ("M6 consolidated matrix"): 98 planned items, of which PASS 87, PARTIAL 6, BLOCKED 2, NOT_RUN 2, FAIL 1 and WAIVED 0. **Pass rate 87/98 = 88.8%.**
+The consolidated matrix is in ACCEPTANCE_MATRIX.md ("M6 consolidated matrix"): 98 planned items, of which PASS 87, PARTIAL 7, BLOCKED 2, NOT_RUN 1, FAIL 1 and WAIVED 0. **Pass rate 87/98 = 88.8%.** (Revised [HERMIA-FE-20261024 M6-fix]. M2-06 moved NOT_RUN→PASS, M4-05 and M1-ZOOM moved PASS→PARTIAL, and GATE-M6 moved NOT_RUN→PASS.)
 
 ## Left (see BLOCKERS.md B1–B11)
 - No server canvas API: canvases are local only.
@@ -32,7 +32,7 @@ The consolidated matrix is in ACCEPTANCE_MATRIX.md ("M6 consolidated matrix"): 9
 - ?uw=1 is not the default UI and needs a Design System change request.
 - Some checks are unit-only, or browser checks were NOT_RUN.
 - The remaining per-item and asset-browser raw codes are out of scope.
-- The full suite at M6 HEAD and Vera's review of M6 are both NOT_RUN.
+- Vera reviewed M6 c3939f22 and ran the full suite: adjusted 297/297/298, PASS. Her MUST-FIX items (tests only) are fixed in M6-fix [HERMIA-FE-20261024 M6-fix]. The full suite at the M6-fix HEAD is NOT_RUN; the change is test and docs only.
 
 ## Patches
 patches/README.md has an index of every patch and its applied state. All of them are applied in this branch; none were sent anywhere.

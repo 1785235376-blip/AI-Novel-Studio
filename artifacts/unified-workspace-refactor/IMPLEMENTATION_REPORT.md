@@ -200,9 +200,16 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 2. Tidy: in UnifiedWorkspacePreview.tsx, the nodeDirtyRef assignment now sits directly after `const nodeDirty = useRef(false)` and no longer splits the M3-s1fix comment from `vps`. No behaviour change.
 3. TaskCenter raw code (frontend-only, small):
    - New `taskcenter/problemText.ts`. TaskList and ReviewInbox alerts show human text only, and the code goes to data-error-code.
-   - TaskCenter.test.tsx: the old assertion `toContain('STUDIO_REQUEST_FAILED')` checked the behaviour being removed. It is replaced by three stricter ones: the human text is shown, the code is not visible, and data-error-code equals the code exactly.
+   - TaskCenter.test.tsx: the old assertion `toContain('STUDIO_REQUEST_FAILED')` checked the behaviour being removed. It is replaced by three assertions: the human text is shown, the code is not visible, and data-error-code equals the code exactly. (Correction from M6-fix: only the data-error-code check was exact. The human-text check was a toContain substring match, so calling the set "stricter" overstated it. M6-fix makes the text check exact as well.)
    - New problemText.m6.test.tsx.
    - Mutant (old display) killed.
    - Delivered as patches/m6-taskcenter-problem-text.patch.
 4. Review package: added REGRESSION_REPORT.md and FINAL_HANDOFF.md, the consolidated matrix in ACCEPTANCE_MATRIX.md, BLOCKERS B1–B11, the patch index in patches/README.md, and refresh sections in TEAM_STATUS, FILE_OWNERSHIP, BASELINE_REPORT and CONTRACT_CHANGELOG.
 5. Verification (Node 22.14): targeted vitest 63 files, 503/503 passed. tsc: 6 errors (baseline). Full suite NOT_RUN.
+
+## M6-fix [HERMIA-FE-20261024 M6-fix]
+- **Authorship.** The review-append commits up to and including e2c9d292 carry Vera as the author of the text. e2c9d292 also has Vera as committer, and it is left as is: no history rewrite. From 52f0a548 on, review appends use the author 'Vera (review) <vera-review@local>' and Hermia's normal identity as committer, so it is clear that Hermia committed Vera's text.
+- **ReviewInbox test.** Added "review inbox read failure shows human text and keeps the code only in data-error-code". data-error-code toBe 'STUDIO_REQUEST_FAILED', the alert textContent toBe '请求未完成。', and the visible text does not contain the code. Mutations on ReviewInbox.tsx: showing reviewProblem.code was KILLED, and dropping data-error-code was KILLED. See logs/m6fix-mutations.log.
+- **TaskCenter test.** toContain('请求未完成。') is now an exact toBe('请求未完成。'). In this test the fake client throws ApiError(…, '请求未完成。'), so that is the full rendered sentence. The longer '请求未完成。请核对输入与连接状态。' only comes from the real client mapping. The "stricter" wording in the M6 section has been corrected.
+- **Docs.** The matrix was revised per vera-compare/m6/matrix-disputes.md, to PASS 87 / PARTIAL 7 / BLOCKED 2 / NOT_RUN 1 / FAIL 1 = 88.8%. BLOCKERS B9 and B11 are fixed. The patches/README line counts were recomputed with an exact whole-line method. The m6 patch was regenerated.
+- **Checks.** Targeted vitest: 63 files, 504/504 pass. tsc: 6 errors, the same as baseline. Full suite at M6-fix: NOT_RUN.

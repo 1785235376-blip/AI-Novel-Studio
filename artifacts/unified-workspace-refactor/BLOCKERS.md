@@ -42,6 +42,8 @@
 | B6 | Viewport memory is in-memory only, kept per project for the session. A reload resets it (M3-08 PARTIAL). | UX | Needs a persistence decision |
 | B7 | The original spec t117u is not on disk (searched /workspace/hr and memory). M3 was derived from the brief and the contract docs (M3-13 BLOCKED). | Traceability | User / Lumen to supply the spec |
 | B8 | ?uw=1 is opt-in only and is not the default UI (M1-E2E PARTIAL). Replacing AppShell/RightInspector needs a Design System change request, which has not been filed. | Product rollout | Design System Owner |
-| B9 | Some items are unit-only, with browser runs NOT_RUN: M2-03 loading/error, M2-06. The real-backend rename write (M2-07) was deliberately not run. M4-08 reduced-motion has never been checked. | Coverage | Vera / QA |
+| B9 | Some items are unit-only, with browser runs NOT_RUN: the M2-03 loading state (error states were browser-verified by Vera in M5-s1/M5-s1fix). M2-06 was browser-verified by Vera in M1-s3 and M5-s1, so it is now PASS. Corrected in [HERMIA-FE-20261024 M6-fix]. The real-backend rename write (M2-07) was deliberately not run. M4-08 reduced-motion has never been checked. | Coverage | Vera / QA |
 | B10 | There are 6 pre-existing tsc errors in untouched files. ISI has timing flakes (2/3) under Node 22. | Baseline | Owners of those files |
 | B11 | The full suite at M6 HEAD is NOT_RUN. | Gate | Vera |
+
+- [HERMIA-FE-20261024 M6-fix] B11 is resolved: Vera ran the full suite at c3939f22 (Node 22.14), adjusted 297/297/298, PASS. New partials: M4-05 and M1-ZOOM. The full 80–200% zoom grid was checked only in Hermia's runs, and those did not intercept requests.
