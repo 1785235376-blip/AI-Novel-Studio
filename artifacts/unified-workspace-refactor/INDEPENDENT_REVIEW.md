@@ -774,3 +774,54 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
   - 变异后均已用 git checkout 还原。
 - 子集 workspace/rebuild/taskcenter/workbench 57 个文件 482/482 ✓；tsc 6（基线）✓。代码未变，所以不重跑浏览器。**全量 vitest：PENDING（合并后跑）**。
 - 证据：/workspace/hr/vera-compare/m5s1fix2/（diff.patch、mutations.log、subset.log、tsc.log）。
+
+## Merge (6652a661) — [VERA-FE] 独立复审：PASS
+
+- 树：HEAD 6652a661 的 tree 为 299022d2（已核对）。证据：/workspace/hr/vera-compare/merge-6652a661/。
+- 1 合并保真（三方，共同基点 3520d679，见 fidelity.txt）：frontend 下 19 个变更文件里，17 个与唯一修改它的已批准分支逐字节相同（M3=1916ea1b，M4=9f2a04e4，M5=834b8588；68cabfa3、b5771aa1 的 frontend 与已批准提交相同）。只有两处不同：UnifiedWorkspacePreview.tsx（M3 和 M5 都改过，git merge-file 出现 4 处冲突）和 m5s1.test.tsx（只有 M5 改过，合并后改了一行定位器）。
+  - UnifiedWorkspacePreview.tsx 逐行复核（uwp-auto-vs-merged.diff），M3 和 M5 两边都完整保留：
+    - M3：按作品分开记的视口 vpOf/setVpOf；revealExec/onExecRevealed；视频保存时清 flag；inspector 标题 specs/dirtyName；pickBlocked 提示。
+    - M5：anyDirty（含 drafts）；DraftStore/useBeforeUnloadGuard；tracker.update 用的 useLayoutEffect；CanvasNodeInspector 和 InspectorPanel 都传了 drafts；onSettled 跟随最新选择。
+    - 冲突处理：M5 的 vps 简化版和 vps.current={} 被 M3 按作品记忆的版本取代，这是有意的，也是正确的。拦截判断统一用 anyDirty() 加 M3 的具名提示。
+    - 只有一处纯外观问题：M5 的 nodeDirtyRef 那一行插在了 M3 注释和它所注释的代码之间，不影响行为。
+    - LatestGate、刷新失败的处理在 novelPreviewPanels.tsx、async.ts 里，这两个文件等于 M5 版本。
+  - INDEPENDENT_REVIEW.md：1916ea1b、a9fb7471、68cabfa3、b5771aa1 四个已提交版本的每一行和每个小节都原样保留在合并版中（diff 无删除行）。
+- 2 m5s1.test.tsx 定位器裁定：等价。
+  - 新正则 /^「节点「.+」属性」停靠位置$/ 首尾都锚定。getByLabelText 遇到多个匹配会直接抛错，测试通过即说明只匹配到一个元素。
+  - 这一行之外的所有断言没有变化。
+  - 语义没有变：这一步之前已经 pick('c1')，节点检查器显示的是 c1。在 M5 分支上，同一个属性面板因为没有 M3-s1fix 的改名，仍然叫「章节属性」；合并后按节点命名。被重新停靠的始终是同一个 inspector 面板（DockLayout 的 aria-label=`「${spec.title}」停靠位置`），测试流程没有变。
+- 3 Chrome（合并构建，端口 4499，所有非 GET 请求被拦截，nonGet、model、errs 全部为空）：
+  - M3：1366 和 1920、k=1 和 1.1，从 -320 起发送 1/6/12/13 个节点，最后一个节点都在视口内，缩放不变，平移最小（1366 k1：-320→-4→-4→-92→-298）。手动平移到 402 后，切 tab、调整窗口大小、切作品 B（显示默认 40）再切回 A（恢复 402）、视频保存，都不回拉。节点已可见时不跳动。没有 ResizeObserver 时 rAF 回退正常。旧 DualCanvas 行为不变。
+  - M4（1366、1440、1920，以及 125% 缩放）：
+    - 首次按 Tab 落在跳转链接上。
+    - tablist 方向键、Home、End 全部正确，单屏和分屏下 aria-controls 都没有悬空引用。
+    - 三个分隔条：方向键每次 ±16，Home/End 到最小/最大值；拖动中按 Esc 恢复到原值（180→297→180）。
+    - 旧 UI 的 /api/text-models 是 GET 请求，与 M4-s1fix 基线一致。
+  - M5（1366 和 1920）：
+    - 乱序的过期响应被丢弃（停留在雾港，stale=false）。
+    - beforeunload 只在有未保存修改时挂上，放弃修改后摘除。
+    - 写入挂起 20 秒后提示「保存超时……不确定是否已保存」。
+    - 当前作品刷新失败时显示「刷新失败，请重试」，原列表保留；非当前作品的刷新失败静默丢弃。
+    - 与 m5s1fix 基线一致。cleanClose 的报错是关页后的 waitForTimeout 造成的，基线中也有。
+  - 旧 UI 18 个页面与 legacy-81a65eb8 对比，18/18 一致。
+- 4 变异（在 workspace/rebuild/taskcenter/workbench 子集上跑，全部被杀死）：
+  - M1 tracker.update 不递增 epoch：8 个失败。
+  - M5 P2 将 stale||error 都丢弃：1 个失败（刷新失败测试）。
+  - M4 labelledby 指向错误的 tab：1 个失败。
+  - M3 去掉揭示前的尺寸等待：3 个失败。
+  - M3 去掉按作品的视口键：1 个失败（A→B→A 测试）。
+- 5 子集 502/502；tsc 6（基线）。
+- 6 全量 vitest（Node 22.14，三次串行，每次超时 1500 秒，启动前确认没有其他 vitest 在跑）。总数 11423，每次都有 1 个文件加载失败（在基线内）。adjusted = raw − ISI + 8，8 是基线中的 ISI 数：
+
+  | 轮次 | raw | ISI | adjusted |
+  |---|---|---|---|
+  | 1 | 297 | 8 | 297 |
+  | 2 | 299 | 10 | 297 |
+  | 3 | 305 | 10 | 303 |
+
+  - 判定：(a) 三次中最好的为 297，≤297，PASS；(b) 第 1 次即 297，≤297，一次重试内 PASS。
+  - 三次都失败的有 298 项，与 persistent-node22.json 完全相同，没有新增的持续失败。
+  - 有 8 项不在基线内、只在部分轮次失败，单独各重跑 3 次：
+    - 6 项 3/3 通过。
+    - 2 项 ISI 用例各为 2/3 通过，它们本来就在 m1flaky2 的 node22 已知 flaky 列表中。
+    - 全部与 workspace 改动无关。
