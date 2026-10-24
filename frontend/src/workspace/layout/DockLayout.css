@@ -42,3 +42,20 @@
 .uw-drop-indicator--zone[data-allowed="false"]{background:color-mix(in srgb,var(--color-border-strong) 18%,transparent);outline-color:var(--color-border-strong)}
 .uw-zone-ghost{position:absolute;pointer-events:none;border:1px dashed var(--color-border-default);border-radius:4px;z-index:9998}
 .uw-toolbar__hint{color:var(--color-text-secondary);font-size:12px}
+/* [HERMIA-FE-20261024 M4-s1] keyboard + zoom usability */
+.uw-layout{overflow:hidden;max-width:100%;min-width:0}
+.uw-layout :focus-visible{outline:2px solid var(--color-accent-primary);outline-offset:1px}
+.uw-panel:focus-visible,.uw-main:focus-visible{outline:2px solid var(--color-accent-primary);outline-offset:-2px}
+.uw-main{min-width:min(320px,100%);min-height:200px;outline:none}
+.uw-skip{position:absolute;left:8px;top:-40px;z-index:10001;padding:4px 10px;border-radius:6px;background:var(--color-bg-elevated);color:var(--color-text-primary);border:1px solid var(--color-accent-primary);text-decoration:none}
+.uw-skip:focus,.uw-skip:focus-visible{top:6px}
+.uw-toolbar{row-gap:4px;min-width:0;max-width:100%}
+.uw-toolbar>*{min-width:0;max-width:100%}
+.uw-toolbar label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.uw-toolbar__status{min-width:0;overflow-wrap:anywhere;flex:1 1 160px;text-align:right}
+.uw-main-tabs{display:inline-flex;flex-wrap:wrap;gap:4px}
+.uw-tab[aria-selected="true"]{border-color:var(--color-accent-primary);font-weight:600}
+.uw-panel__head{flex-wrap:wrap;row-gap:4px}
+.uw-panel__head .uw-select{max-width:100%}
+.uw-resize--x{width:6px}
+@media (prefers-reduced-motion:reduce){.uw-resize{transition:none}}

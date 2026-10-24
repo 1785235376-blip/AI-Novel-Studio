@@ -1,0 +1,317 @@
+{
+ "1366_z80": {
+  "hOverflow": false,
+  "main": [
+   1105,
+   691
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1366_z100": {
+  "hOverflow": false,
+  "main": [
+   764,
+   499
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "initialFocus": "搜索功能",
+  "shiftTabFromInitial": "跳到主区域",
+  "firstTabStopIsSkip": true,
+  "skipVisibleWithRing": true,
+  "afterSkip": "uw-main",
+  "tabOrder": [
+   "BUTTON:搜索功能",
+   "BUTTON:执行画布",
+   "SELECT:分屏方式",
+   "tab:创作画布",
+   "SELECT:切换中间面板",
+   "BUTTON:折叠",
+   "SELECT:「作品结构」停靠位置",
+   "BUTTON:关闭「作品结构」",
+   "SELECT:选择作品",
+   "treeitem:¶第 1 章 · 来信",
+   "treeitem:¶第 2 章 · 灯塔",
+   "treeitem:¶第 3 章 · 雾中码",
+   "BUTTON:刷新章节列表",
+   "separator:调整「作品结构」大小"
+  ],
+  "tabRing": "solid",
+  "tabArrow": {
+   "from": "creative",
+   "to": "execution",
+   "selected": "true"
+  },
+  "splitter": {
+   "v0": 248,
+   "v1": 280,
+   "end": [
+    694,
+    694
+   ],
+   "home": 180
+  },
+  "midDrag": 258,
+  "escResize": {
+   "before": 180,
+   "after": 180
+  },
+  "mainAfter": [
+   832,
+   499
+  ],
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1366_z125": {
+  "hOverflow": false,
+  "main": [
+   490,
+   341
+  ],
+  "toolbarFits": true,
+  "toolbarH": 67,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1366_z150": {
+  "hOverflow": false,
+  "main": [
+   320,
+   214
+  ],
+  "toolbarFits": true,
+  "toolbarH": 92,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1366_z200": {
+  "hOverflow": false,
+  "main": [
+   320,
+   200
+  ],
+  "toolbarFits": true,
+  "toolbarH": 92,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440_z80": {
+  "hOverflow": false,
+  "main": [
+   1198,
+   856
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440_z100": {
+  "hOverflow": false,
+  "main": [
+   838,
+   631
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "initialFocus": "搜索功能",
+  "shiftTabFromInitial": "跳到主区域",
+  "firstTabStopIsSkip": true,
+  "skipVisibleWithRing": true,
+  "afterSkip": "uw-main",
+  "tabOrder": [
+   "BUTTON:搜索功能",
+   "BUTTON:执行画布",
+   "SELECT:分屏方式",
+   "tab:创作画布",
+   "SELECT:切换中间面板",
+   "BUTTON:折叠",
+   "SELECT:「作品结构」停靠位置",
+   "BUTTON:关闭「作品结构」",
+   "SELECT:选择作品",
+   "treeitem:¶第 1 章 · 来信",
+   "treeitem:¶第 2 章 · 灯塔",
+   "treeitem:¶第 3 章 · 雾中码",
+   "BUTTON:刷新章节列表",
+   "separator:调整「作品结构」大小"
+  ],
+  "tabRing": "solid",
+  "tabArrow": {
+   "from": "creative",
+   "to": "execution",
+   "selected": "true"
+  },
+  "splitter": {
+   "v0": 248,
+   "v1": 280,
+   "end": [
+    768,
+    768
+   ],
+   "home": 180
+  },
+  "midDrag": 258,
+  "escResize": {
+   "before": 180,
+   "after": 180
+  },
+  "mainAfter": [
+   906,
+   631
+  ],
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440_z125": {
+  "hOverflow": false,
+  "main": [
+   550,
+   447
+  ],
+  "toolbarFits": true,
+  "toolbarH": 67,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440_z150": {
+  "hOverflow": false,
+  "main": [
+   358,
+   302
+  ],
+  "toolbarFits": true,
+  "toolbarH": 92,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1440_z200": {
+  "hOverflow": false,
+  "main": [
+   320,
+   200
+  ],
+  "toolbarFits": true,
+  "toolbarH": 92,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920_z80": {
+  "hOverflow": false,
+  "main": [
+   1798,
+   1081
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920_z100": {
+  "hOverflow": false,
+  "main": [
+   1318,
+   811
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "initialFocus": "搜索功能",
+  "shiftTabFromInitial": "跳到主区域",
+  "firstTabStopIsSkip": true,
+  "skipVisibleWithRing": true,
+  "afterSkip": "uw-main",
+  "tabOrder": [
+   "BUTTON:搜索功能",
+   "BUTTON:执行画布",
+   "SELECT:分屏方式",
+   "tab:创作画布",
+   "SELECT:切换中间面板",
+   "BUTTON:折叠",
+   "SELECT:「作品结构」停靠位置",
+   "BUTTON:关闭「作品结构」",
+   "SELECT:选择作品",
+   "treeitem:¶第 1 章 · 来信",
+   "treeitem:¶第 2 章 · 灯塔",
+   "treeitem:¶第 3 章 · 雾中码",
+   "BUTTON:刷新章节列表",
+   "separator:调整「作品结构」大小"
+  ],
+  "tabRing": "solid",
+  "tabArrow": {
+   "from": "creative",
+   "to": "execution",
+   "selected": "true"
+  },
+  "splitter": {
+   "v0": 248,
+   "v1": 280,
+   "end": [
+    1152,
+    1152
+   ],
+   "home": 180
+  },
+  "midDrag": 258,
+  "escResize": {
+   "before": 180,
+   "after": 180
+  },
+  "mainAfter": [
+   1386,
+   811
+  ],
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920_z125": {
+  "hOverflow": false,
+  "main": [
+   934,
+   595
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920_z150": {
+  "hOverflow": false,
+  "main": [
+   678,
+   451
+  ],
+  "toolbarFits": true,
+  "toolbarH": 63,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ },
+ "1920_z200": {
+  "hOverflow": false,
+  "main": [
+   358,
+   242
+  ],
+  "toolbarFits": true,
+  "toolbarH": 92,
+  "mainOk": true,
+  "nonGet": [],
+  "pageErrors": []
+ }
+}
