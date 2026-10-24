@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act,cleanup,fireEvent,render,screen,waitFor,within } from '@testing-library/react';
 import { afterEach,beforeEach,expect,it,vi } from 'vitest';
+import { Blob as NodeBlob } from 'node:buffer';
 import { webcrypto } from 'node:crypto';
 import fixture from '../../../tests/fixtures/studio_dual_canvas_loop.json';
 import { useStudioGraphEditor } from './useStudioGraphEditor';
@@ -16,6 +17,7 @@ const json=(v:unknown,status=200)=>new Response(JSON.stringify(v),{status,header
 const retained=(element:HTMLElement)=>(element as any)[Object.keys(element).find(key=>key.startsWith('__reactProps$'))!].onClick as ()=>void;
 let canvas:any,phase:'none'|'queued'|'executed'|'approved',fetcher:ReturnType<typeof vi.fn>;
 beforeEach(()=>{
+ vi.stubGlobal('Blob',NodeBlob);
  localStorage.clear();canvas=structuredClone(fixture.canvas);phase='none';
  vi.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue(null);
  vi.stubGlobal('crypto',{subtle:webcrypto.subtle,randomUUID:()=>fixture.command.request_id,getRandomValues:webcrypto.getRandomValues.bind(webcrypto)});
