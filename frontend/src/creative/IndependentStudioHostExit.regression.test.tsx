@@ -117,8 +117,8 @@ it('keeps dirty protection after child cleanup and rechecks other-owner busy at 
 it('allows only the original Novel exit after denial while private destinations and project actions stay fenced', async () => {
   const {props}=mount();await ready();loseHost();
   fireEvent.click(screen.getByRole('tab',{name:'视频'}));
-  fireEvent.click(screen.getByRole('button',{name:'打开设置（AI 主控与插件）',exact:true}));
-  fireEvent.click(within(screen.getByRole('menu',{name:'设置与溢出工作区'})).getByRole('menuitem',{name:'AI 主控 CONTROL',exact:true}));
+  fireEvent.click(screen.getByRole('button',{name:'打开设置（AI 主控与插件）'}));
+  fireEvent.click(within(screen.getByRole('menu',{name:'设置与溢出工作区'})).getByRole('menuitem',{name:'AI 主控 CONTROL'}));
   fireEvent.click(screen.getByRole('button',{name:'返回项目列表'}));
   expect(props.onModuleChange).not.toHaveBeenCalled();expect(props.onProjectChoice).not.toHaveBeenCalled();
   novel();expect(props.onModuleChange).toHaveBeenCalledTimes(1);expect(props.onModuleChange).toHaveBeenCalledWith('NOVEL');
