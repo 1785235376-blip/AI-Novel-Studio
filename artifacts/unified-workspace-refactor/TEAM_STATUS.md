@@ -9,3 +9,11 @@
 | Lumen | specs (available) | NOT launched |
 | Atlas | board (available) | NOT launched; board not updated |
 No other agents, accounts or external services were used.
+
+## Status at M6 [HERMIA-FE-20261024 M6]
+| member | role | status |
+|---|---|---|
+| Hermia | implementer | M1–M5, merge and M6 package done on work/hermia-unified-workspace-20261023. The worktrees wt-m4 and wt-m5 are kept. |
+| Vera | independent reviewer | Reviewed every slice through the merge, with a final verdict of Merge 6652a661 PASS (her append is committed unchanged as e2c9d292). She has not reviewed M6. |
+| Lumen | specs | Not launched. Spec t117u not supplied. |
+| Atlas | board | Not launched. Board not updated. |

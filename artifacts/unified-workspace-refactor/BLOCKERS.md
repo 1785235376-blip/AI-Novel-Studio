@@ -30,3 +30,18 @@
 - [HERMIA-FE-20261024 M3-s1fix] none new. Full suite not rerun (per brief); viewport memory is still in-memory only (reload resets).
 
 - [HERMIA-FE-20261024 M3-s1fix2] none new. Full suite not rerun (per brief).
+
+## Open items at M6 [HERMIA-FE-20261024 M6]
+| # | item | impact | owner / needed |
+|---|---|---|---|
+| B1 | Canvases are local-only. Node edits and sent nodes are browser-local drafts (labelled in the UI). | Edits do not reach the server. | Needs a backend canvas-graph API. |
+| B2 | There is no server canvas API wired to RebuildCanvas, which is why M3-03 is BLOCKED. | Same as B1. | Backend |
+| B3 | The task panel has no session token. The ?uw=1 tasks panel uses an empty token and shows EXPERIMENTAL_FEATURE_DISABLED or a read failure (M2S-07 PARTIAL). | The task list cannot be verified with real data. | Auth/session wiring outside the preview |
+| B4 | .nv-rail contrast: axe reports color-contrast (serious) ×3 on .nv-rail__h and .nv-rail__vol in the reused legacy NovelStructureRail (M4-09 FAIL). | a11y | Design System Owner (legacy component, not changed here) |
+| B5 | TaskCenter showed the raw code STUDIO_REQUEST_FAILED. **Fixed in M6** for the TaskList and ReviewInbox alerts: human text is shown, and the code moves to data-error-code. Still open: ReviewInbox row detail `row.code ?? '已由原领域处理'` (ReviewInbox.tsx:51) shows a per-item code on purpose, so it was not changed. Other modules (assetbrowser: 「代码 STUDIO_REQUEST_FAILED」, asserted by AssetBrowserPanel.test.tsx:148) are out of scope. | UX | TaskCenter / AssetBrowser owners to decide |
+| B6 | Viewport memory is in-memory only, kept per project for the session. A reload resets it (M3-08 PARTIAL). | UX | Needs a persistence decision |
+| B7 | The original spec t117u is not on disk (searched /workspace/hr and memory). M3 was derived from the brief and the contract docs (M3-13 BLOCKED). | Traceability | User / Lumen to supply the spec |
+| B8 | ?uw=1 is opt-in only and is not the default UI (M1-E2E PARTIAL). Replacing AppShell/RightInspector needs a Design System change request, which has not been filed. | Product rollout | Design System Owner |
+| B9 | Some items are unit-only, with browser runs NOT_RUN: M2-03 loading/error, M2-06. The real-backend rename write (M2-07) was deliberately not run. M4-08 reduced-motion has never been checked. | Coverage | Vera / QA |
+| B10 | There are 6 pre-existing tsc errors in untouched files. ISI has timing flakes (2/3) under Node 22. | Baseline | Owners of those files |
+| B11 | The full suite at M6 HEAD is NOT_RUN. | Gate | Vera |

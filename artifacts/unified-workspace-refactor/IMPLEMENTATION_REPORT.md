@@ -194,3 +194,15 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
   - m5s1.test.tsx (semantic, no textual conflict): once a node is inspected, M3-s1fix names the inspector after it, so the redock step now finds the node inspector's dock control by `/^「节点「.+」属性」停靠位置$/` instead of the static 「章节属性」 label. The assertions are unchanged.
   - M4 merge: DockLayout, CommandSearch and the panel tests auto-merged cleanly.
 - After the merge (Node 22.14): vitest on src/workspace, src/workbench, src/rebuild and src/taskcenter 502/502 (62 files); tsc 6 (baseline). Full suite left for Vera.
+
+## M6 [HERMIA-FE-20261024 M6]
+1. Vera's INDEPENDENT_REVIEW.md append for merge 6652a661 was committed unchanged as e2c9d292 (author and committer: Vera (review) <vera-review@local>).
+2. Tidy: in UnifiedWorkspacePreview.tsx, the nodeDirtyRef assignment now sits directly after `const nodeDirty = useRef(false)` and no longer splits the M3-s1fix comment from `vps`. No behaviour change.
+3. TaskCenter raw code (frontend-only, small):
+   - New `taskcenter/problemText.ts`. TaskList and ReviewInbox alerts show human text only, and the code goes to data-error-code.
+   - TaskCenter.test.tsx: the old assertion `toContain('STUDIO_REQUEST_FAILED')` checked the behaviour being removed. It is replaced by three stricter ones: the human text is shown, the code is not visible, and data-error-code equals the code exactly.
+   - New problemText.m6.test.tsx.
+   - Mutant (old display) killed.
+   - Delivered as patches/m6-taskcenter-problem-text.patch.
+4. Review package: added REGRESSION_REPORT.md and FINAL_HANDOFF.md, the consolidated matrix in ACCEPTANCE_MATRIX.md, BLOCKERS B1–B11, the patch index in patches/README.md, and refresh sections in TEAM_STATUS, FILE_OWNERSHIP, BASELINE_REPORT and CONTRACT_CHANGELOG.
+5. Verification (Node 22.14): targeted vitest 63 files, 503/503 passed. tsc: 6 errors (baseline). Full suite NOT_RUN.

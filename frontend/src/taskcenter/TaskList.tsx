@@ -1,6 +1,7 @@
 import { TaskCostReceiptView } from './TaskCostReceipt';
 import { taskRecoveryGuidance } from './taskCostReceiptHelpers';
 import { useState } from 'react';
+import { problemText } from './problemText'; // [HERMIA-FE-20261024 M6]
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {
   TASK_ACTION_LABELS, TASK_CANCEL_LIMIT_LABELS, TASK_CENTER_NOTICES, TASK_ROUTE_STATE_LABELS,
@@ -125,7 +126,7 @@ export function TaskList({ controller, panelId, labelledBy }: {
     <p>任务 ID、标签与阶段由原任务服务读取；模块与状态是本地过滤（端点没有这些参数）。取消只请求原任务服务，已完成的结果不会被撤销。</p>
     <TaskStatusSummary controller={controller}/>
     {controller.tasksState === 'LOADING' && <StatusMessage>正在读取当前项目的原任务投影…</StatusMessage>}
-    {controller.tasksProblem && <StatusMessage tone="error">{controller.tasksProblem.message} · {controller.tasksProblem.code}</StatusMessage>}
+    {controller.tasksProblem && <StatusMessage tone="error">{/* [HERMIA-FE-20261024 M6] human text only; raw code kept as data-error-code for diagnostics */}<span data-error-code={controller.tasksProblem.code}>{problemText(controller.tasksProblem)}</span></StatusMessage>}
     {controller.tasksState === 'IDLE' && <EmptyState title="尚未读取任务队列" detail="打开队列后会读取一次；读取不会启动模型或任务。"/>}
     {controller.tasksState === 'EMPTY' && <EmptyState title="当前筛选下没有任务记录" detail="原服务返回了空队列且没有不可读来源；这不是权限被拒绝。"/>}
     {controller.tasksState === 'DENIED' && !controller.tasksProblem && <>

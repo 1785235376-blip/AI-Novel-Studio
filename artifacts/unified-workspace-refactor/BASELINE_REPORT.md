@@ -14,3 +14,10 @@
 10. Design rules: AGENTS.md → docs/ui/design_system.md tokens; docs/ui/protected_ui_surfaces.md lists "AppShell layout", RightInspector shell, etc. as Design-System-Owner surfaces.
 11. Baseline tests: `./node_modules/.bin/vitest run src/workbench src/rebuild/canvas src/ui/AppShell` → 9 files, 91 tests passed, exit 0 (logs/baseline-vitest-6ba25ad7.log).
 12. Baseline tsc: full `tsc --noEmit -p .` has 6 pre-existing errors in files M1 does not touch (App.tsx:1963, creative/GraphCanvas.tsx:577, ui/ModuleStartGate.tsx:43, ui/handoffSmoke.xUx10.test.tsx ×3) — recorded from the M1 run (logs/m1-tsc-full.log); a separate tsc run on the pure base was not done.
+
+## Baseline refresh at M6 [HERMIA-FE-20261024 M6]
+- Runtime: Node 22.14 (`PATH=/workspace/hr/node22/bin:$PATH`), as required by package.json engines (>=22.14.0 <25). Node 20.19.2 from apt is not supported (REGRESSION_M1_FLAKY.md).
+- tsc baseline: still 6 errors in the same files. Checked again at M6.
+- Full-suite gate: Node 22.14, best of 3, adjusted ≤297. Latest full run: merge 6652a661 (11423 tests, Vera).
+- Targeted set: src/workspace, src/workbench, src/rebuild, src/taskcenter. At M6: 63 files, 503 tests.
+- origin/main was not touched and nothing was pushed. Only branch and commit history were read for this refresh.

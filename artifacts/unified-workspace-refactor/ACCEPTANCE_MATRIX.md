@@ -203,3 +203,112 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 | M3-s1fix | reveal last sent node at 1366; exec viewport per project; node-named title/notices; re-click switch-back; exec-tab blocked notice | PASS (m3s1fix.test.tsx 5/5, mutations 8/8 killed, 310840ef) |
 
 | M3-s1fix2 | real-Chrome reveal of last sent node (pending until non-zero size, once); no re-reveal after manual pan / tab switch / remount | PASS (m3s1fix2.test.tsx 3/3, mutations 4/5 + 1 equivalent, Chrome 1366/1920 × k1/1.1 4/4, edf7576e) |
+
+## M6 consolidated matrix [HERMIA-FE-20261024 M6]
+
+Every planned M1–M5 item, plus the two gates. Status is the latest verdict (Vera's where she reviewed it). Only PASS counts toward the pass rate, and every planned item is in the denominator, including BLOCKED and NOT_RUN. Paths are relative to artifacts/unified-workspace-refactor/ unless they start with a source file name. The rows in older sections above are historical.
+
+| ID | item | status | evidence | commit |
+|---|---|---|---|---|
+| M1-01 | panel drag / float move, stays in viewport | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 6930d5c9 |
+| M1-02 | resize min/max, pointer + keyboard | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 865233eb |
+| M1-03 | drag to dock zone | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-04 | redock, old relation removed (content kept) | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 865233eb |
+| M1-05 | collapse/expand keeps state | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-06 | close / reopen | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-07 | split switch | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 865233eb |
+| M1-08 | reset default with confirm | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-09 | persist + restore after reload | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-10 | save-failure status; focus/z-order | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-11 | migrate old formats | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 865233eb |
+| M1-12 | missing fields → defaults, extra kept | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-13 | unknown panels preserved | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-14 | corrupt data → default + warning + backup | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-15 | invalid size/dock repaired | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-16 | idempotent migration | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-17 | interrupted migration → raw intact | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-18 | reset only touches layout key | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-19 | repeated close/reopen no duplicates | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-20 | dirty close → save & close | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-21 | dirty close → cancel keeps draft | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-22 | discard only this panel | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-23 | no duplicate listeners / cleanup | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-24 | late async results ignored | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-25 | save failure keeps panel, real error | PASS | frontend/src/workspace/layout/*.test.tsx; INDEPENDENT_REVIEW.md (M1-fix/M1-s2 PASS) | 5aa20a4a |
+| M1-VIEWPORT | real viewports 1366/1440/1920 | PASS | logs/m4s1-browser.json; INDEPENDENT_REVIEW.md Merge §3 | 6652a661 |
+| M1-ZOOM | browser zoom (DSF + CSS zoom, N4) | PASS | logs/m4s1-browser.json (80–200%); ACCEPTANCE_MATRIX M2-s1 N4 | 822b89ec |
+| M1-E2E | end-to-end in the product | PARTIAL | opt-in ?uw=1 only (App.tsx:184); not the default UI | e5524578 |
+| S2-1 | precise dock drop index + indicator | PASS | logs/m1s2-s2-browser.json; slice2.test.tsx | 6930d5c9 |
+| S2-2 | main ≥320×200 after resizers | PASS | logs/m1s2-s2-browser.json; slice2.test.tsx | 6930d5c9 |
+| S2-3 | layout actions via ActionRegistry | PASS | logs/m1s2-s2-browser.json; slice2.test.tsx | 6930d5c9 |
+| S2F-MF1 | empty-zone drop indicator | PASS | slice2fix.test.tsx; INDEPENDENT_REVIEW.md M1-s2fix PASS | e66d2f38 |
+| S2F-MF2 | Esc cancels drag | PASS | slice2fix.test.tsx; INDEPENDENT_REVIEW.md M1-s2fix PASS | e66d2f38 |
+| S2F-MF3 | layout.reset available() | PASS | slice2fix.test.tsx; INDEPENDENT_REVIEW.md M1-s2fix PASS | e66d2f38 |
+| S2F-MF4 | Ctrl+K palette lists layout actions | PASS | slice2fix.test.tsx; INDEPENDENT_REVIEW.md M1-s2fix PASS | e66d2f38 |
+| S2F-NH | in-flight guard, ≥300ms busy, float drag-back | PASS | slice2fix.test.tsx; INDEPENDENT_REVIEW.md M1-s2fix PASS | e66d2f38 |
+| P3-1 | palette hides raw action ids | PASS | CommandSearch.m1s3.test.tsx; logs/m1s3-browser.json | 630448ec |
+| P3-2 | ids still searchable | PASS | CommandSearch.m1s3.test.tsx; logs/m1s3-browser.json | 630448ec |
+| P3-3 | layout.* in 布局 group | PASS | CommandSearch.m1s3.test.tsx; logs/m1s3-browser.json | 630448ec |
+| M2-01 | outline = NovelStructureRail, real GET data | PASS | screenshots/m1s3_*_real_panels.png | e3b92bd6 |
+| M2-02 | inspector shows real chapter props | PASS | screenshots/m1s3_*_real_panels.png | e3b92bd6 |
+| M2-03 | loading/error/empty/not-connected states | PARTIAL | novelPreviewPanels.test.tsx (unit); loading/error in browser NOT_RUN | e3b92bd6 |
+| M2-04 | redock keeps unsaved title | PASS | screenshots/m1s3_*_redock_dirty.png | e3b92bd6 |
+| M2-05 | dirty close 取消/放弃/保存并关闭 | PASS | screenshots/m1s3_*_dirty_close_confirm.png | e3b92bd6 |
+| M2-06 | switch while dirty blocked with notice | PARTIAL | novelPreviewPanels.test.tsx (unit only; browser NOT_RUN) | e3b92bd6 |
+| M2-07 | chapter rename honest success (version>sent + title) | PARTIAL | novelPreviewPanels.test.tsx (mocked fetch); real-backend write deliberately NOT_RUN | e1b91f25 |
+| M2-08 | chapters refresh, GET-only | PASS | logs/m1s3-browser.json | e3b92bd6 |
+| M2-09 | no non-GET, no page errors, no overflow | PASS | logs/m1s3-browser.json | e3b92bd6 |
+| M2-10 | legacy UI without ?uw=1 unchanged | PASS | INDEPENDENT_REVIEW.md Merge §3 (18/18 pages vs legacy-81a65eb8) | e3b92bd6 |
+| M2-11 | inspector empty text direction-free | PASS | novelPreviewPanels.test.tsx / CommandSearch tests | b7e98c69 |
+| M2-12 | 布局 group only layout.* | PASS | novelPreviewPanels.test.tsx / CommandSearch tests | b7e98c69 |
+| M2-13 | dead CSS removed | PASS | novelPreviewPanels.test.tsx / CommandSearch tests | b7e98c69 |
+| M2S-01 | creative/execution/tasks real panels, no placeholder | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-02 | 送到执行画布 disabled reasons, double-trigger once | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-03 | Mod+Alt+E/I/T shortcuts, conflict reported | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-N4 | floats re-clamped under CSS zoom | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-N5 | exec canvas entry visible | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-06 | no model calls / no non-GET | PASS | studioPreviewPanels.test.tsx, layout/m2s1.test; logs/m2s1-browser.json | 822b89ec |
+| M2S-07 | tasks panel with a real session token | PARTIAL | IMPLEMENTATION_REPORT (empty session token; EXPERIMENTAL_FEATURE_DISABLED shown, INDEPENDENT_REVIEW.md M2-s1) | 822b89ec |
+| M2F-1 | sent node inside exec view | PASS | workspace/panels/m2s1fix.test.tsx; logs/m2s1fix-browser.json | 98a9dead |
+| M2F-2 | palette aria-disabled | PASS | workspace/panels/m2s1fix.test.tsx; logs/m2s1fix-browser.json | 98a9dead |
+| M2F-3 | single task GET on mount (StrictMode) | PASS | workspace/panels/m2s1fix.test.tsx; logs/m2s1fix-browser.json | 98a9dead |
+| M2F-4 | layout.showPanel in palette | PASS | workspace/panels/m2s1fix.test.tsx; logs/m2s1fix-browser.json | 98a9dead |
+| M2F-5 | focus task panel after Mod+Alt+T | PASS | workspace/panels/m2s1fix.test.tsx; logs/m2s1fix-browser.json | 98a9dead |
+| M2F2-1 | 7+ sent nodes do not overlap | PASS | m2s1fix2.test.tsx; INDEPENDENT_REVIEW.md M2-s1fix2+M3-s1 | 73ac909c |
+| M2F2-2 | useTaskCenter cancelled deferred read covered | PASS | useTaskCenter.m2s1fix2.test.ts; logs/m2s1fix2-mutations.log | 73ac909c |
+| M3-01 | select in either canvas → inspector | PASS | m3s1.test #1; logs/m3s1-browser.json | 2abedfb3 |
+| M3-02 | node edits via registry, honest success (read-back) | PASS | m3s1.test #2/#3/#7 (browser-local draft) | 2abedfb3 |
+| M3-03 | node edits persisted on the server | BLOCKED | no server canvas-graph API (BLOCKERS B2) | — |
+| M3-04 | no model calls on switch/select/project | PASS | logs/m3s1-browser.json (nonGet/modelReqs empty) | 2abedfb3 |
+| M3-05 | canvas state isolation | PASS | m3s1.test #1; logs/m3s1-mutations.log | 2abedfb3 |
+| M3-06 | exec pan/zoom kept on send/remount | PASS | m3s1.test; INDEPENDENT_REVIEW.md Merge §3 | 2abedfb3 |
+| M3-07 | exec viewport remembered per project | PASS | m3s1fix.test.tsx (A→B→A); INDEPENDENT_REVIEW.md Merge §4 | 310840ef |
+| M3-08 | viewport memory survives reload | PARTIAL | in-memory only; reload resets (BLOCKERS B6) | 310840ef |
+| M3-09 | reveal last sent node in real Chrome | PASS | m3s1fix2.test.tsx; logs/m3s1fix2-browser.json | edf7576e |
+| M3-10 | node-named inspector title/notices | PASS | m3s1fix.test.tsx | 310840ef |
+| M3-11 | re-click switches back | PASS | m3s1fix.test.tsx | 310840ef |
+| M3-12 | exec-tab blocked notice | PASS | m3s1fix.test.tsx | 310840ef |
+| M3-13 | trace to original spec t117u | BLOCKED | spec not on disk (BLOCKERS B7); M3 derived from brief + contract | — |
+| M4-01 | skip link is first Tab stop | PASS | m4s1fix.test.tsx; INDEPENDENT_REVIEW.md M4-s1fix §1 | ae916e14 |
+| M4-02 | tablist roving tabindex, arrows/Home/End/wrap | PASS | m4s1.test.tsx, m4s1fix.test.tsx | ae916e14 |
+| M4-03 | tab ARIA: ids/labelledby, aria-controls only rendered panels | PASS | m4s1fix.test.tsx; INDEPENDENT_REVIEW.md M4-s1fix2 | 9f2a04e4 |
+| M4-04 | splitters: valuemax/valuetext, Shift ×64, Home/End, Esc restores | PASS | layout/m4s1.test.tsx; logs/m4s1-browser.json | ea856da7 |
+| M4-05 | 1366/1440/1920 × 80–200% no overflow, main ≥320×200 | PASS | logs/m4s1-browser.json; screenshots/m4s1_* | ea856da7 |
+| M4-06 | toolbar fits (wrap; overflow menu optional per spec) | PASS | logs/m4s1-browser.json | ea856da7 |
+| M4-07 | CommandSearch does not steal initial focus | PASS | CommandSearch.m4s1fix.test.tsx; patches/m4-s1-commandsearch-initial-focus.patch | ae916e14 |
+| M4-08 | prefers-reduced-motion respected | NOT_RUN | CSS rule only; no test or browser check | ea856da7 |
+| M4-09 | axe color-contrast clean in dock layout | FAIL | axe serious ×3 on legacy .nv-rail__h/.nv-rail__vol (INDEPENDENT_REVIEW.md M4-s1, M4-s1fix2); BLOCKERS B4 | — |
+| M5-01 | project switch resets tracker (layout effect) | PASS | state/m5s1.test.tsx host test; INDEPENDENT_REVIEW.md Merge §4 M1 killed | 937448a0 |
+| M5-02 | last-wins: stale responses dropped, no false 刷新失败 | PASS | state/m5s1.test.tsx | 937448a0 |
+| M5-03 | drafts in host store survive pick change/redock | PASS | state/m5s1.test.tsx | abfe866a |
+| M5-04 | save clears draft only if unchanged | PASS | state/m5s1.test.tsx (XY during save) | 937448a0 |
+| M5-05 | beforeunload only while dirty; removed after save/discard | PASS | state/m5s1.test.tsx; INDEPENDENT_REVIEW.md Merge §3 | 937448a0 |
+| M5-06 | honest timeouts (read 15s / write 20s) | PASS | state/m5s1.test.tsx; INDEPENDENT_REVIEW.md Merge §3 (20s write) | abfe866a |
+| M5-07 | current-project refresh failure shown, list kept | PASS | state/m5s1.test.tsx; INDEPENDENT_REVIEW.md M5-s1fix2 | 834b8588 |
+| M5-08 | rail empty state hidden on read error/timeout | PASS | state/m5s1.test.tsx | 937448a0 |
+| GATE-MERGE | full vitest Node 22.14 best-of-3 ≤297 at merge | PASS | INDEPENDENT_REVIEW.md Merge §6 (297/297/303 adjusted) | 6652a661 |
+| GATE-M6 | full vitest at M6 HEAD | NOT_RUN | targeted only (per brief); Vera runs full | M6 |
+
+**Counts:** PASS 87, FAIL 1, PARTIAL 6, BLOCKED 2, NOT_RUN 2, WAIVED 0 (total 98). **Pass rate: 87/98 = 88.8%.**
+
+Outside M1–M5, not counted: M6-TC, the TaskCenter alert, now shows human text and keeps the raw code only in data-error-code. It is covered by TaskCenter.test.tsx and problemText.m6.test.tsx, and a mutant restoring the old display is killed. PASS (unit, Hermia). Vera has not reviewed it (NOT_RUN).

@@ -132,7 +132,11 @@ describe('task center view', () => {
     });
     const failedView = render(<View client={failed.client}/>);
     await waitFor(() => expect(failedView.container.textContent).toContain('任务队列读取失败'));
-    expect(failedView.container.textContent).toContain('STUDIO_REQUEST_FAILED');
+    // [HERMIA-FE-20261024 M6] was: visible text contains the raw code. Now: the human message is shown, the raw code is
+    // not visible text, and it is still exposed (exactly) as data-error-code for diagnostics.
+    expect(failedView.container.textContent).toContain('请求未完成。');
+    expect(failedView.container.textContent).not.toContain('STUDIO_REQUEST_FAILED');
+    expect(failedView.container.querySelector('[data-error-code]')?.getAttribute('data-error-code')).toBe('STUDIO_REQUEST_FAILED');
     expect(failedView.container.textContent).not.toContain('当前筛选下没有任务记录');
   });
 

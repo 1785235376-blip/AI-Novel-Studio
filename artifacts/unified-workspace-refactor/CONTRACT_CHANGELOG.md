@@ -71,3 +71,8 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - [HERMIA-FE-20261024 M3-s1fix] RebuildCanvas: new optional prop `revealLast` (default off); re-clicking the selected node re-fires onSelect. ExecutionCanvasPanel passes `revealLast`. No API/backend change. (310840ef)
 
 - [HERMIA-FE-20261024 M3-s1fix2] RebuildCanvas `revealLast` is now a pending one-shot request executed on first non-zero size; new optional prop `onRevealed` (ExecutionCanvasPanel passes it through). Defaults unchanged. (edf7576e)
+
+## [HERMIA-FE-20261024 M6]
+- No change to the layout schema, the panel/action contracts or the API contracts.
+- TaskCenter UI: error alerts in TaskList and ReviewInbox now render `problemText(problem)`. That is the human message, or a fixed fallback when the message is empty or looks like a raw code. The raw `problem.code` is exposed only as `data-error-code` on the inner span. The TaskCenterProblem type is unchanged.
+- UnifiedWorkspacePreview: `nodeDirtyRef.current = nodeDirty` moved to just after `const nodeDirty = useRef(false)`. This is placement only, with no behaviour change.

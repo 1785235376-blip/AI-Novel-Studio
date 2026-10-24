@@ -1,0 +1,99 @@
+diff --git a/frontend/src/taskcenter/ReviewInbox.tsx b/frontend/src/taskcenter/ReviewInbox.tsx
+index c763f225..a1562ffd 100644
+--- a/frontend/src/taskcenter/ReviewInbox.tsx
++++ b/frontend/src/taskcenter/ReviewInbox.tsx
+@@ -1,3 +1,4 @@
++import { problemText } from './problemText'; // [HERMIA-FE-20261024 M6]
+ import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
+ import {
+   REVIEW_INBOX_ACTION_LABELS, REVIEW_INBOX_ACTIONS, TASK_CENTER_NOTICES, type ReviewInboxAction,
+@@ -106,7 +107,7 @@ export function ReviewInbox({ controller, panelId, labelledBy }: {
+         <p>{TASK_CENTER_NOTICES.executionIsNotDelivery}</p>
+       </>}
+     </div>
+-    {!!controller.reviewProblem && <StatusMessage tone="error">{controller.reviewProblem.message} · {controller.reviewProblem.code}</StatusMessage>}
++    {!!controller.reviewProblem && <StatusMessage tone="error">{/* [HERMIA-FE-20261024 M6] human text only; raw code kept as data-error-code for diagnostics */}<span data-error-code={controller.reviewProblem.code}>{problemText(controller.reviewProblem)}</span></StatusMessage>}
+     {controller.reviewState === 'LOADING' && <StatusMessage>正在读取当前项目的审核收件箱…</StatusMessage>}
+     {controller.reviewState === 'IDLE' && <EmptyState title="尚未读取审核收件箱" detail="打开队列后会读取一次；读取不会批准或执行任何动作。"/>}
+     {controller.reviewState === 'EMPTY' && <EmptyState title="当前筛选下没有审核项" detail="原服务返回了空列表且没有不可读领域；这不是权限被拒绝。"/>}
+diff --git a/frontend/src/taskcenter/TaskCenter.test.tsx b/frontend/src/taskcenter/TaskCenter.test.tsx
+index 93f5e098..b226cf46 100644
+--- a/frontend/src/taskcenter/TaskCenter.test.tsx
++++ b/frontend/src/taskcenter/TaskCenter.test.tsx
+@@ -132,7 +132,11 @@ describe('task center view', () => {
+     });
+     const failedView = render(<View client={failed.client}/>);
+     await waitFor(() => expect(failedView.container.textContent).toContain('任务队列读取失败'));
+-    expect(failedView.container.textContent).toContain('STUDIO_REQUEST_FAILED');
++    // [HERMIA-FE-20261024 M6] was: visible text contains the raw code. Now: the human message is shown, the raw code is
++    // not visible text, and it is still exposed (exactly) as data-error-code for diagnostics.
++    expect(failedView.container.textContent).toContain('请求未完成。');
++    expect(failedView.container.textContent).not.toContain('STUDIO_REQUEST_FAILED');
++    expect(failedView.container.querySelector('[data-error-code]')?.getAttribute('data-error-code')).toBe('STUDIO_REQUEST_FAILED');
+     expect(failedView.container.textContent).not.toContain('当前筛选下没有任务记录');
+   });
+ 
+diff --git a/frontend/src/taskcenter/TaskList.tsx b/frontend/src/taskcenter/TaskList.tsx
+index 534bf2f7..a2f3ce9e 100644
+--- a/frontend/src/taskcenter/TaskList.tsx
++++ b/frontend/src/taskcenter/TaskList.tsx
+@@ -1,6 +1,7 @@
+ import { TaskCostReceiptView } from './TaskCostReceipt';
+ import { taskRecoveryGuidance } from './taskCostReceiptHelpers';
+ import { useState } from 'react';
++import { problemText } from './problemText'; // [HERMIA-FE-20261024 M6]
+ import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
+ import {
+   TASK_ACTION_LABELS, TASK_CANCEL_LIMIT_LABELS, TASK_CENTER_NOTICES, TASK_ROUTE_STATE_LABELS,
+@@ -125,7 +126,7 @@ export function TaskList({ controller, panelId, labelledBy }: {
+     <p>任务 ID、标签与阶段由原任务服务读取；模块与状态是本地过滤（端点没有这些参数）。取消只请求原任务服务，已完成的结果不会被撤销。</p>
+     <TaskStatusSummary controller={controller}/>
+     {controller.tasksState === 'LOADING' && <StatusMessage>正在读取当前项目的原任务投影…</StatusMessage>}
+-    {controller.tasksProblem && <StatusMessage tone="error">{controller.tasksProblem.message} · {controller.tasksProblem.code}</StatusMessage>}
++    {controller.tasksProblem && <StatusMessage tone="error">{/* [HERMIA-FE-20261024 M6] human text only; raw code kept as data-error-code for diagnostics */}<span data-error-code={controller.tasksProblem.code}>{problemText(controller.tasksProblem)}</span></StatusMessage>}
+     {controller.tasksState === 'IDLE' && <EmptyState title="尚未读取任务队列" detail="打开队列后会读取一次；读取不会启动模型或任务。"/>}
+     {controller.tasksState === 'EMPTY' && <EmptyState title="当前筛选下没有任务记录" detail="原服务返回了空队列且没有不可读来源；这不是权限被拒绝。"/>}
+     {controller.tasksState === 'DENIED' && !controller.tasksProblem && <>
+diff --git a/frontend/src/taskcenter/problemText.m6.test.tsx b/frontend/src/taskcenter/problemText.m6.test.tsx
+new file mode 100644
+index 00000000..8579d011
+--- /dev/null
++++ b/frontend/src/taskcenter/problemText.m6.test.tsx
+@@ -0,0 +1,19 @@
++// @vitest-environment jsdom
++// [HERMIA-FE-20261024 M6] TaskCenter error alerts: human text, no raw code visible.
++import { cleanup, render, waitFor } from '@testing-library/react';
++import { afterEach, describe, expect, it, vi } from 'vitest';
++import { ApiError } from '../api';
++import { TaskCenter } from './TaskCenter';
++import { problemText, TASK_CENTER_PROBLEM_FALLBACK } from './problemText';
++
++afterEach(cleanup);
++
++describe('[HERMIA-FE-20261024 M6] problemText', () => {
++  it('keeps a human message and never returns the raw code', () => {
++    expect(problemText({ code: 'STUDIO_REQUEST_FAILED', message: '原记录或功能当前不可用。' })).toBe('原记录或功能当前不可用。');
++    expect(problemText({ code: 'STUDIO_REQUEST_FAILED', message: 'STUDIO_REQUEST_FAILED' })).toBe(TASK_CENTER_PROBLEM_FALLBACK);
++    expect(problemText({ code: 'X', message: 'SOME_RAW_CODE' })).toBe(TASK_CENTER_PROBLEM_FALLBACK);
++    expect(problemText({ code: 'X', message: '  ' })).toBe(TASK_CENTER_PROBLEM_FALLBACK);
++    expect(problemText(undefined)).toBe(TASK_CENTER_PROBLEM_FALLBACK);
++  });
++});
+diff --git a/frontend/src/taskcenter/problemText.ts b/frontend/src/taskcenter/problemText.ts
+new file mode 100644
+index 00000000..d36cb949
+--- /dev/null
++++ b/frontend/src/taskcenter/problemText.ts
+@@ -0,0 +1,12 @@
++// [HERMIA-FE-20261024 M6] TaskCenter alerts show human text only. The raw problem code (e.g. STUDIO_REQUEST_FAILED)
++// is never rendered as visible text; callers keep it in a data-error-code attribute for diagnostics.
++import type { TaskCenterProblem } from './taskCenterTypes';
++
++export const TASK_CENTER_PROBLEM_FALLBACK = '请求没有完成，请稍后点「重新读取」。';
++const RAW_CODE = /^[A-Z][A-Z0-9_]*$/;
++
++export function problemText(problem: TaskCenterProblem | undefined): string {
++  const message = (problem?.message ?? '').trim();
++  if (!message || RAW_CODE.test(message) || (problem?.code && message === problem.code)) return TASK_CENTER_PROBLEM_FALLBACK;
++  return message;
++}

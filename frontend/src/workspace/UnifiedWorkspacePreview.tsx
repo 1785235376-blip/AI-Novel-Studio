@@ -75,9 +75,9 @@ export function UnifiedWorkspacePreview() {
   const inspectRef = useRef(inspect); inspectRef.current = inspect;
   const [creativeRev, setCreativeRev] = useState(0);
   const nodeDirty = useRef(false);
+  nodeDirtyRef.current = nodeDirty; // [HERMIA-FE-20261024 M5-s1] (moved above the M3-s1fix comment [HERMIA-FE-20261024 M6])
   // [HERMIA-FE-20261024 M3-s1fix] MUST-FIX: viewport memory keyed by novelId (a reset in an effect ran after the new project's canvas had
   // already remounted with the old viewport). Switching back to a project restores its own viewport.
-  nodeDirtyRef.current = nodeDirty; // [HERMIA-FE-20261024 M5-s1]
   const vps = useRef<Record<string, Partial<Record<CanvasKind, CvViewport>>>>({});
   const vpOf = (k: CanvasKind) => (novelId ? vps.current[novelId]?.[k] : undefined);
   const setVpOf = (k: CanvasKind, v: CvViewport) => { const n = novelRef.current; if (n) vps.current[n] = {...vps.current[n], [k]: v}; };
