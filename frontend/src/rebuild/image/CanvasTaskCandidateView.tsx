@@ -217,7 +217,8 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     } finally { tx.finish(); }
   }
 
-  const visiblePreview = preview?.fence === token ? preview : undefined;
+  const visiblePreview = preview?.fence === token && current() ? preview : undefined;
+  const visibleReview = reviewedNow(review) ? review : undefined;
   const canPrepare = !!visiblePreview && loaded === visiblePreview && !!visiblePreview.sha256 && canvasCandidateCryptoAvailable()
     && candidate.approvalStatus === 'APPROVED' && candidate.previewKind === 'asset';
   return <section aria-label="原任务候选结果">
@@ -249,17 +250,17 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
         }
       }} onError={() => {
         if (current() && previewRef.current === visiblePreview && sequence.current === visiblePreview.request) {
-          releasePreview(); setError('候选预览加载失败。来源记录保留，未执行或采用任何结果。');
+          hide(); setError('候选预览加载失败。来源记录保留，未执行或采用任何结果。');
         }
       }}/></div>}
     {candidate.approvalStatus === 'APPROVED' && candidate.previewKind === 'asset' && <>
       <Button disabled={!canPrepare || busy} loading={busy} onClick={() => void prepareReview()}>准备人工核对</Button>
       {visiblePreview && !visiblePreview.sha256 && <StatusMessage>当前环境无法核对图片内容 SHA-256，只能只读预览，不能准备或采用到原节点。</StatusMessage>}
-      {review && review.fence === token && <section aria-label="本次原节点采用确认">
-        <p>已重新核对原资产 v{review.asset.assetVersion} 和当前读到的图片内容 SHA-256。仅保存此浏览器的原节点导航关联，不改变服务端审核记录。</p>
+      {visibleReview && <section aria-label="本次原节点采用确认">
+        <p>已重新核对原资产 v{visibleReview.asset.assetVersion} 和当前读到的图片内容 SHA-256。仅保存此浏览器的原节点导航关联，不改变服务端审核记录。</p>
         <label><input type="checkbox" aria-label="已查看上述图片，并确认仅采用到此浏览器的原节点" checked={confirmed} disabled={busy}
           onChange={event => {
-            if (!running.current && reviewedNow(review)) { confirmedRef.current = event.currentTarget.checked; setConfirmed(event.currentTarget.checked); }
+            if (!running.current && reviewedNow(visibleReview)) { confirmedRef.current = event.currentTarget.checked; setConfirmed(event.currentTarget.checked); }
           }}/>已查看上述图片，并确认仅采用到此浏览器的原节点</label>
         <Button disabled={!confirmed || busy} loading={busy} onClick={() => void adopt()}>采用到此浏览器原节点</Button>
       </section>}
