@@ -581,3 +581,14 @@ nit（P3）：
 - **4 Hermia 的工作**：8 个变异我自己重跑全部被杀（m3s1fix.test.tsx 共 5 个测试；她日志中的“(12)”与报告第 174 行的 5 不一致，P3）。IMPLEMENTATION_REPORT 第 153 行已更正 ✓。第 155 行仍写“发送保持视口”，已过时（P3）。patches/m3s1fix-shared-nonentry.patch 与 RebuildCanvas diff 完全一致；DualCanvas、ImageRebuild、VideoRebuild 都不传 revealLast，重复点击上报是幂等的，默认行为不变 ✓。
 - **5 测试**：子集 workspace/rebuild/taskcenter 50 个文件 420/420 ✓；tsc 6（基线）✓；旧 UI 18 页与 legacy-81a65eb8 逐字节对比 18/18 SAME ✓（401 与基线相同）。**全量 vitest：PENDING（合并后跑）**。
 - 证据：/workspace/hr/vera-compare/m3s1fix/（browser/check.json、probe.json、blocked.json、截图、mutations.log、subset.log、tsc.log、legacy/run）。
+
+## M3-s1fix2 (1916ea1b) — [VERA-FE] 独立复审：PASS
+
+- 范围：代码提交 edf7576e；edf7576e..1916ea1b 不触碰 frontend（diff 为空）。证据：/workspace/hr/vera-compare/m3s1fix2/（脚本 m3s1fix2_browser.mjs 为 Vera 自写，改自 m3s1fix_browser.mjs，未使用 Hermia 脚本；全部非 GET 被拦截，writes=[]、model=[]、errs=[]）。
+- 1 发送揭示（Chrome，起点 translate(-320,40)）：1366/1920 × k=1/1.1，发送 1/6/12/13 个节点后最后节点均在视口内，scale 不变，仅 x 最小平移（例 1366 k1：-320→-4→-4→-90→-296，节点贴边距 16px 左右；节点已可见时不动）。
+- 2 手动平移后不回拉：1366 k1 平移到 translate(404,40) 后，切 tab、窗口 1200/1100 缩放再还原、切作品 520adfa2 再切回、视频节点保存（"已保存到本机草稿"，execRev 重挂载）及其后切 tab，变换均保持 translate(404,40)。
+- 3 无跳动：默认视图连续发送 3 个（均可见），translate(40,40) 不变。
+- 4 存活变异"已揭示则跳过"：判定为等价。ResizeObserver 在首次成功揭示的同一回调内同步 disconnect，effect 仅挂载时运行；StrictMode（main.tsx 已启用，浏览器验证即在 StrictMode dev 下）重放 effect 时外层 `!revealPending.current` 守卫已拦截，且第一次的 RO 已在 cleanup 中断开。无行为差异。
+- 5 rAF 回退：addInitScript 删除 window.ResizeObserver（页面确认 hasRO=false），发送 1/12 均正确揭示，手动平移后切 tab 不回拉。
+- 6 Hermia：自行复现 5 个变异 + 额外"去掉尺寸检查"：一次性不等待尺寸 3 失败、宿主不清 flag 1 失败、无 rAF 1 失败、RO 回调失效 2 失败、去尺寸检查 3 失败、守卫移除 8/8 通过（等价，同上）。patches/m3s1fix2-shared-nonentry.patch 与 edf7576e 的 RebuildCanvas diff 逐行一致。RebuildCanvas 其他使用方（VideoRebuild、ImageRebuild、DualCanvas）未传 revealLast/onRevealed，默认行为不变；旧 DualCanvas 1366 实测与 M3-s1fix 基线一致（发送后 translate(40,40)）。P3 文档：IMPLEMENTATION_REPORT 第 155 行已加更正说明；m3s1fix 变异日志 "(12)" 已解释（5+7）。均已修复。
+- 7 测试：workspace/rebuild/taskcenter 423/423（首轮 1 个 TaskCenter.receiptCompanion 偶发失败，单独 3 次均过，整轮重跑 423/423，与本改动无关）；tsc 6（基线）；旧 UI 18 页对比 legacy-81a65eb8 18/18 一致；全量套件待合并后运行。
