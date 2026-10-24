@@ -501,3 +501,44 @@ nit（P3）：
 - 低：送出会重置执行画布的视口，用户的平移/缩放会丢失（既有行为）。
 - 低：useTaskCenter 的 cancelled 判断没有测试覆盖（属于弱变异）。
 - 低：IndependentStudioIdentity 有 2 项时序 flaky，继续观察。
+
+## M4-s1 (ea856da7) [VERA-FE]
+
+- 对象：分支 work/hermia-uw-m4-20261024，HEAD ea856da7，tree d1311067 已核对；基于 3520d679。临时 worktree 固定在 ea856da7，用 npm ci 安装，Node 22.14，vite 起在 4499；所有非 GET 请求都被路由拦截（拦到 0 次），页面错误 0。复审结束后已停 vite、删除并 prune 临时 worktree。证据在 /workspace/hr/vera-compare/m4s1/。
+- **结论：PASS**（无 MUST-FIX）。
+
+### 浏览器（?uw=1；1366/1440/1920，DPR 1.25/1.5，CSS zoom 1.25 @1366/1920）
+- 跳到主区域：DOM 里它是第一个可聚焦元素；获得焦点后可见（top 6px，2px 实线描边）；按 Enter 后焦点进入 #uw-main（role=main，aria-label=主区域）。**但不打补丁时**，页面加载后焦点落在「搜索功能」，第一次按 Tab 到的是「执行画布」，按 Shift+Tab 才回到跳转链接（和 M4_REPORT 记的 PARTIAL 一致）。
+- tablist：role=tablist（aria-label=中间面板）/role=tab 都对，aria-selected 跟着切换，roving tabindex 始终只有一个 0；→/← 循环、Home/End 都正确（快速连按也正确）；0 次写请求。
+- 分割条（outline/inspector/tasks）：role=separator、aria-orientation、valuenow/min/max/valuetext（「N 像素」）、aria-controls 指向的元素都存在，并随方向键实时更新（每步 16px）；Home=min，End=valuemax，超出两端会被钳住；outline 拉到最大时主区 320 宽，tasks 拉到最大时主区高 239，都 ≥ 下限。拖动中按 Esc：270→恢复成 180。
+- 焦点描边可见（tab、分割条、跳转链接）；7 种配置下 scrollWidth 都等于 clientWidth；主区最小 614×403（1366 + zoom 1.25）；1366 + zoom 1.25 下工具栏高 108px，换行正常，状态行在第二行。
+- axe-core（只扫 dock-layout）：每种配置都只有 color-contrast（serious）×3，位置是 .nv-rail__h / .nv-rail__vol（作品结构面板里复用的旧组件，不属于本次改动）；M4 新增元素没有违规。
+- 旧 UI（不带 uw、?mode=pro）：没有跳转链接，也没有 dock-layout，正常加载，0 写请求、0 错误。本次 diff 没有动 src/workspace 以外的源码。
+
+### 裁定：aria-pressed → aria-selected
+判定为**规格变更，强度不变，不算断言变弱**。理由：组件确实改成了 role=tab，aria-selected 才是正确的语义；三处旧测试仍然逐个 tab 断言 true/false 和切换后的值，其他断言一字未改（已对 3520d679 做 diff）。变异「删掉 aria-selected」时，这 3 条旧测试加 m4s1 共 4 条全部失败，证明它们仍然有效。
+
+### 初始焦点补丁 patches/m4-s1-commandsearch-initial-focus.patch
+只在临时 worktree 里应用过（可以干净 apply）。打补丁后：加载时焦点在 BODY，第一次按 Tab 就到「跳到主区域」；命令面板打开后焦点进输入框，按 Esc 关闭后焦点回到「搜索功能」触发按钮（回焦行为保留）；workspace/workbench/rebuild 三个目录 286/286 通过，CommandSearch 两个测试文件都通过。旧 App 首页不渲染 CommandSearch，补丁只去掉了挂载时抢焦点。**建议应用**，并补一条测试（挂载时不抢焦点 + 关闭后回焦），目前没有测试覆盖这两点。是否正式应用由 Hermia 或用户决定。
+
+### 变异
+- 删 aria-selected：抓到（4 条失败）
+- 方向键失效：抓到
+- 删 Esc 恢复：抓到
+- 删跳转链接：抓到
+- 删 roving tabindex：抓到
+- 补充：去掉循环（→ 到末尾停住）**存活**；去掉 tab 的 Home/End **存活**（浏览器实测都正常，只是没有测试锁住）。
+
+### 测试
+- 目标子集（Node 22.14）：42 个文件，286/286 通过；tsc 6 个错误，和基线一致。
+- 全量 vitest：**本轮未跑（PENDING）**，等 M5 合并后由 Hermia 统一跑，按现行门槛复核。
+
+### 和 Hermia 证据对照
+logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出，主区 ≥320×200，Shift+Tab 回到跳转链接，分割条每次 →→ 是 248→280，End=valuemax，Esc 能恢复，0 次非 GET。截图 21 张和日志对得上。说明：她的脚本只是记录非 GET 请求，没有拦截；我这边是拦截的，结果同样是 0。
+
+### 问题（按优先级）
+- P2：不打补丁时初始焦点在「搜索功能」，跳转链接不是加载后的第一个 Tab 停点 → 应用上面的补丁并补测试。
+- P3：tab 的循环和 Home/End 没有测试锁住（两条变异存活）→ 补两条断言。
+- P3：只有当前选中的 tab 带 aria-controls；面板是 role=region，没有 aria-labelledby 指回 tab；分屏时两个 tab 可能同时 aria-selected=true，但 tablist 没有标 aria-multiselectable。建议补齐或在 contract 里写明。
+- P3：跳转链接获得焦点时会盖住左上角的「搜索功能」按钮，这时用鼠标点不到它（只在获得焦点的那一刻发生）。可以把链接往右挪，或在失焦时立即收起。
+- P3（不属于本次改动）：作品结构面板里旧组件 .nv-rail 有 3 处颜色对比度不足（axe serious）。
