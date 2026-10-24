@@ -40,8 +40,8 @@ function load(key: string, seed: CvGraph): CvGraph {
 export type CvViewport = {x: number; y: number; k: number};
 // [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
 // (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
-export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
-  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean}) {
+export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean; onRevealed?: () => void}) {
   const key = canvasStorageKey(kind, scope);
   const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
   const [vp, setVp] = useState<CvViewport>(() => initialViewport ?? {x: 40, y: 40, k: 1});
@@ -51,17 +51,33 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   const [q, setQ] = useState('');
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  // [HERMIA-FE-20261024 M3-s1fix] revealLast: on mount, if the last node is outside the visible svg, pan just enough to show it (zoom kept).
+  // [HERMIA-FE-20261024 M3-s1fix] revealLast: if the last node is outside the visible svg, pan just enough to show it (zoom kept).
+  // [HERMIA-FE-20261024 M3-s1fix2] the request is kept pending until the svg first has a non-zero size (tab-switch mounts
+  // measure 0×0 in Chrome), executed once via ResizeObserver (rAF polling fallback), then cleared so later manual pans,
+  // resizes or tab switches never pull the view back.
+  const revealPending = useRef(!!revealLast);
+  const onRevealedRef = useRef(onRevealed); onRevealedRef.current = onRevealed;
   useLayoutEffect(() => {
-    const r = svgRef.current?.getBoundingClientRect(); const n = g.nodes[g.nodes.length - 1];
-    if (!revealLast || !n || !r || !r.width || !r.height) return;
-    setVp(v => {
-      const M = 16, l = v.x + n.x * v.k, t = v.y + n.y * v.k, rr = l + REVEAL_W * v.k, b = t + NH * v.k;
-      const dx = l < M ? M - l : rr > r.width - M ? (r.width - M) - rr : 0;
-      const dy = t < M ? M - t : b > r.height - M ? (r.height - M) - b : 0;
-      return dx || dy ? {...v, x: v.x + dx, y: v.y + dy} : v;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only
+    const svg = svgRef.current; if (!revealPending.current || !svg) return;
+    const n = g.nodes[g.nodes.length - 1]; if (!n) { revealPending.current = false; onRevealedRef.current?.(); return; }
+    const tryReveal = () => {
+      if (!revealPending.current) return true;
+      const r = svg.getBoundingClientRect(); if (!r.width || !r.height) return false;
+      revealPending.current = false; onRevealedRef.current?.(); // [HERMIA-FE-20261024 M3-s1fix2] host clears its request
+      setVp(v => {
+        const M = 16, l = v.x + n.x * v.k, t = v.y + n.y * v.k, rr = l + REVEAL_W * v.k, b = t + NH * v.k;
+        const dx = l < M ? M - l : rr > r.width - M ? (r.width - M) - rr : 0;
+        const dy = t < M ? M - t : b > r.height - M ? (r.height - M) - b : 0;
+        return dx || dy ? {...v, x: v.x + dx, y: v.y + dy} : v;
+      });
+      return true;
+    };
+    if (tryReveal()) return;
+    let ro: ResizeObserver | undefined, raf = 0;
+    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(() => { if (tryReveal()) ro?.disconnect(); }); ro.observe(svg); }
+    else { const tick = () => { if (!tryReveal()) raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); }
+    return () => { ro?.disconnect(); if (raf) cancelAnimationFrame(raf); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; request consumed once
   }, []);
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);

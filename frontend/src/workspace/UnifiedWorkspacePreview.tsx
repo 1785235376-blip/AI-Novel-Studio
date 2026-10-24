@@ -76,7 +76,9 @@ export function UnifiedWorkspacePreview() {
   const setVpOf = (k: CanvasKind, v: CvViewport) => { const n = novelRef.current; if (n) vps.current[n] = {...vps.current[n], [k]: v}; };
   const onCreativeVp = useCallback((v: CvViewport) => setVpOf('image', v), []); // eslint-disable-line react-hooks/exhaustive-deps
   const onExecVp = useCallback((v: CvViewport) => setVpOf('video', v), []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [revealExec, setRevealExec] = useState(false); // [HERMIA-FE-20261024 M3-s1fix] true only for the remount right after a send
+  const [revealExec, setRevealExec] = useState(false);
+  const onExecRevealed = useCallback(() => setRevealExec(false), []); // [HERMIA-FE-20261024 M3-s1fix2] one-shot: consumed by the canvas
+  // [HERMIA-FE-20261024 M3-s1fix] true only for the remount right after a send
   useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; setRevealExec(false); setPickBlocked(null); }, [novelId]);
   useEffect(() => registerCanvasNodeActions(shared.actions), [shared.actions]);
   const lastPick = useRef<CanvasPick | null>(null);
@@ -159,7 +161,7 @@ export function UnifiedWorkspacePreview() {
         <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></div>
       </div>;
     }
-    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} />;
+    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} />;
     if (id === 'tasks') return <TasksPanel novelId={novelId} active />;
     return <p style={{ padding: 12 }} data-state="not-connected">{PREVIEW_SPECS.find((x) => x.id === id)?.title ?? "面板"}：预览里尚未接入实际功能。</p>;
   };
