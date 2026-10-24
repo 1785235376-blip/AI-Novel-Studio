@@ -6,15 +6,18 @@ import {RebuildCanvas, canvasStorageKey, type CvNode, type CvGraph} from './Rebu
 
 type Mode = 'creation' | 'execution' | 'split';
 /** [HERMIA-FE-20261024 M2-s1fix] world position of sent reference nodes (inside the default execution viewport). */
-export const LINK_X = 20, LINK_Y0 = 20, LINK_DY = 70;
+export const LINK_X = 20, LINK_Y0 = 20, LINK_DY = 70, LINK_DX = 206; // DX = rendered node width 186 + 20 gap
 export function linkToExecution(scope: string, n: CvNode): void {
   const key = canvasStorageKey('video', scope);
   let g: CvGraph = {nodes: [], edges: []};
   try { const raw = localStorage.getItem(key); if (raw) g = JSON.parse(raw); } catch { /* ignore */ }
   // [HERMIA-FE-20261024 M2-s1fix] was x:-220 (off-view: the execution canvas remounts at viewport {x:40,y:40,k:1}, so the
   // node showed only ~5px). Place it inside that default view: screen x 60..240, y 60..260 — fits the 320×280 panel minimum.
-  const y = LINK_Y0 + (g.nodes.length % 3) * LINK_DY;
-  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x: LINK_X, y, title: `参考 · ${n.title}`}];
+  // [HERMIA-FE-20261024 M2-s1fix2] grid instead of n%3 (4th node fully covered the 1st): column = floor(n/3), so the
+  // first column (first 3 sends) stays inside the default view and later sends never overlap earlier ones.
+  const i = g.nodes.length;
+  const x = LINK_X + Math.floor(i / 3) * LINK_DX, y = LINK_Y0 + (i % 3) * LINK_DY;
+  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x, y, title: `参考 · ${n.title}`}];
   try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
 }
 

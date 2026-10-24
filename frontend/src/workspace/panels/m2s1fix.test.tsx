@@ -72,14 +72,17 @@ describe('300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS
 });
 
 describe('sent node lands inside the execution viewport', () => {
-  it('linkToExecution places every new node inside the default view of a 320×280 (minimum) execution panel', () => {
+  // [HERMIA-FE-20261024 M2-s1fix2] spec change (Vera M2-s1fix medium): later sends now go to further grid columns so they
+  // never overlap; only the first column (first 3 sends) is guaranteed inside the 320×280 minimum view. Overlap + the
+  // 750px-wide real-panel case are covered in m2s1fix2.test.tsx.
+  it('linkToExecution places the first column (3 sends) inside the default view of a 320×280 (minimum) execution panel', () => {
     for (let i = 0; i < 7; i++) linkToExecution('n1', {...node, id: `a${i}`});
     render(<ExecutionCanvasPanel novelId="n1" revision={1} />);
     const vpm = /translate\(([-\d.]+),([-\d.]+)\) scale\(([-\d.]+)\)/.exec(document.querySelector('svg g[transform]')!.getAttribute('transform')!)!;
     const [vx, vy, k] = vpm.slice(1).map(Number);
     const nodes = [...document.querySelectorAll('[data-node-id]')];
     expect(nodes).toHaveLength(7);
-    for (const el of nodes) {
+    for (const el of nodes.slice(0, 3)) {
       const [, x, y] = /translate\(([-\d.]+),([-\d.]+)\)/.exec(el.getAttribute('transform')!)!.map(Number);
       const sx = vx + x * k, sy = vy + y * k;
       expect(sx).toBeGreaterThanOrEqual(0); expect(sx + 180 * k).toBeLessThanOrEqual(320);
