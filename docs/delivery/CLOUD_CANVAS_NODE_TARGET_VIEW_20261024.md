@@ -22,6 +22,17 @@ Real File/API setup uses the original Canvas and Job routes, then reconstructs f
 
 The committed frontend fixture is an exact actual HTTP capture, **14,406 bytes**, SHA256 `59d805a4bfb98aff91b576ddbd4ce39bee248bc733d3a74774b18e7e914a9718`. Its starting `baseline_commit` and four `implementation_sha256` values identify the actual capture source without pretending the endpoint existed in the baseline. Other malformed/racing frontend receipts and statuses are software counterexamples. A simulated oversized response proves the transport bound, not a real oversized user record. The missing-marker test moves and preserves only its newly created synthetic fixture marker.
 
-Prechecks: **14 File/API passed** in two non-overlapping selections; **32 frontend passed** in the two new files (24 unit and 8 existing-workspace integration cases), with no failed attempts. Fixed-source regression, standard type/build and final independent publication review are recorded below after execution. Earlier known workspace-suite failures and external Grok results are not rerun or relabeled by these bounded checks.
+Prechecks: **14 File/API passed** in two non-overlapping selections; **32 frontend passed** in the two new files (24 unit and 8 existing-workspace integration cases), with no failed attempts.
+
+Fixed application/test source: `e81c14855d5608b3e46eabde614c4cc5267dc71f`, tree `5a44175b9ccb65af02c7480e1c73e49b6f42aed0`. The following delivery edit changes documentation only. Final checks used a detached clean worktree and existing frozen dependencies; source and all three manifest/lock hashes remained unchanged before/after.
+
+| Verification | Actual result |
+| --- | --- |
+| Original File/API | **31 passed**, 3 existing warnings, 14.40s (process 19.252s): 14 new exact-record cases and 17 original target-observation cases. Includes same-process fresh-owner reads, stale Job/Canvas/incarnation pins, intervening Canvas edit, missing identity, revoked Host and body/response bounds. No generation or approval. |
+| Related frontend | **171 passed**, 9 files, one worker, 23.69s (process 24.524s). Includes the 32 new cases, previous target comparison, task selector and original Canvas client/history/panel regressions. New cases are part of 171, not an additional count. |
+| Standard type/build | **PASS** `corepack pnpm build` (`tsc -b && vite build`), process 60.373s; Vite 9.88s, 2637 modules. Existing chunk-size warning only. |
+| Independent review | Separate source/lifecycle/permission/owner/public-diff review and fixed-source raw receipt, XML, log and fixture hash audit; no blocking finding. Reviewer did not execute product operations. |
+
+Earlier known workspace-suite failures and external Grok results are not rerun or relabeled by these bounded checks. GitHub source/CI is observed separately after normal work-branch push; local verification does not imply GitHub Actions ran.
 
 Formal reviewed-result save/cold-reopen positive, real model/GPU/paid execution, PostgreSQL, native Windows and browser/geometry acceptance remain **NOT_RUN**. This slice does not establish browser Rebuild graph restoration or complete the formal generation-to-saved-node path. Existing media, sandbox and EACCES restrictions are not retried. Grok's window/view/keyboard work and protected shell are untouched.
