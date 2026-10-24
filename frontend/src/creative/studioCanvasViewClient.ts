@@ -1,3 +1,4 @@
+import { checkedCanvasImageNodeOrigin, canonicalImageNode, type CanvasImageNodeOrigin } from './canvasImageNode';
 import { ApiError } from '../api';
 import type { StudioGraphTransport } from './studioGraphClient';
 import type { StudioGraphOwner } from './studioGraphTypes';
@@ -6,7 +7,7 @@ export type CanvasAssetReference = { asset_id: string; version: number; digest: 
 export type CanvasCard = { id: string; position: { x: number; y: number }; asset?: CanvasAssetReference };
 export type CanvasDisplayGroup = { id: string; name: string; card_ids: string[]; parent_id?: string; collapsed: boolean };
 export type CanvasViewOptions = { grid: boolean; snap_step: 8 | 16 | 24 | 32 | null };
-export type CanvasDefinition = { schema_version: 1; title: string; cards: CanvasCard[]; viewport: { x: number; y: number; zoom: number }; groups?: CanvasDisplayGroup[]; view_options?: CanvasViewOptions };
+export type CanvasDefinition = { schema_version: 1; title: string; cards: CanvasCard[]; viewport: { x: number; y: number; zoom: number }; groups?: CanvasDisplayGroup[]; view_options?: CanvasViewOptions; image_node_origin?: CanvasImageNodeOrigin };
 export type CanvasReferenceState = { card_id: string; state: 'CURRENT_METADATA' | 'STALE' | 'UNAVAILABLE'; filename?: string };
 export type CanvasViewRecord = StudioGraphOwner & { id: string; version: number; definition: CanvasDefinition; definition_digest: string;
   created_at: string; updated_at: string; reference_states: CanvasReferenceState[]; execution_authority: false; binary_content_verified: false;
@@ -27,7 +28,7 @@ function position(v: unknown) { const r = object(v); keys(r, ['x', 'y']); return
 function reference(v: unknown): CanvasAssetReference { const r = object(v); keys(r, ['asset_id', 'version', 'digest', 'kind']); if (!['image', 'video', 'audio'].includes(r.kind as string)) invalid();
   return { asset_id: text(r.asset_id), version: integer(r.version), digest: digest(r.digest), kind: r.kind as CanvasAssetReference['kind'] }; }
 export function checkedCanvasDefinition(v: unknown, writable = false): CanvasDefinition {
-  const r = object(v); keys(r, ['schema_version', 'title', 'cards', 'viewport', 'groups', 'view_options']); if (r.schema_version !== 1) invalid();
+  const r = object(v); keys(r, ['schema_version', 'title', 'cards', 'viewport', 'groups', 'view_options', 'image_node_origin']); if (r.schema_version !== 1) invalid();
   const cards = list(r.cards, 1000).map(v => { const c = object(v); keys(c, ['id', 'position', 'asset']); const id = text(c.id, 64);
     if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id) || writable && c.asset === undefined) invalid();
     return { id, position: position(c.position), ...(c.asset === undefined ? {} : { asset: reference(c.asset) }) }; });
@@ -35,6 +36,11 @@ export function checkedCanvasDefinition(v: unknown, writable = false): CanvasDef
   const view = object(r.viewport); keys(view, ['x', 'y', 'zoom']);
   const result: CanvasDefinition = { schema_version: 1, title: text(r.title, 160), cards,
     viewport: { x: number(view.x, -100_000, 100_000), y: number(view.y, -100_000, 100_000), zoom: number(view.zoom, .35, 2.5) } };
+  if ('image_node_origin' in r) {
+    const origin=checkedCanvasImageNodeOrigin(r.image_node_origin),card=cards.find(c=>c.id===origin.target.node_id);
+    if(!card?.asset||canonicalImageNode(card.asset)!==canonicalImageNode(origin.asset))invalid();
+    result.image_node_origin=origin;
+  }
   if ('view_options' in r) {
     const options = object(r.view_options); keys(options, ['grid', 'snap_step']);
     if (typeof options.grid !== 'boolean' || options.snap_step !== null && ![8, 16, 24, 32].includes(options.snap_step as number)) invalid();
@@ -118,6 +124,19 @@ export function createCanvasViewClient(projectId: string, transport: StudioGraph
       const captured = checkedCanvasDefinition(definition, true); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
       const result = record(await transport.json<unknown>(base, 'POST', { request_id: requestId, expected_version: 0, definition: captured }));
       if (result.version !== 1 || JSON.stringify(result.definition) !== JSON.stringify(captured)) invalid(); return result;
+    },
+    imageNodeResult: async (source: CanvasViewRecord, incarnation: string, job: {id:string;version:number;request_digest:string}, asset: CanvasAssetReference) => {
+      const captured = record(source), expectedIncarnation=text(incarnation), pin=reference(asset);
+      const expectedJob={id:text(job.id),version:integer(job.version),digest:digest(job.request_digest)};
+      const result = record(await transport.json<unknown>(`${base}/${encodeURIComponent(captured.id)}/image-node-result`, 'POST', {
+        confirmed: true, expected_incarnation: expectedIncarnation, expected_version: captured.version, expected_definition_digest: captured.definition_digest,
+        job_id: expectedJob.id, job_version: expectedJob.version, job_request_digest: expectedJob.digest, asset: pin }), captured.id);
+      const origin=result.definition.image_node_origin,target=origin?.target;
+      if (result.version < captured.version + 1 || !origin || !target || origin.job_id!==expectedJob.id || origin.job_version!==expectedJob.version
+        ||origin.job_request_digest!==expectedJob.digest||canonicalImageNode(origin.asset)!==canonicalImageNode(pin)||target.canvas_id!==captured.id
+        ||target.canvas_version!==captured.version||target.canvas_digest!==captured.definition_digest||target.incarnation!==expectedIncarnation
+        ||target.project_id!==captured.project_id||canonicalImageNode(target.scope)!==canonicalImageNode(captured.scope)) invalid();
+      return result;
     },
     save: async (id: string, expectedVersion: number, definition: CanvasDefinition, origin?:{expected_incarnation:string;expected_definition_digest:string;expected_card?:{card_id:string;source:CanvasAssetReference}}) => {
       const captured = checkedCanvasDefinition(definition, true), expected = integer(expectedVersion);

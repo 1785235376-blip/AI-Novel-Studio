@@ -14,6 +14,7 @@ import {ComicView} from '../comic/ComicView';
 import {DualCanvas} from '../canvas/DualCanvas';
 import {CanvasImageQueue} from './CanvasImageQueue';
 import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
+import {RebuildFormalImageNode} from './RebuildFormalImageNode';
 import {imageDraftNodeExists} from './canvasTaskBinding';
 import type {CvNode} from '../canvas/RebuildCanvas';
 import {useScopedRequestConsent} from '../../useScopedRequestConsent';
@@ -71,7 +72,10 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       setCanvasTask({scope: canvasTaskScope, novelId, nodeId: node.id, prompt: node.prompt?.trim() || '', isSourceCurrent});
     }
   };
-  const renderCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number) => <CanvasNodeTaskStatus novelId={novelId} nodeId={node.id} nodePrompt={node.prompt || ''} sourceRevision={sourceRevision} isSourceCurrent={isSourceCurrent} onOpen={() => openCanvasTask(node, isSourceCurrent)}/>;
+  const renderCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => <>
+    <CanvasNodeTaskStatus novelId={novelId} nodeId={node.id} nodePrompt={node.prompt || ''} sourceRevision={sourceRevision} isSourceCurrent={isSourceCurrent} onOpen={() => openCanvasTask(node, isSourceCurrent)}/>
+    <RebuildFormalImageNode projectId={novelId} node={node} sourceRevision={sourceRevision} isSourceCurrent={formalSourceCurrent}/>
+  </>;
   useEffect(() => setCanvasTask(undefined), [novelId, canvasTaskScope, view]);
   const canvasTaskDrawer = canvasTask?.scope === canvasTaskScope && canvasTask.novelId === novelId ? <Drawer title="画布图片任务" onClose={() => setCanvasTask(undefined)}>
     <CanvasImageQueue novelId={novelId} nodeId={canvasTask.nodeId} prompt={canvasTask.prompt} isSourceCurrent={canvasTask.isSourceCurrent} onClose={() => setCanvasTask(undefined)}/>

@@ -283,6 +283,7 @@ class ProductionExecutionService:
             raise ValueError("STUDIO_IMAGE_CUTOUT_PROOF_CHANGED")
 
     def _sources_current(self, nid, scope, context, guard):
+        self._canvas_image_node_current(nid,scope,context.get('actor'),context,guard)
         if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
             return [self._comic_owner().current(nid, scope, context, guard)]
         if context.get("storyboard_speech") is not None:
@@ -568,6 +569,11 @@ class ProductionExecutionService:
         source_dimensions = ({key: evidence[0]["measured"][key] for key in ("width", "height")}
             if command.operation_id == "m5.image.upscale" else None)
         recipe = self._recipe(command, source_dimensions=source_dimensions)
+        if command.canvas_image_node is not None:
+            if (graph_binding is not None or benchmark_binding is not None or batch_binding is not None
+                    or binding is None or not binding.get('local')):
+                raise ValueError('STUDIO_CANVAS_IMAGE_NODE_CONTEXT_CHANGED')
+            self._canvas_image_node_target(nid, scope, actor, command.canvas_image_node, context, guard)
         if command.canvas_return is not None:
             origin = command.canvas_return
             graph = getattr(self, 'graph_service', None)
@@ -595,6 +601,24 @@ class ProductionExecutionService:
         preview["preview_digest"] = digest(preview)
         guard()
         return preview, context, command
+
+    def _canvas_image_node_target(self, nid, scope, actor, origin, context, guard, *, document=None):
+        graph = getattr(self, 'graph_service', None)
+        if (graph is None or origin.project_id != nid or origin.scope != scope
+                or origin.incarnation != context['incarnation']):
+            raise StaleSourceError('STUDIO_CANVAS_IMAGE_NODE_CONTEXT_CHANGED')
+        canvas = (graph.canvas_views.get(nid,scope,actor,origin.canvas_id,guard) if document is None
+            else graph.canvas_views._owned(nid,scope,actor,origin.canvas_id,document))
+        if (canvas['version'] != origin.canvas_version or canvas['definition_digest'] != origin.canvas_digest
+                or canvas['definition']['cards'] or 'image_node_origin' in canvas['definition']):
+            raise StaleSourceError('STUDIO_CANVAS_IMAGE_NODE_TARGET_CHANGED')
+        guard()
+
+    def _canvas_image_node_current(self,nid,scope,actor,context,guard,*,document=None):
+        command=context.get('command')
+        if isinstance(command,dict) and 'canvas_image_node' in command:
+            checked=MediaCommand.model_validate(command)
+            self._canvas_image_node_target(nid,scope,actor,checked.canvas_image_node,context,guard,document=document)
 
     def _canvas_return_target(self, nid, scope, actor, origin, context, guard, *, document=None):
         # The return intent never grants authority. The original Graph owner
@@ -741,11 +765,17 @@ class ProductionExecutionService:
         preview, context, command = self.preview(nid, scope, actor, body.command, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         if preview["preview_digest"] != body.reviewed_preview_digest:
             raise StaleSourceError("STUDIO_PRODUCTION_PREVIEW_CHANGED")
-        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return"})
+        payload = command.model_dump(exclude={"source_snapshots", "allow_cloud", "license_note", "request_id", "canvas_return", "canvas_image_node"})
         payload["parameters"] = command.parameters.model_dump(exclude_none=True)
         # Keep the exact reviewed command for later egress and route rechecks.
         context["command"] = copy.deepcopy(preview["command"]) if command.operation_id in {"m5.image.cutout", "m5.image.composite"} else command.model_dump()
         guard = self._batch_guard(nid, scope, actor, context, guard, phase='create')
+        if command.canvas_image_node is not None:
+            original_guard = guard
+            def current_node():
+                original_guard()
+                self._canvas_image_node_target(nid, scope, actor, command.canvas_image_node, context, original_guard)
+            guard = current_node
         branch = scope.get("branch_id")
         if command.operation_id.startswith("m5."):
             if any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
@@ -1180,6 +1210,7 @@ class ProductionExecutionService:
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='review')
         if row["request_digest"] != action.expected_request_digest:
             raise CapabilityVersionConflict(self.view(row, owner))
+        self._canvas_image_node_current(nid,scope,actor,context,guard)
         if owner == "timeline":
             with self.video_owner.studio_review_phase(jid):
                 return self._review_timeline(nid, scope, actor, jid, row, context, action, guard,
@@ -1426,6 +1457,7 @@ class ProductionExecutionService:
 
     def _callbacks(self, nid, scope, actor, context, guard, *, graph_source_guard=None):
         def timeline_current(document):
+            self._canvas_image_node_current(nid,scope,actor,context,guard,document=document)
             if 'canvas_video' in context:
                 from .canvas_video_task import CanvasVideoTaskExecution
                 CanvasVideoTaskExecution(self).current(nid, scope, actor, context, guard, document=document)
@@ -1627,6 +1659,7 @@ class ProductionExecutionService:
             command = _HistoricalAudioCommand.model_validate(captured_command)
         else:
             command = MediaCommand.model_validate(captured_command)
+        self._canvas_image_node_current(nid,scope,actor,context,guard)
         if owner == 'audio': self._canvas_audio_return_current(nid, scope, actor, context, guard)
         host_guard = guard
         def guard():
@@ -1643,6 +1676,7 @@ class ProductionExecutionService:
                     if not settings.enable_cloud or not command.allow_cloud: raise ValueError("STUDIO_CLOUD_DISABLED")
         guard()
         def before_send(*args):
+            self._canvas_image_node_current(nid,scope,actor,context,guard)
             if owner == 'audio': self._canvas_audio_return_current(nid, scope, actor, context, guard)
             if context.get("storyboard_speech") is not None or any(source["kind"] == "COMIC_PANEL" for source in context["sources"]):
                 self._sources_current(nid, scope, context, guard)

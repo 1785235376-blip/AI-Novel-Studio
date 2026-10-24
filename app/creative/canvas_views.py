@@ -9,7 +9,8 @@ from hashlib import sha256
 from ..experimental.common import StaleSourceError, new_row, change_row, check_version
 from ..experimental.store import canonical
 from .project_store import BINDING
-from .canvas_view_models import CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave, CanvasViewRestore
+from .canvas_view_models import (CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave,
+    CanvasViewRestore, CanvasImageNodeResult, CanvasImageNodeOrigin)
 
 
 def digest(value):
@@ -52,6 +53,8 @@ class CreativeCanvasViews:
         definition=deepcopy(row['definition']);unavailable={item['card_id'] for item in states if item['state']=='UNAVAILABLE'}
         for card in definition['cards']:
             if card['id'] in unavailable:card.pop('asset')
+        if definition.get('image_node_origin',{}).get('target',{}).get('node_id') in unavailable:
+            definition.pop('image_node_origin',None)
         return {'id':row['id'],'version':row['version'],'definition':definition,
             'definition_digest':row['definition_digest'],'project_id':nid,'scope':deepcopy(scope),
             'created_at':row['created_at'],'updated_at':row['updated_at'],'reference_states':states,
@@ -77,6 +80,8 @@ class CreativeCanvasViews:
 
     def create(self,nid,scope,actor,value,guard=lambda:None):
         body=CanvasViewCreate.model_validate(value)
+        if body.definition.image_node_origin is not None:
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGINAL_OWNER_REQUIRED')
         incarnation,current=self.graph._context(nid,scope,actor,guard)
         definition=body.definition.model_dump();request_digest=digest(body.model_dump())
         with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
@@ -100,8 +105,19 @@ class CreativeCanvasViews:
         if body.expected_incarnation is not None and body.expected_incarnation != incarnation:
             raise StaleSourceError('CREATIVE_CANVAS_SAVE_INCARNATION_CHANGED')
         definition=body.definition.model_dump()
+        captured=self._owned(nid,scope,actor,rid,self.store.read(nid,scope))
+        check_version(captured,body.expected_version)
+        old_origin=captured['definition'].get('image_node_origin')
+        if definition.get('image_node_origin') != old_origin:
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGIN_CHANGED')
+        proof=None
+        if old_origin is not None:
+            from .canvas_image_node import capture
+            proof=capture(self,nid,scope,actor,old_origin,current)
         with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
             row=self._owned(nid,scope,actor,rid,state);check_version(row,body.expected_version)
+            if row['definition'].get('image_node_origin') != old_origin:
+                raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGIN_CHANGED')
             if body.expected_definition_digest is not None and body.expected_definition_digest != row['definition_digest']:
                 raise StaleSourceError('CREATIVE_CANVAS_SAVE_DEFINITION_CHANGED')
             if body.expected_card is not None:
@@ -111,8 +127,60 @@ class CreativeCanvasViews:
                     raise StaleSourceError('CREATIVE_CANVAS_RETURN_SOURCE_CHANGED')
             if any(item['state']!='CURRENT_METADATA' for item in self._states(nid,scope,actor,definition,current)):
                 raise StaleSourceError('CREATIVE_CANVAS_SOURCE_CHANGED')
+            if proof is not None:
+                from .canvas_image_node import current_asset
+                current_asset(self,nid,scope,actor,proof,current)
             change_row(row,actor,body.expected_version,lambda target:target.update(definition=deepcopy(definition),definition_digest=digest(definition)))
             self.graph._capacity(state);current()
+        return self.get(nid,scope,actor,rid,current)
+
+    def image_node_result(self,nid,scope,actor,rid,value,guard=lambda:None):
+        """Explicitly attach one original formal result; never approve or run it."""
+        from .canvas_image_node import capture, current_asset
+        body=CanvasImageNodeResult.model_validate(value)
+        incarnation,current=self.graph._context(nid,scope,actor,guard)
+        if body.expected_incarnation != incarnation:
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_CONTEXT_CHANGED')
+        runtime=self.graph.media_runtime
+        if runtime is None:
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_OWNER_REQUIRED')
+        # Job reads stay outside the original scope/asset transaction. A
+        # terminal APPROVED original Job cannot be cancelled or replayed.
+        job,context=runtime.production._row(nid,scope,actor,'image',body.job_id,current)
+        target=context.get('command',{}).get('canvas_image_node')
+        if target is None:
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_SOURCE_CHANGED')
+        origin=CanvasImageNodeOrigin.model_validate({'contract':'studio-canvas-image-node-result/1',
+            'target':target,'job_id':body.job_id,'job_version':body.job_version,
+            'job_request_digest':body.job_request_digest,'asset':body.asset.model_dump()}).model_dump()
+        target=origin['target']
+        if (target['canvas_id'] != rid or target['canvas_version'] != body.expected_version
+                or target['canvas_digest'] != body.expected_definition_digest
+                or target['incarnation'] != body.expected_incarnation):
+            raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_CONTEXT_CHANGED')
+        proof=capture(self,nid,scope,actor,origin,current)
+        with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
+            row=self._owned(nid,scope,actor,rid,state)
+            current_asset(self,nid,scope,actor,proof,current)
+            existing=row['definition'].get('image_node_origin')
+            if existing == origin:
+                # Exact explicit replay confirms the original association; it
+                # neither moves a subsequently moved card nor appends history.
+                pass
+            else:
+                check_version(row,body.expected_version)
+                if (existing is not None or row['definition_digest'] != body.expected_definition_digest
+                        or row['definition']['cards']):
+                    raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_TARGET_CHANGED')
+                definition=deepcopy(row['definition'])
+                definition['cards']=[{'id':target['node_id'],'position':deepcopy(target['position']),
+                    'asset':deepcopy(origin['asset'])}]
+                definition['image_node_origin']=deepcopy(origin)
+                definition=CanvasViewDefinition.model_validate(definition).model_dump()
+                change_row(row,actor,body.expected_version,lambda item:item.update(
+                    definition=definition,definition_digest=digest(definition)))
+                self.graph._capacity(state)
+            current()
         return self.get(nid,scope,actor,rid,current)
 
     def _history_entries(self, nid, scope, actor, row):
@@ -144,6 +212,8 @@ class CreativeCanvasViews:
                 for card in definition['cards']:
                     if card['id'] in unavailable:
                         card.pop('asset')
+                if definition.get('image_node_origin',{}).get('target',{}).get('node_id') in unavailable:
+                    definition.pop('image_node_origin',None)
                 items.append({key: deepcopy(entry[key]) for key in
                     ('version', 'definition_digest', 'created_at', 'updated_at')} |
                     {'definition': definition, 'reference_states': states,
@@ -161,9 +231,18 @@ class CreativeCanvasViews:
         incarnation, current = self.graph._context(nid, scope, actor, guard)
         if body.expected_incarnation != incarnation:
             raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
+        captured=self._owned(nid,scope,actor,rid,self.store.read(nid,scope))
+        check_version(captured,body.expected_version)
+        old_origin=captured['definition'].get('image_node_origin')
+        proof=None
+        if old_origin is not None:
+            from .canvas_image_node import capture
+            proof=capture(self,nid,scope,actor,old_origin,current)
         with self.graph.asset_inputs.transaction(nid, scope, actor, current) as state:
             row = self._owned(nid, scope, actor, rid, state)
             check_version(row, body.expected_version)
+            if row['definition'].get('image_node_origin') != old_origin:
+                raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGIN_CHANGED')
             if row['definition_digest'] != body.expected_definition_digest:
                 raise StaleSourceError('CREATIVE_CANVAS_RESTORE_CONTEXT_CHANGED')
             entries = self._history_entries(nid, scope, actor, row)
@@ -173,9 +252,14 @@ class CreativeCanvasViews:
             if target['definition_digest'] != body.restore_definition_digest:
                 raise StaleSourceError('CREATIVE_CANVAS_RESTORE_HISTORY_CHANGED')
             definition = deepcopy(target['definition'])
+            if definition.get('image_node_origin') != old_origin:
+                raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGIN_CHANGED')
             if any(item['state'] != 'CURRENT_METADATA' for item in
                     self._states(nid, scope, actor, definition, current)):
                 raise StaleSourceError('CREATIVE_CANVAS_RESTORE_SOURCE_UNRESOLVED')
+            if proof is not None:
+                from .canvas_image_node import current_asset
+                current_asset(self,nid,scope,actor,proof,current)
             change_row(row, actor, body.expected_version, lambda value: value.update(
                 definition=definition, definition_digest=target['definition_digest']))
             self.graph._capacity(state)

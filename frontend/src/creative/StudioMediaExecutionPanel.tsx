@@ -66,7 +66,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     </section>}
     <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
-      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
+      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask||!!props.canvasNodeTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
       {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
@@ -88,7 +88,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable && !crossRouteReferences ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
-        {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
+        {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit||!!props.canvasNodeTask} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
         {state.provider && !state.provider.local && <label><input type="checkbox" disabled={!state.canEdit} checked={draft.allowCloud} onChange={event => state.changeField('allowCloud', event.target.checked)} />确认本次允许将提示词及选中的参考素材发送到该云端服务，可能产生费用</label>}
       </>}
       {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : composite ? '选取 2 张' : '选取 1 个'}</legend>
@@ -143,7 +143,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
     </>}
-      {state.impactRequired && !(props.canvasImageTask??props.canvasAudioTrimTask)?.returnBinding && <StatusMessage tone="warning">当前卡片任务缺少可核对的持久范围与存储代际，不能创建或执行。请从原已保存卡片重新进入。</StatusMessage>}
+      {state.impactRequired && !(props.canvasImageTask??props.canvasAudioTrimTask)?.returnBinding && !props.canvasNodeTask?.binding && <StatusMessage tone="warning">当前卡片任务缺少可核对的持久范围与存储代际，不能创建或执行。请从原已保存卡片重新进入。</StatusMessage>}
       {state.impact && <section aria-label="原任务输入确认门">
         <p>{state.impact.input.boundary.kind==='CREATE'?'入队前核对：只保存本次任务，不执行。':'执行前再次核对：使用原入队任务的实际命令、配方与版本。'} 原预览摘要 <code>{state.impact.input.preview.preview_digest}</code></p>
         <ExecutionImpactPanel input={state.impact.input} owner={state.impact} current={state.impact.current()}

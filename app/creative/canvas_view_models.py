@@ -5,6 +5,7 @@ These records never describe execution ports, edges, jobs or model authority.
 from typing import Literal
 from pydantic import Field, model_validator, field_validator, model_serializer
 from .graph_models import Strict, Id, RequestId, Position, Viewport, AssetParameters
+from .production_execution_models import CanvasImageNodeBinding
 
 CANVAS_VIEWS = 'creative_canvas_views_v2'
 MAX_CANVAS_VIEWS = 8
@@ -46,6 +47,21 @@ class CanvasViewOptions(Strict):
             raise ValueError('CREATIVE_CANVAS_SNAP_INVALID')
         return value
 
+class CanvasImageNodeOrigin(Strict):
+    contract: Literal['studio-canvas-image-node-result/1']
+    target: CanvasImageNodeBinding
+    job_id: str = Field(min_length=1, max_length=240, pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$')
+    job_version: int = Field(ge=1, le=2**53 - 1, strict=True)
+    job_request_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    asset: AssetParameters
+
+    @model_validator(mode='after')
+    def image_only(self):
+        if self.asset.kind != 'image':
+            raise ValueError('CREATIVE_CANVAS_IMAGE_NODE_IMAGE_REQUIRED')
+        return self
+
+
 class CanvasViewDefinition(Strict):
     schema_version: Literal[1] = 1
     title: str = Field(min_length=1,max_length=160)
@@ -54,12 +70,14 @@ class CanvasViewDefinition(Strict):
     groups: list[CanvasDisplayGroup] | None = Field(default=None, min_length=1, max_length=64, strict=True)
 
     view_options: CanvasViewOptions | None = None
+    image_node_origin: CanvasImageNodeOrigin | None = None
 
     @model_serializer(mode='wrap')
     def preserve_legacy_definition(self, handler):
         value = handler(self)
         if self.groups is None: value.pop('groups', None)
         if self.view_options is None: value.pop('view_options', None)
+        if self.image_node_origin is None: value.pop('image_node_origin', None)
         return value
 
     @model_validator(mode='before')
@@ -69,6 +87,8 @@ class CanvasViewDefinition(Strict):
             raise ValueError('CREATIVE_CANVAS_GROUP_INVALID')
         if isinstance(value, dict) and 'view_options' in value and value['view_options'] is None:
             raise ValueError('CREATIVE_CANVAS_OPTIONS_INVALID')
+        if isinstance(value, dict) and 'image_node_origin' in value and value['image_node_origin'] is None:
+            raise ValueError('CREATIVE_CANVAS_IMAGE_NODE_ORIGIN_INVALID')
         return value
 
 
@@ -83,6 +103,10 @@ class CanvasViewDefinition(Strict):
         from ..experimental.store import canonical
         if not self.title.strip() or len({card.id for card in self.cards}) != len(self.cards):
             raise ValueError('CREATIVE_CANVAS_CARD_ID_OR_TITLE_INVALID')
+        if self.image_node_origin is not None:
+            card = next((card for card in self.cards if card.id == self.image_node_origin.target.node_id), None)
+            if card is None or card.asset != self.image_node_origin.asset:
+                raise ValueError('CREATIVE_CANVAS_IMAGE_NODE_PIN_CHANGED')
         groups = {group.id: group for group in self.groups or []}
         if len(groups) != len(self.groups or []):
             raise ValueError('CREATIVE_CANVAS_GROUP_ID_INVALID')
@@ -139,3 +163,21 @@ class CanvasViewRestore(Strict):
     expected_incarnation: str = Field(min_length=1, max_length=240, strict=True)
     restore_version: int = Field(ge=1, strict=True)
     restore_definition_digest: str = Field(pattern=r'^[a-f0-9]{64}$', strict=True)
+
+
+class CanvasImageNodeResult(Strict):
+    confirmed: Literal[True]
+    expected_incarnation: str = Field(min_length=1, max_length=240, strict=True)
+    expected_version: int = Field(ge=1, le=2**53 - 1, strict=True)
+    expected_definition_digest: str = Field(pattern=r'^[a-f0-9]{64}$', strict=True)
+    job_id: str = Field(min_length=1, max_length=240, pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$')
+    job_version: int = Field(ge=1, le=2**53 - 1, strict=True)
+    job_request_digest: str = Field(pattern=r'^[a-f0-9]{64}$', strict=True)
+    asset: AssetParameters
+
+    @field_validator('confirmed', mode='before')
+    @classmethod
+    def explicit_confirmation(cls, value):
+        if value is not True:
+            raise ValueError('CREATIVE_CANVAS_IMAGE_NODE_CONFIRMATION_REQUIRED')
+        return value

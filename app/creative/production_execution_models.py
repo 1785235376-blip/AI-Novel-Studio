@@ -52,6 +52,36 @@ class CanvasReturnBinding(ExecutionModel):
         return value
 
 
+class CanvasImageNodePosition(ExecutionModel):
+    x: float = Field(ge=-100_000, le=100_000, strict=True)
+    y: float = Field(ge=-100_000, le=100_000, strict=True)
+
+
+class CanvasImageNodeBinding(ExecutionModel):
+    """Captured display intent only; original owners resolve all authority."""
+    contract: Literal['studio-canvas-image-node/1']
+    project_id: Name
+    scope: dict[str, str | None]
+    incarnation: str = Field(pattern=r'^(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
+    canvas_id: Name
+    canvas_version: int = Field(ge=1, le=2**53 - 1, strict=True)
+    canvas_digest: Digest
+    node_id: str = Field(pattern=r'^[A-Za-z][A-Za-z0-9_-]{0,63}$')
+    title: str = Field(min_length=1, max_length=160)
+    position: CanvasImageNodePosition
+    prompt_digest: Digest
+
+    @model_validator(mode='after')
+    def exact_origin(self):
+        if (set(self.scope) - PUBLIC_SCOPE_KEYS or self.scope.get('novel_id') != self.project_id
+                or self.scope.get('mode') not in {'local', 'collaboration'}
+                or any(v is not None and not 1 <= len(v) <= 240 for v in self.scope.values())
+                or self.scope['mode'] == 'collaboration' and any(not self.scope.get(k) for k in ('workspace_id', 'storyline_id', 'branch_id'))
+                or not self.title.strip()):
+            raise ValueError('STUDIO_CANVAS_IMAGE_NODE_INVALID')
+        return self
+
+
 class MediaParameters(ExecutionModel):
     width: int | None = Field(default=None, ge=64, le=2048)
     height: int | None = Field(default=None, ge=64, le=2048)
@@ -252,6 +282,13 @@ class _MediaCommandShape(ExecutionModel):
     audio_profile: Literal["studio-audio-mp3/1"] | None = None
     image_layers: list[ImageCompositeLayer] | None = Field(default=None, min_length=2, max_length=2)
     canvas_return: CanvasReturnBinding | None = None
+    canvas_image_node: CanvasImageNodeBinding | None = None
+
+    @field_validator('canvas_image_node', mode='before')
+    @classmethod
+    def explicit_canvas_image_node(cls, value):
+        if value is None: raise ValueError('STUDIO_CANVAS_IMAGE_NODE_INVALID')
+        return value
 
     @field_validator('canvas_return', mode='before')
     @classmethod
@@ -276,13 +313,22 @@ class _MediaCommandShape(ExecutionModel):
     @model_serializer(mode="wrap")
     def legacy_image_identity(self, handler):
         value = handler(self)
-        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers", "canvas_return"):
+        for key in ("image_source", "image_references", "mask_source", "video_reference", "video_frames", "storyboard_shot", "storyboard_speech", "audio_profile", "image_layers", "canvas_return", "canvas_image_node"):
             if value.get(key) is None or (key == "image_references" and value[key] == []):
                 value.pop(key, None)
         return value
 
     @model_validator(mode="after")
     def operation_inputs(self):
+        if self.canvas_image_node is not None:
+            import hashlib
+            if (self.operation_id != 'm5.image.t2i' or self.allow_cloud or self.source_snapshots
+                    or self.canvas_return is not None or self.image_source is not None or self.image_references is not None
+                    or self.mask_source is not None or self.video_reference is not None or self.video_frames is not None
+                    or self.storyboard_shot is not None or self.storyboard_speech is not None
+                    or self.audio_profile is not None or self.image_layers is not None
+                    or self.canvas_image_node.prompt_digest != hashlib.sha256(self.prompt.encode('utf-8')).hexdigest()):
+                raise ValueError('STUDIO_CANVAS_IMAGE_NODE_COMMAND_INVALID')
         if self.canvas_return is not None:
             origin = self.canvas_return.source
             if origin.asset_kind == 'image':

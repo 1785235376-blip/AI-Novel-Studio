@@ -48,6 +48,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             if target is None or target[0] == "list":
                 return False
             record = service._owned(nid, scope, actor, target[0], target[1])
+            from .canvas_view_models import CANVAS_VIEWS
+            if target[0] == CANVAS_VIEWS and 'image_node_origin' in record.get('definition', {}):
+                # Only the new mapped formal-source surface requires source
+                # read throughout Save/Restore; old plain Canvas writes keep
+                # their existing permission contract. Re-evaluated at commit.
+                return True
             return record.get("graph_schema_version") in {6, 7} or record.get("definition", {}).get("schema_version") in {6, 7}
 
         def checked_graph(actor, scope, guard, *, source_read_authorized=False):

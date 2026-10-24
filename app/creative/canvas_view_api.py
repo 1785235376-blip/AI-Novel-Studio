@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from ..experimental.production_lineage_api import PrivateProductionRoute
-from .canvas_view_models import CANVAS_VIEWS, CanvasViewCreate, CanvasViewSave, CanvasViewRestore
+from .canvas_view_models import CANVAS_VIEWS, CanvasViewCreate, CanvasViewSave, CanvasViewRestore, CanvasImageNodeResult
 
 
 class CanvasViewRoute(PrivateProductionRoute):
@@ -25,6 +25,18 @@ class CanvasViewRoute(PrivateProductionRoute):
                 raise HTTPException(422, {"code": "CREATIVE_CANVAS_REQUEST_INVALID"}, headers=headers) from None
             except HTTPException as exc:
                 exc.headers = {**(exc.headers or {}), **headers}
+                if request.method == 'POST' and request.url.path.endswith('/image-node-result'):
+                    # New result-association errors never echo raw Job/Asset
+                    # owner exceptions, source identities or input text.
+                    code={400:'CREATIVE_CANVAS_IMAGE_NODE_INVALID',403:'CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN',
+                        404:'CREATIVE_CANVAS_IMAGE_NODE_UNAVAILABLE',409:'CREATIVE_CANVAS_IMAGE_NODE_CHANGED',
+                        413:'CREATIVE_CANVAS_REQUEST_LIMIT',422:'CREATIVE_CANVAS_REQUEST_INVALID'}.get(
+                            exc.status_code,'CREATIVE_CANVAS_IMAGE_NODE_REJECTED')
+                    raise HTTPException(exc.status_code,{'code':code},headers=exc.headers) from None
+                raise
+            except Exception:
+                if request.method == 'POST' and request.url.path.endswith('/image-node-result'):
+                    raise HTTPException(503,{'code':'CREATIVE_CANVAS_IMAGE_NODE_OUTCOME_UNKNOWN'},headers=headers) from None
                 raise
         return checked
 
@@ -65,5 +77,19 @@ def create_canvas_view_router(service, invoke):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
             lambda actor, scope, guard: service.canvas_views.restore(nid, scope, actor, vid, body, guard), request,
             target=(CANVAS_VIEWS, vid))
+
+    @router.post("/projects/{nid}/studio/canvas-views/{vid}/image-node-result")
+    def image_node_result(nid: str, vid: str, request: Request, body: CanvasImageNodeResult,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def write(actor,scope,write_guard):
+            def read(read_actor,read_scope,read_guard):
+                if read_actor != actor or read_scope != scope:
+                    raise HTTPException(403,{'code':'CREATIVE_CANVAS_IMAGE_NODE_FORBIDDEN'})
+                def current():
+                    write_guard();read_guard()
+                current()
+                return service.canvas_views.image_node_result(nid,scope,actor,vid,body,current)
+            return invoke(nid,x_session_token,x_branch_id,'domain.read',read,request,target=(CANVAS_VIEWS,vid))
+        return invoke(nid,x_session_token,x_branch_id,'domain.write',write,request,target=(CANVAS_VIEWS,vid))
 
     return router

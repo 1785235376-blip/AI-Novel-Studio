@@ -15,7 +15,7 @@ export function linkToExecution(scope: string, n: CvNode): void {
 }
 
 type DualCanvasProps = {scope: string; initial?: Mode; videoSeed?: CvGraph;
-  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number) => ReactNode};
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => ReactNode};
 export function DualCanvas(props: DualCanvasProps) {
   return <DualCanvasSession key={props.scope} {...props} />;
 }

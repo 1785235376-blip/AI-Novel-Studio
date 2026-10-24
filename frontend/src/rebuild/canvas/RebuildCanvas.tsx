@@ -38,7 +38,7 @@ function load(key: string, seed: CvGraph): CvGraph {
 }
 
 type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
-  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number) => ReactNode};
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => ReactNode};
 
 // A new owner must load its own draft before any persistence effect runs.
 export function RebuildCanvas(props: RebuildCanvasProps) {
@@ -57,8 +57,10 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const active = useRef(true);
   const removedNodes = useRef(new Set<string>());
   const promptRevisions = useRef(new Map<string, number>());
+  const positionRevisions = useRef(new Map<string, number>());
   const liveGraph = useRef(g); liveGraph.current = g;
   const selectedTask = useRef<CvNode>();
+  const selectionEpoch = useRef(0);
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
   useLayoutEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);
@@ -79,9 +81,9 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const addNode = (t: NodeType) => {
     if (!menu) return;
     const n: CvNode = {id: uid('n'), t: t.id, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10, title: `新${t.label}`};
-    setG(c => ({...c, nodes: [...c.nodes, n]})); setSel(n.id); setMenu(null);
+    selectionEpoch.current++; setG(c => ({...c, nodes: [...c.nodes, n]})); setSel(n.id); setMenu(null);
   };
-  const delNode = (id: string) => { removedNodes.current.add(id); setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
+  const delNode = (id: string) => { selectionEpoch.current++; removedNodes.current.add(id); setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
 
   const onDown = (e: RPE<SVGSVGElement>) => {
     if (e.button !== 0) return; setMenu(null);
@@ -89,15 +91,18 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
     const {wx, wy} = world(e.clientX, e.clientY);
     try { (e.currentTarget as Element).setPointerCapture?.(e.pointerId); } catch { /* jsdom */ }
     if (port) { setLink({from: port.getAttribute('data-for')!, x: wx, y: wy}); return; }
-    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
-    setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
+    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id !== sel) selectionEpoch.current++; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
+    if (sel !== null) selectionEpoch.current++; setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
   };
   const onMove = (e: RPE<SVGSVGElement>) => {
     if (link) { const {wx, wy} = world(e.clientX, e.clientY); setLink({...link, x: wx, y: wy}); return; }
     const d = drag.current; if (!d) return;
     const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
     if (d.mode === 'pan') setVp(v => ({...v, x: d.ox + dx, y: d.oy + dy}));
-    else setG(c => ({...c, nodes: c.nodes.map(n => n.id === d.id ? {...n, x: d.ox + dx / vp.k, y: d.oy + dy / vp.k} : n)}));
+    else {
+      if (d.id && (dx || dy)) positionRevisions.current.set(d.id, (positionRevisions.current.get(d.id) || 0) + 1);
+      setG(c => ({...c, nodes: c.nodes.map(n => n.id === d.id ? {...n, x: d.ox + dx / vp.k, y: d.oy + dy / vp.k} : n)}));
+    }
   };
   const onUp = (e: RPE<SVGSVGElement>) => {
     if (link) {
@@ -132,6 +137,12 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const promptRevision = imageTaskNode ? promptRevisions.current.get(imageTaskNode.id) || 0 : 0;
   const readSourceCurrent = (nodeId: string, revision: number) => () => sourceCurrent(nodeId)()
     && (promptRevisions.current.get(nodeId) || 0) === revision;
+  const formalSourceCurrent = (node: CvNode, revision: number) => {
+    const epoch = selectionEpoch.current, placement = positionRevisions.current.get(node.id) || 0, snapshot = JSON.stringify(node);
+    return () => readSourceCurrent(node.id, revision)() && selectionEpoch.current === epoch
+      && (positionRevisions.current.get(node.id) || 0) === placement
+      && selectedTask.current?.id === node.id && JSON.stringify(liveGraph.current.nodes.find(row => row.id === node.id)) === snapshot;
+  };
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
@@ -182,7 +193,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
           onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()}, sourceCurrent(imageTaskNode.id));
         }
       }}>为此节点准备图片任务</Button>
-      {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision)}
+      {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision, formalSourceCurrent(imageTaskNode, promptRevision))}
       <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
     </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage>视频节点的任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage> : null}
     </div>
