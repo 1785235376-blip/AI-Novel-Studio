@@ -31,4 +31,19 @@ Frontend tests use explicitly synthetic software HTTP records for approved-resul
 
 **A real File approved-result adoption/cold-reopen positive is NOT_RUN.** Producing that positive would require the previously restricted original media review/ingestion path, which was not retried. Implemented code and passing queue/refusal/software tests do not establish that acceptance. Real models, paid/GPU calls, PostgreSQL, native Windows and browser/geometry acceptance also remain NOT_RUN. The earlier browser sandbox and media restrictions were not bypassed.
 
-Final source, directed test counts, standard type/build evidence, independent review, normal work-branch push and remote/CI readback are recorded with this delivery. Local verification never implies GitHub Actions ran.
+The final tested source is `82c7ad4dc4d2f862fd1d5e830c7e8c7c4bc76d6a`, tree `25b1c748f1f592d405af759d4151e7cc9a17e1f4`. The following delivery edit changes documentation only.
+
+| Evidence | Actual result and boundary |
+| --- | --- |
+| Real File/API | **23 passed**, 3 existing warnings, 10.52s at `8945e6a3c4a833bc32dca14f0397f8f2fdd58b40`: 6 existing manual-card persistence/refusal cases and 17 new formal-node queue/cold-read/refusal cases. All backend and Python-test bytes are unchanged in the final source. No formal reviewed-result save positive. |
+| Related frontend regression | **210 passed**, 25 files, one worker, 47.64s at `406b63bcdfb0dc2e2b1488aa06be9f4cc1fd0d12`. This includes the new groups below; their counts must not be added again. |
+| Actual original panel + HTTP client software replay | **3 passed**, included in 210: preview/impact/queue with the new capsule, parameter ABA and an unbound global execution refusal. No provider, execute, review or media call. |
+| Container adoption and reopen software projections | **8 passed**, included in 210: explicit save, unknown/retained callback, deferred permission, node ABA, StrictMode and cold read with explicit record selection. This group stubs the production panel; it does not produce a real approved owner state. |
+| Result HTTP request/receipt checks | **4 passed**, included in 210: exact original POST body and wrong Job, pin or target refusals. Responses are software projections. |
+| Final test-only type correction | The following change only makes the partial container fixture's type assertion explicit; no production or runtime assertion changes. Its **8 cases passed again**, 1.33s at the final source. This overlaps the earlier 210, not 8 additional cases. |
+| Standard type/build | **PASS** `corepack pnpm build` (`tsc -b && vite build`) at the final source: process 50.934s, Vite 8.57s, 2630 modules. Existing chunk-size warning only; package manifests and frozen lock unchanged. |
+| Independent review | Source/authority/public-diff review completed separately from test execution, with final delivery checked before publication. |
+
+Initial verification at `8945e6a3` retained a JSX closing-brace build/transform failure and an outdated closed-client method-list assertion (192 frontend cases passed, one assertion failed). These were corrected before the 210-case pass. That later build then caught a test-only partial-fixture type assertion; the final source corrects it and passes the standard build. Original failure logs remain in cloud evidence. Static source review did not detect the initial JSX typo and is not represented as compiler acceptance.
+
+Normal work-branch push and exact remote/CI readback are recorded separately after verification. Local verification never implies GitHub Actions ran.
