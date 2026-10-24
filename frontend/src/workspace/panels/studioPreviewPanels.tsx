@@ -6,7 +6,7 @@
 // on mount, and the only cross-panel action (送到执行画布) is the existing local `linkToExecution` draft write.
 import {useMemo, useRef} from 'react';
 import type {ActionContext, ActionRegistry, Availability} from '../../workbench/actions';
-import {RebuildCanvas, type CvNode} from '../../rebuild/canvas/RebuildCanvas';
+import {RebuildCanvas, type CvNode, type CvViewport} from '../../rebuild/canvas/RebuildCanvas';
 import {linkToExecution} from '../../rebuild/canvas/DualCanvas';
 import {TaskCenterPanel} from '../../taskcenter/TaskCenter';
 import {studioTransport} from '../../creative/studioClient';
@@ -36,14 +36,20 @@ export const STUDIO_MIN_BUSY_MS = 300;
 
 const NO_NOVEL = '还没有选中作品';
 
-export function CreativeCanvasPanel({novelId, onSelect}: {novelId: string | null; onSelect: (n: CvNode | null) => void}) {
+// [HERMIA-FE-20261024 M3-s1] both canvases report selection; `revision` remounts after an inspector write, and the
+// host-held viewport/selection are fed back so a remount keeps pan/zoom + selection. Each canvas keeps its own state.
+type CanvasPanelProps = {novelId: string | null; revision?: number; onSelect?: (n: CvNode | null) => void; selectedId?: string | null;
+  viewport?: CvViewport; onViewport?: (vp: CvViewport) => void};
+export function CreativeCanvasPanel({novelId, revision = 0, onSelect, selectedId, viewport, onViewport}: CanvasPanelProps) {
   if (!novelId) return <p style={{padding: 12}} data-state="empty">{NO_NOVEL}，选中作品后显示它的创作画布（本机草稿）。</p>;
-  return <div data-testid="uw-creative-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={novelId} kind="image" scope={novelId} label="创作画布" onSelect={onSelect} /></div>;
+  return <div data-testid="uw-creative-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={`${novelId}:${revision}`} kind="image" scope={novelId} label="创作画布"
+    onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} /></div>;
 }
 
-export function ExecutionCanvasPanel({novelId, revision}: {novelId: string | null; revision: number}) {
+export function ExecutionCanvasPanel({novelId, revision = 0, onSelect, selectedId, viewport, onViewport}: CanvasPanelProps) {
   if (!novelId) return <p style={{padding: 12}} data-state="empty">{NO_NOVEL}，选中作品后显示它的执行画布（本机草稿）。</p>;
-  return <div data-testid="uw-execution-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={`${novelId}:${revision}`} kind="video" scope={novelId} label="执行画布" /></div>;
+  return <div data-testid="uw-execution-canvas" style={{height: '100%', minHeight: 280}}><RebuildCanvas key={`${novelId}:${revision}`} kind="video" scope={novelId} label="执行画布"
+    onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} /></div>;
 }
 
 export function TasksPanel({novelId, active}: {novelId: string | null; active: boolean}) {

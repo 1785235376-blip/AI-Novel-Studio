@@ -1,0 +1,7 @@
+== drop read-back title check ->       Tests  1 failed | 6 passed (7)
+== share one selection across canvases ->       Tests  7 passed (7)
+== drop dirty pin on pick ->       Tests  1 failed | 6 passed (7)
+== ignore initialViewport ->       Tests  1 failed | 6 passed (7)
+== keep inspector target on project switch ->       Tests  7 passed (7)
+== share one selection across canvases (after strengthening isolation test with a real send) ->       Tests  1 failed | 6 passed (7)
+== note: 'keep inspector target on project switch' survives because the new project's canvas mount reports onSelect(null) for the same kind and clears the target (redundant path, equivalent mutant)

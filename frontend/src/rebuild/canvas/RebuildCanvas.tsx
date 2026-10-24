@@ -36,11 +36,16 @@ function load(key: string, seed: CvGraph): CvGraph {
   return seed;
 }
 
-export function RebuildCanvas({kind, scope, seed, label, onSelect}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void}) {
+export type CvViewport = {x: number; y: number; k: number};
+// [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
+// (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
+export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void}) {
   const key = canvasStorageKey(kind, scope);
   const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
-  const [vp, setVp] = useState({x: 40, y: 40, k: 1});
-  const [sel, setSel] = useState<string | null>(null);
+  const [vp, setVp] = useState<CvViewport>(() => initialViewport ?? {x: 40, y: 40, k: 1});
+  const [sel, setSel] = useState<string | null>(() => (initialSelected && g.nodes.some(n => n.id === initialSelected) ? initialSelected : null));
+  useEffect(() => { onViewport?.(vp); }, [vp, onViewport]);
   const [menu, setMenu] = useState<null | {cx: number; cy: number; wx: number; wy: number; node?: string}>(null);
   const [q, setQ] = useState('');
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);

@@ -11,7 +11,8 @@ import type {Workbench} from '../workbench/useWorkbench';
 import {actionIdForKey, LAYOUT_ACTION_IDS, ShortcutTable} from './actions/layoutActions';
 // [HERMIA-FE-20261024 M2-s1] remaining placeholders replaced by real existing components + their registry actions.
 import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions, STUDIO_ACTION_IDS, STUDIO_PREVIEW_PANELS, TasksPanel} from './panels/studioPreviewPanels';
-import type {CvNode} from '../rebuild/canvas/RebuildCanvas';
+import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanvas';
+import {CanvasNodeInspector, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
@@ -62,7 +63,31 @@ export function UnifiedWorkspacePreview() {
   const [execRev, setExecRev] = useState(0);
   const [studioMsg, setStudioMsg] = useState<string | null>(null);
   const [, force] = useState(0);
-  useEffect(() => { setSelNode(null); }, [novelId]);
+  // [HERMIA-FE-20261024 M3-s1] per-canvas selection (isolated), inspector target, per-canvas revision + viewport memory.
+  const [execSel, setExecSel] = useState<CvNode | null>(null);
+  const [inspect, setInspect] = useState<CanvasPick | null>(null);
+  const inspectRef = useRef(inspect); inspectRef.current = inspect;
+  const [creativeRev, setCreativeRev] = useState(0);
+  const nodeDirty = useRef(false);
+  const vps = useRef<Partial<Record<CanvasKind, CvViewport>>>({});
+  const onCreativeVp = useCallback((v: CvViewport) => { vps.current.image = v; }, []);
+  const onExecVp = useCallback((v: CvViewport) => { vps.current.video = v; }, []);
+  useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; vps.current = {}; }, [novelId]);
+  useEffect(() => registerCanvasNodeActions(shared.actions), [shared.actions]);
+  const lastPick = useRef<CanvasPick | null>(null);
+  const pickImpl = (kind: CanvasKind, n: CvNode | null) => {
+    (kind === 'image' ? setSelNode : setExecSel)(n);
+    const cur = inspectRef.current;
+    const next = n ? {kind, id: n.id} : (cur?.kind === kind ? null : cur);
+    if (n || lastPick.current?.kind === kind) lastPick.current = n ? next : null;
+    if (next?.kind === cur?.kind && next?.id === cur?.id) return;
+    if (nodeDirty.current || inspectorDirty.current) { setStudioMsg('属性面板里有未保存的修改，请先保存或放弃；属性面板仍显示原对象。'); return; }
+    inspectRef.current = next; setInspect(next);
+  };
+  // stable handlers (RebuildCanvas re-fires onSelect when the callback identity changes)
+  const pickRef = useRef(pickImpl); pickRef.current = pickImpl;
+  const onPickImage = useCallback((n: CvNode | null) => pickRef.current('image', n), []);
+  const onPickVideo = useCallback((n: CvNode | null) => pickRef.current('video', n), []);
   useEffect(() => {
     const r = registerStudioPreviewActions(shared.actions, shared.table, {
       getNovelId: () => novelRef.current, getSelectedNode: () => selRef.current,
@@ -99,13 +124,16 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
   const guardSwitch = (apply: () => void) => {
-    if (inspectorDirty.current) { setBlocked('「章节属性」里有未保存的标题修改，请先保存或放弃后再切换。'); return; }
+    if (inspectorDirty.current || nodeDirty.current) { setBlocked('「章节属性」里有未保存的标题修改，请先保存或放弃后再切换。'); return; }
     setBlocked(null); apply();
   };
   const ctx = useCallback((input?: unknown) => ({...shared.workbench.context(chapterId), input}), [shared.workbench, chapterId]);
   const renderPanel = (id: string, api: PanelRenderApi) => {
     if (id === 'outline') return <OutlinePanel novelId={novelId} novels={novels} onNovel={v => guardSwitch(() => { setNovelId(v); setChapterId(null); })}
       selectedId={chapterId ?? undefined} onSelect={v => guardSwitch(() => setChapterId(v))} blockedNotice={blocked} ctx={() => ctx()} actions={shared.actions} />;
+    if (id === 'inspector' && inspect && novelId) return <CanvasNodeInspector pick={inspect} scope={novelId} actions={shared.actions} ctx={ctx} api={api}
+      dirtyRef={nodeDirty} onSaved={k => (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1)} onBack={() => setInspect(null)}
+      onSettled={() => { const lp = lastPick.current; if (lp && (lp.kind !== inspectRef.current?.kind || lp.id !== inspectRef.current?.id)) { inspectRef.current = lp; setInspect(lp); } }} />;
     if (id === 'inspector') return <InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} />;
     if (id === 'creative') {
       const av = shared.actions.availability(STUDIO_ACTION_IDS.sendToExecution, shared.workbench.context(null));
@@ -116,10 +144,10 @@ export function UnifiedWorkspacePreview() {
             title={av.enabled ? '把选中的节点作为参考放到执行画布' : av.reason} onClick={() => void runStudio(STUDIO_ACTION_IDS.sendToExecution)}>送到执行画布</button>
           {!av.enabled && <small data-testid="uw-send-reason">{av.reason}</small>}
         </div>
-        <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} onSelect={setSelNode} /></div>
+        <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vps.current.image} onViewport={onCreativeVp} /></div>
       </div>;
     }
-    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} />;
+    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vps.current.video} onViewport={onExecVp} />;
     if (id === 'tasks') return <TasksPanel novelId={novelId} active />;
     return <p style={{ padding: 12 }} data-state="not-connected">{PREVIEW_SPECS.find((x) => x.id === id)?.title ?? "面板"}：预览里尚未接入实际功能。</p>;
   };
