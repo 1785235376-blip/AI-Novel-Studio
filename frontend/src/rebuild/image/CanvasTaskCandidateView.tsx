@@ -2,13 +2,15 @@ import {useEffect, useRef, useState} from 'react';
 import {api, getCollaborationContext, getCollaborationEpoch, subscribeCollaborationContext, type CollaborationContext, type ScopedReadOptions} from '../../api';
 import {useLocalHostSession} from '../../localHostSession';
 import {Button, StatusMessage} from '../../ui/primitives';
-import {canvasTaskBindingKey, captureCanvasTaskOwner, readCanvasTaskBinding, writeCanvasTaskAdoption, type CanvasTaskBinding} from './canvasTaskBinding';
+import {canvasTaskBindingKey, captureCanvasTaskOwner, MAX_CANVAS_TASK_HISTORY, readCanvasTaskBinding, restoreCanvasTaskAdoption, writeCanvasTaskAdoption, type CanvasTaskBinding, type CanvasTaskHistoryEntry} from './canvasTaskBinding';
+import {sameCanvasAdoptionTarget} from './canvasAdoptionHistoryDisplay';
 import {checkedCanvasTaskCandidate, sameCanvasTaskCandidate, type CanvasTaskCandidate} from './canvasTaskCandidate';
 import {abortableCanvasCandidateRead, canvasCandidateBlobSha256, canvasCandidateCryptoAvailable, canvasCandidateMediaType,
   canvasCandidateObservationSha256, checkedCanvasCandidateAsset, sameCanvasCandidateAsset, type CanvasCandidateAsset} from './canvasCandidateReview';
 import '../../novel/ImageTaskInspector.css';
 
-type Props = {candidate: CanvasTaskCandidate; binding: CanvasTaskBinding; nodePrompt?: string; isCurrent: () => boolean; onUnavailable: (message: string) => void};
+export type CanvasTaskRestoreContext = {expectedBinding: CanvasTaskBinding; entry: CanvasTaskHistoryEntry};
+type Props = {candidate: CanvasTaskCandidate; binding: CanvasTaskBinding; nodePrompt?: string; isCurrent: () => boolean; onUnavailable: (message: string) => void; restore?: CanvasTaskRestoreContext};
 type Preview = {uri: string; request: number; fence: object; sha256?: string; size?: number; mediaType?: string};
 type Review = {preview: Preview; asset: CanvasCandidateAsset; jobObservationSha256: string; fence: object};
 const READ_TIMEOUT_MS = 15_000;
@@ -16,7 +18,7 @@ const MAX_IMAGE_BYTES = 36 * 1024 * 1024;
 const stale = () => new Error('Candidate source or authority changed');
 
 /** Original Job and Asset remain authoritative. Adoption is only a browser navigation hint. */
-export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurrent, onUnavailable}: Props) {
+export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurrent, onUnavailable, restore}: Props) {
   const [preview, setPreview] = useState<Preview>();
   const [loaded, setLoaded] = useState<Preview>();
   const [review, setReview] = useState<Review>();
@@ -28,17 +30,26 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   const imageElement = useRef<HTMLImageElement>(null);
   const previewRef = useRef<Preview>(), loadedRef = useRef<Preview>(), reviewRef = useRef<Review>(), confirmedRef = useRef(false);
   const initialEpoch = useRef({client: getCollaborationEpoch(), host: useLocalHostSession.getState().epoch});
-  const fence = useRef({candidate, binding, nodePrompt, token: {}});
-  if (fence.current.candidate !== candidate || fence.current.binding !== binding || fence.current.nodePrompt !== nodePrompt) {
-    fence.current = {candidate, binding, nodePrompt, token: {}};
+  const expectedBinding = restore?.expectedBinding ?? binding;
+  const restoreEntry = restore?.entry;
+  const capacityFull = expectedBinding.schema_version === 2 && expectedBinding.history.length >= MAX_CANVAS_TASK_HISTORY;
+  const restoreNoop = !!restoreEntry?.adoption && sameCanvasAdoptionTarget(expectedBinding.taskId, expectedBinding.adoption, restoreEntry.taskId, restoreEntry.adoption);
+  const fence = useRef({candidate, binding, nodePrompt, expectedBinding, restoreEntry, token: {}});
+  if (fence.current.candidate !== candidate || fence.current.binding !== binding || fence.current.nodePrompt !== nodePrompt
+    || fence.current.expectedBinding !== expectedBinding || fence.current.restoreEntry !== restoreEntry) {
+    fence.current = {candidate, binding, nodePrompt, expectedBinding, restoreEntry, token: {}};
   }
   const token = fence.current.token;
   const live = useRef({candidate, isCurrent}); live.current = {candidate, isCurrent};
-  const ownerKey = canvasTaskBindingKey(binding.owner, binding.nodeId);
+  const ownerKey = canvasTaskBindingKey(expectedBinding.owner, expectedBinding.nodeId);
+  const restoreTargetCurrent = () => !restore || !!restoreEntry?.adoption && expectedBinding.schema_version === 2
+    && binding.nodeId === expectedBinding.nodeId && binding.taskId === restoreEntry.taskId
+    && canvasTaskBindingKey(binding.owner, binding.nodeId) === ownerKey
+    && expectedBinding.history.some(entry => JSON.stringify(entry) === JSON.stringify(restoreEntry));
   const sameOwner = () => {
     const owner = captureCanvasTaskOwner(candidate.novelId);
-    return !!owner && canvasTaskBindingKey(owner, binding.nodeId) === ownerKey
-      && JSON.stringify(readCanvasTaskBinding(owner, binding.nodeId)) === JSON.stringify(binding);
+    return !!owner && restoreTargetCurrent() && canvasTaskBindingKey(owner, expectedBinding.nodeId) === ownerKey
+      && JSON.stringify(readCanvasTaskBinding(owner, expectedBinding.nodeId)) === JSON.stringify(expectedBinding);
   };
   const current = () => mounted.current && fence.current.token === token && live.current.candidate === candidate
     && initialEpoch.current.client === getCollaborationEpoch() && initialEpoch.current.host === useLocalHostSession.getState().epoch
@@ -70,7 +81,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       if (objectUrl.current) { URL.revokeObjectURL(objectUrl.current); objectUrl.current = undefined; }
     };
   }, []);
-  useEffect(() => { hide(); }, [candidate, binding, nodePrompt]);
+  useEffect(() => { hide(); }, [candidate, binding, nodePrompt, expectedBinding, restoreEntry]);
 
   function captureContext(): CollaborationContext {
     const context = getCollaborationContext();
@@ -124,6 +135,12 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   async function freshJob(context: CollaborationContext, tx: ReturnType<typeof transaction>) {
     if (!matchesCandidate(await tx.checked(api.imageJobs(candidate.novelId, context, tx.options)))) throw stale();
   }
+  function matchesHistoricPin(asset: CanvasCandidateAsset, jobObservationSha256: string): boolean {
+    if (!restore) return true;
+    const pin = restoreEntry?.adoption;
+    return !!pin && restoreTargetCurrent() && pin.assetId === asset.assetId && pin.assetVersion === asset.assetVersion
+      && pin.assetSha256 === asset.assetSha256 && pin.jobObservationSha256 === jobObservationSha256;
+  }
   function shownImageMatches(value: Preview): boolean {
     const image = imageElement.current;
     return !!image && image.getAttribute('src') === value.uri && (!image.currentSrc || image.currentSrc === value.uri)
@@ -170,6 +187,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     } finally { tx.finish(); }
   }
   async function prepareReview() {
+    if (capacityFull || restoreNoop) return;
     if (!current()) return;
     const image = previewRef.current;
     if (retireChangedImage(image)) return;
@@ -187,19 +205,20 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       if (!sameCanvasCandidateAsset(asset, confirmedAsset)) throw stale();
       await freshJob(context, tx);
       const jobObservationSha256 = await tx.checked(canvasCandidateObservationSha256(candidate));
+      if (!matchesHistoricPin(asset, jobObservationSha256)) throw stale();
       if (!tx.valid() || previewRef.current !== image || loadedRef.current !== image || !shownImageMatches(image)) throw stale();
       const next = {preview: image, asset, jobObservationSha256, fence: token};
       reviewRef.current = next; setReview(next);
     } catch {
       if (current() && tx.request === sequence.current) {
         if (!retireChangedImage(image)) {
-          clearReview(); setError('原任务、资产内容或写权限无法核实，未准备采用。请刷新后重新预览；不会自动重试。');
+          clearReview(); setError(restore ? '历史记录的原任务、资产版本、内容摘要或写权限已变化，不能把新版本当作历史恢复。请重新读取核对；不会自动重试。' : '原任务、资产内容或写权限无法核实，未准备采用。请刷新后重新预览；不会自动重试。');
         }
       }
     } finally { tx.finish(); }
   }
   async function adopt() {
-    if (!current()) return;
+    if (!current() || capacityFull || restoreNoop) return;
     const checked = reviewRef.current;
     if (retireChangedImage(checked?.preview)) return;
     if (!reviewedNow(checked) || !confirmedRef.current || running.current) return;
@@ -215,11 +234,14 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       if (sha256 !== asset.assetSha256 || sha256 !== checked.preview.sha256) throw stale();
       if (!sameCanvasCandidateAsset(asset, await metadata(context, tx))) throw stale();
       await freshJob(context, tx);
+      const jobObservationSha256 = await tx.checked(canvasCandidateObservationSha256(candidate));
+      if (jobObservationSha256 !== checked.jobObservationSha256 || !matchesHistoricPin(asset, jobObservationSha256)) throw stale();
       await assertWrite(context, tx);
       const mayWrite = () => tx.valid() && reviewedNow(checked);
       if (!mayWrite()) throw stale();
-      const persisted = writeCanvasTaskAdoption(binding, {assetId: asset.assetId, assetVersion: asset.assetVersion,
-        assetSha256: sha256, jobObservationSha256: checked.jobObservationSha256}, mayWrite);
+      const adoption = {assetId: asset.assetId, assetVersion: asset.assetVersion, assetSha256: sha256, jobObservationSha256};
+      const persisted = restore ? restoreCanvasTaskAdoption(expectedBinding, restore.entry, adoption, mayWrite)
+        : writeCanvasTaskAdoption(expectedBinding, adoption, mayWrite);
       if (!persisted) {
         if (mounted.current && fence.current.token === token) {
           if (!retireChangedImage(checked.preview)) {
@@ -232,7 +254,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     } catch {
       if (current() && tx.request === sequence.current) {
         if (!retireChangedImage(checked.preview)) {
-          clearReview(); setError('原任务、资产内容或写权限已变化，未确认采用。请刷新后重新预览；不会自动重试。');
+          clearReview(); setError(restore ? '历史记录的原任务、资产版本、内容摘要或写权限已变化，未确认历史恢复。不会升级为最新资产或自动重试。' : '原任务、资产内容或写权限已变化，未确认采用。请刷新后重新预览；不会自动重试。');
         }
       }
     } finally { tx.finish(); }
@@ -242,8 +264,10 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   const visibleReview = reviewedNow(review) ? review : undefined;
   const canPrepare = !!visiblePreview && loaded === visiblePreview && shownImageMatches(visiblePreview) && !!visiblePreview.sha256 && canvasCandidateCryptoAvailable()
     && candidate.approvalStatus === 'APPROVED' && candidate.previewKind === 'asset';
+  const prepareLabel = restore ? '准备历史恢复核对' : '准备人工核对';
+  const confirmationLabel = restore ? '已查看上述图片，并确认仅恢复此浏览器原节点的历史关联' : '已查看上述图片，并确认仅采用到此浏览器的原节点';
   return <section aria-label="原任务候选结果">
-    <h4>原任务读取快照</h4>
+    <h4>{restore ? '历史原任务读取快照' : '原任务读取快照'}</h4>
     <p className="novel-help">候选只读，未自动采用。以下来自原任务记录；请求摘要不是图片文件校验，尝试次数和更新时间不是服务端正式版本。</p>
     {nodePrompt !== undefined && nodePrompt.trim() !== candidate.prompt.trim() && <StatusMessage tone="warning">当前节点提示词已不同；以下仍是历史原任务候选，不会覆盖当前草稿。</StatusMessage>}
     <dl className="image-task-inspector__facts">
@@ -276,18 +300,20 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
         }
       }}/></div>}
     {candidate.approvalStatus === 'APPROVED' && candidate.previewKind === 'asset' && <>
-      <Button disabled={!canPrepare || busy} loading={busy} onClick={() => void prepareReview()}>准备人工核对</Button>
+      <Button disabled={!canPrepare || busy || capacityFull || restoreNoop} loading={busy} onClick={() => void prepareReview()}>{prepareLabel}</Button>
+      {capacityFull && <StatusMessage tone="warning">此浏览器原节点历史容量已满，旧记录全部保留；不能准备新的采用或恢复，不会自动删除记录。</StatusMessage>}
+      {restoreNoop && <StatusMessage>所选历史任务与资产关联已是当前记录，不能重复恢复。</StatusMessage>}
       {visiblePreview && !visiblePreview.sha256 && <StatusMessage>当前环境无法核对图片内容 SHA-256，只能只读预览，不能准备或采用到原节点。</StatusMessage>}
-      {visibleReview && <section aria-label="本次原节点采用确认">
-        <p>已重新核对原资产 v{visibleReview.asset.assetVersion} 和当前读到的图片内容 SHA-256。仅保存此浏览器的原节点导航关联，不改变服务端审核记录。</p>
-        <label><input type="checkbox" aria-label="已查看上述图片，并确认仅采用到此浏览器的原节点" checked={confirmed} disabled={busy}
+      {visibleReview && <section aria-label={restore ? '本次原节点历史恢复确认' : '本次原节点采用确认'}>
+        <p>{restore ? '已重新核对历史记录固定的原任务观察、资产版本和图片内容摘要。恢复只在此浏览器追加新记录，旧记录保留；不恢复服务端历史或共享图。' : '已重新核对原资产 v' + visibleReview.asset.assetVersion + ' 和当前读到的图片内容 SHA-256。仅保存此浏览器的原节点导航关联，不改变服务端审核记录。'}</p>
+        <label><input type="checkbox" aria-label={confirmationLabel} checked={confirmed} disabled={busy}
           onChange={event => {
             if (!running.current && reviewedNow(visibleReview)) { confirmedRef.current = event.currentTarget.checked; setConfirmed(event.currentTarget.checked); }
-          }}/>已查看上述图片，并确认仅采用到此浏览器的原节点</label>
-        <Button disabled={!confirmed || busy} loading={busy} onClick={() => void adopt()}>采用到此浏览器原节点</Button>
+          }}/>{confirmationLabel}</label>
+        <Button disabled={!confirmed || busy} loading={busy} onClick={() => void adopt()}>{restore ? '明确恢复此浏览器原节点' : '采用到此浏览器原节点'}</Button>
       </section>}
     </>}
-    {saved && <StatusMessage tone="success">已保存此浏览器原节点的资产导航关联；原 Job 和 Asset 仍由服务端管理，没有执行或更改服务端审核。</StatusMessage>}
+    {saved && <StatusMessage tone="success">{restore ? '已在此浏览器追加历史恢复记录；原 Job、Asset 和旧采用记录保留，没有更改服务端审核或共享画布。' : '已保存此浏览器原节点的资产导航关联；原 Job 和 Asset 仍由服务端管理，没有执行或更改服务端审核。'}</StatusMessage>}
     <p className="novel-help">{candidate.previewKind === 'asset' ? '已入库结果通过原资产接口读取，并在显示前再次核对原任务快照。' : '内联图片在重新核对原任务快照后显示；网络结果地址不会直接用于预览。'}只读预览不代表生成质量、图片内容审核或持续权限核验。采用仅限明确核对后的已入库原资产，不会调用执行、接受入库或服务端审核接口。</p>
   </section>;
 }

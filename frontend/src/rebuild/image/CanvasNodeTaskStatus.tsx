@@ -7,6 +7,7 @@ import {canvasTaskBindingKey, captureCanvasTaskOwner, imageDraftNodeExists, read
 import {useCanvasTaskBinding} from './useCanvasTaskBinding';
 import {checkedCanvasTaskCandidate, type CanvasTaskCandidate} from './canvasTaskCandidate';
 import {CanvasTaskCandidateView} from './CanvasTaskCandidateView';
+import {CanvasAdoptionHistory} from './CanvasAdoptionHistory';
 
 type Props = {novelId: string; nodeId: string; onOpen?: () => void; nodePrompt?: string; sourceRevision?: number; isSourceCurrent?: () => boolean};
 const states = new Set(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'CANCELLED']);
@@ -14,9 +15,15 @@ const states = new Set(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'CANCELLED']
 /** Original-owner reads and an explicit browser-only asset association; no server review/write endpoint. */
 export function CanvasNodeTaskStatus(props: Props) {
   const {owner, binding, sessionKey} = useCanvasTaskBinding(props.novelId, props.nodeId);
+  let unreadable = false;
+  if (owner && !binding) {
+    try { unreadable = localStorage.getItem(canvasTaskBindingKey(owner, props.nodeId)) !== null; }
+    catch { unreadable = true; }
+  }
   return <section aria-label="原节点图片任务">
     {!owner ? <StatusMessage>尚未验证可持久关联的身份；核对会话后才能在此浏览器保存原节点任务关联。</StatusMessage>
       : binding ? <CanvasNodeTaskStatusSession key={JSON.stringify([sessionKey, props.nodePrompt, props.sourceRevision])} {...props} binding={binding}/>
+      : unreadable ? <StatusMessage tone="warning">此节点的本机关联不可读取或格式无法核实。原记录保留，未恢复或覆盖；请保留浏览器数据后核对。</StatusMessage>
       : <p className="novel-help">此节点尚未关联已入队任务。</p>}
   </section>;
 }
@@ -36,7 +43,7 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
     return mounted.current && (!isSourceCurrent || isSourceCurrent()) && capturedScope() && clientEpoch === getCollaborationEpoch()
       && hostEpoch === useLocalHostSession.getState().epoch && !!owner
       && canvasTaskBindingKey(owner, nodeId) === ownerKey && imageDraftNodeExists(novelId, nodeId)
-      && readCanvasTaskBinding(owner, nodeId)?.taskId === binding.taskId;
+      && JSON.stringify(readCanvasTaskBinding(owner, nodeId)) === JSON.stringify(binding);
   };
   async function refresh() {
     if (!current()) return;
@@ -69,6 +76,7 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
     <p>原入队任务 ID：{binding.taskId}</p>
     <p className="novel-help">原任务不代表当前提示词已经入队。关联仅保存在此浏览器；状态每次从原项目队列读取，不会自动执行或采用结果。</p>
     {binding.adoption && <StatusMessage>此浏览器记录的节点资产：{binding.adoption.assetId}；读取时资产版本：{binding.adoption.assetVersion}。这是本机采用关联，尚未重新核对当前内容；没有新增服务端审核或共享画布记录。使用前请重新预览并核对。</StatusMessage>}
+    <CanvasAdoptionHistory key={`history-${displayedRead}`} binding={binding} nodePrompt={nodePrompt} isCurrent={candidateCurrent}/>
     {loading && <StatusMessage>正在核实原任务状态…</StatusMessage>}
     {status && <p>服务端任务状态：<Badge>{status}</Badge></p>}
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
