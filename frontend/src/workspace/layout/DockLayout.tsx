@@ -37,6 +37,17 @@ export interface DockLayoutProps {
   actionOptions?: LayoutActionOptions;
   /** [HERMIA-FE-20261023 M1-s2fix] host content at the start of the layout toolbar (e.g. command palette trigger); counted in reserveTop. */
   toolbarStart?: ReactNode;
+  /** [HERMIA-FE-20261024 VW-M2] consumer interface for named worksets / panel focus; null on unmount. */
+  onLayoutApi?: (api: DockLayoutApi | null) => void;
+}
+/** [HERMIA-FE-20261024 VW-M2] Minimal consumer surface; apply reuses the original reducer ('replace' + 'viewport' re-fit). */
+export interface DockLayoutApi {
+  getState(): LayoutState;
+  specs(): readonly LayoutPanelSpec[];
+  viewport(): Viewport;
+  isPanelDirty(id: string): boolean;
+  /** Blocks (no change) when the target would close a panel with unsaved edits. */
+  apply(state: LayoutState): {ok: true} | {ok: false; reason: string};
 }
 
 const DOCK_LABEL: Record<DockZone, string> = {left: '左侧', main: '中间', right: '右侧', bottom: '底部', float: '浮动'};
@@ -188,6 +199,29 @@ export function DockLayout(props: DockLayoutProps) {
 
   const close = useCallback((id: string) => dispatch({type: 'close', id}), []);
   const guard = useDirtyCloseGuard(close);
+  // [HERMIA-FE-20261024 VW-M2] consumer API (worksets / panel focus). Applying is an explicit user layout action.
+  const onLayoutApiRef = useRef(props.onLayoutApi); onLayoutApiRef.current = props.onLayoutApi;
+  useEffect(() => {
+    const api: DockLayoutApi = {
+      getState: () => stateRef.current,
+      specs: () => envRef.current.specs,
+      viewport: () => envRef.current.viewport,
+      isPanelDirty: id => guard.isDirty(id),
+      apply: target => {
+        const cur = stateRef.current;
+        const dirty = Object.values(cur.frames).filter(f => f.open && target.frames[f.id] && !target.frames[f.id].open && guard.isDirty(f.id));
+        if (dirty.length) {
+          const names = dirty.map(f => `「${envRef.current.specs.find(s => s.id === f.id)?.title ?? '面板'}」`).join('、');
+          return {ok: false, reason: `${names}有未保存的修改，先保存或放弃后再应用视图；布局没有改变。`};
+        }
+        userTouched.current = true;
+        rawDispatch({type: 'replace', state: target}); rawDispatch({type: 'viewport'});
+        return {ok: true};
+      },
+    };
+    onLayoutApiRef.current?.(api);
+    return () => onLayoutApiRef.current?.(null);
+  }, [guard.isDirty]);
 
   // [HERMIA-FE-20261023 M1-s2] layout actions via the existing workbench ActionRegistry.
   const [ownTracker] = useState(() => new LifecycleTracker());

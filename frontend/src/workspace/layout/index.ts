@@ -2,4 +2,4 @@
 export * from './model';
 export * from './persistence';
 export {useDirtyCloseGuard, type DirtySource, type PendingClose} from './useDirtyCloseGuard';
-export {DockLayout, type DockLayoutProps, type PanelRenderApi} from './DockLayout';
+export {DockLayout, type DockLayoutApi, type DockLayoutProps, type PanelRenderApi} from './DockLayout'; // [HERMIA-FE-20261024 VW-M2] +DockLayoutApi

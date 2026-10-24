@@ -62,5 +62,7 @@ export function useDirtyCloseGuard(close: (panelId: string) => void) {
     }
   }, [pending]);
 
-  return {register, requestClose, pending, save, discard, cancel};
+  // [HERMIA-FE-20261024 VW-M2] read-only probe for consumers (workset apply guard); never saves or discards.
+  const isDirty = useCallback((panelId: string) => !!sources.current.get(panelId)?.isDirty(), []);
+  return {register, requestClose, pending, save, discard, cancel, isDirty};
 }
