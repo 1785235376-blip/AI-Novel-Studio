@@ -29,7 +29,7 @@ function fixture(){
 }
 function approved(binding:CanvasImageNodeBinding):ProductionJob{return {id:'job1',owner:'image',novel_id:'p',branch_id:null,version:4,status:'APPROVED',request_digest:jobHash,
  operation_id:'m5.image.t2i',sources:[],provider:{local:true},output_candidate:{id:'asset1',version:1,digest:assetHash,kind:'image'},approved_asset_version:2,
- command:{operation_id:'m5.image.t2i',prompt:node.prompt,source_snapshots:[],allow_cloud:false,canvas_image_node:binding}} as ProductionJob;}
+ command:{operation_id:'m5.image.t2i',prompt:node.prompt,source_snapshots:[],allow_cloud:false,canvas_image_node:binding}} as unknown as ProductionJob;}
 function saved(e:ReturnType<typeof fixture>,binding:CanvasImageNodeBinding,job:ProductionJob):CanvasViewRecord{return {...e.canvas,version:2,definition_digest:'d'.repeat(64),
  definition:{...e.canvas.definition,cards:[{id:node.id,position:{x:node.x,y:node.y},asset:{asset_id:e.asset.id,version:e.asset.version,digest:e.asset.sha256,kind:'image'}}],
  image_node_origin:{contract:'studio-canvas-image-node-result/1',target:binding,job_id:job.id,job_version:job.version,job_request_digest:job.request_digest,asset:{asset_id:e.asset.id,version:e.asset.version,digest:e.asset.sha256,kind:'image'}}},
