@@ -6,7 +6,7 @@ The original Job read finishes before each original Canvas metadata phase.
 from copy import deepcopy
 
 from ..experimental.common import StaleSourceError
-from .production_execution_models import MediaCommand, MediaJobAction
+from .production_execution_models import CanvasImageNodeTargetView, MediaCommand, MediaJobAction
 
 
 def changed():
@@ -15,8 +15,23 @@ def changed():
 
 def observe(production, nid, scope, actor, jid, value, guard):
     body = MediaJobAction.model_validate(value)
+    result, _ = _capture(production, nid, scope, actor, jid, body, guard)
+    return result
+
+
+def view(production, nid, scope, actor, jid, value, guard):
+    body = CanvasImageNodeTargetView.model_validate(value)
+    observation, canvas = _capture(production, nid, scope, actor, jid, body, guard, current_pin=body)
+    return {'contract': 'studio-image-node-target-view/1', 'job': observation['job'],
+        'target': observation['target'], 'incarnation': observation['incarnation'],
+        'canvas': canvas, 'automatic_actions': False}
+
+
+def _capture(production, nid, scope, actor, jid, body, guard, *, current_pin=None):
     row, context = production._row(nid, scope, actor, 'image', jid, guard)
     if (row['version'], row['request_digest']) != (body.expected_version, body.expected_request_digest):
+        changed()
+    if current_pin is not None and current_pin.expected_incarnation != context['incarnation']:
         changed()
     captured_context = deepcopy(context)
     try:
@@ -63,6 +78,9 @@ def observe(production, nid, scope, actor, jid, value, guard):
                 or history['current_definition_digest'] != canvas['definition_digest']
                 or history['execution_authority'] is not False or history['binary_content_verified'] is not False):
             changed()
+        if current_pin is not None and (canvas['version'], canvas['definition_digest']) != (
+                current_pin.expected_canvas_version, current_pin.expected_canvas_digest):
+            changed()
         matches = [entry for entry in history['items'] if entry['version'] == target.canvas_version]
         if (len(matches) != 1 or matches[0]['definition_digest'] != target.canvas_digest
                 or matches[0]['definition']['cards'] != [] or 'image_node_origin' in matches[0]['definition']):
@@ -83,9 +101,12 @@ def observe(production, nid, scope, actor, jid, value, guard):
     if latest_context != captured_context or production.view(latest, 'image') != original_job:
         changed()
     guard()
-    return {'contract': 'studio-image-node-target-observation/1', 'job': original_job,
+    observation = {'contract': 'studio-image-node-target-observation/1', 'job': original_job,
         'target': target.model_dump(), 'incarnation': context['incarnation'],
         'canvas': canvas_summary, 'history': history_summary,
         'comparison': 'CURRENT_MATCH' if (canvas['version'], canvas['definition_digest']) ==
             (target.canvas_version, target.canvas_digest) else 'CURRENT_CHANGED',
         'automatic_actions': False}
+    # The full record is this same original public GET projection, not another
+    # lookup after a summary. History definitions and internal rows stay here.
+    return observation, canvas

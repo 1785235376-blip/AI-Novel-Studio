@@ -560,6 +560,13 @@ class MediaJobAction(ExecutionModel):
     expected_request_digest: Digest
 
 
+class CanvasImageNodeTargetView(MediaJobAction):
+    """Read an exact current display record derived from the original Job."""
+    expected_incarnation: str = Field(pattern=r'^(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
+    expected_canvas_version: int = Field(ge=1, le=2**53 - 1)
+    expected_canvas_digest: Digest
+
+
 class MediaReview(MediaJobAction):
     reviewed_output_digest: Digest
 

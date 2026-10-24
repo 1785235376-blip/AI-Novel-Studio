@@ -18,6 +18,8 @@ The subsequent [read-only node-task observation slice](CLOUD_CANVAS_NODE_OBSERVE
 
 The independent [original target/save-state comparison](CLOUD_CANVAS_NODE_TARGET_OBSERVATION_20261024.md) shows an explicitly selected formal Job's captured Canvas pin alongside its current saved version, including legitimate later edits that prevent continuation. Its original-owner observation does not provision a missing File identity. It does not relax continuation, open an editor or claim that the historical request node has been restored.
 
+The subsequent [exact saved-record view](CLOUD_CANVAS_NODE_TARGET_VIEW_20261024.md) explicitly reads that observed version's public CanvasView record through the original Job owner and displays actual saved card metadata inside the task center. It avoids the editor's local-recovery/catalog side effects. A manual reference or absent/mismatched node origin is not formal generated-node adoption; real reviewed-result save and editor restoration remain separate, unverified boundaries.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

@@ -20,6 +20,7 @@ import { timelinePlaybackMediaType, checkedTimelinePlayback, timelinePlaybackRes
 import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimelineWaveformTypes';
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 import { canvasReturnInCommand, sameCanvasReturn, type CanvasReturnBinding } from './studioCanvasReturnBinding';
+import { checkedCanvasViewRecord, type CanvasViewRecord } from './studioCanvasViewClient';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
 export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference' | 'm5.image.inpaint' | 'm5.image.upscale' | 'm5.image.cutout' | 'm5.image.composite' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
@@ -78,6 +79,11 @@ export type StudioImageNodeTargetObservation = {
   history: { incarnation: string; current_version: number; current_definition_digest: string;
     target_version: number; target_definition_digest: string; target_empty: true };
   comparison: 'CURRENT_MATCH' | 'CURRENT_CHANGED'; automatic_actions: false;
+};
+export type StudioImageNodeTargetViewPin = { incarnation: string; version: number; definition_digest: string };
+export type StudioImageNodeTargetView = {
+  contract: 'studio-image-node-target-view/1'; job: ProductionJob; target: CanvasImageNodeBinding;
+  incarnation: string; canvas: CanvasViewRecord; automatic_actions: false;
 };
 
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
@@ -716,6 +722,44 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
       return structuredClone({ ...raw,job:resultJob,target:resultTarget }) as StudioImageNodeTargetObservation;
     },
+    async readImageNodeTargetView(selected: ProductionJob, pin: StudioImageNodeTargetViewPin, signal?: AbortSignal): Promise<StudioImageNodeTargetView> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command),captured=structuredClone(pin);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope ? {mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId} : {mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope)||!record(captured)
+        ||Object.keys(captured).length!==3||!['incarnation','version','definition_digest'].every(key=>Object.hasOwn(captured,key))
+        ||captured.incarnation!==target.incarnation||!revision(captured.version)||captured.version>21
+        ||!hex(captured.definition_digest)||captured.version<target.canvas_version
+        ||captured.version===target.canvas_version&&captured.definition_digest!==target.canvas_digest)invalid();
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/target-view`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest,expected_incarnation:captured.incarnation,
+        expected_canvas_version:captured.version,expected_canvas_digest:captured.definition_digest},signal,undefined,{maxBytes:8*1024*1024});
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      let raw:unknown;
+      try {
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(!record(raw)||Object.keys(raw).length!==6
+        ||!['contract','job','target','incarnation','canvas','automatic_actions'].every(key=>Object.hasOwn(raw,key))
+        ||raw.contract!=='studio-image-node-target-view/1'||raw.automatic_actions!==false)invalid();
+      const resultJob=job(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target);
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(expected)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==captured.incarnation)invalid();
+      const canvas=checkedCanvasViewRecord(raw.canvas,row=>{
+        if(row.project_id!==projectId||canonicalImageNode(row.scope)!==canonicalImageNode(ownedScope))invalid();
+        return {project_id:row.project_id as string,scope:row.scope as CanvasImageNodeBinding['scope']};
+      },target.canvas_id);
+      if(canvas.version!==captured.version||canvas.definition_digest!==captured.definition_digest)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      return structuredClone({contract:'studio-image-node-target-view/1',job:resultJob,target:resultTarget,
+        incarnation:captured.incarnation,canvas,automatic_actions:false});
+    },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid(); return v.items.map(job);
@@ -844,5 +888,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget';
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView';
 export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;

@@ -67,27 +67,30 @@ export function checkedCanvasDefinition(v: unknown, writable = false): CanvasDef
   return result;
 }
 
+/** The original public record decoder, shared without changing legacy GET/history semantics. */
+export function checkedCanvasViewRecord(v: unknown, owner: (row: Record<string, unknown>) => StudioGraphOwner, expectedId?: string): CanvasViewRecord {
+  const r = object(v); keys(r, ['project_id', 'scope', 'id', 'version', 'definition', 'definition_digest', 'created_at', 'updated_at', 'reference_states', 'execution_authority', 'binary_content_verified', 'capacity']);
+  const ownership = owner(r), id = text(r.id); if (expectedId !== undefined && id !== expectedId || r.execution_authority !== false || r.binary_content_verified !== false) invalid();
+  const definition = checkedCanvasDefinition(r.definition);
+  const states = list(r.reference_states, 1000).map((v, index): CanvasReferenceState => {
+    const s = object(v); keys(s, ['card_id', 'state', 'filename']); const card = definition.cards[index];
+    if (!card || s.card_id !== card.id || !['CURRENT_METADATA', 'STALE', 'UNAVAILABLE'].includes(s.state as string)) invalid();
+    if ((s.state === 'UNAVAILABLE') !== (card.asset === undefined)) invalid();
+    if (s.state !== 'CURRENT_METADATA' && s.filename !== undefined || s.state === 'CURRENT_METADATA' && s.filename === undefined) invalid();
+    return { card_id: card.id, state: s.state as CanvasReferenceState['state'], ...(s.filename === undefined ? {} : { filename: text(s.filename, 1024) }) };
+  });
+  if (states.length !== definition.cards.length) invalid();
+  const capacity = object(r.capacity); keys(capacity, ['history_used', 'record_bytes']);
+  return { ...ownership, id, version: integer(r.version), definition, definition_digest: digest(r.definition_digest), created_at: text(r.created_at, 128), updated_at: text(r.updated_at, 128),
+    reference_states: states, execution_authority: false, binary_content_verified: false, capacity: { history_used: integer(capacity.history_used, 0, 20), record_bytes: integer(capacity.record_bytes, 1, 2_000_000) } };
+}
+
 /** No credential lookup or execution methods. The original Graph client supplies its captured transport and owner decoder. */
 export function createCanvasViewClient(projectId: string, transport: StudioGraphTransport, owner: (row: Record<string, unknown>) => StudioGraphOwner) {
   const base = `/api/projects/${encodeURIComponent(projectId)}/studio/canvas-views`;
   function summary(v: unknown): CanvasViewSummary { const r = object(v); keys(r, ['id', 'version', 'definition_digest', 'created_at', 'updated_at', 'title', 'card_count']);
     return { id: text(r.id), version: integer(r.version), definition_digest: digest(r.definition_digest), created_at: text(r.created_at, 128), updated_at: text(r.updated_at, 128), title: text(r.title, 160), card_count: integer(r.card_count, 0, 1000) }; }
-  function record(v: unknown, expectedId?: string): CanvasViewRecord {
-    const r = object(v); keys(r, ['project_id', 'scope', 'id', 'version', 'definition', 'definition_digest', 'created_at', 'updated_at', 'reference_states', 'execution_authority', 'binary_content_verified', 'capacity']);
-    const ownership = owner(r), id = text(r.id); if (expectedId !== undefined && id !== expectedId || r.execution_authority !== false || r.binary_content_verified !== false) invalid();
-    const definition = checkedCanvasDefinition(r.definition);
-    const states = list(r.reference_states, 1000).map((v, index): CanvasReferenceState => {
-      const s = object(v); keys(s, ['card_id', 'state', 'filename']); const card = definition.cards[index];
-      if (!card || s.card_id !== card.id || !['CURRENT_METADATA', 'STALE', 'UNAVAILABLE'].includes(s.state as string)) invalid();
-      if ((s.state === 'UNAVAILABLE') !== (card.asset === undefined)) invalid();
-      if (s.state !== 'CURRENT_METADATA' && s.filename !== undefined || s.state === 'CURRENT_METADATA' && s.filename === undefined) invalid();
-      return { card_id: card.id, state: s.state as CanvasReferenceState['state'], ...(s.filename === undefined ? {} : { filename: text(s.filename, 1024) }) };
-    });
-    if (states.length !== definition.cards.length) invalid();
-    const capacity = object(r.capacity); keys(capacity, ['history_used', 'record_bytes']);
-    return { ...ownership, id, version: integer(r.version), definition, definition_digest: digest(r.definition_digest), created_at: text(r.created_at, 128), updated_at: text(r.updated_at, 128),
-      reference_states: states, execution_authority: false, binary_content_verified: false, capacity: { history_used: integer(capacity.history_used, 0, 20), record_bytes: integer(capacity.record_bytes, 1, 2_000_000) } };
-  }
+  const record = (v: unknown, expectedId?: string) => checkedCanvasViewRecord(v, owner, expectedId);
   function history(v: unknown, expectedId?: string): CanvasViewHistory {
     const r = object(v); keys(r, ['project_id', 'scope', 'id', 'incarnation', 'current_version', 'current_definition_digest', 'items', 'restore_policy', 'execution_authority', 'binary_content_verified']);
     const ownership = owner(r), id = text(r.id), currentVersion = integer(r.current_version, 1, 21);

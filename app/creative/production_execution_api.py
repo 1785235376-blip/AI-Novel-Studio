@@ -9,7 +9,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute
 from ..services.v1_capability_service import CapabilityVersionConflict
 from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
-from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
+from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, CanvasImageNodeTargetView, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
     TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
     TimelineWaveformPreview)
@@ -57,6 +57,7 @@ class ImageNodeTargetObservationRoute(PrivateProductionRoute):
     """Closed metadata comparison; errors disclose no lower-owner values."""
     MAX_BODY = 4 * 1024
     MAX_RESPONSE = 256 * 1024
+    ERROR_PREFIX = 'STUDIO_IMAGE_NODE_TARGET_OBSERVATION_'
 
     def get_route_handler(self):
         import json
@@ -64,7 +65,7 @@ class ImageNodeTargetObservationRoute(PrivateProductionRoute):
 
         async def checked(request):
             headers = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
-            prefix = 'STUDIO_IMAGE_NODE_TARGET_OBSERVATION_'
+            prefix = self.ERROR_PREFIX
             try:
                 payload = bytearray()
                 async for part in request.stream():
@@ -102,6 +103,12 @@ class ImageNodeTargetObservationRoute(PrivateProductionRoute):
             except Exception:
                 raise HTTPException(503, {'code': prefix + 'UNKNOWN'}, headers=headers) from None
         return checked
+
+
+class ImageNodeTargetViewRoute(ImageNodeTargetObservationRoute):
+    """Return one exact original public display record, never history payloads."""
+    MAX_RESPONSE = 8 * 1024 * 1024
+    ERROR_PREFIX = 'STUDIO_IMAGE_NODE_TARGET_VIEW_'
 
 
 class TimelineWaveformRoute(PrivateProductionRoute):
@@ -392,6 +399,21 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                 lambda actor, scope, guard: service.observe_image_node_target(nid, scope, actor, jid, body, guard))
 
     router.include_router(node_target_observations)
+
+    node_target_views = APIRouter(route_class=ImageNodeTargetViewRoute)
+
+    @node_target_views.post('/projects/{nid}/studio/production/jobs/image/{jid}/target-view')
+    def view_image_node_target(nid: str, jid: str, request: Request, body: CanvasImageNodeTargetView,
+                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with ExitStack() as observations:
+            observations.enter_context(service.store.existing_owner_only())
+            graph = getattr(service, 'graph_service', None)
+            if graph is not None:
+                observations.enter_context(graph.store.existing_owner_only())
+            return call(request, nid, x_session_token, x_branch_id, 'domain.read',
+                lambda actor, scope, guard: service.view_image_node_target(nid, scope, actor, jid, body, guard))
+
+    router.include_router(node_target_views)
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
