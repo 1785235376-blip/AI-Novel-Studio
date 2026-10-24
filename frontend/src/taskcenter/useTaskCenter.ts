@@ -185,8 +185,16 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
   useEffect(() => {
     if (!props.active || props.denied) return;
     if (loaded.current[queue] === desired) return;
-    loaded.current[queue] = desired;
-    if (queue === 'TASKS') void readTasks(); else void readInbox();
+    // [HERMIA-FE-20261024 M2-s1fix] dedupe the mount read: StrictMode (dev) runs mount effects twice and the unmount
+    // cleanup aborts the first request, so the read is deferred one microtask and cancelled by the effect cleanup.
+    // Still exactly one on-demand read per identity/queue/filter; no polling.
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled || loaded.current[queue] === desired) return;
+      loaded.current[queue] = desired;
+      if (queue === 'TASKS') void readTasks(); else void readInbox();
+    });
+    return () => { cancelled = true; };
   }, [desired, props.active, props.denied, queue, readTasks, readInbox]);
 
   const setQueue = useCallback((next: TaskCenterQueue) => { if (alive.current) setQueueState(next); }, []);

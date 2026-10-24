@@ -30,7 +30,7 @@ export const PREVIEW_SPECS: LayoutPanelSpec[] = [
  * [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 4: the preview shares ONE ActionRegistry + LifecycleTracker between DockLayout
  * and the existing registry-fed command palette (workbench/CommandSearch, same component App mounts). AppShell's own
  * Ctrl/⌘+K palette is a static module list (not registry-fed) and is not mounted under ?uw=1, so here Ctrl/⌘+K opens
- * CommandSearch through its own trigger button. workbench/** is reused unmodified.
+ * CommandSearch through its own trigger button. workbench/** is reused unmodified (except [HERMIA-FE-20261024 M2-s1fix]: aria-disabled on disabled options).
  */
 export function UnifiedWorkspacePreview() {
   const shared = useMemo(() => {
@@ -71,6 +71,11 @@ export function UnifiedWorkspacePreview() {
         const res = await shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context(id), input: id});
         if (res.status !== 'done') throw new Error(res.status === 'blocked' ? res.reason : res.status);
         return res.value;
+      },
+      // [HERMIA-FE-20261024 M2-s1fix] reopen/dock dispatches render next tick; then focus the panel region (tabIndex -1).
+      focusPanel: async id => {
+        await new Promise(r => setTimeout(r, 0));
+        document.querySelector<HTMLElement>(`[data-panel-id="${id}"]`)?.focus({preventScroll: true});
       },
     });
     return r.dispose;

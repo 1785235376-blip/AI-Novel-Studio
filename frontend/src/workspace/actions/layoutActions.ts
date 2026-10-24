@@ -28,7 +28,8 @@ export const DEFAULT_LAYOUT_SHORTCUTS: Readonly<Record<LayoutActionId, string>> 
   'layout.reopenPanel': 'Mod+Alt+O',
   'layout.toggleCollapse': 'Mod+Alt+C',
   'layout.switchSplit': 'Mod+Alt+S',
-  'layout.showPanel': '',
+  // [HERMIA-FE-20261024 M2-s1fix] free key (taken: Mod+Alt+0/O/C/S layout, Mod+Alt+E/I/T studio; Mod+K reserved).
+  'layout.showPanel': 'Mod+Alt+P',
 };
 
 /** Canonical form: modifiers in fixed order Mod, Alt, Shift; key upper-cased. Ctrl/Cmd/Meta all map to Mod. */
@@ -125,12 +126,20 @@ export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Parti
   // [HERMIA-FE-20261024 M2-s1] N5 showPanel target: input (panel id) must be a known spec.
   const showTarget = (ctx: ActionContext): string | null => {
     const want = (typeof ctx.input === 'string' ? ctx.input : ctx.targetId) ?? null;
-    return want && host.specs.some(s => s.id === want) && st().frames[want] ? want : null;
+    if (want) return host.specs.some(s => s.id === want) && st().frames[want] ? want : null;
+    // [HERMIA-FE-20261024 M2-s1fix] no input (command palette / Mod+Alt+P): first closed panel, else the hindmost
+    // main tab (repeating rotates through every main panel). Nothing to show → disabled with a reason.
+    const known = (id: string) => host.specs.some(s => s.id === id);
+    const closed = closedPanels(st()).map(f => f.id).filter(known);
+    if (closed.length) return closed[0];
+    const main = Object.values(st().frames).filter(f => f.open && f.dock === 'main' && known(f.id)).sort((a, b) => a.order - b.order);
+    return main.length > 1 ? main[main.length - 1].id : null;
   };
   return [
     {
-      id: LAYOUT_ACTION_IDS.show, label: '显示面板', surfaces: ['toolbar'],
-      available: ctx => showTarget(ctx) ? yes : {enabled: false, reason: '没有这个面板'},
+      // [HERMIA-FE-20261024 M2-s1fix] now also in the command palette + shortcut.
+      id: LAYOUT_ACTION_IDS.show, label: '显示面板（切到下一个主区面板）', surfaces: ['toolbar', 'shortcut', 'commandSearch'], shortcut: shortcuts['layout.showPanel'] || undefined,
+      available: ctx => showTarget(ctx) ? yes : {enabled: false, reason: (typeof ctx.input === 'string' || ctx.targetId) ? '没有这个面板' : '没有可切换的面板'},
       run: sync(ctx => {
         const id = showTarget(ctx); if (!id) throw new Error('没有这个面板');
         // dispatch is asynchronous (useReducer); decide everything from the pre-action frame.

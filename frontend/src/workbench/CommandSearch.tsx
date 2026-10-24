@@ -109,13 +109,17 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
           return <li key={g} role="presentation" className="wb-command__group">
             <div className="wb-command__group-label" id={`wb-cmd-group-${g}`} aria-hidden="true">{g}</div>
             <ul role="group" aria-label={g} data-command-group={g}>
-              {groupItems.map(a => { const index = items.indexOf(a); return (
+              {groupItems.map(a => { const index = items.indexOf(a);
+                // [HERMIA-FE-20261024 M2-s1fix] disabled items are announced (aria-disabled + reason) but stay focusable; Enter still explains why.
+                const av = workbench.actions.availability(a.id, ctx); return (
           <li key={a.id}>
             <button
               type="button"
               id={`wb-cmd-${a.id}`}
               role="option"
               aria-selected={index === active}
+              aria-disabled={av.enabled ? undefined : true}
+              title={av.enabled ? undefined : av.reason}
               data-action-id={a.id}
               className={index === active ? 'is-active' : undefined}
               onMouseEnter={() => setActive(index)}

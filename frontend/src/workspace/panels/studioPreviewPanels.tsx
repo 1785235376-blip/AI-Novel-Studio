@@ -65,6 +65,8 @@ export interface StudioActionHost {
   onLinked(node: CvNode): void;
   /** Execute layout.showPanel through the same registry. */
   showPanel(id: string): Promise<unknown>;
+  /** [HERMIA-FE-20261024 M2-s1fix] move DOM focus into the shown panel (e.g. 任务 after Mod+Alt+T). */
+  focusPanel?(id: string): void | Promise<void>;
 }
 
 const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -78,7 +80,7 @@ export function registerStudioPreviewActions(reg: ActionRegistry, table: Shortcu
   const show = (id: string, label: string, actionId: string) => ({
     id: actionId, label, surfaces: ['toolbar', 'shortcut', 'commandSearch'] as const,
     available: (): Availability => reg.get(LAYOUT_ACTION_IDS.show) ? yes : {enabled: false, reason: '布局还没有准备好'},
-    run: async () => { const r = await host.showPanel(id); await delay(minBusyMs); return r; },
+    run: async () => { const r = await host.showPanel(id); await host.focusPanel?.(id); await delay(minBusyMs); return r; },
   });
   const defs = [
     {
