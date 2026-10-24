@@ -180,7 +180,8 @@ describe('independent original image-node task binding', () => {
     localStorage.setItem(key, JSON.stringify({schema_version: 1, owner: {...owner, actorId: 'foreign-author'}, nodeId, taskId}));
     const fetcher = vi.fn(); vi.stubGlobal('fetch', fetcher);
     render(<CanvasNodeTaskStatus novelId={project} nodeId={nodeId}/>);
-    expect(screen.getByText('此节点尚未关联已入队任务。')).toBeTruthy();
+    expect(screen.getByText(/本机关联不可读取或格式无法核实/)).toBeTruthy();
+    expect(localStorage.getItem(key)).toContain('foreign-author');
     expect(fetcher).not.toHaveBeenCalled();
   });
 

@@ -147,6 +147,6 @@ export function CanvasAdoptionHistory({binding, nodePrompt, isCurrent, onUnavail
       candidate={visibleRead.candidate} binding={visibleRead.displayBinding} nodePrompt={nodePrompt}
       restore={{expectedBinding: binding, entry: visibleRead.entry}} isCurrent={() => readCurrent(visibleRead)} onUnavailable={message => {
         if (readCurrent(visibleRead)) { setRead(undefined); setError(message); onUnavailable?.(message); }
-      }}/>} 
+      }}/>}
   </section>;
 }
