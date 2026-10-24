@@ -152,3 +152,15 @@ it('does not adopt a late ACK after actual Workspace unmount or send another req
   await prepare();await submit();await waitFor(()=>expect(release).toBeTypeOf('function'));cleanup();await act(async()=>release(json(native.discard)));
   expect(writes()).toBe(1);expect(screen.queryByRole('region',{name:'原任务放弃采用回执'})).toBeNull();noOtherOwners();
 });
+
+it('protects beforeunload while the actual host write is pending before the dispatch claim exists',async()=>{
+  await prepare();await approve();const digest=webcrypto.subtle.digest.bind(webcrypto.subtle);let calls=0,release!:()=>void;
+  vi.spyOn(webcrypto.subtle,'digest').mockImplementation(async(algorithm,data)=>{
+    if(++calls===2)await new Promise<void>(resolve=>{release=resolve;});
+    return digest(algorithm,data);
+  });
+  fireEvent.click(confirm());await waitFor(()=>expect(release).toBeTypeOf('function'));
+  expect(calls).toBe(2);expect(writes()).toBe(0);expect(screen.queryByRole('region',{name:'原任务放弃采用结果记录'})).toBeNull();
+  const event=new Event('beforeunload',{cancelable:true});window.dispatchEvent(event);expect(event.defaultPrevented).toBe(true);
+  await act(async()=>release());await screen.findByRole('region',{name:'原任务放弃采用回执'});expect(writes()).toBe(1);noOtherOwners();
+});

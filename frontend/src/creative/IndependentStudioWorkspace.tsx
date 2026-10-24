@@ -479,7 +479,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   }, [client, current, guarded, projectId, module]);
   useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; retirePendingNodeResume(); nodeResumeSource.current = undefined; targetObservationContextEpoch.current++; retireTargetObservation(); overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh, retirePendingNodeResume, retireTargetObservation]);
   useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current || comicBusyRef.current || leaveRisk.current.dirty || unknownLeaveRisk() || leaveRisk.current.comicInFlight) { event.preventDefault(); event.returnValue = ''; } };
+    const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current || pendingWrites.current > 0 || comicBusyRef.current || leaveRisk.current.dirty || unknownLeaveRisk() || leaveRisk.current.comicInFlight) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [dirty, promptDirty]);
   useEffect(() => {
