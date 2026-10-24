@@ -574,7 +574,7 @@ export function GraphCanvas({ definition, nodeDefinitions, selectedNodeIds, onSe
       onDragOver={event => {
         if (!onAssetDrop || blocked || gesture.current) return;
         const types = event.dataTransfer?.types;
-        if (!types || !(types.contains?.(ADD_NODE_MIME_ASSET_REF) || [...types].includes(ADD_NODE_MIME_ASSET_REF) || [...types].includes('text/plain'))) return;
+        if (!types || ![...types].some(type => type === ADD_NODE_MIME_ASSET_REF || type === 'text/plain')) return;
         event.preventDefault();
         event.dataTransfer.dropEffect = 'link';
         event.currentTarget.classList.add('is-asset-drop-target');

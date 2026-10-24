@@ -14,7 +14,7 @@ import { generationRecovery } from './generationRecovery';
 vi.mock('./Editor', async importOriginal => ({ ...(await importOriginal<typeof import('./Editor')>()), ChapterEditor: ({ content, onChange, onCompositionChange }: any) =>
   <textarea aria-label="Test chapter editor" value={content} onChange={event => onChange(event.target.value, doc(event.target.value))}
     onCompositionStart={() => onCompositionChange?.(true)} onCompositionEnd={() => onCompositionChange?.(false)} /> }));
-vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, inspector, sidebar }: any) => <>{sidebar}<main>{main}</main><aside>{inspector}</aside><footer>{status}</footer></> }));
+vi.mock('./ui/AppShell', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/AppShell')>()), AppShell: ({ main, status, inspector, sidebar }: any) => <>{sidebar}<main>{main}</main><aside>{inspector}</aside><footer>{status}</footer></> }));
 vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGenerateVariants, onRetry, onCancel, onAccept, onReject, draft, variants }: any) => <>
   <button onClick={() => onGenerate('continue', '', '')}>Audit generate</button>
   <button onClick={() => onGenerateVariants('continue', '', 2, '')}>Audit variants</button>
@@ -27,7 +27,7 @@ vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGene
 </> }));
 vi.mock('./novel/SourcePrivacyControl', () => ({ SourcePrivacyControl: () => null }));
 vi.mock('./novel/ChapterTree', () => ({ ChapterTree: () => null }));
-vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
+vi.mock('./ui/FeatureLauncher', async importOriginal => ({ ...(await importOriginal<typeof import('./ui/FeatureLauncher')>()), FeatureLauncher: ({ onSelect }: any) => <button onClick={() => onSelect('experimental')}>Open broker</button> }));
 vi.mock('./experimental/ExperimentalWorkbench', () => ({ EXPERIMENTAL_GROUPS: [], EXPERIMENTAL_TABS: [['model_broker_v2','Broker']], ExperimentalWorkbench: ({ onOpenGeneration }: any) => <><button onClick={() => void onOpenGeneration('broker-one', 'recovery:1').catch(() => {})}>Open current broker job</button><button onClick={() => void onOpenGeneration('broker-two', 'recovery:2').catch(() => {})}>Open other broker job</button></> }));
 function doc(text: string) { return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] }; }
 function chapter(content = 'SAVED', version = 3, id = 'recovery:1'): Chapter {
@@ -79,6 +79,16 @@ it('opens an existing broker job only after fresh authorization and retains orig
   await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('AUTHORIZED BROKER DRAFT'));
   expect(api.job).toHaveBeenCalledWith('broker-one', expect.objectContaining({ sessionToken: '' }));
   expect(editor().value).toBe('SAVED');
+});
+it('writer primary adoption sends the selected authorized draft and its original base version', async () => {
+  vi.mocked(api.job).mockResolvedValue(taskState('broker-one', 'COMPLETED', 'AUTHORIZED PRIMARY DRAFT'));
+  const accept = vi.spyOn(api, 'accept').mockResolvedValue({chapter: chapter('AUTHORIZED PRIMARY DRAFT', 4)});
+  setup(); fireEvent.click(screen.getByRole('button', {name: 'Open broker'}));
+  fireEvent.click(await screen.findByRole('button', {name: 'Open current broker job'}));
+  await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('AUTHORIZED PRIMARY DRAFT'));
+  fireEvent.click(screen.getByRole('button', {name: '采用草稿'}));
+  await waitFor(() => expect(accept).toHaveBeenCalledWith('broker-one', 'AUTHORIZED PRIMARY DRAFT', 3,
+    expect.objectContaining({sessionToken: ''})));
 });
 it('navigates to the authorized job chapter and keeps the previous unsaved manuscript', async () => {
   vi.mocked(api.job).mockResolvedValue({ ...taskState('broker-two', 'COMPLETED', 'SECOND BROKER DRAFT', 10), chapter_id: 'recovery:2' });
