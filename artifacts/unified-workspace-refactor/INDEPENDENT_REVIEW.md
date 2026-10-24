@@ -581,3 +581,35 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - 模型请求 0（旧 App 仅 GET /api/text-models 列表读取）。
 
 ### 结论：PASS（附裁定 5 的弱化断言，建议合并前改为精确名称）
+
+## [VERA-FE] M4-s1fix2（9f2a04e4）
+
+- HEAD 9f2a04e4，tree 32b85cff ✓；对比 ae916e14：代码仅 DockLayout.tsx（aria-controls 条件化）、DockLayout.css（聚焦跳过链接居中）；测试改 m4s1.test.tsx、m4s1fix.test.tsx。
+- 环境：临时 worktree /tmp/vera-m4s1fix2，Node 22.14，vite :4399，非 GET 全拦截（0 次），单浏览器；证据 vera-compare/m4s1fix2/
+
+### 1. 面板名断言
+- m4s1.test.tsx：精确名称（labelledby 以 uw-tab- 开头时为「标题 标题」，否则为标题）；m4s1fix.test.tsx 分屏用例锚定 ^<tab> <header>$ ✓。浏览器实测名称：创作画布 创作画布 / 执行画布 执行画布 / 作品结构 / 章节属性 / 任务，与断言一致。
+- 上轮存活的 V13（labelledby 指向 main[0] 的 tab）→ 现被分屏用例杀死 ✓；另加 V13b（tab 与标题顺序互换）、V10（去掉 tab）→ 杀死 ✓
+
+### 2. aria-controls 仅指向已渲染面板
+- 浏览器 1366/1920：单屏 creative→uw-panel-creative、execution 无 aria-controls；分屏两者都有；切回单屏恢复。页面上所有 aria-controls 全部可解析，无悬空 id ✓
+- 变异：恒有 aria-controls / 恒无 / 条件取反 → 全部杀死 ✓。上轮“仅已选 tab 带 aria-controls”导致 82 个失败的变异，现即为正式实现，基线 218/218 干净通过 ✓
+- 测试变化说明：“每个 tab 都有 aria-controls”改为“仅已选 tab 有”，并新增“未选 tab 必须无 aria-controls”——属规格变更，非放宽。
+
+### 3. 跳过链接居中
+| 视口 | 矩形 | 中心偏移 | 完全可见 | 覆盖交互控件 | 下方网格采样 | Enter 后焦点 |
+|---|---|---|---|---|---|---|
+| 1366 | [639,67,727,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1440 | [676,67,764,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1920 | [916,67,1004,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1366 zoom1.25 | [629,110,737,146] | 0 | ✓ | 无 | 无 | ✓ |
+| 1440 zoom1.25 | [666,110,774,146] | 0 | ✓ | 无 | 无 | ✓ |
+| 1920 zoom1.25 | [906,104,1014,140] | 0 | ✓ | 无 | 无 | ✓ |
+- 加载焦点在 body，首个 Tab 到跳过链接 ✓
+
+### 4. 其它
+- 对比 ae916e14 的测试差异：无其它放宽。
+- 定向子集（workspace/workbench/rebuild）：44 文件 293/293 ✓；tsc：6 errors（基线）✓；全量：合并后跑（pending）。
+- axe 1366：范围内 color-contrast×3（.nv-rail，已知）；整页 document-title/html-has-lang/page-has-heading-one/region×4——与 m4s1fix 基线完全一致，无新增 ✓
+
+### 结论：PASS
