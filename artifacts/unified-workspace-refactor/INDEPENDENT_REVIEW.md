@@ -558,3 +558,16 @@ nit（P3）：
   - 模型调用 0 ✓
 - **5 测试**：子集 workspace/rebuild/taskcenter/workbench 57 个文件 481/481 ✓；tsc 6（基线）✓。**全量 vitest：PENDING（合并后跑）**。
 - 证据：/workspace/hr/vera-compare/m5s1fix/（browser/check.json + 截图、mutations.log、mut.py、subset.log、tsc.log）。
+
+## M5-s1fix2 (834b8588) — [VERA-FE] 独立复核
+
+结论：**PASS**
+
+- 树：834b8588 tree be1ee435 ✓。相对 937448a0 只改了 m5s1.test.tsx（+8，新增 1 个测试）、M5_REPORT/INDEPENDENT_REVIEW（文档），以及 novelPreviewPanels.tsx 中的一行 JSX 注释（运行逻辑不变）。
+- 新测试 render 真实的 `<UnifiedWorkspacePreview/>`，只用 `fetch.mockImplementationOnce` 让下一次章节读取返回 500，host、tracker、actions 都没有被 mock。断言：出现「刷新失败，请重试」，不出现「已刷新」，「雾港·第一章」仍在列表中 ✓。
+- 变异（src/workspace/state，基线 19/19）：
+  - P2 V9「刷新 stale||error 都丢弃」→ 新测试失败（被杀）✓
+  - P3 V10「只要有错误就隐藏章节列表」→ 新测试失败（被杀）✓
+  - 变异后均已用 git checkout 还原。
+- 子集 workspace/rebuild/taskcenter/workbench 57 个文件 482/482 ✓；tsc 6（基线）✓。代码未变，所以不重跑浏览器。**全量 vitest：PENDING（合并后跑）**。
+- 证据：/workspace/hr/vera-compare/m5s1fix2/（diff.patch、mutations.log、subset.log、tsc.log）。
