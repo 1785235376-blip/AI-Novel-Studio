@@ -22,6 +22,17 @@ The real File/API fixture is prepared in a synthetic temporary project through o
 
 The committed fixture is the actual HTTP capture, 22,719 bytes, SHA256 `464904a245c4eee0a87e720cc1a9859290c100a8a31d920470c2b2fe34c8ac65`. It contains synthetic metadata and no credentials, private paths, generated content or approval. RUNNING and UNKNOWN frontend cases are explicit software projections; no actual inference or execution outcome was manufactured to produce them.
 
-Fixed-source verification results and independent review are recorded after integration. The preceding bounded regression had 33 unchanged baseline failures in four older workspace files; this slice does not claim to repair them or to establish an overall green suite.
+Fixed application/test source: `4403cd0716aa21215f3f987a3f2c53da454632c4`, tree `628120eab1c077e7c9eb1afdcb5e0418f53d9dfc`. A following delivery edit changes documentation only.
+
+| Verification | Actual result |
+| --- | --- |
+| Real File/API | **3 passed**, 3 existing warnings, 7.93s (process 12.149s). Exact CANCELLED cold-owner tuple, changed Canvas and revoked Production Host; same-process reconstruction and no actual execution. |
+| Related frontend | **196 passed**, 14 files, one worker, 37.04s (process 37.748s). Includes all 35 new cases (29 helper/controller, 6 actual workspace/selector/panel/client); the 35 are part of 196. Software projections cover RUNNING/UNKNOWN, no-write capability and deterministic lifecycle interleavings. |
+| Standard type/build | **PASS** `corepack pnpm build` (`tsc -b && vite build`), process 54.487s; Vite 8.78s, 2633 modules. Existing frozen dependencies, unchanged manifests/lock and clean worktree before/after; existing chunk-size warning only. |
+| Independent review | Original GET/resolver call paths, metadata-only controller boundaries, exact snapshot/ABA guards, public diff and raw receipt/hash review performed separately from implementation and tests. |
+
+The preceding [continuation handoff](CLOUD_CANVAS_NODE_RESUME_20261024.md) recorded 33 failures in four older workspace files, with exact prior-baseline name/assertion matches. They remain unaddressed and were not rerun in this bounded selection. These 196 passes do not repair those failures, prove their current status again or establish an overall green suite. Actual shared-mode read-only authorization is not newly established by a software `can_mutate=false` overview.
+
+Initial prechecks were 34 new frontend cases followed by one added receipt-digest counterexample, and one File positive followed by two File counterexamples. The fixed-source runs above then executed all 35 and all 3 together within their respective selections. No precheck failure occurred. Raw commands, logs, hashes, unchanged-source checks and final remote/CI observations remain in the cloud handoff; CI is read separately after normal work-branch push.
 
 Real model/GPU/provider execution, formal media approval → generated-result save → cold-reopen positive, PostgreSQL, native Windows and browser/geometry acceptance remain NOT_RUN. Prior restricted media operations and browser-sandbox restrictions are preserved. The Grok unified-workspace branch remains unmerged; this is the existing ordinary Studio entry.
