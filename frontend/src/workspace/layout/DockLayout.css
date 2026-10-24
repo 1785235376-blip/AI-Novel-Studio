@@ -61,3 +61,5 @@
 @media (prefers-reduced-motion:reduce){.uw-resize{transition:none}}
 /* [HERMIA-FE-20261024 M4-s1fix] skip link appears just below the toolbar so it never covers 「搜索功能」. */
 .uw-skip:focus,.uw-skip:focus-visible{top:calc(var(--uw-toolbar-h,40px) + 4px)}
+/* [HERMIA-FE-20261024 M4-s1fix2] centre the focused skip link so it clears panel-header buttons (折叠/dock/关闭) as well as 搜索功能. */
+.uw-skip:focus,.uw-skip:focus-visible{left:50%;transform:translateX(-50%)}

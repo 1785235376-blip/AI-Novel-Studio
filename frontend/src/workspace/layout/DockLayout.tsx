@@ -435,7 +435,7 @@ export function DockLayout(props: DockLayoutProps) {
           const shown = visibleMain.some(v => v.id === f.id);
           const current = (visibleMain.find(v => v.id === state.focusId) ?? visibleMain[0])?.id === f.id;
           return <button key={f.id} type="button" role="tab" className="uw-btn uw-tab" aria-selected={shown} aria-current={current && shown ? 'true' : undefined}
-            tabIndex={current ? 0 : -1} id={`uw-tab-${f.id}`} aria-controls={`uw-panel-${f.id}`} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
+            tabIndex={current ? 0 : -1} id={`uw-tab-${f.id}`} aria-controls={shown ? `uw-panel-${f.id}` : undefined /* [HERMIA-FE-20261024 M4-s1fix2] only reference rendered panels */} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
             aria-busy={pendingOf(LAYOUT_ACTION_IDS.show, f.id) || undefined} onClick={() => { if (!shown || state.focusId !== f.id) void runAction(LAYOUT_ACTION_IDS.show, f.id, f.id); }}>{specOf(f.id).title}</button>;
         })}</span>}
         {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>

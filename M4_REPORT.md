@@ -9,3 +9,10 @@
 - Targeted vitest (workspace/workbench/rebuild): all pass; tsc: 6 errors (baseline).
 - Chrome (logs/m4s1fix-browser.mjs, logs/m4s1fix_skip_*.png) at 1366/1440/1920: skip link focused at [8,67,95,96], 搜索功能 at [12,14,114,48], no overlap. Note: when focused, it briefly covers the left panel header title (transient, focus-only).
 - Legacy: .nv-rail contrast left as-is (not workspace scope).
+
+## M4-s1fix2 [HERMIA-FE-20261024 M4-s1fix2]
+- 54696e89: Vera's INDEPENDENT_REVIEW.md append committed unchanged (author/committer Vera (review)).
+- Exact panel names: m4s1.test.tsx asserts the exact name (header title, or "<tab> <header>" when labelled by its tab); new split test in m4s1fix.test.tsx asserts /^<tab> <header>$/ for both rendered main panels. Mutation "all labelledby point at first tab" → fails (restored).
+- aria-controls on a tab is set only when its panel is shown (rendered); hidden tabs in single view omit it. Test: single view, 2 hidden tabs have no aria-controls and their panels are absent. Mutation "always set aria-controls" → fails (restored).
+- Skip link on focus is centred below the toolbar. Chrome (logs/m4s1fix2-browser.mjs, logs/m4s1fix2_skip_*.png) at 1366/1440/1920: overlaps no button/select/input/link/tab (incl. 搜索功能 and all 折叠).
+- Targeted vitest (workspace/workbench/rebuild) all pass; tsc 6 (baseline).

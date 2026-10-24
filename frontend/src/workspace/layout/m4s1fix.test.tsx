@@ -38,12 +38,34 @@ describe('M4-s1fix tablist', () => {
     await act(async () => { tabs()[0].focus(); }); await step('ArrowUp', (_i, n) => n - 1);
   });
 
-  it('every tab has id + aria-controls; visible main panels are labelledby their tab and header', () => {
+  // [HERMIA-FE-20261024 M4-s1fix2] exact accessible names in split (two main panels rendered) + aria-controls only for rendered panels.
+  it('split: each main region is named exactly "<its tab> <its header>"', async () => {
     setup();
-    for (const t of tabs()) {
-      expect(t.id).toBe(`uw-tab-${t.dataset.panelTab}`);
-      expect(t.getAttribute('aria-controls')).toBe(`uw-panel-${t.dataset.panelTab}`);
+    fireEvent.change(screen.getByLabelText('分屏方式'), {target: {value: 'split-h'}});
+    await act(async () => { await new Promise(r => setTimeout(r, 400)); });
+    const shown = tabs().filter(t => t.getAttribute('aria-selected') === 'true');
+    expect(shown).toHaveLength(2);
+    for (const t of shown) {
+      const title = SPECS3.find(s => s.id === t.dataset.panelTab)!.title;
+      expect(screen.getByRole('region', {name: new RegExp(`^${title} ${title}$`)})).toBe(document.getElementById(`uw-panel-${t.dataset.panelTab}`));
     }
+  });
+
+  it('single view: aria-controls only on tabs whose panel is in the DOM', () => {
+    setup();
+    let hidden = 0;
+    for (const t of tabs()) {
+      const c = t.getAttribute('aria-controls');
+      if (t.getAttribute('aria-selected') === 'true') expect(document.getElementById(c!)).not.toBeNull();
+      else { hidden++; expect(c).toBeNull(); expect(document.getElementById(`uw-panel-${t.dataset.panelTab}`)).toBeNull(); }
+    }
+    expect(hidden).toBe(2);
+  });
+
+  it('every tab has id; selected tabs have aria-controls; visible main panels are labelledby their tab and header', () => {
+    setup();
+    for (const t of tabs()) expect(t.id).toBe(`uw-tab-${t.dataset.panelTab}`);
+    for (const t of tabs().filter(t => t.getAttribute('aria-selected') === 'true')) expect(t.getAttribute('aria-controls')).toBe(`uw-panel-${t.dataset.panelTab}`);
     const shown = tabs().filter(t => t.getAttribute('aria-selected') === 'true');
     expect(shown.length).toBeGreaterThan(0);
     for (const t of shown) {

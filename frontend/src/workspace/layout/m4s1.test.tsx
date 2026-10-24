@@ -29,8 +29,9 @@ describe('M4-s1 keyboard + aria', () => {
       const el = document.getElementById(`uw-panel-${s.id}`);
       if (!el) continue;
       expect(el.getAttribute('role')).toBe('region');
-      // [HERMIA-FE-20261024 M4-s1fix] name now comes from aria-labelledby (tab + header), so it contains the title.
-      expect(screen.getByRole('region', {name: new RegExp(s.title)})).toBe(el);
+      // [HERMIA-FE-20261024 M4-s1fix2] exact name: header only, or "<tab title> <header title>" when labelled by its tab.
+      const viaTab = (el.getAttribute('aria-labelledby') ?? '').startsWith('uw-tab-');
+      expect(screen.getByRole('region', {name: viaTab ? `${s.title} ${s.title}` : s.title})).toBe(el);
     }
     const btn = document.getElementById('uw-panel-outline')!.querySelector('button[aria-expanded]')!;
     expect(document.getElementById(btn.getAttribute('aria-controls')!)).not.toBeNull();
