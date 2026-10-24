@@ -542,3 +542,42 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - P3：只有当前选中的 tab 带 aria-controls；面板是 role=region，没有 aria-labelledby 指回 tab；分屏时两个 tab 可能同时 aria-selected=true，但 tablist 没有标 aria-multiselectable。建议补齐或在 contract 里写明。
 - P3：跳转链接获得焦点时会盖住左上角的「搜索功能」按钮，这时用鼠标点不到它（只在获得焦点的那一刻发生）。可以把链接往右挪，或在失焦时立即收起。
 - P3（不属于本次改动）：作品结构面板里旧组件 .nv-rail 有 3 处颜色对比度不足（axe serious）。
+
+## [VERA-FE] M4-s1fix（ae916e14）
+
+- HEAD ae916e14，tree a3998e4d ✓；对比 ea856da7：代码改动仅 CommandSearch.tsx、DockLayout.tsx/.css，测试新增 CommandSearch.m4s1fix.test.tsx、m4s1fix.test.tsx，修改 m4s1.test.tsx 1 处（正则）。
+- 环境：临时 worktree /tmp/vera-m4s1fix，Node 22.14，vite :4399，非 GET 全部拦截（0 次触发），单浏览器串行；证据 vera-compare/m4s1fix/
+
+### 1. CommandSearch 初始焦点
+- 补丁与 patches/m4-s1-commandsearch-initial-focus.patch 代码一致（仅注释标签 M4-s1→M4-s1fix 不同）✓
+- 浏览器（1366/1440/1920/zoom1.25）：加载后焦点在 body，首个 Tab 到「跳到主区域」；打开面板焦点进输入框，Esc 后回到「搜索功能」按钮 ✓
+- 旧 App（进入小说→展开「更多」）：加载不抢焦点，打开→输入框，Esc→触发按钮；与 ea856da7 基线行为一致 ✓
+- 两个新测试的变异（去掉 wasOpen 守卫 / 去掉焦点恢复）各自被对应测试杀死 ✓
+
+### 2. 标签顺序
+- 浏览器 1366/1920：逆序依次点击各标签，DOM 顺序始终为 creative,execution（配置顺序）✓；←(首→尾回绕)、→(尾→首)、End、Home、↑、↓ 全部落到正确标签 ✓
+- 变异：恢复按面板顺序渲染、去右回绕、去左回绕、去 Home、去 End → 全部杀死 ✓
+
+### 3. ARIA
+- 每个 tab 有 id=uw-tab-*、aria-controls=uw-panel-*；可见主面板 aria-labelledby="uw-tab-X uw-panel-title-X"，引用均存在；侧栏面板只指向自身标题 ✓
+- aria-multiselectable：单屏无此属性，split-h 时 =true 且两个 tab selected，回单屏后消失 ✓
+- 注意（LOW）：单屏时未显示面板的 tab 也带 aria-controls，指向不在 DOM 的 id（ARIA 允许但不理想，axe 未报）
+- axe（1366/1920，单屏+分屏，dock-layout 范围及整页）：与 ea856da7 基线完全一致——范围内仅 .nv-rail color-contrast×3（已知）；整页另有 document-title/html-has-lang/page-has-heading-one/region×4，基线同样存在。无新增 ✓
+- 自加变异：multiselectable 恒真、tab 去 id、labelledby 去掉 tab、删除 labelledby → 杀死；**labelledby 指向错误 tab（main[0]）→ 存活**（见裁定 5）
+
+### 4. 裁定：跳过链接遮挡 —— 可接受
+- 聚焦时位置：1366/1440/1920 为 [8,67,95,96]；zoom1.25 为 [10,110,118,146]（1366）/[10,104,118,140]（1920）
+- 覆盖：左面板标题「作品结构」文字 + 「折叠」按钮左缘约 4px（按钮 [91,67,135,92]）；采样 5 点仍可点 3/5（zoom1.25 为 4/5）。不覆盖「搜索功能」。
+- 仅在跳过链接自身聚焦时出现，焦点移走即隐藏；「折叠」仍可 Tab 到达且大部分区域可点击。被聚焦元素本身未被遮挡（符合 2.4.11）。无不可达控件 → 可接受。建议（LOW）：left 偏移或把 top 再加 ~28px 以完全避开标题行。
+
+### 5. 裁定：面板名断言 精确→正则 —— 弱化断言
+- 新写法 `new RegExp(s.title)`：未锚定的子串匹配，不再钉住 tab 与标题。实证：变异 V13（labelledby 引用 main[0] 的 tab）全部测试通过。
+- 建议改为精确拼接：多标签主区 `${tabTitle} ${s.title}`（如「创作画布 创作画布」），其它面板 `s.title`；或锚定正则 /^创作画布 创作画布$/。
+
+### 6. 其它
+- 对比 ea856da7 的测试差异：除上述正则外无其它放宽；新增 5 个测试。
+- Hermia 7 个变异全部复现为杀死。
+- 定向子集（workspace/workbench/rebuild）：44 文件 291/291 ✓；tsc：6 errors（基线）✓；全量：合并后跑（pending）。
+- 模型请求 0（旧 App 仅 GET /api/text-models 列表读取）。
+
+### 结论：PASS（附裁定 5 的弱化断言，建议合并前改为精确名称）
