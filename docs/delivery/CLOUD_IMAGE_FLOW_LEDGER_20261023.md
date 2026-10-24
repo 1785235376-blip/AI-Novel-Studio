@@ -22,6 +22,8 @@ The subsequent [exact saved-record view](CLOUD_CANVAS_NODE_TARGET_VIEW_20261024.
 
 The [independent node Job metadata view](CLOUD_CANVAS_NODE_JOB_OBSERVATION_20261024.md) reads a fixed selected task without requiring the captured Canvas to remain empty or readable. It exposes only a closed metadata projection and no task actions. The original target is an unchecked request record, and candidate pins do not prove current asset/content availability. This preserves the existing continuation and save-state contracts rather than relaxing them.
 
+The separate [explicit queued-node local discard](CLOUD_CANVAS_NODE_JOB_DISCARD_20261024.md) reuses the original cancel owner when that Canvas-dependent continuation is unavailable. Only an unexecuted QUEUED task is eligible, with fresh authority, explicit confirmation, original request binding and a complete snapshot precondition inside the original CAS. It preserves evidence and does not confirm remote cancellation. The metadata-only entry remains read-only; an uncertain write is recovered by explicit original-owner reads, never automatic resend.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

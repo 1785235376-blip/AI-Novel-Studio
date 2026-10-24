@@ -492,7 +492,7 @@ def resolve_create(service, nid, branch, actor, context, request_id, guard):
     return result
 
 
-def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard, expected_snapshot=None):
     """Cancel only local ownership; preserve all source/candidate evidence.
 
     Only the bounded checkpointed CPU operation can cancel RUNNING here.
@@ -501,10 +501,15 @@ def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_re
     """
     if not callable(guard):
         raise ValueError("STUDIO_IMAGE_AUTHORITY_REQUIRED")
+    snapshot = copy.deepcopy(expected_snapshot) if expected_snapshot is not None else None
+    if snapshot is not None:
+        from ..experimental.common import StaleSourceError
     guard()
     def change(rows):
         row = _owned(service, service._find(rows, job_id), nid, branch, actor)
         _cas(row, expected_version, expected_request_digest)
+        if snapshot is not None and row != snapshot:
+            raise StaleSourceError('STUDIO_IMAGE_CANCEL_SNAPSHOT_CHANGED')
         if row["status"] == "CANCELLED":
             return copy.deepcopy(row)
         cpu = row["body"]["operation_id"] in {"m5.image.cutout", "m5.image.composite"}

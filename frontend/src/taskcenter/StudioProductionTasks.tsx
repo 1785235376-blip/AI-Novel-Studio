@@ -16,12 +16,14 @@ export type StudioProductionTasksProps = {
   /** Selection only; the protected observation owner must verify it before displaying a result. */
   onInspectCanvasTarget?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
   onInspectImageNodeJob?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  onPrepareImageNodeDiscard?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  canPrepareImageNodeDiscard?: boolean;
   /** Retire a sibling metadata view immediately when this exact selection changes. */
   onSelectionRetired?: () => void;
   onUnavailable: () => void;
 };
 type View = { generation: number; rows?: StudioProductionTask[]; message?: string; denied?: boolean };
-type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' | 'DETAIL' };
+type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' | 'DETAIL' | 'DISCARD' };
 
 /** Read-only projection of the original Studio production owner. No queue or action owner. */
 export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
@@ -81,6 +83,9 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
   }
   const hasCanvasTarget = (job: StudioProductionTask) => job.owner === 'image' && job.operation_id === 'm5.image.t2i'
     && !!job.command && Object.hasOwn(job.command, 'canvas_image_node');
+  const discardEligible = (job: StudioProductionTask) => hasCanvasTarget(job) && job.status === 'QUEUED'
+    && (job as StudioProductionTask & { attempt?: unknown }).attempt === 0 && job.output_candidate === null
+    && job.receipt_digest === null && job.approved_asset_version === null;
   async function open(selected: StudioProductionTask) {
     if (renderTicket !== ticket.current || view !== visibleSnapshot.current
       || view?.generation !== scope.current.generation || !view.rows?.includes(selected)) return;
@@ -118,6 +123,18 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
     // may verify it, without ordinary GET or any Canvas-dependent read.
     const origin = latest.current, expected = structuredClone(selected);
     try { if (valid(request)) origin.onInspectImageNodeJob?.(expected, () => valid(request)); }
+    catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
+    finally { finish(request); }
+  }
+  function prepareImageNodeDiscard(selected: StudioProductionTask) {
+    if (renderTicket !== ticket.current || view !== visibleSnapshot.current
+      || view?.generation !== scope.current.generation || !view.rows?.includes(selected)
+      || !latest.current.onPrepareImageNodeDiscard || latest.current.canPrepareImageNodeDiscard !== true || !discardEligible(selected)) return;
+    const request = begin('DISCARD'); if (!request) return;
+    const origin = latest.current, expected = structuredClone(selected);
+    // Preparing performs no mutation or ordinary GET. A separate protected
+    // read and explicit confirmation are required in the dedicated consumer.
+    try { if (valid(request)) origin.onPrepareImageNodeDiscard?.(expected, () => valid(request)); }
     catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
     finally { finish(request); }
   }
@@ -161,6 +178,8 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
           aria-label={`核对原保存位置 ${job.id} v${job.version}`}>核对原保存位置</Button>}
         {props.onInspectImageNodeJob && hasCanvasTarget(job) && <Button disabled={blocked || !!waiting} onClick={() => inspectImageNodeJob(job)}
           aria-label={`只读查看原节点任务 ${job.id} v${job.version}`}>只读查看原节点任务</Button>}
+        {props.onPrepareImageNodeDiscard && discardEligible(job) && <Button disabled={blocked || !!waiting || props.canPrepareImageNodeDiscard !== true}
+          onClick={() => prepareImageNodeDiscard(job)} aria-label={`放弃此排队任务的本地采用 ${job.id} v${job.version}`}>放弃此排队任务的本地采用</Button>}
       </article>
     </li>)}</ul>}
   </Panel>;

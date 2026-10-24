@@ -6,6 +6,7 @@ import { readCanvasImageNodeJobObservation, type CanvasImageNodeJobObservationIn
 import type { StudioImageNodeJobObservation } from './studioProductionClient';
 
 export type CanvasImageNodeJobObservationPanelProps = Omit<CanvasImageNodeJobObservationInput,'signal'> & {
+  onObserved?: (snapshot: StudioImageNodeJobObservation) => void;
   onUnavailable: () => void;
   onClose: () => void;
 };
@@ -48,7 +49,10 @@ export function CanvasImageNodeJobObservationPanel(props: CanvasImageNodeJobObse
       const value=latest.current;
       const result=await readCanvasImageNodeJobObservation({projectId:value.projectId,branchId:value.branchId,client:value.client,
         source:{job:structuredClone(value.source.job),key:value.source.key,isCurrent:current},read:value.read,signal:controller.signal});
-      if(ours(id))setState({pending:false,value:result,snapshotAt:new Date().toISOString()});
+      if(ours(id)){
+        setState({pending:false,value:result,snapshotAt:new Date().toISOString()});
+        if(ours(id)){try{latest.current.onObserved?.(structuredClone(result));}catch{/* A host observer cannot change this accepted read. */}}
+      }
     }catch(error){
       if(!ours(id)||error instanceof Error&&error.name==='AbortError')return;
       const status=error instanceof ApiError?error.status:undefined;

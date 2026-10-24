@@ -900,6 +900,10 @@ class ProductionExecutionService:
         from .canvas_image_node_job_observation import observe
         return observe(self, nid, scope, actor, jid, value, guard)
 
+    def discard_image_node_job(self, nid, scope, actor, jid, value, guard):
+        from .canvas_image_node_job_discard import discard
+        return discard(self, nid, scope, actor, jid, value, guard)
+
     def resolve_image_node_create(self, nid, scope, actor, value, guard):
         """Explicitly observe one exact node-bound image queue admission."""
         body = CanvasImageNodeQueueResolve.model_validate(value)
@@ -1062,7 +1066,9 @@ class ProductionExecutionService:
         return {"contract": "studio-production-review/1", "job_id": row["id"], "request_digest": row["request_digest"],
             "output_digest": candidate["digest"], "candidate_version": candidate["version"], "review_actor": actor}
 
-    def cancel(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
+    def cancel(self, nid, scope, actor, owner, jid, action, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None, expected_snapshot=None):
+        if expected_snapshot is not None and owner != 'image':
+            raise ValueError('STUDIO_IMAGE_CANCEL_SNAPSHOT_OWNER_INVALID')
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         guard = self._batch_guard(nid, scope, actor, context, guard, jid, phase='cancel')
         if (row["version"], row["request_digest"]) != (action.expected_version, action.expected_request_digest):
@@ -1075,8 +1081,11 @@ class ProductionExecutionService:
                 row = self.video.cancel(nid, scope.get("branch_id"), actor, jid, action, context=context, guard=guard)
         elif owner == "audio": row = self._audio(scope, actor).cancel(nid, jid, action.expected_version, context, guard)
         elif owner == "image":
-            row = self._image(actor).cancel_studio(nid, scope.get("branch_id"), actor, jid,
-                expected_version=action.expected_version, expected_request_digest=action.expected_request_digest, guard=guard)
+            owner_args = {'expected_version': action.expected_version,
+                'expected_request_digest': action.expected_request_digest, 'guard': guard}
+            if expected_snapshot is not None:
+                owner_args['expected_snapshot'] = expected_snapshot
+            row = self._image(actor).cancel_studio(nid, scope.get("branch_id"), actor, jid, **owner_args)
         else:
             # Fence publication under its original scope -> asset -> project
             # leases before the original queue CAS. Do not wait on the executor

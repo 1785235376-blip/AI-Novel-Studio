@@ -98,6 +98,10 @@ export type StudioImageNodeJobObservation = {
   contract: 'studio-image-node-job-observation/1'; job: StudioImageNodeJobProjection; target: CanvasImageNodeBinding;
   incarnation: string; canvas_read: false; automatic_actions: false;
 };
+export type StudioImageNodeJobDiscard = {
+  contract: 'studio-image-node-job-discard/1'; job: StudioImageNodeJobProjection; target: CanvasImageNodeBinding;
+  incarnation: string; canvas_read: false; automatic_actions: false; local_result_discarded: true; remote_stop_confirmed: false;
+};
 
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
@@ -109,7 +113,7 @@ const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
 const revision = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1;
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务回执不完整。请重新读取核对，勿重复发送。' }); }
-function checkedImageNodeJobProjection(value: unknown): StudioImageNodeJobProjection {
+export function checkedImageNodeJobProjection(value: unknown): StudioImageNodeJobProjection {
   const exact=(v:unknown,names:readonly string[]):v is Record<string,unknown>=>record(v)
     && Object.keys(v).length===names.length&&names.every(name=>Object.hasOwn(v,name));
   const text=(v:unknown)=>typeof v==='string'&&!!v.trim()&&[...v].length<=240&&!/[\u0000-\u001f\u007f]/.test(v);
@@ -146,6 +150,28 @@ export function studioImageNodeJobProjection(selected: ProductionJob): StudioIma
   const candidate=selected.output_candidate;
   value.output_candidate=candidate?{id:candidate.id,version:candidate.version,digest:candidate.digest,kind:candidate.kind}:null;
   return checkedImageNodeJobProjection(value);
+}
+
+/** Validate only the original owner's bounded local-discard acknowledgement. */
+export function checkedStudioImageNodeJobDiscard(value: unknown, selected: StudioImageNodeJobProjection): StudioImageNodeJobDiscard {
+  const expected=checkedImageNodeJobProjection(selected),target=canvasImageNodeInCommand(expected.command);
+  if(!target||expected.status!=='QUEUED'||expected.attempt!==0||expected.output_candidate!==null
+    ||expected.receipt_digest!==null||expected.approved_asset_version!==null||expected.version>=Number.MAX_SAFE_INTEGER
+    ||target.project_id!==expected.novel_id||(target.scope.mode==='collaboration'?target.scope.branch_id:null)!==expected.branch_id)invalid();
+  if(!record(value)||Object.keys(value).length!==8
+    ||!['contract','job','target','incarnation','canvas_read','automatic_actions','local_result_discarded','remote_stop_confirmed'].every(key=>Object.hasOwn(value,key))
+    ||value.contract!=='studio-image-node-job-discard/1'||value.canvas_read!==false||value.automatic_actions!==false
+    ||value.local_result_discarded!==true||value.remote_stop_confirmed!==false||value.incarnation!==target.incarnation)invalid();
+  const result=checkedImageNodeJobProjection(value.job),resultTarget=checkedCanvasImageNodeBinding(value.target);
+  const changed=new Set(['version','status','updated_at','error_code','cancellation_mode','remote_compute_may_continue']);
+  if(canonicalImageNode(resultTarget)!==canonicalImageNode(target)||result.version!==expected.version+1||result.status!=='CANCELLED'
+    ||result.attempt!==0||result.output_candidate!==null||result.receipt_digest!==null||result.approved_asset_version!==null
+    ||result.error_code!==null||result.cancellation_mode!=='LOCAL_RESULT_DISCARD'||result.remote_compute_may_continue!==true
+    ||STUDIO_IMAGE_NODE_JOB_FIELDS.some(key=>!changed.has(key)&&canonicalImageNode(result[key as keyof StudioImageNodeJobProjection])
+      !==canonicalImageNode(expected[key as keyof StudioImageNodeJobProjection])))invalid();
+  const receipt:StudioImageNodeJobDiscard={contract:'studio-image-node-job-discard/1',job:result,target:resultTarget,incarnation:target.incarnation,
+    canvas_read:false,automatic_actions:false,local_result_discarded:true,remote_stop_confirmed:false};
+  return structuredClone(receipt);
 }
 function cfgParameter(parameters: Record<string, unknown>, operation: unknown) {
   if (Object.hasOwn(parameters, 'cfg') && (operation !== 'm5.image.t2i' || typeof parameters.cfg !== 'number'
@@ -840,6 +866,31 @@ export function studioProductionClient(projectId: string, context: Collaboration
       return structuredClone({contract:'studio-image-node-job-observation/1',job:resultJob,target:resultTarget,
         incarnation:target.incarnation,canvas_read:false,automatic_actions:false});
     },
+    async discardImageNodeJob(selected: ProductionJob, signal?: AbortSignal, beforeDispatch?: () => void): Promise<StudioImageNodeJobDiscard> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command),projection=studioImageNodeJobProjection(expected);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope?{mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId}:{mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope)||projection.status!=='QUEUED'||projection.attempt!==0
+        ||projection.output_candidate!==null||projection.receipt_digest!==null||projection.approved_asset_version!==null
+        ||projection.version>=Number.MAX_SAFE_INTEGER)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃请求已取消。','AbortError');
+      // The caller claims the fixed snapshot here, after validation and immediately before the one POST.
+      beforeDispatch?.();
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/node-discard`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest,confirmed:true},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃回执读取已取消。','AbortError');
+      let raw:unknown;
+      try{
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃回执读取已取消。','AbortError');
+      return checkedStudioImageNodeJobDiscard(raw,projection);
+    },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid(); return v.items.map(job);
@@ -968,5 +1019,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView' | 'observeImageNodeJob';
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView' | 'observeImageNodeJob' | 'discardImageNodeJob';
 export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;

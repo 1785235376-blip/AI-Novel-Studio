@@ -79,10 +79,12 @@ class ImageJobService:
         from .studio_image_execution import resolve_create
         return resolve_create(self, nid, branch, actor, context, request_id, guard)
 
-    def cancel_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
+    def cancel_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard, expected_snapshot=None):
         from .studio_image_execution import cancel
-        return cancel(self, nid, branch, actor, job_id, expected_version=expected_version,
-            expected_request_digest=expected_request_digest, guard=guard)
+        owner_args = {'expected_version': expected_version, 'expected_request_digest': expected_request_digest, 'guard': guard}
+        if expected_snapshot is not None:
+            owner_args['expected_snapshot'] = expected_snapshot
+        return cancel(self, nid, branch, actor, job_id, **owner_args)
 
     def reconcile_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard,
                          recover_candidate=None, recover_review=None):

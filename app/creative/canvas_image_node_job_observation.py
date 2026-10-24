@@ -37,7 +37,11 @@ def _candidate(value):
 
 
 def _projection(production, row, command):
-    public = production.view(row, 'image')
+    return project_public_job(production.view(row, 'image'), command)
+
+
+def project_public_job(public, command):
+    """Project an original public receipt without another owner read."""
     if (public['contract'] != 'studio-production-job/1' or public['owner'] != 'image'
             or public['operation_id'] != 'm5.image.t2i' or public['status'] not in STATES
             or public['product_acceptance'] != 'LOCAL_REQUIRED' or public['automatic_replay'] is not False

@@ -567,6 +567,18 @@ class CanvasImageNodeTargetView(MediaJobAction):
     expected_canvas_digest: Digest
 
 
+class CanvasImageNodeJobDiscard(MediaJobAction):
+    """One explicit local discard; this is not a remote-stop instruction."""
+    confirmed: Literal[True]
+
+    @field_validator('confirmed', mode='before')
+    @classmethod
+    def explicit_confirmation(cls, value):
+        if value is not True:
+            raise ValueError('STUDIO_IMAGE_NODE_JOB_DISCARD_CONFIRMATION_REQUIRED')
+        return value
+
+
 class MediaReview(MediaJobAction):
     reviewed_output_digest: Digest
 

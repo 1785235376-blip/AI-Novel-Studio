@@ -9,7 +9,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute
 from ..services.v1_capability_service import CapabilityVersionConflict
 from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
-from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, CanvasImageNodeTargetView, MediaReview, TimelineSave, TimelineRender,
+from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, CanvasImageNodeTargetView, CanvasImageNodeJobDiscard, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
     TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
     TimelineWaveformPreview)
@@ -114,6 +114,11 @@ class ImageNodeTargetViewRoute(ImageNodeTargetObservationRoute):
 class ImageNodeJobObservationRoute(ImageNodeTargetObservationRoute):
     """Closed original Job metadata without current-Canvas dependencies."""
     ERROR_PREFIX = 'STUDIO_IMAGE_NODE_JOB_OBSERVATION_'
+
+
+class ImageNodeJobDiscardRoute(ImageNodeTargetObservationRoute):
+    """Explicit original-queue discard with closed acknowledgement/errors."""
+    ERROR_PREFIX = 'STUDIO_IMAGE_NODE_JOB_DISCARD_'
 
 
 class TimelineWaveformRoute(PrivateProductionRoute):
@@ -434,6 +439,31 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                 lambda actor, scope, guard: service.observe_image_node_job(nid, scope, actor, jid, body, guard))
 
     router.include_router(node_job_observations)
+
+    node_job_discards = APIRouter(route_class=ImageNodeJobDiscardRoute)
+
+    @node_job_discards.post('/projects/{nid}/studio/production/jobs/image/{jid}/node-discard')
+    def discard_image_node_job(nid: str, jid: str, request: Request, body: CanvasImageNodeJobDiscard,
+                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with ExitStack() as observations:
+            observations.enter_context(service.store.existing_owner_only())
+            graph = getattr(service, 'graph_service', None)
+            if graph is not None:
+                observations.enter_context(graph.store.existing_owner_only())
+
+            def source(actor, scope, read_guard):
+                def write(write_actor, write_scope, write_guard):
+                    if (write_actor, write_scope) != (actor, scope):
+                        raise HTTPException(403, {'code': 'CREATIVE_AUTHORITY_CHANGED'})
+                    def current():
+                        read_guard()
+                        write_guard()
+                    current()
+                    return service.discard_image_node_job(nid, scope, actor, jid, body, current)
+                return call(request, nid, x_session_token, x_branch_id, 'domain.write', write)
+            return call(request, nid, x_session_token, x_branch_id, 'domain.read', source)
+
+    router.include_router(node_job_discards)
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
