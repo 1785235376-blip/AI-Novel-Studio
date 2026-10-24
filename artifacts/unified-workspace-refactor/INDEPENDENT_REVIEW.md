@@ -533,3 +533,28 @@ nit（P3）：
 1. 【MUST】补 host 级测试：发起动作→切换作品→断言 stale（使 M1 被杀），并更正 M5_REPORT 中 M1 的记录。
 2. 【LOW】useBeforeUnloadGuard 放弃修改后监听未卸载（dirtyNow 快照在 inspectorDirty ref 更新前计算，之后无 store 通知）；补“监听挂载数”测试（V2b）。
 3. 【LOW】节点检视器条件清草稿无测试（V4）；读超时时不应同时显示“还没有章节。”
+
+## M5-s1fix (937448a0) — [VERA-FE] 独立复核
+
+结论：**MUST-FIX（仅补测试，P2）**。行为全部正确，但“当前项目刷新失败必须报错”没有测试守护（变异 V9 存活）。
+
+- 树：937448a0 tree 7347a568 ✓。临时 worktree /tmp/vera-m5s1fix，vite :4499，非 GET 全部拦截（passNonGet=[]，model=[]）。
+- **1 宿主级 stale 测试：PASS**。测试 render 真实的 `<UnifiedWorkspacePreview/>`（QueryClientProvider），只 stub 了 fetch，没有 mock 掉 host、tracker 或 actions。流程：n1 刷新挂起 → 切到 n2 → n1 迟到 → 断言无 已刷新/刷新失败/STALE，且仍为 n2。变异 M1（去掉 tracker.update）现在被杀 ✓。M5_REPORT 第 20 行已更正 M1（承认之前误报为 killed）✓。
+- **2 stale 失败静默丢弃：行为可接受**。只有 epoch 变化（换项目，A→B→A 也会递增）时才返回 stale；当前项目自己的失败仍然是 `error`。浏览器验证：
+  - 当前项目刷新 500 → 显示 alert「读取失败，请稍后重试。」和 status「刷新失败，请重试」，章节列表保留 ✓。
+  - 雾港刷新 3s 后 500，期间切到 空画布工作室 → 无「刷新失败」，仍停在 520adfa2 ✓。
+  - 小风险（可接受）：A 发起刷新 → 切 B → 切回 A，旧请求的失败会被丢弃；但切回 A 时 query 会重新读取，读取本身的错误仍由 alert 显示。
+  - **缺口（P2，需补）**：变异 V9「把 error 也当 stale 丢弃」在 src/workspace/state 18/18 全部通过，存活。请补一个宿主级测试：当前项目刷新失败 → 断言出现「刷新失败，请重试」。
+- **3 低优先级项：PASS**。
+  - beforeunload（浏览器计数 add−remove，页面基线为 1）：干净 1 → 脏 2 → 放弃后 1（M5-s1 时为 2）✓；慢保存期间继续输入，保存后仍为 2 并拦截（还有新草稿）。新测试也是按 add/remove 计数 ✓。
+  - 我之前存活的变异 V4「节点保存总是清草稿」现在被杀 ✓。
+  - 读取超时与 500 都不再显示「还没有章节。」；空的成功读取仍显示「还没有章节。」✓。
+  - P3：变异 V10「只要有 errKind 就隐藏章节列表」存活。浏览器中刷新失败时列表保留是正确的，但没有测试锁住这一点。
+- **4 变异**（src/workspace/state，基线 18/18）：Hermia 的 M1、V2b、V4、V7、V8 全部被杀；我的 V2b（总挂监听、处理器内判脏）和 V2c（不再重算脏状态）被杀；V9、V10 存活（见上）。浏览器复跑 m5s1：
+  - 乱序响应：无 STALE 泄漏 ✓
+  - 慢保存期间编辑：输入保留为 来信XY 且仍为脏、版本 3、切换被拒 ✓
+  - 写入超时：20.0s 显示「保存超时…不确定是否已保存」，草稿保留 ✓
+  - 读取超时：14.9s 显示「读取超时」✓
+  - 模型调用 0 ✓
+- **5 测试**：子集 workspace/rebuild/taskcenter/workbench 57 个文件 481/481 ✓；tsc 6（基线）✓。**全量 vitest：PENDING（合并后跑）**。
+- 证据：/workspace/hr/vera-compare/m5s1fix/（browser/check.json + 截图、mutations.log、mut.py、subset.log、tsc.log）。
