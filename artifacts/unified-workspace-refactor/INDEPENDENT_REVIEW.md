@@ -501,3 +501,66 @@ nit（P3）：
 - 低：送出会重置执行画布的视口，用户的平移/缩放会丢失（既有行为）。
 - 低：useTaskCenter 的 cancelled 判断没有测试覆盖（属于弱变异）。
 - 低：IndependentStudioIdentity 有 2 项时序 flaky，继续观察。
+
+## [VERA-FE] M2-s1fix2 + M3-s1（3520d679）
+
+树哈希核对：73ac909c→a77e9964 ✓，2abedfb3→a9f1821e ✓；3520d679 只改文档和日志，没有前端改动。临时 worktree /tmp/vera-m3s1（detached），用未跟踪的 lock 跑 npm ci；自己的 vite 跑在 4399；Playwright 拦截全部非 GET 请求。证据在 /workspace/hr/vera-compare/m3s1/。
+
+### M2-s1fix2（73ac909c）— PASS（附一条测试意见）
+- 浏览器实测（m3s1/browser/check.json）：
+  - uw 视图，1366 下执行画布 750×449：9/12/13 个节点重叠均为 0。9 个都在视口内，第 10 个起（第 4 列，世界坐标 x=638）出了视口。拖动平移可以看到。
+  - uw 视图，1920 下执行画布 1304×761：12 个都在视口内。
+  - 旧双画布（视频›专业›双画布），1366 下 594 宽：第 7 个起出视口；1920 下第 13 个出视口。重叠均为 0。
+  - 没有自动滚动。
+- 发送后保留平移和缩放（只针对 uw）：平移到 translate(-360,40) 后再发送，视图保持不变，第 13 个节点在视口内。旧双画布在发送时仍按原行为重置视图（key=rev，没传 initialViewport），符合预期。
+- 测试改动的裁定：m2s1fix.test 把“每个节点都在视图内”改成了只检查前 3 个。m2s1fix2.test 补充了 9 个节点不重叠、在 750×449 内的断言。但没有任何测试断言“最新发出的节点可见或可达”，所以判为**断言被削弱**。建议补一条断言：最后一个送出的节点在视口内，或者送出后视图会自动跟随到它。
+- 变异测试（m3s1/mutations.log）：
+  - 删掉 useTaskCenter 的 `cancelled ||` → 被 useTaskCenter.m2s1fix2.test 抓到 ✓。
+  - 列偏移改成 0 → 被 m2s1fix2.test 抓到 ✓。
+- RebuildCanvas 新增的 3 个可选 props 默认值和旧行为一致。DualCanvas、ImageRebuild、VideoRebuild 都没有传这 3 个 props ✓。
+
+### M3-s1（2abedfb3）— MUST-FIX（1 条，中等）
+- 通过的项：
+  - 两个画布选中节点后，都会显示「画布节点属性 · 创作画布/执行画布」。
+  - 改名成功后提示“已保存到本机草稿（未同步服务端）”，画布标题同步更新，刷新后保持。
+  - 注入 setItem 抛错 → “写入本机草稿失败（浏览器存储不可用或已满）。”，草稿保留，画布不变。
+  - 注入读回不一致 → “写入后读回不一致，未保存。”，草稿保留。
+  - 两个画布的选择互相独立。
+  - 有脏草稿时：点选另一个画布的节点会被拒绝，属性面板保持不变，「回到章节属性」按钮被禁用。切换作品被拒绝，并提示 blocked。
+  - 放弃后切换作品，属性面板回到章节属性。
+  - 非 GET 请求 0 个，模型请求 0 个，没有 pageerror。
+- **MUST-FIX**：切换作品时视口记忆没有被清空。
+  - 实测：在雾港把执行画布平移到 translate(-360,40)，然后切到「空画布工作室」，新作品的执行画布仍是 translate(-360,40)（1366 和 1920 都复现）。
+  - 原因：`vps.current = {}` 写在 useEffect 里。新 novelId 触发的那次渲染已经用旧的 vps 作为 initialViewport 重新挂载了画布。
+  - 这与 IMPLEMENTATION_REPORT 第 153 行“切换作品会清空 viewport memory”的说法不一致。
+  - 我加的变异“删掉 vps 重置”没有被任何测试抓到。
+  - 建议：按 novelId 给 vps 分 key，或在渲染期同步重置；并补一条测试。
+- 变异测试：
+  - Hermia 的 5 个我都复现了：读回检查、共享选择、脏锁、忽略 initialViewport 共 4 个被杀。
+  - “切作品保留 inspect”存活。我判断它的回退路径是真的：浏览器里干净切换后属性面板确实清空了，新画布挂载时会调用 onSelect(null)。所以它是等价变异体，接受。
+  - 额外 2 个：guardSwitch 忽略 nodeDirty → 被杀；删掉 vps 重置 → 存活（就是上面那个 MUST-FIX）。
+- 低优先级问题：
+  - 选中节点时，面板标题仍然是「章节属性」。guardSwitch 的提示也说「章节属性」里有未保存的标题修改，实际是节点草稿。
+  - 属性面板显示执行画布节点时，再点一次创作画布里那个已经选中的节点，面板不会切回去（选择没变化，就没有 onSelect）。必须先点空白处再点节点。
+  - 在执行页签里发生的脏点选，没有看到 studioMsg 提示。提示只渲染在创作面板里。
+- 规格：在 /workspace/hr/wt 的 docs/architecture 和 artifacts 里没有找到附录 A 的 M3 验收清单或 t117u（unified-workspace-contract.md 里没有 M3 条目）。只搜了本机，没有搜其他机器。IMPLEMENTATION_REPORT 和 BLOCKERS 也写了没找到。因此只能对照 brief 来核对。
+- patches/m3s1-shared-nonentry.patch 与 `git diff 73ac909c 2abedfb3 -- RebuildCanvas.tsx UnifiedWorkspacePreview.tsx studioPreviewPanels.tsx` 逐字节一致 ✓。
+
+### 回归
+- 旧 UI 18 页对比 m1s3fix/legacy-81a65eb8：完全一致。
+- 全量 vitest，Node 22.14，三次都设了超时：
+
+  | 轮次 | raw | ISI | adjusted |
+  |---|---|---|---|
+  | 1 | 297 | 8 | 297 |
+  | 2 | 299 | 10 | 297 |
+  | 3 | 300 | 10 | 298 |
+
+  - total 都是 11384（比上一轮 11375 多 9 = m3s1 的 7 + m2s1fix2 的 2）。
+  - 门槛 (a)：三次最好为 297 ≤297 ✓。门槛 (b)：第一次就是 297 ✓。
+  - 加载失败只有基线已有的 LocalAiBrowserJourneyContracts。
+  - 三次失败的交集共 298 条，与 persistent-node22.json 完全相同，没有新增也没有消失。
+  - flaky：
+    - IndependentStudioIdentity 的 2 条（第 2、3 次），是已知问题。单独跑时该文件仍是基线的 8 条失败。
+    - StudioCanvasVideoTask.integration 1 条（只在第 3 次出现，Test timed out in 5000ms）。机器负载 25–46，有别人的 vitest 在跑。单独跑 5 次：前 3 次是超时、失败、超时（外层 300s timeout），负载下降后第 4、5 次连续通过。不在改动范围内。
+- tsc：6 个错误，与基线一致。workspace 和 workbench 测试 23 个文件、206 个用例全部通过。
