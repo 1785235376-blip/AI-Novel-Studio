@@ -1,5 +1,5 @@
 // [HERMIA-FE-20261023 M1, applied M1-s2] Opt-in preview host for DockLayout (?uw=1 only).
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {createPreviewPanelRegistry, InspectorPanel, OutlinePanel, pickDefaultNovel, registerNovelPreviewActions, useNovels} from './panels/novelPreviewPanels';
 import {DockLayout, type LayoutPanelSpec} from './layout';
@@ -14,6 +14,7 @@ import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions,
 import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanvas';
 import {CanvasNodeInspector, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
+import {DraftStore, useBeforeUnloadGuard} from './state/draftStore'; // [HERMIA-FE-20261024 M5-s1]
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
@@ -51,9 +52,14 @@ export function UnifiedWorkspacePreview() {
   const qc = useQueryClient();
   const novels = useNovels();
   const [novelId, setNovelId] = useState<string | null>(null);
+  const nodeDirtyRef = useRef<{current: boolean}>({current: false});
   const [chapterId, setChapterId] = useState<string | null>(null);
   const [blocked, setBlocked] = useState<string | null>(null);
   const inspectorDirty = useRef(false);
+  // [HERMIA-FE-20261024 M5-s1] drafts survive redock/collapse/tab switch; beforeunload only while dirty.
+  const drafts = useMemo(() => new DraftStore(), []);
+  const anyDirty = useCallback(() => drafts.anyDirty() || inspectorDirty.current || nodeDirtyRef.current.current, [drafts]);
+  useBeforeUnloadGuard(anyDirty, drafts);
   const novelRef = useRef(novelId); novelRef.current = novelId;
   useEffect(() => { if (!novelId && novels.data?.length) setNovelId(pickDefaultNovel(novels.data)?.id ?? null); }, [novels.data, novelId]);
   useEffect(() => registerNovelPreviewActions(shared.actions, qc, () => novelRef.current), [shared.actions, qc]);
@@ -69,10 +75,14 @@ export function UnifiedWorkspacePreview() {
   const inspectRef = useRef(inspect); inspectRef.current = inspect;
   const [creativeRev, setCreativeRev] = useState(0);
   const nodeDirty = useRef(false);
+  nodeDirtyRef.current = nodeDirty;
   const vps = useRef<Partial<Record<CanvasKind, CvViewport>>>({});
   const onCreativeVp = useCallback((v: CvViewport) => { vps.current.image = v; }, []);
   const onExecVp = useCallback((v: CvViewport) => { vps.current.video = v; }, []);
   useEffect(() => { setSelNode(null); setExecSel(null); setInspect(null); lastPick.current = null; vps.current = {}; }, [novelId]);
+  // [HERMIA-FE-20261024 M5-s1] project switch bumps the lifecycle epoch: in-flight registry actions from the previous
+  // project resolve as 'stale' and are not applied. Layout-effect so it lands before any new-project action runs.
+  useLayoutEffect(() => { shared.tracker.update({projectId: novelId}); }, [shared, novelId]);
   useEffect(() => registerCanvasNodeActions(shared.actions), [shared.actions]);
   const lastPick = useRef<CanvasPick | null>(null);
   const pickImpl = (kind: CanvasKind, n: CvNode | null) => {
@@ -81,7 +91,7 @@ export function UnifiedWorkspacePreview() {
     const next = n ? {kind, id: n.id} : (cur?.kind === kind ? null : cur);
     if (n || lastPick.current?.kind === kind) lastPick.current = n ? next : null;
     if (next?.kind === cur?.kind && next?.id === cur?.id) return;
-    if (nodeDirty.current || inspectorDirty.current) { setStudioMsg('属性面板里有未保存的修改，请先保存或放弃；属性面板仍显示原对象。'); return; }
+    if (anyDirty()) { setStudioMsg('属性面板里有未保存的修改，请先保存或放弃；属性面板仍显示原对象。'); return; }
     inspectRef.current = next; setInspect(next);
   };
   // stable handlers (RebuildCanvas re-fires onSelect when the callback identity changes)
@@ -124,7 +134,7 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
   const guardSwitch = (apply: () => void) => {
-    if (inspectorDirty.current || nodeDirty.current) { setBlocked('「章节属性」里有未保存的标题修改，请先保存或放弃后再切换。'); return; }
+    if (anyDirty()) { setBlocked('「章节属性」里有未保存的标题修改，请先保存或放弃后再切换。'); return; }
     setBlocked(null); apply();
   };
   const ctx = useCallback((input?: unknown) => ({...shared.workbench.context(chapterId), input}), [shared.workbench, chapterId]);
@@ -132,9 +142,9 @@ export function UnifiedWorkspacePreview() {
     if (id === 'outline') return <OutlinePanel novelId={novelId} novels={novels} onNovel={v => guardSwitch(() => { setNovelId(v); setChapterId(null); })}
       selectedId={chapterId ?? undefined} onSelect={v => guardSwitch(() => setChapterId(v))} blockedNotice={blocked} ctx={() => ctx()} actions={shared.actions} />;
     if (id === 'inspector' && inspect && novelId) return <CanvasNodeInspector pick={inspect} scope={novelId} actions={shared.actions} ctx={ctx} api={api}
-      dirtyRef={nodeDirty} onSaved={k => (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1)} onBack={() => setInspect(null)}
+      dirtyRef={nodeDirty} onSaved={k => (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1)} drafts={drafts} onBack={() => setInspect(null)}
       onSettled={() => { const lp = lastPick.current; if (lp && (lp.kind !== inspectRef.current?.kind || lp.id !== inspectRef.current?.id)) { inspectRef.current = lp; setInspect(lp); } }} />;
-    if (id === 'inspector') return <InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} />;
+    if (id === 'inspector') return <InspectorPanel novelId={novelId} chapterId={chapterId} api={api} ctx={ctx} actions={shared.actions} dirtyRef={inspectorDirty} drafts={drafts} />;
     if (id === 'creative') {
       const av = shared.actions.availability(STUDIO_ACTION_IDS.sendToExecution, shared.workbench.context(null));
       const busy = shared.actions.isPending(STUDIO_ACTION_IDS.sendToExecution, null);

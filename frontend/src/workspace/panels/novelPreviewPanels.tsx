@@ -16,6 +16,9 @@ import {PanelRegistry, type PanelDefinition} from '../../workbench/panels';
 import type {ActionContext, ActionRegistry} from '../../workbench/actions';
 import type {PanelRenderApi} from '../layout/DockLayout';
 import '../../rebuild/novel/novelRebuild.css';
+// [HERMIA-FE-20261024 M5-s1] host-owned drafts (survive redock/tab switch), honest timeouts, last-wins saves.
+import {chapterDraftKey, DraftStore, useDraft} from '../state/draftStore';
+import {LatestGate, withTimeout, WORKSPACE_TIMEOUTS, WorkspaceTimeoutError, READ_TIMEOUT_TEXT, WRITE_TIMEOUT_TEXT} from '../state/async';
 
 export const NOVEL_PREVIEW_PANELS: PanelDefinition[] = [
   {id: 'outline', kind: 'feature', title: '作品结构', capability: 'connected', instancing: 'singleton', docks: ['left', 'right', 'main'], defaultDock: 'left', minWidth: 180, requiresContext: ['project']},
@@ -30,11 +33,14 @@ export const chaptersKey = (novelId: string) => ['uw-preview', 'chapters', novel
 export const NOVELS_KEY = ['uw-preview', 'novels'] as const;
 
 /** Honest load-state classification (contract §1: loading / error / empty / not-connected). */
-export function classifyError(e: unknown): 'not-connected' | 'error' {
+export function classifyError(e: unknown): 'not-connected' | 'error' | 'timeout' {
+  if (e instanceof WorkspaceTimeoutError) return 'timeout'; // [HERMIA-FE-20261024 M5-s1]
   if (e instanceof ApiError) return e.status === 502 || e.status === 503 || e.status === 504 ? 'not-connected' : 'error';
   return e instanceof TypeError ? 'not-connected' : 'error';
 }
-const ERR_TEXT = {'not-connected': '后端未连接，无法读取作品数据。请确认本地服务已启动后重试。', error: '读取失败，请稍后重试。'} as const;
+const ERR_TEXT = {'not-connected': '后端未连接，无法读取作品数据。请确认本地服务已启动后重试。', error: '读取失败，请稍后重试。', timeout: READ_TIMEOUT_TEXT} as const;
+/** [HERMIA-FE-20261024 M5-s1] GET with an honest read timeout (a hung backend shows 读取超时, not endless loading). */
+export const readChapters = (novelId: string) => withTimeout(api.chapters(novelId), WORKSPACE_TIMEOUTS.readMs, 'read');
 
 export function pickDefaultNovel(novels: Novel[]): Novel | undefined {
   return novels.find(n => n.title.includes('雾港')) ?? novels.find(n => n.chapter_count > 0) ?? novels[0];
@@ -71,9 +77,9 @@ export function registerNovelPreviewActions(reg: ActionRegistry, qc: QueryClient
       run: async ctx => {
         const i = ctx.input as RenameInput;
         let saved: unknown;
-        try { saved = await api.renameChapter(i.chapterId, i.title.trim(), i.version); }
+        try { saved = await withTimeout(api.renameChapter(i.chapterId, i.title.trim(), i.version), WORKSPACE_TIMEOUTS.writeMs, 'write'); }
         catch (e) {
-          if (e instanceof ApiError) throw e;
+          if (e instanceof ApiError || e instanceof WorkspaceTimeoutError) throw e;
           if (e instanceof SyntaxError) throw new RenameUnconfirmedError(); // non-JSON body
           throw new RenameNetworkError(); // fetch rejected / network error [HERMIA-FE-20261023 M1-s3fix2]
         }
@@ -105,7 +111,7 @@ export function OutlinePanel({novelId, novels, onNovel, selectedId, onSelect, bl
   selectedId?: string; onSelect: (id: string) => void; blockedNotice?: string | null;
   ctx: () => ActionContext; actions: ActionRegistry;
 }) {
-  const chapters = useQuery({queryKey: chaptersKey(novelId ?? ''), queryFn: () => api.chapters(novelId!), enabled: !!novelId, retry: false});
+  const chapters = useQuery({queryKey: chaptersKey(novelId ?? ''), queryFn: () => readChapters(novelId!), enabled: !!novelId, retry: false});
   const [msg, setMsg] = useState('');
   if (novels.isLoading) return <p className="uw-state" role="status" data-state="loading">正在读取作品…</p>;
   if (novels.error) return <p className="uw-state" role="alert" data-state={classifyError(novels.error)}>{ERR_TEXT[classifyError(novels.error)]}</p>;
@@ -130,14 +136,19 @@ export function OutlinePanel({novelId, novels, onNovel, selectedId, onSelect, bl
 }
 
 /** Inspector: selected chapter's real properties; title edit is dirty-registered. */
-export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions, dirtyRef}: {
+export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions, dirtyRef, drafts}: {
   novelId: string | null; chapterId: string | null; api: PanelRenderApi;
-  ctx: (input?: unknown) => ActionContext; actions: ActionRegistry; dirtyRef: {current: boolean};
+  ctx: (input?: unknown) => ActionContext; actions: ActionRegistry; dirtyRef: {current: boolean}; drafts?: DraftStore;
 }) {
+  const localDrafts = useRef<DraftStore | null>(null);
+  const store = drafts ?? (localDrafts.current ??= new DraftStore());
+  const gate = useRef(new LatestGate());
   const qc = useQueryClient();
-  const chapters = useQuery({queryKey: chaptersKey(novelId ?? ''), queryFn: () => api.chapters(novelId!), enabled: !!novelId, retry: false});
+  const chapters = useQuery({queryKey: chaptersKey(novelId ?? ''), queryFn: () => readChapters(novelId!), enabled: !!novelId, retry: false});
   const chapter: Chapter | undefined = chapters.data?.find(c => c.id === chapterId);
-  const [draft, setDraft] = useState<{id: string; title: string} | null>(null);
+  const [stored, setStored] = useDraft(store, novelId && chapterId ? chapterDraftKey(novelId, chapterId) : null);
+  const draft = stored && chapterId ? {id: chapterId, title: stored.value} : null;
+  const setDraft = (d: {id: string; title: string} | null, base = stored?.base ?? chapter?.title ?? '') => setStored(d ? {value: d.title, base} : null);
   const [msg, setMsg] = useState<{kind: 'ok' | 'err'; text: string} | null>(null);
   const [saving, setSaving] = useState(false);
   const dirty = !!draft && !!chapter && draft.id === chapter.id && draft.title !== chapter.title;
@@ -147,6 +158,7 @@ export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions,
   const save = async (): Promise<void> => {
     const {draft: d, chapter: c, novelId: n} = live.current;
     if (!d || !c || !n) return;
+    const key = chapterDraftKey(n, c.id); const tok = gate.current.begin();
     setSaving(true); setMsg(null);
     try {
       const r = await actions.execute(NOVEL_ACTION_IDS.rename, ctx({chapterId: c.id, novelId: n, title: d.title, version: c.version} satisfies RenameInput));
@@ -154,19 +166,22 @@ export function InspectorPanel({novelId, chapterId, api: panelApi, ctx, actions,
         const text = r.status === 'blocked' ? r.reason : r.status === 'error'
           ? (r.error instanceof ApiError && r.error.status === 409 ? '章节已被其他地方修改，请刷新后再改。'
             : r.error instanceof RenameUnconfirmedError ? RENAME_UNCONFIRMED_TEXT
-            : r.error instanceof RenameNetworkError ? RENAME_NETWORK_TEXT : '保存失败，请重试。')
+            : r.error instanceof RenameNetworkError ? RENAME_NETWORK_TEXT
+            : r.error instanceof WorkspaceTimeoutError ? WRITE_TIMEOUT_TEXT : '保存失败，请重试。')
           : r.status === 'duplicate' ? '正在保存，请稍候。' : '项目已切换，本次保存未生效。';
-        setMsg({kind: 'err', text}); throw new Error(text);
+        if (gate.current.isLatest(tok)) setMsg({kind: 'err', text}); throw new Error(text);
       }
       const saved = r.value as Chapter;
       qc.setQueryData<Chapter[]>(chaptersKey(n), list => list?.map(x => x.id === saved.id ? {...x, ...saved} : x));
-      setDraft(null); setMsg({kind: 'ok', text: `已保存（版本 ${saved.version}）`});
-    } finally { setSaving(false); }
+      // Only drop the draft if it is still exactly what was saved (user may have typed more while saving).
+      if (store.get(key)?.value === d.title) store.set(key, null);
+      if (gate.current.isLatest(tok)) setMsg({kind: 'ok', text: `已保存（版本 ${saved.version}）`});
+    } finally { if (gate.current.isLatest(tok)) setSaving(false); }
   };
   useEffect(() => panelApi.registerDirty({
     isDirty: () => live.current.dirty,
     save,
-    discard: () => setDraft(null),
+    discard: () => { const {novelId: n, chapter: c} = live.current; if (n && c) store.set(chapterDraftKey(n, c.id), null); },
   // eslint-disable-next-line react-hooks/exhaustive-deps -- reads through live ref
   }), [panelApi]);
 
