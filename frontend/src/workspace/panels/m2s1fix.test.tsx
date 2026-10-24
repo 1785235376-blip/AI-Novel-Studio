@@ -135,7 +135,7 @@ describe('uw preview integration', () => {
   it('Mod+Alt+P via the shared table brings the hindmost main tab to the front', async () => {
     mount();
     await screen.findByTestId('uw-creative-canvas');
-    const pressed = () => screen.getByTestId('uw-main-tabs').querySelector('[aria-pressed=true]')!.getAttribute('data-panel-tab');
+    const pressed = () => screen.getByTestId('uw-main-tabs').querySelector('[aria-selected=true]')!.getAttribute('data-panel-tab');
     const first = pressed();
     fireEvent.keyDown(window, {key: 'p', code: 'KeyP', ctrlKey: true, altKey: true});
     await waitFor(() => expect(pressed()).not.toBe(first));

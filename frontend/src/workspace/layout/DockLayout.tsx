@@ -3,6 +3,7 @@
  * Real pointer drag to dock zones, float drag, resize handles (pointer + keyboard), collapse,
  * close (dirty guard) / reopen menu, split switch, reset default (confirm), persistence status.
  * NOT mounted by App.tsx yet; wiring lives in artifacts/unified-workspace-refactor/patches/.
+ * [HERMIA-FE-20261024 M4-s1] keyboard/a11y: skip link, tablist, splitter valuemax/Home/End/Esc, labelled regions, zoom-safe CSS.
  */
 import {useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
@@ -11,7 +12,7 @@ import {ActionRegistry, type ActionContext, type ExecuteResult} from '../../work
 import {LifecycleTracker} from '../../workbench/lifecycle';
 import {actionIdForKey, displayShortcut, LAYOUT_ACTION_IDS, registerLayoutActions, ShortcutTable, type LayoutActionId, type LayoutActionOptions} from '../actions/layoutActions';
 import {
-  closedPanels, dropAxis, emptyZoneBox, dropIndexFromPoint, layoutReducer, panelsIn, zoneFromPoint,
+  closedPanels, crossLimit, maxSizeFor, dropAxis, emptyZoneBox, dropIndexFromPoint, layoutReducer, panelsIn, zoneFromPoint,
   type DockZone, type LayoutAction, type LayoutPanelSpec, type LayoutState, type PanelFrame, type SplitMode, type Viewport,
 } from './model';
 import {loadWorkspaceLayout, saveWorkspaceLayout, type LoadOptions, type LoadResult} from './persistence';
@@ -306,6 +307,16 @@ export function DockLayout(props: DockLayoutProps) {
   // ---- resize handle ----
   const resizeDrag = useRef<{id: string; start: number; size: number; axis: 'x' | 'y'; sign: number} | null>(null);
   useEffect(() => {
+    // [HERMIA-FE-20261024 M4-s1] Esc cancels an active pointer resize and restores the size it started from.
+    const esc = (e: globalThis.KeyboardEvent) => {
+      const r = resizeDrag.current; if (!r || e.key !== 'Escape') return;
+      e.preventDefault(); e.stopPropagation(); resizeDrag.current = null;
+      dispatch({type: 'resize', id: r.id, size: r.size});
+    };
+    window.addEventListener('keydown', esc, true);
+    return () => window.removeEventListener('keydown', esc, true);
+  }, []);
+  useEffect(() => {
     const move = (e: PointerEvent) => {
       const r = resizeDrag.current; if (!r) return;
       const delta = (r.axis === 'x' ? e.clientX : e.clientY) - r.start;
@@ -332,13 +343,18 @@ export function DockLayout(props: DockLayoutProps) {
     const axis = f.dock === 'bottom' ? 'y' : 'x';
     const sign = f.dock === 'left' ? 1 : -1; // right/bottom grow toward the start
     const spec = specOf(f.id);
+    // [HERMIA-FE-20261024 M4-s1] aria-valuemax = effective limit (spec max, viewport share, main keeps 320×200);
+    // Shift+arrow = big step; Home/End jump to min/max.
+    const max = Math.max(spec.minSize, Math.min(maxSizeFor(spec, f.dock, viewport), crossLimit(state.frames, f.id, f.dock, viewport)));
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); dispatch({type: 'resize', id: f.id, size: e.key === 'Home' ? spec.minSize : max}); return; }
       const grow = axis === 'x' ? (e.key === 'ArrowRight' ? sign : e.key === 'ArrowLeft' ? -sign : 0) : (e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0);
-      if (!grow) return; e.preventDefault(); dispatch({type: 'resize', id: f.id, size: f.size + grow * KEY_STEP});
+      if (!grow) return; e.preventDefault(); dispatch({type: 'resize', id: f.id, size: f.size + grow * KEY_STEP * (e.shiftKey ? 4 : 1)});
     };
     return (
       <div role="separator" tabIndex={0} aria-label={`调整「${spec.title}」大小`} aria-orientation={axis === 'x' ? 'vertical' : 'horizontal'}
-        aria-valuenow={f.size} aria-valuemin={spec.minSize}
+        aria-valuenow={f.size} aria-valuemin={spec.minSize} aria-valuemax={max} aria-controls={`uw-panel-${f.id}`}
+        aria-valuetext={`${f.size} 像素`}
         className={`uw-resize uw-resize--${axis}`} data-testid={`resize-${f.id}`} onKeyDown={onKey}
         onPointerDown={e => { e.preventDefault(); resizeDrag.current = {id: f.id, start: axis === 'x' ? e.clientX : e.clientY, size: f.size, axis, sign}; }} />
     );
@@ -350,12 +366,13 @@ export function DockLayout(props: DockLayoutProps) {
       ? {left: f.floatRect.x, top: f.floatRect.y, width: f.floatRect.w, height: f.floatRect.h, zIndex: 100 + f.z}
       : f.dock === 'left' || f.dock === 'right' ? {width: f.collapsed ? undefined : f.size} : f.dock === 'bottom' ? {height: f.collapsed ? undefined : f.size} : undefined;
     return (
-      <section key={f.id} role="region" aria-label={spec.title} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
+      <section key={f.id} id={`uw-panel-${f.id}`} role="region" aria-label={spec.title}
+        aria-labelledby={f.dock === 'main' && main.length > 1 ? `uw-tab-${f.id} uw-panel-title-${f.id}` : `uw-panel-title-${f.id}`} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
         data-collapsed={f.collapsed} data-focused={state.focusId === f.id} data-z={f.z}
         className={`uw-panel${f.dock === 'float' ? ' uw-float' : ''}`} style={style} onFocusCapture={() => dispatch({type: 'focus', id: f.id})}>
         <header className="uw-panel__head" data-testid={`drag-${f.id}`} onPointerDown={startDrag(f)}>
-          <span className="uw-panel__title">{spec.title}</span>
-          <button type="button" className="uw-btn" aria-expanded={!f.collapsed} data-action-id={LAYOUT_ACTION_IDS.toggleCollapse}
+          <span className="uw-panel__title" id={`uw-panel-title-${f.id}`}>{spec.title}</span>
+          <button type="button" className="uw-btn" aria-expanded={!f.collapsed} aria-controls={`uw-panel-${f.id}`} data-action-id={LAYOUT_ACTION_IDS.toggleCollapse}
             aria-busy={pendingOf(LAYOUT_ACTION_IDS.toggleCollapse, f.id) || undefined} onClick={() => { void runAction(LAYOUT_ACTION_IDS.toggleCollapse, f.id); }}>{f.collapsed ? '展开' : '折叠'}</button>
           <select className="uw-select" aria-label={`「${spec.title}」停靠位置`} value={f.dock} onChange={e => dispatch({type: 'dock', id: f.id, dock: e.target.value as DockZone})}>
             {spec.docks.map(d => <option key={d} value={d}>{DOCK_LABEL[d]}</option>)}
@@ -383,8 +400,23 @@ export function DockLayout(props: DockLayoutProps) {
     ? {ok: false, text: '布局数据无法读取，已用默认布局；原数据已备份，未被覆盖'}
     : saveStatus;
 
+  // [HERMIA-FE-20261024 M4-s1fix] tabs keep a stable (spec) order; activation reorders panels, not tabs, so arrow keys stay predictable.
+  const tabOrder = [...main].sort((a, b) => specs.findIndex(s => s.id === a.id) - specs.findIndex(s => s.id === b.id));
+  const onTabsKey = (e: KeyboardEvent) => {
+    const tabs = Array.from((e.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const i = tabs.indexOf(document.activeElement as HTMLButtonElement); if (i < 0 || !tabs.length) return;
+    const n = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? (i - 1 + tabs.length) % tabs.length
+      : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+    if (n < 0) return; e.preventDefault(); tabs[n].focus(); tabs[n].click();
+  };
+  const skipToMain = (e: {preventDefault(): void}) => {
+    e.preventDefault();
+    const m = rootRef.current?.querySelector<HTMLElement>('[data-testid="main-zone"]'); m?.focus();
+  };
   return (
-    <div className="uw-layout" ref={rootRef} data-testid="dock-layout" data-source={initial.source}>
+    <div className="uw-layout" ref={rootRef} style={{['--uw-toolbar-h' as string]: `${toolbarH}px`}} data-testid="dock-layout" data-source={initial.source}>
+      {/* [HERMIA-FE-20261024 M4-s1] skip link: first Tab stop, visible on focus. [HERMIA-FE-20261024 M4-s1fix] sits below the toolbar; tabs: ids, aria-controls on all, labelledby, multiselectable in split. */}
+      <a href="#uw-main" className="uw-skip" data-testid="uw-skip-main" onClick={skipToMain}>跳到主区域</a>
       <div className="uw-toolbar" role="toolbar" aria-label="布局" ref={toolbarRef}>
         {props.toolbarStart}
         <label>布局 <select className="uw-select" aria-label="分屏方式" data-action-id={LAYOUT_ACTION_IDS.split} value={state.split}
@@ -398,9 +430,12 @@ export function DockLayout(props: DockLayoutProps) {
           {closed.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
         </select></label>
         {/* [HERMIA-FE-20261024 M2-s1] N5: every main panel (e.g. 执行画布) has a visible tab; uses layout.showPanel. */}
-        {main.length > 1 && <span role="group" aria-label="中间面板" className="uw-main-tabs" data-testid="uw-main-tabs">{main.map(f => {
+        {/* [HERMIA-FE-20261024 M4-s1] tablist semantics: roving tabindex, ←/→/Home/End move + activate. */}
+        {main.length > 1 && <span role="tablist" aria-label="中间面板" aria-multiselectable={state.split !== 'single' || undefined} className="uw-main-tabs" data-testid="uw-main-tabs" onKeyDown={onTabsKey}>{tabOrder.map(f => {
           const shown = visibleMain.some(v => v.id === f.id);
-          return <button key={f.id} type="button" className="uw-btn" aria-pressed={shown} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
+          const current = (visibleMain.find(v => v.id === state.focusId) ?? visibleMain[0])?.id === f.id;
+          return <button key={f.id} type="button" role="tab" className="uw-btn uw-tab" aria-selected={shown} aria-current={current && shown ? 'true' : undefined}
+            tabIndex={current ? 0 : -1} id={`uw-tab-${f.id}`} aria-controls={shown ? `uw-panel-${f.id}` : undefined /* [HERMIA-FE-20261024 M4-s1fix2] only reference rendered panels */} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
             aria-busy={pendingOf(LAYOUT_ACTION_IDS.show, f.id) || undefined} onClick={() => { if (!shown || state.focusId !== f.id) void runAction(LAYOUT_ACTION_IDS.show, f.id, f.id); }}>{specOf(f.id).title}</button>;
         })}</span>}
         {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>
@@ -416,7 +451,7 @@ export function DockLayout(props: DockLayoutProps) {
       </div>
       <div className="uw-body" ref={bodyRef}>
         {left.length > 0 && <div className="uw-col uw-col--left" data-zone-box="left" style={{display: 'flex', flexDirection: 'row'}}><div className="uw-col">{left.map(f => panel(f))}</div>{left[0] && resizeHandle(left[0])}</div>}
-        <div className="uw-main" data-split={state.split} data-testid="main-zone" data-zone-box="main">
+        <div className="uw-main" id="uw-main" role="main" aria-label="主区域" tabIndex={-1} data-split={state.split} data-testid="main-zone" data-zone-box="main">
           {visibleMain.map(f => panel(f))}
         </div>
         {right.length > 0 && <div className="uw-col uw-col--right" data-zone-box="right" style={{display: 'flex', flexDirection: 'row'}}>{right[0] && resizeHandle(right[0])}<div className="uw-col">{right.map(f => panel(f))}</div></div>}

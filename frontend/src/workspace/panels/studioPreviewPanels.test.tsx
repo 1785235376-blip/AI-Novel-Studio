@@ -73,7 +73,7 @@ describe('studio preview panels (real components)', () => {
     fireEvent.click(screen.getByTestId('uw-open-execution'));
     await waitFor(() => expect(screen.getByTestId('uw-execution-canvas')).toBeTruthy());
     expect(within(screen.getByTestId('uw-execution-canvas')).getByRole('application', {name: '视频无限画布'})).toBeTruthy();
-    expect(screen.getByTestId('uw-main-tabs').querySelector('[data-panel-tab=execution]')!.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('uw-main-tabs').querySelector('[data-panel-tab=execution]')!.getAttribute('aria-selected')).toBe('true');
     expect(calls.slice(before).filter(c => c.method !== 'GET' || MODEL_URL.test(c.url.replace('/experimental/workspace/tasks', '')))).toEqual([]);
   });
   it('N5: Mod+Alt+E opens the execution canvas even after it was closed', async () => {

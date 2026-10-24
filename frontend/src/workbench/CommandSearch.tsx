@@ -43,11 +43,15 @@ export function CommandSearch({workbench, onLegacy}: {workbench: Workbench; onLe
   const input = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   // [HERMIA-FE-20261022] Ctrl+K is owned by AppShell "打开全局命令" (protected surface).
+  // [HERMIA-FE-20261024 M4-s1fix] do not steal focus on mount; only return focus to the trigger after the palette closes.
+  const wasOpen = useRef(false);
   useEffect(() => {
     if (open) {
+      wasOpen.current = true;
       setActive(0);
       input.current?.focus();
-    } else {
+    } else if (wasOpen.current) {
+      wasOpen.current = false;
       trigger.current?.focus({preventScroll: true});
     }
   }, [open]);

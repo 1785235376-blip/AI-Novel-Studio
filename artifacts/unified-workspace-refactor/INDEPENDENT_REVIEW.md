@@ -565,6 +565,47 @@ nit（P3）：
     - StudioCanvasVideoTask.integration 1 条（只在第 3 次出现，Test timed out in 5000ms）。机器负载 25–46，有别人的 vitest 在跑。单独跑 5 次：前 3 次是超时、失败、超时（外层 300s timeout），负载下降后第 4、5 次连续通过。不在改动范围内。
 - tsc：6 个错误，与基线一致。workspace 和 workbench 测试 23 个文件、206 个用例全部通过。
 
+## M4-s1 (ea856da7) [VERA-FE]
+
+- 对象：分支 work/hermia-uw-m4-20261024，HEAD ea856da7，tree d1311067 已核对；基于 3520d679。临时 worktree 固定在 ea856da7，用 npm ci 安装，Node 22.14，vite 起在 4499；所有非 GET 请求都被路由拦截（拦到 0 次），页面错误 0。复审结束后已停 vite、删除并 prune 临时 worktree。证据在 /workspace/hr/vera-compare/m4s1/。
+- **结论：PASS**（无 MUST-FIX）。
+
+### 浏览器（?uw=1；1366/1440/1920，DPR 1.25/1.5，CSS zoom 1.25 @1366/1920）
+- 跳到主区域：DOM 里它是第一个可聚焦元素；获得焦点后可见（top 6px，2px 实线描边）；按 Enter 后焦点进入 #uw-main（role=main，aria-label=主区域）。**但不打补丁时**，页面加载后焦点落在「搜索功能」，第一次按 Tab 到的是「执行画布」，按 Shift+Tab 才回到跳转链接（和 M4_REPORT 记的 PARTIAL 一致）。
+- tablist：role=tablist（aria-label=中间面板）/role=tab 都对，aria-selected 跟着切换，roving tabindex 始终只有一个 0；→/← 循环、Home/End 都正确（快速连按也正确）；0 次写请求。
+- 分割条（outline/inspector/tasks）：role=separator、aria-orientation、valuenow/min/max/valuetext（「N 像素」）、aria-controls 指向的元素都存在，并随方向键实时更新（每步 16px）；Home=min，End=valuemax，超出两端会被钳住；outline 拉到最大时主区 320 宽，tasks 拉到最大时主区高 239，都 ≥ 下限。拖动中按 Esc：270→恢复成 180。
+- 焦点描边可见（tab、分割条、跳转链接）；7 种配置下 scrollWidth 都等于 clientWidth；主区最小 614×403（1366 + zoom 1.25）；1366 + zoom 1.25 下工具栏高 108px，换行正常，状态行在第二行。
+- axe-core（只扫 dock-layout）：每种配置都只有 color-contrast（serious）×3，位置是 .nv-rail__h / .nv-rail__vol（作品结构面板里复用的旧组件，不属于本次改动）；M4 新增元素没有违规。
+- 旧 UI（不带 uw、?mode=pro）：没有跳转链接，也没有 dock-layout，正常加载，0 写请求、0 错误。本次 diff 没有动 src/workspace 以外的源码。
+
+### 裁定：aria-pressed → aria-selected
+判定为**规格变更，强度不变，不算断言变弱**。理由：组件确实改成了 role=tab，aria-selected 才是正确的语义；三处旧测试仍然逐个 tab 断言 true/false 和切换后的值，其他断言一字未改（已对 3520d679 做 diff）。变异「删掉 aria-selected」时，这 3 条旧测试加 m4s1 共 4 条全部失败，证明它们仍然有效。
+
+### 初始焦点补丁 patches/m4-s1-commandsearch-initial-focus.patch
+只在临时 worktree 里应用过（可以干净 apply）。打补丁后：加载时焦点在 BODY，第一次按 Tab 就到「跳到主区域」；命令面板打开后焦点进输入框，按 Esc 关闭后焦点回到「搜索功能」触发按钮（回焦行为保留）；workspace/workbench/rebuild 三个目录 286/286 通过，CommandSearch 两个测试文件都通过。旧 App 首页不渲染 CommandSearch，补丁只去掉了挂载时抢焦点。**建议应用**，并补一条测试（挂载时不抢焦点 + 关闭后回焦），目前没有测试覆盖这两点。是否正式应用由 Hermia 或用户决定。
+
+### 变异
+- 删 aria-selected：抓到（4 条失败）
+- 方向键失效：抓到
+- 删 Esc 恢复：抓到
+- 删跳转链接：抓到
+- 删 roving tabindex：抓到
+- 补充：去掉循环（→ 到末尾停住）**存活**；去掉 tab 的 Home/End **存活**（浏览器实测都正常，只是没有测试锁住）。
+
+### 测试
+- 目标子集（Node 22.14）：42 个文件，286/286 通过；tsc 6 个错误，和基线一致。
+- 全量 vitest：**本轮未跑（PENDING）**，等 M5 合并后由 Hermia 统一跑，按现行门槛复核。
+
+### 和 Hermia 证据对照
+logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出，主区 ≥320×200，Shift+Tab 回到跳转链接，分割条每次 →→ 是 248→280，End=valuemax，Esc 能恢复，0 次非 GET。截图 21 张和日志对得上。说明：她的脚本只是记录非 GET 请求，没有拦截；我这边是拦截的，结果同样是 0。
+
+### 问题（按优先级）
+- P2：不打补丁时初始焦点在「搜索功能」，跳转链接不是加载后的第一个 Tab 停点 → 应用上面的补丁并补测试。
+- P3：tab 的循环和 Home/End 没有测试锁住（两条变异存活）→ 补两条断言。
+- P3：只有当前选中的 tab 带 aria-controls；面板是 role=region，没有 aria-labelledby 指回 tab；分屏时两个 tab 可能同时 aria-selected=true，但 tablist 没有标 aria-multiselectable。建议补齐或在 contract 里写明。
+- P3：跳转链接获得焦点时会盖住左上角的「搜索功能」按钮，这时用鼠标点不到它（只在获得焦点的那一刻发生）。可以把链接往右挪，或在失焦时立即收起。
+- P3（不属于本次改动）：作品结构面板里旧组件 .nv-rail 有 3 处颜色对比度不足（axe serious）。
+
 ## M3-s1fix (8563bd54) — [VERA-FE] 独立复核
 
 结论：**MUST-FIX**（P1：真实浏览器里发送后自动平移从不生效）
@@ -582,6 +623,45 @@ nit（P3）：
 - **5 测试**：子集 workspace/rebuild/taskcenter 50 个文件 420/420 ✓；tsc 6（基线）✓；旧 UI 18 页与 legacy-81a65eb8 逐字节对比 18/18 SAME ✓（401 与基线相同）。**全量 vitest：PENDING（合并后跑）**。
 - 证据：/workspace/hr/vera-compare/m3s1fix/（browser/check.json、probe.json、blocked.json、截图、mutations.log、subset.log、tsc.log、legacy/run）。
 
+## [VERA-FE] M4-s1fix（ae916e14）
+
+- HEAD ae916e14，tree a3998e4d ✓；对比 ea856da7：代码改动仅 CommandSearch.tsx、DockLayout.tsx/.css，测试新增 CommandSearch.m4s1fix.test.tsx、m4s1fix.test.tsx，修改 m4s1.test.tsx 1 处（正则）。
+- 环境：临时 worktree /tmp/vera-m4s1fix，Node 22.14，vite :4399，非 GET 全部拦截（0 次触发），单浏览器串行；证据 vera-compare/m4s1fix/
+
+### 1. CommandSearch 初始焦点
+- 补丁与 patches/m4-s1-commandsearch-initial-focus.patch 代码一致（仅注释标签 M4-s1→M4-s1fix 不同）✓
+- 浏览器（1366/1440/1920/zoom1.25）：加载后焦点在 body，首个 Tab 到「跳到主区域」；打开面板焦点进输入框，Esc 后回到「搜索功能」按钮 ✓
+- 旧 App（进入小说→展开「更多」）：加载不抢焦点，打开→输入框，Esc→触发按钮；与 ea856da7 基线行为一致 ✓
+- 两个新测试的变异（去掉 wasOpen 守卫 / 去掉焦点恢复）各自被对应测试杀死 ✓
+
+### 2. 标签顺序
+- 浏览器 1366/1920：逆序依次点击各标签，DOM 顺序始终为 creative,execution（配置顺序）✓；←(首→尾回绕)、→(尾→首)、End、Home、↑、↓ 全部落到正确标签 ✓
+- 变异：恢复按面板顺序渲染、去右回绕、去左回绕、去 Home、去 End → 全部杀死 ✓
+
+### 3. ARIA
+- 每个 tab 有 id=uw-tab-*、aria-controls=uw-panel-*；可见主面板 aria-labelledby="uw-tab-X uw-panel-title-X"，引用均存在；侧栏面板只指向自身标题 ✓
+- aria-multiselectable：单屏无此属性，split-h 时 =true 且两个 tab selected，回单屏后消失 ✓
+- 注意（LOW）：单屏时未显示面板的 tab 也带 aria-controls，指向不在 DOM 的 id（ARIA 允许但不理想，axe 未报）
+- axe（1366/1920，单屏+分屏，dock-layout 范围及整页）：与 ea856da7 基线完全一致——范围内仅 .nv-rail color-contrast×3（已知）；整页另有 document-title/html-has-lang/page-has-heading-one/region×4，基线同样存在。无新增 ✓
+- 自加变异：multiselectable 恒真、tab 去 id、labelledby 去掉 tab、删除 labelledby → 杀死；**labelledby 指向错误 tab（main[0]）→ 存活**（见裁定 5）
+
+### 4. 裁定：跳过链接遮挡 —— 可接受
+- 聚焦时位置：1366/1440/1920 为 [8,67,95,96]；zoom1.25 为 [10,110,118,146]（1366）/[10,104,118,140]（1920）
+- 覆盖：左面板标题「作品结构」文字 + 「折叠」按钮左缘约 4px（按钮 [91,67,135,92]）；采样 5 点仍可点 3/5（zoom1.25 为 4/5）。不覆盖「搜索功能」。
+- 仅在跳过链接自身聚焦时出现，焦点移走即隐藏；「折叠」仍可 Tab 到达且大部分区域可点击。被聚焦元素本身未被遮挡（符合 2.4.11）。无不可达控件 → 可接受。建议（LOW）：left 偏移或把 top 再加 ~28px 以完全避开标题行。
+
+### 5. 裁定：面板名断言 精确→正则 —— 弱化断言
+- 新写法 `new RegExp(s.title)`：未锚定的子串匹配，不再钉住 tab 与标题。实证：变异 V13（labelledby 引用 main[0] 的 tab）全部测试通过。
+- 建议改为精确拼接：多标签主区 `${tabTitle} ${s.title}`（如「创作画布 创作画布」），其它面板 `s.title`；或锚定正则 /^创作画布 创作画布$/。
+
+### 6. 其它
+- 对比 ea856da7 的测试差异：除上述正则外无其它放宽；新增 5 个测试。
+- Hermia 7 个变异全部复现为杀死。
+- 定向子集（workspace/workbench/rebuild）：44 文件 291/291 ✓；tsc：6 errors（基线）✓；全量：合并后跑（pending）。
+- 模型请求 0（旧 App 仅 GET /api/text-models 列表读取）。
+
+### 结论：PASS（附裁定 5 的弱化断言，建议合并前改为精确名称）
+
 ## M3-s1fix2 (1916ea1b) — [VERA-FE] 独立复审：PASS
 
 - 范围：代码提交 edf7576e；edf7576e..1916ea1b 不触碰 frontend（diff 为空）。证据：/workspace/hr/vera-compare/m3s1fix2/（脚本 m3s1fix2_browser.mjs 为 Vera 自写，改自 m3s1fix_browser.mjs，未使用 Hermia 脚本；全部非 GET 被拦截，writes=[]、model=[]、errs=[]）。
@@ -592,3 +672,35 @@ nit（P3）：
 - 5 rAF 回退：addInitScript 删除 window.ResizeObserver（页面确认 hasRO=false），发送 1/12 均正确揭示，手动平移后切 tab 不回拉。
 - 6 Hermia：自行复现 5 个变异 + 额外"去掉尺寸检查"：一次性不等待尺寸 3 失败、宿主不清 flag 1 失败、无 rAF 1 失败、RO 回调失效 2 失败、去尺寸检查 3 失败、守卫移除 8/8 通过（等价，同上）。patches/m3s1fix2-shared-nonentry.patch 与 edf7576e 的 RebuildCanvas diff 逐行一致。RebuildCanvas 其他使用方（VideoRebuild、ImageRebuild、DualCanvas）未传 revealLast/onRevealed，默认行为不变；旧 DualCanvas 1366 实测与 M3-s1fix 基线一致（发送后 translate(40,40)）。P3 文档：IMPLEMENTATION_REPORT 第 155 行已加更正说明；m3s1fix 变异日志 "(12)" 已解释（5+7）。均已修复。
 - 7 测试：workspace/rebuild/taskcenter 423/423（首轮 1 个 TaskCenter.receiptCompanion 偶发失败，单独 3 次均过，整轮重跑 423/423，与本改动无关）；tsc 6（基线）；旧 UI 18 页对比 legacy-81a65eb8 18/18 一致；全量套件待合并后运行。
+
+## [VERA-FE] M4-s1fix2（9f2a04e4）
+
+- HEAD 9f2a04e4，tree 32b85cff ✓；对比 ae916e14：代码仅 DockLayout.tsx（aria-controls 条件化）、DockLayout.css（聚焦跳过链接居中）；测试改 m4s1.test.tsx、m4s1fix.test.tsx。
+- 环境：临时 worktree /tmp/vera-m4s1fix2，Node 22.14，vite :4399，非 GET 全拦截（0 次），单浏览器；证据 vera-compare/m4s1fix2/
+
+### 1. 面板名断言
+- m4s1.test.tsx：精确名称（labelledby 以 uw-tab- 开头时为「标题 标题」，否则为标题）；m4s1fix.test.tsx 分屏用例锚定 ^<tab> <header>$ ✓。浏览器实测名称：创作画布 创作画布 / 执行画布 执行画布 / 作品结构 / 章节属性 / 任务，与断言一致。
+- 上轮存活的 V13（labelledby 指向 main[0] 的 tab）→ 现被分屏用例杀死 ✓；另加 V13b（tab 与标题顺序互换）、V10（去掉 tab）→ 杀死 ✓
+
+### 2. aria-controls 仅指向已渲染面板
+- 浏览器 1366/1920：单屏 creative→uw-panel-creative、execution 无 aria-controls；分屏两者都有；切回单屏恢复。页面上所有 aria-controls 全部可解析，无悬空 id ✓
+- 变异：恒有 aria-controls / 恒无 / 条件取反 → 全部杀死 ✓。上轮“仅已选 tab 带 aria-controls”导致 82 个失败的变异，现即为正式实现，基线 218/218 干净通过 ✓
+- 测试变化说明：“每个 tab 都有 aria-controls”改为“仅已选 tab 有”，并新增“未选 tab 必须无 aria-controls”——属规格变更，非放宽。
+
+### 3. 跳过链接居中
+| 视口 | 矩形 | 中心偏移 | 完全可见 | 覆盖交互控件 | 下方网格采样 | Enter 后焦点 |
+|---|---|---|---|---|---|---|
+| 1366 | [639,67,727,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1440 | [676,67,764,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1920 | [916,67,1004,96] | 0 | ✓ | 无 | 无 | main-zone ✓ |
+| 1366 zoom1.25 | [629,110,737,146] | 0 | ✓ | 无 | 无 | ✓ |
+| 1440 zoom1.25 | [666,110,774,146] | 0 | ✓ | 无 | 无 | ✓ |
+| 1920 zoom1.25 | [906,104,1014,140] | 0 | ✓ | 无 | 无 | ✓ |
+- 加载焦点在 body，首个 Tab 到跳过链接 ✓
+
+### 4. 其它
+- 对比 ae916e14 的测试差异：无其它放宽。
+- 定向子集（workspace/workbench/rebuild）：44 文件 293/293 ✓；tsc：6 errors（基线）✓；全量：合并后跑（pending）。
+- axe 1366：范围内 color-contrast×3（.nv-rail，已知）；整页 document-title/html-has-lang/page-has-heading-one/region×4——与 m4s1fix 基线完全一致，无新增 ✓
+
+### 结论：PASS

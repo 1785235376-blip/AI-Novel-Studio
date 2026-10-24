@@ -55,19 +55,19 @@ describe('N5 visible main-panel tabs + layout.showPanel', () => {
     const ctx = (input: unknown) => ({token: tracker.current(), targetId: String(input), targetVersion: null, permissions: new Set<string>(), input});
     return {reg, ctx};
   }
-  it('both main panels have a tab; clicking 执行画布 brings it to front, aria-pressed follows', async () => {
+  it('both main panels have a tab; clicking 执行画布 brings it to front, aria-selected follows (M4-s1: tab role)', async () => {
     setup();
     const tabs = screen.getByTestId('uw-main-tabs');
     const exec = tabs.querySelector<HTMLButtonElement>('[data-panel-tab=exec]')!;
     const canvas = tabs.querySelector<HTMLButtonElement>('[data-panel-tab=canvas]')!;
     expect(exec.textContent).toBe('执行画布');
-    if (exec.getAttribute('aria-pressed') === 'true') { fireEvent.change(screen.getByLabelText('切换中间面板'), {target: {value: 'canvas'}}); }
-    expect(exec.getAttribute('aria-pressed')).toBe('false');
+    if (exec.getAttribute('aria-selected') === 'true') { fireEvent.change(screen.getByLabelText('切换中间面板'), {target: {value: 'canvas'}}); }
+    expect(exec.getAttribute('aria-selected')).toBe('false');
     expect(screen.queryByText('exec 内容')).toBeNull();
     fireEvent.click(exec);
     await waitFor(() => expect(screen.getByText('exec 内容')).toBeTruthy());
-    expect(exec.getAttribute('aria-pressed')).toBe('true');
-    expect(canvas.getAttribute('aria-pressed')).toBe('false');
+    expect(exec.getAttribute('aria-selected')).toBe('true');
+    expect(canvas.getAttribute('aria-selected')).toBe('false');
   });
   it('layout.showPanel reopens a closed panel, rejects unknown ids with a reason', async () => {
     const {reg, ctx} = setup();
