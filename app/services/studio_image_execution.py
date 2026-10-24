@@ -356,6 +356,14 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
     body = _payload(body); context = _context(context, body, actor)
     guard()
     def add(rows):
+        if 'canvas_image_node' in context.get('command', {}):
+            matches = [row for row in rows if row.get('contract') == CONTRACT
+                and row.get('context', {}).get('scope_key') == context['scope_key']
+                and row.get('context', {}).get('incarnation') == context['incarnation']
+                and row.get('context', {}).get('request_id') == context['request_id']]
+            if len(matches) > 1:
+                from ..experimental.common import StaleSourceError
+                raise StaleSourceError('STUDIO_IMAGE_CREATE_AMBIGUOUS')
         for row in rows:
             if (row.get("contract") == CONTRACT and row.get("context", {}).get("scope_key") == context["scope_key"]
                     and row.get("context", {}).get("incarnation") == context["incarnation"]
@@ -420,6 +428,68 @@ def list_jobs(service, nid, branch, actor, context, guard):
             rows.append(copy.deepcopy(_owned(service, row, nid, branch, actor)))
     guard()
     return rows
+
+
+def resolve_create(service, nid, branch, actor, context, request_id, guard):
+    """One bounded original-owner snapshot, with no queue mutation or replay.
+
+    Absence is an observation, not evidence that an in-flight create rolled
+    back. Do not substitute list ordering, another actor or another incarnation.
+    """
+    if (not callable(guard) or not isinstance(context, dict)
+            or set(context) != {'actor', 'scope_key', 'incarnation'}
+            or context.get('actor') != actor or service.owner_actor_id != actor or not actor):
+        raise ValueError('STUDIO_IMAGE_RESOLVE_CONTEXT_INVALID')
+    if not isinstance(request_id, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,99}', request_id):
+        raise ValueError('STUDIO_IMAGE_REQUEST_ID_INVALID')
+    guard()
+    path = service._path(nid, branch)
+    if not path.exists():
+        guard()
+        raise FileNotFoundError(request_id)
+    # New observation budget only; existing queue reads and writes keep their
+    # previous contract. Normal formal storage is already capped at 200 jobs.
+    if path.stat().st_size > 64 * 1024 * 1024:
+        raise ValueError('STUDIO_IMAGE_RESOLVE_CAPACITY')
+    with service._lock, workspace_mutation(service.root, 'image-jobs'):
+        guard()
+        if path.stat().st_size > 64 * 1024 * 1024:
+            raise ValueError('STUDIO_IMAGE_RESOLVE_CAPACITY')
+        stored = service._load(nid, branch)
+        if not isinstance(stored, list):
+            raise ValueError('STUDIO_IMAGE_RESOLVE_INVALID')
+        formal = [row for row in stored if isinstance(row, dict) and row.get('contract') == CONTRACT]
+        if len(formal) > 200:
+            raise ValueError('STUDIO_IMAGE_RESOLVE_CAPACITY')
+        matches = []
+        for row in formal:
+            captured = row.get('context')
+            if (row.get('owner_actor_id') != actor or row.get('novel_id') != nid or row.get('branch_id') != branch
+                    or not isinstance(captured, dict)
+                    or any(captured.get(key) != context[key] for key in context)
+                    or captured.get('request_id') != request_id):
+                continue
+            matches.append(row)
+        if not matches:
+            guard()
+            raise FileNotFoundError(request_id)
+        if len(matches) != 1:
+            raise ValueError('STUDIO_IMAGE_CREATE_AMBIGUOUS')
+        result = copy.deepcopy(_owned(service, matches[0], nid, branch, actor))
+        if (not isinstance(result.get('id'), str) or not IDENTITY.fullmatch(result['id'])
+                or type(result.get('attempt')) is not int or not 0 <= result['attempt'] <= MAX_VERSION
+                or result.get('product_acceptance') != 'LOCAL_REQUIRED'):
+            raise ValueError('STUDIO_IMAGE_RESOLVE_INVALID')
+        _text(result.get('created_at')); _text(result.get('updated_at'))
+        same_ids = [row for row in formal if row.get('id') == result['id']
+            and row.get('owner_actor_id') == actor and row.get('novel_id') == nid and row.get('branch_id') == branch
+            and isinstance(row.get('context'), dict)
+            and all(row['context'].get(key) == context[key] for key in context)]
+        if len(same_ids) != 1:
+            raise ValueError('STUDIO_IMAGE_CREATE_AMBIGUOUS')
+        guard()
+    guard()
+    return result
 
 
 def cancel(service, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):

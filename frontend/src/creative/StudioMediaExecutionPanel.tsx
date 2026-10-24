@@ -54,7 +54,8 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
     {state.notice && <StatusMessage>{state.notice}</StatusMessage>}
     {state.uncertain && <StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务核对；不会自动重试。</StatusMessage>}
     {state.repeatBlocked && <StatusMessage tone="warning">当前版本已有发送记录。相同动作不会再次发送，请继续读取原记录核对。</StatusMessage>}
-    {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。使用“读取任务列表”寻找已保存回执。</p>}
+    {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。{props.canvasNodeTask?'请从原节点显式核对原图片任务入队结果；不会使用列表中的最新任务替代。':'使用“读取任务列表”寻找已保存回执。'}</p>}
+    {props.canvasNodeTask&&(!props.beforeNodeQueue||!props.onNodeQueueUnknown)&&<StatusMessage tone="warning">当前节点入口缺少可追溯的入队恢复能力，不能创建任务。请从原节点重新打开。</StatusMessage>}
     {props.assetHandoff && <section aria-label={`素材引用交接到${handoffLabel}制作`}>
       <h3>素材引用交接到{handoffLabel}制作</h3>
       <p>{props.assetHandoff.reference.asset_id} · v{props.assetHandoff.reference.version} · {props.assetHandoff.reference.digest}</p>

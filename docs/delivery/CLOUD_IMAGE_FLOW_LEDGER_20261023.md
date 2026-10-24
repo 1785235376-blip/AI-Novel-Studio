@@ -10,6 +10,8 @@ The [saved-canvas contract check](CLOUD_SAVED_CANVAS_CONTRACT_BOUNDARY_20261024.
 
 The [explicit empty-create recovery slice](CLOUD_CANVAS_CREATE_RECOVERY_20261024.md) adds a read-only original-owner lookup for new intent-bearing creates with lost acknowledgements before a Job exists. A not-found snapshot never authorizes another create; earlier intentless unknown records and lost browser hints are not silently reconstructed.
 
+The [formal queue-request recovery slice](CLOUD_CANVAS_QUEUE_RECOVERY_20261024.md) adds durable exact request identity and a unique original-owner observation for node-bound queue admission with a lost acknowledgement. It preserves UNKNOWN after an absent snapshot, never chooses the newest matching node task and does not replay execution confirmation.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

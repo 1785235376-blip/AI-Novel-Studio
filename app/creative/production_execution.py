@@ -17,7 +17,7 @@ from ..experimental.store import canonical
 from ..media_files import inspect_image, inspect_media
 from ..services.studio_timeline_export import bound_timeline_output_kind
 from ..services.v1_capability_service import CapabilityVersionConflict
-from .production_execution_models import (MediaCommand, MediaCreate, ProviderSelection, TimelineSave, TimelineRender,
+from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, ProviderSelection, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
 from .project_store import BINDING
 from .workspace import FLAG
@@ -887,6 +887,46 @@ class ProductionExecutionService:
     def get(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         row, _ = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)
         return self.view(row, owner)
+
+    def resolve_image_node_create(self, nid, scope, actor, value, guard):
+        """Explicitly observe one exact node-bound image queue admission."""
+        body = CanvasImageNodeQueueResolve.model_validate(value)
+        context = self._base(nid, scope, actor, guard)
+        target = body.canvas_image_node
+        if (target.project_id != nid or target.scope != scope
+                or target.incarnation != context['incarnation']):
+            raise StaleSourceError('STUDIO_IMAGE_NODE_QUEUE_CONTEXT_CHANGED')
+        guard()
+        try:
+            row = self._image(actor).resolve_studio_create(nid, scope.get('branch_id'), actor,
+                context, body.request_id, guard)
+            captured = row['context']
+            self._graph_admission(captured, None, row['id'])
+            self._benchmark_admission(captured, None, row['id'])
+            self._batch_admission(captured, None, row['id'])
+            command = MediaCommand.model_validate(captured.get('command'))
+            if (command.operation_id != 'm5.image.t2i' or command.request_id != body.request_id
+                    or command.allow_cloud or command.source_snapshots or captured.get('sources') != []
+                    or command.canvas_image_node != target
+                    or row['request_digest'] != body.request_digest
+                    or captured.get('request_digest') != body.request_digest
+                    or not isinstance(captured.get('provider_binding'), dict)
+                    or captured['provider_binding'].get('local') is not True):
+                raise ValueError('changed original node queue request')
+            if ((row.get('status') in {'AWAITING_REVIEW', 'REVIEWING', 'APPROVED'}
+                    or row.get('output_asset_id') is not None) and row.get('receipt_digest') is None):
+                raise ValueError('missing original node queue receipt')
+            if row.get('receipt_digest') is not None:
+                from ..services.studio_image_execution import _digest, _receipt
+                if row['receipt_digest'] != _digest(_receipt(row)):
+                    raise ValueError('changed original node queue receipt')
+        except (KeyError, TypeError, ValueError):
+            raise StaleSourceError('STUDIO_IMAGE_NODE_QUEUE_CHANGED') from None
+        # No original Job lock is held while resolving this metadata target.
+        # Reading it grants no execution; original action guards still apply.
+        self._canvas_image_node_target(nid, scope, actor, target, context, guard)
+        guard()
+        return self.view(row, 'image')
 
     def list(self, nid, scope, actor, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         context = self._base(nid, scope, actor, guard)

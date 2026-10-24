@@ -641,18 +641,28 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (v.provider !== null && (!record(v.provider) || v.provider.provider_id !== command.provider_id || v.provider.model_id !== command.model_id || !hex(v.provider.route_digest) || typeof v.provider.local !== 'boolean')) invalid();
       return v as unknown as ProductionPreview;
     },
-    async create(command: MediaCommand, reviewed_preview_digest: string) {
+    async create(command: MediaCommand, reviewed_preview_digest: string, signal?: AbortSignal) {
       commandScope(command);
       const nodeOrigin=canvasImageNodeInCommand(command);
       if(nodeOrigin&&(nodeOrigin.project_id!==projectId||(nodeOrigin.scope.mode==='collaboration'?nodeOrigin.scope.branch_id:null)!==branch))invalid();
       const requestedCanvasOrigin=canvasReturnInCommand(command);
       if(requestedCanvasOrigin&&(requestedCanvasOrigin.project_id!==projectId||((requestedCanvasOrigin.scope as {branch_id?:string}).branch_id??null)!==branch))invalid();
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
-      const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, undefined, command.request_id));
+      const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, signal, command.request_id));
       if (v.request_id !== command.request_id || v.operation_id !== command.operation_id || !sameCanvasImageNode(command,v.command) || !sameCanvasReturn(command,v.command)
         || !sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameVideoFrames(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)
         || command.operation_id === 'm5.image.cutout' && !sameCutoutCommand(command, v.command)
         || command.operation_id === 'm8.audio.trim' && !sameTrimCommand(command, v.command)) invalid(); return v;
+    },
+    async resolveImageNodeCreate(requestId: string, requestDigest: string, binding: CanvasImageNodeBinding, signal?: AbortSignal) {
+      if (!identifier(requestId) || requestId.length > 100 || !hex(requestDigest)) invalid();
+      const target=canvasImageNodeInCommand({operation_id:'m5.image.t2i',allow_cloud:false,prompt:'shape check',source_snapshots:[],canvas_image_node:binding});
+      if (!target || target.project_id!==projectId || (target.scope.mode==='collaboration'?target.scope.branch_id:null)!==branch) invalid();
+      const result=job(await transport.json<unknown>(`${base}/jobs/image/resolve-create`,'POST',{
+        request_id:requestId,request_digest:requestDigest,canvas_image_node:target},signal));
+      if(result.owner!=='image'||result.request_id!==requestId||result.request_digest!==requestDigest
+        ||!sameCanvasImageNode({operation_id:'m5.image.t2i',allow_cloud:false,prompt:'shape check',source_snapshots:[],canvas_image_node:target},result.command))invalid();
+      return result;
     },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
@@ -782,4 +792,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate';
+export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;

@@ -548,6 +548,13 @@ class MediaCreate(ExecutionModel):
     reviewed_preview_digest: Digest
 
 
+class CanvasImageNodeQueueResolve(ExecutionModel):
+    """A read of one original queue admission, never a new command."""
+    request_id: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$')
+    request_digest: Digest
+    canvas_image_node: CanvasImageNodeBinding
+
+
 class MediaJobAction(ExecutionModel):
     expected_version: int = Field(ge=1)
     expected_request_digest: Digest

@@ -1,5 +1,6 @@
 """Closed, explicit production commands on original Host and scope authority."""
 from typing import Literal
+from contextlib import ExitStack
 from urllib.parse import quote
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
@@ -8,7 +9,7 @@ from ..experimental.production_lineage_api import PrivateProductionRoute
 from ..services.v1_capability_service import CapabilityVersionConflict
 from ..services.audiobook_service import AudiobookError
 from ..audio_production_store import AudioStateVersionConflict
-from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
+from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
     TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
     TimelineWaveformPreview)
@@ -16,6 +17,40 @@ from .production_execution_models import (MediaCommand, MediaCreate, MediaJobAct
 from .canvas_video_task import CanvasVideoCommand, CanvasVideoQueue
 
 Owner = Literal["image", "audio", "video", "timeline"]
+
+
+class ImageNodeQueueResolveRoute(PrivateProductionRoute):
+    """Closed metadata-only lookup, not another queue admission path."""
+    MAX_BODY = 16 * 1024
+    MAX_RESPONSE = 256 * 1024
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+        async def checked(request):
+            headers = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
+            try:
+                payload = bytearray()
+                async for part in request.stream():
+                    if len(payload) + len(part) > self.MAX_BODY:
+                        raise HTTPException(413, {'code': 'STUDIO_IMAGE_NODE_QUEUE_REQUEST_LIMIT'})
+                    payload.extend(part)
+                request._body = bytes(payload)
+                response = await handler(request)
+                if len(response.body) > self.MAX_RESPONSE:
+                    raise HTTPException(413, {'code': 'STUDIO_IMAGE_NODE_QUEUE_RESPONSE_LIMIT'})
+                return response
+            except RequestValidationError:
+                raise HTTPException(422, {'code': 'STUDIO_IMAGE_NODE_QUEUE_REQUEST_INVALID'}, headers=headers) from None
+            except HTTPException as exc:
+                code = {400:'STUDIO_IMAGE_NODE_QUEUE_REQUEST_INVALID', 403:'STUDIO_IMAGE_NODE_QUEUE_FORBIDDEN',
+                    404:'STUDIO_IMAGE_NODE_QUEUE_NOT_FOUND', 409:'STUDIO_IMAGE_NODE_QUEUE_CHANGED',
+                    413:'STUDIO_IMAGE_NODE_QUEUE_LIMIT', 422:'STUDIO_IMAGE_NODE_QUEUE_REQUEST_INVALID'}.get(
+                        exc.status_code, 'STUDIO_IMAGE_NODE_QUEUE_REJECTED')
+                raise HTTPException(exc.status_code, {'code': code},
+                    headers={**(exc.headers or {}), **headers}) from None
+            except Exception:
+                raise HTTPException(503, {'code': 'STUDIO_IMAGE_NODE_QUEUE_LOOKUP_UNKNOWN'}, headers=headers) from None
+        return checked
 
 
 class TimelineWaveformRoute(PrivateProductionRoute):
@@ -276,6 +311,21 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     @router.post("/projects/{nid}/studio/production/jobs", status_code=201)
     def create(nid: str, request: Request, body: MediaCreate, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return call(request, nid, x_session_token, x_branch_id, "domain.write", lambda actor, scope, guard: service.create(nid, scope, actor, body, guard), model=body.command.operation_id not in {"m8.audio.trim", "m5.image.cutout", "m5.image.composite"})
+
+    node_queue_reads = APIRouter(route_class=ImageNodeQueueResolveRoute)
+
+    @node_queue_reads.post('/projects/{nid}/studio/production/jobs/image/resolve-create')
+    def resolve_image_node_create(nid: str, request: Request, body: CanvasImageNodeQueueResolve,
+                                  x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with ExitStack() as observations:
+            observations.enter_context(service.store.existing_owner_only())
+            graph = getattr(service, 'graph_service', None)
+            if graph is not None:
+                observations.enter_context(graph.store.existing_owner_only())
+            return call(request, nid, x_session_token, x_branch_id, 'domain.read',
+                lambda actor,scope,guard:service.resolve_image_node_create(nid,scope,actor,body,guard))
+
+    router.include_router(node_queue_reads)
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

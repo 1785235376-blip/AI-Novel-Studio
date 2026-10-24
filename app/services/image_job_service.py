@@ -75,6 +75,10 @@ class ImageJobService:
         from .studio_image_execution import list_jobs
         return list_jobs(self, nid, branch, actor, context, guard)
 
+    def resolve_studio_create(self, nid, branch, actor, context, request_id, guard):
+        from .studio_image_execution import resolve_create
+        return resolve_create(self, nid, branch, actor, context, request_id, guard)
+
     def cancel_studio(self, nid, branch, actor, job_id, *, expected_version, expected_request_digest, guard):
         from .studio_image_execution import cancel
         return cancel(self, nid, branch, actor, job_id, expected_version=expected_version,

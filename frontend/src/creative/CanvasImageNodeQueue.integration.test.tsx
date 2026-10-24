@@ -28,7 +28,7 @@ function retained(button:HTMLElement){const key=Object.keys(button).find(k=>k.st
 beforeEach(()=>{
  vi.stubGlobal('crypto',webcrypto);latest=undefined;
  props={client:studioProductionClient(target.project_id,{sessionToken:''}),assets:[],canvasNodeTask:{binding:structuredClone(target),initialPrompt:prompt,isCurrent:()=>true},
- canMutate:true,canReview:true,busy:false,isCurrent:()=>true,read:work=>work(),mutate:work=>work(),onDirtyChange:vi.fn(),onUnavailable:vi.fn()};
+ canMutate:true,canReview:true,busy:false,isCurrent:()=>true,read:work=>work(),mutate:work=>work(),onDirtyChange:vi.fn(),onUnavailable:vi.fn(),beforeNodeQueue:vi.fn(),onNodeQueueUnknown:vi.fn()};
  fetcher=vi.fn(async(url:string,init:RequestInit={})=>{
   const body=init.body?JSON.parse(String(init.body)):undefined;
   if(url.endsWith('/providers'))return json({items:[provider,{...provider,provider_id:'software-cloud-image',local:false}],health_probed:false,credentials_read:false});
