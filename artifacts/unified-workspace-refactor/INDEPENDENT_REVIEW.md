@@ -825,3 +825,14 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
     - 6 项 3/3 通过。
     - 2 项 ISI 用例各为 2/3 通过，它们本来就在 m1flaky2 的 node22 已知 flaky 列表中。
     - 全部与 workspace 改动无关。
+
+## M6 (c3939f22) — [VERA-FE] 独立复核
+
+- 范围：HEAD c3939f22 / tree 98089ce1；Node 22.14；Vite :4499；所有非 GET 请求一律被拦截（fulfill 409），实际记录 0 次写请求；未连接 :8000，未碰 :4299。
+- **结论：MUST-FIX（测试缺口，小改即可）**。运行时行为全部通过。
+- 浏览器（uw 面板：任务中心 + 审核收件箱）：REQ500 / DISABLED404 / 未知 code / HTML502 / 网络中断 → 可见文本、title、aria 均无原始 code；data-error-code 与实际 code 完全一致（STUDIO_REQUEST_FAILED / EXPERIMENTAL_FEATURE_DISABLED / VERA_UNKNOWN_CODE / STUDIO_NETWORK_FAILED）；文案为本地映射的中文。FORBID403 走来源级聚合提示，也没有 code。旧 UI 的任务中心入口在 /?novel= 下没有走到（落到了 uw 引导页），这一点记为局限。
+- 变异测试（src/taskcenter，183 个用例）：TaskList 显示原始 code → 1 个失败 ✓；TaskList 去掉 data-error-code → 1 个失败 ✓；全部映射成同一句 → 2 个失败 ✓；去掉兜底 → 1 个失败 ✓；**ReviewInbox 显示原始 code → 0 个失败 ✗；ReviewInbox 去掉 data-error-code → 0 个失败 ✗**。MUST-FIX：ReviewInbox 的 problem 渲染需要补上与 TaskList 对称的断言。
+- TaskCenter.test.tsx 断言变更的裁定：可以接受，属于规格变更（code 用 toBe 精确比较）。但文案断言用的是 toContain('请求未完成。')，只是子串匹配，IMPLEMENTATION_REPORT 称其为 “stricter” 有夸大。建议改为 toBe('请求未完成。请核对输入与连接状态。')。
+- 数字：subset 503/503；tsc 6 个错误（与基线相同）；旧 UI 18 页文本与 merge 轮 18/18 完全一致；完整 vitest 三次 adjusted 297/297/298（raw 297/299/298，ISI 8/10/8），共 11424 个用例，持久失败交集 298 条，与基线相同；flake（ISI 2 条、receiptCompanion）单独各重跑 3 次，3/3 通过。
+- 矩阵：算术正确（87/98）。有争议的条目见 vera-compare/m6/matrix-disputes.md：S2-3 和 M1-01..25 的引用有误；Hermia 的浏览器日志全部未做拦截；M2-06 应为 PASS，B9 的说法有误。
+- 其他：nodeDirtyRef 是纯移动 ✓；m6 patch 与 git diff 完全一致 ✓；P3：e2c9d292 的 author 字段写成了 Vera；README 中的行数有小偏差。
