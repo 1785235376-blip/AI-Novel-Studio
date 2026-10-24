@@ -27,8 +27,20 @@ import { checkedCanvasDefinition, type CanvasDefinition, type CanvasViewRecord, 
 import type { StudioAsset } from './studioClient';
 import { clampGraphPosition, clampGraphZoom } from './graphCanvasGeometry';
 import { mediaViewportCenter } from './mediaCanvasGeometry';
+import { graphDraftIncarnation, type StudioGraphDraftOwner } from './studioGraphLocalDraft';
 import './mediaCanvas.css';
 const blank = (): CanvasDefinition => ({ schema_version: 1, title: '媒体素材画布', cards: [], viewport: { x: 0, y: 0, zoom: 1 } });
+function saveOrigin(base: CanvasViewRecord, owner: StudioGraphDraftOwner) {
+  const scope = base.scope;
+  if (!graphDraftIncarnation(owner.incarnation) || !/^[a-f0-9]{64}$/.test(base.definition_digest)
+    || !owner.projectId || base.project_id !== owner.projectId || scope?.novel_id !== owner.projectId || scope.mode !== owner.mode
+    || (scope.mode === 'collaboration'
+      ? scope.workspace_id !== owner.workspaceId || scope.storyline_id !== owner.storylineId || scope.branch_id !== owner.branchId
+      : owner.workspaceId !== '' || owner.storylineId !== '' || owner.branchId !== '')) {
+    throw new Error('原画布的项目代次、范围或定义摘要尚未核对，当前草稿已保留；请重新打开原画布。');
+  }
+  return { expected_incarnation: owner.incarnation, expected_definition_digest: base.definition_digest };
+}
 type Props = Pick<StudioGraphEditorProps, 'active' | 'denied' | 'identity' | 'client' | 'canMutate' | 'busy' | 'externalDirty' | 'isCurrent' | 'read' | 'mutate' | 'isBusy' | 'draftOwner'> & { onDirtyChange: (dirty: boolean) => void; graphHandoff?: CanvasGraphAssetHandoff; imageGraphHandoff?: CanvasImageGraphHandoff; imageOutputHandoff?: ImageOutputHandoff;
   onBeginImageTask?:(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean)=>void;
   onResumeImageTask?:(origin:CanvasImageTaskOrigin,asset:StudioAsset,isOriginCurrent:()=>boolean,job:ProductionJob)=>void;
@@ -47,26 +59,41 @@ export function MediaCanvasViewPanel(props: Props) {
   const [pending, setPending] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [discard, setDiscard] = useState(false), [size, setSize] = useState({ width: 800, height: 480 });
   const alive = useRef(true), pendingRef = useRef(false), draftRef = useRef(draft), live = useRef(props);
+  const writeUncertain = useRef(false);
   const sourceEpoch = useRef(0), baseRef = useRef(base), dirtyRef = useRef(false);
   const originOwner=JSON.stringify(props.draftOwner),originOwnerRef=useRef(originOwner);
+  const firstOriginOwner=useRef(originOwner);
+  if(props.draftOwner&&firstOriginOwner.current===undefined)firstOriginOwner.current=originOwner;
   if(originOwnerRef.current!==originOwner){originOwnerRef.current=originOwner;sourceEpoch.current++;}
   baseRef.current=base;
   draftRef.current = draft; live.current = props;
   const dirty = uncertain || JSON.stringify(draft) !== JSON.stringify(base?.definition ?? blank());
   dirtyRef.current=dirty;
   const client = props.client.graphs.canvasViews;
-  const authority = [props.identity, props.client, props.active, props.denied, props.canMutate, props.externalDirty, base, draft, discard, selected, JSON.stringify(selectedIds)];
+  const authority = [props.identity, props.client, props.active, props.denied, props.canMutate, props.externalDirty, originOwner, base, draft, uncertain, discard, selected, JSON.stringify(selectedIds)];
   const fence = useRef({ values: authority, token: {} });
   if (authority.some((value, index) => value !== fence.current.values[index])) fence.current = { values: authority, token: {} };
   const token = fence.current.token;
-  const current = () => alive.current && fence.current.token === token && live.current.active && !live.current.denied && live.current.isCurrent();
+  const current = () => alive.current && fence.current.token === token
+    && (firstOriginOwner.current === undefined || originOwnerRef.current === firstOriginOwner.current)
+    && JSON.stringify(live.current.draftOwner) === originOwner
+    && live.current.active && !live.current.denied && live.current.isCurrent();
   const locked = () => !current() || recoveryBusy.current || pendingRef.current || live.current.busy || !!live.current.isBusy?.() || live.current.externalDirty;
+  function setWriteUncertain(value: boolean) {
+    writeUncertain.current = value;
+    if (value) {
+      // Retire retained callbacks before React commits the warning or disables Save.
+      fence.current = { values: fence.current.values, token: {} };
+      sourceEpoch.current++; dirtyRef.current = true;
+    }
+    setUncertain(value);
+  }
   const recovery = useMediaCanvasRecovery({ owner: props.draftOwner, client: props.client, active: props.active, denied: props.denied,
     canMutate: props.canMutate, busy: props.busy || pending, externalDirty: props.externalDirty, definition: draft, base, dirty, uncertain,
     requestId: createRequest.current, isCurrent: current, read: props.read, onBusy: value => { recoveryBusy.current = value; },
     onRestore: (snapshot, record) => { if (!current() || !live.current.canMutate) return;sourceEpoch.current++;baseRef.current=record;dirtyRef.current=true; resetHistory(); setBase(record);
       const restored = structuredClone(snapshot.definition); draftRef.current = restored; setDraft(restored); createRequest.current = snapshot.request_id;
-      setUncertain(snapshot.uncertain); setSelected(''); setSelectedIds([]); setDiscard(false); setNotice('已恢复本机媒体草稿，尚未保存或执行。'); live.current.onDirtyChange(true); } });
+      setWriteUncertain(snapshot.uncertain); setSelected(''); setSelectedIds([]); setDiscard(false); setNotice('已恢复本机媒体草稿，尚未保存或执行。'); live.current.onDirtyChange(true); } });
   const editable = !locked() && props.canMutate && !uncertain;
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
@@ -76,18 +103,19 @@ export function MediaCanvasViewPanel(props: Props) {
     catch { setError('画布内容超出允许范围，当前草稿已保留。'); return false; }
   }
   function travel(redo: boolean) {
-    if (locked() || !live.current.canMutate || uncertain) return;
+    if (locked() || !live.current.canMutate || writeUncertain.current) return;
     const next = travelCanvasEdit(history.current, draftRef.current, redo); if (!next) return;
     if (edit(next.definition, false)) { history.current = next.history; setHistoryRevision(v => v + 1); }
   }
   async function work<T>(write: boolean, task: () => Promise<T>, accept: (value: T) => void) {
-    if (!client || locked() || write && (!live.current.canMutate || uncertain)) return;
+    if (!client || locked() || write && (!live.current.canMutate || writeUncertain.current)) return;
     pendingRef.current = true; setPending(true); setError('');
-    try { const value = await (write ? props.mutate(task) : props.read(task)); if (current()) accept(value); else if (write && alive.current) { setUncertain(true); live.current.onDirtyChange(true); } }
-    catch (reason) { if (current()) setError(apiErrorView(reason).message); if (write && alive.current) { setUncertain(true); live.current.onDirtyChange(true); } }
+    const guardedTask = () => { if (!current() || write && (!live.current.canMutate || writeUncertain.current)) throw new Error('原画布的身份、项目代次或编辑权限已改变，或保存结果尚未确认，本次操作未发送。'); return task(); };
+    try { const value = await (write ? props.mutate(guardedTask) : props.read(guardedTask)); if (current()) accept(value); else if (write && alive.current) { setWriteUncertain(true); live.current.onDirtyChange(true); } }
+    catch (reason) { if (current()) setError(apiErrorView(reason).message); if (write && alive.current) { setWriteUncertain(true); live.current.onDirtyChange(true); } }
     finally { pendingRef.current = false; if (alive.current) setPending(false); }
   }
-  function adopt(row: CanvasViewRecord) { sourceEpoch.current++;baseRef.current=row;dirtyRef.current=false;resetHistory(); setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
+  function adopt(row: CanvasViewRecord) { sourceEpoch.current++;baseRef.current=row;dirtyRef.current=false;resetHistory(); setBase(row); setDraft(row.definition); draftRef.current = row.definition; setSelected(''); setSelectedIds([]); setWriteUncertain(false); setDiscard(false); setNotice('已读取持久化版本'); live.current.onDirtyChange(false); }
   function open(id: string) { if (dirty && !discard) return; void work(false, () => client!.get(id), adopt); }
   const states = new Map(base?.reference_states.map(row => [row.card_id, row]) ?? []);
   const currentCardIds = new Set(draft.cards.map(card => card.id));
@@ -131,10 +159,14 @@ export function MediaCanvasViewPanel(props: Props) {
       <Button disabled={!editable || !history.current.future.length} onClick={() => travel(true)}>重做媒体画布编辑</Button>
       <Button disabled={pending || props.busy || props.externalDirty} onClick={() => void work(false, () => client.list(), value => setRows(value.items))}>读取已存画布</Button>
       <Button disabled={!editable || draft.cards.some(c => !c.asset)} onClick={() => {
+        if (locked() || !live.current.canMutate || writeUncertain.current) return;
         const snapshot = draftRef.current; const requestId = createRequest.current;
-        void work(true, () => base ? client.save(base.id, base.version, snapshot) : client.create(snapshot, requestId), row => { adopt(row); setNotice('已保存媒体画布'); });
+        let origin: ReturnType<typeof saveOrigin> | undefined;
+        try { if (base && props.draftOwner) origin = saveOrigin(base, props.draftOwner); }
+        catch (reason) { setError(reason instanceof Error ? reason.message : '原画布尚未核对，当前草稿已保留。'); return; }
+        void work(true, () => base ? origin ? client.save(base.id, base.version, snapshot, origin) : client.save(base.id, base.version, snapshot) : client.create(snapshot, requestId), row => { adopt(row); setNotice('已保存媒体画布'); });
       }}>保存媒体画布</Button>
-      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank();sourceEpoch.current++;baseRef.current=undefined;dirtyRef.current=false; createRequest.current = `view-${crypto.randomUUID()}`; resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setSelectedIds([]); setUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
+      <Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => { if (locked() || dirty && !discard) return; const next = blank();sourceEpoch.current++;baseRef.current=undefined;dirtyRef.current=false; createRequest.current = `view-${crypto.randomUUID()}`; resetHistory(); setBase(undefined); setDraft(next); draftRef.current = next; setSelected(''); setSelectedIds([]); setWriteUncertain(false); setDiscard(false); live.current.onDirtyChange(false); }}>新建空白视图</Button>
       <Button disabled={!editable} onClick={() => void work(false, () => props.client.assets(), value => setAssets(value.items.filter(a => ['image', 'video', 'audio'].includes(a.kind))))}>读取可用素材</Button>
     </div>
     <p>本地撤销最多 20 步、总快照不超过 2 MB；大画布可能提前淘汰旧记录。保存或重新读取后重置。快捷键 Ctrl／⌘ Z，重做 Ctrl Y 或 Shift Z；文字输入框保留自身撤销。</p>
@@ -147,7 +179,7 @@ export function MediaCanvasViewPanel(props: Props) {
     {base&&typeof client.history==='function'&&<MediaCanvasHistoryPanel base={base} client={client} owner={token} incarnation={props.draftOwner?.incarnation} canMutate={props.canMutate}
       externalDirty={dirty||props.externalDirty} busy={pending||props.busy} isBusy={props.isBusy} isCurrent={current} read={props.read} mutate={props.mutate}
       onAdopt={row=>{adopt(row);props.onTaskReturned?.();setNotice('已恢复为新的当前画布版本；原历史保留，旧选择和预览已退役。');}}
-      onUncertain={()=>{sourceEpoch.current++;dirtyRef.current=true;setUncertain(true);live.current.onDirtyChange(true);}}/>}
+      onUncertain={()=>{setWriteUncertain(true);live.current.onDirtyChange(true);}}/>}
     {dirty && <label><input type="checkbox" checked={discard} onChange={e => setDiscard(e.target.checked)} />允许用所选已存版本或空白视图替换当前草稿</label>}
     {uncertain && <StatusMessage tone="warning">保存结果尚未确认。已停止再次保存，请读取已存画布并核对；替换草稿需要上方明确确认。</StatusMessage>}
     {rows.length > 0 && <ul>{rows.map(row => <li key={row.id}><Button disabled={pending || props.externalDirty || dirty && !discard} onClick={() => open(row.id)}>{row.title} · v{row.version} · {row.card_count} 张</Button></li>)}</ul>}
@@ -163,7 +195,7 @@ export function MediaCanvasViewPanel(props: Props) {
     </div>
     {query.trim() && <section aria-label="画布查找结果"><p>匹配 {matches.length} 张，显示前 20 张。定位会移动视口并展开该卡片的上级分组；需要保存才会保留视图变化。</p>
       {matches.slice(0,20).map(result => <Button key={result.id} disabled={!editable} onClick={() => {
-        if (locked() || !live.current.canMutate || uncertain) return;
+        if (locked() || !live.current.canMutate || writeUncertain.current) return;
         try { edit(focusCanvasCard(draftRef.current,result.id,size.width,size.height)); selectCard(result.id); } catch { setError('卡片或视口已改变，请重新查找。'); }
       }}>定位 {result.id}</Button>)}{!matches.length && <p>没有匹配卡片。隐藏或无权访问的素材详情不会参与查找。</p>}
     </section>}
@@ -191,7 +223,7 @@ export function MediaCanvasViewPanel(props: Props) {
     {props.canvasTask&&props.canvasTaskApproved&&props.taskProduction&&<CanvasImageTaskReturn key={props.canvasTask.id} task={props.canvasTask} approved={props.canvasTaskApproved}
       client={props.client} production={props.taskProduction} disabled={dirty||pending||props.busy||props.externalDirty} canMutate={props.canMutate} isCurrent={()=>alive.current&&live.current.active&&!live.current.denied&&live.current.isCurrent()}
       read={props.read} mutate={props.mutate} onAdopt={row=>{adopt(row);setSelected(props.canvasTask!.origin.cardId);setSelectedIds([props.canvasTask!.origin.cardId]);setNotice('已采用正式结果并回填原卡片；原素材文件、坐标和分组保留。');}}
-      onUncertain={()=>{sourceEpoch.current++;dirtyRef.current=true;setUncertain(true);live.current.onDirtyChange(true);}} onComplete={()=>props.onTaskReturned?.()}/>}
+      onUncertain={()=>{setWriteUncertain(true);live.current.onDirtyChange(true);}} onComplete={()=>props.onTaskReturned?.()}/>}
     {error && <StatusMessage tone="warning">{error}</StatusMessage>}{notice && <p role="status">{notice}</p>}
   </section>;
 }
