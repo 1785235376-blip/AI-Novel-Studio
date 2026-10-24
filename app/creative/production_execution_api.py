@@ -53,6 +53,57 @@ class ImageNodeQueueResolveRoute(PrivateProductionRoute):
         return checked
 
 
+class ImageNodeTargetObservationRoute(PrivateProductionRoute):
+    """Closed metadata comparison; errors disclose no lower-owner values."""
+    MAX_BODY = 4 * 1024
+    MAX_RESPONSE = 256 * 1024
+
+    def get_route_handler(self):
+        import json
+        handler = super().get_route_handler()
+
+        async def checked(request):
+            headers = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
+            prefix = 'STUDIO_IMAGE_NODE_TARGET_OBSERVATION_'
+            try:
+                payload = bytearray()
+                async for part in request.stream():
+                    if len(payload) + len(part) > self.MAX_BODY:
+                        raise HTTPException(413, {'code': prefix + 'LIMIT'})
+                    payload.extend(part)
+
+                def pairs(items):
+                    result = {}
+                    for key, value in items:
+                        if key in result:
+                            raise ValueError('duplicate key')
+                        result[key] = value
+                    return result
+
+                try:
+                    parsed = json.loads(payload, object_pairs_hook=pairs)
+                    if not isinstance(parsed, dict):
+                        raise ValueError('object required')
+                except (ValueError, UnicodeDecodeError):
+                    raise HTTPException(422, {'code': prefix + 'INVALID'}) from None
+                request._body = bytes(payload)
+                response = await handler(request)
+                if len(response.body) > self.MAX_RESPONSE:
+                    raise HTTPException(413, {'code': prefix + 'LIMIT'})
+                return response
+            except RequestValidationError:
+                raise HTTPException(422, {'code': prefix + 'INVALID'}, headers=headers) from None
+            except HTTPException as exc:
+                code = {400: 'INVALID', 401: 'AUTH_REJECTED', 403: 'FORBIDDEN',
+                    404: 'UNAVAILABLE', 409: 'CHANGED', 413: 'LIMIT', 422: 'INVALID'}.get(exc.status_code, 'UNKNOWN')
+                status = exc.status_code if exc.status_code in {400, 401, 403, 404, 409, 413, 422} else 503
+                raise HTTPException(status, {'code': prefix + code},
+                    headers={**(exc.headers or {}), **headers}) from None
+            except Exception:
+                raise HTTPException(503, {'code': prefix + 'UNKNOWN'}, headers=headers) from None
+        return checked
+
+
 class TimelineWaveformRoute(PrivateProductionRoute):
     """Bound and sanitize only this new observation request, never old routes."""
     MAX_BODY = 4096
@@ -326,6 +377,21 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                 lambda actor,scope,guard:service.resolve_image_node_create(nid,scope,actor,body,guard))
 
     router.include_router(node_queue_reads)
+
+    node_target_observations = APIRouter(route_class=ImageNodeTargetObservationRoute)
+
+    @node_target_observations.post('/projects/{nid}/studio/production/jobs/image/{jid}/target-observation')
+    def observe_image_node_target(nid: str, jid: str, request: Request, body: MediaJobAction,
+                                  x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with ExitStack() as observations:
+            observations.enter_context(service.store.existing_owner_only())
+            graph = getattr(service, 'graph_service', None)
+            if graph is not None:
+                observations.enter_context(graph.store.existing_owner_only())
+            return call(request, nid, x_session_token, x_branch_id, 'domain.read',
+                lambda actor, scope, guard: service.observe_image_node_target(nid, scope, actor, jid, body, guard))
+
+    router.include_router(node_target_observations)
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

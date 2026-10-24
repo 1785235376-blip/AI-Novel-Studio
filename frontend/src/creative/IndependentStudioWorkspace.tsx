@@ -5,6 +5,7 @@ import { StudioVideoReferencePanel } from './StudioVideoReferencePanel';
 import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
 import type { StudioProductionTask } from '../taskcenter/studioProductionTask';
 import { prepareCanvasImageNodeResume, type CanvasImageNodeResume } from './canvasImageNodeResume';
+import { CanvasImageNodeTargetPanel } from './CanvasImageNodeTargetPanel';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
 import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
@@ -91,6 +92,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const editorTicket = useRef(0), editorPreparing = useRef(false);
   const pendingEditor = useRef<(() => Promise<void>)>();
   const nodeResumeTicket = useRef(0), nodeResumeSourceTicket = useRef(0);
+  const targetObservationEpoch = useRef(0), targetObservationContextEpoch = useRef(0);
   const pendingNodeResume = useRef<(() => Promise<void>)>();
   const nodeResumeReading = useRef<{ ticket: number; controller: AbortController }>();
   const nodeResumeSource = useRef<NodeResumeSource>();
@@ -98,7 +100,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     nodeResumeTicket.current++; pendingNodeResume.current = undefined; nodeResumeReading.current?.controller.abort();
   }, []);
   const editorLocation = useRef(module);
-  if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; retirePendingNodeResume(); nodeResumeSource.current = undefined; if (editorSession) setEditorSession(undefined); }
+  if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; retirePendingNodeResume(); nodeResumeSource.current = undefined; targetObservationEpoch.current++; targetObservationContextEpoch.current++; if (editorSession) setEditorSession(undefined); }
 
   const capturedHost = useRef({ ...useLocalHostSession.getState() });
   const productionLeaveScope = useRef(`项目 ${projectId} · 分支 ${context.scope?.branchId ?? 'local'}${context.scope ? ` · 工作区 ${context.scope.workspaceId} · 协作项目 ${context.scope.projectId} · 故事线 ${context.scope.storylineId}` : ''} · 操作者 ${context.actor?.id || capturedHost.current.actorId || actor}`).current;
@@ -124,6 +126,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const client = useMemo(() => studioClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const directorSource = useMemo(() => creativeClient(projectId, context), [client]);
   const productionClient = useMemo(() => studioProductionClient(projectId, context), [projectId, context.sessionToken, context.actor?.id, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
+  const productionClientRef = useRef(productionClient); productionClientRef.current = productionClient;
   const cutoutPermission = useRef(false);
   const cutoutLease = useRef<{ job: ProductionJob; control?: Promise<ProductionJob> }>();
   const [cacheKey] = useState(() => `independent-studio-${++studioObserver}`);
@@ -137,6 +140,9 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     ? readLocalStudioResume(projectId) : { state: 'EMPTY' as const });
   const [workspaceView, setWorkspaceView] = useState<StudioWorkspaceView>(resume.state === 'SAVED' ? resume.location.view : (module === 'EDIT' ? 'PRODUCTION' : 'ASSETS')); // [HERMIA-FE-20261022] EDIT cold → 制作操作/时间线
   const workspaceViewRef = useRef(workspaceView); workspaceViewRef.current = workspaceView;
+  const targetObservationView = useRef(workspaceView);
+  if (targetObservationView.current !== workspaceView) { targetObservationView.current = workspaceView; targetObservationContextEpoch.current++; }
+  const targetObservationRenderEpoch = targetObservationContextEpoch.current;
   const defaultCanvasChosen=useRef(resume.state==='SAVED');
   useEffect(()=>{
     if(defaultCanvasChosen.current||!overview)return;
@@ -199,6 +205,8 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const [productionJob, setProductionJob] = useState<{ client: typeof productionClient; job: ProductionJob; resume?: NodeResumeSource }>();
   const productionJobRef = useRef(productionJob); productionJobRef.current = productionJob;
   const nodeResumeActive = productionJob?.client === productionClient && !!productionJob.resume;
+  const [targetObservation, setTargetObservation] = useState<{ ticket: number; source: { job: StudioProductionTask; key: string; isCurrent: () => boolean } }>();
+  const retireTargetObservation = useCallback(() => { targetObservationEpoch.current++; setTargetObservation(undefined); }, []);
   const mediaDirtyRef = useRef(false), timelineDirtyRef = useRef(false), assetReadEpoch = useRef(0);
   const [maskDirty, setMaskDirty] = useState(false);
   const maskDirtyRef = useRef(false);
@@ -229,15 +237,15 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { retirePendingNodeResume(); nodeResumeSource.current = undefined; captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, [retirePendingNodeResume]);
+  const deny = useCallback(() => { retirePendingNodeResume(); nodeResumeSource.current = undefined; retireTargetObservation(); captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, [retirePendingNodeResume, retireTargetObservation]);
   const retireIdentity = useCallback(() => {
-    retirePendingNodeResume(); nodeResumeSource.current = undefined;
+    retirePendingNodeResume(); nodeResumeSource.current = undefined; retireTargetObservation();
     captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); studioRetired.current = true; authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
     setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined);
     setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setError(''); setNotice(''); setLoading(false);
-  }, [retirePendingNodeResume]);
+  }, [retirePendingNodeResume, retireTargetObservation]);
   useEffect(() => {
     // Observe every transition synchronously, including A -> B -> A inside one React batch.
     // Redraw immediately to hide adopted data; only local authored graph text remains read-only.
@@ -433,7 +441,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     } catch (reason) { if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) setError(apiErrorView(reason, '项目读取失败。').message); }
     finally { if (current() && epoch === overviewEpoch.current) setLoading(false); }
   }, [client, current, guarded, projectId, module]);
-  useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; retirePendingNodeResume(); nodeResumeSource.current = undefined; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh, retirePendingNodeResume]);
+  useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; retirePendingNodeResume(); nodeResumeSource.current = undefined; targetObservationContextEpoch.current++; retireTargetObservation(); overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh, retirePendingNodeResume, retireTargetObservation]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current || comicBusyRef.current || leaveRisk.current.dirty || leaveRisk.current.unknown || leaveRisk.current.comicInFlight) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
@@ -516,7 +524,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const navigate = (action: () => void, novelExit = false) => {
     const authorized = current(), retiredExit = !authorized && novelExit;
     if (!authorized && (!retiredExit || !alive.current || studioRetired.current || novelExitCommitted.current || !sameStudioIdentity())) return;
-    editorTicket.current++; pendingEditor.current = undefined; retirePendingNodeResume();
+    editorTicket.current++; pendingEditor.current = undefined; retirePendingNodeResume(); targetObservationContextEpoch.current++; retireTargetObservation();
     if (navigationBusy(retiredExit)) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
     const needsConfirmation = retiredExit ? leaveRisk.current.dirty || leaveRisk.current.unknown
       : dirty || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current;
@@ -726,7 +734,19 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {workspaceView === 'TASKS' && overview && !denied && !identityRetired && <StudioProductionTasksPanel
       projectId={projectId} branchId={context.scope?.branchId ?? null} identity={cacheKey} client={productionClient}
       active={workspaceView === 'TASKS' && overview && !denied && !identityRetired} denied={denied || identityRetired}
-      busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} onUnavailable={deny}
+      busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} onUnavailable={deny} onSelectionRetired={retireTargetObservation}
+      onInspectCanvasTarget={(job, isSelectionCurrent) => {
+        if (!current() || busyRef.current || workspaceViewRef.current !== 'TASKS' || editorLocation.current !== module
+          || productionClientRef.current !== productionClient || targetObservationContextEpoch.current !== targetObservationRenderEpoch || !isSelectionCurrent()) return;
+        const ticket = ++targetObservationEpoch.current, sourceSelection = selectionEpoch.current, originModule = module;
+        const originalClient = productionClient;
+        const source = { job: structuredClone(job), key: `${cacheKey}:target:${ticket}`,
+          isCurrent: () => current() && targetObservationEpoch.current === ticket && isSelectionCurrent()
+            && targetObservationContextEpoch.current === targetObservationRenderEpoch
+            && sourceSelection === selectionEpoch.current && editorLocation.current === originModule
+            && workspaceViewRef.current === 'TASKS' && productionClientRef.current === originalClient };
+        setTargetObservation({ ticket, source });
+      }}
       onOpen={(job, isSelectionCurrent) => {
         if (!isSelectionCurrent() || !current() || busyRef.current) return;
         if (job.command && Object.hasOwn(job.command, 'canvas_image_node')) { openProductionNodeResume(job, isSelectionCurrent); return; }
@@ -737,6 +757,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
           setProductionJob({ client: productionClient, job }); setWorkspaceView('PRODUCTION');
         });
       }} />}
+    {workspaceView === 'TASKS' && overview && !denied && !identityRetired && targetObservation && targetObservation.source.isCurrent()
+      && <CanvasImageNodeTargetPanel key={targetObservation.source.key} projectId={projectId} branchId={context.scope?.branchId ?? null}
+        client={productionClient} source={targetObservation.source} read={guarded}
+        onUnavailable={() => { if (targetObservationEpoch.current === targetObservation.ticket && targetObservation.source.isCurrent()) deny(); }}
+        onClose={() => { if (targetObservationEpoch.current === targetObservation.ticket) retireTargetObservation(); }} />}
     {workspaceView === 'TASKS' && overview && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
       projectId={projectId} scope={context.scope} identity={cacheKey} target={taskTarget.target} transport={taskTransport}
       busy={busy} isCurrent={current} read={guarded} onClose={() => setTaskTarget(undefined)} />}

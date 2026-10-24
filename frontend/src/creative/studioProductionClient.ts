@@ -1,4 +1,5 @@
-import { canvasImageNodeInCommand, sameCanvasImageNode, type CanvasImageNodeBinding } from './canvasImageNode';
+import { assertCanvasImageNodeJob, checkedCanvasImageNodeBinding, canvasImageNodeInCommand, canonicalImageNode,
+  sameCanvasImageNode, verifyCanvasImageNodePrompt, type CanvasImageNodeBinding } from './canvasImageNode';
 import { checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
@@ -70,6 +71,14 @@ export type ProductionJob = { contract: 'studio-production-job/1'; owner: Produc
   media_measurement?: TimelineMediaMeasurement | null; processing_proof?: CutoutProcessingProof | ImageUpscaleProof | ImageCompositeProof | null;
   needs_reconciliation?: boolean | null; execution_state?: string | null; created_at: string; updated_at: string };
 export type ProductionAction = { expected_version: number; expected_request_digest: string };
+export type StudioImageNodeTargetObservation = {
+  contract: 'studio-image-node-target-observation/1'; job: ProductionJob; target: CanvasImageNodeBinding; incarnation: string;
+  canvas: { id: string; project_id: string; scope: CanvasImageNodeBinding['scope']; version: number; definition_digest: string;
+    title: string; card_count: number; execution_authority: false; binary_content_verified: false };
+  history: { incarnation: string; current_version: number; current_definition_digest: string;
+    target_version: number; target_definition_digest: string; target_empty: true };
+  comparison: 'CURRENT_MATCH' | 'CURRENT_CHANGED'; automatic_actions: false;
+};
 
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
@@ -664,6 +673,49 @@ export function studioProductionClient(projectId: string, context: Collaboration
         ||!sameCanvasImageNode({operation_id:'m5.image.t2i',allow_cloud:false,prompt:'shape check',source_snapshots:[],canvas_image_node:target},result.command))invalid();
       return result;
     },
+    async observeImageNodeTarget(selected: ProductionJob, signal?: AbortSignal): Promise<StudioImageNodeTargetObservation> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope ? {mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId} : {mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope))invalid();
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      // This is one bounded metadata response, not a media/content download or an admission request.
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/target-observation`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      let raw:unknown;
+      try {
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      const exact=(value:unknown,names:string[]):value is Record<string,unknown>=>record(value)
+        && Object.keys(value).length===names.length && names.every(name=>Object.hasOwn(value,name));
+      if(!exact(raw,['contract','job','target','incarnation','canvas','history','comparison','automatic_actions'])
+        ||raw.contract!=='studio-image-node-target-observation/1'||raw.automatic_actions!==false)invalid();
+      const resultJob=job(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target),canvas=raw.canvas,history=raw.history;
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(expected)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==target.incarnation
+        ||!exact(canvas,['id','project_id','scope','version','definition_digest','title','card_count','execution_authority','binary_content_verified'])
+        ||!exact(history,['incarnation','current_version','current_definition_digest','target_version','target_definition_digest','target_empty'])
+        ||canvas.id!==target.canvas_id||canvas.project_id!==projectId||canonicalImageNode(canvas.scope)!==canonicalImageNode(ownedScope)
+        ||!revision(canvas.version)||canvas.version>21||!hex(canvas.definition_digest)||typeof canvas.title!=='string'
+        ||!canvas.title.trim()||[...canvas.title].length>160||typeof canvas.card_count!=='number'
+        ||!Number.isSafeInteger(canvas.card_count)||canvas.card_count<0||canvas.card_count>1000
+        ||canvas.execution_authority!==false||canvas.binary_content_verified!==false
+        ||history.incarnation!==target.incarnation||history.current_version!==canvas.version
+        ||history.current_definition_digest!==canvas.definition_digest||history.target_version!==target.canvas_version
+        ||history.target_definition_digest!==target.canvas_digest||history.target_empty!==true
+        ||canvas.version<target.canvas_version
+        ||(canvas.version===target.canvas_version
+          ? canvas.definition_digest!==target.canvas_digest||canvas.card_count!==0||raw.comparison!=='CURRENT_MATCH'
+          : raw.comparison!=='CURRENT_CHANGED'))invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      return structuredClone({ ...raw,job:resultJob,target:resultTarget }) as StudioImageNodeTargetObservation;
+    },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid(); return v.items.map(job);
@@ -792,5 +844,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate';
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget';
 export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;

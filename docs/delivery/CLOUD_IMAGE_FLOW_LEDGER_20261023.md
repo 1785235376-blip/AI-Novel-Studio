@@ -16,6 +16,8 @@ The [task-center node continuation slice](CLOUD_CANVAS_NODE_RESUME_20261024.md) 
 
 The subsequent [read-only node-task observation slice](CLOUD_CANVAS_NODE_OBSERVE_20261024.md) opens exact RUNNING, UNKNOWN or CANCELLED original tasks through the same selector and owners. Its immutable read-only mode permits explicit same-task metadata GET and JSON receipt download; provider loading, all task operations, candidate content and review remain unavailable. Actual File evidence covers original cancellation and fresh-owner reads; other status projections do not establish real inference.
 
+The independent [original target/save-state comparison](CLOUD_CANVAS_NODE_TARGET_OBSERVATION_20261024.md) shows an explicitly selected formal Job's captured Canvas pin alongside its current saved version, including legitimate later edits that prevent continuation. Its original-owner observation does not provision a missing File identity. It does not relax continuation, open an editor or claim that the historical request node has been restored.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |
