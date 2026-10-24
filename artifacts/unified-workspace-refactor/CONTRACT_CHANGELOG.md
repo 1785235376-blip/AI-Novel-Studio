@@ -67,3 +67,5 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - Creative/ExecutionCanvasPanel: new optional props revision, onSelect, selectedId, viewport, onViewport. The creative key is now `novelId:revision`.
 - New action uw.canvas.renameNode (no surfaces; inspector only): input {kind, scope, id, title}. It writes the local draft and reads it back. It reports error on mismatch.
 - New module workspace/panels/canvasInspector.tsx (CanvasNodeInspector, renameCanvasNode, readCanvasNode).
+
+- [HERMIA-FE-20261024 M3-s1fix] RebuildCanvas: new optional prop `revealLast` (default off); re-clicking the selected node re-fires onSelect. ExecutionCanvasPanel passes `revealLast`. No API/backend change. (310840ef)

@@ -199,3 +199,5 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 | canvas state isolation | m3s1 #1 (send after exec pick uses creative node), mutant killed | PASS |
 | full suite 3× Node 22.14 | adjusted 297/297/297 | PASS |
 | tsc | 6 baseline | unchanged |
+
+| M3-s1fix | reveal last sent node at 1366; exec viewport per project; node-named title/notices; re-click switch-back; exec-tab blocked notice | PASS (m3s1fix.test.tsx 5/5, mutations 8/8 killed, 310840ef) |

@@ -150,7 +150,7 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
   - After saving, the canvas remounts and keeps its selection and pan/zoom.
 - **M3-s1 isolation:** each canvas has its own selection (image → selNode, which feeds 送到执行画布; video → execSel), its own revision and its own viewport memory. A pick in one canvas never changes the other.
 - **M3-s1 dirty guard:** while the node or chapter draft is unsaved, a new pick or a project switch is refused with a notice. After discard or save, the inspector follows the latest pick.
-- **M3-s1 project switch:** clears both selections, the inspector target and the viewport memory.
+- **M3-s1 project switch:** clears both selections and the inspector target. ~~and the viewport memory~~ — corrected [HERMIA-FE-20261024 M3-s1fix]: in M3-s1 the memory was NOT cleared on switch in a way the tests proved (Vera MUST-FIX); since M3-s1fix it is keyed by novelId, so B starts at the default viewport and A's is restored on return.
 - **M3-s1 no model calls:** selection, canvas/tab switching, project switching and editing issue no network write and no model request (jsdom and Chrome: nonGet=[], modelReqs=[]).
 - **Optional pan/zoom on send: done.** RebuildCanvas gained optional initialSelected/initialViewport/onViewport props (defaults unchanged). The host remembers each canvas viewport in memory, so sends and tab switches keep it (Chrome: translate(-20,10) before and after 6 sends). It is in-memory only, so a reload resets it.
 - **Tests:** panels/m3s1.test.tsx (7). Mutations are in logs/m3s1-mutations.log: 4 killed. 1 survivor is equivalent: the project-switch reset is redundant because the new canvas mount clears it.
@@ -165,3 +165,10 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
   - logs/m3s1-browser.{mjs,json}
   - screenshots/m3s1_{1366,1440,1920}_{creative,execution}_inspector.png
   - patches/m3s1-shared-nonentry.patch (RebuildCanvas, UnifiedWorkspacePreview, studioPreviewPanels)
+
+## M3-s1fix [HERMIA-FE-20261024 M3-s1fix] (code 310840ef)
+- Vera's INDEPENDENT_REVIEW.md append committed unchanged as 965a07d2 (author Vera (review)).
+- **Reveal last sent node:** RebuildCanvas `revealLast` (layout effect, margin 16) pans by the minimal dx/dy to bring the last node into the svg; zoom unchanged. The host sets it after a send, clears it on video save / project switch. Test: 12 sends at 750×449 → premise outside, revealed inside, k=1; host send with 11 existing → 12th in view.
+- **MUST-FIX viewport per project:** `vps[novelId][kind]`. Test: pan A to translate(-360,40), switch B → translate(40,40) scale(1), back A → restored.
+- **Lows:** inspector title `节点「title」属性`; dirty notices name the node; re-clicking the selected creative node re-reports it (switches back from exec node); `uw-inspector-blocked` notice shown above the inspector on any tab.
+- Tests: panels/m3s1fix.test.tsx (5). Mutations logs/m3s1fix-mutations.log: 8/8 killed. Subsets workspace/rebuild/taskcenter 420/420; tsc 6 (baseline). Full suite skipped per brief. Shared non-entry patch: patches/m3s1fix-shared-nonentry.patch (RebuildCanvas).
