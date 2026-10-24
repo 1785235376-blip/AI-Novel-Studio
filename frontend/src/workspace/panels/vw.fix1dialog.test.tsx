@@ -69,4 +69,17 @@ describe('[VW-fix1] views dialog focus', () => {
     fireEvent.click(screen.getByRole('button', {name: '关闭'}));
     expect(document.activeElement).toBe(trigger);
   });
+  it('[fix2] rename → cancel returns focus to that row\'s rename button', () => {
+    setup();
+    fireEvent.click(screen.getByRole('button', {name: '重命名视图「写作」'}));
+    expect(document.activeElement).toBe(screen.getByLabelText('新名称'));
+    fireEvent.click(screen.getByRole('button', {name: '取消'}));
+    expect(document.activeElement).toBe(screen.getByRole('button', {name: '重命名视图「写作」'}));
+  });
+  it('[fix2] delete-confirm → cancel returns focus to that row\'s delete button', () => {
+    setup();
+    fireEvent.click(screen.getByRole('button', {name: '删除视图「写作」'}));
+    fireEvent.click(document.activeElement as HTMLElement); // focused = 取消 (data-cancel-del)
+    expect(document.activeElement).toBe(screen.getByRole('button', {name: '删除视图「写作」'}));
+  });
 });
