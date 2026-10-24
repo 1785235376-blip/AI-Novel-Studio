@@ -836,3 +836,17 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - 数字：subset 503/503；tsc 6 个错误（与基线相同）；旧 UI 18 页文本与 merge 轮 18/18 完全一致；完整 vitest 三次 adjusted 297/297/298（raw 297/299/298，ISI 8/10/8），共 11424 个用例，持久失败交集 298 条，与基线相同；flake（ISI 2 条、receiptCompanion）单独各重跑 3 次，3/3 通过。
 - 矩阵：算术正确（87/98）。有争议的条目见 vera-compare/m6/matrix-disputes.md：S2-3 和 M1-01..25 的引用有误；Hermia 的浏览器日志全部未做拦截；M2-06 应为 PASS，B9 的说法有误。
 - 其他：nodeDirtyRef 是纯移动 ✓；m6 patch 与 git diff 完全一致 ✓；P3：e2c9d292 的 author 字段写成了 Vera；README 中的行数有小偏差。
+
+## M6-fix (0bf7bdeb) — [VERA-FE] 独立复核
+
+- 范围：HEAD 0bf7bdeb / tree 1b73c3ac ✓；Node 22.14；本轮没有改产品代码，所以没有开浏览器和 Vite；未连接 :8000，未碰 :4299。
+- **结论：PASS**（下面只有 P3 级的文档小问题）。
+- diff c3939f22..HEAD：只改了 TaskCenter.test.tsx（测试）和 artifacts/ 下的文档与日志，产品代码零改动 ✓。
+- 新增的 ReviewInbox 测试：data-error-code 用 toBe('STUDIO_REQUEST_FAILED')；alert 的 textContent 用 toBe('请求未完成。')，因为 fake client 的 message 就是这一句，所以这是 span 的完整文本（完整长句只出自真实 client 的映射）；可见文本中不含 code ✓。TaskCenter.test 也改为对 span 全文 toBe('请求未完成。') ✓；"stricter" 的说法已在 IMPLEMENTATION_REPORT 中更正 ✓。
+- 变异测试（src/taskcenter，184 个用例）：ReviewInbox 显示原始 code → 1 个失败 ✓；ReviewInbox 去掉 data-error-code → 1 个失败 ✓；ReviewInbox 改成 "message · code" → 1 个失败 ✓；TaskList 的两项变异仍然会失败 ✓。M6 的 MUST-FIX 已关闭。
+- 数字：subset 504/504（63 个文件）；tsc 6 个错误（与基线相同）；taskcenter 文件夹跑了 7 次，其中 6 次 184/184，第 3 次有 1 个失败（失败用例名当时没有记录下来）；receiptCompanion 单独跑 3/3 通过，推定是已知的 receiptCompanion flake。
+- 矩阵：按文件本身重新计数，PASS 87 / PARTIAL 7 / BLOCKED 2 / NOT_RUN 1 / FAIL 1 = 98，87/98 = 88.8% ✓。变化是 M2-06 PARTIAL→PASS、GATE-M6 NOT_RUN→PASS、M4-05 和 M1-ZOOM PASS→PARTIAL，所以 PASS 净增 0。P3：FINAL_HANDOFF 把 M2-06 写成 "NOT_RUN→PASS"，实际原来是 PARTIAL。争议表逐项都已处理：S2-3、M1-01..25 的引用、M2-03、M2-07、M2S-07 已更正；GATE-M6 引用的 297/297/298（raw 297/299/298，ISI 8/10/8，11424 个用例）正确，所引证据路径都存在。
+- BLOCKERS：B9 已更正 ✓。B11 由表下注释给出理由（我在 c3939f22 跑过完整 suite）✓。P3：B11 表格行本身仍写着 "NOT_RUN"。
+- patches：m6 patch 与 `git diff e2c9d292..HEAD -- frontend/src/taskcenter` 字节一致，可以反向应用 ✓。README 的行数与我按"整行精确匹配"方法重数的结果全部一致（0001 6/6、11/19；m3s1 20/33；m3s1fix 6/18；m6 2/2、2/2、20/20、10/10、17/17）✓。我在 M6 轮报的 7/7、12/19 用的是另一种方法，口径不同，不算错误。
+- 提交署名（仅作记录）：52f0a548 的 author 是 Vera (review)，committer 是 Hermia；内容与我的 M6 追加字节一致 ✓。P3：IMPLEMENTATION_REPORT 说 e2c9d292 的 committer 也是 Vera，这与 git 记录相符。
+- 证据：/workspace/hr/vera-compare/m6fix/。
