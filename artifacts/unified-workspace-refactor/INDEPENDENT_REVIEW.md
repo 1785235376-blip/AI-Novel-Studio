@@ -501,3 +501,35 @@ nit（P3）：
 - 低：送出会重置执行画布的视口，用户的平移/缩放会丢失（既有行为）。
 - 低：useTaskCenter 的 cancelled 判断没有测试覆盖（属于弱变异）。
 - 低：IndependentStudioIdentity 有 2 项时序 flaky，继续观察。
+
+## [VERA-FE] M5-s1（abfe866a）
+
+- 基线 3520d679，HEAD abfe866a，tree a976e97d ✓；代码 diff 仅 frontend/src/workspace/（另有 M5_REPORT.md 文档）✓
+- 环境：临时 worktree /tmp/vera-m5s1，Node 22.14，vite :4399，所有非 GET 拦截（rename 由 route mock 应答，未转发）；证据 vera-compare/m5s1/
+
+### 浏览器（1366，route mock）
+| 项 | 结果 |
+|---|---|
+| beforeunload 干净时 | 本组件未挂监听（基线 1 个为页面其它来源），dispatch 不 preventDefault ✓ |
+| 变脏 | 监听 +1，preventDefault=true，close(runBeforeUnload) 弹 beforeunload 对话框 ✓ |
+| 放弃修改后 | **监听仍挂着**（计数不降），但 handler 内 isDirty 判定→不拦截；功能等价，属“仅脏时挂载”未严格满足（LOW，见下） |
+| 乱序：A→B→A，B 的旧响应 4s 后回 STALE 数据 | 雾港大纲不出现 STALE ✓（query key 按作品隔离）；回到 B 时才显示其自身数据 ✓ |
+| 慢保存 3s 中途继续编辑 | 输入框保存中可编辑；保存后值保留"来信XY"、仍脏、提示 已保存（版本 3），版本更新 ✓ |
+| 脏时切换作品 | 被拦截并提示 ✓ |
+| 写挂起 >20s | 20.0s 出现「保存超时…不确定是否已保存。修改还在面板里…」(role=alert)，草稿保留、仍脏、beforeunload 仍生效，未宣称成功/失败 ✓ |
+| 读挂起 >15s | 显示「读取超时：服务器长时间没有回应，请稍后重试。」✓；但同时显示「还没有章节。」空态，易误导（LOW） |
+| 模型调用 / 非 GET 透传 | 0 / 0 ✓ |
+
+### 变异（src/workspace 基线 172/172）
+- Hermia 11 个：M2,M4–M9,M11 杀死；M3、M10 存活（同报告）。**M1（删除 host 的 tracker.update 项目切换标 stale）在我这里存活，与 M5_REPORT“M1 已杀”不符。** 原因：m5s1.test.tsx 中 stale 用例只测 LifecycleTracker/ActionRegistry 单元，未经 host 接线。
+- 自加：V2 总是挂载且总是拦截→杀；V2b 总是挂载但 handler 判脏→存活（与上面浏览器观察一致）；V3 章节保存无条件清草稿→杀；V4 节点保存无条件清草稿→存活；V5 isLatest 恒真→杀；V6 写超时标为 read→存活（等价，UI 文案由 instanceof 决定）。
+- 裁定：M3 接受（当前流程等价）；M10 接受（等价）；M1 不接受。
+
+### 运行
+- 定向子集（workspace/workbench/rebuild/taskcenter）：57 文件 477/477 ✓；tsc：6 errors（与基线一致）✓
+- 全量：待合并后跑（pending）
+
+### 结论：MUST-FIX
+1. 【MUST】补 host 级测试：发起动作→切换作品→断言 stale（使 M1 被杀），并更正 M5_REPORT 中 M1 的记录。
+2. 【LOW】useBeforeUnloadGuard 放弃修改后监听未卸载（dirtyNow 快照在 inspectorDirty ref 更新前计算，之后无 store 通知）；补“监听挂载数”测试（V2b）。
+3. 【LOW】节点检视器条件清草稿无测试（V4）；读超时时不应同时显示“还没有章节。”
