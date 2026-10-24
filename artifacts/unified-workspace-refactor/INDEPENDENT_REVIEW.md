@@ -850,3 +850,31 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - patches：m6 patch 与 `git diff e2c9d292..HEAD -- frontend/src/taskcenter` 字节一致，可以反向应用 ✓。README 的行数与我按"整行精确匹配"方法重数的结果全部一致（0001 6/6、11/19；m3s1 20/33；m3s1fix 6/18；m6 2/2、2/2、20/20、10/10、17/17）✓。我在 M6 轮报的 7/7、12/19 用的是另一种方法，口径不同，不算错误。
 - 提交署名（仅作记录）：52f0a548 的 author 是 Vera (review)，committer 是 Hermia；内容与我的 M6 追加字节一致 ✓。P3：IMPLEMENTATION_REPORT 说 e2c9d292 的 committer 也是 Vera，这与 git 记录相符。
 - 证据：/workspace/hr/vera-compare/m6fix/。
+
+## [VERA-FE] 视图工作集 M0–M5 独立复核（ee350ece，基线 51ff02b2，2026-10-24）
+
+**结论：MUST-FIX（2 项）**。门禁全部通过，写安全与脏草稿矩阵通过；问题在于新建视图对话框的焦点管理，以及 M3 宿主测试没有真正守住 viewport 记忆接线。
+
+### 门禁
+- tsc 0，build 0；核心 67 文件 527/527（比 Hermia 记录的 66/526 多出 vw.m3host）；新增视图测试 18/18 通过。
+- 完整 vitest 跑三次（Node 22.14，forks，maxWorkers=3）：raw 294/293/293，ISI 8/8/8，adjusted 294/293/293。规则 (a) 三次取最好 ≤297：PASS；规则 (b) ≤297、允许一次重跑：PASS（三次都 ≤297）。
+- 相对 persistent-node22（298）没有新的持续失败。唯一不在基线里的失败是 PluginResourceDetail.additive 的 writing_presets 用例，三次里只出现 1 次，属偶发。vw.m2m4、vw.m3host、viewPreferences.vw 三次全部通过。
+
+### 浏览器（自起 vite 4399；Playwright 拦截所有非 GET 请求；1366/1440/1920 三个宽度结果一致）
+- 非 GET 请求 0 次，pageerror 0 次，没有写入 viewprefs 键（layout.v3 本来就会写，已有文档说明）。加载时不抢焦点。
+- 视图对话框：打开后焦点在名称输入框，标注「仅本次会话」，重名和空名都会被拒绝，保存/应用/重命名/删除正常，Ctrl+Alt+V 能打开，对话框内 axe 0 违规。
+- M2 矩阵：应用工作集时如果要关闭脏面板，会被拦下，布局和草稿都不变；改停靠位置或转浮动时草稿保留；脏状态下切换小说会被拦下。
+- M3：A→B→A 切换时每部小说各自保留 viewport；重置回到默认并提示「仅本次会话」；刷新后回到默认。冷恢复标 BLOCKED：预览没有真实 scope，我试过「平移并保存工作集→刷新」，按设计会回到默认。
+- M4：Ctrl+Alt+N/B/L 能循环切换并返回；输入中和 IME 组合时不触发；目标面板已关闭时给出说明且焦点不动；有 reduced-motion 规则。焦点指示只是 1px inset 阴影，偏弱（P3）。
+- 页面级 axe：.nv-rail 有 color-contrast 问题，属已有问题，归 Design System Owner。
+
+### MUST-FIX
+1. **WorkspaceViewsPanel.tsx 对话框（role=dialog、aria-modal=true）没有焦点陷阱。** 复现：打开「视图」→ 连按 Tab 4 次，焦点离开对话框；或在第一个控件上按 Shift+Tab，焦点落到背后的「视图」按钮。另外提交重命名后焦点掉到 body。这两种情况下 Esc 都关不掉对话框，因为 Esc 只在卡片内部生效。仓库里 DockLayout.tsx（约 85–100 行）的对话框已经有 Tab 陷阱，这里属于回退。修法：照搬 Tab 循环；Esc 挂到 document 或 overlay 上；重命名后把焦点还给该行或输入框；关闭时把焦点还给触发按钮。
+2. **vw.m3host.test.tsx 守不住 M3 接线。** 变异：把 UnifiedWorkspacePreview.tsx:98 的 onCreativeVp 改成空操作，该测试仍然通过。DBG 显示切 tab 后变换仍是 translate(-260,40)：面板的 DOM 被移出后又接回，RebuildCanvas 实际没有重挂载，所以这个测试验证的不是适配器。需要补一个真正会重挂载的宿主用例（小说 A→B→A，或 revision+1 以后），要求去掉 setViewport 接线后用例失败。
+
+### 变异（12 个：抓住 9 个，存活 3 个）
+- M3-noremember 存活：见 MUST-FIX 2。
+- M1-placeholder（从 PLACEHOLDER 里删掉 'preview'）存活：单测只用 local/preview/preview 这一组 scope，'local' 一个就够命中。建议补一个只含 preview 的 scope 用例（P3）。
+- M3-persistlocal 存活：占位符检查还在，所以这个变异与原代码等价，不算缺口。
+
+证据：/workspace/hr/vera-compare/vw-ee350ece/（tsc/build/core/full1-3 的 log/json、analyze.py、browser.json、probe2.json、shots/、mutations.txt）。本节未提交。
