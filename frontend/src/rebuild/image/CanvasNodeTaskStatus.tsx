@@ -11,7 +11,7 @@ import {CanvasTaskCandidateView} from './CanvasTaskCandidateView';
 type Props = {novelId: string; nodeId: string; onOpen?: () => void; nodePrompt?: string; sourceRevision?: number; isSourceCurrent?: () => boolean};
 const states = new Set(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'CANCELLED']);
 
-/** Read-only view of the exact persisted job ID. No inference, adoption or write endpoint is called. */
+/** Original-owner reads and an explicit browser-only asset association; no server review/write endpoint. */
 export function CanvasNodeTaskStatus(props: Props) {
   const {owner, binding, sessionKey} = useCanvasTaskBinding(props.novelId, props.nodeId);
   return <section aria-label="原节点图片任务">
@@ -68,6 +68,7 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
   return <>
     <p>原入队任务 ID：{binding.taskId}</p>
     <p className="novel-help">原任务不代表当前提示词已经入队。关联仅保存在此浏览器；状态每次从原项目队列读取，不会自动执行或采用结果。</p>
+    {binding.adoption && <StatusMessage>此浏览器记录的节点资产：{binding.adoption.assetId}；读取时资产版本：{binding.adoption.assetVersion}。这是本机采用关联，尚未重新核对当前内容；没有新增服务端审核或共享画布记录。使用前请重新预览并核对。</StatusMessage>}
     {loading && <StatusMessage>正在核实原任务状态…</StatusMessage>}
     {status && <p>服务端任务状态：<Badge>{status}</Badge></p>}
     {error && <StatusMessage tone="error">{error}</StatusMessage>}

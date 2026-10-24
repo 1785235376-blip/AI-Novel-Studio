@@ -7,11 +7,23 @@ export type CanvasTaskOwner = {
   mode: 'local' | 'collaboration'; actorId: string; actorWorkspaceId: string;
   workspaceId: string; projectId: string; storylineId: string; branchId: string; novelId: string;
 };
-export type CanvasTaskBinding = {schema_version: 1; owner: CanvasTaskOwner; nodeId: string; taskId: string};
+/** Browser-local reference to an explicitly observed approved asset, never an approval receipt. */
+export type CanvasTaskAdoption = {
+  assetId: string; assetVersion: number; assetSha256: string;
+  /** Client observation fingerprint only; not an immutable server job revision. */
+  jobObservationSha256: string;
+};
+export type CanvasTaskBinding = {schema_version: 1; owner: CanvasTaskOwner; nodeId: string; taskId: string; adoption?: CanvasTaskAdoption};
 const OWNER_KEYS = ['mode', 'actorId', 'actorWorkspaceId', 'workspaceId', 'projectId', 'storylineId', 'branchId', 'novelId'] as const;
 const safeId = (value: unknown): value is string => typeof value === 'string' && value.length > 0 && value.length <= 240 && value.trim() === value && !/[\u0000-\u001f\u007f]/.test(value);
 const taskId = (value: unknown): value is string => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(value);
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const ADOPTION_KEYS = ['assetId', 'assetVersion', 'assetSha256', 'jobObservationSha256'] as const;
+const hex = (value: unknown): value is string => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+const checkedAdoption = (value: unknown): value is CanvasTaskAdoption => object(value)
+  && Object.keys(value).length === ADOPTION_KEYS.length && ADOPTION_KEYS.every(key => Object.hasOwn(value, key))
+  && taskId(value.assetId) && Number.isSafeInteger(value.assetVersion) && (value.assetVersion as number) > 0
+  && hex(value.assetSha256) && hex(value.jobObservationSha256);
 const checkedOwner = (value: unknown): value is CanvasTaskOwner => {
   if (!object(value) || Object.keys(value).length !== OWNER_KEYS.length || OWNER_KEYS.some(key => !Object.hasOwn(value, key))
     || !safeId(value.actorId) || !safeId(value.projectId) || value.projectId !== value.novelId) return false;
@@ -20,6 +32,15 @@ const checkedOwner = (value: unknown): value is CanvasTaskOwner => {
     && value.actorWorkspaceId === value.workspaceId;
 };
 const ownerIdentity = (owner: CanvasTaskOwner) => JSON.stringify(OWNER_KEYS.map(key => owner[key]));
+const checkedBinding = (value: unknown): value is CanvasTaskBinding => object(value)
+  && Object.keys(value).length === (Object.hasOwn(value, 'adoption') ? 5 : 4)
+  && ['schema_version', 'owner', 'nodeId', 'taskId'].every(key => Object.hasOwn(value, key))
+  && value.schema_version === 1 && checkedOwner(value.owner) && taskId(value.nodeId) && taskId(value.taskId)
+  && (!Object.hasOwn(value, 'adoption') || checkedAdoption(value.adoption));
+const sameBinding = (left: CanvasTaskBinding | undefined, right: CanvasTaskBinding) => !!left
+  && ownerIdentity(left.owner) === ownerIdentity(right.owner) && left.nodeId === right.nodeId && left.taskId === right.taskId
+  && (left.adoption === undefined && right.adoption === undefined || !!left.adoption && !!right.adoption
+    && ADOPTION_KEYS.every(key => left.adoption![key] === right.adoption![key]));
 const bindingEvent = 'poemseed:canvas-task-binding';
 const prefix = 'poemseed.rebuild.image-task.v1:';
 
@@ -62,10 +83,9 @@ export function readCanvasTaskBinding(owner: CanvasTaskOwner, nodeId: string): C
     const raw = localStorage.getItem(canvasTaskBindingKey(owner, nodeId));
     if (!raw || raw.length > 8_000) return;
     const value: unknown = JSON.parse(raw);
-    if (!object(value) || Object.keys(value).length !== 4 || !['schema_version', 'owner', 'nodeId', 'taskId'].every(key => Object.hasOwn(value, key))
-      || value.schema_version !== 1 || !checkedOwner(value.owner) || ownerIdentity(value.owner) !== ownerIdentity(owner)
-      || value.nodeId !== nodeId || !taskId(value.taskId)) return;
-    return {schema_version: 1, owner: {...owner}, nodeId, taskId: value.taskId};
+    if (!checkedBinding(value) || ownerIdentity(value.owner) !== ownerIdentity(owner) || value.nodeId !== nodeId) return;
+    return {schema_version: 1, owner: {...owner}, nodeId, taskId: value.taskId,
+      ...(value.adoption ? {adoption: {...value.adoption}} : {})};
   } catch { return; }
 }
 
@@ -77,6 +97,28 @@ export function writeCanvasTaskBinding(owner: CanvasTaskOwner, nodeId: string, j
   try {
     const binding: CanvasTaskBinding = {schema_version: 1, owner: {...owner}, nodeId, taskId: jobId};
     const key = canvasTaskBindingKey(owner, nodeId), serialized = JSON.stringify(binding);
+    localStorage.setItem(key, serialized);
+    if (localStorage.getItem(key) !== serialized) return false;
+    window.dispatchEvent(new Event(bindingEvent));
+    return true;
+  } catch { return false; }
+}
+
+/**
+ * Store an explicit local association only. The caller must first revalidate the
+ * authorized job observation, asset metadata and bytes; this cache grants no review
+ * or execution authority and cannot restore a preview/load confirmation on reopen.
+ */
+export function writeCanvasTaskAdoption(expectedBinding: CanvasTaskBinding, adoption: CanvasTaskAdoption, isCurrent: () => boolean): boolean {
+  try {
+    if (!checkedBinding(expectedBinding) || !checkedAdoption(adoption) || !isCurrent()) return false;
+    const current = readCanvasTaskBinding(expectedBinding.owner, expectedBinding.nodeId);
+    if (!sameBinding(current, expectedBinding)) return false;
+    const binding: CanvasTaskBinding = {schema_version: 1, owner: {...expectedBinding.owner}, nodeId: expectedBinding.nodeId,
+      taskId: expectedBinding.taskId, adoption: {...adoption}};
+    const key = canvasTaskBindingKey(binding.owner, binding.nodeId), serialized = JSON.stringify(binding);
+    // Recheck the caller's prompt/session/observation fence immediately before the write.
+    if (!isCurrent()) return false;
     localStorage.setItem(key, serialized);
     if (localStorage.getItem(key) !== serialized) return false;
     window.dispatchEvent(new Event(bindingEvent));

@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 // Browser recovery hints only. No HTTP, provider, execution or server canvas is represented.
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {setCollaborationContext, type CollaborationContext} from '../../api';
+import {getCollaborationEpoch, setCollaborationContext, type CollaborationContext} from '../../api';
 import {bindLocalHostSession, useLocalHostSession} from '../../localHostSession';
 import {canvasStorageKey} from '../canvas/RebuildCanvas';
-import {canvasTaskBindingKey, captureCanvasTaskOwner, imageDraftNodeExists, readCanvasTaskBinding, subscribeCanvasTaskBindings, writeCanvasTaskBinding} from './canvasTaskBinding';
+import {canvasTaskBindingKey, captureCanvasTaskOwner, imageDraftNodeExists, readCanvasTaskBinding, subscribeCanvasTaskBindings, writeCanvasTaskAdoption, writeCanvasTaskBinding, type CanvasTaskAdoption} from './canvasTaskBinding';
 
 const novelId = 'binding-project', nodeId = 'original-image-node';
 const context = (branchId = 'branch-a'): CollaborationContext => ({sessionToken: 'not-persisted-session-secret',
@@ -134,5 +134,130 @@ describe('browser image node task navigation binding', () => {
     unsubscribe();
     writeCanvasTaskBinding(owner, nodeId, 'server-task-2');
     expect(listener).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('explicit browser-local approved asset association', () => {
+  const adoption: CanvasTaskAdoption = {assetId: 'original-approved-asset', assetVersion: 3,
+    assetSha256: 'a'.repeat(64), jobObservationSha256: 'b'.repeat(64)};
+  const linkedTask = () => {
+    const owner = captureCanvasTaskOwner(novelId)!;
+    expect(writeCanvasTaskBinding(owner, nodeId, 'original-server-task')).toBe(true);
+    return readCanvasTaskBinding(owner, nodeId)!;
+  };
+
+  it('stores the checked IDs and actual metadata pins in the original binding key without approval, preview or credential state', () => {
+    const binding = linkedTask(), current = vi.fn(() => true), fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    try {
+      expect(writeCanvasTaskAdoption(binding, adoption, current)).toBe(true);
+      expect(current).toHaveBeenCalledTimes(2);
+      const raw = localStorage.getItem(canvasTaskBindingKey(binding.owner, nodeId))!;
+      expect(JSON.parse(raw)).toEqual({...binding, adoption});
+      expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual({...binding, adoption});
+      expect(raw).not.toMatch(/prompt|status|approval|sessionToken|sourceUri|blob:|https:|not-persisted-session-secret|loaded|confirmed/);
+      expect(fetcher).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
+
+  it('keeps old four-field bindings readable and clears the asset association on an explicit new-task binding', () => {
+    const binding = linkedTask();
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual(binding);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(true);
+    expect(writeCanvasTaskBinding(binding.owner, nodeId, 'new-server-task')).toBe(true);
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual({...binding, taskId: 'new-server-task'});
+    expect(localStorage.getItem(canvasTaskBindingKey(binding.owner, nodeId))).not.toContain('adoption');
+  });
+
+  it.each([
+    {assetId: 'https://untrusted.invalid/asset'}, {assetId: ''}, {assetVersion: 0}, {assetVersion: -1},
+    {assetVersion: 1.5}, {assetVersion: Number.MAX_SAFE_INTEGER + 1}, {assetVersion: '3'},
+    {assetSha256: 'not-the-actual-byte-hash'}, {assetSha256: 'A'.repeat(64)}, {jobObservationSha256: 'missing'},
+    {approvalStatus: 'APPROVED'}, {sourceUri: 'https://untrusted.invalid/signed-candidate'},
+  ])('rejects malformed or surplus asset association fields on write and read: %j', change => {
+    const binding = linkedTask(), invalid = {...adoption, ...change};
+    expect(writeCanvasTaskAdoption(binding, invalid as CanvasTaskAdoption, () => true)).toBe(false);
+    localStorage.setItem(canvasTaskBindingKey(binding.owner, nodeId), JSON.stringify({...binding, adoption: invalid}));
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toBeUndefined();
+  });
+
+  it('rejects an absent/null asset association and a non-v1 or surplus outer schema rather than restoring confirmation state', () => {
+    const binding = linkedTask();
+    for (const record of [{...binding, adoption: null}, {...binding, adoption: {}}, {...binding, adoption, schema_version: 2},
+      {...binding, adoption, confirmed: true}, {...binding, adoption: {...adoption, imageLoaded: true}}]) {
+      localStorage.setItem(canvasTaskBindingKey(binding.owner, nodeId), JSON.stringify(record));
+      expect(readCanvasTaskBinding(binding.owner, nodeId)).toBeUndefined();
+      expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    }
+  });
+
+  it('compares the original task and every existing asset pin before updating the association', () => {
+    const binding = linkedTask();
+    expect(writeCanvasTaskBinding(binding.owner, nodeId, 'replacement-server-task')).toBe(true);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    expect(writeCanvasTaskBinding(binding.owner, nodeId, binding.taskId)).toBe(true);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(true);
+    // A ticket from before the first explicit association cannot replace that association.
+    expect(writeCanvasTaskAdoption(binding, {...adoption, assetId: 'other-approved-asset'}, () => true)).toBe(false);
+    const observed = readCanvasTaskBinding(binding.owner, nodeId)!;
+    for (const change of [{assetId: 'other-approved-asset'}, {assetVersion: 4}, {assetSha256: 'c'.repeat(64)}, {jobObservationSha256: 'd'.repeat(64)}]) {
+      const changed = {...observed, adoption: {...adoption, ...change}};
+      localStorage.setItem(canvasTaskBindingKey(binding.owner, nodeId), JSON.stringify(changed));
+      expect(writeCanvasTaskAdoption(observed, adoption, () => true)).toBe(false);
+    }
+  });
+
+  it('requires the current original owner and node even when a stale caller supplies a true fence', () => {
+    const binding = linkedTask();
+    setCollaborationContext(context('other-branch'));
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    setCollaborationContext(context());
+    graph([]);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    graph([{id: nodeId, t: 'image_reference'}]);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+  });
+
+  it('honors the caller fence after identity and prompt A/B/A transitions without copying their details into the cache', () => {
+    const binding = linkedTask(), epoch = getCollaborationEpoch();
+    setCollaborationContext(context('temporary-branch'));
+    setCollaborationContext(context());
+    expect(writeCanvasTaskAdoption(binding, adoption, () => getCollaborationEpoch() === epoch)).toBe(false);
+    let sourceRevision = 1;
+    const capturedRevision = sourceRevision;
+    graph([{id: nodeId, t: 'image_generate', prompt: 'Temporary draft'}]); sourceRevision += 1;
+    graph(); sourceRevision += 1;
+    expect(writeCanvasTaskAdoption(binding, adoption, () => sourceRevision === capturedRevision)).toBe(false);
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual(binding);
+  });
+
+  it('checks the observation/source fence again immediately before writing and fails closed if that check throws', () => {
+    const binding = linkedTask(), expired = vi.fn().mockReturnValueOnce(true).mockReturnValue(false);
+    expect(writeCanvasTaskAdoption(binding, adoption, expired)).toBe(false);
+    expect(expired).toHaveBeenCalledTimes(2);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => { throw new Error('Retired source'); })).toBe(false);
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual(binding);
+  });
+
+  it('does not report success or notify observers if storage throws or the written record cannot be confirmed', () => {
+    const binding = linkedTask(), listener = vi.fn(), unsubscribe = subscribeCanvasTaskBindings(listener);
+    const setter = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('Full', 'QuotaExceededError'); });
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    expect(listener).not.toHaveBeenCalled();
+    setter.mockImplementation(() => {});
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(false);
+    expect(listener).not.toHaveBeenCalled();
+    expect(readCanvasTaskBinding(binding.owner, nodeId)).toEqual(binding);
+    unsubscribe();
+  });
+
+  it('notifies only after successful read-after-write confirmation and returns defensive copies on reopen', () => {
+    const binding = linkedTask(), listener = vi.fn(), unsubscribe = subscribeCanvasTaskBindings(listener);
+    expect(writeCanvasTaskAdoption(binding, adoption, () => true)).toBe(true);
+    expect(listener).toHaveBeenCalledTimes(1);
+    const reopened = readCanvasTaskBinding(binding.owner, nodeId)!;
+    reopened.adoption!.assetId = 'not-the-stored-asset';
+    expect(readCanvasTaskBinding(binding.owner, nodeId)?.adoption).toEqual(adoption);
+    unsubscribe();
   });
 });
