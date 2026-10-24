@@ -14,6 +14,8 @@ The [formal queue-request recovery slice](CLOUD_CANVAS_QUEUE_RECOVERY_20261024.m
 
 The [task-center node continuation slice](CLOUD_CANVAS_NODE_RESUME_20261024.md) reuses the existing exact task selector and original Job/Canvas/history reads to open one still-QUEUED formal node task without a browser graph or recovery hint. Its ephemeral resume-only panel preserves explicit execution confirmation and blocks new queueing, task substitution and candidate review. This is separate from the legacy browser-node path below and does not integrate the Grok unified-workspace preview.
 
+The subsequent [read-only node-task observation slice](CLOUD_CANVAS_NODE_OBSERVE_20261024.md) opens exact RUNNING, UNKNOWN or CANCELLED original tasks through the same selector and owners. Its immutable read-only mode permits explicit same-task metadata GET and JSON receipt download; provider loading, all task operations, candidate content and review remain unavailable. Actual File evidence covers original cancellation and fresh-owner reads; other status projections do not establish real inference.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

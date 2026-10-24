@@ -8,19 +8,20 @@ import type { StudioProductionClient } from './studioProductionClient';
 
 /** An ephemeral original-owner handoff. It is never written to a browser graph or hint. */
 export type CanvasImageNodeResume = { job: StudioProductionTask; canvas: CanvasViewRecord;
-  binding: CanvasImageNodeBinding; initialPrompt: string; canReview: boolean };
+  binding: CanvasImageNodeBinding; initialPrompt: string; canReview: boolean; readOnly: boolean };
 export type CanvasImageNodeResumeInput = { selected: StudioProductionTask; projectId: string; branchId: string | null;
   client: Pick<StudioClient, 'overview' | 'graphs'>;
   production: Pick<StudioProductionClient, 'get' | 'resolveImageNodeCreate'>;
-  isCurrent: () => boolean; read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>; signal?: AbortSignal };
+  isCurrent: () => boolean; read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>; signal?: AbortSignal;
+  readOnly?: boolean };
 
 function invalid(message: string): never {
   throw new ApiError({ status: 409, code: 'STUDIO_CANVAS_NODE_RESUME_CHANGED', message });
 }
 
-/** Read the exact selected queued Job and original Canvas, without granting execution. */
+/** Read the exact selected Job and original Canvas, without granting an action. */
 export async function prepareCanvasImageNodeResume(input: CanvasImageNodeResumeInput): Promise<CanvasImageNodeResume> {
-  const selected = structuredClone(input.selected), controller = new AbortController();
+  const selected = structuredClone(input.selected), controller = new AbortController(), readOnly = input.readOnly === true;
   const aborted = () => controller.abort();
   input.signal?.addEventListener('abort', aborted, { once: true });
   if (input.signal?.aborted) controller.abort();
@@ -47,18 +48,20 @@ export async function prepareCanvasImageNodeResume(input: CanvasImageNodeResumeI
     return await Promise.race([(async () => {
       current();
       const binding = canvasImageNodeInCommand(selected.command);
-      if (!binding || selected.status !== 'QUEUED' || selected.owner !== 'image'
+      const supportedStatus = readOnly ? ['RUNNING', 'UNKNOWN', 'CANCELLED'].includes(selected.status) : selected.status === 'QUEUED';
+      if (!binding || !supportedStatus || selected.owner !== 'image'
         || selected.novel_id !== input.projectId || selected.branch_id !== input.branchId
         || binding.project_id !== input.projectId
         || (binding.scope.mode === 'collaboration' ? binding.scope.branch_id : null) !== input.branchId)
-        invalid('此入口仅续接当前项目明确选中的排队图片节点任务。');
+        invalid('此入口仅续接当前项目明确选中的排队任务，或只读的运行中、未知与已取消图片节点任务。');
       assertCanvasImageNodeJob(binding, selected);
       await verifyCanvasImageNodePrompt(selected.command!); current();
       const resolver = input.production.resolveImageNodeCreate;
       if (!resolver || !input.client.graphs.canvasViews) invalid('当前服务缺少精确原任务或画布读取能力，未开启续接。');
       const overview = await read(signal => input.client.overview(signal));
       if (overview.project.id !== input.projectId || overview.project.incarnation !== binding.incarnation
-        || overview.capabilities.can_mutate !== true) invalid('原项目代次或当前写入能力未确认，未开启任务续接。');
+        || !readOnly && overview.capabilities.can_mutate !== true)
+        invalid(readOnly ? '原项目或代次未确认，未开启只读任务续接。' : '原项目代次或当前写入能力未确认，未开启任务续接。');
       const resolved = await read(signal => resolver(selected.request_id, selected.request_digest, binding, signal));
       exactStudioProductionTask(resolved, selected, input.projectId, input.branchId);
       assertCanvasImageNodeJob(binding, resolved);
@@ -77,7 +80,7 @@ export async function prepareCanvasImageNodeResume(input: CanvasImageNodeResumeI
       const exact = exactStudioProductionTask(latest, selected, input.projectId, input.branchId);
       assertCanvasImageNodeJob(binding, exact); current();
       return { job: exact, canvas, binding: structuredClone(binding), initialPrompt: exact.command!.prompt,
-        canReview: overview.capabilities.can_review === true };
+        canReview: !readOnly && overview.capabilities.can_review === true, readOnly };
     })(), timeout, cancelled]);
   } finally {
     if (timer !== undefined) clearTimeout(timer);

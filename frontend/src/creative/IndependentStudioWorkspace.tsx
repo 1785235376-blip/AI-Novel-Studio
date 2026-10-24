@@ -614,8 +614,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!current() || busyRef.current || workspaceViewRef.current !== 'TASKS' || !isSelectionCurrent()) return;
     retirePendingNodeResume(); editorTicket.current++; pendingEditor.current = undefined;
     navigationEpoch.current++; setPendingNavigation(undefined); setDiscard(false);
-    if (job.owner !== 'image' || job.status !== 'QUEUED') {
-      setNotice('此节点任务当前仅可在原任务记录中读取；只有仍在排队的本地图片节点任务支持此续接入口。不会新建任务或改选其他节点。'); return;
+    const readOnly = ['RUNNING', 'UNKNOWN', 'CANCELLED'].includes(job.status);
+    if (job.owner !== 'image' || job.status !== 'QUEUED' && !readOnly) {
+      setNotice('此节点任务状态暂不支持续接。当前仅支持排队任务，以及运行中、未知或已取消任务的只读元数据；不会改选最新任务或新建节点。'); return;
     }
     const ticket = nodeResumeTicket.current, sourceSelection = selectionEpoch.current, originModule = module;
     const controller = new AbortController(), selectedJob = structuredClone(job);
@@ -634,11 +635,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       }
       if (busyRef.current || editorPreparing.current || preferenceController.pending) return;
       nodeResumeReading.current = { ticket, controller }; busyRef.current = true; setBusy(true);
-      setNotice('正在核对原排队节点任务与原画布；核对成功前保留当前输入。');
+      setNotice(readOnly ? '正在核对原节点任务的只读元数据与原画布；核对成功前保留当前输入。' : '正在核对原排队节点任务与原画布；核对成功前保留当前输入。');
       try {
         const prepared = await prepareCanvasImageNodeResume({ selected: selectedJob, projectId,
           branchId: context.scope?.branchId || null, client, production: productionClient,
-          isCurrent: valid, read: guarded, signal: controller.signal });
+          isCurrent: valid, read: guarded, signal: controller.signal, readOnly });
         if (!valid()) return;
         // No await after this final check: failed reads never discard drafts.
         pendingNodeResume.current = undefined; setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false);
@@ -651,7 +652,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         nodeResumeSource.current = source;
         setTaskTarget(undefined); setStoryboardHandoff(undefined); setAssetHandoff(undefined); setMediaHandoff(undefined);
         setProductionJob({ client: productionClient, job: prepared.job, resume: source }); setWorkspaceView('PRODUCTION');
-        setNotice('已续接精确的原排队节点任务。未恢复浏览器画布或自动执行；执行仍需重新预览并明确确认。');
+        setNotice(prepared.readOnly ? '已只读续接精确的原节点任务。仅可明确读取当前回执或下载已读元数据；此入口不执行、对账、取消或读取候选媒体。' : '已续接精确的原排队节点任务。未恢复浏览器画布或自动执行；执行仍需重新预览并明确确认。');
       } catch (reason) {
         if (current() && nodeResumeTicket.current === ticket && !controller.signal.aborted) {
           pendingNodeResume.current = undefined; setPendingNavigation(undefined); setDiscard(false);
@@ -843,9 +844,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     {productionView && overview && !denied && !storyboardHandoff && <>
       {!resumedNode && <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>}
       <StudioMediaExecutionPanel leaveGuard={leaveGuard} key={`media:${cacheKey}:${productionRevision}:${resumedNode?.ticket ?? 'ordinary'}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
-        canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
+        canMutate={!resumedNode?.readOnly && writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={!resumedNode?.readOnly && overview.capabilities.can_review === true}
         busy={busy} isBusy={operationPending} isCurrent={resumedNode ? resumeSourceCurrent : current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
-        resumeOnly={!!resumedNode} canvasNodeTask={resumedNode ? { binding: resumedNode.binding, initialPrompt: resumedNode.initialPrompt, isCurrent: resumeSourceCurrent } : undefined}
+        resumeOnly={!!resumedNode} resumeReadOnly={resumedNode?.readOnly === true} canvasNodeTask={resumedNode ? { binding: resumedNode.binding, initialPrompt: resumedNode.initialPrompt, isCurrent: resumeSourceCurrent } : undefined}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
       {!resumedNode && <StudioTimelineEditor leaveGuard={leaveGuard} key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}

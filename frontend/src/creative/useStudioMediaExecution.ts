@@ -34,6 +34,8 @@ export type StudioMediaExecutionProps = {
   canvasNodeTask?: CanvasImageNodeTaskBinding;
   /** Resume one already verified queued node Job; never edits or creates a request. */
   resumeOnly?: boolean;
+  /** With resumeOnly, read one already running/unknown/cancelled Job without dispatching any action. */
+  resumeReadOnly?: boolean;
   /** Synchronous, owner-bound recovery persistence before a node queue POST. */
   beforeNodeQueue?: (command: MediaCommand, preview: ProductionPreview) => void;
   onNodeQueueUnknown?: () => void;
@@ -101,16 +103,20 @@ function resumeJobIdentity(job?: ProductionJob): string {
     command:job.command,sources:job.sources,provider:job.provider,execution_recipe:job.execution_recipe}); }
   catch { return ''; }
 }
+function resumeJobProjection(job?: ProductionJob): string {
+  try { return job ? canonicalExecutionImpact(job) : ''; } catch { return ''; }
+}
 function resumeSessionIdentity(props: StudioMediaExecutionProps): string {
-  if (!props.resumeOnly) return 'editable';
-  try { return canonicalExecutionImpact({mode:'resume',binding:props.canvasNodeTask?.binding ?? null,
+  if (!props.resumeOnly) return props.resumeReadOnly ? 'invalid-readonly' : 'editable';
+  try { return canonicalExecutionImpact({mode:props.resumeReadOnly?'resume-readonly':'resume',binding:props.canvasNodeTask?.binding ?? null,
     prompt:props.canvasNodeTask?.initialPrompt ?? null,job:resumeJobIdentity(props.externalJob),
     alternate:!!(boundTask(props)||props.preparedCommand||props.assetHandoff)}); }
   catch { return 'invalid-resume'; }
 }
 function validResumeSource(props: StudioMediaExecutionProps): boolean {
   const task=props.canvasNodeTask,job=props.externalJob;
-  return !!task && !!job && job.status==='QUEUED' && !!resumeJobIdentity(job) && nodeJobMatches(task,job)
+  return !!task && !!job && (props.resumeReadOnly?['RUNNING','UNKNOWN','CANCELLED'].includes(job.status):job.status==='QUEUED')
+    && !!resumeJobIdentity(job) && (!props.resumeReadOnly||!!resumeJobProjection(job)) && nodeJobMatches(task,job)
     && Number.isSafeInteger(job.version) && job.version>=1 && !!job.command && job.command.request_id===job.request_id
     && task.initialPrompt===job.command.prompt && !boundTask(props) && !props.preparedCommand && !props.assetHandoff;
 }
@@ -289,15 +295,22 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   const sessionIdentity=resumeSessionIdentity(props), session=useRef({identity:sessionIdentity,client:props.client,generation:0});
   if(session.current.identity!==sessionIdentity || props.resumeOnly && session.current.client!==props.client)
     session.current={identity:sessionIdentity,client:props.client,generation:session.current.generation+1};
-  const initialSession=useRef({identity:sessionIdentity,generation:session.current.generation,resume:props.resumeOnly===true,
-    valid:!props.resumeOnly||validResumeSource(props),job:resumeJobIdentity(props.externalJob),version:props.externalJob?.version ?? 0});
+  const initialSession=useRef({identity:sessionIdentity,generation:session.current.generation,resume:props.resumeOnly===true,readOnly:props.resumeReadOnly===true,
+    valid:!(props.resumeReadOnly&&!props.resumeOnly)&&(!props.resumeOnly||validResumeSource(props)),
+    job:resumeJobIdentity(props.externalJob),version:props.externalJob?.version ?? 0,status:props.externalJob?.status});
+  const readOnlyProjection=useRef({version:initialSession.current.version,status:initialSession.current.status,canonical:resumeJobProjection(props.externalJob)});
   // A different mode/source requires a new controller mount. Returning through ABA cannot revive callbacks.
   const sessionCurrent=()=>session.current.generation===initialSession.current.generation
     && resumeSessionIdentity(latest.current)===initialSession.current.identity && initialSession.current.valid;
-  const editingBlocked=()=>latest.current.resumeOnly===true || !sessionCurrent();
+  const readOnly=()=>latest.current.resumeReadOnly===true;
+  const editingBlocked=()=>latest.current.resumeOnly===true || readOnly() || !sessionCurrent();
   const resumeJobMatches=(job:ProductionJob)=>!initialSession.current.resume || !!initialSession.current.job
     && resumeJobIdentity(job)===initialSession.current.job && Number.isSafeInteger(job.version)
-    && job.version>=initialSession.current.version && job.version>=(selectedRef.current?.version ?? 0);
+    && job.version>=initialSession.current.version && job.version>=(selectedRef.current?.version ?? 0)
+    && (!initialSession.current.readOnly || job.status!=='QUEUED'
+      && job.version>=readOnlyProjection.current.version
+      && (job.version!==readOnlyProjection.current.version || !!readOnlyProjection.current.canonical && resumeJobProjection(job)===readOnlyProjection.current.canonical)
+      && (!['CANCELLED','FAILED','APPROVED'].includes(readOnlyProjection.current.status ?? '') || job.status===readOnlyProjection.current.status));
   const alive = useRef(true), revoked = useRef(false), owner = useRef(props.client), epoch = useRef(0), slot = useRef<Operation>();
   const providerHandoffLoading = useRef(false);
   const providerEpoch = useRef(0), providerRead = useRef<AbortController>(), candidateRef = useRef<Candidate>();
@@ -346,6 +359,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   // Single-use confirmation for original, explicitly bound media-card tasks.
   const impactRequired = () => !!latest.current.canvasNodeTask || !!boundTask(latest.current) || !!previewRef.current?.command.canvas_return || !!selectedRef.current?.command?.canvas_return || !!selectedRef.current?.command?.canvas_image_node;
   function impactInput(): StudioExecutionImpactInput | undefined {
+    if(readOnly())return;
     const task = boundTask(latest.current), binding = task?.returnBinding ?? latest.current.canvasNodeTask?.binding, saved = previewRef.current, job = selectedRef.current;
     if (!binding) return;
     const scope = { novel_id: binding.project_id, branch_id: binding.scope.mode === 'collaboration' ? binding.scope.branch_id : null, incarnation: binding.incarnation };
@@ -362,7 +376,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   function impactAuthority() {
     const task = boundTask(latest.current);
-    return current() && latest.current.canMutate && !uncertainRef.current
+    return !readOnly() && current() && latest.current.canMutate && !uncertainRef.current
       && !['UNKNOWN','SEND_RESERVED','RUNNING','REMOTE_RUNNING','REVIEWING'].includes(selectedRef.current?.status ?? '') && (task?.isCurrent() ?? latest.current.canvasNodeTask?.isCurrent() ?? false)
       && sourcesCurrent(draftRef.current.sources,latest.current.assets,draftRef.current.operation);
   }
@@ -380,7 +394,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }
   const impact = impactState.current?.gate;
   async function confirmImpact(gate: StudioExecutionImpactGate, proof: ExecutionImpactConfirmation) {
-    if (impactState.current?.gate !== gate || busy()) return;
+    if (readOnly() || impactState.current?.gate !== gate || busy()) return;
     if (await gate.confirm(proof)) { if (impactState.current?.gate===gate) updateImpact(v=>v+1); }
   }
   function impactReady(kind:'CREATE'|'EXECUTE') {
@@ -423,7 +437,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     if (mutation && uncertainFailure(reason)) { markUncertain(true); clearCandidate(); clearPreview(); }
   }
   function begin(kind: Kind): Operation | undefined {
-    if (busy()) return;
+    if (readOnly()&&kind!=='GET' || busy()) return;
     handoffRevision.current++;
     const value = { id: ++epoch.current, kind, client: latest.current.client, controller: new AbortController(), canMutate: latest.current.canMutate, canReview: latest.current.canReview };
     slot.current = value; setPending(kind); setError(''); setNotice(''); return value;
@@ -433,10 +447,11 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   function finish(value: Operation) { if (slot.current?.id === value.id) { slot.current = undefined; if (alive.current) setPending(undefined); } }
   function adoptJob(value: ProductionJob) {
     if(!resumeJobMatches(value))throw invalid('续接任务的请求、执行记录或版本已改变，请返回原任务入口重新核对。');
+    if(initialSession.current.readOnly){value=structuredClone(value);readOnlyProjection.current={version:value.version,status:value.status,canonical:resumeJobProjection(value)};}
     if (jobIdentity(value) !== jobIdentity(selectedRef.current)) clearCandidate();
     selectedRef.current = value; setSelected(value); setJobs(rows => [value, ...rows.filter(row => row.owner !== value.owner || row.id !== value.id)]);
     reviewConsentRef.current = ''; setReviewConsent('');
-    try { latest.current.onJob?.(value); } catch { setError('已读取原任务回执，关联视图刷新未完成。'); }
+    try { latest.current.onJob?.(initialSession.current.readOnly?structuredClone(value):value); } catch { setError('已读取原任务回执，关联视图刷新未完成。'); }
   }
   function edit(next: Draft) {
     if (latest.current.resumeOnly || latest.current.preparedCommand || !current() || busy() || !latest.current.canMutate || uncertainRef.current || creation.current?.uncertain) return;
@@ -663,13 +678,13 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     edit(draftFor(latest.current)); baseline.current = inputKey(draftFor(latest.current)); clearCandidate(); }
 
   async function loadProviders() {
-    if (!current() || busy()) return;
+    if (readOnly() || !current() || busy()) return;
     handoffRevision.current++;
     const client = latest.current.client, id = ++providerEpoch.current, controller = new AbortController(); providerRead.current?.abort(); providerRead.current = controller;
     providerHandoffLoading.current = true; setProviderLoading(true); clearPreview();
     try {
       const rows = await latest.current.read(() => {
-        if(!current() || controller.signal.aborted || providerEpoch.current!==id || client!==latest.current.client)throw invalid('原服务配置读取入口已退役。');
+        if(readOnly() || !current() || controller.signal.aborted || providerEpoch.current!==id || client!==latest.current.client)throw invalid('原服务配置读取入口已退役。');
         return client.providers(controller.signal);
       });
       if (!current() || controller.signal.aborted || providerEpoch.current !== id || client !== latest.current.client) return;
@@ -770,6 +785,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     } catch (reason) { if (live(value)) failure(reason, '任务读取失败。'); } finally { finish(value); }
   }
   async function inspectExecution() {
+    if(readOnly())return;
     const job = selectedRef.current;
     if (!impactRequired() || !job?.command || job.status!=='QUEUED' || !latest.current.canMutate || uncertainRef.current
       || !(latest.current.canvasNodeTask ? latest.current.canvasNodeTask.isCurrent()&&nodeJobMatches(latest.current.canvasNodeTask,job) : boundTask(latest.current)?.isCurrent()&&canvasTaskJobMatches(boundTask(latest.current)!,job))
@@ -787,7 +803,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
         delete command.source_snapshots[0].reference_only;
       }
       const result=await latest.current.read(()=>{
-        if(!sessionCurrent() || initialSession.current.resume && (!live(value)||!resumeJobMatches(job)))throw invalid('原续接入口已退役，未核对执行预览。');
+        if(readOnly() || !sessionCurrent() || initialSession.current.resume && (!live(value)||!resumeJobMatches(job)))throw invalid('原续接入口已退役，未核对执行预览。');
         return value.client.preview(command);
       });
       if(!live(value)||jobIdentity(selectedRef.current)!==identity||impactStamp()!==captured)return;
@@ -796,6 +812,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     }catch(reason){if(live(value))failure(reason,'原入队任务预览核对失败。');}finally{finish(value);}
   }
   function canAction(kind: 'execute' | 'refresh' | 'reconcile' | 'cancel' | 'review') {
+    if(readOnly())return false;
     if(latest.current.resumeOnly && (kind==='review' || !selectedRef.current || !resumeJobMatches(selectedRef.current)))return false;
     if (kind==='execute' && impactRequired() && !impactReady('EXECUTE')) return false;
     const task = boundTask(latest.current), originalJob = selectedRef.current;
@@ -827,7 +844,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     const responseFence = controlFence.current;
     try {
       const result = await (localExecution ? localExecution.execute(job) : latest.current.mutate(() => {
-        if(!sessionCurrent() || initialSession.current.resume && (!live(value)||!resumeJobMatches(job)))throw invalid('原续接入口已退役，未发送操作。');
+        if(readOnly() || !sessionCurrent() || initialSession.current.resume && (!live(value)||!resumeJobMatches(job)))throw invalid('原续接入口已退役，未发送操作。');
         if(kind==='execute' && (impactGate || impactRequired())) {
           if(!live(value)||jobIdentity(selectedRef.current)!==jobIdentity(job))throw new ApiError({status:422,code:'STUDIO_EXECUTION_IMPACT_RETIRED',message:'原任务范围或版本已改变，未派发执行。'});
           consumeImpact('EXECUTE',impactGate);
@@ -853,6 +870,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     } catch (reason) { if (live(value)) { if (localExecution && responseFence !== controlFence.current && selectedRef.current?.status === 'CANCELLED' && !uncertainRef.current) return; if (!uncertainFailure(reason)) sentActions.current.delete(sentKey); failure(reason, '操作结果未确认，请读取任务核对。', true); } } finally { if (localExecution && executingCutout.current === job) executingCutout.current = undefined; finish(value); }
   }
   async function controlRunningCutout(kind: 'read' | 'cancel') {
+    if(readOnly())return;
     const original = executingCutout.current, active = slot.current, method = latest.current.cutoutExecution?.control;
     if (!current() || !latest.current.canMutate || !original || !active || active.kind !== 'execute' || !method || runningControlRef.current) return;
     const expected = selectedRef.current;
@@ -939,18 +957,20 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
   }, [props.canMutate, props.canReview, owns]);
   useEffect(() => { clearPreview(); }, [sourceState]);
   useLayoutEffect(() => { clearCandidate(); }, [jobSourceState]);
-  useEffect(() => { void loadProviders(); return () => { providerEpoch.current++; providerRead.current?.abort(); }; }, [props.client]);
+  useEffect(() => { if(!props.resumeReadOnly)void loadProviders(); return () => { providerEpoch.current++; providerRead.current?.abort(); }; }, [props.client,props.resumeReadOnly]);
   useEffect(() => { props.onDirtyChange(dirty); }, [dirty, props.onDirtyChange]);
   const external = jobIdentity(props.externalJob);
+  const externalReceipt=props.resumeReadOnly?resumeJobProjection(props.externalJob):external;
   useLayoutEffect(() => {
     if(props.canvasNodeTask&&props.externalJob&&!nodeJobMatches(props.canvasNodeTask,props.externalJob))return;
-    if (!props.externalJob || busy() || !current() || external === consumedExternal.current) return;
-    consumedExternal.current = external;
-    if (external === jobIdentity(selectedRef.current)) return;
+    if (!props.externalJob || busy() || !current() || externalReceipt === consumedExternal.current) return;
+    consumedExternal.current = externalReceipt;
     if (selectedRef.current?.id === props.externalJob.id && selectedRef.current.owner === props.externalJob.owner && selectedRef.current.version > props.externalJob.version) return;
+    if(!resumeJobMatches(props.externalJob)){setError('原任务状态、请求或版本不能作为本次续接的后续记录，请重新读取核对。');return;}
+    if (external === jobIdentity(selectedRef.current)) return;
     if(props.canvasNodeTask)creation.current={requestId:props.externalJob.request_id,requestDigest:props.externalJob.request_digest,operation:props.externalJob.operation_id as MediaOperation,input:inputKey(draftRef.current),uncertain:false};
     adoptJob(props.externalJob); // A returned owner row only; never a GET/action or draft overwrite.
-  }, [external, pending, props.busy, props.client]);
+  }, [externalReceipt, pending, props.busy, props.client]);
 
   const cutoutSource = ['m5.image.cutout', 'm5.image.inpaint'].includes(draft.operation) ? props.assets.find(row => row.id === draft.sources[0]?.id && row.version === draft.sources[0]?.version && row.sha256 === draft.sources[0]?.digest) : undefined;
   const eligibleMasks = owns && cutoutSource ? props.assets.filter(row => eligibleCutoutMask(row, cutoutSource)) : [];
@@ -959,7 +979,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     handoffRevision.current++; handoffConsumed.current = latest.current.assetHandoff; setHandoffAsset(undefined); setHandoffNotice('已取消素材交接；草稿未改变。');
   }
   return { changeLayer, swapLayers, cancelHandoff, canHandoff: canClosePrepared && !providerLoading && !props.preparedCommand && handoffOperation(draft.operation), handoffAsset: handoffAsset && handoffAsset.request === props.assetHandoff && handoffAsset.revision === handoffRevision.current ? handoffAsset.asset : undefined, handoffPending, handoffNotice, readHandoff, handoffDone: handoffConsumed.current === props.assetHandoff,
-    runningControl, controlRunningCutout, canCancelRunning: !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns ? (props.canvasNodeTask ? providers.filter(row=>row.local) : providers) : [], provider: owns ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
+    runningControl, controlRunningCutout, canCancelRunning: !props.resumeReadOnly && !uncertain && !!selected && !sentActions.current.has(actionIdentity(selected, 'cancel')), canControlRunning: !props.resumeReadOnly && owns && props.canMutate && !!props.cutoutExecution && !!executingCutout.current && pending === 'execute' && !runningControl, eligibleMasks, draft: owns ? draft : initialDraft(), providers: owns && !props.resumeReadOnly ? (props.canvasNodeTask ? providers.filter(row=>row.local) : providers) : [], provider: owns && !props.resumeReadOnly ? provider : undefined, providerLoading, jobs: owns ? jobs : [], selected: owns ? selected : undefined,
     preview: owns && previewBinding ? preview?.value : undefined, previewReviewed: !!previewBinding && previewConsent === previewBinding,
     candidate: candidateVisible, outputReviewed: !!candidateVisible && reviewConsent === reviewBinding,
     pending, uncertain, repeatBlocked, error: owns ? error : '当前身份或项目范围待核对。', notice: owns ? notice : '', denied, dirty, locked, canEdit, canClosePrepared, inputError, freshSources, jobSourcesFresh, requiredSourceKind: owns ? sourceKind(draft.operation) : undefined,
@@ -967,7 +987,7 @@ export function useStudioMediaExecution(props: StudioMediaExecutionProps) {
     unsupportedParameters: owns ? unsupportedParameters : [], creationUncertain: owns && !!creation.current?.uncertain,
     uncertainRequestId: owns && creation.current?.uncertain ? creation.current.requestId : undefined,
     canInspect: canEdit && !providerLoading && !inputError, canCreate: canEdit && !creation.current && !!previewBinding && previewConsent === previewBinding && impactReady('CREATE')&&(!props.canvasNodeTask||!!props.beforeNodeQueue&&!!props.onNodeQueueUnknown),
-    resumeOnly:props.resumeOnly===true, canRead: !locked, canLoadCandidate: !props.resumeOnly && !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
+    resumeOnly:props.resumeOnly===true, resumeReadOnly:props.resumeReadOnly===true, canRead: !locked, canLoadCandidate: !props.resumeOnly && !props.resumeReadOnly && !locked && !uncertain && !creation.current?.uncertain && jobSourcesFresh && !!selected?.output_candidate,
     imageInputs: !!provider?.image_capabilities && ['m5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale'].includes(draft.operation),
     endFrameSource: draft.lastFrame, videoFrameCapabilities: provider?.video_frame_capabilities, selectEndFrame,
     routeSelectable: !props.canvasNodeTask && routeSelectable(draft.operation), changeRoute, changeOperation, changeField, changeParameter, clearUnsupportedParameters, selectSource, selectMask, selectReference, changeReferenceWeight, changeReferenceMetadata, clearSources, refreshSources, clearInputs, loadProviders, inspect, confirmPreview,
