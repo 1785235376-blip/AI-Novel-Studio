@@ -60,4 +60,27 @@ describe('[VW-M3] preview host viewport prefs', () => {
     const calls = (fetch as unknown as {mock: {calls: [string, RequestInit?][]}}).mock.calls;
     expect(calls.filter(([, i]) => (i?.method ?? 'GET').toUpperCase() !== 'GET')).toEqual([]);
   });
+  it('[VW-fix1] true remount: pan A → switch to B (fresh canvas, default view) → back to A restores A\'s pan', async () => {
+    const NV2 = [...NOVELS, {...NOVELS[0], id: 'n2', title: '第二部'}];
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url === '/api/novels' ? json(NV2) : /chapters$/.test(url) ? json([]) : json({detail: 'nf'}, 404)));
+    localStorage.setItem(canvasStorageKey('image', 'n1'), JSON.stringify({nodes: [img], edges: []}));
+    localStorage.setItem(canvasStorageKey('image', 'n2'), JSON.stringify({nodes: [img], edges: []}));
+    size = {w: 750, h: 449};
+    render(<QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}><UnifiedWorkspacePreview /></QueryClientProvider>);
+    const cv1 = await screen.findByTestId('uw-creative-canvas');
+    await waitFor(() => expect(cv1.querySelector('[data-node-id]')).toBeTruthy());
+    const def = tf(cv1);
+    pan(within(cv1).getByRole('application'), -300); const pannedA = tf(screen.getByTestId('uw-creative-canvas'));
+    expect(pannedA).not.toBe(def);
+    const sel = screen.getByLabelText('选择作品') as HTMLSelectElement;
+    const svgBefore = screen.getByTestId('uw-creative-canvas').querySelector('svg');
+    fireEvent.change(sel, {target: {value: 'n2'}});
+    await waitFor(() => expect(screen.getByTestId('uw-creative-canvas').querySelector('svg')).not.toBe(svgBefore)); // really remounted
+    expect(tf(screen.getByTestId('uw-creative-canvas'))).toBe(def); // B does not inherit A's pan
+    const svgB = screen.getByTestId('uw-creative-canvas').querySelector('svg');
+    fireEvent.change(sel, {target: {value: 'n1'}});
+    await waitFor(() => expect(screen.getByTestId('uw-creative-canvas').querySelector('svg')).not.toBe(svgB));
+    expect(tf(screen.getByTestId('uw-creative-canvas'))).toBe(pannedA); // A's view came back from the adapter
+    expect(Object.keys(localStorage).filter(k => k.includes('viewprefs'))).toEqual([]);
+  });
 });

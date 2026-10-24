@@ -96,3 +96,12 @@ describe('[VW-M1] view preferences adapter', () => {
     expect(m.get('keep')).toBe('1'); expect(st.removeItem).not.toHaveBeenCalled();
   });
 });
+describe('[VW-fix1 P3] placeholder scopes never touch storage', () => {
+  it.each([['local', 'preview', 'preview'], ['', 'p', 'i'], ['u', 'preview', 'x'], ['anonymous', 'p', 'i'], ['u', 'p', 'unknown']])('%s/%s/%s', (userId, projectId, projectInstanceId) => {
+    const {st} = mem();
+    const p = createViewPreferences({scope: {userId, projectId, projectInstanceId}, storage: st, isCurrent: () => true, persist: true});
+    p.setViewport('image', VP); p.setWorksets([]); p.resetViewport('image');
+    expect(p.status().mode).toBe('session'); expect(p.key).toBeNull();
+    expect(st.setItem).not.toHaveBeenCalled(); expect(st.getItem).not.toHaveBeenCalled(); expect(st.removeItem).not.toHaveBeenCalled();
+  });
+});
