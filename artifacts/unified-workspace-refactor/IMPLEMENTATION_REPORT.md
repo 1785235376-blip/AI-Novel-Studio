@@ -182,3 +182,15 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 - **Chrome** logs/m3s1fix2-browser.{mjs,json}, screenshots/m3s1fix2_*: 1366 and 1920 × zoom 1 / 1.1, start translate(-320,40), after 1/6/12/13 sends the last node is inside the svg and zoom kept (e.g. 1366 k1: -320→-4 after 1, →-210 after 6); then manual pan to translate(-1670,40) (last node off view), tab away/back twice and a window resize → unchanged. 4/4 PASS, nonGet=[], modelReqs=[], pageErrors=[].
 - Docs: line ~155 stale "sends keep the viewport" claim corrected; m3s1fix mutation log "(12)" count explained (5 + 7 tests).
 - Subsets workspace/rebuild/taskcenter 423/423; tsc 6 (baseline). Full suite skipped per brief. Shared patch: patches/m3s1fix2-shared-nonentry.patch.
+
+## MERGE [HERMIA-FE-20261024 MERGE]
+- Vera's review appends committed unchanged (author/committer Vera (review)): wt a9fb7471, wt-m4 68cabfa3 (on 9f2a04e4), wt-m5 b5771aa1 (on 834b8588).
+- `--no-ff` merges, no rebase/force: work/hermia-uw-m4-20261024 @ 68cabfa3 → da632676; work/hermia-uw-m5-20261024 @ b5771aa1 → b081816d. No node_modules paths committed.
+- Conflicts and resolutions:
+  - INDEPENDENT_REVIEW.md (both merges): every appended section kept verbatim, ordered by review-commit time: M2-s1fix2+M3-s1, M4-s1, M5-s1, M3-s1fix, M5-s1fix, M4-s1fix, M3-s1fix2, M4-s1fix2, M5-s1fix2. A script checked that every line from both sides is present.
+  - UnifiedWorkspacePreview.tsx (M5 merge), behaviour from both sides kept:
+    - From M3-s1fix/fix2: viewport memory per novel, revealExec/onRevealed, pickBlocked notice, node-named dirty messages.
+    - From M5-s1: nodeDirtyRef, tracker project-epoch layout-effect, `anyDirty()` (which also covers drafts) in the pick and switch guards, and `drafts` passed to both inspectors.
+  - m5s1.test.tsx (semantic, no textual conflict): once a node is inspected, M3-s1fix names the inspector after it, so the redock step now finds the node inspector's dock control by `/^「节点「.+」属性」停靠位置$/` instead of the static 「章节属性」 label. The assertions are unchanged.
+  - M4 merge: DockLayout, CommandSearch and the panel tests auto-merged cleanly.
+- After the merge (Node 22.14): vitest on src/workspace, src/workbench, src/rebuild and src/taskcenter 502/502 (62 files); tsc 6 (baseline). Full suite left for Vera.
