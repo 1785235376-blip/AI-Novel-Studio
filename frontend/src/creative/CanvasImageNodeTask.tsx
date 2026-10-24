@@ -7,6 +7,9 @@ import type { CanvasAssetReference, CanvasViewRecord } from './studioCanvasViewC
 import type { StudioAsset, StudioClient } from './studioClient';
 import type { StudioGraphDraftOwner } from './studioGraphLocalDraft';
 import type { ProductionJob, StudioProductionClient } from './studioProductionClient';
+import { checkedCanvasImageNodeCreateIntent, emptyImageNodeDefinition, canvasImageNodeCreateHintKey,
+  readCanvasImageNodeCreateHint, persistCanvasImageNodeCreateHint, clearCanvasImageNodeCreateHint,
+  type CanvasImageNodeCreateIntent, type CanvasImageNodeCreateHintState } from './canvasImageNodeCreateIntent';
 
 export type CanvasImageNodeTaskProps = { projectId: string; node: { id: string; title: string; prompt: string; x: number; y: number };
   client: StudioClient; production: StudioProductionClient; owner: StudioGraphDraftOwner;
@@ -18,21 +21,35 @@ const scopeFor = (owner: StudioGraphDraftOwner) => owner.mode === 'local'
   : { mode: 'collaboration' as const, novel_id: owner.projectId, workspace_id: owner.workspaceId, storyline_id: owner.storylineId, branch_id: owner.branchId };
 /** A one-node intent; it never serializes the browser graph or owns production state. */
 export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
+  const [createHint, setCreateHint] = useState<CanvasImageNodeCreateHintState>(() => readCanvasImageNodeCreateHint(props.owner, props.node.id));
+  const hintRef=useRef(createHint);hintRef.current=createHint;
   const [base, setBase] = useState<CanvasViewRecord>(), [binding, setBinding] = useState<CanvasImageNodeBinding>(), [job, setJob] = useState<ProductionJob>();
   const [saved, setSaved] = useState<CanvasViewRecord>(), [proof, setProof] = useState<Proof>(), [ack, setAck] = useState(false), [busy, setBusy] = useState(false);
-  const [uncertain, setUncertain] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [childDirty, setChildDirty] = useState(false);
+  const [uncertain, setUncertain] = useState(createHint.state!=='absent'), [error, setError] = useState(''), [notice, setNotice] = useState(''), [childDirty, setChildDirty] = useState(false);
   const [recovery, setRecovery] = useState<{ record: CanvasViewRecord; binding: CanvasImageNodeBinding; job: ProductionJob }[]>([]);
-  const alive = useRef(true), running = useRef(false), unknown = useRef(false), live = useRef(props), proofRef = useRef(proof), ackRef = useRef<Proof>();
+  const alive = useRef(true), running = useRef(false), unknown = useRef(createHint.state!=='absent'), live = useRef(props), proofRef = useRef(proof), ackRef = useRef<Proof>();
   const baseRef = useRef(base), bindingRef = useRef(binding), jobRef = useRef(job), childDirtyRef = useRef(childDirty);
   live.current = props; proofRef.current = proof; baseRef.current = base; bindingRef.current = binding; jobRef.current = job; childDirtyRef.current = childDirty;
   const values = [props.projectId, props.client, props.production, canonicalImageNode(props.owner), canonicalImageNode(props.node), props.canMutate, props.canReview];
   const fence = useRef({ values, token: {} }), first = useRef(fence.current.token);
   if (values.some((value, index) => !Object.is(value, fence.current.values[index]))) fence.current = { values, token: {} };
   const current = () => { try { return alive.current && first.current === fence.current.token && live.current.isCurrent(); } catch { return false; } };
-  const requestId = useRef(`node-${crypto.randomUUID()}`);
-  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const requestId = useRef(createHint.state==='present'?createHint.hint.request_id:`node-${crypto.randomUUID()}`);
+  const activeRequest=useRef<{active:boolean;controller:AbortController}>();
+  useLayoutEffect(() => {
+    alive.current = true;
+    const storageChanged=(event:StorageEvent)=>{
+      if(event.key!==null&&event.key!==canvasImageNodeCreateHintKey(props.owner,props.node.id))return;
+      const actual=readCanvasImageNodeCreateHint(props.owner,props.node.id),expected=hintRef.current;
+      if(actual.state!==expected.state||actual.state==='blocked'||actual.state==='present'&&(expected.state!=='present'||actual.raw!==expected.raw)){
+        first.current={};unknown.current=true;setUncertain(true);setError('创建记录已由其他窗口改变；保留原请求，不会创建或入队。');
+      }
+    };
+    window.addEventListener('storage',storageChanged);
+    return () => { alive.current = false;window.removeEventListener('storage',storageChanged);if(activeRequest.current){activeRequest.current.active=false;activeRequest.current.controller.abort();} };
+  }, []);
   function requireCurrent(write = false) {
-    if (!current() || live.current.owner.projectId !== live.current.projectId || write && (!live.current.canMutate || unknown.current))
+    if (!current() || live.current.owner.projectId !== live.current.projectId || write && (!live.current.canMutate || unknown.current || !hintIsCurrent()))
       throw new Error('原节点、项目、权限或未确认操作已改变，请关闭后重新核对；不会重新发送。');
   }
   const read = async <T,>(work: () => Promise<T>): Promise<T> => {
@@ -41,8 +58,8 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
   const mutate = async <T,>(work: () => Promise<T>): Promise<T> => {
     requireCurrent(true); return live.current.mutate(() => { requireCurrent(true); return work(); });
   };
-  async function verifyOwner(write = false) {
-    requireCurrent(write); const overview = await read(() => live.current.client.overview());
+  async function verifyOwner(write = false, signal?:AbortSignal) {
+    requireCurrent(write); const overview = await read(() => live.current.client.overview(signal));
     if (overview.project.id !== props.projectId || overview.project.incarnation !== props.owner.incarnation || write && !overview.capabilities.can_mutate)
       throw new Error('当前项目代次或写入权限未确认，原草稿保留。');
     return overview;
@@ -51,29 +68,94 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
   function markUnknown(message: string) { unknown.current = true; clearProof(); setUncertain(true); setError(message); }
   function start(write = false) { if (running.current || childDirtyRef.current || !current() || write && unknown.current) return false; running.current = true; setBusy(true); setError(''); clearProof(); return true; }
   function finish() { running.current = false; if (alive.current) setBusy(false); }
+  function rememberHint(value:CanvasImageNodeCreateHintState){hintRef.current=value;setCreateHint(value);}
+  function hintIsCurrent(){
+    const actual=readCanvasImageNodeCreateHint(props.owner,props.node.id),expected=hintRef.current;
+    return actual.state==='absent'&&expected.state==='absent'||actual.state==='present'&&expected.state==='present'&&actual.raw===expected.raw;
+  }
+  function requireHint(expected:Extract<CanvasImageNodeCreateHintState,{state:'present'}>){
+    const actual=readCanvasImageNodeCreateHint(props.owner,props.node.id);
+    if(actual.state!=='present'||actual.raw!==expected.raw)throw new Error('本浏览器的创建意图已改变，不能继续原请求。');
+  }
+  async function bounded<T,>(work:(signal:AbortSignal,check:()=>void)=>Promise<T>):Promise<T>{
+    const request={active:true,controller:new AbortController()};activeRequest.current=request;
+    const check=()=>{requireCurrent();if(!request.active||activeRequest.current!==request||request.controller.signal.aborted)throw new Error('原创建请求或读取已退役。');};
+    let timer:ReturnType<typeof setTimeout>|undefined;
+    const timeout=new Promise<never>((_resolve,reject)=>{timer=setTimeout(()=>{request.active=false;request.controller.abort();reject(new Error('读取或创建超时，结果仍待核对；不会重发。'));},15000);});
+    try{return await Promise.race([work(request.controller.signal,check),timeout]);}
+    finally{if(timer!==undefined)clearTimeout(timer);request.active=false;request.controller.abort();if(activeRequest.current===request)activeRequest.current=undefined;}
+  }
+  function nodeIntent(promptDigest:string):CanvasImageNodeCreateIntent{
+    return checkedCanvasImageNodeCreateIntent({contract:'studio-canvas-image-node-create/1',project_id:props.projectId,
+      scope:scopeFor(props.owner),incarnation:props.owner.incarnation,node_id:props.node.id,title:props.node.title,
+      position:{x:props.node.x,y:props.node.y},prompt_digest:promptDigest});
+  }
+  function acceptEmpty(canvas:CanvasViewRecord,intent:CanvasImageNodeCreateIntent){
+    if(canvas.project_id!==intent.project_id||canonicalImageNode(canvas.scope)!==canonicalImageNode(intent.scope)||canvas.version!==1
+      ||canvas.capacity.history_used!==0||canonicalImageNode(canvas.definition)!==canonicalImageNode(emptyImageNodeDefinition(intent)))throw new Error('原空白位置的回执或版本不一致，结果仍待核对。');
+    const {contract:_contract,...origin}=intent;
+    const target=checkedCanvasImageNodeBinding({...origin,contract:'studio-canvas-image-node/1',canvas_id:canvas.id,
+      canvas_version:canvas.version,canvas_digest:canvas.definition_digest});
+    bindingRef.current=target;baseRef.current=canvas;setBinding(target);setBase(canvas);unknown.current=false;setUncertain(false);
+  }
   async function prepare() {
-    if (baseRef.current || bindingRef.current || !start(true)) return;
+    if (baseRef.current || bindingRef.current || hintRef.current.state!=='absent' || !start(true)) return;
     let dispatched = false;
+    let attemptedIntent:CanvasImageNodeCreateIntent|undefined;
     try {
-      await verifyOwner(true);
-      const node = props.node, promptDigest = await imageNodePromptDigest(node.prompt); requireCurrent(true);
-      // Validate the complete non-authoritative placement before creating any view.
-      checkedCanvasImageNodeBinding({ contract: 'studio-canvas-image-node/1', project_id: props.projectId, scope: scopeFor(props.owner), incarnation: props.owner.incarnation,
-        canvas_id: 'syntax-check-only', canvas_version: 1, canvas_digest: '0'.repeat(64), node_id: node.id, title: node.title,
-        position: { x: node.x, y: node.y }, prompt_digest: promptDigest });
-      if (!node.prompt.trim() || node.prompt.length > 16000) throw new Error('请先填写有效的原节点提示词。');
-      const canvas = await mutate(() => { dispatched = true; return props.client.graphs.canvasViews!.create({ schema_version: 1, title: node.title, cards: [], viewport: { x: 0, y: 0, zoom: 1 } }, requestId.current); });
-      requireCurrent();
-      if (canvas.project_id !== props.projectId || canonicalImageNode(canvas.scope) !== canonicalImageNode(scopeFor(props.owner)) || canvas.definition.cards.length || canvas.definition.image_node_origin)
-        throw new Error('新建位置回执与原节点不一致，需读取原记录核对。');
-      const target = checkedCanvasImageNodeBinding({ contract: 'studio-canvas-image-node/1', project_id: props.projectId, scope: canvas.scope,
-        incarnation: props.owner.incarnation, canvas_id: canvas.id, canvas_version: canvas.version, canvas_digest: canvas.definition_digest,
-        node_id: node.id, title: node.title, position: { x: node.x, y: node.y }, prompt_digest: promptDigest });
-      bindingRef.current = target; baseRef.current = canvas; setBinding(target); setBase(canvas); setNotice('已保存空白作品位置；尚未入队或生成，节点图与连线仍是浏览器草稿。');
+      await bounded(async(signal,check)=>{
+        await verifyOwner(true,signal);check();
+        const promptDigest=await imageNodePromptDigest(props.node.prompt);check();requireCurrent(true);
+        const intent=nodeIntent(promptDigest);
+        if(!props.node.prompt.trim()||props.node.prompt.length>16000)throw new Error('请先填写有效的原节点提示词。');
+        const canvas=await mutate(()=>{
+          check();
+          attemptedIntent=intent;
+          const hint=persistCanvasImageNodeCreateHint(props.owner,props.node.id,requestId.current,intent);rememberHint(hint);requireHint(hint);
+          unknown.current=true;setUncertain(true);dispatched=true;
+          return props.client.graphs.canvasViews!.create(emptyImageNodeDefinition(intent),requestId.current,intent,signal);
+        });
+        check();const hint=hintRef.current;if(hint.state!=='present')throw new Error('原创建记录缺失。');requireHint(hint);
+        acceptEmpty(canvas,intent);setNotice('已保存空白作品位置；尚未入队或生成，节点图与连线仍是浏览器草稿。');
+      });
     } catch (reason) {
-      if (dispatched) markUnknown('空白位置保存结果待核对；保留原请求 ID，不会自动新建或重发。');
-      else if (current()) setError(reason instanceof Error ? reason.message : '正式节点位置准备失败。');
+      if(current()){
+        if(dispatched||hintRef.current.state!=='absent')markUnknown('空白位置保存结果待核对；保留原请求 ID，不会自动新建或重发。');
+        else{
+          const state=readCanvasImageNodeCreateHint(props.owner,props.node.id);
+          if(state.state==='present'&&attemptedIntent&&state.hint.request_id===requestId.current
+            &&canonicalImageNode(state.hint.intent)===canonicalImageNode(attemptedIntent)){
+            rememberHint(state);markUnknown('创建意图已保留，但尚未确认请求派发；只能核对原请求，不会再次创建。');
+          }else if(state.state!=='absent'){
+            rememberHint({state:'blocked',message:'本浏览器创建记录已改变或无法核对，未发送创建请求；不会改用其他请求。'});
+            first.current={};markUnknown('创建意图保存失败或与其他窗口冲突；原输入保留，未发送创建请求。');
+          }else setError(reason instanceof Error?reason.message:'正式节点位置准备失败。');
+        }
+      }
     } finally { finish(); }
+  }
+  async function resolveCreate(){
+    const hint=hintRef.current;
+    if(baseRef.current||bindingRef.current||hint.state!=='present'||!start())return;
+    try{
+      await bounded(async(signal,check)=>{
+        const overview=await verifyOwner(false,signal);check();requireHint(hint);
+        if(!props.canMutate||!overview.capabilities.can_mutate)throw new Error('当前写入权限未确认；保留原创建意图，不会恢复排队入口。');
+        const digest=await imageNodePromptDigest(props.node.prompt);check();
+        if(canonicalImageNode(nodeIntent(digest))!==canonicalImageNode(hint.hint.intent))throw new Error('当前节点与保留的创建意图不一致，不能恢复关联。');
+        const canvas=await read(()=>{check();requireHint(hint);return props.client.graphs.canvasViews!.resolveImageNodeCreate(hint.hint.request_id,hint.hint.intent,signal);});
+        check();requireHint(hint);acceptEmpty(canvas,hint.hint.intent);setNotice('已由原服务端唯一创建记录恢复空白位置；尚未入队、执行或审核。');
+      });
+    }catch(reason){if(current())markUnknown('未确认唯一且未改变的原创建结果；仍保留原请求，不会再次创建或入队。'+(reason instanceof Error?reason.message:''));}
+    finally{finish();}
+  }
+  function clearHintAfterJob(value:ProductionJob){
+    const hint=hintRef.current,target=bindingRef.current;if(hint.state!=='present'||!target)return;
+    assertCanvasImageNodeJob(target,value);
+    const {contract:_contract,...origin}=hint.hint.intent;
+    if(canonicalImageNode({...origin,contract:'studio-canvas-image-node/1',canvas_id:target.canvas_id,canvas_version:target.canvas_version,canvas_digest:target.canvas_digest})!==canonicalImageNode(target))return;
+    if(clearCanvasImageNodeCreateHint(props.owner,props.node.id,hint.raw))rememberHint({state:'absent'});
+    else{const actual=readCanvasImageNodeCreateHint(props.owner,props.node.id);if(actual.state!=='present'||actual.raw!==hint.raw){first.current={};markUnknown('原创建记录已改变，任务保留在原队列；请重新打开核对。');}}
   }
   async function checkApproved(expected: ProductionJob, target: CanvasImageNodeBinding): Promise<Proof> {
     await verifyOwner(true);
@@ -141,13 +223,15 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
     } catch (reason) { if (current()) setError(reason instanceof Error ? reason.message : '原节点位置读取失败；不会重新发送。'); }
     finally { finish(); }
   }
-  const task = useMemo(() => binding ? { binding, initialPrompt: props.node.prompt, isCurrent: () => current() && bindingRef.current === binding } : undefined, [binding]);
+  const task = useMemo(() => binding ? { binding, initialPrompt: props.node.prompt, isCurrent: () => current() && hintIsCurrent() && bindingRef.current === binding } : undefined, [binding]);
   const approved = job?.status === 'APPROVED';
   return <section aria-label="正式图片节点与保存位置">
     <Panel title="正式图片节点任务" actions={props.onClose && <Button onClick={props.onClose}>关闭正式节点任务</Button>}>
       <p>节点 {props.node.id} · {props.node.title} · 坐标 ({props.node.x}, {props.node.y})。只为此节点创建原生产任务；提示词、连线和其他节点仍是浏览器草稿。</p>
       <p>先显式保存空白作品位置，再分别预览、入队、执行和人工审核。审核成功后还需单独确认采用；不兼容的旧队列结果不会变成正式来源。</p>
       {!base && <Button disabled={!current() || !props.canMutate || busy || uncertain} onClick={() => void prepare()}>为此节点保存正式空白位置</Button>}
+      {createHint.state==='present'&&!base&&<Button disabled={!current()||busy||childDirty} onClick={()=>void resolveCreate()}>重新核对此次空白位置创建</Button>}
+      {createHint.state==='blocked'&&<StatusMessage tone="warning">{createHint.message}</StatusMessage>}
       <Button disabled={!current() || busy || childDirty} onClick={() => void reopen()}>读取此节点已保存位置与任务</Button>
       <p>原位置请求 ID：<code>{requestId.current}</code></p>
       {base && <p>原服务端画布 {base.id} · v{base.version} · {saved ? '已保存正式资产关联' : '空白位置，尚未采用资产'}</p>}
@@ -170,8 +254,8 @@ export function CanvasImageNodeTask(props: CanvasImageNodeTaskProps) {
       canMutate={props.canMutate && current()} canReview={props.canReview && current()} busy={busy} isBusy={() => running.current} isCurrent={current}
       read={read} mutate={mutate} onDirtyChange={value => { childDirtyRef.current=value;setChildDirty(value); }}
       externalJob={job} onUnavailable={() => { first.current={};setError('原生产任务权限或身份已改变，请重新打开项目。'); }}
-      onJob={value => { if (!current() || !bindingRef.current) return; assertCanvasImageNodeJob(bindingRef.current,value);clearProof();jobRef.current=value;setJob(value); }}
-      onApproved={value => { if (!current() || !bindingRef.current) return;assertCanvasImageNodeJob(bindingRef.current,value);clearProof();jobRef.current=value;setJob(value); }}/>}
+      onJob={value => { if (!current() || !bindingRef.current) return; assertCanvasImageNodeJob(bindingRef.current,value);clearHintAfterJob(value);clearProof();jobRef.current=value;setJob(value); }}
+      onApproved={value => { if (!current() || !bindingRef.current) return;assertCanvasImageNodeJob(bindingRef.current,value);clearHintAfterJob(value);clearProof();jobRef.current=value;setJob(value); }}/>}
     {approved && task && !saved && <Panel title="采用到原节点作品位置">
       <p>原生产 owner 已记录人工审核。这里重新核对来源元数据，不代替候选预览或审核；保存后固定回到原节点坐标。</p>
       <Button disabled={!current() || !props.canMutate || busy || uncertain || childDirty} onClick={() => void inspect()}>核对正式结果与原节点位置</Button>

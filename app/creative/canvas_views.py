@@ -10,7 +10,7 @@ from ..experimental.common import StaleSourceError, new_row, change_row, check_v
 from ..experimental.store import canonical
 from .project_store import BINDING
 from .canvas_view_models import (CANVAS_VIEWS, CanvasViewDefinition, CanvasViewCreate, CanvasViewSave,
-    CanvasViewRestore, CanvasImageNodeResult, CanvasImageNodeOrigin)
+    CanvasViewRestore, CanvasImageNodeResult, CanvasImageNodeOrigin, CanvasViewResolveCreate, MAX_CANVAS_VIEWS)
 
 
 def digest(value):
@@ -50,6 +50,10 @@ class CreativeCanvasViews:
 
     def _view(self,nid,scope,actor,row,guard):
         states=self._states(nid,scope,actor,row['definition'],guard)
+        return self._presentation(nid,scope,row,states)
+
+    @staticmethod
+    def _presentation(nid,scope,row,states):
         definition=deepcopy(row['definition']);unavailable={item['card_id'] for item in states if item['state']=='UNAVAILABLE'}
         for card in definition['cards']:
             if card['id'] in unavailable:card.pop('asset')
@@ -84,20 +88,84 @@ class CreativeCanvasViews:
             raise StaleSourceError('CREATIVE_CANVAS_IMAGE_NODE_ORIGINAL_OWNER_REQUIRED')
         incarnation,current=self.graph._context(nid,scope,actor,guard)
         definition=body.definition.model_dump();request_digest=digest(body.model_dump())
+        intent=body.image_node_intent
+        if intent is not None and (intent.project_id != nid or intent.scope != scope
+                or intent.incarnation != incarnation or definition != intent.empty_definition()):
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_INTENT_CHANGED')
         with self.graph.asset_inputs.transaction(nid,scope,actor,current) as state:
             if any(item['state']!='CURRENT_METADATA' for item in self._states(nid,scope,actor,definition,current)):
                 raise StaleSourceError('CREATIVE_CANVAS_SOURCE_CHANGED')
             rows=state['collections'].setdefault(CANVAS_VIEWS,{})
-            found=next((row for row in rows.values() if row.get('created_by')==actor and row.get('request_id')==body.request_id),None)
+            matches=[row for row in rows.values() if row.get('created_by')==actor
+                and row.get('novel_id')==nid and row.get('scope')==scope and row.get(BINDING)==incarnation
+                and row.get('request_id')==body.request_id]
+            if len(matches)>1:
+                raise StaleSourceError('CREATIVE_CANVAS_CREATE_AMBIGUOUS')
+            found=matches[0] if matches else None
             if found:
                 if found.get('request_digest')!=request_digest:raise ValueError('CREATIVE_CANVAS_REQUEST_ID_REUSED')
                 row=self._owned(nid,scope,actor,found['id'],state)
+                if intent is not None and row.get('image_node_intent') != intent.model_dump():
+                    raise StaleSourceError('CREATIVE_CANVAS_CREATE_INTENT_CHANGED')
+                if intent is not None and (row['version'] != 1 or row['history']
+                        or row['definition'] != definition or row['definition_digest'] != digest(definition)):
+                    raise StaleSourceError('CREATIVE_CANVAS_CREATE_CHANGED')
             else:
                 row=new_row(nid,scope,actor,{BINDING:incarnation,'definition':definition,
                     'definition_digest':digest(definition),'request_id':body.request_id,'request_digest':request_digest})
+                if intent is not None:
+                    row['image_node_intent']=intent.model_dump()
                 rows[row['id']]=row
             self.graph._capacity(state);current();saved_id=row['id']
         return self.get(nid,scope,actor,saved_id,current)
+
+    def resolve_create(self,nid,scope,actor,value,guard=lambda:None):
+        with self.store.existing_owner_only(), self.workspace.store.existing_owner_only():
+            return self._resolve_create(nid,scope,actor,value,guard)
+
+    def _resolve_create(self,nid,scope,actor,value,guard):
+        """Observe one original creation; absence never authorizes a resend.
+
+        Original store.read supplies a consistent detached scope snapshot. No
+        asset phase is needed for a strictly empty definition, and no raw scope
+        transaction or project marker can be provisioned by this observation.
+        A later queue still checks its original Canvas version and digest.
+        """
+        body=CanvasViewResolveCreate.model_validate(value)
+        incarnation,current=self.graph._context(nid,scope,actor,guard)
+        intent=body.image_node_intent
+        if (body.expected_incarnation != incarnation or intent.incarnation != incarnation
+                or intent.project_id != nid or intent.scope != scope):
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_CONTEXT_CHANGED')
+        expected=CanvasViewCreate(request_id=body.request_id,expected_version=0,
+            definition=intent.empty_definition(),image_node_intent=intent)
+        current();state=self.store.read(nid,scope);current()
+        collection=state['collections'].get(CANVAS_VIEWS,{})
+        # The original owner permits eight views per scope. Corrupt oversized
+        # collections fail before inspecting any record payload.
+        if len(collection)>MAX_CANVAS_VIEWS:
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_AMBIGUOUS')
+        rows=[row for row in collection.values()
+            if row.get('created_by')==actor and row.get('novel_id')==nid
+            and row.get('scope')==scope and row.get(BINDING)==incarnation]
+        if len(rows)>MAX_CANVAS_VIEWS:
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_AMBIGUOUS')
+        matches=[row for row in rows if row.get('request_id')==body.request_id]
+        if not matches:
+            raise FileNotFoundError(body.request_id)
+        if len(matches)!=1:
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_AMBIGUOUS')
+        row=self._owned(nid,scope,actor,matches[0]['id'],state)
+        if (row.get('request_digest') != digest(expected.model_dump())
+                or row.get('image_node_intent') != intent.model_dump()
+                or row['version'] != 1 or row['history']
+                or row['definition'] != expected.definition.model_dump()
+                or row['definition_digest'] != digest(expected.definition.model_dump())):
+            raise StaleSourceError('CREATIVE_CANVAS_CREATE_CHANGED')
+        result={'contract':'studio-canvas-image-node-resolve/1','request_id':body.request_id,
+            'image_node_intent':intent.model_dump(),'incarnation':incarnation,
+            'canvas':self._presentation(nid,scope,row,[])}
+        current();return result
 
     def save(self,nid,scope,actor,rid,value,guard=lambda:None):
         body=CanvasViewSave.model_validate(value)

@@ -5,7 +5,8 @@ These records never describe execution ports, edges, jobs or model authority.
 from typing import Literal
 from pydantic import Field, model_validator, field_validator, model_serializer
 from .graph_models import Strict, Id, RequestId, Position, Viewport, AssetParameters
-from .production_execution_models import CanvasImageNodeBinding
+from .production_execution_models import CanvasImageNodeBinding, CanvasImageNodePosition
+from .production_contracts import Name, Digest, PUBLIC_SCOPE_KEYS
 
 CANVAS_VIEWS = 'creative_canvas_views_v2'
 MAX_CANVAS_VIEWS = 8
@@ -124,10 +125,57 @@ class CanvasViewDefinition(Strict):
             raise ValueError('CREATIVE_CANVAS_DEFINITION_CAPACITY')
         return self
 
+class CanvasImageNodeCreateIntent(Strict):
+    """Explicit placement identity, never a grant or production receipt."""
+    contract: Literal['studio-canvas-image-node-create/1']
+    project_id: Name
+    scope: dict[str, str | None]
+    incarnation: str = Field(pattern=r'^(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
+    node_id: Id
+    title: str = Field(min_length=1, max_length=160, strict=True)
+    position: CanvasImageNodePosition
+    prompt_digest: Digest
+
+    @model_validator(mode='after')
+    def exact_scope(self):
+        if (set(self.scope) - PUBLIC_SCOPE_KEYS or self.scope.get('novel_id') != self.project_id
+                or self.scope.get('mode') not in {'local', 'collaboration'}
+                or any(v is not None and not 1 <= len(v) <= 240 for v in self.scope.values())
+                or self.scope['mode'] == 'collaboration' and any(not self.scope.get(k) for k in ('workspace_id', 'storyline_id', 'branch_id'))
+                or not self.title.strip()):
+            raise ValueError('CREATIVE_CANVAS_CREATE_INTENT_INVALID')
+        return self
+
+    def empty_definition(self):
+        return {'schema_version': 1, 'title': self.title, 'cards': [],
+            'viewport': {'x': 0, 'y': 0, 'zoom': 1}}
+
+
 class CanvasViewCreate(Strict):
     request_id: RequestId
     expected_version: int = Field(default=0,ge=0,le=0,strict=True)
     definition: CanvasViewDefinition
+    image_node_intent: CanvasImageNodeCreateIntent | None = None
+
+    @field_validator('image_node_intent', mode='before')
+    @classmethod
+    def explicit_intent(cls, value):
+        if value is None:
+            raise ValueError('CREATIVE_CANVAS_CREATE_INTENT_INVALID')
+        return value
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_create_identity(self, handler):
+        value = handler(self)
+        if self.image_node_intent is None:
+            value.pop('image_node_intent', None)
+        return value
+
+
+class CanvasViewResolveCreate(Strict):
+    request_id: RequestId
+    expected_incarnation: str = Field(min_length=1, max_length=240, strict=True)
+    image_node_intent: CanvasImageNodeCreateIntent
 
 class CanvasCardPin(Strict):
     card_id: Id

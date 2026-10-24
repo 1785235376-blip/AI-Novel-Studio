@@ -1,4 +1,5 @@
 import { checkedCanvasImageNodeOrigin, canonicalImageNode, type CanvasImageNodeOrigin } from './canvasImageNode';
+import { checkedCanvasImageNodeCreateIntent, emptyImageNodeDefinition, type CanvasImageNodeCreateIntent } from './canvasImageNodeCreateIntent';
 import { ApiError } from '../api';
 import type { StudioGraphTransport } from './studioGraphClient';
 import type { StudioGraphOwner } from './studioGraphTypes';
@@ -120,10 +121,27 @@ export function createCanvasViewClient(projectId: string, transport: StudioGraph
     list: async (signal?: AbortSignal) => { const r = object(await transport.json<unknown>(base, 'GET', undefined, signal)); keys(r, ['items', 'execution_authority']); if (r.execution_authority !== false) invalid();
       const items = list(r.items, 8).map(summary); if (new Set(items.map(x => x.id)).size !== items.length) invalid(); return { items }; },
     get: async (id: string, signal?: AbortSignal) => record(await transport.json<unknown>(`${base}/${encodeURIComponent(text(id))}`, 'GET', undefined, signal), id),
-    create: async (definition: CanvasDefinition, requestId: string) => {
+    create: async (definition: CanvasDefinition, requestId: string, imageNodeIntent?: CanvasImageNodeCreateIntent, signal?: AbortSignal) => {
       const captured = checkedCanvasDefinition(definition, true); if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId)) invalid();
-      const result = record(await transport.json<unknown>(base, 'POST', { request_id: requestId, expected_version: 0, definition: captured }));
+      const intent=imageNodeIntent===undefined?undefined:checkedCanvasImageNodeCreateIntent(imageNodeIntent);
+      if(intent&&(intent.project_id!==projectId||canonicalImageNode(captured)!==canonicalImageNode(emptyImageNodeDefinition(intent))))invalid();
+      const body={ request_id: requestId, expected_version: 0, definition: captured,...(intent?{image_node_intent:intent}:{}) };
+      const result = record(await (intent?transport.json<unknown>(base,'POST',body,signal):transport.json<unknown>(base,'POST',body)));
       if (result.version !== 1 || JSON.stringify(result.definition) !== JSON.stringify(captured)) invalid(); return result;
+    },
+    resolveImageNodeCreate: async (requestId: string, imageNodeIntent: CanvasImageNodeCreateIntent, signal?: AbortSignal) => {
+      if(!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(requestId))invalid();
+      const intent=checkedCanvasImageNodeCreateIntent(imageNodeIntent);
+      if(intent.project_id!==projectId)invalid();
+      const result=object(await transport.json<unknown>(`${base}/resolve-create`,'POST',{
+        request_id:requestId,expected_incarnation:intent.incarnation,image_node_intent:intent},signal));
+      keys(result,['contract','request_id','image_node_intent','incarnation','canvas']);
+      if(Object.keys(result).length!==5||result.contract!=='studio-canvas-image-node-resolve/1'||result.request_id!==requestId
+        ||result.incarnation!==intent.incarnation||canonicalImageNode(checkedCanvasImageNodeCreateIntent(result.image_node_intent))!==canonicalImageNode(intent))invalid();
+      const canvas=record(result.canvas);
+      if(canvas.version!==1||canvas.capacity.history_used!==0||canonicalImageNode(canvas.scope)!==canonicalImageNode(intent.scope)
+        ||canonicalImageNode(canvas.definition)!==canonicalImageNode(emptyImageNodeDefinition(intent)))invalid();
+      return canvas;
     },
     imageNodeResult: async (source: CanvasViewRecord, incarnation: string, job: {id:string;version:number;request_digest:string}, asset: CanvasAssetReference) => {
       const captured = record(source), expectedIncarnation=text(incarnation), pin=reference(asset);

@@ -43,7 +43,7 @@ def is_independent_studio_route(method, normalized_path):
         return True
     canvas_patterns = {
         "GET": root + r"/canvas-views(?:/[^/]+(?:/history)?)?",
-        "POST": root + r"/canvas-views(?:/[^/]+/(?:restore|image-node-result))?",
+        "POST": root + r"/canvas-views(?:/resolve-create|/[^/]+/(?:restore|image-node-result))?",
         "PUT": root + r"/canvas-views/[^/]+",
     }
     if method in canvas_patterns and re.fullmatch(canvas_patterns[method], normalized_path) is not None:

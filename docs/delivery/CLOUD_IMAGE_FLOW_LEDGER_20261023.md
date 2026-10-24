@@ -8,6 +8,8 @@ The October 24 [approved-image node adoption slice](CLOUD_APPROVED_IMAGE_NODE_AD
 
 The [saved-canvas contract check](CLOUD_SAVED_CANVAS_CONTRACT_BOUNDARY_20261024.md) verifies the existing display owner and strengthens its generic Save guards. Legacy-result admission remains incompatible. The later [formal image-node save slice](CLOUD_FORMAL_IMAGE_NODE_SAVE_20261024.md) implements a separate original-production t2i intent and CanvasView mapping, while keeping its unrun real reviewed-result File positive separate from queue/refusal tests and software protocol replay.
 
+The [explicit empty-create recovery slice](CLOUD_CANVAS_CREATE_RECOVERY_20261024.md) adds a read-only original-owner lookup for new intent-bearing creates with lost acknowledgements before a Job exists. A not-found snapshot never authorizes another create; earlier intentless unknown records and lost browser hints are not silently reconstructed.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

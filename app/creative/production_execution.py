@@ -607,11 +607,25 @@ class ProductionExecutionService:
         if (graph is None or origin.project_id != nid or origin.scope != scope
                 or origin.incarnation != context['incarnation']):
             raise StaleSourceError('STUDIO_CANVAS_IMAGE_NODE_CONTEXT_CHANGED')
-        canvas = (graph.canvas_views.get(nid,scope,actor,origin.canvas_id,guard) if document is None
-            else graph.canvas_views._owned(nid,scope,actor,origin.canvas_id,document))
+        # This target is strictly empty. Original metadata ownership suffices;
+        # do not acquire an Asset phase or load payloads under a Job callback.
+        guard()
+        canvas=graph.canvas_views._owned(nid,scope,actor,origin.canvas_id,
+            graph.store.read(nid,scope) if document is None else document)
         if (canvas['version'] != origin.canvas_version or canvas['definition_digest'] != origin.canvas_digest
                 or canvas['definition']['cards'] or 'image_node_origin' in canvas['definition']):
             raise StaleSourceError('STUDIO_CANVAS_IMAGE_NODE_TARGET_CHANGED')
+        if 'image_node_intent' in canvas:
+            from .canvas_view_models import CanvasImageNodeCreateIntent
+            try:
+                intent=CanvasImageNodeCreateIntent.model_validate(canvas['image_node_intent'])
+                captured=origin.model_dump()
+                expected={'contract':'studio-canvas-image-node-create/1',
+                    **{key:captured[key] for key in ('project_id','scope','incarnation','node_id','title','position','prompt_digest')}}
+                if intent.model_dump()!=expected or canvas['definition']!=intent.empty_definition():
+                    raise ValueError('changed creation intent')
+            except (ValueError,TypeError,KeyError):
+                raise StaleSourceError('STUDIO_CANVAS_IMAGE_NODE_CREATE_INTENT_CHANGED') from None
         guard()
 
     def _canvas_image_node_current(self,nid,scope,actor,context,guard,*,document=None):

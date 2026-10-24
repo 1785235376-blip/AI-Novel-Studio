@@ -36,7 +36,7 @@ function saved(e:ReturnType<typeof fixture>,binding:CanvasImageNodeBinding,job:P
  reference_states:[{card_id:node.id,state:'CURRENT_METADATA',filename:e.asset.filename}]};}
 async function prepare(e:ReturnType<typeof fixture>){fireEvent.click(screen.getByRole('button',{name:'为此节点保存正式空白位置'}));await waitFor(()=>expect(e.views.create).toHaveBeenCalledOnce());await screen.findByText('Original production panel fixture');return panel.canvasNodeTask!.binding;}
 async function offerApproved(e:ReturnType<typeof fixture>,binding:CanvasImageNodeBinding){const job=approved(binding);e.production.get.mockResolvedValue(job);act(()=>panel.onJob?.(job));return job;}
-beforeEach(()=>{vi.stubGlobal('crypto',webcrypto);});afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
+beforeEach(()=>{localStorage.clear();vi.stubGlobal('crypto',webcrypto);});afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 
 describe('formal one-node software contract',()=>{
  it('allows explicit preparation after StrictMode setup replay without an automatic write',async()=>{
