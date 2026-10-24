@@ -119,6 +119,7 @@ export function OutlinePanel({novelId, novels, onNovel, selectedId, onSelect, bl
   const errKind = chapters.error ? classifyError(chapters.error) : null;
   const refresh = async () => {
     const r = await actions.execute(NOVEL_ACTION_IDS.refresh, ctx());
+    if (r.status === 'stale') { setMsg(''); return; } // [HERMIA-FE-20261024 M5-s1fix] late result from a previous project is dropped
     setMsg(r.status === 'done' ? '已刷新' : r.status === 'blocked' ? `无法刷新：${r.reason}` : r.status === 'duplicate' ? '正在刷新…' : '刷新失败，请重试');
   };
   return <div data-testid="uw-outline" style={{display: 'grid', gap: 8, padding: 8}}>
@@ -128,8 +129,9 @@ export function OutlinePanel({novelId, novels, onNovel, selectedId, onSelect, bl
       </select>
     </label>
     {errKind ? <p className="uw-state" role="alert" data-state={errKind}>{ERR_TEXT[errKind]}</p> : null}
-    <NovelStructureRail chapters={(chapters.data ?? []).map(c => ({id: c.id, number: c.number, title: c.title, wordCount: c.word_count}))}
-      selectedId={selectedId} loading={chapters.isLoading} error={null} onSelect={onSelect} panels={[]} onOpenPanel={() => {}} />
+    {/* [HERMIA-FE-20261024 M5-s1fix] on a read error/timeout with no data, don't also claim 「还没有章节。」 */}
+    {errKind && !chapters.data ? null : <NovelStructureRail chapters={(chapters.data ?? []).map(c => ({id: c.id, number: c.number, title: c.title, wordCount: c.word_count}))}
+      selectedId={selectedId} loading={chapters.isLoading} error={null} onSelect={onSelect} panels={[]} onOpenPanel={() => {}} />}
     {blockedNotice ? <p role="status" className="uw-state" data-testid="uw-outline-blocked">{blockedNotice}</p> : null}
     <div><button type="button" data-action-id={NOVEL_ACTION_IDS.refresh} onClick={() => void refresh()}>刷新章节列表</button> <small role="status">{msg}</small></div>
   </div>;

@@ -3,7 +3,7 @@
 // and on close. Keeping unsaved edits in component state lost them silently on redock/tab switch. Drafts now live in
 // this store, owned by the workspace host and keyed by project + object, so a remounted panel picks its draft back up.
 // Only an explicit discard, a confirmed save, or the dirty-close guard's 放弃修改 removes a draft.
-import {useCallback, useEffect, useSyncExternalStore} from 'react';
+import {useCallback, useEffect, useState, useSyncExternalStore} from 'react';
 
 export type Draft = {value: string; base: string};
 
@@ -35,13 +35,18 @@ export function useDraft(store: DraftStore, key: string | null): [Draft | undefi
   return [key ? store.get(key) : undefined, set];
 }
 
-/** Window close / reload guard: registers beforeunload ONLY while something is dirty (no prompt when clean). */
+/** Window close / reload guard: registers beforeunload ONLY while something is dirty (no prompt when clean).
+ * [HERMIA-FE-20261024 M5-s1fix] dirtiness is re-evaluated after every host render (child panels update their dirty refs
+ * in render/effects before the host's effect runs) and on every store change, so discarding / saving removes the
+ * listener instead of leaving it attached with a no-op body. */
 export function useBeforeUnloadGuard(isDirty: () => boolean, store: DraftStore): void {
-  const dirtyNow = useSyncExternalStore(store.subscribe, () => isDirty(), () => false);
+  const ver = useSyncExternalStore(store.subscribe, store.snapshot, store.snapshot);
+  const [dirtyNow, setDirtyNow] = useState(false);
+  useEffect(() => { const v = isDirty(); if (v !== dirtyNow) setDirtyNow(v); });
   useEffect(() => {
     if (!dirtyNow) return;
     const onBefore = (e: BeforeUnloadEvent) => { if (!isDirty()) return; e.preventDefault(); e.returnValue = ''; };
     window.addEventListener('beforeunload', onBefore);
     return () => window.removeEventListener('beforeunload', onBefore);
-  }, [dirtyNow, isDirty]);
+  }, [dirtyNow, isDirty, ver]);
 }

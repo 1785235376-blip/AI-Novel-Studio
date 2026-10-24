@@ -79,6 +79,52 @@ describe('M5-s1 (a) project switch isolation + stale responses', () => {
   });
 });
 
+describe('M5-s1fix host-level stale + listener lifecycle  [HERMIA-FE-20261024 M5-s1fix]', () => {
+  it('host: refresh started in project A, switch to B, A’s late result is stale and not applied', async () => {
+    mount(); await screen.findByText(/雾港·第一章/);
+    holding.add('/api/novels/n1/chapters');
+    fireEvent.click(screen.getByRole('button', {name: '刷新章节列表'}));
+    await waitFor(() => expect(hold['/api/novels/n1/chapters']?.length).toBe(1));
+    switchProject('n2'); await screen.findByText(/灯塔·第一章/);
+    await act(async () => { hold['/api/novels/n1/chapters'][0].resolve(json(CH('n1', '雾港·STALE'))); });
+    await act(async () => { await new Promise(r => setTimeout(r, 20)); });
+    expect(screen.queryByText('已刷新')).toBeNull();
+    expect(screen.queryByText('刷新失败，请重试')).toBeNull();
+    expect(screen.queryByText(/STALE/)).toBeNull();
+    expect((screen.getByLabelText('选择作品') as HTMLSelectElement).value).toBe('n2');
+  });
+  it('beforeunload listener is attached only while dirty and removed after discard', async () => {
+    const add = vi.spyOn(window, 'addEventListener'); const rem = vi.spyOn(window, 'removeEventListener');
+    const live = () => add.mock.calls.filter(c => c[0] === 'beforeunload').length - rem.mock.calls.filter(c => c[0] === 'beforeunload').length;
+    mount(); await selectChapter('雾港·第一章');
+    const base = live();
+    fireEvent.change(screen.getByLabelText('章节标题'), {target: {value: '脏'}});
+    await waitFor(() => expect(live()).toBe(base + 1));
+    fireEvent.click(screen.getByRole('button', {name: /放弃/}));
+    await waitFor(() => expect(live()).toBe(base));
+    expect(fireUnload()).toBe(false);
+  });
+  it('node save keeps a newer draft typed while the save is running (conditional clear)', async () => {
+    mount(); await screen.findByTestId('uw-creative-canvas');
+    pick('c1'); await waitFor(() => expect(nodeInsp().dataset.nodeId).toBe('c1'));
+    fireEvent.change(screen.getByLabelText('节点标题'), {target: {value: 'X'}});
+    const orig = Storage.prototype.setItem; let once = true;
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, k: string, v: string) {
+      orig.call(this, k, v);
+      if (once) { once = false; fireEvent.change(screen.getByLabelText('节点标题'), {target: {value: 'XY'}}); }
+    });
+    fireEvent.click(within(nodeInsp()).getByRole('button', {name: '保存'}));
+    await within(nodeInsp()).findByText('已保存到本机草稿（未同步服务端）');
+    expect((screen.getByLabelText('节点标题') as HTMLInputElement).value).toBe('XY');
+    expect((within(nodeInsp()).getByRole('button', {name: '保存'}) as HTMLButtonElement).disabled).toBe(false);
+  });
+  it('read timeout: no 「还没有章节。」 next to the timeout message', async () => {
+    WORKSPACE_TIMEOUTS.readMs = 30; holding.add('/api/novels/n1/chapters'); mount();
+    await within(await screen.findByTestId('uw-outline')).findByText(READ_TIMEOUT_TEXT, {}, {timeout: 2000});
+    expect(screen.queryByText('还没有章节。')).toBeNull();
+  });
+});
+
 describe('M5-s1 (b) rapid switching last-wins', () => {
   it('rapid canvas picks → inspector shows the last one; rapid project A→B→A shows A data only', async () => {
     mount(); await screen.findByTestId('uw-creative-canvas');
