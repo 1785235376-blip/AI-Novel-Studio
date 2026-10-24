@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useRef, useState} from 'react';
 import {api, getCollaborationContext, getCollaborationEpoch, subscribeCollaborationContext, type CollaborationContext, type ScopedReadOptions} from '../../api';
 import {useLocalHostSession} from '../../localHostSession';
 import {Button, StatusMessage} from '../../ui/primitives';
@@ -67,7 +67,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     sequence.current += 1; download.current?.abort(); download.current = undefined;
     running.current = false; setBusy(false); releasePreview(); setError('');
   }
-  useEffect(() => {
+  useLayoutEffect(() => {
     mounted.current = true;
     const retire = () => {
       if (!mounted.current) return;
@@ -81,7 +81,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       if (objectUrl.current) { URL.revokeObjectURL(objectUrl.current); objectUrl.current = undefined; }
     };
   }, []);
-  useEffect(() => { hide(); }, [candidate, binding, nodePrompt, expectedBinding, restoreEntry]);
+  useLayoutEffect(() => { hide(); }, [candidate, binding, nodePrompt, expectedBinding, restoreEntry]);
 
   function captureContext(): CollaborationContext {
     const context = getCollaborationContext();

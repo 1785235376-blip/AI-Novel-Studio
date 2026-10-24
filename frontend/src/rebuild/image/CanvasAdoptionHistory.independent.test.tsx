@@ -3,6 +3,7 @@
 // fixtures; HTTP/PNG/load events do not establish real provider or browser approval.
 import {Blob as NodeBlob} from 'node:buffer';
 import {createHash, webcrypto} from 'node:crypto';
+import {useLayoutEffect, useRef} from 'react';
 import {act, cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {getCollaborationContext, setCollaborationContext} from '../../api';
@@ -14,6 +15,7 @@ import {canvasTaskBindingKey, captureCanvasTaskOwner, readCanvasTaskBinding, wri
 import {checkedCanvasTaskCandidate} from './canvasTaskCandidate';
 import {canvasCandidateObservationSha256} from './canvasCandidateReview';
 import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
+import {CanvasAdoptionHistory} from './CanvasAdoptionHistory';
 import {ImageRebuild} from './ImageRebuild';
 
 const project = 'history-project', nodeId = 'history-original-node', otherNode = 'history-other-node';
@@ -119,6 +121,25 @@ beforeEach(() => {
 afterEach(() => {cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); setCollaborationContext({sessionToken: ''}); useLocalHostSession.setState({token: '', actorId: '', epoch: 0});});
 
 describe('independent browser-local adoption history restoration', () => {
+  it('accepts an explicit host layout-phase history selection at the first visible commit without automatic reads', async () => {
+    const fixture = await historyFixture(); const {fetcher} = http();
+    function FirstCommitChooser() {
+      const container = useRef<HTMLDivElement>(null);
+      useLayoutEffect(() => {
+        const target = container.current!.querySelector<HTMLInputElement>(`input[aria-label="选择历史记录 ${fixture.target.eventId}"]`);
+        if (!target) throw new Error('Expected the target radio at the first visible commit');
+        // Deliberate test-host interaction, never an automatic product selection.
+        target.click();
+      }, []);
+      return <div ref={container}><CanvasAdoptionHistory binding={fixture.binding} nodePrompt={draftPrompt} isCurrent={() => true}/></div>;
+    }
+    render(<FirstCommitChooser/>);
+    const history = screen.getByRole('region', {name: regionName});
+    expect((within(history).getByRole('radio', {name: `选择历史记录 ${fixture.target.eventId}`}) as HTMLInputElement).checked).toBe(true);
+    expect((within(history).getByRole('button', {name: readName}) as HTMLButtonElement).disabled).toBe(false);
+    expect(fetcher).not.toHaveBeenCalled(); expect(localStorage.getItem(fixture.key)).toBe(fixture.raw); noWrites(fetcher);
+  });
+
   it('exposes local history after the initial status deadline without retrying or accepting its late response', async () => {
     const fixture = await historyFixture(); let finishFirst!: (value: Response) => void, firstSignal!: AbortSignal, reads = 0;
     const fetcher = vi.fn((url: string, init: RequestInit = {}): Promise<Response> => {

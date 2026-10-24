@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useRef, useState} from 'react';
 import {api, getCollaborationContext, getCollaborationEpoch, subscribeCollaborationContext, type ScopedReadOptions} from '../../api';
 import {useLocalHostSession} from '../../localHostSession';
 import {Button, StatusMessage} from '../../ui/primitives';
@@ -42,7 +42,7 @@ export function CanvasAdoptionHistory({binding, nodePrompt, isCurrent, onUnavail
     running.current = false; selectedRef.current = undefined;
     setSelected(undefined); setRead(undefined); setBusy(false); setError('');
   }
-  useEffect(() => {
+  useLayoutEffect(() => {
     mounted.current = true;
     const stopClient = subscribeCollaborationContext(retire);
     const stopHost = useLocalHostSession.subscribe(state => { if (state.epoch !== initialEpoch.current.host) retire(); });
@@ -50,7 +50,7 @@ export function CanvasAdoptionHistory({binding, nodePrompt, isCurrent, onUnavail
       mounted.current = false; sequence.current += 1; selection.current += 1; controllerRef.current?.abort(); stopClient(); stopHost();
     };
   }, []);
-  useEffect(() => { retire(); }, [binding, nodePrompt]);
+  useLayoutEffect(() => { retire(); }, [binding, nodePrompt]);
 
   function choose(entry: CanvasTaskHistoryEntry) {
     if (!current() || !entry.adoption || sameCanvasAdoptionTarget(binding.taskId, binding.adoption, entry.taskId, entry.adoption)) return;

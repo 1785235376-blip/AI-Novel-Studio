@@ -3,13 +3,16 @@
 // process; the synthetic owner states prove neither generation nor acceptance.
 import {cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, beforeEach, expect, it, vi} from 'vitest';
+import {useLayoutEffect} from 'react';
 import fixture from '../../creative/fixtures/cloud-canvas-candidate.file-api.json';
 import {setCollaborationContext} from '../../api';
 import {bindLocalHostSession, useLocalHostSession} from '../../localHostSession';
 import {useStudio} from '../../store';
 import {canvasStorageKey} from '../canvas/RebuildCanvas';
-import {captureCanvasTaskOwner, writeCanvasTaskBinding} from './canvasTaskBinding';
+import {captureCanvasTaskOwner, readCanvasTaskBinding, writeCanvasTaskBinding} from './canvasTaskBinding';
 import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
+import {checkedCanvasTaskCandidate} from './canvasTaskCandidate';
+import {CanvasTaskCandidateView} from './CanvasTaskCandidateView';
 
 const NativeURL = URL, nodeId = 'file-protocol-node';
 const createUrl = vi.fn((_blob: Blob) => 'blob:captured-file-protocol'), revokeUrl = vi.fn();
@@ -26,6 +29,7 @@ beforeEach(() => {
   const owner = captureCanvasTaskOwner(fixture.project_id);
   if (!owner || !writeCanvasTaskBinding(owner, nodeId, fixture.task_id)) throw new Error('Synthetic browser binding unavailable');
 });
+
 afterEach(() => {
   cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); setCollaborationContext({sessionToken: ''});
   useLocalHostSession.setState({token: '', actorId: '', epoch: 0});
@@ -62,4 +66,31 @@ it.each(['pending_inline', 'approved'] as const)('uses original File/API %s fiel
     expect(image.getAttribute('src')).toBe(envelope.items[0].asset_uri);
     expect(fetcher).toHaveBeenCalledTimes(2); expect(createUrl).not.toHaveBeenCalled();
   }
+});
+
+it('accepts the first committed preview action after initializing the candidate lifecycle', async () => {
+  const fetcher = vi.fn(async (url: string, init: RequestInit = {}) => {
+    expect(url).toBe(fixture.paths.jobs);
+    expect(!init.method || init.method === 'GET').toBe(true);
+    return new Response(JSON.stringify(fixture.pending_inline), {headers: {'Content-Type': 'application/json'}});
+  });
+  vi.stubGlobal('fetch', fetcher);
+  const owner = captureCanvasTaskOwner(fixture.project_id)!;
+  const binding = readCanvasTaskBinding(owner, nodeId)!;
+  const candidate = checkedCanvasTaskCandidate(binding, fixture.pending_inline.items[0])!;
+  const unavailable = vi.fn();
+  function FirstCommitHost() {
+    // A host can act after child commit, before passive effects. An enabled
+    // control must already have its owner/request lifecycle initialized.
+    useLayoutEffect(() => {
+      const button = screen.getByRole('button', {name: '预览原任务候选结果'}) as HTMLButtonElement;
+      expect(button.disabled).toBe(false);
+      button.click();
+    }, []);
+    return <CanvasTaskCandidateView candidate={candidate} binding={binding} isCurrent={() => true} onUnavailable={unavailable}/>;
+  }
+  render(<FirstCommitHost/>);
+  await screen.findByRole('img', {name: '原节点任务候选结果'});
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(unavailable).not.toHaveBeenCalled();
 });
