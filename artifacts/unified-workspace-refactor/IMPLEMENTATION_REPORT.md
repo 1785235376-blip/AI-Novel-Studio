@@ -136,3 +136,32 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 - **Tests:** workspace/panels/m2s1fix.test.tsx (10). Touched areas (workspace/taskcenter/workbench/rebuild): 454/454.
 - **Gate (Node 22.14, total 11375):** failed 298/297/297, Identity failures 8/8/8, adjusted **298/297/297 → best 297 ≤297 PASS**. The only extra failure in run 1 (StudioModelCameraWorkspace.additive) is not in my area and passes 3/3 in isolation (logs/m2s1fix-isolated-rerun.log). tsc: 6 errors, same files as baseline (logs/m2s1fix-tsc.log).
 - **Artifacts:** logs/m2s1fix-full-node22-{1,2,3}.json, logs/m2s1fix-browser.{mjs,json}, screenshots/m2s1fix_{1366,1440,1920}_{palette,sent_in_view,tasks_focus}.png, patches/m2s1fix-shared-nonentry.patch (the three shared non-entry edits).
+
+## [HERMIA-FE-20261024 M2-s1fix2] + [HERMIA-FE-20261024 M3-s1] (fix2 code 73ac909c tree a77e9964; M3-s1 code 2abedfb3 tree a9f1821e; Vera M2-s1fix review committed unchanged as 1443245c, author Vera (review))
+- **fix2 overlap:** linkToExecution now places node n at x=20+floor(n/3)*206 (206 = Chrome-rendered width 186 + a 20 px gap), y=20+(n%3)*70. That gives a 3-row grid that grows rightward. Test panels/m2s1fix2.test.tsx checks 9 sends: pairwise no overlap with a ≥10 px gap, the first 3 inside 320×280, and all 9 inside 750×449. Chrome: 7 sends, 0 overlaps, first 3 in view at all 3 widths.
+- **fix2 spec change (not a weakening):** the M2-s1fix viewport test now asserts only the first 3 nodes. Later nodes sit in the next column by design and are covered by m2s1fix2.
+- **useTaskCenter cancelled check:** taskcenter/useTaskCenter.m2s1fix2.test.ts switches queues TASKS→REVIEW→TASKS with flushSync inside one act. It expects readInbox to be called 0 times and readTasks once. Removing `cancelled ||` makes it FAIL (logs/m2s1fix2-mutations.log).
+- **M3-s1 inspector:** in ?uw=1, selecting a node in either canvas shows 画布节点属性 · 创作画布/执行画布 inside the inspector panel.
+  - Fields: editable title, plus type, position, in/out edge counts and storage (仅本机草稿 · 未同步服务端).
+  - 回到章节属性 returns to the existing chapter inspector. A blank click in the same canvas also returns to it.
+- **M3-s1 edits:** the only edit is the title. It goes through the registry action uw.canvas.renameNode, which writes the canvas's own localStorage draft (the same key RebuildCanvas persists to) and then reads it back.
+  - Success (已保存到本机草稿（未同步服务端）) is shown only when the read-back matches.
+  - A write exception, a read-back mismatch, an empty title or a missing node shows an alert and keeps the draft.
+  - After saving, the canvas remounts and keeps its selection and pan/zoom.
+- **M3-s1 isolation:** each canvas has its own selection (image → selNode, which feeds 送到执行画布; video → execSel), its own revision and its own viewport memory. A pick in one canvas never changes the other.
+- **M3-s1 dirty guard:** while the node or chapter draft is unsaved, a new pick or a project switch is refused with a notice. After discard or save, the inspector follows the latest pick.
+- **M3-s1 project switch:** clears both selections, the inspector target and the viewport memory.
+- **M3-s1 no model calls:** selection, canvas/tab switching, project switching and editing issue no network write and no model request (jsdom and Chrome: nonGet=[], modelReqs=[]).
+- **Optional pan/zoom on send: done.** RebuildCanvas gained optional initialSelected/initialViewport/onViewport props (defaults unchanged). The host remembers each canvas viewport in memory, so sends and tab switches keep it (Chrome: translate(-20,10) before and after 6 sends). It is in-memory only, so a reload resets it.
+- **Tests:** panels/m3s1.test.tsx (7). Mutations are in logs/m3s1-mutations.log: 4 killed. 1 survivor is equivalent: the project-switch reset is redundant because the new canvas mount clears it.
+  - Subsets: workspace/rebuild/taskcenter 415/415.
+- **Gate (Node 22.14, total 11384, HEAD 2abedfb3):** failed 299/299/297, IndependentStudioIdentity failures 10/10/8, adjusted **297/297/297 → best 297 ≤297 PASS**. Versus the M2-s1fix failure union, the only new failures are 2 IndependentStudioIdentity.regression cases in runs 1–2 (gone in run 3). The gate formula excludes Identity failures, so they don't count. They are disclosed here because they are timing-sensitive and not touched by this work. Logs: logs/m3s1-full-node22-{1,2,3}.json. tsc: 6 errors (baseline, none in workspace/ or rebuild/).
+- **Not real / limited:**
+  - Canvas nodes have no server API, so edits are browser-local drafts only.
+  - The inspector panel title still reads 章节属性. A spec change would touch layout persistence and tests, so it was left as is; the header inside the panel names the target.
+  - Only the title is editable.
+  - Spec "t117u" was not found under /workspace/hr or in memory. M3 was derived from the brief and the existing contract docs.
+- **Artifacts:**
+  - logs/m3s1-browser.{mjs,json}
+  - screenshots/m3s1_{1366,1440,1920}_{creative,execution}_inspector.png
+  - patches/m3s1-shared-nonentry.patch (RebuildCanvas, UnifiedWorkspacePreview, studioPreviewPanels)

@@ -19,3 +19,10 @@
 
 ## [HERMIA-FE-20261024 M2-s1fix]
 - Vera M2-s1 lows resolved in 98a9dead: sent node off-view (x:-220 → inside view), palette aria-disabled, task center double GET on mount (StrictMode), layout.showPanel in the palette (Mod+Alt+P), focus to the task panel after Mod+Alt+T.
+
+## [HERMIA-FE-20261024 M3-s1]
+- No server canvas-graph API is wired to RebuildCanvas, so node edits stay as browser-local drafts (labelled in the UI).
+- Spec t117u was not found, so M3 is derived from the brief and the contract docs.
+- The inspector panel title is still 章节属性. Renaming it is deferred.
+- Viewport memory lasts only for the session (in-memory).
+- IndependentStudioIdentity.regression has 2 timing-sensitive extra failures in 2 of 3 runs. The gate excludes them; they are not touched by this work.

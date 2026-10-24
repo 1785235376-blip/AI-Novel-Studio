@@ -186,3 +186,16 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 - **Tests:** workspace/panels/m2s1fix.test.tsx (10). Touched areas (workspace/taskcenter/workbench/rebuild): 454/454.
 - **Gate (Node 22.14, total 11375):** failed 298/297/297, Identity failures 8/8/8, adjusted **298/297/297 → best 297 ≤297 PASS**. The only extra failure in run 1 (StudioModelCameraWorkspace.additive) is not in my area and passes 3/3 in isolation (logs/m2s1fix-isolated-rerun.log). tsc: 6 errors, same files as baseline (logs/m2s1fix-tsc.log).
 - **Artifacts:** logs/m2s1fix-full-node22-{1,2,3}.json, logs/m2s1fix-browser.{mjs,json}, screenshots/m2s1fix_{1366,1440,1920}_{palette,sent_in_view,tasks_focus}.png, patches/m2s1fix-shared-nonentry.patch (the three shared non-entry edits).
+
+## [HERMIA-FE-20261024 M2-s1fix2] + [HERMIA-FE-20261024 M3-s1] (fix2 code 73ac909c tree a77e9964; M3-s1 code 2abedfb3 tree a9f1821e; Vera M2-s1fix review committed unchanged as 1443245c, author Vera (review))
+| Item | Evidence | Status |
+|---|---|---|
+| 7+ sent nodes do not overlap, first ones in view | m2s1fix2.test.tsx (9 nodes) + Chrome 7 nodes/0 overlaps ×3 widths | PASS |
+| useTaskCenter cancelled check covered | useTaskCenter.m2s1fix2.test.ts, mutant killed | PASS |
+| exec pan/zoom kept on send | Chrome execTfBefore==execTfAfter; jsdom post-save remount test | PASS (in-memory) |
+| select in either canvas → inspector | m3s1.test #1, Chrome inspCreative/inspExec | PASS |
+| edits via registry action with honest success | m3s1 #2/#3/#7 (read-back mismatch → error) | PASS (local draft only) |
+| no model calls on switch/select/project | m3s1 #1/#2/#5, Chrome nonGet/modelReqs empty | PASS |
+| canvas state isolation | m3s1 #1 (send after exec pick uses creative node), mutant killed | PASS |
+| full suite 3× Node 22.14 | adjusted 297/297/297 | PASS |
+| tsc | 6 baseline | unchanged |

@@ -60,3 +60,10 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - **Tests:** workspace/panels/m2s1fix.test.tsx (10). Touched areas (workspace/taskcenter/workbench/rebuild): 454/454.
 - **Gate (Node 22.14, total 11375):** failed 298/297/297, Identity failures 8/8/8, adjusted **298/297/297 → best 297 ≤297 PASS**. The only extra failure in run 1 (StudioModelCameraWorkspace.additive) is not in my area and passes 3/3 in isolation (logs/m2s1fix-isolated-rerun.log). tsc: 6 errors, same files as baseline (logs/m2s1fix-tsc.log).
 - **Artifacts:** logs/m2s1fix-full-node22-{1,2,3}.json, logs/m2s1fix-browser.{mjs,json}, screenshots/m2s1fix_{1366,1440,1920}_{palette,sent_in_view,tasks_focus}.png, patches/m2s1fix-shared-nonentry.patch (the three shared non-entry edits).
+
+## [HERMIA-FE-20261024 M2-s1fix2] + [HERMIA-FE-20261024 M3-s1] (fix2 code 73ac909c tree a77e9964; M3-s1 code 2abedfb3 tree a9f1821e; Vera M2-s1fix review committed unchanged as 1443245c, author Vera (review))
+- DualCanvas: export LINK_DX=206; link position becomes x=LINK_X+floor(n/3)*LINK_DX, y=LINK_Y0+(n%3)*LINK_DY.
+- RebuildCanvas: new optional props initialSelected, initialViewport, onViewport, plus the exported type CvViewport. Defaults are unchanged.
+- Creative/ExecutionCanvasPanel: new optional props revision, onSelect, selectedId, viewport, onViewport. The creative key is now `novelId:revision`.
+- New action uw.canvas.renameNode (no surfaces; inspector only): input {kind, scope, id, title}. It writes the local draft and reads it back. It reports error on mismatch.
+- New module workspace/panels/canvasInspector.tsx (CanvasNodeInspector, renameCanvasNode, readCanvasNode).
