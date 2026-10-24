@@ -12,7 +12,7 @@
 
 
 ## Open after M1-fix [HERMIA-FE-20261023 M1-fix]
-- N4 (S3): with CSS `zoom` only, useViewport reads innerWidth unscaled, so float clamp can place panels outside. Real browser zoom (DSF) is fine per Vera. Deferred.
-- N5 (S3): exec canvas hidden by default in preview; reachable only via 「中间显示」. Deferred to D (discoverability).
+- N4 (S3): with CSS `zoom` only, useViewport reads innerWidth unscaled, so float clamp can place panels outside. Real browser zoom (DSF) is fine per Vera. **RESOLVED in M2-s1 822b89ec**: useViewport divides by html×body CSS zoom and re-clamps on resize/zoom/style change.
+- N5 (S3): exec canvas hidden by default in preview; reachable only via 「中间显示」. **RESOLVED in M2-s1 822b89ec**: toolbar 执行画布 button, main-panel tabs, Mod+Alt+E (layout.showPanel reopens even if closed).
 - N6: one-off 404 on first 1366 load, not reproduced. Watch.
 - Browser re-verification of MF-1/MF-2 and full vitest run pending Vera.

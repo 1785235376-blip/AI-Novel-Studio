@@ -147,3 +147,31 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
   - Total is 11353 tests in every run. Best-of-3 adjusted is 307, so the ≤307 gate is met.
   - The Node 22 run has 4 failures that don't appear in Node 20 runs 1 or 3. They look like timing flakes: IndependentStudioGraphWorkspace.presentation, CreativeWorkspace reorder, WorkspaceToolsPanel delayed search, ComicPublicationPanel PDF preflight.
 - tsc: 6 errors (known baseline; logs/m1flaky2-tsc.log).
+
+## M2-s1 [HERMIA-FE-20261024 M2-s1] — code 822b89ec (tree fcd2c214c41fa7b351c1166fbe80d1dcdfd5c379)
+**Gate (changed by the user):** Node 22.14.0 full vitest, 3 runs, best adjusted ≤297. f3e0b496 = PASS. Vera's review is at 58270f6a.
+
+| Item | Evidence | Status |
+|---|---|---|
+| creative = RebuildCanvas image, execution = RebuildCanvas video, tasks = TaskCenterPanel; no placeholder left | studioPreviewPanels.test "no placeholder left"; browser placeholders=[] at 1366/1440/1920 | PASS |
+| 送到执行画布: disabled with a reason (还没有选中作品 / 先在创作画布选中一个节点), local draft write, double trigger → once | unit tests + browser dblclick → execNodes=1 | PASS |
+| Shortcuts Mod+Alt+E/I/T via ShortcutTable; on conflict the shortcut is dropped and reported | unit test | PASS |
+| N4: floats re-clamped under CSS zoom/resize | layout/m2s1.test; browser zoom 2: header kept inside the window (1440: left 987→672 px) | PASS |
+| N5: exec entry visible (toolbar 执行画布 + main tabs + Mod+Alt+E, also after close) | tests + screenshots/m2s1_*_exec_canvas.png | PASS |
+| No model calls / no non-GET on load, selection, canvas, panel switch | tests (GET-only assertion); browser nonGet=[] | PASS |
+| tsc | 6 errors = known baseline (logs/m2s1-tsc.log) | PASS (baseline) |
+
+**Full vitest, Node 22.14 at 822b89ec** (logs/m2s1-full-node22-*.json):
+
+| Run | Total | Failed | IndependentStudioIdentity | Adjusted | Failures in src/workspace |
+|---|---|---|---|---|---|
+| 1 | 11365 | 297 | 8 | 297 | 0 |
+| 2 | 11250* | 300 | 10 | 298 | 0 |
+| 3 | 11365 | 299 | 10 | 297 | 0 |
+
+- Best adjusted = 297, which is ≤297 → **PASS**.
+- *Run 2: 3 files failed to collect because of vitest-worker module fetch timeouts (presentation.additive, ComicPublicationPanel, MediaWorkspaceShells). Its count is not comparable.
+- Excluded runs:
+  - logs/overlap/: two loops accidentally overlapped (301 / 299).
+  - logs/m2s1-pretypefix-*: run before the docks type fix (297).
+- Browser: logs/m2s1-browser.mjs/.json against 4299 + 8000. The screenshots were taken before the type-only fix in 822b89ec (PanelDefinition docks metadata; layout is unaffected).

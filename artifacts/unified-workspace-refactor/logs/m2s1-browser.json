@@ -1,0 +1,140 @@
+{
+ "1366": {
+  "placeholders": [],
+  "panels": [
+   "panel-outline:left",
+   "panel-creative:main",
+   "panel-inspector:right",
+   "panel-tasks:bottom"
+  ],
+  "tabs": [
+   "创作画布:true",
+   "执行画布:false"
+  ],
+  "sendReason": "先在创作画布选中一个节点",
+  "tasksText": "任务\n折叠\n底部\n右侧\n左侧\n关闭\n统一任务中心\n重新读取当前队列\n任务队列\n审核收件箱\n\n左右方向键切换队列标签的焦点；按 Enter 或空格打开队列。焦点移动不会自动读取。\n\n把原任务服务的任务与原领域的待审候选放在一处：状态、进度、来源与可用动作全部照原服务显示，不新增第二套队列或审核。执行已完成不等于交付，取消",
+  "sendEnabled": true,
+  "status": "已把「新文本输入」送到执行画布（本机草稿）。",
+  "execNodes": 1,
+  "tabsAfter": [
+   "执行画布:true",
+   "创作画布:false"
+  ],
+  "floatBefore": {
+   "dock": "float",
+   "left": "935px",
+   "top": "565px",
+   "right": 983,
+   "bottom": 613,
+   "iw": 1366,
+   "ih": 768,
+   "headerVisible": true
+  },
+  "floatZoom2": {
+   "dock": "float",
+   "left": "635px",
+   "top": "336px",
+   "right": 1318,
+   "bottom": 720,
+   "iw": 1366,
+   "ih": 768,
+   "headerVisible": true
+  },
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": [],
+  "modelish": []
+ },
+ "1440": {
+  "placeholders": [],
+  "panels": [
+   "panel-outline:left",
+   "panel-creative:main",
+   "panel-inspector:right",
+   "panel-tasks:bottom"
+  ],
+  "tabs": [
+   "创作画布:true",
+   "执行画布:false"
+  ],
+  "sendReason": "先在创作画布选中一个节点",
+  "tasksText": "任务\n折叠\n底部\n右侧\n左侧\n关闭\n统一任务中心\n重新读取当前队列\n任务队列\n审核收件箱\n\n左右方向键切换队列标签的焦点；按 Enter 或空格打开队列。焦点移动不会自动读取。\n\n把原任务服务的任务与原领域的待审候选放在一处：状态、进度、来源与可用动作全部照原服务显示，不新增第二套队列或审核。执行已完成不等于交付，取消",
+  "sendEnabled": true,
+  "status": "已把「新文本输入」送到执行画布（本机草稿）。",
+  "execNodes": 1,
+  "tabsAfter": [
+   "执行画布:true",
+   "创作画布:false"
+  ],
+  "floatBefore": {
+   "dock": "float",
+   "left": "987px",
+   "top": "664px",
+   "right": 1035,
+   "bottom": 712,
+   "iw": 1440,
+   "ih": 900,
+   "headerVisible": true
+  },
+  "floatZoom2": {
+   "dock": "float",
+   "left": "672px",
+   "top": "402px",
+   "right": 1392,
+   "bottom": 852,
+   "iw": 1440,
+   "ih": 900,
+   "headerVisible": true
+  },
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": [],
+  "modelish": []
+ },
+ "1920": {
+  "placeholders": [],
+  "panels": [
+   "panel-outline:left",
+   "panel-creative:main",
+   "panel-inspector:right",
+   "panel-tasks:bottom"
+  ],
+  "tabs": [
+   "创作画布:true",
+   "执行画布:false"
+  ],
+  "sendReason": "先在创作画布选中一个节点",
+  "tasksText": "任务\n折叠\n底部\n右侧\n左侧\n关闭\n统一任务中心\n重新读取当前队列\n任务队列\n审核收件箱\n\n左右方向键切换队列标签的焦点；按 Enter 或空格打开队列。焦点移动不会自动读取。\n\n把原任务服务的任务与原领域的待审候选放在一处：状态、进度、来源与可用动作全部照原服务显示，不新增第二套队列或审核。执行已完成不等于交付，取消",
+  "sendEnabled": true,
+  "status": "已把「新文本输入」送到执行画布（本机草稿）。",
+  "execNodes": 1,
+  "tabsAfter": [
+   "执行画布:true",
+   "创作画布:false"
+  ],
+  "floatBefore": {
+   "dock": "float",
+   "left": "1323px",
+   "top": "799px",
+   "right": 1371,
+   "bottom": 847,
+   "iw": 1920,
+   "ih": 1080,
+   "headerVisible": true
+  },
+  "floatZoom2": {
+   "dock": "float",
+   "left": "912px",
+   "top": "492px",
+   "right": 1872,
+   "bottom": 1032,
+   "iw": 1920,
+   "ih": 1080,
+   "headerVisible": true
+  },
+  "overflow": false,
+  "nonGet": [],
+  "pageErrors": [],
+  "modelish": []
+ }
+}

@@ -110,3 +110,18 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
   - Total is 11353 tests in every run. Best-of-3 adjusted is 307, so the ≤307 gate is met.
   - The Node 22 run has 4 failures that don't appear in Node 20 runs 1 or 3. They look like timing flakes: IndependentStudioGraphWorkspace.presentation, CreativeWorkspace reorder, WorkspaceToolsPanel delayed search, ComicPublicationPanel PDF preflight.
 - tsc: 6 errors (known baseline; logs/m1flaky2-tsc.log).
+
+## M2-s1 [HERMIA-FE-20261024 M2-s1] — 822b89ec (tree fcd2c214c41fa7b351c1166fbe80d1dcdfd5c379)
+- **Real (reused unmodified):**
+  - 创作画布 = RebuildCanvas image (local draft).
+  - 执行画布 = RebuildCanvas video (local draft, remount on link).
+  - 任务 = TaskCenterPanel (GET reads of /api/novels/{id}/experimental/workspace/tasks; mutations only from the user's own clicks inside it).
+  - All 5 preview panels are now real; there is no placeholder left in ?uw=1.
+- **Honest limits:**
+  - Both canvases are browser-local drafts (capability local-only, no server canvas graph).
+  - The tasks panel uses an empty session token; capability is partial.
+  - linkToExecution places the reference node at x=-220, so it starts off-view until 适配 is used (existing DualCanvas behavior).
+- **Actions:** canvas.sendToExecution, canvas.openExecution/openCreative, tasks.open, layout.showPanel. Each has a disabled reason and the registry pending guard with 300 ms busy.
+- **N4/N5:** fixed (see BLOCKERS).
+- **Tests:** layout/m2s1.test.tsx (4) and panels/studioPreviewPanels.test.tsx (8). workspace suite 140/140.
+- **Gate:** best adjusted 297 ≤297 PASS (see ACCEPTANCE_MATRIX). tsc: 6 baseline errors.

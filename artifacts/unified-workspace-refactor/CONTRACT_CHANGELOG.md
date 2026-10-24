@@ -31,3 +31,21 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - New panel module workspace/panels/novelPreviewPanels.tsx: NOVEL_PREVIEW_PANELS (PanelDefinition, existing workbench/panels.ts type), createPreviewPanelRegistry(), registerNovelPreviewActions(reg, qc, getNovelId), NOVEL_ACTION_IDS {rename:'novel.chapter.rename', refresh:'novel.chapters.refresh'}. novel.chapter.rename input = {chapterId, novelId, title, version} via ActionContext.input; visible only with input.
 - UnifiedWorkspacePreview requires a QueryClientProvider ancestor (main.tsx already provides). Preview workbench.panels is now a real PanelRegistry. Panel ids unchanged (layout v3 storage compatible); titles 作品结构 / 章节属性.
 - Affected: ?uw=1 preview only. Migration: none.
+
+## Gate change [HERMIA-FE-20261024 M2-s1] (user decision, relayed by the parent agent 2026-10-24)
+- The full-vitest gate now runs on **Node 22.14.0** (copy kept at /workspace/hr/node22, outside /tmp), **3 runs, best adjusted ≤297** (adjusted = failed − IndependentStudioIdentity failures + 8). The old Node 20 / ≤307 gate is retired.
+- f3e0b496 is PASS on the gate. Vera's review is committed at 58270f6a.
+
+## M2-s1 [HERMIA-FE-20261024 M2-s1] — 822b89ec (tree fcd2c214c41fa7b351c1166fbe80d1dcdfd5c379)
+- New workspace/panels/studioPreviewPanels.tsx exports:
+  - Panels: STUDIO_PREVIEW_PANELS (creative/execution local-only, tasks partial), CreativeCanvasPanel, ExecutionCanvasPanel, TasksPanel.
+  - Actions: registerStudioPreviewActions(reg, table, host, minBusyMs=300), STUDIO_ACTION_IDS {canvas.sendToExecution, canvas.openExecution Mod+Alt+E, canvas.openCreative Mod+Alt+I, tasks.open Mod+Alt+T}.
+- These reuse rebuild/canvas RebuildCanvas + DualCanvas.linkToExecution and taskcenter TaskCenterPanel unmodified.
+- layoutActions: new id layout.showPanel. Input is a panel id. It reopens the panel if closed, brings it to the front of main, expands it and focuses it. No shortcut. Unknown id → disabled 「没有这个面板」.
+- DockLayout:
+  - New exports effectiveZoom() and readViewport().
+  - The viewport is now innerWidth/innerHeight ÷ CSS zoom of html×body. It re-reads on resize, visualViewport resize, DPR change and html/body style/class mutation (N4).
+  - New main-panel tab group [data-testid=uw-main-tabs] (aria-pressed buttons). The 切换中间面板 select is kept (N5).
+- Preview: always-visible toolbar button 执行画布 [data-testid=uw-open-execution], plus a status line [data-testid=uw-studio-status].
+- No shared entry files changed (App.tsx already wires ?uw=1). No new patches/.
+- Affected: ?uw=1 preview + DockLayout only. Migration: none (panel ids unchanged).
