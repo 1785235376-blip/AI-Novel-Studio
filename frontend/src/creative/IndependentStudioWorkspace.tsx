@@ -3,6 +3,8 @@ import type { StudioProductionLeaveGuard, StudioProductionLeaveRisk } from './st
 import { StudioComicPanel } from './StudioComicPanel';
 import { StudioVideoReferencePanel } from './StudioVideoReferencePanel';
 import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks';
+import type { StudioProductionTask } from '../taskcenter/studioProductionTask';
+import { prepareCanvasImageNodeResume, type CanvasImageNodeResume } from './canvasImageNodeResume';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
 import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
@@ -75,18 +77,28 @@ function lineageAsset(asset: Asset): LineageAsset {
 }
 export type IndependentStudioProps = { projectId: string; context: CollaborationContext; scope: ScopeLabels; actor: string; module: LocalStudioModule;
   requestedAssetId?: string; onOpenBroker?: () => void; onModuleChange: (module: StudioModule) => void; onProjectChoice: () => void; onVerified?: (projectId: string) => void; status?: ReactNode };
+type NodeResumeSource = CanvasImageNodeResume & { ticket: number; selectionEpoch: number; module: LocalStudioModule };
 
 /** Independent module content; the original shell and asset owners remain authoritative. */
 export function IndependentStudioWorkspace(props: IndependentStudioProps) {
-  return <IndependentStudioSession key={signature(props.projectId, props.context)} {...props} />;
+  // An explicit Host credential is captured by the transport, independently of
+  // the store/Host authority signature. Replacing it retires the whole session.
+  return <IndependentStudioSession key={JSON.stringify([signature(props.projectId, props.context), props.context.localHostToken])} {...props} />;
 }
 function IndependentStudioSession({ projectId, context, scope, actor, module, requestedAssetId, onOpenBroker, onModuleChange, onProjectChoice, onVerified, status }: IndependentStudioProps) {
   const query = useQueryClient();
   const [editorSession, setEditorSession] = useState<{ prepared: PreparedStoryboardEditor; ticket: number; module: 'IMAGE' | 'VIDEO' }>();
   const editorTicket = useRef(0), editorPreparing = useRef(false);
   const pendingEditor = useRef<(() => Promise<void>)>();
+  const nodeResumeTicket = useRef(0), nodeResumeSourceTicket = useRef(0);
+  const pendingNodeResume = useRef<(() => Promise<void>)>();
+  const nodeResumeReading = useRef<{ ticket: number; controller: AbortController }>();
+  const nodeResumeSource = useRef<NodeResumeSource>();
+  const retirePendingNodeResume = useCallback(() => {
+    nodeResumeTicket.current++; pendingNodeResume.current = undefined; nodeResumeReading.current?.controller.abort();
+  }, []);
   const editorLocation = useRef(module);
-  if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; if (editorSession) setEditorSession(undefined); }
+  if (editorLocation.current !== module) { editorLocation.current = module; editorTicket.current++; retirePendingNodeResume(); nodeResumeSource.current = undefined; if (editorSession) setEditorSession(undefined); }
 
   const capturedHost = useRef({ ...useLocalHostSession.getState() });
   const productionLeaveScope = useRef(`项目 ${projectId} · 分支 ${context.scope?.branchId ?? 'local'}${context.scope ? ` · 工作区 ${context.scope.workspaceId} · 协作项目 ${context.scope.projectId} · 故事线 ${context.scope.storylineId}` : ''} · 操作者 ${context.actor?.id || capturedHost.current.actorId || actor}`).current;
@@ -124,6 +136,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [resume] = useState(() => !context.scope && !context.sessionToken && !context.actor
     ? readLocalStudioResume(projectId) : { state: 'EMPTY' as const });
   const [workspaceView, setWorkspaceView] = useState<StudioWorkspaceView>(resume.state === 'SAVED' ? resume.location.view : (module === 'EDIT' ? 'PRODUCTION' : 'ASSETS')); // [HERMIA-FE-20261022] EDIT cold → 制作操作/时间线
+  const workspaceViewRef = useRef(workspaceView); workspaceViewRef.current = workspaceView;
   const defaultCanvasChosen=useRef(resume.state==='SAVED');
   useEffect(()=>{
     if(defaultCanvasChosen.current||!overview)return;
@@ -173,7 +186,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     // carries the mode, and this never fabricates a location to store it.
     rememberLocalStudioInterfaceMode(projectId, mode);
   }, [projectId]);
-  const [pendingNavigation, setPendingNavigation] = useState<{ kind: 'CURRENT'; action: () => void; epoch: number } | { kind: 'NOVEL'; epoch: number }>(), [discard, setDiscard] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<{ kind: 'CURRENT'; action: () => void; epoch: number; nodeResumeTicket?: number } | { kind: 'NOVEL'; epoch: number }>(), [discard, setDiscard] = useState(false);
   const selectionEpoch = useRef(0), overviewEpoch = useRef(0), storageEpoch = useRef(0), storageReading = useRef(false);
   // A request retires stale callbacks immediately, but the current relationship
   // form remains visibly disabled until that same-source read settles. The new
@@ -183,7 +196,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const overviewReading = useRef<AbortController>(), storageRequest = useRef<AbortController>();
   const graphDirtyRef = useRef(false);
   const [mediaDirty, setMediaDirty] = useState(false), [timelineDirty, setTimelineDirty] = useState(false), [productionRevision, setProductionRevision] = useState(0);
-  const [productionJob, setProductionJob] = useState<{ client: typeof productionClient; job: ProductionJob }>();
+  const [productionJob, setProductionJob] = useState<{ client: typeof productionClient; job: ProductionJob; resume?: NodeResumeSource }>();
+  const productionJobRef = useRef(productionJob); productionJobRef.current = productionJob;
+  const nodeResumeActive = productionJob?.client === productionClient && !!productionJob.resume;
   const mediaDirtyRef = useRef(false), timelineDirtyRef = useRef(false), assetReadEpoch = useRef(0);
   const [maskDirty, setMaskDirty] = useState(false);
   const maskDirtyRef = useRef(false);
@@ -214,14 +229,15 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (!sameStudioIdentity() || !sameHostIdentity()) authorityLost.current = true;
     return alive.current && !revoked.current && !authorityLost.current;
   }, [sameStudioIdentity, sameHostIdentity]);
-  const deny = useCallback(() => { captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, []);
+  const deny = useCallback(() => { retirePendingNodeResume(); nodeResumeSource.current = undefined; captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); revoked.current = true; selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); setDenied(true); setStoryboardHandoff(undefined); storyboardDirtyRef.current = false; setStoryboardDirty(false); setAssetHandoff(undefined); setMediaHandoff(undefined); setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined); setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setLineageDirty(false); setRelationshipDirty(false); mediaDirtyRef.current = false; timelineDirtyRef.current = false; setMediaDirty(false); setTimelineDirty(false); }, [retirePendingNodeResume]);
   const retireIdentity = useCallback(() => {
+    retirePendingNodeResume(); nodeResumeSource.current = undefined;
     captureLeaveRisk.current(); navigationEpoch.current++; setAcknowledgeUnknown(false); studioRetired.current = true; authorityLost.current = true; setIdentityRetired(true); setAssetHandoff(undefined); setMediaHandoff(undefined);
     selectionEpoch.current++; overviewEpoch.current++; storageEpoch.current++; assetReadEpoch.current++;
     overviewReading.current?.abort(); storageRequest.current?.abort();
     setSelected(undefined); setRows([]); setOverview(undefined); setComicWorkspace(undefined); setStorage(undefined); setProductionJob(undefined);
     setPendingDeclaration(undefined); setPendingNavigation(undefined); setDiscard(false); setError(''); setNotice(''); setLoading(false);
-  }, []);
+  }, [retirePendingNodeResume]);
   useEffect(() => {
     // Observe every transition synchronously, including A -> B -> A inside one React batch.
     // Redraw immediately to hide adopted data; only local authored graph text remains read-only.
@@ -417,7 +433,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     } catch (reason) { if (current() && epoch === overviewEpoch.current && !abort.signal.aborted) setError(apiErrorView(reason, '项目读取失败。').message); }
     finally { if (current() && epoch === overviewEpoch.current) setLoading(false); }
   }, [client, current, guarded, projectId, module]);
-  useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh]);
+  useEffect(() => { alive.current = true; void refresh(); return () => { alive.current = false; retirePendingNodeResume(); nodeResumeSource.current = undefined; overviewEpoch.current++; storageEpoch.current++; selectionEpoch.current++; overviewReading.current?.abort(); storageRequest.current?.abort(); }; }, [refresh, retirePendingNodeResume]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => { if (dirty || promptDirty || busyRef.current || comicBusyRef.current || leaveRisk.current.dirty || leaveRisk.current.unknown || leaveRisk.current.comicInFlight) { event.preventDefault(); event.returnValue = ''; } };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
@@ -441,8 +457,10 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
     if (current()) void query.invalidateQueries({ queryKey: [cacheKey, projectId, 'assets'] });
   }, [invalidateStorage, loadProductionAssets, current, query, cacheKey, projectId]);
   useEffect(() => {
-    if (productionView && !storyboardHandoff && overview && !denied) void loadProductionAssets();
-  }, [productionView, !!storyboardHandoff, overview?.project.id, denied, loadProductionAssets]);
+    // The bounded resume is source-free and consumes only its exact Job. Avoid
+    // starting an unrelated asset read/semaphore during its destination mount.
+    if (productionView && !nodeResumeActive && !storyboardHandoff && overview && !denied) void loadProductionAssets();
+  }, [productionView, nodeResumeActive, !!storyboardHandoff, overview?.project.id, denied, loadProductionAssets]);
   const refreshedAsset = useCallback((asset: StudioAsset) => {
     selectionEpoch.current += 1;
     setSelected(asset); setRows(previous => [...previous.filter(row => row.id !== asset.id), asset]); setLineageDirty(false); setRelationshipDirty(false);
@@ -498,14 +516,15 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const navigate = (action: () => void, novelExit = false) => {
     const authorized = current(), retiredExit = !authorized && novelExit;
     if (!authorized && (!retiredExit || !alive.current || studioRetired.current || novelExitCommitted.current || !sameStudioIdentity())) return;
-    editorTicket.current++; pendingEditor.current = undefined;
+    editorTicket.current++; pendingEditor.current = undefined; retirePendingNodeResume();
     if (navigationBusy(retiredExit)) { setNotice('当前操作尚未结束，请等待结果确认后再离开。'); return; }
     const needsConfirmation = retiredExit ? leaveRisk.current.dirty || leaveRisk.current.unknown
       : dirty || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current || promptDirtyRef.current;
     if (needsConfirmation) {
       setDiscard(false); setAcknowledgeUnknown(false);
-      setPendingNavigation(retiredExit ? { kind: 'NOVEL', epoch: navigationEpoch.current } : { kind: 'CURRENT', action, epoch: navigationEpoch.current }); return;
+      setPendingNavigation(retiredExit ? { kind: 'NOVEL', epoch: navigationEpoch.current } : { kind: 'CURRENT', action: () => { nodeResumeSource.current = undefined; action(); }, epoch: navigationEpoch.current }); return;
     }
+    nodeResumeSource.current = undefined;
     if (retiredExit) { novelExitCommitted.current = true; onModuleChange('NOVEL'); } else action();
   };
   const relationshipEpoch = selectionEpoch.current;
@@ -559,6 +578,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   };
   const openStoryboard: OpenStoryboardEditor = (request, isOriginCurrent) => {
     if (!current() || busyRef.current || editorPreparing.current || editorSession || !graphView || (module !== 'IMAGE' && module !== 'VIDEO') || !isOriginCurrent()) return;
+    retirePendingNodeResume(); nodeResumeSource.current = undefined;
     const ticket = ++editorTicket.current, sourceSelection = selectionEpoch.current, originModule = module;
     const valid = () => current() && editorTicket.current === ticket && editorLocation.current === originModule && sourceSelection === selectionEpoch.current && isOriginCurrent();
     const prepare = async () => {
@@ -590,6 +610,65 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       setDiscard(false); setPendingNavigation({ kind: 'CURRENT', action: () => {}, epoch: navigationEpoch.current });
     } else void prepare();
   };
+  const openProductionNodeResume = (job: StudioProductionTask, isSelectionCurrent: () => boolean) => {
+    if (!current() || busyRef.current || workspaceViewRef.current !== 'TASKS' || !isSelectionCurrent()) return;
+    retirePendingNodeResume(); editorTicket.current++; pendingEditor.current = undefined;
+    navigationEpoch.current++; setPendingNavigation(undefined); setDiscard(false);
+    if (job.owner !== 'image' || job.status !== 'QUEUED') {
+      setNotice('此节点任务当前仅可在原任务记录中读取；只有仍在排队的本地图片节点任务支持此续接入口。不会新建任务或改选其他节点。'); return;
+    }
+    const ticket = nodeResumeTicket.current, sourceSelection = selectionEpoch.current, originModule = module;
+    const controller = new AbortController(), selectedJob = structuredClone(job);
+    const valid = () => current() && !controller.signal.aborted && nodeResumeTicket.current === ticket
+      && pendingNodeResume.current === prepare && selectionEpoch.current === sourceSelection
+      && editorLocation.current === originModule && workspaceViewRef.current === 'TASKS';
+    const prepare = async () => {
+      // The selector lease only belongs to TASKS. Freeze its UI synchronously,
+      // then use this owned read ticket; navigation must not carry that lease.
+      if (!valid() || !isSelectionCurrent()) {
+        if (current() && nodeResumeTicket.current === ticket) {
+          pendingNodeResume.current = undefined; setPendingNavigation(undefined); setDiscard(false);
+          setNotice('原任务选择已变化，未放弃当前输入；请重新明确选择原节点任务。');
+        }
+        return;
+      }
+      if (busyRef.current || editorPreparing.current || preferenceController.pending) return;
+      nodeResumeReading.current = { ticket, controller }; busyRef.current = true; setBusy(true);
+      setNotice('正在核对原排队节点任务与原画布；核对成功前保留当前输入。');
+      try {
+        const prepared = await prepareCanvasImageNodeResume({ selected: selectedJob, projectId,
+          branchId: context.scope?.branchId || null, client, production: productionClient,
+          isCurrent: valid, read: guarded, signal: controller.signal });
+        if (!valid()) return;
+        // No await after this final check: failed reads never discard drafts.
+        pendingNodeResume.current = undefined; setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false);
+        // Destination hooks read the synchronous semaphore during their first
+        // committed render. Retire this completed read before mounting them.
+        nodeResumeReading.current = undefined; busyRef.current = false; setBusy(false);
+        discardNavigationDrafts();
+        const source: NodeResumeSource = { ...prepared, ticket: ++nodeResumeSourceTicket.current,
+          selectionEpoch: sourceSelection, module: originModule };
+        nodeResumeSource.current = source;
+        setTaskTarget(undefined); setStoryboardHandoff(undefined); setAssetHandoff(undefined); setMediaHandoff(undefined);
+        setProductionJob({ client: productionClient, job: prepared.job, resume: source }); setWorkspaceView('PRODUCTION');
+        setNotice('已续接精确的原排队节点任务。未恢复浏览器画布或自动执行；执行仍需重新预览并明确确认。');
+      } catch (reason) {
+        if (current() && nodeResumeTicket.current === ticket && !controller.signal.aborted) {
+          pendingNodeResume.current = undefined; setPendingNavigation(undefined); setDiscard(false);
+          setNotice(apiErrorView(reason, '原节点任务未能续接，未保存输入仍保留。').message);
+        }
+      } finally {
+        if (nodeResumeReading.current?.ticket === ticket) {
+          nodeResumeReading.current = undefined; busyRef.current = false; if (alive.current) setBusy(false);
+        }
+      }
+    };
+    pendingNodeResume.current = prepare;
+    if (dirtyRef.current || promptDirtyRef.current || comicDirtyRef.current || storyboardDirtyRef.current || mediaDirtyRef.current
+      || timelineDirtyRef.current || maskDirtyRef.current || workflowDirtyRef.current) {
+      setDiscard(false); setAcknowledgeUnknown(false); setPendingNavigation({ kind: 'CURRENT', action: () => {}, epoch: navigationEpoch.current, nodeResumeTicket: ticket });
+    } else void prepare();
+  };
   const confirmNavigation = () => {
     if (!pendingNavigation || pendingNavigation.epoch !== navigationEpoch.current) return;
     const retiredExit = pendingNavigation.kind === 'NOVEL';
@@ -598,14 +677,23 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         || (leaveRisk.current.dirty && !discard) || (leaveRisk.current.unknown && !acknowledgeUnknown)) return;
     } else if (!discard || !current()) return;
     if (navigationBusy(retiredExit)) { setNotice('当前操作尚未结束，未放弃输入或离开。请先核对结果。'); return; }
+    if (pendingNavigation.kind === 'CURRENT' && pendingNavigation.nodeResumeTicket !== undefined) {
+      if (pendingNavigation.nodeResumeTicket === nodeResumeTicket.current && pendingNodeResume.current) void pendingNodeResume.current();
+      return;
+    }
     if (!retiredExit && pendingEditor.current) { void pendingEditor.current(); return; }
     setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false);
     // Retired controllers cannot discard, save, execute, cancel or replay. The
     // original IDs and unknown-result markers remain available for later review.
-    if (pendingNavigation.kind === 'NOVEL') { novelExitCommitted.current = true; onModuleChange('NOVEL'); }
+    if (pendingNavigation.kind === 'NOVEL') { nodeResumeSource.current = undefined; novelExitCommitted.current = true; onModuleChange('NOVEL'); }
     else { discardNavigationDrafts(); pendingNavigation.action(); }
   };
   const retiredExitPending = pendingNavigation?.kind === 'NOVEL';
+  const resumedNode = productionJob?.client === productionClient ? productionJob.resume : undefined;
+  const resumeSourceCurrent = () => !!resumedNode && current() && workspaceViewRef.current === 'PRODUCTION'
+    && nodeResumeSource.current === resumedNode && productionJobRef.current?.resume === resumedNode
+    && productionJobRef.current.client === productionClient && resumedNode.selectionEpoch === selectionEpoch.current
+    && resumedNode.module === editorLocation.current && resumedNode.ticket === nodeResumeSourceTicket.current;
   const sidebar = comicOnly ? <div className="independent-studio-sidebar"><h2>独立漫画</h2><p>空白漫画页和书册沿用原项目保存，无需小说来源。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button></div> : <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
     <StudioWorkspacePreferencesForm controller={preferenceController} locked={storyboardDirty || graph.dirty || mediaDirty || timelineDirty || maskDirty} />
     <details onToggle={event => { if (event.currentTarget.open && !storage && overview) void loadStorage(); }}><summary>项目存储</summary>{storageLoading && <StatusMessage>正在核对项目存储…</StatusMessage>}{storage ? <><p>有效资产 {storage.assets.count} 项 · {storage.assets.bytes} 字节</p><p>回收站 {storage.trash.count} 项 · {storage.trash.bytes} 字节</p>
@@ -640,6 +728,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} onUnavailable={deny}
       onOpen={(job, isSelectionCurrent) => {
         if (!isSelectionCurrent() || !current() || busyRef.current) return;
+        if (job.command && Object.hasOwn(job.command, 'canvas_image_node')) { openProductionNodeResume(job, isSelectionCurrent); return; }
         const epoch = selectionEpoch.current;
         navigate(() => {
           if (!isSelectionCurrent() || !current() || busyRef.current || epoch !== selectionEpoch.current) return;
@@ -737,7 +826,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       {(!retiredExitPending || leaveRisk.current.dirty) && <label><input type="checkbox" disabled={navigationBusy(retiredExitPending)} checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label>}
       {retiredExitPending && leaveRisk.current.unknown && <><p>原请求结果仍待核对。原范围：{productionLeaveScope}。{leaveRisk.current.requestIds.length > 0 && `原请求标识：${leaveRisk.current.requestIds.join('、')}`}</p>{leaveRisk.current.productionRequests.map(request => <p key={request}>原请求归属：{request}</p>)}<label><input type="checkbox" disabled={navigationBusy(true)} checked={acknowledgeUnknown} onChange={event => setAcknowledgeUnknown(event.target.checked)} />确认保留原请求待核对后离开</label></>}
       <Button disabled={navigationBusy(retiredExitPending) || (retiredExitPending ? (leaveRisk.current.dirty && !discard) || (leaveRisk.current.unknown && !acknowledgeUnknown) : !discard)} onClick={confirmNavigation}>确认离开</Button>
-      <Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false); }}>{retiredExitPending ? '留在当前页' : '继续编辑'}</Button>
+      <Button onClick={() => { editorTicket.current++; pendingEditor.current = undefined; retirePendingNodeResume(); setPendingNavigation(undefined); setDiscard(false); setAcknowledgeUnknown(false); }}>{retiredExitPending ? '留在当前页' : '继续编辑'}</Button>
     </section>}
     {pendingDeclaration && !denied && workspaceView === 'ASSETS' && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guardedWrite(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
     {graphView && overview && !denied && graph.content}
@@ -752,15 +841,16 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       <Button onClick={() => changeInterfaceMode('PROFESSIONAL')}>切换到专业模式查看契约与参数</Button>
     </Panel>}
     {productionView && overview && !denied && !storyboardHandoff && <>
-      <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>
-      <StudioMediaExecutionPanel leaveGuard={leaveGuard} key={`media:${cacheKey}:${productionRevision}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
+      {!resumedNode && <Button disabled={busy} onClick={() => void loadProductionAssets()}>读取当前素材版本</Button>}
+      <StudioMediaExecutionPanel leaveGuard={leaveGuard} key={`media:${cacheKey}:${productionRevision}:${resumedNode?.ticket ?? 'ordinary'}`} client={productionClient} assets={rows} assetHandoff={mediaHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} canReview={overview.capabilities.can_review === true}
-        busy={busy} isBusy={operationPending} isCurrent={current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
+        busy={busy} isBusy={operationPending} isCurrent={resumedNode ? resumeSourceCurrent : current} read={guarded} mutate={graphMutation} cutoutExecution={cutoutExecution}
+        resumeOnly={!!resumedNode} canvasNodeTask={resumedNode ? { binding: resumedNode.binding, initialPrompt: resumedNode.initialPrompt, isCurrent: resumeSourceCurrent } : undefined}
         onDirtyChange={mediaDraftChanged} onUnavailable={deny} externalJob={productionJob?.client === productionClient ? productionJob.job : undefined} onApproved={productionApproved} onOpenApprovedAsset={openApprovedAsset} />
-      <StudioTimelineEditor leaveGuard={leaveGuard} key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
+      {!resumedNode && <StudioTimelineEditor leaveGuard={leaveGuard} key={`timeline:${cacheKey}:${productionRevision}:${module}`} mediaKind={module === 'AUDIO' ? 'AUDIO' : 'VIDEO'} client={productionClient} assets={rows} projectId={projectId} assetHandoff={assetHandoff}
         canMutate={writable && !preferenceDirty && !lineageDirty && !relationshipDirty} busy={busy} isBusy={operationPending}
         isCurrent={current} read={guarded} mutate={graphMutation} onDirtyChange={timelineDraftChanged} onUnavailable={deny}
-        onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />
+        onJob={job => { if (current()) setProductionJob({ client: productionClient, job }); }} />}
     </>}
     {productionView && storyboardHandoff && overview && !denied && !identityRetired && <StudioStoryboardAssetHandoff key={storyboardHandoff.id}
       exactImage={storyboardHandoff} client={directorSource} studio={client} production={productionClient}
