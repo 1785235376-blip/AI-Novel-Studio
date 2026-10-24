@@ -28,3 +28,5 @@
 - IndependentStudioIdentity.regression has 2 timing-sensitive extra failures in 2 of 3 runs. The gate excludes them; they are not touched by this work.
 
 - [HERMIA-FE-20261024 M3-s1fix] none new. Full suite not rerun (per brief); viewport memory is still in-memory only (reload resets).
+
+- [HERMIA-FE-20261024 M3-s1fix2] none new. Full suite not rerun (per brief).

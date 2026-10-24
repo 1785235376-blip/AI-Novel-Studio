@@ -69,3 +69,5 @@ No change to workbench/layout.ts, panels.ts, actions.ts contracts.
 - New module workspace/panels/canvasInspector.tsx (CanvasNodeInspector, renameCanvasNode, readCanvasNode).
 
 - [HERMIA-FE-20261024 M3-s1fix] RebuildCanvas: new optional prop `revealLast` (default off); re-clicking the selected node re-fires onSelect. ExecutionCanvasPanel passes `revealLast`. No API/backend change. (310840ef)
+
+- [HERMIA-FE-20261024 M3-s1fix2] RebuildCanvas `revealLast` is now a pending one-shot request executed on first non-zero size; new optional prop `onRevealed` (ExecutionCanvasPanel passes it through). Defaults unchanged. (edf7576e)

@@ -201,3 +201,5 @@ Commits: 84e684a4 (Vera's review append for f8124581, committed unchanged, autho
 | tsc | 6 baseline | unchanged |
 
 | M3-s1fix | reveal last sent node at 1366; exec viewport per project; node-named title/notices; re-click switch-back; exec-tab blocked notice | PASS (m3s1fix.test.tsx 5/5, mutations 8/8 killed, 310840ef) |
+
+| M3-s1fix2 | real-Chrome reveal of last sent node (pending until non-zero size, once); no re-reveal after manual pan / tab switch / remount | PASS (m3s1fix2.test.tsx 3/3, mutations 4/5 + 1 equivalent, Chrome 1366/1920 × k1/1.1 4/4, edf7576e) |
