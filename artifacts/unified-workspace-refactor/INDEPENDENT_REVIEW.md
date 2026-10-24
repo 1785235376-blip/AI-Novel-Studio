@@ -387,3 +387,56 @@ nit（P3）：
 - 交叉核对 Hermia 的 m1flaky2-full-node22-1：raw 302。我们的 298 项固定失败全部包含在内；多出的 4 项（CreativeWorkspace、IndependentStudioGraphWorkspace.presentation、ComicPublicationPanel、WorkspaceToolsPanel）在我们的三次运行中都没有出现，判断为抖动。Hermia 在 Node 20 下的 307/310/307 与我们的 308/308/311 同处一个区间。
 - 结论：P4 通过，Node 根因确认。按旧门槛，Node 20 不达标（308 比 307 多 1，但多出来的只是抖动与环境差异，没有任何新的真实回归）。建议把门槛切换到 Node 22.14（符合 engines），以 297 adjusted / 298 项固定失败作为新基线，ISI 仍按 8 计，并允许重试一次。
 - 证据目录：/workspace/hr/vera-compare/m1flaky2/。本节未提交。
+
+## M2-s1 (6b8a9642) — Vera 独立复核 [VERA-FE]
+
+环境：临时 worktree /tmp/vera-m2s1 固定在 6b8a9642（代码 822b89ec，tree fcd2c214 已校验 ✓），复制未跟踪的 lock 后执行 npm ci；自建 vite :4399（独立缓存）；Playwright 拦截全部非 GET 请求；Node 22.14。未改业务代码，未提交、未推送；未触碰 :4299 和 :8000。全量运行前只按 PID 停止我自己启动的 vitest（当时没有残留），每次全量都设置了 timeout。证据目录：/workspace/hr/vera-compare/m2s1/。
+
+**结论：PASS（无 MUST-FIX）**，有两项中优先级问题需要跟进。
+
+### 1. 浏览器（1366/1440/1920，DPR 1.25/1.5，CSS zoom 0.8/1.25，共 7 组配置）
+- 五个面板都有真实内容（大纲在左、创作在主区、检查器在右、任务在底部、执行画布在标签页里），占位为 0，无溢出，页面错误 0，写请求 0，类模型请求 0。请求只有 GET novels/chapters/tasks。
+- 送到执行画布：未选中节点时禁用，并显示原因「先在创作画布选中一个节点」；选中后可用。防抖：间隔 100ms 点两次、双击、去掉 disabled 后间隔 50ms 强制点击，都只送出 1 次；间隔 450ms 点两次送出 2 次 ✓。
+- 命令面板：送到执行画布在禁用时没有 aria-disabled，按 Enter 提示「无法执行：…」；可用时送出 1 次。打开执行画布、打开创作画布、打开任务都能用。
+- 快捷键：Mod+Alt+E、Mod+Alt+I、Mod+Alt+T 都生效；快捷键也有防抖 ✓；输入框获得焦点时 E 不触发 ✓。
+- N4：浮动面板在拖拽、resize 到 60%、CSS zoom 2、body zoom 1.6、浏览器缩放 175% 下，7 组配置全部 dock=float 且标题栏仍在视口内 ✓。
+- N5：工具栏「执行画布」按钮和主区标签页都正常 ✓。
+- 无 token 时的任务中心：显示 EXPERIMENTAL_FEATURE_DISABLED 和读取失败文案，不会自动重试。
+- 已知限制（送出的节点在画面外）：uw 中复现，**旧版非 uw 画布（视频 › 专业 › 双画布）同样复现**（x=-180，宽 186，只露出 5.5px）。原因是 linkToExecution 把节点固定放在 x:-220，属于既有问题，不是本轮引入的。
+
+### 2. 变异测试（mutations.log）
+- 去掉 registry 去重、去掉选中条件、去掉 /z 换算、z=1：都能被测试抓到。
+- **a1 去掉 delay(minBusyMs)、a2 minBusyMs=0：变异存活**。现有测试只覆盖同一 tick 内的去重，没有覆盖 300ms 窗口。
+
+### 3. 旧 UI 18 页对比（vs m1s3fix/legacy-81a65eb8）
+18 页对 18 页，diff 为空，uw 0，非 GET 0。控制台错误：本轮 18 条（都是 401）；基线 19 条（18 条 401 + 1 条 404），没有新增。
+
+### 4. 全量 vitest（Node 22.14，3 次）
+| run | raw | ISI | adjusted | total |
+|---|---|---|---|---|
+| 1 | 300 | 10 | 298 | 11365 |
+| 2 | 297 | 8 | 297 | 11365 |
+| 3 | 297 | 8 | 297 | 11365 |
+- 门槛 (a) 三次取最好 297 ≤ 297：**PASS**。门槛 (b) 第 1 次 298 超出，重试一次得到 297：**PASS（用掉了重试）**。
+- 加载失败的文件：src/ui/LocalAiBrowserJourneyContracts.test.tsx，三次都失败，已在基线内。
+- 三次都失败的有 298 项，与 m1flaky2/persistent-node22.json（298 项）**完全一致**：没有新增，也没有修复。
+- 不稳定项有 3 个，只出现在第 1 次：
+  - IndependentStudioIdentity 中 2 项：单独重跑 3 次，有 1 次失败（8/8/10 failed，其中 8 项是基线内的稳定失败）。
+  - TaskCenter.additive 中 1 项：单独重跑 3 次全部通过。
+  - 本轮没有改动 src/creative 和 src/taskcenter，判断是既有的时序 flaky。
+- tsc 6 个错误，与基线和 Hermia 的 m2s1-tsc.log 一致；src/workspace 和 src/workbench 测试 188/188 通过。
+
+### 5. 交叉核对 Hermia 的结果
+- full-node22：她的 1 = 297/8/297。她的 2 = 300/10/298，且 total 只有 11250，有 2 个文件加载失败（IndependentStudioGraphWorkspace.presentation、ComicPublicationPanel），看起来是环境或负载问题，在我的三次运行中都没有复现。她的 3 与报告一致。
+- tsc 一致。
+- 她的 browser json 是在 :4299 上跑的，没有拦截请求，所以只能作参考；她的浮动和 execNodes 结论与我的一致。
+- overlap/ 和 pretypefix 日志按要求忽略。
+
+### 问题（按优先级）
+- 中：300ms 防抖窗口没有测试覆盖（a1/a2 变异存活）。建议加 fake-timer 测试：间隔 100ms 触发两次只执行 1 次，间隔 350ms 执行 2 次。
+- 中/低：送出的节点在画面外（x:-220），uw 和旧画布都存在，是既有问题。建议放到视口内或送出后自动滚动到该节点。
+- 低：layout.showPanel 不在命令面板里，也没有快捷键。
+- 低：命令面板中禁用项没有标 aria-disabled。
+- 低：任务中心加载时有 2 次 GET，和「只在切换时读取」的文案不一致（都是 GET，无害）。
+- 低：Mod+Alt+T 之后焦点为 null。
+- 低：IndependentStudioIdentity 有 2 项时序 flaky，需要关注。
