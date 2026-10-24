@@ -878,3 +878,29 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - M3-persistlocal 存活：占位符检查还在，所以这个变异与原代码等价，不算缺口。
 
 证据：/workspace/hr/vera-compare/vw-ee350ece/（tsc/build/core/full1-3 的 log/json、analyze.py、browser.json、probe2.json、shots/、mutations.txt）。本节未提交。
+
+## [VERA-FE] VW fix1 复核（76f868b3，2026-10-25）
+
+**结论：PASS**。上一轮的 2 项 MUST-FIX 已经修好，测试和浏览器实测都确认了。还剩 2 个焦点行为没有测试守护，记为 P2 后续，不阻塞。
+
+### 门禁
+- tsc 0，build 0。核心测试 68 个文件，538 个用例中 537 通过。唯一失败的是 TaskCenter.additive 的回执用例，它和完整测试同时运行，处在资源争抢下；单独重跑 4/4 通过，判为偶发。视图测试 29/29 通过。
+- 完整 vitest 跑三次：raw 294/293/293，ISI 都是 8，adjusted 294/293/293，总数 11460。规则 (a)（三次取最好 ≤297）PASS；规则 (b)（≤297，允许重跑一次）PASS。没有新的持续失败。唯一不在基线里的失败是 PluginResourceDetail.additive，只在第 1 次出现（和上一轮相同）。
+- vw.fix1dialog、vw.m3host、vw.m2m4、viewPreferences.vw 三次全部通过。
+
+### 变异（15 个：抓住 13 个，存活 2 个）
+- 抓住：删掉 image 的 setViewport；同时删掉 image 和 video 的 setViewport；onCreativeVp 改成空操作；vpOf 不读适配器；去掉 Tab 循环；去掉 Shift+Tab 循环；去掉 document 上的 Esc；去掉卡片内的 Esc；关闭后不回触发按钮；去掉初始焦点；重命名提交后不回该行；删除确认时焦点不放到「取消」；从占位 scope 里删掉 'preview'。
+- 存活（P2）：① 重命名点「取消」后不回该行的重命名按钮；② 删除确认点「取消」后不回该行的删除按钮。浏览器里这两项行为都正确，只是 fix1dialog 没有对应断言，建议各补一条。
+
+### 浏览器（4399；拦截非 GET；1366/1440/1920 三个宽度结果一致）
+- 非 GET 请求 0 次，pageerror 0 次，没有 viewprefs 键，对话框内 axe 0 违规。页面级 axe 只剩 .nv-rail 的 color-contrast（3 个节点），是已有问题。
+- 对话框焦点：
+  - 打开时焦点在输入框；连按 15 次 Tab 和 15 次 Shift+Tab 都留在对话框内。
+  - Esc 在卡片内、在 body 上都能关闭；用 Esc 或「关闭」按钮关闭后，焦点回到「视图」按钮。
+  - 重命名提交或取消后，焦点回到该行的重命名按钮。
+  - 删除确认时焦点在「取消」；取消后焦点回到该行的删除按钮，视图没有被删。
+  - 重命名以后 Esc 仍能关闭。
+- M3：A→B→A 时 A 的平移恢复为 (-160,90)，B 为默认；切 tab 后保持；重置回默认；刷新后回到默认（只在本次会话保存）。
+- M2 脏状态矩阵、M4 都和上一轮一致，通过。焦点环已是 2px inset。
+
+证据：/workspace/hr/vera-compare/vw-fix1-76f868b3/。本节未提交。
