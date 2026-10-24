@@ -29,7 +29,8 @@ describe('M4-s1 keyboard + aria', () => {
       const el = document.getElementById(`uw-panel-${s.id}`);
       if (!el) continue;
       expect(el.getAttribute('role')).toBe('region');
-      expect(screen.getByRole('region', {name: s.title})).toBe(el);
+      // [HERMIA-FE-20261024 M4-s1fix] name now comes from aria-labelledby (tab + header), so it contains the title.
+      expect(screen.getByRole('region', {name: new RegExp(s.title)})).toBe(el);
     }
     const btn = document.getElementById('uw-panel-outline')!.querySelector('button[aria-expanded]')!;
     expect(document.getElementById(btn.getAttribute('aria-controls')!)).not.toBeNull();

@@ -59,3 +59,5 @@
 .uw-panel__head .uw-select{max-width:100%}
 .uw-resize--x{width:6px}
 @media (prefers-reduced-motion:reduce){.uw-resize{transition:none}}
+/* [HERMIA-FE-20261024 M4-s1fix] skip link appears just below the toolbar so it never covers 「搜索功能」. */
+.uw-skip:focus,.uw-skip:focus-visible{top:calc(var(--uw-toolbar-h,40px) + 4px)}

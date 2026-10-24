@@ -366,7 +366,8 @@ export function DockLayout(props: DockLayoutProps) {
       ? {left: f.floatRect.x, top: f.floatRect.y, width: f.floatRect.w, height: f.floatRect.h, zIndex: 100 + f.z}
       : f.dock === 'left' || f.dock === 'right' ? {width: f.collapsed ? undefined : f.size} : f.dock === 'bottom' ? {height: f.collapsed ? undefined : f.size} : undefined;
     return (
-      <section key={f.id} id={`uw-panel-${f.id}`} role="region" aria-label={spec.title} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
+      <section key={f.id} id={`uw-panel-${f.id}`} role="region" aria-label={spec.title}
+        aria-labelledby={f.dock === 'main' && main.length > 1 ? `uw-tab-${f.id} uw-panel-title-${f.id}` : `uw-panel-title-${f.id}`} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
         data-collapsed={f.collapsed} data-focused={state.focusId === f.id} data-z={f.z}
         className={`uw-panel${f.dock === 'float' ? ' uw-float' : ''}`} style={style} onFocusCapture={() => dispatch({type: 'focus', id: f.id})}>
         <header className="uw-panel__head" data-testid={`drag-${f.id}`} onPointerDown={startDrag(f)}>
@@ -399,6 +400,8 @@ export function DockLayout(props: DockLayoutProps) {
     ? {ok: false, text: '布局数据无法读取，已用默认布局；原数据已备份，未被覆盖'}
     : saveStatus;
 
+  // [HERMIA-FE-20261024 M4-s1fix] tabs keep a stable (spec) order; activation reorders panels, not tabs, so arrow keys stay predictable.
+  const tabOrder = [...main].sort((a, b) => specs.findIndex(s => s.id === a.id) - specs.findIndex(s => s.id === b.id));
   const onTabsKey = (e: KeyboardEvent) => {
     const tabs = Array.from((e.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>('[role="tab"]'));
     const i = tabs.indexOf(document.activeElement as HTMLButtonElement); if (i < 0 || !tabs.length) return;
@@ -411,8 +414,8 @@ export function DockLayout(props: DockLayoutProps) {
     const m = rootRef.current?.querySelector<HTMLElement>('[data-testid="main-zone"]'); m?.focus();
   };
   return (
-    <div className="uw-layout" ref={rootRef} data-testid="dock-layout" data-source={initial.source}>
-      {/* [HERMIA-FE-20261024 M4-s1] skip link: first Tab stop, visible on focus. */}
+    <div className="uw-layout" ref={rootRef} style={{['--uw-toolbar-h' as string]: `${toolbarH}px`}} data-testid="dock-layout" data-source={initial.source}>
+      {/* [HERMIA-FE-20261024 M4-s1] skip link: first Tab stop, visible on focus. [HERMIA-FE-20261024 M4-s1fix] sits below the toolbar; tabs: ids, aria-controls on all, labelledby, multiselectable in split. */}
       <a href="#uw-main" className="uw-skip" data-testid="uw-skip-main" onClick={skipToMain}>跳到主区域</a>
       <div className="uw-toolbar" role="toolbar" aria-label="布局" ref={toolbarRef}>
         {props.toolbarStart}
@@ -428,11 +431,11 @@ export function DockLayout(props: DockLayoutProps) {
         </select></label>
         {/* [HERMIA-FE-20261024 M2-s1] N5: every main panel (e.g. 执行画布) has a visible tab; uses layout.showPanel. */}
         {/* [HERMIA-FE-20261024 M4-s1] tablist semantics: roving tabindex, ←/→/Home/End move + activate. */}
-        {main.length > 1 && <span role="tablist" aria-label="中间面板" className="uw-main-tabs" data-testid="uw-main-tabs" onKeyDown={onTabsKey}>{main.map(f => {
+        {main.length > 1 && <span role="tablist" aria-label="中间面板" aria-multiselectable={state.split !== 'single' || undefined} className="uw-main-tabs" data-testid="uw-main-tabs" onKeyDown={onTabsKey}>{tabOrder.map(f => {
           const shown = visibleMain.some(v => v.id === f.id);
           const current = (visibleMain.find(v => v.id === state.focusId) ?? visibleMain[0])?.id === f.id;
           return <button key={f.id} type="button" role="tab" className="uw-btn uw-tab" aria-selected={shown} aria-current={current && shown ? 'true' : undefined}
-            tabIndex={current ? 0 : -1} aria-controls={shown ? `uw-panel-${f.id}` : undefined} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
+            tabIndex={current ? 0 : -1} id={`uw-tab-${f.id}`} aria-controls={`uw-panel-${f.id}`} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
             aria-busy={pendingOf(LAYOUT_ACTION_IDS.show, f.id) || undefined} onClick={() => { if (!shown || state.focusId !== f.id) void runAction(LAYOUT_ACTION_IDS.show, f.id, f.id); }}>{specOf(f.id).title}</button>;
         })}</span>}
         {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>
