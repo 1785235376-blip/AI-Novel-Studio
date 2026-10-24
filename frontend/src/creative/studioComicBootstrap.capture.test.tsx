@@ -8,7 +8,10 @@ import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import { useStudio } from '../store';
 import captured from './studioComicBootstrapWire.testFixture.json';
 
-const context = { sessionToken: 'synthetic-bootstrap-session', scope: captured.scope };
+// The capture has no Actor DTO. Supply a synthetic, resolved frontend identity;
+// this is not an actor recovered from the File capture or a new credential.
+const actor = { id: 'synthetic-bootstrap-author', displayName: '合成测试作者', workspaceId: captured.scope.workspaceId };
+const context = { sessionToken: 'synthetic-bootstrap-session', actor, scope: captured.scope };
 const base = `/api/projects/${captured.project_id}/studio`;
 const comics = `/api/novels/${captured.project_id}/experimental/comic-layouts`;
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => structuredClone(body) });
@@ -34,7 +37,7 @@ it.each(['project', 'contract', 'source_free', 'can_mutate', 'can_review'])('rej
 });
 
 it('actual mounted bootstrap/catalog/page responses pass through IndependentStudioWorkspace to StudioComicPanel', async () => {
-  useStudio.setState({ novelId: captured.project_id, chapterId: '', sessionToken: context.sessionToken, actor: undefined, scope: captured.scope });
+  useStudio.setState({ novelId: captured.project_id, chapterId: '', sessionToken: context.sessionToken, actor: context.actor, scope: captured.scope });
   const fetcher = vi.fn(async (url: string) => {
     if (url === base) return response({ detail: { code: 'PERMISSION_DENIED' } }, 403);
     if (url === `${base}/comic-workspace`) return response(captured.bootstrap);
@@ -56,7 +59,7 @@ it('actual mounted bootstrap/catalog/page responses pass through IndependentStud
 });
 
 it('an in-flight captured bootstrap cannot remount Comic after session retirement', async () => {
-  useStudio.setState({ novelId: captured.project_id, chapterId: '', sessionToken: context.sessionToken, actor: undefined, scope: captured.scope });
+  useStudio.setState({ novelId: captured.project_id, chapterId: '', sessionToken: context.sessionToken, actor: context.actor, scope: captured.scope });
   let resolve!: (value: ReturnType<typeof response>) => void;
   const fetcher = vi.fn(async (url: string) => url === base ? response({ detail: { code: 'PERMISSION_DENIED' } }, 403) : new Promise<ReturnType<typeof response>>(done => { resolve = done; }));
   vi.stubGlobal('fetch', fetcher);

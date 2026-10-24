@@ -55,7 +55,21 @@ function mount(scoped: boolean | 'resolving' = false, strict = false) {
   return { query, view };
 }
 const tab = (name: string) => within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name });
-function selected(name: string) { expect(tab(name).getAttribute('aria-selected')).toBe('true'); }
+function selected(name: string) {
+  if (name !== '工作流' && name !== '主控') {
+    expect(tab(name).getAttribute('aria-selected')).toBe('true'); return;
+  }
+  const module = name === '工作流' ? 'WORKFLOW' : 'CONTROL';
+  expect(vi.mocked(shell.AppShell).mock.calls.at(-1)![0].module).toBe(module);
+  // These destinations live outside the six primary tabs. Only inspect the
+  // current menu item; clicking a destination would manufacture a new intent.
+  const settings = screen.getByRole('button', { name: '打开设置（AI 主控与插件）' });
+  fireEvent.click(settings);
+  const current = within(screen.getByRole('menu', { name: '设置与溢出工作区' }))
+    .getByRole('menuitem', { name: `${name === '主控' ? 'AI 主控' : name} ${module}` });
+  expect(current.getAttribute('aria-current')).toBe('page');
+  fireEvent.click(settings);
+}
 async function request(index = 0) { await waitFor(() => expect(held.length).toBeGreaterThan(index)); return held[index]; }
 async function release(row: HeldOverview, settleCurrent = true, value = overview(row.project)) {
   await act(async () => row.resolve(response(value)));
