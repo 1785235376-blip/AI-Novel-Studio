@@ -119,6 +119,38 @@ beforeEach(() => {
 afterEach(() => {cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); setCollaborationContext({sessionToken: ''}); useLocalHostSession.setState({token: '', actorId: '', epoch: 0});});
 
 describe('independent browser-local adoption history restoration', () => {
+  it('exposes local history after the initial status deadline without retrying or accepting its late response', async () => {
+    const fixture = await historyFixture(); let finishFirst!: (value: Response) => void, firstSignal!: AbortSignal, reads = 0;
+    const fetcher = vi.fn((url: string, init: RequestInit = {}): Promise<Response> => {
+      if (url !== `/api/novels/${project}/image-jobs` || init.method && init.method !== 'GET') throw new Error('Deadline fixture permits only the original job GET');
+      if (++reads === 1) {firstSignal = init.signal as AbortSignal; return new Promise(resolve => {finishFirst = resolve;});}
+      return Promise.resolve(json({items: sources.map(source => row(source))}));
+    });
+    vi.stubGlobal('fetch', fetcher);
+    const nativeSetTimeout = globalThis.setTimeout, callbacks: Array<() => void> = [];
+    const timer = vi.spyOn(globalThis, 'setTimeout');
+    timer.mockImplementation(((callback: (...args: unknown[]) => void, delay?: number, ...args: unknown[]) => {
+      if (delay === 15_000) callbacks.push(() => callback(...args));
+      return nativeSetTimeout(callback, delay, ...args);
+    }) as typeof setTimeout);
+    try {
+      render(view());
+      expect(fetcher).toHaveBeenCalledTimes(1); expect(callbacks).toHaveLength(1);
+      expect(screen.queryByRole('region', {name: regionName})).toBeNull(); expect(firstSignal.aborted).toBe(false);
+      await act(async () => {callbacks[0]();});
+      expect(firstSignal.aborted).toBe(true);
+      const history = await screen.findByRole('region', {name: regionName});
+      expect(fetcher).toHaveBeenCalledTimes(1); expect(localStorage.getItem(fixture.key)).toBe(fixture.raw);
+      await act(async () => {finishFirst(json({items: sources.map(source => row(source))}));});
+      expect(screen.queryByRole('region', {name: '原任务候选结果'})).toBeNull();
+      expect(screen.queryByText('SUCCEEDED')).toBeNull(); expect(fetcher).toHaveBeenCalledTimes(1);
+      await select(fixture.target); fireEvent.click(within(history).getByRole('button', {name: readName}));
+      await within(history).findByRole('button', {name: previewName});
+      expect(fetcher).toHaveBeenCalledTimes(2); expect(within(history).queryByRole('img')).toBeNull();
+      expect(localStorage.getItem(fixture.key)).toBe(fixture.raw); noWrites(fetcher);
+    } finally {timer.mockRestore();}
+  });
+
   it('shows the current pin separately and selects historical A without reading or mutating current B', async () => {
     const fixture = await historyFixture(); const {fetcher} = http(); render(view());
     const history = await screen.findByRole('region', {name: regionName});
@@ -173,7 +205,7 @@ describe('independent browser-local adoption history restoration', () => {
       current = readCanvasTaskBinding(fixture.owner, nodeId)!;
     }
     const full = localStorage.getItem(fixture.key); render(view());
-    expect(screen.getByText(/历史容量已满，旧记录全部保留/)).toBeTruthy();
+    expect(await screen.findByText(/历史容量已满，旧记录全部保留/)).toBeTruthy();
     expect(screen.queryByRole('checkbox', {name: checkName})).toBeNull();
     expect(localStorage.getItem(fixture.key)).toBe(full); noWrites(fetcher);
   });
@@ -181,7 +213,7 @@ describe('independent browser-local adoption history restoration', () => {
   it('does not invent asset recovery targets when the saved journal contains only a queued task', async () => {
     host(); seed(); const owner = captureCanvasTaskOwner(project)!;
     expect(writeCanvasTaskBinding(owner, nodeId, tasks.B)).toBe(true); const {fetcher} = http(); render(view());
-    expect(screen.getByText(/当前历史没有可作为资产恢复目标的记录/)).toBeTruthy();
+    expect(await screen.findByText(/当前历史没有可作为资产恢复目标的记录/)).toBeTruthy();
     expect(screen.queryByRole('radio')).toBeNull(); expect(screen.queryByRole('button', {name: readName})).toBeNull(); noWrites(fetcher);
   });
 

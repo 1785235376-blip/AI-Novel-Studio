@@ -8,6 +8,7 @@ import {useCanvasTaskBinding} from './useCanvasTaskBinding';
 import {checkedCanvasTaskCandidate, type CanvasTaskCandidate} from './canvasTaskCandidate';
 import {CanvasTaskCandidateView} from './CanvasTaskCandidateView';
 import {CanvasAdoptionHistory} from './CanvasAdoptionHistory';
+import {abortableCanvasCandidateRead} from './canvasCandidateReview';
 
 type Props = {novelId: string; nodeId: string; onOpen?: () => void; nodePrompt?: string; sourceRevision?: number; isSourceCurrent?: () => boolean};
 const states = new Set(['QUEUED', 'RUNNING', 'SUCCEEDED', 'FAILED', 'CANCELLED']);
@@ -33,7 +34,7 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [candidate, setCandidate] = useState<CanvasTaskCandidate>();
-  const sequence = useRef(0), mounted = useRef(false);
+  const sequence = useRef(0), mounted = useRef(false), readController = useRef<AbortController>();
   const consent = useScopedRequestConsent([]);
   const capturedScope = consent.captureScope();
   const clientEpoch = getCollaborationEpoch(), hostEpoch = useLocalHostSession.getState().epoch;
@@ -48,9 +49,14 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
   async function refresh() {
     if (!current()) return;
     const request = ++sequence.current;
+    readController.current?.abort();
+    const controller = new AbortController(); readController.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 15_000);
     setLoading(true); setStatus(''); setError(''); setCandidate(undefined);
     try {
-      const result = await api.imageJobs(novelId);
+      const result = await abortableCanvasCandidateRead(api.imageJobs(novelId, undefined, {
+        signal: controller.signal, cache: 'no-store', redirect: 'error', credentials: 'omit', referrerPolicy: 'no-referrer',
+      }), controller.signal);
       if (!current() || request !== sequence.current) return;
       const matches = (Array.isArray(result.items) ? result.items : []).filter(row => row?.id === binding.taskId);
       if (matches.length !== 1 || matches[0].novel_id !== novelId || !states.has(matches[0].status)
@@ -63,12 +69,14 @@ function CanvasNodeTaskStatusSession({novelId, nodeId, onOpen, binding, nodeProm
     } catch (reason) {
       if (current() && request === sequence.current) setError(apiErrorView(reason, '原任务状态无法核实').message);
     } finally {
+      clearTimeout(timeout);
+      if (readController.current === controller) readController.current = undefined;
       if (current() && request === sequence.current) setLoading(false);
     }
   }
   useEffect(() => {
     mounted.current = true; void refresh();
-    return () => { mounted.current = false; sequence.current += 1; };
+    return () => { mounted.current = false; sequence.current += 1; readController.current?.abort(); };
   }, []);
   const displayedRead = sequence.current;
   const candidateCurrent = () => current() && sequence.current === displayedRead;
