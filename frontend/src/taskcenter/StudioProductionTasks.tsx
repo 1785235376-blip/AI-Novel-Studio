@@ -15,12 +15,13 @@ export type StudioProductionTasksProps = {
   onOpen: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
   /** Selection only; the protected observation owner must verify it before displaying a result. */
   onInspectCanvasTarget?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  onInspectImageNodeJob?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
   /** Retire a sibling metadata view immediately when this exact selection changes. */
   onSelectionRetired?: () => void;
   onUnavailable: () => void;
 };
 type View = { generation: number; rows?: StudioProductionTask[]; message?: string; denied?: boolean };
-type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' };
+type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' | 'DETAIL' };
 
 /** Read-only projection of the original Studio production owner. No queue or action owner. */
 export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
@@ -108,6 +109,18 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
     catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
     finally { finish(request); }
   }
+  function inspectImageNodeJob(selected: StudioProductionTask) {
+    if (renderTicket !== ticket.current || view !== visibleSnapshot.current
+      || view?.generation !== scope.current.generation || !view.rows?.includes(selected)
+      || !latest.current.onInspectImageNodeJob || !hasCanvasTarget(selected)) return;
+    const request = begin('DETAIL'); if (!request) return;
+    // This selection grants no authority. Only the protected Job-only POST
+    // may verify it, without ordinary GET or any Canvas-dependent read.
+    const origin = latest.current, expected = structuredClone(selected);
+    try { if (valid(request)) origin.onInspectImageNodeJob?.(expected, () => valid(request)); }
+    catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
+    finally { finish(request); }
+  }
   useLayoutEffect(() => {
     alive.current = true;
     return () => { alive.current = false; running.current?.controller.abort(); running.current = undefined; latest.current.onSelectionRetired?.(); };
@@ -146,6 +159,8 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
         <Button disabled={blocked || !!waiting} onClick={() => void open(job)} aria-label={`打开原制作任务 ${job.id} v${job.version}`}>打开原制作任务</Button>
         {props.onInspectCanvasTarget && hasCanvasTarget(job) && <Button disabled={blocked || !!waiting} onClick={() => inspectTarget(job)}
           aria-label={`核对原保存位置 ${job.id} v${job.version}`}>核对原保存位置</Button>}
+        {props.onInspectImageNodeJob && hasCanvasTarget(job) && <Button disabled={blocked || !!waiting} onClick={() => inspectImageNodeJob(job)}
+          aria-label={`只读查看原节点任务 ${job.id} v${job.version}`}>只读查看原节点任务</Button>}
       </article>
     </li>)}</ul>}
   </Panel>;

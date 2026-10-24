@@ -85,6 +85,19 @@ export type StudioImageNodeTargetView = {
   contract: 'studio-image-node-target-view/1'; job: ProductionJob; target: CanvasImageNodeBinding;
   incarnation: string; canvas: CanvasViewRecord; automatic_actions: false;
 };
+export const STUDIO_IMAGE_NODE_JOB_FIELDS = ['contract','owner','id','novel_id','branch_id','version','operation_id','request_id','status',
+  'request_digest','receipt_digest','attempt','created_at','updated_at','error_code','review_state','cancellation_mode','needs_reconciliation',
+  'execution_state','output_candidate','command','provider','approved_asset_version','product_acceptance','automatic_replay','remote_compute_may_continue'] as const;
+const imageNodeJobStates = ['QUEUED','RUNNING','FAILED','UNKNOWN','AWAITING_REVIEW','REVIEWING','APPROVED','CANCELLED'] as const;
+export type StudioImageNodeJobProjection = Required<Pick<ProductionJob,Exclude<typeof STUDIO_IMAGE_NODE_JOB_FIELDS[number],'attempt'>>> & {
+  owner: 'image'; operation_id: 'm5.image.t2i'; status: typeof imageNodeJobStates[number]; attempt: number;
+  command: RecordedMediaCommand; provider: NonNullable<ProductionJob['provider']> & {local:true};
+  output_candidate: {id:string;version:number;digest:string;kind:'image'} | null;
+};
+export type StudioImageNodeJobObservation = {
+  contract: 'studio-image-node-job-observation/1'; job: StudioImageNodeJobProjection; target: CanvasImageNodeBinding;
+  incarnation: string; canvas_read: false; automatic_actions: false;
+};
 
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
@@ -96,6 +109,44 @@ const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
 const revision = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1;
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务回执不完整。请重新读取核对，勿重复发送。' }); }
+function checkedImageNodeJobProjection(value: unknown): StudioImageNodeJobProjection {
+  const exact=(v:unknown,names:readonly string[]):v is Record<string,unknown>=>record(v)
+    && Object.keys(v).length===names.length&&names.every(name=>Object.hasOwn(v,name));
+  const text=(v:unknown)=>typeof v==='string'&&!!v.trim()&&[...v].length<=240&&!/[\u0000-\u001f\u007f]/.test(v);
+  if(!exact(value,STUDIO_IMAGE_NODE_JOB_FIELDS)||value.contract!=='studio-production-job/1'||value.owner!=='image'
+    ||value.operation_id!=='m5.image.t2i'||!imageNodeJobStates.includes(value.status as typeof imageNodeJobStates[number])
+    ||!identifier(value.id)||!identifier(value.novel_id)||value.branch_id!==null&&!text(value.branch_id)
+    ||!revision(value.version)||!text(value.request_id)||!hex(value.request_digest)||value.receipt_digest!==null&&!hex(value.receipt_digest)
+    ||typeof value.attempt!=='number'||!Number.isSafeInteger(value.attempt)||value.attempt<0
+    ||!text(value.created_at)||!text(value.updated_at)
+    ||['error_code','review_state','cancellation_mode','execution_state'].some(key=>value[key]!==null&&!text(value[key]))
+    ||value.needs_reconciliation!==null&&typeof value.needs_reconciliation!=='boolean'
+    ||value.approved_asset_version!==null&&!revision(value.approved_asset_version)
+    ||value.product_acceptance!=='LOCAL_REQUIRED'||value.automatic_replay!==false||typeof value.remote_compute_may_continue!=='boolean')invalid();
+  const command=value.command,provider=value.provider,candidate=value.output_candidate;
+  if(!exact(command,['operation_id','request_id','provider_id','model_id','prompt','parameters','source_snapshots','allow_cloud','license_note','canvas_image_node'])
+    ||command.operation_id!==value.operation_id||command.request_id!==value.request_id
+    ||typeof command.prompt!=='string'||!command.prompt.trim()||command.prompt.length>16000
+    ||!record(command.parameters)||Object.entries(command.parameters).some(([key,item])=>!parameterKeys.includes(key)
+      ||(typeof item==='number'?!Number.isFinite(item):typeof item!=='string'||item.length>8000))
+    ||!Array.isArray(command.source_snapshots)||command.source_snapshots.length||command.allow_cloud!==false
+    ||typeof command.license_note!=='string'||command.license_note.length>2000
+    ||!exact(provider,['provider_id','model_id','local','route_digest'])||provider.local!==true
+    ||!text(provider.provider_id)||!text(provider.model_id)||provider.provider_id!==command.provider_id||provider.model_id!==command.model_id
+    ||!hex(provider.route_digest)||!canvasImageNodeInCommand(command)
+    ||candidate!==null&&(!exact(candidate,['id','version','digest','kind'])||!identifier(candidate.id)||!revision(candidate.version)
+      ||!hex(candidate.digest)||candidate.kind!=='image'))invalid();
+  return structuredClone(value) as StudioImageNodeJobProjection;
+}
+
+/** A metadata projection of an already decoded receipt, never a substitute full Job. */
+export function studioImageNodeJobProjection(selected: ProductionJob): StudioImageNodeJobProjection {
+  const source=selected as unknown as Record<string,unknown>;
+  const value=Object.fromEntries(STUDIO_IMAGE_NODE_JOB_FIELDS.map(key=>[key,source[key]??null]));
+  const candidate=selected.output_candidate;
+  value.output_candidate=candidate?{id:candidate.id,version:candidate.version,digest:candidate.digest,kind:candidate.kind}:null;
+  return checkedImageNodeJobProjection(value);
+}
 function cfgParameter(parameters: Record<string, unknown>, operation: unknown) {
   if (Object.hasOwn(parameters, 'cfg') && (operation !== 'm5.image.t2i' || typeof parameters.cfg !== 'number'
     || !Number.isFinite(parameters.cfg) || parameters.cfg < 0 || parameters.cfg > 100)) invalid();
@@ -760,6 +811,35 @@ export function studioProductionClient(projectId: string, context: Collaboration
       return structuredClone({contract:'studio-image-node-target-view/1',job:resultJob,target:resultTarget,
         incarnation:captured.incarnation,canvas,automatic_actions:false});
     },
+    async observeImageNodeJob(selected: ProductionJob, signal?: AbortSignal): Promise<StudioImageNodeJobObservation> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const projection=studioImageNodeJobProjection(expected);
+      const ownedScope=capturedScope?{mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId}:{mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope))invalid();
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/node-observation`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      let raw:unknown;
+      try{
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(!record(raw)||Object.keys(raw).length!==6
+        ||!['contract','job','target','incarnation','canvas_read','automatic_actions'].every(key=>Object.hasOwn(raw,key))
+        ||raw.contract!=='studio-image-node-job-observation/1'||raw.canvas_read!==false||raw.automatic_actions!==false)invalid();
+      const resultJob=checkedImageNodeJobProjection(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target);
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(projection)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==target.incarnation)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      return structuredClone({contract:'studio-image-node-job-observation/1',job:resultJob,target:resultTarget,
+        incarnation:target.incarnation,canvas_read:false,automatic_actions:false});
+    },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid(); return v.items.map(job);
@@ -888,5 +968,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView';
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView' | 'observeImageNodeJob';
 export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;

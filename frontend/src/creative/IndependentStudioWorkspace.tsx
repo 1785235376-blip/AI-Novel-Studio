@@ -6,6 +6,7 @@ import { StudioProductionTasksPanel } from '../taskcenter/StudioProductionTasks'
 import type { StudioProductionTask } from '../taskcenter/studioProductionTask';
 import { prepareCanvasImageNodeResume, type CanvasImageNodeResume } from './canvasImageNodeResume';
 import { CanvasImageNodeTargetPanel } from './CanvasImageNodeTargetPanel';
+import { CanvasImageNodeJobObservationPanel } from './CanvasImageNodeJobObservationPanel';
 import { StudioModelReferencePanel } from './StudioModelReferencePanel';
 import { CreativeWorkspace } from './CreativeWorkspace';
 import { checkedStoryboardCapabilities, prepareStoryboardEditor, type OpenStoryboardEditor, type PreparedStoryboardEditor } from './storyboardEditorHandoff';
@@ -206,7 +207,9 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
   const productionJobRef = useRef(productionJob); productionJobRef.current = productionJob;
   const nodeResumeActive = productionJob?.client === productionClient && !!productionJob.resume;
   const [targetObservation, setTargetObservation] = useState<{ ticket: number; source: { job: StudioProductionTask; key: string; isCurrent: () => boolean } }>();
-  const retireTargetObservation = useCallback(() => { targetObservationEpoch.current++; setTargetObservation(undefined); }, []);
+  const [jobObservation, setJobObservation] = useState<{ ticket: number; source: { job: StudioProductionTask; key: string; isCurrent: () => boolean } }>();
+  // Both read-only consumers retire with the selector; neither can authorize the other.
+  const retireTargetObservation = useCallback(() => { targetObservationEpoch.current++; setTargetObservation(undefined); setJobObservation(undefined); }, []);
   const mediaDirtyRef = useRef(false), timelineDirtyRef = useRef(false), assetReadEpoch = useRef(0);
   const [maskDirty, setMaskDirty] = useState(false);
   const maskDirtyRef = useRef(false);
@@ -745,7 +748,19 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
             && targetObservationContextEpoch.current === targetObservationRenderEpoch
             && sourceSelection === selectionEpoch.current && editorLocation.current === originModule
             && workspaceViewRef.current === 'TASKS' && productionClientRef.current === originalClient };
-        setTargetObservation({ ticket, source });
+        setJobObservation(undefined); setTargetObservation({ ticket, source });
+      }}
+      onInspectImageNodeJob={(job, isSelectionCurrent) => {
+        if (!current() || busyRef.current || workspaceViewRef.current !== 'TASKS' || editorLocation.current !== module
+          || productionClientRef.current !== productionClient || targetObservationContextEpoch.current !== targetObservationRenderEpoch || !isSelectionCurrent()) return;
+        const ticket = ++targetObservationEpoch.current, sourceSelection = selectionEpoch.current, originModule = module;
+        const originalClient = productionClient;
+        const source = { job: structuredClone(job), key: `${cacheKey}:job:${ticket}`,
+          isCurrent: () => current() && targetObservationEpoch.current === ticket && isSelectionCurrent()
+            && targetObservationContextEpoch.current === targetObservationRenderEpoch
+            && sourceSelection === selectionEpoch.current && editorLocation.current === originModule
+            && workspaceViewRef.current === 'TASKS' && productionClientRef.current === originalClient };
+        setTargetObservation(undefined); setJobObservation({ ticket, source });
       }}
       onOpen={(job, isSelectionCurrent) => {
         if (!isSelectionCurrent() || !current() || busyRef.current) return;
@@ -762,6 +777,11 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
         client={productionClient} source={targetObservation.source} read={guarded}
         onUnavailable={() => { if (targetObservationEpoch.current === targetObservation.ticket && targetObservation.source.isCurrent()) deny(); }}
         onClose={() => { if (targetObservationEpoch.current === targetObservation.ticket) retireTargetObservation(); }} />}
+    {workspaceView === 'TASKS' && overview && !denied && !identityRetired && jobObservation && jobObservation.source.isCurrent()
+      && <CanvasImageNodeJobObservationPanel key={jobObservation.source.key} projectId={projectId} branchId={context.scope?.branchId ?? null}
+        client={productionClient} source={jobObservation.source} read={guarded}
+        onUnavailable={() => { if (targetObservationEpoch.current === jobObservation.ticket && jobObservation.source.isCurrent()) deny(); }}
+        onClose={() => { if (targetObservationEpoch.current === jobObservation.ticket) retireTargetObservation(); }} />}
     {workspaceView === 'TASKS' && overview && !denied && !identityRetired && taskTarget && <TaskOwnerResult key={taskTarget.id}
       projectId={projectId} scope={context.scope} identity={cacheKey} target={taskTarget.target} transport={taskTransport}
       busy={busy} isCurrent={current} read={guarded} onClose={() => setTaskTarget(undefined)} />}

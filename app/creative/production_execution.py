@@ -896,6 +896,10 @@ class ProductionExecutionService:
         from .canvas_image_node_target_observation import view
         return view(self, nid, scope, actor, jid, value, guard)
 
+    def observe_image_node_job(self, nid, scope, actor, jid, value, guard):
+        from .canvas_image_node_job_observation import observe
+        return observe(self, nid, scope, actor, jid, value, guard)
+
     def resolve_image_node_create(self, nid, scope, actor, value, guard):
         """Explicitly observe one exact node-bound image queue admission."""
         body = CanvasImageNodeQueueResolve.model_validate(value)

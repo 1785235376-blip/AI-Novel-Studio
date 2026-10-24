@@ -111,6 +111,11 @@ class ImageNodeTargetViewRoute(ImageNodeTargetObservationRoute):
     ERROR_PREFIX = 'STUDIO_IMAGE_NODE_TARGET_VIEW_'
 
 
+class ImageNodeJobObservationRoute(ImageNodeTargetObservationRoute):
+    """Closed original Job metadata without current-Canvas dependencies."""
+    ERROR_PREFIX = 'STUDIO_IMAGE_NODE_JOB_OBSERVATION_'
+
+
 class TimelineWaveformRoute(PrivateProductionRoute):
     """Bound and sanitize only this new observation request, never old routes."""
     MAX_BODY = 4096
@@ -414,6 +419,21 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                 lambda actor, scope, guard: service.view_image_node_target(nid, scope, actor, jid, body, guard))
 
     router.include_router(node_target_views)
+
+    node_job_observations = APIRouter(route_class=ImageNodeJobObservationRoute)
+
+    @node_job_observations.post('/projects/{nid}/studio/production/jobs/image/{jid}/node-observation')
+    def observe_image_node_job(nid: str, jid: str, request: Request, body: MediaJobAction,
+                               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        with ExitStack() as observations:
+            observations.enter_context(service.store.existing_owner_only())
+            graph = getattr(service, 'graph_service', None)
+            if graph is not None:
+                observations.enter_context(graph.store.existing_owner_only())
+            return call(request, nid, x_session_token, x_branch_id, 'domain.read',
+                lambda actor, scope, guard: service.observe_image_node_job(nid, scope, actor, jid, body, guard))
+
+    router.include_router(node_job_observations)
 
     @router.get("/projects/{nid}/studio/production/jobs")
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
