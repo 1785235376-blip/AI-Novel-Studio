@@ -2,6 +2,7 @@
 // Independent browser-local review QA. HTTP/PNG bytes are software fixtures;
 // explicit synthetic load events do not establish browser decoding or live media acceptance.
 import {createHash, webcrypto} from 'node:crypto';
+import {Blob as NodeBlob} from 'node:buffer';
 import {act, cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {getCollaborationContext, setCollaborationContext} from '../../api';
@@ -91,6 +92,8 @@ beforeEach(() => {
   localStorage.clear(); useStudio.setState({sessionToken: '', actor: undefined, scope: undefined, novelId: ''});
   setCollaborationContext({sessionToken: ''}); useLocalHostSession.setState({token: '', actorId: '', epoch: 0});
   vi.stubGlobal('crypto', webcrypto); vi.stubGlobal('PointerEvent', MouseEvent);
+  // Model the standard Blob.arrayBuffer API absent from jsdom's Blob implementation.
+  vi.stubGlobal('Blob', NodeBlob);
   let urls = 0; createUrl.mockReset().mockImplementation(() => `blob:review-fixture-${++urls}`); revokeUrl.mockReset();
   vi.stubGlobal('URL', class extends NativeURL {static createObjectURL = createUrl; static revokeObjectURL = revokeUrl;});
 });
@@ -132,6 +135,18 @@ describe('independent browser-local original-node candidate review', () => {
     const owner = setup(); const {fetcher} = http(); render(viewStatus()); const old = await preview(); load(old);
     fireEvent.click(screen.getByRole('button', {name: '隐藏候选预览'})); const replacement = await preview();
     expect(replacement).not.toBe(old); load(old); await tryAdopt();
+    expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); noWrites(fetcher);
+  });
+
+  it('does not treat a load from a different actual image source as proof of the original preview', async () => {
+    const owner = setup(); const {state, fetcher} = http(); render(viewStatus()); const image = await preview();
+    image.setAttribute('src', 'blob:review-different-actual-source'); load(image); await tryAdopt();
+    expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); expect(state.metadataReads).toBe(0); noWrites(fetcher);
+  });
+
+  it('rejects an old checked review if the actual image source changes after successful loading', async () => {
+    const owner = setup(); const {fetcher} = http(); render(viewStatus()); const {image, check, adopt} = await prepare(); fireEvent.click(check);
+    image.setAttribute('src', 'blob:review-different-after-confirmation'); fireEvent.click(adopt); await act(async () => {});
     expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); noWrites(fetcher);
   });
 
@@ -224,6 +239,31 @@ describe('independent browser-local original-node candidate review', () => {
     }});
     render(viewStatus()); const {check, adopt} = await prepare(); fireEvent.click(check); fireEvent.click(adopt); await act(async () => {});
     expect(state.downloads).toBe(2); expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); noWrites(fetcher);
+  });
+
+  it('retires a pending confirmation via its actual 15000ms timeout callback and ignores the late download', async () => {
+    const owner = setup(); let finishDownload!: (value: Response) => void;
+    const {state, fetcher} = http({download: index => index === 1
+      ? Promise.resolve(new Response(png.slice().buffer, {headers: {'Content-Type': 'image/png'}}))
+      : new Promise(resolve => {finishDownload = resolve;})});
+    render(viewStatus()); const {check, adopt} = await prepare(); fireEvent.click(check);
+    const nativeSetTimeout = globalThis.setTimeout, timeouts: Array<() => void> = [];
+    const timer = vi.spyOn(globalThis, 'setTimeout');
+    timer.mockImplementation(((callback: (...args: unknown[]) => void, delay?: number, ...args: unknown[]) => {
+      if (delay === 15_000) timeouts.push(() => callback(...args));
+      return nativeSetTimeout(callback, delay, ...args);
+    }) as typeof setTimeout);
+    try {
+      fireEvent.click(adopt); await waitFor(() => expect(finishDownload).toBeTypeOf('function'));
+      expect(timeouts).toHaveLength(1);
+      const signal = fetcher.mock.calls.filter(([url]) => url === downloadPath)[1][1]!.signal;
+      expect(signal?.aborted).toBe(false);
+      await act(async () => {timeouts[0]();});
+      expect(signal?.aborted).toBe(true);
+      expect(screen.queryByRole('checkbox', {name: checkName})).toBeNull();
+      await act(async () => {finishDownload(new Response(png.slice().buffer, {headers: {'Content-Type': 'image/png'}}));});
+      expect(state.downloads).toBe(2); expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); noWrites(fetcher);
+    } finally {timer.mockRestore();}
   });
 
   it('preserves only a historical browser-local association across reopening and requires a fresh image load for new confirmation', async () => {

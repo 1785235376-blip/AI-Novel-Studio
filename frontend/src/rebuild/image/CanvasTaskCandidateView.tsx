@@ -25,6 +25,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
   const mounted = useRef(false), running = useRef(false), sequence = useRef(0);
   const objectUrl = useRef<string>(), download = useRef<AbortController>();
+  const imageElement = useRef<HTMLImageElement>(null);
   const previewRef = useRef<Preview>(), loadedRef = useRef<Preview>(), reviewRef = useRef<Review>(), confirmedRef = useRef(false);
   const initialEpoch = useRef({client: getCollaborationEpoch(), host: useLocalHostSession.getState().epoch});
   const fence = useRef({candidate, binding, nodePrompt, token: {}});
@@ -123,9 +124,14 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   async function freshJob(context: CollaborationContext, tx: ReturnType<typeof transaction>) {
     if (!matchesCandidate(await tx.checked(api.imageJobs(candidate.novelId, context, tx.options)))) throw stale();
   }
+  function shownImageMatches(value: Preview): boolean {
+    const image = imageElement.current;
+    return !!image && image.getAttribute('src') === value.uri && (!image.currentSrc || image.currentSrc === value.uri)
+      && image.naturalWidth > 0 && image.naturalHeight > 0;
+  }
   const reviewedNow = (value: Review | undefined): value is Review => !!value && value.fence === token && value === reviewRef.current
     && previewRef.current === value.preview && loadedRef.current === value.preview && value.preview.request === sequence.current
-    && value.preview.fence === token && current();
+    && value.preview.fence === token && shownImageMatches(value.preview) && current();
 
   async function inspect() {
     if (!current() || running.current || !candidate.previewKind) return;
@@ -161,7 +167,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
   async function prepareReview() {
     const image = previewRef.current;
     if (!current() || running.current || !image || image !== loadedRef.current || image.request !== sequence.current
-      || image.fence !== token || !image.sha256 || !canvasCandidateCryptoAvailable()
+      || image.fence !== token || !shownImageMatches(image) || !image.sha256 || !canvasCandidateCryptoAvailable()
       || candidate.approvalStatus !== 'APPROVED' || candidate.previewKind !== 'asset') return;
     running.current = true; setBusy(true); setError(''); clearReview();
     const context = captureContext(), tx = transaction();
@@ -174,7 +180,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       if (!sameCanvasCandidateAsset(asset, confirmedAsset)) throw stale();
       await freshJob(context, tx);
       const jobObservationSha256 = await tx.checked(canvasCandidateObservationSha256(candidate));
-      if (!tx.valid() || previewRef.current !== image || loadedRef.current !== image) throw stale();
+      if (!tx.valid() || previewRef.current !== image || loadedRef.current !== image || !shownImageMatches(image)) throw stale();
       const next = {preview: image, asset, jobObservationSha256, fence: token};
       reviewRef.current = next; setReview(next);
     } catch {
@@ -219,7 +225,7 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
 
   const visiblePreview = preview?.fence === token && current() ? preview : undefined;
   const visibleReview = reviewedNow(review) ? review : undefined;
-  const canPrepare = !!visiblePreview && loaded === visiblePreview && !!visiblePreview.sha256 && canvasCandidateCryptoAvailable()
+  const canPrepare = !!visiblePreview && loaded === visiblePreview && shownImageMatches(visiblePreview) && !!visiblePreview.sha256 && canvasCandidateCryptoAvailable()
     && candidate.approvalStatus === 'APPROVED' && candidate.previewKind === 'asset';
   return <section aria-label="原任务候选结果">
     <h4>原任务读取快照</h4>
@@ -242,10 +248,10 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     <Button disabled={!candidate.previewKind || busy} loading={busy} onClick={() => void inspect()}>预览原任务候选结果</Button>
     {(visiblePreview || busy) && <Button variant="ghost" onClick={hide}>隐藏候选预览</Button>}
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
-    {visiblePreview && <div className="image-task-inspector__preview"><img key={visiblePreview.request} src={visiblePreview.uri} alt="原节点任务候选结果" referrerPolicy="no-referrer"
+    {visiblePreview && <div className="image-task-inspector__preview"><img ref={imageElement} key={visiblePreview.request} src={visiblePreview.uri} alt="原节点任务候选结果" referrerPolicy="no-referrer"
       onLoad={event => {
         if (current() && previewRef.current === visiblePreview && sequence.current === visiblePreview.request
-          && event.currentTarget.naturalWidth > 0 && event.currentTarget.naturalHeight > 0) {
+          && event.currentTarget === imageElement.current && shownImageMatches(visiblePreview)) {
           loadedRef.current = visiblePreview; setLoaded(visiblePreview); clearReview();
         }
       }} onError={() => {

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 // Original File/API fixture replay. No inference, media ingestion or human approval is simulated as fact.
+import {Blob as NodeBlob} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
 import {cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
@@ -52,6 +53,7 @@ it('uses actual File/API fields and bytes for explicit local adoption, without w
   bindLocalHostSession('synthetic-file-review-host', {session_mode: 'LOCAL_HOST', actor_id: 'synthetic-file-review-author'});
   const nodeId = 'file-review-original-node', NativeURL = URL;
   vi.stubGlobal('crypto', webcrypto);
+  vi.stubGlobal('Blob', NodeBlob);
   vi.stubGlobal('URL', class extends NativeURL {static createObjectURL = vi.fn(() => 'blob:file-review-synthetic'); static revokeObjectURL = vi.fn();});
   const graphKey = canvasStorageKey('image', fixture.project_id);
   const graph = JSON.stringify({nodes: [{id: nodeId, t: 'image_generate', title: 'File review fixture node', x: 0, y: 0,
