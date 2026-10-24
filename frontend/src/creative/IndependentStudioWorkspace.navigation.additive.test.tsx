@@ -46,12 +46,22 @@ function mount(patch: Partial<IndependentStudioProps> = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(<QueryClientProvider client={client}><IndependentStudioWorkspace {...props(patch)} /></QueryClientProvider>);
 }
-async function ready() { await waitFor(() => expect(screen.getByRole('button', { name: '上传资产' })).toBeTruthy()); }
+async function ready() {
+  // IMAGE projects now choose the graph after the authoritative overview loads.
+  // Enter the existing asset destination explicitly, after that choice settles;
+  // the upload button can otherwise be observed during the initial ASSETS frame.
+  const assets = await screen.findByRole('button', { name: '素材工作区' });
+  await waitFor(() => expect(assets.getAttribute('aria-pressed')).toBe('false'));
+  fireEvent.click(assets);
+  await screen.findByRole('button', { name: '上传资产' });
+}
 
 beforeEach(() => {
   localStorage.clear(); saved = [];
   useStudio.setState({ novelId: id, chapterId: '', sessionToken: '', actor: undefined, scope: undefined });
   useLocalHostSession.setState({ token: '', actorId: '' });
+  // These are navigation/HTTP-metadata tests, not canvas rendering assertions.
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
   Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn(() => 'blob:fixture') });
   Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
   server();
@@ -101,11 +111,17 @@ describe('mounted asset browser to original image draft', () => {
     mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '选择素材 reference.png' }));
     fireEvent.click(await screen.findByRole('button', { name: `${kind}模块` })); fireEvent.click(screen.getByRole('button', { name: '生成引用（不执行目标模块）' }));
     await screen.findByRole('region', { name: `素材引用交接到${kind}制作` });
+    const metadataReads = () => fetchMock.mock.calls.filter(([url, init]) => url === `${base}/assets/image-1` && init.method === 'GET').length;
+    const beforeHandoff = metadataReads();
     expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.change(screen.getByLabelText('操作'), { target: { value: operation } });
     await waitFor(() => expect((screen.getByRole('button', { name: `核对${kind}交接版本` }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` })); fireEvent.click(await screen.findByRole('button', { name: `明确加入${kind}制作草稿` }));
+    fireEvent.click(screen.getByRole('button', { name: `核对${kind}交接版本` }));
+    await screen.findByRole('button', { name: `明确加入${kind}制作草稿` });
+    expect(metadataReads()).toBe(beforeHandoff + 1);
+    fireEvent.click(screen.getByRole('button', { name: `明确加入${kind}制作草稿` }));
     await screen.findByText(new RegExp(`已加入原${kind}制作草稿`)); expect(screen.getByText(/已绑定来源 reference.png/)).toBeTruthy();
+    expect(metadataReads()).toBe(beforeHandoff + 2);
     expect(fetchMock.mock.calls.filter(([, init]) => init.method !== 'GET')).toHaveLength(0);
   });
 });
@@ -164,6 +180,8 @@ describe('relationship inspection original asset navigation', () => {
   }
   async function inspectReference() {
     mount(); await ready(); fireEvent.click(await screen.findByRole('button', { name: '检查资产 reference.png' }));
+    // The responsive shell folds the inspector at jsdom's default width.
+    fireEvent.click(screen.getByRole('button', { name: '展开侧栏' }));
     fireEvent.click(await screen.findByRole('button', { name: '可选资产关联' }));
     fireEvent.click(await screen.findByRole('button', { name: '核对原来源版本' }));
     await waitFor(() => expect((screen.getByRole('button', { name: '打开核对的原资产' }) as HTMLButtonElement).disabled).toBe(false));

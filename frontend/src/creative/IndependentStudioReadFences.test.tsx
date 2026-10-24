@@ -6,28 +6,45 @@ import { useStudio } from '../store';
 import { useLocalHostSession } from '../localHostSession';
 import { IndependentStudioWorkspace } from './IndependentStudioWorkspace';
 import type { StudioAsset, StudioOverview, StudioStorage } from './studioClient';
+import emptyPromptLibrary from '../prompt/__fixtures__/empty-library.json';
 
 const id = 'read-fence-project', base = `/api/projects/${id}/studio`, digest = 'a'.repeat(64);
-const makeAsset = (name = 'source', version = 2): StudioAsset => ({ id: name, novel_id: id, filename: `${name}.png`, kind: 'image', media_type: 'image/png', size: 3, sha256: digest, version, created_at: '', updated_at: '', branch_id: null, relationships: [], provenance: { origin: 'EXTERNAL_IMPORT', version, digest, integrity: 'VERIFIED', license: { label: 'UNSPECIFIED', source: '', note: '' }, license_verification: 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', parents: [], sources: [], stale: false } });
+const makeAsset = (name = 'source', version = 2): StudioAsset => ({ id: name, novel_id: id, filename: `${name}.png`, kind: 'image', media_type: 'image/png', size: 3, sha256: digest, version, created_at: '2026-10-24T00:00:00Z', updated_at: '2026-10-24T00:00:00Z', branch_id: null, relationships: [], provenance: { origin: 'EXTERNAL_IMPORT', version, digest, integrity: 'VERIFIED', license: { label: 'UNSPECIFIED', source: '', note: '' }, license_verification: 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', parents: [], sources: [], stale: false } });
 const makeOverview = (): StudioOverview => ({ project: { id, title: '读取保护项目', entry_kind: 'NEUTRAL_STUDIO' }, preferences: { version: 1, intents: [], preset: 'BLANK', custom_intent: '' }, capabilities: { can_mutate: true, can_review: false, manual_import: true, manual_export: true, model_required: false, chapter_required: false, media_validator_configured: true, asset_kinds: ['image', 'audio', 'video'], intent_is_permission: false } });
 const reply = (value: unknown) => ({ ok: true, status: 200, json: async () => value, blob: async () => new Blob(['png']) });
 let overview: StudioOverview, storage: StudioStorage, nextRead: Promise<ReturnType<typeof reply>> | undefined, fetchMock: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   localStorage.clear(); nextRead = undefined; overview = makeOverview();
+  // These desktop read-fence cases need the visible inspector. JSDOM's
+  // default 1024px viewport deliberately folds it under the current shell.
+  vi.stubGlobal('innerWidth', 1440); vi.stubGlobal('innerHeight', 900);
   storage = { assets: { count: 2, bytes: 6 }, trash: { count: 0, bytes: 0 }, limits: { asset_bytes: 25, project_asset_bytes: 100, project_assets: 10 }, model_storage: 'EXTERNAL_READ_ONLY', cache_storage: 'SEPARATE_OWNER', export_storage: 'CLIENT_SELECTED_DOWNLOAD', physical_cleanup_available: false };
   useStudio.setState({ novelId: id, chapterId: '', sessionToken: '', actor: undefined, scope: undefined }); useLocalHostSession.setState({ token: '', actorId: '' });
   Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn(() => 'blob:read-fence') }); Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
-  fetchMock = vi.fn(async (url: string) => {
+  fetchMock = vi.fn(async (url: string, init: RequestInit = {}) => {
     if (url === base) return reply(overview);
+    // Current mounted consumers read the same original metadata owners. These
+    // complete successful DTOs do not replace the deferred asset read below.
+    if (url === `${base}/prompts` && init.method === 'GET') return reply({ ...emptyPromptLibrary,
+      project_id: id, scope: { mode: 'local', novel_id: id } });
+    if (url === `${base}/assets` && init.method === 'GET') return reply({ items: [makeAsset(), makeAsset('target')] });
     if (url.includes('/assets?')) return reply({ items: [makeAsset(), makeAsset('target')] });
     if (url === `${base}/assets/source`) { const value = nextRead; nextRead = undefined; return value ? await value : reply(makeAsset()); }
+    if (url === `${base}/assets/target`) return reply(makeAsset('target'));
     if (url.endsWith('/download')) return reply({});
     if (url.includes('/references?')) return reply({ items: [], read_only: true, content_copied: false });
     if (url.endsWith('/storage')) return reply(storage);
     throw new Error(`Unexpected ${url}`);
   }); vi.stubGlobal('fetch', fetchMock);
 });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => {
+  try {
+    cleanup();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method && init.method !== 'GET')).toEqual([]);
+  } finally {
+    vi.restoreAllMocks(); vi.unstubAllGlobals();
+  }
+});
 function mount() {
   const leave = vi.fn(); const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   render(<QueryClientProvider client={client}><IndependentStudioWorkspace projectId={id} context={{ sessionToken: '' }} scope={{ workspace: '本机', project: '读取保护项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE" requestedAssetId="source" onModuleChange={leave} onProjectChoice={vi.fn()} /></QueryClientProvider>);
@@ -77,7 +94,9 @@ describe('independent asset read fences and truthful capability labels', () => {
     expect(screen.getByText(/布局选项仅保存偏好，当前不会调整界面/)).toBeTruthy();
     fireEvent.change(screen.getByLabelText('布局偏好（仅保存）'), { target: { value: 'VIDEO' } });
     expect(within(screen.getByRole('tablist', { name: '创作模块' })).getByRole('tab', { name: '图片' }).getAttribute('aria-selected')).toBe('true');
-    expect(screen.getAllByRole('tab')).toHaveLength(8); expect(fetchMock.mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
+    expect(within(screen.getByRole('tablist', { name: '创作模块' })).getAllByRole('tab').map(tab => tab.textContent))
+      .toEqual(['小说', '图片', '视频', '声音', '剪辑', '资产']);
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
   });
 
   it.each([

@@ -29,6 +29,9 @@ beforeEach(() => {
   fetchMock = vi.fn(async (url: string) => {
     if (url === base) return reply(overview);
     if (url.startsWith(`${base}/assets?`)) return reply({ items: [] });
+    if (url === `${base}/graphs/catalog`) return reply(modelCatalog());
+    if (url === `${base}/graphs`) return reply({ items: [] });
+    if (url === `${base}/canvas-views`) return reply({ items: [], execution_authority: false });
     throw new Error(`Unexpected request: ${url}`);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -41,6 +44,19 @@ function mount(context: CollaborationContext = { sessionToken: '' }) {
   return { ...render(<QueryClientProvider client={query}><IndependentStudioWorkspace projectId={projectId} context={context}
     scope={{ workspace: '工作区', project: '待核对项目', storyline: '默认', branch: '主线' }} actor="作者" module="IMAGE"
     onModuleChange={vi.fn()} onProjectChoice={vi.fn()} onVerified={onVerified} /></QueryClientProvider>), onVerified };
+}
+
+async function enterAssets() {
+  // Neutral IMAGE now opens its creation canvas. Import assertions use the actual asset entry.
+  fireEvent.click(await screen.findByRole('button', { name: '素材工作区' }));
+  await screen.findByRole('button', { name: '上传资产' });
+  expect(screen.getByRole('button', { name: '素材工作区' }).getAttribute('aria-pressed')).toBe('true');
+}
+async function enterExecutionGraph() {
+  fireEvent.click(await screen.findByRole('button', { name: '创作图' }));
+  // Graph title inputs also exist in the hidden execution layer; expose that layer before acting.
+  fireEvent.click(await screen.findByRole('button', { name: '原执行图与模板入口' }));
+  await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false));
 }
 
 const localChanges: [string, () => void][] = [
@@ -95,7 +111,7 @@ describe('independent Studio captured identity cannot revive before React effect
 
   it('cannot submit a delayed local file after the project returns to its original value', async () => {
     mount();
-    await screen.findByRole('button', { name: '上传资产' });
+    await enterAssets();
     const bytes = deferred<ArrayBuffer>(), file = new File(['private'], 'private.png', { type: 'image/png' });
     Object.defineProperty(file, 'arrayBuffer', { value: () => bytes.promise });
     fireEvent.change(screen.getByLabelText('选择要上传的资产文件'), { target: { files: [file] } });
@@ -114,26 +130,33 @@ describe('independent Studio captured identity cannot revive before React effect
     act(() => useStudio.setState({ chapterId: 'another-chapter', writingInputs: { styleProfileId: 'style' } }));
     await act(async () => pending.resolve(reply(overview)));
     expect(onVerified.mock.calls).toEqual([[projectId]]);
-    expect(await screen.findByRole('button', { name: '上传资产' })).toBeTruthy();
+    await enterAssets();
+    expect(screen.getByRole('button', { name: '上传资产' })).toBeTruthy();
   });
 
   it.each([401, 403])('keeps a current authoritative overview denial %i effective', async status => {
     const pending = deferred<ReturnType<typeof reply>>();
-    fetchMock.mockReturnValueOnce(pending.promise);
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url === base) return pending.promise;
+      // IMAGE has a separate bounded Comic owner after generic overview403; its own denial remains authoritative.
+      if (url === `${base}/comic-workspace` && status === 403) return reply({ code: 'FORBIDDEN' }, 403);
+      throw new Error(`Unexpected request: ${url}`);
+    });
     const { onVerified } = mount();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
     await act(async () => pending.resolve(reply({ code: 'FORBIDDEN' }, status)));
-    expect(screen.getByText('当前会话无权访问此项目')).toBeTruthy();
+    expect(await screen.findByText('当前会话无权访问此项目')).toBeTruthy();
     expect(onVerified).not.toHaveBeenCalled();
     expect(screen.queryByRole('button', { name: '上传资产' })).toBeNull();
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(status === 403 ? [base, `${base}/comic-workspace`] : [base]);
   });
 
   it('admits a newly mounted owner after the old instance was permanently invalidated', async () => {
-    const first = mount(); await screen.findByRole('button', { name: '上传资产' });
+    const first = mount(); await enterAssets();
     act(localChanges[0][1]);
     first.unmount();
     const second = mount();
-    await screen.findByRole('button', { name: '上传资产' });
+    await enterAssets();
     expect(second.onVerified.mock.calls).toEqual([[projectId]]);
   });
 
@@ -157,13 +180,13 @@ describe('independent Studio captured identity cannot revive before React effect
         throw new Error(`Unexpected request: ${url}`);
       });
       mount(context);
-      fireEvent.click(await screen.findByRole('button', { name: '创作图' }));
-      await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false));
+      await enterExecutionGraph();
       fireEvent.change(screen.getByLabelText('已保存创作图'), { target: { value: graph.id } });
       await waitFor(() => expect((screen.getByRole('button', { name: '读取运行记录' }) as HTMLButtonElement).disabled).toBe(false));
       fireEvent.click(screen.getByRole('button', { name: '读取运行记录' }));
       fireEvent.change(await screen.findByRole('combobox', { name: '已保存运行' }), { target: { value: run.id } });
       await screen.findByText(/private_text_asset/);
+      expect(screen.getByRole('region', { name: '当前创作图运行' })).toBeTruthy();
       expect(screen.getByText('Saved proposed text')).toBeTruthy();
       expect(screen.getByText('Complete reviewed author input')).toBeTruthy();
       deferList = true;
@@ -202,8 +225,7 @@ describe('independent Studio captured identity cannot revive before React effect
       if (url === `${base}/graphs`) return reply({ items: [{ ...modelGraph(), definition: { ...modelGraph().definition, title: '私有目录标题' } }] });
       throw new Error(`Unexpected request: ${url}`);
     });
-    mount(); fireEvent.click(await screen.findByRole('button', { name: '创作图' }));
-    await waitFor(() => expect((screen.getByLabelText('创作图标题') as HTMLInputElement).disabled).toBe(false));
+    mount(); await enterExecutionGraph();
     fireEvent.change(screen.getByLabelText('创作图标题'), { target: { value: '未保存作者标题' } });
     fireEvent.click(screen.getByRole('button', { name: '添加节点' }));
     fireEvent.change(screen.getByLabelText('作者输入文本'), { target: { value: '未保存作者文字' } });

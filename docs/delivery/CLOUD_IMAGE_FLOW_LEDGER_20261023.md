@@ -24,6 +24,8 @@ The [independent node Job metadata view](CLOUD_CANVAS_NODE_JOB_OBSERVATION_20261
 
 The separate [explicit queued-node local discard](CLOUD_CANVAS_NODE_JOB_DISCARD_20261024.md) reuses the original cancel owner when that Canvas-dependent continuation is unavailable. Only an unexecuted QUEUED task is eligible, with fresh authority, explicit confirmation, original request binding and a complete snapshot precondition inside the original CAS. It preserves evidence and does not confirm remote cancellation. The metadata-only entry remains read-only; an uncertain write is recovered by explicit original-owner reads, never automatic resend.
 
+The [deferred frontend regression repair](CLOUD_FRONTEND_REGRESSION_CONTRACT_REPAIR_20261024.md) returns the four previously reported 33-failure groups to their real current UI/owner contracts, preserving all 59 original scenarios. It also fixes the initial default canvas hiding an entry asset hint, without changing permissions, saved-view priority or task owners. Earlier delivery reports retain their historical unresolved counts; the new fixed-source evidence is separate from any whole-suite acceptance claim.
+
 | Step | Actual support | Remaining product gap / verification limit |
 | --- | --- | --- |
 | Create and edit | Single and dual Rebuild canvases persist image nodes and draft prompts in browser storage. A selected node opens the shared original image-task form. | The graph is browser-local; it is not a server versioned canvas or cross-device restore. Layout work belongs to the existing frontend owner. |

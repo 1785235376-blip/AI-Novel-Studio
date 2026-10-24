@@ -47,7 +47,15 @@ function mount(patch: Partial<ComponentProps<typeof IndependentStudioWorkspace>>
   const view = render(<QueryClientProvider client={query}><IndependentStudioWorkspace {...props}/></QueryClientProvider>);
   return { ...view, props };
 }
-async function ready() { await screen.findByRole('button',{name:'上传资产'}); }
+async function ready() {
+  // IMAGE chooses its graph after overview verification. Enter the actual asset
+  // workspace after that choice, rather than observing the initial ASSETS frame.
+  const assets = await screen.findByRole('button', { name: '素材工作区' });
+  await waitFor(() => expect(assets.getAttribute('aria-pressed')).toBe('false'));
+  fireEvent.click(assets);
+  await waitFor(() => expect(assets.getAttribute('aria-pressed')).toBe('true'));
+  await screen.findByLabelText('选择要上传的资产文件');
+}
 function loseHost() { act(() => useLocalHostSession.setState(state => ({token:'',actorId:'',epoch:state.epoch+1}))); }
 const novel = () => fireEvent.click(screen.getByRole('tab',{name:'小说'}));
 const confirm = () => screen.getByRole('button',{name:'确认离开'});
@@ -108,7 +116,9 @@ it('keeps dirty protection after child cleanup and rechecks other-owner busy at 
 });
 it('allows only the original Novel exit after denial while private destinations and project actions stay fenced', async () => {
   const {props}=mount();await ready();loseHost();
-  fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('tab',{name:'主控'}));
+  fireEvent.click(screen.getByRole('tab',{name:'视频'}));
+  fireEvent.click(screen.getByRole('button',{name:'打开设置（AI 主控与插件）',exact:true}));
+  fireEvent.click(within(screen.getByRole('menu',{name:'设置与溢出工作区'})).getByRole('menuitem',{name:'AI 主控 CONTROL',exact:true}));
   fireEvent.click(screen.getByRole('button',{name:'返回项目列表'}));
   expect(props.onModuleChange).not.toHaveBeenCalled();expect(props.onProjectChoice).not.toHaveBeenCalled();
   novel();expect(props.onModuleChange).toHaveBeenCalledTimes(1);expect(props.onModuleChange).toHaveBeenCalledWith('NOVEL');
