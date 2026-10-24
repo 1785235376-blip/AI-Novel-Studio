@@ -28,4 +28,21 @@ Real File/API cases commit through original preview/create, inject a post-commit
 
 Frontend tests use actual node container, original production panel and HTTP clients with declared software responses. They verify cold recovery and lifecycle behavior, not real File approval or inference. Provider, execute, review, accept, Asset content, media inspection and fetch calls remain excluded from this slice's new verification.
 
-The real formal media approval → generated-result save → cold-reopen positive remains NOT_RUN. Real providers, paid/GPU calls, PostgreSQL, native Windows and browser/geometry acceptance also remain NOT_RUN; previous media and sandbox restrictions are not retried. Fixed source, directed counts, standard type/build and independent review are added after verification. CI is separately read back after normal work-branch push.
+The real formal media approval → generated-result save → cold-reopen positive remains NOT_RUN. Real providers, paid/GPU calls, PostgreSQL, native Windows and browser/geometry acceptance also remain NOT_RUN; previous media and sandbox restrictions are not retried.
+
+Fixed application/test source: `d739c50daa1d69366fb9f1e6fd00074d852f837c`, tree `3c2d568a4b9cc8c0df6828346b4894e7185697d8`. A following delivery edit changes documentation only.
+
+| Verification | Actual result |
+| --- | --- |
+| Real File/API | **62 passed**, 3 existing warnings, 18.27s. Includes 20 new exact queue-recovery cases plus 42 related empty-create/formal-queue/manual-card cases. Service reconstruction is within the same test process. No model execution or actual approval. |
+| Related frontend | **184 passed**, 17 files, one worker, 43.59s. Includes 11 new full node/container/panel/client lifecycle cases and 17 hint/client cases; these 28 are part of the total, not additional passes. |
+| Standard type/build | **PASS** `corepack pnpm build` (`tsc -b && vite build`), process 58.846s; Vite 8.71s, 2632 modules. Frozen existing dependencies, unchanged manifests/lock; existing chunk-size warning only. |
+| Independent review | Original-owner authority, uniqueness, lifecycle and public-diff review performed separately from tests; final source and delivery checked before publication. |
+
+An initial File precheck retained 17 passes and one test failure because the original Host-binding ABA rejection was 401 rather than the assumed 403. The corrected assertion accepts the original 401/403 authorization rejection while retaining non-mutation and no-stale-publication checks. An initial frontend precheck retained 23 passes and three fixture failures from assuming automatic provider loading; the fixture now uses the existing explicit configuration-read action. Original precheck evidence is retained; the final fixed-source runs above all passed. No app behavior was weakened to accommodate those assumptions.
+
+CI is separately read back after normal work-branch push. Source/dependency hashes, exact commands, raw logs and remote evidence remain in the cloud handoff.
+
+## Next verified reuse point
+
+The existing `StudioProductionTasksPanel` already selects and re-reads an exact original task under a selection lease. `IndependentStudioWorkspace` currently forwards that task to a plain production panel without a node task binding, so its existing safety gate refuses node-bound execution there. A next bounded continuation can reuse this selector and original Job/Canvas/history reads, then open an ephemeral **resume-only** node session: no browser-graph copy, no new queue, no new task center or registry. That continuation is not implemented by this source snapshot and is independent of media approval or inference acceptance.
