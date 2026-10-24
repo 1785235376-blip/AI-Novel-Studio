@@ -15,6 +15,13 @@ import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanv
 import {CanvasNodeInspector, readCanvasNode, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
 import {DraftStore, useBeforeUnloadGuard} from './state/draftStore'; // [HERMIA-FE-20261024 M5-s1]
+// [HERMIA-FE-20261024 VW-M1..M4] view prefs (session-only here: no real host scope), worksets, viewport reset, panel focus.
+import {useViewPreferences} from './state/useViewPreferences';
+import {PREFS_REASON_TEXT} from './state/viewPreferences';
+import {registerViewActions, VIEW_ACTION_IDS} from './actions/viewActions';
+import {WorkspaceViewsPanel} from './panels/WorkspaceViewsPanel';
+import {createPanelFocusTracker, type PanelFocusTracker} from './state/panelFocus';
+import type {DockLayoutApi} from './layout/DockLayout';
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
@@ -78,11 +85,31 @@ export function UnifiedWorkspacePreview() {
   nodeDirtyRef.current = nodeDirty; // [HERMIA-FE-20261024 M5-s1] (moved above the M3-s1fix comment [HERMIA-FE-20261024 M6])
   // [HERMIA-FE-20261024 M3-s1fix] MUST-FIX: viewport memory keyed by novelId (a reset in an effect ran after the new project's canvas had
   // already remounted with the old viewport). Switching back to a project restores its own viewport.
-  const vps = useRef<Record<string, Partial<Record<CanvasKind, CvViewport>>>>({});
-  const vpOf = (k: CanvasKind) => (novelId ? vps.current[novelId]?.[k] : undefined);
-  const setVpOf = (k: CanvasKind, v: CvViewport) => { const n = novelRef.current; if (n) vps.current[n] = {...vps.current[n], [k]: v}; };
-  const onCreativeVp = useCallback((v: CvViewport) => setVpOf('image', v), []); // eslint-disable-line react-hooks/exhaustive-deps
-  const onExecVp = useCallback((v: CvViewport) => setVpOf('video', v), []); // eslint-disable-line react-hooks/exhaustive-deps
+  // [HERMIA-FE-20261024 VW-M1/M3] viewports go through the view-prefs adapter. The preview host has NO real
+  // user/project/instance scope (DockLayout still uses the placeholder one), so prefs are session-only per novel and
+  // nothing is written to storage. Callbacks are bound to the adapter of the novel that rendered them, so a late
+  // onViewport from the previous novel's canvas is rejected by that adapter's lease (isCurrent) instead of leaking.
+  const prefs = useViewPreferences({scope: null, storage: null, persist: false, sessionKey: novelId});
+  // Worksets are layout-level (not per novel): their own session adapter, independent of the novel switch.
+  const layoutPrefs = useViewPreferences({scope: null, storage: null, persist: false, sessionKey: '\u0001worksets'});
+  const prefsRef = useRef(layoutPrefs); prefsRef.current = layoutPrefs;
+  const toCv = (v: {x: number; y: number; zoom: number} | undefined): CvViewport | undefined => (v ? {x: v.x, y: v.y, k: v.zoom} : undefined);
+  const vpOf = (k: CanvasKind) => (novelId ? toCv(prefs.getViewport(k)) : undefined);
+  const onCreativeVp = useMemo(() => (v: CvViewport) => { prefs.setViewport('image', {x: v.x, y: v.y, zoom: v.k}); }, [prefs]);
+  const onExecVp = useMemo(() => (v: CvViewport) => { prefs.setViewport('video', {x: v.x, y: v.y, zoom: v.k}); }, [prefs]);
+  const [vpMsg, setVpMsg] = useState<string | null>(null);
+  const resetVp = (k: CanvasKind) => {
+    prefs.resetViewport(k); (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1);
+    setVpMsg(`已把${k === 'image' ? '创作' : '执行'}画布的视角恢复为默认（${prefs.status().mode === 'session' ? '仅本次会话' : '已保存'}）。`);
+  };
+  const layoutApi = useRef<DockLayoutApi | null>(null);
+  const [viewsOpen, setViewsOpen] = useState(false);
+  const [viewsMsg, setViewsMsg] = useState<string | null>(null);
+  const focusRef = useRef<PanelFocusTracker | null>(null);
+  useEffect(() => {
+    const t = createPanelFocusTracker(() => document.body, id => PREVIEW_SPECS.find(x => x.id === id)?.title ?? '面板');
+    focusRef.current = t; return () => { t.dispose(); focusRef.current = null; };
+  }, []);
   const [revealExec, setRevealExec] = useState(false);
   const onExecRevealed = useCallback(() => setRevealExec(false), []); // [HERMIA-FE-20261024 M3-s1fix2] one-shot: consumed by the canvas
   // [HERMIA-FE-20261024 M3-s1fix] true only for the remount right after a send
@@ -147,6 +174,24 @@ export function UnifiedWorkspacePreview() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
+  // [HERMIA-FE-20261024 VW-M2/M4] worksets + panel focus on the shared registry (button / command search / shortcut).
+  useEffect(() => registerViewActions(shared.actions, shared.table, {
+    layout: () => layoutApi.current, prefs: () => prefsRef.current, focus: () => focusRef.current,
+    openViews: () => { setViewsMsg(null); setViewsOpen(true); }, onChange: m => { setViewsMsg(m); setStudioMsg(m); },
+  }).dispose, [shared]);
+  useEffect(() => {
+    const ids = [VIEW_ACTION_IDS.openViews, VIEW_ACTION_IDS.nextPanel, VIEW_ACTION_IDS.prevPanel, VIEW_ACTION_IDS.lastPanel];
+    const onKey = (e: KeyboardEvent) => {
+      const id = actionIdForKey(e, shared.table, ids); if (!id) return;
+      e.preventDefault();
+      void shared.actions.execute(id, shared.workbench.context(null)).then(r => {
+        if (r.status === 'blocked') setStudioMsg(r.reason);
+        else if (r.status === 'error') setStudioMsg(String((r.error as Error)?.message ?? r.error));
+      });
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [shared]);
   const guardSwitch = (apply: () => void) => {
     if (anyDirty()) /* [HERMIA-FE-20261024 MERGE] */ { setBlocked(`${dirtyName()}里有未保存的标题修改，请先保存或放弃后再切换。`); return; }
     setBlocked(null); setPickBlocked(null); apply();
@@ -167,11 +212,15 @@ export function UnifiedWorkspacePreview() {
           <button type="button" className="uw-btn" data-action-id={STUDIO_ACTION_IDS.sendToExecution} disabled={!av.enabled || busy} aria-busy={busy || undefined}
             title={av.enabled ? '把选中的节点作为参考放到执行画布' : av.reason} onClick={() => void runStudio(STUDIO_ACTION_IDS.sendToExecution)}>送到执行画布</button>
           {!av.enabled && <small data-testid="uw-send-reason">{av.reason}</small>}
+          <button type="button" className="uw-btn" data-testid="uw-reset-vp-image" disabled={!novelId} title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('image')}>重置视角</button>
         </div>
         <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></div>
       </div>;
     }
-    if (id === 'execution') return <ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} />;
+    if (id === 'execution') return <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+      <div style={{display: 'flex', gap: 8, alignItems: 'center', padding: '4px 8px'}}><button type="button" className="uw-btn" data-testid="uw-reset-vp-video" disabled={!novelId}
+        title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('video')}>重置视角</button></div>
+      <div style={{flex: 1, minHeight: 0}}><ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} /></div></div>;
     if (id === 'tasks') return <TasksPanel novelId={novelId} active />;
     return <p style={{ padding: 12 }} data-state="not-connected">{PREVIEW_SPECS.find((x) => x.id === id)?.title ?? "面板"}：预览里尚未接入实际功能。</p>;
   };
@@ -194,7 +243,13 @@ export function UnifiedWorkspacePreview() {
           {/* [HERMIA-FE-20261024 M2-s1] N5: always-visible execution canvas entry, works even when the panel is closed/hidden. */}
           <button type="button" className="uw-btn uw-btn--primary" data-action-id={STUDIO_ACTION_IDS.openExecution} data-testid="uw-open-execution"
             title="打开执行画布（Ctrl／⌘+Alt+E）" onClick={() => void runStudio(STUDIO_ACTION_IDS.openExecution)}>执行画布</button>
-          {studioMsg && <small role="status" data-testid="uw-studio-status">{studioMsg}</small>}</span>}
+          <button type="button" className="uw-btn" data-action-id={VIEW_ACTION_IDS.openViews} data-testid="uw-open-views" title="保存或切换面板布局（Ctrl／⌘+Alt+V）"
+            onClick={() => void shared.actions.execute(VIEW_ACTION_IDS.openViews, shared.workbench.context(null))}>视图</button>
+          {studioMsg && <small role="status" data-testid="uw-studio-status">{studioMsg}</small>}
+          {vpMsg && <small role="status" data-testid="uw-vp-status">{vpMsg}</small>}
+          {viewsOpen && <WorkspaceViewsPanel prefs={layoutPrefs} actions={shared.actions} ctx={input => ({...shared.workbench.context(null), input})}
+            message={viewsMsg} onClose={() => setViewsOpen(false)} />}</span>}
+        onLayoutApi={a => { layoutApi.current = a; }}
         renderPanel={renderPanel} />
   );
 }
