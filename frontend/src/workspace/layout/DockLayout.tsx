@@ -91,14 +91,46 @@ function ModalDialog({label, onCancel, children}: {label: string; onCancel: () =
   );
 }
 
+// [HERMIA-FE-20261024 M2-s1] N4: viewport in layout CSS px. With CSS `zoom` on <html>/<body>, innerWidth stays in
+// unzoomed px, so floats were clamped against a too-large box and ended up off-screen. Divide by the effective zoom,
+// and re-read on resize, visualViewport resize, devicePixelRatio change (browser zoom) and html/body style changes.
+export function effectiveZoom(doc: Document = document): number {
+  let z = 1;
+  for (const el of [doc.documentElement, doc.body]) {
+    if (!el) continue;
+    const raw = (doc.defaultView?.getComputedStyle(el) as CSSStyleDeclaration & {zoom?: string})?.zoom || (el.style as CSSStyleDeclaration & {zoom?: string}).zoom
+      // engines/jsdom whose CSSOM drops `zoom`: fall back to the inline style text.
+      || /(?:^|;)\s*zoom\s*:\s*([^;!]+)/i.exec(el.getAttribute('style') ?? '')?.[1] || '';
+    const v = raw.trim().endsWith('%') ? parseFloat(raw) / 100 : parseFloat(raw);
+    if (Number.isFinite(v) && v > 0) z *= v;
+  }
+  return z;
+}
+export function readViewport(): Viewport {
+  if (typeof window === 'undefined') return {width: 1440, height: 900};
+  const z = effectiveZoom();
+  return {width: Math.floor(window.innerWidth / z), height: Math.floor(window.innerHeight / z)};
+}
+
 function useViewport(fixed?: Viewport): Viewport {
-  const read = () => fixed ?? (typeof window === 'undefined' ? {width: 1440, height: 900} : {width: window.innerWidth, height: window.innerHeight});
+  const read = () => fixed ?? readViewport();
   const [vp, setVp] = useState<Viewport>(read);
   useEffect(() => {
     if (fixed) { setVp(fixed); return; }
-    const on = () => setVp(read());
+    const on = () => setVp(prev => { const n = read(); return n.width === prev.width && n.height === prev.height ? prev : n; });
     window.addEventListener('resize', on);
-    return () => window.removeEventListener('resize', on);
+    window.visualViewport?.addEventListener('resize', on);
+    let mq: MediaQueryList | undefined;
+    const watchDpr = () => {
+      mq?.removeEventListener?.('change', onDpr);
+      mq = typeof window.matchMedia === 'function' ? window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`) : undefined;
+      mq?.addEventListener?.('change', onDpr);
+    };
+    function onDpr() { on(); watchDpr(); }
+    watchDpr();
+    const mo = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(on);
+    for (const el of [document.documentElement, document.body]) if (el) mo?.observe(el, {attributes: true, attributeFilter: ['style', 'class']});
+    return () => { window.removeEventListener('resize', on); window.visualViewport?.removeEventListener('resize', on); mq?.removeEventListener?.('change', onDpr); mo?.disconnect(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fixed?.width, fixed?.height]);
   return vp;
@@ -365,6 +397,12 @@ export function DockLayout(props: DockLayoutProps) {
           <option value="">{reopenAv.enabled ? '选择面板…' : reopenAv.reason}</option>
           {closed.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
         </select></label>
+        {/* [HERMIA-FE-20261024 M2-s1] N5: every main panel (e.g. 执行画布) has a visible tab; uses layout.showPanel. */}
+        {main.length > 1 && <span role="group" aria-label="中间面板" className="uw-main-tabs" data-testid="uw-main-tabs">{main.map(f => {
+          const shown = visibleMain.some(v => v.id === f.id);
+          return <button key={f.id} type="button" className="uw-btn" aria-pressed={shown} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
+            aria-busy={pendingOf(LAYOUT_ACTION_IDS.show, f.id) || undefined} onClick={() => { if (!shown || state.focusId !== f.id) void runAction(LAYOUT_ACTION_IDS.show, f.id, f.id); }}>{specOf(f.id).title}</button>;
+        })}</span>}
         {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>
           <option value="">选择…</option>{hiddenMain.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
         </select></label>}

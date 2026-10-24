@@ -15,6 +15,8 @@ export const LAYOUT_ACTION_IDS = {
   reopen: 'layout.reopenPanel',
   toggleCollapse: 'layout.toggleCollapse',
   split: 'layout.switchSplit',
+  // [HERMIA-FE-20261024 M2-s1] N5: show a named panel (reopen if closed, bring a hidden main panel to front, focus).
+  show: 'layout.showPanel',
 } as const;
 export type LayoutActionId = typeof LAYOUT_ACTION_IDS[keyof typeof LAYOUT_ACTION_IDS];
 
@@ -26,6 +28,7 @@ export const DEFAULT_LAYOUT_SHORTCUTS: Readonly<Record<LayoutActionId, string>> 
   'layout.reopenPanel': 'Mod+Alt+O',
   'layout.toggleCollapse': 'Mod+Alt+C',
   'layout.switchSplit': 'Mod+Alt+S',
+  'layout.showPanel': '',
 };
 
 /** Canonical form: modifiers in fixed order Mod, Alt, Shift; key upper-cased. Ctrl/Cmd/Meta all map to Mod. */
@@ -119,7 +122,26 @@ export function layoutActionDefinitions(host: LayoutActionHost, shortcuts: Parti
     const id = ctx.targetId ?? st().focusId; const f = id ? st().frames[id] : undefined;
     return f && f.open && host.specs.some(s => s.id === id) ? id : null;
   };
+  // [HERMIA-FE-20261024 M2-s1] N5 showPanel target: input (panel id) must be a known spec.
+  const showTarget = (ctx: ActionContext): string | null => {
+    const want = (typeof ctx.input === 'string' ? ctx.input : ctx.targetId) ?? null;
+    return want && host.specs.some(s => s.id === want) && st().frames[want] ? want : null;
+  };
   return [
+    {
+      id: LAYOUT_ACTION_IDS.show, label: '显示面板', surfaces: ['toolbar'],
+      available: ctx => showTarget(ctx) ? yes : {enabled: false, reason: '没有这个面板'},
+      run: sync(ctx => {
+        const id = showTarget(ctx); if (!id) throw new Error('没有这个面板');
+        // dispatch is asynchronous (useReducer); decide everything from the pre-action frame.
+        const f = st().frames[id];
+        if (!f.open) host.dispatch({type: 'reopen', id});
+        if (f.dock === 'main') host.dispatch({type: 'dock', id, dock: 'main', index: 0});
+        if (f.collapsed) host.dispatch({type: 'collapse', id, collapsed: false});
+        host.dispatch({type: 'focus', id});
+        return id;
+      }),
+    },
     {
       id: LAYOUT_ACTION_IDS.reset, label: '恢复默认布局', surfaces: ['toolbar', 'shortcut', 'commandSearch'], shortcut: shortcuts['layout.reset'],
       available: () => host.isDefault?.() ? {enabled: false, reason: '已经是默认布局'} : yes,
