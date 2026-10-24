@@ -150,6 +150,16 @@ describe('independent browser-local original-node candidate review', () => {
     expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined(); noWrites(fetcher);
   });
 
+  it('does not revive a checked review after observing source B and restoring source A without a new load or confirmation', async () => {
+    const owner = setup(); const {state, fetcher} = http(); render(viewStatus()); const {image, check, adopt} = await prepare(); fireEvent.click(check);
+    const originalSource = image.getAttribute('src')!;
+    image.setAttribute('src', 'blob:review-observed-mismatched-source'); fireEvent.click(adopt);
+    expect(screen.queryByRole('checkbox', {name: checkName})).toBeNull();
+    image.setAttribute('src', originalSource); fireEvent.click(adopt); await act(async () => {});
+    expect(readCanvasTaskBinding(owner, nodeId)?.adoption).toBeUndefined();
+    expect(state.downloads).toBe(1); expect(screen.queryByRole('checkbox', {name: checkName})).toBeNull(); noWrites(fetcher);
+  });
+
   it.each(['hide', 'error'])('retires a checked review on image %s before its old confirmation callback', async action => {
     const owner = setup(); const {fetcher} = http(); render(viewStatus()); const {image, check, adopt} = await prepare(); fireEvent.click(check);
     act(() => {if (action === 'hide') fireEvent.click(screen.getByRole('button', {name: '隐藏候选预览'})); else fireEvent.error(image); fireEvent.click(adopt);});

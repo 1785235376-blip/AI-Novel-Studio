@@ -129,6 +129,11 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     return !!image && image.getAttribute('src') === value.uri && (!image.currentSrc || image.currentSrc === value.uri)
       && image.naturalWidth > 0 && image.naturalHeight > 0;
   }
+  function retireChangedImage(value: Preview | undefined): boolean {
+    if (!value || shownImageMatches(value)) return false;
+    hide(); setError('当前显示的图片已变化，旧核对与确认已失效。请重新预览、加载并明确确认。');
+    return true;
+  }
   const reviewedNow = (value: Review | undefined): value is Review => !!value && value.fence === token && value === reviewRef.current
     && previewRef.current === value.preview && loadedRef.current === value.preview && value.preview.request === sequence.current
     && value.preview.fence === token && shownImageMatches(value.preview) && current();
@@ -165,7 +170,9 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     } finally { tx.finish(); }
   }
   async function prepareReview() {
+    if (!current()) return;
     const image = previewRef.current;
+    if (retireChangedImage(image)) return;
     if (!current() || running.current || !image || image !== loadedRef.current || image.request !== sequence.current
       || image.fence !== token || !shownImageMatches(image) || !image.sha256 || !canvasCandidateCryptoAvailable()
       || candidate.approvalStatus !== 'APPROVED' || candidate.previewKind !== 'asset') return;
@@ -185,12 +192,16 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
       reviewRef.current = next; setReview(next);
     } catch {
       if (current() && tx.request === sequence.current) {
-        clearReview(); setError('原任务、资产内容或写权限无法核实，未准备采用。请刷新后重新预览；不会自动重试。');
+        if (!retireChangedImage(image)) {
+          clearReview(); setError('原任务、资产内容或写权限无法核实，未准备采用。请刷新后重新预览；不会自动重试。');
+        }
       }
     } finally { tx.finish(); }
   }
   async function adopt() {
+    if (!current()) return;
     const checked = reviewRef.current;
+    if (retireChangedImage(checked?.preview)) return;
     if (!reviewedNow(checked) || !confirmedRef.current || running.current) return;
     confirmedRef.current = false; setConfirmed(false); running.current = true; setBusy(true); setError('');
     const context = captureContext(), tx = transaction();
@@ -211,14 +222,18 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
         assetSha256: sha256, jobObservationSha256: checked.jobObservationSha256}, mayWrite);
       if (!persisted) {
         if (mounted.current && fence.current.token === token) {
-          clearReview(); setError('未确认保存本机关联。请重新读取原节点和任务核对；不会自动重试，也不宣称存储已回滚。');
+          if (!retireChangedImage(checked.preview)) {
+            clearReview(); setError('未确认保存本机关联。请重新读取原节点和任务核对；不会自动重试，也不宣称存储已回滚。');
+          }
         }
         return;
       }
       if (mounted.current && fence.current.token === token) { setSaved(true); reviewRef.current = undefined; setReview(undefined); }
     } catch {
       if (current() && tx.request === sequence.current) {
-        clearReview(); setError('原任务、资产内容或写权限已变化，未确认采用。请刷新后重新预览；不会自动重试。');
+        if (!retireChangedImage(checked.preview)) {
+          clearReview(); setError('原任务、资产内容或写权限已变化，未确认采用。请刷新后重新预览；不会自动重试。');
+        }
       }
     } finally { tx.finish(); }
   }
@@ -251,7 +266,8 @@ export function CanvasTaskCandidateView({candidate, binding, nodePrompt, isCurre
     {visiblePreview && <div className="image-task-inspector__preview"><img ref={imageElement} key={visiblePreview.request} src={visiblePreview.uri} alt="原节点任务候选结果" referrerPolicy="no-referrer"
       onLoad={event => {
         if (current() && previewRef.current === visiblePreview && sequence.current === visiblePreview.request
-          && event.currentTarget === imageElement.current && shownImageMatches(visiblePreview)) {
+          && event.currentTarget === imageElement.current) {
+          if (retireChangedImage(visiblePreview)) return;
           loadedRef.current = visiblePreview; setLoaded(visiblePreview); clearReview();
         }
       }} onError={() => {
