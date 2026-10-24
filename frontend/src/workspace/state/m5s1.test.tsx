@@ -93,6 +93,14 @@ describe('M5-s1fix host-level stale + listener lifecycle  [HERMIA-FE-20261024 M5
     expect(screen.queryByText(/STALE/)).toBeNull();
     expect((screen.getByLabelText('选择作品') as HTMLSelectElement).value).toBe('n2');
   });
+  it('host: current-project refresh 500 → 刷新失败，请重试; existing chapter list stays visible  [HERMIA-FE-20261024 M5-s1fix2]', async () => {
+    mount(); await screen.findByText(/雾港·第一章/);
+    (fetch as unknown as {mockImplementationOnce: (f: () => Promise<Response>) => void}).mockImplementationOnce(async () => json({detail: 'boom'}, 500));
+    fireEvent.click(screen.getByRole('button', {name: '刷新章节列表'}));
+    await within(screen.getByTestId('uw-outline')).findByText('刷新失败，请重试');
+    expect(screen.queryByText('已刷新')).toBeNull();
+    expect(within(screen.getByTestId('uw-outline')).getByText(/雾港·第一章/)).toBeTruthy();
+  });
   it('beforeunload listener is attached only while dirty and removed after discard', async () => {
     const add = vi.spyOn(window, 'addEventListener'); const rem = vi.spyOn(window, 'removeEventListener');
     const live = () => add.mock.calls.filter(c => c[0] === 'beforeunload').length - rem.mock.calls.filter(c => c[0] === 'beforeunload').length;

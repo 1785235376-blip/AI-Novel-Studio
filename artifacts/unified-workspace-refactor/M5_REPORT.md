@@ -33,3 +33,11 @@ Survived:
 - Mutations (src/workspace/state, 18 tests), all KILLED: M1 host tracker.update removed (1 fail); V2b listener never re-evaluated (1); V4 node save clears unconditionally (1); V7 rail shown on read error (1); V8 stale refresh treated as a result (1). After the run, the files were checked with diff against a clean copy: CLEAN.
 - M3 and M10 are still accepted as equivalent (Vera agreed).
 - Targeted vitest: 57 files and 481 tests passed. tsc: 6 errors, the same as the baseline.
+
+## M5-s1fix2 (after Vera's review of 937448a0)  [HERMIA-FE-20261024 M5-s1fix2]
+- Added one host-level test through UnifiedWorkspacePreview, with no code behaviour change. It loads the current project's chapters, makes the next GET /chapters return 500, and clicks 刷新章节列表. It checks that 「刷新失败，请重试」 appears, that 已刷新 does not, and that the existing chapter list (雾港·第一章) stays visible.
+- Mutations (src/workspace/state, 19 tests):
+  - P2 `r.status === 'stale' || r.status === 'error'` in the refresh handler: KILLED (1 fail).
+  - P3 hide the list on any error (`errKind ? null :`): KILLED (1 fail).
+  - After the run, the files were checked with diff against a clean copy: CLEAN.
+- Targeted vitest: 57 files and 482 tests passed. tsc: 6 errors, the same as the baseline.

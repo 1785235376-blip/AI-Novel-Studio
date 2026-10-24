@@ -129,7 +129,7 @@ export function OutlinePanel({novelId, novels, onNovel, selectedId, onSelect, bl
       </select>
     </label>
     {errKind ? <p className="uw-state" role="alert" data-state={errKind}>{ERR_TEXT[errKind]}</p> : null}
-    {/* [HERMIA-FE-20261024 M5-s1fix] on a read error/timeout with no data, don't also claim 「还没有章节。」 */}
+    {/* [HERMIA-FE-20261024 M5-s1fix] on a read error/timeout with no data, don't also claim 「还没有章节。」; [HERMIA-FE-20261024 M5-s1fix2] with existing data the list stays (tested) */}
     {errKind && !chapters.data ? null : <NovelStructureRail chapters={(chapters.data ?? []).map(c => ({id: c.id, number: c.number, title: c.title, wordCount: c.word_count}))}
       selectedId={selectedId} loading={chapters.isLoading} error={null} onSelect={onSelect} panels={[]} onOpenPanel={() => {}} />}
     {blockedNotice ? <p role="status" className="uw-state" data-testid="uw-outline-blocked">{blockedNotice}</p> : null}
