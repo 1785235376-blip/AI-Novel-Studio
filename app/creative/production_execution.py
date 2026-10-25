@@ -18,7 +18,7 @@ from ..media_files import inspect_image, inspect_media
 from ..services.studio_timeline_export import bound_timeline_output_kind
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, ProviderSelection, TimelineSave, TimelineRender,
-    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport)
+    TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport, StudioProductionQuery)
 from .project_store import BINDING
 from .workspace import FLAG
 
@@ -944,7 +944,8 @@ class ProductionExecutionService:
         guard()
         return self.view(row, 'image')
 
-    def list(self, nid, scope, actor, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
+    def list(self, nid, scope, actor, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None,
+             query: StudioProductionQuery | None = None):
         context = self._base(nid, scope, actor, guard)
         rows = []
         def admitted(row):
@@ -964,8 +965,22 @@ class ProductionExecutionService:
         for row in self.video_owner.list_studio(nid, scope.get("branch_id"), actor, context=context, guard=guard):
             if not admitted(row): continue
             rows.append(self.view(row, "timeline" if row.get("kind") == "STUDIO_TIMELINE" else "video"))
+        # Preserve all original owner validation and binding admission before
+        # filters or totals. A filter/page never conceals a corrupt tail receipt
+        # or bypasses an owner's complete-list limit. This is not an I/O index.
+        rows.sort(key=lambda row: (row.get("created_at") or "", row["id"]), reverse=True)
+        if query is not None:
+            rows = [row for row in rows if (query.owner is None or row["owner"] == query.owner)
+                    and (query.operation_id is None or row["operation_id"] == query.operation_id)]
+        result = {"items": rows, "product_acceptance": "LOCAL_REQUIRED"}
+        if query is not None and (query.limit is not None or query.offset is not None):
+            limit = query.limit if query.limit is not None else 50
+            offset = query.offset if query.offset is not None else 0
+            total = len(rows)
+            result.update(items=rows[offset:offset + limit], total=total, limit=limit, offset=offset,
+                          has_more=offset + limit < total)
         guard()
-        return {"items": sorted(rows, key=lambda row: (row.get("created_at") or "", row["id"]), reverse=True), "product_acceptance": "LOCAL_REQUIRED"}
+        return result
 
     def candidate(self, nid, scope, actor, owner, jid, guard, *, graph_binding=None, benchmark_binding=None, batch_binding=None):
         row, context = self._row(nid, scope, actor, owner, jid, guard, graph_binding=graph_binding, benchmark_binding=benchmark_binding, batch_binding=batch_binding)

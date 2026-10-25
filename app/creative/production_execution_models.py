@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from typing import Literal, ClassVar
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_serializer, model_validator
 from .production_contracts import ProductionSourceSnapshot, Name, Digest, PUBLIC_SCOPE_KEYS
 
 GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m7.video.i2v",
@@ -10,10 +10,37 @@ GraphMediaOperation = Literal["m5.image.t2i", "m5.image.i2i", "m7.video.t2v", "m
 
 ImageRuntimeOperation = Literal["m5.image.t2i", "m5.image.i2i", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale"]
 MediaOperation = Literal[GraphMediaOperation, "m5.image.cutout", "m5.image.reference", "m5.image.inpaint", "m5.image.upscale", "m5.image.composite"]
+ProductionJobOwner = Literal["image", "audio", "video", "timeline"]
+ProductionJobOperation = Literal[MediaOperation, "m9.timeline.multitrack"]
 
 
 class ExecutionModel(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True, allow_inf_nan=False)
+
+
+class StudioProductionQuery(ExecutionModel):
+    """Opt-in response paging; never a new queue or permission authority."""
+    owner: ProductionJobOwner | None = None
+    operation_id: ProductionJobOperation | None = None
+    limit: int | None = Field(default=None, ge=1, le=100)
+    offset: int | None = Field(default=None, ge=0, le=1_000_000)
+
+    @classmethod
+    def from_query_params(cls, params):
+        # Call only after original project, scope, Host and activation checks.
+        # Match the existing Studio scalar wire convention: last value wins,
+        # and Pydantic accepts integral decimal strings such as "1.0".
+        try:
+            return cls(owner=params.get("owner"), operation_id=params.get("operation_id"),
+                       limit=TypeAdapter(int).validate_python(params["limit"]) if "limit" in params else None,
+                       offset=TypeAdapter(int).validate_python(params["offset"]) if "offset" in params else None)
+        except ValueError:
+            raise ValueError("STUDIO_PRODUCTION_QUERY_INVALID") from None
+
+    @classmethod
+    def openapi_parameters(cls):
+        return [{"name": name, "in": "query", "required": False, "schema": schema}
+                for name, schema in cls.model_json_schema()["properties"].items()]
 
 
 class ProviderSelection(ExecutionModel):

@@ -1,5 +1,4 @@
 """Closed, explicit production commands on original Host and scope authority."""
-from typing import Literal
 from contextlib import ExitStack
 from urllib.parse import quote
 from fastapi import APIRouter, Header, HTTPException, Request, Response
@@ -12,11 +11,11 @@ from ..audio_production_store import AudioStateVersionConflict
 from .production_execution_models import (MediaCommand, MediaCreate, CanvasImageNodeQueueResolve, MediaJobAction, CanvasImageNodeTargetView, CanvasImageNodeJobDiscard, MediaReview, TimelineSave, TimelineRender,
     TimelineEdit, TimelineRestore, TimelineExportPreview, TimelineExport,
     TimelineTransferPreview, TimelineTransferImport, TimelineTransferDownload, TimelinePlaybackPreview, TimelinePlaybackBuild, TimelinePlaybackAttestation,
-    TimelineWaveformPreview)
+    TimelineWaveformPreview, StudioProductionQuery, ProductionJobOwner)
 
 from .canvas_video_task import CanvasVideoCommand, CanvasVideoQueue
 
-Owner = Literal["image", "audio", "video", "timeline"]
+Owner = ProductionJobOwner
 
 
 class ImageNodeQueueResolveRoute(PrivateProductionRoute):
@@ -465,9 +464,16 @@ def create_production_execution_router(service, invoke, *, require_host_session,
 
     router.include_router(node_job_discards)
 
-    @router.get("/projects/{nid}/studio/production/jobs")
+    @router.get("/projects/{nid}/studio/production/jobs",
+                openapi_extra={"parameters": StudioProductionQuery.openapi_parameters()})
     def jobs(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return call(request, nid, x_session_token, x_branch_id, "domain.read", lambda actor, scope, guard: service.list(nid, scope, actor, guard))
+        def read(actor, scope, guard):
+            # Query validation must not overtake any original refusal, including
+            # neutral-project activation. list() independently rechecks _base.
+            service._base(nid, scope, actor, guard)
+            query = StudioProductionQuery.from_query_params(request.query_params)
+            return service.list(nid, scope, actor, guard, query=query)
+        return call(request, nid, x_session_token, x_branch_id, "domain.read", read)
 
     @router.get("/projects/{nid}/studio/production/jobs/{owner}/{jid}")
     def job(nid: str, owner: Owner, jid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
