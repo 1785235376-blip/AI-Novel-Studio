@@ -1335,3 +1335,58 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 - P3：补 N8b、S3、S4 的断言。
 
 清理：自起的 vite（4399，PID 33515/33489）已按 PID 停止；临时 worktree vera-duim2-mut 已删除；/tmp/vera-nopy 已删除。未提交、未推送、未碰 main/8000/4299。
+
+---
+
+## [VERA-FE] 独立复审 · work/hermia-default-ui-i18n-20261025 @ 73819989（d9fcaa08 + 73819989，对比 fbe029c4）
+
+**结论：PASS**（无 MUST-FIX）。证据目录：`/workspace/hr/vera-compare/duim-73819989/`
+
+### 1. 契约变异（真实 vitest，临时 worktree 改 app/，跑 apiErrorWhitelist.test.ts；cmut.log）
+"contract=Y" 表示 `contract holds on the real app/` 本身失败。
+
+| 变异 | 结果 | 真实契约失败 |
+|---|---|---|
+| mK1 `**{message}` 展开 / mK2 `**base`(api.py:2035) / mK3 `body['message']=` / K6 `dict.update` | KILLED | Y |
+| mI1 类属性 code / mD1 常量 code / mD3 真 Enum `.value` / D4 f-string code / mD2 `exc.code` | KILLED | Y |
+| F1 `.format` / F2 `%` / KW1 `Call(**kwargs)` / KW2 `code=, **{message}` | KILLED | Y |
+| IH1 子类 `super().__init__(code,str(e))` / IH3 子类 kw super / H1 helper 返回 dict | KILLED | Y |
+| **IH2 二级继承类属性 code** | 只有 Hermia 内置变异因文本变化失败 | **N（盲区）** |
+| **P1 位置参数反序 `ApiErr(str(exc), CODE)`** | 同上 | **N（盲区）** |
+| WLdyn AUDIO_PARAMETER_UNSUPPORTED 改走 `_error(str)` / WLdyn2 IMAGE_PROVIDER_REQUEST_FAILED 改 f-string | KILLED（3 failed） | Y |
+| NEW 新增非白名单 str(exc) code | 存活（预期，不违约） | N（正确） |
+| 前端 WL1d 删一个补一个 / WL1d' 只删 / N8b / S3 / S4 / S1 | 全部 KILLED | — |
+
+- 误报：真实扫描得到 literal 189、dynamic 204、unknown 32。DATABASE_URL、Q4_K_M、OPENAI_API_KEY、HOME 都不在 literal 和 dynamic 里。WL 共 52 项，与 dynamic 交集为 ∅，没有缺字面出处的项。
+- 缺 python3：PATH 只留 node 时，721 个测试里有 36 个失败。首条是 `python3 scanner is available`，报 `spawnSync python3 ENOENT`。失败是显式的，不再是 0 test。证据：no-python.log、nopy.json。
+
+### 2. 两个新白名单 code
+- AUDIO_PARAMETER_UNSUPPORTED 的四个 HTTP 出处都是字面量：studio_audio_execution:259/268、audiobook_service:217、api.py:2521。
+- IMAGE_PROVIDER_REQUEST_FAILED：api.py:2477 是字面量。image_job_service:172 和 screenplay_service:838 只作 job error token，不在 HTTP 错误包络路径上，可以接受。
+
+### 3. 中文回归（matrix-new/base.json，336 组 × 2 版本）
+- 矩阵：zh × normal/pro × 1024/1100/1280/1366/1440/1920 × DPR 1/1.25 × 6 个模块。heads、status、btnText 和 body 全文与 fbe029c4 **逐项完全一致**，问题字段（hs/hdrOut/clipped/offscreen/ov/noName/keyLeak）也一致。
+- 没有英文或 key 泄漏，也没有新增溢出或重叠。
+- 运行时切换：在 1366 下 normal/pro × 6 模块，中→EN 的结果与直接以 en 加载一致，EN→中 后与原中文一致，差异为 0，lang 正确（locale-switch.json）。tz 不响应式的风险没有复现。
+
+### 4. 英文抽查
+- 55 个 key 中英都有，zh 值没有改动。2 个 en 值含 CJK。
+- 没有 noName 和 keyLeak 问题。header 里的 "Settings" 在 pro 1024 下越界（VIDEO/EDIT），base 已经如此。
+
+### 5. 普通模式泄漏与 axe
+- 浏览器注入（inject.mjs，ExportPanel/AssetLibrary/AssetInspector/call × basic/pro）的计数与 fbe029c4 完全相同，basic 下泄漏为 0。
+- axe 输出与上一轮逐行相同，没有 critical 或 serious，只有 heading-order 和 landmark-unique 两项 moderate。
+
+### 6. 全量（Node 22.14，--maxWorkers=3，三轮错峰；基线 raw 298 / adj 297）
+| 轮次 | total | raw | ISI | adj | 基线外（非 ISI） |
+|---|---|---|---|---|---|
+| full1 | 12577 | 293 | 8 | 293 | 0 |
+| full2 | 12577 | 295 | 8 | 295 | 2（StudioCanvasVideoTask 为 creative/* 已知抖动，u1.purge.host 已知抖动） |
+| full3 | 12577 | 293 | 8 | 293 | 0 |
+
+suiteErr 只有 LocalAiBrowserJourneyContracts（基线内）。规则 (a) 三取最好 293 ≤ 297，PASS；规则 (b) 允许一次重跑，三轮都 ≤ 297，PASS。注：run1 期间与变异和矩阵并行，负载约 12，仍然达标。
+
+### 发现（按严重度）
+- **P2（英文暴露的既有布局缺陷，不是本轮回归）**：IMAGE/AUDIO 空态左栏在 1024/1100 下被挤到约 30px，文字逐字竖排，并与右侧面板重叠。fbe029c4 的中文和英文都已存在（shots/base-zh-CN-normal-1024-AUDIO.png 等）。英文按钮更长，因此 offscreen 从 4 增加到 20（New generation / Write a line / Import from assets）。建议另开布局修复。
+- **P3**：扫描器有两个盲区，即 IH2 二级继承类属性 code 和 P1 位置参数反序。app/ 中目前没有这两种写法，属于理论风险，建议补 AUDITED 规则或测试。
+- **观察（非 MUST-FIX）**：英文 UI 仍有大量中文残留，例如各模块标题、编辑工具栏（播放/切割/入点）、资产类型、空态文案。这是粗翻范围内的问题，没有发现会导致误操作的错译。
