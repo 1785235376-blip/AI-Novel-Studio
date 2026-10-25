@@ -76,3 +76,16 @@ it('re-rendering on a project switch is not a second observation (one fetch = on
   await list([nv('n1'), nv('n3')]);  // a real second fetch confirms
   await waitFor(() => expect(has(own)).toBe(false));
 });
+it('Vera SHOULD-FIX (V8/V8b): [A,B,C] → [A,C] → error (isError, stale data kept) is not a second observation; purge only after next successful [A,C]', async () => {
+  novels = [nv('n1'), nv('n2'), nv('n3')];
+  const list = await mount();
+  await list([nv('n1'), nv('n3')]);  // n2 missing once → pending
+  expect(has(own)).toBe(true);
+  await list('fail');                // isError; react-query keeps old data [n1,n3] — must not be re-observed
+  expect(has(own)).toBe(true);
+  expect(localStorage.getItem(viewPrefsKey(own))).not.toBeNull();
+  expect(localStorage.getItem(workspaceLayoutKey(own))).not.toBeNull();
+  await list([nv('n1'), nv('n3')]);  // next successful list confirms → purge
+  await waitFor(() => expect(has(own)).toBe(false));
+  expect(has(other)).toBe(true); expect(has(ownN1)).toBe(true);
+});

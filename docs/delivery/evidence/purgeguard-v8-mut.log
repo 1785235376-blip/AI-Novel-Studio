@@ -1,0 +1,16 @@
+== V8: on error re-observe stale data (observe only, no purge in that pass); base HEAD e217e061, reverted after
+   × two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets 1275ms
+   ✓ an empty list breaks the confirmation streak 303ms
+   ✓ re-rendering on a project switch is not a second observation (one fetch = one piece of evidence) 324ms
+   × Vera SHOULD-FIX (V8/V8b): [A,B,C] → [A,C] → error (isError, stale data kept) is not a second observation; purge only after next successful [A,C] 1230ms
+ FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets
+AssertionError: expected '{"version":1,"viewports":{},"worksets…' to be null
+ FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > Vera SHOULD-FIX (V8/V8b): [A,B,C] → [A,C] → error (isError, stale data kept) is not a second observation; purge only after next successful [A,C]
+AssertionError: expected true to be false // Object.is equality
+      Tests  2 failed | 3 passed (5)
+== V8b: full purge path runs on error with stale data
+   ✓ re-rendering on a project switch is not a second observation (one fetch = one piece of evidence) 365ms
+   × Vera SHOULD-FIX (V8/V8b): [A,B,C] → [A,C] → error (isError, stale data kept) is not a second observation; purge only after next successful [A,C] 171ms
+AssertionError: expected false to be true // Object.is equality
+      Tests  1 failed | 4 passed (5)
+== result: V8 KILLED (2 tests incl. new), V8b KILLED (only new test; old 500 test survived = Vera gap). Unmutated: 5/5 pass. Reverted: git diff clean on UnifiedWorkspacePreview.tsx

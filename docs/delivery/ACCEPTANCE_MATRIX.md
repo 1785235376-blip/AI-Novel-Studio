@@ -1,5 +1,5 @@
 # ACCEPTANCE_MATRIX — t150u PoemSeed Studio V2 unified loop [HERMIA-FE-20261025 M10]
-Code HEAD 10f3a1d5 (row 14 updated after Vera final review of f778eaec) (branch work/hermia-unified-loop-20261025). Statuses: 已实现 / 已验证 / 部分实现 / 受阻 / 未运行.
+Code HEAD 10f3a1d5 (row 14 verified by Vera e217e061; V8/V8b test added) (branch work/hermia-unified-loop-20261025). Statuses: 已实现 / 已验证 / 部分实现 / 受阻 / 未运行.
 Evidence types: mock (jsdom/vitest) · synthetic provider · real File/API · real browser · real provider · PostgreSQL · Windows.
 "real browser" = Chromium (Playwright) against local vite :5391 + **mock backend** :5392; every non-GET was blocked unless explicitly armed; no model call.
 
@@ -18,7 +18,7 @@ Evidence types: mock (jsdom/vitest) · synthetic provider · real File/API · re
 | 11 | Revoked (401) state | 已验证 | real browser | m5 `revoked` |
 | 12 | Unknown/503: "读取失败…不会自动重试" | 已验证 | real browser | m5 `unknown` |
 | 13 | Project gone (404) | 已验证 | real browser | m5 `projectGone` |
-| 14 | Purge of own viewprefs/layout keys when project leaves list (in-session) | 已实现（待 Vera 复核）— Vera re-review of f6e535a3: 单次 200 [] 清空全部已见项目 → 已修 1681ea85（空列表不作证据 + 连续两次成功列表缺失才清理；browser emptyList/projectGone ×3 PASS; P4/P6/P7 已被杀）；**未通过 at f778eaec** (Vera final: realUser always null via sentinel projectId → purge never ran; the earlier m5 projectGone check was vacuous) | mock + real browser | fix 35377d47; u1.purge.host.test (fails on f778eaec code, passes after; mutation realUser→null killed); m5 projectGone ×3 at 10f3a1d5 (FAIL on f778eaec code: m5-repro-purge-before-f778eaec.log); Vera vera-compare/final-f778eaec/purge.json, purge2.json |
+| 14 | Purge of own viewprefs/layout keys when project leaves list (in-session) | 已验证（Vera e217e061）— 历史：Vera re-review of f6e535a3: 单次 200 [] 清空全部已见项目 → 已修 1681ea85（空列表不作证据 + 连续两次成功列表缺失才清理）；**未通过 at f778eaec**（realUser always null via sentinel projectId → purge never ran; earlier m5 projectGone was vacuous）；Vera e217e061 PASS（全量 294/293/293，浏览器 1366/1440/1920）；SHOULD-FIX V8/V8b 单测已补（出错保留旧 data 不算第二次观察） | mock + real browser | fix 35377d47; u1.purge.host.test (fails on f778eaec code, passes after; mutation realUser→null killed); m5 projectGone ×3 at 10f3a1d5 (FAIL on f778eaec code: m5-repro-purge-before-f778eaec.log); Vera vera-compare/final-f778eaec/purge.json, purge2.json; Vera vera-compare/purgeguard-e217e061/; u1.purge.guard.host.test V8/V8b test (mutants killed: m10/logs/purgeguard-v8-mut.log) |
 | 15 | Purge after cold start (project deleted while page closed) | 部分实现 | mock (documented gap) | INTEGRATION_NOTES §M5-fix 3 |
 | 16 | Audio filter 全部/图片/音频 over shared list + gap text | 已验证 | real browser + mock | m5 `audioFilter`; audio.panel.test |
 | 17 | 试听候选: no read on mount, 1 GET on click, no autoplay | 已验证 | real browser (mock WAV) + mock | m5 `audioPreview`; audio.test |
@@ -40,4 +40,4 @@ Evidence types: mock (jsdom/vitest) · synthetic provider · real File/API · re
 | 33 | PostgreSQL-backed run | 未运行 | PostgreSQL | — |
 | 34 | Windows run | 未运行 | Windows | — |
 
-**Counts (34):** 已验证 20 · 已实现 2 · 部分实现 5 · 受阻 3 · 未运行 4.
+**Counts (34):** 已验证 21 · 已实现 1 · 部分实现 5 · 受阻 3 · 未运行 4.

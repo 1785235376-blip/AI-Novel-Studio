@@ -27,4 +27,4 @@ P4 mutant: on load error, feed `[]` to ProjectPresence (failure treated as empty
 ## Evidence
 evidence/purgeguard-*.log/json. Vera: /workspace/hr/vera-compare/purgefix-f6e535a3/.
 ## Status
-Row 14 remains 待 Vera 复核.
+Row 14 已验证（Vera e217e061）. SHOULD-FIX V8/V8b covered by u1.purge.guard.host.test (V8 and V8b mutants killed; log: m10/logs/purgeguard-v8-mut.log, copied to docs/delivery/evidence/).

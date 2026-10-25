@@ -1,6 +1,6 @@
 # Delivery report — t150u PoemSeed Studio V2 unified loop [HERMIA-FE-20261025 M10]
 Branch work/hermia-unified-loop-20261025, code HEAD f178ff84. Node 22.14.0. Times Asia/Shanghai, 2026-10-25.
-See ACCEPTANCE_MATRIX.md (34 rows: 已验证 20 · 已实现 2 · 部分实现 5 · 受阻 3 · 未运行 4), INTERFACE_COVERAGE.md (gaps), INTEGRATION_NOTES.md, GATE_INT.md, evidence/.
+See ACCEPTANCE_MATRIX.md (34 rows: 已验证 21 · 已实现 1 · 部分实现 5 · 受阻 3 · 未运行 4), INTERFACE_COVERAGE.md (gaps), INTEGRATION_NOTES.md, GATE_INT.md, evidence/.
 
 ## Per stage
 | Stage | Commit(s) | Result | Evidence |
