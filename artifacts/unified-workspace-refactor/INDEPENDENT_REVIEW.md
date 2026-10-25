@@ -963,3 +963,29 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - **DELIVERY_REPORT 分阶段表**写「Vera PASS 575501b9」：**不对**。575501b9 的结论是 MUST-FIX（U1 三项仍在），通过的只有集成代码本身。
 - 第 23 行：landmark-unique 的结论成立，但 aria-required-children 没有说明（P3）。
 - 其余各行的分类与证据相符；第 15、19、22、28、29 行的「部分实现」和 20、21、30 行的「受阻」理由都成立。
+
+## [VERA-FE] U5 清理修复复核 — f6e535a3（2026-10-25，Asia/Shanghai）
+结论：**MUST-FIX ×1**（空列表清空本人全部视图），上轮回归本身已修好。证据：/workspace/hr/vera-compare/purgefix-f6e535a3/。tsc 0 / build 0 / src/workspace 42 个文件 358/358。
+
+### 上轮回归：已修
+realUser 改为 resolveWorkspaceUser(actorId)，不再依赖 projectId。浏览器 pf.json（1366/1440/1920，非 GET 0，pageerror 0）：
+- 有身份（u-m5）时 proj-b 离开列表：本人 viewprefs/layout（含 v3）全部删除；他人 2/2 保留，本人其他项目、画布草稿 image/video、sessionStorage、从未出现在列表里的项目均保留。
+- 首次列表 / 相同列表 / 500 失败 / 失败后恢复：不删任何键（10/10）。
+- 无身份（session）：3/3 保留，包括 `anonymous`/空用户键。占位 actor `anonymous`：不清理。
+- 有 actor 但无协作 scope（新行为）：页面显示 session，但仍只删 u-x 在消失项目上的键，他人和画布保留。范围安全。
+
+### MUST-FIX：成功返回的空列表 = 本人所有已见项目全部消失
+列表 [A,proj-b,proj-c] → [A,proj-c] → `200 []`：本人在 A 和 proj-c 上的 viewprefs/layout 全部被删（ownCurrentLeft 0），worksets（用户命名保存的视图）一并丢失。只要服务端一次瞬时/异常的 200 空列表，本人全部视图就没了，与本轮「空列表不误删」的要求冲突。建议：`novels.data.length === 0` 时不清理（也不更新 seen），或要求连续两次成功列表都缺失才清理；补宿主测试。
+
+### 变异（mut.json，src/workspace 358 例）
+被杀：realUser→null、清理扩到他人、清理扩到画布草稿、首次列表即清理。
+**存活**（测试缺口，须补）：P4 加载失败当作空列表处理（浏览器上现行代码是安全的，但没有测试守护）、P6 无身份按 `anonymous` 清理、P7 接受占位 actor。
+
+### U1 三项未回归（u1.json / fin.json）
+pan 后「工作W1」保留；会话保存提示与配额提示文案正确；?uw=1 bootstrap 1 次、actor 由服务端返回，冷重开 (-160,70) + 停靠 left + 工作集恢复；任务面板已接通；音频 1 次 GET、无 autoplay。axe：color-contrast + aria-required-children（旧问题，已在第 23 行注明）。
+
+### 全量 ×3
+调整数 293/293/293（raw 293，ISI 8，总数 11594），规则 (a)(b) 都 PASS，无基线之外的新失败，套件级失败仍是 LocalAiBrowserJourneyContracts（已计入）。
+
+### 文档
+第 14 行改为「已实现（待复核）」，计数 20/2/5/3/4 正确；「Vera PASS 575501b9」已改正。小错：DELIVERY_REPORT 写「已由 u1fix 93a1e351 修复」，93a1e351 是我的复核段，修复提交是 **d9479872**。第 14 行待空列表问题修复后才能改为「已验证」。
