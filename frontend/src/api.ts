@@ -123,6 +123,8 @@ export const RAW_MESSAGE_CODES:ReadonlySet<string>=new Set(['INVALID_PROVIDER_CO
 export const LITERAL_MESSAGE_CODES:ReadonlySet<string>=new Set(['AUDIOBOOK_CONCATENATION_UNAVAILABLE','AUDIOBOOK_SEGMENT_LIMIT','AUDIOBOOK_SUBTITLES_UNAVAILABLE','AUDIO_GENERATION_FAILED','AUDIO_IMPORT_FAILED','CANON_RECOVERY_REQUIRED','CHAPTER_ARCHIVE_REQUIRED','CHAPTER_REQUIRED','CLOUD_PROMPT_REVIEW_REQUIRED','CREATION_RECORD_LOCAL_ONLY','EMOTION_DISCONTINUITY','EXPORT_CANCELLED','EXPORT_NOT_CANCELLABLE','EXPORT_NOT_READY','EXPORT_NOT_RETRYABLE','EXPORT_RESULT_INVALID','FORK_STALE_OR_CONFLICT','IMAGE_EDIT_FAILED','IMAGE_EDIT_PROVIDER_UNSUPPORTED','IMAGE_IMPORT_FAILED','IMAGE_PROVIDER_UNAVAILABLE','IMAGE_REFERENCE_URI_UNSAFE','IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED','IMPORT_SOURCE_CHANGED','IMPORT_SOURCE_RESTRICTED','IMPORT_SOURCE_REVIEW_REQUIRED','INVALID_EXPECTED_VERSION','INVALID_VIDEO_PROVIDER_CONFIG','KNOWLEDGE_REVIEW_SOURCE_EMPTY','LEGACY_MEDIA_SCOPE_UNAVAILABLE','LOCATION_JUMP','NODE_EXECUTION_FAILED','PLANNING_TARGET_CONFLICT','PLANNING_VERSION_CONFLICT','PLUGIN_HOST_ADMIN_REQUIRED','PORTABLE_CHAPTER_VERSION_CONFLICT','PRECONDITION_REQUIRED','PREFERENCE_SHARE_CHANGED','PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED','REALTIME_VERSION_OR_SOURCE_CONFLICT','SPEECH_PROVIDER_UNAVAILABLE','SPEECH_SYNTHESIS_FAILED','SYNC_STALE_OR_CONFLICT','TIME_JUMP_CUT','UNREVIEWED_CHAT_CONTEXT','UNSUPPORTED_PROVIDER','VISION_ANALYZE_FAILED','WORKFLOW_EXECUTION_PROVENANCE_REQUIRED','WORKFLOW_NODE_FAILED','WORKFLOW_PROJECT_CHANGED']);
 export function isUnsafeServerText(text:string):boolean{return text.length>SERVER_MESSAGE_LIMIT||UNSAFE_SERVER_RULES.some(([,re])=>re.test(text))}
 export function friendlyCodeMessage(code:unknown):string|undefined{return typeof code==='string'&&RAW_MESSAGE_CODES.has(code)?apiErrorText(`err.code.${code}`)||undefined:undefined}
+// [HERMIA-FE-20261025 VERA-e471dc76 P3-1] 白名单内后端英文字面文案（由 scripts/scan_error_codes.py 提取；测试校验与 app/ 一致）。
+export const SERVER_LITERAL_EN:Readonly<Record<string,string>>={CANON_RECOVERY_REQUIRED:"Commit interrupted; refresh and recover the existing receipt.",EXPORT_CANCELLED:"export cancelled",EXPORT_NOT_CANCELLABLE:"export is no longer cancellable",EXPORT_NOT_READY:"export is not ready",EXPORT_NOT_RETRYABLE:"export is not retryable",EXPORT_RESULT_INVALID:"export result is unavailable",FORK_STALE_OR_CONFLICT:"Refresh the authorized comparison or inspect recovery; no automatic retry.",INVALID_EXPECTED_VERSION:"expected_version must be a non-negative integer",INVALID_VIDEO_PROVIDER_CONFIG:"invalid video provider id",NODE_EXECUTION_FAILED:"The node did not complete; explicitly retry after review.",PLUGIN_HOST_ADMIN_REQUIRED:"Package mutations require a local host management session.",PORTABLE_CHAPTER_VERSION_CONFLICT:"The original chapter changed; review the preserved recovery record.",PRECONDITION_REQUIRED:"Read the current screenplay edit_version and include expected_version before editing or approving.",REALTIME_VERSION_OR_SOURCE_CONFLICT:"Refresh the scoped document and inspect preserved operations.",SYNC_STALE_OR_CONFLICT:"Refresh and review current candidates; uncertain writes must be reconciled.",WORKFLOW_EXECUTION_PROVENANCE_REQUIRED:"This saved run has no verified project identity. Create a new workflow run and review its agent step.",WORKFLOW_PROJECT_CHANGED:"The original project identity is no longer current. Create a new workflow run for the current project."};
 const structuredMessage=(raw:any):string|undefined=>{
   const pick=(v:any)=>typeof v==='string'&&v.trim()&&!isUnsafeServerText(v)?v:undefined;
   if(!raw||typeof raw!=='object')return undefined;
@@ -130,7 +132,7 @@ const structuredMessage=(raw:any):string|undefined=>{
   const top0=typeof raw.code==='string'&&!/^HTTP_\d+$/.test(raw.code)?raw.code:undefined;
   const code=top0??(d&&typeof d==='object'&&typeof d.code==='string'?d.code:undefined);
   if(typeof code!=='string'||!LITERAL_MESSAGE_CODES.has(code))return undefined; // 白名单外一律不信任
-  if(RAW_MESSAGE_CODES.has(code))return undefined;
+  // [HERMIA-FE-20261025 VERA-e471dc76 P2-2] 原 `if(RAW_MESSAGE_CODES.has(code))return undefined;` 为死代码（两名单不相交），已删除；不相交由 apiErrorWhitelist.test.ts C1 断言守护。
   const httpCode=typeof raw.code==='string'&&/^HTTP_\d+$/.test(raw.code);
   // 字符串 detail 的回显，或无结构化 detail 的 HTTP_<n> 信封：不信任 raw.message
   if(typeof d==='string'&&(raw.message===d||httpCode))return undefined;
@@ -141,7 +143,11 @@ const structuredMessage=(raw:any):string|undefined=>{
   // 输出不可区分。故删除该冗余子句（E2 变异即与实现相同），行为由 apiErrorWhitelist.test.ts 的 E2 用例锁定。
   const echo=!!dict&&typeof dict.detail==='string'&&raw.message===dict.detail;
   const top=raw.message===raw.code||echo?undefined:pick(raw.message);
-  return top??(dict?pick(dict.message):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+  const out=top??(dict?pick(dict.message):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+  // [HERMIA-FE-20261025 VERA-e471dc76 P2-2 N8] 任何位置的 message 等于 code（后端回落）都不是作者文案，不显示裸 code。
+  if(out===undefined||out===code||out.trim()===code)return undefined;
+  // [HERMIA-FE-20261025 VERA-e471dc76 P3-1] 与后端英文字面完全一致时按当前语言本地化（zh 显示中文；en 键值即原文）。
+  return SERVER_LITERAL_EN[code]===out?(apiErrorText(`err.srv.${code}`)||out):out;
 };
 const rawTextOfObj=(raw:any):string|undefined=>{
   if(!raw||typeof raw!=='object')return undefined;
