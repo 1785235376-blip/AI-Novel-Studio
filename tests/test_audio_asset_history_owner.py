@@ -1,4 +1,7 @@
 from __future__ import annotations
+from app.repository import FileRepository
+from app.experimental.store import ExperimentalStore
+from app.creative.project_store import CreativeProjectStore
 import base64
 import hashlib
 import json
@@ -349,14 +352,17 @@ def test_chain_read_budget_rejects_mutation_before_current_commit(audio_owner, m
     assert restarted.audio_history(aid) == before
     assert_snapshot(restarted, aid, before['items'][0])
 
-def test_history_current_metadata_read_is_bounded(audio_owner):
+@pytest.mark.parametrize('reader', ['audio_history', 'audio_history_detail', 'audio_history_content'])
+def test_history_current_metadata_read_is_bounded(audio_owner, reader):
     from app.services.asset_query_index import AssetQueryBudgetExceeded
     root, owner, row = audio_owner
     meta_path = owner.root / (row['id'] + '.json')
     with meta_path.open('ab') as stream:
         stream.write(b' ' * (1024 * 1024 + 1))
+    method = getattr(AssetLibraryService(root), reader)
+    args = (row['id'],) if reader == 'audio_history' else (row['id'], row['_audio_history_head'])
     with pytest.raises(AssetQueryBudgetExceeded):
-        AssetLibraryService(root).audio_history(row['id'])
+        method(*args)
 
 def test_internal_same_revision_write_allocates_new_revision_and_rejects_stale_head(audio_owner):
     from copy import deepcopy
@@ -387,3 +393,82 @@ def test_history_capacity_preserves_original_disk_safety_reserve(audio_owner, mo
         owner.update_metadata(row['id'], {'parameters': {'low_space': True}}, expected_version=1)
     assert owner._meta_path(row['id']).read_bytes() == current
     assert AssetLibraryService(root).audio_history(row['id']) == before
+
+def _bound_cas_worker(root, nid, aid, take, ready, start, results):
+    try:
+        path = Path(root)
+        scope = {'mode': 'local', 'novel_id': nid}
+        store = CreativeProjectStore(ExperimentalStore(path, 'file', ''))
+        owner = AssetLibraryService(path)
+        scope_key = store.key(nid, scope)
+        ready.put(take)
+        if not start.wait(20):
+            results.put(('worker_timeout', take, None))
+            return
+        with owner.project_scope(nid, None, lambda: store.owner_lease(nid), scope_key=scope_key):
+            row = owner.update_metadata(aid, {'parameters': {'take': take}}, expected_version=1)
+        results.put(('ok', take, row['version']))
+    except Exception as exc:
+        results.put(('error', take, type(exc).__name__ + ': ' + str(exc)))
+
+def test_two_process_compare_and_swap_preserves_real_project_owner_binding(tmp_path):
+    root = tmp_path / 'bound-cas'
+    root.mkdir()
+    nid = 'bound-project'
+    scope = {'mode': 'local', 'novel_id': nid}
+    FileRepository(root).create_novel({'id': nid, 'title': 'Synthetic'})
+    store = CreativeProjectStore(ExperimentalStore(root, 'file', ''))
+    incarnation = store.incarnation(nid)
+    assert incarnation
+    scope_key = store.key(nid, scope)
+    owner = AssetLibraryService(root)
+    with owner.project_scope(nid, None, lambda: store.owner_lease(nid), scope_key=scope_key):
+        row = owner.create(nid, 'bound.wav', base64.b64encode(PAYLOAD).decode(), 'audio/wav', 'audio', idempotency_key='bound-import')
+        before = owner.audio_history(row['id'])
+        assert before['current_version'] == 1
+        assert len(before['items']) == 1
+    ctx = multiprocessing.get_context('spawn')
+    ready, results, start = ctx.Queue(), ctx.Queue(), ctx.Event()
+    workers = [ctx.Process(target=_bound_cas_worker, args=(str(root), nid, row['id'], take, ready, start, results)) for take in (2, 3)]
+    try:
+        for worker in workers:
+            worker.start()
+        assert {ready.get(timeout=25), ready.get(timeout=25)} == {2, 3}
+        start.set()
+        outcomes = [results.get(timeout=25), results.get(timeout=25)]
+        for worker in workers:
+            worker.join(timeout=10)
+            assert not worker.is_alive(), outcomes
+            assert worker.exitcode == 0, outcomes
+        successes = [outcome for outcome in outcomes if outcome[0] == 'ok']
+        failures = [outcome for outcome in outcomes if outcome[0] == 'error']
+        assert len(successes) == 1, outcomes
+        assert len(failures) == 1, outcomes
+        assert successes[0][2] == 2
+        assert 'version' in failures[0][2].lower() or 'conflict' in failures[0][2].lower(), outcomes
+        reopened_store = CreativeProjectStore(ExperimentalStore(root, 'file', ''))
+        assert reopened_store.incarnation(nid) == incarnation
+        assert reopened_store.key(nid, scope) == scope_key
+        reopened_owner = AssetLibraryService(root)
+        with reopened_owner.project_scope(nid, None, lambda: reopened_store.owner_lease(nid), scope_key=scope_key):
+            history = reopened_owner.audio_history(row['id'])
+            assert history['current_version'] == 2
+            assert len(history['items']) == 2
+            assert [item['asset_version'] for item in history['items']] == [2, 1]
+            assert [item['history_sequence'] for item in history['items']] == [2, 1]
+            assert history['head'] == history['items'][0]['version_id']
+            assert history['items'][0]['parent_version_id'] == before['head']
+            assert history['items'][1] == before['items'][0]
+            assert history['items'][0]['metadata']['parameters']['take'] == successes[0][1]
+            for item in history['items']:
+                assert_snapshot(reopened_owner, row['id'], item)
+        assert reopened_store.incarnation(nid) == incarnation
+    finally:
+        start.set()
+        for worker in workers:
+            if worker.is_alive():
+                worker.terminate()
+            if worker.pid is not None:
+                worker.join(timeout=5)
+        ready.close()
+        results.close()

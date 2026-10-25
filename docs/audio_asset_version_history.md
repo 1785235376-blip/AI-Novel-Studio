@@ -150,3 +150,11 @@ PostgreSQL: **NOT_RUN**. `DATABASE_URL`, `TEST_POSTGRES_DATABASE_URL`, `E2E_DATA
 Two existing asset-query/cursor compatibility cases reach **503 ASSET_QUERY_INDEX_UNAVAILABLE**. A direct synthetic diagnostic exposed an original index `OSError [Errno 9] Bad file descriptor` during its fsync path. The same two cases were rerun in a **new detached worktree at exact original commit/tree** and failed with the same 503. They are not counted as passed. No protected query/index implementation or original query test was changed; its full compatibility acceptance remains blocked. Raw comparison logs are retained.
 
 Raw stdout/stderr is preserved losslessly in gzip with SHA-256 of decompressed bytes. Intermediate failures, environment errors and subsequent passing runs are distinct files; no previous session's logs are used as current evidence.
+
+## Independent-review correction and final rerun
+
+The independent reviewer found two residual issues in implementation commit `1866465a8766c61020e10a420ceb2471f5c1d54a`: only the list reader activated the direct-owner metadata budget, and preview display fields did not reject nested values. The new counterexamples first produced **4 failed, 1 passed**. Both defects were fixed without weakening assertions: list/detail/content all reuse or activate the original bounded reader context; preview derives validated record fields and accepts only bounded scalar display text.
+
+A real bound-project cross-process CAS case was added using the original `FileRepository`, `CreativeProjectStore`, incarnation marker and owner lease. It does not simulate an HTTP session registry.
+
+Targeted correction run: **6 passed**. Final unchanged-source specialist command (the four test files above, fresh `--basetemp=.runtime/audio-history-20261025/final-post-review-temp`): **58 passed, 3 warnings in 28.07s; exit 0**. This supersedes the 53-case run for the final implementation, while preserving all earlier raw logs. The original query-index baseline failures and restore/PG limitations are unchanged.

@@ -343,7 +343,7 @@ class AssetLibraryService:
         from .audio_asset_history_store import HEAD, DIGEST
         if not isinstance(version_id, str) or not DIGEST.fullmatch(version_id):
             raise ValueError('AUDIO_HISTORY_VERSION_INVALID')
-        with self._lock, workspace_mutation(self.root, 'asset-library'):
+        with self._lock, workspace_mutation(self.root, 'asset-library'), self._audio_history_read_budget():
             current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
             record = next((row for row in records if row['version_id'] == version_id), None)
             if record is None: raise FileNotFoundError(asset_id)
@@ -358,7 +358,7 @@ class AssetLibraryService:
         from .audio_asset_history_store import DIGEST
         if not isinstance(version_id, str) or not DIGEST.fullmatch(version_id):
             raise ValueError('AUDIO_HISTORY_VERSION_INVALID')
-        with self._lock, workspace_mutation(self.root, 'asset-library'):
+        with self._lock, workspace_mutation(self.root, 'asset-library'), self._audio_history_read_budget():
             current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
             record = next((row for row in records if row['version_id'] == version_id), None)
             if record is None: raise FileNotFoundError(asset_id)

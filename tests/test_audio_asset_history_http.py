@@ -444,3 +444,21 @@ def test_feature_revocation_before_return_discards_history(rig, monkeypatch):
     assert response.status_code == 403, response.text
     assert row['id'] not in response.text
     assert 'feature-race.wav' not in response.text
+
+@pytest.mark.parametrize('field', ['filename', 'updated_at'])
+def test_restore_preview_rejects_nested_display_metadata_without_leaking_or_writing(rig, field):
+    row = rig.seed('projection.wav', 'audio')
+    with rig.workspace._asset_scope(rig.nid, rig.scope):
+        raw = rig.assets.get(row['id'])
+        raw[field] = {'path': 'synthetic-private-path', 'token': 'synthetic-private-token'}
+        rig.assets._write_meta(raw)
+    url = _history_url(rig, row['id'])
+    history = rig.client.get(url)
+    assert history.status_code == 200, history.text
+    head = history.json()['head']
+    before = _persisted_audio_files(rig)
+    response = rig.client.post(f'{url}/{head}/restore-preview', json={'operation_id': 'nested-projection'})
+    assert response.status_code == 422, response.text
+    assert 'synthetic-private-path' not in response.text
+    assert 'synthetic-private-token' not in response.text
+    assert _persisted_audio_files(rig) == before

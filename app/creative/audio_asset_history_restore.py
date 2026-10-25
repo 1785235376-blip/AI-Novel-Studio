@@ -5,7 +5,6 @@ not issue confirmation authority, create candidates or manufacture receipts.
 The original soft-delete restore contract is independent and unchanged.
 """
 from __future__ import annotations
-from copy import deepcopy
 import re
 from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
@@ -34,11 +33,25 @@ class AudioHistoryRestoreResolve(AudioHistoryRestorePreview):
     operation_digest: Digest
 
 def _snapshot(record, version_id):
-    metadata = record.get("metadata", {})
-    allowed = ("filename", "kind", "media_type", "size", "sha256", "version", "created_at", "updated_at")
-    return {"version_id": version_id, "asset_version": record["asset_version"],
-        "metadata_digest": record["metadata_digest"], "sha256": record["sha256"], "size": record["size"],
-        "metadata": {key: deepcopy(metadata[key]) for key in allowed if key in metadata}}
+    from .audio_asset_history_models import version_view
+    view = version_view(record)
+    if view['version_id'] != version_id:
+        raise ValueError('AUDIO_HISTORY_INVALID')
+    metadata = {'kind': view['metadata']['kind'], 'media_type': view['metadata']['media_type'],
+        'size': view['size'], 'sha256': view['sha256'], 'version': view['asset_version']}
+    raw = record['metadata']
+    for key, limit in (('filename', 255), ('created_at', 80), ('updated_at', 80)):
+        value = raw.get(key)
+        if value is None:
+            continue
+        if (type(value) is not str or len(value) > limit
+                or any(ord(char) < 32 or 127 <= ord(char) <= 159 for char in value)
+                or (key == 'filename' and ('/' in value or '\\' in value))):
+            raise ValueError('AUDIO_HISTORY_INVALID')
+        metadata[key] = value
+    return {'version_id': view['version_id'], 'asset_version': view['asset_version'],
+        'metadata_digest': view['metadata_digest'], 'sha256': view['sha256'],
+        'size': view['size'], 'metadata': metadata}
 
 class AudioAssetHistoryRestore:
     """Current-authority inspect; candidate writes remain explicitly unavailable."""
