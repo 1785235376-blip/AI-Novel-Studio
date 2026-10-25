@@ -169,7 +169,7 @@ class AudioAssetHistoryStore:
                     raise AudioHistoryCapacityError('AUDIO_HISTORY_CAPACITY')
         return total
 
-    def prepare(self, meta, data, parent=None):
+    def prepare(self, meta, data, parent=None, *, prior_chain_bytes=0):
         saved = snapshot(meta)
         if (saved.get('kind') != 'audio' or type(saved.get('version')) is not int or saved['version'] < 1
                 or len(data) != saved.get('size') or hashlib.sha256(data).hexdigest() != saved.get('sha256')):
@@ -187,6 +187,8 @@ class AudioAssetHistoryStore:
         raw = encoded(record)
         if len(raw) > MAX_RECORD_BYTES:
             raise AudioHistoryCapacityError('AUDIO_HISTORY_METADATA_LIMIT')
+        if prior_chain_bytes + len(raw) > MAX_CHAIN_BYTES:
+            raise AudioHistoryCapacityError('AUDIO_HISTORY_READ_BUDGET')
         version_id = hashlib.sha256(raw).hexdigest()
         path = self.paths(saved['id'], create=True)
         blob = path / 'blobs' / (record['sha256'] + '.bin')
@@ -195,6 +197,18 @@ class AudioAssetHistoryStore:
         reserve = max(len(data) if not blob.exists() else 0, len(raw) if not target.exists() else 0)
         if self._usage(path) + required + reserve > MAX_RETAINED_BYTES:
             raise AudioHistoryCapacityError('AUDIO_HISTORY_CAPACITY')
+        additional = required + reserve
+        if additional:
+            import shutil
+            from ..creative.storage_admission import StudioStorageAdmission
+            try:
+                free = shutil.disk_usage(self.asset_root).free
+            except OSError:
+                raise AudioHistoryCapacityError('AUDIO_HISTORY_STORAGE_UNAVAILABLE') from None
+            if type(free) is not int or free < 0:
+                raise AudioHistoryCapacityError('AUDIO_HISTORY_STORAGE_UNAVAILABLE')
+            if additional > max(0, free - StudioStorageAdmission.RESERVE_BYTES):
+                raise AudioHistoryCapacityError('AUDIO_HISTORY_LOW_SPACE')
         self._immutable(blob, data, maximum=25 * 1024 * 1024)
         self.fault('after_blob')
         self._immutable(target, raw, maximum=MAX_RECORD_BYTES)
@@ -217,6 +231,8 @@ class AudioAssetHistoryStore:
             raw = read_verified(target, trusted_root=target.parent, expected_size=size,
                 expected_digest=version_id, maximum=MAX_RECORD_BYTES, guard=guard)
             record = json.loads(raw)
+            if raw != encoded(record):
+                raise AudioHistoryIntegrityError('AUDIO_HISTORY_RECORD_INVALID')
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise AudioHistoryIntegrityError('AUDIO_HISTORY_RECORD_INVALID') from exc
         meta = record.get('metadata') if isinstance(record, dict) else None
@@ -275,6 +291,7 @@ class AudioAssetHistoryStore:
     def prepare_commit(self, owner, meta, *, guard=lambda: None):
         try: old = owner._load(meta['id'])
         except FileNotFoundError: old = None
+        chain_bytes = 0
         if old is not None:
             if old.get('kind') != 'audio':
                 raise AudioHistoryIntegrityError('AUDIO_HISTORY_KIND_CHANGED')
@@ -283,21 +300,33 @@ class AudioAssetHistoryStore:
                 if old.get(HEAD) is None:
                     raise AudioHistoryConflict('AUDIO_HISTORY_CAPTURE_REQUIRED')
                 return old[HEAD]
-            if (type(meta.get('version')) is not int or meta['version'] != old.get('version', 0) + 1
-                    or meta.get(HEAD) != old.get(HEAD)
+            if (type(old.get('version')) is not int or old['version'] < 1
+                    or type(meta.get('version')) is not int or meta['version'] < 1
+                    or (HEAD in meta) != (HEAD in old) or meta.get(HEAD) != old.get(HEAD)
                     or meta.get('_project_binding') != old.get('_project_binding')
+                    or meta.get('novel_id') != old.get('novel_id') or meta.get('branch_id') != old.get('branch_id')
                     or meta.get('sha256') != old.get('sha256') or meta.get('size') != old.get('size')):
                 raise AudioHistoryConflict('AUDIO_HISTORY_STALE_HEAD')
+            # Existing server-side callers can commit a changed metadata row
+            # without pre-incrementing it. Allocate the next revision here,
+            # under the original lock, only for the exact current head.
+            if meta['version'] == old['version']:
+                meta['version'] = old['version'] + 1
+            elif meta['version'] != old['version'] + 1:
+                raise AudioHistoryConflict('AUDIO_HISTORY_STALE_HEAD')
             chain = self.chain(old, guard=guard)
+            chain_bytes = sum(len(encoded({key: value for key, value in row.items() if key != 'version_id'})) for row in chain)
             if len(chain) >= MAX_VERSIONS:
                 raise AudioHistoryCapacityError('AUDIO_HISTORY_VERSION_LIMIT')
             parent = old.get(HEAD)
             if parent is None:
                 before = owner._verified_content(old, max_bytes=owner.MAX_BYTES, guard=guard)
                 parent = self.prepare(old, before)
+                baseline = self.record(old['id'], parent)
+                chain_bytes = len(encoded({key: value for key, value in baseline.items() if key != 'version_id'}))
         else:
             if meta.get(HEAD) is not None or meta.get('version') != 1:
                 raise AudioHistoryConflict('AUDIO_HISTORY_NEW_ASSET_INVALID')
             parent = None
         data = owner._verified_content(meta, max_bytes=owner.MAX_BYTES, guard=guard)
-        return self.prepare(meta, data, parent)
+        return self.prepare(meta, data, parent, prior_chain_bytes=chain_bytes)

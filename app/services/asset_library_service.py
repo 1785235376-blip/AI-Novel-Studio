@@ -262,6 +262,24 @@ class AssetLibraryService:
 
 
 
+    @contextmanager
+    def _audio_history_read_budget(self):
+        from .asset_query_budget import asset_query_budget
+        import time
+        active = current_query_budget()
+        if active is not None:
+            active.check()
+            yield active
+            active.check()
+            return
+        with asset_query_budget() as budget:
+            budget.MAX_METADATA_READS = 512
+            budget.MAX_METADATA_BYTES = 8 * 1024 * 1024
+            budget.MAX_CONTENT_READS = 8
+            budget.MAX_CONTENT_BYTES = 100 * 1024 * 1024
+            budget.deadline = min(budget.deadline, time.monotonic() + 5.0)
+            yield budget
+
     def _audio_history_context(self, asset_id, *, branch_id, actor_id, guard):
         guard()
         current = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
@@ -283,7 +301,7 @@ class AssetLibraryService:
         from .audio_asset_history_store import HEAD, digest, AudioHistoryConflict
         if type(limit) is not int or not 1 <= limit <= 50:
             raise ValueError('AUDIO_HISTORY_PAGE_LIMIT')
-        with self._lock, workspace_mutation(self.root, 'asset-library'):
+        with self._lock, workspace_mutation(self.root, 'asset-library'), self._audio_history_read_budget():
             current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
             authority = digest({'asset_id': asset_id, 'actor_id': actor_id, 'branch_id': branch_id,
                                 'binding': getattr(self._scope, 'binding', None)})
@@ -305,8 +323,12 @@ class AssetLibraryService:
                 record = records[offset]
                 offset += 1
                 if not self._in_scope(record['metadata'], branch_id, actor_id): continue
-                items.append(self._audio_history_project(record, branch_id=branch_id, actor_id=actor_id,
-                                                         authorize_source=authorize_source))
+                try:
+                    projected = self._audio_history_project(record, branch_id=branch_id, actor_id=actor_id,
+                                                            authorize_source=authorize_source)
+                except FileNotFoundError:
+                    continue
+                items.append(projected)
             next_cursor = None
             if offset < len(records):
                 next_cursor = base64.urlsafe_b64encode(json.dumps({'head': head, 'offset': offset,

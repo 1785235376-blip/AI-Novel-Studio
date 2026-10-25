@@ -89,3 +89,64 @@ python scripts/run_audio_history_tests.py -q tests/test_audio_asset_history_owne
 ```
 
 Result: **15 passed, 1 failed**, exit 1. The sole failure is the intentionally preserved pre-mount history HTTP 404. The 8 new owner cases and 7 original compatibility cases passed. This is not a claim that the entire command passed. Earlier native-reader failures and the initial environment collection error are retained separately. Follow-up HTTP, hard termination, candidate, authorization and independent review results are not implied by this first run.
+
+## M3 read API and the M4 safe boundary
+
+All new endpoints retain the original `/api` mount, project/actor/branch/feature checks and original authority lease. Only exact method/path admission and one new router mount were added to `workspace_api.py`; no global router redesign or other query owner was changed.
+
+| Method | Under `/api/projects/{nid}/studio/assets/{aid}` |
+| --- | --- |
+| GET | `/history?limit=1..50&cursor=...` |
+| GET | `/history/{version_id}` |
+| GET | `/history/{version_id}/download` |
+| POST | `/history/{version_id}/restore-preview` |
+| POST | `/history/{version_id}/restore-confirm` |
+| POST | `/history/restore-resolve` |
+
+`version_id` is a 64-character immutable record digest. The list includes current revision/head, explicit coverage and a cursor; historical items expose history sequence, metadata revision/digest, binary digest/size and a closed metadata projection. Private parameters, prompts, provider/model fields, old review provenance, internal paths and unauthorized source identifiers are not returned.
+
+ASSET source traces distinguish a real pinned source revision/digest from `UNVERSIONED_DECLARATION`. A non-current audio source pin must resolve to the original committed source chain and pass the historical snapshot's current actor/scope/feature checks; a currently formal source does not authorize its earlier private snapshot. `CURRENT` and `HISTORICAL_VERIFIED` describe source metadata, and each trace explicitly says `content_verified: false`: referenced source blobs are not claimed to have been downloaded/verified. Non-ASSET/Chapter/Creative Document source traversal and old non-audio pins are rejected, not guessed or treated as grants. This is a remaining source-coverage limitation.
+
+The new history-only row adapter can read an original private production candidate for its real creating actor, validating the original server-only media-origin contract. Formal production rows still require the original formal-Asset validation. No Job is created or used as the version-history owner.
+
+Authority fingerprints use the original session binding generation, original File authorization/identity bytes plus file identities, enabled features, actual scope and incarnation. PostgreSQL code uses bounded original row identities/xmin and includes user/membership changes, not only effective grants. This PG combination has not run. New history/source metadata traversal is bounded; this does not claim to rewrite the original global authorization repositories' internal I/O limits.
+
+Cursors have a process-local HMAC and a ten-minute lifetime. They reject a changed current head, actor, scope, incarnation or observed authority state; restart/cross-worker use requires restarting pagination. They grant no access. Each return rechecks present authority.
+
+Current/source metadata has its own request budget (8 MiB, bounded count and five seconds). Each history chain has a separate 8 MiB/five-second budget; detail/download/inspect can walk it more than once. There is no claim that total request I/O is only 8 MiB. History reads select and verify the requested immutable bytes; list/detail metadata do not proactively read every historical blob.
+
+### Actual restore status: unavailable, not a successful restore
+
+Preview is genuinely read-only: current/target, safe display differences, metadata digest difference, selected historical byte availability, and explicit limits. Missing target bytes produce an unavailable preview without a token. Missing owner identity is not initialized. Soft-deleted current Assets retain the original undelete-first boundary.
+
+Preview returns `confirmation_available: false`, `admission_available: false`, `review_path_available: false`, `candidate.created: false`, `observation_token: null` and `expires_at: null`. Confirmation and receipt resolution fail with **409 AUDIO_HISTORY_RESTORE_ADMISSION_UNAVAILABLE**, after current authorization. No candidate, signing/confirmation capability, operation journal, receipt, approval, Job, model execution, Canvas/Timeline/Canon update or pin mutation is created.
+
+Two concrete gaps prevent opening the write path:
+1. The original Studio project quota is enforced through `project_usage`, which scans the asset metadata directory. Reusing it would violate the requested bounded exact-operation recovery boundary, while skipping it would bypass the original 1,000 Asset / 512 MiB current-binary quota.
+2. Original Production review is bound to its real Job candidate and immutable context. It cannot safely review a newly copied historical candidate. No Job or historical approval is forged to bridge that gap.
+
+No dormant candidate minting or fake idempotency protocol was added. Full inspect-confirm-create-review recovery, unique-operation journal/receipts, and restore-specific concurrency/restart validation remain unimplemented.
+
+## Additional owner safeguards and compatibility
+
+Every changed internal audio metadata commit now receives a real next CAS revision even when an existing server-side caller supplied the exact current revision/head without pre-incrementing it. No-op writes keep the same history head; stale revision/head, project binding or binary identity still fail. Existing query fixtures use this internal path; the original tests were not edited.
+
+Admission checks the exact resulting chain's encoded bytes before committing a new head, so a successful new state cannot exceed its own chain-read byte limit. Canonical record verification makes that accounting exact. New history allocation also checks the original asset filesystem's free bytes against the original 64 MiB safety reserve. This is admission, not a cross-application disk reservation. Historical bytes have their own per-Asset limits; the original project quota does not claim to include all historical storage.
+
+Original `/restore` remains undelete. Audio delete/undelete now can additionally refuse when current bytes cannot be verified or history/version/capacity limits would be exceeded. Non-audio writes retain their prior path. Original atomic current-file rename does not provide a parent-directory fsync guarantee, so **all platforms are limited to the tested process-crash/restart claim; power-loss durability is not claimed**.
+
+## Actual expanded verification (2026-10-25)
+
+```text
+python scripts/run_audio_history_tests.py -q tests/test_audio_asset_history_owner.py tests/test_audio_asset_history_http.py tests/test_studio_workspace_identity_history_contract.py tests/test_asset_library.py --basetemp=.runtime/audio-history-20261025/final-specialist-temp
+```
+
+**53 passed, 3 warnings in 25.60s; exit 0.** These are new synthetic File owners and the actual mounted application. They include real spawned-process CAS and same-key creation, four real `os._exit` process-termination points followed by reconstructed owners, pre/post-commit exception injection, legacy v7 lazy capture, immutable corruption rejection, old private snapshot privacy, real permission/membership/session ABA, final-return revocation, feature revocation, actor/branch/incarnation cursor isolation, real lineage pins, private production-origin ingestion, no-write preview and explicit confirmation refusal. The low-space admission test injects the measured free-space result; no physical disk was filled. No successful restore is claimed.
+
+AST parsing passed. The warnings concern pre-existing schema-field naming and Starlette/httpx deprecation; no dependency lock was changed.
+
+PostgreSQL: **NOT_RUN**. `DATABASE_URL`, `TEST_POSTGRES_DATABASE_URL`, `E2E_DATABASE_URL`, `POSTGRES_URL`, `TEST_DATABASE_URL`, `PGHOST` and `PGDATABASE` were absent. Only variable presence was recorded, never credential values. No PG-native Asset persistence was introduced.
+
+Two existing asset-query/cursor compatibility cases reach **503 ASSET_QUERY_INDEX_UNAVAILABLE**. A direct synthetic diagnostic exposed an original index `OSError [Errno 9] Bad file descriptor` during its fsync path. The same two cases were rerun in a **new detached worktree at exact original commit/tree** and failed with the same 503. They are not counted as passed. No protected query/index implementation or original query test was changed; its full compatibility acceptance remains blocked. Raw comparison logs are retained.
+
+Raw stdout/stderr is preserved losslessly in gzip with SHA-256 of decompressed bytes. Intermediate failures, environment errors and subsequent passing runs are distinct files; no previous session's logs are used as current evidence.

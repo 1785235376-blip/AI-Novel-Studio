@@ -26,6 +26,13 @@ def is_independent_studio_route(method, normalized_path):
     }
     if method in patterns and re.fullmatch(patterns[method], normalized_path) is not None:
         return True
+    history_patterns = {
+        "GET": root + r"/assets/[^/]+/history(?:/[a-f0-9]{64}(?:/download)?)?",
+        "POST": root + r"/assets/[^/]+/history/(?:[a-f0-9]{64}/restore-(?:preview|confirm)|restore-resolve)",
+    }
+    if method in history_patterns and re.fullmatch(history_patterns[method], normalized_path) is not None:
+        return True
+
     production = root + r"/production"
     owners = r"(?:image|audio|video|timeline)"
     production_patterns = {
@@ -573,6 +580,18 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
                             x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.relationships.remove(nid, scope, actor, aid, rid, expected_version, guard))
+
+    from .audio_asset_history_api import create_audio_asset_history_router
+    from .audio_asset_history_authority import authority_snapshot as audio_history_authority_snapshot
+
+    def audio_history_authority(nid, token, actor, scope):
+        from .. import api as original_api
+        return audio_history_authority_snapshot(service, nid, token, actor, scope,
+            session_resolver=original_api.trusted_session_resolver,
+            authorization_repository=original_api.membership_authorization_service.authorization_service.repository)
+
+    router.include_router(create_audio_asset_history_router(
+        service, invoke, commit_invoke, authority_snapshot=audio_history_authority))
 
     from .production_contract_api import create_production_contract_router
     router.include_router(create_production_contract_router(service, invoke))
