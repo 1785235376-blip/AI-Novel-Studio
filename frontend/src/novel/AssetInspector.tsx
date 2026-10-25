@@ -1,3 +1,4 @@
+import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect, useState, type ReactNode } from "react";
 import { Download, File, Image, Music2, Video } from "lucide-react";
 import { api, type Asset } from "../api";
@@ -60,7 +61,7 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
       {!loading && !previewable && <span>此文件类型没有内置预览。</span>}
     </div>
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
-    <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? new Date(asset.updated_at).toLocaleString() : "未记录"}</dd></div></dl>
+    <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? formatDate(asset.updated_at) : "未记录"}</dd></div></dl>
     <Button variant="ghost" onClick={download}><Download aria-hidden="true" size={15}/>下载原始文件</Button>
     {showReferences && <VisualReferencePanel key={`${asset.novel_id}:${asset.id}`} asset={asset}/>}
     {extra}

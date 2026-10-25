@@ -3,6 +3,7 @@ import { MessageCircleQuestion } from 'lucide-react';
 import { Button, Panel, StatusMessage } from '../ui/primitives';
 import { localTutorIdentity, type LocalTutorProps } from './identity';
 import './entry.css';
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] status-bar entry label
 export type { EditorSelection, LocalTutorProps } from './identity';
 type View = 'ask' | 'settings' | 'diagnostics';
 class TutorLoadBoundary extends Component<{ children: ReactNode; retry: () => void; close: () => void }, { failed: boolean }> {
@@ -26,7 +27,7 @@ export function useLocalTutorIntegration(props: LocalTutorProps) {
   useLayoutEffect(() => { setOpened(undefined); }, [identity]);
   const show = (view: View) => setOpened({ identity, view });
   return {
-    entry: <Button variant="ghost" className="local-tutor-entry" onClick={() => show('ask')}><MessageCircleQuestion aria-hidden="true" />问助手</Button>,
+    entry: <Button variant="ghost" className="local-tutor-entry" onClick={() => show('ask')}><MessageCircleQuestion aria-hidden="true" />{i18nT('lt.ask')}</Button>,
     settings: <Panel title="AI Tutor Integration"><p>本机优先 · 默认关闭 · 正文逐次确认共享</p><Button onClick={() => show('settings')}>本机 Tutor 集成设置</Button></Panel>,
     dialog: opened?.identity === identity ? <DeferredLocalTutorDialog key={identity} {...props} initialView={opened.view} onClose={() => setOpened(undefined)} /> : null,
   };

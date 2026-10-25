@@ -2,7 +2,7 @@
  * [HERMIA-FE-20261025 I18N P0] 轻量 i18n：zh-CN 源词典 + 编译期 en 完整性 + 运行时回退 zh（永不显示裸 key）。
  * 持久化 localStorage `studio.locale`，默认 zh-CN（不跟随浏览器）；切换即时生效并同步 <html lang>。
  */
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import { zhCN, type MessageKey } from './zh-CN';
 import { en } from './en';
 
@@ -96,4 +96,48 @@ export function formatDuration(seconds: number, locale: Locale = current): strin
   const s = Math.max(0, Math.round(seconds));
   const m = Math.floor(s / 60), r = s % 60;
   return locale === 'en' ? (m ? `${m} min ${r} s` : `${r} s`) : (m ? `${m} 分 ${r} 秒` : `${r} 秒`);
+}
+
+/* [HERMIA-FE-20261025 I18N P1/P2] tz(): translate a legacy zh display string by reverse lookup in the typed
+   dictionary (exact value match, then `pat.*` templates). Unknown strings pass through unchanged, so data and
+   untranslated text are never mangled and no raw key can appear. Lets shell components translate labels that
+   App.tsx still builds in zh without touching App.tsx logic. */
+let reverse: Map<string, MessageKey> | null = null;
+let patterns: Array<[RegExp, MessageKey, string[]]> | null = null;
+function buildReverse() {
+  reverse = new Map();
+  patterns = [];
+  for (const [k, v] of Object.entries(zhCN) as Array<[MessageKey, string]>) {
+    if (k.startsWith('pat.') || k.startsWith('he.')) { // [HERMIA-FE-20261025 I18N P1] he.* templates carry {ws}
+      const names: string[] = [];
+      const src = v.replace(/[.*+?^$()|[\]\\]/g, '\\$&').replace(/\\?\{(\w+)\\?\}|\{(\w+)\}/g, (_m, a, b) => { names.push(a || b); return '(.+?)'; });
+      patterns.push([new RegExp(`^${src}$`), k, names]);
+    } else if (!reverse.has(v)) reverse.set(v, k);
+  }
+  patterns.sort((a, b) => b[2].length - a[2].length || b[0].source.length - a[0].source.length);
+}
+export function translateZh(locale: Locale, text: string): string {
+  if (locale === 'zh-CN' || !text) return text;
+  if (!reverse) buildReverse();
+  const key = reverse!.get(text);
+  if (key) return translate(locale, key);
+  for (const [re, k, names] of patterns!) {
+    const m = re.exec(text);
+    if (m) {
+      const vars: Vars = {};
+      names.forEach((n, i) => { const raw = m[i + 1]; vars[n] = /^\d+$/.test(raw) ? formatNumber(Number(raw), locale) : translateZh(locale, raw); });
+      return translate(locale, k, vars);
+    }
+  }
+  return text;
+}
+export function tz(text: string): string { return translateZh(current, text); }
+export function useTz(): (text: string) => string {
+  const locale = useLocale();
+  return useCallback((text: string) => translateZh(locale, text), [locale]);
+}
+
+/** [HERMIA-FE-20261025 I18N P1] shared time-of-day formatter (replaces ad-hoc toLocaleTimeString). */
+export function formatTime(d: Date | string | number, locale: Locale = current, opts: Intl.DateTimeFormatOptions = { timeStyle: 'medium', hour12: false }): string {
+  return formatDate(d, locale, opts);
 }

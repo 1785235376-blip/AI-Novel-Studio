@@ -43,6 +43,7 @@ import { UnifiedWorkspacePreviewHost } from "./workspace/state/identityBootstrap
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
+import { t as i18nT, tz, useLocale, formatNumber } from "./i18n"; // [HERMIA-FE-20261025 I18N P1] string-only: status bar / desk labels
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { EMPTY_EDITOR_SELECTION, shouldRestoreNovelWriteOnEnter } from "./ui/moduleSwitchIsolation";
@@ -181,6 +182,7 @@ export async function recoverGenerationJob(
 type GenerationOrigin = { namespace: string; chapterId: string; novelId: string; identity: string; epoch: number; serial: number; baseVersion?: number; context: CollaborationContext };
 type GenerationObservation = GenerationOrigin & { active: boolean; sources: Set<EventSource> };
 export default function App() {
+  useLocale(); // [HERMIA-FE-20261025 I18N P1] re-render on 中/EN switch (no state/behaviour change)
   // [HERMIA-FE-20261023 M1] opt-in only (?uw=1). Value is fixed for the page load, so hook order stays stable.
   // [HERMIA-FE-20261025 U1fix] MUST-FIX 3: the preview host runs the existing collaboration bootstrap (real actor) first.
   if (unifiedWorkspacePreviewEnabled()) return <UnifiedWorkspacePreviewHost />;
@@ -1853,21 +1855,21 @@ function LegacyApp() {
       <div className="nv-desk">
       {/* [HERMIA-FE-20261022 REBUILD-W3] 写作台头部按原型 nd-head / nd-tools */}
       <div className="nv-desk__head">
-        <h2>{chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : (panel === 'write' ? '未选择章节' : (novelRailPanels.find(p => p.id === panel)?.label || '小说'))}</h2>
-        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--ok">写作台</span> : null}
-        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--local">版本 {chapter.data.version}</span> : null}
+        <h2>{tz(chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : (panel === 'write' ? '未选择章节' : (novelRailPanels.find(p => p.id === panel)?.label || '小说')))}</h2>
+        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--ok">{tz('写作台')}</span> : null}
+        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--local">{i18nT('pat.version', { v: chapter.data.version })}</span> : null}
         <span className="nv-spacer" />
-        {panel !== 'write' ? <button type="button" className="nv-btn" data-back-to-writer="true" onClick={() => openNovelPanel('write')}>回写作台</button> : null}
-        {panel === 'write' && chapter.data && shellMode === 'pro' /* [HERMIA-FE-20261022 U4] 版本对比仅专业 */ ? <button type="button" className="nv-btn" onClick={() => openNovelPanel('history')}>版本历史</button> : null}
+        {panel !== 'write' ? <button type="button" className="nv-btn" data-back-to-writer="true" onClick={() => openNovelPanel('write')}>{i18nT('desk.back')}</button> : null}
+        {panel === 'write' && chapter.data && shellMode === 'pro' /* [HERMIA-FE-20261022 U4] 版本对比仅专业 */ ? <button type="button" className="nv-btn" onClick={() => openNovelPanel('history')}>{i18nT('desk.history')}</button> : null}
       </div>
       <div className={panel === 'write' ? 'novel-workspace-chrome' : 'novel-workspace-chrome nv-hide'}>
       <div className={chapter.data ? 'editorbar nv-desk__tools' : 'editorbar nv-desk__tools nv-hide'}>
         <div className="novel-editor-metadata">
-        <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
-        {writingGoal.data && !writingGoalValue && <p className="notice" role="status">写作目标数据不完整，请刷新后重试。正文仍可编辑和保存。</p>}
+        <small>{i18nT('pat.chars', { n: formatNumber(text.trim().length) })}</small>
+        {writingGoal.data && !writingGoalValue && <p className="notice" role="status">{i18nT('desk.goalBad')}</p>}
         {writingGoalValue && (
           <div className="writing-goal" aria-label="写作目标进度">
-            <span>目标 {writingGoalValue.current_words.toLocaleString()} / {writingGoalValue.target_words.toLocaleString()} 字</span>
+            <span>{i18nT('pat.goal', { cur: formatNumber(writingGoalValue.current_words), target: formatNumber(writingGoalValue.target_words) })}</span>
             <span>第 {writingGoalValue.current_chapters} / {writingGoalValue.target_chapters} 章</span>
             <div className="writing-goal__bar" role="progressbar" aria-valuenow={Math.round(writingGoalValue.words_progress)} aria-valuemin={0} aria-valuemax={100}>
               <i style={{ width: `${Math.min(100, Math.max(0, writingGoalValue.words_progress))}%` }} />
@@ -1924,8 +1926,8 @@ function LegacyApp() {
         ]} />
       ) : (
         <section className="notice" aria-live="polite">
-          <strong>{corruptDraft?.identity === editorIdentity ? '请先处理草稿恢复候选' : '当前还没有打开的章节'}</strong>
-          <p>在左侧新建或选择章节，开始写作。</p>
+          <strong>{corruptDraft?.identity === editorIdentity ? i18nT('desk.recoverFirst') : i18nT('desk.nothingOpen')}</strong>
+          <p>{i18nT('desk.pickHint')}</p>
         </section>
       )}
       {writingFocus && referencesVisible && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
@@ -2092,8 +2094,8 @@ function LegacyApp() {
         creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true ? <CreativeWorkspace navigationConfirmation={styleLeave.dialog}
           enabled={true} novelId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }} scope={shellScope} actor={s.actor?.displayName || "本机作者"}
           chapter={chapter.data} savedChapters={chapters.data} savedChaptersReady={chapters.isSuccess && !chapters.isFetching} onRefreshSavedChapters={() => { void chapters.refetch(); }} chapterCount={chapters.data?.length || 0} manuscriptReady={saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity}
-          novelMain={mainWorkspace} novelSidebar={sidebar} novelInspector={inspector} novelStatus={<>保存：{saveDisplayLabel} · 连接：{scope ? "协作服务" : "本机"}{localTutor.entry}</>}
-          commonStatus={<>连接：{scope ? "协作服务" : "本机"}{localTutor.entry}</>}
+          novelMain={mainWorkspace} novelSidebar={sidebar} novelInspector={inspector} novelStatus={<>{i18nT("status.save", { v: tz(saveDisplayLabel) })} · {i18nT("status.conn", { v: i18nT(scope ? "status.connCloud" : "status.connLocal") })}{localTutor.entry}</>}
+          commonStatus={<>{i18nT("status.conn", { v: i18nT(scope ? "status.connCloud" : "status.connLocal") })}{localTutor.entry}</>}
           onExit={approved => styleLeave.request(current => { if (current() && (!approved || approved())) setCreativeWorkbenchOpen(false); })} onModuleChange={(value, approved) => styleLeave.request(current => { if (current() && (!approved || approved())) { setCreativeWorkbenchOpen(false); commitStudioModule(value); } })} onGlobalSearch={openWorkspaceSearch}
         /> : <AppShell
           module={studioModule}
@@ -2130,8 +2132,8 @@ function LegacyApp() {
           inspector={inspector}
           status={
             <>
-              保存：{saveDisplayLabel} · 连接：{scope ? "协作服务" : "本机"}
-              {taskSummary.total ? ` · AI 任务：${taskSummary.running ? "生成中" : taskSummary.failed ? "失败" : taskSummary.succeeded ? "已完成" : "排队中"}` : " · AI 任务：无运行任务"}
+              {i18nT("status.save", { v: tz(saveDisplayLabel) })} · {i18nT("status.conn", { v: i18nT(scope ? "status.connCloud" : "status.connLocal") })}
+              {` · ${i18nT("status.ai", { v: i18nT(taskSummary.total ? (taskSummary.running ? "status.aiRunning" : taskSummary.failed ? "status.aiFailed" : taskSummary.succeeded ? "status.aiDone" : "status.aiQueued") : "status.aiNone") })}`}
               {shellMessage ? ` · ${shellMessage}` : ""}
               {localTutor.entry}
             </>

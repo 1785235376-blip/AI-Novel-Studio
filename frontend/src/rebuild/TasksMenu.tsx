@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Popover, StateTag, Tabs, WithQuery, type Tone } from './primitives';
 import { rb, rbError } from './rebuildApi';
-import { useT } from '../i18n';
+import { useT, formatDate, useLocale } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] task menu body
 
 type Row = { id: string; source: string; label: string; status: string };
 const norm = (s: string) => s.toLowerCase();
 const tone = (s: string): Tone => /fail|error|cancel/.test(norm(s)) ? 'err' : /succe|complete|done|ready/.test(norm(s)) ? 'ok' : 'warn';
-const zh = (s: string) => ({ pending: '排队', queued: '排队', running: '进行中', succeeded: '完成', completed: '完成', failed: '失败', cancelled: '已取消' } as Record<string, string>)[norm(s)] || s;
+const STATUS_KEY = { pending: 'tk.s.queued', queued: 'tk.s.queued', running: 'tk.s.running', succeeded: 'tk.s.done', completed: 'tk.s.done', failed: 'tk.s.failed', cancelled: 'tk.s.cancelled' } as const;
 
 function useSources(novelId: string, enabled: boolean) {
   const o = { enabled: !!novelId && enabled, retry: false, refetchInterval: enabled ? 5000 : false as const };
@@ -23,30 +23,32 @@ function useSources(novelId: string, enabled: boolean) {
 
 export function TasksBody({ novelId, initialTab = 'tasks' }: { novelId: string; initialTab?: 'tasks' | 'trash' }) {
   const [tab, setTab] = useState<'tasks' | 'trash'>(initialTab);
+  const t = useT(); const locale = useLocale();
+  const zh = (st: string) => { const k = (STATUS_KEY as Record<string, typeof STATUS_KEY[keyof typeof STATUS_KEY]>)[norm(st)]; return k ? t(k) : st; };
   const s = useSources(novelId, tab === 'tasks');
   const trash = useQuery({ queryKey: ['rb', 'trash', novelId], queryFn: () => rb.assetTrash(novelId), enabled: !!novelId && tab === 'trash', retry: false });
-  if (!novelId) return <p className="rb-empty">先打开一部作品。</p>;
+  if (!novelId) return <p className="rb-empty">{t('tk.noWork')}</p>;
   const rows: Row[] = [
-    ...(s.media.data?.audiobook || []).map(t => ({ id: t.id, source: '有声书', label: t.chapter_id ? `章节 ${t.chapter_id.slice(0, 6)}` : t.id.slice(0, 8), status: t.status })),
-    ...(s.media.data?.motion || []).map(t => ({ id: t.id, source: '动态', label: t.id.slice(0, 8), status: t.status })),
-    ...(s.ws.data?.items || []).map(t => ({ id: `${t.authority}:${t.id}`, source: '工作区', label: t.title || t.id.slice(0, 8), status: t.status })),
-    ...(s.exports.data?.items || []).map(t => ({ id: t.id, source: '导出', label: t.format.toUpperCase(), status: t.status })),
+    ...(s.media.data?.audiobook || []).map(x => ({ id: x.id, source: t('tk.audiobook'), label: x.chapter_id ? t('tk.chapterN', { id: x.chapter_id.slice(0, 6) }) : x.id.slice(0, 8), status: x.status })),
+    ...(s.media.data?.motion || []).map(x => ({ id: x.id, source: t('tk.motion'), label: x.id.slice(0, 8), status: x.status })),
+    ...(s.ws.data?.items || []).map(x => ({ id: `${x.authority}:${x.id}`, source: t('tk.ws'), label: x.title || x.id.slice(0, 8), status: x.status })),
+    ...(s.exports.data?.items || []).map(x => ({ id: x.id, source: t('tk.export'), label: x.format.toUpperCase(), status: x.status })),
   ];
-  const errs = ([['媒体任务', s.media], ['资产任务', s.asset], ['工作区任务', s.ws], ['导出', s.exports]] as const).filter(([, q]) => q.isError);
+  const errs = ([[t('tk.media'), s.media], [t('tk.asset'), s.asset], [t('tk.wsTasks'), s.ws], [t('tk.export'), s.exports]] as const).filter(([, q]) => q.isError);
   const loading = [s.media, s.asset, s.ws, s.exports].some(q => q.isLoading);
   const st = s.asset.data?.by_status;
   return <div data-rebuild="tasks">
-    <Tabs label="任务视图" value={tab} onChange={setTab} items={[{ id: 'tasks', label: '任务' }, { id: 'trash', label: '回收站' }]} />
+    <Tabs label={t('tk.view')} value={tab} onChange={setTab} items={[{ id: 'tasks', label: t('tk.tasks') }, { id: 'trash', label: t('tk.trash') }]} />
     {tab === 'tasks' ? <div style={{ display: 'grid', gap: 8 }}>
-      {st ? <div className="rb-field" style={{ flexWrap: 'wrap' }} aria-label="资产任务统计"><span className="rb-sub">资产任务</span>
-        <StateTag tone="muted">共 {s.asset.data!.total}</StateTag>{st.RUNNING ? <StateTag tone="warn">进行 {st.RUNNING}</StateTag> : null}{st.PENDING ? <StateTag tone="warn">排队 {st.PENDING}</StateTag> : null}{st.FAILED ? <StateTag tone="err">失败 {st.FAILED}</StateTag> : null}</div> : null}
-      {rows.length ? <ul className="rb-list" aria-label="任务列表">{rows.map(r => <li key={`${r.source}:${r.id}`} className="rb-row"><StateTag tone="muted">{r.source}</StateTag><span className="rb-row__main">{r.label}</span><StateTag tone={tone(r.status)}>{zh(r.status)}</StateTag></li>)}</ul>
-        : loading ? <p className="rb-empty">读取中…</p> : <p className="rb-empty">当前没有进行中或最近的任务。</p>}
-      {errs.map(([name, q]) => <p key={name} className="rb-note" data-tone="err">{name}：{rbError(q.error)}</p>)}
-    </div> : trash.isError ? <p className="rb-note" data-tone="err">回收站读取失败：{rbError(trash.error)}</p>
-      : trash.isLoading ? <p className="rb-empty">读取中…</p>
-      : (trash.data?.items.length ?? 0) === 0 ? <p className="rb-empty">回收站是空的。</p>
-      : <ul className="rb-list" aria-label="回收站">{trash.data!.items.map(t => <li key={t.id} className="rb-row"><span className="rb-row__main">{t.name || t.title || t.id}</span>{t.kind ? <StateTag tone="muted">{t.kind}</StateTag> : null}{t.deleted_at ? <span className="rb-sub">{new Date(t.deleted_at).toLocaleString('zh-CN', { hour12: false })}</span> : null}</li>)}</ul>}
+      {st ? <div className="rb-field" style={{ flexWrap: 'wrap' }} aria-label={t('tk.stats')}><span className="rb-sub">{t('tk.asset')}</span>
+        <StateTag tone="muted">{t('tk.total', { n: s.asset.data!.total })}</StateTag>{st.RUNNING ? <StateTag tone="warn">{t('tk.running', { n: st.RUNNING })}</StateTag> : null}{st.PENDING ? <StateTag tone="warn">{t('tk.pending', { n: st.PENDING })}</StateTag> : null}{st.FAILED ? <StateTag tone="err">{t('tk.failed', { n: st.FAILED })}</StateTag> : null}</div> : null}
+      {rows.length ? <ul className="rb-list" aria-label={t('tk.list')}>{rows.map(r => <li key={`${r.source}:${r.id}`} className="rb-row"><StateTag tone="muted">{r.source}</StateTag><span className="rb-row__main">{r.label}</span><StateTag tone={tone(r.status)}>{zh(r.status)}</StateTag></li>)}</ul>
+        : loading ? <p className="rb-empty">{t('tk.loading')}</p> : <p className="rb-empty">{t('tk.none')}</p>}
+      {errs.map(([name, q]) => <p key={name} className="rb-note" data-tone="err">{t('tk.errOf', { name, err: rbError(q.error) })}</p>)}
+    </div> : trash.isError ? <p className="rb-note" data-tone="err">{t('tk.trashErr', { err: rbError(trash.error) })}</p>
+      : trash.isLoading ? <p className="rb-empty">{t('tk.loading')}</p>
+      : (trash.data?.items.length ?? 0) === 0 ? <p className="rb-empty">{t('tk.trashEmpty')}</p>
+      : <ul className="rb-list" aria-label={t('tk.trash')}>{trash.data!.items.map(x => <li key={x.id} className="rb-row"><span className="rb-row__main">{x.name || x.title || x.id}</span>{x.kind ? <StateTag tone="muted">{x.kind}</StateTag> : null}{x.deleted_at ? <span className="rb-sub">{formatDate(x.deleted_at, locale, { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false })}</span> : null}</li>)}</ul>}
   </div>;
 }
 

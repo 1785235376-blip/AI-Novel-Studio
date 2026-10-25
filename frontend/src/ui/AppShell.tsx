@@ -11,7 +11,7 @@ import {
 import { IconButton } from "./primitives";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle"; // [HERMIA-FE-20261025 I18N P0]
-import { useT, type MessageKey } from "../i18n";
+import { useT, useTz, type MessageKey } from "../i18n";
 const moduleKey = (id: StudioModule) => `module.${id}` as MessageKey;
 import { RebuildHeaderTools } from "../rebuild/HeaderTools"; // [HERMIA-FE-20261022 REBUILD]
 import {
@@ -302,43 +302,44 @@ export function SettingsPathGateway({
   onOpenModule?: (module: StudioModule) => void;
   children?: ReactNode;
 }) {
+  const t = useT(); // [HERMIA-FE-20261025 I18N P1] settings path panel
   return (
     <section
       className="settings-path-gateway"
       data-settings-path="novel-panel"
       data-x-ux-09="gateway"
       data-capability-tone="neutral"
-      aria-label="设置路径"
+      aria-label={t("spg.region")}
     >
       <header className="settings-path-gateway__head">
-        <strong>设置 · 发现路径</strong>
+        <strong>{t("spg.title")}</strong>
         <p>
-          AI 主控与插件不在默认 6 钮。可经 Header「设置」、「更多」或命令打开完整工作区。
+          {t("spg.desc")}
         </p>
-        <div className="settings-path-gateway__actions" role="group" aria-label="打开溢出工作区">
+        <div className="settings-path-gateway__actions" role="group" aria-label={t("spg.actions")}>
           <button
             type="button"
             data-settings-open="CONTROL"
             onClick={() => onOpenModule?.("CONTROL")}
           >
-            打开 AI 主控
+            {t("spg.control")}
           </button>
           <button
             type="button"
             data-settings-open="PLUGIN"
             onClick={() => onOpenModule?.("PLUGIN")}
           >
-            打开插件
+            {t("spg.plugin")}
           </button>
           <button
             type="button"
             data-settings-open="WORKFLOW"
             onClick={() => onOpenModule?.("WORKFLOW")}
           >
-            打开工作流
+            {t("spg.workflow")}
           </button>
         </div>
-        <small>禁假绿 · 连通态以真实账本为准</small>
+        <small>{t("spg.note")}</small>
       </header>
       {children}
     </section>
@@ -375,13 +376,14 @@ export function ContextBar({
   showCollapsedCta?: boolean;
 }) {
   const t = useT();
+  const tz = useTz();
   const nounLabel = (n?: ProjectNoun) => (n === "项目" ? t("noun.project") : t("noun.novel"));
   const fallback = t("context.unselected");
   // [HERMIA-FE-20261022 N-UX-08] Author-first when writing: 《书名》·小说·章序 — ban pure 项目腔
   if (writing) {
     const book = writing.bookTitle?.trim() || t("context.untitledNovel");
-    const chapter = writing.chapterLabel?.trim();
-    const save = writing.saveLabel?.trim();
+    const chapter = tz(writing.chapterLabel?.trim() || "") || undefined; // [HERMIA-FE-20261025 I18N P2] tz: legacy zh labels from App
+    const save = tz(writing.saveLabel?.trim() || "") || undefined;
     const unnamed = !writing.bookTitle?.trim();
     return (
       <nav
@@ -432,11 +434,11 @@ export function ContextBar({
             disabled={writing.collapsedCta.disabled}
             onClick={writing.collapsedCta.onClick}
           >
-            {writing.collapsedCta.label}
+            {tz(writing.collapsedCta.label)}
           </button>
         ) : null}
         {writing.saveLocation || writing.onOpenReview ? <span className="context-bar__spacer" style={{ flex: 1 }} /> : null}
-        {writing.saveLocation ? <span className="context-bar__save-location" data-save-location="true">{writing.saveLocation}</span> : null}
+        {writing.saveLocation ? <span className="context-bar__save-location" data-save-location="true">{tz(writing.saveLocation)}</span> : null}
         {writing.onOpenReview ? (
           <button type="button" className="context-bar__review" data-context-review="true" onClick={writing.onOpenReview}>
             {`${t("context.review")}${writing.reviewCount ? ` ${writing.reviewCount}` : ''}`}
