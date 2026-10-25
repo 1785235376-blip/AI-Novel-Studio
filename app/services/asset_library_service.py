@@ -59,7 +59,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review", "_comic_page_origin"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt", "_studio_result_origin", "_manual_mask_origin", "_model_reference_origin", "_video_reference_origin", "_prompt_write_origin", "_comic_ora_origin", "_comic_ora_review", "_comic_page_origin", "_audio_history_head", "_audio_history_restore_origin"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -78,6 +78,8 @@ class AssetLibraryService:
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._scope = threading.local()
+        from .audio_asset_history_store import AudioAssetHistoryStore
+        self._audio_history_store = AudioAssetHistoryStore(self.root)
         self._page_source_lock = threading.RLock()
         self._page_source_handles = {}
         self._page_source_request = ContextVar('asset_page_source_request', default=None)
@@ -241,8 +243,108 @@ class AssetLibraryService:
         if meta.get("_owner_actor_id") and meta["_owner_actor_id"] != actor_id: return False
         return branch_id is None or meta.get("branch_id") == branch_id
 
-    def _write_meta(self, meta: dict) -> None:
-        atomic_write(self._meta_path(meta["id"]), json.dumps(meta, ensure_ascii=False, indent=2))
+    def _write_meta(self, meta: dict, *, guard=None) -> None:
+        guard = guard or (lambda: None)
+        if meta.get('kind') != 'audio':
+            atomic_write(self._meta_path(meta['id']), json.dumps(meta, ensure_ascii=False, indent=2))
+            return
+        from .audio_asset_history_store import HEAD
+        with self._lock, workspace_mutation(self.root, 'asset-library'):
+            guard()
+            head = self._audio_history_store.prepare_commit(self, meta, guard=guard)
+            saved = {**meta, HEAD: head}
+            self._audio_history_store.fault('before_current_commit')
+            guard()
+            atomic_write(self._meta_path(meta['id']), json.dumps(saved, ensure_ascii=False, indent=2))
+            meta[HEAD] = head
+            self._audio_history_store.fault('after_current_commit')
+            guard()
+
+
+
+    def _audio_history_context(self, asset_id, *, branch_id, actor_id, guard):
+        guard()
+        current = self.get(asset_id, branch_id=branch_id, actor_id=actor_id)
+        if current.get('kind') != 'audio':
+            raise FileNotFoundError(asset_id)
+        records = self._audio_history_store.chain(current, guard=guard)
+        return current, records
+
+    def _audio_history_project(self, record, *, branch_id, actor_id, authorize_source):
+        if not self._in_scope(record['metadata'], branch_id, actor_id):
+            raise FileNotFoundError(record['asset_id'])
+        if authorize_source is not None:
+            authorize_source(copy.deepcopy(record['metadata']))
+        return {**{k: copy.deepcopy(v) for k, v in record.items() if k != 'metadata'},
+                'metadata': self.public(record['metadata'])}
+
+    def audio_history(self, asset_id, *, branch_id=None, actor_id=None, limit=20,
+                      cursor=None, guard=lambda: None, authorize_source=None):
+        from .audio_asset_history_store import HEAD, digest, AudioHistoryConflict
+        if type(limit) is not int or not 1 <= limit <= 50:
+            raise ValueError('AUDIO_HISTORY_PAGE_LIMIT')
+        with self._lock, workspace_mutation(self.root, 'asset-library'):
+            current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
+            authority = digest({'asset_id': asset_id, 'actor_id': actor_id, 'branch_id': branch_id,
+                                'binding': getattr(self._scope, 'binding', None)})
+            head = current.get(HEAD)
+            offset = 0
+            if cursor is not None:
+                try:
+                    if not isinstance(cursor, str) or len(cursor) > 2048: raise ValueError()
+                    value = json.loads(base64.b64decode(cursor, altchars=b'-_', validate=True))
+                    if (not isinstance(value, dict) or set(value) != {'head', 'offset', 'authority'}
+                            or value['head'] != head or value['authority'] != authority
+                            or type(value['offset']) is not int or not 0 <= value['offset'] <= len(records)):
+                        raise ValueError()
+                    offset = value['offset']
+                except (ValueError, TypeError, UnicodeError):
+                    raise AudioHistoryConflict('AUDIO_HISTORY_CURSOR_STALE') from None
+            items = []
+            while offset < len(records) and len(items) < limit:
+                record = records[offset]
+                offset += 1
+                if not self._in_scope(record['metadata'], branch_id, actor_id): continue
+                items.append(self._audio_history_project(record, branch_id=branch_id, actor_id=actor_id,
+                                                         authorize_source=authorize_source))
+            next_cursor = None
+            if offset < len(records):
+                next_cursor = base64.urlsafe_b64encode(json.dumps({'head': head, 'offset': offset,
+                    'authority': authority}, separators=(',', ':')).encode()).decode()
+            guard()
+            return {'asset_id': asset_id, 'current_version': current['version'], 'head': head,
+                    'items': items, 'next_cursor': next_cursor,
+                    'coverage': 'UNCAPTURED' if not records else 'COMPLETE' if records[-1]['asset_version'] == 1 else 'PARTIAL'}
+
+    def audio_history_detail(self, asset_id, version_id, *, branch_id=None, actor_id=None,
+                             guard=lambda: None, authorize_source=None):
+        from .audio_asset_history_store import HEAD, DIGEST
+        if not isinstance(version_id, str) or not DIGEST.fullmatch(version_id):
+            raise ValueError('AUDIO_HISTORY_VERSION_INVALID')
+        with self._lock, workspace_mutation(self.root, 'asset-library'):
+            current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
+            record = next((row for row in records if row['version_id'] == version_id), None)
+            if record is None: raise FileNotFoundError(asset_id)
+            projected = self._audio_history_project(record, branch_id=branch_id, actor_id=actor_id,
+                                                     authorize_source=authorize_source)
+            guard()
+            return {'asset_id': asset_id, 'current_version': current['version'], 'head': current[HEAD],
+                    'version': projected}
+
+    def audio_history_content(self, asset_id, version_id, *, branch_id=None, actor_id=None,
+                              max_bytes=None, guard=lambda: None, authorize_source=None):
+        from .audio_asset_history_store import DIGEST
+        if not isinstance(version_id, str) or not DIGEST.fullmatch(version_id):
+            raise ValueError('AUDIO_HISTORY_VERSION_INVALID')
+        with self._lock, workspace_mutation(self.root, 'asset-library'):
+            current, records = self._audio_history_context(asset_id, branch_id=branch_id, actor_id=actor_id, guard=guard)
+            record = next((row for row in records if row['version_id'] == version_id), None)
+            if record is None: raise FileNotFoundError(asset_id)
+            self._audio_history_project(record, branch_id=branch_id, actor_id=actor_id, authorize_source=authorize_source)
+            data = self._audio_history_store.content(record, maximum=self.MAX_BYTES if max_bytes is None else max_bytes, guard=guard)
+            if authorize_source is not None: authorize_source(copy.deepcopy(record['metadata']))
+            guard()
+            return data
 
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
@@ -574,7 +676,7 @@ class AssetLibraryService:
                 if model_lineage is not None: self._model_reference_source(origin, novel_id, branch_id)
                 if video_lineage is not None: self._video_reference_source(origin, novel_id, branch_id)
                 os.replace(temporary, target)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             except Exception:
                 # This UUID was allocated by this operation under the existing
                 # owner lock. If metadata never committed, keep no unindexed
@@ -931,7 +1033,7 @@ class AssetLibraryService:
                 updated_at=now(), version=meta["version"] + 1)
             if status == "APPROVED":
                 meta["approved_at"] = receipt["reviewed_at"]
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return meta
 
     def find_text_result(self, novel_id, idempotency_key, *, branch_id, owner_actor_id, proposal_id):
@@ -1246,7 +1348,7 @@ class AssetLibraryService:
                 if inherited_features or inherited_owner:
                     meta.update(_required_features=sorted(inherited_features), _owner_actor_id=inherited_owner)
                 meta.update(updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta
 
     def promote_owned(self, asset_id: str, *, actor_id: str, branch_id: str | None, expected_version: int, provenance: dict, guard=None, _comic_ora_review=None):
@@ -1280,7 +1382,7 @@ class AssetLibraryService:
                 meta['_comic_ora_review'] = copy.deepcopy(proof)
             meta.update(_owner_actor_id=None, _origin_provenance=saved_provenance,
                         approved_at=now(), updated_at=now(), version=meta["version"] + 1)
-            self._write_meta(meta)
+            self._write_meta(meta, guard=guard)
             return self.public(meta)
 
     def annotate_lineage(self, asset_id: str, declaration: dict, parent_ids: list[str], *,
@@ -1327,7 +1429,7 @@ class AssetLibraryService:
                 guard()
             if not meta.get("deleted_at"):
                 meta.update(deleted_at=now(), updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             # Keep original bytes and identity. Existing reads deliberately 404.
             return {"id": asset_id, "deleted": True, "recoverable": True,
                     "sha256": meta["sha256"], "version": meta["version"]}
@@ -1340,5 +1442,5 @@ class AssetLibraryService:
                 guard()
             if meta.get("deleted_at"):
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
-                self._write_meta(meta)
+                self._write_meta(meta, guard=guard)
             return meta

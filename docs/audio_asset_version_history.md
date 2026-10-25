@@ -65,3 +65,27 @@ Verification requires real File owners, actually mounted HTTP, original API-pref
 ## Protected surfaces
 
 No frontend, SDK, TaskCenter, Production query slice, dependency lock or global routing redesign. The original Asset owner and the smallest exact route mount/admission changes are disclosed separately. Push only this feature branch; no main updates, force-push, merge, release or deployment.
+
+## M1–M2 storage slice: implemented behavior
+
+The original audio `_write_meta` now prepares a verified binary blob and canonical metadata record before atomically replacing the original current metadata with `_audio_history_head`. The current metadata is the sole commit authority. There is no second authoritative head/index: reads walk only the head-linked chain. Prepared but unreachable files never appear as successful versions. Identical content is reused only after size/digest verification. A committed update followed by a lost acknowledgement remains exactly one visible revision after reopening the owner.
+
+Internal record identity is its canonical record SHA-256 (`version_id`). `history_sequence` starts at 1 for the first captured state, independently of the original `asset_version`: a legacy v7 first captures as sequence 1, then v8 as sequence 2. Metadata digest excludes only the private current-head pointer. Binary digest is the original `sha256`.
+
+Storage is additive under `assets/.audio-history/<asset-id>/`; both immutable records and blobs have `.bin` filenames to retain the original admitted native Windows reader's filename restriction. Record contents are canonical UTF-8 JSON, not media. Ordinary current Asset JSON/bin paths and the lazy derived Asset query index are unchanged.
+
+Limits: 100 captured states per Asset, 128 MiB retained bytes per Asset (including prepared files), 512 KiB per record, and 8 MiB / 5 seconds for a chain read. Capacity exhaustion refuses the mutation without deleting history; this also means delete/undelete can be refused at the limit. These are per-Asset history limits, not a claim of a project-wide historical-byte quota.
+
+Reads of uncaptured old Assets return `UNCAPTURED` with no invented items and do not migrate. The next real metadata mutation captures the verified old current state and the new state. Coverage is `PARTIAL` when the earliest known original revision exceeds 1.
+
+On Windows, validation covers process termination/restart and the original native admitted reader. No power-loss durability or directory-flush guarantee is claimed.
+
+### Actual first storage run
+
+Command (new synthetic profile and storage paths supplied by the runner):
+
+```text
+python scripts/run_audio_history_tests.py -q tests/test_audio_asset_history_owner.py tests/test_studio_workspace_identity_history_contract.py tests/test_asset_library.py tests/test_audio_asset_history_http.py::test_mounted_history_returns_head_and_original_bytes --basetemp=.runtime/audio-history-20261025/owner-first-temp
+```
+
+Result: **15 passed, 1 failed**, exit 1. The sole failure is the intentionally preserved pre-mount history HTTP 404. The 8 new owner cases and 7 original compatibility cases passed. This is not a claim that the entire command passed. Earlier native-reader failures and the initial environment collection error are retained separately. Follow-up HTTP, hard termination, candidate, authorization and independent review results are not implied by this first run.

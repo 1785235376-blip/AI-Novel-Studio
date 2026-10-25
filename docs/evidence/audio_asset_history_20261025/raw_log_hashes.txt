@@ -1,0 +1,5 @@
+Raw CRLF stdout/stderr preserved as gzip; decompress to recover original bytes.
+3118e6c7500c822c1b9e91567cba5e2783105923576bb994bfefd754d0e17c70  environment.log
+11de7ac0d5357b6072a14d0c251476bdc91f7c2c412c177bfb1a7cb2ca9e9843  baseline.log
+18a49f3ae702543e25240b8461e85972cacfa4a5b4f156b60ef93cc7a1a1cf94  baseline-fixed.log
+5a06d6e47862db0bd5d7f13492d21a4cf5767b5dc8fd06d8a1c9c576be0869f3  owner-first-run.log
