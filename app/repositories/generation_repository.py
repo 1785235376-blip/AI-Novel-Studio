@@ -8,10 +8,18 @@ from ..storage import atomic_write
 
 
 class GenerationProjectIdentityError(ValueError):
-    """A source-bound job may never be adopted by a replacement project owner."""
+    """A bound job may never be adopted by a replacement project owner."""
 
 
 def graph_job_binding(item):
+    # Compatibility name: specialized contracts below remain unchanged. The
+    # ordinary domain has its own strict, disjoint passive identity contract.
+    from ..services.generation_project_binding import FIELD, ordinary_job_binding
+    if FIELD in item:
+        try:
+            return ordinary_job_binding(item)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            raise GenerationProjectIdentityError("GENERATION_ORDINARY_BINDING_INVALID") from None
     from ..creative.director_image_binding import is_image_job, job_binding
     if is_image_job(item): return job_binding(item)
     from ..experimental.research_ocr_binding import is_research_ocr_job, research_ocr_job_binding
@@ -71,6 +79,14 @@ def graph_job_binding(item):
 
 
 def check_graph_job_update(previous, item):
+    from ..services.generation_project_binding import FIELD
+    if FIELD in item or (previous is not None and FIELD in previous):
+        current = graph_job_binding(item)
+        if previous is not None:
+            old = graph_job_binding(previous)
+            if FIELD not in previous or FIELD not in item or old != current:
+                raise GenerationProjectIdentityError("GENERATION_ORDINARY_BINDING_CHANGED")
+        return
     from ..creative.director_binding import is_creative_director_job
     from ..creative.director_image_binding import is_image_job
     image_keys = ("director_image_binding", "operation", "experimental_origin", "chapter_id", "profile",
@@ -113,6 +129,21 @@ class GenerationRepository:
         from ..file_project_lifecycle import project_operation
         from ..creative.project_store import _read_marker, BINDING
         data = self.root.parent.parent
+        from ..services.generation_project_binding import FIELD
+        if FIELD in item:
+            from types import SimpleNamespace
+            from ..creative.project_store import CreativeProjectStore
+            owner = CreativeProjectStore(SimpleNamespace(backend="file", root=data))
+            with ExitStack() as lease:
+                try:
+                    lease.enter_context(owner.existing_owner_only())
+                    current = lease.enter_context(owner.owner_lease(item["novel_id"]))
+                    if current != binding["project_incarnation"]:
+                        raise ValueError("different project owner")
+                except (FileNotFoundError, ValueError, TypeError, KeyError, OSError):
+                    raise GenerationProjectIdentityError("GENERATION_ORDINARY_PROJECT_OWNER_CHANGED") from None
+                yield
+            return
         with ExitStack() as owners:
             try:
                 owners.enter_context(project_operation(data, item["novel_id"]))
@@ -223,6 +254,9 @@ class GenerationRepository:
         for p in self.root.glob("*.json"):
             try:
                 item = json.loads(p.read_text(encoding="utf-8"))
+                from ..services.generation_project_binding import FIELD
+                if FIELD in item and item.get("id") != p.stem:
+                    continue
                 binding = graph_job_binding(item)
                 if binding is None:
                     out.append(item)
@@ -235,7 +269,15 @@ class GenerationRepository:
         path=self._job_path(jid)
         if not path.exists():raise KeyError(jid)
         item = json.loads(path.read_text(encoding="utf-8"))
-        binding = graph_job_binding(item)
+        from ..services.generation_project_binding import FIELD
+        if FIELD in item and item.get("id") != jid:
+            raise KeyError(jid)
+        try:
+            binding = graph_job_binding(item)
+        except GenerationProjectIdentityError:
+            if FIELD in item:
+                raise KeyError(jid) from None
+            raise
         if binding is None: return item
         try:
             with self._graph_owner(item, binding): return item

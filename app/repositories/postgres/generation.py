@@ -13,7 +13,11 @@ class PostgresGenerationRepository:
     def __init__(self,database):self.database=database
     @staticmethod
     def _payload(row):
-        saved=dict((row.request or {}).get("_repository_payload",{}));saved.update({"id":saved.get("id",str(row.id)),"status":row.status})
+        saved=dict((row.request or {}).get("_repository_payload",{}))
+        from ...services.generation_project_binding import FIELD
+        if FIELD in saved and (saved.get("id") != str(row.id) or saved.get("operation") != row.operation):
+            raise GenerationProjectIdentityError("GENERATION_ORDINARY_ROW_IDENTITY_MISMATCH")
+        saved.update({"id":saved.get("id",str(row.id)),"status":row.status})
         if row.context_snapshot_id is not None:saved["context_snapshot_id"]=str(row.context_snapshot_id)
         if row.result is not None:saved["result"]=row.result
         if row.error_code is not None:saved["error_code"]=row.error_code
@@ -42,6 +46,8 @@ class PostgresGenerationRepository:
         if FIELD in item:
             raise ValueError("CREATIVE_DIRECTOR_TERMINAL_POSTGRES_UNSUPPORTED")
         with self.database.session() as session:
+            # The original classifier also validates passive ordinary bindings;
+            # keep owner resolution and row update in this one transaction.
             binding = graph_job_binding(item)
             novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
             iid=external_uuid(item["id"]);row=session.scalar(select(GenerationJobModel).where(GenerationJobModel.id == iid).with_for_update());chapter_uuid=None
@@ -75,6 +81,9 @@ class PostgresGenerationRepository:
                     raise FileNotFoundError(item['chapter_id'])
             elif item.get("chapter_id"):
                 _,chapter=chapter_or_raise(session,item["chapter_id"]);chapter_uuid=chapter.id
+                from ...services.generation_project_binding import FIELD as ORDINARY_BINDING_FIELD
+                if ORDINARY_BINDING_FIELD in item and chapter.novel_id != novel_uuid:
+                    raise GenerationProjectIdentityError("GENERATION_ORDINARY_CHAPTER_OWNER_MISMATCH")
             if row is not None:
                 previous = dict((row.request or {}).get("_repository_payload", {}))
                 if ((previous.get("scope") != item.get("scope") and branch_owned)
@@ -82,7 +91,7 @@ class PostgresGenerationRepository:
                         or (previous.get("chapter_id") and previous["chapter_id"] != item.get("chapter_id"))):
                     from ...chapter_identity import ChapterIdentityConflict
                     raise ChapterIdentityConflict("GENERATION_CHAPTER_IDENTITY_CHANGED")
-            request=dict(item.get("request") or {});request["_repository_payload"]=dict(item)
+            request=dict(item.get("request") or {});request["_repository_payload"]=deepcopy(item)
             values={"novel_id":novel_uuid,"chapter_id":chapter_uuid,"operation":item.get("operation",item.get("agent","unknown")),"status":item.get("status","QUEUED"),"request":request,"draft_path":item.get("draft_path"),"provider":item.get("provider"),"model":item.get("model"),"fallback_used":bool(item.get("fallback_used",False)),"error_code":item.get("error_code"),"error_message":item.get("error_message") or item.get("error"),"result":item.get("result"),"retry_count":int(item.get("retry_count",0)),"timeout_seconds":int(item.get("timeout_seconds",120)),"context_snapshot_id":external_uuid(item["context_snapshot_id"]) if item.get("context_snapshot_id") and not branch_owned else None,"updated_at":datetime.now(timezone.utc)}
             if row is None:row=GenerationJobModel(id=iid,**values);session.add(row)
             else:
@@ -179,8 +188,17 @@ class PostgresGenerationRepository:
         with self.database.session() as session:
             row=session.get(GenerationJobModel,external_uuid(jid))
             if row is None:raise KeyError(jid)
-            item = self._payload(row)
-            binding = graph_job_binding(item)
+            try:
+                item = self._payload(row)
+            except GenerationProjectIdentityError:
+                raise KeyError(jid) from None
+            try:
+                binding = graph_job_binding(item)
+            except GenerationProjectIdentityError:
+                from ...services.generation_project_binding import FIELD
+                if FIELD in item:
+                    raise KeyError(jid) from None
+                raise
             if binding is not None:
                 try:
                     owner_id = self._graph_owner(session, item, binding)
@@ -191,8 +209,8 @@ class PostgresGenerationRepository:
         with self.database.session() as session:
             result = []
             for row in session.scalars(select(GenerationJobModel).order_by(GenerationJobModel.created_at)).all():
-                item = self._payload(row)
                 try:
+                    item = self._payload(row)
                     binding = graph_job_binding(item)
                     if binding is not None and row.novel_id != self._graph_owner(session, item, binding):
                         continue
