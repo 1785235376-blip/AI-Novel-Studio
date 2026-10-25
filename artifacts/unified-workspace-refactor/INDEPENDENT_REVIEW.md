@@ -1390,3 +1390,47 @@ suiteErr 只有 LocalAiBrowserJourneyContracts（基线内）。规则 (a) 三�
 - **P2（英文暴露的既有布局缺陷，不是本轮回归）**：IMAGE/AUDIO 空态左栏在 1024/1100 下被挤到约 30px，文字逐字竖排，并与右侧面板重叠。fbe029c4 的中文和英文都已存在（shots/base-zh-CN-normal-1024-AUDIO.png 等）。英文按钮更长，因此 offscreen 从 4 增加到 20（New generation / Write a line / Import from assets）。建议另开布局修复。
 - **P3**：扫描器有两个盲区，即 IH2 二级继承类属性 code 和 P1 位置参数反序。app/ 中目前没有这两种写法，属于理论风险，建议补 AUDITED 规则或测试。
 - **观察（非 MUST-FIX）**：英文 UI 仍有大量中文残留，例如各模块标题、编辑工具栏（播放/切割/入点）、资产类型、空态文案。这是粗翻范围内的问题，没有发现会导致误操作的错译。
+
+## [VERA-FE] 独立复审 @ 4b1b82d8（窄屏布局修复，基于 73819989）：MUST-FIX
+
+证据：`/workspace/hr/vera-compare/duim-4b1b82d8/`（matrix-new/base.json、analysis.txt、range-*.json、axe-*.json、cssmut.log、full1-3.json、isi1-5.json、shots/）。
+对照：同一脚本跑 73819989（4499）与 4b1b82d8（4399），只读 GET mock，非 GET 全部拦截；未写 8000，未碰 4299。
+
+### 结论
+竖排问题已修好，>1200 宽度零变化，axe 和全量 gate 都通过。但 en 的 VIDEO/EDIT 在 1201–1268（普通）/1201–1244（专业）宽度下「设置」仍在视口外，正好落在本次 ≤1200 断点之上，判 MUST-FIX。
+
+### 已确认修好
+- 竖排：矩阵 zh/en × 普通/专业 × 1024/1100/1101/1180/1200/1201/1280/1366/1440/1920 × DPR 1/1.25 × 6 模块，共 480 格。逐字竖排从 64 格降到 0；空态按钮越界从 36 格降到 0（en IMAGE/AUDIO 的 New generation / Import from assets 等）。≤1100 时网格变成 IMAGE/AUDIO/ASSETS `784px 240px`、VIDEO `1024px`，不再有 0 宽列。1100/1101 两侧都正常。
+- >1200 不变：1201/1280/1366/1440/1920 共 200 格，可见元素几何签名、按钮文本、正文和网格列与 73819989 逐项相同，0 差异。
+- 1024 只剩图标的搜索框：可访问名完整（zh「搜索功能、章节或命令」，en「Search chapters, commands」），不再只有 Ctrl K。点击能打开命令面板并聚焦输入框，Ctrl K 也能打开。
+- axe：zh/en × 普通/专业 × 1024/1100/1201/1366 × 6 模块，serious/critical 新旧都是 0。
+- 旧 CSS（73819989 的三个 CSS 文件）下，narrowLayout.css.test.ts 失败，属实。
+
+### MUST-FIX
+- **MF-1（P1）en VIDEO/EDIT 在 1201–1268 宽度下「设置」越出视口。** 逐像素扫 1180–1366：普通模式 1201–1268 有 36 个宽度越界，专业模式 1201–1244 有 44 个，按钮在右边被截掉（见 shots/new-en-normal-1201-VIDEO.png）。原因是这两个模块顶栏多了「导出」等工具。73819989 时越界范围是 1181–1268，本次只修了 ≤1200 这段。这是旧问题，我在 73819989 的矩阵里没测 1201–1279，所以漏了。zh 和其他模块没有这个问题。
+  修法建议：顶栏断点提高到 ≥1280，或者改成不依赖断点的方案：设置按钮 `flex:none`，搜索框和模块分段可以收缩，或者工具区溢出后收进「更多」。另外加一个浏览器级断言：在 1201/1240/1268 宽度下，en VIDEO/EDIT 的设置按钮 right ≤ innerWidth。
+
+### P2
+- **≤1200 规则块放在 ≤1180 和 ≤1060 之后，同等优先级下把它们覆盖了。** 结果是：
+  - ≤1060 的分段按钮 `padding:6px 5px` 被改回 9px，`gap:5px` 被改回 6px；
+  - ≤1180 的搜索框 `width:32px` 被 `flex:0 1 200px; min-width:96px` 覆盖。zh 在 1024–1200 变成 200px 宽（73819989 是 32px 图标），zh 专业 1024 是 132px。
+  现在没有溢出，但之前的收紧白做了，所以 en 窄屏余量变小。同一个块里 `.global-header{gap}` 还写了两遍（8px 后又写 6px）。建议把 ≤1200 块移到 ≤1180 之前，或者合并。
+- **narrowLayout.css.test.ts 只对 CSS 文本做正则匹配。** CSS 变异 12 个：杀死 4 个（M2/M3 断点改为 900、M9 顶栏断点改为 1000、旧 CSS）；存活 8 个：
+  - M1/M4：后面追加覆盖，把 0 宽列加回来；
+  - M5：重新显示左栏；
+  - M8：后面追加 nowrap；
+  - M10/M11/M12：顶栏 gap/padding/搜索框加大，设置按钮被挤出；
+  - M7：只调换声明顺序（无害，正确存活）。
+  另外 M6 只改空白（无害）却让测试失败，属于误报。这个测试证明不了布局结果，尤其是「设置在视口内」这一条，它只检查 `gap:8px` 这个字面值。建议用 Playwright 在 1024/1100/1201/1268 宽度下断言网格列数、设置按钮的 right 和 scrollWidth，CSS 文本测试只作辅助。
+- **≤1100 隐藏左栏后，没有别的入口能打开它（旧问题）。** 1101 有、1024 没有的入口：IMAGE 的「漫画制作」子入口；ASSETS 的类型筛选（全部/图像/音频/视频/文档）；VIDEO 的场景/镜头树和素材引用。窄屏下这些功能就进不去了。建议加一个抽屉或折叠按钮。
+
+### P3
+- Ctrl K 提示从 ≤1180 隐藏扩大到 ≤1200（1181–1200 也看不到），影响不大。pro 顶栏「导出」未翻译，Hermia 已知。
+
+### 全量 gate（Node 22.14，`--pool=forks --maxWorkers=3`，开跑时负载约 4–5）
+- run1/2/3：raw 293/293/293，ISI 8/8/8，adjusted 293/293/293。不在基线里的非 ISI 失败为 0；suite 级失败只有基线里已有的 LocalAiBrowserJourneyContracts ENOENT。narrowLayout 三次都是 4/4 通过。
+- (a) 三次最优 adjusted 293 ≤297：通过。(b) 允许一次重跑 ≤297：通过（首跑就满足）。基线是 298/adjusted 297。
+- **ISI.regression 多出的 2 条：** 我在独立进程里单跑这个文件 5 次，失败数是 8/10/8/8/8。基线是 8。第 2 次多出的 2 条是「cannot submit a delayed local file after the project returns to its original value」和「admits a newly mounted owner after the old instance was permanently invalidated」，没有负载时也会偶发。本次只改了 CSS，jsdom 逻辑不受影响，判为已知 ISI 时序不稳定，和本次改动无关。
+
+### 清理
+临时 worktree（vera-l-base、vera-l-mut）已删除。自己的 vite（4399/4499）已按 PID 结束，包括子进程。本段未提交。
