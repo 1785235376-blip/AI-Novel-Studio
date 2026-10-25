@@ -921,3 +921,17 @@ MUST-FIX：
 变异：租约不退役(4 失败)、占位 actor(1)、缺 instance(1)、拒绝 v0(1)、损坏不保护(1) 均被杀死；**存活**：future-version 被接受、setWorksets 去掉 isCurrent 检查 → 需补测试（P2）。
 
 已知缺口判定：删除后同名重建/不复活依赖服务端新 id，无 incarnation、项目消失无主动清理 —— 任务书要求"删除后同名重建、不复活"，当前仅通过不同 id 单测覆盖；如服务端保证新 id 则可接受为 P2，但需在文档中明确依赖并加一条"同 id 重建"行为说明，非本轮阻断。其他 P2：resetAll 未接 UI；身份 scope 在 collabScope.projectId≠novelId 时混拼；真实模式工作集按项目而会话模式按布局。
+
+## [VERA-FE] 集成复核（U5；575501b9 = U1+U2+U3+U4 集成，2026-10-25）
+
+**结论：MUST-FIX（上轮 U1 的 3 项均未修复，集成新增部分本身 PASS）**。证据：`/workspace/hr/vera-compare/int-575501b9/`。
+
+- 工程：npm ci / tsc -b / build 均 0。全量三次（Node 22.14）调整后 292/293/293（基线 298），两规则均通过；无新增持续失败；唯一偶发为 ISI 文件 IndependentStudioIdentity.regression（1/3）。TaskCenter.additive、m2s1fix、studioPreviewPanels、u1.identity、u1.purge、u3.* 三次全过。
+- 上轮 MUST-FIX 浏览器复现（u1.json、s1probe.log），8996f553..575501b9 无 U1 修复提交：
+  1. 共用 key 覆盖：保存工作集后平移 → `worksets:[]`，冷重开列表为空 —— 仍在。
+  2. 会话模式保存工作集 →「项目已经切换，这次修改没有保存。」且列表为空；配额失败同样误报 —— 仍在。
+  3. ?uw=1 无 bootstrap（actor 恒空，任务面板显示「未接通」即其直接后果）；注入身份后冷重开视口仍为默认 (40,40)，已存 (-160,70) 未应用 —— 仍在。
+- GATE_INT 两个旧测试改动裁定：**规格变化，不是削弱断言**。原断言依赖伪造 `uw-preview:` 身份读取，违反任务书"不伪造身份"；新版保留"恰好一次 GET、全部 GET"并新增"请求头无 uw-preview"；无身份不读取由 u3.tasks「not-connected … no read」覆盖，浏览器实测无身份时零任务请求（仅 /api/novels 与 chapters）。capability 增加 results/history=partial 与面板实际一致。P2：`studioPreviewPanels.tsx:55` 仍残留 `uw-preview:${novelId}` 身份字符串（旧 TaskCenterPanel 路径，未挂载），建议删除。
+- 集成冒烟（int.json，1366/1440/1920）：非 GET=0，pageerror=0，无横向滚动；面板 outline/creative/inspector/results/history/tasks；结果/历史显示诚实空态 int-*-empty；有身份时任务与 production jobs 均为 GET、无 uw-preview 头。axe：color-contrast（旧）+ **新增 landmark-unique:#uw-panel-tasks**（P2）。
+- 清理（purge.json）：注入身份后列表移除项目 B → 仅删除本人 B 的 viewprefs/layout 键；他人键与画布草稿保留。缺口（P2）：ProjectPresence 只在本次会话内比较，项目在会话外被删除后冷开不会清理。
+- 变异（mutations.log）：purge 不校验用户(1 失败)、任务读取回退为每次挂载一次(2)、身份接受空 actor(1) 均被杀死；purge 覆盖画布键 / 首个列表 / 失败读取三条为等价或无害变异。
