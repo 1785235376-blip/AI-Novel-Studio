@@ -963,3 +963,12 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - **DELIVERY_REPORT 分阶段表**写「Vera PASS 575501b9」：**不对**。575501b9 的结论是 MUST-FIX（U1 三项仍在），通过的只有集成代码本身。
 - 第 23 行：landmark-unique 的结论成立，但 aria-required-children 没有说明（P3）。
 - 其余各行的分类与证据相符；第 15、19、22、28、29 行的「部分实现」和 20、21、30 行的「受阻」理由都成立。
+
+## [VERA-FE] 独立复审 work/hermia-default-ui-20261025 @ 99edf71a（2026-10-25，未提交）
+结论：**MUST-FIX（1 项）**，其余 P0 声明经前后对比确认成立。
+- 已确认：无裸 ID（ws1/s1/b1/audio-wav-project 消失，三宽度无 uuid/hex）；普通模式无「部分实现/未接通」徽章；章节查询 undefined 根因修复（bare/slow/garbage 前 queryUndefined=true，后=false）；问助手白话卡片+重试；Cmd-K id 列改为人话提示；资产 500 单一 alert+重试；无写请求（关闭助手的 POST cancel 基线同样存在）。
+- **MUST-FIX P0-3 单屏单状态未完成**：章节接口 500（或慢加载 6s）时，左栏/章节列显示「章节暂时读不到，请稍后重试。」/「正在读取章节…」，同时中间卡片显示「当前还没有打开的章节/在左侧新建或选择章节」，右侧检查器显示「未选择章节」及主按钮「在左侧选择或新建章节」（aside.workspace-inspector .nv-assist__next .nv-btn--primary）。错误/加载与空态 CTA 并存。位置：App.tsx 小说空卡片、检查器 nv-assist 下一步。证据 shots/probe_500.png、probe_slow.png。
+- P2：折叠「更多」内 div.novel-error 含原始文本「无法加载章节：Error: {"detail":"boom"}」；章节按钮 button.nv-chapters__ch 带 aria-selected（axe aria-allowed-attr critical，因章节现在能加载而暴露，非新写代码）；问助手按钮字体与正文不一致。
+- 测试缺口（变异存活）：Cmd-K 恢复 id 列、失败时仍显示新建章节、rail 徽章不分模式、App 层 simple 接线、写作台/版本徽章门控 —— 均无测试捕获。被捕获：chapterList→items、scopeLabel 回退 id、资产错误态、Cmd-K 专业项隐藏。
+- PortableProjectsPanel.assetRelations：单独 3/3 通过 9/9，本分支未改 src/experimental，判偶发成立。
+- 证据：/workspace/hr/vera-compare/dui-99edf71a/
