@@ -1,6 +1,7 @@
 // [HERMIA-FE-20261022 REBUILD] Thin real-endpoint client for the prototype-style rebuild.
 // Every function hits the real backend path; failures surface as ApiError (no fake success).
 import { call, ApiError } from '../api';
+import { getLocale, t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 VERA-097 P3]
 const e = encodeURIComponent;
 
 export type NovelExport = { format: string; filename: string; content: string };
@@ -40,14 +41,15 @@ export const rb = {
 
 /** Honest error label: never claims success; maps feature-off to a plain sentence. */
 export function rbError(err: unknown): string {
+  // [HERMIA-FE-20261025 VERA-097 P3] 固定文案走 i18n；仅中文界面透传含 CJK 的结构化文案（英文界面不混入中文）
   if (err instanceof ApiError) {
     const code = String(err.problem.code || '');
-    if (code === 'EXPERIMENTAL_FEATURE_DISABLED') return '后端未开启此功能（实验开关关闭）';
-    if (err.status === 404) return '后端没有这个接口（404）';
-    if (err.status === 401 || code === 'SESSION_REQUIRED') return '需要登录会话';
-    if (err.status === 403) return '没有权限';
-    if (/[\u4e00-\u9fff]/.test(err.problem.message || '')) return err.problem.message;
-    return `后端返回错误（${err.status}）`; // [HERMIA-FE-20261022 R7-FIX2] 不露原始错误码
+    if (code === 'EXPERIMENTAL_FEATURE_DISABLED') return i18nT('rb.err.disabled');
+    if (err.status === 404) return i18nT('rb.err.404');
+    if (err.status === 401 || code === 'SESSION_REQUIRED') return i18nT('rb.err.session');
+    if (err.status === 403) return i18nT('rb.err.forbidden');
+    if (getLocale() !== 'en' && /[\u4e00-\u9fff]/.test(err.problem.message || '')) return err.problem.message;
+    return i18nT('rb.err.status', { status: err.status }); // [HERMIA-FE-20261022 R7-FIX2] 不露原始错误码
   }
-  return '后端不可用（无法连接）';
+  return i18nT('rb.err.unreachable');
 }

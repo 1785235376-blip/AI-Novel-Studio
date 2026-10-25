@@ -76,15 +76,15 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       for (let o = 0; o < bytes.length; o += 0x8000) bin += String.fromCharCode(...bytes.subarray(o, o + 0x8000));
       const kind = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : 'file';
       const saved = await api.uploadAsset(novelId, {filename: file.name, media_type: file.type || undefined, kind, content_base64: btoa(bin)});
-      setNote(`已导入「${saved.filename}」`); setSelId(saved.id); setView('lib'); setTick(x => x + 1);
-    } catch (e) { setNote(`导入失败：${rbError(e)}`); } finally { setBusy(false); }
+      setNote(i18nT('rb.ast.imported', { name: saved.filename })); setSelId(saved.id); setView('lib'); setTick(x => x + 1);
+    } catch (e) { setNote(i18nT('rb.ast.importFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; } finally { setBusy(false); }
   }
   async function remove(a: Asset) {
     if (!window.confirm(`把「${a.filename}」移到回收站？被引用的地方会失去这个资产。`)) return;
-    try { await api.deleteAsset(a.id, novelId); setSelId(null); setNote(`已移到回收站：${a.filename}`); setTick(x => x + 1); } catch (e) { setNote(`删除失败：${rbError(e)}`); }
+    try { await api.deleteAsset(a.id, novelId); setSelId(null); setNote(i18nT('rb.ast.deleted', { name: a.filename })) /* [HERMIA-FE-20261025 VERA-097 P3] */; setTick(x => x + 1); } catch (e) { setNote(i18nT('rb.ast.deleteFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; }
   }
   async function restore(a: Asset) {
-    try { await api.restoreAsset(novelId, a.id); setNote(`已恢复：${a.filename}`); setTick(x => x + 1); } catch (e) { setNote(`恢复失败：${rbError(e)}`); }
+    try { await api.restoreAsset(novelId, a.id); setNote(i18nT('rb.ast.restored', { name: a.filename })) /* [HERMIA-FE-20261025 VERA-097 P3] */; setTick(x => x + 1); } catch (e) { setNote(i18nT('rb.ast.restoreFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; }
   }
   const pickFile = () => fileRef.current?.click();
   const loaded = items !== null;
@@ -128,7 +128,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       </div>
       {/* [HERMIA-FE-20261025 DUI P0-3] one state at a time: error (with retry) replaces the empty-library copy; raw detail only in data-* */}
       <div className="ast-grid" id="astGrid">
-        {err ? <div className="ws-honest-empty ast-empty ast-err" role="alert" data-error-detail={err}><h4>资产库暂时读不到，请稍后重试。</h4>
+        {err ? <div className="ws-honest-empty ast-empty ast-err" role="alert" data-error-detail={err}><h4>{i18nT('rb.ast.loadFailed')}</h4>
             <button type="button" className="nv-btn" onClick={() => { setItems(null); setTick(t => t + 1); }}>重试</button></div>
           : !loaded ? <p className="mw-muted">读取中…</p>
           : (items || []).length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_library" data-honest-workspace="ASSETS">
@@ -153,7 +153,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         {isPro ? <><div><dt>版本</dt><dd>{cur.version ?? cur.provenance?.version ? `v${cur.version ?? cur.provenance?.version}` : '未记录'}</dd></div>
         <div><dt>来源</dt><dd>{originLabel(cur.provenance?.origin)}</dd></div>
         <div><dt>完整性</dt><dd>{integrityLabel(cur.provenance?.integrity)}</dd></div>
-        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? '暂时查不到' : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div></> : <div><dt>类型</dt><dd>{assetKind(cur)} · {sizeLabel(cur.size)}</dd></div>}
+        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? i18nT('rb.ast.refsShortFailed') : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div></> : <div><dt>类型</dt><dd>{assetKind(cur)} · {sizeLabel(cur.size)}</dd></div>}
       </dl>
       {isPro ? <div className="sec" data-pro-only="lineage"><h4>血缘摘要</h4>
         <div className="lineage">{(cur.relationships || []).length ? (cur.relationships || []).slice(0, 4).map((r: any, i) => <div key={i} className="ln">→ {r?.target?.label || r?.label || '关联对象'}</div>)
@@ -186,7 +186,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
             <div className="sec ast-refs-card"><h4>{cur.filename}</h4>
               <div className="lineage">
                 <div className="ln">← <b>来源</b> · {originLabel(cur.provenance?.origin)}</div>
-                {refs === null ? <div className="ln">读取中…</div> : refs === 'err' ? <div className="ln">引用关系暂时查不到。</div>
+                {refs === null ? <div className="ln">读取中…</div> : refs === 'err' ? <div className="ln">{i18nT('rb.ast.refsFailed')}</div>
                   : refs.items.length === 0 ? <div className="ln">还没有地方引用它。</div>
                   : refs.items.map((r, i) => <div key={i} className="ln">→ <b>{COLLECTION_LABEL[r.collection] || '其他位置'}</b> · 第 {r.version} 版</div>)}
               </div>
