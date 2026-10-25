@@ -36,6 +36,12 @@ export function resolveWorkspaceIdentity(i: IdentityInput): WorkspaceIdentity {
   return {kind: 'real', scope, key: `real\u0000${scope.userId}\u0000${scope.projectId}\u0000${scope.projectInstanceId}\u0000${client}`};
 }
 
+// [HERMIA-FE-20261025 M10-purgefix] user-level identity (no project involved) for per-user housekeeping such as purge.
+// Same actor rules as resolveWorkspaceIdentity; never fabricates a user.
+export function resolveWorkspaceUser(actorId: string | null | undefined): string | null {
+  return blank(actorId) || fake(actorId!) ? null : actorId!;
+}
+
 export const IDENTITY_TEXT: Record<WorkspaceIdentity['kind'] | 'no-actor' | 'no-project' | 'no-instance' | 'scope-mismatch', string> = {
   real: '视图与布局会按当前账号和项目保存在本机浏览器（不跨设备同步）。',
   session: '仅本次会话：未保存到本机。',

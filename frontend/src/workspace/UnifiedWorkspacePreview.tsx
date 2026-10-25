@@ -24,7 +24,7 @@ import {WorkspaceViewsPanel} from './panels/WorkspaceViewsPanel';
 import {createPanelFocusTracker, type PanelFocusTracker} from './state/panelFocus';
 import type {DockLayoutApi} from './layout/DockLayout';
 import {useStudio} from '../store';
-import {IDENTITY_TEXT, resolveWorkspaceIdentity} from './state/scopeLease';
+import {IDENTITY_TEXT, resolveWorkspaceIdentity, resolveWorkspaceUser} from './state/scopeLease';
 import {TasksPanelLive} from './panels/TasksPanelLive'; // [HERMIA-FE-20261025 U3-M3/M4] real task panel (replaces fabricated-identity TasksPanel)
 import {canvasHasNode, useLiveTasks} from './tasks/useLiveTasks';
 import {ResultsPanel} from './results/ResultsPanel'; // [HERMIA-FE-20261025 U4 wiring]
@@ -131,7 +131,9 @@ export function UnifiedWorkspacePreview() {
   useEffect(() => { setSel(EMPTY_SELECTION); setNav(INITIAL_NAV); }, [tasks]);
   const store = realScope ? safeLocalStorage() : null;
   // [HERMIA-FE-20261025 U1-M2 INT] no resurrection: purge own geometry for projects that vanished from a successful list.
-  const realUser = useMemo(() => { const r = resolveWorkspaceIdentity({actorId, collabScope, projectId: '\u0001'}); return r.kind === 'real' ? r.scope.userId : null; }, [actorId, collabScope]);
+  // [HERMIA-FE-20261025 M10-purgefix] Vera final MUST-FIX: was derived via a sentinel projectId, which the U1fix scope-mismatch
+  // check turned into session ⇒ null ⇒ purge never ran. The user does not depend on a project.
+  const realUser = useMemo(() => resolveWorkspaceUser(actorId), [actorId]);
   const presence = useRef<ProjectPresence | null>(null);
   useEffect(() => {
     if (!realUser || !novels.isSuccess || !Array.isArray(novels.data)) return;
