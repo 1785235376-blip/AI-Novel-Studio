@@ -693,7 +693,10 @@ function LegacyApp() {
     } else setProjectRecoveryNotice('上次项目选择损坏或浏览器存储不可用。请选择作品；正文和服务端工作现场未改变。');
   }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, independentStudios, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
   // [HERMIA-FE-20261025 UWPORT-S1] reopen returns to the last chapter (real identity only; else 仅本次会话); missing chapter ⇒ first.
-  useLastChapter({ actorId: s.actor?.id, scope: s.scope, novelId: s.novelId, chapterId: s.chapterId, rows: chapters.data, setChapter: s.setChapter });
+  // [UWPORT-P0] Vera reopen race: while the collaboration bootstrap is still deciding the actor, neither pick by memory nor write.
+  const bootstrapActorId = bootstrap.data?.actor?.actor_id;
+  const identityPending = bootstrap.isLoading || (!!bootstrapActorId && bootstrapActorId !== s.actor?.id);
+  const lastPositionMode = useLastChapter({ actorId: s.actor?.id, scope: s.scope, novelId: s.novelId, chapterId: s.chapterId, rows: chapters.data, setChapter: s.setChapter, identityPending });
   // BACKPORT CANDIDATE (U02): hydrate before exposing an editable surface, and
   // prefer the current draft even when its rich-text document is absent.
   useLayoutEffect(() => { setComposing(false); }, [editorIdentity, scopeEpoch]);
@@ -2150,6 +2153,7 @@ function LegacyApp() {
               {i18nT("status.save", { v: tz(saveDisplayLabel) })} · {i18nT("status.conn", { v: i18nT(scope ? "status.connCloud" : "status.connLocal") })}
               {` · ${i18nT("status.ai", { v: i18nT(taskSummary.total ? (taskSummary.running ? "status.aiRunning" : taskSummary.failed ? "status.aiFailed" : taskSummary.succeeded ? "status.aiDone" : "status.aiQueued") : "status.aiNone") })}`}
               {shellMessage ? ` · ${shellMessage}` : ""}
+              {s.novelId && lastPositionMode === "session" ? <span data-testid="dui-lastpos-session">{` · ${i18nT("status.lastPosSession")}`}</span> : null}
               {localTutor.entry}
               {/* [HERMIA-FE-20261025 UWPORT-S2] tasks/results/history drawer (port of the unified loop) */}
               {s.novelId ? <>{" "}<DefaultTasksDrawer key={`${namespace}|${s.novelId}`} novelId={s.novelId} actor={s.actor} scope={s.scope} sessionToken={s.sessionToken} /></> : null}

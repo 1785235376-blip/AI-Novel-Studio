@@ -20,3 +20,28 @@ describe('DefaultTasksDrawer (default UI port of the unified task loop)', () => 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
+
+describe('DefaultTasksDrawer focus trap + scroll (Vera P1)', () => {
+  it('Tab / Shift+Tab stay inside the dialog; Esc still closes after cycling', () => {
+    render(<DefaultTasksDrawer novelId="p1" actor={undefined} scope={undefined} sessionToken="" />);
+    fireEvent.click(screen.getByRole('button', {name: '任务与结果'}));
+    const dlg = screen.getByRole('dialog');
+    const f = [...dlg.querySelectorAll<HTMLElement>('button:not([disabled])')];
+    expect(f.length).toBeGreaterThan(0);
+    f[f.length - 1].focus(); fireEvent.keyDown(f[f.length - 1], {key: 'Tab'});
+    expect(document.activeElement).toBe(f[0]);
+    fireEvent.keyDown(f[0], {key: 'Tab', shiftKey: true});
+    expect(document.activeElement).toBe(f[f.length - 1]);
+    dlg.focus(); fireEvent.keyDown(dlg, {key: 'Tab', shiftKey: true});
+    expect(dlg.contains(document.activeElement)).toBe(true);
+    fireEvent.keyDown(document.activeElement!, {key: 'Escape'});
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('drawer is height-capped and scrollable so the last action stays reachable', () => {
+    render(<DefaultTasksDrawer novelId="p1" actor={undefined} scope={undefined} sessionToken="" />);
+    fireEvent.click(screen.getByRole('button', {name: '任务与结果'}));
+    const st = screen.getByRole('dialog').style;
+    expect(st.maxHeight).toMatch(/vh|calc/);
+    expect(st.overflowY).toBe('auto');
+  });
+});

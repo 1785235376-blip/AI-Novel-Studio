@@ -28,4 +28,28 @@ describe('useLastChapter (default UI wiring)', () => {
     renderHook(() => useLastChapter({actorId: 'u1', scope, novelId: 'p1', chapterId: '', rows: undefined, setChapter}));
     expect(setChapter).not.toHaveBeenCalled();
   });
+  it('P0 race: identity arriving late (2.5s) neither picks by session memory nor writes the real key', async () => {
+    vi.useFakeTimers();
+    try {
+      localStorage.setItem('poemseed.default.lastpos.v1::u1::p1::w%2Fs%2Fb', JSON.stringify({v: 1, chapterId: 'c2'}));
+      let chapterId = ''; const setChapter = vi.fn((id: string) => { chapterId = id; });
+      const rows3 = [{id: 'c1'}, {id: 'c2'}, {id: 'c3'}];
+      const props = () => ({actorId: late ? 'u1' : undefined, scope, novelId: 'p1', chapterId, rows: rows3, setChapter, identityPending: !late});
+      let late = false;
+      const r = renderHook(() => useLastChapter(props()));
+      expect(setChapter).not.toHaveBeenCalled();
+      expect(r.result.current).toBe('pending');
+      await vi.advanceTimersByTimeAsync(2500);
+      late = true; r.rerender();
+      expect(setChapter).toHaveBeenCalledTimes(1);
+      expect(setChapter).toHaveBeenCalledWith('c2');
+      r.rerender();
+      expect(JSON.parse(localStorage.getItem('poemseed.default.lastpos.v1::u1::p1::w%2Fs%2Fb')!).chapterId).toBe('c2');
+      expect(r.result.current).toBe('real');
+    } finally { vi.useRealTimers(); }
+  });
+  it('pending never writes even if a chapter is already selected', () => {
+    renderHook(() => useLastChapter({actorId: 'u1', scope, novelId: 'p1', chapterId: 'c1', rows, setChapter: vi.fn(), identityPending: true}));
+    expect(localStorage.length).toBe(0);
+  });
 });
