@@ -98,6 +98,24 @@ describe('U4 M8 adopt flow guards', () => {
     const r = await f.commit(target, p); expect(r.state).toBe('unknown');
     await new Promise(r2 => setTimeout(r2, 20)); expect(raw.canvasViews.save).toHaveBeenCalledTimes(1);
   });
+  // [HERMIA-FE-20261025 U4 no-auto-resend] targets resend directly; must hold even if the in-flight guard is removed.
+  it('timeout → UNKNOWN, save attempted exactly once, nothing resent later', async () => {
+    const {d, raw} = deps({save: vi.fn(async () => { throw Object.assign(new Error('timeout'), {name: 'TimeoutError'}); })});
+    const f = createAdoptFlow(d); const p = await f.prepare(target); if (!p.ok) throw new Error('x');
+    expect((await f.commit(target, p)).state).toBe('unknown');
+    await new Promise(r2 => setTimeout(r2, 30)); expect(raw.canvasViews.save).toHaveBeenCalledTimes(1);
+  });
+  it('double click during a lost response: one write total, no click reports adopted', async () => {
+    let fail!: () => void; const gate = new Promise<void>(r => { fail = r; });
+    const {d, raw} = deps({save: vi.fn(async () => { await gate; throw new TypeError('network'); })});
+    const f = createAdoptFlow(d); const p = await f.prepare(target); if (!p.ok) throw new Error('x');
+    const a = f.commit(target, p); const b = f.commit(target, p);
+    fail(); const rs = [await a, await b];
+    await new Promise(r2 => setTimeout(r2, 30));
+    expect(raw.canvasViews.save).toHaveBeenCalledTimes(1);
+    expect(rs.some(r => r.state === 'adopted')).toBe(false);
+    expect(rs.filter(r => r.state === 'unknown')).toHaveLength(1);
+  });
   it('owner conflict 409 → work-modified; 403 → permission', async () => {
     for (const [status, reason] of [[409, 'work-modified'], [403, 'permission']] as const) {
       const {d} = deps({save: vi.fn(async () => { throw Object.assign(new Error('x'), {status}); })});
