@@ -54,6 +54,8 @@ export interface ViewPrefsHost {
   isCurrent: () => boolean;
   /** Explicit host persistence capability. Absent/false ⇒ session only. */
   persist: boolean;
+  /** [HERMIA-FE-20261025 U1-M1] session-only carry-over between activations of the SAME scope (A→B→A); never persisted by itself. */
+  seed?: ViewPrefsDoc | null;
 }
 
 const enc = (s: LayoutScope) => `${encodeURIComponent(s.userId)}::${encodeURIComponent(s.projectId)}::${encodeURIComponent(s.projectInstanceId)}`;
@@ -105,6 +107,20 @@ export interface ViewPrefs {
   setWorksets(list: StoredWorkset[]): boolean;
   /** Whether the current view came from a cold read of saved preferences (honest restore label). */
   restoredFromStorage(kind: CanvasViewKind): boolean;
+  /** [HERMIA-FE-20261025 U1-M1] copy of the in-memory doc (for session carry-over to the next activation). */
+  snapshot(): ViewPrefsDoc;
+  /** [HERMIA-FE-20261025 U1-M2] reset to defaults: removes ONLY this scope's own key; other keys untouched. */
+  resetAll(): boolean;
+  /** [HERMIA-FE-20261025 U1-M2] source of the doc at creation: storage read, migrated legacy, session seed or default. */
+  readonly origin: 'storage' | 'migrated' | 'session' | 'default';
+}
+
+/** [HERMIA-FE-20261025 U1-M2] v0 = pre-versioned doc `{viewports, worksets}` without `version`. Migrated on read; the
+ * original bytes are only replaced on the next explicit user change (same rule as layout persistence). */
+export function migrateViewPrefs(parsed: Record<string, unknown>): Partial<ViewPrefsDoc> | null {
+  if (parsed.version === VIEW_PREFS_VERSION) return parsed as Partial<ViewPrefsDoc>;
+  if (parsed.version === undefined && (isObj(parsed.viewports) || Array.isArray(parsed.worksets))) return {...parsed, version: 1} as Partial<ViewPrefsDoc>;
+  return null;
 }
 
 /** Create the adapter for one host scope. All state is per-instance (no cross-consumer sharing). */
@@ -113,6 +129,7 @@ export function createViewPreferences(host: ViewPrefsHost): ViewPrefs {
   const key = problem ? null : viewPrefsKey(host.scope!);
   let status: PrefsStatus = problem ? {mode: 'session', reason: problem} : {mode: 'persistent', reason: 'ok'};
   let doc = emptyDoc();
+  let origin: ViewPrefs['origin'] = 'default';
   const restored = new Set<CanvasViewKind>();
   if (key && host.storage) {
     let txt: string | null = null;
@@ -122,13 +139,16 @@ export function createViewPreferences(host: ViewPrefsHost): ViewPrefs {
       try { parsed = JSON.parse(txt); } catch { parsed = undefined; }
       if (!isObj(parsed)) status = {mode: 'session', reason: 'corrupt'};
       else if (typeof parsed.version === 'number' && parsed.version > VIEW_PREFS_VERSION) status = {mode: 'session', reason: 'future-version'};
-      else if (parsed.version !== VIEW_PREFS_VERSION) status = {mode: 'session', reason: 'corrupt'};
+      else if (!migrateViewPrefs(parsed)) status = {mode: 'session', reason: 'corrupt'};
       else {
-        doc = sanitizeDoc(parsed as Partial<ViewPrefsDoc>);
+        origin = parsed.version === VIEW_PREFS_VERSION ? 'storage' : 'migrated';
+        doc = sanitizeDoc(migrateViewPrefs(parsed)!);
         for (const k of Object.keys(doc.viewports) as CanvasViewKind[]) restored.add(k);
       }
     }
   }
+  // A seed only fills in when storage gave nothing usable (session scopes, or a persistent read that failed).
+  if (host.seed && origin !== 'storage' && origin !== 'migrated') { doc = sanitizeDoc(host.seed); origin = 'session'; }
   const writable = () => status.mode === 'persistent' || status.reason === 'write-failed';
   const flush = (): boolean => {
     if (!key || !host.storage || !writable()) return false;
@@ -159,5 +179,17 @@ export function createViewPreferences(host: ViewPrefsHost): ViewPrefs {
       return flush() || status.mode === 'session';
     },
     restoredFromStorage: k => restored.has(k),
+    snapshot: () => structuredClone(doc),
+    origin,
+    resetAll() {
+      if (!host.isCurrent()) return false;
+      doc = emptyDoc(); restored.clear();
+      if (!key || !host.storage || status.reason === 'corrupt' || status.reason === 'future-version' || status.reason === 'read-failed') {
+        // Unreadable/foreign data is never overwritten or deleted implicitly; only session values reset.
+        return true;
+      }
+      try { host.storage.removeItem(key); status = {mode: 'persistent', reason: 'ok'}; return true; }
+      catch { status = {mode: 'persistent', reason: 'write-failed'}; return false; }
+    },
   };
 }

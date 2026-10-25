@@ -22,6 +22,8 @@ import {registerViewActions, VIEW_ACTION_IDS} from './actions/viewActions';
 import {WorkspaceViewsPanel} from './panels/WorkspaceViewsPanel';
 import {createPanelFocusTracker, type PanelFocusTracker} from './state/panelFocus';
 import type {DockLayoutApi} from './layout/DockLayout';
+import {useStudio} from '../store'; // [HERMIA-FE-20261025 U1-M1] real identity source (bootstrap actor + collaboration scope)
+import {IDENTITY_TEXT, resolveWorkspaceIdentity} from './state/scopeLease';
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
@@ -41,6 +43,9 @@ export const PREVIEW_SPECS: LayoutPanelSpec[] = [
  * Ctrl/⌘+K palette is a static module list (not registry-fed) and is not mounted under ?uw=1, so here Ctrl/⌘+K opens
  * CommandSearch through its own trigger button. workbench/** is reused unmodified (except [HERMIA-FE-20261024 M2-s1fix]: aria-disabled on disabled options).
  */
+/** [HERMIA-FE-20261025 U1-M2] property access to localStorage can throw in a blocked origin. */
+function safeLocalStorage(): Storage | null { try { return window.localStorage; } catch { return null; } }
+
 export function UnifiedWorkspacePreview() {
   const shared = useMemo(() => {
     const tracker = new LifecycleTracker(); const actions = new ActionRegistry(tracker); const table = new ShortcutTable();
@@ -89,9 +94,16 @@ export function UnifiedWorkspacePreview() {
   // user/project/instance scope (DockLayout still uses the placeholder one), so prefs are session-only per novel and
   // nothing is written to storage. Callbacks are bound to the adapter of the novel that rendered them, so a late
   // onViewport from the previous novel's canvas is rejected by that adapter's lease (isCurrent) instead of leaking.
-  const prefs = useViewPreferences({scope: null, storage: null, persist: false, sessionKey: novelId});
+  // [HERMIA-FE-20261025 U1-M1/M2] real scope only from the bootstrap actor + complete collaboration scope; otherwise
+  // session-only (never a fabricated user id). Real scope ⇒ prefs/layout persist per user/project/instance (cold reopen).
+  const actorId = useStudio(st => st.actor?.id ?? null);
+  const collabScope = useStudio(st => st.scope ?? null);
+  const identity = useMemo(() => resolveWorkspaceIdentity({actorId, collabScope, projectId: novelId}), [actorId, collabScope, novelId]);
+  const realScope = identity.kind === 'real' ? identity.scope : null;
+  const store = realScope ? safeLocalStorage() : null;
+  const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
   // Worksets are layout-level (not per novel): their own session adapter, independent of the novel switch.
-  const layoutPrefs = useViewPreferences({scope: null, storage: null, persist: false, sessionKey: '\u0001worksets'});
+  const layoutPrefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: '\u0001worksets'});
   const prefsRef = useRef(layoutPrefs); prefsRef.current = layoutPrefs;
   const toCv = (v: {x: number; y: number; zoom: number} | undefined): CvViewport | undefined => (v ? {x: v.x, y: v.y, k: v.zoom} : undefined);
   const vpOf = (k: CanvasKind) => (novelId ? toCv(prefs.getViewport(k)) : undefined);
@@ -235,8 +247,8 @@ export function UnifiedWorkspacePreview() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   return (
-      <DockLayout specs={specs} scope={{ userId: "local", projectId: "preview", projectInstanceId: "preview" }}
-        storage={window.localStorage} loadOptions={{ inspectorPanelId: "inspector" }}
+      <DockLayout specs={specs} scope={realScope ?? { userId: "local", projectId: "preview", projectInstanceId: "preview" }}
+        storage={store} loadOptions={{ inspectorPanelId: "inspector" }}
         actionRegistry={shared.actions} shortcutTable={shared.table} tracker={shared.tracker}
         toolbarStart={<span ref={host} data-testid="uw-command-host" style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
           <CommandSearch workbench={shared.workbench} onLegacy={() => {}} /><small>Ctrl／⌘+K</small>
@@ -247,6 +259,7 @@ export function UnifiedWorkspacePreview() {
             onClick={() => void shared.actions.execute(VIEW_ACTION_IDS.openViews, shared.workbench.context(null))}>视图</button>
           {studioMsg && <small role="status" data-testid="uw-studio-status">{studioMsg}</small>}
           {vpMsg && <small role="status" data-testid="uw-vp-status">{vpMsg}</small>}
+          <small data-testid="uw-identity" data-identity={identity.kind}>{IDENTITY_TEXT[identity.kind === 'real' ? 'real' : identity.reason]}</small>
           {viewsOpen && <WorkspaceViewsPanel prefs={layoutPrefs} actions={shared.actions} ctx={input => ({...shared.workbench.context(null), input})}
             message={viewsMsg} onClose={() => setViewsOpen(false)} />}</span>}
         onLayoutApi={a => { layoutApi.current = a; }}

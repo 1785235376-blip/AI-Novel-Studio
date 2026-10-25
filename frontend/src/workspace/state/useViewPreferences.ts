@@ -1,12 +1,13 @@
 /**
  * [HERMIA-FE-20261024 VW-M1] React binding for the view-preference adapter.
- * One adapter per scope identity (user/project/instance); switching scope creates a new adapter synchronously during
- * render, so the first frame of a project already reads its own preferences (no flash of another project's pan/zoom).
- * Session-only adapters are cached per scope key in this hook instance so A→B→A keeps A's session view.
+ * [HERMIA-FE-20261025 U1-M1] One adapter PER ACTIVATION (lease), not per scope: switching scope retires the previous
+ * adapter's lease synchronously during render, so A→B→A gives A a fresh adapter and every late callback bound to the
+ * first A adapter is dropped. Session-only values carry over A→B→A through a doc snapshot (never written to storage).
  */
-import {useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import type {LayoutScope, StorageLike} from '../../workbench/layout';
-import {createViewPreferences, type ViewPrefs} from './viewPreferences';
+import {createViewPreferences, type ViewPrefs, type ViewPrefsDoc} from './viewPreferences';
+import {LeaseHolder} from './scopeLease';
 
 export interface UseViewPreferencesOptions {
   scope: LayoutScope | null;
@@ -17,14 +18,18 @@ export interface UseViewPreferencesOptions {
 }
 export function useViewPreferences(o: UseViewPreferencesOptions): ViewPrefs {
   const scopeId = o.scope ? `${o.scope.userId}\u0000${o.scope.projectId}\u0000${o.scope.projectInstanceId}` : `session\u0000${o.sessionKey ?? ''}`;
-  const current = useRef(scopeId); current.current = scopeId;
-  const cache = useRef(new Map<string, ViewPrefs>());
-  return useMemo(() => {
-    const id = scopeId;
-    const k = `${id}\u0000${o.persist ? 1 : 0}`;
-    const hit = cache.current.get(k); if (hit) return hit;
-    const p = createViewPreferences({scope: o.scope, storage: o.storage, persist: o.persist, isCurrent: () => current.current === id});
-    cache.current.set(k, p); return p;
+  const k = `${scopeId}\u0000${o.persist ? 1 : 0}`;
+  const holder = useRef(new LeaseHolder());
+  const seeds = useRef(new Map<string, ViewPrefsDoc>());
+  const last = useRef<{k: string; p: ViewPrefs} | null>(null);
+  const prefs = useMemo(() => {
+    if (last.current) seeds.current.set(last.current.k, last.current.p.snapshot());
+    const lease = holder.current.current(k);
+    const p = createViewPreferences({scope: o.scope, storage: o.storage, persist: o.persist, isCurrent: lease.isCurrent, seed: seeds.current.get(k) ?? null});
+    last.current = {k, p};
+    return p;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scopeId, o.persist, o.storage]);
+  }, [k, o.storage]);
+  useEffect(() => () => holder.current.invalidate(), []);
+  return prefs;
 }
