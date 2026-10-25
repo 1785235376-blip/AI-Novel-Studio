@@ -5,12 +5,14 @@ import {
   readStudioTheme,
   type StudioTheme,
 } from "./theme";
+import { useT } from "../i18n"; // [HERMIA-FE-20261025 I18N P0]
 
 export function ThemeToggle({
   className = "shell-mode-toggle",
 }: {
   className?: string;
 }) {
+  const t = useT();
   const [theme, setTheme] = useState<StudioTheme>(() => readStudioTheme());
 
   useEffect(() => {
@@ -18,24 +20,24 @@ export function ThemeToggle({
   }, [theme]);
 
   return (
-    <div className={className} role="group" aria-label="背景明暗">
+    <div className={className} role="group" aria-label={t("theme.group")}>
       <button
         type="button"
         className={theme === "light" ? "is-active" : ""}
         aria-pressed={theme === "light"}
-        title="浅色背景"
+        title={t("theme.light.title")}
         onClick={() => setTheme("light")}
       >
-        浅色
+        {t("theme.light")}
       </button>
       <button
         type="button"
         className={theme === "dark" ? "is-active" : ""}
         aria-pressed={theme === "dark"}
-        title="深色背景"
+        title={t("theme.dark.title")}
         onClick={() => setTheme("dark")}
       >
-        深色
+        {t("theme.dark")}
       </button>
     </div>
   );

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Popover, StateTag, Tabs, WithQuery, type Tone } from './primitives';
 import { rb, rbError } from './rebuildApi';
+import { useT } from '../i18n';
 
 type Row = { id: string; source: string; label: string; status: string };
 const norm = (s: string) => s.toLowerCase();
@@ -51,5 +52,6 @@ export function TasksBody({ novelId, initialTab = 'tasks' }: { novelId: string; 
 
 // [HERMIA-FE-20261022 R1] 任务计数徽标：用外壳已有的任务汇总（运行 + 排队），不额外发请求；0 或未知时不显示数字。
 export function TasksMenu({ novelId, count }: { novelId: string; count?: number }) {
-  return <Popover label="任务" count={count || undefined} testId="rb-tasks">{() => <WithQuery><TasksBody novelId={novelId} /></WithQuery>}</Popover>;
+  const t = useT(); // [HERMIA-FE-20261025 I18N P0] header trigger label only
+  return <Popover label={t('header.tasks')} count={count || undefined} testId="rb-tasks">{() => <WithQuery><TasksBody novelId={novelId} /></WithQuery>}</Popover>;
 }
