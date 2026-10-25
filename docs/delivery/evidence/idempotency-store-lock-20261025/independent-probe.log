@@ -1,0 +1,7 @@
+PASS cold import: lazy coordinator access and roundtrip
+PASS independent baseline red: 2 successful puts, 1 retained key ['b']
+PASS file symlink aliases share lock and replacement preserves alias
+PASS SIGKILL releases OS lock for blocked independent writer
+PASS 6 spawned processes, 12 store instances, 120 distinct puts retained
+PASS retained invalid UTF-8 is fail-closed and byte-preserving
+ALL 6 independent probes passed
