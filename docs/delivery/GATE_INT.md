@@ -1,0 +1,7 @@
+# Gate after integration [HERMIA-FE-20261025 INT] — commit b5241905, Node 22.14
+- tsc -b: clean (exit 0). build: OK (logs/gate-build.log). vitest full, run ONCE: 293 failed / 11269 passed / 6 skipped; 53 files failed (logs/gate-vitest.log).
+- By-name vs M0 (logs/m0-names.txt vs logs/gate-names.txt): NEW = 0 real. The only diff line, the suite-level `src/ui/LocalAiBrowserJourneyContracts.test.tsx` (ENOENT tests/e2e/v2-local-ai-files-live.spec.ts), was in M0 too, as a file-level failure with no assertion entry, so it is persistent. GONE = 1: TaskCenter.additive "shows receipt evidence…" (the flaky one from M0).
+## Test changes (before → after), invariants unchanged
+- m2s1fix "task center reads tasks exactly once": before, it mounted with no identity and expected testid uw-tasks with a read made under a fabricated `uw-preview:` identity. After, it uses a real actor+scope and testid u3-tasks, and still asserts: exactly 1 tasks GET, all GET, plus a new check that no request header carries `uw-preview`.
+- studioPreviewPanels "no placeholder left": same real identity and u3-tasks. The capability map now also has results/history = partial. No `not-connected` placeholder is allowed (results/history show an honest empty state `int-*-empty` when no job is selected).
+- Counterexample found while doing this (logs/int-targeted-2.log): TasksPanelLive read only once PER MOUNT, so a feed built after the project list resolved never read. Fix: read once per feed.
