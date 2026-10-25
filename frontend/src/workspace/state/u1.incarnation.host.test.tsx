@@ -47,7 +47,11 @@ it('first incarnation is recorded without purging; a later different incarnation
   await mount(); await settle();
   await waitFor(() => expect(localStorage.getItem(incarnationLedgerKey('actor-1', 'n1'))).toBe('file:B'));
   expect(localStorage.getItem(workspaceLayoutKey(own))).toBeNull();
-  expect(localStorage.getItem(viewPrefsKey(other))).not.toBeNull();
+  // [Vera MUST-FIX 1] the remount must not write project A's in-memory viewport back into the just-cleared viewprefs.
+  await settle();
+  const vp = localStorage.getItem(viewPrefsKey(own));
+  expect(vp === null || !/"x":7/.test(vp)).toBe(true);
+  expect(localStorage.getItem(viewPrefsKey(other))).toContain('"x":7');
 });
 it.each([404, 500] as const)('overview %s is not deletion: nothing purged, ledger untouched', async status => {
   localStorage.setItem(incarnationLedgerKey('actor-1', 'n1'), 'file:A');
@@ -56,4 +60,15 @@ it.each([404, 500] as const)('overview %s is not deletion: nothing purged, ledge
   expect(localStorage.getItem(workspaceLayoutKey(own))).not.toBeNull();
   expect(localStorage.getItem(viewPrefsKey(own))).not.toBeNull();
   expect(localStorage.getItem(incarnationLedgerKey('actor-1', 'n1'))).toBe('file:A');
+});
+it('[M14] without a real identity (仅本次会话) the overview is never read and the ledger is never written', async () => {
+  useStudio.setState({sessionToken: '', scope: undefined, actor: undefined});
+  const qc = new QueryClient({defaultOptions: {queries: {retry: false}}});
+  render(<StrictMode><QueryClientProvider client={qc}><UnifiedWorkspacePreviewHost /></QueryClientProvider></StrictMode>);
+  await waitFor(() => expect(screen.getByTestId('uw-identity').dataset.identity).not.toBe('real'));
+  await settle(); await settle();
+  const urls = (fetch as unknown as {mock: {calls: unknown[][]}}).mock.calls.map(c => String(c[0]));
+  expect(urls.some(u => u === '/api/novels')).toBe(true); // the host did render and read the project list
+  expect(urls.filter(u => u.endsWith('/studio'))).toEqual([]);
+  expect(localStorage.getItem(incarnationLedgerKey('actor-1', 'n1'))).toBeNull();
 });

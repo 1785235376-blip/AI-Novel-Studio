@@ -161,7 +161,7 @@ export function UnifiedWorkspacePreview() {
     }, () => { /* 404/500/network: not deletion, nothing purged */ });
     return () => controller.abort();
   }, [realUser, novelId, taskCtx]);
-  const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
+  const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId, incarnation: incarnation?.novelId === novelId ? incarnation.value : null});
   // [HERMIA-FE-20261025 U1fix] MUST-FIX 1 + P2: ONE adapter per scope for viewports AND worksets (two adapters on the same
   // key erased each other). Worksets are now per project in both real and session mode (consistent keying).
   const layoutPrefs = prefs;

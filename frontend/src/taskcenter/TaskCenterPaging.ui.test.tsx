@@ -36,4 +36,17 @@ describe('G-TC-1 task center paging UI', () => {
     expect(screen.getByText(/不代表已列出全部历史任务/)).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/全部加载|已全部|加载完毕/);
   });
+  it('[P3] list shrinking between load-mores keeps the shown rows and is not an error', async () => {
+    const readTasks = vi.fn()
+      .mockResolvedValueOnce(page(['t1', 't2'], { observed_total: 3, limit: 2, offset: 0, has_more: true, next_offset: 2 }))
+      .mockResolvedValueOnce(page([], { observed_total: 1, limit: 2, offset: 2, has_more: false, next_offset: null }));
+    const client = { readTasks, readInbox: vi.fn(async () => reviewInboxProjection({ items: [], total: 0, unavailable: [],
+      approval_authority: 'DOMAIN_SERVICE', batch_semantics: 'PER_ITEM_CHECKPOINT' }, FIXTURE_PROJECT)) } as unknown as TaskCenterClient;
+    render(<View client={client}/>);
+    expect((await screen.findByTestId('tc-paging')).textContent).toMatch(/已加载 2 条/);
+    fireEvent.click(screen.getByRole('button', { name: '加载更多任务' }));
+    await waitFor(() => expect(screen.queryByRole('button', { name: '加载更多任务' })).toBeNull());
+    expect(screen.getByTestId('tc-paging').textContent).toMatch(/已加载 2 条/);
+    expect(document.body.textContent).not.toMatch(/下一页读取失败/);
+  });
 });

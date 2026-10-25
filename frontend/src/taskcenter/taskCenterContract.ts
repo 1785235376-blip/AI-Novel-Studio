@@ -318,7 +318,8 @@ function pagedTasks(row: Record<string, unknown>, count: number): { page: TaskCe
   if (coverage.scope !== 'BOUNDED_AUTHORIZED_PROJECTION' || coverage.completeness !== 'NOT_ASSERTED') invalid();
   const limit = integer(row.limit, 100), offset = integer(row.offset, 1_000_000), observed = integer(row.observed_total);
   const hasMore = bool(row.has_more), sourceTruncated = bool(row.source_truncated);
-  if (limit < 1 || count > limit || offset + count > observed) invalid();
+  // [Vera P3] 后端允许 offset 超过 observed_total（两次加载之间列表缩短）：那是合法的空页，不是错误。
+  if (limit < 1 || count > limit || (offset >= observed ? count !== 0 : offset + count > observed)) invalid();
   const next = row.next_offset === null ? null : integer(row.next_offset);
   if (hasMore ? next !== offset + count || next >= observed : next !== null) invalid();
   if (bool(row.truncated) !== (sourceTruncated || hasMore)) invalid();

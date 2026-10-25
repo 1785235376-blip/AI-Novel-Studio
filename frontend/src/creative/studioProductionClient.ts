@@ -684,7 +684,9 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const nat = (n: unknown, max: number) => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0 && n <= max;
       if (!nat(v.total, Number.MAX_SAFE_INTEGER) || !nat(v.limit, 100) || (v.limit as number) < 1 || !nat(v.offset, 1_000_000)
         || typeof v.has_more !== 'boolean' || items.length > (v.limit as number)
-        || v.has_more !== ((v.offset as number) + items.length < (v.total as number))) invalid();
+        // 后端：has_more = offset + limit < total；offset ≥ total 是合法空页（列表在两次加载之间缩短）。
+        || ((v.offset as number) >= (v.total as number) && items.length !== 0)
+        || v.has_more !== ((v.offset as number) + (v.limit as number) < (v.total as number))) invalid();
       return { items, paging: { total: v.total as number, limit: v.limit as number, offset: v.offset as number, has_more: v.has_more } };
     },
     async get(owner: ProductionOwner, id: string, signal?: AbortSignal) {

@@ -54,4 +54,29 @@ describe('G-TC-1 paged task projection', () => {
     const last = taskCenterProjection(paged({ has_more: false, next_offset: null, truncated: false, offset: 2, observed_total: 4 }), FIXTURE_PROJECT);
     expect(last.page?.completeness).toBe('NOT_ASSERTED');
   });
+  it('[M1] rejects truncated that differs from source_truncated || has_more', () => {
+    expect(() => taskCenterProjection(paged({ truncated: false }), FIXTURE_PROJECT)).toThrow();
+    expect(() => taskCenterProjection(paged({ has_more: false, next_offset: null, offset: 1, observed_total: 3, truncated: true }), FIXTURE_PROJECT)).toThrow();
+    expect(taskCenterProjection(paged({ has_more: false, next_offset: null, offset: 1, observed_total: 3, source_truncated: true, truncated: true }), FIXTURE_PROJECT).truncated).toBe(true);
+  });
+  it('[M3] rejects next_offset that is not offset + count, or that is not below observed_total', () => {
+    expect(() => taskCenterProjection(paged({ next_offset: 3 }), FIXTURE_PROJECT)).toThrow();
+    expect(() => taskCenterProjection(paged({ next_offset: 1 }), FIXTURE_PROJECT)).toThrow();
+    expect(() => taskCenterProjection(paged({ offset: 1, next_offset: 3, observed_total: 3 }), FIXTURE_PROJECT)).toThrow();
+    expect(taskCenterProjection(paged(), FIXTURE_PROJECT).page?.next_offset).toBe(2);
+  });
+  it('[M5] only EXPERIMENTAL_INVALID 422 falls back; any other 422 is surfaced without a second request', async () => {
+    const json = vi.fn().mockRejectedValueOnce(new ApiError({ status: 422, code: 'VALIDATION_ERROR', message: 'x' } as never)).mockResolvedValueOnce(tasksResponse());
+    await expect(createTaskCenterClient(FIXTURE_PROJECT, { json }).readTasks({ q: '', failed_only: false, limit: 50, offset: 0 })).rejects.toBeInstanceOf(ApiError);
+    expect(json).toHaveBeenCalledTimes(1);
+    const unpaged = vi.fn().mockRejectedValueOnce(new ApiError({ status: 422, code: 'EXPERIMENTAL_INVALID', message: 'x' } as never)).mockResolvedValueOnce(tasksResponse());
+    await expect(createTaskCenterClient(FIXTURE_PROJECT, { json: unpaged }).readTasks({ q: '', failed_only: false })).rejects.toBeInstanceOf(ApiError);
+    expect(unpaged).toHaveBeenCalledTimes(1);
+  });
+  it('[P3] offset beyond observed_total is a valid empty page; a non-empty one is not', () => {
+    const empty = taskCenterProjection(paged({ items: [], offset: 4, observed_total: 1, has_more: false, next_offset: null, truncated: false }), FIXTURE_PROJECT);
+    expect(empty.items).toEqual([]);
+    expect(empty.page?.offset).toBe(4);
+    expect(() => taskCenterProjection(paged({ items: [projectedTask()], offset: 4, observed_total: 1, has_more: false, next_offset: null, truncated: false }), FIXTURE_PROJECT)).toThrow();
+  });
 });

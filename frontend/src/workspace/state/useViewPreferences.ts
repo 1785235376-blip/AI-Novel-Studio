@@ -15,10 +15,13 @@ export interface UseViewPreferencesOptions {
   persist: boolean;
   /** Distinguishes session caches when scope is null (e.g. the preview's project id). Never persisted. */
   sessionKey?: string | null;
+  /** [HERMIA-FE-CONTRACTS fix1] project.incarnation: a new incarnation is a new activation (fresh adapter read from the
+   * just-purged storage, no snapshot seed from the old project), so the old in-memory viewport is never written back. */
+  incarnation?: string | null;
 }
 export function useViewPreferences(o: UseViewPreferencesOptions): ViewPrefs {
   const scopeId = o.scope ? `${o.scope.userId}\u0000${o.scope.projectId}\u0000${o.scope.projectInstanceId}` : `session\u0000${o.sessionKey ?? ''}`;
-  const k = `${scopeId}\u0000${o.persist ? 1 : 0}`;
+  const k = `${scopeId}\u0000${o.persist ? 1 : 0}\u0000${o.incarnation ?? ''}`;
   const holder = useRef(new LeaseHolder());
   const seeds = useRef(new Map<string, ViewPrefsDoc>());
   const last = useRef<{k: string; p: ViewPrefs} | null>(null);
