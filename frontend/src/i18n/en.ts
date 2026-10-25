@@ -27,7 +27,7 @@ export const en: Record<MessageKey, string> = {
   'overflow.more': 'More',
   'overflow.proMore': 'Pro more',
   'overflow.aria': 'More workspaces',
-  'overflow.aria.pro': 'More pro workspaces',
+  'overflow.aria.pro': 'Pro more workspaces', // [HERMIA-FE-20261025 DUI×I18N] 可访问名须包含可见文本「Pro more」
   'overflow.aria.current': '{prefix}More workspaces (current: {label})',
   'overflow.proPrefix': 'Pro · ',
   'overflow.menu': 'Overflow workspaces',

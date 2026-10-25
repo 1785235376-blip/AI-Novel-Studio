@@ -775,7 +775,7 @@ export function AppShell({
         <button
           ref={commandTrigger}
           className="global-search"
-          aria-label={`${t("search.placeholder")} Ctrl K`} /* [HERMIA-FE-20261025 DUI P1-7] 可访问名与可见文本一致(label-content-name-mismatch) */
+          /* [HERMIA-FE-20261025 DUI×I18N P1-7] 不设 aria-label：可访问名直接取可见文本（中英文都满足 label-content-name-mismatch） */
           onClick={openSearch}
         >
           <Search aria-hidden="true" />
