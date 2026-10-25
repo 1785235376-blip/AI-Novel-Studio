@@ -135,13 +135,16 @@ export function UnifiedWorkspacePreview() {
   // check turned into session ⇒ null ⇒ purge never ran. The user does not depend on a project.
   const realUser = useMemo(() => resolveWorkspaceUser(actorId), [actorId]);
   const presence = useRef<ProjectPresence | null>(null);
+  const observedAt = useRef(-1);
   useEffect(() => {
     if (!realUser || !novels.isSuccess || !Array.isArray(novels.data)) return;
-    if (presence.current?.identityKey !== realUser) presence.current = new ProjectPresence(realUser);
+    if (presence.current?.identityKey !== realUser) { presence.current = new ProjectPresence(realUser); observedAt.current = -1; }
+    if (observedAt.current === novels.dataUpdatedAt) return; // [HERMIA-FE-20261025 M10-purgeguard] one observation per fetched list (StrictMode / novelId reruns are not new evidence)
+    observedAt.current = novels.dataUpdatedAt;
     const gone = presence.current.observe(novels.data.map(n => n.id));
     for (const id of gone) purgeProjectGeometry(safeLocalStorage(), realUser, id);
     if (novelId && gone.includes(novelId)) setNovelId(null);
-  }, [realUser, novels.isSuccess, novels.data, novelId]);
+  }, [realUser, novels.isSuccess, novels.data, novels.dataUpdatedAt, novelId]); // [HERMIA-FE-20261025 M10-purgeguard] dataUpdatedAt: an identical refetched list is a new observation (structural sharing keeps the same data ref)
   const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
   // [HERMIA-FE-20261025 U1fix] MUST-FIX 1 + P2: ONE adapter per scope for viewports AND worksets (two adapters on the same
   // key erased each other). Worksets are now per project in both real and session mode (consistent keying).

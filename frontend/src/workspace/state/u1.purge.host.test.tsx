@@ -35,6 +35,8 @@ it('host purges own keys of a project that left the list; other users and remain
   expect(localStorage.getItem(viewPrefsKey(own))).not.toBeNull(); // first observation never purges
   novels = [nv('n1')];
   await act(async () => { await qc.invalidateQueries(); });
+  expect(localStorage.getItem(viewPrefsKey(own))).not.toBeNull(); // [HERMIA-FE-20261025 M10-purgeguard] missing once = pending
+  await act(async () => { await qc.invalidateQueries(); });
   await waitFor(() => expect(localStorage.getItem(viewPrefsKey(own))).toBeNull());
   expect(localStorage.getItem(workspaceLayoutKey(own))).toBeNull();
   expect(localStorage.getItem(viewPrefsKey(other))).not.toBeNull();
