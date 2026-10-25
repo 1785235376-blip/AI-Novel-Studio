@@ -1,0 +1,59 @@
+{
+  "base_commit": "e99e91ed84763224638b80ffb83ae7880fa4f1a0",
+  "results": {
+    "before-focused": {
+      "exit": 1,
+      "passed": 6,
+      "failed": 5,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    },
+    "after-focused": {
+      "exit": 1,
+      "passed": 20,
+      "failed": 1,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    },
+    "after-focused-final": {
+      "exit": 1,
+      "passed": 20,
+      "failed": 1,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    },
+    "after-focused-canonical": {
+      "exit": 0,
+      "passed": 21,
+      "failed": 0,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    },
+    "after-focused-reviewed": {
+      "exit": 0,
+      "passed": 21,
+      "failed": 0,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    },
+    "after-c-plus-new": {
+      "exit": 0,
+      "passed": 50,
+      "failed": 0,
+      "noncall_errors": 0,
+      "blocked_side_effects": []
+    }
+  },
+  "original_C40_all_included": true,
+  "final_combined_node_count": 50,
+  "sources": {
+    "tests/test_generation_variants_phase3.py": {
+      "before_sha256": "e435c36c6ba5da6984a544a76ae97f12a9d7b0bf96d0a5856068862fca71f9a5",
+      "after_sha256": "c54bfb222839e8a73003a091ebed07ba0608147fab1df444c397c7ea35331755"
+    },
+    "tests/test_memory_agent_contract.py": {
+      "before_sha256": "c57045560a97d2c6188affde6b223fd1b425bb53465b0a20945104b96de813c7",
+      "after_sha256": "140de9e8167b80bc21b28f601bf4bced759e357d0a40435b1fb8fcba2c81dd38"
+    }
+  }
+}
