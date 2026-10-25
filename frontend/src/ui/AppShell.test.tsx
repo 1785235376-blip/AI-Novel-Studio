@@ -905,3 +905,18 @@ describe("AppShell X-UX-09 settings path", () => {
     act(() => root.unmount());
   });
 });
+// [HERMIA-FE-20261025 VERA-F70 P2 axe aria-hidden-focus] 隐藏的检查面板必须 inert，内部可聚焦元素不能留在 Tab 序列里
+it('hidden inspector is inert (no focusable content under aria-hidden), visible inspector is not', () => {
+  localStorage.setItem('studio-inspector-open', '1'); // 前序用例会留下折叠偏好
+  host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  const props = { module: 'NOVEL' as const, onModuleChange: vi.fn(), scope: { workspace: '', project: '', storyline: '', branch: '' }, actor: 'author', sidebar: 'Chapters', main: 'Editor', inspector: 'Same assistance', status: 'ok', onExitFocus: vi.fn() };
+  act(() => root.render(<AppShell {...props} focusMode />));
+  const aside = host.querySelector('#workspace-inspector')!;
+  expect(aside.getAttribute('aria-hidden')).toBe('true');
+  expect(aside.hasAttribute('inert')).toBe(true);
+  act(() => root.render(<AppShell {...props} focusMode={false} />));
+  expect(aside.getAttribute('aria-hidden')).toBe('false');
+  expect(aside.hasAttribute('inert')).toBe(false);
+  act(() => root.unmount());
+});

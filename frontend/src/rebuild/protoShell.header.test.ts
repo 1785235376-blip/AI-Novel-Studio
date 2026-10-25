@@ -48,6 +48,9 @@ describe("protoShell header ≤1180 tightening (all modes)", () => {
     for (const sel of ["html .app-shell .product-mark__name", "html .app-shell .global-search>kbd"]) {
       const d = rule(b, sel);
       expect(d, sel).toMatch(/clip-path:inset\(50%\)/);
+      // [HERMIA-FE-20261025 VERA-F70 H6] 完整的 sr-only：脱离文档流 + 1px 盒，否则 kbd 仍占位挤出头部
+      expect(d!).toMatch(/position:absolute/);
+      expect(d!).toMatch(/width:1px/);
       expect(d!).not.toMatch(/display:none/);
     }
     expect(rule(b, "html .app-shell .global-search")).toMatch(/min-width:0/);

@@ -846,6 +846,7 @@ export function AppShell({
           id="workspace-inspector"
           className="workspace-inspector"
           aria-hidden={!visibleInspector}
+          {...(!visibleInspector ? { inert: "" } : {}) /* [HERMIA-FE-20261025 VERA-F70 P2] axe aria-hidden-focus */}
         >
           <div
             className="workspace-inspector__resize"
