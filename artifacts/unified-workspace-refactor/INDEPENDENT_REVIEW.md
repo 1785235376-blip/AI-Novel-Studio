@@ -980,3 +980,11 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - **MUST-FIX 布局重叠**：EN 下 1440 与 1920，头部搜索框文案「Search features, chapters, commands」被截断并压在「Ctrl K」徽标下方（文字与 kbd 重叠）。复现：4499 起本分支→跳过引导→点 EN→看头部搜索框。位置：src/i18n/i18n-en.css `.global-search>span` 省略号未给 kbd 让位（AppShell.tsx:746），或缩短 en.ts:42 文案。证据 shots/en_1440.png、crop_search_1440.png。
 - 说明（非阻塞）：仅壳层翻译，正文/助手/引导仍中文，属声明范围内。
 - 证据：/workspace/hr/vera-compare/i18n-391f47d8/
+
+## [VERA-FE] 独立复审 work/hermia-default-ui-i18n-20261025 @ 625114c9（2026-10-25，未提交）
+结论：**MUST-FIX（3 项）**。全量三次 raw 295/293/293，校正 293/293/293，新增持久 0，两条门规均通过；tsc/build 0；定向 71/71。merge 两边改动均保留（DUI 的普通模式隐藏专业项、chapterList、scopeLabel 变异与 i18n 的裸 key 回退、html lang 变异均被捕获）。
+1. **a11y 回归（本提交引入）**：global-search 去掉 aria-label 后，EN 且宽度 <1440 时 i18n-en.css 隐藏 span，按钮可访问名只剩「Ctrl K」。AppShell.test 选择器从 `[aria-label="搜索功能、章节或命令 Ctrl K"]` 放宽为 `button.global-search`，断言丢失「名称=可见文本」约束；变异「删除可见文本 span」存活，「en overflow.aria.pro 改回旧文案」也存活。建议：用 getByRole('button',{name:...}) 断言名称，并在窄屏 EN 时保留 aria-label 或用 visually-hidden 文本。位置：AppShell.tsx:775-783、AppShell.test.tsx:~393、i18n-en.css。
+2. **P0-3 单屏单状态仍未修复**（中/EN 均复现）：章节 500/慢加载时，左栏报错/加载中，同时中间显示空态、右侧主按钮「在左侧选择或新建章节 / Select or create a chapter on the left」。证据 shots/zh_1440_500.png、en_1440_500.png。
+3. **EN 头部搜索文案压在 Ctrl K 上**（1440/1920，沿自 i18n）：shots/en_1440_bare.png。
+- P2：EN 下仍有「已保存/保存/当前正在写」等未译 UI 文本；axe 中/EN 1440 仅 heading-order、landmark-unique（moderate）。
+- 证据：/workspace/hr/vera-compare/duim-625114c9/
