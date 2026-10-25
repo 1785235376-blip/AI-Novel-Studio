@@ -167,16 +167,32 @@ const scenarios = {
     const other = [`poemseed.workspace.viewprefs.v1::u-other::${encodeURIComponent(P)}::${inst}`, `poemseed.workspace.layout.v1::u-other::${encodeURIComponent(P)}::${inst}`];
     await page.evaluate(ks => { for (const k of ks) if (localStorage.getItem(k) === null) localStorage.setItem(k, '{"version":1,"viewports":{},"worksets":[]}'); }, [...own, ...other]);
     backend.st.mode = 'gone'; // list now omits P; refetch WITHOUT reload (cold start is the documented gap G-PURGE-1)
-    await page.evaluate(() => { window.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('focus')); });
+    await refetch(page); // [HERMIA-FE-20261025 M10-purgeguard] first missing list = pending only
+    const pend = await page.evaluate(ks => ks.filter(k => localStorage.getItem(k) !== null).length, own);
+    await check(pend === 2, `purged after ONE list (must need two): ${pend}/2 kept`);
+    await refetch(page); // second consecutive successful list missing P → purge
     await page.waitForFunction(ks => ks.every(k => localStorage.getItem(k) === null), own, {timeout: 15000}).catch(() => {});
     await page.waitForTimeout(500); await shot(page, vp, 'project-gone');
     const st = await page.evaluate(([o, x]) => ({own: o.filter(k => localStorage.getItem(k) !== null), other: x.filter(k => localStorage.getItem(k) !== null).length}), [own, other]);
     await check(st.own.length === 0, `own keys not purged: ${JSON.stringify(st.own)}`);
     await check(st.other === 2, `other user's keys removed: ${st.other}/2 kept`);
-    return `own keys after list refresh: ${st.own.length} (purged), other user's keys kept: ${st.other}/2`;
+    return `after 1st missing list own kept 2/2 (pending); after 2nd: own ${st.own.length} (purged), other user's kept ${st.other}/2`;
+  },
+  async emptyList({page, backend}, vp) { // [HERMIA-FE-20261025 M10-purgeguard] Vera repro: [all] → [all−P] → 200 [] must not wipe own keys
+    const inst = encodeURIComponent('ws1/s1/b1'), ids = backend.d.novels.map(n => n.id);
+    const own = ids.flatMap(id => ['viewprefs', 'layout'].map(t => `poemseed.workspace.${t}.v1::u-m5::${encodeURIComponent(id)}::${inst}`));
+    await page.evaluate(ks => { for (const k of ks) if (localStorage.getItem(k) === null) localStorage.setItem(k, '{"version":1,"viewports":{},"worksets":[]}'); }, own);
+    backend.st.mode = 'gone'; await refetch(page);
+    backend.st.mode = 'empty'; await refetch(page); await refetch(page);
+    await shot(page, vp, 'empty-list');
+    const kept = await page.evaluate(ks => ks.filter(k => localStorage.getItem(k) !== null).length, own);
+    const nv = backend.st.log.filter(l => l.includes('/api/novels')).length;
+    await check(kept === own.length, `200 [] wiped own keys: ${kept}/${own.length} kept`);
+    return `projects ${ids.length}; after [all−P] → 200 [] ×2: own keys kept ${kept}/${own.length}; /api/novels requests ${nv}`;
   },
 
 };
+async function refetch(page) { await page.evaluate(() => { window.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('focus')); }); await page.waitForTimeout(1500); }
 async function shot(page, vp, name) { if (!vp.pre) await page.screenshot({path: `${SHOTS}/${vp.width}x${vp.height}-${name}.png`}); }
 const CORRUPT = () => { for (const k of ['poemseed.workspace.viewprefs.v1::user::project::x', 'poemseed.workspace.layout.v1::user::project::x']) localStorage.setItem(k, '{bad json'); localStorage.setItem('poemseed.rebuild.canvas.image.audio-wav-project', '[[['); };
 const browser = await chromium.launch({executablePath: '/usr/bin/google-chrome', headless: true});

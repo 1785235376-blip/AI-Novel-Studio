@@ -35,7 +35,7 @@ export function createBackend() {
     }
     if (st.mode === 'revoked' && p.startsWith('/api/') && p !== '/api/novels') return [403, {detail: 'forbidden', code: 'FORBIDDEN'}];
     if (st.mode === 'unknown' && (p.startsWith(prod) || p.includes('/experimental/workspace/tasks'))) return [503, {detail: 'unavailable'}];
-    if (p === '/api/novels') return [200, st.mode === 'gone' ? d.novels.slice(1) : d.novels];
+    if (p === '/api/novels') return [200, st.mode === 'empty' ? [] : st.mode === 'gone' ? d.novels.slice(1) : d.novels]; // [HERMIA-FE-20261025 M10-purgeguard] 'empty' = successful 200 []
     if (/^\/api\/novels\/[^/]+\/chapters$/.test(p)) return [200, []];
     if (p.endsWith('/bootstrap') && p.startsWith('/api/collaboration/')) return [200, d.bootstrap];
     if (p === `/api/novels/${P}/experimental/workspace/tasks`) return [200, d.tasks];
