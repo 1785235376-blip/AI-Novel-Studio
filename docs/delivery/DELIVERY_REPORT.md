@@ -1,12 +1,12 @@
 # Delivery report — t150u PoemSeed Studio V2 unified loop [HERMIA-FE-20261025 M10]
 Branch work/hermia-unified-loop-20261025, code HEAD f178ff84. Node 22.14.0. Times Asia/Shanghai, 2026-10-25.
-See ACCEPTANCE_MATRIX.md (34 rows: 已验证 21 · 已实现 1 · 部分实现 5 · 受阻 3 · 未运行 4), INTERFACE_COVERAGE.md (gaps), INTEGRATION_NOTES.md, GATE_INT.md, evidence/.
+See ACCEPTANCE_MATRIX.md (34 rows: 已验证 20 · 已实现 2 · 部分实现 5 · 受阻 3 · 未运行 4), INTERFACE_COVERAGE.md (gaps), INTEGRATION_NOTES.md, GATE_INT.md, evidence/.
 
 ## Per stage
 | Stage | Commit(s) | Result | Evidence |
 |---|---|---|---|
 | M0 ledger | a167022b | 294 failing names recorded | /workspace/hr/m10/M0_FAILURE_LEDGER.md (mock) |
-| U2/U3/U4 + integration | c50a8d94, 437f7da6, 1f6ab40e, b5241905, 575501b9 | Vera PASS 575501b9 (full ×3: 292/293/293) | review/INTEGRATION.md, INDEPENDENT_REVIEW.md |
+| U2/U3/U4 + integration | c50a8d94, 437f7da6, 1f6ab40e, b5241905, 575501b9 | 集成代码 PASS，U1 三项 MUST-FIX，已由 u1fix 93a1e351 修复 (full ×3: 292/293/293) | review/INTEGRATION.md, INDEPENDENT_REVIEW.md |
 | M5 real browser + stale-label fix | 581c8463 | 30/30 pre-merge | evidence/m5-repro-storagelabel-*, m5-run-premerge |
 | Audio merge + wiring | f6e60160, 841effd0 | workspace vitest 357/357 | review/AUDIO.md (mock) |
 | U1fix merge | 002ef7fb | no conflicts | review/U1fix.md |
@@ -24,7 +24,7 @@ By name vs M0 (294): persistent 294, NEW 0, gone 1 (`TaskCenter.additive › sho
 Note: `src/ui/LocalAiBrowserJourneyContracts.test.tsx` fails at suite level (reads untracked tests/e2e/v2-local-ai-files-live.spec.ts, ENOENT) — also failed at M0 (m0-full.json, 0 assertions); the M0 names file omitted suite-level failures, so it is persistent, not new.
 
 ## Passed
-Rows 1–14, 16, 17, 23–27 of the matrix (21 已验证).
+Rows 1–13, 16, 17, 23–27 of the matrix (20 已验证). Row 14 fixed after Vera final review, pending her re-check.
 ## Blocked / not done
 受阻: audio history (G-AUD-5), task paging/owner filter (G-AUD-1/G-TC-1), same-id recreation (G-ID-1).
 部分实现: cold-start purge (G-PURGE-1), audio adopt beyond trim (G-AUD-4), cost 未知 (G-AUD-7), compare not split, resetAll not in UI.
@@ -44,3 +44,7 @@ M5_VP=1366x768 [M5_ONLY=axe] M5_HEAD=$(git rev-parse --short HEAD) node tests/m5
 npx tsc -b && npx vite build && npx vitest run --reporter=json --outputFile=full.json
 ```
 axe scenario needs axe-core at $M5_AXE (default /tmp/vera-vw-axe/node_modules/axe-core/axe.min.js; no network fetch).
+
+## Vera final review of f778eaec — MUST-FIX 1 (fixed at 35377d47, pending Vera re-check)
+Bug: UnifiedWorkspacePreview derived `realUser` via resolveWorkspaceIdentity with sentinel projectId '\u0001'; U1fix's scope-mismatch check made it session ⇒ null ⇒ purge never ran (regression vs 575501b9).
+Fix: `resolveWorkspaceUser(actorId)` (scopeLease.ts, same actor rules, no project). Repro-first: u1.purge.host.test.tsx FAIL on f778eaec (evidence/purgefix-repro-before.log) → PASS; mutation realUser→null ⇒ test FAILS (killed, purgefix-mutation-realUser-null.log). Browser projectGone was vacuous (filtered '::project::', after a reload = cold start); now seeds real own/other keys, refetches the list in-session and asserts: FAIL on f778eaec code, PASS ×3 at 10f3a1d5. Targeted: src/workspace vitest 42 files 358/358; tsc -b 0. No full suite rerun (per instruction).
