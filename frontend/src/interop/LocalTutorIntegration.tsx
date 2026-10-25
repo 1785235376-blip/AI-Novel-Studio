@@ -1,5 +1,5 @@
 import {useFloatingTutorPlacement} from './useFloatingTutorPlacement';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ApiError } from '../api';
 import { localTutorIdentity, type LocalTutorProps } from './identity';
@@ -30,6 +30,10 @@ const capabilityNames: Record<string, string> = {
 const metadataNames: Record<MetadataField, string> = { task: '当前任务状态', error: '错误代码', model: '当前模型元数据', runtime: '当前模型运行状态' };
 const diagnosticNames: Record<DiagnosticField, string> = { software_id: '软件 ID', software_version: '软件版本', feature: '当前功能', error_code: '错误代码', task_state: '任务状态', runtime: '运行时元数据', model: '模型元数据', capability_state: '能力状态' };
 
+// [HERMIA-FE-20261025 DUI P0-4] Folds protocol detail behind a disclosure in normal mode; pro/unfolded renders children unchanged.
+function FoldTechnical({ fold, children }: { fold: boolean; children: ReactNode }) {
+  return fold ? <details className="local-tutor-details" data-local-tutor-details="true"><summary>了解如何连接 · 技术详情</summary>{children}</details> : <>{children}</>;
+}
 export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; onClose: () => void }) {
   const identity = localTutorIdentity(props);
   const client = useMemo(() => interopClient(props.context), [identity]);
@@ -423,7 +427,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
         const index = nodes.indexOf(document.activeElement as HTMLElement);
         event.preventDefault(); nodes[(index + (event.shiftKey ? -1 : 1) + nodes.length) % nodes.length]?.focus();
       }}>
-      <header className="local-tutor-header"><div><h2 id="local-tutor-title">问助手 · Local Tutor</h2><p>本机优先 · 预览后确认 · 只读指导</p></div><div className="local-tutor-window-actions"><Button ref={closeButton} onClick={close} aria-label="关闭本机 Tutor">关闭</Button>{floating?<><Button onClick={()=>{if(alive.current)setCollapsed(value=>!value);}}>{collapsed?'展开浮窗':'收起浮窗'}</Button><Button onClick={()=>{if(alive.current){setPresentation('dialog');setCollapsed(false);}}}>返回对话框</Button></>:view==='ask'&&<Button disabled={!!busy||desktopPending||eventSharing==='unknown'} onClick={()=>{const live=layoutState.current;if(alive.current&&!pending.current&&!live.busy&&!live.desktopPending&&live.view==='ask'&&live.eventSharing!=='unknown'){setPresentation('floating');setCollapsed(false);}}}>切换为助手浮窗</Button>}</div></header>
+      <header className="local-tutor-header"><div><h2 id="local-tutor-title">{props.simple?'问助手':'问助手 · Local Tutor'}</h2><p>{props.simple?'用你电脑上的助手看看下一步怎么做；发送任何内容前都会先让你确认。':'本机优先 · 预览后确认 · 只读指导'}</p></div><div className="local-tutor-window-actions"><Button ref={closeButton} onClick={close} aria-label={props.simple?'关闭问助手':'关闭本机 Tutor'}>关闭</Button>{floating?<><Button onClick={()=>{if(alive.current)setCollapsed(value=>!value);}}>{collapsed?'展开浮窗':'收起浮窗'}</Button><Button onClick={()=>{if(alive.current){setPresentation('dialog');setCollapsed(false);}}}>返回对话框</Button></>:view==='ask'&&<Button disabled={!!busy||desktopPending||eventSharing==='unknown'} onClick={()=>{const live=layoutState.current;if(alive.current&&!pending.current&&!live.busy&&!live.desktopPending&&live.view==='ask'&&live.eventSharing!=='unknown'){setPresentation('floating');setCollapsed(false);}}}>切换为助手浮窗</Button>}</div></header>
       {floating&&<p className="local-tutor-floating-note">浮窗仅改变布局，不新增共享权限。{placement&&placement.overlap>0?'当前空间不足以完全避让输入区，可收起浮窗或返回对话框。':'优先避让当前输入或选区。'}</p>}
       <nav className="local-tutor-tabs" aria-label="Tutor 功能" hidden={floating&&collapsed}>
         <Button aria-pressed={view === 'ask'} onClick={() => switchView('ask')}>问助手</Button>
@@ -431,6 +435,9 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
         <Button aria-pressed={view === 'settings'} onClick={() => switchView('settings')}>集成设置</Button>
       </nav>
       <div className="local-tutor-scroll" hidden={floating&&collapsed}>
+        {/* [HERMIA-FE-20261025 DUI P0-4] normal mode, not connected: one human sentence + retry; all technical detail stays reachable under 「技术详情」 */}
+        {props.simple&&!session&&<div className="local-tutor-simple" role="status" data-local-tutor-simple="disconnected"><strong>本机助手未连接</strong><p>没找到你电脑上的助手。写作不受影响；想用的话，先在电脑上打开助手，再点「重试」。</p><div className="local-tutor-actions"><Button disabled={!!busy} onClick={refreshStatus}>重试</Button></div></div>}
+        <FoldTechnical fold={!!props.simple&&!session}>
         {error && <StatusMessage tone="error">{error}</StatusMessage>}
         {notice && <StatusMessage>{notice}</StatusMessage>}
         {eventSharing === 'unknown' && !session && <StatusMessage tone="warning"><strong>撤销状态 UNKNOWN</strong><p>尚未确认主机已停止持续共享。关闭面板不会关闭 Studio 主机。</p>{revokingSession.current && <Button onClick={() => void disconnect()}>重试断开连接</Button>}{masterOffPending.current && <Button disabled={!!busy} onClick={() => changeEnabled(false)}>重试关闭集成</Button>}<Button onClick={dismissUnconfirmed}>仅关闭面板（撤销未确认）</Button></StatusMessage>}
@@ -505,8 +512,9 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
           {guidance.verification_condition && <div><h3>验证条件</h3><pre className="local-tutor-preview">{JSON.stringify(guidance.verification_condition, null, 2)}</pre><Button disabled={!!busy || !session || !has('verifier.request')} onClick={() => { if (!session) return; void run('核对真实 Studio 状态', async (request_id, signal, current) => { const value = await client.verify(session.session_id, guidance.guidance_id, request_id, signal); if (!current()) return; requireReceipt(value, request_id, session.session_id); requireReceipt(value.result, request_id, session.protocol_session_id); setVerification(value.result); }); }}>使用当前 Studio 证据验证</Button></div>}
           {verification && <div role="status"><Badge tone={verification.status === 'VERIFIED' ? 'success' : verification.status === 'FAILED' ? 'error' : 'warning'}>{verification.status}</Badge><p>{verification.reason}</p><p>依据主机状态和证据，不采用模型自报成功。</p><pre className="local-tutor-preview" aria-label="验证证据">{JSON.stringify(verification.evidence, null, 2)}</pre></div>}
         </Panel>}
+        </FoldTechnical>
       </div>
-      <footer className="local-tutor-footer"><span role="status">{busy || (eventSharing === 'unknown' ? '撤销状态 UNKNOWN' : session ? '已连接 · LOCAL_ONLY' : '面板未连接')}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
+      <footer className="local-tutor-footer"><span role="status">{busy || (props.simple ? (eventSharing === 'unknown' ? '正在确认共享是否已停止' : session ? '本机助手已连接' : '本机助手未连接') : (eventSharing === 'unknown' ? '撤销状态 UNKNOWN' : session ? '已连接 · LOCAL_ONLY' : '面板未连接'))}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
     </section>
   </div>;
   return createPortal(body, document.body);

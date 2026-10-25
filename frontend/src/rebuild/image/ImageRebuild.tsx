@@ -73,7 +73,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const head = (title: string) => (
     <div className="mw-head" role="toolbar" aria-label="图片子入口">
       <h2>{title}</h2>
-      <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
+      {/* [HERMIA-FE-20261025 DUI P0-2] pro keeps the wiring badge; normal mode only says (honestly) when generation is unavailable */}
+      {isPro ? <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
+        : providers !== null && !canGen ? <span className="nv-badge nv-badge--off" data-image-provider-state="unavailable">暂时不能生成图片：还没有可用的生图模型</span> : null}
       <span className="nv-spacer" />
       <button type="button" className="nv-btn" aria-pressed={view === 'browse'} data-image-sub="studio" onClick={() => onViewChange('browse')}>图片工作台</button>
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button> : null}

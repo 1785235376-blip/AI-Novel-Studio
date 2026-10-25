@@ -32,6 +32,8 @@ export interface ScopeLabels {
   project: string;
   storyline: string;
   branch: string;
+  /** [HERMIA-FE-20261025 DUI P0-1] Opaque owner IDs — data-* attributes only, never visible text. */
+  ids?: { workspace: string; project: string; storyline: string; branch: string };
 }
 export function moduleForTaskSource(source:string):StudioModule{
   if(source==='image')return 'IMAGE';
@@ -439,13 +441,13 @@ export function ContextBar({
   }
   return (
     <nav className="context-bar" aria-label="当前创作范围">
-      <span>创作空间：{scope.workspace || fallback}</span>
+      <span data-scope-id={scope.ids?.workspace || undefined}>创作空间：{scope.workspace || fallback}</span>
       <i>/</i>
-      <span>{`${projectNoun}：`}{scope.project || fallback}</span>
+      <span data-scope-id={scope.ids?.project || undefined}>{`${projectNoun}：`}{scope.project || fallback}</span>
       <i>/</i>
-      <span>故事线：{scope.storyline || fallback}</span>
+      <span data-scope-id={scope.ids?.storyline || undefined}>故事线：{scope.storyline || fallback}</span>
       <i>/</i>
-      <span>创作分支：{scope.branch || fallback}</span>
+      <span data-scope-id={scope.ids?.branch || undefined}>创作分支：{scope.branch || fallback}</span>
     </nav>
   );
 }
@@ -616,65 +618,87 @@ export function AppShell({
   };
   const commandText = commandQuery.toLowerCase();
   // [HERMIA-FE-20261022] Chrome=6; CONTROL/PLUGIN/WORKFLOW still command-reachable (Lumen §4).
+  // [HERMIA-FE-20261025 DUI P1-5] Normal mode: pro entries are not listed by default but stay reachable by typing
+  // (chrome hide ≠ disable, Lumen §4). Internal ids/codes still match the query but are never shown as text.
+  const proHidden = (proOnly: boolean) => proOnly && shellMode !== "pro" && !commandText.trim();
   const commands = [...STUDIO_MODULES, ...STUDIO_MODULE_OVERFLOW].filter(
     (item) =>
-      item.label.toLowerCase().includes(commandText) ||
-      item.id.toLowerCase().includes(commandText),
+      !proHidden(STUDIO_MODULE_OVERFLOW.some((o) => o.id === item.id)) &&
+      (item.label.toLowerCase().includes(commandText) ||
+      item.id.toLowerCase().includes(commandText)),
   );
   // [HERMIA-FE-20261022 X-UX-02] chrome-hidden + mode still searchable in global palette
   const utilityCommands = [
     {
       id: "inspector",
       label: "打开检查面板",
-      hint: "Inspector",
+      hint: "侧栏",
+      keys: "inspector",
+      proOnly: true,
       action: () => setInspectorOpen(true),
     },
     {
       id: "tasks",
       label: "查看失败任务",
       hint: taskTotal.failed ? `${taskTotal.failed} 个失败` : "无失败任务",
+      keys: "tasks",
+      proOnly: false,
       action: openFailedTasks,
     },
     {
       id: "mode-basic",
       label: "切换到普通模式",
-      hint: "layout.basic",
+      hint: "界面模式",
+      keys: "layout.basic",
+      proOnly: false,
       action: () => onShellModeChange?.("basic"),
     },
     {
       id: "mode-pro",
       label: "切换到专业模式",
-      hint: "layout.pro",
+      hint: "界面模式",
+      keys: "layout.pro",
+      proOnly: false,
       action: () => onShellModeChange?.("pro"),
     },
     {
       id: "settings-hub",
-      label: "打开设置（AI 主控）",
-      hint: "设置 · CONTROL · X-UX-09",
+      label: shellMode === "pro" ? "打开设置（AI 主控）" : "打开设置",
+      hint: "设置",
+      keys: "CONTROL X-UX-09 主控",
+      proOnly: false,
       action: () => onModuleChange("CONTROL"),
     },
     {
       id: "providers",
       label: "打开 Provider 控制中心",
-      hint: "主控 · CONTROL",
+      hint: "专业 · 模型服务",
+      keys: "CONTROL provider 主控",
+      proOnly: true,
       action: () => onModuleChange("CONTROL"),
     },
     {
       id: "plugins",
       label: "打开插件管理",
-      hint: "插件 · PLUGIN",
+      hint: "专业 · 插件",
+      keys: "PLUGIN",
+      proOnly: true,
       action: () => onModuleChange("PLUGIN"),
     },
     {
       id: "workflow-module",
       label: "打开工作流工作区",
-      hint: "工作流 · WORKFLOW",
+      hint: "专业 · 工作流",
+      keys: "WORKFLOW",
+      proOnly: true,
       action: () => onModuleChange("WORKFLOW"),
     },
   ].filter(
     (item) =>
-      item.label.toLowerCase().includes(commandText) ||
-      item.hint.toLowerCase().includes(commandText),
+      !proHidden(item.proOnly) &&
+      (item.label.toLowerCase().includes(commandText) ||
+      item.hint.toLowerCase().includes(commandText) ||
+      item.keys.toLowerCase().includes(commandText)),
   );
   const commandCount = commands.length + utilityCommands.length;
   const executeCommand = (index: number) => {
@@ -986,8 +1010,7 @@ export function AppShell({
                   onClick={() => executeCommand(index)}
                 >
                   {item.icon}
-                  <span>{item.label}</span>
-                  <small>{item.id}</small>
+                  <span data-command-id={item.id}>{item.label}</span>
                 </button>
               ))}
               {utilityCommands.map((item, index) => (

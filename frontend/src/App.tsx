@@ -530,6 +530,7 @@ function LegacyApp() {
     queryKey: ["chapters", namespace, s.novelId],
     queryFn: () =>
       s.scope ? api.scopedChapters(s.scope) : api.chapters(s.novelId),
+    retry: 1, // [HERMIA-FE-20261025 DUI P0-3] fail fast into one error state instead of ~7s of "正在读取章节…"
     enabled: !!s.novelId,
   });
   // [HERMIA-FE-20261022 N-UX-08] Honest continuity open-count for CTA (shared key with ContinuityCheckPanel)
@@ -1380,6 +1381,7 @@ function LegacyApp() {
     selection: studioModule === 'NOVEL' ? selection : undefined,
     sourceReady: studioModule === 'NOVEL' && saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity && !!chapter.data,
     onNavigate: navigateInterop,
+    simple: shellMode !== 'pro', // [HERMIA-FE-20261025 DUI P0-4]
   });
   async function openLocalSample(id: string) {
     const origin = useStudio.getState();
@@ -1456,7 +1458,8 @@ function LegacyApp() {
   if (studioModule !== "NOVEL") return <>{moduleStartGate}{localTutor.dialog}<ModuleWorkspaceRoutes localAiOnboarding={independentStudios ? {context: {sessionToken: s.sessionToken, actor: s.actor, scope: s.scope}, projectId: s.novelId} : undefined} projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={navigateStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} shellMode={shellMode} onShellModeChange={applyShellMode} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
-    : "正在打开章节…";
+    // [HERMIA-FE-20261025 DUI P0-3] Only claim "opening" while a chapter is actually being fetched.
+    : chapter.isFetching ? "正在打开章节…" : chapters.isError ? "章节暂时读不到" : "未打开章节";
   const taskSummary = summarizeTasks(job?.status ? [{ status: job.status }] : []);
   const archivedItems = Array.isArray(archived.data)
     ? archived.data
@@ -1508,6 +1511,7 @@ function LegacyApp() {
   ], NOVEL_PRO_TABS, shellMode);
   const sidebar = (
     <NovelStructureRail
+      pro={shellMode === 'pro' /* [HERMIA-FE-20261025 DUI P0-2] */}
       chapters={novelRailChapters}
       selectedId={s.chapterId}
       loading={chapters.isLoading}
@@ -1847,6 +1851,8 @@ function LegacyApp() {
       {panel === 'write' ? <NovelChapterColumn
         chapters={novelRailChapters}
         selectedId={s.chapterId}
+        loading={chapters.isLoading /* [HERMIA-FE-20261025 DUI P0-3] */}
+        error={chapters.error ? String((chapters.error as Error).message || chapters.error) : null}
         onSelect={id => s.setChapter(id)}
         onCreate={s.novelId ? () => { void createNextChapter(); } : undefined}
       /> : null}
@@ -1854,8 +1860,8 @@ function LegacyApp() {
       {/* [HERMIA-FE-20261022 REBUILD-W3] 写作台头部按原型 nd-head / nd-tools */}
       <div className="nv-desk__head">
         <h2>{chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : (panel === 'write' ? '未选择章节' : (novelRailPanels.find(p => p.id === panel)?.label || '小说'))}</h2>
-        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--ok">写作台</span> : null}
-        {panel === 'write' && chapter.data ? <span className="nv-badge nv-badge--local">版本 {chapter.data.version}</span> : null}
+        {panel === 'write' && chapter.data && shellMode === 'pro' /* [HERMIA-FE-20261025 DUI P0-2] */ ? <span className="nv-badge nv-badge--ok">写作台</span> : null}
+        {panel === 'write' && chapter.data && shellMode === 'pro' ? <span className="nv-badge nv-badge--local">版本 {chapter.data.version}</span> : null}
         <span className="nv-spacer" />
         {panel !== 'write' ? <button type="button" className="nv-btn" data-back-to-writer="true" onClick={() => openNovelPanel('write')}>回写作台</button> : null}
         {panel === 'write' && chapter.data && shellMode === 'pro' /* [HERMIA-FE-20261022 U4] 版本对比仅专业 */ ? <button type="button" className="nv-btn" onClick={() => openNovelPanel('history')}>版本历史</button> : null}

@@ -16,6 +16,16 @@ it('maps every published task family without sending unknown failures to video',
   expect(moduleForTaskSource('provider')).toBe('CONTROL');
   expect(moduleForTaskSource('unknown')).toBe('WORKFLOW');
 });
+// [HERMIA-FE-20261025 DUI P1-5] Spec change: in normal mode pro entries (Provider/插件/工作流/主控 module) are not listed
+// until the user types a query; they remain reachable by search. Helper types into the palette input.
+function typeCommand(host: HTMLElement, text: string) {
+  const input = host.querySelector<HTMLInputElement>(".command-palette input")!;
+  act(() => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
 describe("ModuleSwitcher", () => {
   it("uses one accessible tab contract for every module", () => {
     host = document.createElement("div");
@@ -354,6 +364,7 @@ describe("AppShell command actions", () => {
       ),
     );
     act(() => host.querySelector<HTMLButtonElement>(".global-search")!.click());
+    typeCommand(host, "provider");
     const provider = [
       ...host.querySelectorAll<HTMLButtonElement>(
         ".command-palette__list button",
@@ -589,8 +600,15 @@ describe("AppShell X-UX-02/03/04/05 wave4", () => {
     );
     expect(labels.some((t) => t.includes("专业模式"))).toBe(true);
     expect(labels.some((t) => t.includes("普通模式"))).toBe(true);
-    expect(labels.some((t) => t.includes("主控") || t.includes("CONTROL"))).toBe(true);
-    expect(labels.some((t) => t.includes("插件"))).toBe(true);
+    expect(labels.some((t) => t.includes("打开设置"))).toBe(true);
+    // normal mode, empty query: no pro entries and no internal codes on screen
+    expect(labels.some((t) => /插件|工作流|Provider|CONTROL|PLUGIN|WORKFLOW|layout\.|X-UX|Inspector/.test(t))).toBe(false);
+    // …but still reachable by typing (chrome hide ≠ disable)
+    typeCommand(host, "插件");
+    expect([...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].some((b) => b.textContent?.includes("插件"))).toBe(true);
+    typeCommand(host, "control");
+    expect([...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].some((b) => b.textContent?.includes("主控"))).toBe(true);
+    typeCommand(host, "");
     const pro = [...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].find(
       (b) => b.textContent?.includes("专业模式"),
     )!;

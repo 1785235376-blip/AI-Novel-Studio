@@ -124,9 +124,11 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <span className="nv-spacer" />
         <small className="mw-muted">{cur ? `已选「${cur.filename}」` : '没有选中'}</small>
       </div>
-      {err ? <p className="ast-err" role="alert">读取资产失败：{err}</p> : null}
+      {/* [HERMIA-FE-20261025 DUI P0-3] one state at a time: error (with retry) replaces the empty-library copy; raw detail only in data-* */}
       <div className="ast-grid" id="astGrid">
-        {!loaded ? <p className="mw-muted">读取中…</p>
+        {err ? <div className="ws-honest-empty ast-empty ast-err" role="alert" data-error-detail={err}><h4>资产库暂时读不到，请稍后重试。</h4>
+            <button type="button" className="nv-btn" onClick={() => { setItems(null); setTick(t => t + 1); }}>重试</button></div>
+          : !loaded ? <p className="mw-muted">读取中…</p>
           : (items || []).length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_library" data-honest-workspace="ASSETS">
             <h4>库里还没有资产</h4><p>这里会收好你在各模块生成和导入的东西。先导入一个文件试试。</p>
             <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>导入…</button></div>
@@ -137,7 +139,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
               onClick={() => setSelId(s => s === a.id ? null : a.id)}>
               {thumb(a)}<div className="meta"><b>{a.filename}</b><span>{assetKind(a)} · {a.version ? `v${a.version}` : '版本未记录'} · {sizeLabel(a.size)}</span></div></button>)}
       </div>
-      {loaded && (items || []).length ? <div className="ast-foot">共 {(items || []).length} 个资产 · 存储占用以服务端为准</div> : null}
+      {loaded && !err && (items || []).length ? <div className="ast-foot">共 {(items || []).length} 个资产 · 存储占用以服务端为准</div> : null}
     </div>
   );
 

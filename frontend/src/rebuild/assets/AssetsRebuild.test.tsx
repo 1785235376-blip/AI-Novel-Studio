@@ -15,6 +15,16 @@ beforeEach(() => { vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); assets = []; trash = []; calls.length = 0; });
 const A = {id: 'a1-77ab', novel_id: 'n1', filename: '雾港参考.jpg', kind: 'image', media_type: 'image/jpeg', size: 2048, sha256: 'deadbeefcafe', created_at: '', updated_at: '', version: 3, provenance: {origin: 'upload', integrity: 'partial'}};
 describe('AssetsRebuild', () => {
+  // [HERMIA-FE-20261025 DUI P0-3] Repro: a failed read must show ONE error state with retry, never the empty-library copy too.
+  it('read failure: single error state + 重试, no empty-library copy, no raw HTTP text', async () => {
+    vi.stubGlobal('fetch', vi.fn((url: string) => url.includes('asset-trash') ? json({items: []}) : Promise.resolve(new Response('{"detail":"Not Found"}', {status: 404, headers: {'Content-Type': 'application/json'}}))));
+    render(<AssetsRebuild novelId="n1" />);
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toContain('资产库暂时读不到');
+    expect(screen.queryByText('库里还没有资产')).toBeNull();
+    expect(document.body.textContent).not.toMatch(/404|Not Found/);
+    expect(screen.getByRole('button', {name: '重试'})).toBeTruthy();
+  });
   it('empty library: honest empty copy, 导入… is the page primary, no fake lineage', async () => {
     render(<AssetsRebuild novelId="n1" />);
     await screen.findByText('库里还没有资产');

@@ -199,3 +199,5 @@ html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h3{font
 .nv-rail__more-body .novel-tree-row:hover .novel-tree-actions,.nv-rail__more-body .novel-tree-row:focus-within .novel-tree-actions{opacity:1}
 .nv-rail__more-body .novel-tree-title{white-space:normal;word-break:break-all}
 .nv-rail__more-body .novel-tree-row:not(:hover):not(:focus-within) .novel-tree-actions{visibility:hidden}
+/* [HERMIA-FE-20261025 DUI P1-8] 「更多」disclosure gets the same 2px focus ring as every other control (was 1px auto) */
+.nv-rail__more > summary:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:2px;border-radius:4px}
