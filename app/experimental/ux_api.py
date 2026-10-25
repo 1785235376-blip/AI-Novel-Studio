@@ -7,6 +7,7 @@ from pydantic import Field
 from typing import Literal
 from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn, TaskPageQuery
 from .workspace_interaction import InteractionIn, InteractionVersionIn, InteractionRestoreIn, CommandResolveIn
+from .taskcenter_query import TaskCenterQuery, add_query_metadata, cursor_not_supported
 
 
 class SearchRequest(StrictModel):
@@ -195,13 +196,35 @@ def create_ux_router(service, authorize, require_flag):
             current(origin); current(target)
         return api_call(service.resolve, target, body, reauthorize=checked, require_flag=require_flag)
 
-    @router.get('/tasks', openapi_extra={'parameters': TaskPageQuery.openapi_parameters()})
-    def tasks(nid: str, request: Request, q: str = Query('', max_length=160), failed_only: bool = False,
+    @router.get('/tasks',
+                responses={501: {'description': 'TASKCENTER_CURSOR_UNSUPPORTED: reliable original lifecycle binding is unavailable.'}},
+                openapi_extra={'parameters': TaskPageQuery.openapi_parameters() + TaskCenterQuery.openapi_parameters()})
+    def tasks(nid: str, request: Request, response: Response, q: str = Query('', max_length=160), failed_only: bool = False,
               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx = access(nid, x_session_token, x_branch_id)
-        page = api_call(TaskPageQuery.from_query_params, request.query_params)
-        return api_call(service.tasks, ctx, require_flag, q, failed_only, lambda: current(ctx),
-                        limit=page.limit, offset=page.offset)
+        try:
+            page = api_call(TaskPageQuery.from_query_params, request.query_params)
+            selection = api_call(TaskCenterQuery.from_query_params, request.query_params)
+            if selection.opt_in:
+                response.headers['Cache-Control'] = 'no-store'
+            if selection.page_mode == 'cursor':
+                # Do not issue a token without reliable original owner/session/
+                # permission lifecycle observations. This dependency is paused.
+                current(ctx)
+                cursor_not_supported()
+            limit, offset = page.limit, page.offset
+            if selection.page_mode == 'offset' and limit is None and offset is None:
+                limit, offset = 50, 0
+            result = api_call(service.tasks, ctx, require_flag, q, failed_only, lambda: current(ctx),
+                              limit=limit, offset=offset, authorities=selection.authorities)
+            return add_query_metadata(result, selection)
+        except HTTPException as exc:
+            if 'authority' in request.query_params or 'page_mode' in request.query_params:
+                # The app error handler creates a new response; preserve the
+                # cache policy explicitly on both validation and refusal paths.
+                raise HTTPException(exc.status_code, exc.detail,
+                                    headers={**(exc.headers or {}), 'Cache-Control': 'no-store'}) from None
+            raise
 
     @router.post('/tasks/{authority}/{task_id}/cancel')
     def cancel_task(nid: str, authority: str, task_id: str, body: TaskCancelIn,
