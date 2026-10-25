@@ -72,3 +72,16 @@ it('[M14] without a real identity (仅本次会话) the overview is never read a
   expect(urls.filter(u => u.endsWith('/studio'))).toEqual([]);
   expect(localStorage.getItem(incarnationLedgerKey('actor-1', 'n1'))).toBeNull();
 });
+it('[M14b] a session token alone (bootstrap failed ⇒ no real actor) never reads the overview nor writes the ledger', async () => {
+  const base = fetch as unknown as (url: string) => Promise<Response>;
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => (/\/bootstrap$/.test(url) ? json({detail: 'down'}, 500) : base(url))));
+  useStudio.setState({sessionToken: 'tok', scope: {workspaceId: 'ws1', projectId: 'n1', storylineId: 's1', branchId: 'b1'}, actor: undefined});
+  const qc = new QueryClient({defaultOptions: {queries: {retry: false}}});
+  render(<StrictMode><QueryClientProvider client={qc}><UnifiedWorkspacePreviewHost /></QueryClientProvider></StrictMode>);
+  await settle(); await settle();
+  expect(screen.getByTestId('uw-identity').dataset.identity).not.toBe('real');
+  const urls = (fetch as unknown as {mock: {calls: unknown[][]}}).mock.calls.map(c => String(c[0]));
+  expect(urls.some(u => /\/bootstrap$/.test(u))).toBe(true); // the token was really used for bootstrap
+  expect(urls.filter(u => u.endsWith('/studio'))).toEqual([]);
+  expect(localStorage.getItem(incarnationLedgerKey('actor-1', 'n1'))).toBeNull();
+});

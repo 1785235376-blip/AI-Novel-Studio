@@ -48,6 +48,14 @@ describe('production listPage contract guards [Vera fix1]', () => {
     vi.stubGlobal('fetch', vi.fn(async () => env({ total: 1, has_more: true })));
     await expect(client().listPage({ owner: 'image', limit: 1, offset: 0 })).rejects.toThrow();
   });
+  it('[M7b] rejects an inconsistent short page: has_more must follow offset + limit < total, not offset + items.length', async () => {
+    // offset 0, limit 2, total 3 ⇒ backend has_more=true; a server claiming false with only 1 item is inconsistent.
+    vi.stubGlobal('fetch', vi.fn(async () => env({ items: [image()], total: 3, limit: 2, offset: 0, has_more: false })));
+    await expect(client().listPage({ owner: 'image', limit: 2, offset: 0 })).rejects.toThrow();
+    // offset 0, limit 2, total 2, one item: backend has_more=false; offset+items.length<total would wrongly say true.
+    vi.stubGlobal('fetch', vi.fn(async () => env({ items: [image()], total: 2, limit: 2, offset: 0, has_more: false })));
+    await expect(client().listPage({ owner: 'image', limit: 2, offset: 0 })).resolves.toMatchObject({ paging: { has_more: false } });
+  });
   it('[M8] rejects a partial paging envelope instead of treating it as unpaged', async () => {
     for (const drop of ['total', 'limit', 'offset', 'has_more']) {
       const value: Record<string, unknown> = { items: [image()], total: 3, limit: 1, offset: 0, has_more: true, product_acceptance: 'LOCAL_REQUIRED' };
