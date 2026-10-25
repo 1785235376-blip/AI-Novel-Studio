@@ -161,11 +161,21 @@ const scenarios = {
     const s = await tid(page, 'u3-tasks').locator('[data-state]').first().getAttribute('data-state'); const t = (await tid(page, 'u3-tasks').innerText()).replace(/\s+/g, ' ');
     return `state=${s}; text="${t.slice(0, 90)}"`;
   },
-  async projectGone({page, backend}, vp) {
-    backend.st.mode = 'gone'; await page.reload(); await page.waitForTimeout(2500); await shot(page, vp, 'project-gone');
-    const keys = await page.evaluate(P => Object.keys(localStorage).filter(k => k.includes(`::project::`) && k.includes(P)), backend.d.P);
-    return `own keys for vanished project after list refresh: ${JSON.stringify(keys)}`;
+  async projectGone({page, backend}, vp) { // [HERMIA-FE-20261025 M10-purgefix] in-session purge, real keys, asserted (was vacuous: matched '::project::' only)
+    const P = backend.d.P, inst = encodeURIComponent('ws1/s1/b1');
+    const own = [`poemseed.workspace.viewprefs.v1::u-m5::${encodeURIComponent(P)}::${inst}`, `poemseed.workspace.layout.v1::u-m5::${encodeURIComponent(P)}::${inst}`];
+    const other = [`poemseed.workspace.viewprefs.v1::u-other::${encodeURIComponent(P)}::${inst}`, `poemseed.workspace.layout.v1::u-other::${encodeURIComponent(P)}::${inst}`];
+    await page.evaluate(ks => { for (const k of ks) if (localStorage.getItem(k) === null) localStorage.setItem(k, '{"version":1,"viewports":{},"worksets":[]}'); }, [...own, ...other]);
+    backend.st.mode = 'gone'; // list now omits P; refetch WITHOUT reload (cold start is the documented gap G-PURGE-1)
+    await page.evaluate(() => { window.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('focus')); });
+    await page.waitForFunction(ks => ks.every(k => localStorage.getItem(k) === null), own, {timeout: 15000}).catch(() => {});
+    await page.waitForTimeout(500); await shot(page, vp, 'project-gone');
+    const st = await page.evaluate(([o, x]) => ({own: o.filter(k => localStorage.getItem(k) !== null), other: x.filter(k => localStorage.getItem(k) !== null).length}), [own, other]);
+    await check(st.own.length === 0, `own keys not purged: ${JSON.stringify(st.own)}`);
+    await check(st.other === 2, `other user's keys removed: ${st.other}/2 kept`);
+    return `own keys after list refresh: ${st.own.length} (purged), other user's keys kept: ${st.other}/2`;
   },
+
 };
 async function shot(page, vp, name) { if (!vp.pre) await page.screenshot({path: `${SHOTS}/${vp.width}x${vp.height}-${name}.png`}); }
 const CORRUPT = () => { for (const k of ['poemseed.workspace.viewprefs.v1::user::project::x', 'poemseed.workspace.layout.v1::user::project::x']) localStorage.setItem(k, '{bad json'); localStorage.setItem('poemseed.rebuild.canvas.image.audio-wav-project', '[[['); };
