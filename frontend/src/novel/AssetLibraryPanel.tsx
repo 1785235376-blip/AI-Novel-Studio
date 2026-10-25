@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { AUDIO_HISTORY_TEXT } from '../workspace/media/audioHistoryText';
 import { Download, Trash2, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, apiErrorView, type Asset } from "../api";
@@ -6,6 +7,7 @@ import { Button, EmptyState, IconButton, Panel } from "../ui/primitives";
 import { useRequestedRecord } from "../experimental/useRequestedRecord";
 import { useStudio } from "../store";
 import { ASSET_LIBRARY_SORTS, assetLibraryView, type AssetLibrarySort } from './assetLibraryView';
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
 
 export const MAX_ASSET_BYTES = 25 * 1024 * 1024;
 /** Explicit owner adapter. Omitted consumers retain the original asset API. */
@@ -248,8 +250,9 @@ export function AssetLibraryPanel({
         {trash.data?.items.map(asset => <article key={asset.id}>
           <span>{asset.filename}</span>
           <Button variant="ghost" disabled={restore.isPending || !canMutate || adapter?.mutationsBlocked} onClick={() => restore.mutate(asset)}>
-            {restore.isPending && restore.variables?.id === asset.id ? "恢复中…" : "恢复资产"}
+            {restore.isPending && restore.variables?.id === asset.id ? i18nT("fc.aud.restoring") : AUDIO_HISTORY_TEXT.assetRestore}
           </Button>
+          <small className="novel-help">{AUDIO_HISTORY_TEXT.assetRestoreHint}</small>
         </article>)}
       </section>}
       <div className="novel-record-list asset-library__grid">

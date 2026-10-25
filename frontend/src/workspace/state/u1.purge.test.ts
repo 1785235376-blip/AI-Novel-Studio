@@ -25,11 +25,22 @@ describe('no resurrection after project disappearance', () => {
     m.set('poemseed.rebuild.canvas.image.n1', '{"nodes":[]}');
     const pres = new ProjectPresence('u1');
     expect(pres.observe(['n1', 'n2'])).toEqual([]);
+    expect(pres.observe(['n2'])).toEqual([]); // [HERMIA-FE-20261025 M10-purgeguard] missing once = pending only
     const gone = pres.observe(['n2']); expect(gone).toEqual(['n1']);
     expect(purgeProjectGeometry(s, 'u1', 'n1').sort()).toEqual([viewPrefsKey(A), workspaceLayoutKey(A), workspaceLayoutBackupKey(A)].sort());
     expect(m.has(viewPrefsKey(other))).toBe(true); expect(m.has(viewPrefsKey(n2))).toBe(true); expect(m.has('poemseed.rebuild.canvas.image.n1')).toBe(true);
     // recreated with the same id ⇒ default
     expect(createViewPreferences({scope: A, storage: s, isCurrent: () => true, persist: true}).origin).toBe('default');
+  });
+  it('[M10-purgeguard] empty list never purges, keeps seen, resets pending; reappearing project is not purged', () => {
+    const p = new ProjectPresence('u1');
+    expect(p.observe(['a', 'b', 'c'])).toEqual([]);
+    expect(p.observe(['a', 'c'])).toEqual([]);
+    expect(p.observe([])).toEqual([]);
+    expect(p.observe(['a', 'c'])).toEqual([]);
+    expect(p.observe(['a', 'b', 'c'])).toEqual([]);
+    expect(p.observe(['a'])).toEqual([]);
+    expect(p.observe(['a'])).toEqual(['b', 'c']);
   });
   it('first observation never purges; storage throwing ⇒ no-op', () => {
     expect(new ProjectPresence('u1').observe([])).toEqual([]);
