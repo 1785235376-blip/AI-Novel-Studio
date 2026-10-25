@@ -63,12 +63,14 @@ export const DEFAULT_PRESET: LayoutPresetId = 'creative';
 /** Media slices: image is the active vertical slice; audio is a reserved seam (U3/U4 must stabilise first). */
 export const MEDIA_SLICES: Readonly<Record<MediaSlice, {title: string; state: 'active' | 'reserved'; owner: string; note: string}>> = {
   image: {title: '图片', state: 'active', owner: 'creative/studioGraphClient (image graph)', note: '当前垂直切片。'},
-  audio: {title: '音频', state: 'reserved', owner: 'creative/studioProductionClient m8.audio.*', note: '接口已在任务书清单中，等任务和结果单元稳定后再接；现在不显示任何音频入口。'},
+  // [HERMIA-FE-20261025 AUDIO-M10] activated: audio reuses the SHARED tasks/results/history panels (no audio-only panel);
+  // the media filter + candidate preview live in src/workspace/media/. Gaps: media/mediaSlice.ts G-AUD-1..7.
+  audio: {title: '音频', state: 'active', owner: 'creative/studioProductionClient m8.audio.*', note: '音频任务在共用的任务、结果、历史面板里显示；列表只能在本机筛选，只有音频裁剪任务记录作品位置。'},
 };
 
 // ── derivations (parity with the previous hardcoded tables) ───────────────────────────────────────────────────
-export function layoutSpecs(entries: readonly UnifiedPanelEntry[] = UNIFIED_PANELS): LayoutPanelSpec[] {
-  return entries.filter(e => mediaVisible(e.media)).map(e => ({id: e.id, title: e.title, defaultDock: e.defaultDock, docks: e.docks, defaultSize: e.defaultSize, minSize: e.minSize, ...(e.maxSize ? {maxSize: e.maxSize} : {})}));
+export function layoutSpecs(entries: readonly UnifiedPanelEntry[] = UNIFIED_PANELS, slices: typeof MEDIA_SLICES = MEDIA_SLICES /* [HERMIA-FE-20261025 AUDIO-M10] */): LayoutPanelSpec[] {
+  return entries.filter(e => mediaVisible(e.media, slices)).map(e => ({id: e.id, title: e.title, defaultDock: e.defaultDock, docks: e.docks, defaultSize: e.defaultSize, minSize: e.minSize, ...(e.maxSize ? {maxSize: e.maxSize} : {})}));
 }
 /** workbench PanelDefinition for registry-registered panels (canvas + tasks; outline/inspector come from novelPreviewPanels). */
 export function panelDefinitions(ids: readonly string[] = ['creative', 'execution', 'tasks', 'results', 'history'] /* [HERMIA-FE-20261025 INT] U4 panels */, entries = UNIFIED_PANELS): PanelDefinition[] {
@@ -78,7 +80,7 @@ export function panelDefinitions(ids: readonly string[] = ['creative', 'executio
     return {id: e.id, kind: e.kind, title: e.title, capability: e.capability, instancing: 'singleton', docks, defaultDock: e.defaultDock as WbDock, minWidth: e.minSize, ...(e.requiresContext ? {requiresContext: e.requiresContext} : {})};
   });
 }
-function mediaVisible(m: UnifiedPanelEntry['media']) { return m === 'shared' || MEDIA_SLICES[m].state === 'active'; }
+function mediaVisible(m: UnifiedPanelEntry['media'], slices: typeof MEDIA_SLICES = MEDIA_SLICES) { return m === 'shared' || slices[m].state === 'active'; }
 
 const CAP_TEXT: Record<CapabilityStatus, string> = {
   connected: '已接通', partial: '部分可用', 'local-only': '仅本机草稿', 'not-implemented': '尚未实现', undetermined: '状态未确定',

@@ -27,10 +27,13 @@ describe('U2 registry parity with previously scattered tables', () => {
     const extra = {...UNIFIED_PANELS[4], id: 'history', title: '历史'};
     expect(layoutSpecs([...UNIFIED_PANELS, extra]).map(s => s.id)).toContain('history');
   });
-  it('audio slice is a reserved seam: no audio panel is exposed yet', () => {
-    expect(MEDIA_SLICES.audio.state).toBe('reserved');
+  // [HERMIA-FE-20261025 AUDIO-M10] slice intentionally activated; the hidden-reserved behaviour is still asserted for an
+  // explicitly reserved slice below (same mediaVisible rule), so the original counter-example is kept, not dropped.
+  it('audio slice is active (shared panels); a reserved slice still hides its panel', () => {
+    expect(MEDIA_SLICES.audio.state).toBe('active');
     const audio = {...UNIFIED_PANELS[1], id: 'audio-canvas', media: 'audio' as const};
-    expect(layoutSpecs([...UNIFIED_PANELS, audio]).map(s => s.id)).not.toContain('audio-canvas');
+    expect(layoutSpecs([...UNIFIED_PANELS, audio], {...MEDIA_SLICES, audio: {...MEDIA_SLICES.audio, state: 'reserved'}}).map(s => s.id)).not.toContain('audio-canvas');
+    expect(layoutSpecs([...UNIFIED_PANELS, audio]).map(s => s.id)).toContain('audio-canvas');
   });
 });
 
