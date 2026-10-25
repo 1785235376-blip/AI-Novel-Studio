@@ -412,6 +412,12 @@ export const zhCN = {
   'err.http.413': '内容过大，无法提交',
   'err.http.422': '提交的内容未通过校验，请检查后重试',
   'err.http.429': '操作过于频繁，请稍后再试',
+  // [HERMIA-FE-20261025 VERA-F70 MF-2] str(exc) 类业务 code 的友好文案
+  'err.code.INVALID_PROVIDER_CONFIG': '模型服务配置无效，请检查设置后重试',
+  'err.code.ASSET_INTEGRITY_FAILED': '资产文件校验失败，请重新导入',
+  'err.code.IMAGE_EDIT_INVALID': '图片编辑参数无效，请调整后重试',
+  'err.code.INVALID_WORKER_CONFIG': '后台任务配置无效，请检查设置',
+  'err.code.EXPERIMENTAL_INVALID': '实验功能请求无效，请检查后重试',
   'err.http.500': '服务暂时出错，请稍后重试',
   'err.http.502': '服务暂时无法连接，请稍后重试',
   'err.http.503': '服务暂时无法连接，请稍后重试',

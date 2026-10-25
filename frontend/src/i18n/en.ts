@@ -418,6 +418,12 @@ export const en: Record<MessageKey, string> = {
   'err.http.413': 'The content is too large to submit.',
   'err.http.422': 'The submitted content did not pass validation. Please check and try again.',
   'err.http.429': 'Too many requests. Please wait a moment and try again.',
+  // [HERMIA-FE-20261025 VERA-F70 MF-2] str(exc) 类业务 code 的友好文案
+  'err.code.INVALID_PROVIDER_CONFIG': 'The model provider configuration is invalid. Check the settings and try again.',
+  'err.code.ASSET_INTEGRITY_FAILED': 'The asset file failed its integrity check. Please import it again.',
+  'err.code.IMAGE_EDIT_INVALID': 'The image edit settings are invalid. Adjust them and try again.',
+  'err.code.INVALID_WORKER_CONFIG': 'The background worker configuration is invalid. Please check the settings.',
+  'err.code.EXPERIMENTAL_INVALID': 'The experimental feature request is invalid. Please check and try again.',
   'err.http.500': 'Something went wrong on the server. Please try again shortly.',
   'err.http.502': 'The service is unreachable right now. Please try again shortly.',
   'err.http.503': 'The service is unreachable right now. Please try again shortly.',

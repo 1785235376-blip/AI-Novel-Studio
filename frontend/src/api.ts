@@ -97,18 +97,41 @@ export function friendlyHttpMessage(status:number,fallback?:string):string|undef
 }
 // [HERMIA-FE-20261025 VERA-097 MF1] 后端 unified_http_error（app/main.py:99）把字符串 detail 复制进 message 并带 code:"HTTP_<n>"：
 // 这种回显不是结构化文案，按原文处理（友好文案 + raw_text）。另外凡是像服务端内部信息（路径、Traceback、XxxError(…)）的文本一律视为原文。
-const UNSAFE_SERVER_TEXT=/Traceback|File "|(?:^|[\s'"(=:])(?:\/(?:home|srv|usr|var|tmp|etc|opt|root|app|Users|mnt|private|workspace)\/|[A-Za-z]:\\)|\b[A-Z]\w*(?:Error|Exception)\b|\bline \d+\b|psycopg|sqlalchemy|sqlite3?\.|\bat 0x[0-9a-f]+|<html|<!doctype/i;
-export function isUnsafeServerText(text:string):boolean{return UNSAFE_SERVER_TEXT.test(text)}
+// [HERMIA-FE-20261025 VERA-F70 MF-2] 每条规则独立（测试逐条验证“只有这一条能拦住”）；任何一条命中即视为服务端原文。
+export const UNSAFE_SERVER_RULES:ReadonlyArray<readonly [string,RegExp]>=[
+ ['traceback',/Traceback|File "/i],
+ ['winDrive',/(?:^|[^\w])[A-Za-z]:[\\/]/],
+ ['unc',/\\\\[\w.$-]+\\/],
+ ['absPath',/(?:^|[\s'"(=:,])\/[\w.~-]+\//],
+ ['relPath',/(?:^|[\s'"(=:,])(?:\.{1,2}|~)\/|[\w.-]+\/[\w./-]*\.[A-Za-z0-9]{1,6}\b/],
+ ['excName',/\b[A-Z]\w*(?:Error|Exception)\b/i],
+ ['lineNo',/\bline \d+\b/i],
+ ['errno',/\bErrno\b/i],
+ ['sql',/\bconstraint\b|\b(?:SELECT|INSERT|UPDATE|DELETE)\b[\s\S]*\b(?:FROM|INTO|SET|WHERE)\b|psycopg|sqlalchemy|sqlite3?\./i],
+ ['pyRepr',/\bat 0x[0-9a-f]+|invalid literal for/i],
+ ['html',/<html|<!doctype/i],
+];
+// 结构化 message 的长度上限：超出即按原文处理（友好文案 + 专业模式 technical）。
+export const SERVER_MESSAGE_LIMIT=200;
+// 这些业务 code 的 message 在后端就是 str(exc)：默认按原文处理，界面用按 code 的友好文案。
+export const RAW_MESSAGE_CODES:ReadonlySet<string>=new Set(['INVALID_PROVIDER_CONFIG','ASSET_INTEGRITY_FAILED','IMAGE_EDIT_INVALID','INVALID_WORKER_CONFIG','EXPERIMENTAL_INVALID']);
+export function isUnsafeServerText(text:string):boolean{return text.length>SERVER_MESSAGE_LIMIT||UNSAFE_SERVER_RULES.some(([,re])=>re.test(text))}
+export function friendlyCodeMessage(code:unknown):string|undefined{return typeof code==='string'&&RAW_MESSAGE_CODES.has(code)?apiErrorText(`err.code.${code}`)||undefined:undefined}
 const structuredMessage=(raw:any):string|undefined=>{
-  const pick=(v:any)=>typeof v==='string'&&v.trim()&&!UNSAFE_SERVER_TEXT.test(v)?v:undefined;
+  const pick=(v:any)=>typeof v==='string'&&v.trim()&&!isUnsafeServerText(v)?v:undefined;
   if(!raw||typeof raw!=='object')return undefined;
   const d=raw.detail;
+  const code=raw.code??(d&&typeof d==='object'?d.code:undefined);
+  if(typeof code==='string'&&RAW_MESSAGE_CODES.has(code))return undefined;
   const httpCode=typeof raw.code==='string'&&/^HTTP_\d+$/.test(raw.code);
   // 字符串 detail 的回显，或无结构化 detail 的 HTTP_<n> 信封：不信任 raw.message
   if(typeof d==='string'&&(raw.message===d||httpCode))return undefined;
   if(httpCode&&(d==null||typeof d!=='object'))return undefined;
-  const top=typeof raw.message==='string'&&raw.message===raw.code?undefined:pick(raw.message);
-  return top??(d&&typeof d==='object'&&!Array.isArray(d)?pick(d.message)??pick(d.detail):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+  const dict=d&&typeof d==='object'&&!Array.isArray(d)?d:undefined;
+  // [HERMIA-FE-20261025 VERA-F70 偏离裁定] dict 内 detail 字段被回显成 message（str(exc)）时同样按原文；只认显式的 d.message。
+  const echo=!!dict&&typeof dict.detail==='string'&&raw.message===dict.detail&&dict.message!==raw.message;
+  const top=raw.message===raw.code||echo?undefined:pick(raw.message);
+  return top??(dict?pick(dict.message):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
 };
 const rawTextOfObj=(raw:any):string|undefined=>{
   if(!raw||typeof raw!=='object')return undefined;
@@ -130,9 +153,16 @@ export function apiErrorView(error:unknown,fallback='操作失败'):{message:str
     const safe=Object.fromEntries(Object.entries(problem.details).filter(([key,value])=>SAFE_ERROR_DETAIL_KEYS.has(key)&&(typeof value==='string'||typeof value==='number'||typeof value==='boolean')));
     if(Object.keys(safe).length) details=JSON.stringify(safe);
   }
-  const message=problem.message_source==='fallback'?(friendlyHttpMessage(problem.status,fallback)??fallback):(problem.message||fallback);
+  const message=problem.message_source==='fallback'?(friendlyCodeMessage(problem.code)??friendlyHttpMessage(problem.status,fallback)??fallback):(problem.message||fallback);
   const technical=getApiErrorShellMode()==='pro'&&problem.raw_text?problem.raw_text.slice(0,RAW_TEXT_LIMIT):undefined;
   return {message,code:problem.code,requestId:problem.request_id,details,...(technical?{technical}:{})};
+}
+// [HERMIA-FE-20261025 VERA-F70 MF-1] call() 与 downloadCall() 共用的错误构造：结构化 message 才原样展示，其余友好文案 + raw_text。
+async function apiErrorFromResponse(r:Response):Promise<ApiError>{
+ const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}
+ const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');
+ const sm=structuredMessage(raw);/* [HERMIA-FE-20261025 P1-ERR] no raw-body / string-detail fallback */
+ return new ApiError({status:r.status,code,message:sm??friendlyCodeMessage(code)??friendlyHttpMessage(r.status,`HTTP ${r.status}`)!,message_source:sm?'server':'fallback',raw_text:sm?undefined:rawTextOf(raw,body),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)});
 }
 // [HERMIA-FE-20261022 REBUILD-SHELL] exported for rebuild/rebuildApi.ts (same headers/errors as api.*)
 export async function call<T>(url:string,init?:RequestInit,contextOverride?:CollaborationContext):Promise<T>{
@@ -144,7 +174,7 @@ export async function call<T>(url:string,init?:RequestInit,contextOverride?:Coll
  const token=requestToken(context,url);if(token)headers['X-Session-Token']=token;
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  const r=await fetch(url,{...init,headers});
- if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');const sm=structuredMessage(raw);/* [HERMIA-FE-20261025 P1-ERR] no raw-body / string-detail fallback */throw new ApiError({status:r.status,code,message:sm??friendlyHttpMessage(r.status,`HTTP ${r.status}`)!,message_source:sm?'server':'fallback',raw_text:sm?undefined:rawTextOf(raw,body),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
+ if(!r.ok)throw await apiErrorFromResponse(r);
  return r.status===204?undefined as T:r.json();
 }
 async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit):Promise<Blob>{
@@ -155,7 +185,7 @@ async function downloadCall(url:string,extraHeaders:Record<string,string>={},con
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  Object.assign(headers,extraHeaders);
  const r=await fetch(url,{...init,headers});
- if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
+ if(!r.ok)throw await apiErrorFromResponse(r); // [HERMIA-FE-20261025 VERA-F70 MF-1] 下载失败与 call() 同一套净化
  return r.blob();
 }
 const query=(path:string,params:Record<string,string|undefined>)=>{const s=new URLSearchParams();Object.entries(params).forEach(([k,v])=>v!==undefined&&s.set(k,v));return `${path}?${s}`};
