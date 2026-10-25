@@ -988,3 +988,21 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 3. **EN 头部搜索文案压在 Ctrl K 上**（1440/1920，沿自 i18n）：shots/en_1440_bare.png。
 - P2：EN 下仍有「已保存/保存/当前正在写」等未译 UI 文本；axe 中/EN 1440 仅 heading-order、landmark-unique（moderate）。
 - 证据：/workspace/hr/vera-compare/duim-625114c9/
+
+## [VERA-FE] 复审 c37ef1b0（2026-10-25 14:45 北京时间）— 结论：MUST-FIX（1 项）
+证据：/workspace/hr/vera-compare/duim-fix-c37ef1b0/
+- tsc 0；build 0；定向 10 文件 92 测试全过。
+- 全量 ×3（低负载、串行错开，load 4–5）：adjusted 293 / 296 / 294，两条口径（三取优 ≤297；≤297 允许重试一次）均通过。仅 ISI 为已知抖动；LocalAiBrowserJourneyContracts ENOENT 属基线。
+- 浏览器（4499，zh/EN × 1366/1440/1920 × 普通/专业，章节 bare/500/slow；非 GET 请求数 0）：
+  - 上轮 MUST-FIX①：500 与 slow 在普通和专业模式下，中区都只呈现一个 data-desk-state（error 或 loading），无“继续写”/下一步/新建，也没有混合状态。✅
+  - 上轮②：EN 全部宽度无遮挡。但 **zh 专业模式 1366 下 span 与 Ctrl K 重叠**（截图显示“搜索功能、章节或命令K”），这是新的 MUST-FIX：修复只覆盖了 i18n-en.css，zh 窄屏 + 专业模式（专业更多 等项更宽）没有处理。
+  - 上轮③：窄屏 EN 的可访问名为完整的 "Search chapters, commands Ctrl K"。✅
+  - axe：只有 heading-order 和 landmark-unique（moderate，与之前相同）。
+- 变异 21 个：17 个被捕获。存活 4 个：
+  - B6（中区原始错误）和 C1/C2（Cmd-K id 列在普通模式显示）：没有单测守护，浏览器验证目前正确，记为 P2 测试缺口；
+  - E1/E2（CSS）：jsdom 无法覆盖，由浏览器覆盖。
+- 裁定（1）SourcePrivacyControl 在「更多」中露出 {"detail":"nf"}：**P2，不阻断本合并**，但要另立跨模块任务。
+  - 理由：它只出现在折叠的「更多」里，不在默认视图；问题也不是本分支引入的。
+  - 根因是共享的 apiErrorView（src/api.ts:85）：detail 为字符串时会回落到原始 body，61 个非测试文件都受影响。
+  - 建议在 apiErrorView 层统一改为白名单/i18n 文案，原文只放进专业模式的技术详情。
+- 裁定（2）EN 1440 专业模式搜索框省略号：没有重叠，可访问名完整，**但没有 title/tooltip**，不满足接受条件；给 button.global-search 加上 title 等于完整文案后即可接受（P2，可与 MUST-FIX 同批）。
