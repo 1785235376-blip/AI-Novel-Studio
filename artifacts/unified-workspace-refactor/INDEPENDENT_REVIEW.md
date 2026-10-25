@@ -935,3 +935,31 @@ MUST-FIX：
 - 集成冒烟（int.json，1366/1440/1920）：非 GET=0，pageerror=0，无横向滚动；面板 outline/creative/inspector/results/history/tasks；结果/历史显示诚实空态 int-*-empty；有身份时任务与 production jobs 均为 GET、无 uw-preview 头。axe：color-contrast（旧）+ **新增 landmark-unique:#uw-panel-tasks**（P2）。
 - 清理（purge.json）：注入身份后列表移除项目 B → 仅删除本人 B 的 viewprefs/layout 键；他人键与画布草稿保留。缺口（P2）：ProjectPresence 只在本次会话内比较，项目在会话外被删除后冷开不会清理。
 - 变异（mutations.log）：purge 不校验用户(1 失败)、任务读取回退为每次挂载一次(2)、身份接受空 actor(1) 均被杀死；purge 覆盖画布键 / 首个列表 / 失败读取三条为等价或无害变异。
+
+## [VERA-FE] U5 最终整体复审 — f778eaec（2026-10-25，Asia/Shanghai）
+结论：**MUST-FIX ×1**（清理回归），其余通过。证据：/workspace/hr/vera-compare/final-f778eaec/。worktree /workspace/hr/vera-final（detached，package-lock 未提交）；Node 22.14；tsc 0 / build 0。f178ff84→f778eaec 仅文档与证据。
+
+### (1) U1 三项复验 + P2（真实 Chrome，vite :4399，页面级 route mock，非 GET 全部 abort）
+- U1-1 共享键丢失更新：**已修**。pan 后存储文档保留 worksets，冷重开列表仍在（u1.json）。
+- U1-2 会话保存文案/配额：**已修**。「（仅本次会话有效，关闭页面后不保留）」；配额失败「…但没能写入本机存储（可能已满）…」。
+- U1-3 ?uw=1 bootstrap 真实身份 + 冷重开视口：**已修**。仅写 studio.session/scope、不注入 actor：bootstrap GET 恰好 1 次，actor=u-m5 来自服务端；uw-identity=real；冷重开 translate(-160,70)、停靠 left、工作集「冷W」恢复（fin.json，1440）。
+- 任务面板：有会话时已接通（3 行，非「未接通」）；无身份时仍「未接通」且零任务请求（正确）。
+- P2 三项：uw-preview 身份字符串/请求头已消失；landmark-unique 已消失；purge 文档已补。axe 剩余 color-contrast(4) + aria-required-children(1，div[aria-label="章节"]，修复前就有)。P3：报告只写了 color-contrast 是旧问题，aria-required-children 没提。
+- 三个视口：非 GET 0，pageerror 0，无横向滚动。
+
+### MUST-FIX：会话内清理回归（矩阵第 14 行）
+UnifiedWorkspacePreview.tsx:134 用哨兵 projectId '\u0001' 调用 resolveWorkspaceIdentity。U1fix 新增 scope-mismatch 检查后，collabScope 带 projectId 时一律返回 session，所以 realUser 恒为 null，清理永不执行。复现（purge.json / purge2.json）：actor vera-u5，项目 B 从 /api/novels 消失并强制 refetch。B 已从下拉框移除，但本人 B 的 viewprefs/layout 键仍在；int-575501b9 这些键会被删除。变异 P1（realUser 直接返回 null）**存活**：u1.purge.test 只测纯函数，没有覆盖接线。修复建议：用不带哨兵的方式取 userId（例如直接用 actorId 加 collabScope 的 workspace），并补一个宿主级测试（项目从列表消失后断言本人键被删）。
+
+### (2) 全量 ×3（调整数 = raw − ISI + 8，基线 298）
+run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。规则 (a) 三次最优 293 ≤297、规则 (b) 单次 ≤297：都 **PASS**。三次都失败的条目里没有基线之外的新项。抖动项：ISI ×2、TaskCenter.receiptCompanion ×1（各只出现 1 次）。套件级失败 = src/ui/LocalAiBrowserJourneyContracts.test.tsx（ENOENT tests/e2e/v2-local-ai-files-live.spec.ts），已在基线中以 `<file load>` 计入，**不是新失败**。
+
+### (3) 音频冒烟 + 变异
+三个视口：全部/图片/音频筛选正确（3/1/1）；文本中无原始 id；「试听候选」挂载时 0 次读取，双击也只发 1 次 candidate GET；blob 播放器 paused、无 autoplay。
+变异（mut.json，范围 src/workspace，357 例）：future-version 被接受 / setWorksets 去掉 isCurrent / 去掉 lease 检查 / autoplay / 挂载即读取 / 去掉 MIME 检查 / filterByMedia 写错，**全部被杀**。去掉 inflight 守卫存活：busy 时按钮 disabled 起到同样作用，属等价变异，P3。清理接线变异存活（见上面的 MUST-FIX）。
+
+### (4) ACCEPTANCE_MATRIX 34 行
+重新计数与表中一致：已验证 21 · 已实现 1 · 部分实现 5 · 受阻 3 · 未运行 4；DELIVERY_REPORT 中的数字与矩阵一致（48/48、293+1 套件级、NEW 0）。所列证据文件都存在（m5-run/m5-req ×48/shots 96/full-f178ff84.*/repro before-after）。争议行：
+- **第 14 行**（清理，已验证）：引用的是我在 575501b9 的 purge.json，旧 HEAD 的证据；在 f778eaec 上已回归 → 应改为「部分实现/未通过」，修复后再验。
+- **DELIVERY_REPORT 分阶段表**写「Vera PASS 575501b9」：**不对**。575501b9 的结论是 MUST-FIX（U1 三项仍在），通过的只有集成代码本身。
+- 第 23 行：landmark-unique 的结论成立，但 aria-required-children 没有说明（P3）。
+- 其余各行的分类与证据相符；第 15、19、22、28、29 行的「部分实现」和 20、21、30 行的「受阻」理由都成立。
