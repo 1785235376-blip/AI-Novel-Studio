@@ -1006,3 +1006,20 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
   - 根因是共享的 apiErrorView（src/api.ts:85）：detail 为字符串时会回落到原始 body，61 个非测试文件都受影响。
   - 建议在 apiErrorView 层统一改为白名单/i18n 文案，原文只放进专业模式的技术详情。
 - 裁定（2）EN 1440 专业模式搜索框省略号：没有重叠，可访问名完整，**但没有 title/tooltip**，不满足接受条件；给 button.global-search 加上 title 等于完整文案后即可接受（P2，可与 MUST-FIX 同批）。
+
+## [VERA-FE] 复审 53bd9f1e（2026-10-25 15:50 北京时间）— 结论：PASS（附 2 项既有 P1 跟进）
+证据：/workspace/hr/vera-compare/duim-fix2-53bd9f1e/
+- tsc 0；build 0。
+- 全量 ×3：串行执行，开跑时 load 0.6–4.9。adjusted 为 293 / 294 / 293，两条口径都通过（ISI 每轮 8，ENOENT 属基线）。
+- 浏览器（4499，共 40 格，非 GET 请求数 0）：
+  - zh/en × 普通/专业 × 1366/1440/1920 的 12 格：span 与 kbd 的矩形全部不相交，kbd 都在按钮内；title 为完整文案；可访问名完整。上轮 zh 专业 1366 的重叠已修复（shots/cmp_pro_zh_1366.png）。
+  - DPR 1.25/1.5 抽测（1366/1440）：均无相交。
+  - 1280 抽测：同样无相交。
+- 头部其它布局：与 c37ef1b0 截图逐像素对比，差异只在搜索框内部，EN 头部像素完全相同。所有格都没有页面横向滚动。
+- 一屏一态（1440 下 500/slow，普通与专业）：只有一个 data-desk-state，无下一步/主按钮。✅
+- 1366/1440 窄屏可访问名没有回归。✅
+- axe：只有 heading-order 和 landmark-unique（moderate，与之前相同）。
+- 变异 B6、B6b、C1、C2、T1（去掉 title）、T2（title 改为截断文案）：6/6 全部被捕获。
+- 既有问题（非本次引入，像素对比已证实，建议另开 P1）：
+  1. ≤1360px 时 protoShell.css 对所有语言的 span 使用 display:none，导致 1280 下可访问名只有 "Ctrl K"。title 不参与可访问名计算，应改为视觉隐藏（clip）。
+  2. 专业模式在 zh 1366 / EN 1366、1440 / 1280 下，头部超出视口，"设置"按钮被裁切或完全不可见（header 有 overflow，但页面没有横向滚动）。
