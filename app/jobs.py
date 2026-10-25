@@ -25,6 +25,15 @@ from .experimental.research_ocr_binding import is_research_ocr_job
 repo=getattr(repositories.novels,"backend",None)
 
 def utc():return datetime.now(timezone.utc).isoformat()
+
+
+class _OrdinaryRequestAuthorizationFailed(ModelRuntimeError):
+    """A live request refusal is not a provider failure eligible for fallback."""
+
+    def __init__(self):
+        super().__init__(RuntimeErrorCode.INVALID_REQUEST, "生成授权已改变，请重新检查后生成。")
+
+
 @dataclass
 class Job:
     id:str;operation:str;novel_id:str;chapter_id:str|None;instruction:str;profile:str;source:str="";requested_provider:str|None=None;requested_model:str|None=None;style:str="";status:str="QUEUED";output:str="";error:str|None=None;error_code:str|None=None;provider:str|None=None;model:str|None=None;issues:list=field(default_factory=list);latency_ms:int=0;base_chapter_version:int|None=None;variant_group_id:str|None=None;variant_index:int|None=None;actor_id:str|None=None;session_id:str|None=None;client_id:str|None=None;workspace_id:str|None=None;scope:dict|None=None;scope_type:str|None=None;scope_id:str|None=None;correlation_id:str|None=None;context_snapshot_id:str|None=None;created_at:str=field(default_factory=utc);updated_at:str=field(default_factory=utc);cancelled:threading.Event=field(default_factory=threading.Event,repr=False);condition:threading.Condition=field(default_factory=threading.Condition,repr=False)
@@ -464,6 +473,9 @@ class JobManager:
         return owner.for_scope(job.scope) if owner is not None else self.chapters
 
     def _save_context_snapshot(self, job, chapter, context, prompt_version, model, **metadata):
+        # Context assembly or generation may have waited after the last check.
+        # Never write a required or deferred snapshot after a live refusal.
+        self._guard_ordinary_request_authorization(job)
         owner = self._branch_owner(job)
         if owner is not None:
             return owner.snapshot(job.scope, job.chapter_id, chapter.get("version", 0), context, prompt_version, model, **metadata)
@@ -836,8 +848,34 @@ class JobManager:
                 request = replace(request, preparation_guard=job.author_preparation_guard)
         return chapter, dict(request.context), request
 
+    def _ordinary_request_authorization(self, job):
+        # Branch and reviewed Author sessions retain their existing checks.
+        # Absence is the legacy contract, not a reconstructed/recovered grant.
+        guard = job.request_authorization
+        if not callable(guard) or job.expected_request_digest or self._branch_owner(job) is not None:
+            return None
+        return guard
+
+    def _guard_ordinary_request_authorization(self, job):
+        if getattr(job, "_ordinary_authorization_refused", False):
+            raise _OrdinaryRequestAuthorizationFailed()
+        guard = self._ordinary_request_authorization(job)
+        if guard is None: return
+        try:
+            guard()
+        except Exception:
+            # Closure errors may contain a token, repository root or HTTP detail.
+            # TextModelNode normalizes exceptions into events. Keep the refusal
+            # in this live object only so that normalization cannot retain a
+            # partial result or turn a one-time refusal into a later success.
+            with job.condition:
+                if job.status not in self.terminal:
+                    job._ordinary_authorization_refused = True
+            raise _OrdinaryRequestAuthorizationFailed() from None
+
     def _guard_author_request(self, job, route, *, dispatch=False):
         _deny_creative_director_execution(job)
+        self._guard_ordinary_request_authorization(job)
         check_generation_bounds(job)
         cloud = runtime.is_remote_text_provider(route.provider)
         self._validate_outbound_sources(job, cloud)
@@ -865,7 +903,7 @@ class JobManager:
         # preflight and request assembly never invoke this side-effect hook.
         if dispatch and callable(job.before_dispatch): job.before_dispatch()
 
-    def _finish_terminal_hook(self, job):
+    def _finish_terminal_hook(self, job, *, publication_guard=None):
         # Claim and settle under the same lock used by terminal transitions.
         # Reentrant calls and racing finalizers never bill or release twice.
         with job.condition:
@@ -920,11 +958,21 @@ class JobManager:
                     job.status = "FAILED"
                 job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
                 job.error = "模型任务已结束，但用量结算未确认。请核对调度记录，不要自动重试。"
+            if publication_guard is not None and job.status in {"SETTLING", "FAILED"}:
+                try:
+                    publication_guard()
+                except _OrdinaryRequestAuthorizationFailed as exc:
+                    if job.status in {"SETTLING", "FAILED"}:
+                        job.output = ""; job.issues = []
+                        if job.status == "SETTLING":
+                            job.status = "FAILED"; job.error = exc.safe_message; job.error_code = exc.code.value
+                        # A successful/failed settlement remains exactly that;
+                        # losing publication authority cannot rewrite its receipt.
             try: self._persist(job)
             except Exception:
                 if _isolated_generation(job): job.output = ""
                 job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
-                if job.status == "COMPLETED": job.status = "FAILED"
+                if job.status in {"COMPLETED", "SETTLING"}: job.status = "FAILED"
                 if job.error_code != "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
                     job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
@@ -973,7 +1021,7 @@ class JobManager:
                 routes=router.routes[role]
             last=None
             for route in routes:
-                dispatched=False
+                dispatched=False;completed=False
                 cloud=runtime.is_remote_text_provider(route.provider)
                 decision={"provider":route.provider,"model":route.model,"cloud":cloud,"status":"PREFLIGHT"}
                 job.route_decisions.append(decision)
@@ -994,6 +1042,9 @@ class JobManager:
                             lambda: self._guard_graph_request(job))
                         events = lambda: invocation.adapter.stream_text(request)
                     else:
+                        # Honor the API's live closure before any source/context
+                        # preparation, not only after the snapshot was written.
+                        self._guard_ordinary_request_authorization(job)
                         if job.expected_request_digest:
                             self._guard_author_request(job, route)
                         if not runtime.packaged_author_route_ready(route.provider):
@@ -1018,7 +1069,10 @@ class JobManager:
                                 if event.response is not None and (event.response.provider_id, event.response.model_id) != (job.requested_provider, job.requested_model):
                                     raise ValueError("CREATIVE_DIRECTOR_RESPONSE_ROUTE_CHANGED")
                             if event.event_type=="generation.cancelled" or job.cancelled.is_set():self._cancel_execution(job);return
-                            if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
+                            if event.event_type=="generation.failed":
+                                if not creative_job and not graph_job:
+                                    self._guard_ordinary_request_authorization(job)
+                                raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
                             if graph_job:
                                 self._guard_graph_request(job)
                             if isolated_proposal:
@@ -1026,6 +1080,10 @@ class JobManager:
                                     raise ValueError("GRAPH_MODEL_EVENT_BINDING_CHANGED")
                             if event.event_type=="generation.delta" and event.delta:
                                 check_generation_bounds(job, delta=event.delta)
+                                if not creative_job and not graph_job:
+                                    self._guard_ordinary_request_authorization(job)
+                                    if job.status in self.terminal: return
+                                    if job.cancelled.is_set(): self._cancel_execution(job); return
                                 self._emit(job,event.delta)
                             if event.event_type=="generation.completed":
                                 if isolated_proposal and (event.response is None or not event.response.text.strip()
@@ -1038,14 +1096,24 @@ class JobManager:
                                     job.usage_status="REPORTED" if event.response.usage else "UNKNOWN"
                                     job.execution_mode=event.response.execution_mode
                                     job.provider_reference_id=event.response.provider_reference_id
+                                if not creative_job and not graph_job and self._ordinary_request_authorization(job) is not None:
+                                    # Preserve an observed provider completion even
+                                    # when its result is no longer publishable.
+                                    job.execution_outcome = "COMPLETED"
+                                    job.provider = route.provider; job.model = route.model
+                                    decision["status"] = "COMPLETED"
+                                    self._guard_ordinary_request_authorization(job)
+                                    if job.status in self.terminal: return
                     if not completed:raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED,"模型连接中断，草稿未完成")
                     job.provider=route.provider;job.model=route.model;decision["status"]="COMPLETED";break
                 except Exception as exc:
-                    decision["status"]="FAILED";decision["error_code"]=exc.code.value if isinstance(exc,ModelRuntimeError) else "PREFLIGHT_FAILED"
+                    if not (isinstance(exc, _OrdinaryRequestAuthorizationFailed) and completed):
+                        decision["status"]="FAILED"
+                    decision["error_code"]=exc.code.value if isinstance(exc,ModelRuntimeError) else "PREFLIGHT_FAILED"
                     last=exc
                     # Never combine partial drafts or silently replay a request
                     # whose remote billing/result is ambiguous.
-                    if dispatched or job.output or job.requested_provider or cloud:raise
+                    if isinstance(exc, _OrdinaryRequestAuthorizationFailed) or dispatched or job.output or job.requested_provider or cloud:raise
             else:raise last or RuntimeError("No provider route")
             if job.cancelled.is_set():self._cancel_execution(job);return
             if role=="writer" and not self.snapshot_required:self._save_context_snapshot(job,ch,context,"writer:v1",job.model or "unknown")
@@ -1057,13 +1125,32 @@ class JobManager:
                 if job.cancelled.is_set(): self._cancel_execution(job); return
                 if creative_job: self._guard_creative_request(job)
                 elif graph_job: self._guard_graph_request(job)
-                job.status="COMPLETED";job.execution_outcome="COMPLETED"
+                else: self._guard_ordinary_request_authorization(job)
+                if job.status in self.terminal: return
+                ordinary_publication = (not creative_job and not graph_job
+                    and self._ordinary_request_authorization(job) is not None)
+                # A slow settlement must not expose COMPLETED before the live
+                # publication check. Only actual hooks use SETTLING recovery;
+                # no-hook jobs retain their original interrupted-job semantics.
+                publication_status = "SETTLING" if job.dispatch_hooks_required or callable(job.on_terminal) else "GENERATING"
+                job.status=publication_status if ordinary_publication else "COMPLETED"
+                job.execution_outcome="COMPLETED"
                 try:
                     # Persist SETTLING before entering a potentially slow callback.
                     # A crash here retains the unconfirmed accounting boundary.
                     if job.dispatch_hooks_required or callable(job.on_terminal):
                         self._persist(job)
-                    self._finish_terminal_hook(job)
+                    self._finish_terminal_hook(job, publication_guard=(
+                        lambda: self._guard_ordinary_request_authorization(job)) if ordinary_publication else None)
+                    if ordinary_publication:
+                        if job.status == "FAILED":
+                            self._emit(job)
+                            return
+                        if job.status != publication_status: return
+                        self._guard_ordinary_request_authorization(job)
+                        if job.status != publication_status: return
+                        if job.cancelled.is_set(): self._cancel_execution(job); return
+                        job.status = "COMPLETED"
                     if creative_job:
                         try:
                             check_generation_bounds(job)
@@ -1117,6 +1204,12 @@ class JobManager:
                                 return
                             capability.publication_state = "ACKNOWLEDGED"
                             job.condition.notify_all()
+                except _OrdinaryRequestAuthorizationFailed as exc:
+                    if job.status in self.terminal: return
+                    job.output = ""; job.issues = []; job.adaptation_publication = None
+                    job.status = "FAILED"; job.error = exc.safe_message; job.error_code = exc.code.value
+                    self._emit(job)
+                    return
                 except Exception:
                     # A provider completion is not a published draft until its
                     # receipt is durable. Keep the separate execution outcome
@@ -1143,7 +1236,8 @@ class JobManager:
                 if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
                 elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"
                 else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
-                if _isolated_generation(job): job.output = ""
+                if _isolated_generation(job) or isinstance(exc, _OrdinaryRequestAuthorizationFailed): job.output = ""
+                if isinstance(exc, _OrdinaryRequestAuthorizationFailed): job.issues = []
                 job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
                 runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
         finally:
@@ -1156,9 +1250,12 @@ class JobManager:
     def _cancel_execution(self, job):
         with job.condition:
             if job.status not in self.terminal:
+                # A live ordinary job can have an observed provider completion
+                # before its publication or settlement has finished.
+                completed_execution = job.execution_outcome == "COMPLETED"
                 job.status = "CANCELLED"
                 if _isolated_generation(job): job.output = ""
-                job.execution_outcome = "CANCELLED"
+                if not completed_execution: job.execution_outcome = "CANCELLED"
                 self._emit(job)
 
     def cancel(self,jid):
