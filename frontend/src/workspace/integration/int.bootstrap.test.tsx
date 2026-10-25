@@ -5,7 +5,7 @@
 import {cleanup, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, beforeEach, expect, it, vi} from 'vitest';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {UnifiedWorkspacePreview} from '../UnifiedWorkspacePreview';
+import {UnifiedWorkspacePreviewHost} from '../state/identityBootstrap';
 import {useStudio} from '../../store';
 
 if (!(window as unknown as {PointerEvent?: unknown}).PointerEvent) (window as unknown as {PointerEvent: unknown}).PointerEvent = class extends MouseEvent {};
@@ -27,7 +27,7 @@ beforeEach(() => {
   }));
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); useStudio.setState(initial, true); });
-const mount = () => render(<QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}><UnifiedWorkspacePreview /></QueryClientProvider>);
+const mount = () => render(<QueryClientProvider client={new QueryClient({defaultOptions: {queries: {retry: false}}})}><UnifiedWorkspacePreviewHost /></QueryClientProvider>);
 
 it('signed-in session + complete scope ⇒ preview reads the server actor (GET bootstrap once) and the task list connects', async () => {
   useStudio.setState({sessionToken: 'tok', scope: SCOPE, actor: undefined});

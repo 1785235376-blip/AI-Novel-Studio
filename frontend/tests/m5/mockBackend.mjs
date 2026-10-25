@@ -40,6 +40,10 @@ export function createBackend() {
     if (p.endsWith('/bootstrap') && p.startsWith('/api/collaboration/')) return [200, d.bootstrap];
     if (p === `/api/novels/${P}/experimental/workspace/tasks`) return [200, d.tasks];
     if (p === `${prod}/jobs`) return [200, {items: st.jobs}];
+    const c = p.match(new RegExp(`^${prod}/jobs/([a-z]+)/([^/]+)/candidate$`)); // MOCK candidate bytes: 0.1 s silent WAV
+    if (c) { const n = 4800 * 4, b = Buffer.alloc(44 + n); b.write('RIFF', 0); b.writeUInt32LE(36 + n, 4); b.write('WAVEfmt ', 8); b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20);
+      b.writeUInt16LE(2, 22); b.writeUInt32LE(48000, 24); b.writeUInt32LE(192000, 28); b.writeUInt16LE(4, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(n, 40);
+      return [200, {__bytes: b, type: 'audio/wav'}]; }
     const m = p.match(new RegExp(`^${prod}/jobs/([a-z]+)/([^/]+)$`)); if (m) { const j = st.jobs.find(x => x.owner === m[1] && x.id === decodeURIComponent(m[2])); return j ? [200, j] : [404, {detail: 'nf'}]; }
     if (p === `${prod}/providers`) return [200, {items: d.providers, health_probed: false, credentials_read: false}];
     if (p === `${cv}/${st.canvas.id}`) return [200, st.canvas];

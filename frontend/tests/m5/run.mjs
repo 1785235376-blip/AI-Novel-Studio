@@ -74,6 +74,58 @@ const scenarios = {
     await check(label === 0, 'stale session-only label shown while layout persisted');
     return `split=左右分屏 before=${b} after reopen=${a}; session-only label count=${label}`;
   },
+  async audioFilter({page, backend}, vp) {
+    const n0 = backend.st.log.length;
+    await tid(page, 'aud-filter-audio').click(); await page.waitForTimeout(500); await shot(page, vp, 'audio-1-filter');
+    const t = (await tid(page, 'u3-tasks').innerText()).replace(/\s+/g, ' ');
+    const gap = await tid(page, 'aud-filter-gap').isVisible().catch(() => false);
+    const extra = backend.st.log.slice(n0);
+    await check(/音频任务/.test(t) && !/图像任务/.test(t) && gap && extra.length === 0, `filter wrong: gap=${gap} extra=${JSON.stringify(extra)} text=${t.slice(0, 120)}`);
+    await tid(page, 'aud-filter-all').click();
+    return `audio filter: only 音频 rows, gap text shown, 0 extra requests`;
+  },
+  async audioPreview({page, backend}, vp) {
+    await page.getByRole('button', {name: /音频任务/}).click(); await tid(page, 'aud-preview').waitFor({timeout: 8000});
+    const cand = () => backend.st.log.filter(l => l.endsWith('/candidate')).length;
+    const before = cand(); await page.waitForTimeout(800); await shot(page, vp, 'audio-2-detail');
+    await check(before === 0, `candidate read on mount (${before})`);
+    await tid(page, 'aud-load').click(); await page.waitForTimeout(1500); await shot(page, vp, 'audio-3-preview');
+    const player = await tid(page, 'aud-player').count(), paused = player ? await tid(page, 'aud-player').evaluate(a => a.paused) : null;
+    const msg = await tid(page, 'aud-msg').innerText().catch(() => '');
+    await check(cand() === 1 && backend.st.blocked.length === 0 && (player === 0 || paused === true), `cand=${cand()} player=${player} paused=${paused} msg=${msg}`);
+    return `试听候选 click → ${cand()} GET candidate (MOCK wav), player=${player} paused(no autoplay)=${paused}; msg="${msg}"; no non-GET`;
+  },
+  async identity({page, backend}, vp) { // U1fix MUST-FIX 3: ?uw=1 goes through bootstrap, real identity, no fabricated id
+    await tid(page, 'uw-open-views').click(); await tid(page, 'uw-views').waitFor(); await shot(page, vp, 'u1-identity');
+    const mode = await tid(page, 'uw-views-mode').getAttribute('data-mode'); const boots = backend.st.log.filter(l => l.includes('/bootstrap')).length;
+    const body = await page.locator('body').innerText();
+    await check(mode === 'persistent' && boots >= 1 && !body.includes('u-m5'), `mode=${mode} bootstraps=${boots} rawIdOnScreen=${body.includes('u-m5')}`);
+    return `views mode=${mode}; bootstrap GETs=${boots}; raw actor id on screen=false`;
+  },
+  async worksetPan({page}, vp) { // U1fix MUST-FIX 1: save workset, then pan canvas — neither write loses the other
+    await tid(page, 'uw-open-views').click(); await tid(page, 'uw-views').waitFor();
+    await tid(page, 'uw-views').locator('input').first().fill('M5视图'); await tid(page, 'uw-views').locator('button[type=submit]').first().click();
+    await page.waitForTimeout(500); const msg = await tid(page, 'uw-views-msg').innerText().catch(() => ''); await shot(page, vp, 'u1-workset-saved');
+    await tid(page, 'uw-views').getByRole('button', {name: '关闭'}).last().click();
+    const box = await page.locator('[data-node-id]').first().boundingBox();
+    const sx = box.x + box.width + 120, sy = box.y + box.height + 60;
+    await page.mouse.move(sx, sy); await page.mouse.down(); await page.mouse.move(sx + 90, sy + 40, {steps: 8}); await page.mouse.up(); await page.waitForTimeout(1200);
+    const doc = await page.evaluate(() => { const k = Object.keys(localStorage).find(x => x.startsWith('poemseed.workspace.viewprefs.')); return k ? localStorage.getItem(k) : null; });
+    await page.reload(); await tid(page, 'u3-tasks').waitFor(); await page.waitForTimeout(1500);
+    await tid(page, 'uw-open-views').click(); await tid(page, 'uw-views').waitFor(); await shot(page, vp, 'u1-workset-after-reload');
+    const listed = await tid(page, 'uw-views').getByText('M5视图').count();
+    const d = doc ? JSON.parse(doc) : {}; const hasVp = !!(d.viewports && Object.keys(d.viewports).length);
+    await check(/已保存视图「M5视图」。$/.test(msg) && listed > 0 && (d.worksets || []).length === 1, `msg=${msg} listed=${listed} doc=${(doc || '').slice(0, 160)}`);
+    return `msg="${msg}"; after pan+reload workset listed=${listed}; stored worksets=${(d.worksets || []).length}; stored viewport present=${hasVp}`;
+  },
+  async sessionSave({page}, vp) { // U1fix MUST-FIX 2: no session token → honest session-only save message
+    await tid(page, 'uw-open-views').click(); await tid(page, 'uw-views').waitFor();
+    const mode = await tid(page, 'uw-views-mode').innerText();
+    await tid(page, 'uw-views').locator('input').first().fill('临时'); await tid(page, 'uw-views').locator('button[type=submit]').first().click();
+    await page.waitForTimeout(500); const msg = await tid(page, 'uw-views-msg').innerText().catch(() => ''); await shot(page, vp, 'u1-session-save');
+    await check(/仅本次会话有效/.test(msg) && !/项目已经切换/.test(msg), `msg=${msg}`);
+    return `mode="${mode}"; msg="${msg}"`;
+  },
   async aba({page, backend}, vp) {
     const reads = () => backend.st.log.filter(l => l.includes('/experimental/workspace/tasks')).length;
     const r0 = reads();
@@ -117,7 +169,7 @@ for (const vp of VIEWPORTS) for (const name of Object.keys(scenarios)) {
   if (ONLY && !ONLY.includes(name)) continue;
   const backend = createBackend(); const context = await browser.newContext({viewport: vp});
   const storage = name === 'corruption' ? CORRUPT : {content: `(${seedCanvas})(${JSON.stringify(backend.d.P)})`};
-  const ctx = await open({browser, context, backend, viewport: vp, storage});
+  const ctx = await open({browser, context, backend, viewport: vp, storage, session: name !== 'sessionSave'});
   let status = 'PASS', detail = '';
   try { await ctx.page.getByTestId('u3-tasks').waitFor({timeout: 30000}); await ctx.page.waitForTimeout(1200); detail = await scenarios[name](ctx, vp); }
   catch (e) { status = 'FAIL'; detail = String(e.message).split('\n')[0]; try { await shot(ctx.page, vp, `${name}-FAIL`); } catch {} }

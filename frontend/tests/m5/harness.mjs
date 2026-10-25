@@ -15,6 +15,7 @@ export async function open({viewport = {width: 1366, height: 768}, session = tru
     if (url.pathname.startsWith('/api/')) {
       let body = null; try { body = req.postDataJSON(); } catch {}
       const [status, json] = backend.handle(req.method(), req.url(), body);
+      if (json && json.__bytes) return route.fulfill({status, contentType: json.type, body: json.__bytes});
       return route.fulfill({status, contentType: 'application/json', body: JSON.stringify(json)});
     }
     if (req.method() !== 'GET' && req.method() !== 'HEAD') { backend.st.blocked.push(`${req.method()} ${url.pathname}`); return route.abort(); }
