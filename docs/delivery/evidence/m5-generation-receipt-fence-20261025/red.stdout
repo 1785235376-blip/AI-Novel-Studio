@@ -1,0 +1,128 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+____ test_manual_after_owner_entry_keeps_original_receipt[ACCEPTING-accept] ____
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=<threading.Event at 0x7f054c71b200: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f054c10b920>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f054c052b40>
+status = 'ACCEPTING', operation = 'accept'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+        with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+            getattr(bound.review_manager,operation)(bound.row['id'])
+        assert seen
+>       assert repo._job_path(bound.row['id']).read_bytes()==seen['receipt']
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ... null\n  }\n}'
+E         
+E         At index 340 diff: b'A' != b'C'
+E         Use -v to get more diff
+
+tests/test_m5_generation_receipt_fence.py:32: AssertionError
+____ test_manual_after_owner_entry_keeps_original_receipt[ACCEPTED-accept] _____
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=<threading.Event at 0x7f054c075d90: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f054c121800>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f054c07ab70>
+status = 'ACCEPTED', operation = 'accept'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+>       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (<class 'ValueError'>, <class 'KeyError'>, <class 'FileNotFoundError'>)
+
+tests/test_m5_generation_receipt_fence.py:29: Failed
+____ test_manual_after_owner_entry_keeps_original_receipt[REJECTED-reject] _____
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=<threading.Event at 0x7f054c075be0: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f054c120220>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f054c0605f0>
+status = 'REJECTED', operation = 'reject'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+>       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (<class 'ValueError'>, <class 'KeyError'>, <class 'FileNotFoundError'>)
+
+tests/test_m5_generation_receipt_fence.py:29: Failed
+____________ test_memory_after_owner_entry_keeps_generating_receipt ____________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence/tmp/pytest-of-agent/pytest-0/test_memory_after_owner_entry_0')
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f054c07af60>
+
+    def test_memory_after_owner_entry_keeps_generating_receipt(tmp_path,memory_settings,monkeypatch):
+        agent,bundle,nid,cid,version,owner,binding=setup(tmp_path)
+        repo=bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,current):
+            with original(item,current):
+                if item.get('status')=='COMPLETED' and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    replace_memory_owner(tmp_path,bundle,nid)
+                    seen['project']=project_bytes(tmp_path,nid)
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+>       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (<class 'ValueError'>, <class 'KeyError'>, <class 'FileNotFoundError'>)
+
+tests/test_m5_generation_receipt_fence.py:50: Failed
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/docs/delivery/evidence/m5-generation-receipt-fence-20261025/red.xml -
+=========================== short test summary info ============================
+FAILED tests/test_m5_generation_receipt_fence.py::test_manual_after_owner_entry_keeps_original_receipt[ACCEPTING-accept]
+FAILED tests/test_m5_generation_receipt_fence.py::test_manual_after_owner_entry_keeps_original_receipt[ACCEPTED-accept]
+FAILED tests/test_m5_generation_receipt_fence.py::test_manual_after_owner_entry_keeps_original_receipt[REJECTED-reject]
+FAILED tests/test_m5_generation_receipt_fence.py::test_memory_after_owner_entry_keeps_generating_receipt
+4 failed, 3 warnings in 7.02s

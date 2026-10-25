@@ -1,0 +1,6 @@
+app/jobs.py: OK
+app/lore/memory_project_binding.py: OK
+app/repositories/postgres/generation.py: OK
+tests/test_file_local_bound_review.py: OK
+tests/test_memory_agent_contract.py: OK
+tests/test_bound_review_port_blockers.py: OK

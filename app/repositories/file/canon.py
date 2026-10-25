@@ -40,11 +40,15 @@ class FileCanonRepository:
 
     def get_pending(self, pending_id): return self._find(pending_id)[2]
 
-    def save_pending(self, item):
+    def save_pending(self, item, *, _project_incarnation=None, _project_root=None):
         item = {"status": "PENDING", **item}
         if 'id' not in item: raise ValueError('pending canon id is required')
         self._safe_id(item['id'])
-        with project_operation(self.backend.data, item['novel_id']):
+        if _project_root is not None:
+            from pathlib import Path
+            if Path(self.backend.novels).resolve() != Path(_project_root).resolve()/"novels":
+                raise ValueError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
+        with project_operation(self.backend.data, item['novel_id'], expected_incarnation=_project_incarnation, expected_root=_project_root):
             root = self.backend.novels / item['novel_id']
             old = read_json(root / 'pending_canon' / f"{item['id']}.json", {})
             if old.get("status") in {"APPROVED", "REJECTED"}:

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="8" time="8.986" timestamp="2026-10-25T19:07:32.146744+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_phase7_adaptation" name="test_adaptation_proposal_snapshots_source_without_mutating_chapters" time="0.667" /><testcase classname="tests.test_phase7_adaptation" name="test_adaptation_proposal_requires_supported_target_and_single_approval" time="0.125" /><testcase classname="tests.test_phase7_adaptation" name="test_approved_adaptation_materializes_independent_version_once" time="0.260" /><testcase classname="tests.test_phase7_adaptation" name="test_blueprint_revision_preserves_source_identity_and_freezes_after_approval" time="0.089" /><testcase classname="tests.test_phase7_adaptation" name="test_model_adaptation_draft_validates_contract_and_fails_closed" time="0.621" /><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_capability_matrix_and_cross_workspace_rejection" time="0.082"><failure message="AssertionError: assert 404 == 403&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code&#10; +    where &lt;Response [404 Not Found]&gt; = get('/api/novels/adapt-n-36be065d36434e2bbaf2f5cf9a486fcd/adaptations', params={'branch_id': 'adapt-b-36be065d36434e2bbaf2f5cf9a486fcd'}, headers={'X-Session-Token': 't-member-36be065d36434e2bbaf2f5cf9a486fcd'})&#10; +      where get = &lt;starlette.testclient.TestClient object at 0x7ff8cda6ed80&gt;.get">def test_team_adaptation_capability_matrix_and_cross_workspace_rejection():
+        client,novel,branch,_,headers=setup_scope();params={'branch_id':branch}
+&gt;       assert client.get(f'/api/novels/{novel}/adaptations',params=params,headers=headers['member']).status_code==403
+E       AssertionError: assert 404 == 403
+E        +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+E        +    where &lt;Response [404 Not Found]&gt; = get('/api/novels/adapt-n-36be065d36434e2bbaf2f5cf9a486fcd/adaptations', params={'branch_id': 'adapt-b-36be065d36434e2bbaf2f5cf9a486fcd'}, headers={'X-Session-Token': 't-member-36be065d36434e2bbaf2f5cf9a486fcd'})
+E        +      where get = &lt;starlette.testclient.TestClient object at 0x7ff8cda6ed80&gt;.get
+
+tests/test_phase7_adaptation_authorization.py:29: AssertionError</failure></testcase><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_audit_is_content_free" time="0.075"><failure message="KeyError: 'id'">def test_team_adaptation_audit_is_content_free():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'LITERARY','instruction':'不得写入审计的秘密要求'}).json()
+&gt;       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:40: KeyError</failure></testcase><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_materializes_scoped_project_and_is_idempotent" time="0.074"><failure message="KeyError: 'id'">def test_team_adaptation_materializes_scoped_project_and_is_idempotent():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'SCREEN','title':'影视改编版'}).json()
+&gt;       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:51: KeyError</failure></testcase></testsuite></testsuites>

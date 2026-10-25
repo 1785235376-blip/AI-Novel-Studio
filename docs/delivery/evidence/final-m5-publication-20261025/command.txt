@@ -1,0 +1,4 @@
+From repository root, using an interpreter with project dependencies:
+MOCK_PROVIDER=true ENABLE_PACKAGED_RUNTIME=false ENABLE_CLOUD=false STORAGE_BACKEND=file PYTHONPATH=. python docs/delivery/evidence/final-m5-publication-20261025/run.py -q tests/test_m5_generation_receipt_fence.py tests/test_file_local_bound_review.py tests/test_memory_final_port_fences.py tests/test_bound_memory_project_owner.py tests/test_phase7_adaptation.py tests/test_phase7_adaptation_authorization.py --junitxml=.runtime/final-m5-publication/results.xml
+
+The executed environment was initialized by the local activation helper before invoking this wrapper; the public command explicitly states its relevant synthetic flags. Wrapper supplies isolated HOME/XDG/data and blocks sockets. Portable log/XML replaces only the checkout absolute path with <CHECKOUT>.

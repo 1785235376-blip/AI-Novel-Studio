@@ -1,0 +1,46 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/run.py /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/test_receipt_independent.py -q --junitxml=/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/provisional.xml 
+e7f2eaec2a5010a98cad6aa1d48df8e0ffc3b459
+ M app/repositories/generation_repository.py
+?? docs/delivery/evidence/m5-generation-receipt-fence-20261025/
+?? tests/test_m5_generation_receipt_fence.py
+.......                                                                  [100%]
+=============================== warnings summary ===============================
+tests/test_memory_agent_contract.py:107
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_memory_agent_contract.py:107: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+tests/test_memory_agent_contract.py:132
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_memory_agent_contract.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_passive_generation_manager_binding.py:28
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_passive_generation_manager_binding.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_bound_review_port_blockers.py:19
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_bound_review_port_blockers.py:19: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+tests/test_file_local_bound_review.py:20
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_file_local_bound_review.py:20: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+tests/test_bound_memory_project_owner.py:15
+  /workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/tests/test_bound_memory_project_owner.py:15: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/provisional.xml -
+7 passed, 9 warnings in 6.01s

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 
+from ...lore.file_memory_ports import memory_file_port
 from ...lore.schemas import Evidence, LoreProposal, ProposalEvidenceRelation,CharacterMemory,MemorySnapshot
 from ...lore.validators import require_evidence_transition, require_proposal_transition
 from ...repository import FileRepository, read_json
@@ -42,14 +43,18 @@ class FileLoreRepository:
             raise FileExistsError(path.stem)
         atomic_write(path, json.dumps(item, ensure_ascii=False, indent=2))
 
-    def create_evidence(self, item: dict) -> dict:
+    @memory_file_port
+    def create_evidence(self, item: dict, *, _file_memory=None) -> dict:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         model = Evidence.model_validate(item)
         output = _dump(model)
         path = self._lore_root(model.novel_id) / "evidence" / f"{model.id}.json"
         self._write_new(path, output)
         return output
 
-    def get_evidence(self, evidence_id: str) -> dict:
+    @memory_file_port
+    def get_evidence(self, evidence_id: str, *, _file_memory=None) -> dict:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         return _dump(Evidence.model_validate(read_json(self._find("evidence", evidence_id), {})))
 
     def list_evidence(self, novel_id: str) -> list[dict]:
@@ -65,14 +70,18 @@ class FileLoreRepository:
         atomic_write(path, json.dumps(output, ensure_ascii=False, indent=2))
         return output
 
-    def create_proposal(self, item: dict) -> dict:
+    @memory_file_port
+    def create_proposal(self, item: dict, *, _file_memory=None) -> dict:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         model = LoreProposal.model_validate(item)
         output = _dump(model)
         path = self._lore_root(model.novel_id) / "proposals" / f"{model.id}.json"
         self._write_new(path, output)
         return output
 
-    def get_proposal(self, proposal_id: str) -> dict:
+    @memory_file_port
+    def get_proposal(self, proposal_id: str, *, _file_memory=None) -> dict:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         return _dump(LoreProposal.model_validate(read_json(self._find("proposals", proposal_id), {})))
 
     def list_proposals(self, novel_id: str, status: str | None = None) -> list[dict]:
@@ -80,10 +89,12 @@ class FileLoreRepository:
         items = [_dump(LoreProposal.model_validate(read_json(path, {}))) for path in sorted(root.glob("*.json"))]
         return [item for item in items if status is None or item["status"] == status]
 
-    def link_evidence(self, relation: dict) -> dict:
+    @memory_file_port
+    def link_evidence(self, relation: dict, *, _file_memory=None) -> dict:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         model = ProposalEvidenceRelation.model_validate(relation)
-        proposal = self.get_proposal(model.proposal_id)
-        evidence = self.get_evidence(model.evidence_id)
+        proposal = self.get_proposal(model.proposal_id, **owner)
+        evidence = self.get_evidence(model.evidence_id, **owner)
         if proposal["novel_id"] != evidence["novel_id"]:
             raise ValueError("proposal and evidence must belong to the same novel")
         output = _dump(model)
@@ -91,8 +102,10 @@ class FileLoreRepository:
         self._write_new(path, output)
         return output
 
-    def list_proposal_evidence(self, proposal_id: str) -> list[dict]:
-        proposal = self.get_proposal(proposal_id)
+    @memory_file_port
+    def list_proposal_evidence(self, proposal_id: str, *, _file_memory=None) -> list[dict]:
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
+        proposal = self.get_proposal(proposal_id, **owner)
         root = self._lore_root(proposal["novel_id"]) / "relations"
         return [_dump(ProposalEvidenceRelation.model_validate(read_json(path, {}))) for path in sorted(root.glob(f"{proposal_id}__*.json"))]
 
@@ -154,7 +167,11 @@ class FileLoreRepository:
         updated=CharacterMemory.model_validate({**item,"status":"RETRACTED","retraction_reason":reason,"updated_at":datetime.now(timezone.utc)});out=_dump(updated);atomic_write(self._find("memories",memory_id),json.dumps(out,ensure_ascii=False,indent=2));return out
     def create_snapshot(self,item):
         model=MemorySnapshot.model_validate(item);output=_dump(model);path=self._lore_root(model.novel_id)/"snapshots"/f"{model.id}.json";self._write_new(path,output);return output
-    def list_snapshots(self,novel_id,scope=None):
+    @memory_file_port
+    def list_snapshots(self,novel_id,scope=None, *, _file_memory=None):
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         root=self._lore_root(novel_id)/"snapshots";items=[_dump(MemorySnapshot.model_validate(read_json(p,{}))) for p in sorted(root.glob("*.json"))];return [x for x in items if scope is None or x["scope"]==scope]
-    def get_latest_snapshot(self,novel_id,scope,scope_key):
-        rows=[x for x in self.list_snapshots(novel_id,scope) if x["scope_key"]==scope_key];return max(rows,key=lambda x:x["version"],default=None)
+    @memory_file_port
+    def get_latest_snapshot(self,novel_id,scope,scope_key, *, _file_memory=None):
+        owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
+        rows=[x for x in self.list_snapshots(novel_id,scope, **owner) if x["scope_key"]==scope_key];return max(rows,key=lambda x:x["version"],default=None)

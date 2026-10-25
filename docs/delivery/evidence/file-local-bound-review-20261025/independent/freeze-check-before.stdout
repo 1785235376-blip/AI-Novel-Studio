@@ -1,0 +1,9 @@
+app/jobs.py: OK
+app/file_project_lifecycle.py: OK
+app/services/file_generation_review.py: OK
+app/services/chapter_service.py: OK
+app/services/canon_service.py: OK
+app/repositories/file/chapter.py: OK
+app/repositories/file/canon.py: OK
+app/repositories/generation_repository.py: OK
+tests/test_file_local_bound_review.py: OK

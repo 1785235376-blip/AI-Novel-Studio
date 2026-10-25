@@ -177,8 +177,39 @@ class GenerationRepository:
             # disk-write failure a changed project identity.
             yield
 
+    def _check_expected_save_owner(self, item, binding, expected_root, file_memory):
+        """Recheck M5's pinned owner at the original final receipt boundary.
+
+        The entry lease is reentrant: a synchronous wrapper can replace the
+        project before yielding. Reenter only that same fixed lifecycle lock,
+        never a rotated root beneath the generation-write leaf.
+        """
+        if expected_root is not None:
+            root = Path(expected_root).resolve()
+            if Path(self.root).resolve() != root:
+                raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
+        if file_memory is not None:
+            from ..lore.file_memory_ports import require_memory_ports
+            require_memory_ports(file_memory, self)
+        elif expected_root is not None:
+            from ..file_project_lifecycle import project_operation
+            if binding is None:
+                raise GenerationProjectIdentityError("GENERATION_REVIEW_PROJECT_OWNER_REQUIRED")
+            with project_operation(root.parent.parent, item["novel_id"],
+                                   expected_root=root.parent.parent,
+                                   expected_incarnation=binding["project_incarnation"]):
+                pass
+
     @committed_change("TASK")
-    def save(self,item:dict):
+    def save(self,item:dict,*,_expected_root=None,_file_memory=None):
+        if _file_memory is not None:
+            from ..lore.file_memory_ports import require_memory_ports
+            expected=require_memory_ports(_file_memory,self)
+            from ..lore.memory_project_binding import memory_job_binding
+            if memory_job_binding(item)!=expected.binding:
+                raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_CHANGED")
+        if _expected_root is not None and Path(self.root).resolve() != Path(_expected_root).resolve():
+            raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
         from .file.mutation_coordinator import workspace_mutation
         from ..creative.director_terminal_evidence import preserve_evidence
         from ..creative.director_image_terminal import preserve as preserve_image
@@ -192,11 +223,16 @@ class GenerationRepository:
                 saved = preserve_image(previous, preserve_evidence(previous, item))
                 atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
             return
-        with self._graph_owner(item, binding), workspace_mutation(self.root, self._write_key(path)):
+        # Opted-in M5 saves keep the original leaf root even if a reentrant
+        # entry wrapper rotates the facade; final validation then refuses it.
+        write_root = path.parent if _expected_root is not None or _file_memory is not None else self.root
+        with self._graph_owner(item, binding), workspace_mutation(write_root, self._write_key(path)):
             previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
             check_graph_job_update(previous, item)
             saved = preserve_image(previous, preserve_evidence(previous, item))
-            atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
+            payload = json.dumps(saved,ensure_ascii=False,indent=2)
+            self._check_expected_save_owner(item, binding, _expected_root, _file_memory)
+            atomic_write(path,payload)
 
     def _publish_director_terminal(self, job, capability, evidence):
         """Original live worker only. All authority callbacks precede the leaf lock."""
@@ -278,7 +314,10 @@ class GenerationRepository:
             except Exception:continue
         return out
 
-    def get(self,jid):
+    def get(self,jid,*,_file_memory=None):
+        if _file_memory is not None:
+            from ..lore.file_memory_ports import require_memory_ports
+            require_memory_ports(_file_memory,self)
         path=self._job_path(jid)
         if not path.exists():raise KeyError(jid)
         item = json.loads(path.read_text(encoding="utf-8"))

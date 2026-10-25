@@ -1,0 +1,55 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-file-adoption-independent/run.py tests/test_phase7_adaptation.py tests/test_phase7_adaptation_authorization.py -q --junitxml=/workspace/scratch/20a0022d2b33/review-file-adoption-independent/baseline-adaptation.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+.....FFF                                                                 [100%]
+=================================== FAILURES ===================================
+_____ test_team_adaptation_capability_matrix_and_cross_workspace_rejection _____
+
+    def test_team_adaptation_capability_matrix_and_cross_workspace_rejection():
+        client,novel,branch,_,headers=setup_scope();params={'branch_id':branch}
+>       assert client.get(f'/api/novels/{novel}/adaptations',params=params,headers=headers['member']).status_code==403
+E       AssertionError: assert 404 == 403
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = get('/api/novels/adapt-n-36be065d36434e2bbaf2f5cf9a486fcd/adaptations', params={'branch_id': 'adapt-b-36be065d36434e2bbaf2f5cf9a486fcd'}, headers={'X-Session-Token': 't-member-36be065d36434e2bbaf2f5cf9a486fcd'})
+E        +      where get = <starlette.testclient.TestClient object at 0x7ff8cda6ed80>.get
+
+tests/test_phase7_adaptation_authorization.py:29: AssertionError
+__________________ test_team_adaptation_audit_is_content_free __________________
+
+    def test_team_adaptation_audit_is_content_free():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'LITERARY','instruction':'不得写入审计的秘密要求'}).json()
+>       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:40: KeyError
+______ test_team_adaptation_materializes_scoped_project_and_is_idempotent ______
+
+    def test_team_adaptation_materializes_scoped_project_and_is_idempotent():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'SCREEN','title':'影视改编版'}).json()
+>       client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+                                                       ^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_phase7_adaptation_authorization.py:51: KeyError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-file-adoption-independent/baseline-adaptation.xml -
+=========================== short test summary info ============================
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_capability_matrix_and_cross_workspace_rejection
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_audit_is_content_free
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_materializes_scoped_project_and_is_idempotent
+3 failed, 5 passed, 3 warnings in 8.99s

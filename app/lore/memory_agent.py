@@ -90,30 +90,32 @@ class MemoryAgentRunner:
  def _same_written_fields(existing,expected):
   if any(existing.get(key)!=value for key,value in expected.items()):
    raise ValueError("MEMORY_BOUND_WRITE_IDENTITY_MISMATCH")
- def _bound_proposal(self,proposal,relations):
+ def _bound_proposal(self,proposal,relations,expected):
+  owner={"_file_memory":expected}
   # Original LoreService owns validation and first creation. A prior attempt
   # may have created the proposal but stopped before linking all evidence.
-  try:self.lore.create_proposal(proposal,relations)
+  try:self.lore.create_proposal(proposal,relations,**owner)
   except FileExistsError:
-   self._same_written_fields(self.lore.repository.get_proposal(proposal["id"]),proposal)
+   self._same_written_fields(self.lore.repository.get_proposal(proposal["id"],**owner),proposal)
    for relation in relations:
     row={**relation,"proposal_id":proposal["id"]}
-    try:self.lore.repository.link_evidence(row)
+    try:self.lore.repository.link_evidence(row,**owner)
     except FileExistsError:
-     existing=next((item for item in self.lore.repository.list_proposal_evidence(proposal["id"])
+     existing=next((item for item in self.lore.repository.list_proposal_evidence(proposal["id"],**owner)
                     if item["evidence_id"]==row["evidence_id"]),None)
      if existing is None:raise ValueError("MEMORY_BOUND_RELATION_MISSING")
      self._same_written_fields(existing,row)
 
- def _input(self,novel_id,chapter_id,version):
-  chapter=self.chapters.get(chapter_id);versions=self.chapters.history(chapter_id);match={"version":chapter["version"],"document":chapter["document"]} if chapter["version"]==version else next((x for x in versions if x["version"]==version),None)
+ def _input(self,novel_id,chapter_id,version,expected=None):
+  owner={"_file_memory":expected} if expected is not None else {}
+  chapter=self.chapters.get(chapter_id,**owner);versions=self.chapters.history(chapter_id,**owner);match={"version":chapter["version"],"document":chapter["document"]} if chapter["version"]==version else next((x for x in versions if x["version"]==version),None)
   if not match:raise FileNotFoundError(f"chapter version {chapter_id}@{version}")
   if chapter.get("novel_id")!=novel_id:raise ValueError("memory chapter belongs to another project")
-  document=match["document"];text=document_to_markdown(document);sources=self.novels.get_context_sources(novel_id)
+  document=match["document"];text=document_to_markdown(document);sources=self.novels.get_context_sources(novel_id,**owner)
   chars=[x for x in sources.get("characters",[]) if (x.get("id") and x.get("id") in text) or (x.get("name") and x.get("name") in text)]
   keys=[x.get("id") for x in chars]+[x.get("name") for x in chars];related=lambda items:[x for x in items if any(k and k in canonical(x) for k in keys) or str(chapter["number"]) in canonical(x)]
-  snapshot=self.lore.repository.get_latest_snapshot(novel_id,"NOVEL","novel")
-  return {"accepted_chapter":{"chapter_id":chapter_id,"version":version,"document":document,"content":text},"characters":chars,"canon":related(self.novels.get_data_set(novel_id,"canon")),"timeline":related(self.novels.get_data_set(novel_id,"timeline")),"secrets":[x for x in sources.get("secrets",[]) if (x.get("id") and x.get("id") in text) or (x.get("title") and x.get("title") in text)],"memory_snapshot":snapshot}
+  snapshot=self.lore.repository.get_latest_snapshot(novel_id,"NOVEL","novel",**owner)
+  return {"accepted_chapter":{"chapter_id":chapter_id,"version":version,"document":document,"content":text},"characters":chars,"canon":related(self.novels.get_data_set(novel_id,"canon",**owner)),"timeline":related(self.novels.get_data_set(novel_id,"timeline",**owner)),"secrets":[x for x in sources.get("secrets",[]) if (x.get("id") and x.get("id") in text) or (x.get("title") and x.get("title") in text)],"memory_snapshot":snapshot}
  def _verified_local_adapter(self,provider_id,model_id):
   registry=getattr(self.runtime,"provider_registry",None)
   if registry is None:raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
@@ -154,12 +156,15 @@ class MemoryAgentRunner:
   raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"MEMORY_LOCAL_PROVIDER_NOT_CONFIGURED")
  def extract(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",job_id=None,*,project_incarnation=None):
   binding=create_binding(novel_id,chapter_id,version,project_incarnation) if project_incarnation is not None else None
+  from .file_memory_ports import _FileMemoryPorts
+  expected=_FileMemoryPorts(self,binding) if binding is not None else None
+  owner={"_file_memory":expected} if expected is not None else {}
   if binding is not None and job_id not in (None,binding["job_id"]):raise ValueError("MEMORY_BOUND_JOB_ID_MISMATCH")
   jid=binding["job_id"] if binding is not None else (job_id or str(uuid.uuid4()));base={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"GENERATING","request":{"chapter_version":version,"profile":"LOCAL_ONLY"},"created_at":datetime.now(timezone.utc).isoformat()}
   if binding is not None:base[MEMORY_FIELD]=binding
-  with self._bound_owner(binding):self.generations.save(base)
+  with self._bound_owner(binding):self.generations.save(base,**owner)
   try:
-   with self._bound_owner(binding):data=self._input(novel_id,chapter_id,version)
+   with self._bound_owner(binding):data=self._input(novel_id,chapter_id,version,expected) if expected is not None else self._input(novel_id,chapter_id,version)
    output_schema=source_bound_memory_schema(data)
    task="Extract durable evidence-backed changes from the accepted chapter. Produce an INSTANCE of the output schema, never repeat the schema itself. Return ONLY JSON, without Markdown fences or commentary, matching this JSON schema: "+json.dumps(output_schema,ensure_ascii=False)
    task+="\nEvery evidence reference must use chapter_id="+json.dumps(chapter_id)+" and chapter_version="+str(version)+". Copy an exact contiguous excerpt from accepted_chapter.content. Never cite paraphrases as evidence."
@@ -176,7 +181,7 @@ class MemoryAgentRunner:
      if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
      if evidence.excerpt not in text:raise ValueError("memory evidence quote does not occur in the accepted chapter version")
    with self._bound_owner(binding):
-    if canonical(self._input(novel_id,chapter_id,version))!=canonical(data):raise ValueError("memory extraction sources changed during inference")
+    if canonical(self._input(novel_id,chapter_id,version,expected) if expected is not None else self._input(novel_id,chapter_id,version))!=canonical(data):raise ValueError("memory extraction sources changed during inference")
     for index,item in enumerate(parsed.proposals):
      seed=f"{novel_id}:{chapter_id}:{version}:{index}:{canonical(item.payload)}"
      if binding is not None:seed="bound-memory-v1:"+binding["job_id"]+":"+seed
@@ -184,33 +189,36 @@ class MemoryAgentRunner:
      for eindex,evidence in enumerate(item.evidence):
       if evidence.chapter_id!=chapter_id or evidence.chapter_version!=version:raise ValueError("evidence must reference the accepted chapter version")
       eid=str(uuid.uuid5(NAMESPACE,f"evidence:{seed}:{eindex}:{canonical(evidence.model_dump())}"));ev={"id":eid,"novel_id":novel_id,"source_type":"CHAPTER_VERSION","source_id":f"{chapter_id}:v{version}","chapter_id":chapter_id,"chapter_version":version,"excerpt":evidence.excerpt,"locator":evidence.locator,"content_hash":hashlib.sha256((evidence.excerpt+canonical(evidence.locator)).encode()).hexdigest(),"privacy":"LOCAL_ONLY","status":"ACTIVE"}
-      try:self.lore.create_evidence(ev)
+      try:self.lore.create_evidence(ev,**owner)
       except FileExistsError:
-       existing=self.lore.repository.get_evidence(eid)
+       existing=self.lore.repository.get_evidence(eid,**owner)
        if binding is not None:self._same_written_fields(existing,ev)
       relations.append({"evidence_id":eid,"relevance":"PRIMARY" if eindex==0 else "SUPPORTING"})
      proposal={"id":pid,"novel_id":novel_id,"proposal_type":item.proposal_type,"payload":item.payload,"status":"PENDING","confidence":item.confidence,"agent_name":"memory_agent","generation_job_id":jid,"source_chapter_id":chapter_id,"source_version":version}
-     if binding is not None:self._bound_proposal(proposal,relations)
+     if binding is not None:self._bound_proposal(proposal,relations,expected)
      else:
       try:self.lore.create_proposal(proposal,relations)
       except FileExistsError:self.lore.repository.get_proposal(pid)
      ids.append(pid)
-    self.generations.save({**base,"status":"COMPLETED","provider":result.provider_id,"model":result.model_id,"execution_mode":result.execution_mode,"result":{"proposal_ids":ids}});return ids
+    self.generations.save({**base,"status":"COMPLETED","provider":result.provider_id,"model":result.model_id,"execution_mode":result.execution_mode,"result":{"proposal_ids":ids}},**owner);return ids
   except Exception as exc:
    code=exc.code.value if isinstance(exc,ModelRuntimeError) else "MEMORY_EXTRACTION_FAILED"
-   with self._bound_owner(binding):self.generations.save({**base,"status":"NOT_CONFIGURED" if code=="TEXT_PROVIDER_NOT_CONFIGURED" else "FAILED","error_code":code,"error":f"{type(exc).__name__}: {exc}"});raise
+   with self._bound_owner(binding):self.generations.save({**base,"status":"NOT_CONFIGURED" if code=="TEXT_PROVIDER_NOT_CONFIGURED" else "FAILED","error_code":code,"error":f"{type(exc).__name__}: {exc}"},**owner);raise
  def enqueue(self,novel_id,chapter_id,version,profile="LOCAL_ONLY",*,project_incarnation=None):
   binding=create_binding(novel_id,chapter_id,version,project_incarnation) if project_incarnation is not None else None
+  from .file_memory_ports import _FileMemoryPorts
+  expected=_FileMemoryPorts(self,binding) if binding is not None else None
+  owner={"_file_memory":expected} if expected is not None else {}
   jid=binding["job_id"] if binding is not None else str(uuid.uuid5(NAMESPACE,f"job:{novel_id}:{chapter_id}:{version}"))
   with self._bound_owner(binding):
    try:
-    existing=self.generations.get(jid)
+    existing=self.generations.get(jid,**owner)
     if binding is not None and existing.get(MEMORY_FIELD)!=binding:raise ValueError("MEMORY_BOUND_RECEIPT_MISMATCH")
     if existing.get("status") in {"QUEUED","GENERATING","COMPLETED"}:return jid
    except KeyError:pass
    queued={"id":jid,"operation":"MEMORY_EXTRACTION","novel_id":novel_id,"chapter_id":chapter_id,"status":"QUEUED","request":{"chapter_version":version}}
    if binding is not None:queued[MEMORY_FIELD]=binding
-   self.generations.save(queued)
+   self.generations.save(queued,**owner)
   kwargs={"project_incarnation":project_incarnation} if binding is not None else {}
   threading.Thread(target=lambda:self._quiet_extract(novel_id,chapter_id,version,profile,jid,**kwargs),daemon=True).start();return jid
  def _quiet_extract(self,*args,**kwargs):

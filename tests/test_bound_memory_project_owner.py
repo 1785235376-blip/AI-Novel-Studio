@@ -98,11 +98,11 @@ def test_final_original_lease_excludes_delete_through_every_write(tmp_path, memo
                     'terminal': (bundle.generations, 'save')}[port]
     original = getattr(target, name)
 
-    def gated(item):
+    def gated(item, **kwargs):
         if port != 'terminal' or item.get('status') == 'COMPLETED':
             at_write.set()
             assert release.wait(5)
-        return original(item)
+        return original(item, **kwargs)
     monkeypatch.setattr(target, name, gated)
 
     def extract():
@@ -203,7 +203,7 @@ def test_missing_marker_is_not_provisioned(tmp_path, memory_settings):
 def test_bound_retry_repairs_partial_original_proposal_links(tmp_path, memory_settings, monkeypatch):
     agent, bundle, nid, cid, version, owner, binding = setup(tmp_path)
     original = bundle.lore.link_evidence
-    def fail(_item): raise OSError('synthetic interrupted relation write')
+    def fail(_item, **_kwargs): raise OSError('synthetic interrupted relation write')
     monkeypatch.setattr(bundle.lore, 'link_evidence', fail)
     with pytest.raises(OSError):
         agent.extract(nid, cid, version, project_incarnation=binding['project_incarnation'])

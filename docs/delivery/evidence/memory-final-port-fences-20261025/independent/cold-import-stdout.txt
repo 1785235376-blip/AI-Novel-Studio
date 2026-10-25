@@ -1,0 +1,11 @@
+IMPORTED app.main
+IMPORTED app.lore.file_memory_ports
+COMPOSITION_READY
+IMPORTED app.lore.file_memory_ports
+IMPORTED app.services.lore_service
+IMPORTED app.main
+COMPOSITION_READY
+IMPORTED app.repositories.file.lore
+IMPORTED app.services.generation_service
+IMPORTED app.main
+COMPOSITION_READY

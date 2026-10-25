@@ -1,0 +1,9 @@
+app/file_project_lifecycle.py: OK
+app/lore/file_memory_ports.py: OK
+app/lore/memory_agent.py: OK
+app/services/lore_service.py: OK
+app/services/generation_service.py: OK
+app/repositories/file/lore.py: OK
+app/repositories/generation_repository.py: OK
+tests/test_bound_memory_project_owner.py: OK
+tests/test_memory_final_port_fences.py: OK

@@ -1,0 +1,157 @@
+.......................F..F                                              [100%]
+=================================== FAILURES ===================================
+_____________ test_current_original_review_preconditions[version] ______________
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/.runtime/file-local-bound-rev...y_finished=<threading.Event at 0x7f9d578b9c10: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f9d577f2020>)
+change = 'version'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9d57ebb6b0>
+
+    @pytest.mark.parametrize('change', ['version', 'unsettled', 'scope', 'callback_authority'])
+    def test_current_original_review_preconditions(bound, change, monkeypatch):
+        jid=bound.row['id']; manager=bound.review_manager
+        if change=='version':
+            bound.chapters.save(bound.chapter['id'],{'content':'newer','version':bound.chapter['version']})
+        elif change=='unsettled':
+            row=bound.persistence.get(jid);row.update(dispatch_hooks_required=True,terminal_hook_status='PENDING')
+            bound.persistence.save(row)
+        elif change=='scope':
+            # Caller-supplied collaboration cannot turn this local record into a scoped review.
+            pass
+        else:
+            def refused():raise PermissionError('synthetic revoked local request')
+            manager.get(jid).request_authorization=refused
+        before=project_bytes(bound.root,bound.row['novel_id'])
+        with pytest.raises((ValueError,HTTPException,PermissionError)):
+>           manager.accept(jid, actor=object() if change=='scope' else None)
+
+tests/test_file_local_bound_review.py:309: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:1485: in accept
+    return self._review_file_bound(passive, "accept", accepted_output, actor, scope, expected_version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.jobs.JobManager object at 0x7f9d57a58a70>
+job = Job(id='79ea5416-d05b-43f4-976e-e66f1428273f', operation='continue', novel_id='passive-manager-book', chapter_id='pass...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+action = 'accept', accepted_output = None, actor = None, scope = None
+expected_version = None
+
+    def _review_file_bound(self, job, action, accepted_output=None, actor=None, scope=None, expected_version=None):
+        from .services.file_generation_review import _FileReview
+        from .repositories.chapter_repository import VersionConflict
+        _FileReview.local(job, actor, scope)
+        from .repositories.generation_repository import GenerationProjectIdentityError
+        from fastapi import HTTPException
+        try:self._file_review_pins.validate()
+        except GenerationProjectIdentityError:
+            raise HTTPException(409, {"code": "GENERATION_ORDINARY_MUTATION_NOT_INTEGRATED"}) from None
+        self._guard_ordinary_request_authorization(job)  # Never beneath project/job locks.
+        review = _FileReview(self._file_review_pins, job)
+        require_generation_content(job)
+        if action == "reject" and job.public()["status"] != "COMPLETED":
+            raise GenerationStateConflict(job.public()["status"])
+        with review.enter(), self._review_mutation(job.id), job.condition:
+            stored = review.read()
+            for key, value in stored.items():
+                if key in Job.__dataclass_fields__ and key not in self.transient_fields:
+                    setattr(job, key, value)
+            review.check()
+            require_generation_content(job)
+            require_generation_accounting(job)
+            if action == "reject":
+                if job.public()["status"] != "COMPLETED":
+                    raise GenerationStateConflict(job.public()["status"])
+                job.status = "REJECTED"
+                self._emit(job, _review=review)
+                return job
+            require_whole_generation_acceptance(job)
+            if job.error_code == "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
+                raise ValueError("Draft completion persistence is unconfirmed; review the task before accepting")
+            chapter = review.chapters.get(job.chapter_id)
+            if job.status != "COMPLETED":
+                raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
+            target_version = job.base_chapter_version
+            if target_version is None:
+                if job.operation != "continue":
+                    raise ValueError("Draft generation base is missing; regenerate before accepting")
+                target_version = chapter["version"]
+            if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
+>               raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
+E               app.repositories.chapter_repository.VersionConflict: Document version conflict for passive-manager-book:1: expected 1, actual 2
+
+app/jobs.py:1591: VersionConflict
+________ test_current_original_review_preconditions[callback_authority] ________
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/.runtime/file-local-bound-rev...y_finished=<threading.Event at 0x7f9d57b3f680: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f9d55f57740>)
+change = 'callback_authority'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9d5780fb90>
+
+    @pytest.mark.parametrize('change', ['version', 'unsettled', 'scope', 'callback_authority'])
+    def test_current_original_review_preconditions(bound, change, monkeypatch):
+        jid=bound.row['id']; manager=bound.review_manager
+        if change=='version':
+            bound.chapters.save(bound.chapter['id'],{'content':'newer','version':bound.chapter['version']})
+        elif change=='unsettled':
+            row=bound.persistence.get(jid);row.update(dispatch_hooks_required=True,terminal_hook_status='PENDING')
+            bound.persistence.save(row)
+        elif change=='scope':
+            # Caller-supplied collaboration cannot turn this local record into a scoped review.
+            pass
+        else:
+            def refused():raise PermissionError('synthetic revoked local request')
+            manager.get(jid).request_authorization=refused
+        before=project_bytes(bound.root,bound.row['novel_id'])
+        with pytest.raises((ValueError,HTTPException,PermissionError)):
+>           manager.accept(jid, actor=object() if change=='scope' else None)
+
+tests/test_file_local_bound_review.py:309: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:1485: in accept
+    return self._review_file_bound(passive, "accept", accepted_output, actor, scope, expected_version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/jobs.py:1560: in _review_file_bound
+    self._guard_ordinary_request_authorization(job)  # Never beneath project/job locks.
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.jobs.JobManager object at 0x7f9d577e9f40>
+job = Job(id='86eab452-0931-409b-b419-b7ac422e1b35', operation='continue', novel_id='passive-manager-book', chapter_id='pass...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+
+    def _guard_ordinary_request_authorization(self, job):
+        if getattr(job, "_ordinary_authorization_refused", False):
+            raise _OrdinaryRequestAuthorizationFailed()
+        guard = self._ordinary_request_authorization(job)
+        if guard is None: return
+        try:
+            guard()
+        except Exception:
+            # Closure errors may contain a token, repository root or HTTP detail.
+            # TextModelNode normalizes exceptions into events. Keep the refusal
+            # in this live object only so that normalization cannot retain a
+            # partial result or turn a one-time refusal into a later success.
+            with job.condition:
+                if job.status not in self.terminal:
+                    job._ordinary_authorization_refused = True
+>           raise _OrdinaryRequestAuthorizationFailed() from None
+E           app.jobs._OrdinaryRequestAuthorizationFailed: 生成授权已改变，请重新检查后生成。
+
+app/jobs.py:938: _OrdinaryRequestAuthorizationFailed
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/docs/delivery/evidence/file-local-bound-review-20261025/expanded.xml -
+=========================== short test summary info ============================
+FAILED tests/test_file_local_bound_review.py::test_current_original_review_preconditions[version]
+FAILED tests/test_file_local_bound_review.py::test_current_original_review_preconditions[callback_authority]
+2 failed, 25 passed, 3 warnings in 7.37s

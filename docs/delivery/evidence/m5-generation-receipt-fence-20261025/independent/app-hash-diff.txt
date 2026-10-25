@@ -1,0 +1,11 @@
+--- /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/20261025T114123133690284-source-before.sha256	2026-10-25 20:41:24.173492425 +0900
++++ /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/20261025T114343195865320-source-before.sha256	2026-10-25 20:43:44.227986837 +0900
+@@ -461,7 +461,7 @@
+ d96f2f8339b3f891ad70b87da72e04b67867c6e0f3d3e0fdc4084caf73f99ad2  app/repositories/file/narrative.py
+ 2a1699a11363f639f838419164f8b6f795a6b81089bccba236af5ee92c2dec4d  app/repositories/file/novel.py
+ b3f664468ab78a0398ca90ee008f4395c055aedd8fc1539139088f15abecbffc  app/repositories/file/scope.py
+-ba29e1567d7d6dd125f0b954e37c967df3e18f9ba3f46909615d141ef70a4ffb  app/repositories/generation_repository.py
++beff4db407e0eef0920695dfc6750ac89d8a30a292e290ff850d556f5bcb133d  app/repositories/generation_repository.py
+ cdc6eee509d3f3b3d9c71fd55fbd32c354a2a224fabee84f8e9d186d8421f8b7  app/repositories/identity_interfaces.py
+ b27aaa6acc8ff206adcc3fdad97b21ce4d96ef9faab571819a3ba44f0257db71  app/repositories/interfaces.py
+ ede87302f2cb37970097da8e1dbe90f4804cf3f7561e2e8994640fbcb495766c  app/repositories/lore_interfaces.py

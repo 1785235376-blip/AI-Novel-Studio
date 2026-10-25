@@ -1,0 +1,619 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-file-adoption-independent/run.py /workspace/scratch/20a0022d2b33/review-file-adoption-independent/test_independent.py -q --junitxml=/workspace/scratch/20a0022d2b33/review-file-adoption-independent/provisional.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+ M app/file_project_lifecycle.py
+ M app/jobs.py
+ M app/repositories/file/canon.py
+ M app/repositories/file/chapter.py
+ M app/repositories/generation_repository.py
+ M app/services/canon_service.py
+ M app/services/chapter_service.py
+?? app/services/file_generation_review.py
+?? docs/delivery/evidence/file-local-bound-review-20261025/
+?? tests/test_file_local_bound_review.py
+EEEEEEEEEEEEEEEEEEEEEEEE                                                 [100%]
+==================================== ERRORS ====================================
+_________ ERROR at setup of test_genuine_cold_bound_accept_all_effects _________
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7da330>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa777620>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+______________________ ERROR at setup of test_cold_reject ______________________
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7ddd30>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa775b50>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_reentrant_replacement_never_writes_new_owner[before_lock] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7df8c0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7db920>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_reentrant_replacement_never_writes_new_owner[before_chapter] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e70080>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7dc8c0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_reentrant_replacement_never_writes_new_owner[between_summary_canon] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e736b0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7dfec0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+____ ERROR at setup of test_rotated_facade_denied_without_writes[chapters] _____
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7de6f0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e71c40>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+______ ERROR at setup of test_rotated_facade_denied_without_writes[canon] ______
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7de420>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e71f10>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_____ ERROR at setup of test_rotated_facade_denied_without_writes[memory] ______
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7dffb0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e73b30>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+___ ERROR at setup of test_rotated_facade_denied_without_writes[generation] ____
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa775cd0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6f0e0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_________ ERROR at setup of test_failed_claim_never_replays[ACCEPTING] _________
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7daf30>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6f6e0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+___ ERROR at setup of test_failed_claim_never_replays[ACCEPTANCE_UNCERTAIN] ____
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7dae70>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6e2d0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_concurrent_delete_waits_until_original_synchronous_effects_finish[chapter] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7dcd40>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6df70>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_concurrent_delete_waits_until_original_synchronous_effects_finish[canon] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e708f0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7da900>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_concurrent_delete_waits_until_original_synchronous_effects_finish[generation] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e71fd0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7dc740>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_context_not_usable_other_thread_or_held_callback_and_events_unlocked _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7d8a70>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7deae0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_physical_port_rotation_and_scope_denied[backend_data] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa736d50>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7dcc50>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_physical_port_rotation_and_scope_denied[backend_novels] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e6c050>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e70620>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_physical_port_rotation_and_scope_denied[generation_root] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffaba2c00>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7debd0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_physical_port_rotation_and_scope_denied[memory_lore] __
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e3ec60>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7de0f0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+____ ERROR at setup of test_physical_port_rotation_and_scope_denied[scope] _____
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffadeecf0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6daf0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_authorization_runs_before_any_owner_or_review_lock[True] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ffa7dd5e0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ff9e6ed20>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_authorization_runs_before_any_owner_or_review_lock[False] _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e3e120>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7df050>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_ ERROR at setup of test_failed_original_canon_port_leaves_nonreplayable_receipt _
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e3e0c0>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7daf90>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+_______ ERROR at setup of test_stale_base_version_has_zero_review_writes _______
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=<function JobManager._run at 0x7f7ffd9e37e0>, client=<starlette.testclient.TestClient object at 0x7f7ff9e6f950>)
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7ffa7db9b0>
+
+    @pytest.fixture
+    def ready(source, memory_settings, monkeypatch):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+        job = manager.create('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+        assert source.finished.wait(10)
+        assert job.status == 'COMPLETED', (job.status,job.error)
+        row = job.record(); row['id'] = str(uuid4())
+        row[FIELD] = dict(schema_version=1, project_incarnation=source.incarnation,
+>           job_id=row['id'], project_id=row['novel_id'], **{key:deepcopy(row[key]) for key in IDENTITY_FIELDS})
+                                                                          ^^^^^^^^
+E       KeyError: 'experimental_origin'
+
+../review-file-adoption-independent/test_independent.py:32: KeyError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_passive_generation_manager_binding.py:28
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_passive_generation_manager_binding.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_memory_agent_contract.py:107
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:107: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+tests/test_memory_agent_contract.py:132
+  /workspace/scratch/20a0022d2b33/studio-file-local-bound-review/tests/test_memory_agent_contract.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-file-adoption-independent/provisional.xml -
+=========================== short test summary info ============================
+ERROR ../review-file-adoption-independent/test_independent.py::test_genuine_cold_bound_accept_all_effects
+ERROR ../review-file-adoption-independent/test_independent.py::test_cold_reject
+ERROR ../review-file-adoption-independent/test_independent.py::test_reentrant_replacement_never_writes_new_owner[before_lock]
+ERROR ../review-file-adoption-independent/test_independent.py::test_reentrant_replacement_never_writes_new_owner[before_chapter]
+ERROR ../review-file-adoption-independent/test_independent.py::test_reentrant_replacement_never_writes_new_owner[between_summary_canon]
+ERROR ../review-file-adoption-independent/test_independent.py::test_rotated_facade_denied_without_writes[chapters]
+ERROR ../review-file-adoption-independent/test_independent.py::test_rotated_facade_denied_without_writes[canon]
+ERROR ../review-file-adoption-independent/test_independent.py::test_rotated_facade_denied_without_writes[memory]
+ERROR ../review-file-adoption-independent/test_independent.py::test_rotated_facade_denied_without_writes[generation]
+ERROR ../review-file-adoption-independent/test_independent.py::test_failed_claim_never_replays[ACCEPTING]
+ERROR ../review-file-adoption-independent/test_independent.py::test_failed_claim_never_replays[ACCEPTANCE_UNCERTAIN]
+ERROR ../review-file-adoption-independent/test_independent.py::test_concurrent_delete_waits_until_original_synchronous_effects_finish[chapter]
+ERROR ../review-file-adoption-independent/test_independent.py::test_concurrent_delete_waits_until_original_synchronous_effects_finish[canon]
+ERROR ../review-file-adoption-independent/test_independent.py::test_concurrent_delete_waits_until_original_synchronous_effects_finish[generation]
+ERROR ../review-file-adoption-independent/test_independent.py::test_context_not_usable_other_thread_or_held_callback_and_events_unlocked
+ERROR ../review-file-adoption-independent/test_independent.py::test_physical_port_rotation_and_scope_denied[backend_data]
+ERROR ../review-file-adoption-independent/test_independent.py::test_physical_port_rotation_and_scope_denied[backend_novels]
+ERROR ../review-file-adoption-independent/test_independent.py::test_physical_port_rotation_and_scope_denied[generation_root]
+ERROR ../review-file-adoption-independent/test_independent.py::test_physical_port_rotation_and_scope_denied[memory_lore]
+ERROR ../review-file-adoption-independent/test_independent.py::test_physical_port_rotation_and_scope_denied[scope]
+ERROR ../review-file-adoption-independent/test_independent.py::test_authorization_runs_before_any_owner_or_review_lock[True]
+ERROR ../review-file-adoption-independent/test_independent.py::test_authorization_runs_before_any_owner_or_review_lock[False]
+ERROR ../review-file-adoption-independent/test_independent.py::test_failed_original_canon_port_leaves_nonreplayable_receipt
+ERROR ../review-file-adoption-independent/test_independent.py::test_stale_base_version_has_zero_review_writes
+6 warnings, 24 errors in 6.90s

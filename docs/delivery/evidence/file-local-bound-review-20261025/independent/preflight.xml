@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="7.079" timestamp="2026-10-25T18:59:38.945633+09:00" hostname="8a71deb1dd45"><testcase classname="review-file-adoption-independent.test_independent" name="test_genuine_cold_bound_accept_all_effects" time="0.040"><error message="failed on setup with &quot;AttributeError: 'JobManager' object has no attribute 'start'&quot;">source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-file-adoption-independent/tmp/pytest-of-agent/pytest-...al_run=&lt;function JobManager._run at 0x7f6c390dbba0&gt;, client=&lt;starlette.testclient.TestClient object at 0x7f6c35f29e20&gt;)
+memory_settings = &lt;module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-local-bound-review/app/lore/memory_agent.py'&gt;
+
+    @pytest.fixture
+    def ready(source, memory_settings):
+        # Generate a genuine original Mock draft, then construct a new internal bound
+        # record from it. No API capture/admission or historical record upgrade.
+        manager = source.manager
+&gt;       job = manager.start('rewrite', {'novel_id':source.chapter['novel_id'], 'chapter_id':source.chapter['id'],
+              ^^^^^^^^^^^^^
+            'source':source.chapter['content'], 'instruction':'Continue locally', 'profile':'LOCAL_ONLY',
+            'provider_id':'mock', 'model_id':'mock-writer'})
+E       AttributeError: 'JobManager' object has no attribute 'start'
+
+../review-file-adoption-independent/test_independent.py:25: AttributeError</error></testcase></testsuite></testsuites>

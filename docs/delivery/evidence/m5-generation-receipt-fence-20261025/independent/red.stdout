@@ -1,0 +1,178 @@
+/workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/bin/python /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/run.py /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/test_receipt_independent.py -q --junitxml=/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/red.xml 
+e7f2eaec2a5010a98cad6aa1d48df8e0ffc3b459
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_manual_receipt_after_owner_entry_replacement_does_not_write[ACCEPTING] __
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/tmp/pytest-of-agent/pytest-0/t...y_finished=<threading.Event at 0x7f0e2baa9af0: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f0e2baefec0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0e2ba918e0>
+terminal = 'ACCEPTING'
+
+    @pytest.mark.parametrize('terminal',['ACCEPTING','ACCEPTED'])
+    def test_manual_receipt_after_owner_entry_replacement_does_not_write(bound,monkeypatch,terminal):
+        repo=bound.bundle.generations;jid=bound.row['id'];original=repo._graph_owner
+        before=[];replacement={};seen=[];old_path=repo._job_path(jid)
+        @contextmanager
+        def seam(item,binding):
+            with original(item,binding):
+                if item['id']==jid and item['status']==terminal and not seen:
+                    before.append(old_path.read_bytes());seen.append(True)
+                    _replace_owner(bound)
+                    replacement.update(project_files(bound.root,bound.row['novel_id']))
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',seam)
+        try:bound.review_manager.accept(jid)
+        except Exception:pass
+        assert seen, 'terminal seam was not reached'
+        assert project_files(bound.root,bound.row['novel_id'])==replacement
+        actual=old_path.read_bytes()
+>       assert actual==before[0], f"stale manual receipt written: {json.loads(actual)['status']}"
+E       AssertionError: stale manual receipt written: ACCEPTING
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ... null\n  }\n}'
+E         
+E         At index 340 diff: b'A' != b'C'
+E         Use -v to get more diff
+
+../review-m5-receipt-independent/test_receipt_independent.py:33: AssertionError
+__ test_manual_receipt_after_owner_entry_replacement_does_not_write[ACCEPTED] __
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/tmp/pytest-of-agent/pytest-0/t...y_finished=<threading.Event at 0x7f0e2baad7f0: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7f0e2bb1a2a0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0e2ba922a0>
+terminal = 'ACCEPTED'
+
+    @pytest.mark.parametrize('terminal',['ACCEPTING','ACCEPTED'])
+    def test_manual_receipt_after_owner_entry_replacement_does_not_write(bound,monkeypatch,terminal):
+        repo=bound.bundle.generations;jid=bound.row['id'];original=repo._graph_owner
+        before=[];replacement={};seen=[];old_path=repo._job_path(jid)
+        @contextmanager
+        def seam(item,binding):
+            with original(item,binding):
+                if item['id']==jid and item['status']==terminal and not seen:
+                    before.append(old_path.read_bytes());seen.append(True)
+                    _replace_owner(bound)
+                    replacement.update(project_files(bound.root,bound.row['novel_id']))
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',seam)
+        try:bound.review_manager.accept(jid)
+        except Exception:pass
+        assert seen, 'terminal seam was not reached'
+        assert project_files(bound.root,bound.row['novel_id'])==replacement
+        actual=old_path.read_bytes()
+>       assert actual==before[0], f"stale manual receipt written: {json.loads(actual)['status']}"
+E       AssertionError: stale manual receipt written: ACCEPTED
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ...gin": null\n}'
+E         
+E         At index 346 diff: b'E' != b'I'
+E         Use -v to get more diff
+
+../review-m5-receipt-independent/test_receipt_independent.py:33: AssertionError
+_ test_memory_receipt_after_owner_entry_replacement_does_not_write[GENERATING] _
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/tmp/pytest-of-agent/pytest-0/test_memory_receipt_after_owne0')
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-backend-20261025/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0e2bab4dd0>
+terminal = 'GENERATING'
+
+    @pytest.mark.parametrize('terminal',['GENERATING','COMPLETED'])
+    def test_memory_receipt_after_owner_entry_replacement_does_not_write(tmp_path,memory_settings,monkeypatch,terminal):
+        agent,bundle,nid,cid,version,owner,binding=setup(tmp_path)
+        repo=bundle.generations;jid=binding['job_id'];original=repo._graph_owner
+        path=repo._job_path(jid);before=[];replacement={};seen=[]
+        @contextmanager
+        def seam(item,current):
+            with original(item,current):
+                if item['id']==jid and item['status']==terminal and not seen:
+                    before.append(path.read_bytes() if path.exists() else None);seen.append(True)
+                    replace_memory_owner(tmp_path,bundle,nid)
+                    replacement.update(project_files(tmp_path,nid))
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',seam)
+        try:agent.extract(nid,cid,version,project_incarnation=binding['project_incarnation'])
+        except Exception:pass
+        assert seen,'terminal seam was not reached'
+        assert project_files(tmp_path,nid)==replacement
+        actual=path.read_bytes() if path.exists() else None
+>       assert actual==before[0], f"stale memory receipt written: {json.loads(actual)['status'] if actual else None}"
+E       AssertionError: stale memory receipt written: GENERATING
+E       assert b'{\n  "id": "e481fe15-b65c-5e1d-8afb-668ed7e8362e",\n  "operation": "MEMORY_EXTRACTION",\n  "novel_id": "agent-test",..."chapter_id": "agent-test:1",\n    "chapter_version": 2,\n    "job_id": "e481fe15-b65c-5e1d-8afb-668ed7e8362e"\n  }\n}' == None
+
+../review-m5-receipt-independent/test_receipt_independent.py:54: AssertionError
+_ test_memory_receipt_after_owner_entry_replacement_does_not_write[COMPLETED] __
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/review-m5-receipt-independent/tmp/pytest-of-agent/pytest-0/test_memory_receipt_after_owne1')
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-backend-20261025/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0e2bab4e30>
+terminal = 'COMPLETED'
+
+    @pytest.mark.parametrize('terminal',['GENERATING','COMPLETED'])
+    def test_memory_receipt_after_owner_entry_replacement_does_not_write(tmp_path,memory_settings,monkeypatch,terminal):
+        agent,bundle,nid,cid,version,owner,binding=setup(tmp_path)
+        repo=bundle.generations;jid=binding['job_id'];original=repo._graph_owner
+        path=repo._job_path(jid);before=[];replacement={};seen=[]
+        @contextmanager
+        def seam(item,current):
+            with original(item,current):
+                if item['id']==jid and item['status']==terminal and not seen:
+                    before.append(path.read_bytes() if path.exists() else None);seen.append(True)
+                    replace_memory_owner(tmp_path,bundle,nid)
+                    replacement.update(project_files(tmp_path,nid))
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',seam)
+        try:agent.extract(nid,cid,version,project_incarnation=binding['project_incarnation'])
+        except Exception:pass
+        assert seen,'terminal seam was not reached'
+        assert project_files(tmp_path,nid)==replacement
+        actual=path.read_bytes() if path.exists() else None
+>       assert actual==before[0], f"stale memory receipt written: {json.loads(actual)['status'] if actual else None}"
+E       AssertionError: stale memory receipt written: COMPLETED
+E       assert b'{\n  "id": ...    ]\n  }\n}' == b'{\n  "id": ...8df3"\n  }\n}'
+E         
+E         At index 159 diff: b'C' != b'G'
+E         Use -v to get more diff
+
+../review-m5-receipt-independent/test_receipt_independent.py:54: AssertionError
+=============================== warnings summary ===============================
+tests/test_memory_agent_contract.py:107
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_memory_agent_contract.py:107: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+tests/test_memory_agent_contract.py:132
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_memory_agent_contract.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.file_backend_only
+
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_passive_generation_manager_binding.py:28
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_passive_generation_manager_binding.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+tests/test_bound_review_port_blockers.py:19
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_bound_review_port_blockers.py:19: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+tests/test_file_local_bound_review.py:20
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_file_local_bound_review.py:20: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+tests/test_bound_memory_project_owner.py:15
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/tests/test_bound_memory_project_owner.py:15: PytestUnknownMarkWarning: Unknown pytest.mark.file_backend_only - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = pytest.mark.file_backend_only
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/review-m5-receipt-independent/red.xml -
+=========================== short test summary info ============================
+FAILED ../review-m5-receipt-independent/test_receipt_independent.py::test_manual_receipt_after_owner_entry_replacement_does_not_write[ACCEPTING]
+FAILED ../review-m5-receipt-independent/test_receipt_independent.py::test_manual_receipt_after_owner_entry_replacement_does_not_write[ACCEPTED]
+FAILED ../review-m5-receipt-independent/test_receipt_independent.py::test_memory_receipt_after_owner_entry_replacement_does_not_write[GENERATING]
+FAILED ../review-m5-receipt-independent/test_receipt_independent.py::test_memory_receipt_after_owner_entry_replacement_does_not_write[COMPLETED]
+4 failed, 9 warnings in 6.67s

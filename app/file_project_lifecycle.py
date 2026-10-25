@@ -12,7 +12,7 @@ from pathlib import Path, PureWindowsPath
 
 
 @contextmanager
-def project_operation(data: Path, novel_id: str, *, require_exists=True):
+def project_operation(data: Path, novel_id: str, *, require_exists=True, expected_incarnation=None, expected_root=None):
     # Public project identifiers are one path component. Validate before even
     # deriving a lock key or checking existence outside the novels directory.
     # Generic dot directories remain valid legacy projects. Drive-qualified
@@ -24,10 +24,23 @@ def project_operation(data: Path, novel_id: str, *, require_exists=True):
     # Import lazily: app.repositories imports FileRepository during startup.
     from .repositories.file.mutation_coordinator import workspace_mutation
 
+    if expected_root is not None and Path(data).resolve() != Path(expected_root).resolve():
+        raise ValueError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
     root = data / "novels" / novel_id
     with workspace_mutation(data, f"project-lifecycle:{root.resolve()}"):
         if require_exists and not root.is_dir():
             raise FileNotFoundError(novel_id)
+        if expected_incarnation is not None:
+            from .creative.project_store import _read_marker, BINDING
+            from uuid import UUID
+            marker = _read_marker(root / "creative_project_v2.json")
+            if (not isinstance(marker, dict) or set(marker) != {"schema_version", BINDING}
+                    or type(marker.get("schema_version")) is not int or marker["schema_version"] != 1
+                    or not isinstance(marker.get(BINDING), str)):
+                raise ValueError("GENERATION_REVIEW_PROJECT_OWNER_CHANGED")
+            identity = UUID(marker[BINDING])
+            if identity.version != 4 or str(identity) != marker[BINDING] or "file:" + str(identity) != expected_incarnation:
+                raise ValueError("GENERATION_REVIEW_PROJECT_OWNER_CHANGED")
         yield
 
 
@@ -41,7 +54,19 @@ def guard_project(id_argument, *, chapter=False):
             identifier = args[0] if args else kwargs[id_argument]
             novel_id = identifier.rsplit(":", 1)[0] if chapter else identifier
             backend = getattr(repository, "backend", repository)
-            with project_operation(backend.data, novel_id):
+            memory = kwargs.pop("_file_memory", None)
+            if memory is not None:
+                from .lore.file_memory_ports import require_memory_ports
+                memory = require_memory_ports(memory, repository)
+                if novel_id != memory.binding['project_id']:
+                    raise ValueError("MEMORY_BOUND_WRITE_IDENTITY_MISMATCH")
+                kwargs['_project_incarnation'] = memory.binding['project_incarnation']
+                kwargs['_project_root'] = memory.root
+            incarnation = kwargs.pop("_project_incarnation", None)
+            expected_root = kwargs.pop("_project_root", None)
+            if expected_root is not None and Path(backend.novels).resolve() != Path(expected_root).resolve()/"novels":
+                raise ValueError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
+            with project_operation(backend.data, novel_id, expected_incarnation=incarnation, expected_root=expected_root):
                 return method(repository, *args, **kwargs)
         return guarded
     return decorate

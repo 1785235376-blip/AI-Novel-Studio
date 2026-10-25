@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="7.017" timestamp="2026-10-25T20:41:31.146900+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_m5_generation_receipt_fence" name="test_manual_after_owner_entry_keeps_original_receipt[ACCEPTING-accept]" time="0.094"><failure message="assert b'{\n  &quot;id&quot;: ...gin&quot;: null\n}' == b'{\n  &quot;id&quot;: ... null\n  }\n}'&#10;  &#10;  At index 340 diff: b'A' != b'C'&#10;  Use -v to get more diff">bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=&lt;threading.Event at 0x7f054c71b200: unset&gt;, reopen_bound=&lt;function bound.&lt;locals&gt;.reopen at 0x7f054c10b920&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f054c052b40&gt;
+status = 'ACCEPTING', operation = 'accept'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+        with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+            getattr(bound.review_manager,operation)(bound.row['id'])
+        assert seen
+&gt;       assert repo._job_path(bound.row['id']).read_bytes()==seen['receipt']
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ... null\n  }\n}'
+E         
+E         At index 340 diff: b'A' != b'C'
+E         Use -v to get more diff
+
+tests/test_m5_generation_receipt_fence.py:32: AssertionError</failure></testcase><testcase classname="tests.test_m5_generation_receipt_fence" name="test_manual_after_owner_entry_keeps_original_receipt[ACCEPTED-accept]" time="0.097"><failure message="Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)">bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=&lt;threading.Event at 0x7f054c075d90: unset&gt;, reopen_bound=&lt;function bound.&lt;locals&gt;.reopen at 0x7f054c121800&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f054c07ab70&gt;
+status = 'ACCEPTED', operation = 'accept'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+&gt;       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)
+
+tests/test_m5_generation_receipt_fence.py:29: Failed</failure></testcase><testcase classname="tests.test_m5_generation_receipt_fence" name="test_manual_after_owner_entry_keeps_original_receipt[REJECTED-reject]" time="0.069"><failure message="Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)">bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence...y_finished=&lt;threading.Event at 0x7f054c075be0: unset&gt;, reopen_bound=&lt;function bound.&lt;locals&gt;.reopen at 0x7f054c120220&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f054c0605f0&gt;
+status = 'REJECTED', operation = 'reject'
+
+    @pytest.mark.parametrize('status,operation', [('ACCEPTING','accept'), ('ACCEPTED','accept'), ('REJECTED','reject')])
+    def test_manual_after_owner_entry_keeps_original_receipt(bound, monkeypatch, status, operation):
+        repo=bound.bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,binding):
+            with original(item,binding):
+                if item.get('status')==status and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    _replace_owner(bound)
+                    seen['project']=project_bytes(bound.root,item['novel_id'])
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+&gt;       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)
+
+tests/test_m5_generation_receipt_fence.py:29: Failed</failure></testcase><testcase classname="tests.test_m5_generation_receipt_fence" name="test_memory_after_owner_entry_keeps_generating_receipt" time="0.126"><failure message="Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/.runtime/m5-generation-receipt-fence/tmp/pytest-of-agent/pytest-0/test_memory_after_owner_entry_0')
+memory_settings = &lt;module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-m5-receipt-fence/app/lore/memory_agent.py'&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f054c07af60&gt;
+
+    def test_memory_after_owner_entry_keeps_generating_receipt(tmp_path,memory_settings,monkeypatch):
+        agent,bundle,nid,cid,version,owner,binding=setup(tmp_path)
+        repo=bundle.generations
+        original=repo._graph_owner
+        seen={}
+        @contextmanager
+        def replace_after_entry(item,current):
+            with original(item,current):
+                if item.get('status')=='COMPLETED' and not seen:
+                    seen['receipt']=repo._job_path(item['id']).read_bytes()
+                    replace_memory_owner(tmp_path,bundle,nid)
+                    seen['project']=project_bytes(tmp_path,nid)
+                yield
+        monkeypatch.setattr(repo,'_graph_owner',replace_after_entry)
+&gt;       with pytest.raises((ValueError,KeyError,FileNotFoundError)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE any of (&lt;class 'ValueError'&gt;, &lt;class 'KeyError'&gt;, &lt;class 'FileNotFoundError'&gt;)
+
+tests/test_m5_generation_receipt_fence.py:50: Failed</failure></testcase></testsuite></testsuites>

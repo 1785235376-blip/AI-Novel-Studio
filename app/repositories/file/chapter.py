@@ -23,7 +23,7 @@ class FileChapterRepository(ChapterRepository):
         try:return self.backend.set_chapter_archived(chapter_id,False,expected_version)
         except ValueError:
             raise VersionConflict(self.get(chapter_id),resource_id=chapter_id,expected_version=expected_version)
-    def create(self,novel_id,payload):return self.backend.create_chapter(novel_id,payload)
+    def create(self,novel_id,payload,**owner):return self.backend.create_chapter(novel_id,payload,**owner)
     @guard_project("novel_id")
     def save_summary(self,novel_id,chapter_ref,summary):
         chapter_id=chapter_ref if isinstance(chapter_ref,str) and ":" in chapter_ref else f"{novel_id}:{chapter_ref}"

@@ -433,16 +433,21 @@ class JobManager:
         original_root = getattr(self._ordinary_repository, "root", None)
         self._ordinary_repository_root = Path(original_root).resolve() if original_root is not None else None
         self._ordinary_database = getattr(self._ordinary_repository, "database", None)
+        from .services.file_generation_review import FileReviewPins
+        self._file_review_pins = FileReviewPins(self)
         for item in self.persistence.load_all():
             if "id" not in item: continue
             if item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}:
                 # The load_all snapshot can race a final worker/review publish.
                 # Re-read inside the same claim lock before durable recovery.
-                with self._review_mutation(item["id"]):
-                    read = getattr(self.persistence, "get", None)
-                    try: current = read(item["id"]) if callable(read) else item
-                    except KeyError: continue
-                    self._restore_job(current)
+                from .repositories.generation_repository import GenerationProjectIdentityError
+                try:
+                    with self._restore_mutation(item):
+                        read = getattr(self.persistence, "get", None)
+                        try: current = read(item["id"]) if callable(read) else item
+                        except KeyError: continue
+                        self._restore_job(current)
+                except GenerationProjectIdentityError: continue
             else:
                 self._restore_job(item)
 
@@ -485,7 +490,10 @@ class JobManager:
         if recovered:
             if is_image_job(self.jobs[item["id"]]) or is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
             self._persist(self.jobs[item["id"]])
-    def _persist(self,job):
+    def _persist(self,job,*,_review=None):
+        if _review is not None:
+            from .services.file_generation_review import require_review
+            return require_review(_review, self, job).persist()
         if _has_ordinary_binding(job) and not self._ordinary_store_matches(job):
             from .repositories.generation_repository import GenerationProjectIdentityError
             raise GenerationProjectIdentityError("GENERATION_ORDINARY_STORE_MISMATCH")
@@ -512,6 +520,27 @@ class JobManager:
         repository = getattr(persistence, "repository", persistence)
         root = getattr(repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
         return workspace_mutation(Path(root), f"generation-accept:{jid}")
+    def _restore_mutation(self, item):
+        from contextlib import contextmanager
+        from pathlib import Path
+        from .repositories.generation_repository import GenerationRepository, GenerationProjectIdentityError
+        from .services.generation_project_binding import FIELD, ordinary_job_binding
+        from .runtime_events import runtime_events
+        @contextmanager
+        def enter():
+            repository = self._ordinary_repository
+            if FIELD in item and isinstance(repository, GenerationRepository):
+                if Path(repository.root).resolve() != self._ordinary_repository_root:
+                    raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
+                # A stale load_all snapshot may already be COMPLETED by the
+                # time recovery claims it. Share manual review's owner-before-
+                # review order, never hold the review leaf while awaiting owner.
+                with runtime_events.transaction(), repository._graph_owner(item, ordinary_job_binding(item)), self._review_mutation(item["id"]):
+                    yield
+            else:
+                with self._review_mutation(item["id"]): yield
+        return enter()
+
     def _branch_owner(self, job):
         raw = job.scope or {}
         if raw.get("kind") != "BRANCH": return None
@@ -788,12 +817,12 @@ class JobManager:
             self._persist(job)
             raise
         return job
-    def _emit(self,job,chunk=""):
+    def _emit(self,job,chunk="",*,_review=None):
         with job.condition:
             if job.status != "COMPLETED": job.adaptation_publication = None
             if chunk and not job.cancelled.is_set() and job.status not in self.terminal:job.output+=chunk
             job.updated_at=utc()
-            try: self._persist(job)
+            try: self._persist(job, **({"_review": _review} if _review is not None else {}))
             except Exception as exc:
                 from .repositories.generation_repository import GenerationProjectIdentityError
                 creative_terminal = _is_creative_execution(job) and job.status in self.terminal
@@ -1476,6 +1505,8 @@ class JobManager:
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
         passive = self.get(jid)
+        if _has_ordinary_binding(passive):
+            return self._review_file_bound(passive, "accept", accepted_output, actor, scope, expected_version)
         self.require_ordinary_mutation_eligibility(passive)
         if is_creative_director_job(passive) or _is_research_ocr_execution(passive): require_generation_content(passive)
         from .repositories.file.mutation_coordinator import workspace_mutation
@@ -1541,6 +1572,60 @@ class JobManager:
                         pass  # The durable ACCEPTING claim still prevents replay.
                     raise
 
+    def _review_file_bound(self, job, action, accepted_output=None, actor=None, scope=None, expected_version=None):
+        from .services.file_generation_review import _FileReview
+        from .repositories.chapter_repository import VersionConflict
+        if action not in {"accept", "reject"}: raise ValueError("GENERATION_REVIEW_ACTION_INVALID")
+        _FileReview.local(job, actor, scope)
+        from .repositories.generation_repository import GenerationProjectIdentityError
+        from fastapi import HTTPException
+        try:self._file_review_pins.validate()
+        except GenerationProjectIdentityError:
+            raise HTTPException(409, {"code": "GENERATION_ORDINARY_MUTATION_NOT_INTEGRATED"}) from None
+        self._guard_ordinary_request_authorization(job)  # Never beneath project/job locks.
+        review = _FileReview(self._file_review_pins, job)
+        require_generation_content(job)
+        if action == "reject" and job.public()["status"] != "COMPLETED":
+            raise GenerationStateConflict(job.public()["status"])
+        with review.enter(), self._review_mutation(job.id), job.condition:
+            stored = review.read()
+            for key, value in stored.items():
+                if key in Job.__dataclass_fields__ and key not in self.transient_fields:
+                    setattr(job, key, value)
+            review.check()
+            require_generation_content(job)
+            require_generation_accounting(job)
+            if action == "reject":
+                if job.public()["status"] != "COMPLETED":
+                    raise GenerationStateConflict(job.public()["status"])
+                job.status = "REJECTED"
+                self._emit(job, _review=review)
+                return job
+            require_whole_generation_acceptance(job)
+            if job.error_code == "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
+                raise ValueError("Draft completion persistence is unconfirmed; review the task before accepting")
+            chapter = review.chapters.get(job.chapter_id)
+            if job.status != "COMPLETED":
+                raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
+            target_version = job.base_chapter_version
+            if target_version is None:
+                if job.operation != "continue":
+                    raise ValueError("Draft generation base is missing; regenerate before accepting")
+                target_version = chapter["version"]
+            if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
+                raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
+            job.status = "ACCEPTING"
+            self._persist(job, _review=review)
+            try:
+                return self._accept_claimed(job, chapter, target_version, accepted_output, _review=review)
+            except Exception:
+                job.status = "ACCEPTANCE_UNCERTAIN"
+                job.error_code = "ACCEPTANCE_REVIEW_REQUIRED"
+                job.error = "采用操作未能完整确认，正文可能已保存。请检查正文及待审核 Canon，勿重复采用。"
+                try:self._emit(job, _review=review)
+                except Exception:pass  # Original ACCEPTING claim still prevents replay.
+                raise
+
     @staticmethod
     def _accepted_canon_source(chapters, saved):
         """Bind to the write result, never silently adopt a later current edit.
@@ -1571,8 +1656,14 @@ class JobManager:
             raise ValueError("CANON_ACCEPTED_REVISION_MISMATCH")
         return {**deepcopy(saved), "version": 1, "document": deepcopy(revision["document"]), "content": canonical}
 
-    def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None):
-        self.require_ordinary_mutation_eligibility(job)
+    def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None,*,_review=None):
+        if _has_ordinary_binding(job):
+            from .services.file_generation_review import require_review
+            require_review(_review, self, job).claim_accept_body(actor, scope)
+        else:self.require_ordinary_mutation_eligibility(job)
+        chapters = _review.chapters if _review is not None else self.chapters
+        canon = _review.canon if _review is not None else self.canon
+        memory = _review if _review is not None else self.memory_extractor
         require_generation_content(job)
         require_whole_generation_acceptance(job)
         jid = job.id
@@ -1594,28 +1685,28 @@ class JobManager:
                 created = self.collaboration_updates.create_chapter(actor=stored_actor, scope=stored_scope, title=title)
                 saved = self.collaboration_updates.update_chapter(actor=stored_actor, scope=stored_scope, chapter_id=created["id"], document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(f"# {title}\n\n{output}"), expected_version=created["version"], reason="AI_ACCEPT")
             else:
-                create_chapter = getattr(self.chapters, "create", None)
+                create_chapter = getattr(chapters, "create", None)
                 if callable(create_chapter):
                     saved = create_chapter(job.novel_id, {"title": title, "content": output})
                 else:
                     # Keep the V0.3 compatibility facade usable with minimal
                     # chapter doubles while the real repository creates the
                     # next chapter through ChapterService.create().
-                    saved = self.chapters.save(
+                    saved = chapters.save(
                         job.chapter_id,
                         {"title": title, "content": f"{original}\n\n{output}", "version": target_version, "source": "AI_ACCEPT"},
                     )
-            self.chapters.save_summary(job.novel_id, (saved["id"] if ":~" in saved["id"] else saved.get("number", chapter["number"] + 1)), output[:240])
+            chapters.save_summary(job.novel_id, (saved["id"] if ":~" in saved["id"] else saved.get("number", chapter["number"] + 1)), output[:240])
             from .canon_extraction import build_pending_canon
-            accepted_source = self._accepted_canon_source(self.chapters, saved)
+            accepted_source = self._accepted_canon_source(chapters, saved)
             pending_canon = build_pending_canon(jid, accepted_source)
-            self.canon.save_pending(pending_canon)
-            job.status="ACCEPTED";self._emit(job)
+            canon.save_pending(pending_canon)
+            job.status="ACCEPTED";self._emit(job, **({"_review": _review} if _review is not None else {}))
             try:
                 # The original File create contract returns a list projection;
                 # resolve its durable identity to read the actual version.
                 accepted_version=accepted_source["version"]
-                self.memory_extractor.enqueue(job.novel_id,saved["id"],accepted_version,job.profile)
+                memory.enqueue(job.novel_id,saved["id"],accepted_version,job.profile)
             except Exception:pass  # Independent extraction cannot undo author acceptance.
             return {"chapter": saved, "pending_canon": pending_canon}
         if actor is not None and scope is not None:
@@ -1624,14 +1715,14 @@ class JobManager:
             session=SessionContext(job.session_id or "",job.client_id or "",job.actor_id,job.workspace_id or "",job.correlation_id)
             stored_actor=ActorContext(job.actor_id,job.workspace_id or "",session,job.correlation_id);raw=job.scope;stored_scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
             saved=self.collaboration_updates.update_chapter(actor=stored_actor,scope=stored_scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")
-        else:saved=self.chapters.save(job.chapter_id,{"content":content,"version":target_version,"source":"AI_ACCEPT"})
-        self.chapters.save_summary(job.novel_id,saved["id"] if ":~" in saved["id"] else chapter["number"],content[:240])
+        else:saved=chapters.save(job.chapter_id,{"content":content,"version":target_version,"source":"AI_ACCEPT"})
+        chapters.save_summary(job.novel_id,saved["id"] if ":~" in saved["id"] else chapter["number"],content[:240])
         from .canon_extraction import build_pending_canon
-        pending = build_pending_canon(jid, self._accepted_canon_source(self.chapters, saved))
-        self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
-        try:self.memory_extractor.enqueue(job.novel_id,job.chapter_id,saved["version"],job.profile)
+        pending = build_pending_canon(jid, self._accepted_canon_source(chapters, saved))
+        canon.save_pending(pending);job.status="ACCEPTED";self._emit(job, **({"_review": _review} if _review is not None else {}))
+        try:memory.enqueue(job.novel_id,job.chapter_id,saved["version"],job.profile)
         except Exception:pass
-        return {"chapter":self.chapters_for_job(job).get(job.chapter_id),"pending_canon":pending}
+        return {"chapter":(chapters if _review is not None else self.chapters_for_job(job)).get(job.chapter_id),"pending_canon":pending}
     def _accept_branch_claimed(self, job, chapter, target_version, accepted_output, actor, scope):
         self.require_ordinary_mutation_eligibility(job)
         # Use the original generation owner/terminal-review claim. Branch text
@@ -1662,6 +1753,8 @@ class JobManager:
         from .repositories.file.mutation_coordinator import workspace_mutation
         from pathlib import Path
         job = self.get(jid)
+        if _has_ordinary_binding(job):
+            return self._review_file_bound(job, "reject")
         self.require_ordinary_mutation_eligibility(job)
         require_generation_content(job)
         if job.experimental_origin == "creative_graph_model":
