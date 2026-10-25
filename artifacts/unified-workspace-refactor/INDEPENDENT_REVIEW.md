@@ -976,3 +976,23 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - **MUST-FIX 2（测试守护）**：以下变异存活：M1 去掉 truncated 等式；M3 去掉 next_offset 算术（taskCenterPaging 的测试其实声称覆盖了这一点）；M5 任意 422 都回退；M7 去掉 production 的 has_more 校验；M8 部分分页键被当成未分页；M12 realKey 不带 incarnation；M14 无身份也读 overview（代码本身正确，我的探针已验证不会发请求，但没有测试守护）。被杀死的有：M2/M4/M6/M9/M10/M11/M13/M15。首轮 M7/M14 的“杀死”其实来自 receiptCompanion 偶发，定向重跑后确认存活。
 - P3：后端允许 offset 超过 observed_total（返回空页），前端的 `offset + count > observed` 会把这种情况判为无效。列表在两次加载更多之间缩短时，加载更多会报错，但已显示的行会保留。
 - 浏览器：三个视口下都是 0 个非 GET、0 个 pageerror；默认界面正常加载。
+
+## [VERA-FE] fe-contracts fix1 复审（839434a4）— 结论：PASS
+
+证据：/workspace/hr/vera-compare/fec-fix1-839434a4/（tsc.log、build.log、mutations.log、inc2.json/inc2.mjs、shots/、probe.log、u1-purge.log、full1-3、analyze.log）
+
+- 构建：tsc=0，build=0。
+- 浏览器复现（端口 4599，mock 仅 GET，非 GET=0，pageerror=0），1366/1440/1920 三个宽度结果一致：
+  - 在 A 下平移后冷重开（同一 incarnation）：视角恢复为 translate(-160,70)，工作集仍在。
+  - 换到 B 后重载：视角为默认 translate(40,40)，本人的 viewprefs 被重置，worksets=[]。worksets 清空属于设计内的本人清理。
+  - 他人的 viewprefs（x:7 和工作集）完好。
+  - 上轮的 MUST-FIX 已关闭。jsdom 探针 2/2 通过（上轮为失败）。
+- 旧键与孤儿键：fix1 只改了内存 adapter 键 `k`（新增 `\0${incarnation}`）。localStorage 键形状 viewPrefsKey、workspaceLayoutKey、incarnationLedgerKey 都没变，所以不会产生孤儿键，也不需要迁移。overview 加载前后 k 会切换一次，但已存数据会从 storage 重新读取，不会丢（冷重开时工作集保留已验证）。
+- 变异：我重跑了 M1–M20（M1–M18 加补充的 M7b、M19、M20），并按测试名确认，排除了 receiptCompanion 抖动。
+  - 被杀 19 个：M1–M13、M15–M20。其中 M16（adapter 键去掉 incarnation）、M20（不传 incarnation）、M12 由 u1.incarnation.host 杀死；M17、M18（TC P3 两个方向）、M19（生产 P3）由 paging 测试杀死。
+  - 存活 2 个，均不阻断：
+    - M14（overview 读取去掉 realUser 守卫）：在无身份时 taskCtx 也为空，这个测试场景下属于等价变异，新测试并没有真正区分出 realUser 守卫。建议补一个“有 token、但非 real 身份”的用例。
+    - M7b（has_more 改用 offset+items.length）：只在服务端返回不一致的短页时才有区别。可选补一条用例。
+- P3：TC 和生产两侧，offset ≥ total 时空页合法，非空页拒绝；UI 在列表收缩时保留已显示的行，不报错。
+- U1/purge 回归：u1*/purge* 共 8 个文件、43 个测试，连跑 3 次全部通过。
+- 全量 3 次（Node 22.14）：raw 293/292/293，ISI 8，adjusted 293/292/293，按名称计新增持久失败 0。阈值 297，规则 (a) 和 (b) 都通过。
