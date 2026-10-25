@@ -1,0 +1,22 @@
+[
+  {
+    "caller": "_authorize_export_record",
+    "result": "False",
+    "count": 20
+  },
+  {
+    "caller": "_authorize_export_record",
+    "result": "True",
+    "count": 3
+  },
+  {
+    "caller": "test_real_branch_export_snapshot_allows_branch_only_reader_and_respects_flag",
+    "result": "True",
+    "count": 1
+  },
+  {
+    "caller": "test_real_branch_export_without_valid_snapshot_requires_independent_project_rights",
+    "result": "False",
+    "count": 4
+  }
+]
