@@ -17,3 +17,8 @@ Not done in this slice: M5 real-browser acceptance, audio second media, ACCEPTAN
 - One adapter per scope serves viewports and worksets; writes are read-modify-write on the latest stored doc (no lost update between consumers/tabs on the same key).
 - A collaboration scope belonging to another project → session mode ('scope-mismatch'), never mixed in.
 - Open: resetAll (clear this project's saved views) is not wired to the UI yet.
+
+## [HERMIA-FE-20261025 M5-fix] Vera P2 follow-ups (after 575501b9)
+1. Legacy `TasksPanel` (studioPreviewPanels.tsx, unmounted) no longer builds a fabricated `uw-preview:<id>` identity or reads with an empty token; it states "未接通". `u3.repro.test.tsx` flipped from `it.fails` to `it` with identical assertions (mock/jsdom).
+2. axe `landmark-unique` on `#uw-panel-tasks`: the inner `<section aria-label="任务">` in TasksPanelLive duplicated the dock region name; now a plain `<div>`. Repro (real browser + local axe-core): logs/m5-repro-axe-before.log FAIL → m5-repro-axe-after.log PASS. Remaining axe findings `color-contrast` (rail) and `aria-required-children` (章节 list empty under mock) predate this work and are recorded, not fixed.
+3. Purge cold-start gap — **部分实现, not handled**: `projectPurge` only diffs the project lists seen within one session. If a project is deleted while the page is closed, its owner's viewprefs/layout keys stay in localStorage after a cold open. Not "fixed" by diffing local keys against the first list, because a paged/partial or failed list would delete keys of still-existing projects; a correct fix needs an authoritative "deleted projects" signal from the backend (out of scope: no new backend state). Impact: stale local UI prefs only (no server data, no other user's keys).

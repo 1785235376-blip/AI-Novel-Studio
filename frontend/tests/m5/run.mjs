@@ -126,6 +126,12 @@ const scenarios = {
     await check(/仅本次会话有效/.test(msg) && !/项目已经切换/.test(msg), `msg=${msg}`);
     return `mode="${mode}"; msg="${msg}"`;
   },
+  async axe({page}, vp) { // Vera P2: landmark-unique on #uw-panel-tasks; axe-core from local copy (no network)
+    await page.waitForTimeout(800); await page.addScriptTag({path: process.env.M5_AXE || '/tmp/vera-vw-axe/node_modules/axe-core/axe.min.js'});
+    const v = await page.evaluate(async () => (await window.axe.run(document.querySelector('[data-testid=dock-layout]'), {resultTypes: ['violations']})).violations.map(x => x.id + ':' + x.nodes.map(n => n.target.join(' ')).join('|')));
+    await check(!v.some(x => x.startsWith('landmark-unique')), `axe: ${JSON.stringify(v)}`);
+    return `axe violations (color-contrast is pre-existing): ${JSON.stringify(v.map(x => x.split(':')[0]))}`;
+  },
   async aba({page, backend}, vp) {
     const reads = () => backend.st.log.filter(l => l.includes('/experimental/workspace/tasks')).length;
     const r0 = reads();

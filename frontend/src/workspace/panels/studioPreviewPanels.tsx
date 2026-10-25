@@ -1,15 +1,13 @@
 // [HERMIA-FE-20261024 M2-s1] Real content for the remaining ?uw=1 preview panels, reusing existing components unmodified:
 // - 创作画布 → rebuild/canvas/RebuildCanvas kind="image" (same local-draft canvas DualCanvas uses; writes only localStorage)
 // - 执行画布 → rebuild/canvas/RebuildCanvas kind="video"
-// - 任务     → taskcenter/TaskCenterPanel (GET-only reads on demand; mutations only via the user's own clicks inside it)
+// - 任务     → not connected here (legacy); the live task panel is workspace/panels/TasksPanelLive.tsx [HERMIA-FE-20261025 M5-fix]
 // No model/generation call is made by layout, selection, canvas or project switches: these components never call a model
 // on mount, and the only cross-panel action (送到执行画布) is the existing local `linkToExecution` draft write.
-import {useMemo, useRef} from 'react';
+// [HERMIA-FE-20261025 M5-fix] react hooks no longer needed here (legacy TasksPanel no longer reads)
 import type {ActionContext, ActionRegistry, Availability} from '../../workbench/actions';
 import {RebuildCanvas, type CvNode, type CvViewport} from '../../rebuild/canvas/RebuildCanvas';
 import {linkToExecution} from '../../rebuild/canvas/DualCanvas';
-import {TaskCenterPanel} from '../../taskcenter/TaskCenter';
-import {studioTransport} from '../../creative/studioClient';
 import {LAYOUT_ACTION_IDS, normalizeShortcut, type ShortcutTable} from '../actions/layoutActions';
 
 import {panelDefinitions, shortcutsFor} from '../registry/workspaceRegistry'; // [HERMIA-FE-20261025 U2-M10]
@@ -46,16 +44,11 @@ export function ExecutionCanvasPanel({novelId, revision = 0, onSelect, selectedI
     onSelect={onSelect} initialSelected={selectedId} initialViewport={viewport} onViewport={onViewport} revealLast={revealLast} onRevealed={onRevealed} />{/* [HERMIA-FE-20261024 M3-s1fix2] onRevealed */}</div>;
 }
 
-export function TasksPanel({novelId, active}: {novelId: string | null; active: boolean}) {
-  const transport = useMemo(() => studioTransport({sessionToken: ''}), []);
-  const current = useRef(novelId); current.current = novelId;
+// [HERMIA-FE-20261025 M5-fix] Vera P2: legacy preview TasksPanel no longer reads with an empty token + fabricated
+// `uw-preview:` identity (unmounted path; the live panel is TasksPanelLive). It only states that it is not connected.
+export function TasksPanel({novelId}: {novelId: string | null; active: boolean}) {
   if (!novelId) return <p style={{padding: 12}} data-state="empty">{NO_NOVEL}，选中作品后显示它的任务。</p>;
-  const mine = novelId;
-  return <div data-testid="uw-tasks">
-    <TaskCenterPanel key={novelId} projectId={novelId} transport={transport} identity={`uw-preview:${novelId}`} active={active}
-      denied={false} busy={false} isCurrent={() => current.current === mine}
-      read={work => work()} mutate={work => work()} />
-  </div>;
+  return <div data-testid="uw-tasks"><p data-state="not-connected" role="status">这里的旧任务面板未接通：请使用工作台里的「任务」面板（需要已登录的协作账号）。</p></div>;
 }
 
 export interface StudioActionHost {

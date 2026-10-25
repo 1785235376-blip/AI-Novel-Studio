@@ -76,7 +76,7 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
     }
   }
   const d = detail?.ref ?? sel;
-  return <section data-testid="u3-tasks" aria-label="任务" style={{padding: 8}}>
+  return <div data-testid="u3-tasks" style={{padding: 8}}>{/* [HERMIA-FE-20261025 M5-fix] Vera P2 axe landmark-unique: the dock panel is already the "任务" region; no nested same-name landmark */}
     <div><button type="button" data-testid="u3-refresh" onClick={() => void feed.refresh()} disabled={state.kind === 'not-connected'}>刷新</button>
       {' '}<span role="group" aria-label="按媒介筛选">{(['all', 'image', 'audio'] as const).map(m => <button key={m} type="button" data-testid={`aud-filter-${m}`} aria-pressed={media === m} onClick={() => { setMedia(m); setPage(0); }}>{MEDIA_FILTER_TEXT[m]}</button>)}</span></div>
     {media !== 'all' && state.kind === 'ready' ? <p data-testid="aud-filter-gap">{AUDIO_LIST_GAP_TEXT}</p> : null}
@@ -93,5 +93,5 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
       {detailExtra}
     </div> : null}
     {msg ? <p data-testid="u3-nav-msg" role="status">{msg}</p> : null}
-  </section>;
+  </div>;
 }
