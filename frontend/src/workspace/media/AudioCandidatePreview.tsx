@@ -5,6 +5,7 @@
  * - Bound to the ScopeLease: a response after project/identity switch is dropped (and the object URL revoked).
  * - No autoplay; <audio controls> only. No review/adopt here — those stay in the shared ResultsPanel.
  */
+import {AUDIO_HISTORY_TEXT} from './audioHistoryText';
 import {useEffect, useRef, useState} from 'react';
 import type {ProductionJob} from '../../creative/studioProductionClient';
 import type {ScopeLease} from '../contracts';
@@ -40,5 +41,6 @@ export function AudioCandidatePreview({job, reader, lease, url = defaultUrl}: {j
     <button type="button" data-testid="aud-load" onClick={() => void load()} disabled={!info.playable || busy}>{busy ? '正在读取…' : '试听候选'}</button>
     {src && <audio data-testid="aud-player" controls preload="metadata" src={src} />}
     {msg && <p role="status" data-testid="aud-msg">{msg}</p>}
+    <p className="nv-hint" data-testid="aud-history-note">{AUDIO_HISTORY_TEXT.assetHistory}{AUDIO_HISTORY_TEXT.timelineOnly}</p>
   </div>;
 }

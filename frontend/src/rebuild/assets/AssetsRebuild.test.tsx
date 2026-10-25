@@ -60,7 +60,7 @@ describe('AssetsRebuild', () => {
     fireEvent.click(document.querySelector('.ast-filters [data-astf="音频"]')!);
     expect(screen.getByText('这个类型下还没有资产。')).toBeTruthy();
     fireEvent.click(document.querySelector('[data-astf="trash"]')!);
-    fireEvent.click(await screen.findByRole('button', {name: '恢复'}));
+    fireEvent.click(await screen.findByRole('button', {name: '撤销删除'}));
     await waitFor(() => expect(calls).toContain('POST /api/novels/n1/assets/t1/restore'));
   });
   it('helpers', () => {

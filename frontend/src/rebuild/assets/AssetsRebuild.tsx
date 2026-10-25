@@ -1,6 +1,7 @@
 /* [HERMIA-FE-20261022 R6] 资产模块按原型 assetsWSHTML 重写：模块头 + .mw-split（左 类型/集合 · 中 资产网格 · 右 血缘/版本摘要 或 下一步）。
    真实接口：/api/novels/{nid}/assets（库/上传）· /assets/{id}/references（使用处）· /asset-trash + restore（回收站，1a63d6f7）· DELETE /assets/{id}。
    送到模块沿用 W-UX-12（显式确认后切模块；送剪辑走媒体池手递）。拖出＝引用，不复制。没有数据时不编血缘、不显示假「已校验」。 */
+import { AUDIO_HISTORY_TEXT } from '../../workspace/media/audioHistoryText';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {api, type Asset, type AssetReferences} from '../../api';
 import {rbError} from '../rebuildApi';
@@ -222,9 +223,9 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <div className="ast-grid">
           {trash === null ? <p className="mw-muted">回收站暂时读不到。</p> : trash.length === 0 ? <div className="ws-honest-empty ast-empty" role="status"><h4>回收站是空的</h4></div>
             : trash.map(a => <div key={a.id} className="ast-tile is-trash">{thumb(a)}<div className="meta"><b>{a.filename}</b><span>{assetKind(a)}</span>
-              <button type="button" className="nv-btn" onClick={() => void restore(a)}>恢复</button></div></div>)}
+              <button type="button" className="nv-btn" onClick={() => void restore(a)} title={AUDIO_HISTORY_TEXT.assetRestoreHint}>{AUDIO_HISTORY_TEXT.assetRestore}</button></div></div>)}
         </div></div>
-      <div className="mw-right"><div className="mw-rh">说明</div><div className="mw-rb"><p className="nv-hint">恢复后资产回到原来的位置，引用会重新生效。</p></div></div>
+      <div className="mw-right"><div className="mw-rh">说明</div><div className="mw-rb"><p className="nv-hint">恢复后资产回到原来的位置，引用会重新生效。{AUDIO_HISTORY_TEXT.assetRestoreHint}</p></div></div>
     </>
   );
 

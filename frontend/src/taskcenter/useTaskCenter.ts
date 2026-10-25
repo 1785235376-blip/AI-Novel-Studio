@@ -30,6 +30,8 @@ export type TaskCenterControllerProps = {
   /** 导航只能由调用方执行：这里只发出原 owner 的 id 与来源指针。 */
   onNavigate?: (target: TaskCenterNavigationTarget) => void;
   onUnavailable?: () => void;
+  /** [HERMIA-FE-CONTRACTS G-TC-1] 设置后按页读取（limit=pageSize, offset=0）并提供「加载更多」；不设置时行为与原来一致。 */
+  pageSize?: number;
 };
 
 export type TaskCenterModuleOption = { value: string; label: string };
@@ -91,6 +93,7 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
   const [filters, setFiltersState] = useState<TaskCenterFilter>(EMPTY_TASK_CENTER_FILTER);
   const [applied, setApplied] = useState<TaskCenterFilter>(EMPTY_TASK_CENTER_FILTER);
   const [tasks, setTasks] = useState<TaskCenterTasksProjection>();
+  const tasksRef = useRef<TaskCenterTasksProjection>(); tasksRef.current = tasks;
   const [inbox, setInbox] = useState<ReviewInboxProjection>();
   const [tasksState, setTasksState] = useState<TaskCenterSurfaceState>('IDLE');
   const [reviewState, setReviewState] = useState<TaskCenterSurfaceState>('IDLE');
@@ -133,7 +136,9 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
     try {
       const value = await captured.read(() => captured.client.readTasks({
         q: appliedRef.current.query, failed_only: appliedRef.current.failed_only,
+        ...(captured.pageSize ? { limit: captured.pageSize, offset: 0 } : {}),
       }, controller.signal));
+      setMoreProblem(undefined);
       if (request !== epoch.current || !admit()) return;
       setTasks(value);
       setTasksState(surface(value.items.length, value.unavailable.length));
@@ -145,6 +150,35 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
       setTasksProblem(problemOf(reason, READ_FAILURE, TASK_CENTER_ERROR_CODES.tasksReadFailed));
       setTasksState('FAILED');
     } finally { if (request === epoch.current) running.current.tasks = false; }
+  }, [admit, revoke]);
+
+  // [HERMIA-FE-CONTRACTS G-TC-1] 明确点击才读下一页；追加去重，不替换已显示内容；失败只提示，不自动重试。
+  const [moreLoading, setMoreLoading] = useState(false);
+  const [moreProblem, setMoreProblem] = useState<string>();
+  const loadMoreTasks = useCallback(async () => {
+    const captured = latest.current, current = tasksRef.current;
+    const next = current?.page?.has_more ? current.page.next_offset : null;
+    if (!admit() || captured.busy || running.current.tasks || next === null || !captured.pageSize) return;
+    const controller = new AbortController();
+    abort.current?.abort(); abort.current = controller;
+    const request = ++epoch.current;
+    running.current.tasks = true; setMoreLoading(true); setMoreProblem(undefined);
+    try {
+      const value = await captured.read(() => captured.client.readTasks({
+        q: appliedRef.current.query, failed_only: appliedRef.current.failed_only, limit: captured.pageSize, offset: next,
+      }, controller.signal));
+      if (request !== epoch.current || !admit()) return;
+      setTasks(previous => {
+        if (!previous) return value;
+        const seen = new Set(previous.items.map(taskKey));
+        return { ...value, items: [...previous.items, ...value.items.filter(task => !seen.has(taskKey(task)))],
+          unavailable: value.unavailable.length ? value.unavailable : previous.unavailable };
+      });
+    } catch (reason) {
+      if (request !== epoch.current || controller.signal.aborted || !alive.current) return;
+      if (reason instanceof ApiError && [401, 403].includes(reason.status)) { revoke(); return; }
+      setMoreProblem('下一页读取失败，已显示的任务保持不变。可以再点一次「加载更多任务」；不会自动重试。');
+    } finally { if (request === epoch.current) { running.current.tasks = false; setMoreLoading(false); } }
   }, [admit, revoke]);
 
   const readInbox = useCallback(async (silent = false) => {
@@ -464,6 +498,8 @@ export function useTaskCenter(props: TaskCenterControllerProps) {
     reviewSummary, selected, selectedItems, openItem, setOpenItem,
     results, pending,
     reload, cancelTask, reviewItem, reviewBatch, navigateTask, navigateItem,
+    paging: tasks?.page ? { loaded: tasks.items.length, page: tasks.page, loading: moreLoading, problem: moreProblem } : null,
+    loadMoreTasks,
     toggleSelected, clearSelection, selectAllBatchSafe, selectFailedFromLastBatch,
     taskKey, itemKey,
   };

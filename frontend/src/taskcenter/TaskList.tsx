@@ -147,6 +147,19 @@ export function TaskList({ controller, panelId, labelledBy }: {
         ? <EmptyState title="当前模块/状态过滤下没有记录" detail="原服务的返回里有任务，但都被本地过滤条件排除了。清除筛选可以看到全部。"/>
         : <ul className="task-center-list">{controller.visibleTasks.map(task =>
           <TaskCard key={controller.taskKey(task)} controller={controller} task={task}/>)}</ul>}
+      {controller.paging && <TaskPaging controller={controller}/>}
     </>}
   </section>;
+}
+
+/** [HERMIA-FE-CONTRACTS G-TC-1] 分页说明：只说"已加载/本次观察到"，从不宣称总数或已加载完。 */
+function TaskPaging({ controller }: { controller: TaskCenterController }) {
+  const paging = controller.paging!;
+  return <div className="task-center-paging" data-testid="tc-paging" data-completeness={paging.page.completeness}>
+    <p>已加载 {paging.loaded} 条 · 本次读取观察到 {paging.page.observed_total} 条匹配（不是全部任务总数）</p>
+    {paging.page.has_more
+      ? <Button disabled={!controller.canRead || paging.loading} loading={paging.loading} onClick={() => void controller.loadMoreTasks()}>加载更多任务</Button>
+      : <p className="novel-help">当前读取范围内没有下一页（不代表已列出全部历史任务；更早或不在读取范围内的记录请到原任务工具查找）。</p>}
+    {paging.problem && <StatusMessage tone="error">{paging.problem}</StatusMessage>}
+  </div>;
 }

@@ -625,7 +625,7 @@ const graphView = workspaceView === 'GRAPH', productionView = workspaceView === 
       {comicOpen && !comicWorkspace && <StatusMessage tone={comicError ? 'error' : undefined}>{comicError || '正在核对漫画权限…'}</StatusMessage>}
       {comicOpen && comicWorkspace && <StudioComicPanel sourceFree={comicWorkspace.source_free} canMutate={comicWorkspace.capabilities.can_mutate} canReview={comicWorkspace.capabilities.can_review && !denied} projectId={projectId} context={context} isCurrent={current} onDirtyChange={comicDraftChanged} onBusyChange={comicBusyChanged} />}
     </Panel>}
-    {workspaceView === 'TASKS' && overview && !denied && <TaskCenterPanel projectId={projectId}
+    {workspaceView === 'TASKS' && overview && !denied && <TaskCenterPanel projectId={projectId} pageSize={50}
       transport={studioTransport({ ...context, scope: context.scope ? { ...context.scope } : undefined })}
       scope={context.scope} identity={cacheKey} active={workspaceView === 'TASKS' && overview && !denied && !identityRetired}
       denied={denied || identityRetired} busy={busy} isCurrent={current} read={guarded} mutate={graphMutation}

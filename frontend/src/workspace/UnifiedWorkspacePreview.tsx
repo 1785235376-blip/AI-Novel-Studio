@@ -30,6 +30,8 @@ import {canvasHasNode, useLiveTasks} from './tasks/useLiveTasks';
 import {ResultsPanel} from './results/ResultsPanel'; // [HERMIA-FE-20261025 U4 wiring]
 import {HistoryPanel} from './history/HistoryPanel'; // [HERMIA-FE-20261025 U4 wiring]
 import {ProjectPresence, purgeProjectGeometry} from './state/projectPurge';
+import {incarnationFromOverview, observeIncarnation} from './state/projectIncarnation';
+import {studioClient} from '../creative/studioClient';
 import {useUnifiedLoop} from './integration/useUnifiedLoop'; // [HERMIA-FE-20261025 INT] u4 deps + param session from real clients
 import {ParamEditPanel} from './params/ParamEditPanel';
 import {CanvasSelectionLayer} from './registry/CanvasSelectionLayer'; // [HERMIA-FE-20261025 INT] U2 mounts
@@ -145,6 +147,20 @@ export function UnifiedWorkspacePreview() {
     for (const id of gone) purgeProjectGeometry(safeLocalStorage(), realUser, id);
     if (novelId && gone.includes(novelId)) setNovelId(null);
   }, [realUser, novels.isSuccess, novels.data, novels.dataUpdatedAt, novelId]); // [HERMIA-FE-20261025 M10-purgeguard] dataUpdatedAt: an identical refetched list is a new observation (structural sharing keeps the same data ref)
+  // [HERMIA-FE-CONTRACTS G-PURGE-1] project.incarnation: read-only overview GET; changed ⇒ purge own geometry; failures do nothing.
+  const [incarnation, setIncarnation] = useState<{novelId: string; value: string} | null>(null);
+  useEffect(() => {
+    if (!realUser || !novelId || !taskCtx) return;
+    const controller = new AbortController();
+    void studioClient(novelId, taskCtx).overview(controller.signal).then(value => {
+      if (controller.signal.aborted) return;
+      const inc = incarnationFromOverview(value, novelId);
+      if (!inc) return;
+      observeIncarnation(safeLocalStorage(), realUser, novelId, inc);
+      setIncarnation(cur => (cur?.novelId === novelId && cur.value === inc ? cur : {novelId, value: inc}));
+    }, () => { /* 404/500/network: not deletion, nothing purged */ });
+    return () => controller.abort();
+  }, [realUser, novelId, taskCtx]);
   const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
   // [HERMIA-FE-20261025 U1fix] MUST-FIX 1 + P2: ONE adapter per scope for viewports AND worksets (two adapters on the same
   // key erased each other). Worksets are now per project in both real and session mode (consistent keying).
@@ -159,7 +175,7 @@ export function UnifiedWorkspacePreview() {
   // viewport. When the real scope changes for the SAME project the canvases must remount with the restored viewport.
   // This is derived DURING render (not in an effect): otherwise the still-mounted old canvas sees the new adapter's
   // onViewport callback first and writes its default 40,40 over the stored viewport before the remount.
-  const realKey = realScope ? `${realScope.userId}\u0000${realScope.projectId}\u0000${realScope.projectInstanceId}` : null;
+  const realKey = realScope ? `${realScope.userId}\u0000${realScope.projectId}\u0000${realScope.projectInstanceId}\u0000${incarnation?.novelId === novelId ? incarnation.value : ''}` : null;
   const [ident, setIdent] = useState({novelId, realKey, epoch: 0});
   if (ident.novelId !== novelId || ident.realKey !== realKey) setIdent({novelId, realKey, epoch: ident.epoch + (ident.novelId === novelId ? 1 : 0)});
   const identEpoch = ident.epoch; // a pending setIdent above discards this render before commit

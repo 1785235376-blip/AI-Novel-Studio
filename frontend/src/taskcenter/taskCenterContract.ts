@@ -13,7 +13,7 @@ import {
   type TaskCancelRequest, type TaskCancellationReceipt, type TaskCenterActionLimits, type TaskCenterCost,
   type TaskCenterHistoryEntry, type TaskCenterProgress, type TaskCenterScope,
   type TaskCenterSourcePointer, type TaskCenterStatus, type TaskCenterTask, type TaskCenterTaskAction,
-  type TaskCenterTaskQuery, type TaskCenterTasksProjection, type TaskCenterUnavailable,
+  type TaskCenterTaskQuery, type TaskCenterTasksProjection, type TaskCenterTasksPage, type TaskCenterUnavailable,
   type ReviewInboxQuery,
 } from './taskCenterTypes';
 
@@ -286,7 +286,7 @@ function disclosedIdentity(items: TaskCenterTask[], projectId: string, expected?
 export function taskCenterProjection(value: unknown, projectId: string, expectedScope?: TaskCenterScope): TaskCenterTasksProjection {
   return checked('tasks', () => {
     if (typeof projectId !== 'string' || !projectId.trim() || projectId.length > TASK_CENTER_BOUNDS.project_id) invalid();
-    const row = object(value, ['items', 'unavailable', 'truncated', 'executor', 'refresh', 'automatic_retries']);
+    const row = object(value, ['items', 'unavailable', 'truncated', 'executor', 'refresh', 'automatic_retries', ...TASK_PAGE_KEYS]);
     if (row.executor !== TASK_EXECUTOR || row.refresh !== TASK_REFRESH
       || row.automatic_retries !== TASK_AUTOMATIC_RETRIES) invalid();
     const items = list(row.items, TASK_CENTER_BOUNDS.items).map(task);
@@ -301,10 +301,30 @@ export function taskCenterProjection(value: unknown, projectId: string, expected
     const scopeVerified = disclosedIdentity(items, projectId, expectedScope);
     return {
       project_id: projectId, scope_verified: scopeVerified, items, unavailable,
-      truncated: bool(row.truncated), executor: TASK_EXECUTOR, refresh: TASK_REFRESH,
+      executor: TASK_EXECUTOR, refresh: TASK_REFRESH,
       automatic_retries: TASK_AUTOMATIC_RETRIES,
+      ...pagedTasks(row, items.length),
     };
   });
+}
+
+/* [HERMIA-FE-CONTRACTS G-TC-1] 分页信封：只在 7 个分页键全部出现时采用；部分出现即拒绝（不猜）。 */
+const TASK_PAGE_KEYS = ['observed_total', 'limit', 'offset', 'has_more', 'next_offset', 'source_truncated', 'coverage'] as const;
+function pagedTasks(row: Record<string, unknown>, count: number): { page: TaskCenterTasksPage | null; truncated: boolean } {
+  const present = TASK_PAGE_KEYS.filter(key => Object.hasOwn(row, key));
+  if (!present.length) return { page: null, truncated: bool(row.truncated) };
+  if (present.length !== TASK_PAGE_KEYS.length) invalid();
+  const coverage = object(row.coverage, ['scope', 'completeness']);
+  if (coverage.scope !== 'BOUNDED_AUTHORIZED_PROJECTION' || coverage.completeness !== 'NOT_ASSERTED') invalid();
+  const limit = integer(row.limit, 100), offset = integer(row.offset, 1_000_000), observed = integer(row.observed_total);
+  const hasMore = bool(row.has_more), sourceTruncated = bool(row.source_truncated);
+  if (limit < 1 || count > limit || offset + count > observed) invalid();
+  const next = row.next_offset === null ? null : integer(row.next_offset);
+  if (hasMore ? next !== offset + count || next >= observed : next !== null) invalid();
+  if (bool(row.truncated) !== (sourceTruncated || hasMore)) invalid();
+  // 分页模式下旧的"达到上限"警告只跟随来源截断；还有下一页由加载更多表达。
+  return { page: { observed_total: observed, limit, offset, has_more: hasMore, next_offset: next, source_truncated: sourceTruncated,
+    completeness: 'NOT_ASSERTED' }, truncated: sourceTruncated };
 }
 
 /* ------------------------------------------------------------- 审核收件箱 */
@@ -494,8 +514,12 @@ export function reviewBatchReceipt(value: unknown): ReviewBatchReceipt {
  */
 export function taskCenterTaskQuery(value: unknown): TaskCenterTaskQuery {
   return checked('tasks', () => {
-    const row = object(value, ['q', 'failed_only']);
-    return { q: queryText(row.q, TASK_CENTER_BOUNDS.query), failed_only: bool(row.failed_only) };
+    const row = object(value, ['q', 'failed_only', 'limit', 'offset']);
+    const base = { q: queryText(row.q, TASK_CENTER_BOUNDS.query), failed_only: bool(row.failed_only) };
+    if (row.limit === undefined && row.offset === undefined) return base;
+    const limit = row.limit === undefined ? 50 : integer(row.limit, 100), offset = row.offset === undefined ? 0 : integer(row.offset, 1_000_000);
+    if (limit < 1) invalid();
+    return { ...base, limit, offset };
   });
 }
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { AUDIO_HISTORY_TEXT } from '../workspace/media/audioHistoryText';
 import { Download, Trash2, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, apiErrorView, type Asset } from "../api";
@@ -248,8 +249,9 @@ export function AssetLibraryPanel({
         {trash.data?.items.map(asset => <article key={asset.id}>
           <span>{asset.filename}</span>
           <Button variant="ghost" disabled={restore.isPending || !canMutate || adapter?.mutationsBlocked} onClick={() => restore.mutate(asset)}>
-            {restore.isPending && restore.variables?.id === asset.id ? "恢复中…" : "恢复资产"}
+            {restore.isPending && restore.variables?.id === asset.id ? "恢复中…" : AUDIO_HISTORY_TEXT.assetRestore}
           </Button>
+          <small className="novel-help">{AUDIO_HISTORY_TEXT.assetRestoreHint}</small>
         </article>)}
       </section>}
       <div className="novel-record-list asset-library__grid">

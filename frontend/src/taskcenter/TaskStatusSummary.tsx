@@ -24,7 +24,7 @@ export function TaskStatusSummary({ controller }: { controller: TaskCenterContro
             <Badge>{row.label}</Badge><span className="task-center-summary__meta">{row.status} × {row.count}</span>
           </li>)}</ul>
           : <p>当前筛选下没有可统计的任务状态。</p>}
-        <p className="task-center-summary__meta">共 {summary.total} 条 · 进度未知 {summary.without_progress} 条 · 来源已变化 {summary.stale_source} 条 · 不可读来源 {summary.unavailable} 个{summary.truncated ? ' · 已达显示上限' : ''}</p>
+        <p className="task-center-summary__meta">{controller.paging ? '已加载' : '共'} {summary.total} 条 · 进度未知 {summary.without_progress} 条 · 来源已变化 {summary.stale_source} 条 · 不可读来源 {summary.unavailable} 个{summary.truncated ? ' · 已达显示上限' : ''}</p>
         <p>刷新策略：{summary.refresh}（原服务自己声明）；自动重试：{summary.automatic_retries ? '存在' : '不存在'}。读取只在按需刷新或切换队列时发生，没有轮询。</p>
       </>}
       <p>{TASK_CENTER_NOTICES.noProgressClaim}</p>
