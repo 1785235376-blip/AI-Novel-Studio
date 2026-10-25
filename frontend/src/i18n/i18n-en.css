@@ -1,0 +1,7 @@
+/* [HERMIA-FE-20261025 I18N P0] EN-only header fit; scoped to html[lang=en] so zh layout is untouched */
+html[lang="en"] .app-shell .global-search>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:1439px){
+  html[lang="en"] .app-shell .global-search>span{display:none}
+  html[lang="en"] .app-shell .global-search{flex:0 0 auto;min-width:0}
+  html[lang="en"] .shell-settings>button>span{display:none}
+}

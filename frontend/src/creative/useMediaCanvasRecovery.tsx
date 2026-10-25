@@ -1,3 +1,4 @@
+import { formatTime } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect,useLayoutEffect,useRef,useState } from 'react';
 import { Button,StatusMessage } from '../ui/primitives';
 import { mediaCanvasDraftKey,readMediaCanvasLocalDraft,serializeMediaCanvasLocalDraft,verifyMediaCanvasRecovery,type MediaCanvasLocalDraft } from './mediaCanvasLocalDraft';
@@ -35,7 +36,7 @@ export function useMediaCanvasRecovery(props:Props){
  function discard(){if(!current()||!key||!recovery||confirmed!==recovery||confirmationLive.current!==recovery||locked.current)return;try{if(localStorage.getItem(key)!==observed.current)throw new Error();localStorage.removeItem(key);observed.current=null;setRecovery(undefined);setConfirmed(undefined);setError('');setNotice('');}catch{setError('缓存已变化或不能清除，未删除其他页面的草稿。');}}
  const panel=!props.active||props.denied?null:<section aria-label="本机媒体画布恢复">
   {!allowed&&<StatusMessage>身份和项目代次尚未核对，媒体画布只保留在本页。</StatusMessage>}{notice&&<StatusMessage tone="warning">{notice}</StatusMessage>}
-  {allowed&&!recovery&&!notice&&<p>{savedAt?`媒体画布草稿已保留在本机 · ${new Date(savedAt).toLocaleTimeString('zh-CN',{timeZone:'Asia/Shanghai'})}`:'媒体画布修改可保留在本机；服务端保存仍需明确操作。'} 不保存媒体文件或执行许可。</p>}
+  {allowed&&!recovery&&!notice&&<p>{savedAt?`媒体画布草稿已保留在本机 · ${formatTime(savedAt, undefined, { timeStyle: 'medium', timeZone: 'Asia/Shanghai', hour12: false })}`:'媒体画布修改可保留在本机；服务端保存仍需明确操作。'} 不保存媒体文件或执行许可。</p>}
   {allowed&&recovery&&<><p>发现本机媒体草稿：{recovery.definition.title} · {recovery.definition.cards.length} 张卡片。恢复会重新核对项目代次、服务端版本和每个素材引用。</p>
    {recovery.uncertain&&<StatusMessage tone="warning">上次保存结果未知。恢复后仍保持禁止重复保存，需要核对服务端记录。</StatusMessage>}
    <Button disabled={!canRestore} onClick={()=>void restore()}>核对并恢复本机媒体草稿</Button>

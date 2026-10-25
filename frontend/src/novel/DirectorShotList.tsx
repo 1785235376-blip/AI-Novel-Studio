@@ -1,3 +1,4 @@
+import { formatDate, formatTime } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect, useState } from "react";
 import { DirectorShotCard } from "./DirectorShotCard";
 import type { DirectorShot } from "./MultimodalDirectorWorkspace";
@@ -283,7 +284,7 @@ export function DirectorShotList({
       setDrafts(next);
       localStorage.setItem(draftKey, JSON.stringify(next));
       setDraftMessage(
-        `批次草稿已保存 · ${new Date(savedAt).toLocaleTimeString()}`,
+        `批次草稿已保存 · ${formatTime(savedAt)}`,
       );
     } catch {
       setDraftMessage("批次草稿保存失败");
@@ -293,7 +294,7 @@ export function DirectorShotList({
     if (value?.shots?.length) {
       onChange(value.shots);
       setDraftMessage(
-        `已恢复批次草稿 · ${value.saved_at ? new Date(value.saved_at).toLocaleTimeString() : "未知时间"}`,
+        `已恢复批次草稿 · ${value.saved_at ? formatTime(value.saved_at) : "未知时间"}`,
       );
     } else setDraftMessage("没有可恢复的批次草稿");
   };
@@ -413,7 +414,7 @@ export function DirectorShotList({
           <summary>批次草稿（{drafts.length}）</summary>
           {drafts.map((draft, index) => (
             <p className="novel-help" key={draft.saved_at}>
-              版本 {index + 1} · {new Date(draft.saved_at).toLocaleString()} ·{" "}
+              版本 {index + 1} · {formatDate(draft.saved_at)} ·{" "}
               {draft.shots?.length || 0} 个镜头{" "}
               <Button variant="ghost" onClick={() => loadDraft(draft)}>
                 恢复

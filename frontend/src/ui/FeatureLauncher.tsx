@@ -2,6 +2,7 @@ import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import type {KeyboardEvent as ReactKeyboardEvent,ReactNode} from 'react';
 import {Activity,BookMarked,BookOpen,ChevronDown,ChevronUp,ClipboardList,Download,FileInput,Film,FolderOpen,History,LayoutDashboard,Map,Menu,PenLine,ScanSearch,ScrollText,Settings2,Shield,Users,UsersRound,WandSparkles,Workflow} from 'lucide-react';
 import {Badge,Button,Tooltip} from './primitives';
+import {t as i18nT} from '../i18n'; // [HERMIA-FE-20261025 I18N P2] rail feature launcher toggle
 
 export interface FeatureItemDefinition {
   id:string;
@@ -153,18 +154,18 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
   };
 
   return <div className="feature-launcher" ref={launcherRef}>
-    <Tooltip label={open?'关闭功能导航':'打开功能导航'}>
+    <Tooltip label={i18nT(open?'fl.close':'fl.open')}>
       <Button
         ref={toggleRef}
         type="button"
         variant="ghost"
         className="feature-launcher__toggle"
-        aria-label={open?'关闭功能导航':'打开功能导航'}
+        aria-label={i18nT(open?'fl.close':'fl.open')}
         aria-expanded={open}
         aria-controls="feature-launcher-overlay"
         onClick={()=>open?closeLauncher():openLauncher()}
       >
-        <Menu aria-hidden="true"/><span>功能导航</span>{open?<ChevronDown aria-hidden="true"/>:<ChevronUp aria-hidden="true"/>}
+        <Menu aria-hidden="true"/><span>{i18nT('fl.label')}</span>{open?<ChevronDown aria-hidden="true"/>:<ChevronUp aria-hidden="true"/>}
       </Button>
     </Tooltip>
     {open&&<nav

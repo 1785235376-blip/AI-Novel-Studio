@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import './rebuild.css';
+import { t } from '../i18n'; // [HERMIA-FE-20261025 I18N P1]
 
 export function Popover({ label, count, children, testId }: { label: string; count?: number; children: (close: () => void) => ReactNode; testId?: string }) {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ export function Drawer({ title, onClose, children }: { title: string; onClose: (
   useEffect(() => { const key = (ev: KeyboardEvent) => { if (ev.key === 'Escape') onClose(); }; document.addEventListener('keydown', key); return () => document.removeEventListener('keydown', key); }, [onClose]);
   // Portal: header creates a stacking context; drawer must sit above the inspector.
   return createPortal(<aside className="rb-drawer" role="complementary" aria-label={title}>
-    <header className="rb-drawer__head"><h2 className="rb-h">{title}</h2><button type="button" className="rb-btn" onClick={onClose} aria-label={`关闭${title}`}>关闭</button></header>
+    <header className="rb-drawer__head"><h2 className="rb-h">{title}</h2><button type="button" className="rb-btn" onClick={onClose} aria-label={t('pr.closeOf', { title })}>{t('pr.close')}</button></header>
     <div className="rb-drawer__body">{children}</div>
   </aside>, document.body);
 }

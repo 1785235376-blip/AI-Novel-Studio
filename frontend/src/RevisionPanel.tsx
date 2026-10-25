@@ -1,3 +1,4 @@
+import { formatDate } from './i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import {useEffect, useState} from 'react';
 import {AlertTriangle, Check, Clock3, RotateCcw} from 'lucide-react';
 import {Badge, Button, EmptyState, Panel} from './ui/primitives';
@@ -57,7 +58,7 @@ function failureFrom(reason: unknown): RevisionRestoreFailure {
 
 function formatTime(value: string) {
   const time = new Date(value);
-  return Number.isNaN(time.valueOf()) ? value : time.toLocaleString();
+  return Number.isNaN(time.valueOf()) ? value : formatDate(time);
 }
 function reasonLabel(value?: string) {
   if (!value) return '系统保存';
