@@ -989,3 +989,43 @@ pan 后「工作W1」保留；会话保存提示与配额提示文案正确；?u
 
 ### 文档
 第 14 行改为「已实现（待复核）」，计数 20/2/5/3/4 正确；「Vera PASS 575501b9」已改正。小错：DELIVERY_REPORT 写「已由 u1fix 93a1e351 修复」，93a1e351 是我的复核段，修复提交是 **d9479872**。第 14 行待空列表问题修复后才能改为「已验证」。
+
+## [VERA-FE] 复核 e217e061（M10-purgeguard，空列表不清理 + 连续两次缺失才清理）
+证据：/workspace/hr/vera-compare/purgeguard-e217e061/（未提交）。Node 22.14，vite 4399（已按 PID 清理）。
+
+### 结论：PASS（附 1 条 SHOULD-FIX 测试缺口，不阻塞）
+
+### 静态 / 单测
+tsc -b 0；vite build 0；src/workspace vitest 44 文件 366/366。
+代码审读：ProjectPresence 规则与 PURGEGUARD.md 一致——空列表只清 pending、不动 seen；首个列表只初始化；pending 每次重建，所以重新出现的项目会从 pending 中移除；observedAt 按 dataUpdatedAt 去重；空白或占位 actor 时 realUser=null，不清理。
+
+### 变异（mut.json / mut-extra.json）
+被测试杀死：V1 空列表清理、V2 空列表更新 seen、V3 一次缺失就清理、V5 同一次 fetch 计两次、V6 anonymous 触发清理、V7 占位 actor 触发清理、V9 项目重新出现后 pending 不重置，共 7 个。
+存活：
+- V4（去掉 isSuccess 守卫）：等价变异。出错时 dataUpdatedAt 不变，会被 observedAt 拦住。
+- V8c：等价变异。仍有第一行的 isSuccess 守卫。
+- V8/V8b（出错时绕过去重，把旧列表或空列表再观察一次）：**真实的测试缺口**。按 [A,B,C]→[A,C]→500 的顺序，变异体会在第二次观察时清理 B，但单测没有覆盖这种「先缺失一次、再失败」的顺序。实现本身是对的（浏览器 S3 已验证），建议 Hermia 补一条单测：[A,B,C]→[A,C]→error→断言 B 仍在。
+
+### 浏览器 1366/1440/1920（pg.json，1366 因冷启动超时用 pg1366.json 重跑）
+三个宽度结果一致：
+- S1 [A,B,C]→[A,C]→200[]→500→[A,C]→[A,C]：前四步各项计数均为 own 2/other 2/keep 4。空列表重置了 pending，所以之后的 [A,C] 重新算第一次缺失；第二次缺失后 own 降为 0，other 2/keep 4（canvas 草稿、当前项目、他人 key）不动，sessionStorage 不动，identity=real。
+- S2 重新出现会重置计数：1→1→1→0。
+- S3 500 ×2 不计数：1→1→0，下一次成功列表才算第二次缺失。
+- S4 resize ×3 + store setState 重渲染不计数：1→1，下一次 refetch 才清理。
+- S5 无身份、anonymous 占位 actor：4/4 都保留。
+各场景 non-GET 均为 0，pageerror 均为 0。
+
+### U1 三项回归
+u1.json 与 f6e535a3 相比只有 workset id 和时间戳不同。fin.json 的 purge 场景只清理一次 → 现在需要两次，结果从 session 变为保留，这是预期的规则变化，不是回归。
+
+### 全量 ×3（负载 ≈10–17/8 核，与 4499/4599 的复审错开）
+调整数 294/293/293（raw 295/294/293，ISI 9/9/8，总数 11602）。(a) 最好一次 293 ≤297 PASS；(b) 每次都 ≤297 PASS。
+新增持续失败 0。偶发项三个，单独重跑都 PASS（iso1/iso2/iso-isi.log）：
+- StudioProductionGraphEditor「explicitly binds…」
+- ProductionDashboard「renders the project start…」
+- ISI「delayed local file…」
+套件级失败仍是 LocalAiBrowserJourneyContracts（已计入基线）。
+
+### 文档
+DELIVERY_REPORT 第 9 行已改为 d9479872，并注明 93a1e351 是复核段，正确。
+ACCEPTANCE_MATRIX 第 14 行可改为「已验证（Vera e217e061）」，同时删去「待 Vera 复核」字样；f778eaec 的历史备注可以保留。
