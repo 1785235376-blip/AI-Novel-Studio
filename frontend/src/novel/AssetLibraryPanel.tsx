@@ -430,17 +430,17 @@ export function AssetError({ error, fallback }: { error: unknown; fallback: stri
       <p className="asset-error__meta">
         {view.code && (
           <span>
-            代码：<code>{view.code}</code>
+            {i18nT('err.label.code')}<code>{view.code}</code>
           </span>
         )}
         {view.requestId && (
           <span>
-            请求 ID：<code>{view.requestId}</code>
+            {i18nT('err.label.requestId')}<code>{view.requestId}</code>
           </span>
         )}
         {view.details && (
           <span>
-            详情：<code>{view.details}</code>
+            {i18nT('err.label.details')}<code>{view.details}</code>
           </span>
         )}
         {/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}

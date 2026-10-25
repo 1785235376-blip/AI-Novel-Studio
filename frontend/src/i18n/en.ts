@@ -424,6 +424,11 @@ export const en: Record<MessageKey, string> = {
   'err.code.IMAGE_EDIT_INVALID': 'The image edit settings are invalid. Adjust them and try again.',
   'err.code.INVALID_WORKER_CONFIG': 'The background worker configuration is invalid. Please check the settings.',
   'err.code.EXPERIMENTAL_INVALID': 'The experimental feature request is invalid. Please check and try again.',
+  // [HERMIA-FE-20261025 VERA-fbe029c4 §2] error meta labels
+  'err.label.code': 'Code: ',
+  'err.label.requestId': 'Request ID: ',
+  'err.label.details': 'Details: ',
+  'err.code.TEXT_PROVIDER_NOT_CONFIGURED': 'No text model is configured yet. Add and enable a text model in Settings first.',
   // [HERMIA-FE-20261025 VERA-e471dc76 P3-1] 白名单内英文后端字面文案的本地化（仅当 message 与后端字面完全一致时替换）
   'err.srv.CANON_RECOVERY_REQUIRED': 'Commit interrupted; refresh and recover the existing receipt.',
   'err.srv.EXPORT_CANCELLED': 'export cancelled',

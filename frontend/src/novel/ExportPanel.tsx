@@ -103,5 +103,5 @@ function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{no
 // [HERMIA-FE-20261025 VERA-097 W8] exported for render test
 export function ExportError({error,fallback}:{error:unknown;fallback:string}){
   const view=apiErrorView(error,fallback);
-  return <div className="export-error" role="alert"><p className="novel-error">{view.message}</p><p className="export-error__meta">{view.code&&<span>代码：<code>{view.code}</code></span>}{view.requestId&&<span>请求 ID：<code>{view.requestId}</code></span>}{view.details&&<span>详情：<code>{view.details}</code></span>}{view.technical&&<span className="api-error-technical">{i18nT('err.technical')}：<code>{view.technical}</code></span>}{/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}</p></div>;
+  return <div className="export-error" role="alert"><p className="novel-error">{view.message}</p><p className="export-error__meta">{view.code&&<span>{i18nT('err.label.code')}<code>{view.code}</code></span>}{view.requestId&&<span>{i18nT('err.label.requestId')}<code>{view.requestId}</code></span>}{view.details&&<span>{i18nT('err.label.details')}<code>{view.details}</code></span>}{view.technical&&<span className="api-error-technical">{i18nT('err.technical')}：<code>{view.technical}</code></span>}{/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}</p></div>;
 }
