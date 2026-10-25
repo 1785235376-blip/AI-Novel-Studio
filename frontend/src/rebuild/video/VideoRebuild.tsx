@@ -70,6 +70,10 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <h2>{view === 'studio' ? '视频工作室' : view === 'script' ? '视频 › 分镜表' : view === 'dual' ? '视频 › 双画布' : '视频 › 图生视频'}</h2>
       <span className="nv-badge nv-badge--off">{plays === null ? '镜头 · 读取中' : `镜头 · ${shots.length}`}</span>
       <span className="nv-spacer" />
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏（场景 / 镜头树）隐藏时的替代入口 */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="video" aria-label={i18nTz('选择镜头')} value={cur?.key ?? ''} disabled={!shots.length} onChange={e => setSel(e.target.value)}>
+        {shots.length ? shots.map(s => <option key={s.key} value={s.key}>{`镜头 ${s.n} ${s.title}`}</option>) : <option value="">{i18nTz('还没有镜头')}</option>}
+      </select>
       {view === 'studio' ? <>
         <button type="button" className="nv-btn" id="vidToggleScript" aria-pressed={scriptOpen} onClick={() => setScriptOpen(o => !o)}>{scriptOpen ? '收起镜头脚本' : '镜头脚本'}</button>
         <button type="button" className="nv-btn" id="vidToggleDirector" aria-pressed={dirOpen} onClick={() => setDirOpen(o => !o)}>{dirOpen ? '收起导演台' : '导演台'}</button>

@@ -95,6 +95,13 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       <h2>资产 · {view === 'lib' ? '浏览器' : VIEW_LABEL[view]}</h2>
       <span className="ref-badge">拖入＝引用 · 不复制</span>
       <span className="nv-spacer" />
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏（类型 / 集合）隐藏时的替代入口 */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="assets" aria-label={i18nTz('资产类型')} value={view === 'trash' ? 'trash' : view === 'lib' ? filter : ''}
+        onChange={e => { const v = e.target.value; if (v === 'trash') setView('trash'); else if (v) { setFilter(v as Filter); setView('lib'); } }}>
+        {view !== 'lib' && view !== 'trash' ? <option value="">{i18nTz('当前视图')}</option> : null}
+        {([['all', '全部资产'], ['图像', '图像'], ['音频', '音频'], ['视频', '视频'], ['其他', '文档 / 其他']] as [Filter, string][]).map(([f, l]) => <option key={f} value={f}>{i18nTz(l)}{loaded ? ` (${counts[f] || 0})` : ''}</option>)}
+        {isPro ? <option value="trash">{i18nTz('回收站')}</option> : null}
+      </select>
       {view !== 'lib' ? <button type="button" className="nv-btn" onClick={() => setView('lib')}>回资产库</button> : null}
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'refs'} onClick={() => setView('refs')}>引用关系</button> : null}
       <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>{i18nTz('导入…')}</button>

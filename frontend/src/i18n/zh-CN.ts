@@ -529,5 +529,14 @@ export const zhCN = {
   'rough.54': '▶ 播放',
   'rough.55': '导入…',
   'rough.56': '全部资产',
+  'rough.57': '窄屏导航',
+  'rough.58': '切换视图或素材',
+  'rough.59': '资产类型',
+  'rough.60': '选择镜头',
+  'rough.61': '图像',
+  'rough.62': '音频',
+  'rough.63': '文档 / 其他',
+  'rough.64': '还没有镜头',
+  'rough.65': '当前视图',
 } as const;
 export type MessageKey = keyof typeof zhCN;

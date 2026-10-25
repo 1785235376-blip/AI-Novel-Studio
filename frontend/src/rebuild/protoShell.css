@@ -71,17 +71,22 @@ html .app-shell .workspace-inspector{transition:width var(--motion-panel) var(--
 /* [HERMIA-FE-20261025 P1-HDR] 专业模式头部收紧：≤1600 取消 logo 220px 最小宽；≤1500 产品名视觉隐藏（仍保留 aria-label），保证设置等头部项不被裁切、无横向溢出 */
 @media (max-width:1600px){html .app-shell[data-shell-mode=pro] .product-mark{min-width:0;padding-right:8px}}
 @media (max-width:1500px){html .app-shell[data-shell-mode=pro] .product-mark__name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell[data-shell-mode=pro] .global-header{gap:8px}}
+/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1280 顶栏收紧（Vera 4b1b82d8 P1/P2）：按宽度降序排在 ≤1180/≤1060 之前，后者仍可再收紧；
+   搜索框与 logo 作为唯一可收缩项吸收溢出，设置/模式/工具均 flex:none，保证「设置」始终在视口内。zh 保留 Ctrl K 至 1181。 */
+@media (max-width:1280px){
+html .app-shell .global-header{gap:8px;padding:0 10px}
+html[lang] .app-shell .global-header .global-search{flex:0 1 auto;min-width:32px;overflow:hidden}
+html[lang] .app-shell .global-header .product-mark{flex:0 1 auto;min-width:32px;overflow:hidden}
+html[lang="en"] .app-shell .global-search>kbd{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+html .app-shell .module-switcher button{padding:6px 9px}
+html .app-shell .global-header .shell-mode-toggle button{padding:4px 7px}
+html .app-shell .module-overflow>button,html .app-shell .shell-settings>button,html .app-shell .rb-header-tools button{padding:5px 6px}
+html .app-shell .shell-settings,html .app-shell .shell-mode-toggle,html .app-shell .rb-header-tools{flex:none}
+}
 /* [HERMIA-FE-20261025 VERA-097 MF2] ≤1180（含 1100/1024）：所有模式收紧头部——产品名、搜索框里的 Ctrl K 视觉隐藏（仍在可访问名中），搜索收成图标按钮，间距 6px，模块分段内边距 8px，保证所有头部项与可 Tab 聚焦项都在视口内 */
 @media (max-width:1180px){html .app-shell .product-mark{min-width:0;padding-right:6px}html .app-shell .product-mark__name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell .global-header{gap:6px;padding:0 10px}html .app-shell .global-search{min-width:0;flex:0 0 auto;width:32px;padding:5px 0 5px 30px}html .app-shell .global-search>kbd{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}html .app-shell .module-switcher button{padding:6px 8px}}
 /* [HERMIA-FE-20261025 VERA-097 MF2] ≤1060：模块分段再收 3px（en 专业 1024 余量） */
 @media (max-width:1060px){html .app-shell .module-switcher button{padding:6px 5px}html .app-shell .global-header{gap:5px}}
-/* [HERMIA-FE-20261025 LAYOUT-P2] 1024~1200 顶栏收紧：en/专业模式下「设置」不再被挤出视口 */
-@media (max-width:1200px){
-html .app-shell .global-header{gap:8px;padding:0 10px}
-html .app-shell .global-search{flex:0 1 200px;min-width:96px}
-html .app-shell .global-search kbd{display:none}
-html .app-shell .module-switcher button{padding:6px 9px}
-html .app-shell .global-header{gap:6px}
-html .app-shell .global-header .shell-mode-toggle button{padding:4px 7px}
-html .app-shell .module-overflow>button,html .app-shell .shell-settings>button,html .app-shell .rb-header-tools button{padding:5px 6px}
-}
+/* [HERMIA-FE-20261025 LAYOUT-P3] 窄屏替代入口：仅在左栏被隐藏（≤1100）时显示 */
+html .app-shell .narrow-nav{display:none;max-width:180px;min-width:0;height:28px;min-height:0;padding:2px 6px;line-height:1.2;text-overflow:ellipsis}
+@media (max-width:1100px){html .app-shell .narrow-nav{display:inline-block}}

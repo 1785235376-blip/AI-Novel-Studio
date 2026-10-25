@@ -82,6 +82,13 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button> : null}
       <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => onViewChange('gen')}>{i18nTz('生成')}</button>
       <button type="button" className="nv-btn" aria-pressed={view === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => onViewChange('comic')}>{i18nTz('漫画制作')}</button>
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏隐藏时的替代入口：视觉素材 + 漫画制作（CSS 只在窄屏显示） */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="image" aria-label={i18nTz('切换视图或素材')} value={cur?.id ? `i:${cur.id}` : ''}
+        onChange={e => { const v = e.target.value; if (v === 'comic') onViewChange('comic'); else if (v.startsWith('i:')) setSel(v.slice(2)); }}>
+        {!cur ? <option value="">{i18nTz('当前视图')}</option> : null}
+        {items.map(it => <option key={it.id} value={`i:${it.id}`}>{it.name}</option>)}
+        <option value="comic">{i18nTz('漫画制作')}</option>
+      </select>
     </div>
   );
   const chrome = (

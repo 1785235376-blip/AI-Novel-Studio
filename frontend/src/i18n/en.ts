@@ -536,4 +536,13 @@ export const en: Record<MessageKey, string> = {
   'rough.54': '▶ Play',
   'rough.55': 'Import…',
   'rough.56': 'All assets',
+  'rough.57': 'Narrow nav',
+  'rough.58': 'Switch view or item',
+  'rough.59': 'Asset type',
+  'rough.60': 'Pick a shot',
+  'rough.61': 'Images',
+  'rough.62': 'Audio',
+  'rough.63': 'Docs / other',
+  'rough.64': 'No shots yet',
+  'rough.65': 'Current view',
 };
