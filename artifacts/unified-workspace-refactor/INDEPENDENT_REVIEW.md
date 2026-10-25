@@ -972,3 +972,11 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - 测试缺口（变异存活）：Cmd-K 恢复 id 列、失败时仍显示新建章节、rail 徽章不分模式、App 层 simple 接线、写作台/版本徽章门控 —— 均无测试捕获。被捕获：chapterList→items、scopeLabel 回退 id、资产错误态、Cmd-K 专业项隐藏。
 - PortableProjectsPanel.assetRelations：单独 3/3 通过 9/9，本分支未改 src/experimental，判偶发成立。
 - 证据：/workspace/hr/vera-compare/dui-99edf71a/
+
+## [VERA-FE] 独立复审 work/hermia-i18n-20261025 @ 391f47d8（2026-10-25，未提交）
+结论：**MUST-FIX（1 项，布局）**，功能面通过。
+- 通过：默认中文（无 studio.locale 时 html lang=zh-CN，壳层中文文本与切回后逐字一致）；切 EN 即时生效无刷新，localStorage studio.locale=en，刷新后保持，html lang=en；非法值 fr 回退 zh-CN；无裸 key；1366 隐藏搜索文案/设置文字无溢出；无写请求；axe 中英一致无新增。
+- 变异全部被捕获：回退返回裸 key、不设 html lang、不持久化、默认改 en。
+- **MUST-FIX 布局重叠**：EN 下 1440 与 1920，头部搜索框文案「Search features, chapters, commands」被截断并压在「Ctrl K」徽标下方（文字与 kbd 重叠）。复现：4499 起本分支→跳过引导→点 EN→看头部搜索框。位置：src/i18n/i18n-en.css `.global-search>span` 省略号未给 kbd 让位（AppShell.tsx:746），或缩短 en.ts:42 文案。证据 shots/en_1440.png、crop_search_1440.png。
+- 说明（非阻塞）：仅壳层翻译，正文/助手/引导仍中文，属声明范围内。
+- 证据：/workspace/hr/vera-compare/i18n-391f47d8/
