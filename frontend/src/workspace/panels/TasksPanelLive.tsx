@@ -10,6 +10,7 @@ import type {NavReturnPoint, TaskRef} from '../contracts';
 import type {TaskFeed} from '../tasks/taskFeed';
 import {NAV_TEXT, type LocateResult, type TaskNavigator} from '../tasks/taskNavigation';
 import {pageOf, PAGING_GAP_TEXT, statusText} from '../tasks/taskSources';
+import {AUDIO_LIST_GAP_TEXT, filterByMedia, MEDIA_FILTER_TEXT, type MediaFilter} from '../media/mediaSlice'; // [HERMIA-FE-20261025 AUDIO-M10]
 
 export interface TasksPanelLiveProps {
   /** [HERMIA-FE-20261025 INT] lead wiring: selected production job (re-read) + host-owned detail extras (params/results). */
@@ -27,6 +28,7 @@ export interface TasksPanelLiveProps {
 export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn, onDetail, detailExtra}: TasksPanelLiveProps) {
   const state = useSyncExternalStore(f => feed.subscribe(f), () => feed.state);
   const [page, setPage] = useState(0);
+  const [media, setMedia] = useState<MediaFilter>('all'); // [HERMIA-FE-20261025 AUDIO-M10] local filter over the SAME list
   const [sel, setSel] = useState<TaskRef | null>(null);
   const [detail, setDetail] = useState<{ref: TaskRef; job: ProductionJob | null; gone: boolean} | null>(null);
   const [msg, setMsg] = useState('');
@@ -55,7 +57,7 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
     case 'revoked': body = <p data-state="revoked" role="alert">{state.text}</p>; break;
     case 'error': body = <div data-state="error" role="alert"><p>{state.text}</p><p>{state.next}</p></div>; break;
     case 'ready': {
-      const pg = pageOf(state.items, page);
+      const pg = pageOf(filterByMedia(state.items, media), page);
       body = <div data-state="ready">
         <ul ref={listRef} aria-label="任务列表" style={{listStyle: 'none', margin: 0, padding: 0, maxHeight: 240, overflow: 'auto'}}>
           {pg.rows.map(t => <li key={`${t.source}|${t.id}`}>
@@ -75,7 +77,9 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
   }
   const d = detail?.ref ?? sel;
   return <section data-testid="u3-tasks" aria-label="任务" style={{padding: 8}}>
-    <div><button type="button" data-testid="u3-refresh" onClick={() => void feed.refresh()} disabled={state.kind === 'not-connected'}>刷新</button></div>
+    <div><button type="button" data-testid="u3-refresh" onClick={() => void feed.refresh()} disabled={state.kind === 'not-connected'}>刷新</button>
+      {' '}<span role="group" aria-label="按媒介筛选">{(['all', 'image', 'audio'] as const).map(m => <button key={m} type="button" data-testid={`aud-filter-${m}`} aria-pressed={media === m} onClick={() => { setMedia(m); setPage(0); }}>{MEDIA_FILTER_TEXT[m]}</button>)}</span></div>
+    {media !== 'all' && state.kind === 'ready' ? <p data-testid="aud-filter-gap">{AUDIO_LIST_GAP_TEXT}</p> : null}
     {body}
     {d && state.kind === 'ready' ? <div data-testid="u3-detail" data-task-id={d.id} aria-label="任务详情">
       <h4 style={{margin: '8px 0 4px'}}>{d.title}</h4>

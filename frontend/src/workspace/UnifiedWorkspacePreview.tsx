@@ -39,7 +39,8 @@ import {EMPTY_SELECTION, type CanvasSelection} from './registry/selection';
 import {INITIAL_NAV, openTask, toggleCompare, type NavState} from './registry/contextNav';
 import {registerNavActions} from './actions/navActions';
 import type {NavReturnPoint} from './contracts';
-import type {ProductionJob} from '../creative/studioProductionClient';
+import {studioProductionClient, type ProductionJob} from '../creative/studioProductionClient';
+import {AudioCandidatePreview} from './media/AudioCandidatePreview'; // [HERMIA-FE-20261025 AUDIO-M10]
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
@@ -135,6 +136,7 @@ export function UnifiedWorkspacePreview() {
   const [selJob, setSelJob] = useState<ProductionJob | null>(null);
   useEffect(() => { setSelJob(null); }, [tasks]);
   const loop = useUnifiedLoop(novelId, taskCtx, tasks.lease, selJob);
+  const audioReader = useMemo(() => (novelId && taskCtx ? studioProductionClient(novelId, taskCtx) : null), [novelId, taskCtx]); // [HERMIA-FE-20261025 AUDIO-M10] read-only candidate GET
   const u4 = loop.u4;
   // [HERMIA-FE-20261025 INT] U2 selection + context nav. Return-to-origin uses U3's navigator (single return system).
   const [sel, setSel] = useState<CanvasSelection>(EMPTY_SELECTION);
@@ -312,8 +314,9 @@ export function UnifiedWorkspacePreview() {
       onReturn={handleReturn}
       onDetail={(j, ref) => { setSelJob(j); if (ref) setNav(n => openTask(n, ref, {nodeExists: (c, nid) => !!novelId && canvasHasNode(safeLocalStorage(), novelId, c, nid),
         capture: () => ({panelId: 'tasks', canvas: 'creative', nodeIds: sel.ids.slice(), focusTestId: 'u3-tasks', viewport: null})}).state); }}
-      detailExtra={loop.param ? ('session' in loop.param ? <ParamEditPanel session={loop.param.session} targetTitle={loop.param.title} />
-        : <p data-testid="int-param-gap">{loop.param.gap}</p>) : null} />;
+      detailExtra={<>{loop.param ? ('session' in loop.param ? <ParamEditPanel session={loop.param.session} targetTitle={loop.param.title} />
+        : <p data-testid="int-param-gap">{loop.param.gap}</p>) : null}
+        {selJob?.owner === 'audio' && audioReader && tasks.lease ? <AudioCandidatePreview job={selJob} reader={audioReader} lease={tasks.lease} /> : null}</>} />;
     // [HERMIA-FE-20261025 U4 wiring] 总控需提供 u4 = {adopt: AdoptDeps (StudioProductionClient + canvasViews + 当前 ScopeLease), target, restore: RestoreDeps, canvasId}；未提供时保持"未接入"。
     // [HERMIA-FE-20261025 INT] connected but nothing selected: honest empty state with the next step (not "not connected").
     if ((id === 'results' || id === 'history') && u4 && !u4.target) return <p style={{padding: 12}} data-state="empty" data-testid={`int-${id}-empty`}>
