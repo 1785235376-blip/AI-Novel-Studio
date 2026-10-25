@@ -23,6 +23,7 @@ import {
 } from "./api";
 import { useStudio } from "./store";
 import { useLastChapter } from "./workspace/defaultui/useLastChapter";
+import { DefaultTasksDrawer } from "./workspace/defaultui/DefaultTasksDrawer";
 import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection, readLocalStudioSelection } from "./workspaceSelection";
 import { ChapterEditor, proseDocument } from "./Editor";
 import {
@@ -2150,6 +2151,8 @@ function LegacyApp() {
               {` · ${i18nT("status.ai", { v: i18nT(taskSummary.total ? (taskSummary.running ? "status.aiRunning" : taskSummary.failed ? "status.aiFailed" : taskSummary.succeeded ? "status.aiDone" : "status.aiQueued") : "status.aiNone") })}`}
               {shellMessage ? ` · ${shellMessage}` : ""}
               {localTutor.entry}
+              {/* [HERMIA-FE-20261025 UWPORT-S2] tasks/results/history drawer (port of the unified loop) */}
+              {s.novelId ? <>{" "}<DefaultTasksDrawer key={`${namespace}|${s.novelId}`} novelId={s.novelId} actor={s.actor} scope={s.scope} sessionToken={s.sessionToken} /></> : null}
             </>
           }
         />

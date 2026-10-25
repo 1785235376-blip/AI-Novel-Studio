@@ -23,9 +23,11 @@ export interface TasksPanelLiveProps {
   onLocate(r: Extract<LocateResult, {kind: 'located'}>): void;
   onOpenExecution(): void;
   onReturn(rp: NavReturnPoint): void;
+  /** [HERMIA-FE-20261025 UWPORT-S2] default UI has no canvases: hide locate/execution/return buttons. */
+  hideNav?: boolean;
 }
 
-export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn, onDetail, detailExtra}: TasksPanelLiveProps) {
+export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn, onDetail, detailExtra, hideNav}: TasksPanelLiveProps) {
   const state = useSyncExternalStore(f => feed.subscribe(f), () => feed.state);
   const [page, setPage] = useState(0);
   const [media, setMedia] = useState<MediaFilter>('all'); // [HERMIA-FE-20261025 AUDIO-M10] local filter over the SAME list
@@ -87,9 +89,10 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
       {detail?.gone ? <p role="alert">重新读取这个任务失败：它可能已被删除或失效。列表里的信息可能已过时。</p> : null}
       <p>来源：{d.source === 'production-job' ? '生产任务' : '任务中心'}{d.link ? '，记录了来源作品节点' : '，没有记录来源作品节点'}</p>
       <p>成本：未知（服务端没有提供估算）</p>
+{hideNav ? null : <>
       <button type="button" data-testid="u3-locate" onClick={locate} disabled={!navigator}>定位来源节点</button>{' '}
       <button type="button" data-testid="u3-exec" onClick={exec} disabled={!navigator}>查看执行画布</button>{' '}
-      <button type="button" data-testid="u3-back" onClick={back} disabled={!navigator?.canReturn()}>返回原位置</button>
+      <button type="button" data-testid="u3-back" onClick={back} disabled={!navigator?.canReturn()}>返回原位置</button></>}
       {detailExtra}
     </div> : null}
     {msg ? <p data-testid="u3-nav-msg" role="status">{msg}</p> : null}
