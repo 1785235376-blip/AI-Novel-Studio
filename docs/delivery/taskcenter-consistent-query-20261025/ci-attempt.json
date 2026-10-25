@@ -1,0 +1,65 @@
+{
+  "schema": "TASKCENTER_CLOUD_ATTEMPT_V1",
+  "code_sha": "d227d3e0c7a17eda47d9d456c33775d9b27dfe6a",
+  "code_tree": "aa58fc7ceb9cb241e0ce29176025ec3dd48cd200",
+  "run_id": 40206566004,
+  "run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/40206566004",
+  "interpretation": "BLOCKED_BEFORE_TEST_EXECUTION",
+  "job_records": [
+    {
+      "id": 121208653993,
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-25T15:21:44Z",
+      "completed_at": "2026-10-25T15:21:46Z",
+      "steps": [],
+      "runner_id": 0,
+      "runner_name": "",
+      "labels": [
+        "ubuntu-24.04"
+      ]
+    }
+  ],
+  "check_records": [
+    {
+      "id": 121208653993,
+      "name": "verify",
+      "head_sha": "d227d3e0c7a17eda47d9d456c33775d9b27dfe6a",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-25T15:21:44Z",
+      "completed_at": "2026-10-25T15:21:46Z",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1,
+        "annotations_url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/check-runs/121208653993/annotations"
+      }
+    }
+  ],
+  "job_logs_result": {
+    "error": "GitHub API error 404: ﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:240e6041-001e-0069-4c94-640834000000\nTime:2026-10-25T15:22:10.3410359Z</Message></Error>",
+    "error_code": "NOT_FOUND",
+    "error_data": {
+      "error_str": "GitHub API error 404: ﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:240e6041-001e-0069-4c94-640834000000\nTime:2026-10-25T15:22:10.3410359Z</Message></Error>"
+    }
+  },
+  "annotation_fetch_result": {
+    "error": "HTTPError: 400: GitHub Fetch URL is not an allowed public GitHub repository or search endpoint. (Response: None)",
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "specific_platform_reason": "UNKNOWN: one annotation is reported, but its body is unavailable through the available GitHub/read tools.",
+  "test_results": {
+    "baseline_original": "NOT_RUN",
+    "baseline_red": "NOT_RUN",
+    "candidate_focused": "NOT_RUN",
+    "baseline_regression": "NOT_RUN",
+    "candidate_regression": "NOT_RUN",
+    "file_http": "NOT_RUN",
+    "performance": "NOT_RUN",
+    "independent_dynamic": "NOT_RUN"
+  },
+  "not_evidence": "This is a real GitHub scheduling/check response, not synthetic pytest output. No test pass/fail counts, timings or memory numbers exist."
+}
