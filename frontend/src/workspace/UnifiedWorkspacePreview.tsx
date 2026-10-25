@@ -154,14 +154,23 @@ export function UnifiedWorkspacePreview() {
     if (novelId && gone.includes(novelId)) setNovelId(null);
   }, [realUser, novels.isSuccess, novels.data, novelId]);
   const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
-  // Worksets are layout-level (not per novel): their own session adapter, independent of the novel switch.
-  const layoutPrefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: '\u0001worksets'});
+  // [HERMIA-FE-20261025 U1fix] MUST-FIX 1 + P2: ONE adapter per scope for viewports AND worksets (two adapters on the same
+  // key erased each other). Worksets are now per project in both real and session mode (consistent keying).
+  const layoutPrefs = prefs;
   const prefsRef = useRef(layoutPrefs); prefsRef.current = layoutPrefs;
   const toCv = (v: {x: number; y: number; zoom: number} | undefined): CvViewport | undefined => (v ? {x: v.x, y: v.y, k: v.zoom} : undefined);
   const vpOf = (k: CanvasKind) => (novelId ? toCv(prefs.getViewport(k)) : undefined);
   const onCreativeVp = useMemo(() => (v: CvViewport) => { prefs.setViewport('image', {x: v.x, y: v.y, zoom: v.k}); }, [prefs]);
   const onExecVp = useMemo(() => (v: CvViewport) => { prefs.setViewport('video', {x: v.x, y: v.y, zoom: v.k}); }, [prefs]);
   const [vpMsg, setVpMsg] = useState<string | null>(null);
+  // [HERMIA-FE-20261025 U1fix] MUST-FIX 3: identity can arrive after the canvases mounted with the session (default)
+  // viewport. When the real scope changes for the SAME project the canvases must remount with the restored viewport.
+  // This is derived DURING render (not in an effect): otherwise the still-mounted old canvas sees the new adapter's
+  // onViewport callback first and writes its default 40,40 over the stored viewport before the remount.
+  const realKey = realScope ? `${realScope.userId}\u0000${realScope.projectId}\u0000${realScope.projectInstanceId}` : null;
+  const [ident, setIdent] = useState({novelId, realKey, epoch: 0});
+  if (ident.novelId !== novelId || ident.realKey !== realKey) setIdent({novelId, realKey, epoch: ident.epoch + (ident.novelId === novelId ? 1 : 0)});
+  const identEpoch = ident.epoch; // a pending setIdent above discards this render before commit
   const resetVp = (k: CanvasKind) => {
     prefs.resetViewport(k); (k === 'image' ? setCreativeRev : setExecRev)(v => v + 1);
     setVpMsg(`已把${k === 'image' ? '创作' : '执行'}画布的视角恢复为默认（${prefs.status().mode === 'session' ? '仅本次会话' : '已保存'}）。`);
@@ -287,13 +296,13 @@ export function UnifiedWorkspacePreview() {
           {!av.enabled && <small data-testid="uw-send-reason">{av.reason}</small>}
           <button type="button" className="uw-btn" data-testid="uw-reset-vp-image" disabled={!novelId} title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('image')}>重置视角</button>
         </div>
-        <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="image" selection={sel} onChange={setSel}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></CanvasSelectionLayer></div>
+        <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="image" selection={sel} onChange={setSel}><CreativeCanvasPanel novelId={novelId} revision={creativeRev + identEpoch} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></CanvasSelectionLayer></div>
       </div>;
     }
     if (id === 'execution') return <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
       <div style={{display: 'flex', gap: 8, alignItems: 'center', padding: '4px 8px'}}><button type="button" className="uw-btn" data-testid="uw-reset-vp-video" disabled={!novelId}
         title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('video')}>重置视角</button></div>
-      <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="video" selection={sel} onChange={setSel}><ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} /></CanvasSelectionLayer></div></div>;
+      <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="video" selection={sel} onChange={setSel}><ExecutionCanvasPanel novelId={novelId} revision={execRev + identEpoch} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} /></CanvasSelectionLayer></div></div>;
     // [HERMIA-FE-20261025 U3-M4] read-only nav: locate source node / open execution canvas / return (selection+focus+viewport).
     if (id === 'tasks') return <TasksPanelLive feed={tasks.feed} navigator={tasks.navigator} active
       hasNode={(c, nid) => !!novelId && canvasHasNode(safeLocalStorage(), novelId, c, nid)}

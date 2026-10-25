@@ -47,6 +47,9 @@ export const PREFS_REASON_TEXT: Record<PrefsReason, string> = {
   'not-current': '项目已切换，这次视图变化没有保存到新项目。',
 };
 
+export type WorksetWriteResult = 'saved' | 'session' | 'write-failed' | 'not-current';
+type Patch = {viewport: [CanvasViewKind, CanvasViewport | null]} | {worksets: StoredWorkset[]};
+
 export interface ViewPrefsHost {
   scope: LayoutScope | null;
   storage: StorageLike | null;
@@ -104,7 +107,8 @@ export interface ViewPrefs {
   /** Clears only this canvas's viewport preference. */
   resetViewport(kind: CanvasViewKind): void;
   getWorksets(): StoredWorkset[];
-  setWorksets(list: StoredWorkset[]): boolean;
+  /** [HERMIA-FE-20261025 U1fix] distinguished outcome: saved / session (memory only) / write-failed (memory only) / not-current (discarded). */
+  setWorksets(list: StoredWorkset[]): WorksetWriteResult;
   /** Whether the current view came from a cold read of saved preferences (honest restore label). */
   restoredFromStorage(kind: CanvasViewKind): boolean;
   /** [HERMIA-FE-20261025 U1-M1] copy of the in-memory doc (for session carry-over to the next activation). */
@@ -150,10 +154,28 @@ export function createViewPreferences(host: ViewPrefsHost): ViewPrefs {
   // A seed only fills in when storage gave nothing usable (session scopes, or a persistent read that failed).
   if (host.seed && origin !== 'storage' && origin !== 'migrated') { doc = sanitizeDoc(host.seed); origin = 'session'; }
   const writable = () => status.mode === 'persistent' || status.reason === 'write-failed';
-  const flush = (): boolean => {
+  // [HERMIA-FE-20261025 U1fix] MUST-FIX 1: read-modify-write. Several consumers (or tabs) of the same scope key only
+  // change their own field; the latest stored doc is re-read and only this patch is applied, so saving a workset in one
+  // consumer and panning in another can no longer erase each other.
+  const apply = (d: ViewPrefsDoc, patch: Patch): ViewPrefsDoc => {
+    if ('worksets' in patch) return {...d, worksets: patch.worksets};
+    const [k, v] = patch.viewport; const {[k]: _old, ...rest} = d.viewports;
+    return {...d, viewports: v ? {...rest, [k]: v} : rest};
+  };
+  const readLatest = (): ViewPrefsDoc => {
+    try {
+      const txt = host.storage!.getItem(key!); if (txt === null) return emptyDoc();
+      const parsed: unknown = JSON.parse(txt);
+      if (isObj(parsed) && parsed.version === VIEW_PREFS_VERSION) return sanitizeDoc(parsed as Partial<ViewPrefsDoc>);
+      if (isObj(parsed) && !(typeof parsed.version === 'number') && migrateViewPrefs(parsed)) return sanitizeDoc(migrateViewPrefs(parsed)!);
+    } catch { /* fall through: keep own memory */ }
+    return doc;
+  };
+  const flush = (patch: Patch): boolean => {
     if (!key || !host.storage || !writable()) return false;
     if (!host.isCurrent()) { status = {...status, reason: status.reason === 'write-failed' ? 'write-failed' : 'not-current'}; return false; }
-    try { host.storage.setItem(key, JSON.stringify(doc)); status = {mode: 'persistent', reason: 'ok'}; return true; }
+    const merged = apply(readLatest(), patch);
+    try { host.storage.setItem(key, JSON.stringify(merged)); doc = merged; status = {mode: 'persistent', reason: 'ok'}; return true; }
     catch { status = {mode: 'persistent', reason: 'write-failed'}; return false; }
   };
   return {
@@ -164,19 +186,21 @@ export function createViewPreferences(host: ViewPrefsHost): ViewPrefs {
       // A late callback after the host lease moved must not change this scope's values either.
       if (!host.isCurrent()) { if (key) status = {...status, reason: 'not-current'}; return false; }
       const s = sanitizeViewport(v); if (!s) return false;
-      doc = {...doc, viewports: {...doc.viewports, [k]: s}};
+      doc = apply(doc, {viewport: [k, s]});
       restored.delete(k);
-      flush(); return true;
+      flush({viewport: [k, s]}); return true;
     },
     resetViewport(k) {
       if (!host.isCurrent()) return;
-      const {[k]: _drop, ...rest} = doc.viewports; doc = {...doc, viewports: rest}; restored.delete(k); flush();
+      doc = apply(doc, {viewport: [k, null]}); restored.delete(k); flush({viewport: [k, null]});
     },
     getWorksets: () => doc.worksets,
     setWorksets(list) {
-      if (!host.isCurrent()) { if (key) status = {...status, reason: 'not-current'}; return false; }
-      doc = {...doc, worksets: list.map(sanitizeStoredWorkset).filter((w): w is StoredWorkset => !!w).slice(0, WORKSET_LIMIT)};
-      return flush() || status.mode === 'session';
+      if (!host.isCurrent()) { if (key) status = {...status, reason: 'not-current'}; return 'not-current'; }
+      const worksets = list.map(sanitizeStoredWorkset).filter((w): w is StoredWorkset => !!w).slice(0, WORKSET_LIMIT);
+      doc = apply(doc, {worksets});
+      if (!key || status.mode === 'session') return 'session';
+      return flush({worksets}) ? 'saved' : status.reason === 'not-current' ? 'not-current' : 'write-failed';
     },
     restoredFromStorage: k => restored.has(k),
     snapshot: () => structuredClone(doc),

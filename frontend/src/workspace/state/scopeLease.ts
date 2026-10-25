@@ -30,16 +30,19 @@ export function resolveWorkspaceIdentity(i: IdentityInput): WorkspaceIdentity {
   if (blank(i.projectId) || fake(i.projectId!)) return {kind: 'session', reason: 'no-project', key: sessionKey('no-project')};
   const c = i.collabScope;
   if (!c || blank(c.workspaceId) || blank(c.storylineId) || blank(c.branchId)) return {kind: 'session', reason: 'no-instance', key: sessionKey('no-instance')};
+  // [HERMIA-FE-20261025 U1fix P2] a collaboration scope bound to another project is never mixed into this project's scope.
+  if (!blank(c.projectId) && c.projectId !== i.projectId) return {kind: 'session', reason: 'scope-mismatch', key: sessionKey('scope-mismatch')};
   const scope: LayoutScope = {userId: i.actorId!, projectId: i.projectId!, projectInstanceId: `${c.workspaceId}/${c.storylineId}/${c.branchId}`};
   return {kind: 'real', scope, key: `real\u0000${scope.userId}\u0000${scope.projectId}\u0000${scope.projectInstanceId}\u0000${client}`};
 }
 
-export const IDENTITY_TEXT: Record<WorkspaceIdentity['kind'] | 'no-actor' | 'no-project' | 'no-instance', string> = {
+export const IDENTITY_TEXT: Record<WorkspaceIdentity['kind'] | 'no-actor' | 'no-project' | 'no-instance' | 'scope-mismatch', string> = {
   real: '视图与布局会按当前账号和项目保存在本机浏览器（不跨设备同步）。',
   session: '仅本次会话：未保存到本机。',
   'no-actor': '仅本次会话：尚未登录协作账号，视图与布局不会保存。',
   'no-project': '仅本次会话：还没有选择项目。',
   'no-instance': '仅本次会话：项目范围不完整（缺少工作区或分支）。',
+  'scope-mismatch': '仅本次会话：当前协作范围属于另一个项目，切回该项目或重新选择协作范围后才会保存。',
 };
 
 let EPOCH = 0;
@@ -73,6 +76,8 @@ export class LeaseHolder {
     this.cur = createScopeLease(key);
     return this.cur;
   }
+  /** [HERMIA-FE-20261025 U1fix] true while a current (non-retired) lease is held. */
+  isLive() { return !!this.cur && this.cur.isCurrent(); }
   /** Forced invalidation (permission revoked, logout): retires without creating a successor. */
   invalidate() { this.cur?.retire(); this.cur = null; }
 }

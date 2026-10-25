@@ -36,9 +36,11 @@ export function registerViewActions(reg: ActionRegistry, table: ShortcutTable, h
   const str = (v: unknown, what: string) => { if (typeof v !== 'string' || !v) throw new Error(`缺少${what}`); return v; };
   const commit = (r: {ok: true; value: import('../state/viewPreferences').StoredWorkset[]} | {ok: false; reason: string}, done: string) => {
     if (!r.ok) throw new Error(r.reason);
-    if (!host.prefs().setWorksets(r.value)) throw new Error('项目已经切换，这次修改没有保存。');
-    const st = host.prefs().status();
-    host.onChange(st.reason === 'write-failed' ? `${done}，但没能写入本机存储，只在本次会话有效。` : st.mode === 'session' ? `${done}（仅本次会话有效）。` : `${done}。`);
+    // [HERMIA-FE-20261025 U1fix] MUST-FIX 2: report the real outcome (was: every false ⇒ "项目已经切换").
+    const out = host.prefs().setWorksets(r.value);
+    if (out === 'not-current') throw new Error('项目已经切换，这次修改已丢弃，没有保存。');
+    host.onChange(out === 'write-failed' ? `${done}，但没能写入本机存储（可能已满）：本次会话里仍可使用，关闭页面后不保留。可清理浏览器存储后再保存一次。`
+      : out === 'session' ? `${done}（仅本次会话有效，关闭页面后不保留）。` : `${done}。`);
   };
   const focusRun = (f: (t: PanelFocusTracker) => {ok: true; id: string} | {ok: false; reason: string}) => async () => {
     const t = host.focus(); if (!t) throw new Error(LAYOUT_NOT_READY);

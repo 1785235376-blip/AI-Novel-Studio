@@ -39,6 +39,7 @@ import {
   SingleFlight,
 } from "./collaborationGuards";
 import { ConflictDialog } from "./ConflictDialog";
+import { UnifiedWorkspacePreviewHost } from "./workspace/state/identityBootstrap"; // [HERMIA-FE-20261025 U1fix]
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, type StudioModule, SettingsPathGateway } from "./ui/AppShell";
@@ -181,7 +182,8 @@ type GenerationOrigin = { namespace: string; chapterId: string; novelId: string;
 type GenerationObservation = GenerationOrigin & { active: boolean; sources: Set<EventSource> };
 export default function App() {
   // [HERMIA-FE-20261023 M1] opt-in only (?uw=1). Value is fixed for the page load, so hook order stays stable.
-  if (unifiedWorkspacePreviewEnabled()) return <UnifiedWorkspacePreview />;
+  // [HERMIA-FE-20261025 U1fix] MUST-FIX 3: the preview host runs the existing collaboration bootstrap (real actor) first.
+  if (unifiedWorkspacePreviewEnabled()) return <UnifiedWorkspacePreviewHost />;
   return <LegacyApp />;
 }
 

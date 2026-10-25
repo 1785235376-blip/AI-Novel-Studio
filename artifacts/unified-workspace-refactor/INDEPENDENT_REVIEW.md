@@ -904,3 +904,20 @@ logs/m4s1-browser.json 的 15 种配置和我的结果一致：无横向溢出�
 - M2 脏状态矩阵、M4 都和上一轮一致，通过。焦点环已是 2px inset。
 
 证据：/workspace/hr/vera-compare/vw-fix1-76f868b3/。本节未提交。
+
+## [VERA-FE] U1 M0+M1+M2 独立复核（U5；8996f553，契约 1cde722b，基线 a167022b，2026-10-25）
+
+**结论：MUST-FIX（3 项）**。证据：`/workspace/hr/vera-compare/u1-8996f553/`。
+
+- 工程：npm ci / tsc / build 均 0；workspace/workbench/rebuild/taskcenter 556/556；workspace/state 48/48；u1.identity 16/16 ×3。
+- 全量三次（Node 22.14）：调整后 293/293/293（基线 persistent 298），两条规则（三取最佳 ≤297、允许一次重跑 ≤297）均通过；无新增持续失败。receipt companion 三次全部通过 → 偶发。
+- 浏览器（vite 4399，拦截非 GET=0，pageerror=0；1366/1440/1920）：会话模式身份文案正确、不写任何 `poemseed.workspace*` 键（含 local::preview），重载回默认；注入真实身份后 ABA 正确（B 默认、回 A 恢复视口与停靠）；布局损坏 → 默认布局 + `::backup`、原字节保留；viewprefs 损坏字节保留；配额/存储 getter 抛错不崩溃并降级为会话。axe 仅 color-contrast:3（旧问题）。
+
+MUST-FIX：
+1. **同 key 丢失更新**：`prefs` 与 `layoutPrefs` 两个适配器在同一真实 scope 各自整体写同一 key。复现：真实身份下保存工作集「工作W1」→ 平移画布 → 存储变为 `{"viewports":{"image":{"x":-160,"y":70}},"worksets":[]}`，工作集被抹掉；冷重开后工作集列表为空（u1.json S2.docAfterPan / cold_afterInject）。
+2. **会话模式无法保存工作集且文案错误**：`?uw=1` 默认（无身份）下点保存 →「项目已经切换，这次修改没有保存。」，列表为空（s1probe.log）；配额失败时同样报此错误文案但实际保留在内存（S5）。根因 `setWorksets` 在会话/写失败时返回 false，`viewActions.commit` 统一抛"项目已经切换"。
+3. **冷重开视口不恢复 / 真实身份在预览中不可达**：`?uw=1` 下 App 直接返回 UnifiedWorkspacePreview，bootstrap（setCollaboration）只在 LegacyApp 中运行，actor 永远为空，真实身份路径在真实页面不可达（评审请求也承认仅 mock/jsdom）。即便注入身份，已存 viewport (-160,70) 在冷重开后仍显示默认 (40,40)（身份晚到不重新应用 initialViewport），停靠位置可恢复。
+
+变异：租约不退役(4 失败)、占位 actor(1)、缺 instance(1)、拒绝 v0(1)、损坏不保护(1) 均被杀死；**存活**：future-version 被接受、setWorksets 去掉 isCurrent 检查 → 需补测试（P2）。
+
+已知缺口判定：删除后同名重建/不复活依赖服务端新 id，无 incarnation、项目消失无主动清理 —— 任务书要求"删除后同名重建、不复活"，当前仅通过不同 id 单测覆盖；如服务端保证新 id 则可接受为 P2，但需在文档中明确依赖并加一条"同 id 重建"行为说明，非本轮阻断。其他 P2：resetAll 未接 UI；身份 scope 在 collabScope.projectId≠novelId 时混拼；真实模式工作集按项目而会话模式按布局。
