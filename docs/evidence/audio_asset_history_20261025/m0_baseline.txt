@@ -1,0 +1,33 @@
+M0 baseline observation — 2026-10-25
+Remote baseline ref:
+refs/heads/work/hermia-backend-contracts-20261025
+11d8615cccb688462ff814d025b339e1b6eb0efe
+Git commit tree:
+353b8669da72659da2ead4d9b34ac255504c077a
+Local fresh clone rev-parse HEAD HEAD^{tree} matched both.
+git status --porcelain=v1 after checkout: empty
+AGENTS.md read; only additional repository skill is frontend-specific and is outside scope.
+Required docs/studio_workspace_identity_audio_history_contract.md read at fixed commit.
+
+Repository owner write call sites at fixed baseline:
+app/services/asset_library_service.py:244 _write_meta declaration
+:577 create
+:934 review_text_result (non-audio)
+:1249 update_metadata
+:1283 promote_owned
+:1330 delete
+:1343 restore (undelete)
+No external _write_meta caller found by repository-wide git grep.
+Binary creation: original create temporary write/fsync/replace before _write_meta.
+No original supported in-place binary replacement path.
+
+Environment:
+Primary exec_command failed before process creation:
+helper_unknown_error: setup refresh had errors
+Supported Node execution entry available: Git 2.55.0.windows.2, Python 3.11.9, py launcher Python 3.12.10.
+Fresh GitHub clone and fixed-commit checkout succeeded through the supported Node execution entry.
+cloud-environment runtime skill read; environment_status tool is not exposed.
+Runtime /etc/codex/network-policy.json: ENOENT. No readiness/policy guarantee inferred.
+rg: ENOENT; git grep used.
+No old checkout, old task data or user media read.
+This evidence is an observation, not a passed implementation/test claim.
