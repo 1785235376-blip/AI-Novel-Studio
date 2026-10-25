@@ -22,6 +22,7 @@ import {
   getCollaborationContext,
 } from "./api";
 import { useStudio } from "./store";
+import { useLastChapter } from "./workspace/defaultui/useLastChapter";
 import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection, readLocalStudioSelection } from "./workspaceSelection";
 import { ChapterEditor, proseDocument } from "./Editor";
 import {
@@ -690,9 +691,8 @@ function LegacyApp() {
       if (novels.data[0]) s.setNovel(novels.data[0].id);
     } else setProjectRecoveryNotice('上次项目选择损坏或浏览器存储不可用。请选择作品；正文和服务端工作现场未改变。');
   }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, independentStudios, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
-  useEffect(() => {
-    if (!s.chapterId && chapters.data?.[0]) s.setChapter(chapters.data[0].id);
-  }, [chapters.data]);
+  // [HERMIA-FE-20261025 UWPORT-S1] reopen returns to the last chapter (real identity only; else 仅本次会话); missing chapter ⇒ first.
+  useLastChapter({ actorId: s.actor?.id, scope: s.scope, novelId: s.novelId, chapterId: s.chapterId, rows: chapters.data, setChapter: s.setChapter });
   // BACKPORT CANDIDATE (U02): hydrate before exposing an editable surface, and
   // prefer the current draft even when its rich-text document is absent.
   useLayoutEffect(() => { setComposing(false); }, [editorIdentity, scopeEpoch]);
