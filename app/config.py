@@ -24,6 +24,8 @@ class Settings:
     storage_backend: str = os.getenv("STORAGE_BACKEND", "file").strip().lower()
     database_url: str = os.getenv("DATABASE_URL", "")
     enable_lore_context: bool = _bool("ENABLE_LORE_CONTEXT", False)
+    # Admission-only opt-in; existing bound records keep their immutable fences.
+    enable_experimental_file_keyed_generation: bool = _bool("ENABLE_EXPERIMENTAL_FILE_KEYED_GENERATION", False)
     enable_narrative_context: bool = _bool("ENABLE_NARRATIVE_CONTEXT", False)
     narrative_context_token_budget: int = int(os.getenv("NARRATIVE_CONTEXT_TOKEN_BUDGET", "800"))
     context_policy_token_budget: int = int(os.getenv("CONTEXT_POLICY_TOKEN_BUDGET", "2400"))

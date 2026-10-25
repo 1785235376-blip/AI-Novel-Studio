@@ -1,0 +1,1 @@
+../studio-backend-20261025/.venv/bin/python .runtime/file-keyed-activation/local_route_protocol.py > .runtime/file-keyed-activation/local-route-protocol-final.stdout 2>&1

@@ -1,0 +1,268 @@
+FF....FFFF.F..FFFFF                                                      [100%]
+=================================== FAILURES ===================================
+_______ test_real_keyed_mock_candidate_to_http_manual_adoption[continue] _______
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+        result, job = queued(f, operation=operation)
+        initial = f.persistence.get(job.id)
+>       assert initial['status'] == 'QUEUED' and FIELD in initial
+E       AssertionError: assert ('QUEUED' == 'QUEUED'
+E         
+E           QUEUED and 'ordinary_project_binding' in {'actor_id': None, 'base_chapter_version': 1, 'chapter_id': 'keyed-file-book:1', 'client_id': None, ...})
+
+tests/test_file_keyed_activation.py:160: AssertionError
+_______ test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite] ________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'rewrite'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+        result, job = queued(f, operation=operation)
+        initial = f.persistence.get(job.id)
+>       assert initial['status'] == 'QUEUED' and FIELD in initial
+E       AssertionError: assert ('QUEUED' == 'QUEUED'
+E         
+E           QUEUED and 'ordinary_project_binding' in {'actor_id': None, 'base_chapter_version': 1, 'chapter_id': 'keyed-file-book:1', 'client_id': None, ...})
+
+tests/test_file_keyed_activation.py:160: AssertionError
+_______ test_eligible_bad_composition_refuses_before_reservation[memory] _______
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'memory'
+
+    @pytest.mark.parametrize('port', ['memory', 'canon', 'contexts', 'generation'])
+    def test_eligible_bad_composition_refuses_before_reservation(keyed, port):
+        f=keyed
+        other = create_repository_bundle(Settings(storage_backend='file', novel_data=f.root/'other'), f.root/'other')
+        if port=='memory': f.manager.memory_extractor = SimpleNamespace(enqueue=lambda *a: None)
+        if port=='canon': f.manager.canon = CanonService(other.canon)
+        if port=='contexts': f.manager.contexts = ContextService(other.novels, other.chapters, LoreService(other.lore))
+        if port=='generation': f.manager.persistence = GenerationService(other.generations)
+        response = post(f)
+>       assert response.status_code >= 400, response.text
+E       AssertionError: {"job_id":"bc20375f-13e7-447b-8610-b867e279c3ea","status":"QUEUED","events_url":"/api/generation/bc20375f-13e7-447b-8610-b867e279c3ea/events","base_chapter_version":1}
+E       assert 202 >= 400
+E        +  where 202 = <Response [202 Accepted]>.status_code
+
+tests/test_file_keyed_activation.py:218: AssertionError
+_______ test_eligible_bad_composition_refuses_before_reservation[canon] ________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'canon'
+
+    @pytest.mark.parametrize('port', ['memory', 'canon', 'contexts', 'generation'])
+    def test_eligible_bad_composition_refuses_before_reservation(keyed, port):
+        f=keyed
+        other = create_repository_bundle(Settings(storage_backend='file', novel_data=f.root/'other'), f.root/'other')
+        if port=='memory': f.manager.memory_extractor = SimpleNamespace(enqueue=lambda *a: None)
+        if port=='canon': f.manager.canon = CanonService(other.canon)
+        if port=='contexts': f.manager.contexts = ContextService(other.novels, other.chapters, LoreService(other.lore))
+        if port=='generation': f.manager.persistence = GenerationService(other.generations)
+        response = post(f)
+>       assert response.status_code >= 400, response.text
+E       AssertionError: {"job_id":"e7964ca9-2aaa-4afe-9401-087dbf0d25e2","status":"QUEUED","events_url":"/api/generation/e7964ca9-2aaa-4afe-9401-087dbf0d25e2/events","base_chapter_version":1}
+E       assert 202 >= 400
+E        +  where 202 = <Response [202 Accepted]>.status_code
+
+tests/test_file_keyed_activation.py:218: AssertionError
+______ test_eligible_bad_composition_refuses_before_reservation[contexts] ______
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'contexts'
+
+    @pytest.mark.parametrize('port', ['memory', 'canon', 'contexts', 'generation'])
+    def test_eligible_bad_composition_refuses_before_reservation(keyed, port):
+        f=keyed
+        other = create_repository_bundle(Settings(storage_backend='file', novel_data=f.root/'other'), f.root/'other')
+        if port=='memory': f.manager.memory_extractor = SimpleNamespace(enqueue=lambda *a: None)
+        if port=='canon': f.manager.canon = CanonService(other.canon)
+        if port=='contexts': f.manager.contexts = ContextService(other.novels, other.chapters, LoreService(other.lore))
+        if port=='generation': f.manager.persistence = GenerationService(other.generations)
+        response = post(f)
+>       assert response.status_code >= 400, response.text
+E       AssertionError: {"job_id":"e9a0c764-d06e-4a4f-bb78-dd86f15b4510","status":"QUEUED","events_url":"/api/generation/e9a0c764-d06e-4a4f-bb78-dd86f15b4510/events","base_chapter_version":1}
+E       assert 202 >= 400
+E        +  where 202 = <Response [202 Accepted]>.status_code
+
+tests/test_file_keyed_activation.py:218: AssertionError
+_____ test_eligible_bad_composition_refuses_before_reservation[generation] _____
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'generation'
+
+    @pytest.mark.parametrize('port', ['memory', 'canon', 'contexts', 'generation'])
+    def test_eligible_bad_composition_refuses_before_reservation(keyed, port):
+        f=keyed
+        other = create_repository_bundle(Settings(storage_backend='file', novel_data=f.root/'other'), f.root/'other')
+        if port=='memory': f.manager.memory_extractor = SimpleNamespace(enqueue=lambda *a: None)
+        if port=='canon': f.manager.canon = CanonService(other.canon)
+        if port=='contexts': f.manager.contexts = ContextService(other.novels, other.chapters, LoreService(other.lore))
+        if port=='generation': f.manager.persistence = GenerationService(other.generations)
+        response = post(f)
+>       assert response.status_code >= 400, response.text
+E       AssertionError: {"job_id":"7025e1e1-e594-4485-82c9-685b09990994","status":"QUEUED","events_url":"/api/generation/7025e1e1-e594-4485-82c9-685b09990994/events","base_chapter_version":1}
+E       assert 202 >= 400
+E        +  where 202 = <Response [202 Accepted]>.status_code
+
+tests/test_file_keyed_activation.py:218: AssertionError
+____ test_pre_dispatch_source_or_owner_change_refuses_without_model[digest] ____
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+        _, job = queued(f)
+        if change=='version': f.chapters.save(job.chapter_id, {'content':'NEW_SOURCE','version':1,'source':'MANUAL'})
+        elif change=='archive': f.chapters.archive(job.chapter_id, 1)
+        elif change=='owner': replace_owner(f)
+        elif change=='marker': (f.root/'novels'/job.novel_id/'creative_project_v2.json').unlink()
+        else:
+            chapter_path = f.root/'novels'/job.novel_id/'chapters'
+            candidates = [p for p in chapter_path.rglob('*.md') if 'ORIGINAL_SOURCE' in p.read_text()]
+            assert candidates
+            candidates[0].write_text(candidates[0].read_text().replace('ORIGINAL_SOURCE','CHANGED_DIGEST'))
+        before=files(f)
+        f.release.set(); assert f.finished.wait(10)
+>       assert f.counts['provider']==0 and job.status != 'COMPLETED'
+E       assert (1 == 0)
+
+tests/test_file_keyed_activation.py:238: AssertionError
+____ test_pre_dispatch_source_or_owner_change_refuses_without_model[owner] _____
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'owner'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+        _, job = queued(f)
+        if change=='version': f.chapters.save(job.chapter_id, {'content':'NEW_SOURCE','version':1,'source':'MANUAL'})
+        elif change=='archive': f.chapters.archive(job.chapter_id, 1)
+        elif change=='owner': replace_owner(f)
+        elif change=='marker': (f.root/'novels'/job.novel_id/'creative_project_v2.json').unlink()
+        else:
+            chapter_path = f.root/'novels'/job.novel_id/'chapters'
+            candidates = [p for p in chapter_path.rglob('*.md') if 'ORIGINAL_SOURCE' in p.read_text()]
+            assert candidates
+            candidates[0].write_text(candidates[0].read_text().replace('ORIGINAL_SOURCE','CHANGED_DIGEST'))
+        before=files(f)
+        f.release.set(); assert f.finished.wait(10)
+        assert f.counts['provider']==0 and job.status != 'COMPLETED'
+>       assert files(f)==before
+E       assert {'canon.json'...': b'[]', ...} == {'canon.json'...': b'[]', ...}
+E         
+E         Omitting 17 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'documents/chapter-0001.json': b'{\n  "chapter_id": "keyed-file-book:1",\n '
+E                                         b' "version": 1,\n  "document": {\n    "type'
+E                                         b'": "doc",\n    "content": [\n      {\n     '
+E                                         b'   "type": "heading",\n        "attrs": {'...
+E         
+E         ...Full output truncated (11 lines hidden), use '-vv' to show
+
+tests/test_file_keyed_activation.py:239: AssertionError
+__________ test_deletion_during_mock_wait_does_not_write_replacement ___________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_deletion_during_mock_wait_does_not_write_replacement(keyed):
+        f=keyed
+        f.provider_release.clear()
+        _, job=queued(f)
+        f.release.set(); assert f.provider_entered.wait(5)
+        replace_owner(f)
+        before=files(f)
+        f.provider_release.set(); assert f.finished.wait(10)
+>       assert files(f)==before and job.status != 'COMPLETED'
+E       assert ({'canon.json'...': b'[]', ...} == {'canon.json'...': b'[]', ...}
+E         
+E         Omitting 17 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'documents/chapter-0001.json': b'{\n  "chapter_id": "keyed-file-book:1",\n '
+E                                         b' "version": 1,\n  "document": {\n    "type'
+E                                         b'": "doc",\n    "content": [\n      {\n     '
+E                                         b'   "type": "heading",\n        "attrs": {'...
+E         
+E         ...Full output truncated (11 lines hidden), use '-vv' to show)
+
+tests/test_file_keyed_activation.py:250: AssertionError
+______________ test_cold_queued_record_never_restarts_or_upgrades ______________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_queued_record_never_restarts_or_upgrades(keyed):
+        f=keyed
+        _, job=queued(f)
+>       binding=deepcopy(f.persistence.get(job.id)[FIELD])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'ordinary_project_binding'
+
+tests/test_file_keyed_activation.py:257: KeyError
+______________ test_bound_retry_cancel_and_staging_remain_closed _______________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_bound_retry_cancel_and_staging_remain_closed(keyed):
+        f=keyed
+        _, job=queued(f)
+        for endpoint in ('retry','cancel'):
+            response=f.client.post(f'/api/generation/{job.id}/{endpoint}')
+>           assert response.status_code==409, response.text
+E           AssertionError: {"id":"029d0ad8-f7eb-404a-b797-e0a5b2eaa4f2","operation":"continue","novel_id":"keyed-file-book","chapter_id":"keyed-file-book:1","instruction":"Continue","profile":"LOCAL_ONLY","source":"","requested_provider":"mock","requested_model":"mock-writer","style":"","status":"CANCELLED","output":"","error":null,"error_code":null,"provider":null,"model":null,"issues":[],"latency_ms":0,"base_chapter_version":1,"variant_group_id":null,"variant_index":null,"actor_id":null,"session_id":null,"client_id":null,"workspace_id":null,"scope":null,"scope_type":null,"scope_id":null,"correlation_id":null,"context_snapshot_id":null,"created_at":"2026-10-25T11:04:07.544103+00:00","updated_at":"2026-10-25T11:04:07.569624+00:00","creation_records":[],"usage":null,"usage_status":"UNKNOWN","execution_mode":null,"provider_reference_id":null,"route_decisions":[]}
+E           assert 200 == 409
+E            +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_file_keyed_activation.py:273: AssertionError
+__________ test_duplicate_and_copied_start_capability_cannot_dispatch __________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_duplicate_and_copied_start_capability_cannot_dispatch(keyed):
+        f=keyed
+        _, job=queued(f)
+        with pytest.raises(Exception): f.manager.start_prepared(job)
+        clone=copy(job)
+        with pytest.raises(Exception): f.manager.start_prepared(clone)
+>       with pytest.raises(Exception): f.original_run(clone)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'Exception'>
+
+tests/test_file_keyed_activation.py:284: Failed
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_file_keyed_activation.py::test_real_keyed_mock_candidate_to_http_manual_adoption[continue]
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_file_keyed_activation.py::test_real_keyed_mock_candidate_to_http_manual_adoption[continue]
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tests-initial.xml -
+=========================== short test summary info ============================
+FAILED tests/test_file_keyed_activation.py::test_real_keyed_mock_candidate_to_http_manual_adoption[continue]
+FAILED tests/test_file_keyed_activation.py::test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]
+FAILED tests/test_file_keyed_activation.py::test_eligible_bad_composition_refuses_before_reservation[memory]
+FAILED tests/test_file_keyed_activation.py::test_eligible_bad_composition_refuses_before_reservation[canon]
+FAILED tests/test_file_keyed_activation.py::test_eligible_bad_composition_refuses_before_reservation[contexts]
+FAILED tests/test_file_keyed_activation.py::test_eligible_bad_composition_refuses_before_reservation[generation]
+FAILED tests/test_file_keyed_activation.py::test_pre_dispatch_source_or_owner_change_refuses_without_model[digest]
+FAILED tests/test_file_keyed_activation.py::test_pre_dispatch_source_or_owner_change_refuses_without_model[owner]
+FAILED tests/test_file_keyed_activation.py::test_deletion_during_mock_wait_does_not_write_replacement
+FAILED tests/test_file_keyed_activation.py::test_cold_queued_record_never_restarts_or_upgrades
+FAILED tests/test_file_keyed_activation.py::test_bound_retry_cancel_and_staging_remain_closed
+FAILED tests/test_file_keyed_activation.py::test_duplicate_and_copied_start_capability_cannot_dispatch
+12 failed, 7 passed, 3 warnings in 7.47s

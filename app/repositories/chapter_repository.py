@@ -46,6 +46,9 @@ class ChapterRepository:
     @guard_project("cid", chapter=True)
     def get(self,cid):
         chapter=self.backend.chapter(cid); root,num,path=self._paths(cid)
+        from ..services.ordinary_writer_ports import current_writer_ports
+        expected_writer = current_writer_ports()
+        if expected_writer is not None: expected_writer.check_owner(self)
         if path.exists(): package=read_json(path,{})
         else: package={"chapter_id":cid,"version":1,"document":markdown_to_document(chapter["content"]),"updated_at":datetime.now(timezone.utc).isoformat(),"source":"MIGRATED"}; path.parent.mkdir(parents=True,exist_ok=True);atomic_write(path,json.dumps(package,ensure_ascii=False,indent=2))
         if package.get("chapter_id") != chapter["id"]:
@@ -53,9 +56,13 @@ class ChapterRepository:
         return {**chapter,"content":document_to_markdown(package["document"]),"version":package["version"],"document":package["document"],"updated_at":package.get("updated_at")}
     @committed_change("CHAPTER")
     @guard_project("cid", chapter=True)
-    def save(self,cid,document,expected_version,source="USER",operator="local-user",create_revision=True):
+    def save(self,cid,document,expected_version,source="USER",operator="local-user",create_revision=True,*,_expected_source_digest=None):
         root,num,path=self._paths(cid)
         current=self.get(cid)
+        if _expected_source_digest is not None:
+            from ..author_request import chapter_digest
+            if chapter_digest(current) != _expected_source_digest:
+                raise ValueError("GENERATION_WRITER_SOURCE_CHANGED")
         if expected_version!=current["version"]:
             raise VersionConflict(current,resource_id=cid,expected_version=expected_version)
         from ..revision_constraints import preserve_revision_constraints

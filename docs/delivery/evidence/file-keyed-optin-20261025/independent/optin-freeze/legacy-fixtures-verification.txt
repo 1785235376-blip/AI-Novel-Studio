@@ -1,0 +1,4 @@
+tests/test_generation_idempotency_contracts.py matches canonical18c8744
+tests/test_generation_worker_authority.py matches canonical18c8744
+tests/test_generation_admission_receipts.py matches canonical18c8744
+tests/test_generation_variants_phase3.py matches canonical18c8744

@@ -1,0 +1,1 @@
+pytest exit=1; source hash diff exit=0

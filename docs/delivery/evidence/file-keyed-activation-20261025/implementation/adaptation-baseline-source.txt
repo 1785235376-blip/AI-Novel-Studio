@@ -1,0 +1,4 @@
+e7f2eaec2a5010a98cad6aa1d48df8e0ffc3b459
+dcc10742518d48e4149fafc272722dae91049736aa38012658e34b1fb4aef31d  ../studio-backend-20261025/tests/test_phase7_adaptation.py
+2ac6124cffab0d6cdcae0d851b61aeaf61c83d97e5f99d34021e7db0b8225242  ../studio-backend-20261025/app/services/adaptation_service.py
+9397646828f17bf795a1beeac2c08b28d1d6a8a99224f04fff02a17d0d68ac94  .runtime/file-keyed-activation/run_baseline_tests.py

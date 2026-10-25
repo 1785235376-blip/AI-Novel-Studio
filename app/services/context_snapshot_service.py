@@ -7,12 +7,47 @@ from sqlalchemy import text
 
 from ..lore.context_intelligence import ContextSnapshot, canonical_hash
 from ..storage import atomic_write
+from functools import wraps
+from .ordinary_writer_ports import current_writer_ports, require_writer_ports
+
+
+def _require_writer_snapshot_state(expected):
+    from ..repositories.generation_repository import GenerationRepository
+    from .generation_project_binding import ordinary_job_binding
+    if expected.binding.get('schema_version') != 2:
+        raise ValueError('GENERATION_WRITER_SNAPSHOT_BINDING_REQUIRED')
+    row = GenerationRepository.get(expected.pins.generation_repository, expected.binding['job_id'])
+    if ordinary_job_binding(row) != dict(expected.binding) or row.get('status') != 'GENERATING':
+        raise ValueError('GENERATION_WRITER_SNAPSHOT_STATE_CHANGED')
+
+
+def _writer_snapshot_port(method):
+    @wraps(method)
+    def call(owner, *args, **kwargs):
+        expected = kwargs.pop("_file_writer", None)
+        if expected is None:
+            expected = current_writer_ports()
+        if expected is None:
+            return method(owner, *args, **kwargs)
+        expected = require_writer_ports(expected, owner.repository)
+        with expected.guard(owner.repository):
+            _require_writer_snapshot_state(expected)
+            chapter_id = args[0] if args else kwargs.get("chapter_id")
+            version = args[1] if len(args) > 1 else kwargs.get("chapter_version")
+            if (chapter_id != expected.binding["chapter_id"]
+                    or ("base_chapter_version" in expected.binding
+                        and version != expected.binding["base_chapter_version"])):
+                raise ValueError("GENERATION_WRITER_SNAPSHOT_SOURCE_CHANGED")
+            return method(owner, *args, **kwargs)
+    return call
+
 
 
 class ContextSnapshotService:
     def __init__(self, lore_repository):
         self.repository = lore_repository
 
+    @_writer_snapshot_port
     def create(
         self,
         chapter_id: str,
@@ -68,6 +103,11 @@ class ContextSnapshotService:
                                          or (project_root / "chapter_identity.json").exists()):
                 resolver(chapter_id)
             root: Path = project_root / "lore" / "context_snapshots"
+            expected = current_writer_ports()
+            if expected is not None:
+                expected.check(self.repository)
+                expected.source()
+                _require_writer_snapshot_state(expected)
             root.mkdir(parents=True, exist_ok=True)
             for path in root.glob("*.json"):
                 existing = json.loads(path.read_text(encoding="utf-8"))
@@ -75,6 +115,10 @@ class ContextSnapshotService:
                     "chapter_version_id", "context_pack_hash", "prompt_version", "model"
                 )) and existing.get("generation_id") == generation_id:
                     return {key: existing[key] for key in snapshot}
+            if expected is not None:
+                expected.check(self.repository)
+                expected.source()
+                _require_writer_snapshot_state(expected)
             atomic_write(root / f"{snapshot['id']}.json", json.dumps({**snapshot, "context": context}, ensure_ascii=False, indent=2))
             return snapshot
         database = getattr(self.repository, "database", None)

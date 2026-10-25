@@ -1,0 +1,108 @@
+............................................F........................... [ 67%]
+..........................F.......                                       [100%]
+=================================== FAILURES ===================================
+__ test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[_run] __
+
+bound = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-local-bound-review/tmp/p...y_finished=<threading.Event at 0x7fee866e4d40: unset>, reopen_bound=<function bound.<locals>.reopen at 0x7fee86832fc0>)
+operation = '_run'
+
+    @pytest.mark.parametrize('operation', ['cancel','start_prepared','_run','_cancel_execution'])
+    def test_other_bound_mutation_gates_stay_closed_even_with_composed_ports(bound, operation):
+        manager=bound.review_manager; job=manager.get(bound.row['id'])
+        before=bound.bundle.generations._job_path(job.id).read_bytes()
+        with pytest.raises(HTTPException) as exc:
+>           getattr(manager,operation)(job.id if operation=='cancel' else job)
+
+tests/test_file_local_bound_review.py:318: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_binding.py:100: in run
+    return original_run(manager, job)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/jobs.py:1098: in _run
+    return run(self, job)
+           ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manager = <app.jobs.JobManager object at 0x7fee866e4680>
+job = Job(id='9590c37c-372c-4e29-b12a-51a51b7a19c8', operation='continue', novel_id='passive-manager-book', chapter_id='pass...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+
+    def run(manager, job):
+        capability = getattr(job, '_ordinary_execution_capability', None)
+        # Only the issued worker may consume its claim or publish an error. A
+        # direct/forged caller must fail without mutating the queued original job.
+        if (type(capability) is not _FileWriterCapability or capability._seal is not _SEAL
+                or capability._self[0] is not capability or capability.manager is not manager
+                or capability.job is not job or not capability.started
+                or current_thread() is not capability.worker):
+>           raise ValueError('GENERATION_WRITER_WORKER_REQUIRED')
+E           ValueError: GENERATION_WRITER_WORKER_REQUIRED
+
+app/services/file_generation_execution.py:329: ValueError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_run] _
+
+operation = '_run'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+        manager = _manager(database)
+        job = manager.jobs[item["id"]]
+        original = job.record()
+        stored = _saved(database, item)
+        database.sessions.clear()
+    
+        with pytest.raises(HTTPException) as error:
+            if operation in {"cancel", "accept", "reject"}:
+                getattr(manager, operation)(job.id)
+            elif operation == "_accept_claimed":
+                manager._accept_claimed(job, {}, 1)
+            elif operation == "_accept_branch_claimed":
+                manager._accept_branch_claimed(job, {}, 1, None, None, None)
+            else:
+>               getattr(manager, operation)(job)
+
+tests/test_passive_generation_manager_postgres.py:337: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/jobs.py:1098: in _run
+    return run(self, job)
+           ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manager = <app.jobs.JobManager object at 0x7fee84d98260>
+job = Job(id='5681cf48-88f4-43d2-8299-15872cf13020', operation='continue', novel_id='ordinary-project', chapter_id=None, ins...ctor_image_binding=None, director_image_terminal_v3=None, research_ocr_binding=None, research_ocr_output_evidence=None)
+
+    def run(manager, job):
+        capability = getattr(job, '_ordinary_execution_capability', None)
+        # Only the issued worker may consume its claim or publish an error. A
+        # direct/forged caller must fail without mutating the queued original job.
+        if (type(capability) is not _FileWriterCapability or capability._seal is not _SEAL
+                or capability._self[0] is not capability or capability.manager is not manager
+                or capability.job is not job or not capability.started
+                or current_thread() is not capability.worker):
+>           raise ValueError('GENERATION_WRITER_WORKER_REQUIRED')
+E           ValueError: GENERATION_WRITER_WORKER_REQUIRED
+
+app/services/file_generation_execution.py:329: ValueError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/writer-ports/integrated-ports.xml -
+=========================== short test summary info ============================
+FAILED tests/test_file_local_bound_review.py::test_other_bound_mutation_gates_stay_closed_even_with_composed_ports[_run]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_run]
+2 failed, 104 passed, 3 warnings in 12.65s

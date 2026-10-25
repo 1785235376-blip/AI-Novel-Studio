@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="29" time="27.400" timestamp="2026-10-25T20:07:19.978027+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="6.631"><failure message="AssertionError: Internal Server Error&#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+        result, job = queued(f, operation=operation)
+        initial = f.persistence.get(job.id)
+        assert initial['status'] == 'QUEUED' and FIELD in initial
+        binding = deepcopy(initial[FIELD])
+        assert binding['project_incarnation'] == f.incarnation
+        assert binding['schema_version'] == 2
+        assert binding['base_chapter_version'] == f.chapter['version']
+        assert binding['base_chapter_digest'] == chapter_digest(f.chapter)
+        assert FIELD not in job.public() and 'base_chapter_digest' not in job.public()
+        row = finish(f, job)
+        assert row[FIELD] == binding and row['output'] == DRAFT
+        assert f.counts['adapter'] == f.counts['provider'] == 1
+        snapshots = list((f.root/'novels'/job.novel_id/'lore/context_snapshots').glob('*.json'))
+        assert snapshots, 'deferred writer snapshot must not be skipped'
+        accepted_cid = job.novel_id+':2' if operation=='continue' else job.chapter_id
+        accepted_version = 1 if operation=='continue' else 2
+        f.memory.runtime.provider.text = json.dumps({'proposals':[{'proposal_type':'EVENT',
+            'payload':{'description':DRAFT}, 'confidence':.9,
+            'evidence':[{'chapter_id':accepted_cid,'chapter_version':accepted_version,'excerpt':DRAFT,
+                         'locator':{'kind':'DOCUMENT_RANGE','from':0,'to':len(DRAFT)}}]}]})
+        response = f.client.post(f'/api/generation/{job.id}/accept', json={'expected_version':1})
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: Internal Server Error
+E       assert 500 == 200
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests/test_file_keyed_activation.py:180: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]" time="1.565" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[None-continue-LOCAL_ONLY]" time="0.095" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[polish-key-polish-LOCAL_ONLY]" time="0.111" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[brainstorm-key-brainstorm-LOCAL_ONLY]" time="0.117" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[hybrid-key-continue-HYBRID]" time="0.186" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[memory]" time="0.065" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[canon]" time="0.051" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[contexts]" time="0.056" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[generation]" time="0.049" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[version]" time="0.230" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[digest]" time="1.191"><failure message="assert (1 == 0)">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+        _, job = queued(f)
+        if change=='version': f.chapters.save(job.chapter_id, {'content':'NEW_SOURCE','version':1,'source':'MANUAL'})
+        elif change=='archive': f.chapters.archive(job.chapter_id, 1)
+        elif change=='owner': replace_owner(f)
+        elif change=='marker': (f.root/'novels'/job.novel_id/'creative_project_v2.json').unlink()
+        else:
+            chapter_path = f.root/'novels'/job.novel_id/'chapters'
+            candidates = [p for p in chapter_path.rglob('*.md') if 'ORIGINAL_SOURCE' in p.read_text()]
+            assert candidates
+            candidates[0].write_text(candidates[0].read_text().replace('ORIGINAL_SOURCE','CHANGED_DIGEST'))
+        before=files(f)
+        f.release.set(); assert f.finished.wait(10)
+&gt;       assert f.counts['provider']==0 and job.status != 'COMPLETED'
+E       assert (1 == 0)
+
+tests/test_file_keyed_activation.py:239: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[archive]" time="0.247" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[marker]" time="0.213" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[owner]" time="0.243" /><testcase classname="tests.test_file_keyed_activation" name="test_deletion_during_mock_wait_does_not_write_replacement" time="0.775" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_queued_record_never_restarts_or_upgrades" time="1.170" /><testcase classname="tests.test_file_keyed_activation" name="test_bound_retry_cancel_and_staging_remain_closed" time="1.180" /><testcase classname="tests.test_file_keyed_activation" name="test_duplicate_and_copied_start_capability_cannot_dispatch" time="1.213" /><testcase classname="tests.test_file_keyed_activation" name="test_replaced_authorization_callback_cannot_grant_execution" time="0.196" /><testcase classname="tests.test_file_keyed_activation" name="test_authorization_callbacks_run_outside_owner_review_condition" time="1.276" /><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RECORDED]" time="0.068" /><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RESERVED]" time="0.067" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_completed_candidate_adopts_without_new_execution" time="1.265"><failure message="AssertionError: Internal Server Error&#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_completed_candidate_adopts_without_new_execution(keyed):
+        f=keyed
+        _, job=queued(f)
+        row=finish(f,job)
+        cold=f.reopen()
+        restored=cold.get(job.id)
+        assert restored.status=='COMPLETED' and FIELD in row
+        f.monkeypatch.setattr(api,'jobs',cold)
+        accepted=f.client.post(f'/api/generation/{job.id}/accept',json={'expected_version':1})
+&gt;       assert accepted.status_code==200, accepted.text
+E       AssertionError: Internal Server Error
+E       assert 500 == 200
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests/test_file_keyed_activation.py:365: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[version]" time="1.277" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[digest]" time="2.326" /><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[context]" time="0.359" /><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[snapshot]" time="1.816"><failure message="assert ({'canon.json'...': b'[]', ...} == {}&#10;  &#10;  Left contains 16 more items:&#10;  {'canon.json': b'[]',&#10;   'chapter_identity.json': b'{\n  &quot;schema_version&quot;: 1,\n  &quot;high_water&quot;: 1,\n  &quot;a'&#10;                            b'llocations&quot;: {\n    &quot;1&quot;: {\n      &quot;state&quot;: &quot;active'&#10;                            b'&quot;,\n      &quot;origin&quot;: &quot;allocated&quot;,\n      &quot;public_to'&#10;                            b'ken&quot;: &quot;1&quot;\n    }\n  },\n  &quot;legacy_provenance&quot;: &quot;ALL'...&#10;  &#10;  ...Full output truncated (20 lines hidden), use '-vv' to show)">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'snapshot'
+
+    @pytest.mark.parametrize('port',['context','snapshot','dispatch'])
+    def test_same_thread_replacement_at_final_preparation_ports(keyed,port):
+        f=keyed
+        replaced=[]; replacement={}
+        def change():
+            if not replaced:
+                replaced.append(True)
+                replace_owner(f)
+                replacement.update(files(f))
+        if port=='context':
+            target,name=f.contexts,'for_chapter'
+        elif port=='snapshot':
+            target,name=f.contexts,'save_snapshot'
+        else:
+            target,name=f.runtime.generation_runtime.text_node,'stream'
+        original=getattr(target,name)
+        def wrapped(*args,**kwargs):
+            change()
+            return original(*args,**kwargs)
+        f.monkeypatch.setattr(target,name,wrapped)
+        _,job=queued(f)
+        f.release.set(); assert f.finished.wait(10)
+        assert replaced, 'scheduled original seam was never reached'
+&gt;       assert files(f)==replacement and job.status!='COMPLETED'
+E       assert ({'canon.json'...': b'[]', ...} == {}
+E         
+E         Left contains 16 more items:
+E         {'canon.json': b'[]',
+E          'chapter_identity.json': b'{\n  "schema_version": 1,\n  "high_water": 1,\n  "a'
+E                                   b'llocations": {\n    "1": {\n      "state": "active'
+E                                   b'",\n      "origin": "allocated",\n      "public_to'
+E                                   b'ken": "1"\n    }\n  },\n  "legacy_provenance": "ALL'...
+E         
+E         ...Full output truncated (20 lines hidden), use '-vv' to show)
+
+tests/test_file_keyed_activation.py:411: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[dispatch]" time="0.817" /></testsuite></testsuites>

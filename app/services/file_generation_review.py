@@ -18,6 +18,19 @@ class _ReviewPort:
         original = self.calls[name]
         def call(*args, **kwargs):
             self.context.check()
+            if self.context.binding["schema_version"] == 2 and name in {"create", "save"}:
+                source = self.context.chapters.get(self.context.job.chapter_id)
+                from ..author_request import chapter_digest
+                if (source["version"] != self.context.binding["base_chapter_version"]
+                        or chapter_digest(source) != self.context.binding["base_chapter_digest"]):
+                    raise ValueError("GENERATION_WRITER_SOURCE_CHANGED")
+                if name == "create":
+                    ports = self.context.manager._file_writer_pins.prepare(self.context.binding)
+                    kwargs["_file_writer"] = ports.for_review()
+                    kwargs["_expected_writer_source"] = ports
+                if name == "save":
+                    kwargs["_file_writer"] = self.context.manager._file_writer_pins.prepare(self.context.binding).for_review()
+                    kwargs["_expected_source_digest"] = self.context.binding["base_chapter_digest"]
             return original(*args, **kwargs, _project_incarnation=self.context.binding['project_incarnation'],
                             _project_root=self.context.pins.root.parent.parent)
         return call
@@ -142,7 +155,12 @@ class _FileReview:
 
     def persist(self):
         self.check()
-        self._save(self.job.record(), _expected_root=self.pins.root)
+        writer = {}
+        if self.binding["schema_version"] == 2:
+            # Adoption changes the manuscript base, not the captured original
+            # owner/port identities of its accepting and terminal receipts.
+            writer["_file_writer"] = self.manager._file_writer_pins.prepare(self.binding).for_review()
+        self._save(self.job.record(), _expected_root=self.pins.root, **writer)
 
     def enqueue(self, nid, cid, version, profile):
         self.check()

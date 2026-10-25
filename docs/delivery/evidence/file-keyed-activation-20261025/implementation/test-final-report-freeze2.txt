@@ -1,0 +1,21 @@
+HISTORICAL VERIFIED RUN, SUPERSEDED BY FREEZE3:production freeze2 manifest aed01323e36f7ed85592b8e8f11b7ab7cefb3d463e0d40ec402efbcd97646e2a.
+Final complete no-deselect aggregate:677 passed,3 live-PostgreSQL skipped,0 failed;155.93 seconds.
+All app/tests Python and command/runner/external-probe hashes identical before/after. Parent production-freeze-2 precheck passed; later finalcheck failed because freeze3 source correction had landed after the run ended. No claim that current source equals freeze2.
+Separate real three-concurrent keyed request probe:1 passed; separate portable-runner adaptation+continue+rewrite smoke:3 passed; entire app/tests/probe/runner hashes identical before/after supplements.
+
+Correction boundary:
+Freeze1 green results remain historical, not final. Independent reviewer reproduced a retained global Job GENERATING→COMPLETED write after reentrant owner replacement at the nested _graph_owner entry seam; project bytes were protected but Job receipt was not. Integrator added final original owner/source/pins revalidation immediately before atomic_write under existing original owner+leaf. This entire aggregate and supplemental evidence is rerun after that correction.
+No application code was changed by test worker. No source/test edits during this frozen run.
+
+Current final artifacts:
+run_mock_frozen3_regression.sh; mock-final-frozen3-regression.log/XML; mock-final-frozen3-before.sha256/after.sha256/diff.txt/status.txt.
+concurrent-keyed-freeze2.log/XML; portable-runner-smoke-freeze2.log/XML; freeze2-supplements-before.sha256/after.sha256/diff.txt/status.txt.
+production-freeze2-precheck.log; production-freeze2-finalcheck.log; test-commands.txt.
+
+Live PostgreSQL skips:
+tests.test_chapter_concurrency::test_postgres_two_clients_atomic_cas_and_single_history_row — NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_generation_has_durable_snapshot_foreign_key — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_identical_generation_context_has_distinct_job_snapshots — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+
+All prior failures and runner-mode corrections are retained unmodified; see runner-correction.txt. Adaptation assertions were never changed. Actual Mock-only synthetic predicate and socket blocking are enforced before application import by corrected/portable runners.
+Real model, paid provider/network, live PostgreSQL, Windows and frontend:NOT_RUN. Actual File/Mock evidence is not a real-model claim.

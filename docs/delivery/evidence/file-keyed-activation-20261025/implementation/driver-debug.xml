@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="12" time="11.520" timestamp="2026-10-25T20:08:15.794678+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="5.190" /><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]" time="1.459" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[None-continue-LOCAL_ONLY]" time="0.098" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[polish-key-polish-LOCAL_ONLY]" time="0.106" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[brainstorm-key-brainstorm-LOCAL_ONLY]" time="0.137" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[hybrid-key-continue-HYBRID]" time="0.123" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[memory]" time="0.051" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[canon]" time="0.067" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[contexts]" time="0.067" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[generation]" time="0.055" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[version]" time="0.229" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[digest]" time="1.371"><failure message="assert (1 == 0)">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-local-bound-review/tmp/p...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+        _, job = queued(f)
+        if change=='version': f.chapters.save(job.chapter_id, {'content':'NEW_SOURCE','version':1,'source':'MANUAL'})
+        elif change=='archive': f.chapters.archive(job.chapter_id, 1)
+        elif change=='owner': replace_owner(f)
+        elif change=='marker': (f.root/'novels'/job.novel_id/'creative_project_v2.json').unlink()
+        else:
+            chapter_path = f.root/'novels'/job.novel_id/'chapters'
+            candidates = [p for p in chapter_path.rglob('*.md') if 'ORIGINAL_SOURCE' in p.read_text()]
+            assert candidates
+            candidates[0].write_text(candidates[0].read_text().replace('ORIGINAL_SOURCE','CHANGED_DIGEST'))
+        before=files(f)
+        f.release.set(); assert f.finished.wait(10)
+&gt;       assert f.counts['provider']==0 and job.status != 'COMPLETED'
+E       assert (1 == 0)
+
+tests/test_file_keyed_activation.py:239: AssertionError</failure></testcase></testsuite></testsuites>

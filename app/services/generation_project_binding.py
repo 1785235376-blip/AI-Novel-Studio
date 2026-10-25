@@ -74,12 +74,33 @@ class OrdinaryProjectBinding(_Strict):
         return self
 
 
+class OrdinaryProjectBindingV2(OrdinaryProjectBinding):
+    """New File writer source base; v1 remains an exact passive contract."""
+    schema_version: Literal[2]
+    base_chapter_version: Annotated[int, Field(ge=1)]
+    base_chapter_digest: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+
+    @model_validator(mode="after")
+    def _writer_scope(self):
+        if (not self.project_incarnation.startswith("file:") or self.operation not in {"continue", "rewrite"}
+                or self.chapter_id is None or self.scope is not None or self.experimental_origin is not None):
+            raise ValueError("invalid File writer scope")
+        return self
+
+
 def ordinary_job_binding(item):
     """Validate exact durable shape, including required explicit nullable fields."""
     value = item[FIELD]
     if not isinstance(value, dict) or type(value.get("schema_version")) is not int:
         raise ValueError("invalid ordinary binding schema")
-    binding = OrdinaryProjectBinding.model_validate(value).model_dump()
+    schema = {1: OrdinaryProjectBinding, 2: OrdinaryProjectBindingV2}.get(value["schema_version"])
+    if schema is None:
+        raise ValueError("invalid ordinary binding schema")
+    binding = schema.model_validate(value).model_dump()
+    if binding["schema_version"] == 2 and (type(item.get("base_chapter_version")) is not int or any(
+            key not in item or item[key] != binding[key]
+            for key in ("base_chapter_version", "base_chapter_digest"))):
+        raise ValueError("different ordinary source base")
     if (any(key in item for key in SPECIALIZED_FIELDS)
             or item.get("id") != binding["job_id"] or item.get("novel_id") != binding["project_id"]
             or any(key not in item or item[key] != binding[key] for key in IDENTITY_FIELDS)):

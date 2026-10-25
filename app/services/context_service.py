@@ -1,3 +1,4 @@
+from .ordinary_writer_ports import writer_file_port
 from ..config import settings
 from ..context import build_context_from_sources
 from ..lore.context_view import ContextEnvelope, LoreContextBuilder
@@ -22,6 +23,7 @@ class ContextService:
         self.context_policy_token_budget=settings.context_policy_token_budget if context_policy_token_budget is None else context_policy_token_budget
         self.enable_context_pack_v2=settings.enable_context_pack_v2 if enable_context_pack_v2 is None else enable_context_pack_v2
 
+    @writer_file_port
     def _sources(self, novel_id):
         sources = dict(self.novels.get_context_sources(novel_id))
         if self.lore:
@@ -53,11 +55,13 @@ class ContextService:
         result["context_pack_v2"]=ContextPackV2Builder(self.context_policy_token_budget).build(candidates,enabled=True,cloud=cloud,query=instruction,character_ids=state.get("active_characters",[]),current_chapter=result.get("chapter")).model_dump(mode="json")
         return result
 
+    @writer_file_port
     def _narrative_context(self,base,novel_id,chapter_number,cloud=False):
         if not self.enable_narrative_context or self.narrative_repository is None:return None
         chapter=self.chapters.get(base.get("chapter_id") or f"{novel_id}:{chapter_number}");active=base.get("current_story_state",{}).get("active_characters",[])
         return NarrativeContextBuilder(self.narrative_repository,self.narrative_token_budget).build(novel_id,chapter["id"],chapter["version"],active,cloud=cloud)
 
+    @writer_file_port
     def _context_policy(self,base,narrative=None,lore_memory=None,cloud=False):
         if not self.enable_lore_context and not self.enable_narrative_context:return None
         policy=ContextPolicy(self.context_policy_token_budget);project=base["novel_id"];chapter_id=base.get("chapter_id") or f"{project}:{base['chapter']}";chapter=self.chapters.get(chapter_id);chapter_id=chapter["id"];chapter_version_id=f"{chapter_id}:v{chapter['version']}";items=[]
@@ -81,6 +85,7 @@ class ContextService:
             for finding in narrative.get("findings",[]):items.append(ContextPolicyItem(metadata=policy.metadata(ContextSourceType.NARRATIVE_FINDING,finding["finding_id"],project,chapter_version_id=finding.get("chapter_version_id"),evidence_ids=finding.get("evidence_ids",[]),selection_reasons=[finding["selection_reason"]]),value=finding))
         return policy.apply(items,cloud)
 
+    @writer_file_port
     def _chapter_reference(self, novel_id, chapter_number, chapter_id):
         if chapter_id is None:
             # Numeric context extents can describe an unwritten next chapter.
@@ -94,6 +99,7 @@ class ContextService:
             raise FileNotFoundError(chapter_id)
         return chapter["number"], chapter["id"] if ":~" in chapter["id"] else None
 
+    @writer_file_port
     def build_envelope(self, novel_id, chapter_number, instruction="", cloud=False, operation="", *, chapter_id=None):
         chapter_number, chapter_id = self._chapter_reference(novel_id, chapter_number, chapter_id)
         sources = self._sources(novel_id)
@@ -119,6 +125,7 @@ class ContextService:
         if envelope.context_policy is not None:result["context_policy"]=envelope.context_policy.model_dump(mode="json")
         return self._attach_context_pack_v2(result,cloud,instruction)
 
+    @writer_file_port
     def build(self, novel_id, chapter_number, instruction="", cloud=False, operation="", *, chapter_id=None):
         chapter_number, chapter_id = self._chapter_reference(novel_id, chapter_number, chapter_id)
         envelope = self.build_envelope(novel_id, chapter_number, instruction, cloud, operation, chapter_id=chapter_id)
@@ -134,10 +141,12 @@ class ContextService:
         if policy is not None:result["context_policy"]=policy.model_dump(mode="json")
         return self._attach_context_pack_v2(result,cloud,instruction)
 
+    @writer_file_port
     def for_chapter(self, chapter_id, instruction="", cloud=False, operation=""):
         chapter = self.chapters.get(chapter_id)
         return self.build(chapter["novel_id"], chapter["number"], instruction, cloud, operation, chapter_id=chapter["id"])
 
+    @writer_file_port
     def save_snapshot(self, chapter_id, chapter_version, context, prompt_version, model, **metadata):
         if not self.lore:
             return None

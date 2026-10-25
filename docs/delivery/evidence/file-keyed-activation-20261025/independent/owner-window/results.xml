@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.533" timestamp="2026-10-25T20:30:50.041488+09:00" hostname="8a71deb1dd45"><testcase classname=".runtime.independent-keyed-review.test_final_owner_window" name="test_original_generation_owner_lease_entry_replacement_fences_final_write" time="5.028"><failure message="AssertionError: late original-owner COMPLETED receipt was written after genuine owner replacement&#10;assert b'{\n  &quot;id&quot;: ...gin&quot;: null\n}' == b'{\n  &quot;id&quot;: ...gin&quot;: null\n}'&#10;  &#10;  At index 315 diff: b'C' != b'G'&#10;  Use -v to get more diff">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/tmp/...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_original_generation_owner_lease_entry_replacement_fences_final_write(keyed):
+        f=keyed
+        repository=f.bundle.generations
+        original=repository._graph_owner
+        replaced=[]; retained={}; replacement={}
+        @contextmanager
+        def scheduled(row,binding):
+            with original(row,binding):
+                if row.get('status')=='COMPLETED' and FIELD in row and not replaced:
+                    path=repository.root/(row['id']+'.json')
+                    retained['path']=path; retained['bytes']=path.read_bytes()
+                    replace_owner(f); replaced.append(True)
+                    replacement.update(files(f))
+                yield
+        f.monkeypatch.setattr(repository,'_graph_owner',scheduled)
+        _,job=queued(f)
+        f.release.set(); assert f.finished.wait(10)
+        assert replaced and f.counts['provider']==1
+        assert files(f)==replacement
+        assert job.status!='COMPLETED'
+&gt;       assert retained['path'].read_bytes()==retained['bytes'], 'late original-owner COMPLETED receipt was written after genuine owner replacement'
+E       AssertionError: late original-owner COMPLETED receipt was written after genuine owner replacement
+E       assert b'{\n  "id": ...gin": null\n}' == b'{\n  "id": ...gin": null\n}'
+E         
+E         At index 315 diff: b'C' != b'G'
+E         Use -v to get more diff
+
+.runtime/independent-keyed-review/test_final_owner_window.py:27: AssertionError</failure></testcase></testsuite></testsuites>

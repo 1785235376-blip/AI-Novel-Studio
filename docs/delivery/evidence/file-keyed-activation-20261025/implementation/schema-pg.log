@@ -1,0 +1,1453 @@
+........................................................................ [ 51%]
+........................FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF      [100%]
+=================================== FAILURES ===================================
+_ test_original_postgres_manager_restores_bound_passive_record_without_writes[continue] _
+
+operation = 'continue'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863f170>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_postgres_manager_restores_bound_passive_record_without_writes[rewrite] _
+
+operation = 'rewrite'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863f5c0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_postgres_manager_restores_bound_passive_record_without_writes[polish] _
+
+operation = 'polish'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285e7ec0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_postgres_manager_restores_bound_passive_record_without_writes[brainstorm] _
+
+operation = 'brainstorm'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285cd070>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_postgres_manager_restores_bound_passive_record_without_writes[review] _
+
+operation = 'review'
+
+    @pytest.mark.parametrize("operation", ["continue", "rewrite", "polish", "brainstorm", "review"])
+    def test_original_postgres_manager_restores_bound_passive_record_without_writes(operation):
+        database = _database()
+        item = _seed(database, operation=operation)
+        payload = database.rows[UUID(item["id"])].request["_repository_payload"]
+        # Durable data cannot deserialize execution or content-serving authority.
+        for field in ("request_authorization", "before_dispatch", "on_terminal",
+                      "prepared_text_invocation", "_ordinary_read_verifier"):
+            payload[field] = "untrusted serialized hook"
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286000e0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_manager_reads_use_one_original_read_session_without_nested_connection[get] _
+
+read = 'get'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863dd30>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_manager_reads_use_one_original_read_session_without_nested_connection[content] _
+
+read = 'content'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb828603950>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_manager_reads_use_one_original_read_session_without_nested_connection[variants] _
+
+read = 'variants'
+
+    @pytest.mark.parametrize("read", ["get", "content", "variants"])
+    def test_manager_reads_use_one_original_read_session_without_nested_connection(read):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c4530>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_row] _
+
+change = 'missing_row'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c43e0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_owner] _
+
+change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863dd30>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[replaced_owner] _
+
+change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285cdb80>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[foreign_row_owner] _
+
+change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb829792b40>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_binding] _
+
+change = 'missing_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82861e1e0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[null_binding] _
+
+change = 'null_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb828602a50>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[changed_binding] _
+
+change = 'changed_binding'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863fe00>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_row_and_owner_changes_fence_cached_reads_and_content[row_operation] _
+
+change = 'row_operation'
+
+    @pytest.mark.parametrize("change", [
+        "missing_row", "missing_owner", "replaced_owner", "foreign_row_owner",
+        "missing_binding", "null_binding", "changed_binding", "row_operation",
+    ])
+    def test_original_row_and_owner_changes_fence_cached_reads_and_content(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:192: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82865dd90>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+______ test_stale_or_malformed_bound_rows_are_not_restored[missing_owner] ______
+
+change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82865c800>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_____ test_stale_or_malformed_bound_rows_are_not_restored[replaced_owner] ______
+
+change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863ec00>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+____ test_stale_or_malformed_bound_rows_are_not_restored[foreign_row_owner] ____
+
+change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82865e240>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+______ test_stale_or_malformed_bound_rows_are_not_restored[null_binding] _______
+
+change = 'null_binding'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286aa2d0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+______ test_stale_or_malformed_bound_rows_are_not_restored[row_operation] ______
+
+change = 'row_operation'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "null_binding", "row_operation"])
+    def test_stale_or_malformed_bound_rows_are_not_restored(change):
+        database = _database()
+        item = _seed(database)
+        _invalidate(database, item, change)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286a8260>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+______ test_same_url_different_database_object_cannot_restore_bound_rows _______
+
+    def test_same_url_different_database_object_cannot_restore_bound_rows():
+        database = _database()
+        other = _database()
+        item = _seed(database)
+        assert database.engine.url == other.engine.url
+        assert database is not other
+    
+>       manager = _manager(database, chapter_database=other)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:231: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8297a1af0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[chapter_database] _
+
+change = 'chapter_database'
+
+    @pytest.mark.parametrize("change", ["chapter_database", "generation_repository"])
+    def test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286a8560>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[generation_repository] _
+
+change = 'generation_repository'
+
+    @pytest.mark.parametrize("change", ["chapter_database", "generation_repository"])
+    def test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286aa000>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+__ test_bound_postgres_branch_is_not_inferred_from_mainline_database_identity __
+
+    def test_bound_postgres_branch_is_not_inferred_from_mainline_database_identity():
+        database = _database()
+        item = _seed(database, collaborative=True)
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ec5f0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+___ test_bound_persist_retains_private_identity_in_one_original_save_session ___
+
+    def test_bound_persist_retains_private_identity_in_one_original_save_session():
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:277: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82865ddf0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_save_transaction_rejects_stale_bound_persist_without_writes[missing_owner] _
+
+change = 'missing_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb82863dd30>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_save_transaction_rejects_stale_bound_persist_without_writes[replaced_owner] _
+
+change = 'replaced_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ec320>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_save_transaction_rejects_stale_bound_persist_without_writes[foreign_row_owner] _
+
+change = 'foreign_row_owner'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284edc70>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_original_save_transaction_rejects_stale_bound_persist_without_writes[changed_binding] _
+
+change = 'changed_binding'
+
+    @pytest.mark.parametrize("change", ["missing_owner", "replaced_owner", "foreign_row_owner", "changed_binding"])
+    def test_original_save_transaction_rejects_stale_bound_persist_without_writes(change):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286a9b50>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[cancel] _
+
+operation = 'cancel'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284edfd0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[accept] _
+
+operation = 'accept'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284e6090>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[reject] _
+
+operation = 'reject'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284e44a0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[start_prepared] _
+
+operation = 'start_prepared'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ee870>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_start_prepared_validated] _
+
+operation = '_start_prepared_validated'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ee810>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_run] _
+
+operation = '_run'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ec890>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_claimed] _
+
+operation = '_accept_claimed'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286aa390>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_branch_claimed] _
+
+operation = '_accept_branch_claimed'
+
+    @pytest.mark.parametrize("operation", [
+        "cancel", "accept", "reject", "start_prepared", "_start_prepared_validated",
+        "_run", "_accept_claimed", "_accept_branch_claimed",
+    ])
+    def test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call(operation):
+        database = _database()
+        item = _seed(database)
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:323: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c48f0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_existing_restart_recovery_preserves_binding_without_replaying_execution[SETTLING] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb8286abc20>
+status = 'SETTLING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8286a8ec0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_existing_restart_recovery_preserves_binding_without_replaying_execution[RUNNING] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb8284ef650>
+status = 'RUNNING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8284ec890>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_existing_restart_recovery_preserves_binding_without_replaying_execution[GENERATING] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb8285c4200>
+status = 'GENERATING'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c47a0>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_existing_restart_recovery_preserves_binding_without_replaying_execution[QUEUED] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb8285c4a40>
+status = 'QUEUED'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c5d00>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+_ test_existing_restart_recovery_preserves_binding_without_replaying_execution[PREPARED] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb8285c5160>
+status = 'PREPARED'
+
+    @pytest.mark.parametrize("status", ["SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"])
+    def test_existing_restart_recovery_preserves_binding_without_replaying_execution(monkeypatch, status):
+        database = _database()
+        item = _seed(database, status=status)
+        # The existing process claim is outside this offline SQL protocol test.
+        monkeypatch.setattr(JobManager, "_review_mutation", lambda self, jid: nullcontext())
+    
+>       manager = _manager(database)
+                  ^^^^^^^^^^^^^^^^^^
+
+tests/test_passive_generation_manager_postgres.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_passive_generation_manager_postgres.py:75: in _manager
+    return JobManager(
+app/jobs.py:443: in __init__
+    self._file_writer_pins = FileWriterPins(self)
+                             ^^^^^^^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:29: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_passive_generation_manager_postgres._NoSideEffects object at 0x7fb8285c4890>
+name = 'novels'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"passive manager reached downstream service: {name}")
+E       AssertionError: passive manager reached downstream service: novels
+
+tests/test_passive_generation_manager_postgres.py:71: AssertionError
+=============================== warnings summary ===============================
+tests/test_ordinary_project_binding.py::test_cold_reopen_preserves_passive_identity_and_updates
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_ordinary_project_binding.py::test_cold_reopen_preserves_passive_identity_and_updates
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/schema-pg.xml -
+=========================== short test summary info ============================
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[continue]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[rewrite]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[polish]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[brainstorm]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[review]
+FAILED tests/test_passive_generation_manager_postgres.py::test_manager_reads_use_one_original_read_session_without_nested_connection[get]
+FAILED tests/test_passive_generation_manager_postgres.py::test_manager_reads_use_one_original_read_session_without_nested_connection[content]
+FAILED tests/test_passive_generation_manager_postgres.py::test_manager_reads_use_one_original_read_session_without_nested_connection[variants]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_row]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[replaced_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[foreign_row_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[missing_binding]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[null_binding]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[changed_binding]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_row_and_owner_changes_fence_cached_reads_and_content[row_operation]
+FAILED tests/test_passive_generation_manager_postgres.py::test_stale_or_malformed_bound_rows_are_not_restored[missing_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_stale_or_malformed_bound_rows_are_not_restored[replaced_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_stale_or_malformed_bound_rows_are_not_restored[foreign_row_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_stale_or_malformed_bound_rows_are_not_restored[null_binding]
+FAILED tests/test_passive_generation_manager_postgres.py::test_stale_or_malformed_bound_rows_are_not_restored[row_operation]
+FAILED tests/test_passive_generation_manager_postgres.py::test_same_url_different_database_object_cannot_restore_bound_rows
+FAILED tests/test_passive_generation_manager_postgres.py::test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[chapter_database]
+FAILED tests/test_passive_generation_manager_postgres.py::test_recomposed_manager_hides_cached_bound_job_and_rejects_persist_without_sql[generation_repository]
+FAILED tests/test_passive_generation_manager_postgres.py::test_bound_postgres_branch_is_not_inferred_from_mainline_database_identity
+FAILED tests/test_passive_generation_manager_postgres.py::test_bound_persist_retains_private_identity_in_one_original_save_session
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_save_transaction_rejects_stale_bound_persist_without_writes[missing_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_save_transaction_rejects_stale_bound_persist_without_writes[replaced_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_save_transaction_rejects_stale_bound_persist_without_writes[foreign_row_owner]
+FAILED tests/test_passive_generation_manager_postgres.py::test_original_save_transaction_rejects_stale_bound_persist_without_writes[changed_binding]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[cancel]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[accept]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[reject]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[start_prepared]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_start_prepared_validated]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_run]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_claimed]
+FAILED tests/test_passive_generation_manager_postgres.py::test_passive_mutation_entrypoints_refuse_before_any_write_or_downstream_call[_accept_branch_claimed]
+FAILED tests/test_passive_generation_manager_postgres.py::test_existing_restart_recovery_preserves_binding_without_replaying_execution[SETTLING]
+FAILED tests/test_passive_generation_manager_postgres.py::test_existing_restart_recovery_preserves_binding_without_replaying_execution[RUNNING]
+FAILED tests/test_passive_generation_manager_postgres.py::test_existing_restart_recovery_preserves_binding_without_replaying_execution[GENERATING]
+FAILED tests/test_passive_generation_manager_postgres.py::test_existing_restart_recovery_preserves_binding_without_replaying_execution[QUEUED]
+FAILED tests/test_passive_generation_manager_postgres.py::test_existing_restart_recovery_preserves_binding_without_replaying_execution[PREPARED]
+43 failed, 96 passed, 2 warnings in 12.84s

@@ -97,7 +97,13 @@ class FileRepository:
         chapter=self.chapter(cid); content=payload.get("content",chapter["content"]); atomic_write(self.novels/chapter["novel_id"]/"chapters"/f"chapter-{chapter['number']:04d}.md",content); return self.chapter(cid)
     @committed_change("CHAPTER")
     @guard_project("nid")
-    def create_chapter(self,nid,payload):
+    def create_chapter(self,nid,payload,*,_expected_writer_source=None):
+        if _expected_writer_source is not None:
+            from .services.ordinary_writer_ports import require_writer_ports
+            expected = require_writer_ports(_expected_writer_source, self)
+            if expected.binding["project_id"] != nid:
+                raise ValueError("GENERATION_WRITER_SOURCE_CHANGED")
+            expected.source()
         root=self.novels/nid
         num=chapter_identity.next_number(root,payload.get("number"))
         title=payload.get("title",f"第 {num} 章")

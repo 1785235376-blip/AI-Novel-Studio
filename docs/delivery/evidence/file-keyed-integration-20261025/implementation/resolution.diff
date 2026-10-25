@@ -1,0 +1,90 @@
+diff --git a/app/repositories/generation_repository.py b/app/repositories/generation_repository.py
+index e4f4e2b..ca792b8 100644
+--- a/app/repositories/generation_repository.py
++++ b/app/repositories/generation_repository.py
+@@ -201,38 +201,55 @@ class GenerationRepository:
+                 pass
+ 
+     @committed_change("TASK")
+-    def save(self,item:dict,*,_expected_root=None,_file_memory=None):
+-        if _file_memory is not None:
+-            from ..lore.file_memory_ports import require_memory_ports
+-            expected=require_memory_ports(_file_memory,self)
+-            from ..lore.memory_project_binding import memory_job_binding
+-            if memory_job_binding(item)!=expected.binding:
+-                raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_CHANGED")
+-        if _expected_root is not None and Path(self.root).resolve() != Path(_expected_root).resolve():
+-            raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
+-        from .file.mutation_coordinator import workspace_mutation
+-        from ..creative.director_terminal_evidence import preserve_evidence
+-        from ..creative.director_image_terminal import preserve as preserve_image
+-        path = self._job_path(item["id"])
+-        binding = graph_job_binding(item)
+-        if binding is None:
+-            with workspace_mutation(self.root, self._write_key(path)):
++    def save(self,item:dict,*,_expected_root=None,_file_memory=None,_file_writer=None):
++        from contextlib import nullcontext
++        writer_context = nullcontext()
++        if _file_writer is not None:
++            from ..services.ordinary_writer_ports import require_writer_ports
++            from ..services.generation_project_binding import ordinary_job_binding
++            expected = require_writer_ports(_file_writer, self)
++            if ordinary_job_binding(item) != dict(expected.binding):
++                raise GenerationProjectIdentityError("GENERATION_WRITER_BINDING_CHANGED")
++            writer_context = expected.guard(self)
++        with writer_context:
++            if _file_memory is not None:
++                from ..lore.file_memory_ports import require_memory_ports
++                expected=require_memory_ports(_file_memory,self)
++                from ..lore.memory_project_binding import memory_job_binding
++                if memory_job_binding(item)!=expected.binding:
++                    raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_CHANGED")
++            if _expected_root is not None and Path(self.root).resolve() != Path(_expected_root).resolve():
++                raise GenerationProjectIdentityError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
++            from .file.mutation_coordinator import workspace_mutation
++            from ..creative.director_terminal_evidence import preserve_evidence
++            from ..creative.director_image_terminal import preserve as preserve_image
++            path = self._job_path(item["id"])
++            binding = graph_job_binding(item)
++            if binding is None:
++                with workspace_mutation(self.root, self._write_key(path)):
++                    previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
++                    if previous is not None and graph_job_binding(previous) is not None:
++                        raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
++                    saved = preserve_image(previous, preserve_evidence(previous, item))
++                    atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
++                return
++            # Keep the captured leaf root for every opted-in File receipt.
++            write_root = path.parent if (_expected_root is not None or _file_memory is not None
++                                         or _file_writer is not None) else self.root
++            with self._graph_owner(item, binding), workspace_mutation(write_root, self._write_key(path)):
+                 previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+-                if previous is not None and graph_job_binding(previous) is not None:
+-                    raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
++                check_graph_job_update(previous, item)
+                 saved = preserve_image(previous, preserve_evidence(previous, item))
+-                atomic_write(path,json.dumps(saved,ensure_ascii=False,indent=2))
+-            return
+-        # Opted-in M5 saves keep the original leaf root even if a reentrant
+-        # entry wrapper rotates the facade; final validation then refuses it.
+-        write_root = path.parent if _expected_root is not None or _file_memory is not None else self.root
+-        with self._graph_owner(item, binding), workspace_mutation(write_root, self._write_key(path)):
+-            previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+-            check_graph_job_update(previous, item)
+-            saved = preserve_image(previous, preserve_evidence(previous, item))
+-            payload = json.dumps(saved,ensure_ascii=False,indent=2)
+-            self._check_expected_save_owner(item, binding, _expected_root, _file_memory)
+-            atomic_write(path,payload)
++                payload = json.dumps(saved,ensure_ascii=False,indent=2)
++                self._check_expected_save_owner(item, binding, _expected_root, _file_memory)
++                if _file_writer is not None:
++                    # Nested owner/leaf entry may be wrapped by a reentrant
++                    # lifecycle action. Fence the actual write, not only entry
++                    # and unwind, before changing retained global Job bytes.
++                    expected_writer = require_writer_ports(_file_writer, self)
++                    expected_writer.check_owner(self)
++                    expected_writer._check_source()
++                atomic_write(path,payload)
+ 
+     def _publish_director_terminal(self, job, capability, evidence):
+         """Original live worker only. All authority callbacks precede the leaf lock."""

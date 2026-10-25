@@ -9,7 +9,10 @@ class ChapterService:
     def create(self,nid,payload,**owner):return self.repository.create(nid,payload,**owner)
     def get(self,cid,**owner):return self.repository.get(cid,**owner)
     def save(self,cid,payload,**owner):
-        current=self.get(cid,**owner);document=payload.get("document") or markdown_to_document(payload.get("content",current["content"]));return self.repository.save(cid,document,payload.get("version",current["version"]),payload.get("source","USER"),**owner)
+        source_digest = owner.pop("_expected_source_digest", None)
+        current=self.get(cid,**owner)
+        if source_digest is not None: owner["_expected_source_digest"] = source_digest
+        document=payload.get("document") or markdown_to_document(payload.get("content",current["content"]));return self.repository.save(cid,document,payload.get("version",current["version"]),payload.get("source","USER"),**owner)
     def delete(self,cid):return self.repository.delete(cid)
     def duplicate(self,cid):return self.repository.duplicate(cid)
     def rename(self,cid,title,version):return self.repository.rename(cid,title,version)

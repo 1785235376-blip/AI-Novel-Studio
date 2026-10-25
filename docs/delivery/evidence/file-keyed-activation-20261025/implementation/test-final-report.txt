@@ -1,0 +1,22 @@
+Final full no-deselect aggregate:677 passed,3 skipped,0 failed,125.77 seconds.
+All app/tests Python plus runner/external-probe hashes unchanged before/after. Parent production-freeze-1 app hashes rechecked successfully.
+Separate real concurrent-keyed supplemental:1 passed; probe + critical source hashes unchanged.
+Portable runner smoke:3 passed (untouched valid/invalid adaptation model contract + real continue/rewrite keyed generation/manual adoption).
+
+Live PostgreSQL NOT_RUN:
+tests.test_chapter_concurrency::test_postgres_two_clients_atomic_cas_and_single_history_row — NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_generation_has_durable_snapshot_foreign_key — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+tests.test_generation_snapshot_runtime_v056::test_real_postgres_identical_generation_context_has_distinct_job_snapshots — PostgreSQL implementation contract; covered by the real PostgreSQL full suite
+
+Test-owned changes:
+New tests/test_file_keyed_activation.py:41 original-composition activation/compatibility cases.
+Explicit HYBRID legacy synthetic fixture scoping only, assertions unchanged:tests/test_generation_idempotency_contracts.py, tests/test_generation_worker_authority.py, tests/test_generation_admission_receipts.py, tests/test_generation_variants_phase3.py.
+No app production edits by this worker; no test_phase7_adaptation.py changes; no commits; no GitHub writes.
+
+Final evidence:
+run_mock_frozen2_regression.sh; mock-final-frozen2-regression.log/XML; mock-final-frozen2-before.sha256/after.sha256/diff.txt/status.txt.
+concurrent-keyed.log/XML/input.sha256/after.sha256/diff.txt/status.txt and test_concurrent_keyed_supplement.py.
+run_portable_mock_tests.py discovers repository root by pyproject.toml + app/jobs.py ancestors and explicitly configures Mock/nonpackaged/no-cloud before imports. Its three-case smoke logs/XML are portable-runner-smoke.*.
+All exploratory failures and commands retained. runner-correction.txt explains old Mock-disabled runner vs actual original synthetic predicate; adaptation-mock-baseline/current each passed unchanged exact contract.
+
+Limits:real models, paid/network provider calls, live PostgreSQL, Windows and frontend NOT_RUN. Embedded original Graph Mock worker4 cases and passive specialized record contracts are included, not full live Director/image/OCR end-to-end coverage.

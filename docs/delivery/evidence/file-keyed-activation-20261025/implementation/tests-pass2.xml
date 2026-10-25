@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="19" skipped="0" tests="29" time="10.165" timestamp="2026-10-25T20:06:36.609565+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="4.537"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;e21b299e-1e1d-4063-a1b5-50670ecd734d&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+&gt;       result, job = queued(f, operation=operation)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_file_keyed_activation.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {'operation': 'continue'}, response = &lt;Response [409 Conflict]&gt;
+@py_assert1 = 409, @py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"e21b299e-1e1d-4063-a1b5-50670ecd734d"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"e21b299e-1e1d-4063-a1b5-50670ecd734d"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]" time="0.103"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;0a023a1a-e822-4f3f-9724-b3ce0dd4770f&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'rewrite'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+&gt;       result, job = queued(f, operation=operation)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_file_keyed_activation.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {'operation': 'rewrite'}, response = &lt;Response [409 Conflict]&gt;
+@py_assert1 = 409, @py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"0a023a1a-e822-4f3f-9724-b3ce0dd4770f"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"0a023a1a-e822-4f3f-9724-b3ce0dd4770f"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[None-continue-LOCAL_ONLY]" time="0.118" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[polish-key-polish-LOCAL_ONLY]" time="0.527" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[brainstorm-key-brainstorm-LOCAL_ONLY]" time="0.157" /><testcase classname="tests.test_file_keyed_activation" name="test_excluded_legacy_modes_remain_unbound[hybrid-key-continue-HYBRID]" time="0.203" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[memory]" time="0.067" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[canon]" time="0.061" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[contexts]" time="0.201" /><testcase classname="tests.test_file_keyed_activation" name="test_eligible_bad_composition_refuses_before_reservation[generation]" time="0.058" /><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[version]" time="0.063"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;310fb76c-49e1-4ba8-8e59-ce1714567473&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'version'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+&gt;       _, job = queued(f)
+                 ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"310fb76c-49e1-4ba8-8e59-ce1714567473"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"310fb76c-49e1-4ba8-8e59-ce1714567473"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[digest]" time="0.195"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;07730c9c-d904-4cdd-b7f5-b1e9ddb99398&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+&gt;       _, job = queued(f)
+                 ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"07730c9c-d904-4cdd-b7f5-b1e9ddb99398"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"07730c9c-d904-4cdd-b7f5-b1e9ddb99398"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[archive]" time="0.040"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;786f2985-6190-4513-93dc-9cc1a41ec34d&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'archive'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+&gt;       _, job = queued(f)
+                 ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"786f2985-6190-4513-93dc-9cc1a41ec34d"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"786f2985-6190-4513-93dc-9cc1a41ec34d"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[marker]" time="0.058"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;7d9fc711-72af-439d-8ee7-216bf5f47214&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'marker'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+&gt;       _, job = queued(f)
+                 ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"7d9fc711-72af-439d-8ee7-216bf5f47214"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"7d9fc711-72af-439d-8ee7-216bf5f47214"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_pre_dispatch_source_or_owner_change_refuses_without_model[owner]" time="0.047"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;6f9663a2-6eee-4f48-a325-55a08e2279bf&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'owner'
+
+    @pytest.mark.parametrize('change', ['version','digest','archive','marker','owner'])
+    def test_pre_dispatch_source_or_owner_change_refuses_without_model(keyed, change):
+        f=keyed
+&gt;       _, job = queued(f)
+                 ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"6f9663a2-6eee-4f48-a325-55a08e2279bf"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"6f9663a2-6eee-4f48-a325-55a08e2279bf"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_deletion_during_mock_wait_does_not_write_replacement" time="0.060"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;58318bfc-d028-4422-b5e6-b38a96960dfb&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_deletion_during_mock_wait_does_not_write_replacement(keyed):
+        f=keyed
+        f.provider_release.clear()
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:245: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"58318bfc-d028-4422-b5e6-b38a96960dfb"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"58318bfc-d028-4422-b5e6-b38a96960dfb"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_cold_queued_record_never_restarts_or_upgrades" time="0.048"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;9eb42bdd-3e4c-4cae-887d-5c58f76a2087&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_queued_record_never_restarts_or_upgrades(keyed):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:256: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"9eb42bdd-3e4c-4cae-887d-5c58f76a2087"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"9eb42bdd-3e4c-4cae-887d-5c58f76a2087"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_bound_retry_cancel_and_staging_remain_closed" time="0.048"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;928a52f7-19cd-43ff-9e61-c2158c499400&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_bound_retry_cancel_and_staging_remain_closed(keyed):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:270: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"928a52f7-19cd-43ff-9e61-c2158c499400"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"928a52f7-19cd-43ff-9e61-c2158c499400"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_duplicate_and_copied_start_capability_cannot_dispatch" time="0.052"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;819ada45-4b0e-4131-961f-79388172711b&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_duplicate_and_copied_start_capability_cannot_dispatch(keyed):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:280: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"819ada45-4b0e-4131-961f-79388172711b"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"819ada45-4b0e-4131-961f-79388172711b"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_replaced_authorization_callback_cannot_grant_execution" time="0.058"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;8d205fad-2c98-424e-8d45-c5ff40b0261f&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_replaced_authorization_callback_cannot_grant_execution(keyed):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:291: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"8d205fad-2c98-424e-8d45-c5ff40b0261f"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"8d205fad-2c98-424e-8d45-c5ff40b0261f"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_authorization_callbacks_run_outside_owner_review_condition" time="0.055"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;c5ed23b1-d7b6-4baf-a5f9-34e27c9c2bbd&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_authorization_callbacks_run_outside_owner_review_condition(keyed):
+        from app.file_project_lifecycle import project_operation
+        f=keyed
+        from app.services.file_generation_admission import _Admission
+        original=_Admission.revalidate
+        checks=[]
+        def context(*args, **kwargs):
+            if f.entered.is_set():
+                acquired=Event()
+                def probe():
+                    with project_operation(f.root, f.chapter['novel_id']):
+                        for job in tuple(f.manager.jobs.values()):
+                            with f.manager._review_mutation(job.id), job.condition: pass
+                        acquired.set()
+                thread=Thread(target=probe)
+                thread.start()
+                ok=acquired.wait(2)
+                checks.append(ok)
+                assert ok, 'request authorization ran under owner/review/condition lock'
+                thread.join(3)
+            return original(*args, **kwargs)
+        f.monkeypatch.setattr(_Admission, 'revalidate', context)
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:319: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"c5ed23b1-d7b6-4baf-a5f9-34e27c9c2bbd"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"c5ed23b1-d7b6-4baf-a5f9-34e27c9c2bbd"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RECORDED]" time="0.064" /><testcase classname="tests.test_file_keyed_activation" name="test_retained_original_receipt_never_dispatches_or_upgrades[RESERVED]" time="0.077" /><testcase classname="tests.test_file_keyed_activation" name="test_cold_completed_candidate_adopts_without_new_execution" time="0.059"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;64f59c60-23f2-44d4-ac87-bbd81f65f177&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_completed_candidate_adopts_without_new_execution(keyed):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:357: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"64f59c60-23f2-44d4-ac87-bbd81f65f177"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"64f59c60-23f2-44d4-ac87-bbd81f65f177"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[version]" time="0.045"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;f52b4719-0273-4847-b4ca-f10ab952770d&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'version'
+
+    @pytest.mark.parametrize('change',['version','digest'])
+    def test_cold_manual_adoption_rechecks_original_source(keyed,change):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:372: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"f52b4719-0273-4847-b4ca-f10ab952770d"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"f52b4719-0273-4847-b4ca-f10ab952770d"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_cold_manual_adoption_rechecks_original_source[digest]" time="0.049"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;763a85f1-b029-4085-bac4-fd38c3a4f35d&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+change = 'digest'
+
+    @pytest.mark.parametrize('change',['version','digest'])
+    def test_cold_manual_adoption_rechecks_original_source(keyed,change):
+        f=keyed
+&gt;       _, job=queued(f)
+               ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:372: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"763a85f1-b029-4085-bac4-fd38c3a4f35d"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"763a85f1-b029-4085-bac4-fd38c3a4f35d"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[context]" time="0.061"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;50b8f257-e364-4975-93b9-9782df8310cb&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'context'
+
+    @pytest.mark.parametrize('port',['context','snapshot','dispatch'])
+    def test_same_thread_replacement_at_final_preparation_ports(keyed,port):
+        f=keyed
+        replaced=[]; replacement={}
+        def change():
+            if not replaced:
+                replaced.append(True)
+                replace_owner(f)
+                replacement.update(files(f))
+        if port=='context':
+            target,name=f.contexts,'for_chapter'
+        elif port=='snapshot':
+            target,name=f.contexts,'save_snapshot'
+        else:
+            target,name=f.runtime.generation_runtime.text_node,'stream'
+        original=getattr(target,name)
+        def wrapped(*args,**kwargs):
+            change()
+            return original(*args,**kwargs)
+        f.monkeypatch.setattr(target,name,wrapped)
+&gt;       _,job=queued(f)
+              ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:407: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"50b8f257-e364-4975-93b9-9782df8310cb"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"50b8f257-e364-4975-93b9-9782df8310cb"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[snapshot]" time="0.064"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;702c5e29-3f96-489a-bc68-d3e59ac6bc33&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'snapshot'
+
+    @pytest.mark.parametrize('port',['context','snapshot','dispatch'])
+    def test_same_thread_replacement_at_final_preparation_ports(keyed,port):
+        f=keyed
+        replaced=[]; replacement={}
+        def change():
+            if not replaced:
+                replaced.append(True)
+                replace_owner(f)
+                replacement.update(files(f))
+        if port=='context':
+            target,name=f.contexts,'for_chapter'
+        elif port=='snapshot':
+            target,name=f.contexts,'save_snapshot'
+        else:
+            target,name=f.runtime.generation_runtime.text_node,'stream'
+        original=getattr(target,name)
+        def wrapped(*args,**kwargs):
+            change()
+            return original(*args,**kwargs)
+        f.monkeypatch.setattr(target,name,wrapped)
+&gt;       _,job=queued(f)
+              ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:407: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"702c5e29-3f96-489a-bc68-d3e59ac6bc33"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"702c5e29-3f96-489a-bc68-d3e59ac6bc33"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_same_thread_replacement_at_final_preparation_ports[dispatch]" time="0.056"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;GENERATION_WRITER_ADMISSION_UNVERIFIED&quot;,&quot;message&quot;:&quot;未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。&quot;},&quot;request_id&quot;:&quot;889fef2c-231f-4f4f-9695-7fb7898f569b&quot;}&#10;assert 409 == 202&#10; +  where 409 = &lt;Response [409 Conflict]&gt;.status_code">keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+port = 'dispatch'
+
+    @pytest.mark.parametrize('port',['context','snapshot','dispatch'])
+    def test_same_thread_replacement_at_final_preparation_ports(keyed,port):
+        f=keyed
+        replaced=[]; replacement={}
+        def change():
+            if not replaced:
+                replaced.append(True)
+                replace_owner(f)
+                replacement.update(files(f))
+        if port=='context':
+            target,name=f.contexts,'for_chapter'
+        elif port=='snapshot':
+            target,name=f.contexts,'save_snapshot'
+        else:
+            target,name=f.runtime.generation_runtime.text_node,'stream'
+        original=getattr(target,name)
+        def wrapped(*args,**kwargs):
+            change()
+            return original(*args,**kwargs)
+        f.monkeypatch.setattr(target,name,wrapped)
+&gt;       _,job=queued(f)
+              ^^^^^^^^^
+
+tests/test_file_keyed_activation.py:407: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+f = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-keyed-activation/tmp/pyt...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {}, response = &lt;Response [409 Conflict]&gt;, @py_assert1 = 409
+@py_assert4 = 202, @py_assert3 = False
+@py_format6 = '409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+@py_format8 = '{"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERA...quest_id":"889fef2c-231f-4f4f-9695-7fb7898f569b"}\n&gt;assert 409\n{409 = &lt;Response [409 Conflict]&gt;.status_code\n} == 202'
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。","details":{"code":"GENERATION_WRITER_ADMISSION_UNVERIFIED","message":"未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"},"request_id":"889fef2c-231f-4f4f-9695-7fb7898f569b"}
+E       assert 409 == 202
+E        +  where 409 = &lt;Response [409 Conflict]&gt;.status_code
+
+tests/test_file_keyed_activation.py:127: AssertionError</failure></testcase></testsuite></testsuites>

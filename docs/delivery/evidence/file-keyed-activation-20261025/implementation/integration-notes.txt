@@ -1,0 +1,8 @@
+During integration, a first text replacement inserted the v2 digest check into the similarly shaped legacy review block. The compile tool reported:
+*** Error compiling 'app/jobs.py'...
+Sorry: IndentationError: expected an indented block after 'if' statement on line 1586 (jobs.py, line 1588)
+This is a verbatim tool-output excerpt, not an independently rerun artifact. The legacy block was restored and v2 check inserted only in _review_file_bound; compilation succeeded before tests. No commit contained the intermediate syntax failure.
+
+Early schema-pg run: 96 passed /43 failed, new FileWriterPins constructor eagerly inspected unsupported PG sentinel context. Exact-type construction fixed this without altering original passive PG tests. Later schema-review-pg run:170 passed /2 failed, passive direct _run error shape changed; driver restored original HTTP409 rejection before capability mutation. These raw failed runs are preserved rather than relabeled PASS.
+
+Independent late snapshot counterexample on an unchanged WIP source snapshot was valid: durable FAILED after cold restore did not prevent deferred context snapshot. Final original snapshot owner port now validates exact durable GENERATING record before directory/write, preserving original deferred snapshots.

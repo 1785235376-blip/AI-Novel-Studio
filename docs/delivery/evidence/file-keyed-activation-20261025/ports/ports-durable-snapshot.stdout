@@ -1,0 +1,78 @@
+.................F....                                                   [100%]
+=================================== FAILURES ===================================
+___ test_receipt_expectation_survives_missing_source_but_cannot_use_context ____
+
+source = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/file-local-bound-review/tmp/p...al_run=<function JobManager._run at 0x7fb2ed6a72e0>, client=<starlette.testclient.TestClient object at 0x7fb2ea56c140>)
+
+    def test_receipt_expectation_survives_missing_source_but_cannot_use_context(source):
+        ports = ports_for(source).for_receipt()
+        path = source.root/'novels'/source.chapter['novel_id']/'documents/chapter-0001.json'
+        path.unlink()
+>       with ports.guard(source.bundle.generations):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_file_writer_context_ports.py:173: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/services/ordinary_writer_ports.py:183: in guard
+    self.check(target)
+app/services/ordinary_writer_ports.py:222: in check
+    self.pins.validate(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.ordinary_writer_ports.FileWriterPins object at 0x7fb2ea56c860>
+target = <app.repositories.file.generation.FileGenerationRepository object at 0x7fb2ea56f680>
+
+    def validate(self, target=None):
+        if not self.supported:
+            raise ValueError("GENERATION_WRITER_FILE_PORT_MISMATCH")
+        from .generation_service import GenerationService
+        from ..repositories.generation_repository import GenerationRepository
+        from ..repositories.file.generation import FileGenerationRepository
+        from .context_service import ContextService
+        from .chapter_service import ChapterService
+        from .lore_service import LoreService
+        from ..repositories.file.chapter import FileChapterRepository
+        from ..repositories.file.novel import FileNovelRepository
+        from ..repositories.file.lore import FileLoreRepository
+        from ..repository import FileRepository
+        if (type(self.persistence) is not GenerationService
+                or type(self.generation_repository) not in (GenerationRepository, FileGenerationRepository)
+                or self.manager.persistence is not self.persistence
+                or self.persistence.repository is not self.generation_repository
+                or self.root is None
+                or Path(self.generation_repository.root).resolve() != self.root / "runtime" / "jobs"
+                or type(self.contexts) is not ContextService or type(self.chapters) is not ChapterService
+                or type(self.lore) is not LoreService
+                or tuple(type(repo) for repo in self.repositories) != (FileChapterRepository, FileNovelRepository, FileLoreRepository)
+                or self.manager.contexts is not self.contexts or self.manager.chapters is not self.chapters
+                or self.chapters.repository is not self.chapter_repository
+                or self.contexts.chapters is not self.chapter_repository
+                or self.contexts.novels is not self.novels or self.contexts.lore is not self.lore
+                or self.lore.repository is not self.lore_repository
+                or self.root is None or self.contexts.enable_narrative_context
+                or (target is not None and not any(target is port for port in self.ports))):
+>           raise ValueError('GENERATION_WRITER_FILE_PORT_MISMATCH')
+E           ValueError: GENERATION_WRITER_FILE_PORT_MISMATCH
+
+app/services/ordinary_writer_ports.py:97: ValueError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/writer-ports/ports-durable-snapshot.xml -
+=========================== short test summary info ============================
+FAILED tests/test_file_writer_context_ports.py::test_receipt_expectation_survives_missing_source_but_cannot_use_context
+1 failed, 21 passed, 3 warnings in 9.46s

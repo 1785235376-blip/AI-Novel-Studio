@@ -1,0 +1,57 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_cold_restore_after_last_delta_fences_deferred_snapshot __________
+
+keyed = namespace(root=PosixPath('/workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/tmp/...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+
+    def test_cold_restore_after_last_delta_fences_deferred_snapshot(keyed):
+        from threading import Event
+        f=keyed
+        reached,release=Event(),Event()
+        node=f.runtime.generation_runtime.text_node; original=node.stream
+        def stream(request):
+            for event in original(request):
+                if event.event_type=='generation.completed':
+                    reached.set(); assert release.wait(10)
+                yield event
+        f.monkeypatch.setattr(node,'stream',stream)
+        try:
+            _,job=queued(f)
+            f.release.set(); assert reached.wait(5)
+            cold=f.reopen()
+            assert cold.get(job.id).status=='FAILED'
+            before=files(f); record=deepcopy(f.persistence.get(job.id))
+            release.set(); assert f.finished.wait(10)
+            assert f.persistence.get(job.id)==record
+>           assert files(f)==before, 'late deferred snapshot appeared after durable cold FAILED'
+E           AssertionError: late deferred snapshot appeared after durable cold FAILED
+E           assert {'canon.json'...': b'[]', ...} == {'canon.json'...': b'[]', ...}
+E             
+E             Omitting 18 identical items, use -vv to show
+E             Left contains 1 more item:
+E             {'lore/context_snapshots/251eebd6-61b7-4347-97ad-eb84d8652670.json': b'{\n  '
+E                                                                                  b'"id": "2'
+E                                                                                  b'51eebd6-'
+E                                                                                  b'61b7-434'...
+E             
+E             ...Full output truncated (233 lines hidden), use '-vv' to show
+
+.runtime/independent-keyed-review/test_independent.py:188: AssertionError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.runtime/independent-keyed-review/test_independent.py::test_cold_restore_after_last_delta_fences_deferred_snapshot
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+.runtime/independent-keyed-review/test_independent.py::test_cold_restore_after_last_delta_fences_deferred_snapshot
+  /workspace/scratch/20a0022d2b33/file-keyed-activation/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/file-keyed-activation/.runtime/independent-keyed-review/snapshot-wip/results.xml -
+=========================== short test summary info ============================
+FAILED .runtime/independent-keyed-review/test_independent.py::test_cold_restore_after_last_delta_fences_deferred_snapshot
+1 failed, 15 deselected, 3 warnings in 6.58s

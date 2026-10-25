@@ -1,0 +1,1 @@
+WIP run, not final verdict. Source lifecycle file changed during test execution. Probe executed included first 9 parametrized cases; subsequent probes were appended after collection. Archived executed portion reconstructed by removing later appended tests; do not represent this as outset-frozen probe artifact.

@@ -54,6 +54,28 @@ def guard_project(id_argument, *, chapter=False):
             identifier = args[0] if args else kwargs[id_argument]
             novel_id = identifier.rsplit(":", 1)[0] if chapter else identifier
             backend = getattr(repository, "backend", repository)
+            from .services.ordinary_writer_ports import current_writer_ports, require_writer_ports, suspend_writer_ports
+            writer = kwargs.pop("_file_writer", None)
+            current_writer = current_writer_ports()
+            from .services.ordinary_writer_ports import _FileReviewPorts, _FileWriterPorts
+            source_port = method.__name__ in {"get", "_paths", "chapter", "get_context_sources", "get_outline", "get_data_set"}
+            review_port = type(current_writer) is _FileReviewPorts and method.__name__ == "save_chapter"
+            if writer is None and (source_port or review_port):
+                writer = current_writer
+            if writer is not None:
+                writer = require_writer_ports(writer, repository)
+                if chapter and type(writer) is _FileWriterPorts and identifier != writer.binding['chapter_id']:
+                    raise ValueError("GENERATION_WRITER_SOURCE_CHANGED")
+                incarnation = kwargs.pop("_project_incarnation", None)
+                expected_root = kwargs.pop("_project_root", None)
+                if (kwargs.get("_file_memory") is not None
+                        or (incarnation is not None and incarnation != writer.binding['project_incarnation'])
+                        or (expected_root is not None and Path(expected_root).resolve() != writer.root)):
+                    raise ValueError("GENERATION_WRITER_FILE_PORT_MISMATCH")
+                # Reenter the original method only after validating the actual
+                # nested owner; the scoped expectation covers its own callees.
+                with writer.guard(repository, novel_id):
+                    return method(repository, *args, **kwargs)
             memory = kwargs.pop("_file_memory", None)
             if memory is not None:
                 from .lore.file_memory_ports import require_memory_ports
@@ -67,6 +89,9 @@ def guard_project(id_argument, *, chapter=False):
             if expected_root is not None and Path(backend.novels).resolve() != Path(expected_root).resolve()/"novels":
                 raise ValueError("GENERATION_REVIEW_FILE_PORT_MISMATCH")
             with project_operation(backend.data, novel_id, expected_incarnation=incarnation, expected_root=expected_root):
-                return method(repository, *args, **kwargs)
+                # Independent lifecycle mutations do not inherit a writer
+                # read expectation into their own nested source calls.
+                with suspend_writer_ports():
+                    return method(repository, *args, **kwargs)
         return guarded
     return decorate

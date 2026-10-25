@@ -1484,6 +1484,7 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                 raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED") from exc
             if legacy is not None:
                 raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED")
+            activation = None
             if retained is not None:
                 cached = retained["value"]
                 try:
@@ -1508,11 +1509,28 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                     _generation_context(cached["result"]["job_id"], x_session_token)
             else:
                 try:
+                    from .services.file_generation_admission import prepare_admission
+                    activation = prepare_admission(jobs, owner, novel_service, chapter_service,
+                        operation, payload, actor, scope, x_branch_id)
+                except Exception as exc:
+                    raise conflict("GENERATION_WRITER_ADMISSION_UNVERIFIED") from exc
+                try:
                     incarnation = owner.capture_new(body.novel_id)
                 except Exception as exc:
                     raise conflict("IDEMPOTENCY_OWNER_UNVERIFIED") from exc
+                if activation is not None:
+                    try:
+                        activation.capture(incarnation)
+                    except Exception as exc:
+                        raise conflict("GENERATION_WRITER_ADMISSION_UNVERIFIED") from exc
 
             def revalidate():
+                if activation is not None:
+                    try:
+                        activation.revalidate(jobs, novel_service, chapter_service)
+                    except Exception as exc:
+                        raise conflict("GENERATION_WRITER_AUTHORITY_CHANGED") from exc
+                    return
                 current_actor, current_scope = _generation_request_context(
                     body, x_session_token, x_branch_id, require_active_source=True)
                 if current_actor != actor or current_scope != scope:
@@ -1534,8 +1552,11 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                 return cached["result"]
             revalidate()
             try:
-                job = jobs.prepare_job(operation, payload, actor=actor, scope=scope,
-                                       request_authorization=revalidate)
+                if activation is not None:
+                    job = activation.prepare(revalidate)
+                else:
+                    job = jobs.prepare_job(operation, payload, actor=actor, scope=scope,
+                                           request_authorization=revalidate)
                 reserved = reservation(incarnation, digest, job.id)
             except HTTPException:
                 raise

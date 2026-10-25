@@ -1,7 +1,11 @@
 from ..repositories.interfaces import GenerationRepositoryProtocol
 class GenerationService:
     def __init__(self,repository:GenerationRepositoryProtocol):self.repository=repository
-    def save(self,item,*,_file_memory=None):
+    def save(self,item,*,_file_memory=None,_file_writer=None):
+        if _file_writer is not None:
+            from .ordinary_writer_ports import require_writer_ports
+            expected = require_writer_ports(_file_writer, self)
+            return self.repository.save(item, _file_writer=expected, _expected_root=expected.root/"runtime/jobs")
         if _file_memory is None:return self.repository.save(item)
         from ..lore.file_memory_ports import require_memory_ports
         expected=require_memory_ports(_file_memory,self)

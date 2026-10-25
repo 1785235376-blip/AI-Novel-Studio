@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...services.ordinary_writer_ports import writer_file_port, current_writer_ports
 
 import json
 from datetime import datetime, timezone
@@ -18,20 +19,32 @@ class FileLoreRepository:
     def __init__(self, backend: FileRepository):
         self.backend = backend
 
+    @writer_file_port
     def _novel_root(self, novel_id: str):
+        expected = current_writer_ports()
+        if expected is not None and novel_id != expected.binding["project_id"]:
+            raise ValueError("GENERATION_WRITER_PROJECT_CHANGED")
         root = self.backend.novels / novel_id
         if not root.is_dir():
             raise FileNotFoundError(novel_id)
         return root
 
+    @writer_file_port
     def _lore_root(self, novel_id: str):
         root = self._novel_root(novel_id) / "lore"
         for name in ("evidence", "proposals", "relations", "memories", "snapshots"):
+            expected = current_writer_ports()
+            if expected is not None:
+                expected.check_owner(self)
+                expected.source()
             (root / name).mkdir(parents=True, exist_ok=True)
         return root
 
+    @writer_file_port
     def _find(self, collection: str, object_id: str):
-        for novel in self.backend.novels.iterdir():
+        expected = current_writer_ports()
+        novels = [self.backend.novels / expected.binding["project_id"]] if expected is not None else self.backend.novels.iterdir()
+        for novel in novels:
             path = novel / "lore" / collection / f"{object_id}.json"
             if path.is_file():
                 return path
@@ -53,10 +66,12 @@ class FileLoreRepository:
         return output
 
     @memory_file_port
+    @writer_file_port
     def get_evidence(self, evidence_id: str, *, _file_memory=None) -> dict:
         owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         return _dump(Evidence.model_validate(read_json(self._find("evidence", evidence_id), {})))
 
+    @writer_file_port
     def list_evidence(self, novel_id: str) -> list[dict]:
         root = self._lore_root(novel_id) / "evidence"
         return [_dump(Evidence.model_validate(read_json(path, {}))) for path in sorted(root.glob("*.json"))]
@@ -80,10 +95,12 @@ class FileLoreRepository:
         return output
 
     @memory_file_port
+    @writer_file_port
     def get_proposal(self, proposal_id: str, *, _file_memory=None) -> dict:
         owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         return _dump(LoreProposal.model_validate(read_json(self._find("proposals", proposal_id), {})))
 
+    @writer_file_port
     def list_proposals(self, novel_id: str, status: str | None = None) -> list[dict]:
         root = self._lore_root(novel_id) / "proposals"
         items = [_dump(LoreProposal.model_validate(read_json(path, {}))) for path in sorted(root.glob("*.json"))]
@@ -103,6 +120,7 @@ class FileLoreRepository:
         return output
 
     @memory_file_port
+    @writer_file_port
     def list_proposal_evidence(self, proposal_id: str, *, _file_memory=None) -> list[dict]:
         owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         proposal = self.get_proposal(proposal_id, **owner)
@@ -144,6 +162,7 @@ class FileLoreRepository:
                 item=_dump(CharacterMemory.model_validate(read_json(path,{})))
                 if item["character_id"]==character_id and (status is None or item["status"]==status):out.append(item)
         return out
+    @writer_file_port
     def list_memories(self,novel_id,status=None):
         root=self._lore_root(novel_id)/"memories";items=[_dump(CharacterMemory.model_validate(read_json(p,{}))) for p in sorted(root.glob("*.json"))];return [x for x in items if status is None or x["status"]==status]
     def approve_proposal_with_memory(self,proposal_id,approved_payload,reviewer,memory):
@@ -168,10 +187,12 @@ class FileLoreRepository:
     def create_snapshot(self,item):
         model=MemorySnapshot.model_validate(item);output=_dump(model);path=self._lore_root(model.novel_id)/"snapshots"/f"{model.id}.json";self._write_new(path,output);return output
     @memory_file_port
+    @writer_file_port
     def list_snapshots(self,novel_id,scope=None, *, _file_memory=None):
         owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         root=self._lore_root(novel_id)/"snapshots";items=[_dump(MemorySnapshot.model_validate(read_json(p,{}))) for p in sorted(root.glob("*.json"))];return [x for x in items if scope is None or x["scope"]==scope]
     @memory_file_port
+    @writer_file_port
     def get_latest_snapshot(self,novel_id,scope,scope_key, *, _file_memory=None):
         owner = {"_file_memory": _file_memory} if _file_memory is not None else {}
         rows=[x for x in self.list_snapshots(novel_id,scope, **owner) if x["scope_key"]==scope_key];return max(rows,key=lambda x:x["version"],default=None)

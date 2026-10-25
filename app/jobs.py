@@ -92,6 +92,7 @@ class Job:
     # Absent is legacy; explicit null is malformed, never a legacy downgrade.
     ordinary_project_binding:object=field(default=_ORDINARY_UNBOUND,repr=False)
     _ordinary_read_verifier:object=field(default=None,repr=False)
+    _ordinary_execution_capability:object=field(default=None,repr=False)
 
     def record(self):
         """Private persistence projection. Public HTTP output stays unchanged."""
@@ -102,6 +103,9 @@ class Job:
             from .services.generation_project_binding import FIELD, IDENTITY_FIELDS
             from .repositories.generation_repository import graph_job_binding
             result[FIELD] = deepcopy(self.ordinary_project_binding)
+            if isinstance(result[FIELD], dict) and result[FIELD].get("schema_version") == 2:
+                result["base_chapter_digest"] = self.base_chapter_digest
+                result["execution_outcome"] = self.execution_outcome
             for key in IDENTITY_FIELDS:
                 result[key] = deepcopy(getattr(self, key))
             graph_job_binding(result)
@@ -422,7 +426,7 @@ def _isolated_generation(job):
 
 
 class JobManager:
-    transient_fields={"_ordinary_read_verifier","director_image_authority","research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"_ordinary_execution_capability", "_ordinary_read_verifier","director_image_authority","research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
@@ -435,6 +439,8 @@ class JobManager:
         self._ordinary_database = getattr(self._ordinary_repository, "database", None)
         from .services.file_generation_review import FileReviewPins
         self._file_review_pins = FileReviewPins(self)
+        from .services.ordinary_writer_ports import FileWriterPins
+        self._file_writer_pins = FileWriterPins(self)
         for item in self.persistence.load_all():
             if "id" not in item: continue
             if item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}:
@@ -490,7 +496,12 @@ class JobManager:
         if recovered:
             if is_image_job(self.jobs[item["id"]]) or is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
             self._persist(self.jobs[item["id"]])
-    def _persist(self,job,*,_review=None):
+    def _persist(self,job,*,_review=None,_writer=None):
+        if _writer is not None:
+            from .services.file_generation_execution import require_capability
+            if require_capability(self, job) is not _writer:
+                raise ValueError("GENERATION_WRITER_CAPABILITY_INVALID")
+            return _writer.persist()
         if _review is not None:
             from .services.file_generation_review import require_review
             return require_review(_review, self, job).persist()
@@ -560,6 +571,9 @@ class JobManager:
     def _save_context_snapshot(self, job, chapter, context, prompt_version, model, **metadata):
         # Context assembly or generation may have waited after the last check.
         # Never write a required or deferred snapshot after a live refusal.
+        if _has_ordinary_binding(job):
+            from .services.file_generation_execution import require_capability
+            return require_capability(self, job).snapshot(chapter, context, prompt_version, model, **metadata)
         self._guard_ordinary_request_authorization(job)
         owner = self._branch_owner(job)
         if owner is not None:
@@ -746,6 +760,9 @@ class JobManager:
     def start_prepared(self, job):
         """Start the exact validated instance once, never rebuild its payload."""
         _deny_creative_director_execution(job)
+        if _has_ordinary_binding(job):
+            from .services.file_generation_execution import start
+            return start(self, job)
         return self._start_prepared_validated(job)
 
     def _prepare_research_ocr_job(self, **kwargs):
@@ -845,6 +862,9 @@ class JobManager:
             job.condition.notify_all()
     def _validate_outbound_sources(self, job, cloud):
         """Last-hop authority; queued copies never override current source policy."""
+        if _has_ordinary_binding(job):
+            from .services.file_generation_execution import require_capability
+            return require_capability(self, job).source(cloud)
         from .source_privacy import effective_source_privacy, assert_project_source_policies
         require_generation_content(job)
         branch_id=(job.scope or {}).get("branch_id")
@@ -910,7 +930,11 @@ class JobManager:
             context = {"novel_id": job.novel_id, "chapter_id": chapter["id"],
                        "branch_id": job.scope["branch_id"], "chapter_version": chapter["version"]}
         elif automatic_context_allowed(job):
-            context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
+            writer = {}
+            if _has_ordinary_binding(job):
+                from .services.file_generation_execution import require_capability
+                writer["_file_writer"] = require_capability(self, job).ports
+            context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation, **writer)
         else:
             context = {}
         if job.request_scope is not None and not is_character_job(job):
@@ -962,6 +986,9 @@ class JobManager:
             raise _OrdinaryRequestAuthorizationFailed() from None
 
     def _guard_author_request(self, job, route, *, dispatch=False):
+        if _has_ordinary_binding(job):
+            from .services.file_generation_execution import require_capability
+            return require_capability(self, job).authorize(route, dispatch=dispatch)
         _deny_creative_director_execution(job)
         self._guard_ordinary_request_authorization(job)
         check_generation_bounds(job)
@@ -1066,6 +1093,9 @@ class JobManager:
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
+        if _has_ordinary_binding(job):
+            from .services.file_generation_execution import run
+            return run(self, job)
         self.require_ordinary_mutation_eligibility(job)
         if is_image_job(job):
             from .creative.director_image_execution import run
@@ -1612,6 +1642,9 @@ class JobManager:
                 if job.operation != "continue":
                     raise ValueError("Draft generation base is missing; regenerate before accepting")
                 target_version = chapter["version"]
+            if (review.binding["schema_version"] == 2
+                    and chapter_digest(chapter) != review.binding["base_chapter_digest"]):
+                raise ValueError("GENERATION_WRITER_SOURCE_CHANGED")
             if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
                 raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
             job.status = "ACCEPTING"
