@@ -12,14 +12,12 @@ import {TaskCenterPanel} from '../../taskcenter/TaskCenter';
 import {studioTransport} from '../../creative/studioClient';
 import {LAYOUT_ACTION_IDS, normalizeShortcut, type ShortcutTable} from '../actions/layoutActions';
 
+import {panelDefinitions, shortcutsFor} from '../registry/workspaceRegistry'; // [HERMIA-FE-20261025 U2-M10]
 import type {PanelDefinition} from '../../workbench/panels';
 /** Capability status is honest: both canvases are browser-local drafts (no server canvas graph yet). */
 // (workbench DockZone has no 'float'; floating is a DockLayout-only mode declared in PREVIEW_SPECS.)
-export const STUDIO_PREVIEW_PANELS: PanelDefinition[] = [
-  {id: 'creative', kind: 'canvas', title: '创作画布', capability: 'local-only', instancing: 'singleton', docks: ['main'], defaultDock: 'main', minWidth: 320, requiresContext: ['project']},
-  {id: 'execution', kind: 'canvas', title: '执行画布', capability: 'local-only', instancing: 'singleton', docks: ['main', 'right'], defaultDock: 'main', minWidth: 320, requiresContext: ['project']},
-  {id: 'tasks', kind: 'feature', title: '任务', capability: 'partial', instancing: 'singleton', docks: ['bottom', 'right', 'left'], defaultDock: 'bottom', minWidth: 120, requiresContext: ['project']},
-];
+// [HERMIA-FE-20261025 U2-M10] derived from the unified registry (parity-tested)
+export const STUDIO_PREVIEW_PANELS: PanelDefinition[] = panelDefinitions() // [HERMIA-FE-20261025 INT] includes U4 results/history via registry;
 
 export const STUDIO_ACTION_IDS = {
   sendToExecution: 'canvas.sendToExecution',
@@ -27,11 +25,7 @@ export const STUDIO_ACTION_IDS = {
   openCreative: 'canvas.openCreative',
   openTasks: 'tasks.open',
 } as const;
-export const STUDIO_SHORTCUTS: Readonly<Record<string, string>> = {
-  'canvas.openExecution': 'Mod+Alt+E',
-  'canvas.openCreative': 'Mod+Alt+I',
-  'tasks.open': 'Mod+Alt+T',
-};
+export const STUDIO_SHORTCUTS: Readonly<Record<string, string>> = shortcutsFor('canvas.open', 'tasks.'); // [HERMIA-FE-20261025 U2-M10]
 export const STUDIO_MIN_BUSY_MS = 300;
 
 const NO_NOVEL = '还没有选中作品';

@@ -14,23 +14,32 @@ import {ActionRegistry} from '../../workbench/actions';
 import {LifecycleTracker} from '../../workbench/lifecycle';
 import {DEFAULT_LAYOUT_SHORTCUTS, LAYOUT_ACTION_IDS, layoutActionDefinitions, ShortcutTable} from '../actions/layoutActions';
 import {TaskCenterPanel} from '../../taskcenter/TaskCenter';
+import {useStudio} from '../../store';
 
 if (typeof window !== 'undefined' && !('PointerEvent' in window)) {
   (window as unknown as {PointerEvent: unknown}).PointerEvent = class extends MouseEvent {};
 }
 const NOVELS = [{id: 'n1', title: '演示：雾港', genre: '', chapter_count: 0, word_count: 0, status: 'Writing'}];
-let calls: {url: string; method: string}[];
+let calls: {url: string; method: string; headers?: unknown}[];
+// [HERMIA-FE-20261025 INT] before/after: previously this read ran WITHOUT an identity (empty token + fabricated `uw-preview:<id>`),
+// which was the defect (counterexample kept in tasks/u3.repro.test.tsx). Same invariants now asserted with a REAL actor+scope.
+const REAL_ACTOR = {id: 'u-real', displayName: '作者', workspaceId: 'ws1'};
+const REAL_SCOPE = {workspaceId: 'ws1', projectId: 'n1', storylineId: 's1', branchId: 'b1'};
+function withRealIdentity() { useStudio.setState({actor: REAL_ACTOR, scope: REAL_SCOPE, sessionToken: 'tok-real'}); }
+const noPlaceholder = (h: unknown) => !JSON.stringify(h ?? {}).includes('uw-preview');
+
 const json = (v: unknown, status = 200) => new Response(JSON.stringify(v), {status, headers: {'Content-Type': 'application/json'}});
 beforeEach(() => {
   localStorage.clear(); calls = [];
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
-    calls.push({url: String(url), method: init?.method ?? 'GET'});
+    calls.push({url: String(url), method: init?.method ?? 'GET', headers: init?.headers});
     if (url === '/api/novels') return json(NOVELS);
     if (url === '/api/novels/n1/chapters') return json([]);
     return json({detail: 'nf'}, 404);
   }));
 });
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); });
+const initialStudio = useStudio.getState();
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); useStudio.setState(initialStudio, true); });
 const node: CvNode = {id: 'a1', t: 'image_generate', x: 0, y: 0, title: '雾港封面'};
 
 describe('300ms double-trigger guard (fake timers, production STUDIO_MIN_BUSY_MS)', () => {
@@ -148,12 +157,14 @@ describe('uw preview integration', () => {
     await waitFor(() => expect(document.activeElement?.getAttribute('data-panel-id')).toBe('tasks'), {timeout: 2000});
   });
   it('task center reads tasks exactly once on mount, even under StrictMode', async () => {
+    withRealIdentity();
     mount(true);
-    await screen.findByTestId('uw-tasks');
+    await screen.findByTestId('u3-tasks');
     await waitFor(() => expect(calls.some(c => c.url.includes('/experimental/workspace/tasks'))).toBe(true));
     await act(() => new Promise(r => setTimeout(r, 50)));
     expect(calls.filter(c => c.url.includes('/experimental/workspace/tasks'))).toHaveLength(1);
     expect(calls.every(c => c.method === 'GET')).toBe(true);
+    expect(calls.every(c => noPlaceholder(c.headers))).toBe(true);
   });
   it('TaskCenterPanel alone under StrictMode: one read', async () => {
     const list = vi.fn(async () => json({items: [], next_cursor: null}));

@@ -33,6 +33,9 @@ export const UNIFIED_PANELS: readonly UnifiedPanelEntry[] = [
   {id: 'execution', title: '执行画布', kind: 'canvas', capability: 'local-only', capabilityNote: '执行画布同样只是本机草稿；打开它不会开始执行。', docks: ['main', 'float', 'right'], defaultDock: 'main', defaultSize: 800, minSize: 320, requiresContext: ['project'], showActionId: 'canvas.openExecution', media: 'image', firstStep: '从任务或创作节点进入这里查看执行结构。'},
   {id: 'inspector', title: '章节属性', kind: 'inspector', capability: 'connected', capabilityNote: '章节属性读写服务端；画布节点属性只写本机草稿。', docks: ['left', 'right', 'bottom', 'float'], defaultDock: 'right', defaultSize: 340, minSize: 240, maxSize: 560, media: 'shared', firstStep: '选中章节或节点后在这里查看和修改。'},
   {id: 'tasks', title: '任务', kind: 'feature', capability: 'partial', capabilityNote: '任务列表来自现有任务中心接口，没有分页；成本始终显示未知。', docks: ['bottom', 'right', 'left'], defaultDock: 'bottom', defaultSize: 200, minSize: 120, requiresContext: ['project'], showActionId: 'tasks.open', media: 'shared', firstStep: '选一个任务，可以定位到它对应的作品位置。'},
+  // [HERMIA-FE-20261025 INT] U4 panels through the registry (not hardcoded in STUDIO_PREVIEW_PANELS).
+  {id: 'results', title: '结果', kind: 'feature', capability: 'partial', capabilityNote: '结果来自所选生产任务；审核和采用都需要你逐一确认，采用通过画布保存接口完成。', docks: ['right', 'bottom', 'left'], defaultDock: 'right', defaultSize: 320, minSize: 240, requiresContext: ['project'], media: 'shared', firstStep: '先在任务里选一个带作品位置的生产任务。'},
+  {id: 'history', title: '历史', kind: 'feature', capability: 'partial', capabilityNote: '画布历史来自服务端画布记录；恢复会生成新版本，需要确认。', docks: ['right', 'bottom', 'left'], defaultDock: 'right', defaultSize: 320, minSize: 240, requiresContext: ['project'], media: 'shared', firstStep: '先在任务里选一个带作品位置的生产任务。'},
 ];
 
 /** Every shortcut in the unified workspace, by action id. Mirrors the previously scattered tables exactly. */
@@ -68,7 +71,7 @@ export function layoutSpecs(entries: readonly UnifiedPanelEntry[] = UNIFIED_PANE
   return entries.filter(e => mediaVisible(e.media)).map(e => ({id: e.id, title: e.title, defaultDock: e.defaultDock, docks: e.docks, defaultSize: e.defaultSize, minSize: e.minSize, ...(e.maxSize ? {maxSize: e.maxSize} : {})}));
 }
 /** workbench PanelDefinition for registry-registered panels (canvas + tasks; outline/inspector come from novelPreviewPanels). */
-export function panelDefinitions(ids: readonly string[] = ['creative', 'execution', 'tasks'], entries = UNIFIED_PANELS): PanelDefinition[] {
+export function panelDefinitions(ids: readonly string[] = ['creative', 'execution', 'tasks', 'results', 'history'] /* [HERMIA-FE-20261025 INT] U4 panels */, entries = UNIFIED_PANELS): PanelDefinition[] {
   return ids.map(id => {
     const e = entries.find(x => x.id === id); if (!e) throw new Error(`unknown panel ${id}`);
     const docks = e.docks.filter((d): d is WbDock => d !== 'float');

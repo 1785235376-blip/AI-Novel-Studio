@@ -4,7 +4,7 @@
  * Navigation buttons only read and move focus/selection; nothing here can generate, adopt, cancel or enqueue.
  * Raw ids appear only in data-* attributes.
  */
-import {useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import {useEffect, useRef, useState, useSyncExternalStore, type ReactNode} from 'react';
 import type {ProductionJob} from '../../creative/studioProductionClient';
 import type {NavReturnPoint, TaskRef} from '../contracts';
 import type {TaskFeed} from '../tasks/taskFeed';
@@ -12,6 +12,8 @@ import {NAV_TEXT, type LocateResult, type TaskNavigator} from '../tasks/taskNavi
 import {pageOf, PAGING_GAP_TEXT, statusText} from '../tasks/taskSources';
 
 export interface TasksPanelLiveProps {
+  /** [HERMIA-FE-20261025 INT] lead wiring: selected production job (re-read) + host-owned detail extras (params/results). */
+  onDetail?: (job: ProductionJob | null, ref: TaskRef | null) => void; detailExtra?: ReactNode;
   feed: TaskFeed;
   navigator: TaskNavigator | null;
   active: boolean;
@@ -22,7 +24,7 @@ export interface TasksPanelLiveProps {
   onReturn(rp: NavReturnPoint): void;
 }
 
-export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn}: TasksPanelLiveProps) {
+export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn, onDetail, detailExtra}: TasksPanelLiveProps) {
   const state = useSyncExternalStore(f => feed.subscribe(f), () => feed.state);
   const [page, setPage] = useState(0);
   const [sel, setSel] = useState<TaskRef | null>(null);
@@ -30,11 +32,11 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
   const [msg, setMsg] = useState('');
   const [, force] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
-  const started = useRef(false);
-  useEffect(() => { if (active && !started.current) { started.current = true; void feed.refresh(); } }, [active, feed]);
+  const started = useRef<unknown>(null); // [HERMIA-FE-20261025 INT] once PER FEED: a feed built after the project list resolves must still read
+  useEffect(() => { if (active && started.current !== feed) { started.current = feed; void feed.refresh(); } }, [active, feed]);
   useEffect(() => { setSel(null); setDetail(null); setMsg(''); setPage(0); }, [feed]);
 
-  const open = async (ref: TaskRef) => { setSel(ref); setMsg(''); setDetail(null); const d = await feed.detail(ref); if (d) setDetail(d); };
+  const open = async (ref: TaskRef) => { setSel(ref); setMsg(''); setDetail(null); onDetail?.(null, ref); const d = await feed.detail(ref); if (d) { setDetail(d); onDetail?.(d.job, d.ref); } };
   const locate = () => {
     if (!navigator || !sel) return;
     const ref = detail?.ref ?? sel;
@@ -84,6 +86,7 @@ export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn,
       <button type="button" data-testid="u3-locate" onClick={locate} disabled={!navigator}>定位来源节点</button>{' '}
       <button type="button" data-testid="u3-exec" onClick={exec} disabled={!navigator}>查看执行画布</button>{' '}
       <button type="button" data-testid="u3-back" onClick={back} disabled={!navigator?.canReturn()}>返回原位置</button>
+      {detailExtra}
     </div> : null}
     {msg ? <p data-testid="u3-nav-msg" role="status">{msg}</p> : null}
   </section>;

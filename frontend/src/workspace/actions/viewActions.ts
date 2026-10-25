@@ -5,6 +5,7 @@
  */
 import type {ActionRegistry, Availability} from '../../workbench/actions';
 import {normalizeShortcut, type ShortcutTable} from './layoutActions';
+import {shortcutsFor} from '../registry/workspaceRegistry';
 import type {DockLayoutApi} from '../layout/DockLayout';
 import type {ViewPrefs} from '../state/viewPreferences';
 import {captureWorkset, deleteWorkset, renameWorkset, resolveWorkset} from '../layout/worksets';
@@ -16,10 +17,8 @@ export const VIEW_ACTION_IDS = {
   nextPanel: 'view.panel.next', prevPanel: 'view.panel.prev', lastPanel: 'view.panel.last',
 } as const;
 /** Checked against layout (Mod+Alt+0/O/C/S/P), studio (Mod+Alt+E/I/T) and reserved Mod+K. */
-export const VIEW_SHORTCUTS: Partial<Record<string, string>> = {
-  [VIEW_ACTION_IDS.openViews]: 'Mod+Alt+V', [VIEW_ACTION_IDS.nextPanel]: 'Mod+Alt+N',
-  [VIEW_ACTION_IDS.prevPanel]: 'Mod+Alt+B', [VIEW_ACTION_IDS.lastPanel]: 'Mod+Alt+L',
-};
+// [HERMIA-FE-20261025 INT] single source of truth: the unified registry (U2 parity-tested values).
+export const VIEW_SHORTCUTS: Partial<Record<string, string>> = shortcutsFor('view.');
 export interface ViewActionHost {
   layout(): DockLayoutApi | null;
   prefs(): ViewPrefs;

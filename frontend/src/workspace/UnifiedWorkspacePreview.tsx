@@ -10,7 +10,8 @@ import {CommandSearch} from '../workbench/CommandSearch';
 import type {Workbench} from '../workbench/useWorkbench';
 import {actionIdForKey, LAYOUT_ACTION_IDS, ShortcutTable} from './actions/layoutActions';
 // [HERMIA-FE-20261024 M2-s1] remaining placeholders replaced by real existing components + their registry actions.
-import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions, STUDIO_ACTION_IDS, STUDIO_PREVIEW_PANELS, TasksPanel} from './panels/studioPreviewPanels';
+import {layoutSpecs} from './registry/workspaceRegistry'; // [HERMIA-FE-20261025 U2-M10]
+import {CreativeCanvasPanel, ExecutionCanvasPanel, registerStudioPreviewActions, STUDIO_ACTION_IDS, STUDIO_PREVIEW_PANELS} from './panels/studioPreviewPanels';
 import type {CanvasKind, CvNode, CvViewport} from '../rebuild/canvas/RebuildCanvas';
 import {CanvasNodeInspector, readCanvasNode, registerCanvasNodeActions, type CanvasPick} from './panels/canvasInspector'; // [HERMIA-FE-20261024 M3-s1]
 import {shouldHandleShortcut} from '../workbench/actions';
@@ -24,18 +25,27 @@ import {createPanelFocusTracker, type PanelFocusTracker} from './state/panelFocu
 import type {DockLayoutApi} from './layout/DockLayout';
 import {useStudio} from '../store'; // [HERMIA-FE-20261025 U1-M1] real identity source (bootstrap actor + collaboration scope)
 import {IDENTITY_TEXT, resolveWorkspaceIdentity} from './state/scopeLease';
+import {TasksPanelLive} from './panels/TasksPanelLive'; // [HERMIA-FE-20261025 U3-M3/M4] real task panel (replaces fabricated-identity TasksPanel)
+import {canvasHasNode, useLiveTasks} from './tasks/useLiveTasks';
+import {ResultsPanel} from './results/ResultsPanel'; // [HERMIA-FE-20261025 U4 wiring]
+import {HistoryPanel} from './history/HistoryPanel'; // [HERMIA-FE-20261025 U4 wiring]
+import {ProjectPresence, purgeProjectGeometry} from './state/projectPurge';
+import {useUnifiedLoop} from './integration/useUnifiedLoop'; // [HERMIA-FE-20261025 INT] u4 deps + param session from real clients
+import {ParamEditPanel} from './params/ParamEditPanel';
+import {CanvasSelectionLayer} from './registry/CanvasSelectionLayer'; // [HERMIA-FE-20261025 INT] U2 mounts
+import {ContextNavBar} from './registry/ContextNavBar';
+import {EMPTY_SELECTION, type CanvasSelection} from './registry/selection';
+import {INITIAL_NAV, openTask, toggleCompare, type NavState} from './registry/contextNav';
+import {registerNavActions} from './actions/navActions';
+import type {NavReturnPoint} from './contracts';
+import type {ProductionJob} from '../creative/studioProductionClient';
 
 export function unifiedWorkspacePreviewEnabled(): boolean {
   try { return new URLSearchParams(window.location.search).get("uw") === "1"; } catch { return false; }
 }
 
-export const PREVIEW_SPECS: LayoutPanelSpec[] = [
-  { id: "outline", title: "作品结构", defaultDock: "left", docks: ["left", "right", "main", "float"], defaultSize: 248, minSize: 180 },
-  { id: "creative", title: "创作画布", defaultDock: "main", docks: ["main", "float"], defaultSize: 800, minSize: 320 },
-  { id: "execution", title: "执行画布", defaultDock: "main", docks: ["main", "float", "right"], defaultSize: 800, minSize: 320 },
-  { id: "inspector", title: "章节属性", defaultDock: "right", docks: ["left", "right", "bottom", "float"], defaultSize: 340, minSize: 240, maxSize: 560 },
-  { id: "tasks", title: "任务", defaultDock: "bottom", docks: ["bottom", "right", "left"], defaultSize: 200, minSize: 120 },
-];
+// [HERMIA-FE-20261025 U2-M10] single source: derived from registry/workspaceRegistry (parity-tested)
+export const PREVIEW_SPECS: LayoutPanelSpec[] = layoutSpecs();
 
 /**
  * [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 4: the preview shares ONE ActionRegistry + LifecycleTracker between DockLayout
@@ -100,7 +110,33 @@ export function UnifiedWorkspacePreview() {
   const collabScope = useStudio(st => st.scope ?? null);
   const identity = useMemo(() => resolveWorkspaceIdentity({actorId, collabScope, projectId: novelId}), [actorId, collabScope, novelId]);
   const realScope = identity.kind === 'real' ? identity.scope : null;
+  // [HERMIA-FE-20261025 U3-M3] real session only; no identity ⇒ TasksPanelLive shows "未接通" and performs no read.
+  const sessionToken = useStudio(st => st.sessionToken);
+  const actor = useStudio(st => st.actor);
+  const taskCtx = useMemo(() => (identity.kind === 'real' ? {sessionToken, actor, scope: collabScope ?? undefined} : null), [identity.kind, sessionToken, actor, collabScope]);
+  const tasks = useLiveTasks(novelId, taskCtx, identity.kind === 'real' ? JSON.stringify(identity.scope) : null);
+  // [HERMIA-FE-20261025 INT] selected production job (from task detail) drives params (M7) and results/history (M8/M9).
+  const [selJob, setSelJob] = useState<ProductionJob | null>(null);
+  useEffect(() => { setSelJob(null); }, [tasks]);
+  const loop = useUnifiedLoop(novelId, taskCtx, tasks.lease, selJob);
+  const u4 = loop.u4;
+  // [HERMIA-FE-20261025 INT] U2 selection + context nav. Return-to-origin uses U3's navigator (single return system).
+  const [sel, setSel] = useState<CanvasSelection>(EMPTY_SELECTION);
+  const [nav, setNav] = useState<NavState>(INITIAL_NAV);
+  const navRef = useRef(nav); navRef.current = nav;
+  const returnRef = useRef<() => void>(() => {});
+  useEffect(() => { setSel(EMPTY_SELECTION); setNav(INITIAL_NAV); }, [tasks]);
   const store = realScope ? safeLocalStorage() : null;
+  // [HERMIA-FE-20261025 U1-M2 INT] no resurrection: purge own geometry for projects that vanished from a successful list.
+  const realUser = useMemo(() => { const r = resolveWorkspaceIdentity({actorId, collabScope, projectId: '\u0001'}); return r.kind === 'real' ? r.scope.userId : null; }, [actorId, collabScope]);
+  const presence = useRef<ProjectPresence | null>(null);
+  useEffect(() => {
+    if (!realUser || !novels.isSuccess || !Array.isArray(novels.data)) return;
+    if (presence.current?.identityKey !== realUser) presence.current = new ProjectPresence(realUser);
+    const gone = presence.current.observe(novels.data.map(n => n.id));
+    for (const id of gone) purgeProjectGeometry(safeLocalStorage(), realUser, id);
+    if (novelId && gone.includes(novelId)) setNovelId(null);
+  }, [realUser, novels.isSuccess, novels.data, novelId]);
   const prefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: novelId});
   // Worksets are layout-level (not per novel): their own session adapter, independent of the novel switch.
   const layoutPrefs = useViewPreferences({scope: realScope, storage: store, persist: !!realScope, sessionKey: '\u0001worksets'});
@@ -136,7 +172,7 @@ export function UnifiedWorkspacePreview() {
   const dirtyName = () => (nodeDirty.current && inspectRef.current && novelRef.current
     ? `节点「${readCanvasNode(inspectRef.current.kind, novelRef.current, inspectRef.current.id)?.node.title ?? inspectRef.current.id}」` : '「章节属性」');
   // [HERMIA-FE-20261024 M3-s1fix] the inspector panel title names the node while one is shown (DockLayout's dirty prompt uses this title).
-  const specs = useMemo(() => PREVIEW_SPECS.map(x => x.id === 'inspector' && inspect ? {...x, title: `节点「${nodeTitle ?? inspect.id}」属性`} : x), [inspect, nodeTitle]);
+  const specs = useMemo(() => PREVIEW_SPECS.map(x => x.id === 'inspector' && inspect ? {...x, title: `节点「${nodeTitle ?? '未命名节点'}」属性` /* [HERMIA-FE-20261025 U2] no raw id on screen */} : x), [inspect, nodeTitle]);
   const pickImpl = (kind: CanvasKind, n: CvNode | null) => {
     (kind === 'image' ? setSelNode : setExecSel)(n);
     const cur = inspectRef.current;
@@ -186,6 +222,15 @@ export function UnifiedWorkspacePreview() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [shared, runStudio]);
+  const handleReturn = (rp: NavReturnPoint) => { setNav(n => ({...n, task: null, origin: null, notice: null})); void shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context(rp.panelId), input: rp.panelId})
+        .then(() => document.querySelector<HTMLElement>(`[data-testid="${rp.focusTestId}"]`)?.focus({preventScroll: true})); };
+  returnRef.current = () => { const rp = tasks.navigator?.takeReturn(); if (rp) handleReturn(rp); };
+  const showPanel = useCallback((pid: string) => shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context(pid), input: pid}), [shared]);
+  const doCompare = useCallback(() => { const r = toggleCompare(navRef.current); setNav(r.state);
+    if (r.intent.kind === 'show') { const p = r.intent.preset; void (p === 'compare' ? showPanel('creative').then(() => showPanel('execution')) : showPanel(r.intent.focusPanel)); } }, [showPanel]);
+  useEffect(() => registerNavActions(shared.actions, shared.table, {
+    canReturn: () => !!tasks.navigator?.canReturn(), returnToOrigin: () => returnRef.current(), hasProject: () => !!novelId, toggleCompare: doCompare,
+  }).dispose, [shared, tasks, novelId, doCompare]);
   // [HERMIA-FE-20261024 VW-M2/M4] worksets + panel focus on the shared registry (button / command search / shortcut).
   useEffect(() => registerViewActions(shared.actions, shared.table, {
     layout: () => layoutApi.current, prefs: () => prefsRef.current, focus: () => focusRef.current,
@@ -226,14 +271,30 @@ export function UnifiedWorkspacePreview() {
           {!av.enabled && <small data-testid="uw-send-reason">{av.reason}</small>}
           <button type="button" className="uw-btn" data-testid="uw-reset-vp-image" disabled={!novelId} title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('image')}>重置视角</button>
         </div>
-        <div style={{flex: 1, minHeight: 0}}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></div>
+        <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="image" selection={sel} onChange={setSel}><CreativeCanvasPanel novelId={novelId} revision={creativeRev} onSelect={onPickImage} selectedId={selNode?.id} viewport={vpOf('image')} onViewport={onCreativeVp} /></CanvasSelectionLayer></div>
       </div>;
     }
     if (id === 'execution') return <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
       <div style={{display: 'flex', gap: 8, alignItems: 'center', padding: '4px 8px'}}><button type="button" className="uw-btn" data-testid="uw-reset-vp-video" disabled={!novelId}
         title={PREFS_REASON_TEXT[prefs.status().reason]} onClick={() => resetVp('video')}>重置视角</button></div>
-      <div style={{flex: 1, minHeight: 0}}><ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} /></div></div>;
-    if (id === 'tasks') return <TasksPanel novelId={novelId} active />;
+      <div style={{flex: 1, minHeight: 0}}><CanvasSelectionLayer canvas="video" selection={sel} onChange={setSel}><ExecutionCanvasPanel novelId={novelId} revision={execRev} onSelect={onPickVideo} selectedId={execSel?.id} viewport={vpOf('video')} onViewport={onExecVp} revealLast={revealExec} onRevealed={onExecRevealed} /></CanvasSelectionLayer></div></div>;
+    // [HERMIA-FE-20261025 U3-M4] read-only nav: locate source node / open execution canvas / return (selection+focus+viewport).
+    if (id === 'tasks') return <TasksPanelLive feed={tasks.feed} navigator={tasks.navigator} active
+      hasNode={(c, nid) => !!novelId && canvasHasNode(safeLocalStorage(), novelId, c, nid)}
+      captureReturn={() => ({panelId: 'tasks', canvas: 'creative', nodeIds: [selNode?.id, execSel?.id].filter((x): x is string => !!x), focusTestId: 'u3-tasks', viewport: null})}
+      onLocate={r => { void shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context(r.canvas), input: r.canvas}); }}
+      onOpenExecution={() => { void shared.actions.execute(LAYOUT_ACTION_IDS.show, {...shared.workbench.context('execution'), input: 'execution'}); }}
+      onReturn={handleReturn}
+      onDetail={(j, ref) => { setSelJob(j); if (ref) setNav(n => openTask(n, ref, {nodeExists: (c, nid) => !!novelId && canvasHasNode(safeLocalStorage(), novelId, c, nid),
+        capture: () => ({panelId: 'tasks', canvas: 'creative', nodeIds: sel.ids.slice(), focusTestId: 'u3-tasks', viewport: null})}).state); }}
+      detailExtra={loop.param ? ('session' in loop.param ? <ParamEditPanel session={loop.param.session} targetTitle={loop.param.title} />
+        : <p data-testid="int-param-gap">{loop.param.gap}</p>) : null} />;
+    // [HERMIA-FE-20261025 U4 wiring] 总控需提供 u4 = {adopt: AdoptDeps (StudioProductionClient + canvasViews + 当前 ScopeLease), target, restore: RestoreDeps, canvasId}；未提供时保持"未接入"。
+    // [HERMIA-FE-20261025 INT] connected but nothing selected: honest empty state with the next step (not "not connected").
+    if ((id === 'results' || id === 'history') && u4 && !u4.target) return <p style={{padding: 12}} data-state="empty" data-testid={`int-${id}-empty`}>
+      {selJob ? '所选任务没有记录作品位置，无法显示结果或历史。' : '先在“任务”里选一个生产任务，这里会显示它的结果和作品历史。'}</p>;
+    if (id === 'results' && u4?.adopt && u4.target) return <ResultsPanel deps={u4.adopt} target={u4.target} online={navigator.onLine} />;
+    if (id === 'history' && u4?.restore && u4.canvasId) return <HistoryPanel deps={u4.restore} canvasId={u4.canvasId} localDraft={false} />;
     return <p style={{ padding: 12 }} data-state="not-connected">{PREVIEW_SPECS.find((x) => x.id === id)?.title ?? "面板"}：预览里尚未接入实际功能。</p>;
   };
   const host = useRef<HTMLSpanElement>(null);
@@ -259,6 +320,8 @@ export function UnifiedWorkspacePreview() {
             onClick={() => void shared.actions.execute(VIEW_ACTION_IDS.openViews, shared.workbench.context(null))}>视图</button>
           {studioMsg && <small role="status" data-testid="uw-studio-status">{studioMsg}</small>}
           {vpMsg && <small role="status" data-testid="uw-vp-status">{vpMsg}</small>}
+          <ContextNavBar nav={nav} selection={sel} multi={null} capabilities={[]} canReturn={!!tasks.navigator?.canReturn()}
+            onReturn={() => returnRef.current()} onCompare={doCompare} onClearSelection={() => setSel(EMPTY_SELECTION)} />
           <small data-testid="uw-identity" data-identity={identity.kind}>{IDENTITY_TEXT[identity.kind === 'real' ? 'real' : identity.reason]}</small>
           {viewsOpen && <WorkspaceViewsPanel prefs={layoutPrefs} actions={shared.actions} ctx={input => ({...shared.workbench.context(null), input})}
             message={viewsMsg} onClose={() => setViewsOpen(false)} />}</span>}

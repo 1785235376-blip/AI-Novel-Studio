@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 // [HERMIA-FE-20261024 M2-s1] Real creative/execution/tasks panels in the ?uw=1 preview + their registry actions.
 import {act, cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react';
+import {useStudio} from '../../store';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {UnifiedWorkspacePreview} from '../UnifiedWorkspacePreview';
@@ -26,7 +27,8 @@ beforeEach(() => {
     return json({detail: 'nf'}, 404);
   }));
 });
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); });
+const initialStudio = useStudio.getState();
+afterEach(() => { useStudio.setState(initialStudio, true); cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 function mount() {
   const qc = new QueryClient({defaultOptions: {queries: {retry: false}}});
@@ -37,12 +39,15 @@ const node: CvNode = {id: 'a1', t: 'image_generate', x: 0, y: 0, title: '雾港�
 
 describe('studio preview panels (real components)', () => {
   it('no placeholder left: creative + execution are RebuildCanvas, tasks is TaskCenterPanel; capability honest', async () => {
+    // [HERMIA-FE-20261025 INT] before/after: tasks is now TasksPanelLive (testid u3-tasks) and needs a REAL actor+scope;
+    // without one it shows 未接通 and performs no read (covered by tasks/u3.*). Results/history come via the registry.
+    useStudio.setState({actor: {id: 'u-real', displayName: '作者', workspaceId: 'ws1'}, scope: {workspaceId: 'ws1', projectId: 'n1', storylineId: 's1', branchId: 'b1'}, sessionToken: 'tok-real'});
     mount();
     await screen.findByTestId('uw-creative-canvas');
     expect(document.querySelector('[data-state="not-connected"]')).toBeNull();
     expect(screen.getByRole('application', {name: '图片无限画布'})).toBeTruthy();
-    expect(screen.getByTestId('uw-tasks')).toBeTruthy();
-    expect(Object.fromEntries(STUDIO_PREVIEW_PANELS.map(p => [p.id, p.capability]))).toEqual({creative: 'local-only', execution: 'local-only', tasks: 'partial'});
+    expect(screen.getByTestId('u3-tasks')).toBeTruthy();
+    expect(Object.fromEntries(STUDIO_PREVIEW_PANELS.map(p => [p.id, p.capability]))).toEqual({creative: 'local-only', execution: 'local-only', tasks: 'partial', results: 'partial', history: 'partial'});
     // load path: GET only, no model/generation endpoint
     await waitFor(() => expect(calls.some(c => c.url.includes('/experimental/workspace/tasks'))).toBe(true));
     expect(calls.every(c => c.method === 'GET')).toBe(true);
