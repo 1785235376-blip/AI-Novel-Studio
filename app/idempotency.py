@@ -10,6 +10,23 @@ class IdempotencyStore:
     def _load(self):
         try:return json.loads(self.path.read_text(encoding='utf-8'))
         except (FileNotFoundError, json.JSONDecodeError):return {}
+    def retained(self,key):
+        """Read an existing receipt without TTL eviction or legacy adoption.
+
+        Keyed generation uses this stricter observation path. Other callers
+        retain get()'s original TTL behavior. Corruption is not a cache miss.
+        """
+        with self.lock:
+            try:data=json.loads(self.path.read_text(encoding='utf-8'))
+            except FileNotFoundError:return None
+            except (UnicodeError, json.JSONDecodeError) as exc:
+                raise ValueError("IDEMPOTENCY_RETAINED_STORE_INVALID") from exc
+            if not isinstance(data,dict):raise ValueError("IDEMPOTENCY_RETAINED_STORE_INVALID")
+            if key not in data:return None
+            item=data[key]
+            if not isinstance(item,dict) or set(item)!={'created_at','value'}:
+                raise ValueError("IDEMPOTENCY_RETAINED_RECORD_INVALID")
+            return item
     def get(self,key):
         with self.lock:
             data=self._load(); item=data.get(key)

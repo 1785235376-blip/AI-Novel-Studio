@@ -1,0 +1,131 @@
+{
+  "missing_marker_not_minted_on_replay": {
+    "first": {
+      "status": 202,
+      "body": {
+        "job_id": "job-1",
+        "status": "QUEUED",
+        "events_url": "/api/generation/job-1/events",
+        "base_chapter_version": 1
+      }
+    },
+    "marker_was_present": true,
+    "replay": {
+      "status": 409,
+      "body": {
+        "detail": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "code": "IDEMPOTENCY_OWNER_CHANGED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。",
+        "details": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "request_id": "c415a5b7-87f3-4f87-8a98-d0a1bc6830b6"
+      }
+    },
+    "marker_exists_after": false,
+    "cache_unchanged": true,
+    "dispatch_calls": 1
+  },
+  "uses_actual_repository_root_not_settings": {
+    "first": {
+      "status": 202,
+      "body": {
+        "job_id": "job-1",
+        "status": "QUEUED",
+        "events_url": "/api/generation/job-1/events",
+        "base_chapter_version": 1
+      }
+    },
+    "actual_marker": true,
+    "decoy_marker": false,
+    "dispatch_calls": 1
+  },
+  "post_dispatch_owner_change_retains_receipt": {
+    "first": {
+      "status": 409,
+      "body": {
+        "detail": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "code": "IDEMPOTENCY_OWNER_CHANGED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。",
+        "details": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "request_id": "b4ad11e6-01aa-450a-a081-f1ddb2468711"
+      }
+    },
+    "retry": {
+      "status": 409,
+      "body": {
+        "detail": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "code": "IDEMPOTENCY_OWNER_CHANGED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。",
+        "details": {
+          "code": "IDEMPOTENCY_OWNER_CHANGED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "request_id": "556d982b-a8b4-47f1-b61b-c74855194c02"
+      }
+    },
+    "receipt_retained": true,
+    "cache_unchanged_on_retry": true,
+    "dispatch_calls": 1
+  },
+  "archived_source_during_lookup_denied": {
+    "first": {
+      "status": 202,
+      "body": {
+        "job_id": "job-1",
+        "status": "QUEUED",
+        "events_url": "/api/generation/job-1/events",
+        "base_chapter_version": 1
+      }
+    },
+    "replay": {
+      "status": 404,
+      "body": {
+        "detail": {
+          "code": "CHAPTER_NOT_FOUND"
+        },
+        "code": "CHAPTER_NOT_FOUND",
+        "message": "CHAPTER_NOT_FOUND",
+        "details": {
+          "code": "CHAPTER_NOT_FOUND"
+        },
+        "request_id": "d36c093e-5117-4d83-9e3d-ba85d912b25b"
+      }
+    },
+    "cache_unchanged": true,
+    "dispatch_calls": 1
+  },
+  "copied_branch_other_root_is_not_owner": {
+    "request": {
+      "status": 409,
+      "body": {
+        "detail": {
+          "code": "IDEMPOTENCY_OWNER_UNVERIFIED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "code": "IDEMPOTENCY_OWNER_UNVERIFIED",
+        "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。",
+        "details": {
+          "code": "IDEMPOTENCY_OWNER_UNVERIFIED",
+          "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"
+        },
+        "request_id": "1859ccce-9138-484d-9f63-4488d9f78d50"
+      }
+    },
+    "dispatch_calls": 0,
+    "cache_exists": false
+  }
+}

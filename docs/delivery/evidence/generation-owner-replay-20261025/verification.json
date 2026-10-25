@@ -1,0 +1,532 @@
+{
+  "parent": "7cfe858d959d97c3f6934cbe7c2a70ac1d79691d",
+  "original_counterexample_baseline": "e99e91ed84763224638b80ffb83ae7880fa4f1a0",
+  "source_sha256": {
+    "app/api.py": "d40588c7190472b778b41ad67bf4ea6bc69f8613d4858ca46b8c92471fb08ed7",
+    "app/idempotency.py": "88b03eff20b10333645ae443169611adff1fe730c48453c2966f3a80d6e3214d",
+    "app/services/generation_idempotency_authority.py": "acdeb4d93a14103d4c7f0c0f50a3e57f57c3bad40ca7ba54bc2f681015941437",
+    "tests/test_generation_idempotency_contracts.py": "e28010e2602d9b06ac317c19c34c0f8c2b4ec9402e0181bed4dcd0759771d43c"
+  },
+  "original_junit_sha256": "7d78937297a72838f119a9a5bdc1fb37792e957b2e643fbf29e30894fae9c40c",
+  "counts": {
+    "passed": 102,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "cases": [
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_dirty_tracker_uses_generation_to_reject_stale_completion",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_idle_debounce_coalesces_edits_and_saves_latest_content",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_periodic_safety_save_and_flush_hooks",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_failure_remains_dirty_and_exposes_retryability_and_status",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_flush_all_attempts_every_document_after_one_failure",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_per_document_serialization_and_latest_content_wins_during_save",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_autosave_foundation",
+      "name": "test_observer_failure_cannot_strand_save_guard_and_closed_coordinator_rejects_edits",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_revision_initial_increment_stale_and_missing_guard",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_tracking_disabled_enforcement_and_failed_domain_preserves_revision",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_branch_revisions_are_isolated_and_snapshot_binds_revision",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_default_flag_is_disabled",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_proposal_accept_revision_guard_and_duplicate_idempotency",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_stale_proposal_accept_preserves_pending_and_state",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_branch_revision",
+      "name": "test_file_revision_failure_restores_narrative_snapshot",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_archive_lifecycle_v070",
+      "name": "test_file_archive_restore_persists_without_deleting_content",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_archive_lifecycle_v070",
+      "name": "test_file_archive_is_idempotent",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_archive_lifecycle_v070",
+      "name": "test_file_archive_restore_audit_is_atomic_and_idempotent",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_document_markdown_eof_policy[document0-]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_document_markdown_eof_policy[document1-One\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_document_markdown_eof_policy[document2-One\\n\\nTwo\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_document_markdown_eof_policy[document3-## Title\\n\\nBody\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_postgres_chapter_uses_shared_markdown_renderer[document0-]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_postgres_chapter_uses_shared_markdown_renderer[document1-One\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_postgres_chapter_uses_shared_markdown_renderer[document2-One\\n\\nTwo\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_markdown_contract",
+      "name": "test_postgres_chapter_uses_shared_markdown_renderer[document3-## Title\\n\\nBody\\n\\n]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_restart_recovery",
+      "name": "test_interrupted_job_becomes_safely_retryable_after_restart",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_revision_context_snapshot_v056",
+      "name": "test_debounce_does_not_create_permanent_revision_but_checkpoints_do",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_revision_context_snapshot_v056",
+      "name": "test_restore_appends_new_current_and_preserves_selected_history",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_revision_context_snapshot_v056",
+      "name": "test_snapshot_records_actor_scope_v2_order_budget_hash_and_generation",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_revision_context_snapshot_v056",
+      "name": "test_snapshot_v1_remains_supported_and_cloud_rejects_local_only",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_revision_context_snapshot_v056",
+      "name": "test_snapshot_failure_prevents_model_invocation",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_replay_returns_cached_result_without_creating",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_replay_contract_is_stable_across_repeats",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_without_idempotency_key_creates_independently",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_distinct_keys_create_once_each",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_idempotency_is_namespaced_by_operation",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_create_failure_is_not_cached_and_releases_lock",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_fresh_store_concurrent_submission_survives_repeated_races",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_same_key_changed_payload_is_rejected_without_overwriting_cache",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_same_key_is_isolated_between_real_projects",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_same_key_is_isolated_by_trusted_actor_and_branch",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_current_authority_and_source[membership-403-FORBIDDEN]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_current_authority_and_source[role-403-FORBIDDEN]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_current_authority_and_source[session-401-INVALID_SESSION]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_current_authority_and_source[source-404-CHAPTER_NOT_FOUND]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_current_authority_and_source[feature-404-EXPERIMENTAL_FEATURE_DISABLED]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_replay_rechecks_revocation_after_request_validation[membership]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_replay_rechecks_revocation_after_request_validation[role]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_does_not_survive_local_source_deletion",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_request_cannot_use_another_projects_chapter",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rejects_recreated_project_incarnation",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_cached_result_rechecks_source_deleted_during_replay",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[scoped]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[unscoped]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-scoped]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-unscoped]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[invalid-result]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_expired_bound_receipt_requires_an_explicit_new_key",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[missing]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[corrupt]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{broken json]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_corrupt_retained_cache_fails_closed_without_overwriting[[]]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{\"unused\": 1, \"generate:continue:broken\": null}]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_keyed_request_rejects_different_repository_roots",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_authority_rejects_registered_branch_store_from_another_root",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[source]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[project]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_keyed_replay_rejects_archived_branch_source[before]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_keyed_replay_rejects_archived_branch_source[during]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_keyed_replay_rechecks_feature_disabled_during_lookup",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_without_key_and_variants_do_not_create_idempotency_owner_marker",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_idempotency_non_generation_get_keeps_its_original_ttl_contract",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[None]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[query]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[body]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_late_local_project_recreation_keeps_original_receipt_and_requires_new_key",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_owner_uses_actual_repository_not_decoy_settings_root",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[matching-driver]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[database]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[host]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[port]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[query]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[user]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[chapter-database]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-novels-database]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_idempotency_contracts",
+      "name": "test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-mainline-database]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_concurrency",
+      "name": "test_conflict_has_backend_neutral_details",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_concurrency",
+      "name": "test_file_two_clients_have_one_deterministic_winner",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_concurrency",
+      "name": "test_autosave_uses_durable_version_and_preserves_dirty_latest_on_conflict",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_chapter_concurrency",
+      "name": "test_autosave_multiple_editor_generations_increment_one_durable_version",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_v056_atomic_persistence_integration",
+      "name": "test_file_atomic_success_conflict_and_audit_failure_compensation",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_v056_atomic_persistence_integration",
+      "name": "test_file_atomic_updates_to_different_chapters_do_not_lose_shared_audit",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_generation_is_idempotent_under_concurrent_submission",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variant_generation_creates_independent_jobs",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variant_generation_limits_count",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variant_lifecycle_accepts_one_and_rejects_the_rest",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_failed_variant_can_be_retried_independently",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_completed_variant_cannot_be_retried",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variant_jobs_can_be_cancelled_independently",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variants_reject_invalid_source_before_dispatch[missing]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variants_reject_invalid_source_before_dispatch[other-project]",
+      "status": "passed"
+    },
+    {
+      "class": "tests.test_generation_variants_phase3",
+      "name": "test_variants_reject_invalid_source_before_dispatch[deleted]",
+      "status": "passed"
+    }
+  ],
+  "real_postgresql": "NOT_RUN",
+  "models": "NOT_RUN",
+  "note": "PostgreSQL-named helper cases are offline protocol/configuration checks. Existing process-local locks do not guarantee cross-process/crash exactly-once."
+}

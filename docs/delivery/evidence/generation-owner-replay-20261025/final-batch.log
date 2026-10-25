@@ -1,0 +1,126 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.7.0 -- <CHECKOUT>/.venv/bin/python
+rootdir: <CHECKOUT>
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 102 items
+
+tests/test_autosave_foundation.py::test_dirty_tracker_uses_generation_to_reject_stale_completion PASSED [  0%]
+tests/test_autosave_foundation.py::test_idle_debounce_coalesces_edits_and_saves_latest_content PASSED [  1%]
+tests/test_autosave_foundation.py::test_periodic_safety_save_and_flush_hooks PASSED [  2%]
+tests/test_autosave_foundation.py::test_failure_remains_dirty_and_exposes_retryability_and_status PASSED [  3%]
+tests/test_autosave_foundation.py::test_flush_all_attempts_every_document_after_one_failure PASSED [  4%]
+tests/test_autosave_foundation.py::test_per_document_serialization_and_latest_content_wins_during_save PASSED [  5%]
+tests/test_autosave_foundation.py::test_observer_failure_cannot_strand_save_guard_and_closed_coordinator_rejects_edits PASSED [  6%]
+tests/test_branch_revision.py::test_revision_initial_increment_stale_and_missing_guard PASSED [  7%]
+tests/test_branch_revision.py::test_tracking_disabled_enforcement_and_failed_domain_preserves_revision PASSED [  8%]
+tests/test_branch_revision.py::test_branch_revisions_are_isolated_and_snapshot_binds_revision PASSED [  9%]
+tests/test_branch_revision.py::test_default_flag_is_disabled PASSED      [ 10%]
+tests/test_branch_revision.py::test_proposal_accept_revision_guard_and_duplicate_idempotency PASSED [ 11%]
+tests/test_branch_revision.py::test_stale_proposal_accept_preserves_pending_and_state PASSED [ 12%]
+tests/test_branch_revision.py::test_file_revision_failure_restores_narrative_snapshot PASSED [ 13%]
+tests/test_chapter_archive_lifecycle_v070.py::test_file_archive_restore_persists_without_deleting_content PASSED [ 14%]
+tests/test_chapter_archive_lifecycle_v070.py::test_file_archive_is_idempotent PASSED [ 15%]
+tests/test_chapter_archive_lifecycle_v070.py::test_file_archive_restore_audit_is_atomic_and_idempotent PASSED [ 16%]
+tests/test_chapter_markdown_contract.py::test_document_markdown_eof_policy[document0-] PASSED [ 17%]
+tests/test_chapter_markdown_contract.py::test_document_markdown_eof_policy[document1-One\n\n] PASSED [ 18%]
+tests/test_chapter_markdown_contract.py::test_document_markdown_eof_policy[document2-One\n\nTwo\n\n] PASSED [ 19%]
+tests/test_chapter_markdown_contract.py::test_document_markdown_eof_policy[document3-## Title\n\nBody\n\n] PASSED [ 20%]
+tests/test_chapter_markdown_contract.py::test_postgres_chapter_uses_shared_markdown_renderer[document0-] PASSED [ 21%]
+tests/test_chapter_markdown_contract.py::test_postgres_chapter_uses_shared_markdown_renderer[document1-One\n\n] PASSED [ 22%]
+tests/test_chapter_markdown_contract.py::test_postgres_chapter_uses_shared_markdown_renderer[document2-One\n\nTwo\n\n] PASSED [ 23%]
+tests/test_chapter_markdown_contract.py::test_postgres_chapter_uses_shared_markdown_renderer[document3-## Title\n\nBody\n\n] PASSED [ 24%]
+tests/test_generation_restart_recovery.py::test_interrupted_job_becomes_safely_retryable_after_restart PASSED [ 25%]
+tests/test_revision_context_snapshot_v056.py::test_debounce_does_not_create_permanent_revision_but_checkpoints_do PASSED [ 26%]
+tests/test_revision_context_snapshot_v056.py::test_restore_appends_new_current_and_preserves_selected_history PASSED [ 27%]
+tests/test_revision_context_snapshot_v056.py::test_snapshot_records_actor_scope_v2_order_budget_hash_and_generation PASSED [ 28%]
+tests/test_revision_context_snapshot_v056.py::test_snapshot_v1_remains_supported_and_cloud_rejects_local_only PASSED [ 29%]
+tests/test_revision_context_snapshot_v056.py::test_snapshot_failure_prevents_model_invocation PASSED [ 30%]
+tests/test_generation_idempotency_contracts.py::test_generation_replay_returns_cached_result_without_creating PASSED [ 31%]
+tests/test_generation_idempotency_contracts.py::test_generation_replay_contract_is_stable_across_repeats PASSED [ 32%]
+tests/test_generation_idempotency_contracts.py::test_generation_without_idempotency_key_creates_independently PASSED [ 33%]
+tests/test_generation_idempotency_contracts.py::test_generation_distinct_keys_create_once_each PASSED [ 34%]
+tests/test_generation_idempotency_contracts.py::test_generation_idempotency_is_namespaced_by_operation PASSED [ 35%]
+tests/test_generation_idempotency_contracts.py::test_generation_create_failure_is_not_cached_and_releases_lock PASSED [ 36%]
+tests/test_generation_idempotency_contracts.py::test_generation_fresh_store_concurrent_submission_survives_repeated_races PASSED [ 37%]
+tests/test_generation_idempotency_contracts.py::test_generation_same_key_changed_payload_is_rejected_without_overwriting_cache PASSED [ 38%]
+tests/test_generation_idempotency_contracts.py::test_generation_same_key_is_isolated_between_real_projects PASSED [ 39%]
+tests/test_generation_idempotency_contracts.py::test_generation_same_key_is_isolated_by_trusted_actor_and_branch PASSED [ 40%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_current_authority_and_source[membership-403-FORBIDDEN] PASSED [ 41%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_current_authority_and_source[role-403-FORBIDDEN] PASSED [ 42%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_current_authority_and_source[session-401-INVALID_SESSION] PASSED [ 43%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_current_authority_and_source[source-404-CHAPTER_NOT_FOUND] PASSED [ 44%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_current_authority_and_source[feature-404-EXPERIMENTAL_FEATURE_DISABLED] PASSED [ 45%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_replay_rechecks_revocation_after_request_validation[membership] PASSED [ 46%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_replay_rechecks_revocation_after_request_validation[role] PASSED [ 47%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_does_not_survive_local_source_deletion PASSED [ 48%]
+tests/test_generation_idempotency_contracts.py::test_generation_request_cannot_use_another_projects_chapter PASSED [ 49%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rejects_recreated_project_incarnation PASSED [ 50%]
+tests/test_generation_idempotency_contracts.py::test_generation_cached_result_rechecks_source_deleted_during_replay PASSED [ 50%]
+tests/test_generation_idempotency_contracts.py::test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[scoped] PASSED [ 51%]
+tests/test_generation_idempotency_contracts.py::test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[unscoped] PASSED [ 52%]
+tests/test_generation_idempotency_contracts.py::test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-scoped] PASSED [ 53%]
+tests/test_generation_idempotency_contracts.py::test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[expired-unscoped] PASSED [ 54%]
+tests/test_generation_idempotency_contracts.py::test_generation_retained_legacy_receipt_never_becomes_an_automatic_miss[invalid-result] PASSED [ 55%]
+tests/test_generation_idempotency_contracts.py::test_generation_expired_bound_receipt_requires_an_explicit_new_key PASSED [ 56%]
+tests/test_generation_idempotency_contracts.py::test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[missing] PASSED [ 57%]
+tests/test_generation_idempotency_contracts.py::test_generation_replay_never_replaces_missing_or_corrupt_owner_marker[corrupt] PASSED [ 58%]
+tests/test_generation_idempotency_contracts.py::test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{broken json] PASSED [ 59%]
+tests/test_generation_idempotency_contracts.py::test_generation_corrupt_retained_cache_fails_closed_without_overwriting[[]] PASSED [ 60%]
+tests/test_generation_idempotency_contracts.py::test_generation_corrupt_retained_cache_fails_closed_without_overwriting[{"unused": 1, "generate:continue:broken": null}] PASSED [ 61%]
+tests/test_generation_idempotency_contracts.py::test_generation_keyed_request_rejects_different_repository_roots PASSED [ 62%]
+tests/test_generation_idempotency_contracts.py::test_generation_authority_rejects_registered_branch_store_from_another_root PASSED [ 63%]
+tests/test_generation_idempotency_contracts.py::test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[source] PASSED [ 64%]
+tests/test_generation_idempotency_contracts.py::test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner_check_fails[project] PASSED [ 65%]
+tests/test_generation_idempotency_contracts.py::test_generation_keyed_replay_rejects_archived_branch_source[before] PASSED [ 66%]
+tests/test_generation_idempotency_contracts.py::test_generation_keyed_replay_rejects_archived_branch_source[during] PASSED [ 67%]
+tests/test_generation_idempotency_contracts.py::test_generation_keyed_replay_rechecks_feature_disabled_during_lookup PASSED [ 68%]
+tests/test_generation_idempotency_contracts.py::test_generation_without_key_and_variants_do_not_create_idempotency_owner_marker PASSED [ 69%]
+tests/test_generation_idempotency_contracts.py::test_idempotency_non_generation_get_keeps_its_original_ttl_contract PASSED [ 70%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[None] PASSED [ 71%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[query] PASSED [ 72%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_adapter_uses_original_engine_protocol_without_connecting_to_postgres[body] PASSED [ 73%]
+tests/test_generation_idempotency_contracts.py::test_generation_late_local_project_recreation_keeps_original_receipt_and_requires_new_key PASSED [ 74%]
+tests/test_generation_idempotency_contracts.py::test_generation_owner_uses_actual_repository_not_decoy_settings_root PASSED [ 75%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[matching-driver] PASSED [ 76%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[database] PASSED [ 77%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[host] PASSED [ 78%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[port] PASSED [ 79%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[query] PASSED [ 80%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[user] PASSED [ 81%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[chapter-database] PASSED [ 82%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-novels-database] PASSED [ 83%]
+tests/test_generation_idempotency_contracts.py::test_generation_postgres_owner_binding_configuration_without_a_database_connection[branch-mainline-database] PASSED [ 84%]
+tests/test_chapter_concurrency.py::test_conflict_has_backend_neutral_details PASSED [ 85%]
+tests/test_chapter_concurrency.py::test_file_two_clients_have_one_deterministic_winner PASSED [ 86%]
+tests/test_chapter_concurrency.py::test_autosave_uses_durable_version_and_preserves_dirty_latest_on_conflict PASSED [ 87%]
+tests/test_chapter_concurrency.py::test_autosave_multiple_editor_generations_increment_one_durable_version PASSED [ 88%]
+tests/test_v056_atomic_persistence_integration.py::test_file_atomic_success_conflict_and_audit_failure_compensation PASSED [ 89%]
+tests/test_v056_atomic_persistence_integration.py::test_file_atomic_updates_to_different_chapters_do_not_lose_shared_audit PASSED [ 90%]
+tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission PASSED [ 91%]
+tests/test_generation_variants_phase3.py::test_variant_generation_creates_independent_jobs PASSED [ 92%]
+tests/test_generation_variants_phase3.py::test_variant_generation_limits_count PASSED [ 93%]
+tests/test_generation_variants_phase3.py::test_variant_lifecycle_accepts_one_and_rejects_the_rest PASSED [ 94%]
+tests/test_generation_variants_phase3.py::test_failed_variant_can_be_retried_independently PASSED [ 95%]
+tests/test_generation_variants_phase3.py::test_completed_variant_cannot_be_retried PASSED [ 96%]
+tests/test_generation_variants_phase3.py::test_variant_jobs_can_be_cancelled_independently PASSED [ 97%]
+tests/test_generation_variants_phase3.py::test_variants_reject_invalid_source_before_dispatch[missing] PASSED [ 98%]
+tests/test_generation_variants_phase3.py::test_variants_reject_invalid_source_before_dispatch[other-project] PASSED [ 99%]
+tests/test_generation_variants_phase3.py::test_variants_reject_invalid_source_before_dispatch[deleted] PASSED [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  <CHECKOUT>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  <CHECKOUT>/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  <CHECKOUT>/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: <CHECKOUT>/.runtime/recovery-owners-production-20261025/final-batch.xml -
+======================= 102 passed, 3 warnings in 16.73s =======================

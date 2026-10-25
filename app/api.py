@@ -1376,7 +1376,7 @@ def upsert_story_route(nid:str,route_id:str,body:StoryRouteIn):return guard(nove
 def story_routes(nid:str):return guard(novel_service.data_set,nid,"story_routes")
 @router.get("/novels/{nid}/secrets",dependencies=[Depends(_shared_project_read)])
 def secrets(nid:str): return guard(novel_service.public_secrets,nid)
-def _generation_request_context(body, token, branch):
+def _generation_request_context(body, token, branch, *, require_active_source=False):
     actor = scope = None
     if settings.enable_collaboration_runtime:
         actor, scope, chapter = _collaboration_context(body.chapter_id, token, branch)
@@ -1388,6 +1388,9 @@ def _generation_request_context(body, token, branch):
         chapter = guard(chapter_service.get, body.chapter_id)
     if chapter["novel_id"] != body.novel_id:
         raise HTTPException(404, {"code": "CHAPTER_OUTSIDE_PROJECT"})
+    if require_active_source and (chapter.get("id") != body.chapter_id
+                                  or chapter.get("is_archived") or chapter.get("deleted")):
+        raise HTTPException(404, {"code": "CHAPTER_NOT_FOUND"})
     return actor, scope
 
 
@@ -1424,27 +1427,114 @@ def _generation_payload(body, token, branch):
 def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None),idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
     if operation not in {"continue","rewrite","polish","brainstorm","review"}:
         raise HTTPException(404,"Unknown generation operation")
-    actor, scope = _generation_request_context(body, x_session_token, x_branch_id)
+    actor, scope = _generation_request_context(body, x_session_token, x_branch_id,
+                                              require_active_source=bool(idempotency_key))
     payload = _generation_payload(body, x_session_token, x_branch_id)
     authority = [body.novel_id, body.chapter_id, getattr(actor, "actor_id", "local-author"), getattr(actor, "workspace_id", "local"), getattr(scope, "branch_id", None)]
     cache_scope = "generate:" + operation + ":" + hashlib.sha256(json.dumps(authority).encode()).hexdigest()
     digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
-    def create():
+    def create(request_authorization=None):
+        authorization = _registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope)
+        if request_authorization is not None:
+            authorization = {"request_authorization": request_authorization}
         job = jobs.create(operation, payload, actor=actor, scope=scope,
-                          **_registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope))
+                          **authorization)
         return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
     if idempotency_key:
+        from datetime import datetime, timezone
+        from .services.generation_idempotency_authority import GenerationIdempotencyAuthority
+
+        def conflict(code):
+            return HTTPException(409, {"code": code, "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"})
+
+        try:
+            owner = GenerationIdempotencyAuthority(novel_service, chapter_service)
+        except Exception as exc:
+            # Owner construction may reject an inconsistent repository binding
+            # or database adapter. Never expose roots, DSNs or driver details.
+            raise conflict("IDEMPOTENCY_OWNER_UNVERIFIED") from exc
+
+        @contextmanager
+        def same_owner(expected):
+            try:
+                with owner.verify_existing(body.novel_id, expected):
+                    yield
+            except Exception as exc:
+                raise conflict("IDEMPOTENCY_OWNER_CHANGED") from exc
+
         with _idempotency_execution_lock:
-            cached = _cached_idempotent(idempotency_key, cache_scope)
-            if cached:
+            # Retain the original namespace. Adding incarnation to the key
+            # would turn an old executed request into a miss and redispatch it.
+            try:
+                legacy = _idempotency_store.retained(f"generate:{operation}:{idempotency_key}")
+                retained = _idempotency_store.retained(f"{cache_scope}:{idempotency_key}")
+            except (ValueError, OSError) as exc:
+                raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED") from exc
+            if legacy is not None:
+                raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED")
+            if retained is not None:
+                cached = retained["value"]
+                if (not isinstance(cached, dict)
+                        or set(cached) != {"schema_version", "project_incarnation", "request_digest", "result"}
+                        or type(cached["schema_version"]) is not int or cached["schema_version"] != 2
+                        or not isinstance(cached["project_incarnation"], str)
+                        or not re.fullmatch(r"(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", cached["project_incarnation"])
+                        or not isinstance(cached["result"], dict)
+                        or set(cached["result"]) != {"job_id", "status", "events_url", "base_chapter_version"}
+                        or not isinstance(cached["result"].get("job_id"), str)
+                        or not cached["result"]["job_id"]
+                        or not isinstance(cached["result"].get("status"), str)
+                        or cached["result"].get("events_url") != f"/api/generation/{cached['result']['job_id']}/events"
+                        or type(cached["result"].get("base_chapter_version")) is not int
+                        or cached["result"]["base_chapter_version"] < 1):
+                    raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED")
+                incarnation = cached["project_incarnation"]
+                with same_owner(incarnation):
+                    pass
+                try:
+                    created_at = datetime.fromisoformat(retained["created_at"])
+                    if created_at.tzinfo is None:
+                        raise ValueError("unbound timestamp")
+                    expired = datetime.now(timezone.utc) - created_at > _idempotency_store.ttl
+                except (TypeError, ValueError) as exc:
+                    raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED") from exc
+                if expired:
+                    raise conflict("IDEMPOTENCY_KEY_EXPIRED")
                 if cached.get("request_digest") != digest:
                     raise HTTPException(409, {"code": "IDEMPOTENCY_REQUEST_MISMATCH"})
                 if settings.enable_collaboration_runtime:
                     _generation_context(cached["result"]["job_id"], x_session_token)
-                return cached["result"]
-            result = create()
-            _store_idempotent(idempotency_key, cache_scope, {"request_digest": digest, "result": result})
-            return result
+            else:
+                try:
+                    incarnation = owner.capture_new(body.novel_id)
+                except Exception as exc:
+                    raise conflict("IDEMPOTENCY_OWNER_UNVERIFIED") from exc
+
+            def revalidate():
+                current_actor, current_scope = _generation_request_context(
+                    body, x_session_token, x_branch_id, require_active_source=True)
+                if current_actor != actor or current_scope != scope:
+                    raise HTTPException(403, {"code": "GENERATION_AUTHORITY_CHANGED"})
+                with same_owner(incarnation):
+                    pass
+
+            if retained is not None:
+                # Lookup above may have waited while a source/feature/authority
+                # changed. No project lease is held across auth/source reads.
+                revalidate()
+                with same_owner(incarnation):
+                    return cached["result"]
+            revalidate()
+            result = create(revalidate)
+            # Dispatch succeeded: retain its original binding before any late
+            # rejection. Never erase this evidence or silently dispatch again.
+            _store_idempotent(idempotency_key, cache_scope, {
+                "schema_version": 2, "project_incarnation": incarnation,
+                "request_digest": digest, "result": result,
+            })
+            revalidate()
+            with same_owner(incarnation):
+                return result
     return create()
 
 
