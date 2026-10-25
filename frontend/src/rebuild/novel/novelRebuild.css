@@ -140,7 +140,7 @@ html .app-shell[data-module="NOVEL"] .novel-writing-workspace{overflow:hidden}
 .nv-chapters__vol{font-size:10.5px;color:var(--color-text-muted);padding:8px 6px 4px;letter-spacing:.04em}
 .nv-chapters__ch{display:flex;width:100%;align-items:flex-start;gap:5px;border:0;background:none;text-align:left;padding:6px 7px;border-radius:6px;color:var(--color-text-primary);margin-bottom:2px;font-size:12.5px;cursor:pointer}
 .nv-chapters__ch:hover{background:var(--color-bg-elevated)}
-.nv-chapters__ch[aria-selected="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
+.nv-chapters__ch[aria-selected="true"],.nv-chapters__ch[aria-current="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
 .nv-chapters__meta{display:block;font-size:10.5px;font-weight:400;color:var(--color-text-muted);margin-top:2px}
 .nv-chapters__new{width:100%;margin-top:8px;justify-content:center}
 /* 左栏 200 */

@@ -197,7 +197,7 @@ export function ModuleOverflowMenu({
             >
               {icon}
               <span>{label}</span>
-              <small>{id}</small>
+              {shellMode === "pro" && <small>{id}</small>}
             </button>
           ))}
         </div>
@@ -254,7 +254,7 @@ export function ShellSettingsMenu({
         className={isOverflow ? "is-active" : ""}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label="打开设置（AI 主控与插件）"
+        aria-label={shellMode === "pro" ? "打开设置（AI 主控与插件）" : "打开设置"} /* [HERMIA-FE-20261025 DUI P1-6] 普通模式不提插件 */
         data-settings-trigger="true"
         onClick={() => setOpen((v) => !v)}
       >
@@ -263,10 +263,13 @@ export function ShellSettingsMenu({
       </button>
       {open && (
         <div className="shell-settings__menu" role="menu" aria-label="设置与溢出工作区">
-          <p className="shell-settings__hint">
-            AI 主控 / 插件经设置或「更多」进入 · 铬条仍 6 · 状态读账本（禁假绿）
-          </p>
-          {STUDIO_MODULE_OVERFLOW.map(({ id, icon, label }) => (
+          {shellMode === "pro" && (
+            <p className="shell-settings__hint">
+              AI 主控 / 插件经设置或「更多」进入 · 铬条仍 6 · 状态读账本（禁假绿）
+            </p>
+          )}
+          {/* [HERMIA-FE-20261025 DUI P1-6] 普通模式只留 AI 主控（含简化媒体模型配置）；插件/工作流仅专业 */}
+          {STUDIO_MODULE_OVERFLOW.filter(({ id }) => shellMode === "pro" || id === "CONTROL").map(({ id, icon, label }) => (
             <button
               key={id}
               type="button"
@@ -281,7 +284,7 @@ export function ShellSettingsMenu({
             >
               {icon}
               <span>{id === "CONTROL" ? "AI 主控" : id === "PLUGIN" ? "插件管理" : label}</span>
-              <small>{id}</small>
+              {shellMode === "pro" ? <small>{id}</small> : null /* [HERMIA-FE-20261025 DUI P0-a] 普通模式不显示内部代号 */}
             </button>
           ))}
         </div>
@@ -539,6 +542,12 @@ export function AppShell({
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", stop);
   };
+  // [HERMIA-FE-20261025 DUI P1-7] 每个模块有自己的页标题；html lang 由 i18n 分支负责，这里只在缺失时兜底，不覆盖。
+  const moduleTitle = [...STUDIO_MODULES, ...STUDIO_MODULE_OVERFLOW].find((m) => m.id === module)?.label || "";
+  useEffect(() => {
+    if (!document.documentElement.lang) document.documentElement.lang = "zh-CN";
+    document.title = moduleTitle ? `${moduleTitle} · PoemSeed Studio` : "PoemSeed Studio";
+  }, [moduleTitle]);
   useEffect(() => {
     try { localStorage.setItem("studio-inspector-open", inspectorOpen ? "1" : "0"); } catch { /* ignore */ }
   }, [inspectorOpen]);
@@ -753,7 +762,7 @@ export function AppShell({
         <button
           ref={commandTrigger}
           className="global-search"
-          aria-label="打开全局命令"
+          aria-label="搜索功能、章节或命令 Ctrl K" /* [HERMIA-FE-20261025 DUI P1-7] 可访问名与可见文本一致(label-content-name-mismatch) */
           onClick={openSearch}
         >
           <Search aria-hidden="true" />
@@ -779,7 +788,7 @@ export function AppShell({
           </button>
         </div>
         {/* [HERMIA-FE-20261022 REBUILD] 导出/资料/任务 — prototype header tools */}
-        <RebuildHeaderTools module={module} activeTaskCount={taskTotal.running + taskTotal.queued} />
+        <RebuildHeaderTools module={module} activeTaskCount={taskTotal.running + taskTotal.queued} pro={shellMode === "pro"} /* [HERMIA-FE-20261025 DUI P1-6] */ />
         {/* [HERMIA-FE-20261022] t71u ThemeToggle — 浅色/深色，localStorage studio-theme */}
         <ThemeToggle />
         {/* [HERMIA-FE-20261022 X-UX-09] Header 设置 → CONTROL/PLUGIN；不进 6 钮 */}
@@ -793,6 +802,7 @@ export function AppShell({
       </header>
       <ContextBar scope={scope} projectNoun={projectNoun} writing={writingContext} showCollapsedCta={!visibleInspector && module === "NOVEL"} />
       <main className="workspace-body">
+        <h1 className="sr-only" data-module-h1="true">{moduleTitle || "PoemSeed Studio"}</h1>{/* [HERMIA-FE-20261025 DUI P1-7] */}
         {banner ? <div className="workspace-banner">{banner}</div> : null}
         <aside
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}

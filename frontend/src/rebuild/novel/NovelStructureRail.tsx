@@ -43,29 +43,30 @@ export function NovelStructureRail({
   return (
     <div className="nv-rail" data-rebuild="novel-rail">
       <h3 className="nv-rail__h">作品结构</h3>
-      <div className="nv-rail__tree" role="tree" aria-label="章节">
+      {/* [HERMIA-FE-20261025 DUI P1-7] 结构修复：tree 内只放 treeitem；卷名/状态/新建移到 tree 外（aria-required-children） */}
+      <div className="nv-rail__tree">
         <div className="nv-rail__vol">{volumeLabel}</div>
         {loading ? <p className="nv-rail__muted">正在读取章节…</p> : null}
         {error ? <p className="nv-rail__muted" role="alert">章节暂时读不到，请稍后重试。</p> : null}
         {!loading && !error && chapters.length === 0 ? <p className="nv-rail__muted">还没有章节。</p> : null}
-        {chapters.map(c => (
+        {chapters.length ? <div role="tree" aria-label="章节" style={{display: 'contents'}}>{chapters.map(c => (
           <button key={c.id} type="button" role="treeitem" aria-selected={c.id === selectedId} className="nv-rail__item" data-chapter-id={c.id} onClick={() => onSelect(c.id)}>
             <span className="nv-rail__ic" aria-hidden="true">¶</span>
             <span className="nv-rail__label">第 {c.number} 章 · {c.title || '未命名'}</span>
           </button>
-        ))}
+        ))}</div> : null}
         {onCreate && !loading && !error ? <button type="button" className="nv-rail__new" disabled={creating} onClick={onCreate}>＋ 新建章节</button> : null}
       </div>
       <h3 className="nv-rail__h">小说面板</h3>
-      <div className="nv-rail__tree" role="tree" aria-label="小说面板">
-        {panels.map(p => (
+      <div className="nv-rail__tree">
+        <div role="tree" aria-label="小说面板" style={{display: 'contents'}}>{panels.map(p => (
           <button key={p.id} type="button" role="treeitem" aria-selected={activePanel === p.id} className="nv-rail__item" data-novel-panel={p.id} disabled={p.disabled} title={p.title} onClick={() => onOpenPanel(p.id)}>
             <span className="nv-rail__ic" aria-hidden="true">·</span>
             <span className="nv-rail__label">{p.label}</span>
             {pro ? <span className={`nv-badge nv-badge--${p.status}`}>{RAIL_STATUS_LABEL[p.status]}</span>
               : p.status === 'off' ? <span className="nv-badge nv-badge--off" data-status={p.status}>暂不可用</span> : null}
           </button>
-        ))}
+        ))}</div>
         {more ? (
           <details className="nv-rail__more" data-rail-more="true">
             <summary>更多（章节管理 · 全部功能）</summary>
@@ -91,7 +92,7 @@ export function NovelChapterColumn({chapters, selectedId, onSelect, onCreate, cr
         : error ? <p className="nv-rail__muted" role="alert" data-chapters-state="error">章节暂时读不到，请稍后重试。</p>
         : chapters.length === 0 ? <p className="nv-rail__muted" data-chapters-state="empty">还没有章节。</p> : null}
       {chapters.map(c => (
-        <button key={c.id} type="button" className="nv-chapters__ch" aria-selected={c.id === selectedId} data-ch={c.id} onClick={() => onSelect(c.id)}>
+        <button key={c.id} type="button" className="nv-chapters__ch" aria-current={c.id === selectedId ? 'true' : undefined} /* [HERMIA-FE-20261025 DUI P1-7] 普通按钮不允许 aria-selected */ data-ch={c.id} onClick={() => onSelect(c.id)}>
           <span aria-hidden="true">¶</span>
           <span>第 {c.number} 章 · {c.title || '未命名'}<span className="nv-chapters__meta">{typeof c.wordCount === 'number' ? `${c.wordCount} 字` : '字数未知'}{c.status ? ` · ${c.status}` : ''}</span></span>
         </button>

@@ -79,7 +79,7 @@ export function EditRebuild({novelId, shellMode = 'basic', onBackToVideo, handof
   const binItems = handoffs.filter(h => binTabOf(h) === binTab);
   const binEmpty = binTab === 'sub' ? '字幕轨还没接到这里。字幕请先在声音页准备好。' : '还没有可用素材。去视频或声音页把成品送过来，或从资产拖进来。';
   const grid = (big = false) => (
-    <div className="bin-grid" role="listbox" aria-label="媒体池素材" style={big ? {gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))'} : undefined}>
+    <div className="bin-grid" role={binItems.length ? 'listbox' : undefined} /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */ aria-label="媒体池素材" style={big ? {gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))'} : undefined}>
       {binItems.length === 0 ? <p className="bin-empty" data-edit-handoff="empty">{binEmpty}</p> : binItems.map(h =>
         <button key={h.id} type="button" role="option" className="bin-item" aria-selected={binSel === h.id} data-handoff-source={h.source} data-handoff-source-strip="true"
           title="放到时间线＝引用，不复制" onClick={() => setBinSel(s => s === h.id ? null : h.id)} onDoubleClick={() => addToTimeline(h)}>

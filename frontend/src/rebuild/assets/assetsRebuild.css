@@ -39,3 +39,6 @@ html .app-shell[data-module="ASSETS"] .media-ws-main{flex:1;min-height:0;display
 .ast-refs-card{width:min(100%,520px);border:1px solid var(--color-border-default);border-radius:8px;padding:12px;background:var(--color-bg-surface)}
 .ast-refs-card h4{margin:0 0 6px;font-size:13px}
 .ast-note{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);margin:0;padding:6px 12px;border-radius:6px;background:var(--color-bg-elevated,#222);border:1px solid var(--color-border-default);font-size:12px;z-index:5}
+/* [HERMIA-FE-20261025 DUI P1-7] 浅色主题对比度：引用徽标与空态标题达到 4.5:1 */
+html[data-theme="light"] .ast-ws .ref-badge{color:#0b5cd5}
+html[data-theme="light"] .ast-ws .ast-empty>h4{color:#b42318}

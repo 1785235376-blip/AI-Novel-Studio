@@ -145,10 +145,10 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
     <div className="vid-main">
       <section className="vid-layer vid-layer--script" aria-label="① 镜头脚本">
         <div className="vl-h"><span className="lab">① 镜头脚本</span><span className="nv-spacer" />{cur ? <span className="vl-meta">选中 镜头 {cur.n}</span> : null}</div>
-        <div className="shot-row" role="list" aria-label="镜头卡条">
-          {shots.length === 0 ? <p className="vl-note">{loaded ? emptyLine : '读取中…'}</p> : shots.map(s =>
+        <div className="shot-row" /* [HERMIA-FE-20261025 DUI P1-7] list 只包 listitem，空态/＋镜头放在 list 外 */>
+          {shots.length === 0 ? <p className="vl-note">{loaded ? emptyLine : '读取中…'}</p> : <div role="list" aria-label="镜头卡条" style={{display: 'contents'}}>{shots.map(s =>
             <button key={s.key} type="button" className="vid-shot" role="listitem" aria-selected={cur?.key === s.key} onClick={() => setSel(s.key)}>
-              <span className="shot-num">S{s.n}</span><b>{s.title}</b><span className="meta">{s.size}{s.dialogue ? <><br />{s.dialogue}</> : null}<br /><span className="nv-badge nv-badge--off">{s.status}</span></span></button>)}
+              <span className="shot-num">S{s.n}</span><b>{s.title}</b><span className="meta">{s.size}{s.dialogue ? <><br />{s.dialogue}</> : null}<br /><span className="nv-badge nv-badge--off">{s.status}</span></span></button>)}</div>}
           <button type="button" className="nv-btn vid-add" id="addShot" onClick={addShot}>＋ 镜头</button>
           {shots.length === 0 && loaded ? <button type="button" className="nv-btn vid-add" onClick={addShot}>从剧本拆镜头</button> : null}
         </div>

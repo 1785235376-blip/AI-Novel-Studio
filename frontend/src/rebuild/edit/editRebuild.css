@@ -85,3 +85,9 @@ html .app-shell[data-module="EDIT"] .media-ws-main{flex:1;min-height:0;display:f
 .edr .nle-mon .mon-bar .nv-btn{background:#2a303a;border-color:#3a4250;color:#e8eaef}
 .edr .nle-tl-tools .nv-btn{background:#2a303a;border-color:#3a4250;color:#c5ccd8}
 .edr .nle-upper{height:min(38vh,320px);min-height:220px}
+/* [HERMIA-FE-20261025 DUI P1-9] 1366×768 等矮屏：上区让位，保证 V1/A1/字幕 三轨 + 标尺完整可见，不被挤进滚动 */
+.edr .nle-tl{min-height:186px}
+@media (max-height:820px){
+  .edr .nle-upper,.edr.nle[data-edit-density="w-ux-05"] .nle-upper{height:min(30vh,230px);min-height:160px}
+  .edr .nle-mon .mon-frame{min-height:80px;margin:8px 12px 6px}
+}

@@ -390,7 +390,8 @@ describe('R4 optional global-search consumer', () => {
     expect(open).toHaveBeenCalledTimes(1);
     const updated = vi.fn();
     act(() => root.render(<AppShell {...props} onGlobalSearch={updated} />));
-    act(() => host.querySelector<HTMLButtonElement>('[aria-label="打开全局命令"]')!.click());
+    // [HERMIA-FE-20261025 DUI P1-7] spec change: global-search accessible name now equals its visible text (axe label-content-name-mismatch); same button, same assertions.
+    act(() => host.querySelector<HTMLButtonElement>('[aria-label="搜索功能、章节或命令 Ctrl K"]')!.click());
     expect(updated).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenCalledTimes(1);
     act(() => root.unmount());

@@ -87,7 +87,7 @@ export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   const left = (
     <div className="mw-left">
       <div className="mw-lh">人声 / 音效 / 有声书</div>
-      <div className="mw-tree" role="listbox" aria-label="声音库">
+      <div className="mw-tree" role={loaded && items.length ? 'listbox' : undefined} aria-label="声音库" /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */>
         {!loaded ? <p className="mw-muted">读取中…</p> : items.length === 0 ? <p className="mw-muted">还没有声音</p> :
           items.map(it => <button key={it.key} type="button" role="option" aria-selected={cur?.key === it.key} onClick={() => pick(it.key)}>
             <span className="ic">{it.kind === '人声' ? '♪' : it.kind === '有声书' ? '☰' : '∿'}</span><span>{it.name}<span className="sub">{it.sub}</span></span></button>)}

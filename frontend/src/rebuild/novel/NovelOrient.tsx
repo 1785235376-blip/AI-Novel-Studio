@@ -3,9 +3,11 @@
 import {useState} from 'react';
 
 const KEY = 'studio-novel-orient-dismissed';
+/** [HERMIA-FE-20261025 DUI P1-9] 「不再显示」：所有模块的指引都不再出现（持久化）。 */
+export const ORIENT_ALL_KEY = 'studio-orient-dismissed-all';
 
 export function NovelOrient({what, can, effect, storageKey = KEY}: {what: string; can: string; effect: string; /** [HERMIA-FE-20261022 R2] 每个模块各自记住收起 */ storageKey?: string}) {
-  const [hidden, setHidden] = useState(() => { try { return localStorage.getItem(storageKey) === '1'; } catch { return false; } });
+  const [hidden, setHidden] = useState(() => { try { return localStorage.getItem(storageKey) === '1' || localStorage.getItem(ORIENT_ALL_KEY) === '1'; } catch { return false; } });
   if (hidden) return null;
   return (
     <div className="nv-orient" id="orient" role="region" aria-label="当前创作指引">
@@ -16,6 +18,7 @@ export function NovelOrient({what, can, effect, storageKey = KEY}: {what: string
         <span><b>操作会影响什么</b>：{effect}</span>
       </div>
       <button type="button" className="nv-orient__dismiss" aria-label="收起指引" onClick={() => { try { localStorage.setItem(storageKey, '1'); } catch { /* 存不了就只本次收起 */ } setHidden(true); }}>收起</button>
+      <button type="button" className="nv-orient__dismiss" data-orient-dismiss-all="true" onClick={() => { try { localStorage.setItem(ORIENT_ALL_KEY, '1'); } catch { /* 存不了就只本次收起 */ } setHidden(true); }}>不再显示</button>
     </div>
   );
 }

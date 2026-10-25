@@ -69,6 +69,13 @@ describe('ModuleWorkspaceRoutes',()=>{
     const change=vi.fn();
     const root=createRoot(host);
     await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={change} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1" shellMode="basic"/>));
+    // [HERMIA-FE-20261025 DUI P1-6] 规格变更：普通模式设置菜单只留 AI 主控，插件/工作流仅专业模式可见。
+    act(()=>host.querySelector<HTMLButtonElement>('[data-settings-trigger="true"]')!.click());
+    expect(host.querySelector('.shell-settings__menu [data-settings-open="CONTROL"]')).not.toBeNull();
+    expect(host.querySelector('.shell-settings__menu [data-settings-open="PLUGIN"]')).toBeNull();
+    expect(host.querySelector('.shell-settings__menu [data-settings-open="WORKFLOW"]')).toBeNull();
+    act(()=>host.querySelector<HTMLButtonElement>('[data-settings-trigger="true"]')!.click());
+    await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={change} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1" shellMode="pro"/>));
     act(()=>host.querySelector<HTMLButtonElement>('[data-settings-trigger="true"]')!.click());
     act(()=>host.querySelector<HTMLButtonElement>('.shell-settings__menu [data-settings-open="PLUGIN"]')!.click());
     expect(change).toHaveBeenCalledWith('PLUGIN');

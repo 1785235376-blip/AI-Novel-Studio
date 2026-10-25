@@ -81,7 +81,7 @@
 
   --color-text-primary: #e8eaef;
   --color-text-secondary: #a8b0bc;
-  --color-text-muted: #6b7385;
+  --color-text-muted: #9aa3b5; /* [HERMIA-FE-20261025 DUI P1-7] 原 #6b7385 在深色面上仅 2.5–3.8:1，提到 ≥4.5:1（含选中底 #1e3a40） */
   --color-text-inverse: #0d0f12;
 
   --color-border-default: #2a303c;
