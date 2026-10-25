@@ -1,0 +1,12 @@
+#!/bin/bash
+set -o pipefail
+R=${WORKSPACE}/adaptation-fixture-evidence
+W=${WORKSPACE}/studio-adaptation-fixture-repair
+D="$R/runtime-${RUN_LABEL:-test}"
+mkdir -p "$D"/{home,xdg,data,tmp}
+export PROJECT_ROOT="$W" PYTHONPATH="$W:$W/tests" PYTHONDONTWRITEBYTECODE=1 HOME="$D/home" XDG_CONFIG_HOME="$D/xdg" XDG_DATA_HOME="$D/xdg" NOVEL_DATA_PATH="$D/data" TMPDIR="$D/tmp" STORAGE_BACKEND=file MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory
+unset DATABASE_URL TEST_POSTGRES_DATABASE_URL E2E_DATABASE_URL OPENAI_API_KEY ANTHROPIC_API_KEY DEEPSEEK_API_KEY OPENROUTER_API_KEY GEMINI_API_KEY GOOGLE_API_KEY XAI_API_KEY DASHSCOPE_API_KEY GROQ_API_KEY MISTRAL_API_KEY EXPERIMENTAL_FEATURES V1_ACCEPTANCE_MODE ENABLE_COLLABORATION_RUNTIME ENABLE_PACKAGED_RUNTIME
+cd "$W"
+printf 'COMMAND: '; printf '%q ' "$R/run.sh" "$@"; echo
+git rev-parse HEAD
+${WORKSPACE}/studio-backend-20261025/.venv/bin/python "$R/run.py" -o "cache_dir=$D/cache" "$@"

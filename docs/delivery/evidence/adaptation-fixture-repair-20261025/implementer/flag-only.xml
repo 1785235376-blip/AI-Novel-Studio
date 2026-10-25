@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="8.850" timestamp="2026-10-25T19:12:27.197539+09:00" hostname="8a71deb1dd45"><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_capability_matrix_and_cross_workspace_rejection" time="0.530" /><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_audit_is_content_free" time="0.115" /><testcase classname="tests.test_phase7_adaptation_authorization" name="test_team_adaptation_materializes_scoped_project_and_is_idempotent" time="3.807"><failure message="assert (0 == 1)&#10; +  where 0 = len([])">def test_team_adaptation_materializes_scoped_project_and_is_idempotent():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'SCREEN','title':'影视改编版'}).json()
+        client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+        endpoint=f"/api/novels/{novel}/adaptations/{created['id']}/materialize"
+        first=client.post(endpoint,params=params,headers=headers['admin']);second=client.post(endpoint,params=params,headers=headers['admin'])
+        assert first.status_code==201 and second.status_code==201 and first.json()['id']==second.json()['id']
+        target=first.json()['scope'];assert target['project_id']!=novel and target['branch_id']
+        chapters=client.get(f"/api/collaboration/workspaces/{target['workspace_id']}/projects/{target['project_id']}/storylines/{target['storyline_id']}/branches/{target['branch_id']}/chapters",headers=headers['admin']).json()['items']
+&gt;       assert len(chapters)==1 and chapters[0]['title']=='第一章'
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+tests/test_phase7_adaptation_authorization.py:65: AssertionError</failure></testcase></testsuite></testsuites>

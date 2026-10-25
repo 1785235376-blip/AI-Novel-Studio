@@ -1,0 +1,24 @@
+COMMAND: ${WORKSPACE}/adaptation-fixture-evidence/run.sh tests/test_phase7_adaptation_authorization.py tests/test_phase7_adaptation.py -q --junitxml=${WORKSPACE}/adaptation-fixture-evidence/reverse.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+IMPORTS ${WORKSPACE}/studio-adaptation-fixture-repair/app/dependencies.py ${WORKSPACE}/studio-adaptation-fixture-repair/app/adaptation_api.py
+..........                                                               [100%]
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: ${WORKSPACE}/adaptation-fixture-evidence/reverse.xml -
+10 passed, 4 warnings in 11.71s

@@ -1,0 +1,43 @@
+COMMAND: ${WORKSPACE}/adaptation-fixture-evidence/run.sh tests/test_phase7_adaptation_authorization.py -q --junitxml=${WORKSPACE}/adaptation-fixture-evidence/flag-only.xml 
+5eb983fd620ef905aa4dc1afae80b756ee7e7078
+IMPORTS ${WORKSPACE}/studio-adaptation-fixture-repair/app/dependencies.py ${WORKSPACE}/studio-adaptation-fixture-repair/app/adaptation_api.py
+..F                                                                      [100%]
+=================================== FAILURES ===================================
+______ test_team_adaptation_materializes_scoped_project_and_is_idempotent ______
+
+    def test_team_adaptation_materializes_scoped_project_and_is_idempotent():
+        client,novel,branch,scope,headers=setup_scope();params={'branch_id':branch}
+        created=client.post(f'/api/novels/{novel}/adaptations',params=params,headers=headers['admin'],json={'target':'SCREEN','title':'影视改编版'}).json()
+        client.post(f"/api/novels/{novel}/adaptations/{created['id']}/approve",params=params,headers=headers['admin'])
+        endpoint=f"/api/novels/{novel}/adaptations/{created['id']}/materialize"
+        first=client.post(endpoint,params=params,headers=headers['admin']);second=client.post(endpoint,params=params,headers=headers['admin'])
+        assert first.status_code==201 and second.status_code==201 and first.json()['id']==second.json()['id']
+        target=first.json()['scope'];assert target['project_id']!=novel and target['branch_id']
+        chapters=client.get(f"/api/collaboration/workspaces/{target['workspace_id']}/projects/{target['project_id']}/storylines/{target['storyline_id']}/branches/{target['branch_id']}/chapters",headers=headers['admin']).json()['items']
+>       assert len(chapters)==1 and chapters[0]['title']=='第一章'
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+tests/test_phase7_adaptation_authorization.py:65: AssertionError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py:1290: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  ${WORKSPACE}/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  ${WORKSPACE}/studio-adaptation-fixture-repair/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: ${WORKSPACE}/adaptation-fixture-evidence/flag-only.xml -
+=========================== short test summary info ============================
+FAILED tests/test_phase7_adaptation_authorization.py::test_team_adaptation_materializes_scoped_project_and_is_idempotent
+1 failed, 2 passed, 4 warnings in 8.85s
