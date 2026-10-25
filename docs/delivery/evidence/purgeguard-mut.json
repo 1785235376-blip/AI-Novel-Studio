@@ -1,0 +1,116 @@
+[
+ [
+  "P1 realUser->null",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > re-rendering on a project switch is not a second observation (one fetch = one piece of evidence)",
+   " FAIL  src/workspace/state/u1.purge.host.test.tsx > host purges own keys of a project that left the list; other users and remaining projects are kept",
+   "      Tests  4 failed | 362 passed (366)"
+  ]
+ ],
+ [
+  "P2 purge other users",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets",
+   " FAIL  src/workspace/state/u1.purge.host.test.tsx > host purges own keys of a project that left the list; other users and remaining projects are kept",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > purge on disappearance removes only own keys of that project",
+   "      Tests  3 failed | 363 passed (366)"
+  ]
+ ],
+ [
+  "P3 purge canvas drafts",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.host.test.tsx > host purges own keys of a project that left the list; other users and remaining projects are kept",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > purge on disappearance removes only own keys of that project",
+   "      Tests  2 failed | 364 passed (366)"
+  ]
+ ],
+ [
+  "P4 load-failure treated as empty list",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets",
+   "      Tests  1 failed | 365 passed (366)"
+  ]
+ ],
+ [
+  "P5 first list purges",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > purge on disappearance removes only own keys of that project",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > [M10-purgeguard] empty list never purges, keeps seen, resets pending; reappearing project is not purged",
+   "      Tests  2 failed | 364 passed (366)"
+  ]
+ ],
+ [
+  "P6 no identity purges (anon)",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.user.test.ts > purge user: blank/absent actor ⇒ null (never an implicit anonymous user)",
+   " FAIL  src/workspace/state/u1.purge.user.test.ts > purge user: placeholder actors are not users",
+   "      Tests  2 failed | 364 passed (366)"
+  ]
+ ],
+ [
+  "P7 placeholder actor accepted",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.user.test.ts > purge user: placeholder actors are not users",
+   "      Tests  1 failed | 365 passed (366)"
+  ]
+ ],
+ [
+  "G1 empty list not guarded",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > Vera repro: [n1,n2] → [n1] → 200 [] does NOT wipe own keys of every seen project",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > [M10-purgeguard] empty list never purges, keeps seen, resets pending; reappearing project is not purged",
+   "      Tests  3 failed | 363 passed (366)"
+  ]
+ ],
+ [
+  "G2 empty list does not reset pending",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > [M10-purgeguard] empty list never purges, keeps seen, resets pending; reappearing project is not purged",
+   "      Tests  2 failed | 364 passed (366)"
+  ]
+ ],
+ [
+  "G3 single confirmation",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > Vera repro: [n1,n2] → [n1] → 200 [] does NOT wipe own keys of every seen project",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > re-rendering on a project switch is not a second observation (one fetch = one piece of evidence)",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > purge on disappearance removes only own keys of that project",
+   " FAIL  src/workspace/state/u1.purge.test.ts > no resurrection after project disappearance > [M10-purgeguard] empty list never purges, keeps seen, resets pending; reappearing project is not purged",
+   "      Tests  6 failed | 360 passed (366)"
+  ]
+ ],
+ [
+  "G4 no per-fetch observation guard",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > re-rendering on a project switch is not a second observation (one fetch = one piece of evidence)",
+   "      Tests  1 failed | 365 passed (366)"
+  ]
+ ],
+ [
+  "G5 dataUpdatedAt dep removed",
+  "KILLED",
+  [
+   "FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak",
+   " FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > re-rendering on a project switch is not a second observation (one fetch = one piece of evidence)",
+   " FAIL  src/workspace/state/u1.purge.host.test.tsx > host purges own keys of a project that left the list; other users and remaining projects are kept",
+   "      Tests  3 failed | 363 passed (366)"
+  ]
+ ]
+]

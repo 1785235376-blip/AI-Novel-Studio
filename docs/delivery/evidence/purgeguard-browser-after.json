@@ -1,0 +1,56 @@
+[
+ {
+  "viewport": "1366x768",
+  "scenario": "projectGone",
+  "status": "PASS",
+  "detail": "after 1st missing list own kept 2/2 (pending); after 2nd: own 0 (purged), other user's kept 2/2",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 12
+ },
+ {
+  "viewport": "1366x768",
+  "scenario": "emptyList",
+  "status": "PASS",
+  "detail": "projects 2; after [all−P] → 200 [] ×2: own keys kept 4/4; /api/novels requests 9",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 14
+ },
+ {
+  "viewport": "1440x900",
+  "scenario": "projectGone",
+  "status": "PASS",
+  "detail": "after 1st missing list own kept 2/2 (pending); after 2nd: own 0 (purged), other user's kept 2/2",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 12
+ },
+ {
+  "viewport": "1440x900",
+  "scenario": "emptyList",
+  "status": "PASS",
+  "detail": "projects 2; after [all−P] → 200 [] ×2: own keys kept 4/4; /api/novels requests 9",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 14
+ },
+ {
+  "viewport": "1920x1080",
+  "scenario": "projectGone",
+  "status": "PASS",
+  "detail": "after 1st missing list own kept 2/2 (pending); after 2nd: own 0 (purged), other user's kept 2/2",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 12
+ },
+ {
+  "viewport": "1920x1080",
+  "scenario": "emptyList",
+  "status": "PASS",
+  "detail": "projects 2; after [all−P] → 200 [] ×2: own keys kept 4/4; /api/novels requests 9",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 14
+ }
+]

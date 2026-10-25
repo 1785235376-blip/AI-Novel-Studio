@@ -22,3 +22,11 @@ Not done in this slice: M5 real-browser acceptance, audio second media, ACCEPTAN
 1. Legacy `TasksPanel` (studioPreviewPanels.tsx, unmounted) no longer builds a fabricated `uw-preview:<id>` identity or reads with an empty token; it states "未接通". `u3.repro.test.tsx` flipped from `it.fails` to `it` with identical assertions (mock/jsdom).
 2. axe `landmark-unique` on `#uw-panel-tasks`: the inner `<section aria-label="任务">` in TasksPanelLive duplicated the dock region name; now a plain `<div>`. Repro (real browser + local axe-core): logs/m5-repro-axe-before.log FAIL → m5-repro-axe-after.log PASS. Remaining axe findings `color-contrast` (rail) and `aria-required-children` (章节 list empty under mock) predate this work and are recorded, not fixed.
 3. Purge cold-start gap — **部分实现, not handled**: `projectPurge` only diffs the project lists seen within one session. If a project is deleted while the page is closed, its owner's viewprefs/layout keys stay in localStorage after a cold open. Not "fixed" by diffing local keys against the first list, because a paged/partial or failed list would delete keys of still-existing projects; a correct fix needs an authoritative "deleted projects" signal from the backend (out of scope: no new backend state). Impact: stale local UI prefs only (no server data, no other user's keys).
+
+## Project purge rule [HERMIA-FE-20261025 M10-purgeguard]
+- Only successful list fetches are observed; a load failure (error/pending) is ignored — it neither confirms nor resets.
+- An empty successful list (`200 []`) never purges and does not change `seen`; it resets pending confirmations.
+- A project is purged only after **two consecutive non-empty successful lists** both omit it; own user's keys only (other users' keys and canvas drafts untouched).
+- One fetch = one observation (`dataUpdatedAt` guard); StrictMode/project-switch re-renders are not new evidence.
+- No identity / placeholder actor (local, local-author, preview, unknown, anonymous, default) ⇒ no purge.
+- Cost: purge is delayed by one refetch; a deleted project's keys linger until then (best-effort cleanup; ids are not reused).

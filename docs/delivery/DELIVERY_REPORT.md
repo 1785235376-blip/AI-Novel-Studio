@@ -6,7 +6,7 @@ See ACCEPTANCE_MATRIX.md (34 rows: 已验证 20 · 已实现 2 · 部分实现 5
 | Stage | Commit(s) | Result | Evidence |
 |---|---|---|---|
 | M0 ledger | a167022b | 294 failing names recorded | /workspace/hr/m10/M0_FAILURE_LEDGER.md (mock) |
-| U2/U3/U4 + integration | c50a8d94, 437f7da6, 1f6ab40e, b5241905, 575501b9 | 集成代码 PASS，U1 三项 MUST-FIX，已由 u1fix 93a1e351 修复 (full ×3: 292/293/293) | review/INTEGRATION.md, INDEPENDENT_REVIEW.md |
+| U2/U3/U4 + integration | c50a8d94, 437f7da6, 1f6ab40e, b5241905, 575501b9 | 集成代码 PASS，U1 三项 MUST-FIX，已由 u1fix **d9479872** 修复（93a1e351 是 Vera 的复核段，非修复提交；[HERMIA-FE-20261025 M10-purgeguard] 更正） (full ×3: 292/293/293) | review/INTEGRATION.md, INDEPENDENT_REVIEW.md |
 | M5 real browser + stale-label fix | 581c8463 | 30/30 pre-merge | evidence/m5-repro-storagelabel-*, m5-run-premerge |
 | Audio merge + wiring | f6e60160, 841effd0 | workspace vitest 357/357 | review/AUDIO.md (mock) |
 | U1fix merge | 002ef7fb | no conflicts | review/U1fix.md |
@@ -48,3 +48,27 @@ axe scenario needs axe-core at $M5_AXE (default /tmp/vera-vw-axe/node_modules/ax
 ## Vera final review of f778eaec — MUST-FIX 1 (fixed at 35377d47, pending Vera re-check)
 Bug: UnifiedWorkspacePreview derived `realUser` via resolveWorkspaceIdentity with sentinel projectId '\u0001'; U1fix's scope-mismatch check made it session ⇒ null ⇒ purge never ran (regression vs 575501b9).
 Fix: `resolveWorkspaceUser(actorId)` (scopeLease.ts, same actor rules, no project). Repro-first: u1.purge.host.test.tsx FAIL on f778eaec (evidence/purgefix-repro-before.log) → PASS; mutation realUser→null ⇒ test FAILS (killed, purgefix-mutation-realUser-null.log). Browser projectGone was vacuous (filtered '::project::', after a reload = cold start); now seeds real own/other keys, refetches the list in-session and asserts: FAIL on f778eaec code, PASS ×3 at 10f3a1d5. Targeted: src/workspace vitest 42 files 358/358; tsc -b 0. No full suite rerun (per instruction).
+
+## M10-purgeguard (Vera re-review of f6e535a3, MUST-FIX 1) [HERMIA-FE-20261025 M10-purgeguard]
+- Bug (Vera): one successful `200 []` project list purged own viewprefs/layout/worksets for every seen project.
+- Fix 1681ea85: empty successful list is never evidence (no purge, `seen` kept, pending reset); purge requires **two consecutive non-empty successful lists** missing a project; load failures are never fed in (neither confirm nor reset); one observation per fetch (`dataUpdatedAt` guard). Both of Vera's options applied — the stricter combination.
+- Repro-first: u1.purge.guard.host.test.tsx failed 3/3 before the fix (evidence/purgeguard-repro-before.log); browser emptyList FAIL 0/4 kept and projectGone FAIL on f6e535a3 code (evidence/purgeguard-browser-before.json).
+- After: src/workspace vitest 44 files 366/366; tsc -b 0; browser projectGone + emptyList PASS at 1366x768/1440x900/1920x1080 (harness 618476cd, evidence/purgeguard-browser-after.json). Targeted only; full suite not rerun.
+- Vera section committed verbatim 44eae320.
+
+| # | Mutation | Result | Note |
+|---|---|---|---|
+| P1 | realUser->null | KILLED | Vera P1 |
+| P2 | purge other users | KILLED | Vera P2 |
+| P3 | purge canvas drafts | KILLED | Vera P3 |
+| P4 | load-failure treated as empty list | KILLED | Vera P4 (was SURVIVED) |
+| P5 | first list purges | KILLED | Vera P5 |
+| P6 | no identity purges (anon) | KILLED | Vera P6 (was SURVIVED) |
+| P7 | placeholder actor accepted | KILLED | Vera P7 (was SURVIVED) |
+| G1 | empty list not guarded | KILLED | new guard mutant |
+| G2 | empty list does not reset pending | KILLED | new guard mutant |
+| G3 | single confirmation | KILLED | new guard mutant |
+| G4 | no per-fetch observation guard | KILLED | new guard mutant |
+| G5 | dataUpdatedAt dep removed | KILLED | new guard mutant |
+
+Review note: docs/delivery/PURGEGUARD.md

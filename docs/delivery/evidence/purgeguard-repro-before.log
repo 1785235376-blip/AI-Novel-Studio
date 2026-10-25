@@ -1,0 +1,75 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ❯ src/workspace/state/u1.purge.guard.host.test.tsx (3 tests | 3 failed) 912ms
+   × Vera repro: [n1,n2] → [n1] → 200 [] does NOT wipe own keys of every seen project 357ms
+     → expected false to be true // Object.is equality
+   × two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets 217ms
+     → expected false to be true // Object.is equality
+   × an empty list breaks the confirmation streak 337ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > Vera repro: [n1,n2] → [n1] → 200 [] does NOT wipe own keys of every seen project
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/workspace/state/u1.purge.guard.host.test.tsx:45:22
+     43|   await list([nv('n1')]);
+     44|   await list([]);
+     45|   expect(has(ownN1)).toBe(true);
+       |                      ^
+     46|   expect(has(own)).toBe(true); // n2 missing once only; empty list is …
+     47| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/workspace/state/u1.purge.guard.host.test.tsx:51:20
+     49|   const list = await mount();
+     50|   await list([nv('n1')]);       // n2 missing once → pending
+     51|   expect(has(own)).toBe(true);
+       |                    ^
+     52|   await list('fail');           // load failure: no information
+     53|   await list([nv('n1')]);       // second successful list missing n2 →…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/workspace/state/u1.purge.guard.host.test.tsx > an empty list breaks the confirmation streak
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/workspace/state/u1.purge.guard.host.test.tsx:61:20
+     59|   const list = await mount();
+     60|   await list([nv('n1')]); await list([]); await list([nv('n1')]);
+     61|   expect(has(own)).toBe(true);  // only one confirmation since the emp…
+       |                    ^
+     62|   await list([nv('n1')]);
+     63|   await waitFor(() => expect(has(own)).toBe(false));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  11:48:50
+   Duration  4.78s (transform 1.80s, setup 52ms, collect 2.90s, tests 912ms, environment 478ms, prepare 110ms)
+

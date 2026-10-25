@@ -1,0 +1,20 @@
+[
+ {
+  "viewport": "1366x768",
+  "scenario": "projectGone",
+  "status": "FAIL",
+  "detail": "purged after ONE list (must need two): 0/2 kept",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 9
+ },
+ {
+  "viewport": "1366x768",
+  "scenario": "emptyList",
+  "status": "FAIL",
+  "detail": "200 [] wiped own keys: 0/4 kept",
+  "blockedWrites": [],
+  "pageErrors": [],
+  "requests": 14
+ }
+]

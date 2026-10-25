@@ -1,0 +1,81 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ✓ src/workspace/results/results.test.tsx (22 tests) 206ms
+ ✓ src/workspace/tasks/u3.tasks.test.tsx (13 tests) 190ms
+ ✓ src/workspace/vw.m2m4.test.tsx (9 tests) 326ms
+ ✓ src/workspace/panels/m3s1.test.tsx (7 tests) 1129ms
+   ✓ M3-s1 dual canvas ↔ inspector > selecting in either canvas shows that node; selections are isolated; switching makes no model call / write 431ms
+ ✓ src/workspace/panels/m2s1fix.test.tsx (10 tests) 1233ms
+   ✓ uw preview integration > palette: 显示面板 listed; disabled items carry aria-disabled + reason; enabled ones do not 413ms
+   ✓ uw preview integration > Mod+Alt+T moves DOM focus into the task panel 429ms
+ ✓ src/workspace/panels/novelPreviewPanels.test.tsx (17 tests) 1767ms
+ ✓ src/workspace/panels/studioPreviewPanels.test.tsx (8 tests) 710ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 2972ms
+   ✓ DockLayout interactions > M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates 1493ms
+   ✓ DockLayout interactions > M1-08 reset default asks first, then restores layout but keeps draft text 435ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 397ms
+ ✓ src/workspace/layout/slice2fix.test.tsx (13 tests) 1406ms
+   ✓ MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions > Ctrl+K opens the shared registry palette with the 4 layout actions; running split works 447ms
+   ✓ nice-to-have: double-trigger guard + visible busy; shortcut text localized > two real key presses ~50ms apart execute once; aria-busy visible meanwhile 473ms
+ ✓ src/workspace/params/u3.params.test.tsx (10 tests) 77ms
+ ✓ src/workspace/state/m5s1.test.tsx (19 tests) 2666ms
+   ✓ M5-s1 (a) project switch isolation + stale responses > switch resets chapter selection, canvas selection and node inspector to the new project 307ms
+ ✓ src/workspace/state/u1.identity.test.tsx (16 tests) 23ms
+ ✓ src/workspace/history/history.test.tsx (13 tests) 85ms
+ ✓ src/workspace/panels/m3s1fix.test.tsx (5 tests) 951ms
+   ✓ reveal the last sent node (1366 panel 750×449) > host: send with 11 nodes already there → execution canvas opens with the new (12th) node in view 394ms
+ ✓ src/workspace/state/u1fix.test.tsx (8 tests) 32ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 270ms
+ ✓ src/workspace/panels/m3s1fix2.test.tsx (3 tests) 905ms
+   ✓ host: tab switch / remount after manual pan does not re-reveal > send (0×0 mount) → reveal on size; pan away; creative and back, and close+reopen (remount) → stays where the user panned 813ms
+ ✓ src/workspace/media/audio.test.tsx (8 tests) 48ms
+stdout | src/workspace/registry/u2.render.test.tsx > measurements (jsdom, mock evidence) > 5000-row windowed render keeps DOM bounded; selectBox over 10k nodes
+[U2-MEASURE jsdom] rows=5000 domLi=32 renderMs=13.04 | nodes=10000 boxHits=25 selectBoxMs=5.61
+
+ ✓ src/workspace/registry/u2.render.test.tsx (3 tests) 106ms
+ ✓ src/workspace/panels/vw.m3host.test.tsx (2 tests) 544ms
+   ✓ [VW-M3] preview host viewport prefs > pan → tab remount keeps view; reset returns to default; zero view-pref writes (novel isolation: adapter tests) 352ms
+ ✓ src/workspace/state/u1fix.host.test.tsx (3 tests) 722ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 6ms
+ ✓ src/workspace/layout/m2s1.test.tsx (4 tests) 712ms
+   ✓ N5 visible main-panel tabs + layout.showPanel > layout.showPanel reopens a closed panel, rejects unknown ids with a reason 366ms
+ ✓ src/workspace/panels/vw.fix1dialog.test.tsx (7 tests) 389ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 107ms
+ ✓ src/workspace/layout/m4s1.test.tsx (5 tests) 837ms
+   ✓ M4-s1 keyboard + aria > main tabs: tablist with roving tabindex; ArrowRight moves focus and selects 462ms
+ ✓ src/workspace/panels/m2s1fix2.test.tsx (1 test) 61ms
+ ✓ src/workspace/media/audio.panel.test.tsx (1 test) 139ms
+ ✓ src/workspace/state/u1.purge.guard.host.test.tsx (4 tests) 1750ms
+   ✓ Vera repro: [n1,n2] → [n1] → 200 [] does NOT wipe own keys of every seen project 356ms
+   ✓ two consecutive non-empty lists missing a project purge it (own only); a 500 in between neither confirms nor resets 360ms
+   ✓ an empty list breaks the confirmation streak 525ms
+   ✓ re-rendering on a project switch is not a second observation (one fetch = one piece of evidence) 508ms
+ ✓ src/workspace/state/u1.purge.host.test.tsx (1 test) 365ms
+   ✓ host purges own keys of a project that left the list; other users and remaining projects are kept 365ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 27ms
+ ✓ src/workspace/integration/int.bootstrap.test.tsx (3 tests) 656ms
+   ✓ signed-in session + complete scope ⇒ preview reads the server actor (GET bootstrap once) and the task list connects 357ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 3ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 33ms
+ ✓ src/workspace/layout/m5storageLabel.test.tsx (2 tests) 182ms
+ ✓ src/workspace/tasks/u3.repro.test.tsx (1 test) 92ms
+ ✓ src/workspace/state/viewPreferences.vw.test.ts (13 tests) 16ms
+ ✓ src/workspace/registry/u2.contextNav.test.ts (11 tests) 25ms
+ ✓ src/workspace/state/u1.purge.test.ts (4 tests) 4ms
+ ✓ src/workspace/state/u1.purge.user.test.ts (3 tests) 2ms
+ ✓ src/workspace/actions/layoutActions.test.ts (10 tests) 1817ms
+   ✓ availability / disabled reason / execution > reopen + collapse + split + reset outcomes 1209ms
+   ✓ reopen after close > reopens the requested closed panel, blocks a non-closed one 301ms
+   ✓ running state + double-trigger guard > same-tick second trigger is a duplicate and has no side effect; pending clears after 301ms
+ ✓ src/workspace/registry/u2.registry.test.ts (14 tests) 16ms
+ ✓ src/workspace/layout/m4s1fix.test.tsx (5 tests) 5375ms
+   ✓ M4-s1fix tablist > ArrowRight wraps last→first, ArrowLeft wraps first→last, Home/End jump 4261ms
+   ✓ M4-s1fix tablist > split: each main region is named exactly "<its tab> <its header>" 527ms
+   ✓ M4-s1fix tablist > aria-multiselectable only when split shows two tabs selected 475ms
+
+ Test Files  44 passed (44)
+      Tests  366 passed (366)
+   Start at  11:57:29
+   Duration  12.73s (transform 4.08s, setup 587ms, collect 20.02s, tests 29.38s, environment 16.57s, prepare 3.91s)
+
