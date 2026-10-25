@@ -201,7 +201,17 @@ from .workspace_task_owners import extend_workspace_task_readers
 workspace_tools_service.task_readers = extend_workspace_task_readers(
     workspace_tools_service.task_readers, legacy_api, import_service, team_service, media_service,
     audiobook_service, inbox_service, authorize, require_flag)
-router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag))
+from .taskcenter_cursor_http import TaskCenterCursorHTTPAdapter
+# A deliberately explicit narrow composition. Other routers and callers retain
+# the default fail-closed adapter=None behavior.
+taskcenter_cursor_adapter = TaskCenterCursorHTTPAdapter(
+    workspace_tools_service, import_service,
+    next(reader for reader in workspace_tools_service.task_readers if reader.name == 'semantic_import'),
+    actual_repositories=lambda: (legacy_api.novel_service, legacy_api.chapter_service),
+    runtime_mode=lambda: (settings.enable_packaged_runtime, settings.enable_collaboration_runtime),
+)
+router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag,
+                                     cursor_adapter=taskcenter_cursor_adapter))
 
 
 from .local_ai_inspection import LocalAIInspectionService

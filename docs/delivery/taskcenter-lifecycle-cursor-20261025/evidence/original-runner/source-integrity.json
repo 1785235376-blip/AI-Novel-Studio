@@ -1,0 +1,7 @@
+{
+  "allowed_baseline_overlay": {
+    "tests/test_taskcenter_consistent_query.py": "a74eb3799eb4fecc26a2bc749a2efa9153b56a3d68bd4262c55dc450bb582cd0"
+  },
+  "baseline_unchanged_except_recorded_red_test": true,
+  "candidate_unchanged": true
+}

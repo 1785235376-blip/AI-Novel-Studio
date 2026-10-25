@@ -1,5 +1,11 @@
 # TaskCenter 类型筛选、覆盖报告与游标依赖边界
 
+> 历史阶段说明：本文保留上一轮“HTTP 始终 501”的交付记录。
+> 后续已实现受限的 File/local semantic-import 真实游标切片；当前条件、
+> 观察行生命周期保证及未覆盖边界见
+> [稳定切片说明](delivery/taskcenter-lifecycle-cursor-20261025/stable-slice.md)。
+> 不是所有 authority、协作或历史记录都获得了游标支持。
+
 本轮起点为 `ffe1937911cff32d4ebd4770b350674627501d3a`，
 tree `447bfefcee8393b9b0907fe7daff2d5b044709da`。
 实现分支为 `work/taskcenter-consistent-query-20261025`。

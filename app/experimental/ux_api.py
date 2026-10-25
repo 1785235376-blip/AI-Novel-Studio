@@ -8,6 +8,7 @@ from typing import Literal
 from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn, TaskPageQuery
 from .workspace_interaction import InteractionIn, InteractionVersionIn, InteractionRestoreIn, CommandResolveIn
 from .taskcenter_query import TaskCenterQuery, add_query_metadata, cursor_not_supported, openapi_responses
+from .taskcenter_cursor_http import TaskCenterQueryRoute
 
 
 class SearchRequest(StrictModel):
@@ -27,8 +28,7 @@ class SearchCancel(StrictModel):
     request_id: str = Field(pattern=r'^[a-zA-Z0-9_-]{1,80}$')
 
 
-def create_ux_router(service, authorize, require_flag):
-    router = APIRouter(prefix='/novels/{nid}/experimental/workspace', tags=['experimental-workspace'])
+def create_ux_router(service, authorize, require_flag, cursor_adapter=None):
 
     def access(nid, token, branch, write=False):
         require_flag('workspace_tools_v2')
@@ -38,6 +38,12 @@ def create_ux_router(service, authorize, require_flag):
     def current(ctx, write=False):
         if access(ctx.novel_id, ctx.token, ctx.branch, write) != ctx:
             raise HTTPException(403, {'code': 'WORKSPACE_AUTHORITY_CHANGED'})
+
+    class QueryRoute(TaskCenterQueryRoute):
+        taskcenter_access = staticmethod(access)
+
+    router = APIRouter(prefix='/novels/{nid}/experimental/workspace',
+                       tags=['experimental-workspace'], route_class=QueryRoute)
 
     def interaction_access(nid, token, branch, write=False):
         require_flag('workspace_interaction_v1')
@@ -208,10 +214,11 @@ def create_ux_router(service, authorize, require_flag):
             if selection.opt_in:
                 response.headers['Cache-Control'] = 'no-store'
             if selection.page_mode == 'cursor':
-                # Do not issue a token without reliable original owner/session/
-                # permission lifecycle observations. This dependency is paused.
                 current(ctx)
-                cursor_not_supported()
+                if cursor_adapter is None:
+                    cursor_not_supported()
+                return cursor_adapter.tasks(ctx, selection, page, require_flag, q,
+                                            failed_only, lambda: current(ctx))
             limit, offset = page.limit, page.offset
             if selection.page_mode == 'offset' and limit is None and offset is None:
                 limit, offset = 50, 0

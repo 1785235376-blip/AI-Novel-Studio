@@ -12,9 +12,37 @@ import json
 from contextlib import contextmanager
 from pathlib import Path
 from threading import local
+from uuid import UUID, uuid4
 
 from ..repositories.file.mutation_coordinator import workspace_mutation
 from ..storage import atomic_write
+
+
+# This is original-owner metadata, not a second task store. Only the File/local
+# semantic-import observation contract consumes it; legacy documents are never
+# claimed or migrated by a read or by an ordinary business transaction.
+LIFECYCLE = "_taskcenter_lifecycle_v1"
+OBSERVED_COLLECTION = "semantic_import_jobs"
+OBSERVATION_UNSUPPORTED = "EXPERIMENTAL_OBSERVATION_UNSUPPORTED"
+
+
+def _unique_object(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError("experimental store contains duplicate JSON keys")
+        value[key] = item
+    return value
+
+
+def _nonce(value):
+    if not isinstance(value, str):
+        return False
+    try:
+        parsed = UUID(value)
+        return parsed.version == 4 and str(parsed) == value
+    except ValueError:
+        return False
 
 
 def canonical(value):
@@ -60,15 +88,111 @@ class ExperimentalStore:
             or not isinstance(doc.get("collections"), dict)
             or any(not isinstance(rows, dict) for rows in doc["collections"].values())):
             raise ValueError("experimental store corrupt or scope mismatch; restore a verified backup")
+        if LIFECYCLE in doc:
+            metadata = doc[LIFECYCLE]
+            if (not isinstance(metadata, dict)
+                    or set(metadata) != {"schema_version", "project_identity", "document_incarnation", "rows"}
+                    or type(metadata.get("schema_version")) is not int or metadata["schema_version"] != 1
+                    or not isinstance(metadata.get("project_identity"), str)
+                    or not metadata["project_identity"].startswith("file:")
+                    or not _nonce(metadata["project_identity"][5:])
+                    or not _nonce(metadata.get("document_incarnation"))
+                    or not isinstance(metadata.get("rows"), dict)
+                    or any(not isinstance(rid, str) or not rid or not _nonce(nonce)
+                           for rid, nonce in metadata["rows"].items())
+                    or scope.get("mode") != "local"
+                    or set(doc["collections"].get(OBSERVED_COLLECTION, {})) != set(metadata["rows"])):
+                raise ValueError("experimental lifecycle metadata is invalid")
         canonical(doc)
         return doc
 
-    def _file_read(self, nid, scope):
+    def _file_bytes(self, nid, scope):
         try:
-            raw = json.loads(self.path(nid, scope).read_text(encoding="utf-8"))
+            return self.path(nid, scope).read_bytes()
         except FileNotFoundError:
-            return self.empty(nid, scope)
-        return self.validate(raw, nid, scope)
+            return None
+
+    def _file_snapshot(self, nid, scope):
+        raw = self._file_bytes(nid, scope)
+        if raw is None:
+            return None, self.empty(nid, scope)
+        document = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+        return raw, self.validate(document, nid, scope)
+
+    def _file_read(self, nid, scope):
+        return self._file_snapshot(nid, scope)[1]
+
+    @contextmanager
+    def _existing_project_owner(self, nid):
+        # Reuse the real marker parser and scope -> project lock order. Creating
+        # an identity here would falsely adopt old or unowned source rows.
+        from ..creative.project_store import CreativeProjectStore
+        owner = CreativeProjectStore(self)
+        with owner.existing_owner_only(), owner.owner_lease(nid) as identity:
+            yield identity
+
+    def _initial_project_identity(self, nid, scope):
+        if scope.get("mode") != "local":
+            return None
+        try:
+            with self._existing_project_owner(nid) as identity:
+                return identity
+        except (FileNotFoundError, ValueError):
+            # Ordinary unprotected writers keep their existing behavior. They
+            # cannot turn missing/invalid ownership into observation support.
+            return None
+
+    @staticmethod
+    def _advance_lifecycles(document, previous, identity=None):
+        if LIFECYCLE in previous:
+            metadata = copy.deepcopy(previous[LIFECYCLE])
+        elif identity is not None:
+            metadata = {"schema_version": 1, "project_identity": identity,
+                        "document_incarnation": str(uuid4()), "rows": {}}
+        else:
+            return
+        before = previous["collections"].get(OBSERVED_COLLECTION, {})
+        after = document["collections"].get(OBSERVED_COLLECTION, {})
+        metadata["rows"] = {rid: nonce for rid, nonce in metadata["rows"].items() if rid in after}
+        for rid in after:
+            if rid not in before or canonical(before[rid]) != canonical(after[rid]):
+                # A recreation receives a fresh random identity even when the
+                # row ID/content/version repeats. Retaining deleted IDs is not
+                # needed for that property and would grow without a bound.
+                metadata["rows"][rid] = str(uuid4())
+        document[LIFECYCLE] = metadata
+
+    def capture_committed_collection(self, nid, scope, collection=OBSERVED_COLLECTION):
+        """Return one committed File/local source with original-owner proofs.
+
+        Rows and proofs come from the same physical snapshot, never ``read``'s
+        active transaction buffer. The caller must retain the original source
+        authorization/scope checks and bind only its authorized finite window,
+        not this whole map or any unrelated collection's state. There is no
+        legacy migration and no guarantee against external byte-for-byte backup
+        replay, which does not participate in this owner's commit boundary.
+        """
+        if (self.backend != "file" or not isinstance(scope, dict)
+                or scope.get("mode") != "local" or collection != OBSERVED_COLLECTION):
+            raise ValueError(OBSERVATION_UNSUPPORTED)
+        key = self.key(nid, scope)
+        with workspace_mutation(self.root, f"experimental:{key}"):
+            raw, document = self._file_snapshot(nid, scope)
+            if raw is None or LIFECYCLE not in document:
+                raise ValueError(OBSERVATION_UNSUPPORTED)
+            metadata = document[LIFECYCLE]
+            try:
+                with self._existing_project_owner(nid) as identity:
+                    if identity != metadata["project_identity"]:
+                        raise ValueError(OBSERVATION_UNSUPPORTED)
+                    rows = document["collections"].get(collection, {})
+                    return copy.deepcopy({
+                        "rows": list(rows.values()), "project_identity": identity,
+                        "document_incarnation": metadata["document_incarnation"],
+                        "row_lifecycles": {rid: metadata["rows"][rid] for rid in rows},
+                    })
+            except (FileNotFoundError, ValueError) as exc:
+                raise ValueError(OBSERVATION_UNSUPPORTED) from exc
 
     def _connect(self):
         if not self.database_url:
@@ -99,14 +223,40 @@ class ExperimentalStore:
             raise ValueError("nested experimental transaction is not supported")
         if self.backend == "file":
             with workspace_mutation(self.root, f"experimental:{key}"):
-                doc = self._file_read(nid, scope)
+                original_bytes, doc = self._file_snapshot(nid, scope)
+                original = copy.deepcopy(doc)
+                identity = self._initial_project_identity(nid, scope) if original_bytes is None else None
                 self._local.active[key] = doc
                 before = canonical(doc)
                 try:
                     yield doc
-                    self.validate(doc, nid, scope)
+                    # Reserved metadata is owner-maintained. Accept detached
+                    # deep copies (CreativeProjectStore.clear/update), not a
+                    # caller's removal, injection, rollback or replacement.
+                    if ((LIFECYCLE in doc) != (LIFECYCLE in original)
+                            or (LIFECYCLE in original and canonical(doc[LIFECYCLE]) != canonical(original[LIFECYCLE]))):
+                        raise ValueError("experimental lifecycle metadata is owner-managed")
+                    # New live rows have not received their owner nonce yet.
+                    business = copy.deepcopy(doc)
+                    business.pop(LIFECYCLE, None)
+                    self.validate(business, nid, scope)
+                    # The workspace lock is reentrant across store instances.
+                    # Compare existence and exact committed bytes even for an
+                    # unchanged callback/source_lease, not read(active).
+                    if self._file_bytes(nid, scope) != original_bytes:
+                        raise ValueError("EXPERIMENTAL_SCOPE_CONCURRENT_WRITE")
                     if canonical(doc) != before:
-                        atomic_write(self.path(nid, scope), canonical(doc))
+                        self._advance_lifecycles(doc, original, identity)
+                        self.validate(doc, nid, scope)
+                        if identity is not None:
+                            with self._existing_project_owner(nid) as current_identity:
+                                if current_identity != identity:
+                                    raise ValueError("EXPERIMENTAL_PROJECT_OWNER_CHANGED")
+                                if self._file_bytes(nid, scope) != original_bytes:
+                                    raise ValueError("EXPERIMENTAL_SCOPE_CONCURRENT_WRITE")
+                                atomic_write(self.path(nid, scope), canonical(doc))
+                        else:
+                            atomic_write(self.path(nid, scope), canonical(doc))
                 finally:
                     self._local.active.pop(key, None)
         else:

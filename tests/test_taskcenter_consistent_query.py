@@ -28,7 +28,10 @@ AUTHORITIES = (
 )
 CAPABILITIES = {
     "authority_filter": {"supported": True, "operator": "OR"},
-    "cursor": {"supported": False, "reason": "RELIABLE_LIFECYCLE_BINDING_UNAVAILABLE"},
+    "cursor": {"supported": True, "mode": "FILE_LOCAL_SEMANTIC_IMPORT_ONLY",
+        "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED_LOCAL_AUTHOR",
+                       "NO_SESSION_OR_BRANCH_HEADER", "EXPLICIT_SEMANTIC_IMPORT_ONLY",
+                       "EXISTING_PROJECT_AND_SOURCE_LIFECYCLE"]},
     "cross_owner_atomic_snapshot": False,
     "full_history_query": False,
     "cost": "UNKNOWN",

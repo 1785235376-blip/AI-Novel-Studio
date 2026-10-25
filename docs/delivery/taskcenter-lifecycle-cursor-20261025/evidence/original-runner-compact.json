@@ -1,0 +1,40 @@
+{
+  "accepted": true,
+  "effective_baseline_red": true,
+  "interpretation": "Focused tests and unchanged regression evidence only; existing baseline failures remain reported. Cursor HTTP support and complete product readiness are not claimed.",
+  "regression_nodeids_and_messages_match": true,
+  "source_integrity_verified": true,
+  "source_isolation_verified": true,
+  "groups": {
+    "baseline_original": {
+      "returncode": 0,
+      "tests": 65,
+      "failed_tests": 0,
+      "errors": 0
+    },
+    "baseline_red": {
+      "returncode": 1,
+      "tests": 12,
+      "failed_tests": 12,
+      "errors": 0
+    },
+    "baseline_regression": {
+      "returncode": 0,
+      "tests": 198,
+      "failed_tests": 0,
+      "errors": 0
+    },
+    "candidate_focused": {
+      "returncode": 0,
+      "tests": 190,
+      "failed_tests": 0,
+      "errors": 0
+    },
+    "candidate_regression": {
+      "returncode": 0,
+      "tests": 198,
+      "failed_tests": 0,
+      "errors": 0
+    }
+  }
+}

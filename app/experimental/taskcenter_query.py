@@ -6,8 +6,8 @@ authorize before parsing and retain the original per-reader scope fences.
 
 The authority catalogue documents the baseline's composition, not visibility.
 Runtime acceptance is additionally checked against the actual reader registry
-by the service. Cursor mode is deliberately unsupported until reliable original
-lifecycle and permission binding can be wired without replacing their owners.
+by the service. Cursor support is limited to an explicitly injected File/local semantic-import
+adapter with original committed lifecycle evidence. Other modes fail closed.
 """
 from __future__ import annotations
 
@@ -127,7 +127,9 @@ class TaskCenterQuery:
                 "description": (
                     "Explicit opt-in query mode; repeated values use the last value. "
                     "Omitted preserves legacy behavior. offset preserves existing bounded response paging. "
-                    "cursor currently returns TASKCENTER_CURSOR_UNSUPPORTED after original authorization; "
+                    "cursor supports only the explicitly selected semantic_import authority with actual File "
+                    "repositories, non-packaged local-author mode, no session/branch headers and existing "
+                    "project/source lifecycle evidence. Other modes return TASKCENTER_CURSOR_UNSUPPORTED; "
                     "it cannot be mixed with an explicit offset, including offset=0."
                 ),
             },
@@ -136,7 +138,8 @@ class TaskCenterQuery:
                 "schema": {"type": "string", "minLength": 1, "maxLength": MAX_CURSOR_LENGTH},
                 "description": (
                     "Only recognized when page_mode=cursor; otherwise ignored for legacy compatibility. "
-                    "Repeated values use the last value. No cursor is issued by this unsupported mode. "
+                    "Repeated values use the last value. Tokens expire, may be evicted and are process-local; "
+                    "a changed observation requires a restart, not an automatic retry or offset fallback. "
                     "Empty or oversized values in cursor mode return the fixed query validation error."
                 ),
             },
@@ -148,8 +151,11 @@ def static_capabilities():
     return {
         "authority_filter": {"supported": True, "operator": "OR"},
         "cursor": {
-            "supported": False,
-            "reason": "RELIABLE_LIFECYCLE_BINDING_UNAVAILABLE",
+            "supported": True,
+            "mode": "FILE_LOCAL_SEMANTIC_IMPORT_ONLY",
+            "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED_LOCAL_AUTHOR",
+                           "NO_SESSION_OR_BRANCH_HEADER", "EXPLICIT_SEMANTIC_IMPORT_ONLY",
+                           "EXISTING_PROJECT_AND_SOURCE_LIFECYCLE"],
         },
         "cross_owner_atomic_snapshot": False,
         "full_history_query": False,
@@ -175,7 +181,7 @@ def add_query_metadata(result, query):
 
 
 def cursor_not_supported():
-    """Fail closed without reading owners, issuing tokens, or echoing input."""
+    """Fail closed without issuing tokens or echoing private input."""
     raise HTTPException(
         501,
         {"code": "TASKCENTER_CURSOR_UNSUPPORTED", "message": "TASKCENTER_CURSOR_UNSUPPORTED"},
@@ -183,13 +189,15 @@ def cursor_not_supported():
 
 
 def openapi_responses():
-    """Document real envelopes only; no successful HTTP cursor is advertised."""
+    """Static narrow support and fixed errors, never per-request visibility."""
     coverage = {"scope": "BOUNDED_AUTHORIZED_PROJECTION", "completeness": "NOT_ASSERTED"}
     legacy = {"items": [], "unavailable": [], "truncated": False,
               "executor": False, "refresh": "MANUAL", "automatic_retries": False}
     selected = {**legacy, "observed_total": 0, "source_truncated": False,
                 "coverage": coverage, "capabilities": static_capabilities()}
     offset = {**selected, "limit": 50, "offset": 0, "has_more": False, "next_offset": None}
+    cursor = {**selected, "page_mode": "cursor", "limit": 50,
+              "has_more": False, "next_cursor": None}
     unsupported = {"code": "TASKCENTER_CURSOR_UNSUPPORTED",
                    "message": "TASKCENTER_CURSOR_UNSUPPORTED"}
     return {
@@ -198,18 +206,32 @@ def openapi_responses():
                 "Legacy envelopes remain unchanged without authority/page_mode. "
                 "authority alone retains the 500-item cap and adds bounded observed_total. "
                 "page_mode=offset activates existing 50/0 defaults; limit stays at most 100. "
-                "An empty or final page never establishes complete history."
+                "cursor requires the documented File/local semantic_import conditions and emits "
+                "next_cursor/has_more without offset fallback. An empty or final page never "
+                "establishes complete history."
             ),
             "content": {"application/json": {"examples": {
                 "legacy": {"value": legacy},
                 "authority_only_empty": {"value": selected},
                 "explicit_offset_empty": {"value": offset},
+                "supported_cursor_empty": {"value": cursor},
             }}},
+        },
+        409: {
+            "description": "TASKCENTER_CURSOR_RESTART_REQUIRED. Observation changed, expired, was evicted or belongs to another binding/process.",
+            "content": {"application/json": {"example": {"detail": {
+                "code": "TASKCENTER_CURSOR_RESTART_REQUIRED", "message": "TASKCENTER_CURSOR_RESTART_REQUIRED"}}}},
+        },
+        422: {
+            "description": "Fixed non-echoing invalid opt-in query or token shape.",
+            "content": {"application/json": {"example": {"detail": {
+                "code": "EXPERIMENTAL_INVALID", "message": "TASKCENTER_QUERY_INVALID"}}}},
         },
         501: {
             "description": (
                 "TASKCENTER_CURSOR_UNSUPPORTED after original authorization. "
-                "No HTTP cursor is issued until reliable original lifecycle binding exists."
+                "The request does not satisfy the narrow File/local semantic_import conditions, "
+                "or an initial observation lacks reliable existing original lifecycle binding."
             ),
             "content": {"application/json": {"example": {"detail": unsupported}}},
         },
