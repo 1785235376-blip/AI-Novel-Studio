@@ -75,7 +75,7 @@ html .app-shell .workspace-inspector{transition:width var(--motion-panel) var(--
    搜索框与 logo 作为唯一可收缩项吸收溢出，设置/模式/工具均 flex:none，保证「设置」始终在视口内。zh 保留 Ctrl K 至 1181。 */
 @media (max-width:1280px){
 html .app-shell .global-header{gap:8px;padding:0 10px}
-html[lang] .app-shell .global-header .global-search{flex:0 1 auto;min-width:32px;overflow:hidden}
+html[lang] .app-shell .global-header .global-search{flex:0 1 auto;min-width:32px;height:28px;box-sizing:border-box;overflow:hidden}
 html[lang] .app-shell .global-header .product-mark{flex:0 1 auto;min-width:32px;overflow:hidden}
 html[lang="en"] .app-shell .global-search>kbd{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 html .app-shell .module-switcher button{padding:6px 9px}
