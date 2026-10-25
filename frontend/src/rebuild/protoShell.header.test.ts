@@ -40,3 +40,21 @@ describe("protoShell pro header tightening", () => {
     expect(n).not.toMatch(/display:none/);
   });
 });
+
+// [HERMIA-FE-20261025 VERA-097 MF2] 1100/1024 头部：所有模式收紧；kbd/产品名视觉隐藏（clip，非 display:none）
+describe("protoShell header ≤1180 tightening (all modes)", () => {
+  it("visually hides product name and Ctrl K kbd with clip, collapses search, tightens gaps", () => {
+    const b = block("@media (max-width:1180px)");
+    for (const sel of ["html .app-shell .product-mark__name", "html .app-shell .global-search>kbd"]) {
+      const d = rule(b, sel);
+      expect(d, sel).toMatch(/clip-path:inset\(50%\)/);
+      expect(d!).not.toMatch(/display:none/);
+    }
+    expect(rule(b, "html .app-shell .global-search")).toMatch(/min-width:0/);
+    expect(rule(b, "html .app-shell .global-header")).toMatch(/gap:6px/);
+    expect(rule(block("@media (max-width:1060px)"), "html .app-shell .module-switcher button")).toMatch(/padding:6px 5px/);
+  });
+  it("≤1180 rules come after the ≤1100 min-width:120px rule so they win the cascade", () => {
+    expect(css.lastIndexOf("@media (max-width:1180px)")).toBeGreaterThan(css.indexOf("@media (max-width:1100px)"));
+  });
+});
