@@ -171,6 +171,10 @@ export function DockLayout(props: DockLayoutProps) {
   [scope.userId, scope.projectId, scope.projectInstanceId]);
   const [state, rawDispatch] = useReducer(reducer, initial.state);
   const [saveStatus, setSaveStatus] = useState<{ok: boolean; text: string}>({ok: true, text: storage ? '' : '布局仅在本次会话有效（无本地存储）'});
+  // [HERMIA-FE-20261025 M5-fix] storage can appear/disappear after mount (identity resolved later by bootstrap);
+  // keep the persistence label truthful instead of freezing the mount-time value.
+  const hasStorage = !!storage;
+  useEffect(() => { setSaveStatus({ok: true, text: hasStorage ? '' : '布局仅在本次会话有效（无本地存储）'}); }, [hasStorage]);
   const [confirmReset, setConfirmReset] = useState(false);
   // [HERMIA-FE-20261023 M1-fix] N2: persist only after an explicit user layout action that actually changed the
   // layout signature. Hydration, viewport re-fit, focus and z-order never write — so after a corrupt load the

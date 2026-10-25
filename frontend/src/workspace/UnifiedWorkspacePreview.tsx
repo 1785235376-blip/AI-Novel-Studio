@@ -23,7 +23,8 @@ import {registerViewActions, VIEW_ACTION_IDS} from './actions/viewActions';
 import {WorkspaceViewsPanel} from './panels/WorkspaceViewsPanel';
 import {createPanelFocusTracker, type PanelFocusTracker} from './state/panelFocus';
 import type {DockLayoutApi} from './layout/DockLayout';
-import {useStudio} from '../store'; // [HERMIA-FE-20261025 U1-M1] real identity source (bootstrap actor + collaboration scope)
+import {useStudio} from '../store';
+import {api} from '../api'; // [HERMIA-FE-20261025 M5] bootstrap read for ?uw=1 (LegacyApp's bootstrap never runs here) // [HERMIA-FE-20261025 U1-M1] real identity source (bootstrap actor + collaboration scope)
 import {IDENTITY_TEXT, resolveWorkspaceIdentity} from './state/scopeLease';
 import {TasksPanelLive} from './panels/TasksPanelLive'; // [HERMIA-FE-20261025 U3-M3/M4] real task panel (replaces fabricated-identity TasksPanel)
 import {canvasHasNode, useLiveTasks} from './tasks/useLiveTasks';
@@ -113,6 +114,21 @@ export function UnifiedWorkspacePreview() {
   // [HERMIA-FE-20261025 U3-M3] real session only; no identity ⇒ TasksPanelLive shows "未接通" and performs no read.
   const sessionToken = useStudio(st => st.sessionToken);
   const actor = useStudio(st => st.actor);
+  // [HERMIA-FE-20261025 M5] ?uw=1 returns before LegacyApp, whose bootstrap is the only place the server actor is read; without
+  // this a signed-in session never became "real" (repro: integration/int.bootstrap.test.tsx, shots/00-repro-*). Same GET as
+  // LegacyApp, only with a token + complete scope and no actor yet; the actor comes from the server, never invented. A late
+  // answer for a scope/token that is no longer current is dropped.
+  useEffect(() => {
+    const sc = collabScope;
+    if (actor || !sessionToken || !sc?.workspaceId || !sc.projectId || !sc.storylineId || !sc.branchId) return;
+    let live = true;
+    api.bootstrap(sc).then(b => {
+      const st = useStudio.getState();
+      if (!live || st.actor || st.sessionToken !== sessionToken || st.scope !== sc || !b?.actor?.actor_id || b.scope?.workspace_id !== sc.workspaceId) return;
+      st.setCollaboration(sessionToken, {id: b.actor.actor_id, displayName: '协作账号', workspaceId: b.scope.workspace_id}, sc);
+    }, () => undefined);
+    return () => { live = false; };
+  }, [actor, sessionToken, collabScope]);
   const taskCtx = useMemo(() => (identity.kind === 'real' ? {sessionToken, actor, scope: collabScope ?? undefined} : null), [identity.kind, sessionToken, actor, collabScope]);
   const tasks = useLiveTasks(novelId, taskCtx, identity.kind === 'real' ? JSON.stringify(identity.scope) : null);
   // [HERMIA-FE-20261025 INT] selected production job (from task detail) drives params (M7) and results/history (M8/M9).
