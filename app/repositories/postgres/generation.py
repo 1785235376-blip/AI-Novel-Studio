@@ -25,6 +25,8 @@ class PostgresGenerationRepository:
         return saved
     @staticmethod
     def _graph_owner(session, item, binding):
+        if "memory_project_binding" in item:
+            raise GenerationProjectIdentityError("GENERATION_MEMORY_POSTGRES_UNSUPPORTED")
         try:
             # Lock the original project row through the same save transaction.
             # DELETE cannot pass validation and then replace this slug midway.
@@ -41,6 +43,8 @@ class PostgresGenerationRepository:
 
     @committed_change("TASK")
     def save(self,item):
+        if "memory_project_binding" in item:
+            raise GenerationProjectIdentityError("GENERATION_MEMORY_POSTGRES_UNSUPPORTED")
         from ...creative.director_image_terminal import preserve as preserve_image
         from ...creative.director_terminal_evidence import FIELD, preserve_evidence
         if FIELD in item:

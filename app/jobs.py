@@ -447,6 +447,9 @@ class JobManager:
                 self._restore_job(item)
 
     def _restore_job(self, item):
+        # Bound independent memory operations belong to the original memory
+        # runner, never to a generic writer Job that would erase their identity.
+        if "memory_project_binding" in item: return
         from .services.generation_project_binding import FIELD
         if FIELD in item or is_image_job(item) or is_creative_director_job(item) or _is_research_ocr_execution(item):
             from .repositories.generation_repository import graph_job_binding

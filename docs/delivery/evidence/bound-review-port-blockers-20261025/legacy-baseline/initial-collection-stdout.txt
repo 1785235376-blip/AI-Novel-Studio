@@ -1,0 +1,31 @@
+
+==================================== ERRORS ====================================
+_ ERROR collecting .runtime/delayed-memory-owner-review/test_delayed_memory.py _
+.runtime/delayed-memory-owner-review/test_delayed_memory.py:7: in <module>
+    from app import jobs as jobs_module
+app/jobs.py:8: in <module>
+    from .runtime import runtime
+app/runtime.py:262: in <module>
+    runtime=Runtime()
+            ^^^^^^^^^
+app/runtime.py:35: in __init__
+    self.execution_node_identity.get_or_create()
+app/stable_identity.py:494: in get_or_create
+    return ExecutionNodeIdentity(self.store.get_or_create("execution_node", "local"))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/stable_identity.py:293: in get_or_create
+    with self._mutation():
+         ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/stable_identity.py:213: in _mutation
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: in mkdir
+    os.mkdir(self, mode)
+E   OSError: [Errno 30] Read-only file system: '/home/agent/.local/share/AI-Novel-Studio'
+- generated xml file: /workspace/scratch/20a0022d2b33/studio-backend-20261025/.runtime/delayed-memory-owner-review/results.xml -
+=========================== short test summary info ============================
+ERROR .runtime/delayed-memory-owner-review/test_delayed_memory.py - OSError: ...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.32s

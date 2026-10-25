@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 FIELD = "ordinary_project_binding"
 Identifier = Annotated[str, Field(min_length=1, max_length=240)]
-SPECIALIZED_FIELDS = ("graph_binding", "adaptation_binding", "creative_director_binding",
+SPECIALIZED_FIELDS = ("memory_project_binding", "graph_binding", "adaptation_binding", "creative_director_binding",
                       "director_image_binding", "research_ocr_binding", "research_ocr_output_evidence",
                       "_creative_director_terminal_evidence", "director_image_terminal_v3")
 IDENTITY_FIELDS = ("chapter_id", "operation", "actor_id", "workspace_id", "scope", "scope_type", "scope_id", "experimental_origin")

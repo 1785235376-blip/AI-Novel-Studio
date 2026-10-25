@@ -1,0 +1,65 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+_____________ test_failed_same_owner_retry_has_complete_relations ______________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-file-bound-review/.runtime/bound-memory-independent/tmp/pytest-of-agent/pytest-0/test_failed_same_owner_retry_h0')
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-bound-review/app/lore/memory_agent.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f956fe29100>
+
+    def test_failed_same_owner_retry_has_complete_relations(tmp_path, memory_settings, monkeypatch):
+        agent,bundle,nid,cid,v,owner,binding=setup(tmp_path)
+        original=bundle.lore.link_evidence
+        def fail(item): raise OSError('synthetic one-time relation write failure')
+        monkeypatch.setattr(bundle.lore,'link_evidence',fail)
+        with pytest.raises(OSError): agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='FAILED'
+        assert len(bundle.lore.list_proposals(nid))==1
+        monkeypatch.setattr(bundle.lore,'link_evidence',original)
+        ids=agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='COMPLETED'
+>       assert len(bundle.lore.list_proposal_evidence(ids[0]))==1, 'COMPLETED after retry with missing evidence relation'
+E       AssertionError: COMPLETED after retry with missing evidence relation
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +    where [] = list_proposal_evidence('d389c7a6-69d5-5db9-aef2-33ff579f5459')
+E        +      where list_proposal_evidence = <app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370>.list_proposal_evidence
+E        +        where <app.repositories.file.lore.FileLoreRepository object at 0x7f956fe29370> = RepositoryBundle(novels=<app.repositories.file.novel.FileNovelRepository object at 0x7f956fe29010>, chapters=<app.repo...y object at 0x7f956fe29460>, identity=<app.repositories.file.identity.FileIdentityRepository object at 0x7f956fe294c0>).lore
+
+.runtime/bound-memory-independent/test_independent.py:26: AssertionError
+______________ test_bound_does_not_adopt_legacy_proposal_receipt _______________
+
+tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/studio-file-bound-review/.runtime/bound-memory-independent/tmp/pytest-of-agent/pytest-0/test_bound_does_not_adopt_lega0')
+memory_settings = <module 'app.lore.memory_agent' from '/workspace/scratch/20a0022d2b33/studio-file-bound-review/app/lore/memory_agent.py'>
+
+    def test_bound_does_not_adopt_legacy_proposal_receipt(tmp_path,memory_settings):
+        agent,bundle,nid,cid,v,owner,binding=setup(tmp_path)
+        legacy=agent.extract(nid,cid,v,job_id='legacy-existing')
+        ids=agent.extract(nid,cid,v,project_incarnation=binding['project_incarnation'])
+        assert bundle.generations.get(binding['job_id'])['status']=='COMPLETED'
+>       assert bundle.lore.get_proposal(ids[0])['generation_job_id']==binding['job_id'], 'bound receipt points to legacy proposal provenance'
+E       AssertionError: bound receipt points to legacy proposal provenance
+E       assert 'legacy-existing' == '3839987b-4b9...-1ec59a0759a5'
+E         
+E         - 3839987b-4b98-503b-88b2-1ec59a0759a5
+E         + legacy-existing
+
+.runtime/bound-memory-independent/test_independent.py:33: AssertionError
+=============================== warnings summary ===============================
+../studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-backend-20261025/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /workspace/scratch/20a0022d2b33/studio-file-bound-review/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /workspace/scratch/20a0022d2b33/studio-file-bound-review/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/20a0022d2b33/studio-file-bound-review/.runtime/bound-memory-independent/results.xml -
+=========================== short test summary info ============================
+FAILED .runtime/bound-memory-independent/test_independent.py::test_failed_same_owner_retry_has_complete_relations
+FAILED .runtime/bound-memory-independent/test_independent.py::test_bound_does_not_adopt_legacy_proposal_receipt
+2 failed, 1 passed, 3 warnings in 5.65s

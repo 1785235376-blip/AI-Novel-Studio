@@ -12,6 +12,12 @@ class GenerationProjectIdentityError(ValueError):
 
 
 def graph_job_binding(item):
+    from ..lore.memory_project_binding import FIELD as MEMORY_FIELD, memory_job_binding
+    if MEMORY_FIELD in item:
+        try:
+            return memory_job_binding(item)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_INVALID") from None
     # Compatibility name: specialized contracts below remain unchanged. The
     # ordinary domain has its own strict, disjoint passive identity contract.
     from ..services.generation_project_binding import FIELD, ordinary_job_binding
@@ -79,6 +85,13 @@ def graph_job_binding(item):
 
 
 def check_graph_job_update(previous, item):
+    from ..lore.memory_project_binding import FIELD as MEMORY_FIELD
+    if MEMORY_FIELD in item or (previous is not None and MEMORY_FIELD in previous):
+        current = graph_job_binding(item)
+        if previous is not None and (MEMORY_FIELD not in previous or MEMORY_FIELD not in item
+                                     or graph_job_binding(previous) != current):
+            raise GenerationProjectIdentityError("GENERATION_MEMORY_BINDING_CHANGED")
+        return
     from ..services.generation_project_binding import FIELD
     if FIELD in item or (previous is not None and FIELD in previous):
         current = graph_job_binding(item)
@@ -255,7 +268,7 @@ class GenerationRepository:
             try:
                 item = json.loads(p.read_text(encoding="utf-8"))
                 from ..services.generation_project_binding import FIELD
-                if FIELD in item and item.get("id") != p.stem:
+                if (FIELD in item or "memory_project_binding" in item) and item.get("id") != p.stem:
                     continue
                 binding = graph_job_binding(item)
                 if binding is None:
@@ -270,12 +283,12 @@ class GenerationRepository:
         if not path.exists():raise KeyError(jid)
         item = json.loads(path.read_text(encoding="utf-8"))
         from ..services.generation_project_binding import FIELD
-        if FIELD in item and item.get("id") != jid:
+        if (FIELD in item or "memory_project_binding" in item) and item.get("id") != jid:
             raise KeyError(jid)
         try:
             binding = graph_job_binding(item)
         except GenerationProjectIdentityError:
-            if FIELD in item:
+            if FIELD in item or "memory_project_binding" in item:
                 raise KeyError(jid) from None
             raise
         if binding is None: return item
