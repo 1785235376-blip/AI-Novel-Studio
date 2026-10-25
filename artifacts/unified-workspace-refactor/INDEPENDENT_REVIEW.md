@@ -963,3 +963,16 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - **DELIVERY_REPORT 分阶段表**写「Vera PASS 575501b9」：**不对**。575501b9 的结论是 MUST-FIX（U1 三项仍在），通过的只有集成代码本身。
 - 第 23 行：landmark-unique 的结论成立，但 aria-required-children 没有说明（P3）。
 - 其余各行的分类与证据相符；第 15、19、22、28、29 行的「部分实现」和 20、21、30 行的「受阻」理由都成立。
+
+## [VERA-FE] 复审 work/hermia-fe-contracts-20261025 @ fa2fa0f4（基于 02bbff08 + 8877b216）— 结论：MUST-FIX
+
+环境：临时 worktree /workspace/hr/vera-fec（变异/浏览器在 /workspace/hr/vera-fec-mut），Node 22.14，npm ci（lock 未跟踪），vite 4599 独立缓存，Playwright 拦截全部非 GET。证据：/workspace/hr/vera-compare/fec-fa2fa0f4/。
+
+- tsc 0，build 0；相关 34 文件 290/290。
+- 全量三次：raw 293/293/294，ISI 8/8/8，调整 293/293/294（≤297）；规则 (a)(b) 均通过。按名新增仅 run3 的 PortableProjectsPanel.assetRelations 1 项，单独重跑 3/3 通过，判偶发。
+- u1.purge.host「host purges own keys…」归因：与 incarnation 改动无关。fa2fa0f4 未改 projectPurge.ts 和该测试（两者的改动都来自 8877b216）；该测试里 overview 返回 404，不会 setIncarnation，realKey 不变。在 8877b216 与 fa2fa0f4 上单跑各 10/10 通过，各 4 路并行 ×3 轮（12 次）也全部通过；本人全量三次中 0/3 失败。Hermia 日志里的失败是最后那个 waitFor（默认 1s）超时，属于负载下的时序偶发，来自 8877b216 的测试。
+- 契约核对（对照 origin/work/hermia-backend-contracts-20261025）：TaskCenter 分页的 7 个键、coverage、next_offset、truncated=source_truncated||has_more 与 ux.py 一致；Production 的 owner/operation_id 白名单、limit 1–100、offset ≤1e6、has_more 语义等价；overview 的 project.incarnation 形状一致；Timeline history/restore 的四个字段一致。
+- **MUST-FIX 1（行为）**：incarnation 变化后，旧项目的 viewport 会被写回。原因是 realKey 带上 incarnation 后会触发重挂载，重挂载把内存里的旧 viewport 写回了刚清理过的 viewprefs。jsdom 探针 3/3 复现（viewprefs(own) 里仍有 x:7）。浏览器在 1366/1440/1920 下也复现：A 下平移到 (-160,70)，切到 B 后重载，ledger 已更新为 B，但画布仍是 translate(-160,70)，viewprefs 里还是旧值。去掉 realKey 中的 incarnation 后探针变成 null，说明问题就出在这次改动。u1.incarnation.host 只断言了 layout，没有断言 viewprefs，所以没发现。修复后请补上 viewprefs(own) 为 null 或为默认值的断言。
+- **MUST-FIX 2（测试守护）**：以下变异存活：M1 去掉 truncated 等式；M3 去掉 next_offset 算术（taskCenterPaging 的测试其实声称覆盖了这一点）；M5 任意 422 都回退；M7 去掉 production 的 has_more 校验；M8 部分分页键被当成未分页；M12 realKey 不带 incarnation；M14 无身份也读 overview（代码本身正确，我的探针已验证不会发请求，但没有测试守护）。被杀死的有：M2/M4/M6/M9/M10/M11/M13/M15。首轮 M7/M14 的“杀死”其实来自 receiptCompanion 偶发，定向重跑后确认存活。
+- P3：后端允许 offset 超过 observed_total（返回空页），前端的 `offset + count > observed` 会把这种情况判为无效。列表在两次加载更多之间缩短时，加载更多会报错，但已显示的行会保留。
+- 浏览器：三个视口下都是 0 个非 GET、0 个 pageerror；默认界面正常加载。
