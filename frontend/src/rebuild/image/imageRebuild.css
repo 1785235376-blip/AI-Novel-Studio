@@ -66,7 +66,9 @@ html .app-shell[data-module="IMAGE"] .media-ws-main{flex:1;min-height:0;display:
 .comic-strip button{flex:none;width:56px;height:72px;border:1px solid var(--color-border-default);border-radius:4px;background:var(--color-bg-elevated);font-size:10px;color:var(--color-text-muted);cursor:pointer}
 .comic-strip button[aria-selected="true"]{border-color:var(--color-accent-primary);box-shadow:0 0 0 1px var(--color-accent-primary)}
 .img-ws .nv-orient,.img-ws .nv-tabs{flex:none}
-@media (max-width:1100px){.mw-split{grid-template-columns:0 1fr minmax(200px,240px)}.mw-left{display:none}}
+/* [HERMIA-FE-20261025 LAYOUT-P2] 同上：隐藏左栏后两列，主区 minmax(320px,1fr)；空态按钮可换行。 */
+@media (max-width:1100px){.mw-split{grid-template-columns:minmax(320px,1fr) minmax(200px,240px)}.mw-left{display:none}}
+.img-empty{min-width:0;max-width:min(360px,100%)}.img-empty>div,.img-empty .nv-row{flex-wrap:wrap;justify-content:center;max-width:100%}.img-empty button{white-space:normal;max-width:100%}
 .img-ws .mw-head .nv-btn,.mw-hero .hero-tools .nv-btn{padding:2px 10px} /* [HERMIA-FE-20261022 R2] 原型 .btn.sm 高度 */
 /* [HERMIA-FE-20261022 R3] 漫画子视图正文 11px 对齐原型 */
 .img-ws[data-img-view="comic"] .nv-hint,.img-ws[data-img-view="comic"] .mw-muted{font-size:11px}
