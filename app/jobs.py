@@ -27,6 +27,14 @@ repo=getattr(repositories.novels,"backend",None)
 def utc():return datetime.now(timezone.utc).isoformat()
 
 
+_ORDINARY_UNBOUND = object()
+
+
+def _has_ordinary_binding(job):
+    return (getattr(job, "ordinary_project_binding", _ORDINARY_UNBOUND) is not _ORDINARY_UNBOUND
+            or getattr(job, "_ordinary_read_verifier", None) is not None)
+
+
 class _OrdinaryRequestAuthorizationFailed(ModelRuntimeError):
     """A live request refusal is not a provider failure eligible for fallback."""
 
@@ -81,6 +89,24 @@ class Job:
     creative_execution_authority:object=field(default=None,repr=False)
     creative_director_cancel_requested:bool=field(default=False,repr=False)
     prepared_text_invocation:object=field(default=None,repr=False)
+    # Absent is legacy; explicit null is malformed, never a legacy downgrade.
+    ordinary_project_binding:object=field(default=_ORDINARY_UNBOUND,repr=False)
+    _ordinary_read_verifier:object=field(default=None,repr=False)
+
+    def record(self):
+        """Private persistence projection. Public HTTP output stays unchanged."""
+        from copy import deepcopy
+        result = self.public()
+        if _has_ordinary_binding(self):
+            result = deepcopy(result)
+            from .services.generation_project_binding import FIELD, IDENTITY_FIELDS
+            from .repositories.generation_repository import graph_job_binding
+            result[FIELD] = deepcopy(self.ordinary_project_binding)
+            for key in IDENTITY_FIELDS:
+                result[key] = deepcopy(getattr(self, key))
+            graph_job_binding(result)
+        return result
+
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
         if self.director_image_binding is not None:
@@ -190,6 +216,11 @@ def mark_generation_origin(job, origin):
 
 
 def generation_content_available(job):
+    if _has_ordinary_binding(job):
+        # This read-only verifier belongs to the original manager/repository.
+        # It is reconstructed, never deserialized as execution authorization.
+        verifier = getattr(job, "_ordinary_read_verifier", None)
+        if not callable(verifier) or not verifier(job): return False
     if is_image_job(job): return False  # Only the private pending-review owner may expose V3 content.
     if _is_research_ocr_execution(job): return False
     # Passive Creative evidence has no executable or content-serving authority,
@@ -391,12 +422,17 @@ def _isolated_generation(job):
 
 
 class JobManager:
-    transient_fields={"director_image_authority","research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"_ordinary_read_verifier","director_image_authority","research_ocr_execution_authority", "creative_director_cancel_requested", "creative_execution_authority", "author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
             bundle=create_repository_bundle(data_root=repo.data);generations=GenerationService(bundle.generations);chapters=ChapterService(bundle.chapters);contexts=ContextService(bundle.novels,bundle.chapters,LoreService(bundle.lore));canon=CanonService(bundle.canon)
         self.jobs={};self.lock=threading.Lock();self.persistence=generations or generation_service;self.chapters=chapters or chapter_service;self.contexts=contexts or context_service;self.canon=canon or canon_service;self.memory_extractor=memory_extractor if memory_extractor is not None else memory_agent_service;self.snapshot_required=settings.enable_collaboration_runtime if snapshot_required is None else snapshot_required;self.collaboration_updates=collaboration_application_service if collaboration_updates is None else collaboration_updates
+        self._ordinary_repository = getattr(self.persistence, "repository", self.persistence)
+        from pathlib import Path
+        original_root = getattr(self._ordinary_repository, "root", None)
+        self._ordinary_repository_root = Path(original_root).resolve() if original_root is not None else None
+        self._ordinary_database = getattr(self._ordinary_repository, "database", None)
         for item in self.persistence.load_all():
             if "id" not in item: continue
             if item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}:
@@ -411,10 +447,19 @@ class JobManager:
                 self._restore_job(item)
 
     def _restore_job(self, item):
-        if is_image_job(item) or is_creative_director_job(item) or _is_research_ocr_execution(item):
+        from .services.generation_project_binding import FIELD
+        if FIELD in item or is_image_job(item) or is_creative_director_job(item) or _is_research_ocr_execution(item):
             from .repositories.generation_repository import graph_job_binding
             try: graph_job_binding(item)
             except ValueError: return
+        if FIELD in item:
+            if not self._ordinary_store_matches(item): return
+            from .services.generation_project_binding import ordinary_job_binding
+            try:
+                if ordinary_job_binding(self._ordinary_repository.get(item["id"])) != ordinary_job_binding(item): return
+            except Exception: return
+            from copy import deepcopy
+            item = deepcopy(item)
         recovered = item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}
         if item.get("status") == "SETTLING":
             item.update(status="FAILED", error_code="GENERATION_SETTLEMENT_RECOVERY_REQUIRED",
@@ -427,12 +472,20 @@ class JobManager:
                 terminal_hook_status='MISSING_RECONCILIATION_REQUIRED')
         try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in self.transient_fields})
         except Exception:return
+        if FIELD in item:
+            from copy import deepcopy
+            restored = self.jobs[item["id"]]
+            restored.ordinary_project_binding = deepcopy(item[FIELD])
+            restored._ordinary_read_verifier = self._ordinary_record_available
         # Recovery is a durable state transition. A later reader/restart
         # must not see the interrupted task as still executing or reviewable.
         if recovered:
             if is_image_job(self.jobs[item["id"]]) or is_creative_director_job(self.jobs[item["id"]]) or _is_research_ocr_execution(self.jobs[item["id"]]): self.jobs[item["id"]].output = ""
             self._persist(self.jobs[item["id"]])
     def _persist(self,job):
+        if _has_ordinary_binding(job) and not self._ordinary_store_matches(job):
+            from .repositories.generation_repository import GenerationProjectIdentityError
+            raise GenerationProjectIdentityError("GENERATION_ORDINARY_STORE_MISMATCH")
         if is_image_job(job) and job.director_image_authority is not None:
             from .creative.director_image_execution import _DirectorImageCapability, IDENTITY
             authority = job.director_image_authority
@@ -448,7 +501,7 @@ class JobManager:
         capability = getattr(job, "creative_execution_authority", None)
         if type(capability) is _CreativeDirectorCapability and (capability.job is not job or capability.job_id != job.id):
             raise ValueError("CREATIVE_DIRECTOR_PERSISTENCE_IDENTITY_CHANGED")
-        self.persistence.save(job.public())
+        self.persistence.save(job.record())
     def _review_mutation(self, jid):
         from .repositories.file.mutation_coordinator import workspace_mutation
         from pathlib import Path
@@ -641,6 +694,8 @@ class JobManager:
         Keep partial persistence evidence on failure. The batch coordinator will
         never fill missing members by replay after an uncertain staging/start.
         """
+        for job in jobs:
+            self.require_ordinary_mutation_eligibility(job)
         if not 2 <= len(jobs) <= 3 or any(not job.reviewed_variant or not job.expected_request_digest
                 or not callable(job.request_authorization) or job.status != "PREPARED" for job in jobs):
             raise ValueError("AUTHOR_VARIANT_REVIEW_REQUIRED")
@@ -682,6 +737,7 @@ class JobManager:
         return self._start_prepared_validated(job)
 
     def _start_prepared_validated(self, job):
+        self.require_ordinary_mutation_eligibility(job)
         if is_image_job(job):
             from .creative.director_image_execution import require_capability
             require_capability(self, job, started=True)
@@ -978,6 +1034,7 @@ class JobManager:
                     job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
+        self.require_ordinary_mutation_eligibility(job)
         if is_image_job(job):
             from .creative.director_image_execution import run
             return run(self, job)
@@ -1242,12 +1299,80 @@ class JobManager:
                 runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
         finally:
             self._finish_terminal_hook(job)
+    def _ordinary_store_matches(self, job):
+        """Composition metadata only: no new owner, connection or lock."""
+        from pathlib import Path
+        from .repositories.generation_repository import GenerationRepository
+        from .repositories.chapter_repository import ChapterRepository
+        from .repository import FileRepository
+        repository = getattr(self.persistence, "repository", self.persistence)
+        chapters = getattr(self.chapters, "repository", self.chapters)
+        if repository is not self._ordinary_repository: return False
+        raw_scope = job.get("scope") if isinstance(job, dict) else job.scope
+        branch = isinstance(raw_scope, dict) and raw_scope.get("kind") == "BRANCH"
+        if isinstance(repository, GenerationRepository):
+            if Path(repository.root).resolve() != self._ordinary_repository_root: return False
+            root = Path(repository.root).parent.parent.resolve()
+            if not (isinstance(chapters, ChapterRepository) and isinstance(chapters.backend, FileRepository)
+                    and root == Path(chapters.backend.data).resolve()): return False
+            if not branch: return True
+            from .services.branch_manuscript_service import BranchManuscriptService
+            from .experimental.store import ExperimentalStore
+            from .repositories.file.novel import FileNovelRepository
+            from .services.novel_service import NovelService
+            resolver = getattr(self.chapters, "branch_authority", None)
+            owner = getattr(resolver, "__self__", None)
+            novel_service = getattr(owner, "novels", None)
+            novels = getattr(novel_service, "novels", None)
+            return (type(owner) is BranchManuscriptService and isinstance(novel_service, NovelService)
+                    and isinstance(novels, FileNovelRepository) and isinstance(novels.backend, FileRepository)
+                    and Path(novels.backend.data).resolve() == root
+                    and getattr(resolver, "__func__", None) is BranchManuscriptService.for_scope
+                    and owner.mainline is self.chapters and type(owner.store) is ExperimentalStore
+                    and owner.store.backend == "file" and Path(owner.store.root).resolve() == root)
+        from .repositories.postgres.generation import PostgresGenerationRepository
+        from .repositories.postgres.chapter import PostgresChapterRepository
+        if isinstance(repository, PostgresGenerationRepository):
+            # The registered branch ExperimentalStore currently owns a URL,
+            # not this Database instance. Do not infer shared identity from it.
+            return (not branch and isinstance(chapters, PostgresChapterRepository)
+                    and repository.database is self._ordinary_database is chapters.database)
+        return False
+
+    def _ordinary_record_available(self, job):
+        if not _has_ordinary_binding(job): return True
+        from .services.generation_project_binding import ordinary_job_binding
+        try:
+            if self.jobs.get(job.id) is not job or not self._ordinary_store_matches(job): return False
+            expected = ordinary_job_binding(job.record())
+            # Original get validates its durable identity and current owner in
+            # the original File lease / PG session. Missing rows never fall
+            # back to the cache, even for manually injected drafts.
+            current = self._ordinary_repository.get(job.id)
+            return ordinary_job_binding(current) == expected
+        except Exception:
+            return False
+
+    @staticmethod
+    def require_ordinary_mutation_eligibility(job):
+        if _has_ordinary_binding(job):
+            from fastapi import HTTPException
+            raise HTTPException(409, {"code": "GENERATION_ORDINARY_MUTATION_NOT_INTEGRATED"})
+
     def get(self,jid):
         if jid not in self.jobs:raise KeyError(jid)
-        return self.jobs[jid]
+        job = self.jobs[jid]
+        if not self._ordinary_record_available(job): raise KeyError(jid)
+        return job
     def variants(self, group_id):
-        return sorted((job for job in self.jobs.values() if job.variant_group_id == group_id), key=lambda job: job.variant_index or 0)
+        # Snapshot before repository reads; never hold the manager lock across
+        # an original owner lease or a PostgreSQL connection.
+        with self.lock:
+            candidates = tuple(self.jobs.values())
+        return sorted((job for job in candidates if job.variant_group_id == group_id
+                       and self._ordinary_record_available(job)), key=lambda job: job.variant_index or 0)
     def _cancel_execution(self, job):
+        self.require_ordinary_mutation_eligibility(job)
         with job.condition:
             if job.status not in self.terminal:
                 # A live ordinary job can have an observed provider completion
@@ -1260,6 +1385,7 @@ class JobManager:
 
     def cancel(self,jid):
         job=self.get(jid)
+        self.require_ordinary_mutation_eligibility(job)
         if is_image_job(job): raise ValueError("DIRECTOR_IMAGE_PRIVATE_CANCELLATION_REQUIRED")
         # The cooperative signal stays responsive during a slow settlement.
         # The locked transition rechecks state before changing it, so this can
@@ -1284,8 +1410,42 @@ class JobManager:
         job.creative_director_cancel_requested = True
         job.cancelled.set()
         return True
+    def _ordinary_events(self, job, authorize=None, stop_event=None):
+        # Repository reads may acquire a project lease. Do not acquire them
+        # under job.condition (or hold a PG connection across wait/yield).
+        sent = 0
+        heartbeat = time.monotonic()
+        def available():
+            return (not (stop_event is not None and stop_event.is_set())
+                    and generation_content_available(job)
+                    and (authorize is None or authorize()))
+        while True:
+            if not available(): return
+            with job.condition:
+                if len(job.output) == sent and job.public()["status"] not in self.terminal:
+                    job.condition.wait(timeout=.25)
+                chunk = job.output[sent:]
+                status = job.public()["status"]
+                length = len(job.output)
+                payload = {"job_id": job.id, "status": status, "chunk": chunk,
+                           "provider": job.provider, "model": job.model,
+                           "error": job.error, "error_code": job.error_code}
+            if not available(): return
+            if not chunk and status not in self.terminal and time.monotonic() - heartbeat < 10:
+                continue
+            event = "data: " + json.dumps(payload, ensure_ascii=False) + "\n\n"
+            if not available(): return
+            sent = length
+            yield event
+            heartbeat = time.monotonic()
+            if status in self.terminal: return
+
     def events(self,jid,authorize=None,stop_event=None):
-        job=self.get(jid);sent=0;heartbeat=time.monotonic()
+        job=self.get(jid)
+        if _has_ordinary_binding(job):
+            yield from self._ordinary_events(job, authorize, stop_event)
+            return
+        sent=0;heartbeat=time.monotonic()
         def available():
             return (not (stop_event is not None and stop_event.is_set())
                     and generation_content_available(job)
@@ -1313,6 +1473,7 @@ class JobManager:
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
         passive = self.get(jid)
+        self.require_ordinary_mutation_eligibility(passive)
         if is_creative_director_job(passive) or _is_research_ocr_execution(passive): require_generation_content(passive)
         from .repositories.file.mutation_coordinator import workspace_mutation
         from .repositories.chapter_repository import VersionConflict
@@ -1408,6 +1569,7 @@ class JobManager:
         return {**deepcopy(saved), "version": 1, "document": deepcopy(revision["document"]), "content": canonical}
 
     def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None):
+        self.require_ordinary_mutation_eligibility(job)
         require_generation_content(job)
         require_whole_generation_acceptance(job)
         jid = job.id
@@ -1468,6 +1630,7 @@ class JobManager:
         except Exception:pass
         return {"chapter":self.chapters_for_job(job).get(job.chapter_id),"pending_canon":pending}
     def _accept_branch_claimed(self, job, chapter, target_version, accepted_output, actor, scope):
+        self.require_ordinary_mutation_eligibility(job)
         # Use the original generation owner/terminal-review claim. Branch text
         # is never written to mainline summaries, pending Canon or memory.
         from .document import markdown_to_document
@@ -1496,6 +1659,7 @@ class JobManager:
         from .repositories.file.mutation_coordinator import workspace_mutation
         from pathlib import Path
         job = self.get(jid)
+        self.require_ordinary_mutation_eligibility(job)
         require_generation_content(job)
         if job.experimental_origin == "creative_graph_model":
             from fastapi import HTTPException
@@ -1529,5 +1693,7 @@ class JobManager:
             from fastapi import HTTPException
             raise HTTPException(409, {"code": "CREATIVE_GRAPH_REVIEW_REQUIRED"})
         original=job.source or self.chapters_for_job(job).get(job.chapter_id)["content"]
-        return "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
+        result = "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
+        if not self._ordinary_record_available(job): raise KeyError(jid)
+        return result
 jobs=JobManager()

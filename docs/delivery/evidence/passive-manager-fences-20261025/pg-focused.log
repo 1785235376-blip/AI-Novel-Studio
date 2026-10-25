@@ -1,0 +1,13 @@
+...........................................                              [100%]
+=============================== warnings summary ===============================
+tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[continue]
+  $WORKTREE/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_passive_generation_manager_postgres.py::test_original_postgres_manager_restores_bound_passive_record_without_writes[continue]
+  $WORKTREE/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: $WORKTREE/.runtime/pg-manager/first-run.xml -
+43 passed, 2 warnings in 5.18s

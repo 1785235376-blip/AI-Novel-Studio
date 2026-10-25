@@ -1,0 +1,29 @@
+Working directory for both commands:
+$WORKTREE
+
+Failed isolated run (54 passed, 4 failed; original output result.log/result.xml):
+
+mkdir -p .runtime/file-manager; python - <<'PY'
+from pathlib import Path
+source = Path('docs/delivery/evidence/passive-manager-fences-20261025/run_tests.py').read_text()
+source = source.replace('parents[4]', 'parents[2]').replace("'.runtime/passive-manager-fences'", "'.runtime/file-manager/isolated'")
+Path('.runtime/file-manager/run_tests.py').write_text(source)
+PY
+../studio-backend-20261025/.venv/bin/python .runtime/file-manager/run_tests.py -q tests/test_passive_generation_manager_binding.py --junitxml=.runtime/file-manager/result.xml > .runtime/file-manager/result.log 2>&1; rc=$?; tail -85 .runtime/file-manager/result.log; exit $rc
+
+Final isolated run after the production NovelService composition fix (58 passed):
+
+cp .runtime/file-manager/result.log .runtime/file-manager/before-novel-service-fix.log; cp .runtime/file-manager/result.xml .runtime/file-manager/before-novel-service-fix.xml; sha256sum app/jobs.py app/api.py tests/test_passive_generation_manager_binding.py > .runtime/file-manager/verified-input.sha256; ../studio-backend-20261025/.venv/bin/python .runtime/file-manager/run_tests.py -q tests/test_passive_generation_manager_binding.py --junitxml=.runtime/file-manager/final.xml > .runtime/file-manager/final.log 2>&1; rc=$?; cat .runtime/file-manager/final.log; exit $rc
+
+Runner:
+.runtime/file-manager/run_tests.py
+
+The runner creates separate HOME/XDG/data/tmp under .runtime/file-manager/isolated,
+sets this worktree's PROJECT_ROOT/PYTHONPATH, removes provider API-key and database
+environment variables, selects File storage and a memory credential vault, and
+blocks socket connect/connect_ex/create_connection/getaddrinfo before pytest.
+
+Portability note: The Python executable above is the actual shared existing venv
+used. On another machine it must resolve to an equivalently provisioned Python
+environment; neither execution installed packages nor used real provider/network
+or PostgreSQL services. The test file was unchanged between these two runs.

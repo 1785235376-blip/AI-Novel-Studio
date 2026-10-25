@@ -1703,6 +1703,7 @@ def retry_generation(jid:str,x_session_token:str|None=Header(None)):
         raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if generation_required_features(job):
         raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
+    jobs.require_ordinary_mutation_eligibility(job)
     if job.status not in {"FAILED","CANCELLED"}:raise HTTPException(409,{"code":"GENERATION_NOT_RETRYABLE","status":job.status})
     payload={
         "novel_id":job.novel_id,"chapter_id":job.chapter_id,"instruction":job.instruction,
