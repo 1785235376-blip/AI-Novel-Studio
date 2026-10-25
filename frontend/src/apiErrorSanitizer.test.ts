@@ -65,10 +65,16 @@ describe.each(Object.keys(VIA) as Array<keyof typeof VIA>)("Vera 15-case injecti
     expect(v.technical).toMatch(/SECRET/);
     expect(v.technical!.length).toBeLessThanOrEqual(500);
   });
-  it.each([["dictCodeSafe", "SAFE-D"], ["dictNoCodeSafe", "SAFE-E"], ["revLock", "段落已锁定"]])("legit %s message kept", async (k, needle) => {
+// [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
+  it.each([["dictCodeSafe", "SAFE-D"], ["dictNoCodeSafe", "SAFE-E"], ["revLock", "段落已锁定"]])("non-whitelisted %s message → friendly copy", async (k, needle) => {
     serve(V[k]);
     const v = apiErrorView(await caught(VIA[via]), "操作失败");
-    expect(v.message).toContain(needle);
+    expect(v.message).not.toContain(needle);
+    expect(v.message).toMatch(/[\u4e00-\u9fff]/);
+  });
+  it("whitelisted code keeps the same legit copy", async () => {
+    serve(env(409, { code: "PLANNING_VERSION_CONFLICT", message: "章节已被其他人修改，请刷新后重试 SAFE-D" }));
+    expect(apiErrorView(await caught(VIA[via]), "操作失败").message).toContain("SAFE-D");
   });
 });
 
@@ -99,7 +105,7 @@ describe("unsafe rules are each independently load-bearing", () => {
     absPath: "open failed /data/poemseed/m",
     relPath: "missing data/uploads/abc.png",
     excName: "KeyError: 'title'",
-    lineNo: "第 line 3 行",
+    lineNo: "at x.py, line 3", // [规格变更] lineNo 仅认 ", line N" / "line N column M"（不再误杀 Each line 2）
     errno: "[Errno 2] No such file or directory",
     sql: "UNIQUE constraint failed: chapters.novel_id",
     pyRepr: "invalid literal for int() with base 10: 'abc'",
@@ -123,14 +129,16 @@ describe("unsafe rules are each independently load-bearing", () => {
     expect(apiErrorView(await caught(VIA.call)).message).toBe("请求内容有误，请检查后重试");
   });
   it.each(["该章节已被其他人修改，请刷新后重试", "Chapter was modified elsewhere", "网络 Error 请重试", "Use A/B test variants"])("legit text kept: %s", async text => {
-    serve(env(409, { code: "X", message: text }));
+    // [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
+    serve(env(409, { code: "PLANNING_VERSION_CONFLICT", message: text }));
     expect(apiErrorView(await caught(VIA.call)).message).toBe(text);
   });
   it("length cap: exactly the limit is kept, one more char is raw", async () => {
-    serve(env(409, { code: "X", message: "好".repeat(SERVER_MESSAGE_LIMIT) }));
+    // [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
+    serve(env(409, { code: "PLANNING_VERSION_CONFLICT", message: "好".repeat(SERVER_MESSAGE_LIMIT) }));
     expect(apiErrorView(await caught(VIA.call)).message).toBe("好".repeat(SERVER_MESSAGE_LIMIT));
     vi.restoreAllMocks();
-    serve(env(409, { code: "X", message: "好".repeat(SERVER_MESSAGE_LIMIT + 1) }));
+    serve(env(409, { code: "PLANNING_VERSION_CONFLICT", message: "好".repeat(SERVER_MESSAGE_LIMIT + 1) }));
     expect(apiErrorView(await caught(VIA.call)).message).toBe("内容已被修改，请刷新后重试");
   });
 });
@@ -153,7 +161,8 @@ describe("independent guards (N6 / N7 / N9 / dict echo)", () => {
     serve(env(400, { detail: "Chapter number must be positive" }));
     expect(apiErrorView(await caught(VIA.call)).message).toBe("请求内容有误，请检查后重试");
     vi.restoreAllMocks();
-    serve(env(400, { detail: "x", message: "标题不能为空" }));
+    // [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
+    serve(env(400, { code: "PLANNING_VERSION_CONFLICT", detail: "x", message: "标题不能为空" }));
     expect(apiErrorView(await caught(VIA.call)).message).toBe("标题不能为空");
   });
 });

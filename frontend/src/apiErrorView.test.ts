@@ -32,15 +32,16 @@ describe("apiErrorView whitelist", () => {
     fail(418, "teapot internals");
     expect(apiErrorView(await caught(), "保存失败").message).toBe("保存失败");
   });
+// [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
   it("structured message field is still shown (whitelisted contract)", async () => {
-    fail(409, JSON.stringify({ code: "VERSION_CONFLICT", message: "章节已被他人修改", details: { actual_version: 4, secret: "x" } }));
+    fail(409, JSON.stringify({ code: "PLANNING_VERSION_CONFLICT", message: "章节已被他人修改", details: { actual_version: 4, secret: "x" } }));
     const v = apiErrorView(await caught());
     expect(v.message).toBe("章节已被他人修改");
-    expect(v.code).toBe("VERSION_CONFLICT");
+    expect(v.code).toBe("PLANNING_VERSION_CONFLICT");
     expect(v.details).toBe('{"actual_version":4}');
   });
   it("nested object detail.message is structured and kept", async () => {
-    fail(400, JSON.stringify({ detail: { code: "BAD", message: "标题不能为空" } }));
+    fail(400, JSON.stringify({ detail: { code: "PLANNING_VERSION_CONFLICT", message: "标题不能为空" } }));
     expect(apiErrorView(await caught()).message).toBe("标题不能为空");
   });
   it("pro mode exposes raw text only as technical details (truncated), message stays friendly", async () => {
@@ -91,15 +92,16 @@ describe("apiErrorView with the real unified_http_error envelope", () => {
     expect(v.technical).toBe("Not found: /home/u/SECRET-T4.key");
   });
   it("structured dict detail keeps its message through the envelope", async () => {
-    fail(409, envelope(409, { code: "VERSION_CONFLICT", message: "章节已被他人修改", details: { actual_version: 7 } }));
+    fail(409, envelope(409, { code: "PLANNING_VERSION_CONFLICT", message: "章节已被他人修改", details: { actual_version: 7 } }));
     const v = apiErrorView(await caught());
     expect(v.message).toBe("章节已被他人修改");
-    expect(v.code).toBe("VERSION_CONFLICT");
+    expect(v.code).toBe("PLANNING_VERSION_CONFLICT");
     expect(v.details).toBe('{"actual_version":7}');
   });
-  it("dict detail without code (HTTP_<n>) keeps a safe message but drops unsafe text", async () => {
+// [HERMIA-FE-20261025 VERA-620963bf 规格变更] 白名单裁定：仅 LITERAL_MESSAGE_CODES 内的 code 可原样展示；VERSION_CONFLICT/BAD/X/无 code 在后端不带字面文案，改用白名单 code PLANNING_VERSION_CONFLICT 验证“展示”，原 code 改断言为友好文案。
+  it("dict detail without code (HTTP_<n>) is never shown; unsafe text dropped too", async () => {
     fail(400, envelope(400, { message: "标题不能为空" }));
-    expect(apiErrorView(await caught()).message).toBe("标题不能为空");
+    expect(apiErrorView(await caught()).message).toBe("请求内容有误，请检查后重试");
     fail(400, envelope(400, { message: "ValueError: bad path /var/lib/app/db.sqlite" }));
     expect(apiErrorView(await caught()).message).toBe("请求内容有误，请检查后重试");
   });

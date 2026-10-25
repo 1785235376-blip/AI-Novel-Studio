@@ -103,9 +103,11 @@ export const UNSAFE_SERVER_RULES:ReadonlyArray<readonly [string,RegExp]>=[
  ['winDrive',/(?:^|[^\w])[A-Za-z]:[\\/]/],
  ['unc',/\\\\[\w.$-]+\\/],
  ['absPath',/(?:^|[\s'"(=:,])\/[\w.~-]+\//],
- ['relPath',/(?:^|[\s'"(=:,])(?:\.{1,2}|~)\/|[\w.-]+\/[\w./-]*\.[A-Za-z0-9]{1,6}\b/],
- ['excName',/\b[A-Z]\w*(?:Error|Exception)\b/i],
- ['lineNo',/\bline \d+\b/i],
+ // [HERMIA-FE-20261025 VERA-620963bf P2] 去误杀：relPath 只认小写路径段+字母扩展名（不拦「1/2.5」「JSON/YAML.zip」），
+ // excName 区分大小写（不拦 Terror），lineNo 只认 Python/JSON 的「, line N」「line N column M」（不拦 Each line 2）。
+ ['relPath',/(?:^|[\s'"(=:,])(?:\.{1,2}|~)\/|[a-z0-9_.-]*[a-z_][a-z0-9_.-]*\/[\w./-]*\.[a-z][a-z0-9]{0,5}\b/],
+ ['excName',/\b[A-Z]\w*(?:Error|Exception)\b/],
+ ['lineNo',/,\s*line \d+\b|\bline \d+ column \d+/i],
  ['errno',/\bErrno\b/i],
  ['sql',/\bconstraint\b|\b(?:SELECT|INSERT|UPDATE|DELETE)\b[\s\S]*\b(?:FROM|INTO|SET|WHERE)\b|psycopg|sqlalchemy|sqlite3?\./i],
  ['pyRepr',/\bat 0x[0-9a-f]+|invalid literal for/i],
@@ -115,21 +117,29 @@ export const UNSAFE_SERVER_RULES:ReadonlyArray<readonly [string,RegExp]>=[
 export const SERVER_MESSAGE_LIMIT=200;
 // 这些业务 code 的 message 在后端就是 str(exc)：默认按原文处理，界面用按 code 的友好文案。
 export const RAW_MESSAGE_CODES:ReadonlySet<string>=new Set(['INVALID_PROVIDER_CONFIG','ASSET_INTEGRITY_FAILED','IMAGE_EDIT_INVALID','INVALID_WORKER_CONFIG','EXPERIMENTAL_INVALID']);
+// [HERMIA-FE-20261025 VERA-620963bf MF] 白名单（option b）：仅这些 code 在后端 app/ 中只带字面（作者手写）message，
+// 普通模式才可能原样展示；其余 code / 动态 exc.code / HTTP_n / 未知一律友好文案。由 apiErrorWhitelist.test.ts 扫描 app/ 契约校验。
+// 同一行出现 str(exc)/f"" 的 code（AUDIO_PARAMETER_UNSUPPORTED、IMAGE_PROVIDER_REQUEST_FAILED、NOT_FOUND、TEXT_PROVIDER_NOT_CONFIGURED）保守排除。
+export const LITERAL_MESSAGE_CODES:ReadonlySet<string>=new Set(['AUDIOBOOK_CONCATENATION_UNAVAILABLE','AUDIOBOOK_SEGMENT_LIMIT','AUDIOBOOK_SUBTITLES_UNAVAILABLE','AUDIO_GENERATION_FAILED','AUDIO_IMPORT_FAILED','CANON_RECOVERY_REQUIRED','CHAPTER_ARCHIVE_REQUIRED','CHAPTER_REQUIRED','CLOUD_PROMPT_REVIEW_REQUIRED','CREATION_RECORD_LOCAL_ONLY','EMOTION_DISCONTINUITY','EXPORT_CANCELLED','EXPORT_NOT_CANCELLABLE','EXPORT_NOT_READY','EXPORT_NOT_RETRYABLE','EXPORT_RESULT_INVALID','FORK_STALE_OR_CONFLICT','IMAGE_EDIT_FAILED','IMAGE_EDIT_PROVIDER_UNSUPPORTED','IMAGE_IMPORT_FAILED','IMAGE_PROVIDER_UNAVAILABLE','IMAGE_REFERENCE_URI_UNSAFE','IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED','IMPORT_SOURCE_CHANGED','IMPORT_SOURCE_RESTRICTED','IMPORT_SOURCE_REVIEW_REQUIRED','INVALID_EXPECTED_VERSION','INVALID_VIDEO_PROVIDER_CONFIG','KNOWLEDGE_REVIEW_SOURCE_EMPTY','LEGACY_MEDIA_SCOPE_UNAVAILABLE','LOCATION_JUMP','NODE_EXECUTION_FAILED','PLANNING_TARGET_CONFLICT','PLANNING_VERSION_CONFLICT','PLUGIN_HOST_ADMIN_REQUIRED','PORTABLE_CHAPTER_VERSION_CONFLICT','PRECONDITION_REQUIRED','PREFERENCE_SHARE_CHANGED','PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED','REALTIME_VERSION_OR_SOURCE_CONFLICT','SPEECH_PROVIDER_UNAVAILABLE','SPEECH_SYNTHESIS_FAILED','SYNC_STALE_OR_CONFLICT','TIME_JUMP_CUT','UNREVIEWED_CHAT_CONTEXT','UNSUPPORTED_PROVIDER','VISION_ANALYZE_FAILED','WORKFLOW_EXECUTION_PROVENANCE_REQUIRED','WORKFLOW_NODE_FAILED','WORKFLOW_PROJECT_CHANGED']);
 export function isUnsafeServerText(text:string):boolean{return text.length>SERVER_MESSAGE_LIMIT||UNSAFE_SERVER_RULES.some(([,re])=>re.test(text))}
 export function friendlyCodeMessage(code:unknown):string|undefined{return typeof code==='string'&&RAW_MESSAGE_CODES.has(code)?apiErrorText(`err.code.${code}`)||undefined:undefined}
 const structuredMessage=(raw:any):string|undefined=>{
   const pick=(v:any)=>typeof v==='string'&&v.trim()&&!isUnsafeServerText(v)?v:undefined;
   if(!raw||typeof raw!=='object')return undefined;
   const d=raw.detail;
-  const code=raw.code??(d&&typeof d==='object'?d.code:undefined);
-  if(typeof code==='string'&&RAW_MESSAGE_CODES.has(code))return undefined;
+  const top0=typeof raw.code==='string'&&!/^HTTP_\d+$/.test(raw.code)?raw.code:undefined;
+  const code=top0??(d&&typeof d==='object'&&typeof d.code==='string'?d.code:undefined);
+  if(typeof code!=='string'||!LITERAL_MESSAGE_CODES.has(code))return undefined; // 白名单外一律不信任
+  if(RAW_MESSAGE_CODES.has(code))return undefined;
   const httpCode=typeof raw.code==='string'&&/^HTTP_\d+$/.test(raw.code);
   // 字符串 detail 的回显，或无结构化 detail 的 HTTP_<n> 信封：不信任 raw.message
   if(typeof d==='string'&&(raw.message===d||httpCode))return undefined;
   if(httpCode&&(d==null||typeof d!=='object'))return undefined;
   const dict=d&&typeof d==='object'&&!Array.isArray(d)?d:undefined;
   // [HERMIA-FE-20261025 VERA-F70 偏离裁定] dict 内 detail 字段被回显成 message（str(exc)）时同样按原文；只认显式的 d.message。
-  const echo=!!dict&&typeof dict.detail==='string'&&raw.message===dict.detail&&dict.message!==raw.message;
+  // [HERMIA-FE-20261025 VERA-620963bf P3-E2] 原条件里的 `dict.message!==raw.message` 是等价变异：相等时 top 被跳过后仍由 pick(dict.message) 取回同一文本，
+  // 输出不可区分。故删除该冗余子句（E2 变异即与实现相同），行为由 apiErrorWhitelist.test.ts 的 E2 用例锁定。
+  const echo=!!dict&&typeof dict.detail==='string'&&raw.message===dict.detail;
   const top=raw.message===raw.code||echo?undefined:pick(raw.message);
   return top??(dict?pick(dict.message):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
 };
