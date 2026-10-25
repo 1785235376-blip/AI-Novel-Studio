@@ -1366,3 +1366,61 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 
 ### 未覆盖
 - 浏览器内切换项目（proj-b）没有实测。只做了代码审查：抽屉的 key 含 novelId，换项目会重挂载；lastpos key 含 project。
+
+---
+
+## [VERA-FE] 第三轮前端独立复验 — f7174b6b（2026-10-25，UTC+8）
+
+**结论：MUST-FIX**。证据目录：`/workspace/hr/vera-compare/uwport-f7174b6b/`。环境：vite 4599，假后端 4698。8000 没有写入，4299 没有碰过。
+
+### 必须修复
+1. **[P1] identity 失败后恢复会覆盖真实记录**（recover.json "online"）。复现步骤：bootstrap 失败一次 → 以会话模式落在 ch1 → online/focus 触发 refetch 并成功 → u-m5 的 lastpos 由 ch3 被覆盖成 ch1。另外，失败后切到 B 账号，B 的键也会被写入 ch1。建议二选一：
+   - 带 token/scope 的 bootstrap 出错时也算 pending；
+   - 只有在当前真实身份下完成过 pick，或用户显式导航之后，才允许写入。
+2. **[P1] 抽屉内确认 adopt/restore 后焦点丢到 body**。确认按钮被卸载后，Tab/Shift+Tab 第一下就离开了陷阱。Esc 还能关闭抽屉，焦点也会回到触发按钮。其余情况下 Tab/Shift+Tab ×30 都留在抽屉内：刚打开、选中任务后、confirm 打开时。
+
+### 其他问题
+- [P1 测试缺口] App 层门控没有单测。M4（门控恒 false）、M5（删 isLoading 项）、M6（删 mismatch 项）、M7（删会话提示）、M10（删 document 级 Esc 监听）这 5 个变异全部存活。hook 层和陷阱相关的变异（M1–3、M8、M9、M11、M12）都被测试杀掉。
+- [P2] 会话中途从 A 切到 B，A 的 ch3 会写进 B 的键（actor 变化时 chapterId 没有重置）。
+- [P2] 英文 UI 的抽屉里，TasksPanel/ResultsPanel/HistoryPanel 还有 17 行中文。
+- [P3] bootHang 期间页面显示"未打开章节"，没有 loading 也没有超时提示。boot 6s 期间先显示入口卡片，没有显式的加载态。
+
+### 竞态表（1366，已存 ch3）
+| 场景 | 落点 | lastpos 写入 |
+|---|---|---|
+| 无延迟 | ch3 | 1× ch3 |
+| boot 0.5s | ch3 | 1× ch3 |
+| boot 2.5s | ch3 | 1× ch3 |
+| boot 6s | ch3 | 1× ch3 |
+| chapters 2.5s | ch3 | 1× ch3 |
+| chapters 6s + boot 2.5s | ch3 | 1× ch3 |
+| boot 500 | ch1 + 会话提示 | 0 |
+| bootDrop | ch1 | 0 |
+| bootHang 30–35s | 不打开章节；resolve 后 ch3 | resolve 后 1× ch3 |
+| actorB（无记录） | ch1 | 只写 u-b |
+| 无 identity | ch1 + 会话提示 | 0 |
+| **失败 → online 恢复** | **ch1** | **u-m5 被写成 ch1 ✗** |
+
+### 通过项
+- 会话提示：zh 为"· 章节位置：仅本次会话"，en 为"· Chapter position: this session only"。只在没有 identity 时显示。
+- 抽屉滚动：1366×768、1024×768、1280×720 三个尺寸下，都能滚到恢复按钮，并用真实点击完成恢复（1 次 POST，生成 v3）。
+- axe 没有 serious/critical，只有 moderate（heading-order、landmark-unique）。
+- 回归：
+  - adopt/restore：确认前 0 写，取消 0 写，双击只有 1 个 PUT；Canon 0 写。
+  - 20/20 故障场景：无泄漏，显示 UNKNOWN，不重发。
+  - StrictMode 不卡死，0 个 pageerror。
+  - U1 reopen 隔离正确。
+  - 溢出矩阵 12 格全部无横向溢出。
+
+### 门控（adj = raw − ISI + 8；基线 298 / adj 297）
+| run | raw | ISI | adj | 基线外的新失败（非 ISI） |
+|---|---|---|---|---|
+| 1 | 294 | 9 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+(a) 三次取最好 293 ≤ 297，通过。(b) 允许重试一次，同样通过。三次都有 suite 错误 `LocalAiBrowserJourneyContracts.test.tsx`，它不在基线外的新失败里。
+
+### Hermia 的 2 个新失败（每个单独跑 5 次，分支 f7174b6b vs 基线 73819989）
+- ISI "admits a newly mounted owner…"：分支 1/5 失败，基线 0/5。整个文件稳定有 8 个失败。这条属于 ISI 文件内部的时序抖动，已经由 ISI 扣减覆盖，不阻塞，但建议跟踪。
+- u1.purge.host "left the list"：分支 0/5，基线 0/5。三次全量跑也都没有复现，判定为高负载下的偶发失败，不阻塞。
