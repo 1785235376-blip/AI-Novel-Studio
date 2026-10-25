@@ -1104,3 +1104,58 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - 存活两项：
   - W7（raw_text 不截断）：缺少截断测试，P3；
   - W8（AssetLibrary 不渲染 technical）：P2，建议补渲染断言。
+
+---
+
+## [VERA-FE] 复审 work/hermia-default-ui-i18n-20261025 @ f703b17e（efe629f0 MF1 / 911cbf71 MF2 / f703b17e P3）
+
+- 方法：临时 worktree /workspace/hr/vera-duim2（detached f703b17e），自起 vite 4499（结束已按 PID 停），Chrome/Playwright 真实注入；变异在 /tmp/vera-duimf70-mut（已删）。未写 8000、未碰 4299。
+- 时间：2026-10-25 17:20–17:55（Asia/Shanghai）
+- 证据：/workspace/hr/vera-compare/duim-f703b17e/（inject.json、regex-bypass.txt、header-matrix.json、axe.json、mutations.log、full{1,2,3}.json、gate.py）
+
+### 结论：**MUST-FIX**
+
+MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 `downloadCall()` 仍把服务端原文直接当 message**，普通模式可见 Traceback/路径；另外过滤规则对相对路径、SQL、Errno 等可绕过。
+
+### MUST-FIX
+**MF-1 `downloadCall()` 完全绕过 MF1（P0）**
+- 位置：frontend/src/api.ts:150 起 `downloadCall`，`message: raw?.message ?? detail?.message ?? detail?.detail ?? (body || ...)`，没有走 structuredMessage / message_source / raw_text。
+- 影响：api.exportDownload / assetDownload / agentJobsExport / agentJobAuditExport / downloadAudiobookChapter / audiobookSubtitles。其中 ExportPanel 的下载失败用 `ExportError → apiErrorView` 展示，AssetLibraryPanel/AssetInspector 下载失败同理。
+- 复现（浏览器注入，普通模式，apiErrorView 输出）：500 text/plain `Traceback SECRET-N /home/u/.env` 原样显示；`<html>nginx…</html>` 原样显示；真实信封 `{"detail":"Traceback… File \"/srv/app/api.py\"…","code":"HTTP_500",…}` 原样显示。共 15 种注入全部泄露（inject.json → download.basic_*）。
+- 建议：downloadCall 的错误构造复用 call() 的同一段（structuredMessage + friendlyHttpMessage + message_source + rawTextOf），并补一条“下载 500 text/plain 普通模式不显示原文”的测试。
+
+**MF-2 “安全”判定是黑名单，真实后端的 str(exc) 可绕过（P1）**
+- 位置：api.ts `UNSAFE_SERVER_TEXT`。带业务 code 的 dict detail 本来就走结构化 message，后端有大量 `{"code":…, "message": str(exc)}`（如 INVALID_PROVIDER_CONFIG api.py:1139、ASSET_INTEGRITY_FAILED asset_lifecycle_api.py:36、IMAGE_EDIT_INVALID api.py:2500、INVALID_WORKER_CONFIG api.py:2965、EXPERIMENTAL_INVALID experimental/common.py:63 等）。
+- 普通模式实测仍显示（call 路径）：`[Errno 2] No such file or directory: 'config/providers/x.toml'`、`UNIQUE constraint failed: assets.sha256`、`./data/novels/x.json`、`/data/poemseed/x.db`（/data 不在前缀表）、UNC `\\server\share`、3000 字长文本（message 不截断）、`invalid literal for int() with base 10`。能拦住：Windows 盘符、/home 等前缀、XxxError 名、Traceback、0x 地址、html。
+- 建议（任选其一）：普通模式只对“已知业务 code 白名单”或 CJK 文案原样展示，其余走友好文案并把原文放 technical；或至少补：任意 `[\\/]` 分隔的路径段 / 带扩展名的文件名、`Errno`、`constraint`、`SELECT|INSERT|UPDATE … FROM|INTO`、`invalid literal`、`~/`、UNC，并对 message 设长度上限（如 200 字，超出转 technical）。
+
+### 偏离裁定（code=HTTP_n + dict detail + message 安全时保留 message）
+- **有条件接受。** 后端 unified_http_error 对无 code 的 dict detail 会生成 `HTTP_<n>`，message 取 `detail.message || detail.detail`。全仓扫描 app/：目前**没有**无 code 的 dict detail 抛出点，所以这一分支当前不会被真实后端触发，保留 message 不会误丢也不会多泄露。
+- 但有一个漏洞：若将来出现 `{"detail": str(exc)}`（无 code），message 就是 str(exc) 回显，实测 `invalid literal for int()…` 在普通模式原样显示。要求：当 `raw.message === d.detail`（即 dict 内 detail 字段回显）时与字符串 detail 同样处理，只保留显式的 `d.message`。安全判定本身的问题见 MF-2。
+
+### 已验证通过
+- call() 路径：字符串 detail 回显（HTTP_n）、500 text/plain、html 502 在普通模式均为友好文案；专业模式 technical 可见（截断 500）；正常业务文案未误丢：VERSION_CONFLICT 409（含 expected/actual_version）、无 code dict 安全文案 409、REVISION_LOCKED 409 全部保留（inject.json summary.lost=[]）。409 调用方（assetBrowserClient、LocalTutorIntegration、useTaskCenter 等）只读 code/details/已净化的 problem.message，行为不变。
+- 头部矩阵：zh/en × 普通/专业 × 1024/1100/1180/1280/1366/1440/1920 × DPR 1/1.25/1.5 共 84 格：scrollWidth=innerWidth、头部 scrollWidth≤clientWidth、无交互项出视口、无祖先裁切、无子块重叠、无无名按钮、Tab 焦点全在视口内（header-matrix.json，84/84 ok）。检测器自检：1024 en 专业注入加宽样式后 hsw 1360、7 个按钮出视口，能报出。
+- 搜索按钮可访问名在所有格均含完整文字（“搜索功能、章节或命令Ctrl K” / “Search chapters, commandsCtrl K”），之前 ≤1360 只剩 “Ctrl K” 的 P1 已消失。
+- P3：rbError 英文界面不再混中文（变异 P3a/P3b 被杀）。contracts.test.ts 未改动，“500 text/plain” 断言未放松。
+
+### 变异（mutations.log，20 个）
+- 被杀：W7 不截断、W8a/b/c 三个面板不渲染 technical、N1 pick 不过滤、N8、H4 ≤1180、H5 ≤1060、H7 搜索收图标、P3a、P3b。W7/W8 上轮存活，本轮已补上。
+- 存活（P2 测试缺口）：N2 去 Traceback、N3 去 Windows 盘符、N4 去异常名、N5 去 /home 等前缀（每条规则单独删掉都没测试失败）；N6 去“字符串 detail 回显丢弃”与 N7 互为冗余，单删各自存活；N9 rawTextOfObj 不取 message；H6 ≤1180 kbd 不隐藏。建议每条过滤规则各一条用例，N6/N7 各一条独立用例。
+
+### axe
+- zh/en × 普通/专业 × 1366：heading-order(moderate)、landmark-unique(moderate)，与之前一致，无 serious/critical 新增。
+- 1024：`aria-hidden-focus`(serious) 1 处 —— `#workspace-inspector` 带 aria-hidden=true 但内含可聚焦元素。本轮提交只改头部 CSS，不是本轮引入，记 P2，建议单独任务处理（隐藏时加 inert）。
+
+### gate（adjusted = raw − ISI + 8；基线 297）
+| 运行 | raw | ISI | adjusted | 基线外非 ISI 失败 |
+|---|---|---|---|---|
+| full1 | 293 | 8 | 293 | 0 |
+| full2 | 295 | 10 | 293 | 0 |
+| full3 | 294 | 8 | 294 | 1（StudioTimelineBasicColor.additive “preserves applied color and blocks duplicate saves after CONFLICT”，full1/full2 均通过，判为偶发 flaky，P2 观察项） |
+| Hermia task8-full.json | 295 | 10 | 293 | 0 |
+- (a) 三次最优 ≤297：通过（293）；(b) 允许一次重跑 ≤297：通过（首跑即 293）。LocalAiBrowserJourneyContracts ENOENT 在基线内。Hermia 的 task8 数据复核一致（295 raw，ISI 10，按名字比对基线外非 ISI 为 0）。
+
+### 其他
+- 5472 端口 pid 3521797：`node …/wt-dui/frontend/node_modules/.bin/vite --host 127.0.0.1 --port 5472 --strictPort`，cwd /workspace/hr/wt-dui/frontend，14:58:40 启动，父进程是 pid 53（sand-exit-watch 守护，即原父 shell 已退出被收养）。环境变量 CURSOR_CONVERSATION_ID=sand-subagent-ef853e69-…，是某个子任务启动的；npm 版 node 22.14。Vera 的复审从不使用 5472 端口、也不在 wt-dui 起 vite，按端口约定判断不是 Vera 的复审进程，更像 Hermia 侧（wt-dui 是她的工作树）的子任务遗留。未杀。
+- 未提交；未提交 frontend/package-lock.json；未碰 main。
