@@ -1261,3 +1261,77 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 
 ### 7. 其他
 - 未触碰 4299 / 8000（8000 只经 vite 代理被动 GET，且非 GET 均被 abort）。vite 仅用 4399，已按 PID 关闭；临时 worktree vera-duim3-mut 已移除；未提交、未推送。
+
+---
+
+## [VERA-FE] 独立复审：fbe029c4（work/hermia-default-ui-i18n-20261025，e471dc76 PASS 之后的跟进）
+
+**结论：PASS**（无 P0/P1；P2/P3 列为后续跟进，不阻塞）。证据目录：`/workspace/hr/vera-compare/duim-fbe029c4/`。
+
+### 1. 后端变异与 AST 扫描器
+- 真实扫描（scan-real.json）：literal 294 / dynamic 164 / 白名单 50；WL∩dynamic=∅，WL−literal=∅。
+- 扫描器能检出（变异被杀）：str(exc)、变量传 message、.format、%、%-tuple、join、三元、隐式拼接、dict()、helper 函数、变量中转的字面量（保守判为 dynamic）、Call(**kw)、子类 super("CODE", str(e))、super(code=,message=)、detail 键、删除唯一字面量站点。
+- 新增 code 用 str(exc) 且不在白名单：契约不报。这是正确且安全的，因为普通模式不显示非白名单 message。
+- 扫描器在测试中真实执行：execFileSync("python3")。
+- 无 python3 时（no-python.log）：整个 apiErrorWhitelist.test.ts 在 collect 阶段报 `spawnSync python3 ENOENT`，不会静默通过。但这表现为 suite 级失败，692 个用例会从失败计数中消失。
+
+### 2. 三个 code 裁定
+- **AUDIO_PARAMETER_UNSUPPORTED**：所有站点都是字面量（api.py:2521、studio_audio_execution.py:259/268、audiobook_service.py:217），文案有用（例如“只支持 0.5 到 2.0 倍语速”）。现在不在白名单，用户只能看到通用 HTTP 文案，丢失了可操作的提示。**建议加入白名单，或补 err.code 专属友好文案。**
+- **IMAGE_PROVIDER_REQUEST_FAILED**：api.py:2477 是字面量“图片服务请求失败，请检查地址、模型和服务状态”，可操作。job error_code 属于另一通道。**建议加入白名单，或补专属文案。**
+- **TEXT_PROVIDER_NOT_CONFIGURED**：不是纯字面量，经 ModelRuntimeError 以 `exc.safe_message` 透出（api.py:953/2189/3821）。memory_agent.py 会传内部 token 作为 message，扫描器看不到 Enum code。**维持不进白名单是正确的**，可补 err.code 友好文案。
+- 另外：jobs.py:770 `ModelRuntimeError(INVALID_REQUEST, str(exc))` 现在之所以安全，仅因为 RuntimeErrorCode 均不在白名单。今后不得把它们加入白名单。
+- 以上三者目前都没有 err.code 条目，回落到 HTTP 状态文案。
+
+### 3. err.srv.* 映射
+- SERVER_LITERAL_EN 17 条，zh/en 各 17 个 key，集合一致；en 值与后端英文原文逐字一致，zh 值全部是中文译文。
+- 浏览器实测（srv.mjs → browser-srv.json，vite 4399）：zh-CN 与 en 各 51 例（17 code × call/exportDownload/assetDownload）全部通过。近似文本（大小写/空白变化）和非白名单 code 均不替换、不泄露原文。
+- UI 挂载 AssetLibraryPanel：zh 显示中文译文，en 显示英文。
+- P3：zh 文案“expected_version 必须是非负整数”和 PRECONDITION_REQUIRED 的文案含有字段名，普通用户看到的是开发者术语。
+- P3：en 语言下，NovelImportPanel、ExportPanel、AssetLibraryPanel 的“代码：”“请求 ID：”“详情：”标签硬编码为中文，未走 i18n。
+
+### 4. N8 修复与列表不相交断言（vmut.log，真实 vitest）
+- 被杀：WL1b、WL1c（靠 size==50 断言）、N8a（两个判断都删）、C1a、S1（去掉精确匹配，52 个失败）、S2（关闭映射）、Z/Z2（删除 zh/en 的 err.srv key）。
+- 存活：
+  - WL1d：等量替换白名单成员。参数化用例直接遍历实现自己的 WL，没有独立的期望清单。P2。
+  - N8b：只删 trim 分支。P3。
+  - N8c：只删 out===code。与 trim 分支等价，可忽略。
+  - S3：err.srv key 缺失时回落到 code。P3。
+  - S4：大小写不敏感匹配。P3。
+
+### 5. 扫描器盲区（P2，回归防护，当前无泄露）
+- 以下写法不产生 dynamic 标记：`**dict` 展开、基础 dict 展开、`body["message"]=str(exc)`、dict.update、`code=…, **{message}`。
+- code 经类属性、常量变量、exc.code、Enum .value 或 f-string 给出时，扫描器看不到。
+- 在多站点 code（KNOWLEDGE_REVIEW_SOURCE_EMPTY，api.py:2035/2047）上，以上 9 种全部存活。真实 vitest 中 mK2（2035 处 `**base`）结果为 692 passed。此前看似被杀的变异，实际只是被 Hermia 的 withMutant 模式断言拦下，不是契约在起作用。
+- P3：literal 集合混入环境变量和常量名（DATABASE_URL、Q4_K_M 等），削弱了“WL⊆literal”的意义。
+
+### 6. 浏览器注入与 axe
+- inject：81 例 × 路径 × basic/pro，统计与 e471dc76 完全一致。
+  - basic 模式下 call、ExportPanel、AssetInspector 各为 75 ok + 6 legit-ok，**0 泄露**。
+  - AssetLibrary 在 inject 里显示 "no button"，AssetInspector/pro 显示 NO-TECH，都是旧 harness 的已知限制。
+- inject2：AssetLibrary/AssetInspector 的 basic 与 pro 全部通过，bad=0。
+- axe：无 critical/serious，只有 heading-order、landmark-unique（moderate，与上轮相同）。inert 和焦点行为正常。
+
+### 7. 全量门禁（Node 22.14，`--pool=forks --maxWorkers=3`，与上轮和 task11 的口径一致）
+
+基线 persistent-node22：raw 298，adjusted 297。三次运行错开启动，启动时 load 分别为 0.61、3.73、4.11。
+
+| 运行 | raw | ISI | adjusted | 基线外的非 ISI 失败 |
+|---|---|---|---|---|
+| full1 | 293 | 8 | 293 | 0 |
+| full2 | 293 | 8 | 293 | 0 |
+| full3 | 294 | 8 | 294 | 1（creative/StudioDiscoveredImageProduction，负载下超时，属已知 flaky） |
+| task11-full | 293 | 8 | 293 | 0 |
+
+- 规则 (a) 三次取最好 293 ≤ 297：**通过**。规则 (b) 允许一次重试：三次均 ≤ 297，**通过**。
+- suiteErr 只有 LocalAiBrowserJourneyContracts ENOENT，与基线相同。
+- --maxWorkers=3 与 task11、e471dc76 口径相同，可以直接比较。
+
+### 建议跟进
+- P2：补齐扫描器对 dict 展开、下标赋值、update、Enum/Attribute code 的识别。
+- P2：为白名单提供独立的期望清单，以杀掉 WL1d。
+- P3：给 AUDIO_PARAMETER_UNSUPPORTED、IMAGE_PROVIDER_REQUEST_FAILED 补白名单或 err.code 文案。
+- P3：缺少 python 时给出显式失败，而不是 suite 消失。
+- P3：本地化“代码/请求 ID/详情”标签。
+- P3：补 N8b、S3、S4 的断言。
+
+清理：自起的 vite（4399，PID 33515/33489）已按 PID 停止；临时 worktree vera-duim2-mut 已删除；/tmp/vera-nopy 已删除。未提交、未推送、未碰 main/8000/4299。
