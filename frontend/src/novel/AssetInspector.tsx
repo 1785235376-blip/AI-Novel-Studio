@@ -68,7 +68,7 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
       {!loading && !previewable && <span>此文件类型没有内置预览。</span>}
     </div>
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
-    {error && technical && <p className="api-error-technical">{i18nT("err.technical")}：<code>{technical}</code></p>}
+    {error && technical && <p className="api-error-technical">{i18nT("err.technical")}{i18nT("context.sep")}<code>{technical}</code></p>}
     <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? formatDate(asset.updated_at) : "未记录"}</dd></div></dl>
     <Button variant="ghost" onClick={download}><Download aria-hidden="true" size={15}/>下载原始文件</Button>
     {showReferences && <VisualReferencePanel key={`${asset.novel_id}:${asset.id}`} asset={asset}/>}

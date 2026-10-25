@@ -3,6 +3,7 @@
    声音是检听和生成，不是多轨剪辑：页上没有任何轨道头。没有音频文件时不画假波形、不显示假「已就绪」。
    一页一主（规格 §3.2）：有选中时「送到剪辑…」为主，无选中时「新建配音」为主。 */
 import {useEffect, useMemo, useRef, useState} from 'react';
+import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {api} from '../../api';
 import {Drawer} from '../primitives';
 import {SpeechSynthesisPanel} from '../../novel/SpeechSynthesisPanel';
@@ -78,16 +79,16 @@ export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <span className="nv-badge nv-badge--off">{loaded ? `${items.length} 条` : '读取中'}</span>
       <span className="nv-spacer" />
       {isPro && views.map(v => <button key={v} type="button" className="nv-btn" aria-pressed={view === v} onClick={() => { setView(v); if (v === 'tts') setFocus('speech'); }}>{VIEW_LABEL[v]}</button>)}
-      {cur ? <button type="button" className="nv-btn nv-btn--primary" data-send-edit="audio" onClick={askSend}>送到剪辑…</button>
-        : <><button type="button" className="nv-btn nv-btn--primary" data-aud-primary="new-speech" onClick={() => open('speech')}>新建配音</button>
-          <button type="button" className="nv-btn" data-send-edit="audio" onClick={askSend}>送到剪辑…</button></>}
+      {cur ? <button type="button" className="nv-btn nv-btn--primary" data-send-edit="audio" onClick={askSend}>{i18nTz('送到剪辑…')}</button>
+        : <><button type="button" className="nv-btn nv-btn--primary" data-aud-primary="new-speech" onClick={() => open('speech')}>{i18nTz('新建配音')}</button>
+          <button type="button" className="nv-btn" data-send-edit="audio" onClick={askSend}>{i18nTz('送到剪辑…')}</button></>}
     </div>
   );
 
   const left = (
     <div className="mw-left">
-      <div className="mw-lh">人声 / 音效 / 有声书</div>
-      <div className="mw-tree" role={loaded && items.length ? 'listbox' : undefined} aria-label="声音库" /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */>
+      <div className="mw-lh">{i18nTz('人声 / 音效 / 有声书')}</div>
+      <div className="mw-tree" role={loaded && items.length ? 'listbox' : undefined} aria-label={i18nTz('声音库')} /* [HERMIA-FE-20261025 DUI P1-7] 空列表不挂 listbox */>
         {!loaded ? <p className="mw-muted">读取中…</p> : items.length === 0 ? <p className="mw-muted">还没有声音</p> :
           items.map(it => <button key={it.key} type="button" role="option" aria-selected={cur?.key === it.key} onClick={() => pick(it.key)}>
             <span className="ic">{it.kind === '人声' ? '♪' : it.kind === '有声书' ? '☰' : '∿'}</span><span>{it.name}<span className="sub">{it.sub}</span></span></button>)}
@@ -100,11 +101,11 @@ export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   const hero = (
     <div className="mw-hero">
       <div className="hero-tools"><b>{cur ? cur.name : '波形检听'}</b><span className="nv-spacer" />
-        <button type="button" className="nv-btn" id="audSendEdit" data-send-edit="audio" onClick={askSend}>送去剪辑</button></div>
+        <button type="button" className="nv-btn" id="audSendEdit" data-send-edit="audio" onClick={askSend}>{i18nTz('送去剪辑')}</button></div>
       <div className="hero-stage">
         {loaded && items.length === 0 && !cur ? (
           <div className="img-empty" data-audio-empty="library"><h3>声音库是空的</h3><p>这里还没有声音。写一句对白试试配音，或导入一段环境音。</p>
-            <div className="nv-row"><button type="button" className="nv-btn" onClick={() => open('speech')}>写一句对白</button><button type="button" className="nv-btn" onClick={onOpenAssets}>从资产导入</button></div></div>
+            <div className="nv-row"><button type="button" className="nv-btn" onClick={() => open('speech')}>{i18nTz('写一句对白')}</button><button type="button" className="nv-btn" onClick={onOpenAssets}>{i18nTz('从资产导入')}</button></div></div>
         ) : (
           <div className="wave-stage" aria-label="波形与配音检听" data-audio-hero="waveform">
             <div className="w-meta"><span>{cur ? cur.name : '未选中'}</span><span>{cur ? `${cur.kind} · 单条检听` : '在左边选一条'}</span></div>
@@ -146,26 +147,26 @@ export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         </div>
         <div className={`sec aud-panel ${focus === 'manifest' ? 'is-focus' : ''}`} data-panel="manifest"><h4>有声书清单</h4>
           <div className="aud-batch"><b>全书批次</b>{prog.total} 章 · {prog.done} 已有音频 · {prog.queued} 排队中</div>
-          <button type="button" className="nv-btn" id="bookOpen" onClick={() => open('manifest')}>打开有声书清单</button>
+          <button type="button" className="nv-btn" id="bookOpen" onClick={() => open('manifest')}>{i18nTz('打开有声书清单')}</button>
         </div>
         <div className="nv-row"><button type="button" className="nv-btn" onClick={askSend}>送去剪辑（显式确认）</button>
           <button type="button" className="nv-btn" onClick={onOpenAssets}>在资产中查看</button>
           {isPro ? <button type="button" className="nv-btn" data-pro-only="true" onClick={() => setView('mix')}>混音台</button> : null}</div>
       </div></div>
   ) : (
-    <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb">
+    <div className="mw-right"><div className="mw-rh">{i18nTz('下一步')}</div><div className="mw-rb">
       <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="AUDIO">
         <h4>尚未选中内容</h4><p>选一条声音来试听，或者新建一段配音。</p>
         {ttsReason ? <p className="nv-hint" data-tts-reason="true">{ttsReason}</p> : null}
-        <button type="button" className="nv-btn" onClick={() => open('gen')}>新建音效</button>
-        <button type="button" className="nv-btn" onClick={() => open('manifest')}>打开有声书清单</button>
+        <button type="button" className="nv-btn" onClick={() => open('gen')}>{i18nTz('新建音效')}</button>
+        <button type="button" className="nv-btn" onClick={() => open('manifest')}>{i18nTz('打开有声书清单')}</button>
       </div></div></div>
   );
 
   const mix = (
     <div className="mw-hero"><div className="hero-stage"><div className="img-empty" data-aud-view="mix"><h3>混音台</h3>
       <p>按章节查看有声书混音方案。混音方案的服务端状态还待核实，这里只做查看，不改动任何声音。</p>
-      <div className="nv-row"><button type="button" className="nv-btn" onClick={() => open('manifest')}>打开有声书清单</button><button type="button" className="nv-btn" onClick={() => setView('lib')}>回声音库</button></div></div></div></div>
+      <div className="nv-row"><button type="button" className="nv-btn" onClick={() => open('manifest')}>{i18nTz('打开有声书清单')}</button><button type="button" className="nv-btn" onClick={() => setView('lib')}>回声音库</button></div></div></div></div>
   );
 
   const confirm = sendConfirm ? (
@@ -177,7 +178,7 @@ export function AudioRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   ) : null;
 
   return (
-    <div className="aud-ws" data-shell-mode={shellMode} data-aud-view={view} data-nle-tracks="0" aria-label="声音工作区">
+    <div className="aud-ws" data-shell-mode={shellMode} data-aud-view={view} data-nle-tracks="0" aria-label={i18nTz('声音工作区')}>
       <NovelOrient storageKey="studio-audio-orient-dismissed" what="这部作品的配音、音效和有声书" can="试听、合成配音、生成音效、看有声书进度" effect="这里不做多轨剪辑；准备好后「送去剪辑」" />
       {isPro ? <NovelModTabs tabs={views.map(id => ({id, label: VIEW_LABEL[id], selected: view === id, onClick: () => setView(id)}))} /> : null}
       {head}

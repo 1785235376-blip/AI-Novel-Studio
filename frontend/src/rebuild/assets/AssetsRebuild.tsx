@@ -2,6 +2,7 @@
    真实接口：/api/novels/{nid}/assets（库/上传）· /assets/{id}/references（使用处）· /asset-trash + restore（回收站，1a63d6f7）· DELETE /assets/{id}。
    送到模块沿用 W-UX-12（显式确认后切模块；送剪辑走媒体池手递）。拖出＝引用，不复制。没有数据时不编血缘、不显示假「已校验」。 */
 import { AUDIO_HISTORY_TEXT } from '../../workspace/media/audioHistoryText';
+import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {api, type Asset, type AssetReferences} from '../../api';
 import {rbError} from '../rebuildApi';
@@ -96,7 +97,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       <span className="nv-spacer" />
       {view !== 'lib' ? <button type="button" className="nv-btn" onClick={() => setView('lib')}>回资产库</button> : null}
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'refs'} onClick={() => setView('refs')}>引用关系</button> : null}
-      <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>导入…</button>
+      <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>{i18nTz('导入…')}</button>
     </div>
   );
 
@@ -129,11 +130,11 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       {/* [HERMIA-FE-20261025 DUI P0-3] one state at a time: error (with retry) replaces the empty-library copy; raw detail only in data-* */}
       <div className="ast-grid" id="astGrid">
         {err ? <div className="ws-honest-empty ast-empty ast-err" role="alert" data-error-detail={err}><h4>{i18nT('rb.ast.loadFailed')}</h4>
-            <button type="button" className="nv-btn" onClick={() => { setItems(null); setTick(t => t + 1); }}>重试</button></div>
+            <button type="button" className="nv-btn" onClick={() => { setItems(null); setTick(t => t + 1); }}>{i18nTz('重试')}</button></div>
           : !loaded ? <p className="mw-muted">读取中…</p>
           : (items || []).length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_library" data-honest-workspace="ASSETS">
             <h4>库里还没有资产</h4><p>这里会收好你在各模块生成和导入的东西。先导入一个文件试试。</p>
-            <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>导入…</button></div>
+            <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>{i18nTz('导入…')}</button></div>
           : list.length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_filter"><h4>这个类型下还没有资产。</h4>
             <button type="button" className="nv-btn" onClick={() => setFilter('all')}>查看全部</button></div>
           : list.map(a => <button key={a.id} type="button" className="ast-tile" aria-selected={cur?.id === a.id} draggable title="拖到其它模块＝引用，不复制"
@@ -167,10 +168,10 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       </div>
     </div></div>
   ) : (
-    <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb">
+    <div className="mw-right"><div className="mw-rh">{i18nTz('下一步')}</div><div className="mw-rb">
       <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="ASSETS">
         <h4>尚未选中内容</h4><p>点一个资产看它从哪来、被用在哪。</p>
-        <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>导入…</button>
+        <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>{i18nTz('导入…')}</button>
         <button type="button" className="nv-btn" onClick={() => { setFilter('图像'); setView('lib'); }}>只看图像</button>
       </div></div></div>
   );
@@ -211,7 +212,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <div className="hero-stage"><div className="sec" style={{maxWidth: 420, width: '100%'}}><h4>选择本地文件…</h4>
           <button type="button" className="nv-btn nv-btn--primary" id="astImportBtn" disabled={busy} onClick={pickFile}>{busy ? '导入中…' : '选择文件…'}</button>
           <p className="nv-hint">导入不会自动开始任何付费任务。大文件和去重还没做。</p></div></div></div>
-      <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb mw-cta">
+      <div className="mw-right"><div className="mw-rh">{i18nTz('下一步')}</div><div className="mw-rb mw-cta">
         <button type="button" className="nv-btn nv-btn--primary" id="astImportBtn2" disabled={busy} onClick={pickFile}>选择本地文件…</button>
         <button type="button" className="nv-btn" onClick={() => setView('lib')}>去筛选已有库</button></div></div>
     </>
@@ -243,7 +244,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
   ) : null;
 
   return (
-    <div className="ast-ws" data-shell-mode={shellMode} data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label="资产工作区">
+    <div className="ast-ws" data-shell-mode={shellMode} data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label={i18nTz('资产工作区')}>
       <NovelOrient storageKey="studio-assets-orient-dismissed" what="这部作品的图片、视频、声音和文档" can="导入、筛选、看来源和使用处、送到其它模块" effect="送出去的是引用，不复制文件" />
       <NovelModTabs tabs={((isPro ? ['lib', 'refs', 'import'] : ['lib', 'import']) as AssetsView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id || (id === 'lib' && view === 'trash'), onClick: () => setView(id)}))} />
       {head}
