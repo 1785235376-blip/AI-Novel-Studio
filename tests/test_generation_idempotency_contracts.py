@@ -9,6 +9,7 @@ import hashlib
 import json
 from threading import Barrier, Lock, Thread
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -37,6 +38,8 @@ class CountingDispatcher:
 
     def __init__(self):
         self.calls = []
+        self.prepare_calls = []
+        self.prepared = []
         self.items = {}
         self.failures_remaining = 0
         self.delay = 0
@@ -44,33 +47,47 @@ class CountingDispatcher:
         self.on_create = None
         self.lock = Lock()
 
-    def create(self, operation, payload, actor=None, scope=None, request_authorization=None):
-        import time
-
+    def prepare_job(self, operation, payload, actor=None, scope=None, request_authorization=None):
         if request_authorization is not None:
             request_authorization()
         with self.lock:
-            self.calls.append((operation, dict(payload), actor, scope))
-            index = len(self.calls)
+            self.prepare_calls.append((operation, dict(payload), actor, scope))
             if self.failures_remaining:
                 self.failures_remaining -= 1
-                raise RuntimeError("controlled dispatch failure")
-        # Delay outside this counter lock, so it cannot supply idempotency itself.
-        if self.delay:
-            time.sleep(self.delay)
+                raise RuntimeError("controlled preparation failure")
         item = SimpleNamespace(
-            id=f"job-{index}", status="QUEUED", base_chapter_version=1,
+            id=str(uuid4()), status="PREPARED", base_chapter_version=1,
             novel_id=payload["novel_id"], chapter_id=payload["chapter_id"],
             actor_id=actor.actor_id if actor else None,
             workspace_id=actor.workspace_id if actor else None,
             scope=asdict(scope) if scope else None,
+            request_authorization=request_authorization,
+            dispatch_call=(operation, dict(payload), actor, scope),
         )
+        self.prepared.append(item)
+        return item
+
+    def start_prepared(self, item):
+        import time
+
+        if item.request_authorization is not None:
+            item.request_authorization()
+        with self.lock:
+            self.calls.append(item.dispatch_call)
+        # Delay outside this counter lock, so it cannot supply idempotency itself.
+        if self.delay:
+            time.sleep(self.delay)
+        item.status = "QUEUED"
         with self.lock:
             self.items[item.id] = item
         callback, self.on_create = self.on_create, None
         if callback is not None:
             callback()
         return item
+
+    def create(self, operation, payload, actor=None, scope=None, request_authorization=None):
+        return self.start_prepared(self.prepare_job(
+            operation, payload, actor, scope, request_authorization))
 
     def get(self, job_id):
         callback, self.on_get = self.on_get, None
@@ -247,7 +264,7 @@ def test_generation_idempotency_is_namespaced_by_operation(generation):
     _assert_cache(generation.store, generation.payload, "same", second, operation="rewrite")
 
 
-def test_generation_create_failure_is_not_cached_and_releases_lock(generation):
+def test_generation_prepare_failure_is_not_cached_and_releases_lock(generation):
     generation.dispatcher.failures_remaining = 1
     failed = _post(generation, "err-key")
     assert failed.status_code == 500
@@ -264,11 +281,12 @@ def test_generation_create_failure_is_not_cached_and_releases_lock(generation):
     worker.join(5)
     assert not worker.is_alive(), "Failed dispatch stranded the idempotency lock"
     second = _accepted(box["response"])
-    assert second["job_id"] == "job-2"
+    assert second["job_id"] == generation.dispatcher.prepared[-1].id
     assert _accepted(_post(generation, "err-key")) == second
     _assert_cache(generation.store, generation.payload, "err-key", second)
-    assert len(generation.dispatcher.calls) == 2
-    assert set(generation.dispatcher.items) == {"job-2"}
+    assert len(generation.dispatcher.prepare_calls) == 2
+    assert len(generation.dispatcher.calls) == 1
+    assert set(generation.dispatcher.items) == {second["job_id"]}
 
 
 def test_generation_fresh_store_concurrent_submission_survives_repeated_races(generation, monkeypatch):
@@ -591,7 +609,7 @@ def test_generation_successful_dispatch_retains_receipt_if_final_source_or_owner
     receipt = next(iter(rows.values()))["value"]
     assert receipt["schema_version"] == 2
     assert receipt["project_incarnation"].startswith("file:")
-    assert receipt["result"]["job_id"] == "job-1"
+    assert receipt["result"]["job_id"] == fixture.dispatcher.prepared[0].id
     before = fixture.store.path.read_bytes()
     assert _post(fixture, "late-rejection").status_code == expected_status
     assert len(fixture.dispatcher.calls) == 1
@@ -725,11 +743,11 @@ def test_generation_late_local_project_recreation_keeps_original_receipt_and_req
     assert len(generation.dispatcher.calls) == 1
     key = _cache_key(generation.payload, "late-local-owner")
     old_receipt = _rows(generation.store)[key]
-    assert old_receipt["value"]["result"]["job_id"] == "job-1"
+    assert old_receipt["value"]["result"]["job_id"] == generation.dispatcher.prepared[0].id
     assert _post(generation, "late-local-owner").status_code == 409
     assert len(generation.dispatcher.calls) == 1
     second = _accepted(_post(generation, "explicit-new-owner-request"))
-    assert second["job_id"] == "job-2"
+    assert second["job_id"] == generation.dispatcher.prepared[-1].id
     assert _rows(generation.store)[key] == old_receipt
     new_receipt = _rows(generation.store)[_cache_key(generation.payload, "explicit-new-owner-request")]
     assert new_receipt["value"]["project_incarnation"] != old_receipt["value"]["project_incarnation"]

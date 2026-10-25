@@ -1,0 +1,25 @@
+{
+  "review": "PASS; no P1/P2 findings in the reviewed slice",
+  "base_commit": "e9830fc4c24fe8b0b08f2fbba03d3f4dbf35a86e",
+  "base_tree": "452c7c3581952b4388a02b60a63c7f9b51f4ee2b",
+  "main_passed": 118,
+  "adjacent_passed": 11,
+  "unique_passed": 129,
+  "counts": {
+    "main": {
+      ".runtime.generation-admission-independent-20261025.test_independent_admission": 6,
+      "tests.test_generation_admission_receipts": 39,
+      "tests.test_generation_idempotency_contracts": 55,
+      "tests.test_idempotency_store_multiprocess": 18
+    },
+    "adjacent": {
+      "tests.test_generation_variants_phase3": 10,
+      "tests.test_generation_restart_recovery": 1
+    }
+  },
+  "final_hashes_stable": true,
+  "provider_calls": 0,
+  "postgres_used": false,
+  "product_or_repository_tests_modified": false,
+  "committed_or_pushed": false
+}

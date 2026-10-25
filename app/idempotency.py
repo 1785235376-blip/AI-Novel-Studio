@@ -19,6 +19,19 @@ class IdempotencyStore:
         key="idempotency-store:"+os.path.normcase(str(self.path))
         with self.lock, workspace_mutation(self.path.parent,key):
             yield
+    @contextmanager
+    def generation_admission(self):
+        """Coordinate keyed admission, not JSON access or Job execution.
+
+        One separate lock per canonical cache file preserves bounded metadata
+        and the API's existing serialization across request keys. Enter outside
+        _access(): callers may take short store locks, auth/source and Job locks
+        in this context, but no store lock may be held while entering it.
+        """
+        from .repositories.file.mutation_coordinator import workspace_mutation
+        key="generation-admission:"+os.path.normcase(str(self.path))
+        with workspace_mutation(self.path.parent,key):
+            yield
     def _load(self):
         try:return json.loads(self.path.read_text(encoding='utf-8'))
         except (FileNotFoundError, json.JSONDecodeError):return {}

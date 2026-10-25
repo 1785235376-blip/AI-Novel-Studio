@@ -1433,16 +1433,18 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
     authority = [body.novel_id, body.chapter_id, getattr(actor, "actor_id", "local-author"), getattr(actor, "workspace_id", "local"), getattr(scope, "branch_id", None)]
     cache_scope = "generate:" + operation + ":" + hashlib.sha256(json.dumps(authority).encode()).hexdigest()
     digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
-    def create(request_authorization=None):
+    def result_for(job):
+        return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
+
+    def create():
         authorization = _registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope)
-        if request_authorization is not None:
-            authorization = {"request_authorization": request_authorization}
         job = jobs.create(operation, payload, actor=actor, scope=scope,
                           **authorization)
-        return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
+        return result_for(job)
     if idempotency_key:
         from datetime import datetime, timezone
         from .services.generation_idempotency_authority import GenerationIdempotencyAuthority
+        from .services.generation_admission_receipt import reservation, validate_receipt
 
         def conflict(code):
             return HTTPException(409, {"code": code, "message": "未重新派发。请核对已有任务，明确需要新任务时使用新的请求键。"})
@@ -1462,7 +1464,17 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
             except Exception as exc:
                 raise conflict("IDEMPOTENCY_OWNER_CHANGED") from exc
 
-        with _idempotency_execution_lock:
+        @contextmanager
+        def coordinated_admission():
+            try:
+                # Distinct from the short whole-JSON lock. Never enter this
+                # from inside store._access() or a source/Job owner lease.
+                with _idempotency_store.generation_admission():
+                    yield
+            except (OSError, ValueError) as exc:
+                raise conflict("IDEMPOTENCY_ADMISSION_COORDINATION_UNAVAILABLE") from exc
+
+        with _idempotency_execution_lock, coordinated_admission():
             # Retain the original namespace. Adding incarnation to the key
             # would turn an old executed request into a miss and redispatch it.
             try:
@@ -1474,20 +1486,10 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                 raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED")
             if retained is not None:
                 cached = retained["value"]
-                if (not isinstance(cached, dict)
-                        or set(cached) != {"schema_version", "project_incarnation", "request_digest", "result"}
-                        or type(cached["schema_version"]) is not int or cached["schema_version"] != 2
-                        or not isinstance(cached["project_incarnation"], str)
-                        or not re.fullmatch(r"(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", cached["project_incarnation"])
-                        or not isinstance(cached["result"], dict)
-                        or set(cached["result"]) != {"job_id", "status", "events_url", "base_chapter_version"}
-                        or not isinstance(cached["result"].get("job_id"), str)
-                        or not cached["result"]["job_id"]
-                        or not isinstance(cached["result"].get("status"), str)
-                        or cached["result"].get("events_url") != f"/api/generation/{cached['result']['job_id']}/events"
-                        or type(cached["result"].get("base_chapter_version")) is not int
-                        or cached["result"]["base_chapter_version"] < 1):
-                    raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED")
+                try:
+                    phase = validate_receipt(cached)
+                except ValueError as exc:
+                    raise conflict("IDEMPOTENCY_RECORD_UNVERIFIED") from exc
                 incarnation = cached["project_incarnation"]
                 with same_owner(incarnation):
                     pass
@@ -1502,7 +1504,7 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                     raise conflict("IDEMPOTENCY_KEY_EXPIRED")
                 if cached.get("request_digest") != digest:
                     raise HTTPException(409, {"code": "IDEMPOTENCY_REQUEST_MISMATCH"})
-                if settings.enable_collaboration_runtime:
+                if phase == "RECORDED" and settings.enable_collaboration_runtime:
                     _generation_context(cached["result"]["job_id"], x_session_token)
             else:
                 try:
@@ -1523,15 +1525,48 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
                 # changed. No project lease is held across auth/source reads.
                 revalidate()
                 with same_owner(incarnation):
-                    return cached["result"]
+                    pass
+                if phase == "RESERVED":
+                    # The reserved original ID may not exist in the Job
+                    # repository. Do not expose it as a successful Job.
+                    raise HTTPException(409, {"code": "ADMISSION_UNCONFIRMED",
+                        "message": "请求记录尚未确认，未自动重新派发。请先核对原任务记录，不要自动重试或更换请求键。"})
+                return cached["result"]
             revalidate()
-            result = create(revalidate)
-            # Dispatch succeeded: retain its original binding before any late
-            # rejection. Never erase this evidence or silently dispatch again.
-            _store_idempotent(idempotency_key, cache_scope, {
-                "schema_version": 2, "project_incarnation": incarnation,
-                "request_digest": digest, "result": result,
-            })
+            try:
+                job = jobs.prepare_job(operation, payload, actor=actor, scope=scope,
+                                       request_authorization=revalidate)
+                reserved = reservation(incarnation, digest, job.id)
+            except HTTPException:
+                raise
+            except Exception as exc:
+                # Preparation is inert: no original Job save or worker start.
+                raise HTTPException(500, {"code": "GENERATION_PREPARATION_FAILED"}) from exc
+            revalidate()
+            try:
+                _store_idempotent(idempotency_key, cache_scope, reserved)
+            except Exception as exc:
+                # It may have committed before raising. Never delete evidence.
+                raise HTTPException(503, {"code": "IDEMPOTENCY_ADMISSION_PERSISTENCE_UNCONFIRMED"}) from exc
+            revalidate()
+            try:
+                started = jobs.start_prepared(job)
+                if started is not job or job.id != reserved["job_id"]:
+                    raise ValueError("GENERATION_ADMISSION_IDENTITY_CHANGED")
+                result = result_for(job)
+            except HTTPException:
+                raise
+            except Exception as exc:
+                raise HTTPException(503, {"code": "GENERATION_ADMISSION_UNCONFIRMED"}) from exc
+            try:
+                # Full v2 is the original response receipt, not Job completion.
+                # Ordinary put preserves its original final-record TTL origin.
+                _store_idempotent(idempotency_key, cache_scope, {
+                    "schema_version": 2, "project_incarnation": incarnation,
+                    "request_digest": digest, "result": result,
+                })
+            except Exception as exc:
+                raise HTTPException(503, {"code": "IDEMPOTENCY_ADMISSION_PERSISTENCE_UNCONFIRMED"}) from exc
             revalidate()
             with same_owner(incarnation):
                 return result

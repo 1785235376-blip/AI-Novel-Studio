@@ -1,0 +1,34 @@
+{
+  "baseline": "e9830fc4c24fe8b0b08f2fbba03d3f4dbf35a86e",
+  "source_sha256": {
+    "app/api.py": "fb24d6de2a6ec0475257b48b2f5e4939b1a64f8c87938ba1c0b12af20a622670",
+    "app/idempotency.py": "4212aeb54b37d230efbd3bac26a0687274700a51c017fae3b736a41b3e923c3d",
+    "app/services/generation_admission_receipt.py": "9109bd2f4de5dee99f0ea5fb308e8150773b72e81484b199f9fce5673f39b227",
+    "tests/test_generation_admission_receipts.py": "aa8b083a210d134fe71e68821c999a3892ff5a0db6214b2dea3357a0b00da4c1",
+    "tests/test_generation_idempotency_contracts.py": "99274bba9e27ddeccba7b0aae505d0f9c7a258e1a9f9bb66a8bb111e1855c87d"
+  },
+  "runs": {
+    "implementation": {
+      "cases": 123,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "original_junit_sha256": "82c4e66a2a5fe3cc176f66bfb9b92db826e26b89df85135eb30a74e718451066"
+    },
+    "independent_main": {
+      "cases": 118,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "original_junit_sha256": "fe230bcbb5e777dc9e2edbd5cc569cf292db369968379d82b846c79e0238241b"
+    },
+    "independent_adjacent": {
+      "cases": 11,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "original_junit_sha256": "58c53c1dcd4756fea037bf564a6b28b3490001a9dcc8fa241352c61c68a898ad"
+    }
+  },
+  "note": "Implementation and independent runs overlap; do not sum them. No real model/provider/PostgreSQL or power-loss guarantee."
+}
