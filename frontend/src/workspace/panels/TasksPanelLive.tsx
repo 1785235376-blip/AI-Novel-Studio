@@ -1,0 +1,90 @@
+/**
+ * [HERMIA-FE-20261025 U3-M3/M4] Live task panel over existing owners (TaskFeed) + read-only navigation (TaskNavigator).
+ * States: not-connected / loading / empty / error(+next step) / revoked / ready(+bounded client paging, stale marks).
+ * Navigation buttons only read and move focus/selection; nothing here can generate, adopt, cancel or enqueue.
+ * Raw ids appear only in data-* attributes.
+ */
+import {useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import type {ProductionJob} from '../../creative/studioProductionClient';
+import type {NavReturnPoint, TaskRef} from '../contracts';
+import type {TaskFeed} from '../tasks/taskFeed';
+import {NAV_TEXT, type LocateResult, type TaskNavigator} from '../tasks/taskNavigation';
+import {pageOf, PAGING_GAP_TEXT, statusText} from '../tasks/taskSources';
+
+export interface TasksPanelLiveProps {
+  feed: TaskFeed;
+  navigator: TaskNavigator | null;
+  active: boolean;
+  hasNode(canvas: 'creative' | 'execution', id: string): boolean;
+  captureReturn(): NavReturnPoint;
+  onLocate(r: Extract<LocateResult, {kind: 'located'}>): void;
+  onOpenExecution(): void;
+  onReturn(rp: NavReturnPoint): void;
+}
+
+export function TasksPanelLive({feed, navigator, active, hasNode, captureReturn, onLocate, onOpenExecution, onReturn}: TasksPanelLiveProps) {
+  const state = useSyncExternalStore(f => feed.subscribe(f), () => feed.state);
+  const [page, setPage] = useState(0);
+  const [sel, setSel] = useState<TaskRef | null>(null);
+  const [detail, setDetail] = useState<{ref: TaskRef; job: ProductionJob | null; gone: boolean} | null>(null);
+  const [msg, setMsg] = useState('');
+  const [, force] = useState(0);
+  const listRef = useRef<HTMLUListElement>(null);
+  const started = useRef(false);
+  useEffect(() => { if (active && !started.current) { started.current = true; void feed.refresh(); } }, [active, feed]);
+  useEffect(() => { setSel(null); setDetail(null); setMsg(''); setPage(0); }, [feed]);
+
+  const open = async (ref: TaskRef) => { setSel(ref); setMsg(''); setDetail(null); const d = await feed.detail(ref); if (d) setDetail(d); };
+  const locate = () => {
+    if (!navigator || !sel) return;
+    const ref = detail?.ref ?? sel;
+    const r = navigator.locate(ref, hasNode);
+    if (r.kind === 'missing') { setMsg(r.text); return; }
+    navigator.remember(captureReturn()); setMsg(''); onLocate(r); force(x => x + 1);
+  };
+  const exec = () => { if (!navigator) return; navigator.remember(captureReturn()); onOpenExecution(); force(x => x + 1); };
+  const back = () => { const rp = navigator?.takeReturn(); if (rp) onReturn(rp); else setMsg(NAV_TEXT.stale); force(x => x + 1); };
+
+  let body;
+  switch (state.kind) {
+    case 'not-connected': body = <p data-state="not-connected" role="status">{state.gap}</p>; break;
+    case 'loading': body = <p data-state="loading" role="status" aria-busy="true">正在读取任务…</p>; break;
+    case 'empty': body = <p data-state="empty">这个项目还没有任务。</p>; break;
+    case 'revoked': body = <p data-state="revoked" role="alert">{state.text}</p>; break;
+    case 'error': body = <div data-state="error" role="alert"><p>{state.text}</p><p>{state.next}</p></div>; break;
+    case 'ready': {
+      const pg = pageOf(state.items, page);
+      body = <div data-state="ready">
+        <ul ref={listRef} aria-label="任务列表" style={{listStyle: 'none', margin: 0, padding: 0, maxHeight: 240, overflow: 'auto'}}>
+          {pg.rows.map(t => <li key={`${t.source}|${t.id}`}>
+            <button type="button" data-task-id={t.id} data-task-source={t.source} aria-pressed={sel?.id === t.id && sel.source === t.source}
+              onClick={() => void open(t)}>{t.title} · {statusText(t)}{t.stale ? ' · 需核对' : ''}</button>
+          </li>)}
+        </ul>
+        {pg.pages > 1 || state.truncated ? <p data-testid="u3-paging-gap">{PAGING_GAP_TEXT}{state.truncated ? ' 服务端已截断，部分任务未显示。' : ''}</p> : null}
+        {pg.pages > 1 ? <nav aria-label="任务分页">
+          <button type="button" disabled={pg.page === 0} onClick={() => setPage(pg.page - 1)}>上一页</button>
+          <span>{pg.page + 1} / {pg.pages}</span>
+          <button type="button" disabled={pg.page >= pg.pages - 1} onClick={() => setPage(pg.page + 1)}>下一页</button>
+        </nav> : null}
+      </div>;
+      break;
+    }
+  }
+  const d = detail?.ref ?? sel;
+  return <section data-testid="u3-tasks" aria-label="任务" style={{padding: 8}}>
+    <div><button type="button" data-testid="u3-refresh" onClick={() => void feed.refresh()} disabled={state.kind === 'not-connected'}>刷新</button></div>
+    {body}
+    {d && state.kind === 'ready' ? <div data-testid="u3-detail" data-task-id={d.id} aria-label="任务详情">
+      <h4 style={{margin: '8px 0 4px'}}>{d.title}</h4>
+      <p>状态：{statusText(d)}{d.stale ? '（状态需核对：请到原任务界面确认，不会自动重试）' : ''}</p>
+      {detail?.gone ? <p role="alert">重新读取这个任务失败：它可能已被删除或失效。列表里的信息可能已过时。</p> : null}
+      <p>来源：{d.source === 'production-job' ? '生产任务' : '任务中心'}{d.link ? '，记录了来源作品节点' : '，没有记录来源作品节点'}</p>
+      <p>成本：未知（服务端没有提供估算）</p>
+      <button type="button" data-testid="u3-locate" onClick={locate} disabled={!navigator}>定位来源节点</button>{' '}
+      <button type="button" data-testid="u3-exec" onClick={exec} disabled={!navigator}>查看执行画布</button>{' '}
+      <button type="button" data-testid="u3-back" onClick={back} disabled={!navigator?.canReturn()}>返回原位置</button>
+    </div> : null}
+    {msg ? <p data-testid="u3-nav-msg" role="status">{msg}</p> : null}
+  </section>;
+}
