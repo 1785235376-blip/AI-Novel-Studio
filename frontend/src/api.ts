@@ -95,14 +95,31 @@ export {setApiErrorShellMode} from './apiErrorMode';
 export function friendlyHttpMessage(status:number,fallback?:string):string|undefined{
   return (FRIENDLY_HTTP.has(status)?apiErrorText(`err.http.${status}`)||undefined:undefined)??fallback;
 }
+// [HERMIA-FE-20261025 VERA-097 MF1] 后端 unified_http_error（app/main.py:99）把字符串 detail 复制进 message 并带 code:"HTTP_<n>"：
+// 这种回显不是结构化文案，按原文处理（友好文案 + raw_text）。另外凡是像服务端内部信息（路径、Traceback、XxxError(…)）的文本一律视为原文。
+const UNSAFE_SERVER_TEXT=/Traceback|File "|(?:^|[\s'"(=:])(?:\/(?:home|srv|usr|var|tmp|etc|opt|root|app|Users|mnt|private|workspace)\/|[A-Za-z]:\\)|\b[A-Z]\w*(?:Error|Exception)\b|\bline \d+\b|psycopg|sqlalchemy|sqlite3?\.|\bat 0x[0-9a-f]+|<html|<!doctype/i;
+export function isUnsafeServerText(text:string):boolean{return UNSAFE_SERVER_TEXT.test(text)}
 const structuredMessage=(raw:any):string|undefined=>{
-  const pick=(v:any)=>typeof v==='string'&&v.trim()?v:undefined;
+  const pick=(v:any)=>typeof v==='string'&&v.trim()&&!UNSAFE_SERVER_TEXT.test(v)?v:undefined;
   if(!raw||typeof raw!=='object')return undefined;
   const d=raw.detail;
-  return pick(raw.message)??(d&&typeof d==='object'?pick(d.message)??pick(d.detail):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+  const httpCode=typeof raw.code==='string'&&/^HTTP_\d+$/.test(raw.code);
+  // 字符串 detail 的回显，或无结构化 detail 的 HTTP_<n> 信封：不信任 raw.message
+  if(typeof d==='string'&&(raw.message===d||httpCode))return undefined;
+  if(httpCode&&(d==null||typeof d!=='object'))return undefined;
+  const top=typeof raw.message==='string'&&raw.message===raw.code?undefined:pick(raw.message);
+  return top??(d&&typeof d==='object'&&!Array.isArray(d)?pick(d.message)??pick(d.detail):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+};
+const rawTextOfObj=(raw:any):string|undefined=>{
+  if(!raw||typeof raw!=='object')return undefined;
+  const d=raw.detail;
+  if(typeof d==='string')return d;
+  if(typeof raw.message==='string'&&raw.message)return raw.message;
+  if(d&&typeof d==='object'&&!Array.isArray(d)){const m=d.message??d.detail;if(typeof m==='string')return m;}
+  return undefined;
 };
 const rawTextOf=(raw:any,body:string):string|undefined=>{
-  const t=typeof raw?.detail==='string'?raw.detail:typeof raw==='string'?raw:body;
+  const t=rawTextOfObj(raw)??(typeof raw==='string'?raw:body); /* [HERMIA-FE-20261025 VERA-097 MF1] */
   return t?t.slice(0,RAW_TEXT_LIMIT):undefined;
 };
 export function apiErrorView(error:unknown,fallback='操作失败'):{message:string;code?:string;requestId?:string;details?:string;technical?:string}{

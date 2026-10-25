@@ -421,7 +421,8 @@ function AssetCard({
   );
 }
 
-function AssetError({ error, fallback }: { error: unknown; fallback: string }) {
+// [HERMIA-FE-20261025 VERA-097 W8] exported for render test
+export function AssetError({ error, fallback }: { error: unknown; fallback: string }) {
   const view = apiErrorView(error, fallback);
   return (
     <div className="asset-error" role="alert">
