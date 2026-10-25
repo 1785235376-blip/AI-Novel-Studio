@@ -57,6 +57,11 @@ export const zhCN = {
   'lt.cancel': '取消当前请求',
   'lt.closeDisconnect': '关闭并断开',
   'lt.techDetails': '了解如何连接 · 技术详情',
+  // [HERMIA-FE-20261025 VERA-FIX] Vera 复审补键
+  'ct.retryLater': '请稍后重试。',
+  'save.viewConflict': '查看冲突',
+  'save.exportDraft': '导出当前草稿',
+  'as.currentlyWriting': '当前正在写',
   'settings.label': '设置',
   'settings.aria': '打开设置（AI 主控与插件）',
   'settings.menu': '设置与溢出工作区',
@@ -105,10 +110,10 @@ export const zhCN = {
   'cmd.providers': '打开 Provider 控制中心',
   'cmd.plugins': '打开插件管理',
   'cmd.workflow': '打开工作流工作区',
-  'cmd.hint.settings': '设置 · CONTROL · X-UX-09',
-  'cmd.hint.providers': '主控 · CONTROL',
-  'cmd.hint.plugins': '插件 · PLUGIN',
-  'cmd.hint.workflow': '工作流 · WORKFLOW',
+  'cmd.hint.settings': '设置 · AI 主控', // [HERMIA-FE-20261025 VERA-FIX MF-4] 不露内部 id / 工单号
+  'cmd.hint.providers': 'AI 主控', // [HERMIA-FE-20261025 VERA-FIX MF-4]
+  'cmd.hint.plugins': '插件', // [HERMIA-FE-20261025 VERA-FIX MF-4]
+  'cmd.hint.workflow': '工作流', // [HERMIA-FE-20261025 VERA-FIX MF-4]
   'cmds.trigger': '搜索功能',
   'cmds.dialog': '搜索功能与命令',
   'cmds.placeholder': '输入功能名称，例如：版本历史 / 主控 / 专业',

@@ -2,6 +2,7 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { within } from "@testing-library/react";
 import { AppShell, ModuleSwitcher, moduleForTaskSource, SettingsPathGateway } from "./AppShell";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
@@ -391,7 +392,8 @@ describe('R4 optional global-search consumer', () => {
     const updated = vi.fn();
     act(() => root.render(<AppShell {...props} onGlobalSearch={updated} />));
     // [HERMIA-FE-20261025 DUI P1-7] spec change: global-search has no aria-label; its accessible name is its visible text (axe label-content-name-mismatch, zh+en). Same button, same assertions.
-    act(() => host.querySelector<HTMLButtonElement>('button.global-search')!.click());
+    // [HERMIA-FE-20261025 VERA-FIX MF-3] spec change: locate by accessible name (role+name), not by class, so a nameless button fails.
+    act(() => within(host).getByRole('button', { name: '搜索功能、章节或命令 Ctrl K' }).click());
     expect(updated).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenCalledTimes(1);
     act(() => root.unmount());

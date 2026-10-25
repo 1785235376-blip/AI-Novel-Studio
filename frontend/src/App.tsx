@@ -1462,6 +1462,8 @@ function LegacyApp() {
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
     // [HERMIA-FE-20261025 DUI P0-3] Only claim "opening" while a chapter is actually being fetched.
     : chapter.isFetching ? i18nT("save.opening") : chapters.isError ? i18nT("chapter.unreadable") : i18nT("chapter.notOpen");
+  // [HERMIA-FE-20261025 VERA-FIX P0-3] 一屏一状态：章节列表读取中/失败且没有已打开章节时，中间与右栏只跟随同一状态，不再出现空态卡片与「选择或新建章节」CTA。
+  const chaptersPending: 'loading' | 'error' | undefined = chapter.data ? undefined : chapters.isError ? 'error' : chapters.isLoading ? 'loading' : undefined;
   const taskSummary = summarizeTasks(job?.status ? [{ status: job.status }] : []);
   const archivedItems = Array.isArray(archived.data)
     ? archived.data
@@ -1517,7 +1519,7 @@ function LegacyApp() {
       chapters={novelRailChapters}
       selectedId={s.chapterId}
       loading={chapters.isLoading}
-      error={chapters.error ? String(chapters.error) : null}
+      error={chapters.error ? i18nT("ct.retryLater") /* [HERMIA-FE-20261025 VERA-FIX P2] 不外露原始错误文本 */ : null}
       onSelect={id => { s.setChapter(id); if (panel !== 'write') openNovelPanel('write'); }}
       onCreate={s.novelId ? () => { void createNextChapter(); } : undefined}
       panels={novelRailPanels}
@@ -1544,7 +1546,7 @@ function LegacyApp() {
           }))}
           selectedId={s.chapterId}
           loading={chapters.isLoading}
-          error={chapters.error ? String(chapters.error) : null}
+          error={chapters.error ? i18nT("ct.retryLater") /* [HERMIA-FE-20261025 VERA-FIX P2] 不外露原始错误文本 */ : null}
           onSelect={s.setChapter}
           onCreate={async (title) => {
             const created = scope
@@ -1930,6 +1932,11 @@ function LegacyApp() {
           { id: 'story', title: '先做故事规划', desc: '人物、世界观与大纲', onClick: () => openNovelPanel('story') },
           { id: 'import', title: '导入已有稿件', desc: '把已有文本导入为章节', onClick: () => openNovelPanel('knowledge') },
         ]} />
+      ) : chaptersPending && corruptDraft?.identity !== editorIdentity ? (
+        // [HERMIA-FE-20261025 VERA-FIX P0-3] 状态已由左侧章节列宣告（role=status/alert），这里只静默镜像，无 CTA
+        <section className="notice" data-desk-state={chaptersPending}>
+          <strong>{i18nT(chaptersPending === 'error' ? 'rail.error' : 'rail.loading')}</strong>
+        </section>
       ) : (
         <section className="notice" aria-live="polite">
           <strong>{corruptDraft?.identity === editorIdentity ? i18nT('desk.recoverFirst') : i18nT('desk.nothingOpen')}</strong>
@@ -1966,7 +1973,7 @@ function LegacyApp() {
   const outlineItems = (chapters.data || []).slice(0, 12).map(c => ({
     id: c.id,
     label: `第 ${c.number} 章 · ${c.title || '未命名'}`,
-    hint: c.id === s.chapterId ? '当前正在写' : undefined,
+    hint: c.id === s.chapterId ? i18nT('as.currentlyWriting') : undefined, // [HERMIA-FE-20261025 VERA-FIX P2]
   }));
   const draftReady = !!(job && draftStateFromGeneration(job.status) === 'ready' && job.output);
   // [HERMIA-FE-20261022 N-UX-08] CTA state machine — adopt > continuity > continue; count is honest (error/loading → 0)
@@ -2006,8 +2013,9 @@ function LegacyApp() {
       ], NOVEL_PRO_LINKS, shellMode)}
       onOpenStory={() => openNovelPanel('story')}
       onOpenCheck={shellMode === 'pro' ? () => openNovelPanel('check') : undefined /* [HERMIA-FE-20261022 U4] */}
-      chapterTitle={chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : "未选择章节"}
-      chapterMeta={chapter.data ? `${text.trim().length} 字 · 版本 ${chapter.data.version}` : "从左侧作品结构选择或新建章节"}
+      chapterTitle={chapter.data ? `第 ${chapter.data.number} 章 · ${chapter.data.title || '未命名'}` : chaptersPending ? i18nT(chaptersPending === 'error' ? 'chapter.unreadable' : 'rail.loading') : "未选择章节"}
+      chapterMeta={chapter.data ? `${text.trim().length} 字 · 版本 ${chapter.data.version}` : chaptersPending ? "" : "从左侧作品结构选择或新建章节" /* [HERMIA-FE-20261025 VERA-FIX P0-3] */}
+      pendingState={chaptersPending /* [HERMIA-FE-20261025 VERA-FIX P0-3] 读取中/失败时隐藏「下一步」主按钮 */}
       saveLabel={chapter.data ? saveDisplayLabel : undefined}
       primaryCta={primaryCta}
       outlineItems={outlineItems}

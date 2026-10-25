@@ -1,6 +1,7 @@
 import {AlertCircle,CheckCircle2,LoaderCircle,PencilLine} from 'lucide-react';
 import {Button} from './primitives';
 import type {DraftDurability} from '../drafts';
+import {useTz} from '../i18n'; // [HERMIA-FE-20261025 VERA-FIX P2] EN 下保存状态/按钮走字典（中文原样）
 
 export type SaveState='saved'|'dirty'|'saving'|'failed'|'conflict';
 export type SaveEvent=
@@ -39,6 +40,7 @@ export function recoveryStateLabel(state:SaveState,durability:DraftDurability,co
 
 export function SaveControls({state,ready,onSave,composing=false,recovery}:{state:SaveState;ready:boolean;onSave:()=>void;composing?:boolean;recovery?:{durability:DraftDurability;offline?:boolean;onExport:()=>void;onConflict?:()=>void}}) {
   const label=ready?(recovery?recoveryStateLabel(state,recovery.durability,composing,recovery.offline):saveStateLabel(state)):'正在打开章节…',Icon=!ready?LoaderCircle:state==='saved'?CheckCircle2:state==='dirty'?PencilLine:state==='saving'?LoaderCircle:AlertCircle;
+  const tz=useTz();
   const blocked=!ready||composing||state==='saving'||state==='conflict';
-  return <div className="save-controls"><span className={`save-status save-status--${ready?state:'loading'}`} role="status" aria-live={ready&&(state==='failed'||state==='conflict')?'polite':'off'}><Icon aria-hidden="true"/>{label}</span><Button type="button" disabled={blocked} onClick={onSave}>保存</Button>{ready&&recovery&&state==='conflict'&&recovery.onConflict&&<Button type="button" onClick={recovery.onConflict}>查看冲突</Button>}{ready&&recovery&&state!=='saved'&&<Button type="button" onClick={recovery.onExport}>导出当前草稿</Button>}</div>;
+  return <div className="save-controls"><span className={`save-status save-status--${ready?state:'loading'}`} role="status" aria-live={ready&&(state==='failed'||state==='conflict')?'polite':'off'}><Icon aria-hidden="true"/>{tz(label)}</span><Button type="button" disabled={blocked} onClick={onSave}>{tz('保存')}</Button>{ready&&recovery&&state==='conflict'&&recovery.onConflict&&<Button type="button" onClick={recovery.onConflict}>{tz('查看冲突')}</Button>}{ready&&recovery&&state!=='saved'&&<Button type="button" onClick={recovery.onExport}>{tz('导出当前草稿')}</Button>}</div>;
 }

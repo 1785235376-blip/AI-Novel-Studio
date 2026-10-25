@@ -10,7 +10,7 @@ const QUICK: Array<[QuickOp, string]> = [['continue', '续写'], ['rewrite', '�
 
 export function NovelAssist({
   chapterTitle, chapterMeta, saveLabel, saveLocation, primaryCta, links, outlineItems, onSelectOutline,
-  onOpenStory, onOpenCheck, castNote, ai, aiStatus, onQuickOp, hasChapter = true, extras,
+  onOpenStory, onOpenCheck, castNote, ai, aiStatus, onQuickOp, hasChapter = true, extras, pendingState,
 }: {
   chapterTitle: string;
   chapterMeta: string;
@@ -31,6 +31,8 @@ export function NovelAssist({
   hasChapter?: boolean;
   /** 写作目标、来源隐私、生成恢复等低频工具，收在抽屉「更多」里 */
   extras?: ReactNode;
+  /** [HERMIA-FE-20261025 VERA-FIX P0-3] 章节列表读取中/失败：不显示「下一步」与其主按钮（一屏一状态） */
+  pendingState?: 'loading' | 'error';
 }) {
   const [drawer, setDrawer] = useState(false);
   const t = useT(), tz = useTz();
@@ -39,10 +41,10 @@ export function NovelAssist({
       <section className="nv-assist__ctx" aria-label={t('as.ctx')}>
         <span>{t('as.current')}</span>
         <strong>{tz(chapterTitle)}</strong>
-        <small>{tz(chapterMeta)}{saveLabel ? ` · ${tz(saveLabel)}` : ''}</small>
+        {chapterMeta || saveLabel ? <small>{tz(chapterMeta)}{saveLabel ? `${chapterMeta ? ' · ' : ''}${tz(saveLabel)}` : ''}</small> : null}
         {saveLocation ? <div className="nv-assist__badges"><span className="nv-badge nv-badge--local">{tz(saveLocation)}</span></div> : null}
       </section>
-      <section className="nv-assist__next" aria-label={t('as.next')}>
+      {pendingState ? null : <section className="nv-assist__next" aria-label={t('as.next')}>
         <h4>{t('as.next')}</h4>
         <button type="button" className="nv-btn nv-btn--primary nv-assist__primary" data-primary-cta="true" data-cta-kind={primaryCta.kind || undefined} disabled={primaryCta.disabled} onClick={primaryCta.onClick}>
           {tz(primaryCta.label)}
@@ -50,7 +52,7 @@ export function NovelAssist({
         <div className="nv-assist__links">
           {links.map(l => <button key={l.id} type="button" className="nv-link" data-sec-cta={l.id} onClick={l.onClick}>{tz(l.label)}</button>)}
         </div>
-      </section>
+      </section>}
       <details className="nv-sec" open>
         <summary>{t('as.outline')}</summary>
         <div className="nv-sec__body">

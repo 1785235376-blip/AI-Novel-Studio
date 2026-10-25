@@ -58,6 +58,11 @@ export const en: Record<MessageKey, string> = {
   'lt.cancel': 'Cancel current request',
   'lt.closeDisconnect': 'Close and disconnect',
   'lt.techDetails': 'How to connect · technical details',
+  // [HERMIA-FE-20261025 VERA-FIX] Vera re-review keys
+  'ct.retryLater': 'Please try again later.',
+  'save.viewConflict': 'View conflict',
+  'save.exportDraft': 'Export current draft',
+  'as.currentlyWriting': 'Writing now',
   'settings.label': 'Settings',
   'settings.aria': 'Open settings (AI control and plugins)',
   'settings.menu': 'Settings and overflow workspaces',
@@ -65,7 +70,7 @@ export const en: Record<MessageKey, string> = {
   'settings.control': 'AI control',
   'settings.plugin': 'Plugin manager',
   'search.aria': 'Open global commands',
-  'search.placeholder': 'Search features, chapters, commands',
+  'search.placeholder': 'Search chapters, commands', // [HERMIA-FE-20261025 VERA-FIX MF-2] shorter so it fits beside Ctrl K at 1440
   'header.capability': 'Capabilities',
   'header.tasks': 'Tasks',
   'context.writingAria': 'Current writing scope',
@@ -106,10 +111,10 @@ export const en: Record<MessageKey, string> = {
   'cmd.providers': 'Open provider control center',
   'cmd.plugins': 'Open plugin manager',
   'cmd.workflow': 'Open workflow workspace',
-  'cmd.hint.settings': 'Settings · CONTROL',
-  'cmd.hint.providers': 'Control · CONTROL',
-  'cmd.hint.plugins': 'Plugins · PLUGIN',
-  'cmd.hint.workflow': 'Workflows · WORKFLOW',
+  'cmd.hint.settings': 'Settings · AI control', // [HERMIA-FE-20261025 VERA-FIX MF-4] no internal id
+  'cmd.hint.providers': 'AI control', // [HERMIA-FE-20261025 VERA-FIX MF-4]
+  'cmd.hint.plugins': 'Plugins', // [HERMIA-FE-20261025 VERA-FIX MF-4]
+  'cmd.hint.workflow': 'Workflows', // [HERMIA-FE-20261025 VERA-FIX MF-4]
   'cmds.trigger': 'Search features',
   'cmds.dialog': 'Search features and commands',
   'cmds.placeholder': 'Type a feature name, e.g. version history / control / pro',
@@ -363,8 +368,9 @@ export const en: Record<MessageKey, string> = {
   'ct.noArchived': 'No removed chapters.',
   'ct.restore': 'Restore to manuscript',
   'ct.delete': 'Permanently delete {title}',
-  'fl.open': 'Open feature navigator',
-  'fl.close': 'Close feature navigator',
+  // [HERMIA-FE-20261025 VERA-FIX] name must contain visible text "Features" (axe label-content-name-mismatch)
+  'fl.open': 'Open Features navigator',
+  'fl.close': 'Close Features navigator',
   'fl.label': 'Features',
   'lt.ask': 'Ask assistant',
 };
