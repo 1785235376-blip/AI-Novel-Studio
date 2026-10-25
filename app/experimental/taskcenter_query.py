@@ -180,3 +180,37 @@ def cursor_not_supported():
         501,
         {"code": "TASKCENTER_CURSOR_UNSUPPORTED", "message": "TASKCENTER_CURSOR_UNSUPPORTED"},
     )
+
+
+def openapi_responses():
+    """Document real envelopes only; no successful HTTP cursor is advertised."""
+    coverage = {"scope": "BOUNDED_AUTHORIZED_PROJECTION", "completeness": "NOT_ASSERTED"}
+    legacy = {"items": [], "unavailable": [], "truncated": False,
+              "executor": False, "refresh": "MANUAL", "automatic_retries": False}
+    selected = {**legacy, "observed_total": 0, "source_truncated": False,
+                "coverage": coverage, "capabilities": static_capabilities()}
+    offset = {**selected, "limit": 50, "offset": 0, "has_more": False, "next_offset": None}
+    unsupported = {"code": "TASKCENTER_CURSOR_UNSUPPORTED",
+                   "message": "TASKCENTER_CURSOR_UNSUPPORTED"}
+    return {
+        200: {
+            "description": (
+                "Legacy envelopes remain unchanged without authority/page_mode. "
+                "authority alone retains the 500-item cap and adds bounded observed_total. "
+                "page_mode=offset activates existing 50/0 defaults; limit stays at most 100. "
+                "An empty or final page never establishes complete history."
+            ),
+            "content": {"application/json": {"examples": {
+                "legacy": {"value": legacy},
+                "authority_only_empty": {"value": selected},
+                "explicit_offset_empty": {"value": offset},
+            }}},
+        },
+        501: {
+            "description": (
+                "TASKCENTER_CURSOR_UNSUPPORTED after original authorization. "
+                "No HTTP cursor is issued until reliable original lifecycle binding exists."
+            ),
+            "content": {"application/json": {"example": {"detail": unsupported}}},
+        },
+    }

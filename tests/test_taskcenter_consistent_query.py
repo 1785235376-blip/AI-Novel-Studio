@@ -272,8 +272,17 @@ def test_explicit_offset_mode_activates_default_page_without_changing_old_calls(
     assert set(get(mounted, {"limit": 1}).json()) == PAGE_KEYS
 
 
-def test_unsupported_cursor_does_not_scan_readers_or_provision_project_identity(mounted):
+@pytest.mark.parametrize("identity_present", [False, True])
+def test_unsupported_cursor_does_not_scan_readers_or_provision_project_identity(mounted, identity_present):
     marker = mounted.rig.root / "novels" / mounted.rig.nid / "creative_project_v2.json"
+    if identity_present:
+        if not marker.exists():
+            from app.creative.project_store import CreativeProjectStore
+            CreativeProjectStore(mounted.store).incarnation(mounted.rig.nid)
+    else:
+        # This is the test's synthetic project, before the query snapshot.
+        marker.unlink(missing_ok=True)
+    assert marker.exists() is identity_present
 
     def forbidden_read(ctx):
         pytest.fail("unsupported cursor mode scanned a reader")
@@ -282,12 +291,11 @@ def test_unsupported_cursor_does_not_scan_readers_or_provision_project_identity(
         mounted.svc, "task_readers",
         tuple(replace(item, read=forbidden_read) for item in mounted.svc.task_readers),
     )
-    existed = marker.exists()
     before = complete_business_snapshot(mounted.rig.root)
     response = get(mounted, {"page_mode": "cursor"})
     assert response.status_code == 501, response.text
     assert response.json()["detail"] == UNSUPPORTED
-    assert marker.exists() is existed
+    assert marker.exists() is identity_present
     assert complete_business_snapshot(mounted.rig.root) == before
 
 
@@ -330,6 +338,44 @@ def test_original_access_precedes_new_authority_and_cursor_query_validation(moun
             assert str(e.root) not in response.text
     finally:
         assert complete_business_snapshot(e.root) == before
+
+
+@pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+@pytest.mark.parametrize("owner_raises", [False, True])
+def test_authority_filtered_real_read_mid_revocation_aborts_everything(mounted, prefix, owner_raises):
+    from app.identity import IdentityStatus
+    scope, headers = shared_scope(mounted.rig)
+    mounted.seed(scope=scope)
+    original = mounted.svc.task_readers[0]
+    before = complete_business_snapshot(mounted.rig.root)
+    injected = {}
+
+    def revoke_during_real_read(ctx):
+        result = original.read(ctx)
+        # The real owner read itself must have performed no business write.
+        assert complete_business_snapshot(mounted.rig.root) == before
+        mounted.rig.identities.set_membership_status(
+            "reader", "query-workspace", IdentityStatus.INACTIVE,
+        )
+        # This deliberate test mutation is the only allowed business delta.
+        injected["after_revocation"] = complete_business_snapshot(mounted.rig.root)
+        if owner_raises:
+            raise HTTPException(403, {"code": "private-original-owner-revoked"})
+        return result
+
+    mounted.monkeypatch.setattr(
+        mounted.svc, "task_readers",
+        (replace(original, read=revoke_during_real_read), mounted.svc.task_readers[1]),
+    )
+    response = get(
+        mounted, {"authority": "semantic_import", "limit": 1},
+        headers=headers, prefix=prefix,
+    )
+    assert response.status_code == 403, response.text
+    assert "items" not in response.json() and "observed_total" not in response.json()
+    assert "job-" not in response.text and "private-" not in response.text
+    assert "after_revocation" in injected
+    assert complete_business_snapshot(mounted.rig.root) == injected["after_revocation"]
 
 
 @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
