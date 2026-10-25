@@ -4,7 +4,7 @@
  * adapter's lease synchronously during render, so A→B→A gives A a fresh adapter and every late callback bound to the
  * first A adapter is dropped. Session-only values carry over A→B→A through a doc snapshot (never written to storage).
  */
-import {useEffect, useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import type {LayoutScope, StorageLike} from '../../workbench/layout';
 import {createViewPreferences, type ViewPrefs, type ViewPrefsDoc} from './viewPreferences';
 import {LeaseHolder} from './scopeLease';
@@ -22,6 +22,9 @@ export function useViewPreferences(o: UseViewPreferencesOptions): ViewPrefs {
   const holder = useRef(new LeaseHolder());
   const seeds = useRef(new Map<string, ViewPrefsDoc>());
   const last = useRef<{k: string; p: ViewPrefs} | null>(null);
+  // [HERMIA-FE-20261025 U1fix] MUST-FIX 2 root cause: React StrictMode runs mount→cleanup→mount; the unmount cleanup
+  // retired the only lease, so every later write was rejected as "not current". Re-mount now re-activates (new lease).
+  const [gen, setGen] = useState(0);
   const prefs = useMemo(() => {
     if (last.current) seeds.current.set(last.current.k, last.current.p.snapshot());
     const lease = holder.current.current(k);
@@ -29,7 +32,10 @@ export function useViewPreferences(o: UseViewPreferencesOptions): ViewPrefs {
     last.current = {k, p};
     return p;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [k, o.storage]);
-  useEffect(() => () => holder.current.invalidate(), []);
+  }, [k, o.storage, gen]);
+  useEffect(() => {
+    if (!holder.current.isLive()) setGen(g => g + 1);
+    return () => holder.current.invalidate();
+  }, []);
   return prefs;
 }

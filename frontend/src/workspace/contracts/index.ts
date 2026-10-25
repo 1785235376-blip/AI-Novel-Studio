@@ -14,7 +14,7 @@ export type MatrixStatus = 'IMPLEMENTED' | 'VERIFIED' | 'PARTIAL' | 'BLOCKED' | 
 /** Real identity only from the bootstrap actor + collaboration scope. Never fabricated, never 'local-author'. */
 export type WorkspaceIdentity =
   | {kind: 'real'; scope: LayoutScope; key: string}
-  | {kind: 'session'; reason: 'no-actor' | 'no-project' | 'no-instance'; key: string};
+  | {kind: 'session'; reason: 'no-actor' | 'no-project' | 'no-instance' | 'scope-mismatch' /* [HERMIA-FE-20261025 U1fix P2] */; key: string};
 /** One activation of an identity. A→B→A creates a NEW lease; a retired lease never becomes current again. */
 export interface ScopeLease {
   readonly key: string;
