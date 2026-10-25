@@ -1159,3 +1159,44 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 ### 其他
 - 5472 端口 pid 3521797：`node …/wt-dui/frontend/node_modules/.bin/vite --host 127.0.0.1 --port 5472 --strictPort`，cwd /workspace/hr/wt-dui/frontend，14:58:40 启动，父进程是 pid 53（sand-exit-watch 守护，即原父 shell 已退出被收养）。环境变量 CURSOR_CONVERSATION_ID=sand-subagent-ef853e69-…，是某个子任务启动的；npm 版 node 22.14。Vera 的复审从不使用 5472 端口、也不在 wt-dui 起 vite，按端口约定判断不是 Vera 的复审进程，更像 Hermia 侧（wt-dui 是她的工作树）的子任务遗留。未杀。
 - 未提交；未提交 frontend/package-lock.json；未碰 main。
+
+---
+
+## [VERA-FE] 独立复核 @ 620963bf（work/hermia-default-ui-i18n-20261025，复核 8b8779ac + 620963bf）
+
+结论：**MUST-FIX**（1 项 P1：真实后端 str(exc) 仍在普通模式直出）。inert / H6 / 门禁 / 变异覆盖均 PASS。
+证据目录：`/workspace/hr/vera-compare/duim-620963bf/`
+
+### 1. 真实浏览器下载失败（ExportPanel / AssetLibrary / AssetInspector，普通 + 专业）
+- 方法：Playwright + mockBackend，route 注入；上轮 15 种注入 + 按 `app/main.py:99 unified_http_error` 复刻的真实信封（`{detail,code,message,details,request_id}`）。默认 UI 资产模块是 AssetsRebuild（无下载按钮），AssetLibraryPanel / AssetInspector 不可达，故经 vite deps 在 live 页内挂载真实组件（见 dl-lib.mjs）。结果：download-ui.json、download-ui-lib.json、shots/。
+- 上轮 15 种注入 + forbidDetail：ExportPanel、AssetLibrary 普通模式全部只显友好文案 ✅；专业模式 technical 可见且 ≤500 ✅；合法文案保留 ✅。
+- **P1 泄露**：`INVALID_ASSET_REQUEST`（asset_lifecycle_api:42，ValueError/TypeError → str(exc)）与 `INVALID_CAPABILITY_REQUEST`（api.py:603，KeyError → `'SECRET-R'`）普通模式直出原文，如 `unsupported operand type(s) for +: 'int' and 'SECRET-Q'`。
+- AssetInspector：始终固定文案「资产下载失败…」，专业模式也无 technical（P2，无泄露，默认 UI 不可达）。
+
+### 2. 设计裁定：枚举规则 + 200 字上限 **不成立**
+- app/ 扫描：带 str(exc) 且不在 RAW_MESSAGE_CODES 的 code：WORKBENCH_INVALID、PLANNING_INVALID、INVALID_ASSET_REQUEST、ASSET_IDEMPOTENCY_CONFLICT、INVALID_CAPABILITY_REQUEST、CREATION_RECORD_NOT_AVAILABLE（含 FileNotFoundError）、IMPORT_AI_REVIEW_INVALID、SOURCE_PRIVACY_REVIEW_REQUIRED、EXPERIMENTAL_SOURCE_STALE，以及动态 exc.code（AudiobookError voice_direction_api:42、DocumentProjectionError api.py:549/1265）。`{code, detail:str(exc)}` 形式（FORBIDDEN、AGENT_JOB_*）由 echo 规则拦住 ✅。
+- 短绕过（<200 字，bypass-probe.txt）普通模式**全部可见**：KeyError `'title'`、TypeError 文案、`__init__() got an unexpected keyword argument`、`too many values to unpack`、`data/x`、`uploads/abc`、`'secrets.toml'`、`no such table/column`、`database is locked`、pg foreign key、`10.0.3.7:5432`、`http://127.0.0.1:11434`、`OPENAI_API_KEY=sk-…`、`$HOME`、`"novel_42.sqlite"`、`/etc missing`、`/secret.db`、`..\..\secret.db`、`math domain error`、带 token 的 dict repr。仅 json `line 1 column` 被拦。
+- 误杀：`比例需在 1/2.5 之间`、`Terror theme…`、`请选择 JSON/YAML.zip 文件`、`Each line 2…` 被当原文丢弃（P2）。
+- VERSION_CONFLICT / PLANNING_VERSION_CONFLICT / 普通英文文案保留 ✅。另：后端 VERSION_CONFLICT 不带 message（只有 current），本就走友好文案，"纯白名单会误杀 VERSION_CONFLICT" 的论据不成立。
+- 要求（二选一）：(a) 把上述全部 str(exc) code 纳入 RAW_MESSAGE_CODES，并加契约测试扫描 app/ 中 `str(exc)`/`detail=str(` 的 code 断言全部在集合中；(b) 反转为白名单：仅已知携带字面文案的 code 显示 server message。同时修复上述误杀。
+
+### 3. 变异（mutations.log，13 个测试文件 240 用例）
+- 全部 CAUGHT：W7（两处截断）、W8a/b/c、N1–N9、R1–R8（逐条删规则 + relPath 分支）、L1/L2/L3（长度上限去除、+1、2000）、C1/C3、E1、D1（downloadCall 回退）、D2（call 不净化）、I1（去 inert）、I2（inert 恒加）、H6。
+- SURVIVED（P3）：C2（只认顶层 code，忽略 detail.code）、E2（echo 条件去掉 `dict.message!==raw.message`）。
+- apiErrorSanitizer.test.ts：27 处 expect 经 it.each 展开为 120 用例，变异证实确有断言力 ✅。
+
+### 4. axe / inert（axe-inert.json，1024×768 与 1366×900，普通/专业）
+- aria-hidden-focus 消失 ✅；剩余仅 heading-order / landmark-unique（moderate，既有）。
+- inert 只在隐藏时存在（aria-hidden=true ⇔ inert=true）；可见时 inert=false、可聚焦、Tab 能进入（27/33 次）；隐藏时 Tab 0 次进入 ✅。来回切换状态正确；React 18.3.1 渲染 `inert=""` 有效且无 warning。
+- 头部抽查：无横向滚动、无 kbd 重叠；1024 的 ov 项为 sr-only 裁剪元素，符合预期。
+
+### 5. 全量门禁（Node 22.14，adjusted = raw − ISI + 8，基线 298 / adj 297）
+- run1：raw 295，ISI 10，adj 293；新增非 ISI 失败 0
+- run2：raw 293，ISI 8，adj 293；新增 0
+- run3：raw 294，ISI 8，adj 294；新增 1，为 TaskCenter receiptCompanion（已知 flaky）
+- (a) 三次取最好 293 ≤ 297 **PASS**；(b) 允许重跑 1 次，run1 即 293 ≤ 297 **PASS**
+- task9-full.json：raw 293，ISI 8，adj 293，新增非 ISI 失败 0。
+- LocalAiBrowserJourneyContracts ENOENT 为基线既有。
+
+### 6. 其他
+- 5472 无监听 ✅。未触碰 4299 / 8000；vite 仅用 4499，已按 PID 关闭；临时变异 worktree 已移除。
