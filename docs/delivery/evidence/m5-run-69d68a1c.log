@@ -1,0 +1,46 @@
+# M5 run 2026-10-25T02:12:26.136Z HEAD=69d68a1c
+1366x768 loop PASS :: locate msg="它记录的来源节点已不在当前画布（可能被删除，或画布是另一台设备的本机草稿）。没有创建替代节点。"; exec canvas visible=true; returned to tasks=true :: blocked=[] pageerrors=0
+1366x768 param PASS :: MOCK preview ok → confirm step shown and cancelled; no create/execute sent; confirm="将按这份预览创建一个任务（不会立即执行）。 影响对象：所选生产任务。修改的参数：无。成本：未知。 确认 取消" :: blocked=[] pageerrors=0
+1366x768 adopt PASS :: mock canvas v1→v2; msg="已采用到作品原位置。旧版本仍保留在作品历史里。" :: blocked=[] pageerrors=0
+1366x768 restore PASS :: mock canvas v2→v3 (restored v1 content); msg="已恢复为新的第 3 版，旧版本都还在。没有重跑任何生成。" :: blocked=[] pageerrors=0
+1366x768 coldReopen PASS :: split=左右分屏 before=true after reopen=true; session-only label count=0 :: blocked=[] pageerrors=0
+1366x768 audioFilter PASS :: audio filter: only 音频 rows, gap text shown, 0 extra requests :: blocked=[] pageerrors=0
+1366x768 audioPreview PASS :: 试听候选 click → 1 GET candidate (MOCK wav), player=1 paused(no autoplay)=true; msg=""; no non-GET :: blocked=[] pageerrors=0
+1366x768 identity PASS :: views mode=persistent; bootstrap GETs=1; raw actor id on screen=false :: blocked=[] pageerrors=0
+1366x768 worksetPan PASS :: msg="已保存视图「M5视图」。"; after pan+reload workset listed=1; stored worksets=1; stored viewport present=true :: blocked=[] pageerrors=0
+1366x768 sessionSave PASS :: mode="仅本次会话：当前没有可用的项目身份，视图只在本次会话有效，不会写入本机。"; msg="已保存视图「临时」（仅本次会话有效，关闭页面后不保留）。" :: blocked=[] pageerrors=0
+1366x768 aba PASS :: B="刷新 全部图片音频 任务列表未接通：当前没有真实登录身份或项目范围，不会显示示例任务。"; A again has tasks; task reads 1→2 :: blocked=[] pageerrors=0
+1366x768 corruption PASS :: corrupted 6 real keys (poemseed.rebuild.canvas.video.audio-wav-project, poemseed.workspace.layout.v1, poemseed.workspace.viewprefs.v1, poemseed.workspace.layout.v3, poemseed.workspace.viewprefs.v1, poemseed.rebuild.canvas.image.audio-wav-project) → reload renders defaults, no page error :: blocked=[] pageerrors=0
+1366x768 revoked PASS :: state=revoked; text="刷新 全部图片音频 当前账号已无权查看这个项目的任务。已清空列表；重新登录或切换到有权限的项目后再刷新。" :: blocked=[] pageerrors=0
+1366x768 unknown PASS :: state=error; text="刷新 全部图片音频 任务列表读取失败。 检查网络后点「刷新」重试；不会自动重试。" :: blocked=[] pageerrors=0
+1366x768 projectGone PASS :: own keys for vanished project after list refresh: [] :: blocked=[] pageerrors=0
+1440x900 loop PASS :: locate msg="它记录的来源节点已不在当前画布（可能被删除，或画布是另一台设备的本机草稿）。没有创建替代节点。"; exec canvas visible=true; returned to tasks=true :: blocked=[] pageerrors=0
+1440x900 param PASS :: MOCK preview ok → confirm step shown and cancelled; no create/execute sent; confirm="将按这份预览创建一个任务（不会立即执行）。 影响对象：所选生产任务。修改的参数：无。成本：未知。 确认 取消" :: blocked=[] pageerrors=0
+1440x900 adopt PASS :: mock canvas v1→v2; msg="已采用到作品原位置。旧版本仍保留在作品历史里。" :: blocked=[] pageerrors=0
+1440x900 restore PASS :: mock canvas v2→v3 (restored v1 content); msg="已恢复为新的第 3 版，旧版本都还在。没有重跑任何生成。" :: blocked=[] pageerrors=0
+1440x900 coldReopen PASS :: split=左右分屏 before=true after reopen=true; session-only label count=0 :: blocked=[] pageerrors=0
+1440x900 audioFilter PASS :: audio filter: only 音频 rows, gap text shown, 0 extra requests :: blocked=[] pageerrors=0
+1440x900 audioPreview PASS :: 试听候选 click → 1 GET candidate (MOCK wav), player=1 paused(no autoplay)=true; msg=""; no non-GET :: blocked=[] pageerrors=0
+1440x900 identity PASS :: views mode=persistent; bootstrap GETs=1; raw actor id on screen=false :: blocked=[] pageerrors=0
+1440x900 worksetPan PASS :: msg="已保存视图「M5视图」。"; after pan+reload workset listed=1; stored worksets=1; stored viewport present=true :: blocked=[] pageerrors=0
+1440x900 sessionSave PASS :: mode="仅本次会话：当前没有可用的项目身份，视图只在本次会话有效，不会写入本机。"; msg="已保存视图「临时」（仅本次会话有效，关闭页面后不保留）。" :: blocked=[] pageerrors=0
+1440x900 aba PASS :: B="刷新 全部图片音频 任务列表未接通：当前没有真实登录身份或项目范围，不会显示示例任务。"; A again has tasks; task reads 1→2 :: blocked=[] pageerrors=0
+1440x900 corruption PASS :: corrupted 6 real keys (poemseed.rebuild.canvas.video.audio-wav-project, poemseed.workspace.layout.v1, poemseed.workspace.viewprefs.v1, poemseed.workspace.layout.v3, poemseed.workspace.viewprefs.v1, poemseed.rebuild.canvas.image.audio-wav-project) → reload renders defaults, no page error :: blocked=[] pageerrors=0
+1440x900 revoked PASS :: state=revoked; text="刷新 全部图片音频 当前账号已无权查看这个项目的任务。已清空列表；重新登录或切换到有权限的项目后再刷新。" :: blocked=[] pageerrors=0
+1440x900 unknown PASS :: state=error; text="刷新 全部图片音频 任务列表读取失败。 检查网络后点「刷新」重试；不会自动重试。" :: blocked=[] pageerrors=0
+1440x900 projectGone PASS :: own keys for vanished project after list refresh: [] :: blocked=[] pageerrors=0
+1920x1080 loop PASS :: locate msg="它记录的来源节点已不在当前画布（可能被删除，或画布是另一台设备的本机草稿）。没有创建替代节点。"; exec canvas visible=true; returned to tasks=true :: blocked=[] pageerrors=0
+1920x1080 param PASS :: MOCK preview ok → confirm step shown and cancelled; no create/execute sent; confirm="将按这份预览创建一个任务（不会立即执行）。 影响对象：所选生产任务。修改的参数：无。成本：未知。 确认 取消" :: blocked=[] pageerrors=0
+1920x1080 adopt PASS :: mock canvas v1→v2; msg="已采用到作品原位置。旧版本仍保留在作品历史里。" :: blocked=[] pageerrors=0
+1920x1080 restore PASS :: mock canvas v2→v3 (restored v1 content); msg="已恢复为新的第 3 版，旧版本都还在。没有重跑任何生成。" :: blocked=[] pageerrors=0
+1920x1080 coldReopen PASS :: split=左右分屏 before=true after reopen=true; session-only label count=0 :: blocked=[] pageerrors=0
+1920x1080 audioFilter PASS :: audio filter: only 音频 rows, gap text shown, 0 extra requests :: blocked=[] pageerrors=0
+1920x1080 audioPreview PASS :: 试听候选 click → 1 GET candidate (MOCK wav), player=1 paused(no autoplay)=true; msg=""; no non-GET :: blocked=[] pageerrors=0
+1920x1080 identity PASS :: views mode=persistent; bootstrap GETs=1; raw actor id on screen=false :: blocked=[] pageerrors=0
+1920x1080 worksetPan PASS :: msg="已保存视图「M5视图」。"; after pan+reload workset listed=1; stored worksets=1; stored viewport present=true :: blocked=[] pageerrors=0
+1920x1080 sessionSave PASS :: mode="仅本次会话：当前没有可用的项目身份，视图只在本次会话有效，不会写入本机。"; msg="已保存视图「临时」（仅本次会话有效，关闭页面后不保留）。" :: blocked=[] pageerrors=0
+1920x1080 aba PASS :: B="刷新 全部图片音频 任务列表未接通：当前没有真实登录身份或项目范围，不会显示示例任务。"; A again has tasks; task reads 1→2 :: blocked=[] pageerrors=0
+1920x1080 corruption PASS :: corrupted 6 real keys (poemseed.rebuild.canvas.video.audio-wav-project, poemseed.workspace.layout.v1, poemseed.workspace.viewprefs.v1, poemseed.workspace.layout.v3, poemseed.workspace.viewprefs.v1, poemseed.rebuild.canvas.image.audio-wav-project) → reload renders defaults, no page error :: blocked=[] pageerrors=0
+1920x1080 revoked PASS :: state=revoked; text="刷新 全部图片音频 当前账号已无权查看这个项目的任务。已清空列表；重新登录或切换到有权限的项目后再刷新。" :: blocked=[] pageerrors=0
+1920x1080 unknown PASS :: state=error; text="刷新 全部图片音频 任务列表读取失败。 检查网络后点「刷新」重试；不会自动重试。" :: blocked=[] pageerrors=0
+1920x1080 projectGone PASS :: own keys for vanished project after list refresh: [] :: blocked=[] pageerrors=0

@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ✓ src/workspace/integration/int.bootstrap.test.tsx (3 tests) 291ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  09:46:06
+   Duration  2.04s (transform 838ms, setup 18ms, collect 1.26s, tests 291ms, environment 292ms, prepare 46ms)
+

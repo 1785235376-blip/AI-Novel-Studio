@@ -1,0 +1,52 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ❯ src/workspace/layout/m5storageLabel.test.tsx (2 tests | 2 failed) 89ms
+   × M5 storage label > drops the session-only label once storage becomes available 66ms
+     → expected <span …(2)></span> to be null
+   × M5 storage label > shows the session-only label when storage goes away 23ms
+     → expected null not to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workspace/layout/m5storageLabel.test.tsx > M5 storage label > drops the session-only label once storage becomes available
+AssertionError: expected <span …(2)></span> to be null
+
+- Expected: 
+null
+
++ Received: 
+<span
+  class="uw-toolbar__status"
+  role="status"
+>
+  布局仅在本次会话有效（无本地存储）
+</span>
+
+ ❯ src/workspace/layout/m5storageLabel.test.tsx:15:53
+     13|     expect(screen.queryByText('布局仅在本次会话有效（无本地存储）')).n…
+     14|     r.rerender(<DockLayout specs={SPECS} scope={SCOPE} storage={new Me…
+     15|     expect(screen.queryByText('布局仅在本次会话有效（无本地存储）')).t…
+       |                                                     ^
+     16|   });
+     17|   it('shows the session-only label when storage goes away', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/workspace/layout/m5storageLabel.test.tsx > M5 storage label > shows the session-only label when storage goes away
+AssertionError: expected null not to be null
+ ❯ src/workspace/layout/m5storageLabel.test.tsx:22:57
+     20|     expect(screen.queryByText('布局仅在本次会话有效（无本地存储）')).t…
+     21|     r.rerender(<DockLayout specs={SPECS} scope={{userId: 'local', proj…
+     22|     expect(screen.queryByText('布局仅在本次会话有效（无本地存储）')).n…
+       |                                                         ^
+     23|   });
+     24| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  10:01:04
+   Duration  948ms (transform 165ms, setup 23ms, collect 284ms, tests 89ms, environment 324ms, prepare 62ms)
+
