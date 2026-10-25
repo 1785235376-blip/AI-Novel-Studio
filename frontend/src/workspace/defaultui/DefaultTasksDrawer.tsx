@@ -29,9 +29,9 @@ function DrawerBody({novelId, actor, scope, sessionToken}: DefaultTasksDrawerPro
   const extra = job === null ? null : !u4?.target
     ? <p data-testid="dui-results-gap">这个任务没有记录作品位置，无法在这里采用结果或查看历史。</p>
     : <>
-      <h4 style={{margin: '12px 0 4px'}}>结果（需手动确认采用，不会写入设定）</h4>
+      <p style={{margin: '12px 0 4px', opacity: .8}}>结果（需手动确认采用，不会写入设定）</p>
       {u4.adopt ? <ResultsPanel deps={u4.adopt} target={u4.target} online={navigator.onLine} /> : null}
-      <h4 style={{margin: '12px 0 4px'}}>作品历史（恢复会追加为新版本）</h4>
+      <p style={{margin: '12px 0 4px', opacity: .8}}>作品历史（恢复会追加为新版本）</p>
       {u4.restore && u4.canvasId ? <HistoryPanel deps={u4.restore} canvasId={u4.canvasId} localDraft={false} /> : null}
     </>;
   return <>
@@ -53,10 +53,10 @@ export function DefaultTasksDrawer(props: DefaultTasksDrawerProps) {
     {open ? <div className="task-inspector-overlay" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) close(); }}>
       <section ref={panel} tabIndex={-1} className="task-inspector dui-tasks-drawer" role="dialog" aria-modal="true" aria-labelledby="dui-tasks-title"
         onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } }}>
-        <header style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <h3 id="dui-tasks-title" style={{margin: 0}}>{TITLE}</h3>
           <button type="button" onClick={close}>关闭</button>
-        </header>
+        </div>
         <DrawerBody {...props} />
       </section>
     </div> : null}
