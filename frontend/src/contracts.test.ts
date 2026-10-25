@@ -1,3 +1,4 @@
+import './i18n'; // [HERMIA-FE-20261025 P1-ERR] 友好错误文案由 i18n 注册（应用启动时总会加载）
 import {afterEach,describe,expect,it,vi} from 'vitest';import {api,ApiError,setCollaborationContext} from './api';import {conflicts,drafts} from './drafts';
 afterEach(()=>{vi.unstubAllGlobals();if(typeof localStorage!=='undefined')localStorage.clear();setCollaborationContext({sessionToken:''});drafts.remove('c');conflicts.remove('c')});
 describe('collaboration frontend contracts',()=>{
@@ -8,6 +9,8 @@ describe('collaboration frontend contracts',()=>{
  it.each([
   [403,'application/json',JSON.stringify({detail:{code:'FORBIDDEN',message:'没有权限'}}),'FORBIDDEN','没有权限'],
   [422,'application/json',JSON.stringify({detail:{code:'VALIDATION_ERROR',message:'输入无效'}}),'VALIDATION_ERROR','输入无效'],
-  [500,'text/plain','服务暂时不可用','HTTP_ERROR','服务暂时不可用'],
+  // [HERMIA-FE-20261025 P1-ERR] 规格变更：非 JSON 正文不再作为 message 原样展示，改为按状态码的友好文案；原文移至 problem.raw_text（仅专业模式技术详情），见 apiErrorView.test.ts
+  [500,'text/plain','服务暂时不可用','HTTP_ERROR','服务暂时出错，请稍后重试'],
  ])('parses an error response body once and preserves status/code/message',async(status,contentType,body,code,message)=>{const response=new Response(body,{status,headers:{'content-type':contentType}});const text=vi.spyOn(response,'text');vi.stubGlobal('fetch',vi.fn().mockResolvedValue(response));await expect(api.adminWorkspaces()).rejects.toMatchObject({problem:{status,code,message}} satisfies Partial<ApiError>);expect(text).toHaveBeenCalledTimes(1);expect(response.bodyUsed).toBe(true)});
+ it('keeps a non-JSON error body only as raw_text, never as message ([HERMIA-FE-20261025 P1-ERR])',async()=>{vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response('服务暂时不可用',{status:500,headers:{'content-type':'text/plain'}})));await expect(api.adminWorkspaces()).rejects.toMatchObject({problem:{status:500,code:'HTTP_ERROR',message:'服务暂时出错，请稍后重试',message_source:'fallback',raw_text:'服务暂时不可用'}})});
 });

@@ -5,6 +5,7 @@
 import { useCallback, useSyncExternalStore } from 'react';
 import { zhCN, type MessageKey } from './zh-CN';
 import { en } from './en';
+import { registerApiErrorTranslator } from '../apiErrorMode';
 
 export type Locale = 'zh-CN' | 'en';
 export type { MessageKey };
@@ -75,6 +76,8 @@ export function translate(locale: Locale, key: MessageKey, vars?: Vars): string 
   return zh !== undefined ? interpolate('zh-CN', zh, vars) : '';
 }
 export function t(key: MessageKey, vars?: Vars): string { return translate(current, key, vars); }
+// [HERMIA-FE-20261025 P1-ERR] 为 apiErrorView 注册友好错误文案（仅 err.* 键）
+registerApiErrorTranslator((key) => (key.startsWith('err.') && key in zhCN ? t(key as MessageKey) : ''));
 
 export function useLocale(): Locale {
   return useSyncExternalStore(subscribeLocale, getLocale, getLocale);

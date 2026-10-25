@@ -1,3 +1,4 @@
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 P1-ERR]
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Check, FileSearch, FileUp } from "lucide-react";
 import { aiAnalyzeImportReview, api, apiErrorView, createChapterKnowledgeReview, createNovelKnowledgeReview, type ImportReview, type Novel, type CollaborationContext } from "../api";
@@ -238,5 +239,5 @@ function KnowledgeReviewPanel({review,busy,onAiReview,onToggle,onEdit,onSelectAl
 
 function ImportError({error,fallback}:{error:unknown;fallback:string}){
   const view=apiErrorView(error,fallback);
-  return <div className="novel-import-error" role="alert"><p className="novel-error">{view.message}</p><p className="novel-import-error__meta">{view.code&&<span>代码：<code>{view.code}</code></span>}{view.requestId&&<span>请求 ID：<code>{view.requestId}</code></span>}{view.details&&<span>详情：<code>{view.details}</code></span>}</p></div>;
+  return <div className="novel-import-error" role="alert"><p className="novel-error">{view.message}</p><p className="novel-import-error__meta">{view.code&&<span>代码：<code>{view.code}</code></span>}{view.requestId&&<span>请求 ID：<code>{view.requestId}</code></span>}{view.details&&<span>详情：<code>{view.details}</code></span>}{view.technical&&<span className="api-error-technical">{i18nT('err.technical')}：<code>{view.technical}</code></span>}{/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}</p></div>;
 }

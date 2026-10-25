@@ -30,7 +30,11 @@ export type AdminStoryline={id:string;name:string;description?:string};
 export type AdminBranch={id:string;name:string;storyline_id?:string};
 export type AdminMember={user_id:string;display_name:string;membership_id:string;status:string;roles:any[];permissions:any[]};
 export type PermissionExplanation={principal_id:string;permission:string;domain:string;allowed:boolean;sources:any[]};
-export type ApiProblem={status:number;code:string;message:string;details?:any;request_id?:string};
+export type ApiProblem={status:number;code:string;message:string;details?:any;request_id?:string;
+ /** [HERMIA-FE-20261025 P1-ERR] 'server' = structured message field; 'fallback' = friendly copy (raw body/string detail withheld). */
+ message_source?:'server'|'fallback';
+ /** [HERMIA-FE-20261025 P1-ERR] raw string detail / non-JSON body (truncated); only surfaced as pro-mode technical details. */
+ raw_text?:string};
 export type TextModel={provider_id:string;model_id:string;display_name:string;available:boolean};
 export type ModelCenterModel={id:string;display_name:string;capabilities:string[];runtime_type:string;status:string;verified:boolean;historically_validated:boolean;hardware_profile_details:{id:string;gpu_name:string;profile_kind:string;benchmark:Record<string,unknown>}[]};
 export type ModelCenterRuntime={id:string;runtime_type:string;base_url:string;bind_address?:string;port?:number|null;health_endpoint?:string;management?:'MANAGED'|'EXTERNAL';context_size?:number|null;gpu_layers?:number|null;status:string;instance?:{state:string;process_id?:number|null;process_alive?:boolean;http_reachable?:boolean;loaded_models?:string[];health?:{model_loaded?:boolean;admission?:string;inference?:string;verification?:string};latency_ms?:number|null;safe_error_code?:string|null}|null;discovery:{path_exists:boolean;executable_exists:boolean;version?:string|null;security_warning?:string|null}};
@@ -62,6 +66,7 @@ export type AgentContextPreview={context_contract_version?:string;agent_id?:stri
 
 import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from './localHostSession';
 import {isPackagedDesktopHost} from './packagedHost';
+import {apiErrorText,getApiErrorShellMode} from './apiErrorMode'; // [HERMIA-FE-20261025 P1-ERR]
 let collaboration:CollaborationContext={sessionToken:''};
 export function setCollaborationContext(value:CollaborationContext){if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
 export function getCollaborationContext(){return collaboration}
@@ -82,7 +87,25 @@ export class ApiError extends Error{constructor(public problem:ApiProblem){super
  * ``ApiError.problem`` for diagnostics and tests.
  */
 const SAFE_ERROR_DETAIL_KEYS=new Set(['status','actual_version','expected_version','field','format','operation','retry_of','limit','resource','completed','total']);
-export function apiErrorView(error:unknown,fallback='操作失败'):{message:string;code?:string;requestId?:string;details?:string}{
+// [HERMIA-FE-20261025 P1-ERR] 白名单：只有结构化 message 字段可原样展示；字符串 detail / 非 JSON 正文一律换成按状态码的友好文案，
+// 原文仅在专业模式下作为 technical 返回（截断 500 字）。
+const FRIENDLY_HTTP=new Set([400,401,403,404,408,409,413,422,429,500,502,503,504]);
+const RAW_TEXT_LIMIT=500;
+export {setApiErrorShellMode} from './apiErrorMode';
+export function friendlyHttpMessage(status:number,fallback?:string):string|undefined{
+  return (FRIENDLY_HTTP.has(status)?apiErrorText(`err.http.${status}`)||undefined:undefined)??fallback;
+}
+const structuredMessage=(raw:any):string|undefined=>{
+  const pick=(v:any)=>typeof v==='string'&&v.trim()?v:undefined;
+  if(!raw||typeof raw!=='object')return undefined;
+  const d=raw.detail;
+  return pick(raw.message)??(d&&typeof d==='object'?pick(d.message)??pick(d.detail):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+};
+const rawTextOf=(raw:any,body:string):string|undefined=>{
+  const t=typeof raw?.detail==='string'?raw.detail:typeof raw==='string'?raw:body;
+  return t?t.slice(0,RAW_TEXT_LIMIT):undefined;
+};
+export function apiErrorView(error:unknown,fallback='操作失败'):{message:string;code?:string;requestId?:string;details?:string;technical?:string}{
   if(!(error instanceof ApiError)) return {message:error instanceof Error&&error.message?error.message:fallback};
   const problem=error.problem;
   let details:string|undefined;
@@ -90,7 +113,9 @@ export function apiErrorView(error:unknown,fallback='操作失败'):{message:str
     const safe=Object.fromEntries(Object.entries(problem.details).filter(([key,value])=>SAFE_ERROR_DETAIL_KEYS.has(key)&&(typeof value==='string'||typeof value==='number'||typeof value==='boolean')));
     if(Object.keys(safe).length) details=JSON.stringify(safe);
   }
-  return {message:problem.message||fallback,code:problem.code,requestId:problem.request_id,details};
+  const message=problem.message_source==='fallback'?(friendlyHttpMessage(problem.status,fallback)??fallback):(problem.message||fallback);
+  const technical=getApiErrorShellMode()==='pro'&&problem.raw_text?problem.raw_text.slice(0,RAW_TEXT_LIMIT):undefined;
+  return {message,code:problem.code,requestId:problem.request_id,details,...(technical?{technical}:{})};
 }
 // [HERMIA-FE-20261022 REBUILD-SHELL] exported for rebuild/rebuildApi.ts (same headers/errors as api.*)
 export async function call<T>(url:string,init?:RequestInit,contextOverride?:CollaborationContext):Promise<T>{
@@ -102,7 +127,7 @@ export async function call<T>(url:string,init?:RequestInit,contextOverride?:Coll
  const token=requestToken(context,url);if(token)headers['X-Session-Token']=token;
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  const r=await fetch(url,{...init,headers});
- if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??raw?.error?.message??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
+ if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');const sm=structuredMessage(raw);/* [HERMIA-FE-20261025 P1-ERR] no raw-body / string-detail fallback */throw new ApiError({status:r.status,code,message:sm??friendlyHttpMessage(r.status,`HTTP ${r.status}`)!,message_source:sm?'server':'fallback',raw_text:sm?undefined:rawTextOf(raw,body),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
  return r.status===204?undefined as T:r.json();
 }
 async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit):Promise<Blob>{

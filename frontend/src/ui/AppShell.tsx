@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { IconButton } from "./primitives";
 import { ThemeToggle } from "./ThemeToggle";
+import { setApiErrorShellMode } from "../apiErrorMode"; // [HERMIA-FE-20261025 P1-ERR]
 import { LanguageToggle } from "./LanguageToggle"; // [HERMIA-FE-20261025 I18N P0]
 import { useT, useTz, type MessageKey } from "../i18n";
 const moduleKey = (id: StudioModule) => `module.${id}` as MessageKey;
@@ -560,6 +561,8 @@ export function AppShell({
     if (!document.documentElement.lang) document.documentElement.lang = "zh-CN";
     document.title = moduleTitleText ? `${moduleTitleText} · PoemSeed Studio` : "PoemSeed Studio";
   }, [moduleTitleText]);
+  // [HERMIA-FE-20261025 P1-ERR] 专业模式才在错误里显示技术详情
+  useEffect(() => { setApiErrorShellMode(shellMode); }, [shellMode]);
   useEffect(() => {
     try { localStorage.setItem("studio-inspector-open", inspectorOpen ? "1" : "0"); } catch { /* ignore */ }
   }, [inspectorOpen]);

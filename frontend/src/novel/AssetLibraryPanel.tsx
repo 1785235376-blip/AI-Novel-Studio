@@ -442,6 +442,8 @@ function AssetError({ error, fallback }: { error: unknown; fallback: string }) {
             详情：<code>{view.details}</code>
           </span>
         )}
+        {/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}
+        {view.technical&&<span className="api-error-technical">{i18nT('err.technical')}：<code>{view.technical}</code></span>}
       </p>
     </div>
   );
