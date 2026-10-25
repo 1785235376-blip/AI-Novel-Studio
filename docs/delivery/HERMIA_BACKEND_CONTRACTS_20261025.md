@@ -41,3 +41,19 @@ Local evidence directories: `.runtime/backend-smoke-20261025`, `.runtime/product
 - Timeline version restore is not a generic Audio Asset metadata/binary version archive. Asset `/restore` remains undelete.
 - No real PostgreSQL, Windows Host, external provider/model/GPU, frontend integration or remote CI validation is claimed.
 - `main`, other developers' branches, releases and private history are untouched. Publication must be confirmed by a separate remote HEAD readback; this document alone is not proof of upload.
+
+## Follow-on: bounded TaskCenter projection paging
+
+Fixed starting commit: `90c09981e7d9418c15eca4043338146aa5293549`.
+
+The separate `G-TC-1` endpoint now supports explicit `limit`/`offset` paging of its existing authorized, filtered projection. It reports `observed_total`, not a global `total`, and always marks coverage completeness `NOT_ASSERTED`. Original reader scan windows and permission rules are unchanged. The old unpaged response keeps its exact fields, ordering and 500-item response cap. No frontend or SDK is changed. See [TaskCenter contract](../taskcenter_query_backend.md).
+
+- Original-code red run: 41 failed / 8 passed.
+- Final new TaskCenter cases: 65 passed, also independently rerun.
+- Combined ten-file regression: final 195 passed / 6 failed (31.35 seconds); preceding 193 passed / 6 failed retained. **Neither run is a green suite**.
+- All six failures reproduced with the same node IDs and failure messages in a complete `git archive` of the fixed baseline, isolated working directory and the same virtual environment. Loaded module paths and SHA256 values were checked against baseline Git objects by the independent reviewer. Process-replacement experiments are not the final baseline proof.
+- Independent boundary probes: 73 passed. These are separate from, and overlap with, product tests; do not sum counts into unique coverage.
+
+The six retained baseline failures involve an incomplete project-delete mock, an agent-review actor expectation, and export mocks/readiness expectations. This slice does not change their owners or weaken their assertions. Baseline and candidate logs remain under `.runtime/taskcenter-query-20261025`; independent probes and comparisons remain under `.runtime/taskcenter-independent-20261025`.
+
+This is response paging over bounded observed task projections, not complete history traversal, a global queue index, or a storage performance improvement. Some original owners silently truncate their search window. A final page with `has_more=false` does not prove complete project history. Real PostgreSQL, external providers, Windows, frontend integration and remote CI are not claimed.

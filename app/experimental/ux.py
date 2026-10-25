@@ -19,7 +19,7 @@ from uuid import uuid4
 from typing import Callable, Literal
 
 from fastapi import HTTPException
-from pydantic import Field
+from pydantic import Field, TypeAdapter
 
 from .common import DomainService, StaleSourceError, change_row, new_row
 from .planning import StrictModel, digest
@@ -92,6 +92,28 @@ class ResolveIn(StrictModel):
 
 class TaskCancelIn(StrictModel):
     expected_revision: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
+class TaskPageQuery(StrictModel):
+    """Opt-in paging of the existing bounded projection, never owner history."""
+    limit: int | None = Field(default=None, ge=1, le=100, strict=True)
+    offset: int | None = Field(default=None, ge=0, le=1_000_000, strict=True)
+
+    @classmethod
+    def from_query_params(cls, params):
+        # The route calls this only after the original workspace access check.
+        # Keep the established scalar wire convention: the last value wins,
+        # and integral decimal strings ("1.0") decode as integers.
+        try:
+            return cls(**{name: TypeAdapter(int).validate_python(params[name])
+                          for name in ('limit', 'offset') if name in params})
+        except ValueError:
+            raise ValueError('TASKCENTER_QUERY_INVALID') from None
+
+    @classmethod
+    def openapi_parameters(cls):
+        return [{'name': name, 'in': 'query', 'required': False, 'schema': schema}
+                for name, schema in cls.model_json_schema()['properties'].items()]
 
 
 class DiagnosticIn(StrictModel):
@@ -753,8 +775,13 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             return row.get('scope') == ctx.scope or row.get('branch_id') == ctx.scope.get('branch_id')
         return not row.get('branch_id')
 
-    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None):
+    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None, *, limit=None, offset=None):
         reauthorize()
+        try:
+            page_query = TaskPageQuery(limit=limit, offset=offset)
+        except ValueError:
+            raise ValueError('TASKCENTER_QUERY_INVALID') from None
+        paged = page_query.limit is not None or page_query.offset is not None
         items, unavailable, truncated = [], [], False
         for reader in self.task_readers:
             reauthorize()
@@ -785,8 +812,21 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             except Exception:
                 unavailable.append({'authority': reader.name, 'label': reader.label, 'reason': 'SOURCE_UNAVAILABLE'})
         reauthorize()
-        return {'items': items[:500], 'unavailable': unavailable, 'truncated': truncated or len(items) > 500,
-                'executor': False, 'refresh': 'MANUAL', 'automatic_retries': False}
+        result = {'items': items[:500], 'unavailable': unavailable, 'truncated': truncated or len(items) > 500,
+                  'executor': False, 'refresh': 'MANUAL', 'automatic_retries': False}
+        if paged:
+            limit = page_query.limit if page_query.limit is not None else 50
+            offset = page_query.offset if page_query.offset is not None else 0
+            page = items[offset:offset + limit]
+            has_more = offset + len(page) < len(items)
+            # These counts and offsets describe only this observed projection.
+            # Original owners may silently cap their history, so even a final
+            # page without source hints cannot establish complete coverage.
+            result.update(items=page, observed_total=len(items), limit=limit, offset=offset,
+                          has_more=has_more, next_offset=offset + len(page) if has_more else None,
+                          source_truncated=truncated, truncated=truncated or has_more,
+                          coverage={'scope': 'BOUNDED_AUTHORIZED_PROJECTION', 'completeness': 'NOT_ASSERTED'})
+        return result
 
     def cancel_task(self, ctx, authority, task_id, body, require_flag, reauthorize=lambda: None):
         value = TaskCancelIn.model_validate(body)

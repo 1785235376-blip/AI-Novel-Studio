@@ -1,11 +1,11 @@
 """Server-gated workspace routes. No commands execute from search or diagnosis."""
 import json
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from .common import api_call
 from .planning import StrictModel
 from pydantic import Field
 from typing import Literal
-from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn
+from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn, TaskPageQuery
 from .workspace_interaction import InteractionIn, InteractionVersionIn, InteractionRestoreIn, CommandResolveIn
 
 
@@ -195,11 +195,13 @@ def create_ux_router(service, authorize, require_flag):
             current(origin); current(target)
         return api_call(service.resolve, target, body, reauthorize=checked, require_flag=require_flag)
 
-    @router.get('/tasks')
-    def tasks(nid: str, q: str = Query('', max_length=160), failed_only: bool = False,
+    @router.get('/tasks', openapi_extra={'parameters': TaskPageQuery.openapi_parameters()})
+    def tasks(nid: str, request: Request, q: str = Query('', max_length=160), failed_only: bool = False,
               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx = access(nid, x_session_token, x_branch_id)
-        return api_call(service.tasks, ctx, require_flag, q, failed_only, lambda: current(ctx))
+        page = api_call(TaskPageQuery.from_query_params, request.query_params)
+        return api_call(service.tasks, ctx, require_flag, q, failed_only, lambda: current(ctx),
+                        limit=page.limit, offset=page.offset)
 
     @router.post('/tasks/{authority}/{task_id}/cancel')
     def cancel_task(nid: str, authority: str, task_id: str, body: TaskCancelIn,
