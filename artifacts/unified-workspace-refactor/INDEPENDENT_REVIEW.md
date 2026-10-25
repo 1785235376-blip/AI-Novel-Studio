@@ -1056,3 +1056,51 @@ run1 raw 295 / ISI 10 → 293；run2 294 / 8 → 294；run3 293 / 8 → 293。�
 - P3：TC 和生产两侧，offset ≥ total 时空页合法，非空页拒绝；UI 在列表收缩时保留已显示的行，不报错。
 - U1/purge 回归：u1*/purge* 共 8 个文件、43 个测试，连跑 3 次全部通过。
 - 全量 3 次（Node 22.14）：raw 293/292/293，ISI 8，adjusted 293/292/293，按名称计新增持久失败 0。阈值 297，规则 (a) 和 (b) 都通过。
+
+## Vera 复审 @ 097ce4b3（2026-10-25，未提交）
+
+**结论：MUST-FIX（2 项），其余 PASS。** 证据：/workspace/hr/vera-compare/duim-097ce4b3/
+
+### 全量 ×3（Node 22.14，起跑 load 1.06）
+- run1/2/3 raw 293/294/295，ISI 6/6/6 → adjusted **295/296/297**；两种规则都 ≤297，**PASS**。
+- 和 53bd9f1e 三轮失败的并集对比，新增的只有单轮出现的创作区时序 flaky：run2 有 1 条（ISI.regression），run3 有 2 条（ComicTimelineHandoff / TimelineSelectionDuplicate），每轮不重复，跟本次改动无关。
+
+### MUST-FIX-1：真实后端信封仍会把原文泄露到普通模式
+- 原因：后端 app/main.py:99 的 unified_http_error 遇到字符串 detail 时，会把同一段文本复制进 `message`，同时带上 `code:"HTTP_<n>"`。structuredMessage 会把 `raw.message` 当成结构化文案。
+- 浏览器内对 `/src/api.ts` 实测，普通（basic）模式下：
+  - `{"detail":"Not found: /home/u/SECRET-T4.key","code":"HTTP_404","message":<同上>}` → 界面显示 `Not found: /home/u/SECRET-T4.key`；
+  - 500 的 `KeyError(...) at /srv/app/api.py:547` 也原样显示；
+  - 同时 message_source=server，所以专业模式下也拿不到 technical。
+- 白名单只对 mock 形态生效（无 message 字段的 text/plain、`{"detail":"nf"}`、422 数组、html），这些都已正确显示友好文案。
+- 后端约有 67 处 `HTTPException(4xx, f"...{exc}")`。
+- 建议修法：`typeof raw.detail==='string' && raw.message===raw.detail`（或 code 匹配 `/^HTTP_\d+$/`）时按 fallback 处理；可另加 UNSAFE 内容过滤（路径、Traceback、Error(）。补一条真实信封的测试。
+
+### MUST-FIX-2：1100 宽度头部仍然溢出
+- 1100×800：zh 下「打开设置」right=1113>1100；en 下「EN」被挤出视口。四种组合（zh/en × 普通/专业）头部都有 scrollWidth>clientWidth。
+- 页面本身没有横向滚动，但按钮被裁切，Tab 聚焦到的按钮落在视口外。
+- Hermia 的证据矩阵没有 1100 这一档。1280/1366/1440/1920 以及 DPR 1.25/1.5 全部通过。
+
+### 头部（其余）PASS
+- span/kbd 不相交；clip 档 span 是 position:absolute 1px（不是 display:none）。
+- 可访问名称完整，例如 `搜索功能、章节或命令 Ctrl K`、`Search chapters, commands Ctrl K`。
+- 专业模式「更多」可用 Tab 到达，Enter 能打开（4 项），方向键可移动；普通模式没有折叠项。
+- axe 只有 heading-order、landmark-unique（moderate），与之前一致。
+
+### apiErrorView 调用方（65 个非测试文件）
+- 依赖统计：message 61、status 44、code 21、technical 6、details 4。
+- 没有调用方对 message 做内容匹配；status/code/details 都没变，没有调用方丢失必要信息。409 冲突（promptClient、App.tsx:2683 actual_version）和重试逻辑不受影响。
+- 注意：rebuildApi/useModelCenter 只采用含 CJK 的 message，所以 en 下会退回中文通用句（已有问题）。AssetsRebuild 在 en 下的错误文案也是硬编码中文（已有问题，P3）。
+- P2：technical 只在 3 个面板（AssetLibrary/Export/NovelImport）渲染，其余调用方在专业模式下也看不到技术详情。
+
+### contracts.test「500 text/plain」
+- 期望从 `服务暂时不可用` 改为友好文案，并新增断言 message_source=fallback、raw_text=原文。这是收紧，不是放宽；W1/W3/W6 都能杀死。
+
+### fe-contracts 合并
+- taskcenter 相对 3e72db70 只把字面量换成 i18nT('fc.*')，逻辑不变。
+- zh/en 各 40 个 fc./err. 键，没有缺失，代码用到的 19 个 fc 键在 en 中都存在；taskcenter 测试全绿，F1 变异被杀。
+
+### 变异（基线 267/267 通过）
+- 被杀 11/13：W1–W6、W9、H1–H3、F1。
+- 存活两项：
+  - W7（raw_text 不截断）：缺少截断测试，P3；
+  - W8（AssetLibrary 不渲染 technical）：P2，建议补渲染断言。
