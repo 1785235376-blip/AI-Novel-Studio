@@ -1335,3 +1335,34 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 - P3：补 N8b、S3、S4 的断言。
 
 清理：自起的 vite（4399，PID 33515/33489）已按 PID 停止；临时 worktree vera-duim2-mut 已删除；/tmp/vera-nopy 已删除。未提交、未推送、未碰 main/8000/4299。
+
+---
+
+## [VERA-FE] 复审 work/hermia-default-uw-port-20261025 @ ca8bdac0（base 73819989）— 2026-10-25
+
+**结论：MUST-FIX**（1 个 P0，2 个 P1）。证据：`/workspace/hr/vera-compare/uwport-ca8bdac0/`（假后端 fakeBackend.mjs:4698，vite:4599；全程未写 8000、未碰 4299）。
+
+### P0
+1. **有真实身份时重开不回到上次章节，还会把记录覆盖成第 1 章。** 已存 ch-003，冷启动后落在 ch-001，lastpos 被改写成 ch-001。原因：章节列表先于 bootstrap actor 到达，此时 `useLastChapter` 的 identity 还是 session，`pickChapter` 回落到首章，store 随后有了 chapterId；actor 到达后 `if (chapterId) return`，再由 rememberChapter 用真实 key 写入 ch-001。延迟实验（reopen-race.json）：bootstrap 晚 2.5s → 回落；chapters 晚 → 正确落在第 3 章；不加延迟 → 回落。单测只覆盖纯函数，没有覆盖这个竞态（变异测试无法杀死）。修复方向：identity 还没确定（actor 未到）时不要 pick，也不要 remember。
+
+### P1
+2. **"仅本次会话"在主界面从不显示。** App.tsx 丢掉了 `useLastChapter` 的返回值，`LAST_POSITION_TEXT` 没有渲染的地方；只有无身份时抽屉内部有会话提示。
+3. **抽屉不能滚动。** `.dui-tasks-drawer` 用 fixed + 居中，没有 max-height，也没有 overflow。1366×768 下读取结果和历史并展开对比后，「恢复这个版本…」跑到视口外点不到（Playwright 提示 outside of viewport）。1920×1080 下可以完成。
+4. **焦点陷阱缺失。** 打开后 Tab 到第 9 下焦点逃到 body，Shift+Tab 同样会逃出。焦点逃出后 Esc 不再关闭（esc.mjs）。不过有 role=dialog + aria-modal，焦点在抽屉内时 Esc 能关闭，关闭后焦点回到「任务与结果」按钮。
+
+### P2
+5. EN 界面下「任务与结果」按钮和整个抽屉仍是中文（硬编码，没有走 i18n）。
+6. axe 只有 moderate 级：heading-order、landmark-unique，没有 serious/critical。
+
+### 通过项
+- **采用（adopt）**：确认前 0 次写入；取消后 0 次写入；双击确认只发出 1 次 PUT，带 expected_version/digest/incarnation/expected_card；作品 v1→v2；Canon/设定 0 次写入，写入设定按钮为 disabled。
+- **恢复（restore）**：取消 0 次写入；确认后只有 1 次 POST …/restore，追加出 v3，历史为 [1,2,3]，旧版本保留。
+- **异常**：409/500（JSON 与纯文本 traceback）/断连/403，在 normal 和 pro 两种模式下，adopt 和 restore 各测一遍，共 20 例：都只写一次，没有自动重发；断连和 500 显示「不确定，请重新读取」（UNKNOWN 语义）；均未泄露原始错误（faults.json）。
+- **U1 老问题**：lastpos key 为 `poemseed.default.lastpos.v1::user::project::instance`，与 prefs 和其他 `poemseed.*` key 不冲突；无身份时不写 storage；200 [] 不清空其他设置；已删除的章节回落到首章；切换用户时隔离；没有伪造的身份。
+- **StrictMode**：dev 浏览器中任务列表能加载；快速开关 12 次再加延迟刷新后，不会卡在「正在读取任务」，也没有 pageerror。
+- **1024/1366/1920 × zh/en × normal/pro**：无横向溢出，没有多种状态同时显示（P0-3 未复现）。
+- **变异测试（8/8 全部被测试杀死）**：去掉 StrictMode 修复、无身份时持久化、复活已删除章节、跳过恢复确认、跳过采用确认、写 Canon、去掉恢复前的新鲜度校验、去掉 Esc。所有变异均已还原，git status 干净。
+- **全量（Node 22.14，三轮，开跑前 load 约 1.8–2.3）**：raw 293/294/293，ISI 8/9/8，adjusted 293/293/293；与基线相比无新增失败；LocalAiBrowserJourneyContracts ENOENT 在基线里已有。规则 (a) 三取最好 ≤297：PASS；规则 (b) 允许重试 1 次 ≤297：PASS。
+
+### 未覆盖
+- 浏览器内切换项目（proj-b）没有实测。只做了代码审查：抽屉的 key 含 novelId，换项目会重挂载；lastpos key 含 project。
