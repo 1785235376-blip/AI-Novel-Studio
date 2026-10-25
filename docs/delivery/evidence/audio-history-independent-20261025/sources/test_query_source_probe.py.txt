@@ -1,0 +1,28 @@
+"""Preserve the original cursor-invalidates-on-source-change assertion with a raw fixture change."""
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tests'))
+import json
+import pytest
+from conftest import restore_global_settings
+from test_studio_asset_query import rig
+from test_studio_asset_query_cursor import first_page, cursor_get, refusal
+from app.repository import atomic_write
+
+def test_actual_raw_kind_change_still_invalidates_original_cursor(rig):
+    rows, token = first_page(rig)
+    with rig.workspace._asset_scope(rig.nid, rig.scope):
+        row = rig.assets.get(rows[-1]['id'])
+        assert row['kind'] == 'image'
+        row['kind'] = 'audio'
+        atomic_write(rig.assets._meta_path(row['id']), json.dumps(row, ensure_ascii=False, indent=2))
+    response = cursor_get(rig, {'limit': 1, 'cursor': token})
+    refusal(rig, response, 409, rows, 'ASSET_QUERY_RESTART_REQUIRED')
+
+def test_existing_metadata_update_does_not_admit_kind_mutation(rig):
+    row = rig.seed('fixed-kind.png')
+    with rig.workspace._asset_scope(rig.nid, rig.scope):
+        before = rig.assets._meta_path(row['id']).read_bytes()
+        with pytest.raises(ValueError, match='unsupported asset metadata fields'):
+            rig.assets.update_metadata(row['id'], {'kind': 'audio'}, expected_version=1)
+        assert rig.assets._meta_path(row['id']).read_bytes() == before

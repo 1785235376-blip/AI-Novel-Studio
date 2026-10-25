@@ -1,0 +1,161 @@
+{
+  "description": "Original artifact hashes are retained for audit; published copies differ only by documented machine-path substitutions. Synthetic data is not redacted. No runtime data directories were copied.",
+  "artifacts": [
+    {
+      "file": "logs/baseline-query-3.log",
+      "source_sha256": "0f5b7f0cc55aee1182bbb141ff5a721c4205c23f1e2399c74d11ef00b3307dfa",
+      "published_sha256": "642be2fef9fb45ba9575aa12f8d5903a3706b08fecd73b52eeacfdc56025a48e",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/baseline-retained-control.log",
+      "source_sha256": "f0583471511f21ebc9478758318f5f9890072dfb9230a86bc63f968a0028a0bb",
+      "published_sha256": "7a8f66526d77519ceee19340f13fc8a2d5e1510e0f520852f6fa71517adebf70",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/chain-orphan-probe.log",
+      "source_sha256": "4caa5a9d5b86f580113a8b6dc4a138a227afc62fb8b8ce4f063d8edb28881c05",
+      "published_sha256": "43ae5c0721b0e518364ec8202dc44e3ddc548abe7e7e2be68867d18388a646c4",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/initial-60.log",
+      "source_sha256": "d56061677a5efb672224d6e6fd1c2f2394cfa3f38d673dadcd37aea1e210654b",
+      "published_sha256": "98a0465697c61bf92bd17921a365c7c1083dfc4a4c4294e9e7ae6bccb6de8050",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/owner-extra-corrected.log",
+      "source_sha256": "aaac46b2c60a9b7e8e1f89372e29e4bfd3f21e6746a5ecddb989124ed115c966",
+      "published_sha256": "c76c7a6475374dfb9f2fc67669897f903ad49c1313aafdf0b778cf96d8e0d864",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/owner-extra.log",
+      "source_sha256": "41076efa51538ddbf3e54c4fe0aacd0f2fbe5fb1055128e37b3c492c7a533608",
+      "published_sha256": "8302d9c76b013c6135e674e3f0c5a6f11f0f138d9c59aa4e7e35499e4e1d55fe",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/query-all.log",
+      "source_sha256": "de88bec41dae821fd5631557e2db70f8edd776f5ce0c33597ffbd973ccea1dce",
+      "published_sha256": "f5729ee8a1909c6c1fdd3143a1983664a8b914c295454f8d5dcf991f37749755",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/query-source-probe.log",
+      "source_sha256": "2c2f852ec6be8367040cfed7b9c36d55a14e0e7350e6d84649a9ca76acaa7ab8",
+      "published_sha256": "37cb4201a212f57599cffbdd4f6bbcfaf57626918ab4b916cb7142d676c64f1e",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/retained-accounting-probe.log",
+      "source_sha256": "58deb01fd98344b44d80bfed1791247b9ea091b0fb7087da9a445c4dd4571e2e",
+      "published_sha256": "d5753950a2efd8abdf2e29ccbe93c41960b8938d145dadc9023722c0ad3dc74f",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "results/diff-vs-main-4fd.patch",
+      "source_sha256": "27eab2258cc4cc2ea5473ff92d300eb1ed3186aa0f164a46e6fea9e0a53f5db3",
+      "published_sha256": "27eab2258cc4cc2ea5473ff92d300eb1ed3186aa0f164a46e6fea9e0a53f5db3",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/review_launch.py.txt",
+      "source_sha256": "00d84f8e971fd4a2d9b16a72f7aa60bb75ef47ab10f82e09c0a11caf7565e062",
+      "published_sha256": "00d84f8e971fd4a2d9b16a72f7aa60bb75ef47ab10f82e09c0a11caf7565e062",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/run.sh.txt",
+      "source_sha256": "40abf9d9e812ae0bd0e0aaae369c85169bc03aa9834ceeb3e92f4e1f63a4ccd3",
+      "published_sha256": "75f0228c02339aed91d3e037913682e6dff1b8f12e0e0d5e9c2477ad6561da19",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "sources/test_owner_independent.py.txt",
+      "source_sha256": "facd45095e7c1f2174d2e6a3ec344f019ff84e31a771e766c5aa25ff1c0c2574",
+      "published_sha256": "facd45095e7c1f2174d2e6a3ec344f019ff84e31a771e766c5aa25ff1c0c2574",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/test_query_source_probe.py.txt",
+      "source_sha256": "25b02c0a30f05fb39ff27a9ac2a46c0a263ee7ef43e2fa5eafb396ac6b7ba225",
+      "published_sha256": "25b02c0a30f05fb39ff27a9ac2a46c0a263ee7ef43e2fa5eafb396ac6b7ba225",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/test_retained_accounting_probe.py.txt",
+      "source_sha256": "6df16994e235599386eb144da3b6926ca1e0163e3019a5f21fce55986a1e0b45",
+      "published_sha256": "6df16994e235599386eb144da3b6926ca1e0163e3019a5f21fce55986a1e0b45",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/test_owner_independent_initial.py.txt",
+      "source_sha256": "c0de9ff523aae9f62289890db03d5d4bab9fb5ce2cd58ed24803c614cf0b0e9c",
+      "published_sha256": "c0de9ff523aae9f62289890db03d5d4bab9fb5ce2cd58ed24803c614cf0b0e9c",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/review_baseline_launch.py.txt",
+      "source_sha256": "d89dff12af627d2e0b3bcd80093dffd8f7abf1e7b9e53d8f5d47c379668c6105",
+      "published_sha256": "d89dff12af627d2e0b3bcd80093dffd8f7abf1e7b9e53d8f5d47c379668c6105",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/test_review_retained_baseline.py.txt",
+      "source_sha256": "323a24d5f270165f46721da475419914b92426276d0f6b3cc951640814a10a16",
+      "published_sha256": "323a24d5f270165f46721da475419914b92426276d0f6b3cc951640814a10a16",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/test_promotion_probe.py.txt",
+      "source_sha256": "12874a5098899d42b10b7599446951176e363b5a38fcb23eba5a430299ee1f7b",
+      "published_sha256": "12874a5098899d42b10b7599446951176e363b5a38fcb23eba5a430299ee1f7b",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "sources/promotion-recorded-run.sh.txt",
+      "source_sha256": "03ea37c29d5419a76f282e6c37d94a09d467f8e2fd92d03db4b0c2ede9ccd6d8",
+      "published_sha256": "419bd872c5242029f24a8b586bc1f686dca160fa83e17c28ff6e9fe4dd2f0621",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "results/promotion-report.json",
+      "source_sha256": "ad29ce910a7565a7c248ef9bfe69b63aa65cefb98c5f6fe8034f5e69ab28e0c1",
+      "published_sha256": "ad29ce910a7565a7c248ef9bfe69b63aa65cefb98c5f6fe8034f5e69ab28e0c1",
+      "path_substitution_applied": false
+    },
+    {
+      "file": "logs/promotion-run-1.log",
+      "source_sha256": "71daf12cd762f65edb25aa48ea9df29116153ef1adeacede7a8263e60077b257",
+      "published_sha256": "050ec69c84b2c215431c0a0303d4eced6d09c63862e5439dc6ac9b562c4fc8fb",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/promotion-run-2.log",
+      "source_sha256": "7068ba9235ca2e025c74a89181403486558de0c038374b5dfefdca09ac49103c",
+      "published_sha256": "4792c610b36a58dc88f8b51d692ab3f12add3b800e8d5ac59bd4a84712255024",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/promotion-run-3.log",
+      "source_sha256": "0e2390e2fce90c5020b2cc0a5db28657de9be8cbba33e01829808a518b0a66dc",
+      "published_sha256": "4752e3f8c3d1b0a9387f867adbd35692227c7ade4e5e2dd79a7e16d6984c7b6d",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/promotion-run-4.log",
+      "source_sha256": "9415a29944236ba3678258f5693574f6317709687fa394ba0e9023f990eccb03",
+      "published_sha256": "4f0b6b56da34eda0dcc8e93e48c9c63ec981903e03cfaf8faf21189ba854fca4",
+      "path_substitution_applied": true
+    },
+    {
+      "file": "logs/promotion-run-5.log",
+      "source_sha256": "3391613070cf0531a9d98993f8aaedf905e1fae88ff06fe844866881436967fe",
+      "published_sha256": "715802d95c25e4fa721e2d6871ecf04641c7ef3d326fb3238f0a244e6b6d0d42",
+      "path_substitution_applied": true
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+import base64, json, hashlib, os
+from pathlib import Path
+from types import SimpleNamespace
+from test_studio_asset_query import rig, shared_scope
+from test_studio_canvas_audio_return import production, synthetic_wav, action
+from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+from app.audio_providers import AudioGenerationResult
+
+
+def test_real_production_publish_promote_history(rig, monkeypatch):
+    from app import api, audio_providers
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'narrative_production_v2,asset_lineage_v2,ai_execution_v2,model_broker_v2,author_context_inspector_v2')
+    monkeypatch.setattr(api, 'authorization_service', rig.grants)
+    scope, headers = shared_scope(rig)
+    rig.grants.assign_permission(PermissionAssignment('probe-other-read', 'no-grants', 'domain.read',
+        ModalityDomain.NOVEL, AuthorizationScope(ScopeKind.PROJECT, scope['workspace_id'], rig.nid), 'fixture'))
+    other = {**headers, 'X-Session-Token': 'token-no-grants'}
+    e = SimpleNamespace(service=rig.workspace, root=rig.root)
+    prod = production(e)
+    rig.workspace.activate(rig.nid, scope, 'reader')
+    raw = synthetic_wav()
+    calls = []
+    class Synthetic:
+        endpoint = 'http://127.0.0.1:19999/v1'
+        local = True
+        supports_dispatch_guard = True
+        def generate(self, request):
+            request.dispatch_guard()
+            calls.append('synthetic_generate')
+            return AudioGenerationResult('synthetic-history', 'synthetic-model',
+                'data:audio/wav;base64,' + base64.b64encode(raw).decode())
+    provider = Synthetic()
+    monkeypatch.setattr(audio_providers, 'provider_catalog', lambda: [{'provider_id': 'synthetic-history',
+        'default_model': 'synthetic-model', 'endpoint': provider.endpoint, 'local': True,
+        'enabled': True, 'requires_credential': False, 'capabilities': ['TTS']}])
+    monkeypatch.setattr(audio_providers, 'resolve_provider', lambda *a: ('synthetic-history', 'synthetic-model', provider))
+    original_create = rig.assets.create
+    def observed_create(*args, **kwargs):
+        assert kwargs['owner_actor_id'] == 'reader'
+        origin = kwargs['_initial_studio_result']
+        assert origin['contract'] == 'studio-production-result/1'
+        assert origin['actor'] == 'reader'
+        calls.append({'create_owner': kwargs['owner_actor_id'], 'origin': origin})
+        return original_create(*args, **kwargs)
+    monkeypatch.setattr(rig.assets, 'create', observed_create)
+    original_promote = rig.assets.promote_owned
+    def observed_promote(*args, **kwargs):
+        calls.append({'promote_actor': kwargs['actor_id'], 'expected_version': kwargs['expected_version']})
+        return original_promote(*args, **kwargs)
+    monkeypatch.setattr(rig.assets, 'promote_owned', observed_promote)
+    cmd = {'operation_id': 'm8.audio.speech', 'request_id': 'synthetic-history-request',
+        'provider_id': 'synthetic-history', 'model_id': 'synthetic-model',
+        'prompt': 'synthetic-private-prompt-sentinel', 'parameters': {'voice_id': 'synthetic', 'speech_rate': 1.0},
+        'allow_cloud': False, 'source_snapshots': [], 'license_note': ''}
+    preview = prod.preview(rig.nid, scope, 'reader', cmd, lambda: None)[0]
+    queued = prod.create(rig.nid, scope, 'reader', {'command': cmd,
+        'reviewed_preview_digest': preview['preview_digest']}, lambda: None)
+    finished = prod.execute(rig.nid, scope, 'reader', 'audio', queued['id'], action(queued), lambda: None)
+    assert finished['status'] == 'AWAITING_REVIEW', finished
+    aid = finished['output_candidate']['id']
+    url = f'/api/projects/{rig.nid}/studio/assets/{aid}/history'
+    before = rig.client.get(url, headers=headers)
+    assert before.status_code == 200, before.text
+    private_ids = [v['version_id'] for v in before.json()['items']]
+    assert private_ids
+    responses = []
+    def denied(suffix):
+        response = rig.client.get(url + suffix, headers=other)
+        assert response.status_code == 404, response.text
+        assert response.json()['detail'] == {'code': 'AUDIO_HISTORY_UNAVAILABLE'}, response.text
+        for secret in [aid, queued['id'], cmd['prompt'], *private_ids]:
+            assert secret not in response.text
+        responses.append({'suffix': suffix, 'status': response.status_code, 'body': response.json()})
+    for suffix in ['', *[s for vid in private_ids for s in ['/' + vid, '/' + vid + '/download']]]:
+        denied(suffix)
+    approved = prod.review(rig.nid, scope, 'reader', 'audio', finished['id'], action(finished, True), lambda: None)
+    assert approved['status'] == 'APPROVED', approved
+    owner_after = rig.client.get(url, headers=headers)
+    assert owner_after.status_code == 200, owner_after.text
+    owner_ids = {v['version_id'] for v in owner_after.json()['items']}
+    assert set(private_ids) < owner_ids
+    public = rig.client.get(url, headers=other)
+    assert public.status_code == 200, public.text
+    public_ids = {v['version_id'] for v in public.json()['items']}
+    assert public_ids == owner_ids - set(private_ids), (public.json(), owner_after.json())
+    assert len(public_ids) == 1
+    for vid in public_ids:
+        detail = rig.client.get(url + '/' + vid, headers=other)
+        assert detail.status_code == 200, detail.text
+        download = rig.client.get(url + '/' + vid + '/download', headers=other)
+        assert download.status_code == 200, download.text
+        assert download.content == raw
+        assert detail.json()['version']['sha256'] == hashlib.sha256(raw).hexdigest()
+    for vid in private_ids:
+        assert vid not in public.text
+        denied('/' + vid); denied('/' + vid + '/download')
+    for secret in [queued['id'], cmd['prompt'], 'provider_id', '_studio_result_origin', '_owner_actor_id']:
+        assert secret not in public.text
+    assert sum(c == 'synthetic_generate' for c in calls) == 1
+    assert len([c for c in calls if isinstance(c, dict) and 'promote_actor' in c]) == 1
+    Path(os.environ['PROBE_REPORT']).write_text(json.dumps({'calls': calls, 'private_ids': private_ids,
+        'public_history': public.json(), 'denied_responses': responses,
+        'approved': approved, 'download_sha256': hashlib.sha256(raw).hexdigest()}, indent=2))

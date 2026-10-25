@@ -1,0 +1,9 @@
+#!/bin/bash
+set -uo pipefail
+cd <REVIEW_ROOT>
+R=$PWD/.runtime/promotion-history-review
+N=${1:?run number}
+env PROJECT_ROOT="$PWD" PYTHONPATH="$PWD:$PWD/tests" HOME="$R/home" XDG_DATA_HOME="$R/xdg-data" XDG_CONFIG_HOME="$R/xdg-config" XDG_CACHE_HOME="$R/xdg-cache" XDG_STATE_HOME="$R/xdg-state" XDG_RUNTIME_DIR="$R/xdg-run" LOCALAPPDATA="$R/localapp" NOVEL_DATA_PATH="$R/data" TMPDIR="$R/tmp" STORAGE_BACKEND=file CREDENTIAL_VAULT_BACKEND=memory PROBE_REPORT="$R/report.json" <MAIN_ROOT>/.venv/bin/python -m pytest "$R/test_promotion_probe.py" --basetemp="$R/pytest-tmp-$N" -q -o cache_dir="$R/cache" > "$R/run-$N.log" 2>&1
+code=$?
+cat "$R/run-$N.log"
+exit "$code"
