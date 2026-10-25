@@ -23,6 +23,7 @@ import {
 } from "./api";
 import { useStudio } from "./store";
 import { useLastChapter } from "./workspace/defaultui/useLastChapter";
+import { lastChapterIdentityPending, lastPosStatus } from "./workspace/defaultui/lastPosGate";
 import { DefaultTasksDrawer } from "./workspace/defaultui/DefaultTasksDrawer";
 import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection, readLocalStudioSelection } from "./workspaceSelection";
 import { ChapterEditor, proseDocument } from "./Editor";
@@ -695,7 +696,9 @@ function LegacyApp() {
   // [HERMIA-FE-20261025 UWPORT-S1] reopen returns to the last chapter (real identity only; else 仅本次会话); missing chapter ⇒ first.
   // [UWPORT-P0] Vera reopen race: while the collaboration bootstrap is still deciding the actor, neither pick by memory nor write.
   const bootstrapActorId = bootstrap.data?.actor?.actor_id;
-  const identityPending = bootstrap.isLoading || (!!bootstrapActorId && bootstrapActorId !== s.actor?.id);
+  // [UWPORT-P1-1] a bootstrap that errored while a token/scope exists is still "undetermined": the real actor may come back
+  // on refetch, so session-mode memory must neither pick nor write (Vera recover.json "online").
+  const identityPending = lastChapterIdentityPending({ isLoading: bootstrap.isLoading, isError: bootstrap.isError, bootstrapActorId, actorId: s.actor?.id });
   const lastPositionMode = useLastChapter({ actorId: s.actor?.id, scope: s.scope, novelId: s.novelId, chapterId: s.chapterId, rows: chapters.data, setChapter: s.setChapter, identityPending });
   // BACKPORT CANDIDATE (U02): hydrate before exposing an editable surface, and
   // prefer the current draft even when its rich-text document is absent.
@@ -2153,7 +2156,7 @@ function LegacyApp() {
               {i18nT("status.save", { v: tz(saveDisplayLabel) })} · {i18nT("status.conn", { v: i18nT(scope ? "status.connCloud" : "status.connLocal") })}
               {` · ${i18nT("status.ai", { v: i18nT(taskSummary.total ? (taskSummary.running ? "status.aiRunning" : taskSummary.failed ? "status.aiFailed" : taskSummary.succeeded ? "status.aiDone" : "status.aiQueued") : "status.aiNone") })}`}
               {shellMessage ? ` · ${shellMessage}` : ""}
-              {s.novelId && lastPositionMode === "session" ? <span data-testid="dui-lastpos-session">{` · ${i18nT("status.lastPosSession")}`}</span> : null}
+              {lastPosStatus(s.novelId, lastPositionMode, bootstrap.isError, i18nT)}
               {localTutor.entry}
               {/* [HERMIA-FE-20261025 UWPORT-S2] tasks/results/history drawer (port of the unified loop) */}
               {s.novelId ? <>{" "}<DefaultTasksDrawer key={`${namespace}|${s.novelId}`} novelId={s.novelId} actor={s.actor} scope={s.scope} sessionToken={s.sessionToken} /></> : null}

@@ -45,3 +45,32 @@ describe('DefaultTasksDrawer focus trap + scroll (Vera P1)', () => {
     expect(st.overflowY).toBe('auto');
   });
 });
+
+describe('DefaultTasksDrawer focus recovery (Vera P1-2 / M10)', () => {
+  it('document-level Esc closes when focus is outside the dialog (kills M10)', () => {
+    render(<DefaultTasksDrawer novelId="p1" actor={undefined} scope={undefined} sessionToken="" />);
+    fireEvent.click(screen.getByRole('button', {name: '任务与结果'}));
+    (document.activeElement as HTMLElement | null)?.blur();
+    expect(document.activeElement).toBe(document.body);
+    fireEvent.keyDown(document, {key: 'Escape'});
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('Tab from body (focused element unmounted) re-enters the dialog', () => {
+    render(<DefaultTasksDrawer novelId="p1" actor={undefined} scope={undefined} sessionToken="" />);
+    fireEvent.click(screen.getByRole('button', {name: '任务与结果'}));
+    (document.activeElement as HTMLElement | null)?.blur();
+    fireEvent.keyDown(document, {key: 'Tab'});
+    expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true);
+    expect(document.activeElement).toBe(screen.getByTestId('dui-tasks-home'));
+  });
+  it('when the focused confirm button unmounts, focus moves to the stable drawer title', async () => {
+    render(<DefaultTasksDrawer novelId="p1" actor={undefined} scope={undefined} sessionToken="" />);
+    fireEvent.click(screen.getByRole('button', {name: '任务与结果'}));
+    const dlg = screen.getByRole('dialog');
+    const b = document.createElement('button'); b.textContent = '确认采用'; dlg.appendChild(b); b.focus();
+    expect(document.activeElement).toBe(b);
+    b.remove();
+    await new Promise(r => setTimeout(r, 0));
+    expect(document.activeElement).toBe(screen.getByTestId('dui-tasks-home'));
+  });
+});

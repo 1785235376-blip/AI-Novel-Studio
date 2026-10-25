@@ -60,14 +60,28 @@ export function DefaultTasksDrawer(props: DefaultTasksDrawerProps) {
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLElement>(null);
   useEffect(() => { if (open) panel.current?.focus(); }, [open]);
+  const title = useRef<HTMLHeadingElement>(null);
+  const focusHome = () => { (title.current ?? panel.current)?.focus(); };
   const close = () => { setOpen(false); trigger.current?.focus(); };
   const closeRef = useRef(close); closeRef.current = close;
   // Esc also works if focus somehow left the dialog (e.g. a focused button unmounted).
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !panel.current?.contains(document.activeElement)) closeRef.current(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (panel.current?.contains(document.activeElement)) return;
+      if (e.key === 'Escape') closeRef.current();
+      // [UWPORT-P1-2] focus already fell out (e.g. to body): Tab / Shift+Tab re-enters the trap instead of escaping.
+      else if (e.key === 'Tab' && panel.current) { e.preventDefault(); focusHome(); }
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    // [UWPORT-P1-2] after adopt/restore confirm the focused confirm button unmounts ⇒ focus drops to body.
+    // Move it to the drawer title (stable, always mounted) so the next Tab stays inside.
+    const mo = new MutationObserver(() => {
+      const a = document.activeElement;
+      if (!a || a === document.body || !a.isConnected) focusHome();
+    });
+    if (panel.current) mo.observe(panel.current, {childList: true, subtree: true});
+    return () => { document.removeEventListener('keydown', onKey); mo.disconnect(); };
   }, [open]);
   return <>
     <button ref={trigger} type="button" className="status-bar__action" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>{TITLE}</button>
@@ -76,7 +90,7 @@ export function DefaultTasksDrawer(props: DefaultTasksDrawerProps) {
         style={{maxHeight: 'calc(100vh - 48px)', overflowY: 'auto'}}
         onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else if (e.key === 'Tab' && panel.current) trapTab(e, panel.current); }}>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h3 id="dui-tasks-title" style={{margin: 0}}>{TITLE}</h3>
+          <h3 id="dui-tasks-title" ref={title} tabIndex={-1} data-testid="dui-tasks-home" style={{margin: 0}}>{TITLE}</h3>
           <button type="button" onClick={close}>{tr('dui.close')}</button>
         </div>
         <DrawerBody {...props} />

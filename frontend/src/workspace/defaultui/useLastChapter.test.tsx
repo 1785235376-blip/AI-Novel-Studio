@@ -53,3 +53,48 @@ describe('useLastChapter (default UI wiring)', () => {
     expect(localStorage.length).toBe(0);
   });
 });
+
+describe('useLastChapter owner rule (Vera P1-1 / P2)', () => {
+  const K1 = 'poemseed.default.lastpos.v1::u1::p1::w%2Fs%2Fb', KB = 'poemseed.default.lastpos.v1::uB::p1::w%2Fs%2Fb';
+  const rows3 = [{id: 'c1'}, {id: 'c2'}, {id: 'c3'}];
+  beforeEach(() => { __resetLastPositionSession(); localStorage.clear(); });
+  function harness(init: {actorId?: string; pending?: boolean}) {
+    const st = {actorId: init.actorId, pending: !!init.pending, chapterId: ''};
+    const setChapter = vi.fn((id: string) => { st.chapterId = id; });
+    const r = renderHook(() => useLastChapter({actorId: st.actorId, scope, novelId: 'p1', chapterId: st.chapterId, rows: rows3, setChapter, identityPending: st.pending}));
+    const settle = () => { for (let i = 0; i < 4; i++) r.rerender(); };
+    return {st, setChapter, r, settle};
+  }
+  it('session-mode auto pick (after failed bootstrap) is never written to the real user when identity recovers', () => {
+    localStorage.setItem(K1, JSON.stringify({v: 1, chapterId: 'c3'}));
+    const h = harness({actorId: undefined}); h.settle();
+    expect(h.st.chapterId).toBe('c1');
+    h.st.actorId = 'u1'; h.settle();
+    expect(JSON.parse(localStorage.getItem(K1)!).chapterId).toBe('c3');
+    expect(h.st.chapterId).toBe('c3'); // re-picked from the real user's memory
+  });
+  it('a chapter clicked while identity was pending is not written once identity resolves', () => {
+    localStorage.setItem(K1, JSON.stringify({v: 1, chapterId: 'c3'}));
+    const h = harness({actorId: undefined, pending: true});
+    h.st.chapterId = 'c2'; h.settle();
+    h.st.actorId = 'u1'; h.st.pending = false; h.settle();
+    expect(JSON.parse(localStorage.getItem(K1)!).chapterId).toBe('c3');
+  });
+  it('explicit click under the real identity is written', () => {
+    const h = harness({actorId: 'u1'}); h.settle();
+    h.st.chapterId = 'c2'; h.settle();
+    expect(JSON.parse(localStorage.getItem(K1)!).chapterId).toBe('c2');
+  });
+  it('P2: mid-session A→B resets the chapter; A\'s ch3 is never written to B\'s key', () => {
+    localStorage.setItem(K1, JSON.stringify({v: 1, chapterId: 'c3'}));
+    const h = harness({actorId: 'u1'}); h.settle();
+    expect(h.st.chapterId).toBe('c3');
+    h.st.actorId = 'uB'; h.settle();
+    expect(h.st.chapterId).toBe('c1');
+    expect(JSON.parse(localStorage.getItem(KB) ?? 'null')?.chapterId ?? 'c1').toBe('c1');
+    // also after a user click under A
+    h.st.actorId = 'u1'; h.settle(); h.st.chapterId = 'c2'; h.settle();
+    h.st.actorId = 'uB'; h.settle();
+    expect(JSON.parse(localStorage.getItem(KB) ?? 'null')?.chapterId ?? 'none').not.toBe('c2');
+  });
+});
