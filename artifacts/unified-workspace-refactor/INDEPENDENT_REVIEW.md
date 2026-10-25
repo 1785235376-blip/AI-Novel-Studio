@@ -1200,3 +1200,64 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 
 ### 6. 其他
 - 5472 无监听 ✅。未触碰 4299 / 8000；vite 仅用 4499，已按 PID 关闭；临时变异 worktree 已移除。
+
+## [VERA-FE] 独立复审 @ e471dc76（work/hermia-default-ui-i18n-20261025，复审上轮 620963bf MUST-FIX）
+
+**结论：PASS**（无 P0/P1；下列 P2/P3 建议后续跟进，不阻塞）。证据：`/workspace/hr/vera-compare/duim-e471dc76/`。
+
+### 1. 白名单安全性（LITERAL_MESSAGE_CODES，50 个）
+- 独立扫描 app/ 每个 code 全部出处（wl.txt、wl-occurrences.txt），含跨行 EXPORT_*、PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED、REALTIME_VERSION_OR_SOURCE_CONFLICT、WORKFLOW_* 多行构造：所有 HTTPException 出处 message 均为字面量 ✅。
+- 间接路径：CANON_RECOVERY_REQUIRED 经 FindingReviewConflict 产出 `{code,current}`，message 回落为 code，前端跳过；IMAGE_EDIT_PROVIDER_UNSUPPORTED 的 ValueError 在内部重映射为 IMAGE_PROVIDER_REQUEST_FAILED；SPEECH_PROVIDER_UNAVAILABLE / SPEECH_SYNTHESIS_FAILED 以 AudiobookError 抛出，构造参数是字面量，因此 api.py / voice_direction_api.py 中通用的 `{'code':exc.code,'message':str(exc)}` 处理器当前输出也是字面量。其余动态 `exc.code` 发射点不含白名单 code。白名单与 RAW_MESSAGE_CODES 交集为空。**当前名单安全。**
+- 契约扫描健壮性：在临时 worktree 中做后端变异，结果见 backend-contract-mutations*.log。
+  - 能抓住：同行 str(exc)、msg 变量、跨行 f-string、.format、%、函数构造、repr、删除唯一出处、K1、K4。
+  - 漏网：
+    - B7：字面量后换行再 `+ str(exc)`；
+    - B8：隐式拼接 `("x"\n f"{exc}")`；
+    - B12：`AudiobookError("SPEECH_SYNTHESIS_FAILED", 变量)` 经通用 str(exc) 处理器流出；
+    - K2/K3：双出处 code 中有一处 message 写在 code 前，或用 `dict(code=,message=)` 跨行。
+  - B9/B10 能抓住，只是因为 PLANNING_VERSION_CONFLICT 恰好只有一个出处。B13（新增 str(exc) code 但不进名单）按设计会回落为友好文案，安全。
+  - **P2-1**：regex+500 字符窗口的护栏较脆，尤其对动态 exc.code 路径（B12）无感知。建议改为 Python ast 扫描：解析 HTTPException/JSONResponse 的 dict，以及自定义异常类构造与 str(exc) 处理器的映射。
+- **P3-1**：部分白名单文案是英文（如 "export cancelled"、"expected_version must be a non-negative integer"），会原样展示给中文用户。
+
+### 2. 浏览器注入（vite 4399，Playwright + mockBackend）
+- 覆盖 call() 路径（页内 import /src/api.ts，调用 api.adminWorkspaces + apiErrorView）、ExportPanel、AssetLibraryPanel、AssetInspector（后两者默认 UI 不可达，按上轮方式在 live 页内挂载真实组件），普通 + 专业两种模式。共 81 例/模式：
+  - 上轮 15 例异常，另加：403 detail、白名单 code 带路径、detail.code-only、HTTP_n+detail.code；
+  - 22 条短绕过 × {INVALID_ASSET_REQUEST, 无 code}；
+  - 9 个指定 code 加 AUDIOBOOK_*/DOCUMENT_PROJECTION_* 动态 code 和 HTTP_400；
+  - 4 条合法文案 + PLANNING_VERSION_CONFLICT 文案（顶层 + detail.code 两种形态）+ VERSION_CONFLICT 无 message。
+- 结果（browser-inject.json、browser-inject2.json、shots/）：
+  - 4 个面板 × 普通模式：75 ok + 6 legit-ok，**0 泄露** ✅。
+  - 专业模式：74 例 technical 可见，6 例 legit-ok，VERSION_CONFLICT 显示友好文案；technical 段最长 500（截断生效）✅。
+  - 「比例需在 1/2.5 之间」「Terror theme…」「请选择 JSON/YAML.zip 文件」「Each line 2…」原样显示 ✅。
+- 上轮 P2（AssetInspector 专业模式无 technical）已修复：现为「资产下载失败…｜技术详情：<原文≤500>」，白名单 server 文案原样显示 ✅。
+
+### 3. 测试断言改动与 E2 裁定
+- **E2：等价，裁定可删。** 被删子句 `dict.message!==raw.message` 只在 dict.message===raw.message===dict.detail 时起作用；此时 top 被置为 undefined，再由 pick(dict.message) 取回同一字符串，输出不变。变异 E2r（恢复该子句）存活，与等价结论一致。
+- 4 个测试文件中，「合法文案保留」改为「非白名单 code 不显示」与规格变更一致，不属放水 ✅。但「文案保留」与长度上限现在只由 PLANNING_VERSION_CONFLICT 一个 code 覆盖：
+  - WL1b/WL1c（从名单删除 UNSUPPORTED_PROVIDER / CHAPTER_REQUIRED）存活。
+  - **P3-2**：删除名单项方向是 fail-safe（只丢文案，不泄露），但建议参数化覆盖全部 50 个 code，或至少再加一个 code，并覆盖 detail.code / HTTP_n 形态。
+- **P2-2（覆盖回退）**：N6、N7、N8、C1 上轮能抓住，本轮存活。
+  - N6、N7、C1：在白名单前置后为等价或死代码。
+    - N6/N7：字符串 detail 或 HTTP_n 无 dict 时取不到 code，直接 return。
+    - C1：两名单不相交，第 133 行 RAW 检查为死代码，可删，或改成测试断言两名单不相交。
+  - N8（去掉 message===code 跳过）不等价：CANON_RECOVERY_REQUIRED 在白名单内且后端 message 回落为 code。推断变异后普通模式会显示裸 code「CANON_RECOVERY_REQUIRED」（不是泄露，但属于体验退化），当前无测试守护。建议补一个用例。
+
+### 4. 变异（mutations.log 47 项 + mutations2.log 3 项；前端在临时 worktree 中做，已丢弃）
+- 白名单类：
+  - CAUGHT：WL1（删 PLANNING_VERSION_CONFLICT）、WL2/2b/2c（加 str(exc) code / SOURCE_PRIVACY_REVIEW_REQUIRED / VERSION_CONFLICT）、WL3（忽略名单）、WL3b（无 code 放行）、C2（去 detail.code 回退）、C2b（HTTP_n 不让位）。
+  - SURVIVED：WL1b、WL1c，见 P3-2。
+- 其余 CAUGHT：W7、W8a/b/c、N1–N5、N9、R1、R3–R7、L1–L3、C3、E1、D1、D2、I1、I2、H6、AI1–AI3。
+- relPath 模式本轮已变，R2/R8 按新模式重跑并新增 R9（回退为旧的误杀正则），均 CAUGHT。
+- SURVIVED：N6、N7、N8、C1、E2r，见第 3 节。
+
+### 5. axe / header 抽查（axe.json 即 axe-inert.json、axe.log）
+- 1024/1100/1280/1440 × 普通/专业：仅 moderate 级 heading-order / landmark-unique（与上轮一致），无 serious/critical。
+- inspector 隐藏时 inert + aria-hidden，Tab 进入次数为 0；展开后可聚焦。header 搜索框 span/kbd 无重叠，无水平滚动。
+
+### 6. 全量门禁（Node 22.14，--pool=forks --maxWorkers=3，串行错峰，起跑前查 uptime）
+- 基线 persistent-node22：raw 298，adj 297。
+- full1/2/3：raw 293 / 293 / 293，ISI 8，adj 293 / 293 / 293，新增非 ISI 失败 0。suiteErr 仅 LocalAiBrowserJourneyContracts ENOENT（基线既有）。
+- (a) 三次最好 ≤297 ✅；(b) 允许一次重跑 ≤297 ✅（三次均达标）。
+
+### 7. 其他
+- 未触碰 4299 / 8000（8000 只经 vite 代理被动 GET，且非 GET 均被 abort）。vite 仅用 4399，已按 PID 关闭；临时 worktree vera-duim3-mut 已移除；未提交、未推送。
