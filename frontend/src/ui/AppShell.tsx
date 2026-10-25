@@ -775,6 +775,7 @@ export function AppShell({
         <button
           ref={commandTrigger}
           className="global-search"
+          title={t("search.placeholder")} /* [HERMIA-FE-20261025 VERA-FIX2] 省略时悬停可见全文；可访问名仍取内容 */
           /* [HERMIA-FE-20261025 DUI×I18N P1-7] 不设 aria-label：可访问名直接取可见文本（中英文都满足 label-content-name-mismatch） */
           onClick={openSearch}
         >

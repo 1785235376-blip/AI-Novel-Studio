@@ -3,7 +3,7 @@
 // so removing the visible search text or reverting en overflow.aria.pro fails here; Cmd-K list has no id column.
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
-import {AppShell,ModuleOverflowMenu} from './AppShell';
+import {AppShell,ModuleOverflowMenu,ShellSettingsMenu} from './AppShell';
 import {setLocale} from '../i18n';
 import {STUDIO_MODULES,STUDIO_MODULE_OVERFLOW} from './moduleRegistry';
 const props={module:'NOVEL' as const,onModuleChange:vi.fn(),scope:{workspace:'',project:'',storyline:'',branch:''},actor:'author',sidebar:null,main:'Editor',inspector:null,status:'Saved'};
@@ -37,5 +37,31 @@ describe('Cmd-K list has no internal id column',()=>{
       const txt=opt.textContent||'';
       for(const id of ids) expect(txt.includes(id),`option "${txt}" shows id ${id}`).toBe(false);
     }
+  });
+});
+
+// [HERMIA-FE-20261025 VERA-FIX2] kills C1 (ModuleOverflowMenu) / C2 (ShellSettingsMenu): normal mode must not show internal ids
+const OV_IDS=STUDIO_MODULE_OVERFLOW.map(m=>m.id);
+function openMenu(c:HTMLElement){const trig=c.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement;expect(trig).not.toBeNull();fireEvent.click(trig);const menu=c.querySelector('[role="menu"]') as HTMLElement;expect(menu).not.toBeNull();return menu;}
+describe.each([['ModuleOverflowMenu',ModuleOverflowMenu],['ShellSettingsMenu',ShellSettingsMenu]] as const)('%s: normal mode hides module ids',(_n,Menu)=>{
+  it.each(['NOVEL',OV_IDS[0]] as const)('value=%s basic → no <small>, no id text',v=>{
+    const {container}=render(<Menu value={v as any} onChange={vi.fn()} shellMode="basic"/>);
+    const menu=openMenu(container);
+    expect(menu.querySelectorAll('[role="menuitem"],button').length).toBeGreaterThan(0);
+    expect(menu.querySelectorAll('small').length).toBe(0);
+    for(const id of OV_IDS) expect(menu.textContent!.includes(id),`basic shows ${id}`).toBe(false);
+  });
+  it('pro may show ids (positive control)',()=>{
+    const {container}=render(<Menu value="NOVEL" onChange={vi.fn()} shellMode="pro"/>);
+    const menu=openMenu(container);
+    expect(menu.querySelectorAll('small').length).toBe(OV_IDS.length);
+  });
+});
+describe('global-search title carries the full label (ellipsis fallback)',()=>{
+  it.each([['zh-CN','搜索功能、章节或命令'],['en','Search chapters, commands']] as const)('%s',(loc,label)=>{
+    setLocale(loc);render(<AppShell {...props} shellMode="pro"/>);
+    const btn=screen.getByRole('button',{name:`${label} Ctrl K`});
+    expect(btn.getAttribute('title')).toBe(label);
+    expect(btn.getAttribute('aria-label')).toBeNull();
   });
 });

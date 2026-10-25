@@ -1,7 +1,6 @@
 /* [HERMIA-FE-20261025 I18N P0] EN-only header fit; scoped to html[lang=en] so zh layout is untouched */
 /* [HERMIA-FE-20261025 VERA-FIX MF-2] kbd 不再绝对定位压在文字上：放回 flex 流里，文字省略号给 kbd 让位 */
-html[lang="en"] .app-shell .global-search>span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
-html[lang="en"] .app-shell .global-search kbd{position:static;flex:none;margin-left:auto}
+/* [HERMIA-FE-20261025 VERA-FIX2] span/kbd 防重叠规则已移至 ui/shell-overrides.css（全语言共享） */
 @media (max-width:1439px){
   /* [HERMIA-FE-20261025 VERA-FIX MF-3] 窄屏只在视觉上隐藏文字（不用 display:none），可访问名仍是「Search … Ctrl K」 */
   html[lang="en"] .app-shell .global-search>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}

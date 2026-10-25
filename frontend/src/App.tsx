@@ -1856,7 +1856,7 @@ function LegacyApp() {
         chapters={novelRailChapters}
         selectedId={s.chapterId}
         loading={chapters.isLoading /* [HERMIA-FE-20261025 DUI P0-3] */}
-        error={chapters.error ? String((chapters.error as Error).message || chapters.error) : null}
+        error={chapters.error ? i18nT("ct.retryLater") /* [HERMIA-FE-20261025 VERA-FIX2] 中栏亦不传原始错误 */ : null}
         onSelect={id => s.setChapter(id)}
         onCreate={s.novelId ? () => { void createNextChapter(); } : undefined}
       /> : null}

@@ -13,6 +13,11 @@ vi.mock('./Editor',async original=>({...await original<typeof import('./Editor')
 vi.mock('./ui/AppShell',()=>({AppShell:({main,inspector,sidebar}:any)=><div><aside>{sidebar}</aside><main>{main}</main><aside data-testid="insp">{inspector}</aside></div>}));
 vi.mock('./novel/AiWritingPanel',()=>({AiWritingPanel:()=>null}));
 vi.mock('./novel/SourcePrivacyControl',()=>({SourcePrivacyControl:()=>null}));
+// [HERMIA-FE-20261025 VERA-FIX2] B6 prop-contract：rail/中栏只渲染 t('rail.error')，故需记录传入的 error prop 才能杀死"中栏传原始错误"变异
+const errProps=vi.hoisted(()=>({rail:[] as unknown[],center:[] as unknown[]}));
+vi.mock('./rebuild/novel/NovelStructureRail',async o=>{const m=await o<typeof import('./rebuild/novel/NovelStructureRail')>();return {...m,
+ NovelStructureRail:(p:any)=>{errProps.rail.push(p.error);return <m.NovelStructureRail {...p}/>},
+ NovelChapterColumn:(p:any)=>{errProps.center.push(p.error);return <m.NovelChapterColumn {...p}/>}}});
 vi.mock('./ui/FeatureLauncher',async o=>({...await o<typeof import('./ui/FeatureLauncher')>(),FeatureLauncher:()=>null}));
 const chapter:Chapter={id:'n:1',novel_id:'n',number:1,title:'Synthetic',content:'p',document:{type:'doc',content:[]},word_count:1,version:2,status:'DRAFT'} as Chapter;
 const clients:QueryClient[]=[];
@@ -54,4 +59,17 @@ it.each([['basic',false],['pro',true]] as const)('写作台/版本 badges gated 
  const badges=[...r.container.querySelectorAll('main .nv-badge')].map(b=>b.textContent);
  expect(badges.includes('写作台')).toBe(shown);
  expect(badges.some(b=>/v2|版本\s*2|2/.test(b||'')&&b!=='写作台')).toBe(shown);
+});
+
+// [HERMIA-FE-20261025 VERA-FIX2] kills B6: no component (rail or center column) may even receive the raw error message
+it('chapters 500: rail and center column error props are the localized retry text, never the raw message',async()=>{
+ errProps.rail.length=0;errProps.center.length=0;
+ useStudio.setState({novelId:'n',chapterId:'',textModel:null});
+ vi.spyOn(api,'chapters').mockRejectedValue(new Error('{"detail":"boom"}'));
+ const r=mount(false);
+ await waitFor(()=>expect(r.container.querySelector('[data-desk-state="error"]')).not.toBeNull(),{timeout:5000});
+ const rail=errProps.rail.filter(Boolean),center=errProps.center.filter(Boolean);
+ expect(rail.length).toBeGreaterThan(0);
+ expect(center.length).toBeGreaterThan(0);
+ for(const e of [...rail,...center]){expect(String(e)).not.toContain('boom');expect(String(e)).not.toContain('{"detail"');expect(String(e)).not.toMatch(/Error:/);}
 });
