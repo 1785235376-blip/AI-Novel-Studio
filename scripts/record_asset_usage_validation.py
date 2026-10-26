@@ -38,8 +38,10 @@ def main() -> int:
     if args.require_clean_code and dirty:
         parser.error("source or tests are not frozen: " + dirty)
     source_paths = git("ls-files", "--cached", "--others", "--exclude-standard", "app/creative", "app/experimental/store.py",
+                       "app/main.py", "app/repository.py", "app/repositories/file",
                        "app/services/asset_library_service.py", "scripts/run_studio_backend_tests.py",
                        "scripts/record_asset_usage_validation.py", "scripts/measure_asset_usage_process.py",
+                       "scripts/measure_asset_usage_resource_process.py",
                        "tests/*asset_usage*").splitlines()
     hashes = {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
               for name in source_paths if (root / name).is_file()}
