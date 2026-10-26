@@ -1692,3 +1692,42 @@ zh/en、basic/pro、1024/1366/1920 下只有 moderate 级的 heading-order 和 l
 | 2 | 293 | 8 | 293 | 0 |
 | 3 | 293 | 8 | 293 | 0 |
 (a) 三次取最好 = 293 ✅；(b) 一次重试内 ≤297 ✅。LocalAiBrowserJourneyContracts ENOENT 是 baseline 就有的失败。
+
+---
+
+## [VERA-FE] 独立复核：双画布 × 真实后端联调（work/hermia-dualcanvas-integration-20261026 @ 7c964d66，tree 9448db4c；后端只读 8ea45399）
+
+**结论：MUST-FIX（阻塞，1 项）**。证据目录：`/workspace/hr/vera-compare/dci-7c964d66/`
+
+### 发现（按严重度）
+- **P1 MUST-FIX（阻塞）**：普通模式下 IMAGE/VIDEO 的 `.rcv` 宽度为 0，在 1024/1099/1100/1180/1279/1280/1366/1370/1920 九个宽度上都能复现（`rcv-size.json`、`af.json`、`af-*-normal.png`）。根因是 6024748c 在 RebuildCanvas.tsx 里给 `.vid-canvas-host` 加了一层 flex 包裹，而该容器是 `align-items:center`，子画布没有被撑开。专业模式正常（rcv = 视口宽度）。
+- **P2 待确认**：专业模式 DualStack 的高度从 247/163 变成了 320/320。各宽度下都没有出现横向溢出（offN=0），需要设计确认这是否是预期改动。
+- **P2 后端（转交后端负责人，不阻塞前端）**：image-node-result 返回 403 是后端缺口。commit 阶段会重新判定 `source_read_required`，但准入只给了写权限。反事实验证：设 `local_input=True` 后返回 200。另外，错误重映射把所有 403 合成了同一个 code；反事实中无 token 的请求也返回了 200。
+- **INFO**：应用壳目前没有 en 切换入口，lang 恒为 zh-CN，所以 en 验证不适用，不算回归。
+
+### 已完成项
+- 5de20d4d 修复的 VIDEO 高亮：深色 VIDEO 像素差为 0，7c964d66 上没有回归。
+- 自起后端 + vite 跑通了 preview → create → execute → candidate → review 全链路；回填这一步因上述 403 失败，反事实后端（CF）上回填成功。
+
+### 反例表
+测试方式：真实后端 4698 / 反事实后端 CF 4697，前端经 vite。并发全部用 deferred/route 拦截，没有用 sleep 做同步。
+| 组 | 用例 | 结果 | 反向验证 |
+|---|---|---|---|
+| a 解析严格 | A1–A7（单测） | PASS | M1：把 exact() 改成恒真后 A1、A2 变红；M2/M2b：去掉 source_snapshots 或互斥键检查后 A4 变红 |
+| b 不重复派发 | B1 连点、Enter、双击 → create 1 次、execute 1 次；B2 跨标签页；B3 超时不重发；B4 响应丢失后离线再上线不重发；B5 中途切换模块 | PASS | M3、M3b、M3c（去掉 busy/sentActions、按钮 loading、canAction）仍为绿；M3d 再禁用 consumeImpact 后 **B1 变红，出现 5 次 execute**。说明有纵深防御，一次性 impact token 是最后一道 |
+| c 不误回填 | C0 正对照成功；C1–C8 篡改 asset_id、digest、project_id、job_id、incarnation、scope、版本不前进、未知字段 → 都判为待核对，无泄露，backfill 只有 1 次；C9 候选字节被篡改 → 不进入 review；C10、C11（单测） | PASS | C10：去掉 novel_id 检查后变红；M4/M4b：去掉 client 和 assertSavedImageNode 中的 asset/pin 校验后 **C1 仍为绿**。还有其他层兜底（推测是 record()/checkedCanvasDefinition 的结构与 reference_states 校验），记为纵深防御，单层反向验证未能变红 |
+| d 撤销/过期/迟到/换身份 | D1 401、D2 403、D3 409 → 不进入候选态、不重试；D4 换身份后迟到的 200 不被采用；D5 换身份在派发前就拦截（弱）；D6 review 返回 403 → 不回填 | PASS | — |
+| e 不自动执行 | E1 读取、选择、保存空白、preview、刷新都不产生写请求；E2 入队后刷新或开新标签页不产生写请求 | PASS | — |
+| f 回归 | 主题：axe wcag2a/aa 在深/浅 × 普通/专业 × NOVEL/IMAGE/VIDEO 共 12 组下都是 0 违规；窄宽 1024–1370 无横向溢出；<1100 时“任务”抽屉能打开，Esc 关闭后焦点回到触发按钮；双画布隔离：非 GET 请求 0 次 | PASS，**rcv 宽度 0 除外（P1）** | — |
+
+所有临时改动都在临时 worktree vera-dci-ce 里做，已还原并删除该 worktree。
+
+### 门禁（基线 raw 298 / adjusted 297；adjusted = raw − ISI + 8）
+| 轮次 | raw | ISI | adjusted | 不在基线中的失败 |
+|---|---|---|---|---|
+| 1 | 295 | 10 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 295 | 9 | 294 | 1 个 TaskCenter.receiptCompanion（已知 flaky） |
+(a) 三次取最好 293 ≤ 297 ✅；(b) 一次重试内 ≤ 297 ✅。
+
+阻塞项：P1。
