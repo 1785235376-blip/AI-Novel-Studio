@@ -97,5 +97,3 @@ def measured(e, monkeypatch, callback):
         tracemalloc.stop()
     return result, {**meter.result(), 'owner_reader_calls': readers, 'elapsed_seconds': elapsed, 'python_peak_bytes': peak,
                     'memory_scope': 'tracemalloc Python allocations during request; not RSS'}
-
-

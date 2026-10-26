@@ -86,4 +86,3 @@ def copied_timeline_consumers(e, count=10, references=30):
         records[row['id']] = row
     path.write_text(json.dumps(state), encoding='utf-8')
     return count * references
-
