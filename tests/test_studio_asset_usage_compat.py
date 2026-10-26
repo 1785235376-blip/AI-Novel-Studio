@@ -48,3 +48,14 @@ def test_original_single_graph_node_capacity_is_not_expanded(usage_rig):
     response = e.client.post(e.graph_url, headers=e.headers, json=body)
     assert response.status_code == 422, response.text
     assert snapshot(e.rig.root) == before
+
+
+def test_original_single_timeline_thirty_references(usage_rig):
+    from studio_asset_usage_fixture import copied_timeline_consumers
+    e = usage_rig
+    assert copied_timeline_consumers(e, count=1) == 30
+    before = snapshot(e.rig.root)
+    response = e.client.get(e.usage_base + '/studio-timeline-usages', headers=e.headers)
+    assert response.status_code == 200, response.text
+    assert len(response.json()['items']) == 30
+    assert snapshot(e.rig.root) == before
