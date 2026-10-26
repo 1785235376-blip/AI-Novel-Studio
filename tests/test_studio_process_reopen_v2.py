@@ -81,7 +81,8 @@ def checked(response, status=200):
     return response.json()
 
 
-def test_original_http_assembly_candidate_adoption_survives_process_restart(tmp_path):
+@pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+def test_original_http_assembly_candidate_adoption_survives_process_restart(tmp_path, prefix):
     root = Path(__file__).resolve().parents[1]
     run = tmp_path / "original-process"
     run.mkdir()
@@ -121,10 +122,10 @@ def test_original_http_assembly_candidate_adoption_survives_process_restart(tmp_
         "enabled": True, "requires_credential": False}}), encoding="utf-8")
     try:
         with original_application(root, run, config, "first-process.log") as client:
-            novel = checked(client.post("/api/novels", json={"title": "Synthetic process reopen"}), 201)
+            novel = checked(client.post(prefix + "/novels", json={"title": "Synthetic process reopen"}), 201)
             nid = novel["id"]
-            base = f"/api/projects/{nid}/studio"
-            creative = f"/api/novels/{nid}/experimental/creative"
+            base = f"{prefix}/projects/{nid}/studio"
+            creative = f"{prefix}/novels/{nid}/experimental/creative"
             checked(client.post(base + "/activate"))
             document = checked(client.post(creative + "/documents", json={"mode": "STORYBOARD", "title": "Synthetic board",
                 "source_independent": True, "scenes": [{"id": "scene-one", "sequence": 1, "heading": "Courtyard"}],
@@ -154,7 +155,8 @@ def test_original_http_assembly_candidate_adoption_survives_process_restart(tmp_
             assert bound["shots"][0]["image_asset"] == asset
         with original_application(root, run, config, "reopened-process.log") as client:
             assert checked(client.get(doc_url + "/storyboard")) == bound
-            alias = doc_url.replace("/api/", "/api/v1/", 1)
+            alias_prefix = "/api/v1" if prefix == "/api" else "/api"
+            alias = alias_prefix + doc_url[len(prefix):]
             assert checked(client.get(alias + "/storyboard")) == bound
             assert checked(client.get(job_url))["status"] == "APPROVED"
             assert len(calls) == 1
