@@ -1,24 +1,32 @@
 # Studio frontend/backend alignment, 2026-10-26
 
-Status: **TARGET PROVISIONAL; PARTIAL; no frontend acceptance claim**.
+Status: **ACTUAL TARGET CONFIRMED, SOURCE UNAVAILABLE; target tests NOT_RUN**.
 The user explicitly rejected the initially selected `048c5ebb` frontend:
 "你使用的前端是错误的，bot做了个新的，更友好的". All earlier claims that
 `048c5ebb` was the intended frontend are superseded; original evidence is retained.
-The stronger candidate is the newer default-shell integration `34eb95c7` below,
-supported by actual default entry code and the coordinator's read-only recovery
-of the earlier bot handoff referring to ancestor `f7174b6b`. Exact user target
-confirmation remains pending. This report does not assert browser, PostgreSQL,
-external-model, GPU, or product acceptance.
+The user subsequently confirmed the actual target is
+**`work/hermia-theme-dualcanvas-20261026`**, created from the i18n branch and
+merging default-uw-port. It is still being merged and is **unpublished**.
+Its exact SHA is **NOT_AVAILABLE**; actual-target contract and browser tests are
+**NOT_RUN**. Neither `048c5ebb` nor `34eb95c7` is the final target. Prior
+provisional-target conclusions are superseded. The source-reviewed published
+parents below are references only; their compatibility risks cannot establish
+the behavior of the missing merge result. Backend work is independently tested.
 
 ## Fixed sources and ownership
 
 - Backend baseline: `ffe1937911cff32d4ebd4770b350674627501d3a`.
-- Provisional remote frontend: `origin/work/hermia-default-uw-port-20261025`,
+- Published parent reference: `origin/work/hermia-default-uw-port-20261025`,
   `34eb95c7f247e90168b27f96e33e6feacd80fc8d`, commit time
   `2026-10-26 10:14:02 +0800`; includes `f7174b6b` identity-pending/default
-  drawer work and `2ed4c99c` follow-up fixes. This is a separate branch from
+  drawer work and `2ed4c99c` follow-up fixes. This is a separate parent branch from
   `work/hermia-default-ui-i18n-20261025`, whose `048c5ebb` target was rejected.
-- The candidate ref contains `work/hermia-fe-contracts-20261025` at
+- User-specified published parent code points, verified from Git objects:
+  `5e279fb65073468cd94b59936378af70a94eddb0` (i18n) and
+  `2ed4c99cd2360179c6b9593f457bb3ff1c8d0c69` (default-uw-port).
+  `048c5ebb` and `34eb95c7` are their respective review-only descendants;
+  none supplies the unpublished theme/dual-canvas merge result.
+- The published uw-port ref contains `work/hermia-fe-contracts-20261025` at
   `3e72db70f6270e4f27d21647b229e6cf0d2c1b32` and
   `work/hermia-loop-u4-20261025` at
   `a0a56101a58ebdd210b996402b617d09b13b2d6e`: each pair's `git merge-base`
@@ -26,11 +34,11 @@ external-model, GPU, or product acceptance.
   `73819989d1c7764cd78ffb279afa954d98a37af8`; timestamp alone is insufficient
   to choose the user-facing target. Both candidate refs were fetched read-only;
   no branch checkout/reset or frontend merge occurred.
-- Candidate frontend `studioProductionClient.ts` Git blob:
+- Both user-specified parent code points' `studioProductionClient.ts` Git blob:
   `1d4036653297a0379faabc56ebcfbbf66c392068`; backend baseline's different
   frontend client blob: `660d1b2921cab32a073d2d32281649abdef21671`.
-  The candidate's Production client is byte-identical to the old `048c5ebb`
-  client. Both Storyboard client blobs are also identical:
+  Both remote review descendants retain that Production client blob.
+  All four Storyboard client blobs are also identical:
   `132d234b40cab1950ebb2baae74f28c7ea3e199a`. This preserves the specific wire
   findings, not the superseded target-selection or UI-acceptance claims.
 - Read first: repository `AGENTS.md`,
@@ -46,9 +54,10 @@ external-model, GPU, or product acceptance.
   cursor/collaboration, audio history owner, permissions, model runtime,
   dependencies, or protected checkout was modified.
 
-## Actual provisional frontend callers and wire contracts
+## Published parent callers and wire contracts — PARENT_REFERENCE_ONLY
 
-All frontend paths in this table are under `frontend/src` at `34eb95c7`.
+All frontend paths in this table are under `frontend/src` at the published
+uw-port parent reference `34eb95c7`, not the unpublished actual target.
 `studio` means `/api/projects/{projectId}/studio`.
 
 | Consumer / source | Request and response contract | Backend owner / boundary |
@@ -82,9 +91,9 @@ query returns 422 with `EXPERIMENTAL_INVALID` /
 `STUDIO_PRODUCTION_QUERY_INVALID`, without echoing private input. Stale Canvas
 restore returns 409 and does not overwrite current content.
 
-## P1 provisional-frontend incompatibility: formal image-node provenance
+## Published-parent compatibility risk: formal image-node provenance
 
-At provisional frontend `creative/studioProductionClient.ts:376`, `job()` parses all
+At the published parents' `creative/studioProductionClient.ts:376`, `job()` parses all
 Production list, get and action responses. Its exact command-key allowlist at
 line **426** excludes `canvas_image_node`. The fixed backend legitimately emits
 this field for formal image-node jobs, binding project incarnation, canvas and
@@ -98,7 +107,8 @@ failure is:
 
 ```text
 Historical 048c5ebb probe: rejects original backend command fields: ['canvas_image_node']
-34eb95c7 has the identical validator blob; provisional-target probe uses that SHA.
+5e279fb6 / 2ed4c99c and their review descendants have the identical validator blob.
+Unpublished theme-dualcanvas target: SHA NOT_AVAILABLE, test NOT_RUN.
 ```
 
 This probe is a wire-contract reproduction, not execution of the complete
@@ -154,11 +164,12 @@ GraphFlow `gf_read` was used before exploration. The configured server exposes
 `gf_read/gf_exec/gf_edit/gf_macro`, not the instructed old
 `graphflow_context/plan/index`; no old-name index success is claimed.
 
-### Provisional target correction verification
+### Historical provisional run, now superseded as target evidence
 
-After fetching and inspecting `34eb95c7`, the frozen test contract was relabeled
-with that SHA and `PROVISIONAL_DEFAULT_UW_PORT`. Its former `048c5ebb` SHA is
-explicitly retained as superseded. The inspected Production/Storyboard client
+After fetching and inspecting `34eb95c7`, an intermediate contract revision was
+labeled `PROVISIONAL_DEFAULT_UW_PORT`. The subsequent user confirmation of the
+unpublished branch supersedes that provisional selection as well as `048c5ebb`.
+The inspected Production/Storyboard client
 blobs are identical across these refs, while default App and drawer consumers
 are different as mapped above. No frontend file was modified or merged.
 
@@ -166,7 +177,14 @@ Rerun with a fresh per-invocation settings/data root:
 `10 passed, 1 xfailed, 3 warnings in 8.65s`.
 Evidence: `.runtime/frontend-provisional-34eb95c7.log` and
 `.runtime/frontend-provisional-34eb95c7-results.xml`.
-The expected failure remains a **provisional frontend blocker**, not product
-PASS. This is a backend wire regression run against source-reviewed constraints;
+The expected failure is now retained as **PARENT_REFERENCE_ONLY**, not an
+actual-target failure or product PASS. This is a backend wire regression run against source-reviewed constraints;
 the complete TypeScript parser, default drawer UI and browser were not executed.
-It does not finalize the user's target selection.
+The test module now records the confirmed branch, `FRONTEND_TARGET_SHA=None`,
+`NOT_AVAILABLE_NOT_RUN`, and both published parent SHAs. Its named expected
+failure is `test_published_parent_frontends_admit_formal_image_node_job_command`.
+This metadata/name correction changes no production logic; unchanged tests were
+not rerun merely to relabel evidence. Once the bot publishes the actual branch,
+fetch its exact SHA, inspect its real default UI callers/validators, and run
+actual-target contract and browser acceptance. Do not infer a merged implementation
+from the two parents or treat prior browser work as final-target acceptance.

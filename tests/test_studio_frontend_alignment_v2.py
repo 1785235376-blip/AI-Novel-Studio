@@ -1,9 +1,10 @@
-"""Wire checks against provisional friendlier-default frontend 34eb95c7.
+"""PARENT_REFERENCE_ONLY wire checks; the actual target is unpublished.
 
 Real mounted File/HTTP routes and original owners, with no provider execution.
-User rejected the earlier 048c5ebb target; its evidence remains historical.
-34eb95c7 contains the default tasks drawer and is a provisional target, not
-user-confirmed acceptance. Its Production client blob is identical to 048c5ebb.
+Actual target: work/hermia-theme-dualcanvas-20261026, SHA unavailable, NOT_RUN.
+Published parent code points 5e279fb6 and 2ed4c99c share the inspected Production
+client blob. Remote review descendants 048c5ebb and 34eb95c7 retain that blob.
+These checks cannot establish compatibility of an unpublished merge result.
 This is not browser acceptance. The strict xfail records a real, unresolved
 frontend command-validator incompatibility; it must not be counted as a pass.
 """
@@ -22,8 +23,14 @@ from test_studio_workspace_identity_history_contract import (
 
 
 pytestmark = pytest.mark.file_backend_only
-FRONTEND_SHA = "34eb95c7f247e90168b27f96e33e6feacd80fc8d"
-FRONTEND_TARGET_STATUS = "PROVISIONAL_DEFAULT_UW_PORT"
+FRONTEND_TARGET_BRANCH = "work/hermia-theme-dualcanvas-20261026"
+FRONTEND_TARGET_SHA = None
+FRONTEND_TARGET_STATUS = "NOT_AVAILABLE_NOT_RUN"
+PUBLISHED_PARENT_SHAS = (
+    "5e279fb65073468cd94b59936378af70a94eddb0",
+    "2ed4c99cd2360179c6b9593f457bb3ff1c8d0c69",
+)
+CONTRACT_EVIDENCE_SCOPE = "PARENT_REFERENCE_ONLY"
 SUPERSEDED_FRONTEND_SHA = "048c5ebb3cedb138dcef15bbfc5e9f4be8c92760"
 # studioProductionClient.ts:426, job() strict command-key validator at that SHA.
 # Keep this snapshot distinct from the newer backend branch's frontend sources.
@@ -162,10 +169,10 @@ def test_original_backend_retains_formal_node_provenance(resume_source):
     assert row["status"] == "QUEUED" and row["output_candidate"] is None
 
 
-@pytest.mark.xfail(strict=True, reason="PROVISIONAL_FRONTEND_BLOCKED: 34eb95c7 job command allowlist rejects canvas_image_node provenance")
-def test_selected_frontend_admits_formal_image_node_job_command(resume_source):
+@pytest.mark.xfail(strict=True, reason="PARENT_REFERENCE_ONLY: published parents reject canvas_image_node; unpublished target NOT_RUN")
+def test_published_parent_frontends_admit_formal_image_node_job_command(resume_source):
     e = resume_source
     row = formal_image_job_wire(e)
     assert "canvas_image_node" in row["command"]  # Original authority must remain intact.
     unknown = set(row["command"]) - FRONTEND_COMMAND_KEYS
-    assert not unknown, f"Frontend {FRONTEND_SHA} rejects original backend command fields: {sorted(unknown)}"
+    assert not unknown, f"Published parent references {PUBLISHED_PARENT_SHAS} reject backend fields: {sorted(unknown)}; actual target NOT_RUN"
