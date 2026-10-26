@@ -28,11 +28,11 @@ def usage_rig(audio_history, monkeypatch):
     return e
 
 
-def graph_create(e, count=1, request_id="usage-graph"):
+def graph_create(e, count=1, request_id="usage-graph", alternate=None):
     pin = {"asset_id": e.asset["id"], "version": e.asset["version"],
            "digest": e.asset["sha256"], "kind": "audio"}
     body = {"request_id": request_id, "definition": {"title": "Synthetic direct references",
-        "nodes": [{"id": f"ref-{i:04d}", "definition_id": "asset_reference", "parameters": pin}
+        "nodes": [{"id": f"ref-{i:04d}", "definition_id": "asset_reference", "parameters": (alternate if alternate and i % 2 else pin)}
                   for i in range(count)]}}
     return checked(e.client.post(e.graph_url, headers=e.headers, json=body), 201)
 
@@ -42,13 +42,17 @@ def snapshot(root):
             for p in root.rglob("*") if p.is_file()}
 
 
-def copied_graph_consumers(e, count=30, references=16):
+def copied_graph_consumers(e, count=30, references=16, mixed=False):
     """Saved-schema synthetic scale fixture; >25 exceeds normal create capacity.
 
     Only fixture preparation bulk-copies the original owner record; every query
     still goes through the production reader and validates its original schema.
     """
-    original = graph_create(e, references, 'scale-template')
+    alternate = None
+    if mixed:
+        row = e.rig.seed('unrelated-image.png', 'image')
+        alternate = {'asset_id': row['id'], 'version': row['version'], 'digest': row['sha256'], 'kind': 'image'}
+    original = graph_create(e, references, 'scale-template', alternate)
     path = e.graph.store.path(e.rig.nid, e.rig.scope)
     import json
     state = json.loads(path.read_text(encoding='utf-8'))
@@ -59,4 +63,27 @@ def copied_graph_consumers(e, count=30, references=16):
         row['id'] = f'synthetic-consumer-{i:04d}'
         records[row['id']] = row
     path.write_text(json.dumps(state), encoding='utf-8')
+    return count * (references // 2 if mixed else references)
+
+
+def copied_timeline_consumers(e, count=10, references=30):
+    """Copy a real saved 30-clip Timeline after original HTTP schema validation."""
+    import json
+    original = create_timeline(e)
+    value = deepcopy(original['timeline'])
+    template = value['tracks'][0]['clips'][0]
+    value['tracks'][0]['clips'] = [{**deepcopy(template), 'id': f'clip-{i:04d}'} for i in range(references)]
+    url = e.base + '/production/timelines/' + original['id']
+    saved = checked(e.client.put(url, headers=e.headers, json={
+        'expected_version': original['version'], 'title': original['title'], 'timeline': value}))
+    path = e.production.store.path(e.rig.nid, e.rig.scope)
+    state = json.loads(path.read_text(encoding='utf-8'))
+    records = state['collections']['creative_production_timelines_v2']
+    template = records.pop(saved['id'])
+    for i in range(count):
+        row = deepcopy(template)
+        row['id'] = f'synthetic-timeline-{i:04d}'
+        records[row['id']] = row
+    path.write_text(json.dumps(state), encoding='utf-8')
     return count * references
+

@@ -35,3 +35,16 @@ def test_original_usage_host_denial_precedes_source_lookup(usage_rig):
             assert response.status_code == 401, response.text
     assert snapshot(e.rig.root) == before
 
+
+
+def test_original_single_graph_node_capacity_is_not_expanded(usage_rig):
+    e = usage_rig
+    before = snapshot(e.rig.root)
+    pin = {'asset_id': e.asset['id'], 'version': e.asset['version'],
+           'digest': e.asset['sha256'], 'kind': 'audio'}
+    body = {'request_id': 'oversized-graph', 'definition': {'title': 'Oversized synthetic graph',
+        'nodes': [{'id': f'ref-{i:04d}', 'definition_id': 'asset_reference', 'parameters': pin}
+                  for i in range(201)]}}
+    response = e.client.post(e.graph_url, headers=e.headers, json=body)
+    assert response.status_code == 422, response.text
+    assert snapshot(e.rig.root) == before
