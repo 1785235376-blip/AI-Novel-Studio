@@ -177,6 +177,50 @@ def test_independent_http_hostile_scope_does_not_reach_scope_decoder(usage_rig, 
     assert decoded == [], "scope was decoded before the resource refusal"
 
 
+@pytest.mark.parametrize("change", ["growth", "replacement"])
+def test_independent_mounted_query_refuses_scope_change_inside_a_bounded_read(usage_rig, monkeypatch, change):
+    from app.creative import asset_usage_budget as module, asset_usage_paging
+    e = usage_rig
+    graph_create(e, 3)
+    target = e.graph.store.path(e.rig.nid, e.rig.scope)
+    monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+    fired = []
+    def hook(stage, path):
+        if stage != "after_chunk" or Path(path) != target or fired:
+            return
+        fired.append(stage)
+        if change == "growth":
+            with target.open("ab") as handle:
+                handle.write(b" ")
+        else:
+            replacement = target.with_suffix(".synthetic-replacement")
+            replacement.write_bytes(target.read_bytes())
+            replacement.replace(target)
+    monkeypatch.setattr(module, "_read_checkpoint", hook)
+    refused(query(e, {"limit": 1}, owner="asset"), e)
+    assert fired == ["after_chunk"] and asset_usage_paging._tokens == {}
+
+
+def test_independent_private_consumer_is_neither_a_result_nor_failure_diagnostic(usage_rig):
+    from app.creative.asset_usage_budget import UsageReadBudget
+    e = usage_rig
+    graph_create(e, 3)
+    private = e.graph.create(e.rig.nid, e.rig.scope, "private-other-actor", {
+        "request_id": "independent-private", "definition": {
+            "title": "INVISIBLE PRIVATE CONSUMER", "nodes": []}})
+    response = query(e, {"limit": 200}, owner="asset")
+    body = page(response)
+    assert body["total"] == 3
+    assert private["id"] not in response.text and "INVISIBLE PRIVATE" not in response.text
+    target = e.graph.store.path(e.rig.nid, e.rig.scope)
+    state = json.loads(target.read_text(encoding="utf-8"))
+    state["collections"][e.graph.GRAPHS][private["id"]]["private-fixture-padding"] = "x" * (UsageReadBudget.MAX_JSON_STRING_BYTES + 1)
+    target.write_text(json.dumps(state), encoding="utf-8")
+    response = query(e, {"limit": 200}, owner="asset")
+    refused(response, e)
+    assert private["id"] not in response.text and "INVISIBLE PRIVATE" not in response.text
+
+
 @pytest.mark.parametrize("stage", ["after_source", "after_consumer", "before_return"])
 def test_independent_reauthorization_uses_the_same_request_budget(usage_rig, monkeypatch, stage):
     from app.creative import asset_usage_paging
