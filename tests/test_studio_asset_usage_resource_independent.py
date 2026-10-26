@@ -244,6 +244,35 @@ def test_independent_reauthorization_uses_the_same_request_budget(usage_rig, mon
     assert fired == [stage] and budgets and all(budget is budgets[0] for budget in budgets)
 
 
+def test_independent_actual_http_read_bytes_match_one_fresh_budget_per_request(usage_rig, monkeypatch):
+    from app.creative.asset_usage_budget import UsageReadBudget
+    e = usage_rig
+    graph_create(e, 3)
+    instances = []
+    original_init = UsageReadBudget.__init__
+    def initialized(self):
+        original_init(self)
+        instances.append(self)
+    monkeypatch.setattr(UsageReadBudget, "__init__", initialized)
+    cursor = None
+    for phase in ("first", "continuation", "replay"):
+        params = {"limit": 1}
+        if cursor:
+            params["cursor"] = cursor
+        previous = len(instances)
+        meter = ReadMeter(e.rig.root)
+        with monkeypatch.context() as patch:
+            meter.install(patch)
+            body = page(query(e, params, owner="asset"))
+        assert len(instances) == previous + 1, phase
+        budget = instances[-1]
+        assert budget.read_bytes == meter.read_bytes > 0, {
+            "phase": phase, "budget_bytes": budget.read_bytes, "actual_bytes": meter.read_bytes}
+        if phase == "first":
+            cursor = body["next_cursor"]
+    assert len({id(value) for value in instances}) == 3
+
+
 @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
 def test_independent_initialized_compat_query_preserves_540_positions_in_six_pages(usage_rig, monkeypatch, prefix):
     e = usage_rig
