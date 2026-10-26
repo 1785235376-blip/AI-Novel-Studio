@@ -116,7 +116,10 @@ def test_independent_json_token_allowance_is_cumulative_across_decodes(tmp_path)
     with pytest.raises(UsageBudgetError):
         for _ in range(8):
             budget.read(target)
-    assert budget.json_tokens <= budget.MAX_REQUEST_JSON_TOKENS
+    # One inspected sentinel token detects the excess; no second document is
+    # admitted to the allocating parser, and the counter never resets on retry.
+    assert budget.json_tokens <= budget.MAX_REQUEST_JSON_TOKENS + 1
+    assert budget.json_documents == 1
 
 
 @pytest.mark.parametrize("owner", ["graph", "timeline", "asset"])
