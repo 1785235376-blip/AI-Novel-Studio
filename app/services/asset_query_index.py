@@ -377,7 +377,9 @@ class FileAssetQueryIndex:
             if staging.stat().st_size > self.MAX_INDEX_BYTES:
                 raise AssetQueryBudgetExceeded()
             self._directory_usage(deadline)
-            with staging.open("rb") as handle:
+            # Windows _commit requires a writable descriptor. The database is
+            # already closed; reopen without truncation before durable publish.
+            with staging.open("r+b") as handle:
                 os.fsync(handle.fileno())
             os.replace(staging, self.path)
             self._rebuild_checkpoint("published")
