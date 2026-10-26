@@ -59,3 +59,27 @@ def test_original_single_timeline_thirty_references(usage_rig):
     assert response.status_code == 200, response.text
     assert len(response.json()['items']) == 30
     assert snapshot(e.rig.root) == before
+
+
+def test_original_graph_save_history_and_stale_source_are_preserved(usage_rig):
+    from copy import deepcopy
+    e = usage_rig
+    original = graph_create(e)
+    definition = deepcopy(original['definition'])
+    definition['title'] = 'Saved second graph version'
+    response = e.client.put(e.graph_url + '/' + original['id'], headers=e.headers,
+        json={'expected_version': original['version'], 'definition': definition})
+    assert response.status_code == 200, response.text
+    assert response.json()['version'] == 2
+    assert response.json()['capacity']['history_used'] == 1
+    with e.rig.workspace._asset_scope(e.rig.nid, e.rig.scope):
+        source = e.rig.assets.get(e.asset['id'])
+        source['version'] += 1
+        e.rig.assets._write_meta(source)
+    before = snapshot(e.rig.root)
+    result = e.client.get(e.usage_base + '/studio-graph-usages', headers=e.headers)
+    assert result.status_code == 200, result.text
+    assert result.json()['items'][0]['state'] == 'STALE'
+    assert result.json()['items'][0]['source']['version'] == 1
+    assert result.json()['source']['version'] == 2
+    assert snapshot(e.rig.root) == before
