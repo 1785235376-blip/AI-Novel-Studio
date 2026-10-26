@@ -137,6 +137,23 @@ def test_independent_unselected_timeline_changes_do_not_invalidate_graph_page(us
     assert second["items"][0]["node_id"] != first["items"][0]["node_id"]
 
 
+def test_independent_equal_graph_timeline_ids_do_not_share_cursor_namespace(usage_rig, monkeypatch):
+    from app.experimental import common
+    e = usage_rig
+    graph = graph_create(e, 3)
+    # Deterministic synthetic ID allocation only; both records still pass the
+    # original owner create/validation/transaction paths in distinct collections.
+    with monkeypatch.context() as patch:
+        patch.setattr(common, "new_id", lambda: graph["id"])
+        timeline = create_timeline(e)
+    assert timeline["id"] == graph["id"]
+    first = page(query(e, {"limit": 1}))
+    timeline_page = page(query(e, {"limit": 1}, owner="timeline"))
+    assert timeline_page["items"][0]["owner"] == "STUDIO_TIMELINE"
+    assert timeline_page["items"][0]["id"] == graph["id"]
+    refused(query(e, {"limit": 1, "cursor": first["next_cursor"]}, owner="timeline"), e)
+
+
 def test_independent_other_actor_graph_is_not_a_cursor_or_count_oracle(usage_rig):
     e = usage_rig
     graph_create(e, 3)
