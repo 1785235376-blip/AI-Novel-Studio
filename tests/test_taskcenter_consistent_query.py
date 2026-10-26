@@ -30,7 +30,7 @@ CAPABILITIES = {
     "authority_filter": {"supported": True, "operator": "OR"},
     "cursor": {"supported": True, "mode": "FILE_TWO_EXCLUSIVE_MODES",
         "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED",
-                       "LOCAL_SEMANTIC_IMPORT_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM",
+                       "LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM",
                        "EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES", "NO_MIXED_SOURCES"]},
     "cross_owner_atomic_snapshot": False,
     "full_history_query": False,

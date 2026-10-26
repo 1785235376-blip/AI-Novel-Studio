@@ -1,0 +1,248 @@
+cwd=/workspace/shared/taskcenter-local-export-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_local_export_external.py", "tests/test_taskcenter_local_export_external_cases.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-export-independent-evidence/candidate-1799.xml", "--basetemp=/tmp/tmpfbwlh3ft/candidate-1799/pytest-tmp", "-o", "cache_dir=/tmp/tmpfbwlh3ft/candidate-1799/pytest-cache"]
+..EEEEEEEEEEEEEEEEEE                                                     [100%]
+==================================== ERRORS ====================================
+____ ERROR at setup of test_selected_original_changes_restart[private_aba] _____
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 18
+  @pytest.mark.parametrize('kind',['private_aba','row_recreate','document_recreate','project_recreate'])
+  def test_selected_original_changes_restart(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+____ ERROR at setup of test_selected_original_changes_restart[row_recreate] ____
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 18
+  @pytest.mark.parametrize('kind',['private_aba','row_recreate','document_recreate','project_recreate'])
+  def test_selected_original_changes_restart(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_selected_original_changes_restart[document_recreate] __
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 18
+  @pytest.mark.parametrize('kind',['private_aba','row_recreate','document_recreate','project_recreate'])
+  def test_selected_original_changes_restart(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+__ ERROR at setup of test_selected_original_changes_restart[project_recreate] __
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 18
+  @pytest.mark.parametrize('kind',['private_aba','row_recreate','document_recreate','project_recreate'])
+  def test_selected_original_changes_restart(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_unmatched_and_hidden_nonce_updates_do_not_invalidate[unmatched] _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 34
+  @pytest.mark.parametrize('kind',['unmatched','foreign','wrong_local_actor'])
+  def test_unmatched_and_hidden_nonce_updates_do_not_invalidate(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_unmatched_and_hidden_nonce_updates_do_not_invalidate[foreign] _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 34
+  @pytest.mark.parametrize('kind',['unmatched','foreign','wrong_local_actor'])
+  def test_unmatched_and_hidden_nonce_updates_do_not_invalidate(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_unmatched_and_hidden_nonce_updates_do_not_invalidate[wrong_local_actor] _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 34
+  @pytest.mark.parametrize('kind',['unmatched','foreign','wrong_local_actor'])
+  def test_unmatched_and_hidden_nonce_updates_do_not_invalidate(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+__ ERROR at setup of test_empty_bound_document_is_valid_without_provisioning ___
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 50
+  def test_empty_bound_document_is_valid_without_provisioning(export_rig):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_missing_or_legacy_source_rejected_zero_write[legacy] __
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 58
+  @pytest.mark.parametrize('kind',['legacy','missing'])
+  def test_missing_or_legacy_source_rejected_zero_write(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_missing_or_legacy_source_rejected_zero_write[missing] _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 58
+  @pytest.mark.parametrize('kind',['legacy','missing'])
+  def test_missing_or_legacy_source_rejected_zero_write(export_rig,kind):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+________ ERROR at setup of test_mixed_source_stays_unsupported[params0] ________
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 67
+  @pytest.mark.parametrize('params',[{'authority':['exports','semantic_import']},{'authority':['exports','agent_team']}])
+  def test_mixed_source_stays_unsupported(export_rig,params):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+________ ERROR at setup of test_mixed_source_stays_unsupported[params1] ________
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 67
+  @pytest.mark.parametrize('params',[{'authority':['exports','semantic_import']},{'authority':['exports','agent_team']}])
+  def test_mixed_source_stays_unsupported(export_rig,params):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+________ ERROR at setup of test_collaboration_exports_stays_unsupported ________
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 72
+  def test_collaboration_exports_stays_unsupported(export_rig):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+__ ERROR at setup of test_original_reader_permission_exception_not_swallowed ___
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 76
+  def test_original_reader_permission_exception_not_swallowed(export_rig,monkeypatch):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+___ ERROR at setup of test_source_root_switch_after_original_reader_restarts ___
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 84
+  def test_source_root_switch_after_original_reader_restarts(export_rig,monkeypatch,tmp_path):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_original_hundred_row_window_and_overflow_remain_bounded _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 91
+  def test_original_hundred_row_window_and_overflow_remain_bounded(export_rig):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+_ ERROR at setup of test_hidden_tail_private_change_stable_but_window_reentry_restarts _
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 104
+  def test_hidden_tail_private_change_stable_but_window_reentry_restarts(export_rig):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+___ ERROR at setup of test_original_scope_fence_hides_all_rows_and_overflow ____
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external_cases.py, line 114
+  def test_original_scope_fence_hides_all_rows_and_overflow(export_rig):
+file /workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py, line 15
+  @pytest.fixture
+  def export_rig(rig,monkeypatch):
+E       fixture 'rig' not found
+>       available fixtures: anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, export_rig, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, restore_global_settings, sample_novel_source, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+/workspace/shared/taskcenter-local-export-independent/tests/test_taskcenter_local_export_external.py:15
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api]
+  /workspace/shared/taskcenter-local-export-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_local_export_external.py::test_original_post_then_cursor_first_next_replay_final_readonly[/api]
+  /workspace/shared/taskcenter-local-export-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-export-independent-evidence/candidate-1799.xml -
+=========================== short test summary info ============================
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[private_aba]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[row_recreate]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[document_recreate]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_selected_original_changes_restart[project_recreate]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[unmatched]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[foreign]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_unmatched_and_hidden_nonce_updates_do_not_invalidate[wrong_local_actor]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_empty_bound_document_is_valid_without_provisioning
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_missing_or_legacy_source_rejected_zero_write[legacy]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_missing_or_legacy_source_rejected_zero_write[missing]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_mixed_source_stays_unsupported[params0]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_mixed_source_stays_unsupported[params1]
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_collaboration_exports_stays_unsupported
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_original_reader_permission_exception_not_swallowed
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_source_root_switch_after_original_reader_restarts
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_original_hundred_row_window_and_overflow_remain_bounded
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_hidden_tail_private_change_stable_but_window_reentry_restarts
+ERROR tests/test_taskcenter_local_export_external_cases.py::test_original_scope_fence_hides_all_rows_and_overflow
+2 passed, 3 warnings, 18 errors in 134.76s (0:02:14)

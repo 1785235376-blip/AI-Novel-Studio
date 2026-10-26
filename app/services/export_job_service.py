@@ -427,6 +427,49 @@ class ExportJobService:
             item["result"] = {key: value for key, value in result.items() if key not in {"content", "content_base64"}}
         return item
 
+    @classmethod
+    def _scope_rows(cls, jobs, novel_id, permission_context, status=None):
+        """The original exact-context filter, shared by list and observation."""
+        keys = ("mode", "novel_id", "workspace_id", "storyline_id", "branch_id", "actor_id")
+        rows = []
+        for raw in jobs.values():
+            if not isinstance(raw, dict) or raw.get("novel_id") != novel_id:
+                continue
+            context = raw.get("permission_context")
+            if not isinstance(context, dict) or any(context.get(key) != permission_context.get(key) for key in keys):
+                continue
+            if status and raw.get("status") != status:
+                continue
+            rows.append(cls._normalise_job(raw))
+        return rows
+
+    def local_task_observation(self, novel_id):
+        """Atomic original local 100-row window; not a permission grant.
+
+        There is deliberately no collaboration shortcut here: those records
+        still require their independent original per-record authorization.
+        """
+        if type(novel_id) is not str or not novel_id:
+            raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+        with self._lock:
+            document = self._read_document()
+            meta = document.get(self._LIFECYCLE)
+            if not isinstance(meta, dict):
+                raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+            jobs = {key: value for key, value in document.items() if key != self._LIFECYCLE}
+            rows = self._scope_rows(jobs, novel_id, {"mode": "local", "novel_id": novel_id})
+            rows.sort(key=lambda row: (str(row.get("created_at", "")), str(row.get("id", ""))), reverse=True)
+            selected = rows[:100]
+            ids = [row.get("id") for row in selected]
+            if (any(type(jid) is not str or not jid or jid not in jobs for jid in ids)
+                    or len(set(ids)) != len(ids)
+                    or any(self._committed_row(self._normalise_job(jobs[jid])) != self._committed_row(row)
+                           for jid, row in zip(ids, selected))):
+                raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+            return {"rows": [self.public(row) for row in selected],
+                    "row_lifecycles": {jid: meta["rows"][jid] for jid in ids},
+                    "document_incarnation": meta["incarnation"], "source_more": len(rows) > 100}
+
     def list(self, novel_id: str, *, permission_context: dict, status: str | None = None,
              limit: int = 50, offset: int = 0, authorize=None) -> dict:
         """Exact owner/scope history, with no secret session identifier saved."""
@@ -434,18 +477,8 @@ class ExportJobService:
             raise ValueError("invalid export status filter")
         if not 1 <= limit <= 100 or offset < 0:
             raise ValueError("invalid export history page")
-        scope_keys = ("mode", "novel_id", "workspace_id", "storyline_id", "branch_id", "actor_id")
         with self._lock:
-            rows = []
-            for raw in self._read().values():
-                if not isinstance(raw, dict) or raw.get("novel_id") != novel_id:
-                    continue
-                context = raw.get("permission_context")
-                if not isinstance(context, dict) or any(context.get(key) != permission_context.get(key) for key in scope_keys):
-                    continue
-                if status and raw.get("status") != status:
-                    continue
-                rows.append(self._normalise_job(raw))
+            rows = self._scope_rows(self._read(), novel_id, permission_context, status)
         # Source ownership can be stricter than a historical permission label.
         # Filter before pagination so denied records contribute no count/hint.
         if authorize is not None:

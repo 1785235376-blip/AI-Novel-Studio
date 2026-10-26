@@ -1,0 +1,54 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window",
+    "tests/test_export_local_window_observation.py::test_foreign_actor_scope_and_hidden_tail_do_not_invalidate",
+    "tests/test_export_local_window_observation.py::test_selected_private_aba_and_document_recreation_change_binding",
+    "tests/test_export_local_window_observation.py::test_legacy_and_missing_zero_write_refusal",
+    "tests/test_export_local_window_observation.py::test_observation_no_writer_coordinator",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[fresh]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[legacy]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[managed]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[corrupt]",
+    "tests/test_export_owner_readonly.py::test_original_json_key_and_tuple_coercions_remain_supported"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_local_window_observation.py",
+    "tests/test_export_owner_readonly.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-evidence/owner-green.xml",
+    "--basetemp=/tmp/tmp05d4te5k/owner-green/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp05d4te5k/owner-green/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-cursor-20261026",
+  "failed_reports": [
+    {
+      "failure_message": "assert 'snapshot' not in '[{\"id\": \"j-..._at\": null}]'\n  \n  'snapshot' is contained here:\n  ?           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    unt\": 0, \"snapshot_id\": null, \"resource_manifest\": {\"referenced\": [], \"available\": [], \"missing\": [], \"missing_count\": 0}, \"missing_resources\": [], \"source_versions\": {}, \"captured_at\": null}, {\"id\": \"j-001\", \"novel_id\": \"book\", \"format\": \"txt\", \"status\": \"queued\", \"permission_context\": {\"mode\": \"local\", \"novel_id\": \"book\"}, \"created_at\": \"00001\", \"progress\": 0, \"progress_message\": \"\\u6392\\u961f\\u4e2d\", \"retry_of\": null, \"attempt\": 1, \"cancel_requested\": false, \"recovery_count\": 0, \"snapshot_id\": null, \"resource_m...\n  \n  ...Full output truncated (2 lines hidden), use '-vv' to show",
+      "nodeid": "tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "assert 'snapshot' not in '[{\"id\": \"j-..._at\": null}]'\n  \n  'snapshot' is contained here:\n  ?           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    unt\": 0, \"snapshot_id\": null, \"resource_manifest\": {\"referenced\": [], \"available\": [], \"missing\": [], \"missing_count\": 0}, \"missing_resources\": [], \"source_versions\": {}, \"captured_at\": null}, {\"id\": \"j-001\", \"novel_id\": \"book\", \"format\": \"txt\", \"status\": \"queued\", \"permission_context\": {\"mode\": \"local\", \"novel_id\": \"book\"}, \"created_at\": \"00001\", \"progress\": 0, \"progress_message\": \"\\u6392\\u961f\\u4e2d\", \"retry_of\": null, \"attempt\": 1, \"cancel_requested\": false, \"recovery_count\": 0, \"snapshot_id\": null, \"resource_m...\n  \n  ...Full output truncated (2 lines hidden), use '-vv' to show",
+        "name": "test_matches_original_empty_and_capped_window",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 10
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

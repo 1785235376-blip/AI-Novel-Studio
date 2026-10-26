@@ -219,6 +219,14 @@ taskcenter_cursor_adapter.collaboration_adapter = CollaborationTaskCenterCursorA
     actual_authorities=lambda: (legacy_api.trusted_session_resolver,
         legacy_api.membership_authorization_service, legacy_api.collaboration_scope_service),
 )
+from .taskcenter_export_cursor import LocalExportTaskCenterCursorAdapter
+taskcenter_cursor_adapter.export_adapter = LocalExportTaskCenterCursorAdapter(
+    workspace_tools_service, legacy_api.export_job_service,
+    next(reader for reader in workspace_tools_service.task_readers if reader.name == 'exports'),
+    actual_source=lambda: legacy_api.export_job_service,
+    actual_repositories=lambda: (legacy_api.novel_service, legacy_api.chapter_service),
+    runtime_mode=lambda: (settings.enable_packaged_runtime, settings.enable_collaboration_runtime),
+)
 router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag,
                                      cursor_adapter=taskcenter_cursor_adapter))
 

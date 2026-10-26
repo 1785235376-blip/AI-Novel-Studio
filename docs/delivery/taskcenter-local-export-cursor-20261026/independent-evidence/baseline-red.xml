@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="35.778" timestamp="2026-10-26T22:18:30.947968+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_taskcenter_local_export_external" name="test_original_post_then_cursor_first_next_replay_final_readonly[/api]" time="26.703"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;cc6b7a76-dbd1-4fc8-9e5e-30422122bb6f&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">export_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f0143886150&gt;, nid='query-25972f71c42d4053...l-export-independent/app/experimental/api.py'&gt;, monkeypatch=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f01487be7e0&gt;)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_original_post_then_cursor_first_next_replay_final_readonly(export_rig,prefix):
+        e=export_rig;before=files(e.rig.root);submitted=list(e.calls)
+&gt;       first=get(e,prefix=prefix);assert first.status_code==200,first.text
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"cc6b7a76-dbd1-4fc8-9e5e-30422122bb6f"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_local_export_external.py:48: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_local_export_external" name="test_original_post_then_cursor_first_next_replay_final_readonly[/api/v1]" time="7.486"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;203c9d16-6164-4e76-8dc6-3280263d98c7&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">export_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f0142bbc560&gt;, nid='query-d835f78ec6eb4e5c...l-export-independent/app/experimental/api.py'&gt;, monkeypatch=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f01417fe720&gt;)
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_original_post_then_cursor_first_next_replay_final_readonly(export_rig,prefix):
+        e=export_rig;before=files(e.rig.root);submitted=list(e.calls)
+&gt;       first=get(e,prefix=prefix);assert first.status_code==200,first.text
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"203c9d16-6164-4e76-8dc6-3280263d98c7"}
+E       assert 501 == 200
+E        +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_local_export_external.py:48: AssertionError</failure></testcase></testsuite></testsuites>

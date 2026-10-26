@@ -183,6 +183,10 @@ class TaskCenterCursorHTTPAdapter:
 
     def tasks(self, ctx, selection, page, require_flag, query, failed_only,
               reauthorize):
+        if (ctx.scope.get("mode") == "local" and selection.authorities == ("exports",)
+                and getattr(self, "export_adapter", None) is not None):
+            return self.export_adapter.tasks(ctx, selection, page, require_flag, query,
+                                             failed_only, reauthorize)
         if ctx.scope.get("mode") == "collaboration" and getattr(self, "collaboration_adapter", None) is not None:
             return self.collaboration_adapter.tasks(ctx, selection, page, require_flag, query,
                                                     failed_only, reauthorize)

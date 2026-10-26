@@ -1,0 +1,153 @@
+{
+  "base": "bfca25464d3f8329585ee9463f39ee52fb7ef00b",
+  "code_freeze": "1799b098f1f5b5639e151c66be21a175387cb047",
+  "app_tree": "591cc74b70cf5546f6cf604d985e484f40c18567",
+  "groups": {
+    "owner-red": {
+      "returncode": 1,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+            "name": "test_matches_original_empty_and_capped_window",
+            "type": null
+          },
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+            "name": "test_foreign_actor_scope_and_hidden_tail_do_not_invalidate",
+            "type": null
+          },
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+            "name": "test_selected_private_aba_and_document_recreation_change_binding",
+            "type": null
+          },
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+            "name": "test_legacy_and_missing_zero_write_refusal",
+            "type": null
+          },
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+            "name": "test_observation_no_writer_coordinator",
+            "type": null
+          }
+        ],
+        "present": true,
+        "tests": 5
+      },
+      "outside_source_modules": []
+    },
+    "http-red": {
+      "returncode": 1,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [
+          {
+            "classname": "tests.test_taskcenter_local_export_http",
+            "message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"130e341c-a422-4b00-ae5f-001b20d649f7\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+            "name": "test_first_next_replay_final_zero_write[/api]",
+            "type": null
+          }
+        ],
+        "present": true,
+        "tests": 1
+      },
+      "outside_source_modules": []
+    },
+    "owner-green": {
+      "returncode": 1,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [
+          {
+            "classname": "tests.test_export_local_window_observation",
+            "message": "assert 'snapshot' not in '[{\"id\": \"j-..._at\": null}]'\n  \n  'snapshot' is contained here:\n  ?           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    unt\": 0, \"snapshot_id\": null, \"resource_manifest\": {\"referenced\": [], \"available\": [], \"missing\": [], \"missing_count\": 0}, \"missing_resources\": [], \"source_versions\": {}, \"captured_at\": null}, {\"id\": \"j-001\", \"novel_id\": \"book\", \"format\": \"txt\", \"status\": \"queued\", \"permission_context\": {\"mode\": \"local\", \"novel_id\": \"book\"}, \"created_at\": \"00001\", \"progress\": 0, \"progress_message\": \"\\u6392\\u961f\\u4e2d\", \"retry_of\": null, \"attempt\": 1, \"cancel_requested\": false, \"recovery_count\": 0, \"snapshot_id\": null, \"resource_m...\n  \n  ...Full output truncated (2 lines hidden), use '-vv' to show",
+            "name": "test_matches_original_empty_and_capped_window",
+            "type": null
+          }
+        ],
+        "present": true,
+        "tests": 10
+      },
+      "outside_source_modules": []
+    },
+    "http-green": {
+      "returncode": 1,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [
+          {
+            "classname": "tests.test_taskcenter_local_export_http",
+            "message": "AssertionError: {\"detail\":{\"code\":\"EXPERIMENTAL_INVALID\",\"message\":\"TASKCENTER_QUERY_INVALID\"},\"code\":\"EXPERIMENTAL_INVALID\",\"message\":\"TASKCENTER_QUERY_INVALID\",\"details\":{\"code\":\"EXPERIMENTAL_INVALID\",\"message\":\"TASKCENTER_QUERY_INVALID\"},\"request_id\":\"5738f312-a181-4a81-bcd5-518778d82fad\"}\nassert 422 == 200\n +  where 422 = <Response [422 Unprocessable Entity]>.status_code",
+            "name": "test_query_hidden_row_does_not_invalidate",
+            "type": null
+          }
+        ],
+        "present": true,
+        "tests": 76
+      },
+      "outside_source_modules": []
+    },
+    "frozen-taskcenter": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 130
+      },
+      "outside_source_modules": []
+    },
+    "frozen-export-consumers": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 96
+      },
+      "outside_source_modules": []
+    },
+    "independent-final": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 22
+      },
+      "outside_source_modules": []
+    }
+  },
+  "group_provenance": {
+    "owner-red": "expected missing API5FAIL before implementation",
+    "http-red": "expected501 before wiring; not frozen baseline",
+    "owner-green": "INTERMEDIATE9PASS+1harness snapshot_id assertion failure; non-frozen",
+    "http-green": "INTERMEDIATE75PASS+1harness false label/q assumption failure; production same final, tests corrected",
+    "frozen-taskcenter": "FINAL1799 immutable app;130PASS",
+    "frozen-export-consumers": "FINAL1799 immutable app;96PASS",
+    "independent-final": "FINAL1799 separate immutable checkout;22PASS; baseline/harness history retained"
+  },
+  "counts_overlap": true,
+  "cursor_support_added": "NON_PACKAGED_FILE_LOCAL_EXPORTS_ONLY",
+  "collaboration_exports_and_mixed_sources": "UNSUPPORTED",
+  "store_py_app_api_py_excluded_surfaces": "UNCHANGED",
+  "full_ABA_cross_owner_atomicity_worker_exclusivity": "NOT_CLAIMED",
+  "execution_environment": "dot native cloud workspace",
+  "real_models_paid_resources_hosted_deployment_CI": "NOT_RUN",
+  "publication": "PENDING_ROOT_REVIEW_AND_USER_AUTHORIZATION"
+}

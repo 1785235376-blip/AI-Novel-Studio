@@ -1,0 +1,56 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_local_export_http.py::test_first_next_replay_final_zero_write[/api]",
+    "tests/test_taskcenter_local_export_http.py::test_first_next_replay_final_zero_write[/api/v1]",
+    "tests/test_taskcenter_local_export_http.py::test_restart_original_owner_changes[private_aba]",
+    "tests/test_taskcenter_local_export_http.py::test_restart_original_owner_changes[recreate_row]",
+    "tests/test_taskcenter_local_export_http.py::test_restart_original_owner_changes[document]",
+    "tests/test_taskcenter_local_export_http.py::test_restart_original_owner_changes[project]",
+    "tests/test_taskcenter_local_export_http.py::test_empty_bound_and_legacy_refusal",
+    "tests/test_taskcenter_local_export_http.py::test_query_hidden_row_does_not_invalidate",
+    "tests/test_taskcenter_local_export_http.py::test_original_actual_owner_change_refuses",
+    "tests/test_taskcenter_local_export_http.py::test_get_never_constructs_or_submits_exporter",
+    "tests/test_taskcenter_local_export_http.py::test_mixed_unsupported[params0]",
+    "tests/test_taskcenter_local_export_http.py::test_mixed_unsupported[params1]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_local_export_http.py",
+    "-x",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-evidence/http-red.xml",
+    "--basetemp=/tmp/tmp8buwdpjl/http-red/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp8buwdpjl/http-red/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-cursor-20261026",
+  "failed_reports": [
+    {
+      "failure_message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"130e341c-a422-4b00-ae5f-001b20d649f7\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+      "nodeid": "tests/test_taskcenter_local_export_http.py::test_first_next_replay_final_zero_write[/api]",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_taskcenter_local_export_http",
+        "message": "AssertionError: {\"detail\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"details\":{\"code\":\"TASKCENTER_CURSOR_UNSUPPORTED\",\"message\":\"TASKCENTER_CURSOR_UNSUPPORTED\"},\"request_id\":\"130e341c-a422-4b00-ae5f-001b20d649f7\"}\nassert 501 == 200\n +  where 501 = <Response [501 Not Implemented]>.status_code",
+        "name": "test_first_next_replay_final_zero_write[/api]",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 1
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}
