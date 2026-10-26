@@ -1,0 +1,31 @@
+{
+  "baseline_expected_tree": "447bfefcee8393b9b0907fe7daff2d5b044709da",
+  "baseline_sha": "ffe1937911cff32d4ebd4770b350674627501d3a",
+  "candidate_sha": "774e65a56fce3464d8b6e884d3da8a0d629aac68",
+  "candidate_tree": "67fdc75acd411316ea5f136cf2334b1d8c944d30",
+  "focused_files": [
+    "tests/test_taskcenter_query_backend.py",
+    "tests/test_taskcenter_consistent_query.py",
+    "tests/test_taskcenter_cursor_independent.py",
+    "tests/test_taskcenter_query_measurements.py"
+  ],
+  "not_run": [
+    "real PostgreSQL",
+    "Windows",
+    "real frontend",
+    "real model"
+  ],
+  "provider": "MOCK_PROVIDER_SYNTHETIC_ONLY",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "regression_files": [
+    "tests/test_collaboration_http_boundary_v056.py",
+    "tests/test_packaged_local_session_bootstrap_v070.py",
+    "tests/test_p0_security_regressions.py",
+    "tests/test_phase1_media_project_authorization.py",
+    "tests/test_phase6_agent_jobs.py",
+    "tests/test_phase6_agent_authorization.py",
+    "tests/test_export_jobs.py",
+    "tests/test_api_v1_alias.py",
+    "tests/test_studio_production_query.py"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "base": "0eb392f49eb57107905a226b092566cb42e620c5",
+  "code_freeze": "335fdd6ac6a7f1e350792eb2179d6c372ccb19c5",
+  "app_tree": "6ee7fd97bf422d99a931d4672d0b07f81f650f60",
+  "groups": {
+    "export-original": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 71
+      },
+      "outside_source_modules": []
+    },
+    "export-final-original": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 73
+      },
+      "outside_source_modules": []
+    },
+    "export-readonly": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 4
+      },
+      "outside_source_modules": []
+    },
+    "export-final-regression": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 78
+      },
+      "outside_source_modules": []
+    },
+    "independent-final": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 18
+      },
+      "outside_source_modules": []
+    }
+  },
+  "group_provenance": {
+    "export-original": "INTERMEDIATE ONLY: began8dfe; production file changed during run; not final freeze evidence",
+    "export-final-original": "INTERMEDIATE ONLY: began d7d; production file changed during run; not final freeze evidence",
+    "export-readonly": "08fe earlier readonly4 only",
+    "export-final-regression": "FINAL335 production frozen; original exports71 + snapshots2 + readonly/coercion5",
+    "independent-final": "FINAL335 immutable separate checkout;18 independent cases;6 child processes incl2SIGKILL"
+  },
+  "counts_overlap": true,
+  "cursor_HTTP_support": "UNCHANGED_NOT_ADDED",
+  "executor_ownership_cross_file_crash_powerloss": "NOT_CLAIMED",
+  "execution_environment": "dot native cloud workspace",
+  "real_models_paid_resources_hosted_deployment_CI": "NOT_RUN",
+  "publication": "PENDING_ROOT_REVIEW"
+}

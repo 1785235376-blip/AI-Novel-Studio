@@ -1,0 +1,80 @@
+cwd=/workspace/shared/taskcenter-local-export-cursor-20261026
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_export_local_window_observation.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-export-evidence/owner-red.xml", "--basetemp=/tmp/tmp0o_2om2s/owner-red/pytest-tmp", "-o", "cache_dir=/tmp/tmp0o_2om2s/owner-red/pytest-cache"]
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+________________ test_matches_original_empty_and_capped_window _________________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f59f9bb4f20>
+
+    def test_matches_original_empty_and_capped_window(owner):
+        for count in (0,3,101):
+            seed(owner,count)
+>           v=owner.local_task_observation('book')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'
+
+tests/test_export_local_window_observation.py:25: AttributeError
+__________ test_foreign_actor_scope_and_hidden_tail_do_not_invalidate __________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f59f4f2dd90>
+
+    def test_foreign_actor_scope_and_hidden_tail_do_not_invalidate(owner):
+>       seed(owner,101);v=owner.local_task_observation('book');d=owner._read()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'
+
+tests/test_export_local_window_observation.py:34: AttributeError
+_______ test_selected_private_aba_and_document_recreation_change_binding _______
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f59f4f2e780>
+
+    def test_selected_private_aba_and_document_recreation_change_binding(owner):
+>       seed(owner);v=owner.local_task_observation('book');d=owner._read();original=deepcopy(d)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'
+
+tests/test_export_local_window_observation.py:42: AttributeError
+__________________ test_legacy_and_missing_zero_write_refusal __________________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f59f4f2f380>
+
+    def test_legacy_and_missing_zero_write_refusal(owner):
+        for legacy in (False,True):
+            if legacy:owner.path.write_text('{}')
+            before=owner.path.read_bytes() if owner.path.exists() else None
+>           with pytest.raises(ValueError):owner.local_task_observation('book')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'
+
+tests/test_export_local_window_observation.py:53: AttributeError
+____________________ test_observation_no_writer_coordinator ____________________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f59f4f2ee40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f59f4f2f530>
+
+    def test_observation_no_writer_coordinator(owner,monkeypatch):
+        seed(owner);from app.services import export_job_service as module
+        monkeypatch.setattr(module,'workspace_mutation',lambda *a:pytest.fail('read must not write'))
+>       before=owner.path.read_bytes();owner.local_task_observation('book');assert owner.path.read_bytes()==before
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'
+
+tests/test_export_local_window_observation.py:60: AttributeError
+=============================== warnings summary ===============================
+tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+  /workspace/shared/taskcenter-local-export-cursor-20261026/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+  /workspace/shared/taskcenter-local-export-cursor-20261026/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-export-evidence/owner-red.xml -
+=========================== short test summary info ============================
+FAILED tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window
+FAILED tests/test_export_local_window_observation.py::test_foreign_actor_scope_and_hidden_tail_do_not_invalidate
+FAILED tests/test_export_local_window_observation.py::test_selected_private_aba_and_document_recreation_change_binding
+FAILED tests/test_export_local_window_observation.py::test_legacy_and_missing_zero_write_refusal
+FAILED tests/test_export_local_window_observation.py::test_observation_no_writer_coordinator
+5 failed, 2 warnings in 33.77s

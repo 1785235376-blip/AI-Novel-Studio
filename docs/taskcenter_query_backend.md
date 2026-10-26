@@ -1,3 +1,5 @@
+> 后续类型筛选与覆盖扩展见 [taskcenter_consistent_query_backend.md](taskcenter_consistent_query_backend.md)。当前 HTTP cursor 明确未支持；以下保留原有限 offset 分页合同与历史验证记录。
+
 # TaskCenter 有限投影分页后端合同
 
 范围：`G-TC-1` 的 bounded-projection 分页，沿用

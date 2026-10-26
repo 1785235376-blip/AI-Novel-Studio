@@ -1,0 +1,92 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window",
+    "tests/test_export_local_window_observation.py::test_foreign_actor_scope_and_hidden_tail_do_not_invalidate",
+    "tests/test_export_local_window_observation.py::test_selected_private_aba_and_document_recreation_change_binding",
+    "tests/test_export_local_window_observation.py::test_legacy_and_missing_zero_write_refusal",
+    "tests/test_export_local_window_observation.py::test_observation_no_writer_coordinator"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_local_window_observation.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-export-evidence/owner-red.xml",
+    "--basetemp=/tmp/tmp0o_2om2s/owner-red/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp0o_2om2s/owner-red/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-export-cursor-20261026",
+  "failed_reports": [
+    {
+      "failure_message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+      "nodeid": "tests/test_export_local_window_observation.py::test_matches_original_empty_and_capped_window",
+      "when": "call"
+    },
+    {
+      "failure_message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+      "nodeid": "tests/test_export_local_window_observation.py::test_foreign_actor_scope_and_hidden_tail_do_not_invalidate",
+      "when": "call"
+    },
+    {
+      "failure_message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+      "nodeid": "tests/test_export_local_window_observation.py::test_selected_private_aba_and_document_recreation_change_binding",
+      "when": "call"
+    },
+    {
+      "failure_message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+      "nodeid": "tests/test_export_local_window_observation.py::test_legacy_and_missing_zero_write_refusal",
+      "when": "call"
+    },
+    {
+      "failure_message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+      "nodeid": "tests/test_export_local_window_observation.py::test_observation_no_writer_coordinator",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+        "name": "test_matches_original_empty_and_capped_window",
+        "type": null
+      },
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+        "name": "test_foreign_actor_scope_and_hidden_tail_do_not_invalidate",
+        "type": null
+      },
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+        "name": "test_selected_private_aba_and_document_recreation_change_binding",
+        "type": null
+      },
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+        "name": "test_legacy_and_missing_zero_write_refusal",
+        "type": null
+      },
+      {
+        "classname": "tests.test_export_local_window_observation",
+        "message": "AttributeError: 'ExportJobService' object has no attribute 'local_task_observation'",
+        "name": "test_observation_no_writer_coordinator",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 5
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

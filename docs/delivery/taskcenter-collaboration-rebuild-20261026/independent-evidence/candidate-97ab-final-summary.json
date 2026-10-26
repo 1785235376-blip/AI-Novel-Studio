@@ -1,0 +1,52 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api]",
+    "tests/test_taskcenter_external_adversarial.py::test_real_post_and_repeated_pages_are_private_zero_write[/api/v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_same_token_same_session_revoke_register_invalidates",
+    "tests/test_taskcenter_external_adversarial.py::test_resolver_replacement_equal_first_generation_rejected",
+    "tests/test_taskcenter_external_adversarial.py::test_membership_inactive_active_direct_service_invalidates",
+    "tests/test_taskcenter_external_adversarial.py::test_grant_exact_payload_restore_via_repository_invalidates",
+    "tests/test_taskcenter_external_adversarial.py::test_unrelated_membership_and_irrelevant_grant_preserve_cursor",
+    "tests/test_taskcenter_external_adversarial.py::test_revocation_inside_original_source_reader_rejects_whole_response[False]",
+    "tests/test_taskcenter_external_adversarial.py::test_revocation_inside_original_source_reader_rejects_whole_response[True]",
+    "tests/test_taskcenter_external_adversarial.py::test_scope_retire_and_same_topology_recreation_invalidates",
+    "tests/test_taskcenter_external_adversarial.py::test_observed_private_field_aba_invalidates_even_unchanged_projection",
+    "tests/test_taskcenter_external_adversarial.py::test_other_collection_changes_preserve_cursor",
+    "tests/test_taskcenter_external_adversarial.py::test_recreated_project_never_claims_old_source_document",
+    "tests/test_taskcenter_external_adversarial.py::test_admin_cross_domain_grant_semantics_and_direct_recreation",
+    "tests/test_taskcenter_external_adversarial.py::test_other_actor_cannot_reuse_token_even_with_same_permissions",
+    "tests/test_taskcenter_external_adversarial.py::test_branch_revision_and_presentation_changes_do_not_create_global_epoch",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-identity-_identity_lifecycle_v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-scope-_scope_lifecycle_v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[False-grants-_grant_lifecycle_v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-identity-_identity_lifecycle_v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-scope-_scope_lifecycle_v1]",
+    "tests/test_taskcenter_external_adversarial.py::test_reserved_null_is_not_accepted_for_fresh_or_legacy_owner[True-grants-_grant_lifecycle_v1]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_external_adversarial.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent/../taskcenter-rebuild-independent-evidence/candidate-97ab-final.xml",
+    "--basetemp=/tmp/independent-taskcenter-yt8g5u00/candidate-97ab-final/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/independent-taskcenter-yt8g5u00/candidate-97ab-final/pytest-cache"
+  ],
+  "cwd": "/workspace/scratch/20a0022d2b33/taskcenter-rebuild-independent",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 22
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

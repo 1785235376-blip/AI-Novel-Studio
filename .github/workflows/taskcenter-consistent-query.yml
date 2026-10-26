@@ -1,0 +1,60 @@
+name: TaskCenter bounded query verification
+
+on:
+  push:
+    branches:
+      - work/taskcenter-consistent-query-20261025
+    paths:
+      - app/experimental/ux.py
+      - app/experimental/ux_api.py
+      - app/experimental/taskcenter_query.py
+      - app/experimental/taskcenter_cursor.py
+      - tests/test_taskcenter*.py
+      - scripts/verify_taskcenter_consistent_query.py
+      - .github/workflows/taskcenter-consistent-query.yml
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: taskcenter-consistent-query-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.repository == '1785235376-blip/AI-Novel-Studio' && github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - name: Install declared test dependencies without a cache
+        env:
+          PIP_DISABLE_PIP_VERSION_CHECK: '1'
+          PIP_NO_CACHE_DIR: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/taskcenter-evidence"
+          python -m venv "$RUNNER_TEMP/taskcenter-venv"
+          "$RUNNER_TEMP/taskcenter-venv/bin/python" -m pip install ".[dev]" --report "$RUNNER_TEMP/taskcenter-evidence/install-report.json" 2>&1 | tee "$RUNNER_TEMP/taskcenter-evidence/install.log"
+          "$RUNNER_TEMP/taskcenter-venv/bin/python" -m pip freeze > "$RUNNER_TEMP/taskcenter-evidence/dependencies.txt"
+      - name: Verify exact baseline, red probes, candidate and regressions
+        run: |
+          "$RUNNER_TEMP/taskcenter-venv/bin/python" scripts/verify_taskcenter_consistent_query.py --output "$RUNNER_TEMP/taskcenter-evidence"
+      - name: Preserve synthetic verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: taskcenter-query-${{ github.sha }}
+          path: ${{ runner.temp }}/taskcenter-evidence/
+          retention-days: 3
+          compression-level: 9
+          if-no-files-found: error

@@ -132,6 +132,11 @@ class TeamService(DomainService):
         rows = [self._view(nid, row) for row in self.list(nid, scope, _COLLECTION)]
         return {"items": rows, "total": len(rows)}
 
+    def runs_observation(self, nid, scope):
+        """Committed original team rows; chapter-backed windows are not certified."""
+        self.novels.get(nid)
+        return self.store.capture_committed_collection(nid, scope, _COLLECTION)
+
     def get_run(self, nid, scope, run_id):
         return self._view(nid, self.get(nid, scope, _COLLECTION, run_id))
 

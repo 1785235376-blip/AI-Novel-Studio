@@ -1,0 +1,20 @@
+cwd=/workspace/shared/taskcenter-lifecycle-6363
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_lifecycle_http.py", "tests/test_taskcenter_store_lifecycle.py", "tests/test_taskcenter_private_cache.py", "tests/test_taskcenter_store_process.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-lifecycle-evidence/final-new.xml", "--basetemp=/tmp/taskcenter-slice-c9f42j5b/final-new/pytest-tmp", "-o", "cache_dir=/tmp/taskcenter-slice-c9f42j5b/final-new/pytest-cache"]
+........................................................................ [ 68%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_lifecycle_http.py::test_success_first_continuation_replay_final_and_zero_business_write[/api]
+  /workspace/shared/taskcenter-lifecycle-6363/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_lifecycle_http.py::test_success_first_continuation_replay_final_and_zero_business_write[/api]
+  /workspace/shared/taskcenter-lifecycle-6363/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-lifecycle-evidence/final-new.xml -
+105 passed, 3 warnings in 12.43s

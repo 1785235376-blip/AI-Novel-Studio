@@ -1,0 +1,21 @@
+cwd=/tmp/taskcenter-verification-a8cp4gzf/baseline
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_collaboration_http_boundary_v056.py", "tests/test_packaged_local_session_bootstrap_v070.py", "tests/test_p0_security_regressions.py", "tests/test_phase1_media_project_authorization.py", "tests/test_phase6_agent_jobs.py", "tests/test_phase6_agent_authorization.py", "tests/test_export_jobs.py", "tests/test_api_v1_alias.py", "tests/test_studio_production_query.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-lifecycle-evidence/frozen-original-runner/baseline-regression.xml", "--basetemp=/tmp/taskcenter-verification-a8cp4gzf/baseline-regression/pytest-tmp", "-o", "cache_dir=/tmp/taskcenter-verification-a8cp4gzf/baseline-regression/pytest-cache"]
+........................................................................ [ 36%]
+........................................................................ [ 72%]
+......................................................                   [100%]
+=============================== warnings summary ===============================
+../../../workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app/experimental/terminology_portability.py:34
+  /tmp/taskcenter-verification-a8cp4gzf/baseline/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app/experimental/interactive_export_contract.py:209
+  /tmp/taskcenter-verification-a8cp4gzf/baseline/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-lifecycle-evidence/frozen-original-runner/baseline-regression.xml -
+198 passed, 3 warnings in 60.35s (0:01:00)

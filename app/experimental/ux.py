@@ -26,6 +26,7 @@ from .planning import StrictModel, digest
 from .search_sources import SearchSource, chapter_manifest, project_ids
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .workspace_interaction import WorkspaceInteractionMixin
+from .taskcenter_query import normalize_authorities
 
 FEATURES = frozenset({'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
                       'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings',
@@ -775,16 +776,21 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             return row.get('scope') == ctx.scope or row.get('branch_id') == ctx.scope.get('branch_id')
         return not row.get('branch_id')
 
-    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None, *, limit=None, offset=None):
+    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None, *, limit=None, offset=None, authorities=None):
         reauthorize()
         try:
             page_query = TaskPageQuery(limit=limit, offset=offset)
         except ValueError:
             raise ValueError('TASKCENTER_QUERY_INVALID') from None
+        authorities = normalize_authorities(authorities)
+        if authorities is not None and not set(authorities).issubset({reader.name for reader in self.task_readers}):
+            raise ValueError('TASKCENTER_QUERY_INVALID')
         paged = page_query.limit is not None or page_query.offset is not None
         items, unavailable, truncated = [], [], False
         for reader in self.task_readers:
             reauthorize()
+            if authorities is not None and reader.name not in authorities:
+                continue
             try:
                 if reader.flag:
                     require_flag(reader.flag)
@@ -825,6 +831,11 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             result.update(items=page, observed_total=len(items), limit=limit, offset=offset,
                           has_more=has_more, next_offset=offset + len(page) if has_more else None,
                           source_truncated=truncated, truncated=truncated or has_more,
+                          coverage={'scope': 'BOUNDED_AUTHORIZED_PROJECTION', 'completeness': 'NOT_ASSERTED'})
+        elif authorities is not None:
+            # Type filtering is opt-in. Preserve the old 500-item response cap,
+            # while counting the complete matching bounded observation.
+            result.update(observed_total=len(items), source_truncated=truncated,
                           coverage={'scope': 'BOUNDED_AUTHORIZED_PROJECTION', 'completeness': 'NOT_ASSERTED'})
         return result
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="74.193" timestamp="2026-10-26T20:51:57.019090+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_taskcenter_external_adversarial" name="test_real_post_and_repeated_pages_are_private_zero_write[/api]" time="71.120"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;,&quot;message&quot;:&quot;TASKCENTER_CURSOR_UNSUPPORTED&quot;},&quot;request_id&quot;:&quot;2a085086-ce65-4be2-a6c8-6f05a2846816&quot;}&#10;assert 501 == 200&#10; +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code">env = namespace(r=namespace(client=&lt;starlette.testclient.TestClient object at 0x7f2fa40c6b10&gt;, nid='query-7bb561e4b4654cceab...t': '2026-10-26T11:53:07.821019+00:00', 'history': []}], mp=&lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2fa8f3fbf0&gt;)
+prefix = '/api'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    def test_real_post_and_repeated_pages_are_private_zero_write(env,prefix):
+        e=env; before=snap(e.r.root); seen=[]; token=None
+        for page in range(3):
+&gt;           r=read(e,token,prefix); assert r.status_code==200,r.text
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: {"detail":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED","details":{"code":"TASKCENTER_CURSOR_UNSUPPORTED","message":"TASKCENTER_CURSOR_UNSUPPORTED"},"request_id":"2a085086-ce65-4be2-a6c8-6f05a2846816"}
+E           assert 501 == 200
+E            +  where 501 = &lt;Response [501 Not Implemented]&gt;.status_code
+
+tests/test_taskcenter_external_adversarial.py:59: AssertionError</failure></testcase></testsuite></testsuites>

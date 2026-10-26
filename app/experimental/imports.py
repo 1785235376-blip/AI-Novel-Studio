@@ -225,6 +225,20 @@ class SemanticImportService(DomainService):
     def jobs(self, nid, scope):
         return self.list(nid, scope, JOBS)
 
+    def jobs_observation(self, nid, scope):
+        """Read original committed jobs and their owner-maintained evidence.
+
+        This does not migrate legacy data or provision a project identity. Keep
+        the same project/scope validation as the original jobs reader; the HTTP
+        adapter remains responsible for original authorization and projection.
+        """
+        self.novels.get(nid)
+        observation = self.store.capture_committed_collection(nid, scope, JOBS)
+        if any(not isinstance(row, dict) or row.get("novel_id") != nid
+               or row.get("scope") != scope for row in observation["rows"]):
+            raise ValueError("experimental collection contains invalid scope metadata")
+        return observation
+
     def job(self, nid, scope, job_id):
         return self.get(nid, scope, JOBS, job_id)
 

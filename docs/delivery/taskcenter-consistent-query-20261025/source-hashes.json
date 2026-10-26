@@ -1,0 +1,53 @@
+{
+  "schema": "TASKCENTER_REMOTE_SOURCE_HASHES_V1",
+  "code_commit": "d227d3e0c7a17eda47d9d456c33775d9b27dfe6a",
+  "code_tree": "aa58fc7ceb9cb241e0ce29176025ec3dd48cd200",
+  "method": "SHA256 of exact UTF-8 source strings stored/read through GitHub blobs; computed in the orchestration V8 runtime. This is source identity, not Python compilation or execution evidence.",
+  "files": [
+    {
+      "path": "app/experimental/ux.py",
+      "git_blob_sha1": "af6d36b66b2f500534deb6524b1f12e212bcf1f1",
+      "sha256": "15e5bd9e7153464a76baf13d1eef2d6d4c7c7fcbe573b4ca87772a284e5ab078"
+    },
+    {
+      "path": "app/experimental/ux_api.py",
+      "git_blob_sha1": "629b8361262116740501b26598d95c4a4c939235",
+      "sha256": "db35880cccf76e2f6e31269d13c233b4a66f4891c4abd601d7dc64b2ff0c8def"
+    },
+    {
+      "path": "app/experimental/taskcenter_query.py",
+      "git_blob_sha1": "71735ef2543748b2dcc83789de8e977f3721df00",
+      "sha256": "31c53740ce7a65b18759cc1ba5336b52cd260066675da4043ccfc7037e224a03"
+    },
+    {
+      "path": "app/experimental/taskcenter_cursor.py",
+      "git_blob_sha1": "c7fabb00ad82f7dac9af638607cda551e334e87f",
+      "sha256": "c7998d45200e8fc36d261ce766545fbff6b30067773594b14b49f0002e6019ea"
+    },
+    {
+      "path": "tests/test_taskcenter_consistent_query.py",
+      "git_blob_sha1": "b9387f2cf7e53cd3b1c38bdd3e90a6314183b8bf",
+      "sha256": "a6494fa331829a6f2d7655fea6a30c2ffbb9b2ce54268d1826941ac28a2395b4"
+    },
+    {
+      "path": "tests/test_taskcenter_cursor_independent.py",
+      "git_blob_sha1": "f132302639695cb2aca1ab7afbc7e554a5f7a576",
+      "sha256": "9dcf681b51b7e6dee392202481275ebf538bacb33669b75b76810ee2ba0a17f3"
+    },
+    {
+      "path": "tests/test_taskcenter_query_measurements.py",
+      "git_blob_sha1": "e86b190d82c93e00e3dc975c8ccf469f08281344",
+      "sha256": "1bd4bf46c685cdfc10a5d9b36cefbd8bb3b000b83de344223d876404c2fc2e53"
+    },
+    {
+      "path": "scripts/verify_taskcenter_consistent_query.py",
+      "git_blob_sha1": "bb23cf8c059b376aba7534d8eae40e8c903b7c65",
+      "sha256": "7af2a456a41e64deeb2607b6c76a54dd88f0e6cc4ec330fe1d4a3c944e5b61ae"
+    },
+    {
+      "path": ".github/workflows/taskcenter-consistent-query.yml",
+      "git_blob_sha1": "2c47bf8bbcb174105d2e917d752d5690522a968e",
+      "sha256": "72b0f098e7f68afadc5681083dfa3c165bd01a264549300524a1b962f3571b41"
+    }
+  ]
+}

@@ -381,6 +381,23 @@ async def local_discovery_private_cache(request: Request, call_next):
     return response
 
 
+@app.middleware("http")
+async def taskcenter_private_cache(request: Request, call_next):
+    """Cover early global denials without altering their authority or payload.
+
+    The route wrapper handles parameter errors. This outer wrapper also covers
+    responses produced before routing by the original loopback/session gates.
+    Legacy requests and every other endpoint keep their original cache policy.
+    """
+    response = await call_next(request)
+    if (request.method == "GET"
+            and re.fullmatch(r"/api/novels/[^/]+/experimental/workspace/tasks",
+                             _normalized_api_path(request.url.path))
+            and ("authority" in request.query_params or "page_mode" in request.query_params)):
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 app.include_router(create_local_discovery_router(local_ai_discovery, host_authorization=_local_discovery_host_authority))
 app.include_router(create_local_discovery_router(local_ai_discovery, prefix="/api/v1/model-center/local-ai", host_authorization=_local_discovery_host_authority))
 app.include_router(create_collaboration_router(collaboration_read_service))

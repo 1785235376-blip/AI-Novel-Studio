@@ -1,0 +1,102 @@
+cwd=/workspace/shared/taskcenter-export-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_export_owner_independent_serialization.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-export-independent-evidence/candidate-08fe-json-probe.xml", "--basetemp=/tmp/tmp9pnqtshe/candidate-08fe-json-probe/pytest-tmp", "-o", "cache_dir=/tmp/tmp9pnqtshe/candidate-08fe-json-probe/pytest-cache"]
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_existing_row_accepts_nested_mixed_json_object_keys ____________
+
+owner = <app.services.export_job_service.ExportJobService object at 0x7f453edca660>
+
+    def test_existing_row_accepts_nested_mixed_json_object_keys(owner):
+        row=seed_terminal(owner)
+        row['private_snapshot']={1:'integer-key','name':'text-key'}
+>       owner._write({'terminal':row})
+
+tests/test_export_owner_independent_serialization.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/export_job_service.py:208: in _write
+    == json.dumps(row, sort_keys=True, separators=(",", ":"))
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.encoder.JSONEncoder object at 0x7f4539033b30>
+o = {'created_at': '2026-01-01T00:00:00Z', 'id': 'terminal', 'novel_id': 'book', 'permission_context': {'actor_id': 'a', 'mode': 'local', 'novel_id': 'book'}, ...}
+_one_shot = True
+
+    def iterencode(self, o, _one_shot=False):
+        """Encode the given object and yield each string
+        representation as available.
+    
+        For example::
+    
+            for chunk in JSONEncoder().iterencode(bigobject):
+                mysocket.write(chunk)
+    
+        """
+        if self.check_circular:
+            markers = {}
+        else:
+            markers = None
+        if self.ensure_ascii:
+            _encoder = encode_basestring_ascii
+        else:
+            _encoder = encode_basestring
+    
+        def floatstr(o, allow_nan=self.allow_nan,
+                _repr=float.__repr__, _inf=INFINITY, _neginf=-INFINITY):
+            # Check for specials.  Note that this type of test is processor
+            # and/or platform-specific, so do tests which don't depend on the
+            # internals.
+    
+            if o != o:
+                text = 'NaN'
+            elif o == _inf:
+                text = 'Infinity'
+            elif o == _neginf:
+                text = '-Infinity'
+            else:
+                return _repr(o)
+    
+            if not allow_nan:
+                raise ValueError(
+                    "Out of range float values are not JSON compliant: " +
+                    repr(o))
+    
+            return text
+    
+    
+        if (_one_shot and c_make_encoder is not None
+                and self.indent is None):
+            _iterencode = c_make_encoder(
+                markers, self.default, _encoder, self.indent,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, self.allow_nan)
+        else:
+            _iterencode = _make_iterencode(
+                markers, self.default, _encoder, self.indent, floatstr,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, _one_shot)
+>       return _iterencode(o, 0)
+               ^^^^^^^^^^^^^^^^^
+E       TypeError: '<' not supported between instances of 'str' and 'int'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:258: TypeError
+=============================== warnings summary ===============================
+tests/test_export_owner_independent_serialization.py::test_existing_row_accepts_nested_mixed_json_object_keys
+  /workspace/shared/taskcenter-export-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_export_owner_independent_serialization.py::test_existing_row_accepts_nested_mixed_json_object_keys
+  /workspace/shared/taskcenter-export-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-export-independent-evidence/candidate-08fe-json-probe.xml -
+=========================== short test summary info ============================
+FAILED tests/test_export_owner_independent_serialization.py::test_existing_row_accepts_nested_mixed_json_object_keys
+1 failed, 2 warnings in 68.57s (0:01:08)

@@ -1,0 +1,56 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[False]",
+    "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[True]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_owner_independent_process.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-export-independent-evidence/baseline-race.xml",
+    "--basetemp=/tmp/tmpfs2aee6a/baseline-race/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmpfs2aee6a/baseline-race/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-export-independent",
+  "failed_reports": [
+    {
+      "failure_message": "AssertionError: one original committed job was lost\nassert ('89a6918c-24af-4569-84de-5dbea0493a0f' in {'89a6918c-24af-4569-84de-5dbea0493a0f': {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-26T12:22:27.469243+00:00', ...}} and 'a189c332-3a48-4ac3-8b7f-e52e00e55454' in {'89a6918c-24af-4569-84de-5dbea0493a0f': {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-26T12:22:27.469243+00:00', ...}})",
+      "nodeid": "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[False]",
+      "when": "call"
+    },
+    {
+      "failure_message": "AssertionError: same idempotency key created two logical jobs\nassert '8c7f9b96-403...-214581fc0ade' == '96f012e5-6d8...-fe1fa51c50ea'\n  \n  - 96f012e5-6d8e-4a23-a25d-fe1fa51c50ea\n  + 8c7f9b96-403d-4851-bba9-214581fc0ade",
+      "nodeid": "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[True]",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_export_owner_independent_process",
+        "message": "AssertionError: one original committed job was lost\nassert ('89a6918c-24af-4569-84de-5dbea0493a0f' in {'89a6918c-24af-4569-84de-5dbea0493a0f': {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-26T12:22:27.469243+00:00', ...}} and 'a189c332-3a48-4ac3-8b7f-e52e00e55454' in {'89a6918c-24af-4569-84de-5dbea0493a0f': {'artifact': None, 'attempt': 1, 'cancel_requested': False, 'created_at': '2026-10-26T12:22:27.469243+00:00', ...}})",
+        "name": "test_original_export_create_serializes_independent_processes[False]",
+        "type": null
+      },
+      {
+        "classname": "tests.test_export_owner_independent_process",
+        "message": "AssertionError: same idempotency key created two logical jobs\nassert '8c7f9b96-403...-214581fc0ade' == '96f012e5-6d8...-fe1fa51c50ea'\n  \n  - 96f012e5-6d8e-4a23-a25d-fe1fa51c50ea\n  + 8c7f9b96-403d-4851-bba9-214581fc0ade",
+        "name": "test_original_export_create_serializes_independent_processes[True]",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 2
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}

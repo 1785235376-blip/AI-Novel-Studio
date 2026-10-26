@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="68.296" timestamp="2026-10-26T21:30:57.227390+09:00" hostname="41bcdb05fc96"><testcase classname="tests.test_export_owner_independent_serialization" name="test_existing_row_accepts_nested_mixed_json_object_keys" time="65.557"><failure message="TypeError: '&lt;' not supported between instances of 'str' and 'int'">owner = &lt;app.services.export_job_service.ExportJobService object at 0x7f453edca660&gt;
+
+    def test_existing_row_accepts_nested_mixed_json_object_keys(owner):
+        row=seed_terminal(owner)
+        row['private_snapshot']={1:'integer-key','name':'text-key'}
+&gt;       owner._write({'terminal':row})
+
+tests/test_export_owner_independent_serialization.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/export_job_service.py:208: in _write
+    == json.dumps(row, sort_keys=True, separators=(",", ":"))
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;json.encoder.JSONEncoder object at 0x7f4539033b30&gt;
+o = {'created_at': '2026-01-01T00:00:00Z', 'id': 'terminal', 'novel_id': 'book', 'permission_context': {'actor_id': 'a', 'mode': 'local', 'novel_id': 'book'}, ...}
+_one_shot = True
+
+    def iterencode(self, o, _one_shot=False):
+        """Encode the given object and yield each string
+        representation as available.
+    
+        For example::
+    
+            for chunk in JSONEncoder().iterencode(bigobject):
+                mysocket.write(chunk)
+    
+        """
+        if self.check_circular:
+            markers = {}
+        else:
+            markers = None
+        if self.ensure_ascii:
+            _encoder = encode_basestring_ascii
+        else:
+            _encoder = encode_basestring
+    
+        def floatstr(o, allow_nan=self.allow_nan,
+                _repr=float.__repr__, _inf=INFINITY, _neginf=-INFINITY):
+            # Check for specials.  Note that this type of test is processor
+            # and/or platform-specific, so do tests which don't depend on the
+            # internals.
+    
+            if o != o:
+                text = 'NaN'
+            elif o == _inf:
+                text = 'Infinity'
+            elif o == _neginf:
+                text = '-Infinity'
+            else:
+                return _repr(o)
+    
+            if not allow_nan:
+                raise ValueError(
+                    "Out of range float values are not JSON compliant: " +
+                    repr(o))
+    
+            return text
+    
+    
+        if (_one_shot and c_make_encoder is not None
+                and self.indent is None):
+            _iterencode = c_make_encoder(
+                markers, self.default, _encoder, self.indent,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, self.allow_nan)
+        else:
+            _iterencode = _make_iterencode(
+                markers, self.default, _encoder, self.indent, floatstr,
+                self.key_separator, self.item_separator, self.sort_keys,
+                self.skipkeys, _one_shot)
+&gt;       return _iterencode(o, 0)
+               ^^^^^^^^^^^^^^^^^
+E       TypeError: '&lt;' not supported between instances of 'str' and 'int'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:258: TypeError</failure></testcase></testsuite></testsuites>

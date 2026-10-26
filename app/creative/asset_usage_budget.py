@@ -292,10 +292,19 @@ class UsageReadBudget:
         """Binary integrity readers share the same cumulative request budget."""
         return bytes(self._read_bytes(path, limit, self.MAX_BINARY_BYTES))
 
-    def read(self, path, limit=None):
+    def read_json_bytes(self, path, limit=None):
+        """Admit JSON without changing the original owner's physical snapshot.
+
+        Snapshot/CAS owners need exact bytes, including whitespace. Their own
+        decoder still checks syntax, duplicate keys and lifecycle metadata.
+        """
         data = self._read_bytes(path, limit, self.MAX_SCOPE_BYTES)
         _checkpoint('before_json_preflight', path)
         self._preflight_json(data)
+        return bytes(data)
+
+    def read(self, path, limit=None):
+        data = self.read_json_bytes(path, limit)
         try:
             return data.decode('utf-8')
         except UnicodeError:
