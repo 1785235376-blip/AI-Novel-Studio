@@ -356,6 +356,10 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
     body = _payload(body); context = _context(context, body, actor)
     guard()
     def add(rows):
+        # Admission may have waited for another original queue writer. Recheck
+        # authority after that wait, inside the callback that can still abort
+        # persistence. A post-write refusal cannot undo an unauthorized row.
+        guard()
         if 'canvas_image_node' in context.get('command', {}):
             matches = [row for row in rows if row.get('contract') == CONTRACT
                 and row.get('context', {}).get('scope_key') == context['scope_key']
@@ -371,6 +375,7 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
                 _owned(service, row, nid, branch, actor)
                 if row["body"] != body or row["context"] != context:
                     raise ValueError("STUDIO_IMAGE_IDEMPOTENCY_CONFLICT")
+                guard()
                 return copy.deepcopy(row)
         if sum(row.get("contract") == CONTRACT for row in rows) >= 200:
             raise ValueError("STUDIO_IMAGE_JOB_CAPACITY")
@@ -383,9 +388,11 @@ def create(service, nid, branch, actor, body, context, guard, *, source_phase=No
             "product_acceptance": "LOCAL_REQUIRED", "created_at": now(), "updated_at": now()}
         row["binding_digest"] = _binding(row)
         rows.append(row)
+        guard()
         return copy.deepcopy(row)
-    if (body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale", "m5.image.composite"}
-            or any(source["kind"] == "COMIC_PANEL" for source in context["sources"])):
+    requires_source_phase = (body["operation_id"] in {"m5.image.cutout", "m5.image.inpaint", "m5.image.upscale", "m5.image.composite"}
+            or any(source["kind"] == "COMIC_PANEL" for source in context["sources"]))
+    if requires_source_phase or source_phase is not None:
         if not callable(source_phase):
             raise ValueError("STUDIO_IMAGE_UPSCALE_SOURCE_PHASE_REQUIRED" if body["operation_id"] == "m5.image.upscale"
                 else "STUDIO_IMAGE_CUTOUT_SOURCE_PHASE_REQUIRED")

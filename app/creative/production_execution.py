@@ -171,6 +171,21 @@ class ProductionExecutionService:
         return lambda snapshot, *, inspection_guard=None: self.source(
             nid, scope, snapshot, guard, inspection_guard=inspection_guard)
 
+    @contextmanager
+    def _image_document_queue_phase(self, nid, scope, actor, context, guard):
+        """Pin the reviewed document through the original queue's atomic write.
+
+        Use the existing queue -> source -> asset -> project lease order. A
+        preview is read-only and cannot reserve its source for a later command.
+        """
+        with self.timeline_inputs.phase(nid, scope, actor, guard):
+            base = self._base(nid, scope, actor, guard)
+            if any(base[key] != context[key] for key in ("actor", "scope_key", "incarnation")):
+                raise StaleSourceError("STUDIO_DOCUMENT_SOURCE_CHANGED")
+            self._sources_current(nid, scope, context, guard)
+            yield
+            guard()
+
     @staticmethod
     def _cutout_guard(guard):
         def current():
@@ -802,6 +817,9 @@ class ProductionExecutionService:
             elif command.operation_id == "m5.image.upscale":
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
                     source_phase=lambda: self._upscale_queue_phase(nid, scope, context, guard))
+            elif graph_binding is None and any(source["kind"] == "CREATIVE_DOCUMENT" for source in context["sources"]):
+                row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard,
+                    source_phase=lambda: self._image_document_queue_phase(nid, scope, actor, context, guard))
             else:
                 row = self._image(actor).create_studio(nid, branch, actor, payload, context, guard)
             owner = "image"
