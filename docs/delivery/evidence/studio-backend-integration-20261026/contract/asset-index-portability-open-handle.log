@@ -1,0 +1,73 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-wal'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-shm'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-journal'
+INDEX_EXCEPTION 196 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-wal'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-shm'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-journal'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-wal'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-shm'
+INDEX_EXCEPTION 189 FileNotFoundError [WinError 2] ϵͳ�Ҳ���ָ�����ļ���: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3-journal'
+INDEX_EXCEPTION 269 _RebuildRequired 
+INDEX_EXCEPTION 426 _RebuildRequired 
+INDEX_EXCEPTION 384 PermissionError [WinError 5] �ܾ����ʡ�: 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\building-a9adefae58584184a83fdce2a508d160.sqlite3' -> 'D:\\PoemSeed\\Worktrees\\studio-contracts-20261026\\.runtime\\asset-rebuild-probe-715ee112879646758219c81fcf4f9b8e\\tmp\\pytest-of-admin\\pytest-0\\test_canonical_rebuild_failure0\\assets\\.asset-query-index\\index.sqlite3'
+INDEX_EXCEPTION 404 AssetQueryUnavailable ASSET_QUERY_INDEX_UNAVAILABLE
+INDEX_EXCEPTION 432 AssetQueryUnavailable ASSET_QUERY_INDEX_UNAVAILABLE
+F
+================================== FAILURES ===================================
+____________________ test_canonical_rebuild_failure_trace _____________________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x0000019D41B10D50>, nid='query-1344e84624e04643971de63419...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000019D41BB8A10>
+
+    def test_canonical_rebuild_failure_trace(rig, monkeypatch):
+        from app.services.asset_query_index import FileAssetQueryIndex
+        original = FileAssetQueryIndex.snapshot
+        def traced(self, *args, **kwargs):
+            def trace(frame, event, value):
+                if event == "exception" and frame.f_code.co_filename.endswith("asset_query_index.py"):
+                    print("INDEX_EXCEPTION", frame.f_lineno, type(value[1]).__name__, str(value[1]))
+                return trace
+            previous = sys.gettrace()
+            sys.settrace(trace)
+            try:
+                return original(self, *args, **kwargs)
+            finally:
+                sys.settrace(previous)
+        monkeypatch.setattr(FileAssetQueryIndex, "snapshot", traced)
+>       reproduce(rig)
+
+tests\test_asset_index_portability_probe.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_studio_asset_query_indexed.py:204: in test_damaged_derived_filter_cannot_silently_hide_source_match
+    assert ids(response) == [row["id"]] and response.json()["total"] == 1
+           ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [503 Service Unavailable]>
+
+    def ids(response):
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"652cae14-1d5d-4332-8b37-209e52df5a22"}
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError
+============================== warnings summary ===============================
+[USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  [USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_asset_index_portability_probe.py::test_canonical_rebuild_failure_trace
+  [WORKTREES]\studio-contracts-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_asset_index_portability_probe.py::test_canonical_rebuild_failure_trace
+  [WORKTREES]\studio-contracts-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_asset_index_portability_probe.py::test_canonical_rebuild_failure_trace
+1 failed, 3 warnings in 4.61s

@@ -1,0 +1,13 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+.                                                                        [100%]
+============================== warnings summary ===============================
+tests/test_studio_process_reopen_v2.py::test_original_http_assembly_candidate_adoption_survives_process_restart
+  [WORKTREES]\studio-backend-integration-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_process_reopen_v2.py::test_original_http_assembly_candidate_adoption_survives_process_restart
+  [WORKTREES]\studio-backend-integration-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 2 warnings in 14.14s

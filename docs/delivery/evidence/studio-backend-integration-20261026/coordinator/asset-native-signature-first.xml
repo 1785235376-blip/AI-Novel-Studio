@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="4.181" timestamp="2026-10-26T10:48:51.188614+08:00" hostname="SYNTHETIC_HOST"><testcase classname=".runtime.test_asset_signature_probe" name="test_byte_preserving_external_metadata_edit" time="3.955" /></testsuite></testsuites>

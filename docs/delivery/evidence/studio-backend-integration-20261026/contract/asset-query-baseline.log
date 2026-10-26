@@ -1,0 +1,80 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- [USER]\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: [WORKTREES]\studio-contracts-20261026
+configfile: pyproject.toml
+plugins: anyio-4.14.2
+collecting ... collected 1 item
+
+tests/test_studio_asset_query.py::test_existing_shape_and_combined_filename_kind_filter FAILED [100%]
+
+================================== FAILURES ===================================
+____________ test_existing_shape_and_combined_filename_kind_filter ____________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000002899E22C8D0>, nid='query-068962c787384279995f1ccac3...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_existing_shape_and_combined_filename_kind_filter(rig):
+        first = rig.seed("Shrine Cover.PNG")
+        second = rig.seed("shrine ambience.wav", "audio")
+        rig.seed("Forest.png")
+>       assert set(get(rig).json()) == {"items"}
+E       AssertionError: assert {'message', 'details', 'request_id', 'detail', 'code'} == {'items'}
+E         
+E         Extra items in the left set:
+E         'message'
+E         'detail'
+E         'details'
+E         'request_id'
+E         'code'
+E         Extra items in the right set:
+E         'items'
+E         
+E         Full diff:
+E           {
+E         -     'items',
+E         +     'code',
+E         +     'detail',
+E         +     'details',
+E         +     'message',
+E         +     'request_id',
+E           }
+
+tests\test_studio_asset_query.py:108: AssertionError
+============================== warnings summary ===============================
+[USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  [USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_studio_asset_query.py::test_existing_shape_and_combined_filename_kind_filter
+  [WORKTREES]\studio-contracts-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_asset_query.py::test_existing_shape_and_combined_filename_kind_filter
+  [WORKTREES]\studio-contracts-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studio_asset_query.py::test_existing_shape_and_combined_filename_kind_filter - AssertionError: assert {'message', 'details', 'request_id', 'detail', 'code'} == {'items'}
+  
+  Extra items in the left set:
+  'message'
+  'detail'
+  'details'
+  'request_id'
+  'code'
+  Extra items in the right set:
+  'items'
+  
+  Full diff:
+    {
+  -     'items',
+  +     'code',
+  +     'detail',
+  +     'details',
+  +     'message',
+  +     'request_id',
+    }
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+======================== 1 failed, 3 warnings in 4.48s ========================

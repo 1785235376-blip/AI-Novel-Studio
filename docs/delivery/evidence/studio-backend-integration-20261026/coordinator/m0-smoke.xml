@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="3.524" timestamp="2026-10-26T10:32:21.251914+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[continue]" time="2.372"><failure message="AssertionError: &#10;assert 500 == 202&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">keyed = namespace(root=WindowsPath('[WORKTREES]/studio-backend-integration-20261026/.runtime/file-keyed-activation/m...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'continue'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+&gt;       result, job = queued(f, operation=operation)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_file_keyed_activation.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+f = namespace(root=WindowsPath('[WORKTREES]/studio-backend-integration-20261026/.runtime/file-keyed-activation/m...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {'operation': 'continue'}
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: 
+E       assert 500 == 202
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests\test_file_keyed_activation.py:131: AssertionError</failure></testcase><testcase classname="tests.test_file_keyed_activation" name="test_real_keyed_mock_candidate_to_http_manual_adoption[rewrite]" time="0.175"><failure message="AssertionError: &#10;assert 500 == 202&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">keyed = namespace(root=WindowsPath('[WORKTREES]/studio-backend-integration-20261026/.runtime/file-keyed-activation/m...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+operation = 'rewrite'
+
+    @pytest.mark.parametrize('operation', ['continue', 'rewrite'])
+    def test_real_keyed_mock_candidate_to_http_manual_adoption(keyed, operation):
+        f = keyed
+&gt;       result, job = queued(f, operation=operation)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_file_keyed_activation.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+f = namespace(root=WindowsPath('[WORKTREES]/studio-backend-integration-20261026/.runtime/file-keyed-activation/m...ed-file-book:1', 'instruction': 'Continue', 'profile': 'LOCAL_ONLY', 'provider_id': 'mock', 'model_id': 'mock-writer'})
+kwargs = {'operation': 'rewrite'}
+
+    def queued(f, **kwargs):
+        response = post(f, **kwargs)
+&gt;       assert response.status_code == 202, response.text
+E       AssertionError: 
+E       assert 500 == 202
+E        +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests\test_file_keyed_activation.py:131: AssertionError</failure></testcase></testsuite></testsuites>

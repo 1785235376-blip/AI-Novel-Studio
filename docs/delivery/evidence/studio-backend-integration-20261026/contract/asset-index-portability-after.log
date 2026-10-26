@@ -1,0 +1,47 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+......F..                                                                [100%]
+================================== FAILURES ===================================
+________ test_damaged_derived_filter_cannot_silently_hide_source_match ________
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x000001AEC0E1B590>, nid='query-cf3113531e7e450ebd4b88ff07...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_damaged_derived_filter_cannot_silently_hide_source_match(rig):
+        row = rig.seed("needle.png")
+        assert ids(get(rig, {"q": "needle", "limit": 1})) == [row["id"]]
+        before = source_snapshot(rig.root)
+        with sqlite3.connect(rig.workspace.query_index.path) as connection:
+            connection.execute("UPDATE sources SET filename_folded=? WHERE asset_id=?",
+                               ("nonmatching damage", row["id"]))
+        response = get(rig, {"q": "needle", "limit": 1})
+>       assert ids(response) == [row["id"]] and response.json()["total"] == 1
+               ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:204: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [503 Service Unavailable]>
+
+    def ids(response):
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"8c2ae737-1275-4ef0-9626-eb45c7126e79"}
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError
+============================== warnings summary ===============================
+[USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  [USER]\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_studio_asset_query_indexed.py::test_cold_hot_deep_low_hit_and_exact_total_file_read_costs
+  [WORKTREES]\studio-contracts-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_asset_query_indexed.py::test_cold_hot_deep_low_hit_and_exact_total_file_read_costs
+  [WORKTREES]\studio-contracts-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studio_asset_query_indexed.py::test_damaged_derived_filter_cannot_silently_hide_source_match
+1 failed, 8 passed, 3 warnings in 8.35s

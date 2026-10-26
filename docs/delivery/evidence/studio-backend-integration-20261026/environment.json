@@ -1,0 +1,14 @@
+{
+  "platform": "Windows-10-10.0.26100-SP0",
+  "python": "3.11.9",
+  "test_mode": "File storage; synthetic Mock provider; Windows local processes",
+  "actual_frontend_target": "work/hermia-theme-dualcanvas-20261026",
+  "actual_frontend_sha": "03e8034a41adc18ab0e32a35688e6ec2ff889d9f",
+  "actual_frontend_tree": "ebbffb2f8938f80b98df8ab779eec34a0014b706",
+  "actual_frontend_verification": "SOURCE_VERIFIED; browser entry/theme/stack observed; execution FRONTEND_BLOCKED",
+  "real_model": "NOT_RUN",
+  "postgres": "NOT_RUN_UNCONFIGURED",
+  "cloud_executor": "NOT_RUN",
+  "github_actions": "NOT_RUN_NO_RERUN_OR_BILLING_CHANGE",
+  "normalization": "worktree paths and local username normalized; JUnit hostname replaced; test outcomes unchanged"
+}

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="6" tests="80" time="50.515" timestamp="2026-10-26T10:44:52.498025+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_asset_query" name="test_existing_shape_and_combined_filename_kind_filter" time="4.255" /><testcase classname="tests.test_studio_asset_query" name="test_name_search_is_unicode_casefold_literal_substring" time="0.474" /><testcase classname="tests.test_studio_asset_query" name="test_maximum_keyword_length_is_accepted" time="0.176" /><testcase classname="tests.test_studio_asset_query" name="test_creation_time_precedes_id_in_sort_order" time="0.191" /><testcase classname="tests.test_studio_asset_query" name="test_corrupt_metadata_is_excluded_by_real_owner_before_total" time="0.183" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[image]" time="0.166" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[video]" time="0.172" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[audio]" time="0.164" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[model]" time="0.169" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[text]" time="0.192" /><testcase classname="tests.test_studio_asset_query" name="test_existing_stored_kinds_can_be_selected[prompt]" time="0.166" /><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[]" time="0.157" /><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[   ]" time="0.166" /><testcase classname="tests.test_studio_asset_query" name="test_empty_keyword_means_no_filter[\u3000]" time="0.163" /><testcase classname="tests.test_studio_asset_query" name="test_pagination_total_stable_ties_and_boundaries" time="0.441" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params0]" time="0.093" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params1]" time="0.094" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params2]" time="0.095" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params3]" time="0.092" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params4]" time="0.096" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params5]" time="0.095" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params6]" time="0.103" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params7]" time="0.100" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params8]" time="0.094" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params9]" time="0.096" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params10]" time="0.095" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params11]" time="0.099" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params12]" time="0.099" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params13]" time="0.101" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params14]" time="0.103" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params15]" time="0.098" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params16]" time="0.098" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params17]" time="0.096" /><testcase classname="tests.test_studio_asset_query" name="test_invalid_query_returns_fixed_safe_error[params18]" time="0.098" /><testcase classname="tests.test_studio_asset_query" name="test_filter_total_respects_project_private_deleted_and_feature_visibility" time="0.356" /><testcase classname="tests.test_studio_asset_query" name="test_recreated_project_does_not_adopt_old_bound_assets" time="0.265" /><testcase classname="tests.test_studio_asset_query" name="test_real_authority_session_membership_and_branch_boundaries" time="0.761" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_cold_hot_deep_low_hit_and_exact_total_file_read_costs" time="1.093" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_index_corpus_budget_is_explicit_and_never_returns_partial_total" time="0.134" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_content_budget_rejects_whole_page_and_is_request_local" time="0.312" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_matching_off_page_invalid_revision_keeps_owner_failure" time="0.188" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_metadata_rename_type_and_deletion_refresh_real_index" time="0.281" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_query_detects_actual_source_change_before_return" time="0.221" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_damaged_derived_filter_cannot_silently_hide_source_match" time="0.231" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_offset_total_rejects_feature_visibility_change_before_return" time="0.194" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_injected_content_io_failure_returns_fixed_error_without_path" time="0.174" /><testcase classname="tests.test_asset_query_index_recovery" name="test_fresh_process_reopens_persistent_index_without_source_rebuild" time="1.227" /><testcase classname="tests.test_asset_query_index_recovery" name="test_atomic_insert_rename_type_change_delete_reconciles_in_new_process" time="2.217" /><testcase classname="tests.test_asset_query_index_recovery" name="test_in_place_source_edit_is_detected_without_directory_mtime_change" time="0.665"><failure message="AssertionError: assert 851 == 827&#10; +  where 851 = os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=851, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709).st_size&#10; +    where os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=851, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709) = stat()&#10; +      where stat = WindowsPath('[WORKTREES]/studio-independent-20261026/.runtime/asset-independent-regression-8e81572e927e424db...49cf7c0/tmp/pytest-of-admin/pytest-0/test_in_place_source_edit_is_d0/assets/1ab5269c-96a8-4d04-82a2-cf8371ac1abb.json').stat&#10; +  and   827 = os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=827, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709).st_size">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257D8D5F910&gt;, nid='query-00db16d100794afe912a2926cc...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_in_place_source_edit_is_detected_without_directory_mtime_change(rig):
+        saved = rig.seed("before.png")
+        original = query_process(rig)
+        path = rig.assets.root / (saved["id"] + ".json")
+        directory_time = rig.assets.root.stat().st_mtime_ns
+        previous_stat = path.stat()
+        text = path.read_text(encoding="utf-8")
+        assert '"before.png"' in text
+        path.write_text(text.replace('"before.png"', '"afters.png"'), encoding="utf-8")
+        # Even a writer preserving mtime and file length changes ctime.
+        os.utime(path, ns=(previous_stat.st_atime_ns, previous_stat.st_mtime_ns))
+&gt;       assert path.stat().st_size == previous_stat.st_size
+E       AssertionError: assert 851 == 827
+E        +  where 851 = os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=851, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709).st_size
+E        +    where os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=851, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709) = stat()
+E        +      where stat = WindowsPath('[WORKTREES]/studio-independent-20261026/.runtime/asset-independent-regression-8e81572e927e424db...49cf7c0/tmp/pytest-of-admin/pytest-0/test_in_place_source_edit_is_d0/assets/1ab5269c-96a8-4d04-82a2-cf8371ac1abb.json').stat
+E        +  and   827 = os.stat_result(st_mode=33206, st_ino=1688849861648112, st_dev=2229535215, st_nlink=1, st_uid=0, st_gid=0, st_size=827, st_atime=1792982710, st_mtime=1792982709, st_ctime=1792982709).st_size
+
+tests\test_asset_query_index_recovery.py:238: AssertionError</failure></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[missing]" time="1.264" /><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[invalid_sqlite]" time="1.497" /><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[old_format]" time="1.227"><failure message="KeyError: 'build_metadata_reads'">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257D8D90A50&gt;, nid='query-97a0f91da88e4eb18107a7a3e7...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+damage = 'old_format'
+
+    @pytest.mark.parametrize("damage", ["missing", "invalid_sqlite", "old_format", "wrong_root", "filter_column", "oversized_cell"])
+    def test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources(rig, damage):
+        saved = rig.seed("needle.png")
+        original = query_process(rig)
+        path = index_path(rig)
+        cursor_key = path.parent / "cursor.key"
+        cursor_key.write_bytes(b"synthetic cursor key preserved by index recovery")
+        before = source_snapshot(rig)
+        if damage == "missing":
+            path.unlink()
+        elif damage == "invalid_sqlite":
+            path.write_bytes(b"this is not a SQLite database")
+        else:
+            with sqlite3.connect(path) as connection:
+                if damage == "filter_column":
+                    connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
+                elif damage == "oversized_cell":
+                    connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
+                else:
+                    key = "format" if damage == "old_format" else "source_root"
+                    connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
+        recovered = query_process(rig, keyword="needle")
+        assert recovered["pid"] != original["pid"]
+&gt;       assert recovered["build_metadata_reads"] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'build_metadata_reads'
+
+tests\test_asset_query_index_recovery.py:270: KeyError</failure></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[wrong_root]" time="1.392"><failure message="KeyError: 'build_metadata_reads'">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257D8DCF390&gt;, nid='query-453673cb856b4e6193a9a32212...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+damage = 'wrong_root'
+
+    @pytest.mark.parametrize("damage", ["missing", "invalid_sqlite", "old_format", "wrong_root", "filter_column", "oversized_cell"])
+    def test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources(rig, damage):
+        saved = rig.seed("needle.png")
+        original = query_process(rig)
+        path = index_path(rig)
+        cursor_key = path.parent / "cursor.key"
+        cursor_key.write_bytes(b"synthetic cursor key preserved by index recovery")
+        before = source_snapshot(rig)
+        if damage == "missing":
+            path.unlink()
+        elif damage == "invalid_sqlite":
+            path.write_bytes(b"this is not a SQLite database")
+        else:
+            with sqlite3.connect(path) as connection:
+                if damage == "filter_column":
+                    connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
+                elif damage == "oversized_cell":
+                    connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
+                else:
+                    key = "format" if damage == "old_format" else "source_root"
+                    connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
+        recovered = query_process(rig, keyword="needle")
+        assert recovered["pid"] != original["pid"]
+&gt;       assert recovered["build_metadata_reads"] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'build_metadata_reads'
+
+tests\test_asset_query_index_recovery.py:270: KeyError</failure></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[filter_column]" time="1.180"><failure message="KeyError: 'build_metadata_reads'">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257D8E4C5D0&gt;, nid='query-dd279a373a5a41e49348456bb0...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+damage = 'filter_column'
+
+    @pytest.mark.parametrize("damage", ["missing", "invalid_sqlite", "old_format", "wrong_root", "filter_column", "oversized_cell"])
+    def test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources(rig, damage):
+        saved = rig.seed("needle.png")
+        original = query_process(rig)
+        path = index_path(rig)
+        cursor_key = path.parent / "cursor.key"
+        cursor_key.write_bytes(b"synthetic cursor key preserved by index recovery")
+        before = source_snapshot(rig)
+        if damage == "missing":
+            path.unlink()
+        elif damage == "invalid_sqlite":
+            path.write_bytes(b"this is not a SQLite database")
+        else:
+            with sqlite3.connect(path) as connection:
+                if damage == "filter_column":
+                    connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
+                elif damage == "oversized_cell":
+                    connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
+                else:
+                    key = "format" if damage == "old_format" else "source_root"
+                    connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
+        recovered = query_process(rig, keyword="needle")
+        assert recovered["pid"] != original["pid"]
+&gt;       assert recovered["build_metadata_reads"] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'build_metadata_reads'
+
+tests\test_asset_query_index_recovery.py:270: KeyError</failure></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources[oversized_cell]" time="1.158"><failure message="KeyError: 'build_metadata_reads'">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x00000257D8D91D10&gt;, nid='query-0cda99e680264c67918652ff10...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+damage = 'oversized_cell'
+
+    @pytest.mark.parametrize("damage", ["missing", "invalid_sqlite", "old_format", "wrong_root", "filter_column", "oversized_cell"])
+    def test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources(rig, damage):
+        saved = rig.seed("needle.png")
+        original = query_process(rig)
+        path = index_path(rig)
+        cursor_key = path.parent / "cursor.key"
+        cursor_key.write_bytes(b"synthetic cursor key preserved by index recovery")
+        before = source_snapshot(rig)
+        if damage == "missing":
+            path.unlink()
+        elif damage == "invalid_sqlite":
+            path.write_bytes(b"this is not a SQLite database")
+        else:
+            with sqlite3.connect(path) as connection:
+                if damage == "filter_column":
+                    connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
+                elif damage == "oversized_cell":
+                    connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
+                else:
+                    key = "format" if damage == "old_format" else "source_root"
+                    connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
+        recovered = query_process(rig, keyword="needle")
+        assert recovered["pid"] != original["pid"]
+&gt;       assert recovered["build_metadata_reads"] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'build_metadata_reads'
+
+tests\test_asset_query_index_recovery.py:270: KeyError</failure></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_sigkill_rebuild_keeps_a_complete_committed_database_and_recovers[row]" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:297: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_sigkill_rebuild_keeps_a_complete_committed_database_and_recovers[staged]" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:297: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_sigkill_rebuild_keeps_a_complete_committed_database_and_recovers[committed]" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:297: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_sigkill_rebuild_keeps_a_complete_committed_database_and_recovers[published]" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:297: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_first_build_sigkill_recovers_without_a_prior_index" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:324: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_source_changes_are_conflicts_without_partial_results[during_build]" time="1.675" /><testcase classname="tests.test_asset_query_index_recovery" name="test_source_changes_are_conflicts_without_partial_results[after_read]" time="1.749" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits0]" time="1.058" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits1]" time="1.368" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits2]" time="1.111" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits3]" time="1.176" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits4]" time="1.232" /><testcase classname="tests.test_asset_query_index_recovery" name="test_budget_exhaustion_is_explicit_and_never_returns_partial_success[limits5]" time="1.210" /><testcase classname="tests.test_asset_query_index_recovery" name="test_live_sqlite_sidecar_is_rejected_by_an_unchanged_warm_identity[wal]" time="1.764" /><testcase classname="tests.test_asset_query_index_recovery" name="test_live_sqlite_sidecar_is_rejected_by_an_unchanged_warm_identity[journal]" time="1.666" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[hot_entries]" time="1.153" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[directory_bytes]" time="1.177" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[cursor_reservation]" time="1.308" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[rebuild_entries]" time="1.223" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[rebuild_bytes]" time="1.130" /><testcase classname="tests.test_asset_query_index_recovery" name="test_derived_directory_budgets_preserve_sources_and_retained_files[within_room]" time="1.811" /><testcase classname="tests.test_asset_query_index_recovery" name="test_repeated_sigkill_evidence_consumes_budget_without_deleting_key_or_old_index" time="0.000"><skipped type="pytest.skip" message="SIGKILL recovery contract runs on POSIX">[WORKTREES]\studio-independent-20261026\tests\test_asset_query_index_recovery.py:432: SIGKILL recovery contract runs on POSIX</skipped></testcase><testcase classname="tests.test_asset_query_index_recovery" name="test_sqlite_page_growth_cap_is_a_budget_failure_with_old_artifact_preserved" time="2.162" /><testcase classname="tests.test_asset_index_publication_independent_v2" name="test_staging_fsync_failure_preserves_publication_and_recovers[first-build]" time="0.372" /><testcase classname="tests.test_asset_index_publication_independent_v2" name="test_staging_fsync_failure_preserves_publication_and_recovers[replace-existing]" time="0.388" /></testsuite></testsuites>

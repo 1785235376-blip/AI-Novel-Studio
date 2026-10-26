@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="4.400" timestamp="2026-10-26T10:41:03.187170+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_asset_query" name="test_existing_shape_and_combined_filename_kind_filter" time="3.845"><failure message="AssertionError: assert {'message', 'code', 'request_id', 'details', 'detail'} == {'items'}&#10;  &#10;  Extra items in the left set:&#10;  'message'&#10;  'code'&#10;  'detail'&#10;  'details'&#10;  'request_id'&#10;  Extra items in the right set:&#10;  'items'&#10;  &#10;  Full diff:&#10;    {&#10;  -     'items',&#10;  +     'code',&#10;  +     'detail',&#10;  +     'details',&#10;  +     'message',&#10;  +     'request_id',&#10;    }">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000001F9E192B190&gt;, nid='query-339d9471716b4599a14b0aa52d...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_existing_shape_and_combined_filename_kind_filter(rig):
+        first = rig.seed("Shrine Cover.PNG")
+        second = rig.seed("shrine ambience.wav", "audio")
+        rig.seed("Forest.png")
+&gt;       assert set(get(rig).json()) == {"items"}
+E       AssertionError: assert {'message', 'code', 'request_id', 'details', 'detail'} == {'items'}
+E         
+E         Extra items in the left set:
+E         'message'
+E         'code'
+E         'detail'
+E         'details'
+E         'request_id'
+E         Extra items in the right set:
+E         'items'
+E         
+E         Full diff:
+E           {
+E         -     'items',
+E         +     'code',
+E         +     'detail',
+E         +     'details',
+E         +     'message',
+E         +     'request_id',
+E           }
+
+tests\test_studio_asset_query.py:108: AssertionError</failure></testcase></testsuite></testsuites>

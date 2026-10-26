@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="5.665" timestamp="2026-10-26T10:43:42.927014+08:00" hostname="SYNTHETIC_HOST"><testcase classname="tests.test_studio_asset_query_indexed" name="test_cold_hot_deep_low_hit_and_exact_total_file_read_costs" time="4.777"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;614bde8f-daba-4865-bff5-819a2d4609a9&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x0000025735F32650&gt;, nid='query-ec1d3023199548f7a180bf478f...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+
+    def test_cold_hot_deep_low_hit_and_exact_total_file_read_costs(rig):
+        rows = [rig.seed(f"{'needle' if number == 53 else 'ordinary'}-{number:03d}.bin",
+                         "audio" if number % 2 else "image",
+                         stamp=f"2026-01-01T00:00:{number:02d}+00:00") for number in range(60)]
+        audit = FileReads(rig.assets.root)
+        before = source_snapshot(rig.root)
+    
+        cold, cold_cost = audit.query(rig, {"limit": 4})
+&gt;       assert ids(cold) == [row["id"] for row in rows[:4]]
+               ^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"614bde8f-daba-4865-bff5-819a2d4609a9"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase><testcase classname="tests.test_studio_asset_query_indexed" name="test_index_corpus_budget_is_explicit_and_never_returns_partial_total" time="0.136" /><testcase classname="tests.test_studio_asset_query_indexed" name="test_content_budget_rejects_whole_page_and_is_request_local" time="0.188"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_INDEX_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;5475a2d5-dce9-4a15-a180-cfd61cdd2ff0&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000002573637D110&gt;, nid='query-58a2ec82a8df462bb54652ef33...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000025737661110&gt;
+
+    def test_content_budget_rejects_whole_page_and_is_request_local(rig, monkeypatch):
+        from app.services.asset_query_budget import AssetQueryReadBudget
+    
+        rows = [rig.seed(f"content-budget-{number}.png") for number in range(3)]
+&gt;       assert len(ids(get(rig, {"limit": 3}))) == 3
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_indexed.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"code":"ASSET_QUERY_INDEX_UNAVAILABLE","message":"ASSET_QUERY_INDEX_UNAVAILABLE","details":{"code":"ASSET_QUERY_INDEX_UNAVAILABLE"},"request_id":"5475a2d5-dce9-4a15-a180-cfd61cdd2ff0"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase></testsuite></testsuites>
