@@ -1,0 +1,5 @@
+cwd=/workspace/shared/taskcenter-local-mixed-cursor-20261026
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_collaboration_http_boundary_v056.py", "tests/test_packaged_local_session_bootstrap_v070.py", "tests/test_p0_security_regressions.py", "tests/test_phase1_media_project_authorization.py", "tests/test_phase6_agent_jobs.py", "tests/test_phase6_agent_authorization.py", "tests/test_export_jobs.py", "tests/test_api_v1_alias.py", "tests/test_studio_production_query.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-mixed-evidence/frozen-original-regression.xml", "--basetemp=/tmp/tmpsra4qxel/frozen-original-regression/pytest-tmp", "-o", "cache_dir=/tmp/tmpsra4qxel/frozen-original-regression/pytest-cache"]
+........................................................................ [ 36%]
+.......F......................................
+VERIFICATION_SUBPROCESS_TIMEOUT

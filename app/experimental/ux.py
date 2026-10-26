@@ -776,7 +776,7 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             return row.get('scope') == ctx.scope or row.get('branch_id') == ctx.scope.get('branch_id')
         return not row.get('branch_id')
 
-    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None, *, limit=None, offset=None, authorities=None):
+    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None, *, limit=None, offset=None, authorities=None, _read_observer=None):
         reauthorize()
         try:
             page_query = TaskPageQuery(limit=limit, offset=offset)
@@ -791,6 +791,7 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
             reauthorize()
             if authorities is not None and reader.name not in authorities:
                 continue
+            completed = False
             try:
                 if reader.flag:
                     require_flag(reader.flag)
@@ -811,12 +812,19 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
                     items.append(task)
                 # Never expose pagination hints solely from rejected records.
                 truncated |= source_visible and (source_more or len(rows) > 200)
+                completed = True
             except HTTPException as exc:
                 if exc.status_code not in {403, 404}:
                     unavailable.append({'authority': reader.name, 'label': reader.label, 'reason': 'SOURCE_UNAVAILABLE'})
                 # A denied source has no task identifiers, counts or titles.
             except Exception:
                 unavailable.append({'authority': reader.name, 'label': reader.label, 'reason': 'SOURCE_UNAVAILABLE'})
+            finally:
+                # Private request-local receipt for the actual selected read.
+                # Observer failures deliberately propagate, outside source error
+                # handling; never disguise them as ordinary source availability.
+                if _read_observer is not None:
+                    _read_observer(reader, completed)
         reauthorize()
         result = {'items': items[:500], 'unavailable': unavailable, 'truncated': truncated or len(items) > 500,
                   'executor': False, 'refresh': 'MANUAL', 'automatic_retries': False}

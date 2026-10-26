@@ -1,0 +1,44 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_mixed_external_order_race.py::test_registry_order_change_inside_last_final_component_restarts"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_mixed_external_order_race.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-dac-order-probe.xml",
+    "--basetemp=/tmp/tmpa93hc47r/candidate-dac-order-probe/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmpa93hc47r/candidate-dac-order-probe/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-mixed-independent",
+  "failed_reports": [
+    {
+      "failure_message": "AssertionError: {\"items\":[{\"source\":{\"kind\":\"feature\",\"id\":\"b6f21ab9-e9cb-4b0b-873b-bf019d25cc24\",\"feature\":\"semantic_import_v2\",\"task_authority\":\"semantic_import\"},\"id\":\"b6f21ab9-e9cb-4b0b-873b-bf019d25cc24\",\"authority\":\"semantic_import\",\"label\":\"\u957f\u7bc7\u5bfc\u5165\",\"status\":\"QUEUED\",\"stage_label\":\"\u6392\u961f\",\"version\":1,\"feature\":\"semantic_import_v2\",\"progress\":{\"completed\":0,\"total\":1,\"unit\":\"\u5206\u5757\"},\"history\":[],\"stale\":false,\"cost\":{\"estimate\":null,\"actual\":null,\"state\":\"UNKNOWN\"},\"error_code\":null,\"provider_id\":null,\"model_id\":null,\"route_state\":\"UNKNOWN\",\"actions\":[\"open_source\",\"cancel\"],\"action_limits\":{\"cancel\":null,\"retry\":\"SOURCE_PREFLIGHT_REQUIRED\",\"resume\":\"SOURCE_RECOVERY_REQUIRED\",\"review\":\"SOURCE_REVIEW_REQUIRED\"},\"retry_policy\":\"SOURCE_AUTHORITY_ONLY\",\"lifecycle\":\"\u9762\u677f\u5173\u95ed\u4e0d\u53d6\u6d88\u4efb\u52a1\uff1b\u7ee7\u7eed\u6267\u884c\u548c\u91cd\u542f\u6062\u590d\u53d6\u51b3\u4e8e\u539f\u4efb\u52a1\u670d\u52a1\u3002\",\"revision\":\"d7480bcd71c54ec6ac06bd4d8aa3d716bec727f8ef9a95d3ef6a926506a87490\"},{\"source\":{\"kind\":\"feature\",\"id\":\"e7c06a78-2848-4dd3-b614-9ed0c8380ee1\",\"feature\":\"exports\",\"task_authority\":\"exports\"},\"id\":\"e7c06a78-2848-4dd3-b614-9ed0c8380ee1\",\"authority\":\"exports\",\"label\":\"\u5bfc\u51fa\u4efb\u52a1\",\"status\":\"QUEUED\",\"stage_label\":\"\u6392\u961f\",\"version\":null,\"feature\":\"exports\",\"progress\":null,\"history\":[],\"stale\":false,\"cost\":{\"estimate\":null,\"actual\":null,\"state\":\"UNKNOWN\"},\"error_code\":null,\"provider_id\":null,\"model_id\":null,\"route_state\":\"UNKNOWN\",\"actions\":[\"open_source\",\"cancel\"],\"action_limits\":{\"cancel\":null,\"retry\":\"SOURCE_PREFLIGHT_REQUIRED\",\"resume\":\"SOURCE_RECOVERY_REQUIRED\",\"review\":\"SOURCE_REVIEW_REQUIRED\"},\"retry_policy\":\"SOURCE_AUTHORITY_ONLY\",\"lifecycle\":\"\u9762\u677f\u5173\u95ed\u4e0d\u53d6\u6d88\u4efb\u52a1\uff1b\u7ee7\u7eed\u6267\u884c\u548c\u91cd\u542f\u6062\u590d\u53d6\u51b3\u4e8e\u539f\u4efb\u52a1\u670d\u52a1\u3002\",\"revision\":\"f83de78ee66088c080d93f04ef190b1192a9fc45a00d13b150e9287bd57f4e88\"}],\"unavailable\":[],\"truncated\":true,\"executor\":false,\"refresh\":\"MANUAL\",\"automatic_retries\":false,\"observed_total\":6,\"source_truncated\":false,\"coverage\":{\"scope\":\"BOUNDED_AUTHORIZED_PROJECTION\",\"completeness\":\"NOT_ASSERTED\"},\"page_mode\":\"cursor\",\"limit\":2,\"has_more\":true,\"next_cursor\":\"tc1.ipsi0Icco8MojNvrbB4u3k3sIZXkYzt_UfnJvYrEq1o.4.zpPel1isCCNVCImS0nH5dLeO-Qh_bybZvLdkMrBVIW4\",\"capabilities\":{\"authority_filter\":{\"supported\":true,\"operator\":\"OR\"},\"cursor\":{\"supported\":true,\"mode\":\"FILE_TWO_EXCLUSIVE_MODES\",\"conditions\":[\"ACTUAL_FILE_OWNERS\",\"NON_PACKAGED\",\"LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM\",\"EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES\",\"ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR\"]},\"cross_owner_atomic_snapshot\":false,\"full_history_query\":false,\"cost\":\"UNKNOWN\"}}\nassert 200 == 409\n +  where 200 = <Response [200 OK]>.status_code",
+      "nodeid": "tests/test_taskcenter_mixed_external_order_race.py::test_registry_order_change_inside_last_final_component_restarts",
+      "when": "call"
+    }
+  ],
+  "junit": {
+    "errors": [],
+    "failures": [
+      {
+        "classname": "tests.test_taskcenter_mixed_external_order_race",
+        "message": "AssertionError: {\"items\":[{\"source\":{\"kind\":\"feature\",\"id\":\"b6f21ab9-e9cb-4b0b-873b-bf019d25cc24\",\"feature\":\"semantic_import_v2\",\"task_authority\":\"semantic_import\"},\"id\":\"b6f21ab9-e9cb-4b0b-873b-bf019d25cc24\",\"authority\":\"semantic_import\",\"label\":\"\u957f\u7bc7\u5bfc\u5165\",\"status\":\"QUEUED\",\"stage_label\":\"\u6392\u961f\",\"version\":1,\"feature\":\"semantic_import_v2\",\"progress\":{\"completed\":0,\"total\":1,\"unit\":\"\u5206\u5757\"},\"history\":[],\"stale\":false,\"cost\":{\"estimate\":null,\"actual\":null,\"state\":\"UNKNOWN\"},\"error_code\":null,\"provider_id\":null,\"model_id\":null,\"route_state\":\"UNKNOWN\",\"actions\":[\"open_source\",\"cancel\"],\"action_limits\":{\"cancel\":null,\"retry\":\"SOURCE_PREFLIGHT_REQUIRED\",\"resume\":\"SOURCE_RECOVERY_REQUIRED\",\"review\":\"SOURCE_REVIEW_REQUIRED\"},\"retry_policy\":\"SOURCE_AUTHORITY_ONLY\",\"lifecycle\":\"\u9762\u677f\u5173\u95ed\u4e0d\u53d6\u6d88\u4efb\u52a1\uff1b\u7ee7\u7eed\u6267\u884c\u548c\u91cd\u542f\u6062\u590d\u53d6\u51b3\u4e8e\u539f\u4efb\u52a1\u670d\u52a1\u3002\",\"revision\":\"d7480bcd71c54ec6ac06bd4d8aa3d716bec727f8ef9a95d3ef6a926506a87490\"},{\"source\":{\"kind\":\"feature\",\"id\":\"e7c06a78-2848-4dd3-b614-9ed0c8380ee1\",\"feature\":\"exports\",\"task_authority\":\"exports\"},\"id\":\"e7c06a78-2848-4dd3-b614-9ed0c8380ee1\",\"authority\":\"exports\",\"label\":\"\u5bfc\u51fa\u4efb\u52a1\",\"status\":\"QUEUED\",\"stage_label\":\"\u6392\u961f\",\"version\":null,\"feature\":\"exports\",\"progress\":null,\"history\":[],\"stale\":false,\"cost\":{\"estimate\":null,\"actual\":null,\"state\":\"UNKNOWN\"},\"error_code\":null,\"provider_id\":null,\"model_id\":null,\"route_state\":\"UNKNOWN\",\"actions\":[\"open_source\",\"cancel\"],\"action_limits\":{\"cancel\":null,\"retry\":\"SOURCE_PREFLIGHT_REQUIRED\",\"resume\":\"SOURCE_RECOVERY_REQUIRED\",\"review\":\"SOURCE_REVIEW_REQUIRED\"},\"retry_policy\":\"SOURCE_AUTHORITY_ONLY\",\"lifecycle\":\"\u9762\u677f\u5173\u95ed\u4e0d\u53d6\u6d88\u4efb\u52a1\uff1b\u7ee7\u7eed\u6267\u884c\u548c\u91cd\u542f\u6062\u590d\u53d6\u51b3\u4e8e\u539f\u4efb\u52a1\u670d\u52a1\u3002\",\"revision\":\"f83de78ee66088c080d93f04ef190b1192a9fc45a00d13b150e9287bd57f4e88\"}],\"unavailable\":[],\"truncated\":true,\"executor\":false,\"refresh\":\"MANUAL\",\"automatic_retries\":false,\"observed_total\":6,\"source_truncated\":false,\"coverage\":{\"scope\":\"BOUNDED_AUTHORIZED_PROJECTION\",\"completeness\":\"NOT_ASSERTED\"},\"page_mode\":\"cursor\",\"limit\":2,\"has_more\":true,\"next_cursor\":\"tc1.ipsi0Icco8MojNvrbB4u3k3sIZXkYzt_UfnJvYrEq1o.4.zpPel1isCCNVCImS0nH5dLeO-Qh_bybZvLdkMrBVIW4\",\"capabilities\":{\"authority_filter\":{\"supported\":true,\"operator\":\"OR\"},\"cursor\":{\"supported\":true,\"mode\":\"FILE_TWO_EXCLUSIVE_MODES\",\"conditions\":[\"ACTUAL_FILE_OWNERS\",\"NON_PACKAGED\",\"LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM\",\"EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES\",\"ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR\"]},\"cross_owner_atomic_snapshot\":false,\"full_history_query\":false,\"cost\":\"UNKNOWN\"}}\nassert 200 == 409\n +  where 200 = <Response [200 OK]>.status_code",
+        "name": "test_registry_order_change_inside_last_final_component_restarts",
+        "type": null
+      }
+    ],
+    "present": true,
+    "tests": 1
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 1,
+  "timed_out": false
+}
