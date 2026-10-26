@@ -13,7 +13,7 @@ describe('original captured display client', () => {
     expect(json).toHaveBeenLastCalledWith('/api/projects/project/studio/canvas-views', 'POST', { expected_version: 0, request_id: 'request-1', definition });
     json.mockResolvedValue({ ...row(), version: 2 }); await client.save('view', 1, definition);
     expect(json).toHaveBeenLastCalledWith('/api/projects/project/studio/canvas-views/view', 'PUT', { expected_version: 1, definition });
-    expect(Object.keys(client).sort()).toEqual(['create', 'get', 'history', 'list', 'restore', 'save']);
+    expect(Object.keys(client).sort()).toEqual(['create', 'get', 'history', 'imageNodeResult', 'list', 'resolveImageNodeCreate', 'restore', 'save']);
   });
   it.each(['project', 'scope', 'id', 'execution', 'binary', 'state', 'filename', 'duplicate', 'port'])('rejects wrong or executable %s response', async kind => {
     const value: any = row();
@@ -51,5 +51,29 @@ describe('original captured display client', () => {
     const saving = client.save('view', 1, draft); draft.title = 'changed';
     expect((json.mock.calls[0][2] as any).definition.title).toBe('Media');
     await expect(saving).rejects.toThrow();
+  });
+  // Software response projections only; the real server remains the approval owner.
+  it.each(['valid', 'wrong-job', 'wrong-pin', 'wrong-target'])('binds the exact new result POST and rejects mismatched %s receipt', async kind => {
+    const empty = { ...row(), definition: { ...structuredClone(definition), cards: [] }, reference_states: [] };
+    const { client, json } = setup(empty), source = await client.get('view');
+    const incarnation = 'file:12345678-1234-1234-1234-123456789abc';
+    const job = { id: 'formal-job', version: 5, request_digest: 'd'.repeat(64) };
+    const pin = structuredClone(definition.cards[0].asset!);
+    const target = { contract: 'studio-canvas-image-node/1', project_id: 'project', scope: empty.scope, incarnation,
+      canvas_id: 'view', canvas_version: 1, canvas_digest: empty.definition_digest, node_id: 'Card', title: 'One node',
+      position: { x: 0, y: 0 }, prompt_digest: 'e'.repeat(64) };
+    const origin = { contract: 'studio-canvas-image-node-result/1', target, job_id: job.id, job_version: job.version,
+      job_request_digest: job.request_digest, asset: { ...pin } };
+    const response = { ...row(), version: 2, definition: { ...structuredClone(definition), image_node_origin: origin } };
+    if (kind === 'wrong-job') origin.job_id = 'other-job';
+    if (kind === 'wrong-pin') { origin.asset.digest = '0'.repeat(64); response.definition.cards[0].asset!.digest = origin.asset.digest; }
+    if (kind === 'wrong-target') target.canvas_version = 2;
+    json.mockResolvedValue(response);
+    const saving = client.imageNodeResult(source, incarnation, job, pin);
+    expect(json).toHaveBeenLastCalledWith('/api/projects/project/studio/canvas-views/view/image-node-result', 'POST', {
+      confirmed: true, expected_incarnation: incarnation, expected_version: 1, expected_definition_digest: empty.definition_digest,
+      job_id: job.id, job_version: job.version, job_request_digest: job.request_digest, asset: pin });
+    if (kind === 'valid') expect((await saving).definition.image_node_origin).toEqual(origin);
+    else await expect(saving).rejects.toThrow();
   });
 });

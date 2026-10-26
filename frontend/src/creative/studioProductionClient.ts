@@ -1,3 +1,5 @@
+import { assertCanvasImageNodeJob, checkedCanvasImageNodeBinding, canvasImageNodeInCommand, canonicalImageNode,
+  sameCanvasImageNode, verifyCanvasImageNodePrompt, type CanvasImageNodeBinding } from './canvasImageNode';
 import { checkedCanvasVideoTaskCommand, checkedCanvasVideoTaskPreview, checkedCanvasVideoTaskJob, type CanvasVideoTaskCommand } from './canvasVideoTrimTask';
 import { checkedCompositeCommand, checkedCompositeRecipe, checkedCompositeProof, sameCompositeCommand, type ImageCompositeLayer, type ImageCompositeProof } from './studioImageCompositeContract';
 import { checkedComicImageSource, checkedComicImageCommand, checkedComicImageFields, hasComicImageSource, sameComicImageCommand, type ComicImageSource } from './studioComicImageContract';
@@ -19,6 +21,7 @@ import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimeli
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 import { canvasReturnInCommand, sameCanvasReturn, type CanvasReturnBinding } from './studioCanvasReturnBinding';
 import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
+import { checkedCanvasViewRecord, type CanvasViewRecord } from './studioCanvasViewClient';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
 /** [HERMIA-FE-CONTRACTS G-AUD-1] GET …/production/jobs 的可选筛选（后端 studio_production_query_backend.md）。 */
@@ -48,7 +51,7 @@ export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.referen
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
   parameters: Record<string, string | number>; source_snapshots: RecordedProductionSource[]; allow_cloud: boolean; license_note: string;
-  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; video_frames?: VideoFrame[]; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[]; canvas_return?: CanvasReturnBinding };
+  image_source?: ProductionSource; image_references?: ImageReference[]; mask_source?: ProductionSource; video_reference?: VideoReference; video_frames?: VideoFrame[]; storyboard_shot?: ShotPin; storyboard_speech?: StoryboardSpeechPin; audio_profile?: typeof AUDIO_MP3_PROFILE; image_layers?: ImageCompositeLayer[]; canvas_return?: CanvasReturnBinding; canvas_image_node?: CanvasImageNodeBinding };
 export type RecordedProductionSource = ProductionSource | ComicImageSource | { id: string; kind: 'CREATIVE_DOCUMENT'; version: number; digest: string; reference_only?: true };
 export type RecordedMediaCommand = Omit<MediaCommand, 'source_snapshots'> & { source_snapshots: RecordedProductionSource[] };
 export type ProductionProvider = { operation_id: MediaOperation; provider_id: string; model_id: string; local: boolean; route_digest: string; capability: string; supported_parameters: string[]; readiness: 'CONFIGURED_NOT_VERIFIED'; video_capabilities?: VideoCapabilities; video_frame_capabilities?: VideoFrameCapabilities;
@@ -93,6 +96,36 @@ export type ProductionJob = { contract: 'studio-production-job/1'; owner: Produc
   media_measurement?: TimelineMediaMeasurement | null; processing_proof?: CutoutProcessingProof | ImageUpscaleProof | ImageCompositeProof | null;
   needs_reconciliation?: boolean | null; execution_state?: string | null; created_at: string; updated_at: string };
 export type ProductionAction = { expected_version: number; expected_request_digest: string };
+export type StudioImageNodeTargetObservation = {
+  contract: 'studio-image-node-target-observation/1'; job: ProductionJob; target: CanvasImageNodeBinding; incarnation: string;
+  canvas: { id: string; project_id: string; scope: CanvasImageNodeBinding['scope']; version: number; definition_digest: string;
+    title: string; card_count: number; execution_authority: false; binary_content_verified: false };
+  history: { incarnation: string; current_version: number; current_definition_digest: string;
+    target_version: number; target_definition_digest: string; target_empty: true };
+  comparison: 'CURRENT_MATCH' | 'CURRENT_CHANGED'; automatic_actions: false;
+};
+export type StudioImageNodeTargetViewPin = { incarnation: string; version: number; definition_digest: string };
+export type StudioImageNodeTargetView = {
+  contract: 'studio-image-node-target-view/1'; job: ProductionJob; target: CanvasImageNodeBinding;
+  incarnation: string; canvas: CanvasViewRecord; automatic_actions: false;
+};
+export const STUDIO_IMAGE_NODE_JOB_FIELDS = ['contract','owner','id','novel_id','branch_id','version','operation_id','request_id','status',
+  'request_digest','receipt_digest','attempt','created_at','updated_at','error_code','review_state','cancellation_mode','needs_reconciliation',
+  'execution_state','output_candidate','command','provider','approved_asset_version','product_acceptance','automatic_replay','remote_compute_may_continue'] as const;
+const imageNodeJobStates = ['QUEUED','RUNNING','FAILED','UNKNOWN','AWAITING_REVIEW','REVIEWING','APPROVED','CANCELLED'] as const;
+export type StudioImageNodeJobProjection = Required<Pick<ProductionJob,Exclude<typeof STUDIO_IMAGE_NODE_JOB_FIELDS[number],'attempt'>>> & {
+  owner: 'image'; operation_id: 'm5.image.t2i'; status: typeof imageNodeJobStates[number]; attempt: number;
+  command: RecordedMediaCommand; provider: NonNullable<ProductionJob['provider']> & {local:true};
+  output_candidate: {id:string;version:number;digest:string;kind:'image'} | null;
+};
+export type StudioImageNodeJobObservation = {
+  contract: 'studio-image-node-job-observation/1'; job: StudioImageNodeJobProjection; target: CanvasImageNodeBinding;
+  incarnation: string; canvas_read: false; automatic_actions: false;
+};
+export type StudioImageNodeJobDiscard = {
+  contract: 'studio-image-node-job-discard/1'; job: StudioImageNodeJobProjection; target: CanvasImageNodeBinding;
+  incarnation: string; canvas_read: false; automatic_actions: false; local_result_discarded: true; remote_stop_confirmed: false;
+};
 
 const operations: MediaOperation[] = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.reference', 'm5.image.inpaint', 'm5.image.upscale', 'm5.image.cutout', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music', 'm8.audio.effects', 'm8.audio.trim'];
 const owners: ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
@@ -104,6 +137,66 @@ const hex = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{64}
 const identifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9][A-Za-z0-9_-]{0,239}$/.test(v);
 const revision = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1;
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务回执不完整。请重新读取核对，勿重复发送。' }); }
+export function checkedImageNodeJobProjection(value: unknown): StudioImageNodeJobProjection {
+  const exact=(v:unknown,names:readonly string[]):v is Record<string,unknown>=>record(v)
+    && Object.keys(v).length===names.length&&names.every(name=>Object.hasOwn(v,name));
+  const text=(v:unknown)=>typeof v==='string'&&!!v.trim()&&[...v].length<=240&&!/[\u0000-\u001f\u007f]/.test(v);
+  if(!exact(value,STUDIO_IMAGE_NODE_JOB_FIELDS)||value.contract!=='studio-production-job/1'||value.owner!=='image'
+    ||value.operation_id!=='m5.image.t2i'||!imageNodeJobStates.includes(value.status as typeof imageNodeJobStates[number])
+    ||!identifier(value.id)||!identifier(value.novel_id)||value.branch_id!==null&&!text(value.branch_id)
+    ||!revision(value.version)||!text(value.request_id)||!hex(value.request_digest)||value.receipt_digest!==null&&!hex(value.receipt_digest)
+    ||typeof value.attempt!=='number'||!Number.isSafeInteger(value.attempt)||value.attempt<0
+    ||!text(value.created_at)||!text(value.updated_at)
+    ||['error_code','review_state','cancellation_mode','execution_state'].some(key=>value[key]!==null&&!text(value[key]))
+    ||value.needs_reconciliation!==null&&typeof value.needs_reconciliation!=='boolean'
+    ||value.approved_asset_version!==null&&!revision(value.approved_asset_version)
+    ||value.product_acceptance!=='LOCAL_REQUIRED'||value.automatic_replay!==false||typeof value.remote_compute_may_continue!=='boolean')invalid();
+  const command=value.command,provider=value.provider,candidate=value.output_candidate;
+  if(!exact(command,['operation_id','request_id','provider_id','model_id','prompt','parameters','source_snapshots','allow_cloud','license_note','canvas_image_node'])
+    ||command.operation_id!==value.operation_id||command.request_id!==value.request_id
+    ||typeof command.prompt!=='string'||!command.prompt.trim()||command.prompt.length>16000
+    ||!record(command.parameters)||Object.entries(command.parameters).some(([key,item])=>!parameterKeys.includes(key)
+      ||(typeof item==='number'?!Number.isFinite(item):typeof item!=='string'||item.length>8000))
+    ||!Array.isArray(command.source_snapshots)||command.source_snapshots.length||command.allow_cloud!==false
+    ||typeof command.license_note!=='string'||command.license_note.length>2000
+    ||!exact(provider,['provider_id','model_id','local','route_digest'])||provider.local!==true
+    ||!text(provider.provider_id)||!text(provider.model_id)||provider.provider_id!==command.provider_id||provider.model_id!==command.model_id
+    ||!hex(provider.route_digest)||!canvasImageNodeInCommand(command)
+    ||candidate!==null&&(!exact(candidate,['id','version','digest','kind'])||!identifier(candidate.id)||!revision(candidate.version)
+      ||!hex(candidate.digest)||candidate.kind!=='image'))invalid();
+  return structuredClone(value) as StudioImageNodeJobProjection;
+}
+
+/** A metadata projection of an already decoded receipt, never a substitute full Job. */
+export function studioImageNodeJobProjection(selected: ProductionJob): StudioImageNodeJobProjection {
+  const source=selected as unknown as Record<string,unknown>;
+  const value=Object.fromEntries(STUDIO_IMAGE_NODE_JOB_FIELDS.map(key=>[key,source[key]??null]));
+  const candidate=selected.output_candidate;
+  value.output_candidate=candidate?{id:candidate.id,version:candidate.version,digest:candidate.digest,kind:candidate.kind}:null;
+  return checkedImageNodeJobProjection(value);
+}
+
+/** Validate only the original owner's bounded local-discard acknowledgement. */
+export function checkedStudioImageNodeJobDiscard(value: unknown, selected: StudioImageNodeJobProjection): StudioImageNodeJobDiscard {
+  const expected=checkedImageNodeJobProjection(selected),target=canvasImageNodeInCommand(expected.command);
+  if(!target||expected.status!=='QUEUED'||expected.attempt!==0||expected.output_candidate!==null
+    ||expected.receipt_digest!==null||expected.approved_asset_version!==null||expected.version>=Number.MAX_SAFE_INTEGER
+    ||target.project_id!==expected.novel_id||(target.scope.mode==='collaboration'?target.scope.branch_id:null)!==expected.branch_id)invalid();
+  if(!record(value)||Object.keys(value).length!==8
+    ||!['contract','job','target','incarnation','canvas_read','automatic_actions','local_result_discarded','remote_stop_confirmed'].every(key=>Object.hasOwn(value,key))
+    ||value.contract!=='studio-image-node-job-discard/1'||value.canvas_read!==false||value.automatic_actions!==false
+    ||value.local_result_discarded!==true||value.remote_stop_confirmed!==false||value.incarnation!==target.incarnation)invalid();
+  const result=checkedImageNodeJobProjection(value.job),resultTarget=checkedCanvasImageNodeBinding(value.target);
+  const changed=new Set(['version','status','updated_at','error_code','cancellation_mode','remote_compute_may_continue']);
+  if(canonicalImageNode(resultTarget)!==canonicalImageNode(target)||result.version!==expected.version+1||result.status!=='CANCELLED'
+    ||result.attempt!==0||result.output_candidate!==null||result.receipt_digest!==null||result.approved_asset_version!==null
+    ||result.error_code!==null||result.cancellation_mode!=='LOCAL_RESULT_DISCARD'||result.remote_compute_may_continue!==true
+    ||STUDIO_IMAGE_NODE_JOB_FIELDS.some(key=>!changed.has(key)&&canonicalImageNode(result[key as keyof StudioImageNodeJobProjection])
+      !==canonicalImageNode(expected[key as keyof StudioImageNodeJobProjection])))invalid();
+  const receipt:StudioImageNodeJobDiscard={contract:'studio-image-node-job-discard/1',job:result,target:resultTarget,incarnation:target.incarnation,
+    canvas_read:false,automatic_actions:false,local_result_discarded:true,remote_stop_confirmed:false};
+  return structuredClone(receipt);
+}
 function cfgParameter(parameters: Record<string, unknown>, operation: unknown) {
   if (Object.hasOwn(parameters, 'cfg') && (operation !== 'm5.image.t2i' || typeof parameters.cfg !== 'number'
     || !Number.isFinite(parameters.cfg) || parameters.cfg < 0 || parameters.cfg > 100)) invalid();
@@ -201,6 +294,7 @@ function sameTrimCommand(expected: RecordedMediaCommand, value: RecordedMediaCom
     { ...value, provider_id: value.provider_id ?? null, model_id: value.model_id ?? null }) && sameTrimParameters(trimParameters(expected.parameters, true), trimParameters(value.parameters, true));
 }
 function commandScope(command: MediaCommand) {
+  canvasImageNodeInCommand(command);
   canvasReturnInCommand(command);
   cfgParameter(command.parameters, command.operation_id);
   if (command.operation_id === 'm5.image.composite') { checkedCompositeCommand(command); return; }
@@ -423,11 +517,14 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const c = v.command;
       if (!record(c) || c.operation_id !== v.operation_id || c.request_id !== v.request_id || typeof c.prompt !== 'string' || c.prompt.length > 16000
         || !record(c.parameters) || !Array.isArray(c.source_snapshots) || typeof c.allow_cloud !== 'boolean' || typeof c.license_note !== 'string' || c.license_note.length > 2000) invalid();
-      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'video_frames', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers', 'canvas_return'].includes(key))
+      if (Object.keys(c).some(key => !['operation_id', 'request_id', 'provider_id', 'model_id', 'prompt', 'parameters', 'source_snapshots', 'allow_cloud', 'license_note', 'image_source', 'image_references', 'mask_source', 'video_reference', 'video_frames', 'storyboard_shot', 'storyboard_speech', 'audio_profile', 'image_layers', 'canvas_return', 'canvas_image_node'].includes(key))
         || Object.entries(c.parameters).some(([key, value]) => !parameterKeys.includes(key) || c.operation_id !== 'm8.audio.trim' && trimControlKeys.includes(key)
           || (typeof value === 'number' ? !Number.isFinite(value) : typeof value !== 'string' || value.length > 8000))) invalid();
       if (Object.hasOwn(c, 'audio_profile') && c.operation_id !== 'm8.audio.trim') invalid();
       sources(c.source_snapshots, 8);
+      const nodeOrigin=canvasImageNodeInCommand(c);
+      if(nodeOrigin&&(nodeOrigin.project_id!==projectId||(nodeOrigin.scope.mode==='collaboration'?nodeOrigin.scope.branch_id:null)!==branch
+        ||v.owner!=='image'||!record(v.provider)||v.provider.local!==true))invalid();
       const canvasOrigin=canvasReturnInCommand(c);
       if(canvasOrigin&&(canvasOrigin.project_id!==v.novel_id||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==(v.branch_id??null)
         ||(canvasOrigin.source.asset_kind==='audio'
@@ -512,6 +609,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       && (result.version < expected.version || !expected.canvas_video || !result.canvas_video
         || canvasVideoIdentity(expected.canvas_video) !== canvasVideoIdentity(result.canvas_video)
         || result.execution_recipe.recipe_digest !== expected.execution_recipe.recipe_digest)) invalid();
+    if(expected?.command&&!sameCanvasImageNode(expected.command,result.command))invalid();
     return result;
   }
   function canvasVideoIdentity(value: unknown) {
@@ -594,6 +692,8 @@ export function studioProductionClient(projectId: string, context: Collaboration
     },
     async preview(command: MediaCommand): Promise<ProductionPreview> {
       commandScope(command);
+      const nodeOrigin=canvasImageNodeInCommand(command);
+      if(nodeOrigin&&(nodeOrigin.project_id!==projectId||(nodeOrigin.scope.mode==='collaboration'?nodeOrigin.scope.branch_id:null)!==branch))invalid();
       const requestedCanvasOrigin=canvasReturnInCommand(command);
       if(requestedCanvasOrigin&&(requestedCanvasOrigin.project_id!==projectId||((requestedCanvasOrigin.scope as {branch_id?:string}).branch_id??null)!==branch))invalid();
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
@@ -601,7 +701,7 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (!record(v)) invalid(); scoped(v);
       const executionRecipe = recipe(v.execution_recipe, command.operation_id);
       const canvasOrigin=canvasReturnInCommand(command);
-      if(!sameCanvasReturn(command,v.command)||canvasOrigin&&(canvasOrigin.project_id!==projectId||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==branch))invalid();
+      if(!sameCanvasImageNode(command,v.command)||!sameCanvasReturn(command,v.command)||canvasOrigin&&(canvasOrigin.project_id!==projectId||((canvasOrigin.scope as {branch_id?:string}).branch_id??null)!==branch))invalid();
       if (Object.hasOwn(command.parameters, 'cfg') && (!record(executionRecipe.parameters)
         || executionRecipe.parameters.cfg !== command.parameters.cfg)) invalid();
       if (v.contract !== 'studio-production-preview/1' || !hex(v.preview_digest) || !hex(v.request_digest) || v.request_id !== command.request_id || v.operation_id !== command.operation_id
@@ -657,16 +757,163 @@ export function studioProductionClient(projectId: string, context: Collaboration
       if (v.provider !== null && (!record(v.provider) || v.provider.provider_id !== command.provider_id || v.provider.model_id !== command.model_id || !hex(v.provider.route_digest) || typeof v.provider.local !== 'boolean')) invalid();
       return v as unknown as ProductionPreview;
     },
-    async create(command: MediaCommand, reviewed_preview_digest: string) {
+    async create(command: MediaCommand, reviewed_preview_digest: string, signal?: AbortSignal) {
       commandScope(command);
+      const nodeOrigin=canvasImageNodeInCommand(command);
+      if(nodeOrigin&&(nodeOrigin.project_id!==projectId||(nodeOrigin.scope.mode==='collaboration'?nodeOrigin.scope.branch_id:null)!==branch))invalid();
       const requestedCanvasOrigin=canvasReturnInCommand(command);
       if(requestedCanvasOrigin&&(requestedCanvasOrigin.project_id!==projectId||((requestedCanvasOrigin.scope as {branch_id?:string}).branch_id??null)!==branch))invalid();
       if (command.operation_id === 'm5.image.cutout') cutoutCommand(command);
-      const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, undefined, command.request_id));
-      if (v.request_id !== command.request_id || v.operation_id !== command.operation_id || !sameCanvasReturn(command,v.command)
+      const v = job(await transport.json<unknown>(`${base}/jobs`, 'POST', { command, reviewed_preview_digest }, signal, command.request_id));
+      if (v.request_id !== command.request_id || v.operation_id !== command.operation_id || !sameCanvasImageNode(command,v.command) || !sameCanvasReturn(command,v.command)
         || !sameImageRuntimeInputs(command, v.command) || !sameVideoReference(command, v.command) || !sameVideoFrames(command, v.command) || !sameStoryboardShot(command, v.command) || !sameStoryboardSpeech(command, v.command) || !sameComicImageCommand(command, v.command) || !sameCompositeCommand(command, v.command as RecordedMediaCommand)
         || command.operation_id === 'm5.image.cutout' && !sameCutoutCommand(command, v.command)
         || command.operation_id === 'm8.audio.trim' && !sameTrimCommand(command, v.command)) invalid(); return v;
+    },
+    async resolveImageNodeCreate(requestId: string, requestDigest: string, binding: CanvasImageNodeBinding, signal?: AbortSignal) {
+      if (!identifier(requestId) || requestId.length > 100 || !hex(requestDigest)) invalid();
+      const target=canvasImageNodeInCommand({operation_id:'m5.image.t2i',allow_cloud:false,prompt:'shape check',source_snapshots:[],canvas_image_node:binding});
+      if (!target || target.project_id!==projectId || (target.scope.mode==='collaboration'?target.scope.branch_id:null)!==branch) invalid();
+      const result=job(await transport.json<unknown>(`${base}/jobs/image/resolve-create`,'POST',{
+        request_id:requestId,request_digest:requestDigest,canvas_image_node:target},signal));
+      if(result.owner!=='image'||result.request_id!==requestId||result.request_digest!==requestDigest
+        ||!sameCanvasImageNode({operation_id:'m5.image.t2i',allow_cloud:false,prompt:'shape check',source_snapshots:[],canvas_image_node:target},result.command))invalid();
+      return result;
+    },
+    async observeImageNodeTarget(selected: ProductionJob, signal?: AbortSignal): Promise<StudioImageNodeTargetObservation> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope ? {mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId} : {mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope))invalid();
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      // This is one bounded metadata response, not a media/content download or an admission request.
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/target-observation`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      let raw:unknown;
+      try {
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      const exact=(value:unknown,names:string[]):value is Record<string,unknown>=>record(value)
+        && Object.keys(value).length===names.length && names.every(name=>Object.hasOwn(value,name));
+      if(!exact(raw,['contract','job','target','incarnation','canvas','history','comparison','automatic_actions'])
+        ||raw.contract!=='studio-image-node-target-observation/1'||raw.automatic_actions!==false)invalid();
+      const resultJob=job(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target),canvas=raw.canvas,history=raw.history;
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(expected)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==target.incarnation
+        ||!exact(canvas,['id','project_id','scope','version','definition_digest','title','card_count','execution_authority','binary_content_verified'])
+        ||!exact(history,['incarnation','current_version','current_definition_digest','target_version','target_definition_digest','target_empty'])
+        ||canvas.id!==target.canvas_id||canvas.project_id!==projectId||canonicalImageNode(canvas.scope)!==canonicalImageNode(ownedScope)
+        ||!revision(canvas.version)||canvas.version>21||!hex(canvas.definition_digest)||typeof canvas.title!=='string'
+        ||!canvas.title.trim()||[...canvas.title].length>160||typeof canvas.card_count!=='number'
+        ||!Number.isSafeInteger(canvas.card_count)||canvas.card_count<0||canvas.card_count>1000
+        ||canvas.execution_authority!==false||canvas.binary_content_verified!==false
+        ||history.incarnation!==target.incarnation||history.current_version!==canvas.version
+        ||history.current_definition_digest!==canvas.definition_digest||history.target_version!==target.canvas_version
+        ||history.target_definition_digest!==target.canvas_digest||history.target_empty!==true
+        ||canvas.version<target.canvas_version
+        ||(canvas.version===target.canvas_version
+          ? canvas.definition_digest!==target.canvas_digest||canvas.card_count!==0||raw.comparison!=='CURRENT_MATCH'
+          : raw.comparison!=='CURRENT_CHANGED'))invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原作品保存状态读取已取消。','AbortError');
+      return structuredClone({ ...raw,job:resultJob,target:resultTarget }) as StudioImageNodeTargetObservation;
+    },
+    async readImageNodeTargetView(selected: ProductionJob, pin: StudioImageNodeTargetViewPin, signal?: AbortSignal): Promise<StudioImageNodeTargetView> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command),captured=structuredClone(pin);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope ? {mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId} : {mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope)||!record(captured)
+        ||Object.keys(captured).length!==3||!['incarnation','version','definition_digest'].every(key=>Object.hasOwn(captured,key))
+        ||captured.incarnation!==target.incarnation||!revision(captured.version)||captured.version>21
+        ||!hex(captured.definition_digest)||captured.version<target.canvas_version
+        ||captured.version===target.canvas_version&&captured.definition_digest!==target.canvas_digest)invalid();
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/target-view`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest,expected_incarnation:captured.incarnation,
+        expected_canvas_version:captured.version,expected_canvas_digest:captured.definition_digest},signal,undefined,{maxBytes:8*1024*1024});
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      let raw:unknown;
+      try {
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(!record(raw)||Object.keys(raw).length!==6
+        ||!['contract','job','target','incarnation','canvas','automatic_actions'].every(key=>Object.hasOwn(raw,key))
+        ||raw.contract!=='studio-image-node-target-view/1'||raw.automatic_actions!==false)invalid();
+      const resultJob=job(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target);
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(expected)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==captured.incarnation)invalid();
+      const canvas=checkedCanvasViewRecord(raw.canvas,row=>{
+        if(row.project_id!==projectId||canonicalImageNode(row.scope)!==canonicalImageNode(ownedScope))invalid();
+        return {project_id:row.project_id as string,scope:row.scope as CanvasImageNodeBinding['scope']};
+      },target.canvas_id);
+      if(canvas.version!==captured.version||canvas.definition_digest!==captured.definition_digest)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('关联画布只读记录读取已取消。','AbortError');
+      return structuredClone({contract:'studio-image-node-target-view/1',job:resultJob,target:resultTarget,
+        incarnation:captured.incarnation,canvas,automatic_actions:false});
+    },
+    async observeImageNodeJob(selected: ProductionJob, signal?: AbortSignal): Promise<StudioImageNodeJobObservation> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const projection=studioImageNodeJobProjection(expected);
+      const ownedScope=capturedScope?{mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId}:{mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope))invalid();
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/node-observation`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      let raw:unknown;
+      try{
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(!record(raw)||Object.keys(raw).length!==6
+        ||!['contract','job','target','incarnation','canvas_read','automatic_actions'].every(key=>Object.hasOwn(raw,key))
+        ||raw.contract!=='studio-image-node-job-observation/1'||raw.canvas_read!==false||raw.automatic_actions!==false)invalid();
+      const resultJob=checkedImageNodeJobProjection(raw.job),resultTarget=checkedCanvasImageNodeBinding(raw.target);
+      if(canonicalImageNode(resultJob)!==canonicalImageNode(projection)||canonicalImageNode(resultTarget)!==canonicalImageNode(target)
+        ||raw.incarnation!==target.incarnation)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原图片节点任务元数据读取已取消。','AbortError');
+      return structuredClone({contract:'studio-image-node-job-observation/1',job:resultJob,target:resultTarget,
+        incarnation:target.incarnation,canvas_read:false,automatic_actions:false});
+    },
+    async discardImageNodeJob(selected: ProductionJob, signal?: AbortSignal, beforeDispatch?: () => void): Promise<StudioImageNodeJobDiscard> {
+      admitted();
+      const expected=job(structuredClone(selected)),target=canvasImageNodeInCommand(expected.command),projection=studioImageNodeJobProjection(expected);
+      if(!target)invalid();
+      assertCanvasImageNodeJob(target,expected);
+      const ownedScope=capturedScope?{mode:'collaboration',novel_id:projectId,workspace_id:capturedScope.workspaceId,
+        storyline_id:capturedScope.storylineId,branch_id:capturedScope.branchId}:{mode:'local',novel_id:projectId};
+      if(canonicalImageNode(target.scope)!==canonicalImageNode(ownedScope)||projection.status!=='QUEUED'||projection.attempt!==0
+        ||projection.output_candidate!==null||projection.receipt_digest!==null||projection.approved_asset_version!==null
+        ||projection.version>=Number.MAX_SAFE_INTEGER)invalid();
+      await verifyCanvasImageNodePrompt(expected.command!);
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃请求已取消。','AbortError');
+      // The caller claims the fixed snapshot here, after validation and immediately before the one POST.
+      beforeDispatch?.();
+      const response=await original.blobResponse(`${jobUrl('image',expected.id)}/node-discard`,'POST',{
+        expected_version:expected.version,expected_request_digest:expected.request_digest,confirmed:true},signal,undefined,{maxBytes:256*1024});
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃回执读取已取消。','AbortError');
+      let raw:unknown;
+      try{
+        if(response.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid();
+        raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await response.blob.arrayBuffer()));
+      }catch{invalid();}
+      if(signal?.aborted)throw new DOMException('原任务本地采用资格放弃回执读取已取消。','AbortError');
+      return checkedStudioImageNodeJobDiscard(raw,projection);
     },
     async list(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
@@ -827,4 +1074,5 @@ type CompleteProductionClient = ReturnType<typeof studioProductionClient>;
 type TimelineExportMethods = 'timelineSourceBounds' | 'timelineWaveformPreview' | 'timelineExportPreview' | 'timelineExport' | 'timelineTransferPreview' | 'timelineTransferImport' | 'timelineTransferAttachment' | 'timelineTrackLock' | 'timelinePlaybackPreview' | 'timelinePlaybackBuild' | 'timelinePlaybackAttestation' | 'timelineEdit';
 // Existing embedded clients keep their original media/render surface. Export
 // controls require both additive methods before becoming available.
-export type StudioProductionClient = Omit<CompleteProductionClient, TimelineExportMethods> & Partial<Pick<CompleteProductionClient, TimelineExportMethods>>;
+type OptionalProductionMethods = TimelineExportMethods | 'resolveImageNodeCreate' | 'observeImageNodeTarget' | 'readImageNodeTargetView' | 'observeImageNodeJob' | 'discardImageNodeJob';
+export type StudioProductionClient = Omit<CompleteProductionClient, OptionalProductionMethods> & Partial<Pick<CompleteProductionClient, OptionalProductionMethods>>;
