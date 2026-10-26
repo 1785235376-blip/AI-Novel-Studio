@@ -1,0 +1,6 @@
+证据目录：/workspace/hr/vera-compare/dualcanvas-03e8034a/
+源复审：/workspace/hr/vera-dualcanvas/artifacts/unified-workspace-refactor/INDEPENDENT_REVIEW.md（末尾 dualcanvas @ 03e8034a 段，已逐字追加到本仓同路径文件）
+MUST-FIX 反例：frontend/src/rebuild/image/imageRebuildMwTreePressed.test.ts
+修前红：/workspace/hr/dci-20261026/vera-mustfix-red.log
+修后绿：/workspace/hr/dci-20261026/vera-mustfix-green.log
+修复：frontend/src/rebuild/image/imageRebuild.css — .mw-tree>button 选择器追加 [aria-pressed="true"]（保留 aria-selected）

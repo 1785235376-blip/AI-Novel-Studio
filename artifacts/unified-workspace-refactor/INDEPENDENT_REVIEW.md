@@ -1637,3 +1637,58 @@ zh/en、basic/pro、1024/1366/1920 下只有 moderate 级的 heading-order 和 l
 ### Hermia 未确认点
 - LocalAiBrowserJourneyContracts：整个套件在文件加载阶段报 ENOENT（`tests/e2e/v2-local-ai-files-live.spec.ts` 不存在），与基线 persistent-node22.json 中的 `<file load>` 条目以及 m1flaky2 日志里的报错完全相同。**属于基线。**
 - esc.mjs 里 closebtn 超时：**是我的脚本问题，不是回归**。脚本用 /Tasks/ 选到的是页头的 rb-trigger 按钮，抽屉根本没有打开，所以抽屉里的关闭按钮不存在，click 一直等到超时。改用 `status-bar__action[aria-haspopup=dialog]` 重测后，关闭按钮能关闭抽屉，焦点也回到了触发按钮（nr.json keys.closeBtn）。
+
+---
+
+## [VERA-FE] 独立复核：work/hermia-theme-dualcanvas-20261026 @ 03e8034a（base f8d76863）
+
+证据目录：`/workspace/hr/vera-compare/dualcanvas-03e8034a/`（Node 22.14，playwright-core + Chrome，GET-only mock，非 GET 一律 abort 计数）
+
+### 结论：有条件通过 —— 1 项 MUST-FIX（阻断，修复一行），其余可后续
+
+### MUST-FIX
+- **P1【阻断】VIDEO 镜头树选中态丢失（深色 / 浅色、普通 / 专业均受影响）**。VideoRebuild 把 `.mw-tree` 按钮从 `aria-selected` 改成了 `aria-pressed`，但 `imageRebuild.css:19` 的选择器仍然是 `.mw-tree>button[aria-selected="true"]`。结果是选中项的背景 rgb(30,58,64) 和强调色 rgb(77,184,196) 都没了。深色与 base 的像素对比：VIDEO 差 7416 px（bbox 10,469–165,517），IMAGE 和 EDIT 为 0。修法：选择器改为（或追加）`[aria-pressed="true"]`。证据：`theme-diff.txt`、`dark-*.png`。
+
+### P2
+- 确认条是内联的 `role=group`，不是 dialog：打开、取消、确认之后焦点都掉到 BODY，Esc 也关不掉。键盘 Enter 可以打开「接入上画布…」。建议焦点移到确认按钮，关闭后还给触发按钮，并支持 Esc。
+- 上画布 key 不按身份区分（`poemseed.rebuild.canvas.<kind>.<P>`）：A→B 切换后，B 能看到 A 的上画布。这是 base 就有的行为，不是本分支引入的，记录在此。
+- 测试有效性：`themeDualCanvas.browser` 没有接入 vitest 或 CI（package.json test = `vitest run`，没有 .github，也没有任何引用）。这条测试不覆盖接入、确认、快照、身份。
+
+### P3 / 观察
+- 「仅本次会话」期间加的节点，身份迟到后会被静默丢弃（不会覆盖 A，正确），建议给个提示。
+- 身份翻转后壳层回到普通模式（base 就是这样）。
+- 残留的硬编码 hex 多数是 var() 回退值或漫画内容色。EditNleShell 渐变里的 #1a1a22 / #12141c 在浅色下可以再看一下。
+- 英文界面里夹杂中文，仅作观察。
+
+### 已验证通过
+- 隔离（image + video）：不确认、取消都不改上画布；确认会复制出 ↑ 副本并分配新 id，之后两边独立（快照）；没有 undo/redo，Ctrl+Z/Y 不跨画布；生成显示为不可用，没有可点的执行按钮；非 GET = 0。下画布调色板只有补充类节点。
+- 身份：A→B→A 没有串写（u-a=2，u-b=1）；刷新保留；无身份时显示徽标、不写 dualcv key、刷新即清空；迟到的身份不覆盖已有数据。
+- 普通模式：IMAGE/VIDEO/EDIT/AUDIO 都没有挂载 DualStack。
+- 深色：除上面的 P1 外，其余模块计算样式 diff 为 0（pro 下新增的 dstk 元素除外）。主题实时切换正常（EDIT 和画布双向都对）。
+- 窄屏 narrowLayout 8 个宽度：new 和 base 都是 192 组合 / 0 违例，uw-port 没有回退。
+- axe：两种主题下 serious/critical 均为 0（themeDualCanvas 60 行全部通过；base 上 28 fail，Hermia 报的是 32，差异可能来自 D 项）。
+
+### 变异表（unit = DualStack 等 vitest；browser = themeDualCanvas.browser）
+| 变异 | unit | browser |
+|---|---|---|
+| M1 自动接入 | KILLED | survived |
+| M2 引用而非快照（复用 id） | **survived** | survived |
+| M2b 就地改输入对象 | KILLED | survived |
+| M3 去掉确认 | KILLED | survived |
+| M3b 取消也接入 | KILLED | survived |
+| M4 key 去掉 userId | KILLED | survived |
+| M4b 无身份也写 LS | KILLED | survived |
+| M5 生成可用 | KILLED | survived |
+| M6 浅色 --cv-bg 回填深色 | KILLED | KILLED |
+| M7 下画布全调色板 | KILLED | survived |
+| M8 普通模式也挂 DualStack | **survived** | survived |
+| M9 上下共用 key | KILLED | survived |
+建议补两条测试：断言接入后 id 不同（针对 M2），断言普通模式不挂载 DualStack（针对 M8）。
+
+### 全量门禁（adj = raw − ISI + 8，阈值 ≤297；baseline 298 / adj 297）
+| run | raw | ISI | adj | 新增失败（非 ISI、不在 baseline） |
+|---|---|---|---|---|
+| 1 | 293 | 8 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+(a) 三次取最好 = 293 ✅；(b) 一次重试内 ≤297 ✅。LocalAiBrowserJourneyContracts ENOENT 是 baseline 就有的失败。

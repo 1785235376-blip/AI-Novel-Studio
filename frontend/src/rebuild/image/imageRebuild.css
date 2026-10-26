@@ -16,7 +16,7 @@ html .app-shell[data-module="IMAGE"] .media-ws-main{flex:1;min-height:0;display:
 .mw-tree{padding:8px;display:flex;flex-direction:column;gap:2px}
 .mw-tree>button:not(.nv-rail__new){display:flex;width:100%;align-items:center;gap:6px;border:0;background:none;text-align:left;padding:6px 8px;border-radius:6px;font-size:12.5px;color:var(--color-text-primary);cursor:pointer}
 .mw-tree>button:hover{background:var(--color-bg-subtle)}
-.mw-tree>button[aria-selected="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
+.mw-tree>button[aria-selected="true"],.mw-tree>button[aria-pressed="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
 .mw-tree .ic{width:12px;flex:none;color:var(--color-text-muted)}
 .mw-tree .sub{font-size:10.5px;color:var(--color-text-muted);font-weight:400;display:block;margin-top:1px}
 .mw-muted{margin:4px 8px;font-size:12px;color:var(--color-text-muted);line-height:1.5}
