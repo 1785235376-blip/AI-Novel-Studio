@@ -78,7 +78,8 @@ def _open_windows_read(path):
             raise UsageBudgetError()
     kernel = _windows_read_api()
     # Deny direct writers, including writers already open before admission.
-    # FILE_SHARE_DELETE retains the original atomic-replace owner protocol.
+    # Offer delete sharing, but Windows MoveFileEx overwrite can still refuse
+    # until this short-lived handle closes; original owner retries stay intact.
     handle = kernel.CreateFileW('\\\\?\\' + str(path), 0x80000000, 0x1 | 0x4,
                                 None, 3, 0x00200000, None)
     if handle in (None, ctypes.c_void_p(-1).value):

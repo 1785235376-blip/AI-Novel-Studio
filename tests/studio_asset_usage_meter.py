@@ -23,6 +23,8 @@ class ReadMeter:
             return False
 
     def wrap(self, handle, name, mode):
+        if getattr(handle, '_usage_read_meter', None) is self:
+            return handle
         if not self.contains(name):
             return handle
         if any(x in str(mode) for x in 'wax+'):
@@ -31,6 +33,7 @@ class ReadMeter:
             self.read_opens += 1
         meter = self
         class File:
+            _usage_read_meter = meter
             def __getattr__(self, key):
                 return getattr(handle, key)
             def __enter__(self):
@@ -67,6 +70,12 @@ class ReadMeter:
             return self.wrap(original_fdopen(fd, mode, *args, **kwargs), self.descriptors.get(fd), mode)
         monkeypatch.setattr(os, 'open', descriptor)
         monkeypatch.setattr(os, 'fdopen', fdopen)
+        from app.creative import asset_usage_budget
+        if hasattr(asset_usage_budget, '_open_read'):
+            original_read_open = asset_usage_budget._open_read
+            def read_open(path):
+                return self.wrap(original_read_open(path), path, 'rb')
+            monkeypatch.setattr(asset_usage_budget, '_open_read', read_open)
 
     def result(self):
         return {'read_calls': self.read_calls, 'bytes_read': self.read_bytes,

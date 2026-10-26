@@ -1043,11 +1043,20 @@ class AssetLibraryService:
         if max_bytes is not None:
             return self._verified_bounded_content(meta, max_bytes, guard)
         path = self._bin_path(meta["id"])
+        from ..creative.asset_usage_budget import current_usage_budget
+        usage_budget = current_usage_budget()
         try:
-            with path.open("rb") as stream:
-                if os.fstat(stream.fileno()).st_size != meta["size"]:
-                    raise AssetIntegrityError("asset content size mismatch")
-                data = stream.read(self.MAX_BYTES + 1)
+            if usage_budget is not None:
+                # Original Graph 3-5 input validation must still verify bytes.
+                # Repeated integrity reads share the observation's admission.
+                guard()
+                data = usage_budget.read_binary(path, min(meta['size'], self.MAX_BYTES))
+                guard()
+            else:
+                with path.open("rb") as stream:
+                    if os.fstat(stream.fileno()).st_size != meta["size"]:
+                        raise AssetIntegrityError("asset content size mismatch")
+                    data = stream.read(self.MAX_BYTES + 1)
         except FileNotFoundError:
             raise FileNotFoundError(meta["id"]) from None
         if len(data) != meta["size"] or not hmac.compare_digest(hashlib.sha256(data).hexdigest(), meta["sha256"]):

@@ -187,24 +187,60 @@ def test_windows_competing_writer_is_denied_and_query_refusal_is_not_claimed_mut
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='Windows native sharing contract')
-def test_windows_atomic_replace_remains_possible_and_replaced_observation_is_refused(tmp_path, monkeypatch):
+def test_windows_replace_observation_is_refused_and_original_writer_works_after_close(tmp_path, monkeypatch):
     from app.creative import asset_usage_budget as module
     payload = b'"' + b'a' * (module.UsageReadBudget.READ_CHUNK_BYTES * 2) + b'"'
     path = synthetic(tmp_path, payload)
     replacement = tmp_path / 'replacement.json'
     replacement.write_bytes(payload.replace(b'a', b'b'))
     replaced = []
+    denied = []
 
     def replace(stage, target):
         if stage == 'after_chunk' and not replaced:
-            replacement.replace(target)
+            try:
+                replacement.replace(target)
+            except OSError as error:
+                denied.append({
+                    'errno': error.errno, 'winerror': getattr(error, 'winerror', None),
+                })
+                raise
             replaced.append(True)
 
     monkeypatch.setattr(module, '_read_checkpoint', replace)
     with pytest.raises(UsageBudgetError):
         UsageReadBudget().read(path)
-    assert replaced == [True]
-    assert path.read_bytes() == payload.replace(b'a', b'b')
+    assert (replaced == [True]) != bool(denied)
+    assert path.read_bytes() == (payload.replace(b'a', b'b') if replaced else payload)
+    # Preserve the original atomic writer and verify that a rejected query
+    # releases its native handle before the next original-owner write.
+    from app.storage import atomic_write
+    atomic_write(path, payload.replace(b'a', b'c').decode())
+    assert path.read_bytes() == payload.replace(b'a', b'c')
+    print('WINDOWS_NATIVE_REPLACE_OBSERVATION ' + json.dumps({
+        'during_open': 'REPLACED' if replaced else 'OS_DENIED',
+        'denial': denied[0] if denied else None, 'query': 'RESOURCE_UNAVAILABLE',
+        'original_atomic_write_after_close': 'SUCCEEDED',
+    }, sort_keys=True))
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows native sharing contract')
+def test_windows_original_python_open_also_denies_atomic_replace_until_close(tmp_path):
+    path = synthetic(tmp_path)
+    original = path.read_bytes()
+    replacement = tmp_path / 'replacement.json'
+    replacement.write_bytes(b'{"replacement":true}')
+    with path.open('rb', buffering=0):
+        with pytest.raises(PermissionError) as denied:
+            replacement.replace(path)
+    assert path.read_bytes() == original
+    replacement.replace(path)
+    assert path.read_bytes() == b'{"replacement":true}'
+    print('WINDOWS_ORIGINAL_READER_REPLACE_BASELINE ' + json.dumps({
+        'reader': 'original Python Path.open rb', 'during_open': 'OS_DENIED',
+        'errno': denied.value.errno, 'winerror': getattr(denied.value, 'winerror', None),
+        'replace_after_close': 'SUCCEEDED',
+    }, sort_keys=True))
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='Windows native sharing contract')
