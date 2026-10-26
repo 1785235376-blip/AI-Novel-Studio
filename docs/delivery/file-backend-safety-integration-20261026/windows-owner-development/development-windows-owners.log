@@ -1,0 +1,33 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+WINDOWS_OWNER_TERMINATE_PROCESS identity before_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS scope before_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS grants before_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS team before_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS identity after_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS scope after_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS grants after_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_TERMINATE_PROCESS team after_replace paired_and_fresh_process_reopened
+.WINDOWS_OWNER_COMMIT_FAILURE identity fsync exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE scope fsync exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE grants fsync exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE team fsync exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE identity replace exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE scope replace exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE grants replace exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_COMMIT_FAILURE team replace exact_file_and_fresh_process_recovered
+.WINDOWS_OWNER_TWO_PROCESS_SERIALIZATION identity both_commits_preserved
+.WINDOWS_OWNER_TWO_PROCESS_SERIALIZATION scope both_commits_preserved
+.WINDOWS_OWNER_TWO_PROCESS_SERIALIZATION grants both_commits_preserved
+.WINDOWS_OWNER_TWO_PROCESS_SERIALIZATION team both_commits_preserved
+.
+============================== warnings summary ===============================
+tests/test_file_backend_safety_windows_owners.py::test_windows_termination_keeps_business_and_original_lifecycle_paired[before_replace-identity]
+  D:\PoemSeed\Worktrees\file-backend-safety-windows-owners-dev-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_file_backend_safety_windows_owners.py::test_windows_termination_keeps_business_and_original_lifecycle_paired[before_replace-identity]
+  D:\PoemSeed\Worktrees\file-backend-safety-windows-owners-dev-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+20 passed, 2 warnings in 22.60s
