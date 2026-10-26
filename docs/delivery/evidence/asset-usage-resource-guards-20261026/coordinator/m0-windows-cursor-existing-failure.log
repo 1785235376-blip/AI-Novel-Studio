@@ -1,0 +1,62 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection _
+
+rig = namespace(client=<starlette.testclient.TestClient object at 0x00000298D960FD50>, nid='query-00d7259d74284c91825270279a...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000298D9679310>
+
+    def test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection(rig, monkeypatch):
+        from app.experimental import api as experimental_api
+    
+        stamp = "2026-10-23T00:00:00+00:00"
+        selected = [rig.seed(f"Stra\xdfe-{index}.png", stamp=stamp) for index in range(5)]
+        rig.seed("Stra\xdfe-audio.wav", "audio", stamp=stamp)
+        rig.seed("different.png", stamp=stamp)
+        rig.seed("Stra\xdfe-private.png", owner="another-actor", stamp=stamp)
+        rig.seed("Stra\xdfe-deleted.png", deleted=True, stamp=stamp)
+        rig.seed("Stra\xdfe-hidden.png", required_features=("asset_lineage_v2",), stamp=stamp)
+        rig.seed("Stra\xdfe-other-project.png", project_id=rig.project(), stamp=stamp)
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2")
+    
+        def full_projection_forbidden(*_args, **_kwargs):
+            raise AssertionError("metadata cursor invoked content/cross-owner projection")
+        monkeypatch.setattr(experimental_api.independent_workspace_service, "_view", full_projection_forbidden)
+        monkeypatch.setattr(rig.assets, "_verified_content", full_projection_forbidden)
+        query = {"q": " STRASSE ", "kind": "image", "limit": 2}
+        visited, token = [], None
+        for count in (2, 2, 1):
+            response = cursor_get(rig, {**query, **({"cursor": token} if token else {})})
+            page = response.json()
+>           visited.extend(ids(response))
+                           ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_cursor.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [503 Service Unavailable]>
+
+    def ids(response):
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_CURSOR_UNAVAILABLE"},"code":"ASSET_QUERY_CURSOR_UNAVAILABLE","message":"ASSET_QUERY_CURSOR_UNAVAILABLE","details":{"code":"ASSET_QUERY_CURSOR_UNAVAILABLE"},"request_id":"e9548258-bc8a-4939-8954-abf3888ae2f8"}
+E       assert 503 == 200
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection
+  D:\PoemSeed\Worktrees\asset-usage-query-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection
+  D:\PoemSeed\Worktrees\asset-usage-query-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection
+1 failed, 3 warnings in 4.91s
