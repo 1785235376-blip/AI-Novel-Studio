@@ -14,6 +14,13 @@ export type StudioProductionTasksProps = {
   read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>;
   /** The host rechecks the lease if its existing dirty-navigation confirmation delays opening. */
   onOpen: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  /** Selection only; the protected observation owner must verify it before displaying a result. */
+  onInspectCanvasTarget?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  onInspectImageNodeJob?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  onPrepareImageNodeDiscard?: (job: StudioProductionTask, isSelectionCurrent: () => boolean) => void;
+  canPrepareImageNodeDiscard?: boolean;
+  /** Retire a sibling metadata view immediately when this exact selection changes. */
+  onSelectionRetired?: () => void;
   onUnavailable: () => void;
 };
 type View = { generation: number; rows?: StudioProductionTask[]; message?: string; denied?: boolean;
@@ -22,7 +29,7 @@ type View = { generation: number; rows?: StudioProductionTask[]; message?: strin
 type Filter = { owner: '' | 'image' | 'video'; operation: '' | ProductionQueryOperation };
 const NO_FILTER: Filter = { owner: '', operation: '' };
 const PAGE_SIZE = 50;
-type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' };
+type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' | 'DETAIL' | 'DISCARD' };
 
 /** Read-only projection of the original Studio production owner. No queue or action owner. */
 export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
@@ -43,7 +50,7 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
   function begin(kind: Request['kind']) {
     if (!available() || running.current) return;
     const request = { generation: scope.current.generation, ticket: ++ticket.current, controller: new AbortController(), kind };
-    running.current = request; setPending(request);
+    running.current = request; latest.current.onSelectionRetired?.(); setPending(request);
     return request;
   }
   const valid = (request: Request) => available() && !request.controller.signal.aborted
@@ -106,18 +113,57 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
     const request = begin('GET'); if (!request) return;
     const origin = latest.current, expected = structuredClone(selected);
     try {
-      const result = await origin.read(() => origin.client.get(expected.owner, expected.id, request.controller.signal), request.controller.signal);
+      const result = await origin.read(() => {
+        if (!valid(request)) throw new DOMException('原任务读取入口已退役。', 'AbortError');
+        return origin.client.get(expected.owner, expected.id, request.controller.signal);
+      }, request.controller.signal);
       if (!valid(request)) return;
       const exact = exactStudioProductionTask(result, expected, origin.projectId, origin.branchId);
       if (valid(request)) origin.onOpen(exact, () => valid(request));
     } catch (reason) { failure(request, reason); }
     finally { finish(request); }
   }
+  const hasCanvasTarget = (job: StudioProductionTask) => job.owner === 'image' && job.operation_id === 'm5.image.t2i'
+    && !!job.command && Object.hasOwn(job.command, 'canvas_image_node');
+  const discardEligible = (job: StudioProductionTask) => hasCanvasTarget(job) && job.status === 'QUEUED'
+    && (job as StudioProductionTask & { attempt?: unknown }).attempt === 0 && job.output_candidate === null
+    && job.receipt_digest === null && job.approved_asset_version === null;
+  function inspectTarget(selected: StudioProductionTask) {
+    if (renderTicket !== ticket.current || view !== visibleSnapshot.current
+      || view?.generation !== scope.current.generation || !view.rows?.includes(selected)
+      || !latest.current.onInspectCanvasTarget || !hasCanvasTarget(selected)) return;
+    const request = begin('TARGET'); if (!request) return;
+    const origin = latest.current, expected = structuredClone(selected);
+    try { if (valid(request)) origin.onInspectCanvasTarget?.(expected, () => valid(request)); }
+    catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
+    finally { finish(request); }
+  }
+  function inspectImageNodeJob(selected: StudioProductionTask) {
+    if (renderTicket !== ticket.current || view !== visibleSnapshot.current
+      || view?.generation !== scope.current.generation || !view.rows?.includes(selected)
+      || !latest.current.onInspectImageNodeJob || !hasCanvasTarget(selected)) return;
+    const request = begin('DETAIL'); if (!request) return;
+    const origin = latest.current, expected = structuredClone(selected);
+    try { if (valid(request)) origin.onInspectImageNodeJob?.(expected, () => valid(request)); }
+    catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
+    finally { finish(request); }
+  }
+  function prepareImageNodeDiscard(selected: StudioProductionTask) {
+    if (renderTicket !== ticket.current || view !== visibleSnapshot.current
+      || view?.generation !== scope.current.generation || !view.rows?.includes(selected)
+      || !latest.current.onPrepareImageNodeDiscard || latest.current.canPrepareImageNodeDiscard !== true || !discardEligible(selected)) return;
+    const request = begin('DISCARD'); if (!request) return;
+    const origin = latest.current, expected = structuredClone(selected);
+    try { if (valid(request)) origin.onPrepareImageNodeDiscard?.(expected, () => valid(request)); }
+    catch (reason) { latest.current.onSelectionRetired?.(); failure(request, reason); }
+    finally { finish(request); }
+  }
   useLayoutEffect(() => {
     alive.current = true;
-    return () => { alive.current = false; running.current?.controller.abort(); running.current = undefined; };
+    return () => { alive.current = false; running.current?.controller.abort(); running.current = undefined; latest.current.onSelectionRetired?.(); };
   }, []);
-  useLayoutEffect(() => {
+    useLayoutEffect(() => {
+    latest.current.onSelectionRetired?.();
     const request = running.current;
     if (request && request.generation !== generation) { request.controller.abort(); running.current = undefined; setPending(undefined); }
   }, [generation]);
@@ -160,6 +206,12 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
         </dl>
         {job.remote_compute_may_continue && <StatusMessage tone="warning">原服务提示远端计算可能仍在继续；本地状态不代表远端已经停止。</StatusMessage>}
         <Button disabled={blocked || !!waiting} onClick={() => void open(job)} aria-label={`打开原制作任务 ${job.id} v${job.version}`}>打开原制作任务</Button>
+        {props.onInspectCanvasTarget && hasCanvasTarget(job) && <Button disabled={blocked || !!waiting} onClick={() => inspectTarget(job)}
+          aria-label={`核对原保存位置 ${job.id} v${job.version}`}>核对原保存位置</Button>}
+        {props.onInspectImageNodeJob && hasCanvasTarget(job) && <Button disabled={blocked || !!waiting} onClick={() => inspectImageNodeJob(job)}
+          aria-label={`只读查看原节点任务 ${job.id} v${job.version}`}>只读查看原节点任务</Button>}
+        {props.onPrepareImageNodeDiscard && discardEligible(job) && <Button disabled={blocked || !!waiting || props.canPrepareImageNodeDiscard !== true}
+          onClick={() => prepareImageNodeDiscard(job)} aria-label={`放弃此排队任务的本地采用 ${job.id} v${job.version}`}>放弃此排队任务的本地采用</Button>}
       </article>
     </li>)}</ul>}
     {visible?.paging && <div className="task-center-paging" data-testid="prod-paging">
