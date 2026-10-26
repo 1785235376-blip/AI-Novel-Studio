@@ -1,0 +1,108 @@
+{
+  "fixture_kind": "EXPLICIT_SYNTHETIC_OWNER_STATES_NO_EXECUTION_OR_ACCEPT",
+  "base_commit": "1c19d81ddc55043a9bd908af6ddb56cda71e5186",
+  "limitations": "Real File persistence and original GET/download protocol only; the status and approval markers are explicit test setup, not generated or accepted media.",
+  "project_id": "owned-cloud-canvas-queue",
+  "task_id": "97c67a09-acce-41c7-8a33-b0a85e3eedd2",
+  "pending_inline": {
+    "items": [
+      {
+        "id": "97c67a09-acce-41c7-8a33-b0a85e3eedd2",
+        "novel_id": "owned-cloud-canvas-queue",
+        "branch_id": null,
+        "owner_actor_id": null,
+        "prompt": "Author-owned prompt from the selected image node",
+        "provider_id": "comfyui",
+        "model_id": "explicit-author-selection.safetensors",
+        "parameters": {
+          "width": 768,
+          "height": 512,
+          "steps": 24,
+          "seed": 101
+        },
+        "allow_cloud_prompt": false,
+        "status": "SUCCEEDED",
+        "approval_status": "PENDING",
+        "attempt": 1,
+        "created_at": "2026-10-23T12:54:11.164613+00:00",
+        "updated_at": "2026-10-23T12:54:11.165880+00:00",
+        "idempotency_key": "synthetic-candidate-protocol",
+        "request_sha256": "55bf5d1f27f7907483c9dd424f5e81d99314d84e843d566e487ab146779baed5",
+        "asset_uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9skAAAAASUVORK5CYII=",
+        "recoverable": false
+      }
+    ]
+  },
+  "approved": {
+    "items": [
+      {
+        "id": "97c67a09-acce-41c7-8a33-b0a85e3eedd2",
+        "novel_id": "owned-cloud-canvas-queue",
+        "branch_id": null,
+        "owner_actor_id": null,
+        "prompt": "Author-owned prompt from the selected image node",
+        "provider_id": "comfyui",
+        "model_id": "explicit-author-selection.safetensors",
+        "parameters": {
+          "width": 768,
+          "height": 512,
+          "steps": 24,
+          "seed": 101
+        },
+        "allow_cloud_prompt": false,
+        "status": "SUCCEEDED",
+        "approval_status": "APPROVED",
+        "attempt": 1,
+        "created_at": "2026-10-23T12:54:11.164613+00:00",
+        "updated_at": "2026-10-23T12:54:11.173685+00:00",
+        "idempotency_key": "synthetic-candidate-protocol",
+        "request_sha256": "55bf5d1f27f7907483c9dd424f5e81d99314d84e843d566e487ab146779baed5",
+        "asset_uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9skAAAAASUVORK5CYII=",
+        "asset_id": "b6fbd519-b16b-4a15-83bd-6b32d43f083f",
+        "approved_at": "2026-10-23T12:54:11.173685+00:00",
+        "recoverable": false
+      }
+    ]
+  },
+  "approved_asset": {
+    "id": "b6fbd519-b16b-4a15-83bd-6b32d43f083f",
+    "novel_id": "owned-cloud-canvas-queue",
+    "filename": "synthetic-canvas-candidate.png",
+    "kind": "image",
+    "media_type": "image/png",
+    "size": 68,
+    "sha256": "e6fa51b216b95e6bf68e0225a622038749c4f3ddc87d33cfdca62386641c59b1",
+    "branch_id": null,
+    "created_at": "2026-10-23T12:54:11.171451+00:00",
+    "updated_at": "2026-10-23T12:54:11.174115+00:00",
+    "version": 2,
+    "deleted_at": null,
+    "idempotency_key": "synthetic-protocol-asset:97c67a09-acce-41c7-8a33-b0a85e3eedd2",
+    "source_job_id": "97c67a09-acce-41c7-8a33-b0a85e3eedd2",
+    "provider_id": "comfyui",
+    "model_id": "explicit-author-selection.safetensors",
+    "parameters": {
+      "width": 768,
+      "height": 512,
+      "steps": 24,
+      "seed": 101
+    },
+    "approved_at": "2026-10-23T12:54:11.173685+00:00"
+  },
+  "download": {
+    "status": 200,
+    "path": "/api/assets/b6fbd519-b16b-4a15-83bd-6b32d43f083f/download?novel_id=owned-cloud-canvas-queue",
+    "body_b64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9skAAAAASUVORK5CYII=",
+    "headers": {
+      "content-type": "image/png",
+      "content-disposition": "attachment; filename=\"synthetic-canvas-candidate.png\"; filename*=UTF-8''synthetic-canvas-candidate.png",
+      "content-length": "68",
+      "x-asset-sha256": "e6fa51b216b95e6bf68e0225a622038749c4f3ddc87d33cfdca62386641c59b1",
+      "x-content-type-options": "nosniff"
+    }
+  },
+  "paths": {
+    "jobs": "/api/novels/owned-cloud-canvas-queue/image-jobs",
+    "approved_asset_metadata": "/api/assets/b6fbd519-b16b-4a15-83bd-6b32d43f083f?novel_id=owned-cloud-canvas-queue"
+  }
+}

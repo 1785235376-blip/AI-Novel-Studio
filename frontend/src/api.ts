@@ -1,3 +1,4 @@
+import {cancelResponseBody,checkBlobReadLimit,readBoundedResponseBlob} from './boundedResponseBlob';
 export type VisualReference={id:string;novel_id:string;asset_id?:string;entity_type:string;entity_id:string;notes:string;status:string;version:number;approval_status?:'DRAFT'|'APPROVED';approval?:{approved_by:string;approved_at:string;asset_sha256:string;asset_version:number;memory_version:number}|null};
 export type VisualReferenceSearch={items:{id:string;version:number;entity_type:string;entity_id:string;asset_id:string;score:number;matched_terms:string[];provenance:{asset_sha256:string;asset_version:number;memory_version:number};searchable:Record<string,unknown>}[];total:number;indexed_count:number;excluded:{id:string;reason:string}[];retrieval_mode:'LEXICAL_METADATA';inference_performed:false;embeddings_available:false};
 export type AssetReferences={asset_id:string;items:{collection:string;id:string;field:string;version:number;status:string}[];total:number;coverage:string[];other_project_references_scanned:false;deletion_policy:string};
@@ -68,8 +69,13 @@ import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from '.
 import {isPackagedDesktopHost} from './packagedHost';
 import {apiErrorText,getApiErrorShellMode} from './apiErrorMode'; // [HERMIA-FE-20261025 P1-ERR]
 let collaboration:CollaborationContext={sessionToken:''};
-export function setCollaborationContext(value:CollaborationContext){if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
+let collaborationEpoch=0;
+const collaborationListeners=new Set<()=>void>();
+export function setCollaborationContext(value:CollaborationContext){collaborationEpoch+=1;if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value;for(const listener of collaborationListeners)listener()}
 export function getCollaborationContext(){return collaboration}
+/** In-memory retirement marker; contains no credential and also detects A/B/A client rebinding. */
+export function getCollaborationEpoch(){return collaborationEpoch}
+export function subscribeCollaborationContext(listener:()=>void){collaborationListeners.add(listener);return()=>{collaborationListeners.delete(listener)}}
 export function requestToken(context:CollaborationContext,url:string){
  if(context.sessionToken)return context.sessionToken;
  if(context.scope||context.actor||isPackagedDesktopHost()||/^\/api\/(?:v1\/)?(?:collaboration|packaged)\//.test(url))return '';
@@ -197,7 +203,10 @@ export async function call<T>(url:string,init?:RequestInit,contextOverride?:Coll
  if(!r.ok)throw await apiErrorFromResponse(r);
  return r.status===204?undefined as T:r.json();
 }
-async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit):Promise<Blob>{
+export type ScopedReadOptions=Pick<RequestInit,'signal'|'cache'|'redirect'|'credentials'|'referrerPolicy'>;
+export type AssetDownloadOptions=RequestInit&{maxBytes?:number};
+async function downloadCall(url:string,extraHeaders:Record<string,string>={},contextOverride?:CollaborationContext,init?:RequestInit,maxBytes?:number):Promise<Blob>{
+ if(maxBytes!==undefined)checkBlobReadLimit({maxBytes});
  const context=contextOverride??collaboration;
  const scope=context.scope;
  const headers:Record<string,string>={'X-Request-ID':globalThis.crypto?.randomUUID?.()||`desktop-${Date.now()}-${Math.random().toString(16).slice(2)}`};
@@ -205,6 +214,10 @@ async function downloadCall(url:string,extraHeaders:Record<string,string>={},con
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  Object.assign(headers,extraHeaders);
  const r=await fetch(url,{...init,headers});
+ if(maxBytes!==undefined){
+  if(!r.ok){cancelResponseBody(r);throw new ApiError({status:r.status,code:r.status===403?'FORBIDDEN':'ASSET_PREVIEW_UNAVAILABLE',message:'资产预览读取失败。'})}
+  return readBoundedResponseBlob(r,{maxBytes});
+ }
  if(!r.ok)throw await apiErrorFromResponse(r); // [HERMIA-FE-20261025 VERA-F70 MF-1] 下载失败与 call() 同一套净化
  return r.blob();
 }
@@ -264,7 +277,7 @@ export const api={
  adminGrantPermission:(workspaceId:string,body:any)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions`,{method:'POST',body:JSON.stringify(body)}),
  adminRevokePermission:(workspaceId:string,id:string)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions/${encodeURIComponent(id)}`,{method:'DELETE'}),
  adminExplain:(workspaceId:string,principalId:string,permission:string,domain:string,scope:Scope)=>call<PermissionExplanation>(query(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/explain`,{principal_id:principalId,permission,domain,kind:'BRANCH',project_id:scope.projectId,storyline_id:scope.storylineId,branch_id:scope.branchId})),
- bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope)=>call<PermissionSummary>(scoped(scope,'permissions')),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>chapterList(call<unknown>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
+ bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope,context?:CollaborationContext,options?:ScopedReadOptions)=>call<PermissionSummary>(scoped(scope,'permissions'),options,context),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>chapterList(call<unknown>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
  novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string;world_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),
  novelOverview:(id:string)=>call<{novel:any;counts:Record<string,number>;content:{word_count:number;has_chapters:boolean;latest_chapter:any};writing_goal:any;pending_items:{kind:string;label:string;count?:number}[];recent_activity:any[];readiness:any;storage:string;placeholder:boolean}>(`/api/novels/${encodeURIComponent(id)}/overview`),
  listResearch:(novelId:string,filters?:{status?:string;source_type?:string;tag?:string})=>call<{items:any[];total:number;storage:string;external_fetch:boolean}>(query(`/api/novels/${encodeURIComponent(novelId)}/research`,filters||{})),
@@ -275,8 +288,10 @@ export const api={
    assets:(novelId:string,kind?:string,characterId?:string,sceneId?:string)=>{const params=new URLSearchParams();if(kind)params.set('kind',kind);if(characterId)params.set('character_id',characterId);if(sceneId)params.set('scene_id',sceneId);const query=params.toString();return call<Asset[]>(`/api/novels/${encodeURIComponent(novelId)}/assets${query?`?${query}`:''}`)},
  uploadAsset:(novelId:string,body:{filename:string;content_base64:string;media_type?:string;kind?:string})=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets`,{method:'POST',body:JSON.stringify({novel_id:novelId,...body})}),
  asset:(assetId:string)=>call<Asset>(`/api/assets/${encodeURIComponent(assetId)}`),
+ // Scoped metadata from the original asset owner; keep the legacy asset() signature unchanged.
+ assetMetadata:(assetId:string,novelId:string,context?:CollaborationContext,options?:ScopedReadOptions)=>call<Asset>(query(`/api/assets/${encodeURIComponent(assetId)}`,{novel_id:novelId}),options,context),
  assetDownloadUrl:(assetId:string,novelId:string)=>`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`,
- assetDownload:(assetId:string,novelId:string)=>downloadCall(`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`),
+ assetDownload:(assetId:string,novelId:string,context?:CollaborationContext,options?:AssetDownloadOptions)=>{const {maxBytes,...init}=options||{};return downloadCall(`/api/assets/${encodeURIComponent(assetId)}/download?novel_id=${encodeURIComponent(novelId)}`,{},context,init,maxBytes)},
 
 assetTrash:(novelId:string)=>call<{items:Asset[];total:number}>(`/api/novels/${encodeURIComponent(novelId)}/asset-trash`),
 restoreAsset:(novelId:string,assetId:string)=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets/${encodeURIComponent(assetId)}/restore`,{method:'POST'}),
@@ -411,9 +426,10 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
  updateMotionPrivacy:(nid:string,sid:string,tid:string,privacyLevel:string,promptSha256:string,requestSha256?:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(sid)}/motion-tasks/${encodeURIComponent(tid)}/privacy`,{method:'PUT',body:JSON.stringify({privacy_level:privacyLevel,prompt_sha256:promptSha256,request_sha256:requestSha256})}),
  videoAssemblies:(nid:string,screenplayId:string)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(screenplayId)}/video-assemblies`),
  createVideoAssembly:(nid:string,screenplayId:string,clips:{asset_id:string;start_ms:number;end_ms:number|null}[])=>call<any>(`/api/novels/${encodeURIComponent(nid)}/screenplays/${encodeURIComponent(screenplayId)}/video-assemblies`,{method:'POST',body:JSON.stringify({clips})}),
- imageJobs:(nid:string)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`),
+ imageJobs:(nid:string,context?:CollaborationContext,options?:ScopedReadOptions)=>call<{items:any[]}>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`,options,context),
+ imageJobExecutionRead:(nid:string,context?:CollaborationContext)=>call<{items:any[];execution_confirmation?:string}>(`/api/novels/${encodeURIComponent(nid)}/image-jobs?execution_confirmation=1`,undefined,context),
  createImageJob:(nid:string,body:any)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs`,{method:'POST',body:JSON.stringify(body)}),
- executeImageJob:(nid:string,id:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/execute`,{method:'POST'}),
+ executeImageJob:(nid:string,id:string,expectation?:{confirmed:true;expected_request_sha256:string;expected_attempt:number;expected_updated_at:string},context?:CollaborationContext,signal?:AbortSignal)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/execute`,{method:'POST',signal,...(expectation?{body:JSON.stringify(expectation)}:{})},context),
  cancelImageJob:(nid:string,id:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/cancel`,{method:'POST'}),
  retryImageJob:(nid:string,id:string)=>call<any>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/retry`,{method:'POST'}),
  acceptImageJob:(nid:string,id:string)=>call<Asset>(`/api/novels/${encodeURIComponent(nid)}/image-jobs/${encodeURIComponent(id)}/accept`,{method:'POST'}),
@@ -476,7 +492,7 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
    completeAgentTask:(runId:string,nodeId:string,status:'SUCCEEDED'|'FAILED',output?:object,error?:string,context?:CollaborationContext)=>call<any>(`/api/agent-queue/${encodeURIComponent(runId)}/${encodeURIComponent(nodeId)}/complete?status=${status}${error?`&error=${encodeURIComponent(error)}`:''}`,{method:'POST',body:output?JSON.stringify(output):undefined},context),
    pipelineStatus:(novelId:string,screenplayId:string)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/screenplays/${encodeURIComponent(screenplayId)}/pipeline-status`),
    multimodalHealth:()=>call<any>('/api/multimodal/health'),
-   assetProviders:()=>call<{items:AssetProviderStatus[];routing_policy?:'LOCAL_FIRST'}>('/api/asset-providers'),
+   assetProviders:(context?:CollaborationContext)=>call<{items:AssetProviderStatus[];routing_policy?:'LOCAL_FIRST'}>('/api/asset-providers',undefined,context),
    configureAssetProvider:(providerId:string,config:{endpoint:string;default_model:string;api_style:'openai'|'comfyui'|'automatic1111';local:boolean;enabled:boolean;requires_credential:boolean;display_name:string})=>call<AssetProviderStatus>(`/api/asset-providers/${encodeURIComponent(providerId)}`,{method:'PUT',body:JSON.stringify(config)}),
    deleteAssetProvider:(providerId:string)=>call<{provider_id:string;deleted:boolean}>(`/api/asset-providers/${encodeURIComponent(providerId)}`,{method:'DELETE'}),
    advancePipeline:(novelId:string,screenplayId:string)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/screenplays/${encodeURIComponent(screenplayId)}/pipeline-advance`,{method:'POST'}),

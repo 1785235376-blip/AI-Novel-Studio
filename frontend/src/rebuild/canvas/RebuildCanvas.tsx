@@ -3,13 +3,14 @@
    - 右键空白处 → 在点击位置弹「添加节点」菜单（类型取自现存 StudioGraphDefinitionId 目录，按画布过滤）；右键节点 → 删除。
    - 持久化：前端还没有可直接写入的画布图接口接到这里，所以只存本机浏览器 localStorage，并在画布上写明「仅本机草稿」。不发任何写请求。 */
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE} from 'react';
+import type {PointerEvent as RPE, MouseEvent as RME, WheelEvent as RWE, ReactNode} from 'react';
 import type {StudioGraphDefinitionId} from '../../creative/studioGraphTypes';
+import {Button, Panel, StatusMessage} from '../../ui/primitives';
 import './rebuildCanvas.css';
 
 export type CanvasKind = 'image' | 'video';
 export type NodeType = {id: StudioGraphDefinitionId; label: string; color: string; icon: string; ins: boolean; outs: boolean};
-export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string};
+export type CvNode = {id: string; t: StudioGraphDefinitionId; x: number; y: number; title: string; prompt?: string};
 export type CvEdge = {id: string; a: string; b: string};
 export type CvGraph = {nodes: CvNode[]; edges: CvEdge[]};
 
@@ -52,11 +53,19 @@ function load(key: string, seed: CvGraph, persist: 'local' | 'session' = 'local'
 export type CvViewport = {x: number; y: number; k: number};
 // [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
 // (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
-export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed,
-  storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
   initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean; onRevealed?: () => void;
-  // [HERMIA-FE-20261026 DUAL] optional: own storage key / session-only persistence / own node palette / labels. Defaults unchanged.
-  storageKey?: string; persist?: 'local' | 'session'; types?: NodeType[]; ariaLabel?: string; menuTitle?: string; badge?: string; badgeTitle?: string; emptyHint?: string}) {
+  storageKey?: string; persist?: 'local' | 'session'; types?: NodeType[]; ariaLabel?: string; menuTitle?: string; badge?: string; badgeTitle?: string; emptyHint?: string;
+  onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => ReactNode};
+
+/** Remount when owner storage key changes so selection/prompt/source guards never leak across projects. */
+export function RebuildCanvas(props: RebuildCanvasProps) {
+  return <RebuildCanvasSession key={props.storageKey ?? canvasStorageKey(props.kind, props.scope)} {...props} />;
+}
+
+function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed,
+  storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
+  onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
   const key = storageKey ?? canvasStorageKey(kind, scope);
   const palette = typesProp ?? NODE_TYPES[kind];
   const typeOf = (_k: CanvasKind, t: string) => palette.find(x => x.id === t) ?? NODE_TYPES[_k].find(x => x.id === t);
@@ -68,6 +77,14 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   const [q, setQ] = useState('');
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const active = useRef(true);
+  const removedNodes = useRef(new Set<string>());
+  const promptRevisions = useRef(new Map<string, number>());
+  const positionRevisions = useRef(new Map<string, number>());
+  const liveGraph = useRef(g); liveGraph.current = g;
+  const selectedTask = useRef<CvNode>();
+  const selectionEpoch = useRef(0);
+  useLayoutEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   // [HERMIA-FE-20261024 M3-s1fix] revealLast: if the last node is outside the visible svg, pan just enough to show it (zoom kept).
   // [HERMIA-FE-20261024 M3-s1fix2] the request is kept pending until the svg first has a non-zero size (tab-switch mounts
   // measure 0×0 in Chrome), executed once via ResizeObserver (rAF polling fallback), then cleared so later manual pans,
@@ -115,9 +132,9 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   const addNode = (t: NodeType) => {
     if (!menu) return;
     const n: CvNode = {id: uid('n'), t: t.id, x: Math.round(menu.wx / 10) * 10, y: Math.round(menu.wy / 10) * 10, title: `新${t.label}`};
-    setG(c => ({...c, nodes: [...c.nodes, n]})); setSel(n.id); setMenu(null);
+    selectionEpoch.current++; setG(c => ({...c, nodes: [...c.nodes, n]})); setSel(n.id); setMenu(null);
   };
-  const delNode = (id: string) => { setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
+  const delNode = (id: string) => { selectionEpoch.current++; removedNodes.current.add(id); setG(c => ({nodes: c.nodes.filter(n => n.id !== id), edges: c.edges.filter(e => e.a !== id && e.b !== id)})); setSel(null); setMenu(null); };
 
   const onDown = (e: RPE<SVGSVGElement>) => {
     if (e.button !== 0) return; setMenu(null);
@@ -126,15 +143,18 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
     try { (e.currentTarget as Element).setPointerCapture?.(e.pointerId); } catch { /* jsdom */ }
     if (port) { setLink({from: port.getAttribute('data-for')!, x: wx, y: wy}); return; }
     // [HERMIA-FE-20261024 M3-s1fix] re-clicking the already-selected node re-reports it (host may be showing the other canvas's node).
-    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id === sel) onSelect?.(n); setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
-    setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
+    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id === sel) onSelect?.(n); if (id !== sel) selectionEpoch.current++; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
+    if (sel !== null) selectionEpoch.current++; setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
   };
   const onMove = (e: RPE<SVGSVGElement>) => {
     if (link) { const {wx, wy} = world(e.clientX, e.clientY); setLink({...link, x: wx, y: wy}); return; }
     const d = drag.current; if (!d) return;
     const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
     if (d.mode === 'pan') setVp(v => ({...v, x: d.ox + dx, y: d.oy + dy}));
-    else setG(c => ({...c, nodes: c.nodes.map(n => n.id === d.id ? {...n, x: d.ox + dx / vp.k, y: d.oy + dy / vp.k} : n)}));
+    else {
+      if (d.id && (dx || dy)) positionRevisions.current.set(d.id, (positionRevisions.current.get(d.id) || 0) + 1);
+      setG(c => ({...c, nodes: c.nodes.map(n => n.id === d.id ? {...n, x: d.ox + dx / vp.k, y: d.oy + dy / vp.k} : n)}));
+    }
   };
   const onUp = (e: RPE<SVGSVGElement>) => {
     if (link) {
@@ -159,8 +179,25 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   const by = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const curve = (x1: number, y1: number, x2: number, y2: number) => { const m = Math.max(40, Math.abs(x2 - x1) / 2); return `M${x1},${y1} C${x1 + m},${y1} ${x2 - m},${y2} ${x2},${y2}`; };
   const types = palette.filter(t => !q || t.label.includes(q));
+  const selectedNode = g.nodes.find(n => n.id === sel);
+  const imageTaskNode = kind === 'image' && selectedNode?.t === 'image_generate' ? selectedNode : undefined;
+  selectedTask.current = imageTaskNode;
+  const taskPrompt = typeof imageTaskNode?.prompt === 'string' ? imageTaskNode.prompt : '';
+  const sourceCurrent = (nodeId: string) => () => active.current && !removedNodes.current.has(nodeId)
+    && liveGraph.current.nodes.filter(node => node.id === nodeId).length === 1
+    && liveGraph.current.nodes.some(node => node.id === nodeId && node.t === 'image_generate');
+  const promptRevision = imageTaskNode ? promptRevisions.current.get(imageTaskNode.id) || 0 : 0;
+  const readSourceCurrent = (nodeId: string, revision: number) => () => sourceCurrent(nodeId)()
+    && (promptRevisions.current.get(nodeId) || 0) === revision;
+  const formalSourceCurrent = (node: CvNode, revision: number) => {
+    const epoch = selectionEpoch.current, placement = positionRevisions.current.get(node.id) || 0, snapshot = JSON.stringify(node);
+    return () => readSourceCurrent(node.id, revision)() && selectionEpoch.current === epoch
+      && (positionRevisions.current.get(node.id) || 0) === placement
+      && selectedTask.current?.id === node.id && JSON.stringify(liveGraph.current.nodes.find(row => row.id === node.id)) === snapshot;
+  };
 
   return (
+    <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
       <span className="rcv-local" title={badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢'}>{badge ?? '仅本机草稿 · 未同步服务端'}</span>
@@ -198,6 +235,20 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
             {types.length === 0 ? <p className="none">没有匹配的类型</p> : null}</div>
         </>}
       </div> : null}
+    </div>
+    {imageTaskNode ? <Panel title="所选图片节点参数" aria-label="所选图片节点参数" style={{flexShrink: 0}}>
+      <p>节点：{imageTaskNode.title}。这里只保存本次提示词草稿；节点标题、连线和参考节点不会自动作为生成参数。</p>
+      <label>本次提示词<textarea aria-label="本次提示词" rows={3} maxLength={8000} value={taskPrompt}
+        onChange={event => { const prompt = event.target.value; promptRevisions.current.set(imageTaskNode.id, (promptRevisions.current.get(imageTaskNode.id) || 0) + 1); setG(current => ({...current, nodes: current.nodes.map(node => node.id === imageTaskNode.id ? {...node, prompt} : node)})); }} /></label>
+      <Button disabled={!onImageTaskIntent || !taskPrompt.trim()} onClick={() => {
+        if (active.current && selectedTask.current === imageTaskNode && onImageTaskIntent && taskPrompt.trim()) {
+          onImageTaskIntent({...imageTaskNode, prompt: taskPrompt.trim()}, sourceCurrent(imageTaskNode.id));
+        }
+      }}>为此节点准备图片任务</Button>
+      {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision, formalSourceCurrent(imageTaskNode, promptRevision))}
+      <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
+    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage data-unsupported="video-node">视频节点的正式任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage>
+      : kind === 'video' && selectedNode ? <StatusMessage data-unsupported="video-canvas">VIDEO 画布节点正式执行未接线（unsupported）。</StatusMessage> : null}
     </div>
   );
 }

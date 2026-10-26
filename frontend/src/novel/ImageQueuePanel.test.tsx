@@ -16,7 +16,7 @@ it('persists configured image parameters and accepts reviewed output explicitly'
  const accept=vi.spyOn(api,'acceptImageJob').mockResolvedValue({id:'asset-a'} as any);
  fireEvent.click(screen.getByRole('button',{name:'刷新任务'}));
  fireEvent.click(await screen.findByRole('button',{name:'对比结果'}));
- expect(screen.getByAltText('对比结果 job-a')).toBeTruthy();expect(accept).not.toHaveBeenCalled();
+ expect(screen.getByRole('region',{name:'图片结果对比'})).toBeTruthy();expect(screen.queryByRole('img')).toBeNull();expect(accept).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'接受并入库'}));
  await waitFor(()=>expect(accept).toHaveBeenCalledWith('project-a','job-a'));view.unmount();
 });
@@ -30,4 +30,16 @@ it('drops old scope responses and suppresses duplicate submission',async()=>{
  view.rerender(<ImageQueuePanel novelId="project-b" draft={draft}/>);
  resolve({items:[{id:'private-old',prompt:'Must not appear',status:'FAILED'}]});finish({id:'old-job'});
  await waitFor(()=>expect(screen.getByText('暂无持久任务。')).toBeTruthy());expect(screen.queryByText('Must not appear')).toBeNull();
+});
+it.each([
+ {approval_status:'PENDING',asset_uri:'https://example.test/candidate.png'},
+ {approval_status:'PENDING',asset_uri:'data:image/png;base64,aW1hZ2U='},
+ {approval_status:'APPROVED',asset_id:'stored-asset',asset_uri:'/api/assets/stored-asset/download?novel_id=project-a'},
+])('keeps the old comparison entry metadata-only for $approval_status candidates',async candidate=>{
+ vi.spyOn(api,'imageJobs').mockResolvedValue({items:[{id:'job-a',prompt:'Synthetic comparison source',status:'SUCCEEDED',provider_id:'fixture',model_id:'model',attempt:1,...candidate}]});
+ const download=vi.spyOn(api,'assetDownload');
+ const view=render(<ImageQueuePanel novelId="project-a" draft={draft}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'对比结果'}));
+ expect(screen.getByRole('region',{name:'图片结果对比'})).toBeTruthy();expect(screen.queryByRole('img')).toBeNull();
+ expect(view.container.textContent).not.toContain(candidate.asset_uri);expect(download).not.toHaveBeenCalled();
 });

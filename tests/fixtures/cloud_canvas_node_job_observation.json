@@ -1,0 +1,195 @@
+{
+  "contract": "studio-node-job-observation-file-api/1",
+  "baseline_commit": "6e6fcd72a09622e600c3f357e5f6bd6ef449072b",
+  "implementation_sha256": {
+    "app/creative/canvas_image_node_job_observation.py": "9dce002a303fb2a00722b03ddf10a02731fd80b4e957dfba978b42aa08630ce8",
+    "app/creative/production_execution.py": "cf98294e35bf397acddecaf8e4074ec5091ba791a440496446d8a16bd9763ea4",
+    "app/creative/production_execution_api.py": "1b34e0624acce7a7c0b8aa67b1b99c7af02f546d9d353588ade3e1ea0ae30e26"
+  },
+  "evidence_type": "REAL_ORIGINAL_FILE_API_CANCELLED_METADATA_ONLY",
+  "project": "query-68b4f9d098bc48f298e39b95eaead110",
+  "scope": {
+    "mode": "local",
+    "novel_id": "query-68b4f9d098bc48f298e39b95eaead110"
+  },
+  "selected_job": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "d9db297f-896a-4a35-9da5-bb84baf3e4a6",
+    "novel_id": "query-68b4f9d098bc48f298e39b95eaead110",
+    "branch_id": null,
+    "version": 2,
+    "status": "CANCELLED",
+    "request_digest": "e09b0358bfe08bf6f4dbf26285d0175ad600f566cc4755f08dbe3e88e430dcc8",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-24T15:59:06.996246+00:00",
+    "updated_at": "2026-10-24T15:59:07.017854+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": "LOCAL_RESULT_DISCARD",
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "prompt": "Synthetic queue recovery prompt; no inference",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "source_snapshots": [],
+      "allow_cloud": false,
+      "license_note": "Synthetic queue-only test",
+      "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "query-68b4f9d098bc48f298e39b95eaead110",
+        "scope": {
+          "mode": "local",
+          "novel_id": "query-68b4f9d098bc48f298e39b95eaead110"
+        },
+        "incarnation": "file:8eadc5b8-a9ae-4175-82fc-68113c1fe692",
+        "canvas_id": "a71da948-6f40-4595-b010-00245817004b",
+        "canvas_version": 1,
+        "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+        "node_id": "queue-recovery-node",
+        "title": "One durable node queue intent",
+        "position": {
+          "x": 48.0,
+          "y": 80.0
+        },
+        "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+      }
+    },
+    "provider": {
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "local": true,
+      "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "AUTOMATIC1111_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "automatic_fallback": false,
+      "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+      },
+      "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "original-target-observation",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": true
+  },
+  "observation": {
+    "contract": "studio-image-node-job-observation/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "d9db297f-896a-4a35-9da5-bb84baf3e4a6",
+      "novel_id": "query-68b4f9d098bc48f298e39b95eaead110",
+      "branch_id": null,
+      "version": 2,
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "status": "CANCELLED",
+      "request_digest": "e09b0358bfe08bf6f4dbf26285d0175ad600f566cc4755f08dbe3e88e430dcc8",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T15:59:06.996246+00:00",
+      "updated_at": "2026-10-24T15:59:07.017854+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": "LOCAL_RESULT_DISCARD",
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "output_candidate": null,
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-68b4f9d098bc48f298e39b95eaead110",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-68b4f9d098bc48f298e39b95eaead110"
+          },
+          "incarnation": "file:8eadc5b8-a9ae-4175-82fc-68113c1fe692",
+          "canvas_id": "a71da948-6f40-4595-b010-00245817004b",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "approved_asset_version": null,
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": true
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-68b4f9d098bc48f298e39b95eaead110",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-68b4f9d098bc48f298e39b95eaead110"
+      },
+      "incarnation": "file:8eadc5b8-a9ae-4175-82fc-68113c1fe692",
+      "canvas_id": "a71da948-6f40-4595-b010-00245817004b",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:8eadc5b8-a9ae-4175-82fc-68113c1fe692",
+    "canvas_read": false,
+    "automatic_actions": false
+  }
+}

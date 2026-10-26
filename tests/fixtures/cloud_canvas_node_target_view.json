@@ -1,0 +1,400 @@
+{
+  "contract": "studio-node-target-view-file-api/1",
+  "baseline_commit": "7736423c9c261e2028d0b675935ca7b9b2482f7e",
+  "implementation_sha256": {
+    "app/creative/canvas_image_node_target_observation.py": "fd332bb18d2ebb80239f18acf4aaf284a3d7b08433e83664227c6254625d3850",
+    "app/creative/production_execution.py": "67a6c42c293a7fce8d32a80f8c29dad2f2c03ca05abafbe22f53025a7ab24018",
+    "app/creative/production_execution_api.py": "7e6ad47efc16e6812a7a539b62ed01b1a6f678f6163035453151fab6320141a4",
+    "app/creative/production_execution_models.py": "c8a7dc181f289a1902062a156506f137229226db7a9e6b9b786fae6af1eb0ae3"
+  },
+  "evidence_type": "REAL_ORIGINAL_FILE_API_MANUAL_REFERENCE_METADATA_ONLY",
+  "project": "query-ed5169f5d0eb459cadd66e997715a86c",
+  "scope": {
+    "mode": "local",
+    "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+  },
+  "queued_job": {
+    "contract": "studio-production-job/1",
+    "owner": "image",
+    "id": "fe360f0f-e186-44ea-81a4-f39ca317bb79",
+    "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+    "branch_id": null,
+    "version": 1,
+    "status": "QUEUED",
+    "request_digest": "e9e03a4a2d445e6d921dd05b3c59e9af6a5685e39a6842879bc6fbbd0ffead05",
+    "receipt_digest": null,
+    "attempt": 0,
+    "created_at": "2026-10-24T15:38:51.534498+00:00",
+    "updated_at": "2026-10-24T15:38:51.534509+00:00",
+    "error_code": null,
+    "review_state": null,
+    "cancellation_mode": null,
+    "needs_reconciliation": null,
+    "execution_state": null,
+    "operation_id": "m5.image.t2i",
+    "output_candidate": null,
+    "timeline_snapshot": null,
+    "sources": [],
+    "command": {
+      "operation_id": "m5.image.t2i",
+      "request_id": "original-target-observation",
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "prompt": "Synthetic queue recovery prompt; no inference",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "source_snapshots": [],
+      "allow_cloud": false,
+      "license_note": "Synthetic queue-only test",
+      "canvas_image_node": {
+        "contract": "studio-canvas-image-node/1",
+        "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+        "scope": {
+          "mode": "local",
+          "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+        },
+        "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+        "canvas_id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+        "canvas_version": 1,
+        "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+        "node_id": "queue-recovery-node",
+        "title": "One durable node queue intent",
+        "position": {
+          "x": 48.0,
+          "y": 80.0
+        },
+        "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+      }
+    },
+    "provider": {
+      "provider_id": "automatic1111",
+      "model_id": "synthetic-no-weights.safetensors",
+      "local": true,
+      "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+    },
+    "execution_recipe": {
+      "contract": "studio-execution-recipe/1",
+      "operation_id": "m5.image.t2i",
+      "adapter": "AUTOMATIC1111_IMAGE",
+      "parameters": {
+        "width": 64,
+        "height": 64,
+        "steps": 1,
+        "seed": 42
+      },
+      "automatic_fallback": false,
+      "defaults": {
+        "width": 1024,
+        "height": 1024,
+        "steps": 28
+      },
+      "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+    },
+    "media_measurement": null,
+    "approved_asset_version": null,
+    "request_id": "original-target-observation",
+    "product_acceptance": "LOCAL_REQUIRED",
+    "automatic_replay": false,
+    "remote_compute_may_continue": false
+  },
+  "observation": {
+    "contract": "studio-image-node-target-observation/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "fe360f0f-e186-44ea-81a4-f39ca317bb79",
+      "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "e9e03a4a2d445e6d921dd05b3c59e9af6a5685e39a6842879bc6fbbd0ffead05",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T15:38:51.534498+00:00",
+      "updated_at": "2026-10-24T15:38:51.534509+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+          },
+          "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+          "canvas_id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m5.image.t2i",
+        "adapter": "AUTOMATIC1111_IMAGE",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "automatic_fallback": false,
+        "defaults": {
+          "width": 1024,
+          "height": 1024,
+          "steps": 28
+        },
+        "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "original-target-observation",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+      },
+      "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+      "canvas_id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+    "canvas": {
+      "id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+      "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+      },
+      "version": 2,
+      "definition_digest": "5e5eeaffc9bed8bfb60dfeb07e448e131b042d682431a880996338f149980dc4",
+      "title": "A saved manual reference, not generated output",
+      "card_count": 1,
+      "execution_authority": false,
+      "binary_content_verified": false
+    },
+    "history": {
+      "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+      "current_version": 2,
+      "current_definition_digest": "5e5eeaffc9bed8bfb60dfeb07e448e131b042d682431a880996338f149980dc4",
+      "target_version": 1,
+      "target_definition_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "target_empty": true
+    },
+    "comparison": "CURRENT_CHANGED",
+    "automatic_actions": false
+  },
+  "view": {
+    "contract": "studio-image-node-target-view/1",
+    "job": {
+      "contract": "studio-production-job/1",
+      "owner": "image",
+      "id": "fe360f0f-e186-44ea-81a4-f39ca317bb79",
+      "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "branch_id": null,
+      "version": 1,
+      "status": "QUEUED",
+      "request_digest": "e9e03a4a2d445e6d921dd05b3c59e9af6a5685e39a6842879bc6fbbd0ffead05",
+      "receipt_digest": null,
+      "attempt": 0,
+      "created_at": "2026-10-24T15:38:51.534498+00:00",
+      "updated_at": "2026-10-24T15:38:51.534509+00:00",
+      "error_code": null,
+      "review_state": null,
+      "cancellation_mode": null,
+      "needs_reconciliation": null,
+      "execution_state": null,
+      "operation_id": "m5.image.t2i",
+      "output_candidate": null,
+      "timeline_snapshot": null,
+      "sources": [],
+      "command": {
+        "operation_id": "m5.image.t2i",
+        "request_id": "original-target-observation",
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "prompt": "Synthetic queue recovery prompt; no inference",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "source_snapshots": [],
+        "allow_cloud": false,
+        "license_note": "Synthetic queue-only test",
+        "canvas_image_node": {
+          "contract": "studio-canvas-image-node/1",
+          "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+          "scope": {
+            "mode": "local",
+            "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+          },
+          "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+          "canvas_id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+          "canvas_version": 1,
+          "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+          "node_id": "queue-recovery-node",
+          "title": "One durable node queue intent",
+          "position": {
+            "x": 48.0,
+            "y": 80.0
+          },
+          "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+        }
+      },
+      "provider": {
+        "provider_id": "automatic1111",
+        "model_id": "synthetic-no-weights.safetensors",
+        "local": true,
+        "route_digest": "e2c767612a98c9bc7146ff2e1afd31db9c1c74e18e93db32b67c8025df1c6648"
+      },
+      "execution_recipe": {
+        "contract": "studio-execution-recipe/1",
+        "operation_id": "m5.image.t2i",
+        "adapter": "AUTOMATIC1111_IMAGE",
+        "parameters": {
+          "width": 64,
+          "height": 64,
+          "steps": 1,
+          "seed": 42
+        },
+        "automatic_fallback": false,
+        "defaults": {
+          "width": 1024,
+          "height": 1024,
+          "steps": 28
+        },
+        "recipe_digest": "6067a9543dacf3a0277fa92aeb8ff89d47a4f2ca30fcb4f2c5422c0c27f1b4f8"
+      },
+      "media_measurement": null,
+      "approved_asset_version": null,
+      "request_id": "original-target-observation",
+      "product_acceptance": "LOCAL_REQUIRED",
+      "automatic_replay": false,
+      "remote_compute_may_continue": false
+    },
+    "target": {
+      "contract": "studio-canvas-image-node/1",
+      "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+      },
+      "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+      "canvas_id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+      "canvas_version": 1,
+      "canvas_digest": "f521d18f22c84ab7625322992d05fca80c6f16e2275255387bc3abd7e0b412cb",
+      "node_id": "queue-recovery-node",
+      "title": "One durable node queue intent",
+      "position": {
+        "x": 48.0,
+        "y": 80.0
+      },
+      "prompt_digest": "fa5d034905936549138ec10ff4132d259e7970a5c9c9d0271bd2b3d62bb538db"
+    },
+    "incarnation": "file:82fa7e9a-a289-4a93-9220-09f432a42009",
+    "canvas": {
+      "id": "c25d2fba-d737-406c-941d-6c8cb8b55164",
+      "version": 2,
+      "definition": {
+        "cards": [
+          {
+            "asset": {
+              "asset_id": "b55cc0f2-d0ea-4976-98fd-b54a2e5c1baf",
+              "digest": "ea8ead92c9a0f989414f3a64216b01a34364d8f4c87b87c2f7c8004df65a4314",
+              "kind": "image",
+              "version": 1
+            },
+            "id": "manual-reference-card",
+            "position": {
+              "x": 160.0,
+              "y": 96.0
+            }
+          }
+        ],
+        "schema_version": 1,
+        "title": "A saved manual reference, not generated output",
+        "viewport": {
+          "x": 0.0,
+          "y": 0.0,
+          "zoom": 1.0
+        }
+      },
+      "definition_digest": "5e5eeaffc9bed8bfb60dfeb07e448e131b042d682431a880996338f149980dc4",
+      "project_id": "query-ed5169f5d0eb459cadd66e997715a86c",
+      "scope": {
+        "mode": "local",
+        "novel_id": "query-ed5169f5d0eb459cadd66e997715a86c"
+      },
+      "created_at": "2026-10-24T15:38:51.484156+00:00",
+      "updated_at": "2026-10-24T15:38:51.578301+00:00",
+      "reference_states": [
+        {
+          "card_id": "manual-reference-card",
+          "state": "CURRENT_METADATA",
+          "filename": "Synthetic manual metadata reference.png"
+        }
+      ],
+      "execution_authority": false,
+      "binary_content_verified": false,
+      "capacity": {
+        "history_used": 1,
+        "record_bytes": 2735
+      }
+    },
+    "automatic_actions": false
+  }
+}

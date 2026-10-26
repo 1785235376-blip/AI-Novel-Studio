@@ -49,13 +49,15 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
   }
   const handoffLabel = props.assetHandoff?.target === 'VIDEO' ? '视频' : '图片';
   return <Panel title="媒体制作与审核" className="studio-graph-run">
-    <p>预览、入队、执行和审核分别确认。候选先保持私有，人工审核后再入素材库。完整本机验收仍待完成（LOCAL_REQUIRED）。</p>
+    <p>{props.resumeReadOnly?'此入口只显示原任务状态和元数据回执。原任务状态仅在你显式读取时请求，不自动请求或轮询，也不发送任务操作。':'预览、入队、执行和审核分别确认。候选先保持私有，人工审核后再入素材库。完整本机验收仍待完成（LOCAL_REQUIRED）。'}</p>
     {state.error && <StatusMessage tone="error">{state.error}</StatusMessage>}
     {state.notice && <StatusMessage>{state.notice}</StatusMessage>}
     {state.uncertain && <StatusMessage tone="warning">操作结果尚未确认，已阻止继续发送。请读取原任务核对；不会自动重试。</StatusMessage>}
     {state.repeatBlocked && <StatusMessage tone="warning">当前版本已有发送记录。相同动作不会再次发送，请继续读取原记录核对。</StatusMessage>}
-    {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。使用“读取任务列表”寻找已保存回执。</p>}
-    {props.assetHandoff && <section aria-label={`素材引用交接到${handoffLabel}制作`}>
+    {state.uncertainRequestId && <p>待核对的原请求：<code>{state.uncertainRequestId}</code>。{props.canvasNodeTask?'请从原节点显式核对原图片任务入队结果；不会使用列表中的最新任务替代。':'使用“读取任务列表”寻找已保存回执。'}</p>}
+    {props.canvasNodeTask&&!props.resumeOnly&&(!props.beforeNodeQueue||!props.onNodeQueueUnknown)&&<StatusMessage tone="warning">当前节点入口缺少可追溯的入队恢复能力，不能创建任务。请从原节点重新打开。</StatusMessage>}
+    {props.resumeReadOnly?<StatusMessage>只读续接原任务，可显式读取当前状态或下载刚读取的 JSON 元数据。当前入口不能预检、执行、核对中断、取消或审核；状态推进不代表已审核入库。</StatusMessage>:props.resumeOnly&&<StatusMessage>仅续接原任务，不新建或重新排队。此入口不打开候选媒体、人工审核或采用；状态推进不代表已审核入库。</StatusMessage>}
+    {props.assetHandoff && !props.resumeOnly && !props.resumeReadOnly && <section aria-label={`素材引用交接到${handoffLabel}制作`}>
       <h3>素材引用交接到{handoffLabel}制作</h3>
       <p>{props.assetHandoff.reference.asset_id} · v{props.assetHandoff.reference.version} · {props.assetHandoff.reference.digest}</p>
       <p>{handoffLabel === '视频' ? '须明确选择“图片生成视频”或“视频生成视频”，且来源类型必须匹配、来源槽为空。视频转视频是否可执行仍以原服务能力为准；当前本地路线不执行参考视频。' : draft.operation === 'm5.image.reference' ? '当前为“多参考图生成图片”：须明确选择支持此操作的服务商配置，按当前上限追加参考图（最多五张），新参考权重为 1，保留已有参考权重、用途与说明。' : '须在下方明确选择“参考图片生成图片”或“多参考图生成图片”。前者使用原基础图输入规则，后者追加加权参考图。'}核对只读取元数据；加入前再次核对版本，不更改提示词、服务商或参数，也不覆盖已有基础图。</p>
@@ -64,9 +66,9 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       <Button disabled={state.handoffDone} onClick={state.cancelHandoff}>取消{handoffLabel}交接</Button>
       {state.handoffNotice && <StatusMessage>{state.handoffNotice}</StatusMessage>}
     </section>}
-    <section aria-label="媒体制作输入">{props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
+    <section aria-label="媒体制作输入">{props.resumeReadOnly ? <><h3>只读续接原节点任务</h3><p>输入固定为下方原任务已保存的命令，版本和状态来自原任务回执。服务配置、候选内容及所有任务操作在此入口保持关闭。</p></> : props.resumeOnly ? <><h3>仅续接原节点任务</h3><p>输入固定为下方原任务已保存的命令。重新读取服务配置与执行预览后，仍须单独确认本次执行影响；不会自动派发。</p><Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取原任务服务配置</Button></> : props.preparedCommand ? <><h3>{props.preparedCommand.source_snapshots.some(source => source.kind === "COMIC_PANEL") ? "原漫画格框图片请求" : props.preparedCommand.operation_id === "m8.audio.speech" ? "原分镜语音请求" : props.preparedCommand.operation_id.startsWith("m7.") ? "原分镜视频请求" : "原分镜图片请求"}</h3><p>输入来自已核对的原来源版本；更换参数须返回原入口明确准备新请求。预览、入队、执行与审核仍分别确认。</p><details><summary>核对完整来源与输入</summary><pre>{JSON.stringify(props.preparedCommand, null, 2)}</pre></details><Button disabled={!state.canRead || state.providerLoading} onClick={() => void state.loadProviders()}>明确读取当前请求服务配置</Button><Button disabled={!state.canInspect} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canClosePrepared} onClick={state.clearInputs}>关闭当前请求视图，保留原任务</Button></> : <>
       <h3>制作输入</h3>
-      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
+      <label>操作<select disabled={!state.canEdit||!!props.canvasImageTask||!!props.canvasAudioTrimTask||!!props.canvasNodeTask} value={draft.operation} onChange={event => state.changeOperation(event.target.value as MediaOperation)}>
         {Object.entries(MEDIA_OPERATION_LABELS).map(([id, title]) => <option key={id} value={id}>{title}</option>)}
       </select></label>
       {cutout && <><p>本地 CPU 使用已保存的手绘二值遮罩：白色保留来源像素，黑色变为透明且清零颜色。默认输出同尺寸 PNG，也可明确选择无损 WebP；后者编码后重新解码核对全部 RGBA 字节。不使用服务商、模型、提示词或云端。仅接受 64–1024、宽高为 8 的倍数的 PNG 来源与对应遮罩，执行时再次核对真实字节。</p>{parameter('cutout_output')}</>}
@@ -88,7 +90,7 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         <p>配置参考不代表服务已验证可用。{!state.providerLoading && !providers.length && (state.routeSelectable && !crossRouteReferences ? `当前操作暂无${draft.route === 'local' ? '本地' : '云端'}配置；可以切换路线或先完成对应配置，不会自动回退。` : '暂无对应配置，请先完成服务商与模型配置。')}</p>
         {state.provider?.image_capabilities && <p>当前图片配方：{state.provider.image_capabilities.recipe_id}。输入结构已核对，真实推理尚未验证。参考图最多 {state.provider.image_capabilities.reference_limit} 张；{state.provider.image_capabilities.reference_semantics === 'WEIGHTED_PIXEL_INITIALIZATION' ? '权重用于归一化混合参考像素后初始化生成，不代表角色或风格识别质量。' : '当前路线采用单图初始化。'}</p>}
         <Button disabled={!state.canRead || state.providerLoading} loading={state.providerLoading} onClick={() => void state.loadProviders()}>重新读取配置</Button>
-        {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
+        {!upscale && <label>本次提示词<textarea maxLength={16000} disabled={!state.canEdit||!!props.canvasNodeTask} value={draft.prompt} onChange={event => state.changeField('prompt', event.target.value)} /></label>}
         {state.provider && !state.provider.local && <label><input type="checkbox" disabled={!state.canEdit} checked={draft.allowCloud} onChange={event => state.changeField('allowCloud', event.target.checked)} />确认本次允许将提示词及选中的参考素材发送到该云端服务，可能产生费用</label>}
       </>}
       {state.requiredSourceKind && !reference && <fieldset disabled={!state.canEdit}><legend>{kindLabels[state.requiredSourceKind]}来源 · {draft.operation === 'm5.image.i2i' && !state.imageInputs ? '选取 1–5 张' : composite ? '选取 2 张' : '选取 1 个'}</legend>
@@ -143,25 +145,25 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
       {state.inputError && <p>{state.inputError}</p>}
       <div className="studio-graph-actions"><Button disabled={!state.canInspect} loading={state.pending === 'PREVIEW'} onClick={() => void state.inspect()}>读取制作预览</Button><Button disabled={!state.canEdit} onClick={state.clearInputs}>清空本地输入</Button></div>
     </>}
-      {state.impactRequired && !(props.canvasImageTask??props.canvasAudioTrimTask)?.returnBinding && <StatusMessage tone="warning">当前卡片任务缺少可核对的持久范围与存储代际，不能创建或执行。请从原已保存卡片重新进入。</StatusMessage>}
-      {state.impact && <section aria-label="原任务输入确认门">
+      {state.impactRequired && !(props.canvasImageTask??props.canvasAudioTrimTask)?.returnBinding && !props.canvasNodeTask?.binding && <StatusMessage tone="warning">当前卡片任务缺少可核对的持久范围与存储代际，不能创建或执行。请从原已保存卡片重新进入。</StatusMessage>}
+      {!props.resumeReadOnly && state.impact && <section aria-label="原任务输入确认门">
         <p>{state.impact.input.boundary.kind==='CREATE'?'入队前核对：只保存本次任务，不执行。':'执行前再次核对：使用原入队任务的实际命令、配方与版本。'} 原预览摘要 <code>{state.impact.input.preview.preview_digest}</code></p>
         <ExecutionImpactPanel input={state.impact.input} owner={state.impact} current={state.impact.current()}
           canConfirm={props.canMutate} busy={state.locked} isCurrent={state.impact.current}
           onConfirm={proof=>void state.confirmImpact(state.impact!,proof)}/>
       </section>}
-      {state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.composite' ? '本地 CPU 双层 PNG 合成' : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
+      {!props.resumeOnly && !props.resumeReadOnly && state.preview && <section aria-label="制作预览确认"><h4>确认本次预览</h4><p>{MEDIA_OPERATION_LABELS[state.preview.operation_id]} · {state.preview.provider ? `${state.preview.provider.provider_id} / ${state.preview.provider.model_id} · ${state.preview.provider.local ? '本地' : '云端'}` : state.preview.operation_id === 'm5.image.composite' ? '本地 CPU 双层 PNG 合成' : state.preview.operation_id === 'm5.image.cutout' ? '本地 CPU 二值遮罩抠图' : '本地截取'}</p>
         <p>预览绑定当前输入、来源版本与处理接口。创建仅保存任务，尚不执行。</p>
         <details><summary>核对本次执行接口、默认参数与工作流</summary><p>本次预览的接口记录，不代表处理已成功执行。</p><pre>{JSON.stringify(state.preview.execution_recipe, null, 2)}</pre></details>
         <label><input type="checkbox" disabled={state.locked || !props.canMutate} checked={state.previewReviewed} onChange={event => state.confirmPreview(event.target.checked)} />已核对本次输入、来源和处理边界</label>
         <Button disabled={!state.canCreate} loading={state.pending === 'CREATE'} onClick={() => void state.create()}>仅创建任务并入队</Button>
       </section>}
     </section>
-    <section aria-label="原媒体任务记录"><h3>任务记录</h3><Button disabled={!state.canRead} loading={state.pending === 'LIST'} onClick={() => void state.listJobs()}>读取任务列表</Button>
+    <section aria-label="原媒体任务记录"><h3>任务记录</h3>{props.resumeOnly||props.resumeReadOnly ? <p>当前只固定续接这一条原节点任务。选择其他任务须返回任务中心重新核对。</p> : <><Button disabled={!state.canRead} loading={state.pending === 'LIST'} onClick={() => void state.listJobs()}>读取任务列表</Button>
       {!state.jobs.length && <p>读取后可选择已保存的任务，不会自动创建或执行。</p>}
       {!!state.jobs.length && <label>已保存任务<select disabled={!state.canRead} value={job ? `${job.owner}:${job.id}` : ''} onChange={event => { const selected = state.jobs.find(row => `${row.owner}:${row.id}` === event.target.value); if (selected) void state.openJob(selected); }}>
         <option value="">选择原任务记录</option>{state.jobs.map(row => <option key={`${row.owner}:${row.id}`} value={`${row.owner}:${row.id}`}>{MEDIA_OPERATION_LABELS[row.operation_id as MediaOperation] || '多轨合成'} · {MEDIA_STATUS_LABELS[row.status]} · v{row.version} · {row.id}</option>)}
-      </select></label>}
+      </select></label>}</>}
       {job && <section aria-label="当前媒体任务"><Badge>{MEDIA_STATUS_LABELS[job.status]}</Badge><p>任务 {job.id} · v{job.version}</p>
         <details><summary>本任务已确认的输入与处理记录</summary>
           <p>这里显示刚读取的服务端公共回执，不会替换当前制作输入，也不代表本机能力验收已通过。</p>
@@ -210,24 +212,24 @@ export function StudioMediaExecutionPanel(props: StudioMediaExecutionProps) {
         {job.processing_proof?.contract === 'cpu-binary-mask-cutout-webp/1' && <details><summary>本地无损 WebP 处理证明</summary><p>{job.processing_proof.width} × {job.processing_proof.height} · 保留 {job.processing_proof.keep_pixels} 像素 · 移除 {job.processing_proof.remove_pixels} 像素 · WebP {job.processing_proof.output_bytes} 字节</p><p>解码 RGBA 摘要：<code>{job.processing_proof.rgba_sha256}</code></p><p>输出摘要：<code>{job.processing_proof.output_sha256}</code></p></details>}
         {!!job.sources.length && <details><summary>本任务绑定的来源版本</summary><ul>{job.sources.map(source => <li key={`${source.kind}:${source.id}`}>{source.kind === 'ASSET' ? props.assets.find(row => row.id === source.id)?.filename || source.id : source.id} · v{source.version}<p>来源摘要：<code>{source.digest}</code></p></li>)}</ul></details>}
         {!state.jobSourcesFresh && <StatusMessage tone="warning">本任务的素材来源已变化，当前不可继续执行或审核。保留原记录供读取核对。</StatusMessage>}
-        {job.status === 'UNKNOWN' && <StatusMessage tone="warning">无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。</StatusMessage>}
-        {job.status === 'REVIEWING' && <StatusMessage tone="warning">原审核可能已经提交。先读取任务和候选，再确认原审核；不会重新生成。</StatusMessage>}
+        {job.status === 'UNKNOWN' && <StatusMessage tone="warning">{props.resumeReadOnly?'无法确认先前分派结果，当前只可显式读取原任务状态；此入口不能重新派发或丢弃结果。':'无法确认先前分派结果，禁止再次执行。同一原任务只能继续读取核对或丢弃本地结果。'}</StatusMessage>}
+        {job.status === 'REVIEWING' && <StatusMessage tone="warning">{props.resumeReadOnly?'原审核可能已经提交，当前只可显式读取原任务状态；此入口不能读取候选或继续审核。':'原审核可能已经提交。先读取任务和候选，再确认原审核；不会重新生成。'}</StatusMessage>}
         {job.error_code && <details><summary>任务回执细节</summary><p>{job.error_code}</p></details>}
         <Button disabled={!state.canRead} loading={state.pending === 'GET'} onClick={() => void state.openJob(job)}>读取当前任务核对</Button>
         <Button disabled={!state.canRead} onClick={state.downloadReceipt}>下载当前已读回执（JSON）</Button>
-        {state.pending === 'execute' && ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && props.cutoutExecution && <section aria-label={job.operation_id === 'm5.image.composite' ? '正在执行的本地合成控制' : '正在执行的本地抠图控制'}><p>本地执行请求尚未返回。可读取同一原任务，或明确取消；其它制作修改保持锁定。</p>
+        {!props.resumeReadOnly && state.pending === 'execute' && ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && props.cutoutExecution && <section aria-label={job.operation_id === 'm5.image.composite' ? '正在执行的本地合成控制' : '正在执行的本地抠图控制'}><p>本地执行请求尚未返回。可读取同一原任务，或明确取消；其它制作修改保持锁定。</p>
           <Button disabled={!state.canControlRunning} loading={state.runningControl === 'read'} onClick={() => void state.controlRunningCutout('read')}>读取运行中的原抠图任务</Button>
           <Button variant="danger" disabled={!state.canControlRunning || !state.canCancelRunning || job.status === 'CANCELLED'} loading={state.runningControl === 'cancel'} onClick={() => void state.controlRunningCutout('cancel')}>明确取消运行中的原抠图任务</Button>
         </section>}
-        {state.impactRequired && job.status==='QUEUED' && <><p>执行使用下方原 Job 已保存的命令；修改上方草稿不会覆盖它。重新核对将退役草稿预览，仍须明确确认，不能自动派发。</p><Button disabled={!state.canRead || !props.canMutate || state.uncertain} onClick={()=>void state.inspectExecution()}>读取原入队任务预览</Button></>}
+        {!props.resumeReadOnly && <>{state.impactRequired && job.status==='QUEUED' && <><p>{props.resumeOnly?'执行只使用当前原任务已保存的命令、路线和版本，不创建新任务。重新核对后仍须明确确认，不能自动派发。':'执行使用下方原 Job 已保存的命令；修改上方草稿不会覆盖它。重新核对将退役草稿预览，仍须明确确认，不能自动派发。'}</p><Button disabled={!state.canRead || !props.canMutate || state.uncertain} onClick={()=>void state.inspectExecution()}>读取原入队任务预览</Button></>}
         <div className="studio-graph-actions">
           <Button disabled={!state.canAction('execute')} loading={state.pending === 'execute'} onClick={() => void state.action('execute')}>明确执行当前入队任务</Button>
           {job.owner === 'video' && <Button disabled={!state.canAction('refresh')} loading={state.pending === 'refresh'} onClick={() => void state.action('refresh')}>核对已有远端进度</Button>}
           {(['RUNNING', 'SEND_RESERVED'].includes(job.status) || job.command?.source_snapshots.some(source => source.kind === 'COMIC_PANEL') && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.owner === 'timeline' && job.execution_recipe.output_profile === 'AUDIO_WAV_PCM16' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || job.operation_id === 'm8.audio.trim' && ['UNKNOWN', 'REVIEWING'].includes(job.status) || ['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) && (['UNKNOWN', 'REVIEWING'].includes(job.status) || job.status === 'CANCELLED' && !!job.processing_proof && !job.output_candidate)) && <Button disabled={!state.canAction('reconcile')} loading={state.pending === 'reconcile'} onClick={() => void state.action('reconcile')}>核对中断状态，不重新发送</Button>}
           {(job.owner !== 'timeline' || ['RUNNING', 'UNKNOWN', 'SUCCEEDED', 'AWAITING_REVIEW'].includes(job.status)) && <Button variant="danger" disabled={!state.canAction('cancel')} loading={state.pending === 'cancel'} onClick={() => void state.action('cancel')}>{job.operation_id === 'm5.image.composite' ? '明确取消本地合成或丢弃候选' : job.operation_id === 'm5.image.cutout' ? '明确取消本地抠图或丢弃候选' : job.owner === 'timeline' && job.status === 'RUNNING' ? '明确取消本地渲染' : '丢弃未采用的本地结果'}</Button>}
         </div>
-        <p>{['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p>
-        {job.output_candidate && <section aria-label="媒体候选预览与审核"><h4>候选结果</h4><p>{kindLabels[job.output_candidate.kind]}候选 · v{job.output_candidate.version}</p>
+        <p>{['m5.image.cutout', 'm5.image.composite'].includes(job.operation_id) ? '取消会请求原本地处理停止，或撤销未审核候选的采用权限；保留原记录，不会重新处理或入库。' : job.owner === 'timeline' ? '时间线取消会请求原本地渲染停止或撤销未审核候选的采用权限，保留原回执与已有候选；已进入审核或已入库的结果不能从这里取消。' : '丢弃仅撤销本地采用结果的权限，保留原记录；远端计算可能继续。'}</p></>}
+        {!props.resumeOnly && !props.resumeReadOnly && job.output_candidate && <section aria-label="媒体候选预览与审核"><h4>候选结果</h4><p>{kindLabels[job.output_candidate.kind]}候选 · v{job.output_candidate.version}</p>
           <Button disabled={!state.canLoadCandidate} loading={state.pending === 'CANDIDATE'} onClick={() => void state.loadCandidate()}>读取并核对候选媒体</Button>
           {state.candidate?.kind === 'image' && <img src={state.candidate.url} style={{ maxWidth: '100%', maxHeight: 'var(--layout-inspector-width)' }} alt="本任务经摘要核对的图片候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}
           {state.candidate?.kind === 'video' && <video src={state.candidate.url} style={{ maxWidth: '100%', maxHeight: 'var(--layout-inspector-width)' }} controls preload="metadata" aria-label="本任务的视频候选" onError={() => state.mediaFailed(state.candidate?.binding || '')} />}

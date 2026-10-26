@@ -12,6 +12,12 @@ import {VisionAnalysisPanel} from '../../novel/VisionAnalysisPanel';
 import {MultimodalDirectorWorkspace} from '../../novel/MultimodalDirectorWorkspace';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import {DualStack} from '../canvas/DualStack';
+import {useScopedRequestConsent} from '../../useScopedRequestConsent';
+import {CanvasImageQueue} from './CanvasImageQueue';
+import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
+import {RebuildFormalImageNode} from './RebuildFormalImageNode';
+import {imageDraftNodeExists} from './canvasTaskBinding';
+import type {CvNode} from '../canvas/RebuildCanvas';
 import {ComicView} from '../comic/ComicView';
 import {safeImagePreviewUri} from '../../novel/ImageInfiniteCanvas';
 import type {ImageInspection} from '../../novel/ImageTaskInspector';
@@ -66,6 +72,22 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const isPro = shellMode === 'pro';
   // [HERMIA-FE-20261022 U4] 普通：浏览/生成/漫画 + 单画布；专业另有 双画布、多图约束、JSON 导入导出、画面分析。批量生成：后端无批量出图能力，入口隐藏（不做假按钮）。
   useEffect(() => { if (!isPro && view === 'dual') onViewChange('browse'); }, [isPro, view, onViewChange]);
+  // [HERMIA-FE-20261026 DCI] basic single canvas formal IMAGE task (preview→confirm→create→execute→review); DualStack wires its own for pro.
+  const {scopeKey: canvasTaskScope} = useScopedRequestConsent([]);
+  const [canvasTask, setCanvasTask] = useState<{scope: string; novelId: string; nodeId: string; prompt: string; isSourceCurrent?: () => boolean}>();
+  const openCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean) => {
+    if ((!isSourceCurrent || isSourceCurrent()) && imageDraftNodeExists(novelId, node.id) && node.t === 'image_generate') {
+      setCanvasTask({scope: canvasTaskScope, novelId, nodeId: node.id, prompt: node.prompt?.trim() || '', isSourceCurrent});
+    }
+  };
+  const renderCanvasTask = (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => <>
+    <CanvasNodeTaskStatus novelId={novelId} nodeId={node.id} nodePrompt={node.prompt || ''} sourceRevision={sourceRevision} isSourceCurrent={isSourceCurrent} onOpen={() => openCanvasTask(node, isSourceCurrent)}/>
+    <RebuildFormalImageNode projectId={novelId} node={node} sourceRevision={sourceRevision} isSourceCurrent={formalSourceCurrent}/>
+  </>;
+  useEffect(() => setCanvasTask(undefined), [novelId, canvasTaskScope, view]);
+  const canvasTaskDrawer = canvasTask?.scope === canvasTaskScope && canvasTask.novelId === novelId ? <Drawer title="画布图片任务" onClose={() => setCanvasTask(undefined)}>
+    <CanvasImageQueue novelId={novelId} nodeId={canvasTask.nodeId} prompt={canvasTask.prompt} isSourceCurrent={canvasTask.isSourceCurrent} onClose={() => setCanvasTask(undefined)}/>
+  </Drawer> : null;
   const loaded = gens !== null && refs !== null;
   const ready = (providers || []).filter(p => p.configured && p.registered && p.reachable !== false);
   const canGen = ready.length > 0;
@@ -105,8 +127,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button>
         <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>{i18nTz('漫画制作')}</button></div>
       {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
-      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas">{isPro ? <DualStack kind="image" scope={novelId} /> : <RebuildCanvas kind="image" scope={novelId} label="图片画布" />}</div>
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas">{isPro ? <DualStack kind="image" scope={novelId} /> : <RebuildCanvas kind="image" scope={novelId} label="图片画布" onImageTaskIntent={openCanvasTask} renderImageTaskBinding={renderCanvasTask} />}</div>
       {isPro ? <details className="img-canvas-pro" data-pro-only="true"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details> : null}
+      {!isPro ? canvasTaskDrawer : null}
     </div>
   );
 
