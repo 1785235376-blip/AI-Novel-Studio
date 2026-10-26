@@ -1434,3 +1434,76 @@ suiteErr 只有 LocalAiBrowserJourneyContracts（基线内）。规则 (a) 三�
 
 ### 清理
 临时 worktree（vera-l-base、vera-l-mut）已删除。自己的 vite（4399/4499）已按 PID 结束，包括子进程。本段未提交。
+
+---
+
+## [VERA-FE] 窄屏布局第二轮复审 @ 5e279fb6（范围 4b1b82d8..5e279fb6）— 结论：PASS（附 P3 建议）
+
+证据目录：`/workspace/hr/vera-compare/duim-5e279fb6/`（mx.mjs / nav.mjs / navkbd.mjs / p3.mjs / nlmut.sh 及其输出）。
+
+### 上轮问题关闭情况
+- P1 en VIDEO/EDIT 设置按钮越界：已关闭。独立矩阵 8736 行（zh/en × normal/pro × 6 模块 × DPR 1/1.25 × 1024–1370 每 2px，另加 1061/1101/1181/1201/1269/1281/1440/1920）0 违规：设置按钮 right ≤ 视口、无横向滚动、顶栏无重叠/越界、无竖排挤压、搜索框高度 28–29、可访问名完整；非 GET 请求 0。
+- P2 ≤1200 块顺序覆盖：已关闭（≤1200 块已移除，≤1280 → ≤1180 → ≤1060 降序；CSS 测试断言降序）。
+- P2 CSS 测试只做文本匹配：已关闭（新增真浏览器 narrowLayout.browser.mjs，见下）。
+- P2 ≤1100 左栏隐藏无替代入口：已关闭（IMAGE/ASSETS/VIDEO 新增 `select[data-narrow-nav]`）。
+- P3 1181–1200 Ctrl K 丢失：见 P3 裁定。
+
+### ≥1281 宽屏对照 73819989
+- 2304 行几何签名对比：IMAGE/VIDEO/AUDIO/EDIT/ASSETS 全部 0 差异。NOVEL 384 行出现差异（inspector 折叠 + context-bar CTA 位移），已证实是矩阵顺序造成的假象：完整矩阵先跑 1024 窄屏，inspector 自动折叠后保持折叠状态。用与基线相同的“直接从 1281 进入”路径重测 NOVEL 96 行，差异为 0；该区间也没有改动 inspector 相关代码。
+- 搜索框高度修复对宽屏的影响：逐项核对，≥1281 时搜索框宽高与 kbd 显示均与基线一致，无影响（修复只作用于 ≤1280）。
+
+### 窄屏入口
+- ≤1100 显示，1101 及以上 0 个可见。zh/en × normal/pro 均验证：切换条目/漫画、资产按类型过滤（图像只显示 2 张图片）、专业模式回收站、镜头选择都生效；与左栏双向同步（窄屏选择后加宽，左栏选中项一致；宽屏在左栏选择后缩窄，select 同步）。
+- role=combobox，标签正确（zh：切换视图或素材 / 资产类型 / 选择镜头；en：Switch view or item / Asset type / Pick a shot）。Tab 可达，ArrowDown 可改值，键盘改值后左栏同步。
+- 观察（不判错）：en 下选项文本仍含中文（素材名、“镜头 n”）；漫画页 h2 为中文；option value 用中文 key（仅内部使用）。
+
+### P3 裁定：可接受
+- zh 在 1181–1280 保留 Ctrl K 提示；en 下 kbd 被视觉隐藏（clip 成 1px），但可访问名仍是 “Search chapters, commands Ctrl K”，Ctrl+K 在所有宽度都可用。
+- 建议（P3）：加 `aria-keyshortcuts="Control+K"`；title 中目前没有快捷键信息。
+
+### narrowLayout.browser.mjs 有效性
+- 在 4b1b82d8 上：240 组合，44 违规，exit 1。在 5e279fb6 上：0 违规，exit 0；AXE=1 时 1024/1366 的 serious/critical 为 0。
+- 变异结果：
+
+| 变异 | 结果 |
+|---|---|
+| M0 不改 | 存活 0（正确） |
+| M1 后置覆盖重新引入 0 宽列 | 杀死 120 |
+| M2 image 断点 1100→900 | 杀死 24 |
+| M3 video 断点 1100→900 | 杀死 8 |
+| M4 第二个 media 块恢复 0 1fr | 杀死 8 |
+| M5 左栏重新显示 | 杀死 24 |
+| M6 只改空白（良性） | 存活（正确，非误报） |
+| M7 声明重排（良性） | 存活（正确） |
+| M8 空态按钮后置 nowrap | **存活** |
+| M9 顶栏断点 1280→1000 | 杀死 14 |
+| M10 ≤1280 块 gap40/padding60 | **存活**（搜索框可收缩吸收，设置按钮未越界，属可接受存活） |
+| M11 设置按钮 padding 40 | 杀死 10 |
+| M12 搜索框 min-width 400 | 杀死 140 |
+| M13 设置可收缩 + 搜索不收缩 | 杀死 12 |
+| M14 窄屏入口断点 1100→1000 | 杀死 24 |
+| M15 zh 1181–1280 也隐藏 Ctrl K | 杀死 60 |
+| M16 搜索框高度塌成 6px | **存活** |
+
+- 接线：vitest 的 include 是 `*.test.*`，`npm test` 就是 `vitest run`，仓库里也没有 CI 配置，所以这个脚本只能手动运行。脚本固定高度 800，没有 DPR 维度。
+
+### 发现（按严重度）
+- P1：无。
+- P2：无。
+- P3-1：browser 测试没有断言搜索框高度（M16 存活），本轮修复的回归没有被测试覆盖。建议断言 `.global-search` 高度在 24–40。
+- P3-2：没有断言空态按钮换行（M8 存活）。
+- P3-3：narrowLayout.browser.mjs 没接入 vitest/CI，没有 DPR 1.25 维度。
+- P3-4：en Ctrl K 建议加 aria-keyshortcuts。
+- P3-5：IMAGE 漫画视图中窄屏入口消失（仍可经“生成/图片画布”按钮返回）。
+
+### 门禁（Node 22.14，三次全量，基线 raw 298 / adj 297）
+| 运行 | raw | ISI | adj | 非基线非 ISI 失败 |
+|---|---|---|---|---|
+| full1 | 295 | 10 | 293 | 0 |
+| full2 | 293 | 8 | 293 | 0 |
+| full3 | 293 | 8 | 293 | 0 |
+
+- (a) 三次取最好 293 ≤ 297：通过。(b) 允许重跑一次 ≤ 297：通过（每次都 ≤ 297）。
+- 唯一的 suite error 是基线已有的 LocalAiBrowserJourneyContracts ENOENT。
+- 注：full1 与浏览器矩阵并发，负载偏高，但结果与 full2/3 一致。
+- 交叉核对 /workspace/hr/duim3：293/293/293，与 Hermia 的说法一致。
