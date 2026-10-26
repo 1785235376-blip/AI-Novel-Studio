@@ -162,8 +162,12 @@ def test_independent_scope_over_four_mib_refused_before_payload_read(usage_rig, 
 
 
 @pytest.mark.parametrize("change", ["actor", "branch"])
-def test_independent_continuation_cannot_cross_real_collaboration_authority(usage_rig, change):
+def test_independent_continuation_cannot_cross_real_collaboration_authority(usage_rig, monkeypatch, change):
+    from app import main
     from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
+    from app.packaging.bootstrap_api import PackagedBootstrapRegistry
+    from app.packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLocalIdentity
+    from app.packaging.runtime_identity import RuntimeIdentity
     from test_studio_asset_query import shared_scope
     e = usage_rig
     scope, headers = shared_scope(e.rig)
@@ -171,6 +175,23 @@ def test_independent_continuation_cannot_cross_real_collaboration_authority(usag
     for user, permission in (("reader", "domain.write"), ("no-grants", "domain.read")):
         e.rig.grants.assign_permission(PermissionAssignment("independent-" + user, user, permission,
             ModalityDomain.NOVEL, grant_scope, "synthetic independent fixture"))
+    # Collaboration membership alone is deliberately not Host provenance.
+    # Build a real in-memory launcher bootstrap, without launching a process,
+    # changing system settings or replacing any authorization decision.
+    object.__setattr__(e.rig.settings, "enable_packaged_runtime", True)
+    def issued_host(actor):
+        runtime = RuntimeIdentity.create()
+        manager = LocalSessionBootstrap(runtime=runtime, sessions=e.rig.sessions,
+            trusted_identity=TrustedLocalIdentity(actor, "query-workspace"),
+            expected_origin="http://127.0.0.1:41831")
+        token = manager.exchange(bootstrap_secret=manager.take_launcher_secret(),
+            runtime_instance_id=runtime.runtime_instance_id,
+            origin=manager.expected_origin, remote_host="127.0.0.1").session_token
+        registry = PackagedBootstrapRegistry()
+        registry.configure(manager)
+        monkeypatch.setattr(main, "packaged_bootstrap_registry", registry)
+        return token
+    headers = {**headers, "X-Session-Token": issued_host("reader")}
     e.headers = headers
     activated = e.client.post(e.base + "/activate", headers=headers)
     assert activated.status_code == 200, activated.text
@@ -180,7 +201,7 @@ def test_independent_continuation_cannot_cross_real_collaboration_authority(usag
     graph_create(e, 3)
     first = page(query(e, {"limit": 1}, owner="asset"))
     if change == "actor":
-        changed = {**headers, "X-Session-Token": "token-no-grants"}
+        changed = {**headers, "X-Session-Token": issued_host("no-grants")}
         # Another authorized actor sees no private consumers, rather than being
         # rejected merely because they are different from the first reader.
         assert page(query(e, {"limit": 1}, owner="asset", headers=changed))["total"] == 0
