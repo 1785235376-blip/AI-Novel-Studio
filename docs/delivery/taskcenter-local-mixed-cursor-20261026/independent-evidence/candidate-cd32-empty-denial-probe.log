@@ -1,0 +1,65 @@
+cwd=/workspace/shared/taskcenter-local-mixed-independent
+command=["/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python", "-m", "pytest", "tests/test_taskcenter_mixed_external_empty_denial.py", "-q", "-p", "taskcenter_evidence", "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-cd32-empty-denial-probe.xml", "--basetemp=/tmp/tmphluiayrs/candidate-cd32-empty-denial-probe/pytest-tmp", "-o", "cache_dir=/tmp/tmphluiayrs/candidate-cd32-empty-denial-probe/pytest-cache"]
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_empty_selected_source_denial_cannot_certify_mixed_continuation[import] __
+
+mixed_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f072874e3f0>, nid='query-ea882ee433af41c6...nticImportService object at 0x7f072aaf7c80>, store=<app.experimental.store.ExperimentalStore object at 0x7f07287df920>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f072cc43530>
+source = 'import'
+
+    @pytest.mark.parametrize('source',['import','export'])
+    def test_empty_selected_source_denial_cannot_certify_mixed_continuation(mixed_rig,monkeypatch,source):
+        e=mixed_rig
+        if source=='import':import_write(e,lambda rows:rows.clear());owner=e.importer;name='jobs'
+        else:e.source._write({});owner=e.source;name='list'
+        t=token(e)
+        def denied(*a,**kw):raise HTTPException(403,{'code':'SYNTHETIC_ORIGINAL_EMPTY_SOURCE_DENIED'})
+        monkeypatch.setattr(owner,name,denied)
+>       initial=get(e);assert initial.status_code==501,initial.text
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"items":[{"source":{"kind":"feature","id":"0baf2976-3404-4205-8d12-8d367e17adc2","feature":"exports","task_authority":"exports"},"id":"0baf2976-3404-4205-8d12-8d367e17adc2","authority":"exports","label":"导出任务","status":"QUEUED","stage_label":"排队","version":null,"feature":"exports","progress":null,"history":[],"stale":false,"cost":{"estimate":null,"actual":null,"state":"UNKNOWN"},"error_code":null,"provider_id":null,"model_id":null,"route_state":"UNKNOWN","actions":["open_source","cancel"],"action_limits":{"cancel":null,"retry":"SOURCE_PREFLIGHT_REQUIRED","resume":"SOURCE_RECOVERY_REQUIRED","review":"SOURCE_REVIEW_REQUIRED"},"retry_policy":"SOURCE_AUTHORITY_ONLY","lifecycle":"面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。","revision":"dd7fd0b2299e9c2d3d81c825df1cbc020faf4c4e15ef44a7d7cdcdb2ecb2ac4e"},{"source":{"kind":"feature","id":"4ffb65aa-ff6c-4ae8-a3a4-0b6537d4b83f","feature":"exports","task_authority":"exports"},"id":"4ffb65aa-ff6c-4ae8-a3a4-0b6537d4b83f","authority":"exports","label":"导出任务","status":"QUEUED","stage_label":"排队","version":null,"feature":"exports","progress":null,"history":[],"stale":false,"cost":{"estimate":null,"actual":null,"state":"UNKNOWN"},"error_code":null,"provider_id":null,"model_id":null,"route_state":"UNKNOWN","actions":["open_source","cancel"],"action_limits":{"cancel":null,"retry":"SOURCE_PREFLIGHT_REQUIRED","resume":"SOURCE_RECOVERY_REQUIRED","review":"SOURCE_REVIEW_REQUIRED"},"retry_policy":"SOURCE_AUTHORITY_ONLY","lifecycle":"面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。","revision":"dc1f0d1e46d63c95703c49a7446c98603bb8693ffc52d1a50f63f2dc7d5936a9"}],"unavailable":[],"truncated":true,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":3,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":true,"next_cursor":"tc1.guXofXoN3jzSKtp7aZ587lOHSLIDOE3aV47M0kneqdM.2.G6A8u33nTCSB8mI9S8zQ3ggBJ0ioJFrMSn3DQm6rdos","capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E       assert 200 == 501
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_taskcenter_mixed_external_empty_denial.py:16: AssertionError
+_ test_empty_selected_source_denial_cannot_certify_mixed_continuation[export] __
+
+mixed_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f072657f410>, nid='query-1b499bcc0f874851...nticImportService object at 0x7f072aaf7c80>, store=<app.experimental.store.ExperimentalStore object at 0x7f07263f0e90>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f072657eea0>
+source = 'export'
+
+    @pytest.mark.parametrize('source',['import','export'])
+    def test_empty_selected_source_denial_cannot_certify_mixed_continuation(mixed_rig,monkeypatch,source):
+        e=mixed_rig
+        if source=='import':import_write(e,lambda rows:rows.clear());owner=e.importer;name='jobs'
+        else:e.source._write({});owner=e.source;name='list'
+        t=token(e)
+        def denied(*a,**kw):raise HTTPException(403,{'code':'SYNTHETIC_ORIGINAL_EMPTY_SOURCE_DENIED'})
+        monkeypatch.setattr(owner,name,denied)
+>       initial=get(e);assert initial.status_code==501,initial.text
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: {"items":[{"source":{"kind":"feature","id":"151725ef-c97c-4ebd-a642-191f2d7f71cc","feature":"semantic_import_v2","task_authority":"semantic_import"},"id":"151725ef-c97c-4ebd-a642-191f2d7f71cc","authority":"semantic_import","label":"长篇导入","status":"QUEUED","stage_label":"排队","version":1,"feature":"semantic_import_v2","progress":{"completed":0,"total":1,"unit":"分块"},"history":[],"stale":false,"cost":{"estimate":null,"actual":null,"state":"UNKNOWN"},"error_code":null,"provider_id":null,"model_id":null,"route_state":"UNKNOWN","actions":["open_source","cancel"],"action_limits":{"cancel":null,"retry":"SOURCE_PREFLIGHT_REQUIRED","resume":"SOURCE_RECOVERY_REQUIRED","review":"SOURCE_REVIEW_REQUIRED"},"retry_policy":"SOURCE_AUTHORITY_ONLY","lifecycle":"面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。","revision":"11ab925d98906287961b57c0e62ba28a5382ad24c1aa0503ea6665b9bf763f71"},{"source":{"kind":"feature","id":"2b00494e-5ccf-4019-b595-d0700d2970d4","feature":"semantic_import_v2","task_authority":"semantic_import"},"id":"2b00494e-5ccf-4019-b595-d0700d2970d4","authority":"semantic_import","label":"长篇导入","status":"QUEUED","stage_label":"排队","version":1,"feature":"semantic_import_v2","progress":{"completed":0,"total":1,"unit":"分块"},"history":[],"stale":false,"cost":{"estimate":null,"actual":null,"state":"UNKNOWN"},"error_code":null,"provider_id":null,"model_id":null,"route_state":"UNKNOWN","actions":["open_source","cancel"],"action_limits":{"cancel":null,"retry":"SOURCE_PREFLIGHT_REQUIRED","resume":"SOURCE_RECOVERY_REQUIRED","review":"SOURCE_REVIEW_REQUIRED"},"retry_policy":"SOURCE_AUTHORITY_ONLY","lifecycle":"面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。","revision":"a94f05c96f8526fa2ce364448c066ba407c057175dd016722af4908955a88c08"}],"unavailable":[],"truncated":true,"executor":false,"refresh":"MANUAL","automatic_retries":false,"observed_total":3,"source_truncated":false,"coverage":{"scope":"BOUNDED_AUTHORIZED_PROJECTION","completeness":"NOT_ASSERTED"},"page_mode":"cursor","limit":2,"has_more":true,"next_cursor":"tc1.wpD2Ru5oVtfqDBJZgxHdEIU1BofpYwz7z_URtqkKkK4.2.Sa8vX8sTJDh78ROFF5WzBQm3hqkPBbS8CSUXfv_60zY","capabilities":{"authority_filter":{"supported":true,"operator":"OR"},"cursor":{"supported":true,"mode":"FILE_TWO_EXCLUSIVE_MODES","conditions":["ACTUAL_FILE_OWNERS","NON_PACKAGED","LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM","EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES","ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"]},"cross_owner_atomic_snapshot":false,"full_history_query":false,"cost":"UNKNOWN"}}
+E       assert 200 == 501
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_taskcenter_mixed_external_empty_denial.py:16: AssertionError
+=============================== warnings summary ===============================
+../../scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/20a0022d2b33/studio-overnight/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[import]
+  /workspace/shared/taskcenter-local-mixed-independent/app/experimental/terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[import]
+  /workspace/shared/taskcenter-local-mixed-independent/app/experimental/interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-cd32-empty-denial-probe.xml -
+=========================== short test summary info ============================
+FAILED tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[import]
+FAILED tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[export]
+2 failed, 3 warnings in 187.88s (0:03:07)

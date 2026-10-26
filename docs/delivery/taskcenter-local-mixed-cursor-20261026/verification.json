@@ -1,0 +1,175 @@
+{
+  "base": "978059432a3dee2bd8ebee5645aafc7e13b4bbb8",
+  "code_freeze": "c68857c59d50dfe90b8edc5e88e8de2cc81d5fc3",
+  "immutable_test_checkout": "b00bf27525df9a8f2a8933ea4498cfc1b31596ad",
+  "app_tree": "7e357c95629c255854e4287e02c4c57777097573",
+  "groups": {
+    "focused-receipts": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 20
+      },
+      "outside_source_modules": [],
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_taskcenter_reader_receipts.py",
+        "tests/test_taskcenter_local_mixed_http.py",
+        "-k",
+        "reader_receipts or exact_aggregate or denied_empty",
+        "-vv",
+        "-q",
+        "-p",
+        "taskcenter_evidence",
+        "--junitxml=/workspace/shared/taskcenter-local-mixed-receipt-evidence/focused-receipts.xml",
+        "--basetemp=/tmp/tmpbm0yx_oo/focused-receipts/pytest-tmp",
+        "-o",
+        "cache_dir=/tmp/tmpbm0yx_oo/focused-receipts/pytest-cache"
+      ],
+      "cwd": "/workspace/shared/taskcenter-local-mixed-verify-c688"
+    },
+    "immutable-original-regression": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 198
+      },
+      "outside_source_modules": [],
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_collaboration_http_boundary_v056.py",
+        "tests/test_packaged_local_session_bootstrap_v070.py",
+        "tests/test_p0_security_regressions.py",
+        "tests/test_phase1_media_project_authorization.py",
+        "tests/test_phase6_agent_jobs.py",
+        "tests/test_phase6_agent_authorization.py",
+        "tests/test_export_jobs.py",
+        "tests/test_api_v1_alias.py",
+        "tests/test_studio_production_query.py",
+        "-vv",
+        "-x",
+        "-q",
+        "-p",
+        "taskcenter_evidence",
+        "--junitxml=/workspace/shared/taskcenter-local-mixed-receipt-evidence/immutable-original-regression.xml",
+        "--basetemp=/tmp/tmpx4t4nr_4/immutable-original-regression/pytest-tmp",
+        "-o",
+        "cache_dir=/tmp/tmpx4t4nr_4/immutable-original-regression/pytest-cache"
+      ],
+      "cwd": "/workspace/shared/taskcenter-local-mixed-verify-c688"
+    },
+    "immutable-taskcenter": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 312
+      },
+      "outside_source_modules": [],
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_taskcenter_local_mixed_http.py",
+        "tests/test_taskcenter_reader_receipts.py",
+        "tests/test_taskcenter_query_backend.py",
+        "tests/test_taskcenter_consistent_query.py",
+        "tests/test_taskcenter_cursor_independent.py",
+        "tests/test_taskcenter_private_cache.py",
+        "tests/test_taskcenter_lifecycle_http.py",
+        "tests/test_taskcenter_collaboration_rebuilt.py",
+        "tests/test_taskcenter_local_export_http.py",
+        "tests/test_taskcenter_local_export_external.py",
+        "tests/test_taskcenter_local_export_external_cases.py",
+        "tests/test_taskcenter_local_export_external_singleton.py",
+        "-vv",
+        "-x",
+        "-q",
+        "-p",
+        "taskcenter_evidence",
+        "--junitxml=/workspace/shared/taskcenter-local-mixed-receipt-evidence/immutable-taskcenter.xml",
+        "--basetemp=/tmp/tmp4rslmn68/immutable-taskcenter/pytest-tmp",
+        "-o",
+        "cache_dir=/tmp/tmp4rslmn68/immutable-taskcenter/pytest-cache"
+      ],
+      "cwd": "/workspace/shared/taskcenter-local-mixed-verify-c688"
+    },
+    "candidate-c688-receipt-focus": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 10
+      },
+      "outside_source_modules": [],
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_taskcenter_mixed_external_empty_denial.py",
+        "tests/test_taskcenter_mixed_external_aggregate_denial.py",
+        "-q",
+        "-p",
+        "taskcenter_evidence",
+        "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-c688-receipt-focus.xml",
+        "--basetemp=/tmp/tmp76b4lojo/candidate-c688-receipt-focus/pytest-tmp",
+        "-o",
+        "cache_dir=/tmp/tmp76b4lojo/candidate-c688-receipt-focus/pytest-cache"
+      ],
+      "cwd": "/workspace/shared/taskcenter-local-mixed-independent"
+    },
+    "candidate-c688-regression": {
+      "returncode": 0,
+      "timed_out": false,
+      "junit": {
+        "errors": [],
+        "failures": [],
+        "present": true,
+        "tests": 35
+      },
+      "outside_source_modules": [],
+      "command": [
+        "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_taskcenter_mixed_external.py",
+        "tests/test_taskcenter_mixed_external_cases.py",
+        "tests/test_taskcenter_mixed_external_races.py",
+        "tests/test_taskcenter_mixed_external_order_race.py",
+        "tests/test_taskcenter_mixed_external_observer_contract.py",
+        "-q",
+        "-p",
+        "taskcenter_evidence",
+        "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-c688-regression.xml",
+        "--basetemp=/tmp/tmpbec9pc0q/candidate-c688-regression/pytest-tmp",
+        "-o",
+        "cache_dir=/tmp/tmpbec9pc0q/candidate-c688-regression/pytest-cache"
+      ],
+      "cwd": "/workspace/shared/taskcenter-local-mixed-independent"
+    }
+  },
+  "counts_overlap": true,
+  "historical_timeout_groups": "NOT_ACCEPTANCE: mutable source, exit124 at900s; preserved raw",
+  "rejected_intermediate": "5349824 separate probes do not prove actual aggregate success",
+  "independent_test_commit": "a83aa5d85d4058b73f6ce12420b6cf9461bc86f3",
+  "independent_cherry_pick": "851f651ed7659bb5acfa99620ffaf946a218c8d7",
+  "support": "NON_PACKAGED_FILE_LOCAL_SEMANTIC_IMPORT_EXPORTS_PAIR_ONLY",
+  "cross_owner_atomicity_full_ABA": "NOT_CLAIMED",
+  "execution_environment": "dot native cloud workspace",
+  "real_models_paid_resources_hosted_deployment_CI": "NOT_RUN",
+  "publication": "PENDING_ROOT_REVIEW_AND_SPECIFIC_AUTHORIZATION"
+}

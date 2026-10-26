@@ -70,6 +70,8 @@ class TaskCenterQueryRoute(APIRoute):
 
 class TaskCenterCursorHTTPAdapter:
     """Explicit composition-root dependency supporting only one proven mode."""
+    _window_limit = 200
+
     def __init__(self, service, source, reader, *, actual_repositories, runtime_mode,
                  engine=None):
         self.service, self.source, self.reader = service, source, reader
@@ -181,8 +183,16 @@ class TaskCenterCursorHTTPAdapter:
         except Exception:
             self._unavailable(selection)
 
+    def _read_aggregate(self, ctx, selection, require_flag, query, failed_only, reauthorize):
+        return self.service.tasks(ctx, require_flag, query, failed_only,
+                                  reauthorize, authorities=selection.authorities)
+
     def tasks(self, ctx, selection, page, require_flag, query, failed_only,
               reauthorize):
+        if (ctx.scope.get("mode") == "local" and selection.authorities == ("exports", "semantic_import")
+                and getattr(self, "mixed_adapter", None) is not None):
+            return self.mixed_adapter.tasks(ctx, selection, page, require_flag, query,
+                                            failed_only, reauthorize)
         if (ctx.scope.get("mode") == "local" and selection.authorities == ("exports",)
                 and getattr(self, "export_adapter", None) is not None):
             return self.export_adapter.tasks(ctx, selection, page, require_flag, query,
@@ -206,15 +216,14 @@ class TaskCenterCursorHTTPAdapter:
         before = self._checked_capture(ctx, selection, require_flag, owner,
                                        identity, query, failed_only)
         reauthorize()
-        result = self.service.tasks(ctx, require_flag, query, failed_only,
-                                    reauthorize, authorities=selection.authorities)
+        result = self._read_aggregate(ctx, selection, require_flag, query, failed_only, reauthorize)
         reauthorize()
         after = self._checked_capture(ctx, selection, require_flag, owner,
                                       identity, query, failed_only)
         if (before != after or result.get("unavailable") != []
                 or result.get("items") != after["items"]
                 or result.get("observed_total") != len(after["items"])
-                or not 0 <= len(after["items"]) <= 200
+                or not 0 <= len(after["items"]) <= self._window_limit
                 or result.get("source_truncated") != after["source_truncated"]):
             self._unavailable(selection)
         limit = page.limit if page.limit is not None else 50

@@ -1,0 +1,41 @@
+{
+  "collected_nodeids": [
+    "tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[import]",
+    "tests/test_taskcenter_mixed_external_empty_denial.py::test_empty_selected_source_denial_cannot_certify_mixed_continuation[export]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[True-403-import]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[True-403-export]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[True-404-import]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[True-404-export]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[False-403-import]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[False-403-export]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[False-404-import]",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py::test_aggregate_only_empty_reader_denial_cannot_be_masked_by_other_successful_reads[False-404-export]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_taskcenter_mixed_external_empty_denial.py",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-local-mixed-independent-evidence/candidate-c688-receipt-focus.xml",
+    "--basetemp=/tmp/tmp76b4lojo/candidate-c688-receipt-focus/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmp76b4lojo/candidate-c688-receipt-focus/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-local-mixed-independent",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 10
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

@@ -130,7 +130,7 @@ class TaskCenterQuery:
                     "cursor supports two exclusive non-packaged File modes: explicit local semantic_import or exports "
                     "without session/branch headers, or collaboration source-free agent_team with original "
                     "session, membership, topology and grant evidence. Existing project/source lifecycle "
-                    "evidence is required. Mixed sources and other modes return TASKCENTER_CURSOR_UNSUPPORTED; "
+                    "evidence is required. Only the local semantic_import+exports pair supports mixed selection (200+100 original windows). Other mixed sources and modes return TASKCENTER_CURSOR_UNSUPPORTED; "
                     "it cannot be mixed with an explicit offset, including offset=0."
                 ),
             },
@@ -156,7 +156,7 @@ def static_capabilities():
             "mode": "FILE_TWO_EXCLUSIVE_MODES",
             "conditions": ["ACTUAL_FILE_OWNERS", "NON_PACKAGED",
                            "LOCAL_SEMANTIC_IMPORT_OR_EXPORTS_OR_COLLABORATION_SOURCE_FREE_AGENT_TEAM",
-                           "EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES", "NO_MIXED_SOURCES"],
+                           "EXISTING_PROJECT_SOURCE_AND_AUTHORITY_LIFECYCLES", "ONLY_LOCAL_SEMANTIC_IMPORT_EXPORTS_MIXED_PAIR"],
         },
         "cross_owner_atomic_snapshot": False,
         "full_history_query": False,
