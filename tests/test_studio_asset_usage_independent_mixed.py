@@ -189,3 +189,16 @@ def test_independent_continuation_cannot_cross_real_collaboration_authority(usag
     before = snapshot(e.rig.root)
     refused(query(e, {"limit": 1, "cursor": first["next_cursor"]}, owner="asset", headers=changed), e)
     assert snapshot(e.rig.root) == before
+
+
+def test_independent_scan_ceiling_yields_progress_for_empty_filtered_pages(usage_rig):
+    e = usage_rig
+    for index in range(17):
+        graph_create(e, 16, f"scan-{index}")
+    first = page(query(e, {"limit": 200, "state": "STALE"}))
+    assert first["items"] == [] and first["has_more"] is True
+    assert first["scanned_references"] == 256 and first["scanned_consumers"] == 16
+    assert first["total"] is None
+    second = page(query(e, {"limit": 200, "state": "STALE", "cursor": first["next_cursor"]}))
+    assert second["items"] == [] and second["has_more"] is False and second["total"] == 0
+    assert second["scanned_references"] == 16
