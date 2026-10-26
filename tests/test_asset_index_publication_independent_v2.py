@@ -4,7 +4,9 @@ Real File source ownership, mounted query, SQLite staging and recovery remain
 intact. Only the explicit final staging fsync is made to report an I/O error.
 """
 import errno
+from contextlib import closing
 import os
+import sqlite3
 
 import pytest
 
@@ -95,3 +97,130 @@ def test_staging_fsync_failure_preserves_publication_and_recovers(rig, monkeypat
     assert [row['id'] for row in candidates] == [asset['id']]
     assert candidates[0]['filename'] == expected_name
     assert source_bytes(rig) == unchanged_sources
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows native ChangeTime boundary')
+def test_same_size_source_edit_with_restored_mtime_changes_filtered_results(rig):
+    row = rig.seed('before.png')
+    endpoint = f'/api/projects/{rig.nid}/studio/assets'
+    initial = rig.client.get(endpoint, params={'q': 'before', 'limit': 10})
+    assert initial.status_code == 200 and initial.json()['total'] == 1
+    path = rig.assets.root / (row['id'] + '.json')
+    prior = path.stat()
+    content = path.read_bytes()
+    replacement = content.replace(b'"before.png"', b'"afters.png"')
+    assert replacement != content and len(replacement) == len(content)
+    path.write_bytes(replacement)
+    os.utime(path, ns=(prior.st_atime_ns, prior.st_mtime_ns))
+    assert path.stat().st_size == prior.st_size
+    assert path.stat().st_mtime_ns == prior.st_mtime_ns
+    current = rig.client.get(endpoint, params={'q': 'afters', 'limit': 10})
+    assert current.status_code == 200, current.text
+    assert [item['id'] for item in current.json()['items']] == [row['id']]
+    assert current.json()['total'] == 1
+    assert rig.client.get(endpoint, params={'q': 'before', 'limit': 10}).json()['total'] == 0
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows native ChangeTime boundary')
+def test_warm_index_same_size_sql_corruption_with_restored_mtime_rebuilds(rig):
+    row = rig.seed('needle.png')
+    endpoint = f'/api/projects/{rig.nid}/studio/assets'
+    initial = rig.client.get(endpoint, params={'q': 'needle', 'limit': 10})
+    assert initial.status_code == 200 and initial.json()['total'] == 1
+    index = rig.workspace.query_index
+    prior = index.path.stat()
+    original_sources = source_bytes(rig)
+    with closing(sqlite3.connect(index.path)) as connection:
+        with connection:
+            connection.execute('UPDATE sources SET filename_folded=? WHERE asset_id=?',
+                               ('hidden.png', row['id']))
+    os.utime(index.path, ns=(prior.st_atime_ns, prior.st_mtime_ns))
+    assert index.path.stat().st_size == prior.st_size
+    assert index.path.stat().st_mtime_ns == prior.st_mtime_ns
+    recovered = rig.client.get(endpoint, params={'q': 'needle', 'limit': 10})
+    assert recovered.status_code == 200, recovered.text
+    assert [item['id'] for item in recovered.json()['items']] == [row['id']]
+    assert recovered.json()['total'] == 1
+    assert source_bytes(rig) == original_sources
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows native ChangeTime boundary')
+@pytest.mark.parametrize('failure', ['attributes', 'missing-api', 'open-handle', 'reparse-attribute'])
+def test_native_failure_refuses_warm_cache_and_releases_handle(rig, monkeypatch, failure):
+    import app.services.asset_query_index as owner
+    row = rig.seed('native-attributes.png')
+    assert query(rig).status_code == 200
+    index = rig.workspace.query_index
+    before = index.path.read_bytes()
+    dll, basic_type = owner._windows_signature_api()
+    failed = []
+
+    class FailedAttributes:
+        def __getattr__(self, name):
+            return getattr(dll, name)
+
+        def GetFileInformationByHandleEx(self, *args):
+            failed.append(True)
+            if failure == 'reparse-attribute':
+                import ctypes
+                result = dll.GetFileInformationByHandleEx(*args)
+                assert result
+                # Auxiliary native-result injection: actual symlink creation
+                # is checked separately and may be unavailable on the host.
+                ctypes.cast(args[2], ctypes.POINTER(basic_type)).contents.attributes |= 0x400
+                return result
+            return False
+
+        def CreateFileW(self, *args):
+            if failure == 'open-handle':
+                import ctypes
+                failed.append(True)
+                return ctypes.c_void_p(-1).value
+            return dll.CreateFileW(*args)
+
+    def failing_api():
+        if failure == 'missing-api':
+            failed.append(True)
+            raise AttributeError('independent native API unavailable')
+        return FailedAttributes(), basic_type
+
+    with monkeypatch.context() as fault:
+        fault.setattr(owner, '_windows_signature_api', failing_api)
+        for _ in range(3):
+            denied = query(rig)
+            assert denied.status_code == 503, denied.text
+            assert denied.json()['code'] == 'ASSET_QUERY_INDEX_UNAVAILABLE'
+            assert row['id'] not in denied.text and 'items' not in denied.json()
+    assert len(failed) == 3 and index.path.read_bytes() == before
+    # A leaked FILE_SHARE_READ-only handle would prevent this real metadata
+    # update/atomic replace, so recovery checks disposal as well as response.
+    with rig.workspace._asset_scope(rig.nid, rig.scope):
+        current = rig.assets.get(row['id'])
+        current['filename'] = 'native-attributes-after-fault.png'
+        rig.assets._write_meta(current)
+    recovered = query(rig)
+    assert recovered.status_code == 200, recovered.text
+    assert recovered.json()['items'][0]['filename'] == current['filename']
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='Windows reparse-point boundary')
+def test_actual_reparse_metadata_entry_is_rejected_without_reading_target(rig):
+    row = rig.seed('ordinary-metadata.png')
+    assert query(rig).status_code == 200
+    external = rig.root / 'independent-reparse-target.json'
+    external.write_bytes(b'INDEPENDENT_TARGET_BYTES_MUST_NOT_BECOME_QUERY_CONTENT')
+    link = rig.assets.root / 'independent-reparse.json'
+    try:
+        link.symlink_to(external)
+    except OSError as error:
+        if getattr(error, 'winerror', None) == 1314:
+            pytest.skip('Host does not permit creation of a real Windows symlink')
+        raise
+    assert link.is_symlink()
+    denied = query(rig)
+    assert denied.status_code == 503, denied.text
+    assert denied.json()['code'] == 'ASSET_QUERY_INDEX_UNAVAILABLE'
+    assert row['id'] not in denied.text and external.read_text() not in denied.text
+    assert 'items' not in denied.json()
+    link.unlink()
+    assert query(rig).status_code == 200
