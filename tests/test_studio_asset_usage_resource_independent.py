@@ -111,8 +111,8 @@ def test_independent_json_token_allowance_is_cumulative_across_decodes(tmp_path)
     target = tmp_path / "tokens.json"
     target.write_text("[1,2,3,4]", encoding="utf-8")
     budget = UsageReadBudget()
-    budget.MAX_REQUEST_JSON_TOKENS = 8
     budget.read(target)
+    budget.MAX_REQUEST_JSON_TOKENS = budget.json_tokens * 2 - 1
     with pytest.raises(UsageBudgetError):
         for _ in range(8):
             budget.read(target)
