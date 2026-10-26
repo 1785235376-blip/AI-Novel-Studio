@@ -30,7 +30,9 @@ class FileScopeRepository:
  def __init__(self,root:Path):self.path=Path(root)/"collaboration_scope.json"
  def _read(self):
   if not self.path.exists():return {"workspaces":[],"project_workspaces":[],"storylines":[],"branches":[]}
-  return json.loads(self.path.read_text(encoding="utf-8"))
+  from ...creative.asset_usage_budget import current_usage_budget
+  budget=current_usage_budget()
+  return json.loads(budget.read(self.path) if budget is not None else self.path.read_text(encoding="utf-8"))
  def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
  @scope_file_mutation
  def create(self,kind,item):
@@ -153,7 +155,9 @@ class FileAuthorizationRepository:
   with self.lock,workspace_mutation(self.path.parent,"authorization-store"):yield
  def _read(self):
   if not self.path.exists():return {"role_assignments":[],"permission_assignments":[],"audit_events":[]}
-  data=json.loads(self.path.read_text(encoding="utf-8"))
+  from ...creative.asset_usage_budget import current_usage_budget
+  budget=current_usage_budget()
+  data=json.loads(budget.read(self.path) if budget is not None else self.path.read_text(encoding="utf-8"))
   return {key:list(data.get(key,[])) for key in ("role_assignments","permission_assignments","audit_events")}
  def _write(self,data):atomic_write(self.path,json.dumps(data,ensure_ascii=False,sort_keys=True,indent=2))
  @authorization_file_mutation

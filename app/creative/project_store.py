@@ -28,6 +28,13 @@ MAX_MARKER_BYTES = 256
 
 def _read_marker(path):
     """Never follow a marker symlink/reparse point or read unbounded content."""
+    from .asset_usage_budget import current_usage_budget
+    budget = current_usage_budget()
+    if budget is not None:
+        try:
+            return json.loads(budget.read(path, MAX_MARKER_BYTES))
+        except (UnicodeError, ValueError):
+            raise ValueError("CREATIVE_PROJECT_IDENTITY_INVALID") from None
     info = path.lstat()
     def regular(value):
         return stat.S_ISREG(value.st_mode) and not (

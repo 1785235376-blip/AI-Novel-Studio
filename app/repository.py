@@ -9,7 +9,10 @@ from . import chapter_identity
 
 def now(): return datetime.now(timezone.utc).isoformat()
 def read_json(path:Path,default):
-    try:return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        from .creative.asset_usage_budget import current_usage_budget
+        budget = current_usage_budget()
+        return json.loads(budget.read(path) if budget is not None else path.read_text(encoding="utf-8"))
     except FileNotFoundError:return default
 def slug(value:str)->str:
     clean=re.sub(r"[^a-zA-Z0-9_-]+","-",value.strip()).strip("-").lower(); return clean or str(uuid.uuid4())[:8]

@@ -25,7 +25,9 @@ class FileIdentityRepository:
     def _read(self) -> dict:
         if not self.path.exists():
             return {"users": [], "memberships": []}
-        value = json.loads(self.path.read_text(encoding="utf-8"))
+        from ...creative.asset_usage_budget import current_usage_budget
+        budget = current_usage_budget()
+        value = json.loads(budget.read(self.path) if budget is not None else self.path.read_text(encoding="utf-8"))
         return {"users": list(value.get("users", [])), "memberships": list(value.get("memberships", []))}
 
     def _write(self, value: dict) -> None:
