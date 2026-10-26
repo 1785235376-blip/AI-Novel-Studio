@@ -1,0 +1,28 @@
+{
+  "source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+  "source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+  "source_unchanged_during_run": true,
+  "receipt_file": "audit-final-frozen-authority-costs.receipt.json",
+  "receipt_sha256": "90b5392756d525efc051365c1d6dabb35fd69b3938f97cc183b9de6ba9934a59",
+  "source_sha256": {
+    "app/repository.py": "e2e50abe36fccf3e62298de3595364fce2c2440ee7161b25835d3aeb60ae0211",
+    "app/repositories/file/identity.py": "f9c70829a3ac4a93d5b3413180dfa939257e2e85692f72757033df1636445c37",
+    "app/repositories/file/scope.py": "7dcd9b03f6e3f93098023639ba3e60ea848ee22747115729be38cbc7fd36de74",
+    "app/creative/project_store.py": "cc7a3e2484204a806690cb94276dd941f6d7ef1f52fb1a88d30f6c8eed171a27",
+    "app/creative/asset_usage_budget.py": "c9ed977be76e4f56736e4e0ec5a5504a7dd020bb307b1a163e8e5986e4568b86",
+    "app/services/asset_library_service.py": "e60477a5dce3b091b601f8a798f02339bad4ebd5d465c8388bcdab93dcf3bbf5",
+    "tests/studio_asset_usage_resource_meter.py": "28a27c1fc5939a2d201d128d3d7e1203f33721c503e3e535d2d970c9909eebcd",
+    "tests/test_studio_asset_usage_resource_costs.py": "ab126a3e1638db660dfd4195cb78f68c63740e00e3baf686663db6fbfbfe044d",
+    "tests/test_studio_asset_usage_authority_budget.py": "25e8940d4b183383adfd67ee90bdeaad5035b3c6d71bb2aad5ba5b857992ed73",
+    "scripts/measure_asset_usage_resource_process.py": "bb196129f2d323279035b0ace81a125a22471b72a3a3561b6dbde20da9dd6014"
+  },
+  "raw_metrics_sha256": {
+    "resource-costs-fresh-process.json": "a6894f5977316e04aa1e1834823a62d887ca5a4bdb1082972baae4c567eca1d2",
+    "resource-costs-initialized-http.json": "2969e7baec0809dc27d02a0ac7832877ddde1ca432c3595e32f17d89841b34d2",
+    "resource-costs-real-authority.json": "ac10c8eb6ddfa34366f13059ae891ca5af3a1d1202d7208a5a0a058e561cbf3a",
+    "resource-costs-schema3-binary.json": "873d39dbe5320f9ee52ecca3dd630658a122519173f18ed46e851a083457750f",
+    "summary.json": "2e2f6ce8a97cf52fdfb5aeff0cd7c436ea22f15b85f165c54fdc85cb9b833a0a"
+  },
+  "all13_measured_requests_have_one_budget_and_all_actual_payload_bytes_charged": true,
+  "coverage_limit": "Windows synthetic File payload read/decode chain only; metadata syscalls, OS disk bytes, hard CPU and process RSS are separate"
+}

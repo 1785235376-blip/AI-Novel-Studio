@@ -1,0 +1,28 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+............WINDOWS_NATIVE_WRITE_DENIAL {"charged_read_bytes": 65536, "competing_direct_write": "OS_DENIED", "denial": {"errno": 13, "winerror": null}, "handle_released_after_failure": true, "original_content_unchanged": true, "query": "RESOURCE_UNAVAILABLE"}
+.WINDOWS_NATIVE_REPLACE_OBSERVATION {"denial": {"errno": 13, "winerror": 5}, "during_open": "OS_DENIED", "original_atomic_write_after_close": "SUCCEEDED", "query": "RESOURCE_UNAVAILABLE"}
+.WINDOWS_ORIGINAL_READER_REPLACE_BASELINE {"during_open": "OS_DENIED", "errno": 13, "reader": "original Python Path.open rb", "replace_after_close": "SUCCEEDED", "winerror": 5}
+................RESOURCE_REFUSAL_MEASUREMENT {"elapsed_seconds": 0.0001081999798770994, "input_bytes": 4194305, "json_documents": 0, "json_input_bytes": 0, "json_tokens": 0, "measurement_scope": "tracemalloc during budget.read; not RSS", "python_peak_bytes": 2160, "read_bytes": 0, "reads": 1, "shape": "oversized"}
+.RESOURCE_REFUSAL_MEASUREMENT {"elapsed_seconds": 0.0010018000029958785, "input_bytes": 262147, "json_documents": 0, "json_input_bytes": 262147, "json_tokens": 1, "measurement_scope": "tracemalloc during budget.read; not RSS", "python_peak_bytes": 330386, "read_bytes": 262147, "reads": 1, "shape": "long-string"}
+.RESOURCE_REFUSAL_MEASUREMENT {"elapsed_seconds": 0.0004512000014074147, "input_bytes": 131, "json_documents": 0, "json_input_bytes": 131, "json_tokens": 65, "measurement_scope": "tracemalloc during budget.read; not RSS", "python_peak_bytes": 3264, "read_bytes": 131, "reads": 1, "shape": "depth"}
+.RESOURCE_REFUSAL_MEASUREMENT {"elapsed_seconds": 0.503081500006374, "input_bytes": 100003, "json_documents": 0, "json_input_bytes": 100003, "json_tokens": 100001, "measurement_scope": "tracemalloc during budget.read; not RSS", "python_peak_bytes": 167646, "read_bytes": 100003, "reads": 1, "shape": "objects"}
+.RESOURCE_ACCEPTED_MEASUREMENT {"elapsed_seconds": 0.0010286000033374876, "input_bytes": 262146, "json_documents": 1, "json_input_bytes": 262146, "json_tokens": 1, "measurement_scope": "tracemalloc read and json.loads; not RSS", "python_peak_bytes": 557868, "read_bytes": 262146, "reads": 1, "shape": "long-string"}
+.RESOURCE_ACCEPTED_MEASUREMENT {"elapsed_seconds": 0.0004044999950565398, "input_bytes": 129, "json_documents": 1, "json_input_bytes": 129, "json_tokens": 129, "measurement_scope": "tracemalloc read and json.loads; not RSS", "python_peak_bytes": 4409, "read_bytes": 129, "reads": 1, "shape": "depth"}
+.RESOURCE_ACCEPTED_MEASUREMENT {"elapsed_seconds": 0.5139069000142626, "input_bytes": 100000, "json_documents": 1, "json_input_bytes": 100000, "json_tokens": 100000, "measurement_scope": "tracemalloc read and json.loads; not RSS", "python_peak_bytes": 2512516, "read_bytes": 100000, "reads": 1, "shape": "objects"}
+.RESOURCE_ACCEPTED_MEASUREMENT {"elapsed_seconds": 0.022497900004964322, "input_bytes": 3932206, "json_documents": 1, "json_input_bytes": 3932206, "json_tokens": 31, "measurement_scope": "tracemalloc read and json.loads; not RSS", "python_peak_bytes": 31462998, "read_bytes": 3932206, "reads": 1, "shape": "encoded-ceiling"}
+..............................................
+============================== warnings summary ===============================
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\experimental\terminology_portability.py:34
+  D:\PoemSeed\Worktrees\asset-usage-resource-guards-20261026\app\experimental\terminology_portability.py:34: UserWarning: Field name "schema" in "GlossaryDocument" shadows an attribute in parent "StrictModel"
+    class GlossaryDocument(StrictModel):
+
+app\experimental\interactive_export_contract.py:209
+  D:\PoemSeed\Worktrees\asset-usage-resource-guards-20261026\app\experimental\interactive_export_contract.py:209: UserWarning: Field name "schema" in "VerificationReceipt" shadows an attribute in parent "Frozen"
+    class VerificationReceipt(Frozen):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+83 passed, 3 warnings in 69.36s (0:01:09)

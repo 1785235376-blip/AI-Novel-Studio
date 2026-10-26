@@ -1,0 +1,3 @@
+# Preserve the exact archived bytes used by receipts and metric provenance.
+*.json -text
+*.log -text

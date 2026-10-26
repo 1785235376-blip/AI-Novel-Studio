@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-10-26T14:43:28.136211+00:00",
+  "repository": "https://github.com/1785235376-blip/AI-Novel-Studio",
+  "branch": "work/asset-usage-resource-guards-20261026",
+  "remote_source_commit": "18731becb0060d3006dd3f5ab8fe0c6cc00c0266",
+  "remote_source_tree": "a40cc8e58c304cd77072f31ca98703a439c860cc",
+  "readback_commands": [
+    [
+      "git",
+      "fetch",
+      "--no-tags",
+      "origin",
+      "work/asset-usage-resource-guards-20261026"
+    ],
+    [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD",
+      "FETCH_HEAD^{tree}"
+    ]
+  ],
+  "app_scripts_tests_equal_verified_source": true,
+  "store_py_baseline_blob": "6068abd41fe9813a2cb5da9dc9aa30a4f6621c28",
+  "store_py_final_blob": "6068abd41fe9813a2cb5da9dc9aa30a4f6621c28",
+  "frontend_diff_empty": true,
+  "delivery_policy": "Later commits only archive docs/evidence; source receipts bind this exact published freeze. No main update, force push, Release, deployment or Actions rerun."
+}
