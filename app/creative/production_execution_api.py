@@ -509,17 +509,20 @@ def create_production_execution_router(service, invoke, *, require_host_session,
     def asset_usages(nid: str, aid: str, request: Request,
                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         from .asset_usages import timeline_asset_usages
+        from .asset_usage_paging import query_options
+        from .asset_usage_budget import usage_read_budget, UsageBudgetError
         def observe(actor, scope, guard):
             try:
-                return timeline_asset_usages(service, nid, scope, actor, aid, guard)
-            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                return timeline_asset_usages(service, nid, scope, actor, aid, guard,
+                                             **(query_options(request) or {}))
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 guard()
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
-        with service.store.existing_owner_only():
+        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))):
             try:
                 return call(request, nid, x_session_token, x_branch_id, "domain.read",
                     observe)
-            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
 
     @router.post("/projects/{nid}/studio/production/canvas-video/preview")

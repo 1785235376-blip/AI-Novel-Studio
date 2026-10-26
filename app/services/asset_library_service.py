@@ -166,8 +166,12 @@ class AssetLibraryService:
     def _load(self, asset_id: str) -> dict:
         try:
             path = self._meta_path(asset_id)
+            from ..creative.asset_usage_budget import current_usage_budget
+            usage_budget = current_usage_budget()
             budget = current_query_budget()
-            if budget is not None:
+            if usage_budget is not None:
+                raw = usage_budget.read(path, 1024 * 1024)
+            elif budget is not None:
                 budget.charge(path)
                 with path.open(encoding="utf-8") as stream:
                     raw = stream.read(1024 * 1024 + 1)

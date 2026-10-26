@@ -1852,6 +1852,33 @@ class ProductionExecutionService:
             inspect_source=self._source_guard(nid, scope, guard))
         return self.view(row, "video")
 
+    def timeline_usage_directory(self, nid, scope, actor, guard):
+        from .asset_usage_paging import directory
+        self._base(nid, scope, actor, guard)
+        result = directory(self.store.read(nid, scope), TIMELINES, actor)
+        guard()
+        return result
+
+    def timeline_usage_get(self, nid, scope, actor, tid, guard):
+        from .asset_usage_paging import MAX_VALIDATION_REFERENCES
+        context = self._base(nid, scope, actor, guard)
+        document = self.store.read(nid, scope)
+        row = document["collections"].get(TIMELINES, {}).get(tid)
+        if not isinstance(row, dict) or row.get('created_by') != actor:
+            raise FileNotFoundError('STUDIO_USAGE_UNAVAILABLE')
+        timeline = row.get('timeline')
+        if not isinstance(timeline, dict) or not isinstance(timeline.get('tracks'), list):
+            raise ValueError('STUDIO_USAGE_OWNER_IDENTITY_INVALID')
+        tracks = timeline['tracks']
+        if any(not isinstance(track, dict) or not isinstance(track.get('clips'), list) for track in tracks):
+            raise ValueError('STUDIO_USAGE_OWNER_IDENTITY_INVALID')
+        if (len(tracks) > MAX_VALIDATION_REFERENCES or
+                sum(len(track.get('clips', [])) for track in tracks) > MAX_VALIDATION_REFERENCES):
+            raise ValueError('STUDIO_USAGE_RESOURCE_UNAVAILABLE')
+        result = self._timeline_view(self._owned_timeline(nid, scope, actor, tid, context, document), scope)
+        guard()
+        return result
+
     def timeline_get(self, nid, scope, actor, tid, guard):
         context = self._base(nid, scope, actor, guard)
         row = self._owned_timeline(nid, scope, actor, tid, context, self.store.read(nid, scope))

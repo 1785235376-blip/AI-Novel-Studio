@@ -45,8 +45,16 @@ def _result(owner, items, source):
             'other_dependencies': 'UNKNOWN'}
 
 
-def graph_asset_usages(service, nid, scope, actor, aid, guard):
+def graph_asset_usages(service, nid, scope, actor, aid, guard, *, limit=None, cursor=None, state=None):
     """Original list/get perform schema and reference redaction checks."""
+    if limit is not None:
+        from .asset_usage_paging import paged_usages
+        from .asset_usage_budget import usage_read_budget
+        with usage_read_budget():
+            return paged_usages(service, nid, scope, actor, aid, guard, graph=True,
+                                limit=limit, cursor=cursor, state=state)
+    if cursor is not None or state is not None:
+        raise ValueError('STUDIO_USAGE_QUERY_INVALID')
     source = _source(service.workspace, nid, scope, aid, guard)
     def read():
         listed = _bounded(service.list(nid, scope, actor, guard)['items'])
@@ -79,7 +87,15 @@ def graph_asset_usages(service, nid, scope, actor, aid, guard):
     return _result('CREATIVE_GRAPH', result, source)
 
 
-def timeline_asset_usages(service, nid, scope, actor, aid, guard):
+def timeline_asset_usages(service, nid, scope, actor, aid, guard, *, limit=None, cursor=None, state=None):
+    if limit is not None:
+        from .asset_usage_paging import paged_usages
+        from .asset_usage_budget import usage_read_budget
+        with usage_read_budget():
+            return paged_usages(service, nid, scope, actor, aid, guard, graph=False,
+                                limit=limit, cursor=cursor, state=state)
+    if cursor is not None or state is not None:
+        raise ValueError('STUDIO_USAGE_QUERY_INVALID')
     source = _source(service.workspace, nid, scope, aid, guard)
 
     def read():

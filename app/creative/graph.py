@@ -341,6 +341,32 @@ class CreativeGraphService:
                 result.append(self._view(nid, scope, self._owned(nid, scope, actor, GRAPHS, rid, state), current))
         current(); return {"items": sorted(result, key=lambda row: (row["created_at"], row["id"]))}
 
+    def usage_directory(self, nid, scope, actor, guard):
+        """Discovery only; projected rows still pass through original get()."""
+        from .asset_usage_paging import directory
+        _, current = self._context(nid, scope, actor, guard)
+        document = self.store.read(nid, scope)
+        result = directory(document, GRAPHS, actor, excluded_schemas={6, 7})
+        current()
+        return result
+
+    def usage_get(self, nid, scope, actor, rid, guard):
+        # Validate size before original schema/reference traversal and copies.
+        from .asset_usage_paging import MAX_VALIDATION_REFERENCES
+        _, current = self._context(nid, scope, actor, guard)
+        document = self.store.read(nid, scope)
+        row = document["collections"].get(GRAPHS, {}).get(rid)
+        if not isinstance(row, dict) or row.get('created_by') != actor:
+            raise FileNotFoundError('STUDIO_USAGE_UNAVAILABLE')
+        definition = row.get('definition')
+        if not isinstance(definition, dict) or not isinstance(definition.get('nodes'), list):
+            raise ValueError('STUDIO_USAGE_OWNER_IDENTITY_INVALID')
+        if len(definition['nodes']) > MAX_VALIDATION_REFERENCES:
+            raise ValueError('STUDIO_USAGE_RESOURCE_UNAVAILABLE')
+        result = self._view(nid, scope, self._owned(nid, scope, actor, GRAPHS, rid, document), current)
+        current()
+        return result
+
     def get(self, nid, scope, actor, rid, guard=lambda: None):
         _, current = self._context(nid, scope, actor, guard)
         result = self._view(nid, scope, self._owned(nid, scope, actor, GRAPHS, rid), current)

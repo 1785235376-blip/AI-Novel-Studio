@@ -65,9 +65,17 @@ class ExperimentalStore:
 
     def _file_read(self, nid, scope):
         try:
-            raw = json.loads(self.path(nid, scope).read_text(encoding="utf-8"))
+            from ..creative.asset_usage_budget import current_usage_budget
+            budget = current_usage_budget()
+            path = self.path(nid, scope)
+            raw = json.loads(budget.read(path) if budget is not None else path.read_text(encoding="utf-8"))
         except FileNotFoundError:
             return self.empty(nid, scope)
+        except RecursionError:
+            if budget is not None:
+                from ..creative.asset_usage_budget import UsageBudgetError
+                raise UsageBudgetError() from None
+            raise
         return self.validate(raw, nid, scope)
 
     def _connect(self):
@@ -77,6 +85,10 @@ class ExperimentalStore:
         return psycopg.connect(self.database_url, options="-c timezone=UTC")
 
     def read(self, nid, scope):
+        from ..creative.asset_usage_budget import current_usage_budget, UsageBudgetError
+        if current_usage_budget() is not None and self.backend != "file":
+            # No pre-fetch byte bound exists for the current JSONB reader.
+            raise UsageBudgetError()
         key = self.key(nid, scope)
         active = getattr(self._local, "active", {})
         if key in active:

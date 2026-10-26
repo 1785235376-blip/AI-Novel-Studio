@@ -11,7 +11,8 @@ from .graph_models import (GraphAction, GraphCreate, GraphPreflight, GraphRunCre
     GraphMediaPreflight, GraphMediaRunCreate)
 
 
-def create_creative_graph_router(service, invoke, *, require_host_session=None, model_host_authority=None):
+def create_creative_graph_router(service, invoke, *, require_host_session=None, model_host_authority=None,
+                                 usage_production=None):
     router = APIRouter(tags=["Creative Graph V2"], route_class=PrivateProductionRoute)
 
     from .ai_execution import ModelPreview, ModelDispatch, ModelRefresh, require_execution
@@ -166,20 +167,88 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
     def asset_usages(nid: str, aid: str, request: Request,
                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         from .asset_usages import graph_asset_usages
+        from .asset_usage_paging import query_options
+        from .asset_usage_budget import usage_read_budget, UsageBudgetError
         def observe(actor, scope, guard):
             try:
-                return graph_asset_usages(service, nid, scope, actor, aid, guard)
-            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+                return graph_asset_usages(service, nid, scope, actor, aid, guard,
+                                          **(query_options(request) or {}))
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 guard()
                 raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
         # Observation must never mint a missing File project incarnation.
-        with service.store.existing_owner_only():
+        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))):
             try:
                 return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                     observe,
                     request, target=("list",), inspection_host=True)
-            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError):
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
+
+    @router.get("/novels/{nid}/experimental/production/assets/{aid}/studio-asset-usages")
+    def saved_asset_usages(nid: str, aid: str, request: Request,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        from contextlib import ExitStack
+        from .asset_usage_paging import paged_usages, query_options
+        from .asset_usage_budget import usage_read_budget, UsageBudgetError
+        from .production_execution_api import create_production_invoker
+        production_call = create_production_invoker(invoke, require_host_session=require_host_session,
+                                                    model_host_authority=model_host_authority)
+
+        def admitted(actor, scope, guard):
+            initial_authority = capture_host(request, x_session_token)
+            if require_host_session is None:
+                raise HTTPException(403, {'code': 'CREATIVE_MODEL_HOST_REQUIRED'})
+            require_host_session(x_session_token)
+            def admitted_guard():
+                guard()
+                require_host_session(x_session_token)
+                initial_authority.guard()
+            admitted_guard()
+            options = query_options(request, combined=True)
+            if options is None:
+                raise ValueError('STUDIO_USAGE_QUERY_INVALID')
+            selected = options['sources']
+            def observe(selected_actor, selected_scope, selected_guard):
+                if (selected_actor, selected_scope) != (actor, scope):
+                    raise PermissionError('STUDIO_USAGE_AUTHORITY_CHANGED')
+                def current():
+                    admitted_guard()
+                    selected_guard()
+                return paged_usages(service, nid, scope, actor, aid, current, graph=True,
+                                    production=usage_production, **options)
+            if selected == ['timeline']:
+                return production_call(request, nid, x_session_token, x_branch_id, 'domain.read', observe)
+            def graph_observe(graph_actor, graph_scope, graph_guard):
+                if (graph_actor, graph_scope) != (actor, scope):
+                    raise PermissionError('STUDIO_USAGE_AUTHORITY_CHANGED')
+                if selected == ['graph']:
+                    return observe(graph_actor, graph_scope, graph_guard)
+                def both(timeline_actor, timeline_scope, timeline_guard):
+                    if (timeline_actor, timeline_scope) != (actor, scope):
+                        raise PermissionError('STUDIO_USAGE_AUTHORITY_CHANGED')
+                    def current():
+                        graph_guard()
+                        timeline_guard()
+                    return observe(timeline_actor, timeline_scope, current)
+                return production_call(request, nid, x_session_token, x_branch_id, 'domain.read', both)
+            return graph_invoke(nid, x_session_token, x_branch_id, 'domain.read', graph_observe,
+                                request, target=('list',), inspection_host=True)
+
+        # The first original admission precedes query parsing and storage work.
+        with ExitStack() as contexts:
+            contexts.enter_context(service.store.existing_owner_only())
+            if usage_production is not None:
+                contexts.enter_context(usage_production.store.existing_owner_only())
+            contexts.enter_context(usage_read_budget())
+            try:
+                return invoke(nid, x_session_token, x_branch_id, 'domain.read', admitted)
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
+                raise HTTPException(409, {'code': 'STUDIO_ASSET_USAGE_UNAVAILABLE'}) from None
+            except HTTPException as exc:
+                if exc.status_code in {404, 409, 422}:
+                    raise HTTPException(409, {'code': 'STUDIO_ASSET_USAGE_UNAVAILABLE'}) from None
+                raise
 
     @router.post("/projects/{nid}/studio/graph-runs/{rid}/media/preview")
     def media_preview(nid: str, rid: str, request: Request, body: MediaNodeRequest, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

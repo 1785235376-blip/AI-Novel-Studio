@@ -632,5 +632,5 @@ def create_independent_workspace_router(service, authorize, require_flag, *, cre
     if graph_service is not None:
         from .graph_api import create_creative_graph_router
         router.include_router(create_creative_graph_router(graph_service, invoke, require_host_session=require_host_session,
-            model_host_authority=model_host_authority))
+            model_host_authority=model_host_authority, usage_production=production_service))
     return router
