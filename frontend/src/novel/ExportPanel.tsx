@@ -1,3 +1,5 @@
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 P1-ERR]
+import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {Download,FileArchive,FileText,LoaderCircle,PackageCheck} from 'lucide-react';
 import {useMutation,useQuery,useQueryClient} from '@tanstack/react-query';
@@ -88,7 +90,7 @@ function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{no
       {history.isPending&&<p className="novel-help" role="status">正在读取导出历史…</p>}
       {history.error&&<ExportError error={history.error} fallback="无法读取导出历史，请刷新重试。"/>}
       {!history.isPending&&!history.error&&!history.data?.items?.length&&<EmptyState title="暂无导出记录" detail="此项目与当前分支下的任务会显示在这里，可关闭窗口后重新找到。"/>}
-      {!history.error&&<div className="export-history__list">{history.data?.items?.map(item=><Button key={item.id} type="button" variant={item.id===jobId?'secondary':'ghost'} aria-pressed={item.id===jobId} onClick={()=>setJobId(item.id)}>{formats.find(format=>format.id===item.format)?.label||item.format} · {({queued:'排队中',running:'处理中',succeeded:'已完成',failed:'失败',cancelled:'已取消'})[item.status]} · {item.id.slice(0,8)}<small>{item.created_at?new Date(item.created_at).toLocaleString():''} · 快照 {item.snapshot_id?.slice(0,8)||'旧版未记录'}</small></Button>)}</div>}
+      {!history.error&&<div className="export-history__list">{history.data?.items?.map(item=><Button key={item.id} type="button" variant={item.id===jobId?'secondary':'ghost'} aria-pressed={item.id===jobId} onClick={()=>setJobId(item.id)}>{formats.find(format=>format.id===item.format)?.label||item.format} · {({queued:'排队中',running:'处理中',succeeded:'已完成',failed:'失败',cancelled:'已取消'})[item.status]} · {item.id.slice(0,8)}<small>{item.created_at?formatDate(item.created_at):''} · 快照 {item.snapshot_id?.slice(0,8)||'旧版未记录'}</small></Button>)}</div>}
       <footer className="export-job__actions">{offset>0&&<Button type="button" variant="ghost" disabled={history.isFetching} onClick={()=>setOffset(Math.max(0,offset-50))}>上一页</Button>}{history.data?.next_offset!=null&&<Button type="button" variant="ghost" disabled={history.isFetching} onClick={()=>setOffset(history.data!.next_offset!)}>下一页</Button>}</footer>
     </section>}
     {start.error&&<ExportError error={start.error} fallback="导出任务创建失败，请重试。"/>}
@@ -98,7 +100,8 @@ function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{no
   </Panel>
 }
 
-function ExportError({error,fallback}:{error:unknown;fallback:string}){
+// [HERMIA-FE-20261025 VERA-097 W8] exported for render test
+export function ExportError({error,fallback}:{error:unknown;fallback:string}){
   const view=apiErrorView(error,fallback);
-  return <div className="export-error" role="alert"><p className="novel-error">{view.message}</p><p className="export-error__meta">{view.code&&<span>代码：<code>{view.code}</code></span>}{view.requestId&&<span>请求 ID：<code>{view.requestId}</code></span>}{view.details&&<span>详情：<code>{view.details}</code></span>}</p></div>;
+  return <div className="export-error" role="alert"><p className="novel-error">{view.message}</p><p className="export-error__meta">{view.code&&<span>{i18nT('err.label.code')}<code>{view.code}</code></span>}{view.requestId&&<span>{i18nT('err.label.requestId')}<code>{view.requestId}</code></span>}{view.details&&<span>{i18nT('err.label.details')}<code>{view.details}</code></span>}{view.technical&&<span className="api-error-technical">{i18nT('err.technical')}{i18nT('context.sep')}<code>{view.technical}</code></span>}{/* [HERMIA-FE-20261025 P1-ERR] 仅专业模式 */}</p></div>;
 }

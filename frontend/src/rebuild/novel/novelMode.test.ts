@@ -18,3 +18,12 @@ describe('novel mode gating', () => {
     expect(novelPanelAllowed('check', 'pro')).toBe(true);
   });
 });
+// [HERMIA-FE-20261025 DUI P1-6] 普通模式单一主流程：工作流 / AI 任务编排只在专业模式出现
+describe('DUI P1-6 normal mode hides orchestration panels', () => {
+  it('basic hides workflow + agents, pro keeps them', () => {
+    const r = ['write', 'workflow', 'agents', 'exports'].map(id => ({id}));
+    expect(gateNovel(r, NOVEL_PRO_PANELS, 'basic').map(x => x.id)).toEqual(['write', 'exports']);
+    expect(gateNovel(r, NOVEL_PRO_PANELS, 'pro').map(x => x.id)).toEqual(['write', 'workflow', 'agents', 'exports']);
+    expect(novelPanelAllowed('workflow', 'basic')).toBe(false);
+  });
+});

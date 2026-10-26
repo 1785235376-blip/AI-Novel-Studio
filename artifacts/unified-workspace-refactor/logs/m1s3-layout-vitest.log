@@ -1,0 +1,28 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 13ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 116ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 286ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 361ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 19ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 4ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 16ms
+ ✓ src/workspace/panels/novelPreviewPanels.test.tsx (9 tests) 602ms
+ ✓ src/workspace/layout/slice2fix.test.tsx (13 tests) 1155ms
+   ✓ MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions > Ctrl+K opens the shared registry palette with the 4 layout actions; running split works 348ms
+   ✓ nice-to-have: double-trigger guard + visible busy; shortcut text localized > two real key presses ~50ms apart execute once; aria-busy visible meanwhile 433ms
+ ✓ src/workspace/actions/layoutActions.test.ts (10 tests) 1816ms
+   ✓ availability / disabled reason / execution > reopen + collapse + split + reset outcomes 1205ms
+   ✓ reopen after close > reopens the requested closed panel, blocks a non-closed one 301ms
+   ✓ running state + double-trigger guard > same-tick second trigger is a duplicate and has no side effect; pending clears after 301ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 2638ms
+   ✓ DockLayout interactions > M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates 1427ms
+   ✓ DockLayout interactions > M1-08 reset default asks first, then restores layout but keeps draft text 397ms
+
+ Test Files  11 passed (11)
+      Tests  120 passed (120)
+   Start at  19:36:34
+   Duration  3.73s (transform 872ms, setup 211ms, collect 2.70s, tests 7.03s, environment 3.36s, prepare 623ms)
+
+EXIT 0

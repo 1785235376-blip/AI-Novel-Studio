@@ -1,4 +1,5 @@
 import {useEffect, useState, type ReactNode} from 'react';
+import { tz as i18nTz } from '../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import { CredentialsPanel } from '../rebuild/CredentialsPanel'; // [HERMIA-FE-20261022 REBUILD-2]
 import { LocalInteropPanel } from '../rebuild/LocalInteropPanel'; // [HERMIA-FE-20261022 REBUILD-5]
 import type {Asset} from '../api';
@@ -128,5 +129,5 @@ export function ModuleWorkspaceRoutes({localAiOnboarding,module,onModuleChange,s
   const isOverflow = module==='CONTROL'||module==='PLUGIN'||module==='WORKFLOW';
   const shell = mediaShellForModule(module);
   const mainBody=module==='CONTROL'||module==='PLUGIN'?<>{main}</>/* [HERMIA-FE-20261022 R7] 不再挂溢出横幅/能力状态大块 */:shell?<div className="media-ws-main" data-module-shell={shell} data-shell-mode={shellMode} data-x-ux-isolation="per-module">{main}</div>:<>{isOverflow?<OverflowSurfaceBanner module={module}/>:null}<CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>;
-  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{status}{interopEntry}</>} shellMode={shellMode} onShellModeChange={onShellModeChange}/>;
+  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={sidebar} main={mainBody} inspector={inspector} status={<>{i18nTz(status)}{interopEntry}</>} shellMode={shellMode} onShellModeChange={onShellModeChange}/>;
 }

@@ -1,3 +1,4 @@
+import { formatTime } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { isBoundGraphDraft } from './studioGraphLocalDraft';
 import { GraphConditionFields } from './GraphConditionFields';
 import { useState } from 'react';
@@ -22,7 +23,7 @@ export function StudioGraphDraftRecovery({ controller }: { controller: StudioGra
     {draftStorageNotice && <StatusMessage tone="warning">{draftStorageNotice}</StatusMessage>}
     {!draftRecoverable && <StatusMessage tone="warning">当前图含未能安全序列化的字段，本次输入仅保留在本页；请核对原格式与来源后明确保存。尚未应用的侧表单不属于图草稿。</StatusMessage>}
     {!recovery && draftRecoverable && !draftStorageNotice && <StatusMessage>{draftSavedAt
-      ? `${authoring ? '创作图' : '文本图'}草稿已保留在本机 · ${new Date(draftSavedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai' })}。服务端版本、审核与运行仍需明确操作。`
+      ? `${authoring ? '创作图' : '文本图'}草稿已保留在本机 · ${formatTime(draftSavedAt, undefined, { timeStyle: 'medium', timeZone: 'Asia/Shanghai', hour12: false })}。服务端版本、审核与运行仍需明确操作。`
       : authoring ? '创作图作者输入可保留在本机；恢复将重读门禁及来源，服务端保存仍需明确操作。' : '文本图后续修改可自动保留在本机；服务端保存仍需明确操作。'}</StatusMessage>}
     {recovery && <Panel title={bound ? '发现本机创作图草稿' : '发现本机文本图草稿'}>
       <p>{recovery.definition.title} · {recovery.definition.nodes.length} 节点 / {recovery.definition.edges.length} 连接 · {recovery.base ? `基于 v${recovery.base.version}` : '尚未保存到服务端'}</p>

@@ -1,0 +1,80 @@
+[
+ {
+  "w": 1366,
+  "h": 768,
+  "uw": true,
+  "dock": false,
+  "moduleTabs": 0,
+  "sw": 1366,
+  "cw": 1366,
+  "text": "布局 \n单栏\n左右分屏\n上下分屏\n重新打开 \n没有已关闭的面板\n中间显示 \n选择…\n执行画布\n恢复默认布局\n大纲\n折叠\n左侧\n右侧\n中间\n浮动\n关闭\n\noutl",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_uw_1366x768.png"
+ },
+ {
+  "w": 1366,
+  "h": 768,
+  "uw": false,
+  "dock": true,
+  "moduleTabs": 6,
+  "sw": 1366,
+  "cw": 1366,
+  "text": "PoemSeed Studio\n小说\n图片\n视频\n声音\n剪辑\n资产\n搜索功能、章节或命令\nCtrl K\n普通\n专业\n能力状态\n任务\n浅色\n深色\n设置\n本\n本机作",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_legacy_1366x768.png"
+ },
+ {
+  "w": 1440,
+  "h": 900,
+  "uw": true,
+  "dock": false,
+  "moduleTabs": 0,
+  "sw": 1440,
+  "cw": 1440,
+  "text": "布局 \n单栏\n左右分屏\n上下分屏\n重新打开 \n没有已关闭的面板\n中间显示 \n选择…\n执行画布\n恢复默认布局\n大纲\n折叠\n左侧\n右侧\n中间\n浮动\n关闭\n\noutl",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_uw_1440x900.png"
+ },
+ {
+  "w": 1440,
+  "h": 900,
+  "uw": false,
+  "dock": true,
+  "moduleTabs": 6,
+  "sw": 1440,
+  "cw": 1440,
+  "text": "PoemSeed Studio\n小说\n图片\n视频\n声音\n剪辑\n资产\n搜索功能、章节或命令\nCtrl K\n普通\n专业\n能力状态\n任务\n浅色\n深色\n设置\n本\n本机作",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_legacy_1440x900.png"
+ },
+ {
+  "w": 1920,
+  "h": 1080,
+  "uw": true,
+  "dock": false,
+  "moduleTabs": 0,
+  "sw": 1920,
+  "cw": 1920,
+  "text": "布局 \n单栏\n左右分屏\n上下分屏\n重新打开 \n没有已关闭的面板\n中间显示 \n选择…\n执行画布\n恢复默认布局\n大纲\n折叠\n左侧\n右侧\n中间\n浮动\n关闭\n\noutl",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_uw_1920x1080.png"
+ },
+ {
+  "w": 1920,
+  "h": 1080,
+  "uw": false,
+  "dock": true,
+  "moduleTabs": 6,
+  "sw": 1920,
+  "cw": 1920,
+  "text": "PoemSeed Studio\n小说\n图片\n视频\n声音\n剪辑\n资产\n搜索功能、章节或命令\nCtrl K\n普通\n专业\n能力状态\n任务\n浅色\n深色\n设置\n本\n本机作",
+  "errs": [],
+  "writes": [],
+  "f": "/workspace/hr/wt/artifacts/unified-workspace-refactor/screenshots/m1s2_stepA_legacy_1920x1080.png"
+ }
+]

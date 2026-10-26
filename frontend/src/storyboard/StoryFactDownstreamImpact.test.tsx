@@ -8,6 +8,8 @@ import { StoryFactDownstreamImpact } from './StoryFactDownstreamImpact';
 import { StoryFactUsagePanel } from './StoryFactUsagePanel';
 import { checkedImpact, type FactTarget, type FactUse } from './storyFactClient';
 import { factAssetPin, factPathKey, revalidateFactPath } from './storyFactDownstream';
+// [HERMIA-FE-20261023 M1-flaky] Root cause: these long jsdom integration flows take 3-5s unloaded and exceed vitest's default 5000ms testTimeout under full-suite CPU load. Budget raised per file; no assertion, step or mock changed.
+vi.setConfig({ testTimeout: 30000 });
 afterEach(cleanup);
 const digest = (letter: string) => letter.repeat(64);
 const fact = { id: 'fact', version: 2, digest: digest('a'), title: 'Fact' };

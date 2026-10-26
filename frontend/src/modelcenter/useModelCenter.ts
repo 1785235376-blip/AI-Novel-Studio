@@ -11,6 +11,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from '../api';
+import { getLocale, tz } from '../i18n'; // [HERMIA-FE-20261025 VERA-097 P3]
 import type { StudioGraphTransport } from '../creative/studioGraphClient';
 import type { CollaborationContext } from '../api';
 import { createModelCenterClient, type ModelCenterClient, type ModelCenterSourceStatus } from './modelCenterClient';
@@ -63,10 +64,11 @@ function ownerMessage(value: unknown): string | undefined {
 function problemOf(reason: unknown, fallback: string): ModelCenterProblem {
   if (reason instanceof ApiError) {
     // 请求 id 与 owner 的英文诊断串都不进入界面；无法安全透传时用本模块的固定文案。
-    return { code: reason.problem.code, message: ownerMessage(reason.problem.message) ?? fallback };
+    // [HERMIA-FE-20261025 VERA-097 P3] 英文界面不透传中文 owner 文案；固定文案按当前语言（tz 反查字典）
+    return { code: reason.problem.code, message: (getLocale() === 'en' ? undefined : ownerMessage(reason.problem.message)) ?? tz(fallback) };
   }
   // 非 ApiError 的本地异常文案永不原样渲染。
-  return { code: MODEL_CENTER_CODES.readFailed.code, message: fallback };
+  return { code: MODEL_CENTER_CODES.readFailed.code, message: tz(fallback) };
 }
 
 export function useModelCenter(props: ModelCenterControllerProps) {

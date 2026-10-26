@@ -46,6 +46,6 @@ it('rediscovers and restores deleted assets from the server recycle bin',async()
   const client=new QueryClient({defaultOptions:{queries:{retry:false}}});
   render(<QueryClientProvider client={client}><AssetLibraryPanel novelId="n1"/></QueryClientProvider>);
   fireEvent.click(screen.getByRole('button',{name:'回收站'}));
-  fireEvent.click(await screen.findByRole('button',{name:'恢复资产'}));
+  fireEvent.click(await screen.findByRole('button',{name:'撤销删除'}));
   await waitFor(()=>expect(api.restoreAsset).toHaveBeenCalledWith('n1','restore-1'));
 });

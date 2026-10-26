@@ -20,9 +20,33 @@ import { timelinePlaybackMediaType, checkedTimelinePlayback, timelinePlaybackRes
 import { checkedTimelineWaveform, timelineWaveformRequest } from './studioTimelineWaveformTypes';
 import { checkedTimelineSourceRequest, checkedTimelineSourceEffect, type TimelineSourceEditRequest } from './studioTimelineSourceEditContract';
 import { canvasReturnInCommand, sameCanvasReturn, type CanvasReturnBinding } from './studioCanvasReturnBinding';
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
 import { checkedCanvasViewRecord, type CanvasViewRecord } from './studioCanvasViewClient';
 
 export type ProductionOwner = 'image' | 'audio' | 'video' | 'timeline';
+/** [HERMIA-FE-CONTRACTS G-AUD-1] GET …/production/jobs 的可选筛选（后端 studio_production_query_backend.md）。 */
+export const PRODUCTION_QUERY_OPERATIONS = ['m5.image.t2i', 'm5.image.i2i', 'm5.image.cutout', 'm5.image.reference', 'm5.image.inpaint',
+  'm5.image.upscale', 'm5.image.composite', 'm7.video.t2v', 'm7.video.i2v', 'm7.video.v2v', 'm8.audio.speech', 'm8.audio.music',
+  'm8.audio.effects', 'm8.audio.trim', 'm9.timeline.multitrack'] as const;
+export type ProductionQueryOperation = typeof PRODUCTION_QUERY_OPERATIONS[number];
+export type ProductionJobQuery = { owner?: ProductionOwner; operation_id?: ProductionQueryOperation; limit?: number; offset?: number };
+export type ProductionJobPaging = { total: number; limit: number; offset: number; has_more: boolean };
+export type ProductionJobPage = { items: ProductionJob[]; paging: ProductionJobPaging | null };
+const PRODUCTION_QUERY_OWNERS: readonly ProductionOwner[] = ['image', 'audio', 'video', 'timeline'];
+export function productionJobSearch(query: ProductionJobQuery): string {
+  const bad = () => { throw new ApiError({ status: 0, code: 'STUDIO_PRODUCTION_QUERY_LOCAL_INVALID', message: i18nT('fc.prod.queryInvalid') } as never); };
+  if (!query || typeof query !== 'object') bad();
+  const search = new URLSearchParams();
+  if (query.owner !== undefined) { if (!PRODUCTION_QUERY_OWNERS.includes(query.owner)) bad(); search.set('owner', query.owner); }
+  if (query.operation_id !== undefined) { if (!(PRODUCTION_QUERY_OPERATIONS as readonly string[]).includes(query.operation_id)) bad(); search.set('operation_id', query.operation_id); }
+  const int = (n: unknown, min: number, max: number) => typeof n === 'number' && Number.isSafeInteger(n) && n >= min && n <= max;
+  if (query.limit !== undefined || query.offset !== undefined) {
+    const limit = query.limit ?? 50, offset = query.offset ?? 0;
+    if (!int(limit, 1, 100) || !int(offset, 0, 1_000_000)) bad();
+    search.set('limit', String(limit)); search.set('offset', String(offset));
+  }
+  return search.toString();
+}
 export type MediaOperation = 'm5.image.t2i' | 'm5.image.i2i' | 'm5.image.reference' | 'm5.image.inpaint' | 'm5.image.upscale' | 'm5.image.cutout' | 'm5.image.composite' | 'm7.video.t2v' | 'm7.video.i2v' | 'm7.video.v2v' | 'm8.audio.speech' | 'm8.audio.music' | 'm8.audio.effects' | 'm8.audio.trim';
 export type ProductionSource = { id: string; kind: 'ASSET'; version: number; digest: string; asset_kind: 'image' | 'video' | 'audio'; reference_only?: true };
 export type MediaCommand = { operation_id: MediaOperation; request_id: string; provider_id?: string | null; model_id?: string | null; prompt: string;
@@ -895,6 +919,24 @@ export function studioProductionClient(projectId: string, context: Collaboration
       const v = await transport.json<unknown>(`${base}/jobs`, 'GET', undefined, signal);
       if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid(); return v.items.map(job);
     },
+    /** [HERMIA-FE-CONTRACTS G-AUD-1] 可选筛选与分页；只发送提供的参数。旧后端返回未分页信封时 paging=null（优雅回退）。
+     * total 只是本次读取匹配数，不是全局任务数。 */
+    async listPage(query: ProductionJobQuery = {}, signal?: AbortSignal): Promise<ProductionJobPage> {
+      const search = productionJobSearch(query);
+      const v = await transport.json<unknown>(search ? `${base}/jobs?${search}` : `${base}/jobs`, 'GET', undefined, signal);
+      if (!record(v) || !Array.isArray(v.items) || v.items.length > 1000) invalid();
+      const items = v.items.map(job);
+      const keys = ['total', 'limit', 'offset', 'has_more'] as const, present = keys.filter(key => Object.hasOwn(v, key));
+      if (!present.length) return { items, paging: null };
+      if (present.length !== keys.length) invalid();
+      const nat = (n: unknown, max: number) => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0 && n <= max;
+      if (!nat(v.total, Number.MAX_SAFE_INTEGER) || !nat(v.limit, 100) || (v.limit as number) < 1 || !nat(v.offset, 1_000_000)
+        || typeof v.has_more !== 'boolean' || items.length > (v.limit as number)
+        // 后端：has_more = offset + limit < total；offset ≥ total 是合法空页（列表在两次加载之间缩短）。
+        || ((v.offset as number) >= (v.total as number) && items.length !== 0)
+        || v.has_more !== ((v.offset as number) + (v.limit as number) < (v.total as number))) invalid();
+      return { items, paging: { total: v.total as number, limit: v.limit as number, offset: v.offset as number, has_more: v.has_more } };
+    },
     async get(owner: ProductionOwner, id: string, signal?: AbortSignal) {
       const v = job(await transport.json<unknown>(jobUrl(owner, id), 'GET', undefined, signal)); if (v.owner !== owner || v.id !== id) invalid(); return v;
     },
@@ -906,6 +948,19 @@ export function studioProductionClient(projectId: string, context: Collaboration
     candidate: (j: ProductionJob) => transport.blob(`${jobUrl(j.owner, j.id)}/candidate`),
     async timelineList(signal?: AbortSignal) {
       const v = await transport.json<unknown>(`${base}/timelines`, 'GET', undefined, signal); if (!record(v) || !Array.isArray(v.items) || v.items.length > 25) invalid(); return { items: v.items.map(timeline) };
+    },
+    /** [HERMIA-FE-CONTRACTS G-AUD-5] Timeline 是唯一的版本历史。返回未解析行（契约形状校验）；UI 尚未接入。 */
+    async timelineHistoryRaw(id: string, signal?: AbortSignal): Promise<{ timeline_id: string; current_version: number; items: unknown[] }> {
+      const v = await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/history`, 'GET', undefined, signal);
+      if (!record(v) || v.timeline_id !== id || typeof v.current_version !== 'number' || !Number.isSafeInteger(v.current_version) || v.current_version < 0
+        || !Array.isArray(v.items) || v.items.length > 1000) invalid();
+      return { timeline_id: id, current_version: v.current_version as number, items: v.items as unknown[] };
+    },
+    async timelineRestoreRaw(id: string, body: { expected_version: number; reviewed_timeline_digest: string; restore_version: number; restore_digest: string }) {
+      const hex = (d: unknown) => typeof d === 'string' && /^[0-9a-f]{64}$/.test(d), ver = (n: unknown) => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0;
+      if (!body || !ver(body.expected_version) || !ver(body.restore_version) || !hex(body.reviewed_timeline_digest) || !hex(body.restore_digest)) invalid();
+      const input = { expected_version: body.expected_version, reviewed_timeline_digest: body.reviewed_timeline_digest, restore_version: body.restore_version, restore_digest: body.restore_digest };
+      return transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}/restore`, 'POST', input);
     },
     async timelineGet(id: string, signal?: AbortSignal) { return timeline(await transport.json<unknown>(`${base}/timelines/${encodeURIComponent(id)}`, 'GET', undefined, signal)); },
     async timelineEdit(source: StudioTimelineRow, body: TimelineSourceEditRequest): Promise<StudioTimelineRow> {

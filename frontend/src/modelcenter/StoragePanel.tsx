@@ -1,3 +1,4 @@
+import { formatNumber, t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { MODEL_CENTER_CODES, type OrphanReport, type StorageReport } from './modelCenterTypes';
 import type { ModelCenterSourceStatus } from './modelCenterClient';
@@ -17,7 +18,7 @@ export type StoragePanelProps = {
   canReRead?: boolean;
 };
 
-const bytes = (value: number | null): string => value === null ? '未知' : `${value.toLocaleString('zh-CN')} 字节`;
+const bytes = (value: number | null): string => value === null ? '未知' : i18nT('fmt.bytes', { n: formatNumber(value) });
 
 /**
  * 存储面板：用量 / 配额 / 冷存储 / 孤儿报告。**只读**，并对"不可逆动作"说实话：

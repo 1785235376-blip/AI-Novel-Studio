@@ -184,7 +184,7 @@ describe('CanvasImageQueue', () => {
     });
     vi.stubGlobal('fetch', fetcher);
     render(<CanvasImageQueue novelId="novel-a" nodeId="node-a" prompt="不会派发" onClose={() => {}} />);
-    expect((await screen.findByRole('alert')).textContent).toMatch(/配置服务暂不可用|503|图片服务|加载/);
+    expect((await screen.findByRole('alert')).textContent).toMatch(/配置服务暂不可用|503|图片服务|加载|服务暂时无法连接/);
     expect((screen.getByRole('button', {name: '保存到生成队列'}) as HTMLButtonElement).disabled).toBe(true);
     expect(writes(fetcher)).toHaveLength(0);
   });
@@ -194,7 +194,7 @@ describe('CanvasImageQueue', () => {
     render(<CanvasImageQueue novelId="novel-a" nodeId="canvas-node-a" prompt="节点的手工提示词" onClose={() => {}} />);
     await selectProvider();
     fireEvent.click(screen.getByRole('button', {name: '保存到生成队列'}));
-    expect((await screen.findByRole('alert')).textContent).toContain('队列写入暂不可用');
+    expect((await screen.findByRole('alert')).textContent).toMatch(/队列写入暂不可用|服务暂时无法连接/);
     expect(screen.queryByText('任务 ID：fixture-job-1')).toBeNull();
     expect(writes(fetcher)).toHaveLength(1);
     expect(executeCalls(fetcher)).toHaveLength(0);

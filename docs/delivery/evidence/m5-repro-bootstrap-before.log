@@ -1,0 +1,728 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ❯ src/workspace/integration/int.bootstrap.test.tsx (3 tests | 2 failed) 2233ms
+   × signed-in session + complete scope ⇒ preview reads the server actor (GET bootstrap once) and the task list connects 1112ms
+     → expected undefined to be 'u-server' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"uw-layout"[39m
+        [33mdata-source[39m=[32m"default"[39m
+        [33mdata-testid[39m=[32m"dock-layout"[39m
+        [33mstyle[39m=[32m"--uw-toolbar-h: 0px;"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"uw-skip"[39m
+          [33mdata-testid[39m=[32m"uw-skip-main"[39m
+          [33mhref[39m=[32m"#uw-main"[39m
+        [36m>[39m
+          [0m跳到主区域[0m
+        [36m</a>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"布局"[39m
+          [33mclass[39m=[32m"uw-toolbar"[39m
+          [33mrole[39m=[32m"toolbar"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mdata-testid[39m=[32m"uw-command-host"[39m
+            [33mstyle[39m=[32m"display: inline-flex; align-items: center; gap: 6px;"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wb-command"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"dialog"[39m
+                [33mclass[39m=[32m"ui-button ui-button--ghost  wb-command__trigger"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.3-4.3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m搜索功能[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<small>[39m
+              [0mCtrl／⌘+K[0m
+            [36m</small>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn uw-btn--primary"[39m
+              [33mdata-action-id[39m=[32m"canvas.openExecution"[39m
+              [33mdata-testid[39m=[32m"uw-open-execution"[39m
+              [33mtitle[39m=[32m"打开执行画布（Ctrl／⌘+Alt+E）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m执行画布[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn"[39m
+              [33mdata-action-id[39m=[32m"view.worksets.open"[39m
+              [33mdata-testid[39m=[32m"uw-open-views"[39m
+              [33mtitle[39m=[32m"保存或切换面板布局（Ctrl／⌘+Alt+V）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m视图[0m
+            [36m</button>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"当前位置"[39m
+              [33mclass[39m=[32m"uw-ctxbar"[39m
+              [33mdata-preset[39m=[32m"creative"[39m
+              [33mdata-testid[39m=[32m"uw-ctxbar"[39m
+              [33mrole[39m=[32m"region"[39m
+              [33mstyle[39m=[32m"display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 8px; min-width: 0;"[39m
+            [36m>[39m
+              [36m<strong[39m
+                [33mdata-testid[39m=[32m"uw-ctx-step"[39m
+                [33mstyle[39m=[32m"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch;"[39m
+              [36m>[39m
+                [0m在创作画布选择节点开始[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m创作（默认）[0m
+              [36m</small>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.returnToOrigin"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mtitle[39m=[32m"从任务跳转后才会记录原位置"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m返回原位置[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.compare"[39m
+                [33mtitle[39m=[32m"左右对照创作与执行画布（Ctrl／⌘+Alt+D）"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m对照[0m
+              [36m</button>[39m
+              [36m<details[39m
+                [33mdata-testid[39m=[32m"uw-ctx-details"[39m
+                [33mstyle[39m=[32m"flex-basis: 100%;"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m技术细节[0m
+                [36m</summary>[39m
+                [36m<ul[39m
+                  [33mstyle[39m=[32m"margin: 0px; padding-left: 18px;"[39m
+                [36m/>[39m
+              [36m</details>[39m
+            [36m</div>[39m
+            [36m<small[39m
+              [33mdata-identity[39m=[32m"session"[39m
+              [33mdata-testid[39m=[32m"uw-identity"[39m
+            [36m>[39m
+              [0m仅本次会话：尚未登录协作账号，视图与布局不会保存。[0m
+            [36m</small>[39m
+          [36m</span>[39m
+          [36m<label>[39m
+            [0m布局 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分屏方式"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.switchSplit"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"single"[39m
+              [36m>[39m
+                [0m单栏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-h"[39m
+              [36m>[39m
+                [0m左右分屏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-v"[39m
+              [36m>[39m
+                [0m上下分屏[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<label>[39m
+            [0m重新打开 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"重新打开面板"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.reopenPanel"[39m
+              [33mdisabled[39m=...
+   × bootstrap refused ⇒ stays 仅本次会话, never invents an actor 1039ms
+     → expected false to be true // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"uw-layout"[39m
+        [33mdata-source[39m=[32m"default"[39m
+        [33mdata-testid[39m=[32m"dock-layout"[39m
+        [33mstyle[39m=[32m"--uw-toolbar-h: 0px;"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"uw-skip"[39m
+          [33mdata-testid[39m=[32m"uw-skip-main"[39m
+          [33mhref[39m=[32m"#uw-main"[39m
+        [36m>[39m
+          [0m跳到主区域[0m
+        [36m</a>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"布局"[39m
+          [33mclass[39m=[32m"uw-toolbar"[39m
+          [33mrole[39m=[32m"toolbar"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mdata-testid[39m=[32m"uw-command-host"[39m
+            [33mstyle[39m=[32m"display: inline-flex; align-items: center; gap: 6px;"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wb-command"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"dialog"[39m
+                [33mclass[39m=[32m"ui-button ui-button--ghost  wb-command__trigger"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.3-4.3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m搜索功能[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<small>[39m
+              [0mCtrl／⌘+K[0m
+            [36m</small>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn uw-btn--primary"[39m
+              [33mdata-action-id[39m=[32m"canvas.openExecution"[39m
+              [33mdata-testid[39m=[32m"uw-open-execution"[39m
+              [33mtitle[39m=[32m"打开执行画布（Ctrl／⌘+Alt+E）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m执行画布[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn"[39m
+              [33mdata-action-id[39m=[32m"view.worksets.open"[39m
+              [33mdata-testid[39m=[32m"uw-open-views"[39m
+              [33mtitle[39m=[32m"保存或切换面板布局（Ctrl／⌘+Alt+V）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m视图[0m
+            [36m</button>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"当前位置"[39m
+              [33mclass[39m=[32m"uw-ctxbar"[39m
+              [33mdata-preset[39m=[32m"creative"[39m
+              [33mdata-testid[39m=[32m"uw-ctxbar"[39m
+              [33mrole[39m=[32m"region"[39m
+              [33mstyle[39m=[32m"display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 8px; min-width: 0;"[39m
+            [36m>[39m
+              [36m<strong[39m
+                [33mdata-testid[39m=[32m"uw-ctx-step"[39m
+                [33mstyle[39m=[32m"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch;"[39m
+              [36m>[39m
+                [0m在创作画布选择节点开始[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m创作（默认）[0m
+              [36m</small>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.returnToOrigin"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mtitle[39m=[32m"从任务跳转后才会记录原位置"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m返回原位置[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.compare"[39m
+                [33mtitle[39m=[32m"左右对照创作与执行画布（Ctrl／⌘+Alt+D）"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m对照[0m
+              [36m</button>[39m
+              [36m<details[39m
+                [33mdata-testid[39m=[32m"uw-ctx-details"[39m
+                [33mstyle[39m=[32m"flex-basis: 100%;"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m技术细节[0m
+                [36m</summary>[39m
+                [36m<ul[39m
+                  [33mstyle[39m=[32m"margin: 0px; padding-left: 18px;"[39m
+                [36m/>[39m
+              [36m</details>[39m
+            [36m</div>[39m
+            [36m<small[39m
+              [33mdata-identity[39m=[32m"session"[39m
+              [33mdata-testid[39m=[32m"uw-identity"[39m
+            [36m>[39m
+              [0m仅本次会话：尚未登录协作账号，视图与布局不会保存。[0m
+            [36m</small>[39m
+          [36m</span>[39m
+          [36m<label>[39m
+            [0m布局 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分屏方式"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.switchSplit"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"single"[39m
+              [36m>[39m
+                [0m单栏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-h"[39m
+              [36m>[39m
+                [0m左右分屏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-v"[39m
+              [36m>[39m
+                [0m上下分屏[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<label>[39m
+            [0m重新打开 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"重新打开面板"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.reopenPanel"[39m
+              [33mdisabled[39m=...
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/workspace/integration/int.bootstrap.test.tsx > signed-in session + complete scope ⇒ preview reads the server actor (GET bootstrap once) and the task list connects
+AssertionError: expected undefined to be 'u-server' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"uw-layout"[39m
+        [33mdata-source[39m=[32m"default"[39m
+        [33mdata-testid[39m=[32m"dock-layout"[39m
+        [33mstyle[39m=[32m"--uw-toolbar-h: 0px;"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"uw-skip"[39m
+          [33mdata-testid[39m=[32m"uw-skip-main"[39m
+          [33mhref[39m=[32m"#uw-main"[39m
+        [36m>[39m
+          [0m跳到主区域[0m
+        [36m</a>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"布局"[39m
+          [33mclass[39m=[32m"uw-toolbar"[39m
+          [33mrole[39m=[32m"toolbar"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mdata-testid[39m=[32m"uw-command-host"[39m
+            [33mstyle[39m=[32m"display: inline-flex; align-items: center; gap: 6px;"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wb-command"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"dialog"[39m
+                [33mclass[39m=[32m"ui-button ui-button--ghost  wb-command__trigger"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.3-4.3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m搜索功能[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<small>[39m
+              [0mCtrl／⌘+K[0m
+            [36m</small>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn uw-btn--primary"[39m
+              [33mdata-action-id[39m=[32m"canvas.openExecution"[39m
+              [33mdata-testid[39m=[32m"uw-open-execution"[39m
+              [33mtitle[39m=[32m"打开执行画布（Ctrl／⌘+Alt+E）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m执行画布[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn"[39m
+              [33mdata-action-id[39m=[32m"view.worksets.open"[39m
+              [33mdata-testid[39m=[32m"uw-open-views"[39m
+              [33mtitle[39m=[32m"保存或切换面板布局（Ctrl／⌘+Alt+V）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m视图[0m
+            [36m</button>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"当前位置"[39m
+              [33mclass[39m=[32m"uw-ctxbar"[39m
+              [33mdata-preset[39m=[32m"creative"[39m
+              [33mdata-testid[39m=[32m"uw-ctxbar"[39m
+              [33mrole[39m=[32m"region"[39m
+              [33mstyle[39m=[32m"display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 8px; min-width: 0;"[39m
+            [36m>[39m
+              [36m<strong[39m
+                [33mdata-testid[39m=[32m"uw-ctx-step"[39m
+                [33mstyle[39m=[32m"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch;"[39m
+              [36m>[39m
+                [0m在创作画布选择节点开始[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m创作（默认）[0m
+              [36m</small>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.returnToOrigin"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mtitle[39m=[32m"从任务跳转后才会记录原位置"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m返回原位置[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.compare"[39m
+                [33mtitle[39m=[32m"左右对照创作与执行画布（Ctrl／⌘+Alt+D）"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m对照[0m
+              [36m</button>[39m
+              [36m<details[39m
+                [33mdata-testid[39m=[32m"uw-ctx-details"[39m
+                [33mstyle[39m=[32m"flex-basis: 100%;"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m技术细节[0m
+                [36m</summary>[39m
+                [36m<ul[39m
+                  [33mstyle[39m=[32m"margin: 0px; padding-left: 18px;"[39m
+                [36m/>[39m
+              [36m</details>[39m
+            [36m</div>[39m
+            [36m<small[39m
+              [33mdata-identity[39m=[32m"session"[39m
+              [33mdata-testid[39m=[32m"uw-identity"[39m
+            [36m>[39m
+              [0m仅本次会话：尚未登录协作账号，视图与布局不会保存。[0m
+            [36m</small>[39m
+          [36m</span>[39m
+          [36m<label>[39m
+            [0m布局 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分屏方式"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.switchSplit"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"single"[39m
+              [36m>[39m
+                [0m单栏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-h"[39m
+              [36m>[39m
+                [0m左右分屏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-v"[39m
+              [36m>[39m
+                [0m上下分屏[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<label>[39m
+            [0m重新打开 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"重新打开面板"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.reopenPanel"[39m
+              [33mdisabled[39m=...
+
+- Expected: 
+"u-server"
+
++ Received: 
+undefined
+
+ ❯ src/workspace/integration/int.bootstrap.test.tsx:35:62
+     33|   useStudio.setState({sessionToken: 'tok', scope: SCOPE, actor: undefi…
+     34|   mount();
+     35|   await waitFor(() => expect(useStudio.getState().actor?.id).toBe('u-s…
+       |                                                              ^
+     36|   await waitFor(() => expect(calls.some(c => c.url.includes('/experime…
+     37|   expect(calls.filter(c => c.url.endsWith('/bootstrap'))).toHaveLength…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../wt/frontend/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../wt/frontend/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../wt/frontend/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/workspace/integration/int.bootstrap.test.tsx > bootstrap refused ⇒ stays 仅本次会话, never invents an actor
+AssertionError: expected false to be true // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"uw-layout"[39m
+        [33mdata-source[39m=[32m"default"[39m
+        [33mdata-testid[39m=[32m"dock-layout"[39m
+        [33mstyle[39m=[32m"--uw-toolbar-h: 0px;"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"uw-skip"[39m
+          [33mdata-testid[39m=[32m"uw-skip-main"[39m
+          [33mhref[39m=[32m"#uw-main"[39m
+        [36m>[39m
+          [0m跳到主区域[0m
+        [36m</a>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"布局"[39m
+          [33mclass[39m=[32m"uw-toolbar"[39m
+          [33mrole[39m=[32m"toolbar"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mdata-testid[39m=[32m"uw-command-host"[39m
+            [33mstyle[39m=[32m"display: inline-flex; align-items: center; gap: 6px;"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wb-command"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"dialog"[39m
+                [33mclass[39m=[32m"ui-button ui-button--ghost  wb-command__trigger"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.3-4.3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m搜索功能[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<small>[39m
+              [0mCtrl／⌘+K[0m
+            [36m</small>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn uw-btn--primary"[39m
+              [33mdata-action-id[39m=[32m"canvas.openExecution"[39m
+              [33mdata-testid[39m=[32m"uw-open-execution"[39m
+              [33mtitle[39m=[32m"打开执行画布（Ctrl／⌘+Alt+E）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m执行画布[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"uw-btn"[39m
+              [33mdata-action-id[39m=[32m"view.worksets.open"[39m
+              [33mdata-testid[39m=[32m"uw-open-views"[39m
+              [33mtitle[39m=[32m"保存或切换面板布局（Ctrl／⌘+Alt+V）"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0m视图[0m
+            [36m</button>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"当前位置"[39m
+              [33mclass[39m=[32m"uw-ctxbar"[39m
+              [33mdata-preset[39m=[32m"creative"[39m
+              [33mdata-testid[39m=[32m"uw-ctxbar"[39m
+              [33mrole[39m=[32m"region"[39m
+              [33mstyle[39m=[32m"display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 4px 8px; min-width: 0;"[39m
+            [36m>[39m
+              [36m<strong[39m
+                [33mdata-testid[39m=[32m"uw-ctx-step"[39m
+                [33mstyle[39m=[32m"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch;"[39m
+              [36m>[39m
+                [0m在创作画布选择节点开始[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0m创作（默认）[0m
+              [36m</small>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.returnToOrigin"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mtitle[39m=[32m"从任务跳转后才会记录原位置"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m返回原位置[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"uw-btn"[39m
+                [33mdata-action-id[39m=[32m"nav.compare"[39m
+                [33mtitle[39m=[32m"左右对照创作与执行画布（Ctrl／⌘+Alt+D）"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m对照[0m
+              [36m</button>[39m
+              [36m<details[39m
+                [33mdata-testid[39m=[32m"uw-ctx-details"[39m
+                [33mstyle[39m=[32m"flex-basis: 100%;"[39m
+              [36m>[39m
+                [36m<summary>[39m
+                  [0m技术细节[0m
+                [36m</summary>[39m
+                [36m<ul[39m
+                  [33mstyle[39m=[32m"margin: 0px; padding-left: 18px;"[39m
+                [36m/>[39m
+              [36m</details>[39m
+            [36m</div>[39m
+            [36m<small[39m
+              [33mdata-identity[39m=[32m"session"[39m
+              [33mdata-testid[39m=[32m"uw-identity"[39m
+            [36m>[39m
+              [0m仅本次会话：尚未登录协作账号，视图与布局不会保存。[0m
+            [36m</small>[39m
+          [36m</span>[39m
+          [36m<label>[39m
+            [0m布局 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分屏方式"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.switchSplit"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"single"[39m
+              [36m>[39m
+                [0m单栏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-h"[39m
+              [36m>[39m
+                [0m左右分屏[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"split-v"[39m
+              [36m>[39m
+                [0m上下分屏[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</label>[39m
+          [36m<label>[39m
+            [0m重新打开 [0m
+            [36m<select[39m
+              [33maria-label[39m=[32m"重新打开面板"[39m
+              [33mclass[39m=[32m"uw-select"[39m
+              [33mdata-action-id[39m=[32m"layout.reopenPanel"[39m
+              [33mdisabled[39m=...
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/workspace/integration/int.bootstrap.test.tsx:45:77
+     43|   useStudio.setState({sessionToken: 'tok', scope: SCOPE, actor: undefi…
+     44|   mount();
+     45|   await waitFor(() => expect(calls.some(c => c.url.endsWith('/bootstra…
+       |                                                                             ^
+     46|   await new Promise(r => setTimeout(r, 50));
+     47|   expect(useStudio.getState().actor).toBeUndefined();
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../wt/frontend/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../wt/frontend/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../wt/frontend/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  09:45:49
+   Duration  3.94s (transform 801ms, setup 16ms, collect 1.20s, tests 2.23s, environment 299ms, prepare 44ms)
+

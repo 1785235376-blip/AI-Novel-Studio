@@ -139,9 +139,10 @@ describe('independent studio original owner integration', () => {
   it('clears private selected data when the authoritative download is denied', async () => {
     saved = [asset(2)]; server({ override: url => url.endsWith('/download') ? response({ code: 'FORBIDDEN' }, 403) : undefined });
     mount({ requestedAssetId: 'image-1' });
-    await screen.findByText('当前会话无权访问此项目');
+    // [HERMIA-FE-20261023 M1-flaky] Root cause: overview → asset → download(403) → denied is 4+ async hops; under load it exceeded findBy's default 1000ms. Same assertion, longer wait budget.
+    await screen.findByText('当前会话无权访问此项目', undefined, { timeout: 10000 });
     expect(screen.queryByRole('region', { name: '独立资产来源' })).toBeNull();
     expect(screen.queryByRole('button', { name: '检查资产 reference.png' })).toBeNull();
     expect(URL.createObjectURL).not.toHaveBeenCalled();
-  });
+  }, 30000);
 });

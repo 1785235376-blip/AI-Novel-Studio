@@ -1,3 +1,4 @@
+import { problemText } from './problemText'; // [HERMIA-FE-20261024 M6]
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {
   REVIEW_INBOX_ACTION_LABELS, REVIEW_INBOX_ACTIONS, TASK_CENTER_NOTICES, type ReviewInboxAction,
@@ -106,7 +107,7 @@ export function ReviewInbox({ controller, panelId, labelledBy }: {
         <p>{TASK_CENTER_NOTICES.executionIsNotDelivery}</p>
       </>}
     </div>
-    {!!controller.reviewProblem && <StatusMessage tone="error">{controller.reviewProblem.message} · {controller.reviewProblem.code}</StatusMessage>}
+    {!!controller.reviewProblem && <StatusMessage tone="error">{/* [HERMIA-FE-20261024 M6] human text only; raw code kept as data-error-code for diagnostics */}<span data-error-code={controller.reviewProblem.code}>{problemText(controller.reviewProblem)}</span></StatusMessage>}
     {controller.reviewState === 'LOADING' && <StatusMessage>正在读取当前项目的审核收件箱…</StatusMessage>}
     {controller.reviewState === 'IDLE' && <EmptyState title="尚未读取审核收件箱" detail="打开队列后会读取一次；读取不会批准或执行任何动作。"/>}
     {controller.reviewState === 'EMPTY' && <EmptyState title="当前筛选下没有审核项" detail="原服务返回了空列表且没有不可读领域；这不是权限被拒绝。"/>}

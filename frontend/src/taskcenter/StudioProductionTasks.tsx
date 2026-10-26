@@ -1,14 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError } from '../api';
-import type { MediaOperation, StudioProductionClient } from '../creative/studioProductionClient';
+import { PRODUCTION_QUERY_OPERATIONS, type MediaOperation, type ProductionJobPaging, type ProductionQueryOperation, type StudioProductionClient } from '../creative/studioProductionClient';
 import { MEDIA_OPERATION_LABELS, MEDIA_STATUS_LABELS } from '../creative/useStudioMediaExecution';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { exactStudioProductionTask, studioProductionTaskRows, type StudioProductionTask } from './studioProductionTask';
 import './taskCenter.css';
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
 
 export type StudioProductionTasksProps = {
   projectId: string; branchId: string | null; identity: string;
-  client: Pick<StudioProductionClient, 'list' | 'get'>;
+  client: Pick<StudioProductionClient, 'list' | 'get'> & Partial<Pick<StudioProductionClient, 'listPage'>>;
   active: boolean; denied: boolean; busy: boolean; isBusy?: () => boolean; isCurrent: () => boolean;
   read: <T>(work: () => Promise<T>, signal?: AbortSignal) => Promise<T>;
   /** The host rechecks the lease if its existing dirty-navigation confirmation delays opening. */
@@ -22,7 +23,12 @@ export type StudioProductionTasksProps = {
   onSelectionRetired?: () => void;
   onUnavailable: () => void;
 };
-type View = { generation: number; rows?: StudioProductionTask[]; message?: string; denied?: boolean };
+type View = { generation: number; rows?: StudioProductionTask[]; message?: string; denied?: boolean;
+  /** [HERMIA-FE-CONTRACTS G-AUD-1] 仅在明确选择筛选后存在；loaded=已读取条数，total=本次读取匹配数。 */
+  paging?: ProductionJobPaging | null; loaded?: number };
+type Filter = { owner: '' | 'image' | 'video'; operation: '' | ProductionQueryOperation };
+const NO_FILTER: Filter = { owner: '', operation: '' };
+const PAGE_SIZE = 50;
 type Request = { generation: number; ticket: number; controller: AbortController; kind: 'LIST' | 'GET' | 'TARGET' | 'DETAIL' | 'DISCARD' };
 
 /** Read-only projection of the original Studio production owner. No queue or action owner. */
@@ -68,17 +74,37 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
     show({ generation: request.generation, message, denied });
     if (denied) latest.current.onUnavailable();
   }
-  async function load() {
+  const [filter, setFilter] = useState<Filter>(NO_FILTER);
+  const filterRef = useRef(filter);
+  async function load(nextFilter: Filter = filterRef.current, more = false) {
     if (generation !== scope.current.generation || renderTicket !== ticket.current) return;
+    const origin = latest.current, previous = visibleSnapshot.current;
+    const filtered = !!(nextFilter.owner || nextFilter.operation) && !!origin.client.listPage;
+    const offset = more && previous?.paging?.has_more ? previous.loaded ?? 0 : 0;
+    if (more && (!filtered || !previous?.paging?.has_more)) return;
     const request = begin('LIST'); if (!request) return;
-    const origin = latest.current;
-    show(undefined);
+    filterRef.current = nextFilter; setFilter(nextFilter);
+    if (!more) show(undefined);
     try {
-      const jobs = await origin.read(() => origin.client.list(request.controller.signal), request.controller.signal);
+      if (!filtered) {
+        // 无筛选：与原来完全一致的未分页读取。
+        const jobs = await origin.read(() => origin.client.list(request.controller.signal), request.controller.signal);
+        if (!valid(request)) return;
+        show({ generation: request.generation, rows: studioProductionTaskRows(jobs, origin.projectId, origin.branchId) });
+        return;
+      }
+      const page = await origin.read(() => origin.client.listPage!({ ...(nextFilter.owner ? { owner: nextFilter.owner } : {}),
+        ...(nextFilter.operation ? { operation_id: nextFilter.operation } : {}), limit: PAGE_SIZE, offset }, request.controller.signal), request.controller.signal);
       if (!valid(request)) return;
-      const rows = studioProductionTaskRows(jobs, origin.projectId, origin.branchId);
-      show({ generation: request.generation, rows });
-    } catch (reason) { failure(request, reason); }
+      const fresh = studioProductionTaskRows(page.items, origin.projectId, origin.branchId);
+      const kept = more ? previous?.rows ?? [] : [];
+      const seen = new Set(kept.map(row => `${row.owner}:${row.id}`));
+      const rows = [...kept, ...fresh.filter(row => !seen.has(`${row.owner}:${row.id}`))];
+      show({ generation: request.generation, rows, paging: page.paging, loaded: offset + page.items.length });
+    } catch (reason) {
+      if (more && valid(request)) { show({ ...previous!, message: i18nT('fc.prod.moreFailed') }); return; }
+      failure(request, reason);
+    }
     finally { finish(request); }
   }
   const hasCanvasTarget = (job: StudioProductionTask) => job.owner === 'image' && job.operation_id === 'm5.image.t2i'
@@ -160,6 +186,18 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
   return <Panel title="Studio 图片与视频任务" aria-label="Studio 图片与视频任务" className="task-center"
     actions={<Button disabled={blocked || !!waiting} loading={waiting?.kind === 'LIST'} onClick={() => void load()}>重新读取 Studio 制作任务</Button>}>
     <p>读取当前项目的原图片、视频制作回执。打开会先核对所选版本，再进入原制作面板；不会执行任务、审核候选或替换制作输入。</p>
+    {props.client.listPage && <div className="task-center-filters" data-testid="prod-filters">
+      <label>{i18nT('fc.prod.ownerLabel')}<select aria-label={i18nT('fc.prod.ownerLabel')} value={filter.owner} disabled={blocked || !!waiting}
+        onChange={event => void load({ owner: event.target.value as Filter['owner'], operation: '' })}>
+        <option value="">{i18nT('fc.prod.ownerAll')}</option><option value="image">{i18nT('fc.prod.ownerImage')}</option><option value="video">{i18nT('fc.prod.ownerVideo')}</option>
+      </select></label>
+      <label>{i18nT('fc.prod.opLabel')}<select aria-label={i18nT('fc.prod.opLabel')} value={filter.operation} disabled={blocked || !!waiting}
+        onChange={event => void load({ ...filter, operation: event.target.value as Filter['operation'] })}>
+        <option value="">{i18nT('fc.prod.opAll')}</option>
+        {PRODUCTION_QUERY_OPERATIONS.filter(op => filter.owner === 'image' ? op.startsWith('m5.') : filter.owner === 'video' ? op.startsWith('m7.') : op.startsWith('m5.') || op.startsWith('m7.'))
+          .map(op => <option key={op} value={op}>{MEDIA_OPERATION_LABELS[op as MediaOperation] ?? op}</option>)}
+      </select></label>
+    </div>}
     {waiting && <StatusMessage>{waiting.kind === 'LIST' ? '正在读取原 Studio 制作任务…' : '正在核对所选原制作回执…'}</StatusMessage>}
     {visible?.message && <StatusMessage tone={visible.denied ? 'warning' : 'error'}>{visible.message}</StatusMessage>}
     {(props.denied || !current) && <StatusMessage tone="warning">当前项目或身份不可用，先前制作回执已隐藏。</StatusMessage>}
@@ -182,5 +220,12 @@ export function StudioProductionTasksPanel(props: StudioProductionTasksProps) {
           onClick={() => prepareImageNodeDiscard(job)} aria-label={`放弃此排队任务的本地采用 ${job.id} v${job.version}`}>放弃此排队任务的本地采用</Button>}
       </article>
     </li>)}</ul>}
+    {visible?.paging && <div className="task-center-paging" data-testid="prod-paging">
+      <p>{i18nT('fc.prod.loaded', { loaded: visible.loaded ?? 0, total: visible.paging.total })}</p>
+      {visible.paging.has_more
+        ? <Button disabled={blocked || !!waiting} onClick={() => void load(filterRef.current, true)}>{i18nT('fc.prod.loadMore')}</Button>
+        : <p className="novel-help">{i18nT('fc.prod.noNext')}</p>}
+    </div>}
+    {visible && visible.paging === null && <p className="novel-help" data-testid="prod-paging-fallback">{i18nT('fc.prod.noPaging')}</p>}
   </Panel>;
 }

@@ -1,0 +1,65 @@
+{
+ "reset_default": {
+  "disabled": true,
+  "reason": "已经是默认布局"
+ },
+ "outline_dock": "right",
+ "reset_after_change": {
+  "disabled": false
+ },
+ "indicator": {
+  "x": 0,
+  "y": 63,
+  "width": 273,
+  "height": 705
+ },
+ "root": {
+  "x": 0,
+  "y": 0,
+  "width": 1366,
+  "height": 768
+ },
+ "indicator_class": "uw-drop-indicator uw-drop-indicator--zone",
+ "indicator_bg": "color(srgb 0.301961 0.721569 0.768627 / 0.14)",
+ "after_esc": {
+  "indicator": false,
+  "ghosts": 0
+ },
+ "inspector_dock_after_esc_up": "right",
+ "palette_has": [
+  [
+   "恢复默认布局",
+   true
+  ],
+  [
+   "分屏",
+   true
+  ],
+  [
+   "重新打开",
+   true
+  ],
+  [
+   "layout.",
+   true
+  ]
+ ],
+ "palette_items": [
+  "搜索功能",
+  "恢复默认布局layout.reset",
+  "重新打开面板layout.reopenPanel",
+  "折叠／展开当前面板layout.toggleCollapse",
+  "切换分屏方式layout.switchSplit"
+ ],
+ "dialog": [
+  "只恢复面板位置和大小，不会删除作品、草稿或任务。\n\n取消\n恢复默认"
+ ],
+ "dialog_buttons": [
+  "取消",
+  "恢复默认"
+ ],
+ "after_palette_reset": {
+  "outline_dock": "left",
+  "reset_disabled": true
+ }
+}

@@ -31,7 +31,11 @@ export type AdminStoryline={id:string;name:string;description?:string};
 export type AdminBranch={id:string;name:string;storyline_id?:string};
 export type AdminMember={user_id:string;display_name:string;membership_id:string;status:string;roles:any[];permissions:any[]};
 export type PermissionExplanation={principal_id:string;permission:string;domain:string;allowed:boolean;sources:any[]};
-export type ApiProblem={status:number;code:string;message:string;details?:any;request_id?:string};
+export type ApiProblem={status:number;code:string;message:string;details?:any;request_id?:string;
+ /** [HERMIA-FE-20261025 P1-ERR] 'server' = structured message field; 'fallback' = friendly copy (raw body/string detail withheld). */
+ message_source?:'server'|'fallback';
+ /** [HERMIA-FE-20261025 P1-ERR] raw string detail / non-JSON body (truncated); only surfaced as pro-mode technical details. */
+ raw_text?:string};
 export type TextModel={provider_id:string;model_id:string;display_name:string;available:boolean};
 export type ModelCenterModel={id:string;display_name:string;capabilities:string[];runtime_type:string;status:string;verified:boolean;historically_validated:boolean;hardware_profile_details:{id:string;gpu_name:string;profile_kind:string;benchmark:Record<string,unknown>}[]};
 export type ModelCenterRuntime={id:string;runtime_type:string;base_url:string;bind_address?:string;port?:number|null;health_endpoint?:string;management?:'MANAGED'|'EXTERNAL';context_size?:number|null;gpu_layers?:number|null;status:string;instance?:{state:string;process_id?:number|null;process_alive?:boolean;http_reachable?:boolean;loaded_models?:string[];health?:{model_loaded?:boolean;admission?:string;inference?:string;verification?:string};latency_ms?:number|null;safe_error_code?:string|null}|null;discovery:{path_exists:boolean;executable_exists:boolean;version?:string|null;security_warning?:string|null}};
@@ -63,6 +67,7 @@ export type AgentContextPreview={context_contract_version?:string;agent_id?:stri
 
 import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from './localHostSession';
 import {isPackagedDesktopHost} from './packagedHost';
+import {apiErrorText,getApiErrorShellMode} from './apiErrorMode'; // [HERMIA-FE-20261025 P1-ERR]
 let collaboration:CollaborationContext={sessionToken:''};
 let collaborationEpoch=0;
 const collaborationListeners=new Set<()=>void>();
@@ -88,7 +93,85 @@ export class ApiError extends Error{constructor(public problem:ApiProblem){super
  * ``ApiError.problem`` for diagnostics and tests.
  */
 const SAFE_ERROR_DETAIL_KEYS=new Set(['status','actual_version','expected_version','field','format','operation','retry_of','limit','resource','completed','total']);
-export function apiErrorView(error:unknown,fallback='操作失败'):{message:string;code?:string;requestId?:string;details?:string}{
+// [HERMIA-FE-20261025 P1-ERR] 白名单：只有结构化 message 字段可原样展示；字符串 detail / 非 JSON 正文一律换成按状态码的友好文案，
+// 原文仅在专业模式下作为 technical 返回（截断 500 字）。
+const FRIENDLY_HTTP=new Set([400,401,403,404,408,409,413,422,429,500,502,503,504]);
+const RAW_TEXT_LIMIT=500;
+export {setApiErrorShellMode} from './apiErrorMode';
+export function friendlyHttpMessage(status:number,fallback?:string):string|undefined{
+  return (FRIENDLY_HTTP.has(status)?apiErrorText(`err.http.${status}`)||undefined:undefined)??fallback;
+}
+// [HERMIA-FE-20261025 VERA-097 MF1] 后端 unified_http_error（app/main.py:99）把字符串 detail 复制进 message 并带 code:"HTTP_<n>"：
+// 这种回显不是结构化文案，按原文处理（友好文案 + raw_text）。另外凡是像服务端内部信息（路径、Traceback、XxxError(…)）的文本一律视为原文。
+// [HERMIA-FE-20261025 VERA-F70 MF-2] 每条规则独立（测试逐条验证“只有这一条能拦住”）；任何一条命中即视为服务端原文。
+export const UNSAFE_SERVER_RULES:ReadonlyArray<readonly [string,RegExp]>=[
+ ['traceback',/Traceback|File "/i],
+ ['winDrive',/(?:^|[^\w])[A-Za-z]:[\\/]/],
+ ['unc',/\\\\[\w.$-]+\\/],
+ ['absPath',/(?:^|[\s'"(=:,])\/[\w.~-]+\//],
+ // [HERMIA-FE-20261025 VERA-620963bf P2] 去误杀：relPath 只认小写路径段+字母扩展名（不拦「1/2.5」「JSON/YAML.zip」），
+ // excName 区分大小写（不拦 Terror），lineNo 只认 Python/JSON 的「, line N」「line N column M」（不拦 Each line 2）。
+ ['relPath',/(?:^|[\s'"(=:,])(?:\.{1,2}|~)\/|[a-z0-9_.-]*[a-z_][a-z0-9_.-]*\/[\w./-]*\.[a-z][a-z0-9]{0,5}\b/],
+ ['excName',/\b[A-Z]\w*(?:Error|Exception)\b/],
+ ['lineNo',/,\s*line \d+\b|\bline \d+ column \d+/i],
+ ['errno',/\bErrno\b/i],
+ ['sql',/\bconstraint\b|\b(?:SELECT|INSERT|UPDATE|DELETE)\b[\s\S]*\b(?:FROM|INTO|SET|WHERE)\b|psycopg|sqlalchemy|sqlite3?\./i],
+ ['pyRepr',/\bat 0x[0-9a-f]+|invalid literal for/i],
+ ['html',/<html|<!doctype/i],
+];
+// 结构化 message 的长度上限：超出即按原文处理（友好文案 + 专业模式 technical）。
+export const SERVER_MESSAGE_LIMIT=200;
+// 这些业务 code 的 message 在后端就是 str(exc)：默认按原文处理，界面用按 code 的友好文案。
+export const RAW_MESSAGE_CODES:ReadonlySet<string>=new Set(['INVALID_PROVIDER_CONFIG','ASSET_INTEGRITY_FAILED','IMAGE_EDIT_INVALID','INVALID_WORKER_CONFIG','EXPERIMENTAL_INVALID']);
+// [HERMIA-FE-20261025 VERA-620963bf MF] 白名单（option b）：仅这些 code 在后端 app/ 中只带字面（作者手写）message，
+// 普通模式才可能原样展示；其余 code / 动态 exc.code / HTTP_n / 未知一律友好文案。由 apiErrorWhitelist.test.ts 扫描 app/ 契约校验。
+// 同一行出现 str(exc)/f"" 的 code（AUDIO_PARAMETER_UNSUPPORTED、IMAGE_PROVIDER_REQUEST_FAILED、NOT_FOUND、TEXT_PROVIDER_NOT_CONFIGURED）保守排除。
+export const LITERAL_MESSAGE_CODES:ReadonlySet<string>=new Set(['AUDIO_PARAMETER_UNSUPPORTED','IMAGE_PROVIDER_REQUEST_FAILED','AUDIOBOOK_CONCATENATION_UNAVAILABLE','AUDIOBOOK_SEGMENT_LIMIT','AUDIOBOOK_SUBTITLES_UNAVAILABLE','AUDIO_GENERATION_FAILED','AUDIO_IMPORT_FAILED','CANON_RECOVERY_REQUIRED','CHAPTER_ARCHIVE_REQUIRED','CHAPTER_REQUIRED','CLOUD_PROMPT_REVIEW_REQUIRED','CREATION_RECORD_LOCAL_ONLY','EMOTION_DISCONTINUITY','EXPORT_CANCELLED','EXPORT_NOT_CANCELLABLE','EXPORT_NOT_READY','EXPORT_NOT_RETRYABLE','EXPORT_RESULT_INVALID','FORK_STALE_OR_CONFLICT','IMAGE_EDIT_FAILED','IMAGE_EDIT_PROVIDER_UNSUPPORTED','IMAGE_IMPORT_FAILED','IMAGE_PROVIDER_UNAVAILABLE','IMAGE_REFERENCE_URI_UNSAFE','IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED','IMPORT_SOURCE_CHANGED','IMPORT_SOURCE_RESTRICTED','IMPORT_SOURCE_REVIEW_REQUIRED','INVALID_EXPECTED_VERSION','INVALID_VIDEO_PROVIDER_CONFIG','KNOWLEDGE_REVIEW_SOURCE_EMPTY','LEGACY_MEDIA_SCOPE_UNAVAILABLE','LOCATION_JUMP','NODE_EXECUTION_FAILED','PLANNING_TARGET_CONFLICT','PLANNING_VERSION_CONFLICT','PLUGIN_HOST_ADMIN_REQUIRED','PORTABLE_CHAPTER_VERSION_CONFLICT','PRECONDITION_REQUIRED','PREFERENCE_SHARE_CHANGED','PROMPT_ADOPTION_WRITE_TIME_UNVERIFIED','REALTIME_VERSION_OR_SOURCE_CONFLICT','SPEECH_PROVIDER_UNAVAILABLE','SPEECH_SYNTHESIS_FAILED','SYNC_STALE_OR_CONFLICT','TIME_JUMP_CUT','UNREVIEWED_CHAT_CONTEXT','UNSUPPORTED_PROVIDER','VISION_ANALYZE_FAILED','WORKFLOW_EXECUTION_PROVENANCE_REQUIRED','WORKFLOW_NODE_FAILED','WORKFLOW_PROJECT_CHANGED']);
+export function isUnsafeServerText(text:string):boolean{return text.length>SERVER_MESSAGE_LIMIT||UNSAFE_SERVER_RULES.some(([,re])=>re.test(text))}
+// [HERMIA-FE-20261025 VERA-fbe029c4 §2] RuntimeErrorCode（app/model_runtime 的 Enum）成员永不进 LITERAL_MESSAGE_CODES：
+// jobs.py:770 以 str(exc) 作 message（INVALID_REQUEST 等），memory_agent 以内部 token 作 TEXT_PROVIDER_NOT_CONFIGURED 的 message。
+// 由 apiErrorWhitelist.test.ts contractViolations() 守护。TEXT_PROVIDER_NOT_CONFIGURED 只获得专属友好文案（不显示服务端原文）。
+const FRIENDLY_CODE_COPY:ReadonlySet<string>=new Set([...RAW_MESSAGE_CODES,'TEXT_PROVIDER_NOT_CONFIGURED']);
+export function friendlyCodeMessage(code:unknown):string|undefined{return typeof code==='string'&&FRIENDLY_CODE_COPY.has(code)?apiErrorText(`err.code.${code}`)||undefined:undefined}
+// [HERMIA-FE-20261025 VERA-e471dc76 P3-1] 白名单内后端英文字面文案（由 scripts/scan_error_codes.py 提取；测试校验与 app/ 一致）。
+export const SERVER_LITERAL_EN:Readonly<Record<string,string>>={CANON_RECOVERY_REQUIRED:"Commit interrupted; refresh and recover the existing receipt.",EXPORT_CANCELLED:"export cancelled",EXPORT_NOT_CANCELLABLE:"export is no longer cancellable",EXPORT_NOT_READY:"export is not ready",EXPORT_NOT_RETRYABLE:"export is not retryable",EXPORT_RESULT_INVALID:"export result is unavailable",FORK_STALE_OR_CONFLICT:"Refresh the authorized comparison or inspect recovery; no automatic retry.",INVALID_EXPECTED_VERSION:"expected_version must be a non-negative integer",INVALID_VIDEO_PROVIDER_CONFIG:"invalid video provider id",NODE_EXECUTION_FAILED:"The node did not complete; explicitly retry after review.",PLUGIN_HOST_ADMIN_REQUIRED:"Package mutations require a local host management session.",PORTABLE_CHAPTER_VERSION_CONFLICT:"The original chapter changed; review the preserved recovery record.",PRECONDITION_REQUIRED:"Read the current screenplay edit_version and include expected_version before editing or approving.",REALTIME_VERSION_OR_SOURCE_CONFLICT:"Refresh the scoped document and inspect preserved operations.",SYNC_STALE_OR_CONFLICT:"Refresh and review current candidates; uncertain writes must be reconciled.",WORKFLOW_EXECUTION_PROVENANCE_REQUIRED:"This saved run has no verified project identity. Create a new workflow run and review its agent step.",WORKFLOW_PROJECT_CHANGED:"The original project identity is no longer current. Create a new workflow run for the current project."};
+const structuredMessage=(raw:any):string|undefined=>{
+  const pick=(v:any)=>typeof v==='string'&&v.trim()&&!isUnsafeServerText(v)?v:undefined;
+  if(!raw||typeof raw!=='object')return undefined;
+  const d=raw.detail;
+  const top0=typeof raw.code==='string'&&!/^HTTP_\d+$/.test(raw.code)?raw.code:undefined;
+  const code=top0??(d&&typeof d==='object'&&typeof d.code==='string'?d.code:undefined);
+  if(typeof code!=='string'||!LITERAL_MESSAGE_CODES.has(code))return undefined; // 白名单外一律不信任
+  // [HERMIA-FE-20261025 VERA-e471dc76 P2-2] 原 `if(RAW_MESSAGE_CODES.has(code))return undefined;` 为死代码（两名单不相交），已删除；不相交由 apiErrorWhitelist.test.ts C1 断言守护。
+  const httpCode=typeof raw.code==='string'&&/^HTTP_\d+$/.test(raw.code);
+  // 字符串 detail 的回显，或无结构化 detail 的 HTTP_<n> 信封：不信任 raw.message
+  if(typeof d==='string'&&(raw.message===d||httpCode))return undefined;
+  if(httpCode&&(d==null||typeof d!=='object'))return undefined;
+  const dict=d&&typeof d==='object'&&!Array.isArray(d)?d:undefined;
+  // [HERMIA-FE-20261025 VERA-F70 偏离裁定] dict 内 detail 字段被回显成 message（str(exc)）时同样按原文；只认显式的 d.message。
+  // [HERMIA-FE-20261025 VERA-620963bf P3-E2] 原条件里的 `dict.message!==raw.message` 是等价变异：相等时 top 被跳过后仍由 pick(dict.message) 取回同一文本，
+  // 输出不可区分。故删除该冗余子句（E2 变异即与实现相同），行为由 apiErrorWhitelist.test.ts 的 E2 用例锁定。
+  const echo=!!dict&&typeof dict.detail==='string'&&raw.message===dict.detail;
+  const top=raw.message===raw.code||echo?undefined:pick(raw.message);
+  const out=top??(dict?pick(dict.message):undefined)??(raw.error&&typeof raw.error==='object'?pick(raw.error.message):undefined);
+  // [HERMIA-FE-20261025 VERA-e471dc76 P2-2 N8] 任何位置的 message 等于 code（后端回落）都不是作者文案，不显示裸 code。
+  if(out===undefined||out===code||out.trim()===code)return undefined;
+  // [HERMIA-FE-20261025 VERA-e471dc76 P3-1] 与后端英文字面完全一致时按当前语言本地化（zh 显示中文；en 键值即原文）。
+  return SERVER_LITERAL_EN[code]===out?(apiErrorText(`err.srv.${code}`)||out):out;
+};
+const rawTextOfObj=(raw:any):string|undefined=>{
+  if(!raw||typeof raw!=='object')return undefined;
+  const d=raw.detail;
+  if(typeof d==='string')return d;
+  if(typeof raw.message==='string'&&raw.message)return raw.message;
+  if(d&&typeof d==='object'&&!Array.isArray(d)){const m=d.message??d.detail;if(typeof m==='string')return m;}
+  return undefined;
+};
+const rawTextOf=(raw:any,body:string):string|undefined=>{
+  const t=rawTextOfObj(raw)??(typeof raw==='string'?raw:body); /* [HERMIA-FE-20261025 VERA-097 MF1] */
+  return t?t.slice(0,RAW_TEXT_LIMIT):undefined;
+};
+export function apiErrorView(error:unknown,fallback='操作失败'):{message:string;code?:string;requestId?:string;details?:string;technical?:string}{
   if(!(error instanceof ApiError)) return {message:error instanceof Error&&error.message?error.message:fallback};
   const problem=error.problem;
   let details:string|undefined;
@@ -96,7 +179,16 @@ export function apiErrorView(error:unknown,fallback='操作失败'):{message:str
     const safe=Object.fromEntries(Object.entries(problem.details).filter(([key,value])=>SAFE_ERROR_DETAIL_KEYS.has(key)&&(typeof value==='string'||typeof value==='number'||typeof value==='boolean')));
     if(Object.keys(safe).length) details=JSON.stringify(safe);
   }
-  return {message:problem.message||fallback,code:problem.code,requestId:problem.request_id,details};
+  const message=problem.message_source==='fallback'?(friendlyCodeMessage(problem.code)??friendlyHttpMessage(problem.status,fallback)??fallback):(problem.message||fallback);
+  const technical=getApiErrorShellMode()==='pro'&&problem.raw_text?problem.raw_text.slice(0,RAW_TEXT_LIMIT):undefined;
+  return {message,code:problem.code,requestId:problem.request_id,details,...(technical?{technical}:{})};
+}
+// [HERMIA-FE-20261025 VERA-F70 MF-1] call() 与 downloadCall() 共用的错误构造：结构化 message 才原样展示，其余友好文案 + raw_text。
+async function apiErrorFromResponse(r:Response):Promise<ApiError>{
+ const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}
+ const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');
+ const sm=structuredMessage(raw);/* [HERMIA-FE-20261025 P1-ERR] no raw-body / string-detail fallback */
+ return new ApiError({status:r.status,code,message:sm??friendlyCodeMessage(code)??friendlyHttpMessage(r.status,`HTTP ${r.status}`)!,message_source:sm?'server':'fallback',raw_text:sm?undefined:rawTextOf(raw,body),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)});
 }
 // [HERMIA-FE-20261022 REBUILD-SHELL] exported for rebuild/rebuildApi.ts (same headers/errors as api.*)
 export async function call<T>(url:string,init?:RequestInit,contextOverride?:CollaborationContext):Promise<T>{
@@ -108,7 +200,7 @@ export async function call<T>(url:string,init?:RequestInit,contextOverride?:Coll
  const token=requestToken(context,url);if(token)headers['X-Session-Token']=token;
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  const r=await fetch(url,{...init,headers});
- if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??raw?.error?.message??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
+ if(!r.ok)throw await apiErrorFromResponse(r);
  return r.status===204?undefined as T:r.json();
 }
 export type ScopedReadOptions=Pick<RequestInit,'signal'|'cache'|'redirect'|'credentials'|'referrerPolicy'>;
@@ -126,12 +218,14 @@ async function downloadCall(url:string,extraHeaders:Record<string,string>={},con
   if(!r.ok){cancelResponseBody(r);throw new ApiError({status:r.status,code:r.status===403?'FORBIDDEN':'ASSET_PREVIEW_UNAVAILABLE',message:'资产预览读取失败。'})}
   return readBoundedResponseBlob(r,{maxBytes});
  }
- if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
+ if(!r.ok)throw await apiErrorFromResponse(r); // [HERMIA-FE-20261025 VERA-F70 MF-1] 下载失败与 call() 同一套净化
  return r.blob();
 }
 const query=(path:string,params:Record<string,string|undefined>)=>{const s=new URLSearchParams();Object.entries(params).forEach(([k,v])=>v!==undefined&&s.set(k,v));return `${path}?${s}`};
 const scoped=(scope:Scope,suffix:string)=>`/api/collaboration/workspaces/${encodeURIComponent(scope.workspaceId)}/projects/${encodeURIComponent(scope.projectId)}/storylines/${encodeURIComponent(scope.storylineId)}/branches/${encodeURIComponent(scope.branchId)}/${suffix}`;
 const items=async<T>(promise:Promise<{items:T[]}>):Promise<T[]>=>(await promise).items;
+// [HERMIA-FE-20261025 DUI P0-3] Chapter lists: accept T[] or {items:T[]}; anything else rejects with human text instead of resolving undefined.
+const chapterList=async(promise:Promise<unknown>):Promise<Chapter[]>=>{const d:any=await promise;if(Array.isArray(d))return d;if(d&&Array.isArray(d.items))return d.items;throw new Error('章节列表格式无法识别，请刷新后重试');};
 export const aiAnalyzeImportReview=(novelId:string,reviewId:string,providerId?:string,modelId?:string,allowCloudExcerpt=false,context?:CollaborationContext)=>call<{review:ImportReview;analysis:NonNullable<ImportReview['analysis']>}>(`/api/novels/${encodeURIComponent(novelId)}/import/knowledge-base/review/${encodeURIComponent(reviewId)}/ai-analyze`,{method:'POST',body:JSON.stringify({provider_id:providerId,model_id:modelId,allow_cloud_excerpt:allowCloudExcerpt})},context);
 export const createNovelKnowledgeReview=(novelId:string,context?:CollaborationContext)=>call<ImportReview>(`/api/novels/${encodeURIComponent(novelId)}/knowledge-base/review`,{method:'POST'},context);
 export const createChapterKnowledgeReview=(novelId:string,chapterId:string,context?:CollaborationContext)=>call<ImportReview>(`/api/novels/${encodeURIComponent(novelId)}/chapters/${encodeURIComponent(chapterId)}/knowledge-base/review`,{method:'POST'},context);
@@ -183,7 +277,7 @@ export const api={
  adminGrantPermission:(workspaceId:string,body:any)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions`,{method:'POST',body:JSON.stringify(body)}),
  adminRevokePermission:(workspaceId:string,id:string)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions/${encodeURIComponent(id)}`,{method:'DELETE'}),
  adminExplain:(workspaceId:string,principalId:string,permission:string,domain:string,scope:Scope)=>call<PermissionExplanation>(query(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/explain`,{principal_id:principalId,permission,domain,kind:'BRANCH',project_id:scope.projectId,storyline_id:scope.storylineId,branch_id:scope.branchId})),
- bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope,context?:CollaborationContext,options?:ScopedReadOptions)=>call<PermissionSummary>(scoped(scope,'permissions'),options,context),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>items(call<{items:Chapter[]}>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
+ bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope,context?:CollaborationContext,options?:ScopedReadOptions)=>call<PermissionSummary>(scoped(scope,'permissions'),options,context),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>chapterList(call<unknown>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
  novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string;world_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),
  novelOverview:(id:string)=>call<{novel:any;counts:Record<string,number>;content:{word_count:number;has_chapters:boolean;latest_chapter:any};writing_goal:any;pending_items:{kind:string;label:string;count?:number}[];recent_activity:any[];readiness:any;storage:string;placeholder:boolean}>(`/api/novels/${encodeURIComponent(id)}/overview`),
  listResearch:(novelId:string,filters?:{status?:string;source_type?:string;tag?:string})=>call<{items:any[];total:number;storage:string;external_fetch:boolean}>(query(`/api/novels/${encodeURIComponent(novelId)}/research`,filters||{})),
@@ -207,7 +301,7 @@ createVisualReference:(novelId:string,body:{entity_type:string;entity_id:string;
 approveVisualReference:(novelId:string,memoryId:string,expectedVersion:number)=>call<VisualReference>(`/api/novels/${encodeURIComponent(novelId)}/visual-references/${encodeURIComponent(memoryId)}/approve`,{method:'POST',body:JSON.stringify({expected_version:expectedVersion})}),
 searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch>(`/api/novels/${encodeURIComponent(novelId)}/visual-reference-search?query=${encodeURIComponent(query)}`),
  deleteAsset:(assetId:string,novelId?:string)=>call<{id:string;deleted:boolean}>(query(`/api/assets/${encodeURIComponent(assetId)}`,{novel_id:novelId||collaboration.scope?.projectId}),{method:'DELETE'}),
- chapters:(id:string)=>call<Chapter[]>(`/api/novels/${id}/chapters`),archivedChapters:(id:string)=>call<Chapter[]>(`/api/novels/${id}/chapters/archived`),archiveChapter:(id:string,version:number)=>call<Chapter>(`/api/chapters/${id}/archive?expected_version=${version}`,{method:'POST'}),restoreArchivedChapter:(id:string,version:number)=>call<Chapter>(`/api/chapters/${id}/restore-archive?expected_version=${version}`,{method:'POST'}),chapter:(id:string,context?:CollaborationContext)=>call<Chapter>(`/api/chapters/${id}`,undefined,context),createChapter:(id:string,title='')=>call<Chapter>(`/api/novels/${id}/chapters`,{method:'POST',body:JSON.stringify({title})}),
+ chapters:(id:string)=>chapterList(call<unknown>(`/api/novels/${id}/chapters`)),archivedChapters:(id:string)=>call<Chapter[]>(`/api/novels/${id}/chapters/archived`),archiveChapter:(id:string,version:number)=>call<Chapter>(`/api/chapters/${id}/archive?expected_version=${version}`,{method:'POST'}),restoreArchivedChapter:(id:string,version:number)=>call<Chapter>(`/api/chapters/${id}/restore-archive?expected_version=${version}`,{method:'POST'}),chapter:(id:string,context?:CollaborationContext)=>call<Chapter>(`/api/chapters/${id}`,undefined,context),createChapter:(id:string,title='')=>call<Chapter>(`/api/novels/${id}/chapters`,{method:'POST',body:JSON.stringify({title})}),
  saveChapter:(id:string,content:string,version:number,document?:any,source='USER',context?:CollaborationContext)=>call<Chapter>(`/api/chapters/${id}`,{method:'PUT',body:JSON.stringify({content,document,version,source})},context),history:async(scope:Scope,id:string,context?:CollaborationContext)=>(await call<{items:VersionEntry[];current_version:number}>(scoped(scope,`chapters/${encodeURIComponent(id)}/revisions`),undefined,context)).items,revisionDetail:(scope:Scope,id:string,version:number,context?:CollaborationContext)=>call<VersionEntry>(scoped(scope,`chapters/${encodeURIComponent(id)}/revisions/${version}`),undefined,context),legacyHistory:(id:string,context?:CollaborationContext)=>call<VersionEntry[]>(`/api/chapters/${encodeURIComponent(id)}/history`,undefined,context),restore:(id:string,v:number,expected:number,context?:CollaborationContext)=>call<Chapter>(`/api/chapters/${id}/history/${v}/restore?expected_version=${expected}`,{method:'POST'},context),deleteChapter:(id:string)=>call<void>(`/api/chapters/${id}`,{method:'DELETE'}),duplicateChapter:(id:string)=>call<Chapter>(`/api/chapters/${id}/duplicate`,{method:'POST'}),renameChapter:(id:string,title:string,version:number)=>call<Chapter>(`/api/chapters/${id}/rename`,{method:'POST',body:JSON.stringify({title,version})}),moveChapter:(id:string,direction:'up'|'down')=>call<any>(`/api/chapters/${id}/move`,{method:'POST',body:JSON.stringify({direction})}),
  generate:(operation:string,body:object,context?:CollaborationContext)=>call<{job_id:string;events_url:string;base_chapter_version?:number}>(`/api/generate/${operation}`,{method:'POST',body:JSON.stringify(body)},context),
  job:(id:string,context?:CollaborationContext)=>call<any>(`/api/generation/${encodeURIComponent(id)}`,undefined,context),

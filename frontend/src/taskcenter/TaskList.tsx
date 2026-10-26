@@ -1,6 +1,7 @@
 import { TaskCostReceiptView } from './TaskCostReceipt';
 import { taskRecoveryGuidance } from './taskCostReceiptHelpers';
 import { useState } from 'react';
+import { problemText } from './problemText'; // [HERMIA-FE-20261024 M6]
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import {
   TASK_ACTION_LABELS, TASK_CANCEL_LIMIT_LABELS, TASK_CENTER_NOTICES, TASK_ROUTE_STATE_LABELS,
@@ -8,6 +9,7 @@ import {
 } from './taskCenterTypes';
 import type { TaskCenterController } from './useTaskCenter';
 import { TaskStatusSummary } from './TaskStatusSummary';
+import { t as i18nT } from '../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
 
 function progressText(task: TaskCenterTask) {
   // 只有原 owner 同时给出 completed+total 时才显示量化进度；否则如实说"进度未知"。
@@ -125,7 +127,7 @@ export function TaskList({ controller, panelId, labelledBy }: {
     <p>任务 ID、标签与阶段由原任务服务读取；模块与状态是本地过滤（端点没有这些参数）。取消只请求原任务服务，已完成的结果不会被撤销。</p>
     <TaskStatusSummary controller={controller}/>
     {controller.tasksState === 'LOADING' && <StatusMessage>正在读取当前项目的原任务投影…</StatusMessage>}
-    {controller.tasksProblem && <StatusMessage tone="error">{controller.tasksProblem.message} · {controller.tasksProblem.code}</StatusMessage>}
+    {controller.tasksProblem && <StatusMessage tone="error">{/* [HERMIA-FE-20261024 M6] human text only; raw code kept as data-error-code for diagnostics */}<span data-error-code={controller.tasksProblem.code}>{problemText(controller.tasksProblem)}</span></StatusMessage>}
     {controller.tasksState === 'IDLE' && <EmptyState title="尚未读取任务队列" detail="打开队列后会读取一次；读取不会启动模型或任务。"/>}
     {controller.tasksState === 'EMPTY' && <EmptyState title="当前筛选下没有任务记录" detail="原服务返回了空队列且没有不可读来源；这不是权限被拒绝。"/>}
     {controller.tasksState === 'DENIED' && !controller.tasksProblem && <>
@@ -146,6 +148,19 @@ export function TaskList({ controller, panelId, labelledBy }: {
         ? <EmptyState title="当前模块/状态过滤下没有记录" detail="原服务的返回里有任务，但都被本地过滤条件排除了。清除筛选可以看到全部。"/>
         : <ul className="task-center-list">{controller.visibleTasks.map(task =>
           <TaskCard key={controller.taskKey(task)} controller={controller} task={task}/>)}</ul>}
+      {controller.paging && <TaskPaging controller={controller}/>}
     </>}
   </section>;
+}
+
+/** [HERMIA-FE-CONTRACTS G-TC-1] 分页说明：只说"已加载/本次观察到"，从不宣称总数或已加载完。 */
+function TaskPaging({ controller }: { controller: TaskCenterController }) {
+  const paging = controller.paging!;
+  return <div className="task-center-paging" data-testid="tc-paging" data-completeness={paging.page.completeness}>
+    <p>{i18nT('fc.tc.loaded', { loaded: paging.loaded, total: paging.page.observed_total })}</p>
+    {paging.page.has_more
+      ? <Button disabled={!controller.canRead || paging.loading} loading={paging.loading} onClick={() => void controller.loadMoreTasks()}>{i18nT('fc.tc.loadMore')}</Button>
+      : <p className="novel-help">{i18nT('fc.tc.noNext')}</p>}
+    {paging.problem && <StatusMessage tone="error">{paging.problem}</StatusMessage>}
+  </div>;
 }

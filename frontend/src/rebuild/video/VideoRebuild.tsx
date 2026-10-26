@@ -3,6 +3,7 @@
    数据来自真实接口：/api/novels/{nid}/screenplays（镜头）· /api/video-providers（图生视频置灰原因）。
    没有导演建议接口数据时只写空态说明，不画假节点、不显示假「已就绪」。 */
 import {useEffect, useMemo, useState} from 'react';
+import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {api} from '../../api';
 import {Drawer} from '../primitives';
 import {ScreenplayPanel} from '../../novel/ScreenplayPanel';
@@ -13,7 +14,7 @@ import '../image/imageRebuild.css';
 import './videoRebuild.css';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import type {CvGraph} from '../canvas/RebuildCanvas';
-import {DualCanvas} from '../canvas/DualCanvas';
+import {DualStack} from '../canvas/DualStack';
 
 export type VideoView = 'studio' | 'script' | 'gen' | 'dual'; // [HERMIA-FE-20261022 U2] + 双画布
 type Shot = {key: string; n: number; title: string; size: string; dialogue: string; status: string; hasFrame: boolean};
@@ -69,13 +70,17 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <h2>{view === 'studio' ? '视频工作室' : view === 'script' ? '视频 › 分镜表' : view === 'dual' ? '视频 › 双画布' : '视频 › 图生视频'}</h2>
       <span className="nv-badge nv-badge--off">{plays === null ? '镜头 · 读取中' : `镜头 · ${shots.length}`}</span>
       <span className="nv-spacer" />
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏（场景 / 镜头树）隐藏时的替代入口 */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="video" aria-label={i18nTz('选择镜头')} value={cur?.key ?? ''} disabled={!shots.length} onChange={e => setSel(e.target.value)}>
+        {shots.length ? shots.map(s => <option key={s.key} value={s.key}>{`镜头 ${s.n} ${s.title}`}</option>) : <option value="">{i18nTz('还没有镜头')}</option>}
+      </select>
       {view === 'studio' ? <>
         <button type="button" className="nv-btn" id="vidToggleScript" aria-pressed={scriptOpen} onClick={() => setScriptOpen(o => !o)}>{scriptOpen ? '收起镜头脚本' : '镜头脚本'}</button>
         <button type="button" className="nv-btn" id="vidToggleDirector" aria-pressed={dirOpen} onClick={() => setDirOpen(o => !o)}>{dirOpen ? '收起导演台' : '导演台'}</button>
       </> : <button type="button" className="nv-btn" onClick={() => setView('studio')}>回视频工作室</button>}
-      <button type="button" className="nv-btn nv-btn--primary" id="vidSendEdit" data-send-edit="true" onClick={askSend}>送去剪辑</button>
+      <button type="button" className="nv-btn nv-btn--primary" id="vidSendEdit" data-send-edit="true" onClick={askSend}>{i18nTz('送去剪辑')}</button>
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => setView('dual')}>双画布</button> : null}
-      <button type="button" className="nv-btn" aria-pressed={view === 'script'} onClick={() => setView('script')}>分镜表</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'script'} onClick={() => setView('script')}>{i18nTz('分镜表')}</button>
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'gen'} data-pro-only="i2v" onClick={() => setView('gen')}>图生视频</button> : null}
     </div>
   );
@@ -85,12 +90,12 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <div className="eyebrow">视频</div>
       <strong>三层工作区</strong>
       <ul><li>① 镜头脚本</li><li>② 无限画布</li><li>③ 内置导演台</li></ul>
-      <button type="button" className="nv-btn" id="vidSendEditRail" onClick={askSend}>送去剪辑</button>
+      <button type="button" className="nv-btn" id="vidSendEditRail" onClick={askSend}>{i18nTz('送去剪辑')}</button>
       <p className="hint">这里排镜头和画面关系；剪成片在剪辑页。</p>
       <div className="mw-lh vid-rail-lh">场景 / 镜头树</div>
       <div className="mw-tree">
         {!loaded ? <p className="mw-muted">读取中…</p> : shots.length === 0 ? <p className="mw-muted">还没有镜头</p> :
-          shots.map(s => <button key={s.key} type="button" aria-selected={cur?.key === s.key} onClick={() => setSel(s.key)}><span className="ic">·</span><span>镜头 {s.n} {s.title}<span className="sub">{s.size} · {s.status}</span></span></button>)}
+          shots.map(s => <button key={s.key} type="button" aria-pressed={cur?.key === s.key} onClick={() => setSel(s.key)}><span className="ic">·</span><span>镜头 {s.n} {s.title}<span className="sub">{s.size} · {s.status}</span></span></button>)}
       </div>
       <div className="mw-lh vid-rail-lh">素材引用</div>
       <p className="mw-muted">从图片页「送去视频当参考」后会出现在这里。</p>
@@ -118,7 +123,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   let main: React.ReactNode;
   if (view === 'script') main = (
     <div className="vid-main vid-sub">
-      {shots.length === 0 ? <div className="img-empty"><h3>分镜表还是空的</h3><p>{emptyLine}</p><div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" onClick={addShot}>＋ 镜头</button><button type="button" className="nv-btn" onClick={addShot}>从剧本拆镜头</button></div></div> :
+      {shots.length === 0 ? <div className="img-empty"><h3>分镜表还是空的</h3><p>{emptyLine}</p><div className="nv-row"><button type="button" className="nv-btn nv-btn--primary" onClick={addShot}>{i18nTz('＋ 镜头')}</button><button type="button" className="nv-btn" onClick={addShot}>{i18nTz('从剧本拆镜头')}</button></div></div> :
         <table className="vid-table" data-cols={isPro ? 'advanced' : 'basic'}><thead><tr><th>镜头</th>{isPro ? <th>景别</th> : null}<th>内容</th><th>状态</th>{isPro ? <th /> : null}</tr></thead><tbody>
           {shots.map(s => <tr key={s.key}><td>镜头 {s.n}</td>{isPro ? <td>{s.size}</td> : null}<td>{s.title}{isPro && s.dialogue ? ` · ${s.dialogue}` : ''}</td><td>{s.status}</td>
             {isPro ? <td><button type="button" className="nv-btn" disabled={!s.hasFrame} onClick={() => { setSel(s.key); setView('studio'); }}>{s.hasFrame ? '在画布查看' : '缺少关键帧'}</button></td> : null}</tr>)}
@@ -127,14 +132,14 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
     </div>
   );
   else if (view === 'dual' && isPro) main = (
-    <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualCanvas scope={novelId} initial="split" videoSeed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
+    <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualStack kind="video" scope={novelId} seed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
   );
   else if (view === 'gen' && isPro) main = (
     <div className="vid-main vid-sub">
       <div className="img-empty"><h3>从关键帧生成片段</h3>
         <p>{providers === null ? '正在检查视频服务…' : ready.length ? `可用视频服务 ${ready.length} 个，派发前会再确认模型和费用。` : '需要先在 AI 主控里接好视频服务。'}</p>
         <div className="nv-row">
-          <button type="button" className="nv-btn nv-btn--primary" id="vidGenGo" disabled={!ready.length || !cur?.hasFrame}>生成候选…</button>
+          <button type="button" className="nv-btn nv-btn--primary" id="vidGenGo" disabled={!ready.length || !cur?.hasFrame}>{i18nTz('生成候选…')}</button>
           {!ready.length ? <button type="button" className="nv-btn" onClick={onOpenControl}>打开 AI 主控</button> : null}
         </div>
         {ready.length && !cur?.hasFrame ? <p className="nv-hint">当前镜头还没有关键帧。</p> : null}
@@ -145,25 +150,25 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
     <div className="vid-main">
       <section className="vid-layer vid-layer--script" aria-label="① 镜头脚本">
         <div className="vl-h"><span className="lab">① 镜头脚本</span><span className="nv-spacer" />{cur ? <span className="vl-meta">选中 镜头 {cur.n}</span> : null}</div>
-        <div className="shot-row" role="list" aria-label="镜头卡条">
-          {shots.length === 0 ? <p className="vl-note">{loaded ? emptyLine : '读取中…'}</p> : shots.map(s =>
-            <button key={s.key} type="button" className="vid-shot" role="listitem" aria-selected={cur?.key === s.key} onClick={() => setSel(s.key)}>
-              <span className="shot-num">S{s.n}</span><b>{s.title}</b><span className="meta">{s.size}{s.dialogue ? <><br />{s.dialogue}</> : null}<br /><span className="nv-badge nv-badge--off">{s.status}</span></span></button>)}
-          <button type="button" className="nv-btn vid-add" id="addShot" onClick={addShot}>＋ 镜头</button>
-          {shots.length === 0 && loaded ? <button type="button" className="nv-btn vid-add" onClick={addShot}>从剧本拆镜头</button> : null}
+        <div className="shot-row" /* [HERMIA-FE-20261025 DUI P1-7] list 只包 listitem，空态/＋镜头放在 list 外 */>
+          {shots.length === 0 ? <p className="vl-note">{loaded ? emptyLine : '读取中…'}</p> : <div role="list" aria-label="镜头卡条" style={{display: 'contents'}}>{shots.map(s =>
+            <button key={s.key} type="button" className="vid-shot" role="listitem" aria-current={cur?.key === s.key ? 'true' : undefined} onClick={() => setSel(s.key)}>
+              <span className="shot-num">S{s.n}</span><b>{s.title}</b><span className="meta">{s.size}{s.dialogue ? <><br />{s.dialogue}</> : null}<br /><span className="nv-badge nv-badge--off">{s.status}</span></span></button>)}</div>}
+          <button type="button" className="nv-btn vid-add" id="addShot" onClick={addShot}>{i18nTz('＋ 镜头')}</button>
+          {shots.length === 0 && loaded ? <button type="button" className="nv-btn vid-add" onClick={addShot}>{i18nTz('从剧本拆镜头')}</button> : null}
         </div>
       </section>
       <section className="vid-layer vid-layer--canvas" aria-label="② 无限画布">
         <div className="vl-h"><span className="lab">② 无限画布</span><span className="nv-spacer" /><span className="vl-meta">节点 · 素材引用 · 关系边</span></div>
         <div className="vid-canvas-host" id="vidCanvasHost" data-surface="canvas">
           {/* [HERMIA-FE-20261022 U1] 换成共用黑色无限画布：右键空白加节点；镜头作为初始种子（仅首次，之后按本机草稿） */}
-          {loaded ? <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}
+          {loaded ? (isPro ? <DualStack kind="video" scope={novelId} seed={shotSeed} /> : <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} />) : <p className="vid-canvas-empty">读取中…</p>}
         </div>
       </section>
       <section className="vid-layer vid-layer--director" aria-label="③ 内置导演台">
         <div className="vl-h"><span className="lab">③ 内置导演台</span><span className="nv-spacer" />
           <button type="button" className="nv-btn" id="vidAdopt" disabled title="还没有可采用的导演建议">采用到镜头卡…</button>
-          <button type="button" className="nv-btn" id="vidSendEditDir" onClick={askSend}>送去剪辑（交片）</button></div>
+          <button type="button" className="nv-btn" id="vidSendEditDir" onClick={askSend}>{i18nTz('送去剪辑（交片）')}</button></div>
         <div className="dir-grid">
           <div className="sugg"><b>{cur ? `镜头 ${cur.n} · 导演建议` : '导演建议'}</b>
             <p>选一个镜头，导演会给出景别和运镜建议；采用前你会看到改动。</p>
@@ -177,7 +182,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
   );
 
   return (
-    <div className={cls} data-video-layers="script-canvas-director" data-shell-mode={shellMode} data-vid-view={view} aria-label="视频工作区">
+    <div className={cls} data-video-layers="script-canvas-director" data-shell-mode={shellMode} data-vid-view={view} aria-label={i18nTz('视频工作区')}>
       {chrome}{head}
       <div className="vid-body">{rail}{main}</div>
       {confirm}{drawers}

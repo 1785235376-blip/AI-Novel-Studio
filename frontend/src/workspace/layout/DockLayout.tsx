@@ -1,0 +1,551 @@
+/**
+ * [HERMIA-FE-20261023 M1] DockLayout — isolated unified window/layout component.
+ * Real pointer drag to dock zones, float drag, resize handles (pointer + keyboard), collapse,
+ * close (dirty guard) / reopen menu, split switch, reset default (confirm), persistence status.
+ * NOT mounted by App.tsx yet; wiring lives in artifacts/unified-workspace-refactor/patches/.
+ * [HERMIA-FE-20261024 M4-s1] keyboard/a11y: skip link, tablist, splitter valuemax/Home/End/Esc, labelled regions, zoom-safe CSS.
+ */
+import {useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent, type ReactNode} from 'react';
+import {createPortal} from 'react-dom';
+import type {LayoutScope, StorageLike} from '../../workbench/layout';
+import {ActionRegistry, type ActionContext, type ExecuteResult} from '../../workbench/actions';
+import {LifecycleTracker} from '../../workbench/lifecycle';
+import {actionIdForKey, displayShortcut, LAYOUT_ACTION_IDS, registerLayoutActions, ShortcutTable, type LayoutActionId, type LayoutActionOptions} from '../actions/layoutActions';
+import {
+  closedPanels, crossLimit, maxSizeFor, dropAxis, emptyZoneBox, dropIndexFromPoint, layoutReducer, panelsIn, zoneFromPoint,
+  type DockZone, type LayoutAction, type LayoutPanelSpec, type LayoutState, type PanelFrame, type SplitMode, type Viewport,
+} from './model';
+import {loadWorkspaceLayout, saveWorkspaceLayout, type LoadOptions, type LoadResult} from './persistence';
+import {useDirtyCloseGuard, type DirtySource} from './useDirtyCloseGuard';
+import './DockLayout.css';
+
+export interface PanelRenderApi { registerDirty(src: DirtySource): () => void; }
+export interface DockLayoutProps {
+  specs: readonly LayoutPanelSpec[];
+  scope: LayoutScope;
+  storage: StorageLike | null;
+  renderPanel: (id: string, api: PanelRenderApi) => ReactNode;
+  /** Fixed viewport for tests; otherwise window size with resize listener. */
+  viewport?: Viewport;
+  loadOptions?: LoadOptions;
+  onLoad?: (r: LoadResult) => void;
+  /** [HERMIA-FE-20261023 M1-s2] Optional shared registry / shortcut table (host app). Defaults to a private pair. */
+  actionRegistry?: ActionRegistry;
+  shortcutTable?: ShortcutTable;
+  /** [HERMIA-FE-20261023 M1-s2fix] lifecycle tracker shared with actionRegistry (so a host command palette's ctx tokens match). */
+  tracker?: LifecycleTracker;
+  actionOptions?: LayoutActionOptions;
+  /** [HERMIA-FE-20261023 M1-s2fix] host content at the start of the layout toolbar (e.g. command palette trigger); counted in reserveTop. */
+  toolbarStart?: ReactNode;
+  /** [HERMIA-FE-20261024 VW-M2] consumer interface for named worksets / panel focus; null on unmount. */
+  onLayoutApi?: (api: DockLayoutApi | null) => void;
+}
+/** [HERMIA-FE-20261024 VW-M2] Minimal consumer surface; apply reuses the original reducer ('replace' + 'viewport' re-fit). */
+export interface DockLayoutApi {
+  getState(): LayoutState;
+  specs(): readonly LayoutPanelSpec[];
+  viewport(): Viewport;
+  isPanelDirty(id: string): boolean;
+  /** Blocks (no change) when the target would close a panel with unsaved edits. */
+  apply(state: LayoutState): {ok: true} | {ok: false; reason: string};
+}
+
+const DOCK_LABEL: Record<DockZone, string> = {left: '左侧', main: '中间', right: '右侧', bottom: '底部', float: '浮动'};
+const SPLIT_LABEL: Record<SplitMode, string> = {single: '单栏', 'split-h': '左右分屏', 'split-v': '上下分屏'};
+const KEY_STEP = 16;
+interface DropTarget { zone: DockZone; index: number; allowed: boolean; axis: 'x' | 'y'; line: {left: number; top: number; width: number; height: number}; empty: boolean; }
+
+/** [HERMIA-FE-20261023 M1-fix] N2: layout signature without focus / z-order, which are not layout changes. */
+function layoutSignature(s: LayoutState): string {
+  const frames = Object.values(s.frames).map(({z: _z, ...f}) => f).sort((a, b) => a.id.localeCompare(b.id));
+  return JSON.stringify({split: s.split, frames, preserved: s.preserved});
+}
+
+/**
+ * [HERMIA-FE-20261023 M1-fix] MF-1: a panel's content lives in ONE stable host element per panel id and is rendered
+ * through a keyed portal at a fixed position in the React tree. Zones only attach that host element, so redocking,
+ * floating, or hiding a main panel in single-column mode never remounts content (no silent draft loss).
+ * Only an explicit close (through the dirty-close guard) unmounts it.
+ */
+function PanelSlot({host}: {host: HTMLElement | undefined}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const p = ref.current; if (!p || !host) return;
+    p.appendChild(host);
+    return () => { if (host.parentNode === p) p.removeChild(host); };
+  }, [host]);
+  return <div ref={ref} className="uw-panel__body" />;
+}
+
+/** [HERMIA-FE-20261023 M1-fix] N3: modal dialog — Esc cancels, Tab is trapped, focus returns to the trigger. */
+function ModalDialog({label, onCancel, children}: {label: string; onCancel: () => void; children: ReactNode}) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Capture the trigger during render: React's autoFocus runs before layout effects.
+  const [prev] = useState(() => (typeof document === 'undefined' ? null : document.activeElement as HTMLElement | null));
+  useLayoutEffect(() => {
+    const first = ref.current?.querySelector<HTMLElement>('[autofocus],button:not([disabled])');
+    first?.focus();
+    return () => { if (prev && prev.isConnected) prev.focus(); };
+  }, []);
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onCancel(); return; }
+    if (e.key !== 'Tab' || !ref.current) return;
+    const items = Array.from(ref.current.querySelectorAll<HTMLElement>('button:not([disabled]),select:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])'));
+    if (!items.length) { e.preventDefault(); return; }
+    const a = items[0], z = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+    else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+  };
+  return (
+    <div className="uw-dialog" role="dialog" aria-modal="true" aria-label={label} ref={ref} onKeyDown={onKeyDown}>
+      <div className="uw-dialog__card">{children}</div>
+    </div>
+  );
+}
+
+// [HERMIA-FE-20261024 M2-s1] N4: viewport in layout CSS px. With CSS `zoom` on <html>/<body>, innerWidth stays in
+// unzoomed px, so floats were clamped against a too-large box and ended up off-screen. Divide by the effective zoom,
+// and re-read on resize, visualViewport resize, devicePixelRatio change (browser zoom) and html/body style changes.
+export function effectiveZoom(doc: Document = document): number {
+  let z = 1;
+  for (const el of [doc.documentElement, doc.body]) {
+    if (!el) continue;
+    const raw = (doc.defaultView?.getComputedStyle(el) as CSSStyleDeclaration & {zoom?: string})?.zoom || (el.style as CSSStyleDeclaration & {zoom?: string}).zoom
+      // engines/jsdom whose CSSOM drops `zoom`: fall back to the inline style text.
+      || /(?:^|;)\s*zoom\s*:\s*([^;!]+)/i.exec(el.getAttribute('style') ?? '')?.[1] || '';
+    const v = raw.trim().endsWith('%') ? parseFloat(raw) / 100 : parseFloat(raw);
+    if (Number.isFinite(v) && v > 0) z *= v;
+  }
+  return z;
+}
+export function readViewport(): Viewport {
+  if (typeof window === 'undefined') return {width: 1440, height: 900};
+  const z = effectiveZoom();
+  return {width: Math.floor(window.innerWidth / z), height: Math.floor(window.innerHeight / z)};
+}
+
+function useViewport(fixed?: Viewport): Viewport {
+  const read = () => fixed ?? readViewport();
+  const [vp, setVp] = useState<Viewport>(read);
+  useEffect(() => {
+    if (fixed) { setVp(fixed); return; }
+    const on = () => setVp(prev => { const n = read(); return n.width === prev.width && n.height === prev.height ? prev : n; });
+    window.addEventListener('resize', on);
+    window.visualViewport?.addEventListener('resize', on);
+    let mq: MediaQueryList | undefined;
+    const watchDpr = () => {
+      mq?.removeEventListener?.('change', onDpr);
+      mq = typeof window.matchMedia === 'function' ? window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`) : undefined;
+      mq?.addEventListener?.('change', onDpr);
+    };
+    function onDpr() { on(); watchDpr(); }
+    watchDpr();
+    const mo = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(on);
+    for (const el of [document.documentElement, document.body]) if (el) mo?.observe(el, {attributes: true, attributeFilter: ['style', 'class']});
+    return () => { window.removeEventListener('resize', on); window.visualViewport?.removeEventListener('resize', on); mq?.removeEventListener?.('change', onDpr); mo?.disconnect(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fixed?.width, fixed?.height]);
+  return vp;
+}
+
+export function DockLayout(props: DockLayoutProps) {
+  const {specs, scope, storage, renderPanel} = props;
+  const rawViewport = useViewport(props.viewport);
+  // [HERMIA-FE-20261023 M1-s2] measured toolbar height is reserved so main keeps MAIN_MIN_HEIGHT for real.
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarH, setToolbarH] = useState(0);
+  useLayoutEffect(() => {
+    const el = toolbarRef.current; if (!el) return;
+    const m = () => setToolbarH(Math.ceil(el.getBoundingClientRect().height));
+    m();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(m); ro.observe(el); return () => ro.disconnect();
+  }, []);
+  const viewport = useMemo<Viewport>(() => ({...rawViewport, reserveTop: toolbarH}), [rawViewport, toolbarH]);
+  const envRef = useRef({specs, viewport}); envRef.current = {specs, viewport};
+  const reducer = useMemo(() => (s: LayoutState, a: Parameters<ReturnType<typeof layoutReducer>>[1]) => layoutReducer(envRef.current)(s, a), []);
+  const initial = useMemo<LoadResult>(() => storage
+    ? loadWorkspaceLayout(storage, scope, specs, viewport, props.loadOptions)
+    : {state: layoutReducer({specs, viewport})({} as LayoutState, {type: 'reset'}), source: 'default', diagnostics: []},
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [scope.userId, scope.projectId, scope.projectInstanceId]);
+  const [state, rawDispatch] = useReducer(reducer, initial.state);
+  const [saveStatus, setSaveStatus] = useState<{ok: boolean; text: string}>({ok: true, text: storage ? '' : '布局仅在本次会话有效（无本地存储）'});
+  // [HERMIA-FE-20261025 M5-fix] storage can appear/disappear after mount (identity resolved later by bootstrap);
+  // keep the persistence label truthful instead of freezing the mount-time value.
+  const hasStorage = !!storage;
+  useEffect(() => { setSaveStatus({ok: true, text: hasStorage ? '' : '布局仅在本次会话有效（无本地存储）'}); }, [hasStorage]);
+  const [confirmReset, setConfirmReset] = useState(false);
+  // [HERMIA-FE-20261023 M1-fix] N2: persist only after an explicit user layout action that actually changed the
+  // layout signature. Hydration, viewport re-fit, focus and z-order never write — so after a corrupt load the
+  // original key stays untouched (backup already holds a copy) until the user really changes the layout.
+  const userTouched = useRef(false);
+  const lastSig = useRef(layoutSignature(initial.state));
+  const rootRef = useRef<HTMLDivElement>(null);
+  const dispatch = useCallback((a: LayoutAction) => {
+    if (a.type !== 'focus' && a.type !== 'viewport' && a.type !== 'replace') userTouched.current = true;
+    rawDispatch(a);
+  }, []);
+
+  useEffect(() => { props.onLoad?.(initial); rawDispatch({type: 'replace', state: initial.state}); userTouched.current = false; lastSig.current = layoutSignature(initial.state); },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [initial]);
+  useEffect(() => { rawDispatch({type: 'viewport'}); }, [viewport.width, viewport.height, viewport.reserveTop]);
+
+  useEffect(() => {
+    if (!storage || !userTouched.current) return;
+    const sig = layoutSignature(state);
+    if (sig === lastSig.current) return;
+    lastSig.current = sig;
+    const r = saveWorkspaceLayout(storage, scope, state);
+    setSaveStatus(r.ok ? {ok: true, text: '布局已保存到本机'} : {ok: false, text: `布局保存失败，仅本次会话有效：${r.error}`});
+  }, [state, storage, scope]);
+
+  const close = useCallback((id: string) => dispatch({type: 'close', id}), []);
+  const guard = useDirtyCloseGuard(close);
+  // [HERMIA-FE-20261024 VW-M2] consumer API (worksets / panel focus). Applying is an explicit user layout action.
+  const onLayoutApiRef = useRef(props.onLayoutApi); onLayoutApiRef.current = props.onLayoutApi;
+  useEffect(() => {
+    const api: DockLayoutApi = {
+      getState: () => stateRef.current,
+      specs: () => envRef.current.specs,
+      viewport: () => envRef.current.viewport,
+      isPanelDirty: id => guard.isDirty(id),
+      apply: target => {
+        const cur = stateRef.current;
+        const dirty = Object.values(cur.frames).filter(f => f.open && target.frames[f.id] && !target.frames[f.id].open && guard.isDirty(f.id));
+        if (dirty.length) {
+          const names = dirty.map(f => `「${envRef.current.specs.find(s => s.id === f.id)?.title ?? '面板'}」`).join('、');
+          return {ok: false, reason: `${names}有未保存的修改，先保存或放弃后再应用视图；布局没有改变。`};
+        }
+        userTouched.current = true;
+        rawDispatch({type: 'replace', state: target}); rawDispatch({type: 'viewport'});
+        return {ok: true};
+      },
+    };
+    onLayoutApiRef.current?.(api);
+    return () => onLayoutApiRef.current?.(null);
+  }, [guard.isDirty]);
+
+  // [HERMIA-FE-20261023 M1-s2] layout actions via the existing workbench ActionRegistry.
+  const [ownTracker] = useState(() => new LifecycleTracker());
+  const tracker = props.tracker ?? ownTracker;
+  const registry = useMemo(() => props.actionRegistry ?? new ActionRegistry(tracker), [props.actionRegistry, tracker]);
+  const table = useMemo(() => props.shortcutTable ?? new ShortcutTable(), [props.shortcutTable]);
+  const [, setPendingTick] = useState(0);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
+  const [shortcutConflicts, setShortcutConflicts] = useState<string[]>([]);
+  useEffect(() => {
+    const reg = registerLayoutActions(registry, table, {
+      getState: () => stateRef.current, specs, dispatch, requestReset: () => setConfirmReset(true),
+      // [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 3: compare with what 'reset' would produce (focus / z ignored).
+      isDefault: () => layoutSignature(stateRef.current) === layoutSignature(layoutReducer(envRef.current)(stateRef.current, {type: 'reset'})),
+    }, undefined, props.actionOptions);
+    setShortcutConflicts(reg.conflicts.map(c => `快捷键 ${displayShortcut(c.shortcut)} 已被占用，「${registry.get(c.actionId)?.label ?? ''}」未绑定快捷键`));
+    return reg.dispose;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registry, table]);
+  const actionCtx = (targetId: string | null = null, input?: unknown): ActionContext =>
+    ({token: tracker.current(), targetId, targetVersion: null, permissions: new Set<string>(), input});
+  const availability = (id: LayoutActionId, targetId: string | null = null, input?: unknown) =>
+    registry.get(id) ? registry.availability(id, actionCtx(targetId, input)) : {enabled: false as const, reason: '动作未注册'};
+  const runAction = async (id: LayoutActionId, targetId: string | null = null, input?: unknown): Promise<ExecuteResult> => {
+    const p = registry.execute(id, actionCtx(targetId, input));
+    setPendingTick(n => n + 1);
+    // [HERMIA-FE-20261023 M1-s2fix] re-render on the busy edge so aria-busy is visible for MIN_BUSY_MS.
+    await Promise.resolve(); setPendingTick(n => n + 1);
+    const r = await p;
+    setPendingTick(n => n + 1);
+    if (r.status === 'blocked') setActionMsg(r.reason);
+    else if (r.status === 'error') setActionMsg(`操作没有完成：${r.error instanceof Error ? r.error.message : '未知原因'}`);
+    else setActionMsg(null);
+    return r;
+  };
+  useEffect(() => {
+    const ids = Object.values(LAYOUT_ACTION_IDS);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      const id = actionIdForKey(e, table, ids) as LayoutActionId | null; if (!id) return;
+      e.preventDefault();
+      void runAction(id, id === LAYOUT_ACTION_IDS.toggleCollapse ? stateRef.current.focusId : null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registry, table]);
+  const pendingOf = (id: LayoutActionId, targetId: string | null = null) => registry.isPending(id, targetId);
+
+  // ---- pointer drag (header) ----
+  const drag = useRef<{id: string; startX: number; startY: number; ox: number; oy: number; floating: boolean} | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  const dragZone = dropTarget?.zone ?? null;
+  const stateRef = useRef(state); stateRef.current = state;
+  // [HERMIA-FE-20261023 M1-s2] precise drop: zone from pointer, insertion index from the zone's other panels' rects.
+  const computeDrop = (id: string, x: number, y: number): DropTarget | null => {
+    const root = rootRef.current; if (!root) return null;
+    const rr = root.getBoundingClientRect();
+    const zone = zoneFromPoint(x, y, rr);
+    const fromFloat = stateRef.current.frames[id]?.dock === 'float';
+    // [HERMIA-FE-20261023 M1-s2fix] nice-to-have: a floating panel docks only when released over an edge zone it
+    // allows; the centre is where floats live, so no target there (and no indicator).
+    if (fromFloat && (zone === 'main' || !specs.find(s => s.id === id)?.docks.includes(zone))) return null;
+    const spec = specs.find(s => s.id === id);
+    const allowed = !!spec?.docks.includes(zone);
+    const axis = dropAxis(zone, stateRef.current.split);
+    const others = Array.from(root.querySelectorAll<HTMLElement>(`section.uw-panel[data-dock="${zone}"]`)).filter(el => el.dataset.panelId !== id);
+    const rects = others.map(el => el.getBoundingClientRect());
+    const index = dropIndexFromPoint(axis, {x, y}, rects);
+    let line: {left: number; top: number; width: number; height: number};
+    if (!rects.length) {
+      // [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 1: every zone has a measurable box; never fall back to the root rect.
+      const el = root.querySelector<HTMLElement>(`[data-zone-box="${zone}"]:not([data-zone-ghost])`);
+      const zr = el?.getBoundingClientRect();
+      if (zr && zr.width > 0 && zr.height > 0) line = {left: zr.left - rr.left, top: zr.top - rr.top, width: zr.width, height: zr.height};
+      else {
+        const bodyTop = bodyRef.current ? Math.max(0, bodyRef.current.getBoundingClientRect().top - rr.top) : 0;
+        line = emptyZoneBox(zone, rr, bodyTop) ?? {left: 0, top: bodyTop, width: 0, height: 0};
+      }
+    } else {
+      const ref = rects[Math.min(index, rects.length - 1)]; const after = index >= rects.length;
+      line = axis === 'y'
+        ? {left: ref.left - rr.left, top: (after ? ref.bottom : ref.top) - rr.top - 1, width: ref.width, height: 3}
+        : {left: (after ? ref.right : ref.left) - rr.left - 1, top: ref.top - rr.top, width: 3, height: ref.height};
+    }
+    return {zone, index, allowed, axis, line, empty: !rects.length};
+  };
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      const d = drag.current; if (!d) return;
+      if (d.floating) dispatch({type: 'moveFloat', id: d.id, x: d.ox + e.clientX - d.startX, y: d.oy + e.clientY - d.startY});
+      setDropTarget(computeDrop(d.id, e.clientX, e.clientY));
+    };
+    const up = (e: PointerEvent) => {
+      const d = drag.current; if (!d) return; drag.current = null; setDropTarget(null);
+      if (!rootRef.current) return;
+      if (Math.abs(e.clientX - d.startX) + Math.abs(e.clientY - d.startY) < 4) return; // click, not drag
+      const t = computeDrop(d.id, e.clientX, e.clientY);
+      if (t && t.allowed) dispatch({type: 'dock', id: d.id, dock: t.zone, index: t.index});
+    };
+    // [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 2: Esc cancels an active drag — no drop, float returns to its origin.
+    const esc = (e: globalThis.KeyboardEvent) => {
+      const d = drag.current; if (!d || e.key !== 'Escape') return;
+      e.preventDefault(); e.stopPropagation();
+      drag.current = null; setDropTarget(null);
+      if (d.floating) dispatch({type: 'moveFloat', id: d.id, x: d.ox, y: d.oy});
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('keydown', esc, true);
+    return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('keydown', esc, true); };
+  }, []);
+  const startDrag = (f: PanelFrame) => (e: RPointerEvent) => {
+    if ((e.target as HTMLElement).closest('button,select')) return;
+    dispatch({type: 'focus', id: f.id});
+    drag.current = {id: f.id, startX: e.clientX, startY: e.clientY, ox: f.floatRect?.x ?? 0, oy: f.floatRect?.y ?? 0, floating: f.dock === 'float'};
+  };
+
+  // ---- resize handle ----
+  const resizeDrag = useRef<{id: string; start: number; size: number; axis: 'x' | 'y'; sign: number} | null>(null);
+  useEffect(() => {
+    // [HERMIA-FE-20261024 M4-s1] Esc cancels an active pointer resize and restores the size it started from.
+    const esc = (e: globalThis.KeyboardEvent) => {
+      const r = resizeDrag.current; if (!r || e.key !== 'Escape') return;
+      e.preventDefault(); e.stopPropagation(); resizeDrag.current = null;
+      dispatch({type: 'resize', id: r.id, size: r.size});
+    };
+    window.addEventListener('keydown', esc, true);
+    return () => window.removeEventListener('keydown', esc, true);
+  }, []);
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      const r = resizeDrag.current; if (!r) return;
+      const delta = (r.axis === 'x' ? e.clientX : e.clientY) - r.start;
+      dispatch({type: 'resize', id: r.id, size: r.size + r.sign * delta});
+    };
+    const up = () => { resizeDrag.current = null; };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+  }, []);
+
+  const specOf = (id: string) => specs.find(s => s.id === id)!;
+  // [HERMIA-FE-20261023 M1-fix] MF-1 stable per-panel host elements.
+  const hosts = useRef(new Map<string, HTMLDivElement>());
+  const hostFor = (id: string): HTMLDivElement | undefined => {
+    if (typeof document === 'undefined') return undefined;
+    let el = hosts.current.get(id);
+    if (!el) { el = document.createElement('div'); el.className = 'uw-panel__host'; el.dataset.panelHost = id; hosts.current.set(id, el); }
+    return el;
+  };
+  const api = useCallback((id: string): PanelRenderApi => ({registerDirty: src => guard.register(id, src)}), [guard.register]);
+
+  const resizeHandle = (f: PanelFrame) => {
+    if (f.dock === 'main' || f.dock === 'float' || f.collapsed) return null;
+    const axis = f.dock === 'bottom' ? 'y' : 'x';
+    const sign = f.dock === 'left' ? 1 : -1; // right/bottom grow toward the start
+    const spec = specOf(f.id);
+    // [HERMIA-FE-20261024 M4-s1] aria-valuemax = effective limit (spec max, viewport share, main keeps 320×200);
+    // Shift+arrow = big step; Home/End jump to min/max.
+    const max = Math.max(spec.minSize, Math.min(maxSizeFor(spec, f.dock, viewport), crossLimit(state.frames, f.id, f.dock, viewport)));
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); dispatch({type: 'resize', id: f.id, size: e.key === 'Home' ? spec.minSize : max}); return; }
+      const grow = axis === 'x' ? (e.key === 'ArrowRight' ? sign : e.key === 'ArrowLeft' ? -sign : 0) : (e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0);
+      if (!grow) return; e.preventDefault(); dispatch({type: 'resize', id: f.id, size: f.size + grow * KEY_STEP * (e.shiftKey ? 4 : 1)});
+    };
+    return (
+      <div role="separator" tabIndex={0} aria-label={`调整「${spec.title}」大小`} aria-orientation={axis === 'x' ? 'vertical' : 'horizontal'}
+        aria-valuenow={f.size} aria-valuemin={spec.minSize} aria-valuemax={max} aria-controls={`uw-panel-${f.id}`}
+        aria-valuetext={`${f.size} 像素`}
+        className={`uw-resize uw-resize--${axis}`} data-testid={`resize-${f.id}`} onKeyDown={onKey}
+        onPointerDown={e => { e.preventDefault(); resizeDrag.current = {id: f.id, start: axis === 'x' ? e.clientX : e.clientY, size: f.size, axis, sign}; }} />
+    );
+  };
+
+  const panel = (f: PanelFrame) => {
+    const spec = specOf(f.id);
+    const style = f.dock === 'float' && f.floatRect
+      ? {left: f.floatRect.x, top: f.floatRect.y, width: f.floatRect.w, height: f.floatRect.h, zIndex: 100 + f.z}
+      : f.dock === 'left' || f.dock === 'right' ? {width: f.collapsed ? undefined : f.size} : f.dock === 'bottom' ? {height: f.collapsed ? undefined : f.size} : undefined;
+    return (
+      <section key={f.id} id={`uw-panel-${f.id}`} role="region" aria-label={spec.title}
+        aria-labelledby={f.dock === 'main' && main.length > 1 ? `uw-tab-${f.id} uw-panel-title-${f.id}` : `uw-panel-title-${f.id}`} tabIndex={-1} data-testid={`panel-${f.id}`} data-panel-id={f.id} data-dock={f.dock}
+        data-collapsed={f.collapsed} data-focused={state.focusId === f.id} data-z={f.z}
+        className={`uw-panel${f.dock === 'float' ? ' uw-float' : ''}`} style={style} onFocusCapture={() => dispatch({type: 'focus', id: f.id})}>
+        <header className="uw-panel__head" data-testid={`drag-${f.id}`} onPointerDown={startDrag(f)}>
+          <span className="uw-panel__title" id={`uw-panel-title-${f.id}`}>{spec.title}</span>
+          <button type="button" className="uw-btn" aria-expanded={!f.collapsed} aria-controls={`uw-panel-${f.id}`} data-action-id={LAYOUT_ACTION_IDS.toggleCollapse}
+            aria-busy={pendingOf(LAYOUT_ACTION_IDS.toggleCollapse, f.id) || undefined} onClick={() => { void runAction(LAYOUT_ACTION_IDS.toggleCollapse, f.id); }}>{f.collapsed ? '展开' : '折叠'}</button>
+          <select className="uw-select" aria-label={`「${spec.title}」停靠位置`} value={f.dock} onChange={e => dispatch({type: 'dock', id: f.id, dock: e.target.value as DockZone})}>
+            {spec.docks.map(d => <option key={d} value={d}>{DOCK_LABEL[d]}</option>)}
+          </select>
+          <button type="button" className="uw-btn" aria-label={`关闭「${spec.title}」`} onClick={() => guard.requestClose(f.id)}>关闭</button>
+        </header>
+        <PanelSlot host={hostFor(f.id)} />
+      </section>
+    );
+  };
+  const withHandle = (f: PanelFrame) => f.dock === 'left'
+    ? [panel(f), <span key={`h-${f.id}`}>{resizeHandle(f)}</span>]
+    : [<span key={`h-${f.id}`}>{resizeHandle(f)}</span>, panel(f)];
+
+  const left = panelsIn(state, 'left'); const right = panelsIn(state, 'right'); const bottom = panelsIn(state, 'bottom');
+  const main = panelsIn(state, 'main'); const floats = panelsIn(state, 'float');
+  const visibleMain = state.split === 'single' ? main.slice(0, 1) : main.slice(0, 2);
+  const hiddenMain = main.slice(visibleMain.length);
+  const closed = closedPanels(state);
+  const reopenAv = availability(LAYOUT_ACTION_IDS.reopen);
+  const resetAv = availability(LAYOUT_ACTION_IDS.reset);
+  const pendingSpec = guard.pending ? specOf(guard.pending.panelId) : null;
+  const recovered = initial.source === 'fallback-corrupt';
+  const status = !saveStatus.ok ? saveStatus : recovered
+    ? {ok: false, text: '布局数据无法读取，已用默认布局；原数据已备份，未被覆盖'}
+    : saveStatus;
+
+  // [HERMIA-FE-20261024 M4-s1fix] tabs keep a stable (spec) order; activation reorders panels, not tabs, so arrow keys stay predictable.
+  const tabOrder = [...main].sort((a, b) => specs.findIndex(s => s.id === a.id) - specs.findIndex(s => s.id === b.id));
+  const onTabsKey = (e: KeyboardEvent) => {
+    const tabs = Array.from((e.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const i = tabs.indexOf(document.activeElement as HTMLButtonElement); if (i < 0 || !tabs.length) return;
+    const n = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? (i - 1 + tabs.length) % tabs.length
+      : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+    if (n < 0) return; e.preventDefault(); tabs[n].focus(); tabs[n].click();
+  };
+  const skipToMain = (e: {preventDefault(): void}) => {
+    e.preventDefault();
+    const m = rootRef.current?.querySelector<HTMLElement>('[data-testid="main-zone"]'); m?.focus();
+  };
+  return (
+    <div className="uw-layout" ref={rootRef} style={{['--uw-toolbar-h' as string]: `${toolbarH}px`}} data-testid="dock-layout" data-source={initial.source}>
+      {/* [HERMIA-FE-20261024 M4-s1] skip link: first Tab stop, visible on focus. [HERMIA-FE-20261024 M4-s1fix] sits below the toolbar; tabs: ids, aria-controls on all, labelledby, multiselectable in split. */}
+      <a href="#uw-main" className="uw-skip" data-testid="uw-skip-main" onClick={skipToMain}>跳到主区域</a>
+      <div className="uw-toolbar" role="toolbar" aria-label="布局" ref={toolbarRef}>
+        {props.toolbarStart}
+        <label>布局 <select className="uw-select" aria-label="分屏方式" data-action-id={LAYOUT_ACTION_IDS.split} value={state.split}
+          aria-busy={pendingOf(LAYOUT_ACTION_IDS.split) || undefined} onChange={e => { void runAction(LAYOUT_ACTION_IDS.split, null, e.target.value as SplitMode); }}>
+          {(Object.keys(SPLIT_LABEL) as SplitMode[]).map(m => <option key={m} value={m}>{SPLIT_LABEL[m]}</option>)}
+        </select></label>
+        <label>重新打开 <select className="uw-select" aria-label="重新打开面板" data-action-id={LAYOUT_ACTION_IDS.reopen} value=""
+          disabled={!reopenAv.enabled} aria-busy={pendingOf(LAYOUT_ACTION_IDS.reopen) || undefined} title={reopenAv.enabled ? undefined : reopenAv.reason}
+          onChange={e => { if (e.target.value) void runAction(LAYOUT_ACTION_IDS.reopen, e.target.value, e.target.value); }}>
+          <option value="">{reopenAv.enabled ? '选择面板…' : reopenAv.reason}</option>
+          {closed.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
+        </select></label>
+        {/* [HERMIA-FE-20261024 M2-s1] N5: every main panel (e.g. 执行画布) has a visible tab; uses layout.showPanel. */}
+        {/* [HERMIA-FE-20261024 M4-s1] tablist semantics: roving tabindex, ←/→/Home/End move + activate. */}
+        {main.length > 1 && <span role="tablist" aria-label="中间面板" aria-multiselectable={state.split !== 'single' || undefined} className="uw-main-tabs" data-testid="uw-main-tabs" onKeyDown={onTabsKey}>{tabOrder.map(f => {
+          const shown = visibleMain.some(v => v.id === f.id);
+          const current = (visibleMain.find(v => v.id === state.focusId) ?? visibleMain[0])?.id === f.id;
+          return <button key={f.id} type="button" role="tab" className="uw-btn uw-tab" aria-selected={shown} aria-current={current && shown ? 'true' : undefined}
+            tabIndex={current ? 0 : -1} id={`uw-tab-${f.id}`} aria-controls={shown ? `uw-panel-${f.id}` : undefined /* [HERMIA-FE-20261024 M4-s1fix2] only reference rendered panels */} data-action-id={LAYOUT_ACTION_IDS.show} data-panel-tab={f.id}
+            aria-busy={pendingOf(LAYOUT_ACTION_IDS.show, f.id) || undefined} onClick={() => { if (!shown || state.focusId !== f.id) void runAction(LAYOUT_ACTION_IDS.show, f.id, f.id); }}>{specOf(f.id).title}</button>;
+        })}</span>}
+        {hiddenMain.length > 0 && <label>中间显示 <select className="uw-select" aria-label="切换中间面板" value="" onChange={e => { if (e.target.value) dispatch({type: 'dock', id: e.target.value, dock: 'main', index: 0}); }}>
+          <option value="">选择…</option>{hiddenMain.map(f => <option key={f.id} value={f.id}>{specOf(f.id).title}</option>)}
+        </select></label>}
+        {/* [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 3: disabled with a Chinese reason when already default. */}
+        <button type="button" className="uw-btn" data-action-id={LAYOUT_ACTION_IDS.reset} aria-busy={pendingOf(LAYOUT_ACTION_IDS.reset) || undefined}
+          disabled={!resetAv.enabled} title={resetAv.enabled ? undefined : resetAv.reason} aria-describedby={resetAv.enabled ? undefined : 'uw-reset-reason'}
+          onClick={() => { void runAction(LAYOUT_ACTION_IDS.reset); }}>恢复默认布局</button>
+        {!resetAv.enabled && <span id="uw-reset-reason" className="uw-toolbar__hint" data-testid="reset-reason">{resetAv.reason}</span>}
+        <span className="uw-toolbar__status" role="status" data-tone={status.ok && !actionMsg && !shortcutConflicts.length ? undefined : 'warn'}>
+          {[actionMsg, ...shortcutConflicts, status.text].filter(Boolean).join('；')}</span>
+      </div>
+      <div className="uw-body" ref={bodyRef}>
+        {left.length > 0 && <div className="uw-col uw-col--left" data-zone-box="left" style={{display: 'flex', flexDirection: 'row'}}><div className="uw-col">{left.map(f => panel(f))}</div>{left[0] && resizeHandle(left[0])}</div>}
+        <div className="uw-main" id="uw-main" role="main" aria-label="主区域" tabIndex={-1} data-split={state.split} data-testid="main-zone" data-zone-box="main">
+          {visibleMain.map(f => panel(f))}
+        </div>
+        {right.length > 0 && <div className="uw-col uw-col--right" data-zone-box="right" style={{display: 'flex', flexDirection: 'row'}}>{right[0] && resizeHandle(right[0])}<div className="uw-col">{right.map(f => panel(f))}</div></div>}
+      </div>
+      {bottom.length > 0 && <div data-zone-box="bottom" style={{display: 'flex', flexDirection: 'column'}}>{bottom[0] && resizeHandle(bottom[0])}<div className="uw-bottom">{bottom.map(f => panel(f))}</div></div>}
+      {floats.map(f => panel(f))}
+      {Object.values(state.frames).filter(f => f.open).map(f => {
+        const host = hostFor(f.id); if (!host) return null;
+        return createPortal(
+          <div className="uw-panel__content" onFocusCapture={() => dispatch({type: 'focus', id: f.id})}>{renderPanel(f.id, api(f.id))}</div>,
+          host, f.id);
+      })}
+      {dragZone && <div className="uw-dropzones" data-testid="drop-hint" data-zone={dragZone} aria-hidden="true" />}
+      {dropTarget && (['left', 'right', 'bottom'] as const).filter(z => !panelsIn(state, z).length).map(z => {
+        // [HERMIA-FE-20261023 M1-s2fix] MUST-FIX 1: faint outline of each EMPTY dock zone while dragging.
+        const rr = rootRef.current?.getBoundingClientRect(); if (!rr) return null;
+        const bt = bodyRef.current ? Math.max(0, bodyRef.current.getBoundingClientRect().top - rr.top) : 0;
+        const b = emptyZoneBox(z, rr, bt); if (!b) return null;
+        return <div key={`ghost-${z}`} className="uw-zone-ghost" data-zone-box={z} data-zone-ghost="" data-testid={`zone-ghost-${z}`} aria-hidden="true"
+          style={{left: b.left, top: b.top, width: b.width, height: b.height}} />;
+      })}
+      {dropTarget && (
+        <div className={`uw-drop-indicator${dropTarget.empty ? ' uw-drop-indicator--zone' : ''}`} data-testid="drop-indicator" aria-hidden="true"
+          data-zone={dropTarget.zone} data-index={dropTarget.index} data-allowed={dropTarget.allowed} data-axis={dropTarget.axis}
+          style={{left: dropTarget.line.left, top: dropTarget.line.top, width: dropTarget.line.width, height: dropTarget.line.height}} />
+      )}
+      {dropTarget && !dropTarget.allowed && <div className="uw-drop-note" role="status">这个面板不能放到{DOCK_LABEL[dropTarget.zone]}</div>}
+      {confirmReset && (
+        <ModalDialog label="恢复默认布局" onCancel={() => setConfirmReset(false)}>
+          <p>只恢复面板位置和大小，不会删除作品、草稿或任务。</p>
+          <div className="uw-dialog__actions">
+            <button type="button" className="uw-btn" autoFocus onClick={() => setConfirmReset(false)}>取消</button>
+            <button type="button" className="uw-btn" onClick={() => { dispatch({type: 'reset'}); setConfirmReset(false); }}>恢复默认</button>
+          </div>
+        </ModalDialog>
+      )}
+      {guard.pending && pendingSpec && (
+        <ModalDialog label={`关闭「${pendingSpec.title}」`} onCancel={guard.cancel}>
+          <p>「{pendingSpec.title}」有未保存的修改。</p>
+          {guard.pending.error && <p role="alert">{closeConfirmErrorText(guard.pending.error)}</p>}
+          <div className="uw-dialog__actions">
+            <button type="button" className="uw-btn" autoFocus onClick={guard.cancel}>取消</button>
+            <button type="button" className="uw-btn" onClick={guard.discard}>放弃修改</button>
+            <button type="button" className="uw-btn" disabled={guard.pending.saving} onClick={() => { void guard.save(); }}>{guard.pending.saving ? '保存中…' : '保存并关闭'}</button>
+          </div>
+        </ModalDialog>
+      )}
+    </div>
+  );
+}
+
+// [HERMIA-FE-20261023 M1-flaky] P3: dedupe 「保存失败：」 prefix and drop the error's own 「修改还在」 tail so the dialog reads as one sentence.
+export function closeConfirmErrorText(err: unknown): string {
+  let msg = String(err instanceof Error ? err.message : err).trim();
+  msg = msg.replace(/^(Error:\s*)?(保存失败[：:]\s*)+/u, '');
+  msg = msg.replace(/[，,]?\s*修改(还在|仍在)[^。]*[。.]?\s*$/u, '');
+  msg = msg.replace(/[。.\s]+$/u, '');
+  return `保存失败：${msg || '未知错误'}。修改仍在面板里，没有保存。`;
+}

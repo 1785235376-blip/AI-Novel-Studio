@@ -140,7 +140,7 @@ html .app-shell[data-module="NOVEL"] .novel-writing-workspace{overflow:hidden}
 .nv-chapters__vol{font-size:10.5px;color:var(--color-text-muted);padding:8px 6px 4px;letter-spacing:.04em}
 .nv-chapters__ch{display:flex;width:100%;align-items:flex-start;gap:5px;border:0;background:none;text-align:left;padding:6px 7px;border-radius:6px;color:var(--color-text-primary);margin-bottom:2px;font-size:12.5px;cursor:pointer}
 .nv-chapters__ch:hover{background:var(--color-bg-elevated)}
-.nv-chapters__ch[aria-selected="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
+.nv-chapters__ch[aria-selected="true"],.nv-chapters__ch[aria-current="true"]{background:var(--color-selection-bg);color:var(--color-accent-primary);font-weight:600}
 .nv-chapters__meta{display:block;font-size:10.5px;font-weight:400;color:var(--color-text-muted);margin-top:2px}
 .nv-chapters__new{width:100%;margin-top:8px;justify-content:center}
 /* 左栏 200 */
@@ -199,3 +199,5 @@ html .app-shell[data-module="NOVEL"] .nv-desk__body .editor .ProseMirror h3{font
 .nv-rail__more-body .novel-tree-row:hover .novel-tree-actions,.nv-rail__more-body .novel-tree-row:focus-within .novel-tree-actions{opacity:1}
 .nv-rail__more-body .novel-tree-title{white-space:normal;word-break:break-all}
 .nv-rail__more-body .novel-tree-row:not(:hover):not(:focus-within) .novel-tree-actions{visibility:hidden}
+/* [HERMIA-FE-20261025 DUI P1-8] 「更多」disclosure gets the same 2px focus ring as every other control (was 1px auto) */
+.nv-rail__more > summary:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:2px;border-radius:4px}

@@ -1,0 +1,294 @@
+src/AppAdaptationNavigation.test.tsx > blocks navigation for composing before reading task
+src/AppAdaptationNavigation.test.tsx > blocks navigation for dirty before reading task
+src/AppAdaptationNavigation.test.tsx > blocks navigation for flag off before reading task
+src/AppAdaptationNavigation.test.tsx > fences late original task result after abort
+src/AppAdaptationNavigation.test.tsx > fences late original task result after leave
+src/AppAdaptationNavigation.test.tsx > fences late original task result after new input
+src/AppAdaptationNavigation.test.tsx > opens exact original proposal/task/revision without switching manuscript or executing work
+src/AppAdaptationNavigation.test.tsx > rejects revoked rather than opening another adaptation
+src/AppAdaptationNavigation.test.tsx > rejects stale revision rather than opening another adaptation
+src/AppAdaptationNavigation.test.tsx > rejects stale source rather than opening another adaptation
+src/AppAdaptationNavigation.test.tsx > rejects wrong proposal rather than opening another adaptation
+src/AppAdaptationNavigation.test.tsx > rejects wrong task rather than opening another adaptation
+src/AppAuthorTaskNavigation.additive.test.tsx > preserves exact simulator/planning navigation when workspace tools are off
+src/AppAuthorTaskNavigation.test.tsx > discards a delayed task lookup after leaving the task view
+src/AppAuthorTaskNavigation.test.tsx > discards old responses after chapter A to B to A even though coordinates match again
+src/AppAuthorTaskNavigation.test.tsx > drops a lookup dismissed inside the child task surface without parent navigation
+src/AppAuthorTaskNavigation.test.tsx > drops a pending original read when its workspace entry is disabled
+src/AppAuthorTaskNavigation.test.tsx > keeps a stale original source version visibly blocked from acceptance
+src/AppAuthorTaskNavigation.test.tsx > only opens the newest explicitly selected original task
+src/AppAuthorTaskNavigation.test.tsx > opens a different chapter and preserves the previous unsaved manuscript
+src/AppAuthorTaskNavigation.test.tsx > opens the exact original text job without broker or recovery flags, generation or acceptance
+src/AppAuthorTaskNavigation.test.tsx > rechecks original authority at the destination after chapter navigation
+src/AppAuthorTaskNavigation.test.tsx > rejects mismatched original job coordinates without opening or changing manuscript
+src/AppDraftRecovery.test.tsx > AUDIT preserves a recovered plain-text candidate if the receipt acknowledges different prose
+src/AppDraftRecovery.test.tsx > AUDIT shows the latest retained candidate when a persisted conflict is reopened after reload
+src/AppDraftRecovery.test.tsx > accepts the existing backend Markdown projection when the acknowledged document matches
+src/AppDraftRecovery.test.tsx > archives the old conflict and invalidates its stale manual resolution when a newer candidate hydrates
+src/AppDraftRecovery.test.tsx > does not display a late conflict result in another chapter
+src/AppDraftRecovery.test.tsx > ends saving visibly even when a conflict lookup also loses connection
+src/AppDraftRecovery.test.tsx > fences a late success across an A-B-A chapter change and retains both candidates
+src/AppDraftRecovery.test.tsx > hydrates a durable plain-text draft without borrowing stale server rich text
+src/AppDraftRecovery.test.tsx > keeps an explicit merge pending through a cache refresh of its already-reviewed server version
+src/AppDraftRecovery.test.tsx > keeps flag-off controls unchanged and starts no recovery unload listener
+src/AppDraftRecovery.test.tsx > keeps newer typing dirty through a delayed save, coalesces repeated clicks and rebases only after acknowledgement
+src/AppDraftRecovery.test.tsx > labels browser-offline drafts honestly and permits an explicit reachable local-backend save
+src/AppDraftRecovery.test.tsx > never marks saved on invalid failure
+src/AppDraftRecovery.test.tsx > never marks saved on network failure
+src/AppDraftRecovery.test.tsx > never marks saved on wrong-content failure
+src/AppDraftRecovery.test.tsx > normalizes recovered raw prose into a verifiable literal document before saving
+src/AppDraftRecovery.test.tsx > preserves a corrupt local candidate behind an explicit export/discard recovery gate
+src/AppDraftRecovery.test.tsx > preserves a quota-failed buffer across a new server version and offers exact text export
+src/AppDraftRecovery.test.tsx > reserves the pre-IME version before its first transaction and defers conflict focus until composition ends
+src/AppDraftRecovery.test.tsx > retains an explicit manual merge when its receipt belongs to other prose
+src/AppDraftRecovery.test.tsx > suppresses autosave and manual submit throughout composition and submits after it ends
+src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > retains the original authorized interop feature route model-center
+src/AppModuleNavigationIntent.test.tsx > App module navigation during delayed original overview > retains the original authorized interop feature route workflow
+src/AppProductionReceiptNavigation.test.tsx > real App retains source declaration on cancelled leave and opens the explicit original chapter
+src/AppProductionReceiptNavigation.test.tsx > real App retains source declaration on cancelled leave and opens the explicit original task
+src/AppRevisionHistory.test.tsx > actual App preserves the new dirty buffer when old restore completes after branch change
+src/AppRevisionHistory.test.tsx > actual App preserves the new dirty buffer when old restore completes after project change
+src/AppRevisionHistory.test.tsx > actual App preserves the new dirty buffer when old restore completes after session change
+src/AppRevisionHistory.test.tsx > actual App refreshes mounted history after chapter cache advances on AI Accept
+src/AppRevisionHistory.test.tsx > hydrates a clean buffer from the returned chapter without reloading
+src/AppRevisionHistory.test.tsx > routes restore through actual App hydration without overwriting a newer dirty buffer
+src/AppStorySourceNavigation.test.tsx > blocks source navigation for composing using existing manuscript state
+src/AppStorySourceNavigation.test.tsx > blocks source navigation for dirty using existing manuscript state
+src/AppStorySourceNavigation.test.tsx > blocks source navigation for target draft using existing manuscript state
+src/AppStorySourceNavigation.test.tsx > ignores the late source read after cancel
+src/AppStorySourceNavigation.test.tsx > ignores the late source read after chapter ABA
+src/AppStorySourceNavigation.test.tsx > ignores the late source read after leave
+src/AppStorySourceNavigation.test.tsx > ignores the late source read after new input
+src/AppStorySourceNavigation.test.tsx > keeps the current chapter when source permission is revoked or coordinates mismatch
+src/AppStorySourceNavigation.test.tsx > reads the exact chapter through original authority before normal App hydration
+src/AppStyleComparisonNavigation.test.tsx > real App keeps profile and feedback drafts on cancel, and only confirmed leave unmounts the style owner
+src/AppStyleDNANavigation.test.tsx > a newer module intent suppresses late original navigation reads after explicit discard
+src/AppStyleDNANavigation.test.tsx > composes the original CreativeWorkspace return with Style DNA cancel and 保存 Style DNA 后离开
+src/AppStyleDNANavigation.test.tsx > composes the original CreativeWorkspace return with Style DNA cancel and 放弃 Style DNA 修改并离开
+src/AppStyleDNANavigation.test.tsx > does not treat an unverified success-shaped receipt as a durable save
+src/AppStyleDNANavigation.test.tsx > failure retains the private draft; permission revocation quarantines it and cancels intent
+src/AppStyleDNANavigation.test.tsx > forbidden save removes private draft and pending transition without navigation
+src/AppStyleDNANavigation.test.tsx > keeps Style DNA confirmation reachable after switching to another creative mode
+src/AppStyleDNANavigation.test.tsx > late save after cancel never leaves the original editor
+src/AppStyleDNANavigation.test.tsx > manuscript protection remains in force after Style DNA is saved
+src/AppStyleDNANavigation.test.tsx > protects original App Global search before any transition
+src/AppStyleDNANavigation.test.tsx > protects original App Open overview before any transition
+src/AppStyleDNANavigation.test.tsx > protects original App Switch image before any transition
+src/AppStyleDNANavigation.test.tsx > protects original App 切换本机作品 before any transition
+src/AppStyleDNANavigation.test.tsx > quarantines a batched store A/B/A editor and protects fresh edits after retirement
+src/AppStyleDNANavigation.test.tsx > rechecks creative edits during 保存 Style DNA 后离开 before Switch image
+src/AppStyleDNANavigation.test.tsx > rechecks creative edits during 保存 Style DNA 后离开 before 返回经典工作区
+src/AppStyleDNANavigation.test.tsx > rechecks creative edits during 放弃 Style DNA 修改并离开 before Switch image
+src/AppStyleDNANavigation.test.tsx > rechecks creative edits during 放弃 Style DNA 修改并离开 before 返回经典工作区
+src/AppStyleDNANavigation.test.tsx > rechecks manuscript changes made while the leave confirmation is pending
+src/AppStyleDNANavigation.test.tsx > saves through original STYLE endpoint before leaving and keeps manuscript unchanged
+src/AppWorkspaceResume.test.tsx > adds no grid row or editor remount when a volatile-memory draft warning appears
+src/AppWorkspaceResume.test.tsx > blocks reopening while IME composition has reserved the current buffer
+src/AppWorkspaceResume.test.tsx > cannot fall back to legacy generation when the enabled request inspector receipt is omitted
+src/AppWorkspaceResume.test.tsx > discards a delayed verification after the restore panel is dismissed
+src/AppWorkspaceResume.test.tsx > does not fetch resume metadata or expose the new entry when the server flag is off
+src/AppWorkspaceResume.test.tsx > does not navigate away from dirty manuscript
+src/AppWorkspaceResume.test.tsx > does not navigate to a search project removed from the refreshed original inventory
+src/AppWorkspaceResume.test.tsx > does not open a delayed revision source after its feature is revoked
+src/AppWorkspaceResume.test.tsx > does not open a sample after session changes during original inventory refresh
+src/AppWorkspaceResume.test.tsx > does not reopen after chapter A to B to A while current authority is being verified
+src/AppWorkspaceResume.test.tsx > drops a delayed cross-project source when the author types during revalidation
+src/AppWorkspaceResume.test.tsx > drops delayed revision-owner navigation after new typing or scope change
+src/AppWorkspaceResume.test.tsx > forwards the actual reviewed source exclusions through App into the original author endpoint
+src/AppWorkspaceResume.test.tsx > keeps a dirty buffer on an attempted local project switch
+src/AppWorkspaceResume.test.tsx > keeps a long stopping note intact in its editor while the chrome uses a bounded preview
+src/AppWorkspaceResume.test.tsx > keeps the original save controls outside the shrinking metadata group in recovery state
+src/AppWorkspaceResume.test.tsx > keeps the original three workspace rows with resume enabled=false
+src/AppWorkspaceResume.test.tsx > keeps the original three workspace rows with resume enabled=true
+src/AppWorkspaceResume.test.tsx > leaves the picker open when a saved project is unavailable rather than silently choosing the first
+src/AppWorkspaceResume.test.tsx > never consumes the local-author selection hint in an authenticated session
+src/AppWorkspaceResume.test.tsx > opens a confirmed sample only after refreshing original project inventory
+src/AppWorkspaceResume.test.tsx > opens another authorized project only after original inventory and exact chapter version revalidation
+src/AppWorkspaceResume.test.tsx > opens the exact revision model owner with its original chapter after authoritative verification
+src/AppWorkspaceResume.test.tsx > preserves an existing target chapter draft instead of replacing it with the saved workspace
+src/AppWorkspaceResume.test.tsx > preserves current U04 settings when the saved reference/preferences pointer changed
+src/AppWorkspaceResume.test.tsx > refuses a revision-owner chapter switch when the manuscript has unsaved work
+src/AppWorkspaceResume.test.tsx > refuses cross-project search navigation while manuscript is dirty
+src/AppWorkspaceResume.test.tsx > rejects a changed source version instead of applying an old anchor or layout
+src/AppWorkspaceResume.test.tsx > rejects a mismatched original revision job and never falls back to another draft
+src/AppWorkspaceResume.test.tsx > remembers an explicitly selected non-first project and reopens it after a fresh inventory check
+src/AppWorkspaceResume.test.tsx > reopens the saved chapter through current authority and applies original reading/split state only after explicit restore
+src/AppWorkspaceResume.test.tsx > retains a picker and explanation when the confirmed sample is no longer in inventory
+src/AppWorkspaceResume.test.tsx > retains newer typing when fresh chapter verification is delayed
+src/AppWritingGoalRecovery.test.tsx > keeps accurate progress for a complete writing-goal response
+src/AppWritingGoalRecovery.test.tsx > keeps the actual App editor and save path usable with malformed writing-goal data 0
+src/AppWritingGoalRecovery.test.tsx > keeps the actual App editor and save path usable with malformed writing-goal data 1
+src/AppWritingGoalRecovery.test.tsx > keeps the actual App editor and save path usable with malformed writing-goal data 2
+src/AuditGenerationScope.test.tsx > AUDIT fences a late generation creation response after chapter navigation
+src/AuditGenerationScope.test.tsx > AUDIT revalidates a completed current recovery task before presenting it as ready
+src/AuditGenerationScope.test.tsx > StrictMode revalidates completed single once per observer before presenting fresh output
+src/AuditGenerationScope.test.tsx > StrictMode revalidates completed variants once per observer before presenting fresh output
+src/AuditGenerationScope.test.tsx > closes only the local stream on navigation and ignores queued events/errors without cancelling the server task
+src/AuditGenerationScope.test.tsx > coalesces synchronous repeated generation clicks before React commits loading state
+src/AuditGenerationScope.test.tsx > does not let an obsolete creation replace newer origin recovery metadata
+src/AuditGenerationScope.test.tsx > fences a late accept action and preserves the new chapter view
+src/AuditGenerationScope.test.tsx > fences a late cancel action and preserves the new chapter view
+src/AuditGenerationScope.test.tsx > fences a late reject action and preserves the new chapter view
+src/AuditGenerationScope.test.tsx > fences a variant group that is created only after navigation
+src/AuditGenerationScope.test.tsx > fences delayed creation across A-B-A and retains its originating task without starting an old stream
+src/AuditGenerationScope.test.tsx > fences delayed single retry creation while preserving new task metadata in the old chapter
+src/AuditGenerationScope.test.tsx > fences delayed variant creation and poll callbacks across chapters
+src/AuditGenerationScope.test.tsx > fences delayed variant retry creation while preserving new task metadata in the old chapter
+src/AuditGenerationScope.test.tsx > fences in-flight stream recovery polling after navigation
+src/AuditGenerationScope.test.tsx > fences initial recovery polling under StrictMode and retains metadata on genuine unmount
+src/AuditGenerationScope.test.tsx > never exposes retained output after a denied recovery check
+src/AuditGenerationScope.test.tsx > never exposes retained output after a navigation recovery check
+src/AuditGenerationScope.test.tsx > never exposes retained output after a other-project recovery check
+src/AuditGenerationScope.test.tsx > recovers offline current metadata through explicit recheck after permission returns, without new generation
+src/AuditGenerationScope.test.tsx > rejects source drift for current single recovery without rendering its payload
+src/AuditGenerationScope.test.tsx > rejects source drift for current variants recovery without rendering its payload
+src/AuditGenerationScope.test.tsx > reopens a displaced task only after fresh source checks and preserves the newer candidate for later recovery
+src/AuditGenerationScope.test.tsx > retains completed candidate output for reopening instead of deleting it at stream completion
+src/AuditGenerationScope.test.tsx > withholds cached single output and original while authorization is pending or denied
+src/AuditGenerationScope.test.tsx > withholds cached variants output and original while authorization is pending or denied
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > clears a decoder failure in the real mounted right slot and permits explicit retry
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > keeps loaded comparison and playback across an unrelated host draft rerender without another comparison read
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > retires loaded comparison when the explicit localHostToken prop changes and uses the replacement override
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > retires visible private comparison on host credentials ABA even when credentials return within one batch
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > retires visible private comparison on host epoch ABA even when credentials return within one batch
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > retires visible private comparison on studio credentials ABA even when credentials return within one batch
+src/assetbrowser/AssetBrowserHost.comparison.test.tsx > actual independent workspace comparison preview lifecycle > uses new credentials after a real keyed workspace replacement and does not retain the old preview
+src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx > CreativeWorkspace adoption readback admission > a late adoption v3 cannot replace a clean v4 already accepted from the original production owner
+src/creative/CreativeWorkspace.adoptionCommitRace.test.tsx > CreativeWorkspace adoption readback admission > accepts a verified adoption only against the still-current original target version
+src/creative/CreativeWorkspace.saveState.regression.test.tsx > Creative current document save-state ownership > does not call a pending Director proposal a document save
+src/creative/CreativeWorkspace.test.tsx > creative workspace protected manuscript and request boundaries > keeps read-only document fields disabled and never writes
+src/creative/DirectorSheetExport.additive.test.tsx > uses exact original source/version GET and verifies CSV bytes before return
+src/creative/GraphImageOutputStarter.additive.test.tsx > preserves original dirty-target layout lock before a retained production Apply
+src/creative/GraphImageOutputStarter.additive.test.tsx > production hook creates 2 authored image outputs from an empty upper canvas with no API task
+src/creative/GraphImageOutputStarter.additive.test.tsx > production hook creates 4 authored image outputs from an empty upper canvas with no API task
+src/creative/GraphImageOutputStarter.additive.test.tsx > rejects retained Apply after an allowed same-batch upper layout edit on a saved empty original graph
+src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx > independent studio graph content integration > persists groups through original undo/save/reopen and inspector node deletion
+src/creative/IndependentStudioGraphWorkspace.presentation.additive.test.tsx > persists nested visual organization with undo, dirty leave warning, reopen and parent-node deletion promotion
+src/creative/IndependentStudioGraphWorkspace.test.tsx > independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job
+src/creative/IndependentStudioGraphWorkspace.test.tsx > independent studio graph content integration > keeps graphs lazy until an explicit content choice, with unchanged eight shell modules
+src/creative/IndependentStudioHostExit.regression.test.tsx > allows only the original Novel exit after denial while private destinations and project actions stay fenced
+src/creative/IndependentStudioHostExit.regression.test.tsx > does not treat an unrelated storage401 as settlement of a concurrent actual import
+src/creative/IndependentStudioHostExit.regression.test.tsx > keeps a real import in flight blocked after Host loss, then requires unknown-outcome consent with its original ID
+src/creative/IndependentStudioHostExit.regression.test.tsx > keeps dirty protection after child cleanup and rechecks other-owner busy at confirmation
+src/creative/IndependentStudioHostExit.regression.test.tsx > keeps the pre-retirement Comic busy fence when child unmount reports false without a settlement receipt
+src/creative/IndependentStudioHostExit.regression.test.tsx > retains an already unknown import ID when a later Host loss opens the safe exit
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor ABA and rejects a late list
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous actor workspace ABA and rejects a late list
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous branch ABA and rejects a late list
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous project ABA and rejects a late list
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > immediately hides an adopted private run receipt after synchronous session ABA and rejects a late list
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > keeps a current authoritative overview denial 403 effective
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > keeps only unsaved author text read-only while hiding private graph directory metadata
+src/creative/IndependentStudioIdentity.regression.test.tsx > independent Studio captured identity cannot revive before React effects > still adopts an overview when only non-authority editor state changes
+src/creative/IndependentStudioManualMask.test.tsx > manual mask in the original Image workspace > does not reopen a late source decode after source A→B→A navigation
+src/creative/IndependentStudioManualMask.test.tsx > manual mask in the original Image workspace > loads only explicitly and creates original MANUAL_EDIT Asset without jobs or automatic selection
+src/creative/IndependentStudioReadFences.refresh.additive.test.tsx > independent asset read fences and truthful capability labels > keeps refresh inputs visible until failed read settles, then retires the old relationship view
+src/creative/IndependentStudioReadFences.refresh.additive.test.tsx > independent asset read fences and truthful capability labels > keeps refresh inputs visible until same-version read settles, then retires the old relationship view
+src/creative/IndependentStudioReadFences.refresh.additive.test.tsx > independent asset read fences and truthful capability labels > removes the retained refresh form when the original asset read returns 401
+src/creative/IndependentStudioReadFences.refresh.additive.test.tsx > independent asset read fences and truthful capability labels > removes the retained refresh form when the original asset read returns 403
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > describes presets as saved preferences without implying an active layout change
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > labels review-only authority accurately while asset files remain readonly
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > shows safe LOW_SPACE_OR_QUOTA storage state without filesystem paths or cleanup controls
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > shows safe READY storage state without filesystem paths or cleanup controls
+src/creative/IndependentStudioReadFences.test.tsx > independent asset read fences and truthful capability labels > shows safe UNAVAILABLE storage state without filesystem paths or cleanup controls
+src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked
+src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations
+src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload
+src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > prevents relation writes while a provenance draft is being edited
+src/creative/IndependentStudioRelationships.test.tsx > studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target
+src/creative/IndependentStudioSequentialImport.test.tsx > independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once
+src/creative/IndependentStudioSequentialImport.test.tsx > independent studio sequential import readiness > rejects a synthetic change sent to the disabled input instead of silently queueing another upload
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > cancelled recipient closes only after dirty confirmation and never saves
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > denied final source read clears the recipient and never posts a binding
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after branch ABA
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after project ABA
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after session ABA
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > fences delayed authoritative source read after unmount
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > isolates handoff actions and restores ordinary production controls after explicit close
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > keeps route/selection/inspection GET-only and sends one exact original-owner POST on final click
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > preserves dirty-navigation cancellation and requires explicit discard before entering
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects document body and keeps the dispatched attempt locked
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects missing document shot and keeps the dispatched attempt locked
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects refresh 404 and keeps the dispatched attempt locked
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects refresh 409 and keeps the dispatched attempt locked
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real decoded save rejects unrelated receipt shot and keeps the dispatched attempt locked
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN 503 stays blocked after authoritative observation, never retries
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN invalid receipt stays blocked after authoritative observation, never retries
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN network stays blocked after authoritative observation, never retries
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > real transport UNKNOWN refresh failure stays blocked after authoritative observation, never retries
+src/creative/IndependentStudioStoryboardHandoff.additive.test.tsx > real IndependentStudioWorkspace to original storyboard image binding > source replacement after preview is rejected without any write
+src/creative/IndependentStudioWorkspace.comic.test.tsx > Image subview creates a source-free page, edits a bubble, saves and reopens without a model or renderer
+src/creative/IndependentStudioWorkspace.comic.test.tsx > denied Comic scope is explicit and does not look like an empty project
+src/creative/IndependentStudioWorkspace.comic.test.tsx > dirty comic blocks closing until the existing workspace discard confirmation
+src/creative/IndependentStudioWorkspace.comic.test.tsx > same-batch retained host Close observes synchronous ORA dirty before React rerenders
+src/creative/IndependentStudioWorkspace.comic.test.tsx > selected ORA File reaches the actual Image close guard and survives cancelled navigation
+src/creative/IndependentStudioWorkspace.comic.test.tsx > standalone RASTER edits block New/Open/Source until explicit discard without book membership
+src/creative/IndependentStudioWorkspace.comic.test.tsx > unsaved ORA license reaches the actual host guard and survives page save dirty cleanup
+src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx > keeps unsent IMAGE cost through real Broker navigation cancel, then discards only after explicit confirmation
+src/creative/IndependentStudioWorkspace.directorImage.additive.test.tsx > keeps unsent IMAGE note through real Broker navigation cancel, then discards only after explicit confirmation
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted asset browser to original image draft > requires an explicit 图片 operation choice and two metadata reads without dispatch
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted asset browser to original image draft > requires an explicit 视频 operation choice and two metadata reads without dispatch
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 图片模块
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 时间线模块
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted original asset browser to timeline handoff > keeps dirty-navigation cancel for 视频模块
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > mounted original asset browser to timeline handoff > routes a real browser reference into the original timeline preview and exact draft only after explicit acceptance
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > does not open a changed original owner read {"deleted_at":"deleted"}
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > does not open a changed original owner read {"novel_id":"other-project"}
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > does not open a changed original owner read {"sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > does not open a changed original owner read {"version":3}
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > re-reads exact original asset after explicit dirty discard and performs no writes
+src/creative/IndependentStudioWorkspace.navigation.additive.test.tsx > relationship inspection original asset navigation > retires inspection when the original selection goes A to B to A in one batch
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > cancels dirty graph navigation before any final read or discard
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > does not allow an edited director draft to silently replace the inspected source
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > ignores a late final export after cancel without discarding the graph
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > ignores a late final export after module ABA without discarding the graph
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > keeps the graph and director mounted until both admission reads finish, then consumes the receipt without a second admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > keeps the original editor dirty draft when a fixed-module switch is cancelled
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > keeps the originating IMAGE shell, exact target and original explicit version-aware save
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > keeps the originating VIDEO shell, exact target and original explicit version-aware save
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final 503 admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final digest admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final network admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note performances admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final note planning admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final revoked capability admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot characters admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot continuity admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot emotion admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final shot note IDs admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final source binding admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final version admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > preserves graph input and director state on failed final visual references admission
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > retires an already mounted editor across external module A→B→A instead of reopening the old receipt
+src/creative/IndependentStudioWorkspace.storyboardEditor.additive.test.tsx > mounted graph → exact original storyboard editor navigation > retires the hosted editor before an accepted dirty fixed-module switch and never revives it on return
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > disables only import when media validation is unavailable, with truthful capability text
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > keeps preview/export available in readonly mode while preventing all writes
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > preserves a preference draft on CAS conflict and does not hide modules or run jobs
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > rejects a delayed file read after the selected project changes
+src/creative/IndependentStudioWorkspace.test.tsx > independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration
+src/creative/StoryboardSheetExport.additive.test.tsx > uses the original authenticated versioned sheet GET and rejects tampered bytes
+src/creative/StudioImageGraphEditor.providerMigration.test.tsx > image Graph authoring through original controller and mounted workspace > migration: saves weighted reference and prompt parameters through original actions with no arbitrary JSON or direct generation
+src/creative/StudioProductionGraphEditor.director.additive.test.tsx > keeps an UNKNOWN storyboard handoff pending through cancelled workspace navigation
+src/creative/StudioProductionGraphEditor.director.additive.test.tsx > requires an explicit original workspace navigation confirmation to abandon an UNKNOWN director create
+src/creative/StudioProductionGraphEditor.providerMigration.test.tsx > Production Graph UI keeps original controller and execution authority > migration: explicitly binds authored documents, style and upscale parameters without dispatch
+src/creative/StudioProductionGraphEditor.test.tsx > Production Graph UI keeps original controller and execution authority > mounts the existing read-only Director Console in a selected Director graph node
+src/creative/StudioVideoGraphEditor.phase4.test.tsx > Explicit video Graph keeps saved shot and original execution authority > adds exact current shot pins and video controls without starting a job
+src/creative/StudioVideoGraphEditor.phase4.test.tsx > Explicit video Graph keeps saved shot and original execution authority > ignores a late saved shot receipt after same-token Host replacement
+src/creative/StudioVideoGraphEditor.providerMigration.test.tsx > Explicit video Graph keeps saved shot and original execution authority > migration: adds exact current shot pins and video controls without starting a job
+src/creative/StudioVideoShotBinding.providerMigration.test.tsx > Phase 5 independent Video author flow can explicitly omit a new Shot binding > migration: allows unchecking the initial true flag without a connected Shot and saves no implicit pin
+src/creative/graphCanvasLargeNotes.helpers.test.ts > matches original Python canonical boundary fixtures including signed zero, exponents and UTF-8 escapes
+src/creative/studioComicBootstrap.capture.test.tsx > actual mounted bootstrap/catalog/page responses pass through IndependentStudioWorkspace to StudioComicPanel
+src/creative/studioExecutionRecipeView.video.test.ts > does not explain unsupported video mapping: include_audio
+src/creative/studioExecutionRecipeView.video.test.ts > explains only the actual single-clip Timeline mapping and preserves execution uncertainty
+src/experimental/ComicPublicationPanel.epub.test.tsx > downloads EPUB through the mounted IMAGE owner with the captured session and branch
+src/experimental/ComicPublicationPanel.pageArchive.test.tsx > downloads lossless WebP through the original mounted IMAGE owner with captured scope
+src/experimental/ComicPublicationPanel.test.tsx > downloads PDF through the original mounted IMAGE owner with captured collaboration headers
+src/experimental/ComicPublicationPanel.test.tsx > downloads through the real mounted IMAGE adapter with the original captured collaboration headers
+src/experimental/ExperimentalWorkbench.test.tsx > default-off Experimental UI > keeps the inherited launcher unchanged without opt-in
+src/nle/TrackHeaderSelection.additive.test.tsx > original mounted multitrack edit owner > keeps locked-track batch refusal in the original owner instead of moving an unselected substitute
+src/production/productionDashboardMount.test.tsx > production workflow dashboard mounted in the original Studio workspace > reads the projection once through the captured host session and renders it beside the operation contracts
+src/prompt/PromptWorkspace.test.tsx > R3-U3-C1 Prompt workspace (jsdom) > opens a family and edits the body without saving on input
+src/ui/LocalAiBrowserJourneyContracts.test.tsx > (suite)

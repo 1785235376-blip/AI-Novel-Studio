@@ -132,8 +132,28 @@ describe('task center view', () => {
     });
     const failedView = render(<View client={failed.client}/>);
     await waitFor(() => expect(failedView.container.textContent).toContain('任务队列读取失败'));
-    expect(failedView.container.textContent).toContain('STUDIO_REQUEST_FAILED');
+    // [HERMIA-FE-20261024 M6] was: visible text contains the raw code. Now: the human message is shown, the raw code is
+    // not visible text, and it is still exposed (exactly) as data-error-code for diagnostics.
+    const taskAlert = failedView.container.querySelector('[data-error-code]');
+    expect(taskAlert?.textContent).toBe('请求未完成。'); // [HERMIA-FE-20261024 M6-fix] exact sentence
+    expect(failedView.container.textContent).not.toContain('STUDIO_REQUEST_FAILED');
+    expect(failedView.container.querySelector('[data-error-code]')?.getAttribute('data-error-code')).toBe('STUDIO_REQUEST_FAILED');
     expect(failedView.container.textContent).not.toContain('当前筛选下没有任务记录');
+  });
+
+  // [HERMIA-FE-20261024 M6-fix] ReviewInbox alert matches TaskList: human sentence only, raw code only in data-error-code.
+  it('review inbox read failure shows human text and keeps the code only in data-error-code', async () => {
+    const failed = fakeClient({
+      readInbox: vi.fn(async () => { throw new ApiError({ status: 500, code: 'STUDIO_REQUEST_FAILED', message: '请求未完成。' }); }),
+    });
+    const view = render(<View client={failed.client}/>);
+    await screen.findByRole('article', { name: '任务 media media-task-1' });
+    fireEvent.click(tab('审核收件箱'));
+    await waitFor(() => expect(view.container.querySelector('[data-error-code]')).not.toBeNull());
+    const alert = view.container.querySelector('[data-error-code]');
+    expect(alert?.getAttribute('data-error-code')).toBe('STUDIO_REQUEST_FAILED');
+    expect(alert?.textContent).toBe('请求未完成。');
+    expect(view.container.textContent).not.toContain('STUDIO_REQUEST_FAILED');
   });
 
   it('takes button availability from the owner actions only', async () => {

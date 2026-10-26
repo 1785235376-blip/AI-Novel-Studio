@@ -2,6 +2,7 @@
  * [HERMIA-FE-20261022 X-UX-01] Shared honest empty / error / loading copy
  * for six workspaces + novel main path. Author language; 禁假绿空壳.
  */
+import {useTz} from '../i18n';
 import type {ReactNode} from 'react';
 import {Button, EmptyState} from './primitives';
 import './WorkspaceHonestEmpty.css';
@@ -91,8 +92,10 @@ export function WorkspaceHonestEmpty({
   actionLabel?: string;
   extra?: ReactNode;
 }) {
-  const {title, detail, cta} = honestEmptyCopy(kind, workspace);
-  const label = actionLabel || cta;
+  const tz = useTz(); // [HERMIA-FE-20261025 I18N P1] honest empty/error states — zh copy stays the source, translated at render
+  const raw = honestEmptyCopy(kind, workspace);
+  const title = tz(raw.title), detail = tz(raw.detail), cta = tz(raw.cta || '');
+  const label = actionLabel ? tz(actionLabel) : cta;
   return (
     <div
       className="ws-honest-empty"
@@ -106,7 +109,7 @@ export function WorkspaceHonestEmpty({
         <Button type="button" onClick={onAction}>{label}</Button>
       ) : null}
       {extra}
-      <small className="ws-honest-empty__mark">[HERMIA-FE-20261022 X-UX-01] 诚实空态 · 禁假绿</small>
+      <small className="ws-honest-empty__mark">[HERMIA-FE-20261022 X-UX-01] {tz('诚实空态 · 禁假绿')}</small>
     </div>
   );
 }

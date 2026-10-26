@@ -1,0 +1,3 @@
+run 1 failedTotal 15 protects IMAGE cost=f:5507ms after invalid preview=p:68ms authoritative download=p:210ms authors a director in =f:5204ms asset-B-ABA=p:26ms
+run 2 failedTotal 16 protects IMAGE cost=f:5765ms after invalid preview=p:75ms authoritative download=p:407ms authors a director in =f:6026ms asset-B-ABA=p:66ms
+run 3 failedTotal 16 protects IMAGE cost=f:5829ms after invalid preview=p:62ms authoritative download=p:700ms authors a director in =f:5520ms asset-B-ABA=p:73ms

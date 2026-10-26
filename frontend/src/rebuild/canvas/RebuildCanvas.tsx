@@ -28,28 +28,51 @@ export const NODE_TYPES: Record<CanvasKind, NodeType[]> = {
   ],
 };
 const NW = 180, NH = 60;
-const typeOf = (k: CanvasKind, t: string) => NODE_TYPES[k].find(x => x.id === t);
+const REVEAL_W = 186; // [HERMIA-FE-20261024 M3-s1fix] rendered box incl. border/ports (Chrome)
 let seq = 0; const uid = (p: string) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
 export const canvasStorageKey = (k: CanvasKind, scope: string) => `poemseed.rebuild.canvas.${k}.${scope}`;
 
-function load(key: string, seed: CvGraph): CvGraph {
+// [HERMIA-FE-20261026 DUAL] in-memory store for 「仅本次会话」 canvases (no identity → never written to localStorage).
+const SESSION_GRAPHS = new Map<string, CvGraph>();
+export const sessionCanvasStore = {get: (k: string) => SESSION_GRAPHS.get(k), set: (k: string, g: CvGraph) => { SESSION_GRAPHS.set(k, g); }, clear: () => SESSION_GRAPHS.clear()};
+export function readCanvasGraph(key: string, persist: 'local' | 'session' = 'local'): CvGraph | null {
+  if (persist === 'session') return SESSION_GRAPHS.get(key) ?? null;
+  try { const raw = localStorage.getItem(key); if (raw) { const g = JSON.parse(raw); if (Array.isArray(g?.nodes) && Array.isArray(g?.edges)) return g; } } catch { /* corrupt: leave untouched */ }
+  return null;
+}
+export function writeCanvasGraph(key: string, g: CvGraph, persist: 'local' | 'session' = 'local') {
+  if (persist === 'session') { SESSION_GRAPHS.set(key, g); return; }
+  try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
+}
+function load(key: string, seed: CvGraph, persist: 'local' | 'session' = 'local'): CvGraph {
+  if (persist === 'session') return SESSION_GRAPHS.get(key) ?? seed;
   try { const raw = localStorage.getItem(key); if (raw) { const g = JSON.parse(raw); if (Array.isArray(g?.nodes) && Array.isArray(g?.edges)) return g; } } catch { /* ignore */ }
   return seed;
 }
 
+export type CvViewport = {x: number; y: number; k: number};
+// [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
+// (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
 type RebuildCanvasProps = {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean; onRevealed?: () => void;
+  storageKey?: string; persist?: 'local' | 'session'; types?: NodeType[]; ariaLabel?: string; menuTitle?: string; badge?: string; badgeTitle?: string; emptyHint?: string;
   onImageTaskIntent?: (node: CvNode, isSourceCurrent?: () => boolean) => void; renderImageTaskBinding?: (node: CvNode, isSourceCurrent?: () => boolean, sourceRevision?: number, formalSourceCurrent?: () => boolean) => ReactNode};
 
-// A new owner must load its own draft before any persistence effect runs.
+/** Remount when owner storage key changes so selection/prompt/source guards never leak across projects. */
 export function RebuildCanvas(props: RebuildCanvasProps) {
-  return <RebuildCanvasSession key={canvasStorageKey(props.kind, props.scope)} {...props} />;
+  return <RebuildCanvasSession key={props.storageKey ?? canvasStorageKey(props.kind, props.scope)} {...props} />;
 }
 
-function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
-  const key = canvasStorageKey(kind, scope);
-  const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
-  const [vp, setVp] = useState({x: 40, y: 40, k: 1});
-  const [sel, setSel] = useState<string | null>(null);
+function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed,
+  storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint,
+  onImageTaskIntent, renderImageTaskBinding}: RebuildCanvasProps) {
+  const key = storageKey ?? canvasStorageKey(kind, scope);
+  const palette = typesProp ?? NODE_TYPES[kind];
+  const typeOf = (_k: CanvasKind, t: string) => palette.find(x => x.id === t) ?? NODE_TYPES[_k].find(x => x.id === t);
+  const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}, persist));
+  const [vp, setVp] = useState<CvViewport>(() => initialViewport ?? {x: 40, y: 40, k: 1});
+  const [sel, setSel] = useState<string | null>(() => (initialSelected && g.nodes.some(n => n.id === initialSelected) ? initialSelected : null));
+  useEffect(() => { onViewport?.(vp); }, [vp, onViewport]);
   const [menu, setMenu] = useState<null | {cx: number; cy: number; wx: number; wy: number; node?: string}>(null);
   const [q, setQ] = useState('');
   const [link, setLink] = useState<null | {from: string; x: number; y: number}>(null);
@@ -61,9 +84,37 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   const liveGraph = useRef(g); liveGraph.current = g;
   const selectedTask = useRef<CvNode>();
   const selectionEpoch = useRef(0);
-  const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
   useLayoutEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
-  useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);
+  // [HERMIA-FE-20261024 M3-s1fix] revealLast: if the last node is outside the visible svg, pan just enough to show it (zoom kept).
+  // [HERMIA-FE-20261024 M3-s1fix2] the request is kept pending until the svg first has a non-zero size (tab-switch mounts
+  // measure 0×0 in Chrome), executed once via ResizeObserver (rAF polling fallback), then cleared so later manual pans,
+  // resizes or tab switches never pull the view back.
+  const revealPending = useRef(!!revealLast);
+  const onRevealedRef = useRef(onRevealed); onRevealedRef.current = onRevealed;
+  useLayoutEffect(() => {
+    const svg = svgRef.current; if (!revealPending.current || !svg) return;
+    const n = g.nodes[g.nodes.length - 1]; if (!n) { revealPending.current = false; onRevealedRef.current?.(); return; }
+    const tryReveal = () => {
+      if (!revealPending.current) return true;
+      const r = svg.getBoundingClientRect(); if (!r.width || !r.height) return false;
+      revealPending.current = false; onRevealedRef.current?.(); // [HERMIA-FE-20261024 M3-s1fix2] host clears its request
+      setVp(v => {
+        const M = 16, l = v.x + n.x * v.k, t = v.y + n.y * v.k, rr = l + REVEAL_W * v.k, b = t + NH * v.k;
+        const dx = l < M ? M - l : rr > r.width - M ? (r.width - M) - rr : 0;
+        const dy = t < M ? M - t : b > r.height - M ? (r.height - M) - b : 0;
+        return dx || dy ? {...v, x: v.x + dx, y: v.y + dy} : v;
+      });
+      return true;
+    };
+    if (tryReveal()) return;
+    let ro: ResizeObserver | undefined, raf = 0;
+    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(() => { if (tryReveal()) ro?.disconnect(); }); ro.observe(svg); }
+    else { const tick = () => { if (!tryReveal()) raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); }
+    return () => { ro?.disconnect(); if (raf) cancelAnimationFrame(raf); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; request consumed once
+  }, []);
+  const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
+  useEffect(() => { writeCanvasGraph(key, g, persist); }, [g, key, persist]);
   useEffect(() => { onSelect?.(g.nodes.find(n => n.id === sel) || null); }, [sel, g.nodes, onSelect]);
 
   const world = useCallback((cx: number, cy: number) => {
@@ -91,7 +142,8 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
     const {wx, wy} = world(e.clientX, e.clientY);
     try { (e.currentTarget as Element).setPointerCapture?.(e.pointerId); } catch { /* jsdom */ }
     if (port) { setLink({from: port.getAttribute('data-for')!, x: wx, y: wy}); return; }
-    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id !== sel) selectionEpoch.current++; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
+    // [HERMIA-FE-20261024 M3-s1fix] re-clicking the already-selected node re-reports it (host may be showing the other canvas's node).
+    if (nodeEl) { const id = nodeEl.getAttribute('data-node-id')!; const n = g.nodes.find(m => m.id === id)!; if (id === sel) onSelect?.(n); if (id !== sel) selectionEpoch.current++; setSel(id); drag.current = {mode: 'node', id, sx: e.clientX, sy: e.clientY, ox: n.x, oy: n.y}; return; }
     if (sel !== null) selectionEpoch.current++; setSel(null); drag.current = {mode: 'pan', sx: e.clientX, sy: e.clientY, ox: vp.x, oy: vp.y};
   };
   const onMove = (e: RPE<SVGSVGElement>) => {
@@ -126,7 +178,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   };
   const by = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const curve = (x1: number, y1: number, x2: number, y2: number) => { const m = Math.max(40, Math.abs(x2 - x1) / 2); return `M${x1},${y1} C${x1 + m},${y1} ${x2 - m},${y2} ${x2},${y2}`; };
-  const types = NODE_TYPES[kind].filter(t => !q || t.label.includes(q));
+  const types = palette.filter(t => !q || t.label.includes(q));
   const selectedNode = g.nodes.find(n => n.id === sel);
   const imageTaskNode = kind === 'image' && selectedNode?.t === 'image_generate' ? selectedNode : undefined;
   selectedTask.current = imageTaskNode;
@@ -145,11 +197,11 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
+    <div data-rcv-wrap="" style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto', alignSelf: 'stretch', flex: '1 1 auto', width: '100%', minWidth: 0}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
-      <span className="rcv-local" title="图结构与提示词按作品保存在此浏览器；不是已保存的服务端图，清除浏览器数据会丢失">仅本机草稿 · 未同步服务端</span>
-      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={kind === 'image' ? '图片无限画布' : '视频无限画布'} tabIndex={0}
+      <span className="rcv-local" title={badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢'}>{badge ?? '仅本机草稿 · 未同步服务端'}</span>
+      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={ariaLabel ?? (kind === 'image' ? '图片无限画布' : '视频无限画布')} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel}
         onKeyDown={e => { if ((e.key === 'Delete' || e.key === 'Backspace') && sel) delNode(sel); }}>
         <g transform={`translate(${vp.x},${vp.y}) scale(${vp.k})`}>
@@ -160,12 +212,12 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
               <text className="ttl" x={16} y={24}>{ty?.icon} {n.title.length > 12 ? n.title.slice(0, 12) + '…' : n.title}</text>
               <text className="sub" x={16} y={44}>{ty?.label || n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">本地</text>
-              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} fill="#8a93a5" data-port="in"><title>输入端口</title></circle> : null}
+              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>输入端口</title></circle> : null}
               {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>输出端口（拖动连线）</title></circle> : null}
             </g>; })}
         </g>
       </svg>
-      {g.nodes.length === 0 ? <p className="rcv-empty">在空白处<b>右键</b>添加节点 · 滚轮缩放 · 拖动空白平移</p> : null}
+      {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{emptyHint}<br /></> : null}在空白处<b>右键</b>添加节点 · 滚轮缩放 · 拖动空白平移</p> : null}
       <div className="rcv-zoom" aria-label="缩放">
         <button type="button" onClick={() => zoom(1 / 1.2)} aria-label="缩小">−</button><span>{Math.round(vp.k * 100)}%</span>
         <button type="button" onClick={() => zoom(1.2)} aria-label="放大">＋</button><button type="button" onClick={fit}>适配</button>
@@ -176,7 +228,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
           <div className="grp">节点</div>
           <button type="button" role="menuitem" onClick={() => delNode(menu.node!)}>删除节点</button>
         </> : <>
-          <div className="grp">添加到{kind === 'image' ? '图片' : '视频'}画布（本机草稿）</div>
+          <div className="grp">{menuTitle ?? `添加到${kind === 'image' ? '图片' : '视频'}画布（本机草稿）`}</div>
           <input autoFocus placeholder="搜索节点类型" aria-label="搜索节点类型" value={q} onChange={e => setQ(e.target.value)}
             onKeyDown={e => { if (e.key === 'Escape') setMenu(null); if (e.key === 'Enter' && types[0]) addNode(types[0]); }} />
           <div className="lst">{types.map(t => <button key={t.id} type="button" role="menuitem" data-node-type={t.id} onClick={() => addNode(t)}><i style={{background: t.color}} />{t.icon} {t.label}</button>)}
@@ -195,7 +247,8 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, onImageTaskIn
       }}>为此节点准备图片任务</Button>
       {renderImageTaskBinding?.(imageTaskNode, readSourceCurrent(imageTaskNode.id, promptRevision), promptRevision, formalSourceCurrent(imageTaskNode, promptRevision))}
       <StatusMessage>{onImageTaskIntent ? '只打开真实图片任务准备面板。保存入队、执行与接受入库仍需分别确认；不会自动派发或把结果写回草稿图。' : '此入口尚未接入持久图片任务；这里只保存提示词草稿。'}</StatusMessage>
-    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage>视频节点的任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage> : null}
+    </Panel> : selectedNode?.t === 'video_generate' ? <StatusMessage data-unsupported="video-node">视频节点的正式任务参数尚未接线；这里只保存草稿图，不会创建或执行视频任务。</StatusMessage>
+      : kind === 'video' && selectedNode ? <StatusMessage data-unsupported="video-canvas">VIDEO 画布节点正式执行未接线（unsupported）。</StatusMessage> : null}
     </div>
   );
 }

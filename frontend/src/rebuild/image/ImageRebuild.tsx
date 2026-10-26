@@ -3,6 +3,7 @@
    /api/novels/{nid}/image-generations · image-jobs · visual-references · /api/asset-providers。
    没有接口支撑的（漫画分格/气泡、逐格生成）只做本地草稿并写「状态待核实」，不显示已就绪。 */
 import {useEffect, useMemo, useRef, useState} from 'react';
+import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {api, type VisualReference} from '../../api';
 import {Drawer} from '../primitives';
 import {ImageGenerationPanel} from '../../novel/ImageGenerationPanel';
@@ -10,14 +11,14 @@ import {VisualContextPanel} from '../../novel/VisualContextPanel';
 import {VisionAnalysisPanel} from '../../novel/VisionAnalysisPanel';
 import {MultimodalDirectorWorkspace} from '../../novel/MultimodalDirectorWorkspace';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
-import {ComicView} from '../comic/ComicView';
-import {DualCanvas} from '../canvas/DualCanvas';
+import {DualStack} from '../canvas/DualStack';
+import {useScopedRequestConsent} from '../../useScopedRequestConsent';
 import {CanvasImageQueue} from './CanvasImageQueue';
 import {CanvasNodeTaskStatus} from './CanvasNodeTaskStatus';
 import {RebuildFormalImageNode} from './RebuildFormalImageNode';
 import {imageDraftNodeExists} from './canvasTaskBinding';
 import type {CvNode} from '../canvas/RebuildCanvas';
-import {useScopedRequestConsent} from '../../useScopedRequestConsent';
+import {ComicView} from '../comic/ComicView';
 import {safeImagePreviewUri} from '../../novel/ImageInfiniteCanvas';
 import type {ImageInspection} from '../../novel/ImageTaskInspector';
 import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
@@ -94,12 +95,21 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   const head = (title: string) => (
     <div className="mw-head" role="toolbar" aria-label="图片子入口">
       <h2>{title}</h2>
-      <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
+      {/* [HERMIA-FE-20261025 DUI P0-2] pro keeps the wiring badge; normal mode only says (honestly) when generation is unavailable */}
+      {isPro ? <span className="nv-badge nv-badge--off" data-image-provider-state>{providers === null ? '生图模型 · 检查中' : canGen ? `生图模型 · 已接通 ${ready.length}` : '生图模型 · 未接通'}</span>
+        : providers !== null && !canGen ? <span className="nv-badge nv-badge--off" data-image-provider-state="unavailable">暂时不能生成图片：还没有可用的生图模型</span> : null}
       <span className="nv-spacer" />
-      <button type="button" className="nv-btn" aria-pressed={view === 'browse'} data-image-sub="studio" onClick={() => onViewChange('browse')}>图片工作台</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'browse'} data-image-sub="studio" onClick={() => onViewChange('browse')}>{i18nTz('图片工作台')}</button>
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'dual'} data-open-dual="true" onClick={() => onViewChange('dual')}>双画布</button> : null}
-      <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => onViewChange('gen')}>生成</button>
-      <button type="button" className="nv-btn" aria-pressed={view === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => onViewChange('comic')}>漫画制作</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'gen'} onClick={() => onViewChange('gen')}>{i18nTz('生成')}</button>
+      <button type="button" className="nv-btn" aria-pressed={view === 'comic'} data-open-comic="true" data-image-sub="comic" onClick={() => onViewChange('comic')}>{i18nTz('漫画制作')}</button>
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏隐藏时的替代入口：视觉素材 + 漫画制作（CSS 只在窄屏显示） */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="image" aria-label={i18nTz('切换视图或素材')} value={cur?.id ? `i:${cur.id}` : ''}
+        onChange={e => { const v = e.target.value; if (v === 'comic') onViewChange('comic'); else if (v.startsWith('i:')) setSel(v.slice(2)); }}>
+        {!cur ? <option value="">{i18nTz('当前视图')}</option> : null}
+        {items.map(it => <option key={it.id} value={`i:${it.id}`}>{it.name}</option>)}
+        <option value="comic">{i18nTz('漫画制作')}</option>
+      </select>
     </div>
   );
   const chrome = (
@@ -110,33 +120,32 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
   );
 
   if (view === 'canvas') return (
-    <div className="img-ws" data-img-view="canvas" aria-label="图片工作区">
+    <div className="img-ws" data-img-view="canvas" aria-label={i18nTz('图片工作区')}>
       {chrome}
-      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>图片画布</h2>{/* [HERMIA-FE-20261022 U3b] 去掉「专业」小标：画布普通/专业都有，小标两种模式都不准确 */}<span className="nv-spacer" />
+      <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>{i18nTz('图片画布')}</h2>{/* [HERMIA-FE-20261022 U3b] 去掉「专业」小标：画布普通/专业都有，小标两种模式都不准确 */}<span className="nv-spacer" />
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button>
-        <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>漫画制作</button></div>
+        <button type="button" className="nv-btn" onClick={() => onViewChange('comic')}>{i18nTz('漫画制作')}</button></div>
       {/* [HERMIA-FE-20261022 U1] 主画布换成原型同款黑色无限画布（右键加节点）；旧的多图约束 / 导入导出收进下方「专业工具」 */}
-      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><RebuildCanvas kind="image" scope={novelId} label="图片画布" onImageTaskIntent={openCanvasTask} renderImageTaskBinding={renderCanvasTask}/></div>
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas">{isPro ? <DualStack kind="image" scope={novelId} /> : <RebuildCanvas kind="image" scope={novelId} label="图片画布" onImageTaskIntent={openCanvasTask} renderImageTaskBinding={renderCanvasTask} />}</div>
       {isPro ? <details className="img-canvas-pro" data-pro-only="true"><summary>专业工具：多图约束 · 导入/导出 JSON · 快照</summary><div className="img-canvas-pro__body"><MultimodalDirectorWorkspace mode="image" novelId={novelId} /></div></details> : null}
-      {canvasTaskDrawer}
+      {!isPro ? canvasTaskDrawer : null}
     </div>
   );
 
   if (view === 'dual' && isPro) return (
-    <div className="img-ws" data-img-view="dual" aria-label="图片工作区">
+    <div className="img-ws" data-img-view="dual" aria-label={i18nTz('图片工作区')}>
       {chrome}
       <div className="mw-head" role="toolbar" aria-label="图片子入口"><h2>双画布</h2><span className="nv-badge nv-badge--part">本机草稿</span><span className="nv-spacer" />
         <button type="button" className="nv-btn" onClick={() => onViewChange('canvas')}>只看图片画布</button>
         <button type="button" className="nv-btn" onClick={() => onViewChange('browse')}>回到预览</button></div>
-      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><DualCanvas scope={novelId} onImageTaskIntent={openCanvasTask} renderImageTaskBinding={renderCanvasTask}/></div>
-      {canvasTaskDrawer}
+      <div className="img-canvaswrap img-canvaswrap--rcv" data-surface="canvas"><DualStack kind="image" scope={novelId} /></div>
     </div>
   );
 
   if (view === 'comic') return <ComicView novelId={novelId} chrome={chrome} onBack={() => onViewChange('browse')} onGen={() => onViewChange('gen')} />;
 
   return (
-    <div className="img-ws" data-img-view={view === 'dual' ? 'browse' : view} aria-label="图片工作区">
+    <div className="img-ws" data-img-view={view === 'dual' ? 'browse' : view} aria-label={i18nTz('图片工作区')}>
       {chrome}
       {head(view === 'gen' ? '图片 · 生成' : '图片 · 浏览 / 预览')}
       <div className="mw-split">
@@ -145,7 +154,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
           <div className="mw-tree">
             {!loaded ? <p className="mw-muted">读取中…</p> : items.length === 0 ? <p className="mw-muted">还没有参考图或生成结果</p> :
               items.map(it => <button key={it.id} type="button" aria-selected={cur?.id === it.id} onClick={() => setSel(it.id)}><span className="ic">{it.kind === 'ref' ? '▣' : '▭'}</span><span>{it.name}<span className="sub">{it.sub}</span></span></button>)}
-            <button type="button" onClick={() => onViewChange('comic')} data-open-comic="true"><span className="ic">▦</span><span>漫画制作<span className="sub">图片 › 子入口</span></span></button>
+            <button type="button" onClick={() => onViewChange('comic')} data-open-comic="true"><span className="ic">▦</span><span>{i18nTz('漫画制作')}<span className="sub">图片 › 子入口</span></span></button>
           </div>
           <div className="mw-lh">生成队列</div>
           <div className="mw-tree">
@@ -165,7 +174,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
               <div className="img-empty" data-image-empty="true">
                 <h3>还没有图片</h3>
                 <p>先放一张参考图，或者直接写一句描述开始生成。</p>
-                <div className="nv-row"><button type="button" className="nv-btn" onClick={() => document.getElementById('imgPrompt')?.focus()}>新建生成</button><button type="button" className="nv-btn" onClick={onOpenAssets}>从资产导入</button></div>
+                <div className="nv-row"><button type="button" className="nv-btn" onClick={() => document.getElementById('imgPrompt')?.focus()}>{i18nTz('新建生成')}</button><button type="button" className="nv-btn" onClick={onOpenAssets}>{i18nTz('从资产导入')}</button></div>
               </div>
             ) : (
               <div className="img-preview" aria-label="当前图预览">
@@ -176,9 +185,9 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
             )}
           </div>
           <div className="img-hero-actions" aria-label="预览下一步">
-            <button type="button" className="nv-btn" id="imgCtaGen" onClick={() => { onViewChange('gen'); setTimeout(() => document.getElementById('imgPrompt')?.focus(), 0); }}>新建生成</button>
-            <button type="button" className="nv-btn" id="imgCtaRef" onClick={() => setDrawer('refs')}>加参考</button>
-            <button type="button" className="nv-btn" data-open-comic="true" onClick={() => onViewChange('comic')}>打开漫画</button>
+            <button type="button" className="nv-btn" id="imgCtaGen" onClick={() => { onViewChange('gen'); setTimeout(() => document.getElementById('imgPrompt')?.focus(), 0); }}>{i18nTz('新建生成')}</button>
+            <button type="button" className="nv-btn" id="imgCtaRef" onClick={() => setDrawer('refs')}>{i18nTz('加参考')}</button>
+            <button type="button" className="nv-btn" data-open-comic="true" onClick={() => onViewChange('comic')}>{i18nTz('打开漫画')}</button>
           </div>
           {items.length > 0 ? <div className="img-thumb-row" role="list" aria-label="缩略条">
             {items.map(it => <button key={it.id} type="button" role="listitem" aria-selected={cur?.id === it.id} onClick={() => setSel(it.id)}><div className={`th th--${it.kind}`}>{it.uri && safeImagePreviewUri(it.uri) ? <img src={safeImagePreviewUri(it.uri)} alt="" /> : null}</div><div className="nm">{it.name}</div></button>)}
@@ -188,7 +197,7 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
         <aside className="mw-right" aria-label="图片生成">
           <div className="mw-rh">{view === 'gen' || !cur ? '图片生成' : `检视 · ${cur.name}`}</div>
           <div className="mw-rb">
-            <div className="sec"><h4>生成</h4>
+            <div className="sec"><h4>{i18nTz('生成')}</h4>
               <label className="f" htmlFor="imgPrompt">提示词</label>
               <textarea className="inp" id="imgPrompt" rows={3} value={prompt} placeholder="例如：雾港码头，冷灰蓝，一盏煤油灯" onChange={e => setPrompt(e.target.value)} />
               <label className="f" htmlFor="imgRefSel">参考约束</label>
@@ -196,8 +205,8 @@ export function ImageRebuild({novelId, view, onViewChange, shellMode = 'basic', 
                 <option value="">无参考</option>
                 {(refs || []).map(r => <option key={r.id} value={r.notes || r.id}>{r.notes || r.id}</option>)}
               </select>
-              <button type="button" className="nv-btn nv-btn--primary img-gen-btn" id="imgGen" disabled={!canGen} onClick={() => setDrawer('gen')}>生成候选…</button>
-              {providers !== null && !canGen ? <p className="nv-hint">需要先在 AI 主控里接好生图模型。<button type="button" className="nv-link" onClick={onOpenControl}>打开主控</button></p> : <p className="nv-hint">派发前会再确认模型和费用，不会自动扣费。</p>}
+              <button type="button" className="nv-btn nv-btn--primary img-gen-btn" id="imgGen" disabled={!canGen} onClick={() => setDrawer('gen')}>{i18nTz('生成候选…')}</button>
+              {providers !== null && !canGen ? <p className="nv-hint">需要先在 AI 主控里接好生图模型。<button type="button" className="nv-link" onClick={onOpenControl}>{i18nTz('打开主控')}</button></p> : <p className="nv-hint">派发前会再确认模型和费用，不会自动扣费。</p>}
             </div>
             <div className="sec"><h4>视觉上下文</h4>
               <dl className="kv"><dt>主参考</dt><dd>{refSel || '无'}</dd><dt>参考数</dt><dd>{refs ? refs.length : '…'}</dd><dt>角色一致性</dt><dd><span className="nv-badge nv-badge--off">状态待核实</span></dd></dl>

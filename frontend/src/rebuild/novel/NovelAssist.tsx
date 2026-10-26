@@ -2,6 +2,7 @@
    [HERMIA-FE-20261022 R1] 宽 312、一屏内：AI 写作只留 4 个入口（续写 / 改写所选 / 润色 / 头脑风暴），
    完整 AI 面板收进右栏抽屉（保持挂载，生成状态不丢）。入口只预选方式并打开抽屉，不自动生成。 */
 import {useState, type ReactNode} from 'react';
+import {useT, useTz} from '../../i18n'; // [HERMIA-FE-20261025 I18N P2] right 创作辅助 rail
 
 export type AssistLink = {id: string; label: string; onClick: () => void};
 export type QuickOp = 'continue' | 'rewrite' | 'polish' | 'brainstorm';
@@ -9,7 +10,7 @@ const QUICK: Array<[QuickOp, string]> = [['continue', '续写'], ['rewrite', '�
 
 export function NovelAssist({
   chapterTitle, chapterMeta, saveLabel, saveLocation, primaryCta, links, outlineItems, onSelectOutline,
-  onOpenStory, onOpenCheck, castNote, ai, aiStatus, onQuickOp, hasChapter = true, extras,
+  onOpenStory, onOpenCheck, castNote, ai, aiStatus, onQuickOp, hasChapter = true, extras, pendingState,
 }: {
   chapterTitle: string;
   chapterMeta: string;
@@ -30,71 +31,74 @@ export function NovelAssist({
   hasChapter?: boolean;
   /** 写作目标、来源隐私、生成恢复等低频工具，收在抽屉「更多」里 */
   extras?: ReactNode;
+  /** [HERMIA-FE-20261025 VERA-FIX P0-3] 章节列表读取中/失败：不显示「下一步」与其主按钮（一屏一状态） */
+  pendingState?: 'loading' | 'error';
 }) {
   const [drawer, setDrawer] = useState(false);
+  const t = useT(), tz = useTz();
   return (
-    <div className="nv-assist" aria-label="写作右栏" data-rebuild="novel-assist">
-      <section className="nv-assist__ctx" aria-label="当前写作上下文">
-        <span>当前章节</span>
-        <strong>{chapterTitle}</strong>
-        <small>{chapterMeta}{saveLabel ? ` · ${saveLabel}` : ''}</small>
-        {saveLocation ? <div className="nv-assist__badges"><span className="nv-badge nv-badge--local">{saveLocation}</span></div> : null}
+    <div className="nv-assist" aria-label={t('as.region')} data-rebuild="novel-assist">
+      <section className="nv-assist__ctx" aria-label={t('as.ctx')}>
+        <span>{t('as.current')}</span>
+        <strong>{tz(chapterTitle)}</strong>
+        {chapterMeta || saveLabel ? <small>{tz(chapterMeta)}{saveLabel ? `${chapterMeta ? ' · ' : ''}${tz(saveLabel)}` : ''}</small> : null}
+        {saveLocation ? <div className="nv-assist__badges"><span className="nv-badge nv-badge--local">{tz(saveLocation)}</span></div> : null}
       </section>
-      <section className="nv-assist__next" aria-label="下一步">
-        <h4>下一步</h4>
+      {pendingState ? null : <section className="nv-assist__next" aria-label={t('as.next')}>
+        <h4>{t('as.next')}</h4>
         <button type="button" className="nv-btn nv-btn--primary nv-assist__primary" data-primary-cta="true" data-cta-kind={primaryCta.kind || undefined} disabled={primaryCta.disabled} onClick={primaryCta.onClick}>
-          {primaryCta.label}
+          {tz(primaryCta.label)}
         </button>
         <div className="nv-assist__links">
-          {links.map(l => <button key={l.id} type="button" className="nv-link" data-sec-cta={l.id} onClick={l.onClick}>{l.label}</button>)}
+          {links.map(l => <button key={l.id} type="button" className="nv-link" data-sec-cta={l.id} onClick={l.onClick}>{tz(l.label)}</button>)}
         </div>
-      </section>
+      </section>}
       <details className="nv-sec" open>
-        <summary>大纲 / 章节脉络</summary>
+        <summary>{t('as.outline')}</summary>
         <div className="nv-sec__body">
           {outlineItems.length ? (
             <ul className="nv-outline">
               {outlineItems.map(item => (
                 <li key={item.id}>
-                  <button type="button" className="nv-outline__btn" onClick={() => onSelectOutline?.(item.id)}>{item.label}</button>
-                  {item.hint ? <span className="nv-hint">{item.hint}</span> : null}
+                  <button type="button" className="nv-outline__btn" onClick={() => onSelectOutline?.(item.id)}>{tz(item.label)}</button>
+                  {item.hint ? <span className="nv-hint">{tz(item.hint)}</span> : null}
                 </li>
               ))}
             </ul>
-          ) : <p className="nv-hint">还没有大纲条目，可以在故事规划里补充。</p>}
+          ) : <p className="nv-hint">{t('as.noOutline')}</p>}
           {/* [HERMIA-FE-20261022 R1] 「打开故事规划」与「下一步 · 故事规划」重复，去掉以压到一屏 */}
         </div>
       </details>
       <details className="nv-sec" open>
-        <summary>角色 / 登场</summary>
+        <summary>{t('as.cast')}</summary>
         <div className="nv-sec__body">
-          <p className="nv-hint">{castNote || '本章还没有关联角色。'}</p>
+          <p className="nv-hint">{castNote ? tz(castNote) : t('as.noCast')}</p>
           <div className="nv-row">
-            {onOpenStory ? <button type="button" className="nv-btn" onClick={onOpenStory} data-open="story-characters">管理角色</button> : null}
-            {onOpenCheck ? <button type="button" className="nv-btn" onClick={onOpenCheck}>一致性检查</button> : null}
+            {onOpenStory ? <button type="button" className="nv-btn" onClick={onOpenStory} data-open="story-characters">{t('as.manageCast')}</button> : null}
+            {onOpenCheck ? <button type="button" className="nv-btn" onClick={onOpenCheck}>{t('as.check')}</button> : null}
           </div>
         </div>
       </details>
       <details className="nv-sec nv-sec--ai novel-writer-dock__section--ai" open>
-        <summary>AI 写作</summary>
+        <summary>{t('as.ai')}</summary>
         <div className="nv-sec__body">
-          <div className="nv-ai-quick" role="group" aria-label="AI 写作方式">
+          <div className="nv-ai-quick" role="group" aria-label={t('as.aiModes')}>
             {QUICK.map(([op, label]) => (
-              <button key={op} type="button" className="nv-btn" data-ai={op} disabled={!hasChapter} onClick={() => { onQuickOp?.(op); setDrawer(true); }}>{label}</button>
+              <button key={op} type="button" className="nv-btn" data-ai={op} disabled={!hasChapter} onClick={() => { onQuickOp?.(op); setDrawer(true); }}>{tz(label)}</button>
             ))}
           </div>
-          {aiStatus ? <span className="nv-badge nv-badge--part" data-ai-status="true">{aiStatus}</span> : null}
-          <p className="nv-hint">选方式后在完整面板确认才生成；结果先成候选。</p>
-          <button type="button" className="nv-link" data-open-ai-drawer="true" aria-expanded={drawer} onClick={() => setDrawer(true)}>打开完整 AI 面板{extras ? '（含写作目标等）' : ''}</button>
+          {aiStatus ? <span className="nv-badge nv-badge--part" data-ai-status="true">{tz(aiStatus)}</span> : null}
+          <p className="nv-hint">{t('as.aiHint')}</p>
+          <button type="button" className="nv-link" data-open-ai-drawer="true" aria-expanded={drawer} onClick={() => setDrawer(true)}>{extras ? t('as.openFullExtras') : t('as.openFull')}</button>
         </div>
       </details>
-      <div className={drawer ? 'nv-ai-drawer' : 'nv-ai-drawer nv-hide'} role="dialog" aria-label="AI 写作 · 完整面板" aria-hidden={!drawer}>
+      <div className={drawer ? 'nv-ai-drawer' : 'nv-ai-drawer nv-hide'} role="dialog" aria-label={t('as.drawer')} aria-hidden={!drawer}>
         <div className="nv-ai-drawer__head">
-          <strong>AI 写作</strong>
+          <strong>{t('as.ai')}</strong>
           <span className="nv-spacer" />
-          <button type="button" className="nv-btn" onClick={() => setDrawer(false)}>收起</button>
+          <button type="button" className="nv-btn" onClick={() => setDrawer(false)}>{t('orient.dismiss')}</button>
         </div>
-        <div className="nv-ai-drawer__body">{ai}{extras ? <details className="nv-sec"><summary>更多写作工具</summary><div className="nv-sec__body">{extras}</div></details> : null}</div>
+        <div className="nv-ai-drawer__body">{ai}{extras ? <details className="nv-sec"><summary>{t('as.moreTools')}</summary><div className="nv-sec__body">{extras}</div></details> : null}</div>
       </div>
     </div>
   );

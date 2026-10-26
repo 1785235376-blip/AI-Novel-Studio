@@ -1,6 +1,8 @@
+import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect, useState, type ReactNode } from "react";
 import { Download, File, Image, Music2, Video } from "lucide-react";
-import { api, type Asset } from "../api";
+import { ApiError, api, apiErrorView, type Asset } from "../api";
+import { t as i18nT } from "../i18n"; // [HERMIA-FE-20261025 VERA-620963bf P2]
 import { Button, EmptyState, StatusMessage } from "../ui/primitives";
 import "./AssetInspector.css";
 import { VisualReferencePanel } from "./VisualReferencePanel";
@@ -20,6 +22,7 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [technical, setTechnical] = useState<string | undefined>(); // 仅专业模式有值
   const previewable = asset && /^(image|audio|video)\//.test(asset.media_type);
   useEffect(() => {
     let active = true;
@@ -37,7 +40,7 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
   }, [asset?.id, asset?.novel_id, asset?.sha256, previewable, downloadAsset, isCurrent]);
   async function download() {
     if (!asset) return;
-    setError("");
+    setError(""); setTechnical(undefined);
     try {
       const blob = await (downloadAsset ? downloadAsset(asset) : api.assetDownload(asset.id,asset.novel_id));
       if (isCurrent && !isCurrent()) return;
@@ -46,7 +49,12 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
       anchor.href = url; anchor.download = asset.filename.replace(/[\\/\r\n\0]/g, "_").slice(0, 255) || "asset";
       document.body.appendChild(anchor); anchor.click(); anchor.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 0);
-    } catch { setError("资产下载失败，请检查本地服务后重试。"); }
+    } catch (e) {
+      // [HERMIA-FE-20261025 VERA-620963bf P2] 白名单服务端文案（message_source=server）原样展示，否则固定友好文案；原文只进专业模式技术详情
+      const view = apiErrorView(e);
+      setError(e instanceof ApiError && e.problem.message_source === "server" ? view.message : "资产下载失败，请检查本地服务后重试。");
+      setTechnical(view.technical);
+    }
   }
   if (!asset) return <section className="asset-inspector" aria-label="资产检查面板"><div className="workspace-inspector__eyebrow">Inspector</div><EmptyState title="未选择资产" detail={novelId ? "从资产网格选择一个项目以查看真实预览和元数据。" : "请先打开小说项目。"}/></section>;
   return <section className="asset-inspector" aria-label="资产检查面板">
@@ -60,7 +68,8 @@ export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra
       {!loading && !previewable && <span>此文件类型没有内置预览。</span>}
     </div>
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
-    <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? new Date(asset.updated_at).toLocaleString() : "未记录"}</dd></div></dl>
+    {error && technical && <p className="api-error-technical">{i18nT("err.technical")}{i18nT("context.sep")}<code>{technical}</code></p>}
+    <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? formatDate(asset.updated_at) : "未记录"}</dd></div></dl>
     <Button variant="ghost" onClick={download}><Download aria-hidden="true" size={15}/>下载原始文件</Button>
     {showReferences && <VisualReferencePanel key={`${asset.novel_id}:${asset.id}`} asset={asset}/>}
     {extra}

@@ -1,0 +1,23 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspaceSelection.test.ts (3 tests) 4ms
+ ✓ src/workbench/workbench.test.ts (18 tests) 15ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 9ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 108ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 20ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 20ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 251ms
+ ✓ src/workbench/revisionRestore.test.ts (5 tests) 5ms
+ ✓ src/workbench/novelCta.test.ts (3 tests) 6ms
+ ✓ src/workbench/capabilityBadge.test.ts (4 tests) 9ms
+ ✓ src/workbench/novelSecondaryEntries.test.ts (2 tests) 4ms
+ ✓ src/workbench/CommandSearch.test.tsx (12 tests) 537ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 952ms
+ ✓ src/App.test.tsx (12 tests) 16ms
+
+ Test Files  14 passed (14)
+      Tests  131 passed (131)
+   Start at  18:36:18
+   Duration  8.15s (transform 5.72s, setup 233ms, collect 9.21s, tests 1.96s, environment 3.04s, prepare 1.10s)
+

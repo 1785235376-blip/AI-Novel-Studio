@@ -1,0 +1,73 @@
+
+ RUN  v2.1.9 /workspace/hr/wt-loop/frontend
+
+ ✓ src/workspace/results/results.test.tsx (22 tests) 147ms
+ ✓ src/workspace/tasks/u3.tasks.test.tsx (13 tests) 156ms
+ ✓ src/workspace/vw.m2m4.test.tsx (9 tests) 332ms
+ ✓ src/workspace/panels/m3s1.test.tsx (7 tests) 933ms
+   ✓ M3-s1 dual canvas ↔ inspector > selecting in either canvas shows that node; selections are isolated; switching makes no model call / write 323ms
+ ✓ src/workspace/panels/m2s1fix.test.tsx (10 tests) 1079ms
+   ✓ uw preview integration > palette: 显示面板 listed; disabled items carry aria-disabled + reason; enabled ones do not 365ms
+   ✓ uw preview integration > Mod+Alt+T moves DOM focus into the task panel 375ms
+ ✓ src/workspace/panels/novelPreviewPanels.test.tsx (17 tests) 1456ms
+ ✓ src/workspace/panels/studioPreviewPanels.test.tsx (8 tests) 714ms
+ ✓ src/workspace/layout/slice2.test.tsx (13 tests) 430ms
+ ✓ src/workspace/layout/DockLayout.test.tsx (25 tests) 2768ms
+   ✓ DockLayout interactions > M1-06/M1-19 close clean panel without prompt, reopen from menu, no duplicates 1458ms
+   ✓ DockLayout interactions > M1-08 reset default asks first, then restores layout but keeps draft text 412ms
+ ✓ src/workspace/params/u3.params.test.tsx (10 tests) 73ms
+ ✓ src/workspace/state/m5s1.test.tsx (19 tests) 2286ms
+ ✓ src/workspace/layout/slice2fix.test.tsx (13 tests) 1372ms
+   ✓ MUST-FIX 4: ?uw=1 preview — Ctrl+K command palette lists and runs layout actions > Ctrl+K opens the shared registry palette with the 4 layout actions; running split works 480ms
+   ✓ nice-to-have: double-trigger guard + visible busy; shortcut text localized > two real key presses ~50ms apart execute once; aria-busy visible meanwhile 454ms
+ ✓ src/workspace/state/u1.identity.test.tsx (16 tests) 21ms
+ ✓ src/workspace/history/history.test.tsx (13 tests) 63ms
+ ✓ src/workspace/panels/m3s1fix.test.tsx (5 tests) 814ms
+   ✓ reveal the last sent node (1366 panel 750×449) > host: send with 11 nodes already there → execution canvas opens with the new (12th) node in view 324ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 261ms
+ ✓ src/workspace/state/u1fix.test.tsx (8 tests) 26ms
+ ✓ src/workspace/panels/vw.m3host.test.tsx (2 tests) 459ms
+   ✓ [VW-M3] preview host viewport prefs > pan → tab remount keeps view; reset returns to default; zero view-pref writes (novel isolation: adapter tests) 318ms
+ ✓ src/workspace/media/audio.test.tsx (8 tests) 55ms
+stdout | src/workspace/registry/u2.render.test.tsx > measurements (jsdom, mock evidence) > 5000-row windowed render keeps DOM bounded; selectBox over 10k nodes
+[U2-MEASURE jsdom] rows=5000 domLi=32 renderMs=3.77 | nodes=10000 boxHits=25 selectBoxMs=0.93
+
+ ✓ src/workspace/registry/u2.render.test.tsx (3 tests) 90ms
+ ✓ src/workspace/panels/m3s1fix2.test.tsx (3 tests) 859ms
+   ✓ host: tab switch / remount after manual pan does not re-reveal > send (0×0 mount) → reveal on size; pan away; creative and back, and close+reopen (remount) → stays where the user panned 763ms
+ ✓ src/workspace/state/u1fix.host.test.tsx (3 tests) 647ms
+   ✓ U1fix host > MUST-FIX 2: session mode (no token) — save keeps the workset in memory, says 仅本次会话, writes nothing, no bootstrap call 327ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 7ms
+ ✓ src/workspace/panels/vw.fix1dialog.test.tsx (7 tests) 262ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 100ms
+ ✓ src/workspace/layout/m2s1.test.tsx (4 tests) 530ms
+   ✓ N5 visible main-panel tabs + layout.showPanel > layout.showPanel reopens a closed panel, rejects unknown ids with a reason 328ms
+ ✓ src/workspace/integration/int.bootstrap.test.tsx (3 tests) 310ms
+ ✓ src/workspace/panels/m2s1fix2.test.tsx (1 test) 37ms
+ ✓ src/workspace/media/audio.panel.test.tsx (1 test) 74ms
+ ✓ src/workspace/state/u1.purge.host.test.tsx (1 test) 173ms
+ ✓ src/workspace/layout/m4s1.test.tsx (5 tests) 648ms
+   ✓ M4-s1 keyboard + aria > main tabs: tablist with roving tabindex; ArrowRight moves focus and selects 433ms
+ ✓ src/workspace/layout/m5storageLabel.test.tsx (2 tests) 87ms
+ ✓ src/workspace/layout/persistence.test.ts (13 tests) 18ms
+ ✓ src/workspace/layout/model.test.ts (13 tests) 12ms
+ ✓ src/workspace/state/viewPreferences.vw.test.ts (13 tests) 8ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 3ms
+ ✓ src/workspace/registry/u2.contextNav.test.ts (11 tests) 5ms
+ ✓ src/workspace/state/u1.purge.test.ts (3 tests) 4ms
+ ✓ src/workspace/tasks/u3.repro.test.tsx (1 test) 67ms
+ ✓ src/workspace/registry/u2.registry.test.ts (14 tests) 8ms
+ ✓ src/workspace/actions/layoutActions.test.ts (10 tests) 1813ms
+   ✓ availability / disabled reason / execution > reopen + collapse + split + reset outcomes 1204ms
+   ✓ reopen after close > reopens the requested closed panel, blocks a non-closed one 300ms
+   ✓ running state + double-trigger guard > same-tick second trigger is a duplicate and has no side effect; pending clears after 301ms
+ ✓ src/workspace/layout/m4s1fix.test.tsx (5 tests) 4965ms
+   ✓ M4-s1fix tablist > ArrowRight wraps last→first, ArrowLeft wraps first→last, Home/End jump 4065ms
+   ✓ M4-s1fix tablist > split: each main region is named exactly "<its tab> <its header>" 447ms
+   ✓ M4-s1fix tablist > aria-multiselectable only when split shows two tabs selected 424ms
+
+ Test Files  42 passed (42)
+      Tests  358 passed (358)
+   Start at  11:15:41
+   Duration  10.85s (transform 2.51s, setup 368ms, collect 12.99s, tests 24.17s, environment 12.47s, prepare 2.34s)
+

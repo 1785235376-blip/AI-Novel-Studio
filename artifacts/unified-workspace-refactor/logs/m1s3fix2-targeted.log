@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/hr/wt/frontend
+
+ ✓ src/workspace/panels/novelPreviewPanels.test.tsx (16 tests) 933ms
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  21:05:11
+   Duration  3.13s (transform 416ms, setup 38ms, collect 745ms, tests 933ms, environment 937ms, prepare 98ms)
+

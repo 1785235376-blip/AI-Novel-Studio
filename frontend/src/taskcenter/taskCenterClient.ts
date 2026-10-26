@@ -94,13 +94,24 @@ export function createTaskCenterClient(
       // 查询参数在本地就有界（`ux_api.py::tasks` 的 `q` 上限 160）。
       const checked = locally(TASK_CENTER_ERROR_CODES.tasksQueryLocalInvalid,
         '任务查询过长或含不可用字符，请缩短后重试。',
-        () => taskCenterTaskQuery({ q: query?.q ?? '', failed_only: query?.failed_only === true }));
+        () => taskCenterTaskQuery({ q: query?.q ?? '', failed_only: query?.failed_only === true,
+          ...(query?.limit !== undefined ? { limit: query.limit } : {}), ...(query?.offset !== undefined ? { offset: query.offset } : {}) }));
       // 与既有消费者完全一致的查询串（`uxClient.ts::tasks`）：两个参数总是发送。
       const search = new URLSearchParams({ q: checked.q, failed_only: String(checked.failed_only) });
+      const plain = `${tasksBase}?${search}`;
+      // [HERMIA-FE-CONTRACTS G-TC-1] 分页只在调用方显式要求时发送。
+      if (checked.limit !== undefined) { search.set('limit', String(checked.limit)); search.set('offset', String(checked.offset ?? 0)); }
+      const read = async (url: string) => taskCenterProjection(await transport.json<unknown>(url, 'GET', undefined, signal), projectId, expected);
       try {
-        return taskCenterProjection(await transport.json<unknown>(`${tasksBase}?${search}`, 'GET', undefined, signal),
-          projectId, expected);
-      } catch (reason) { throw refusal(reason); }
+        return await read(`${tasksBase}?${search}`);
+      } catch (reason) {
+        // 旧后端若拒绝分页参数（422 EXPERIMENTAL_INVALID），只回退一次到原未分页读取；其余错误照旧。
+        if (checked.limit !== undefined && reason instanceof ApiError && reason.status === 422
+          && reason.problem.code === 'EXPERIMENTAL_INVALID' && !signal?.aborted) {
+          try { return await read(plain); } catch (again) { throw refusal(again); }
+        }
+        throw refusal(reason);
+      }
     },
     async readInbox(query: ReviewInboxQuery, signal?: AbortSignal): Promise<ReviewInboxProjection> {
       if (foreign()) throw inboxRejected();

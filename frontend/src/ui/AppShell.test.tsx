@@ -2,6 +2,7 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { within } from "@testing-library/react";
 import { AppShell, ModuleSwitcher, moduleForTaskSource, SettingsPathGateway } from "./AppShell";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
@@ -16,6 +17,16 @@ it('maps every published task family without sending unknown failures to video',
   expect(moduleForTaskSource('provider')).toBe('CONTROL');
   expect(moduleForTaskSource('unknown')).toBe('WORKFLOW');
 });
+// [HERMIA-FE-20261025 DUI P1-5] Spec change: in normal mode pro entries (Provider/插件/工作流/主控 module) are not listed
+// until the user types a query; they remain reachable by search. Helper types into the palette input.
+function typeCommand(host: HTMLElement, text: string) {
+  const input = host.querySelector<HTMLInputElement>(".command-palette input")!;
+  act(() => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
 describe("ModuleSwitcher", () => {
   it("uses one accessible tab contract for every module", () => {
     host = document.createElement("div");
@@ -354,6 +365,7 @@ describe("AppShell command actions", () => {
       ),
     );
     act(() => host.querySelector<HTMLButtonElement>(".global-search")!.click());
+    typeCommand(host, "provider");
     const provider = [
       ...host.querySelectorAll<HTMLButtonElement>(
         ".command-palette__list button",
@@ -379,7 +391,9 @@ describe('R4 optional global-search consumer', () => {
     expect(open).toHaveBeenCalledTimes(1);
     const updated = vi.fn();
     act(() => root.render(<AppShell {...props} onGlobalSearch={updated} />));
-    act(() => host.querySelector<HTMLButtonElement>('[aria-label="打开全局命令"]')!.click());
+    // [HERMIA-FE-20261025 DUI P1-7] spec change: global-search has no aria-label; its accessible name is its visible text (axe label-content-name-mismatch, zh+en). Same button, same assertions.
+    // [HERMIA-FE-20261025 VERA-FIX MF-3] spec change: locate by accessible name (role+name), not by class, so a nameless button fails.
+    act(() => within(host).getByRole('button', { name: '搜索功能、章节或命令 Ctrl K' }).click());
     expect(updated).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenCalledTimes(1);
     act(() => root.unmount());
@@ -589,8 +603,15 @@ describe("AppShell X-UX-02/03/04/05 wave4", () => {
     );
     expect(labels.some((t) => t.includes("专业模式"))).toBe(true);
     expect(labels.some((t) => t.includes("普通模式"))).toBe(true);
-    expect(labels.some((t) => t.includes("主控") || t.includes("CONTROL"))).toBe(true);
-    expect(labels.some((t) => t.includes("插件"))).toBe(true);
+    expect(labels.some((t) => t.includes("打开设置"))).toBe(true);
+    // normal mode, empty query: no pro entries and no internal codes on screen
+    expect(labels.some((t) => /插件|工作流|Provider|CONTROL|PLUGIN|WORKFLOW|layout\.|X-UX|Inspector/.test(t))).toBe(false);
+    // …but still reachable by typing (chrome hide ≠ disable)
+    typeCommand(host, "插件");
+    expect([...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].some((b) => b.textContent?.includes("插件"))).toBe(true);
+    typeCommand(host, "control");
+    expect([...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].some((b) => b.textContent?.includes("主控"))).toBe(true);
+    typeCommand(host, "");
     const pro = [...host.querySelectorAll<HTMLButtonElement>(".command-palette__list button")].find(
       (b) => b.textContent?.includes("专业模式"),
     )!;
@@ -883,4 +904,19 @@ describe("AppShell X-UX-09 settings path", () => {
     expect(open).toHaveBeenCalledWith("PLUGIN");
     act(() => root.unmount());
   });
+});
+// [HERMIA-FE-20261025 VERA-F70 P2 axe aria-hidden-focus] 隐藏的检查面板必须 inert，内部可聚焦元素不能留在 Tab 序列里
+it('hidden inspector is inert (no focusable content under aria-hidden), visible inspector is not', () => {
+  localStorage.setItem('studio-inspector-open', '1'); // 前序用例会留下折叠偏好
+  host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  const props = { module: 'NOVEL' as const, onModuleChange: vi.fn(), scope: { workspace: '', project: '', storyline: '', branch: '' }, actor: 'author', sidebar: 'Chapters', main: 'Editor', inspector: 'Same assistance', status: 'ok', onExitFocus: vi.fn() };
+  act(() => root.render(<AppShell {...props} focusMode />));
+  const aside = host.querySelector('#workspace-inspector')!;
+  expect(aside.getAttribute('aria-hidden')).toBe('true');
+  expect(aside.hasAttribute('inert')).toBe(true);
+  act(() => root.render(<AppShell {...props} focusMode={false} />));
+  expect(aside.getAttribute('aria-hidden')).toBe('false');
+  expect(aside.hasAttribute('inert')).toBe(false);
+  act(() => root.unmount());
 });

@@ -1,6 +1,8 @@
 /* [HERMIA-FE-20261022 R6] 资产模块按原型 assetsWSHTML 重写：模块头 + .mw-split（左 类型/集合 · 中 资产网格 · 右 血缘/版本摘要 或 下一步）。
    真实接口：/api/novels/{nid}/assets（库/上传）· /assets/{id}/references（使用处）· /asset-trash + restore（回收站，1a63d6f7）· DELETE /assets/{id}。
    送到模块沿用 W-UX-12（显式确认后切模块；送剪辑走媒体池手递）。拖出＝引用，不复制。没有数据时不编血缘、不显示假「已校验」。 */
+import { AUDIO_HISTORY_TEXT } from '../../workspace/media/audioHistoryText';
+import { tz as i18nTz } from '../../i18n'; // [HERMIA-FE-20261025 I18N-ROUGH]
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {api, type Asset, type AssetReferences} from '../../api';
 import {rbError} from '../rebuildApi';
@@ -8,6 +10,7 @@ import {NovelOrient, NovelModTabs} from '../novel/NovelOrient';
 import '../novel/novelRebuild.css';
 import '../image/imageRebuild.css';
 import './assetsRebuild.css';
+import { t as i18nT } from '../../i18n'; // [HERMIA-FE-20261025 MERGE-FEC i18n]
 
 export type AssetsView = 'lib' | 'refs' | 'import' | 'trash';
 export type AssetsSendTarget = 'IMAGE' | 'VIDEO' | 'AUDIO' | 'EDIT';
@@ -74,15 +77,15 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       for (let o = 0; o < bytes.length; o += 0x8000) bin += String.fromCharCode(...bytes.subarray(o, o + 0x8000));
       const kind = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : 'file';
       const saved = await api.uploadAsset(novelId, {filename: file.name, media_type: file.type || undefined, kind, content_base64: btoa(bin)});
-      setNote(`已导入「${saved.filename}」`); setSelId(saved.id); setView('lib'); setTick(x => x + 1);
-    } catch (e) { setNote(`导入失败：${rbError(e)}`); } finally { setBusy(false); }
+      setNote(i18nT('rb.ast.imported', { name: saved.filename })); setSelId(saved.id); setView('lib'); setTick(x => x + 1);
+    } catch (e) { setNote(i18nT('rb.ast.importFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; } finally { setBusy(false); }
   }
   async function remove(a: Asset) {
     if (!window.confirm(`把「${a.filename}」移到回收站？被引用的地方会失去这个资产。`)) return;
-    try { await api.deleteAsset(a.id, novelId); setSelId(null); setNote(`已移到回收站：${a.filename}`); setTick(x => x + 1); } catch (e) { setNote(`删除失败：${rbError(e)}`); }
+    try { await api.deleteAsset(a.id, novelId); setSelId(null); setNote(i18nT('rb.ast.deleted', { name: a.filename })) /* [HERMIA-FE-20261025 VERA-097 P3] */; setTick(x => x + 1); } catch (e) { setNote(i18nT('rb.ast.deleteFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; }
   }
   async function restore(a: Asset) {
-    try { await api.restoreAsset(novelId, a.id); setNote(`已恢复：${a.filename}`); setTick(x => x + 1); } catch (e) { setNote(`恢复失败：${rbError(e)}`); }
+    try { await api.restoreAsset(novelId, a.id); setNote(i18nT('rb.ast.restored', { name: a.filename })) /* [HERMIA-FE-20261025 VERA-097 P3] */; setTick(x => x + 1); } catch (e) { setNote(i18nT('rb.ast.restoreFailed', { msg: rbError(e) })) /* [HERMIA-FE-20261025 VERA-097 P3] */; }
   }
   const pickFile = () => fileRef.current?.click();
   const loaded = items !== null;
@@ -92,9 +95,16 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       <h2>资产 · {view === 'lib' ? '浏览器' : VIEW_LABEL[view]}</h2>
       <span className="ref-badge">拖入＝引用 · 不复制</span>
       <span className="nv-spacer" />
+      {/* [HERMIA-FE-20261025 LAYOUT-P3] ≤1100 左栏（类型 / 集合）隐藏时的替代入口 */}
+      <select className="nv-btn narrow-nav" data-narrow-nav="assets" aria-label={i18nTz('资产类型')} value={view === 'trash' ? 'trash' : view === 'lib' ? filter : ''}
+        onChange={e => { const v = e.target.value; if (v === 'trash') setView('trash'); else if (v) { setFilter(v as Filter); setView('lib'); } }}>
+        {view !== 'lib' && view !== 'trash' ? <option value="">{i18nTz('当前视图')}</option> : null}
+        {([['all', '全部资产'], ['图像', '图像'], ['音频', '音频'], ['视频', '视频'], ['其他', '文档 / 其他']] as [Filter, string][]).map(([f, l]) => <option key={f} value={f}>{i18nTz(l)}{loaded ? ` (${counts[f] || 0})` : ''}</option>)}
+        {isPro ? <option value="trash">{i18nTz('回收站')}</option> : null}
+      </select>
       {view !== 'lib' ? <button type="button" className="nv-btn" onClick={() => setView('lib')}>回资产库</button> : null}
       {isPro ? <button type="button" className="nv-btn" aria-pressed={view === 'refs'} onClick={() => setView('refs')}>引用关系</button> : null}
-      <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>导入…</button>
+      <button type="button" className="nv-btn nv-btn--primary" data-ast-primary="import" disabled={busy} onClick={() => setView('import')}>{i18nTz('导入…')}</button>
     </div>
   );
 
@@ -124,12 +134,14 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <span className="nv-spacer" />
         <small className="mw-muted">{cur ? `已选「${cur.filename}」` : '没有选中'}</small>
       </div>
-      {err ? <p className="ast-err" role="alert">读取资产失败：{err}</p> : null}
+      {/* [HERMIA-FE-20261025 DUI P0-3] one state at a time: error (with retry) replaces the empty-library copy; raw detail only in data-* */}
       <div className="ast-grid" id="astGrid">
-        {!loaded ? <p className="mw-muted">读取中…</p>
+        {err ? <div className="ws-honest-empty ast-empty ast-err" role="alert" data-error-detail={err}><h4>{i18nT('rb.ast.loadFailed')}</h4>
+            <button type="button" className="nv-btn" onClick={() => { setItems(null); setTick(t => t + 1); }}>{i18nTz('重试')}</button></div>
+          : !loaded ? <p className="mw-muted">读取中…</p>
           : (items || []).length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_library" data-honest-workspace="ASSETS">
             <h4>库里还没有资产</h4><p>这里会收好你在各模块生成和导入的东西。先导入一个文件试试。</p>
-            <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>导入…</button></div>
+            <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>{i18nTz('导入…')}</button></div>
           : list.length === 0 ? <div className="ws-honest-empty ast-empty" role="status" data-honest-kind="empty_filter"><h4>这个类型下还没有资产。</h4>
             <button type="button" className="nv-btn" onClick={() => setFilter('all')}>查看全部</button></div>
           : list.map(a => <button key={a.id} type="button" className="ast-tile" aria-selected={cur?.id === a.id} draggable title="拖到其它模块＝引用，不复制"
@@ -137,7 +149,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
               onClick={() => setSelId(s => s === a.id ? null : a.id)}>
               {thumb(a)}<div className="meta"><b>{a.filename}</b><span>{assetKind(a)} · {a.version ? `v${a.version}` : '版本未记录'} · {sizeLabel(a.size)}</span></div></button>)}
       </div>
-      {loaded && (items || []).length ? <div className="ast-foot">共 {(items || []).length} 个资产 · 存储占用以服务端为准</div> : null}
+      {loaded && !err && (items || []).length ? <div className="ast-foot">共 {(items || []).length} 个资产 · 存储占用以服务端为准</div> : null}
     </div>
   );
 
@@ -149,7 +161,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         {isPro ? <><div><dt>版本</dt><dd>{cur.version ?? cur.provenance?.version ? `v${cur.version ?? cur.provenance?.version}` : '未记录'}</dd></div>
         <div><dt>来源</dt><dd>{originLabel(cur.provenance?.origin)}</dd></div>
         <div><dt>完整性</dt><dd>{integrityLabel(cur.provenance?.integrity)}</dd></div>
-        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? '暂时查不到' : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div></> : <div><dt>类型</dt><dd>{assetKind(cur)} · {sizeLabel(cur.size)}</dd></div>}
+        <div><dt>使用处</dt><dd data-ast-used="true">{refs === null ? '读取中…' : refs === 'err' ? i18nT('rb.ast.refsShortFailed') : usedIn.length ? usedIn.join(' · ') : '还没有被引用'}</dd></div></> : <div><dt>类型</dt><dd>{assetKind(cur)} · {sizeLabel(cur.size)}</dd></div>}
       </dl>
       {isPro ? <div className="sec" data-pro-only="lineage"><h4>血缘摘要</h4>
         <div className="lineage">{(cur.relationships || []).length ? (cur.relationships || []).slice(0, 4).map((r: any, i) => <div key={i} className="ln">→ {r?.target?.label || r?.label || '关联对象'}</div>)
@@ -163,10 +175,10 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
       </div>
     </div></div>
   ) : (
-    <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb">
+    <div className="mw-right"><div className="mw-rh">{i18nTz('下一步')}</div><div className="mw-rb">
       <div className="ws-honest-empty" role="status" data-honest-kind="empty_selection" data-honest-workspace="ASSETS">
         <h4>尚未选中内容</h4><p>点一个资产看它从哪来、被用在哪。</p>
-        <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>导入…</button>
+        <button type="button" className="nv-btn nv-btn--primary" onClick={() => setView('import')}>{i18nTz('导入…')}</button>
         <button type="button" className="nv-btn" onClick={() => { setFilter('图像'); setView('lib'); }}>只看图像</button>
       </div></div></div>
   );
@@ -182,7 +194,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
             <div className="sec ast-refs-card"><h4>{cur.filename}</h4>
               <div className="lineage">
                 <div className="ln">← <b>来源</b> · {originLabel(cur.provenance?.origin)}</div>
-                {refs === null ? <div className="ln">读取中…</div> : refs === 'err' ? <div className="ln">引用关系暂时查不到。</div>
+                {refs === null ? <div className="ln">读取中…</div> : refs === 'err' ? <div className="ln">{i18nT('rb.ast.refsFailed')}</div>
                   : refs.items.length === 0 ? <div className="ln">还没有地方引用它。</div>
                   : refs.items.map((r, i) => <div key={i} className="ln">→ <b>{COLLECTION_LABEL[r.collection] || '其他位置'}</b> · 第 {r.version} 版</div>)}
               </div>
@@ -207,7 +219,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <div className="hero-stage"><div className="sec" style={{maxWidth: 420, width: '100%'}}><h4>选择本地文件…</h4>
           <button type="button" className="nv-btn nv-btn--primary" id="astImportBtn" disabled={busy} onClick={pickFile}>{busy ? '导入中…' : '选择文件…'}</button>
           <p className="nv-hint">导入不会自动开始任何付费任务。大文件和去重还没做。</p></div></div></div>
-      <div className="mw-right"><div className="mw-rh">下一步</div><div className="mw-rb mw-cta">
+      <div className="mw-right"><div className="mw-rh">{i18nTz('下一步')}</div><div className="mw-rb mw-cta">
         <button type="button" className="nv-btn nv-btn--primary" id="astImportBtn2" disabled={busy} onClick={pickFile}>选择本地文件…</button>
         <button type="button" className="nv-btn" onClick={() => setView('lib')}>去筛选已有库</button></div></div>
     </>
@@ -220,9 +232,9 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
         <div className="ast-grid">
           {trash === null ? <p className="mw-muted">回收站暂时读不到。</p> : trash.length === 0 ? <div className="ws-honest-empty ast-empty" role="status"><h4>回收站是空的</h4></div>
             : trash.map(a => <div key={a.id} className="ast-tile is-trash">{thumb(a)}<div className="meta"><b>{a.filename}</b><span>{assetKind(a)}</span>
-              <button type="button" className="nv-btn" onClick={() => void restore(a)}>恢复</button></div></div>)}
+              <button type="button" className="nv-btn" onClick={() => void restore(a)} title={AUDIO_HISTORY_TEXT.assetRestoreHint}>{AUDIO_HISTORY_TEXT.assetRestore}</button></div></div>)}
         </div></div>
-      <div className="mw-right"><div className="mw-rh">说明</div><div className="mw-rb"><p className="nv-hint">恢复后资产回到原来的位置，引用会重新生效。</p></div></div>
+      <div className="mw-right"><div className="mw-rh">说明</div><div className="mw-rb"><p className="nv-hint">{i18nT('fc.aud.restoreNote')}{AUDIO_HISTORY_TEXT.assetRestoreHint}</p></div></div>
     </>
   );
 
@@ -239,7 +251,7 @@ export function AssetsRebuild({novelId, shellMode = 'basic', onSelectAsset, onSe
   ) : null;
 
   return (
-    <div className="ast-ws" data-shell-mode={shellMode} data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label="资产工作区">
+    <div className="ast-ws" data-shell-mode={shellMode} data-ast-view={view} data-assets-hero="browser" data-drag-semantics="reference" aria-label={i18nTz('资产工作区')}>
       <NovelOrient storageKey="studio-assets-orient-dismissed" what="这部作品的图片、视频、声音和文档" can="导入、筛选、看来源和使用处、送到其它模块" effect="送出去的是引用，不复制文件" />
       <NovelModTabs tabs={((isPro ? ['lib', 'refs', 'import'] : ['lib', 'import']) as AssetsView[]).map(id => ({id, label: VIEW_LABEL[id], selected: view === id || (id === 'lib' && view === 'trash'), onClick: () => setView(id)}))} />
       {head}

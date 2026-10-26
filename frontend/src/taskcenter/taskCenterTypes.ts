@@ -342,6 +342,14 @@ export type TaskCenterTasksProjection = {
   executor: false;
   refresh: 'MANUAL';
   automatic_retries: false;
+  /** [HERMIA-FE-CONTRACTS G-TC-1] 只在显式发送 limit/offset 且服务返回分页信封时存在；旧响应为 null。 */
+  page: TaskCenterTasksPage | null;
+};
+
+/** 分页元数据。observed_total 只是本次读取观察到的匹配数，不是全部任务总数；completeness 永远 NOT_ASSERTED。 */
+export type TaskCenterTasksPage = {
+  observed_total: number; limit: number; offset: number; has_more: boolean; next_offset: number | null;
+  source_truncated: boolean; completeness: 'NOT_ASSERTED';
 };
 
 export type ReviewInboxField = { key: string; value: string };
@@ -420,7 +428,7 @@ export type ReviewBatchReceipt = {
 
 /* ------------------------------------------------------------------ 输入形状 */
 
-export type TaskCenterTaskQuery = { q: string; failed_only: boolean };
+export type TaskCenterTaskQuery = { q: string; failed_only: boolean; limit?: number; offset?: number };
 export type ReviewInboxQuery = { domain: string; status: string; search: string };
 export type TaskCancelRequest = { expected_revision: string };
 export type ReviewActionRequest = { expected_version: number };

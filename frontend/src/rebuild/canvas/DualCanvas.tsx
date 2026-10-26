@@ -5,12 +5,19 @@ import {useCallback, useState, type ReactNode} from 'react';
 import {RebuildCanvas, canvasStorageKey, type CvNode, type CvGraph} from './RebuildCanvas';
 
 type Mode = 'creation' | 'execution' | 'split';
+/** [HERMIA-FE-20261024 M2-s1fix] world position of sent reference nodes (inside the default execution viewport). */
+export const LINK_X = 20, LINK_Y0 = 20, LINK_DY = 70, LINK_DX = 206; // DX = rendered node width 186 + 20 gap
 export function linkToExecution(scope: string, n: CvNode): void {
   const key = canvasStorageKey('video', scope);
   let g: CvGraph = {nodes: [], edges: []};
   try { const raw = localStorage.getItem(key); if (raw) g = JSON.parse(raw); } catch { /* ignore */ }
-  const y = 40 + (g.nodes.length % 5) * 80;
-  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x: -220, y, title: `参考 · ${n.title}`}];
+  // [HERMIA-FE-20261024 M2-s1fix] was x:-220 (off-view: the execution canvas remounts at viewport {x:40,y:40,k:1}, so the
+  // node showed only ~5px). Place it inside that default view: screen x 60..240, y 60..260 — fits the 320×280 panel minimum.
+  // [HERMIA-FE-20261024 M2-s1fix2] grid instead of n%3 (4th node fully covered the 1st): column = floor(n/3), so the
+  // first column (first 3 sends) stays inside the default view and later sends never overlap earlier ones.
+  const i = g.nodes.length;
+  const x = LINK_X + Math.floor(i / 3) * LINK_DX, y = LINK_Y0 + (i % 3) * LINK_DY;
+  g.nodes = [...g.nodes, {id: `ref-${n.id}-${Date.now().toString(36)}`, t: 'image_reference', x, y, title: `参考 · ${n.title}`}];
   try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
 }
 
@@ -34,7 +41,7 @@ function DualCanvasSession({scope, initial = 'split', videoSeed, onImageTaskInte
           {([['creation', '创作画布'], ['execution', '执行画布'], ['split', '对照分屏']] as [Mode, string][]).map(([m, l]) =>
             <button key={m} type="button" aria-pressed={mode === m} data-dual={m} onClick={() => setMode(m)}>{l}</button>)}
         </div>
-        <span className="dual-cv__hint">两侧图结构仍是本机草稿，不是已保存的服务端图。图片任务需另行确认；视频节点尚未接入执行。</span>
+        <span className="dual-cv__hint">两侧图结构仍是本机草稿，不是已保存的服务端图。左边组织素材和画面（图片），右边排镜头（视频）。图片任务需另行确认；视频节点尚未接入执行。</span>
         <span className="nv-spacer" />
         {note ? <span className="dual-cv__note" role="status">{note}</span> : null}
         <button type="button" className="nv-btn" data-dual-link="true" disabled={!sel || mode === 'execution'} title={sel ? '' : '先在创作画布选中一个节点'} onClick={send}>

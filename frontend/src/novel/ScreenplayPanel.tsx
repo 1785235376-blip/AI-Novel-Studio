@@ -1,3 +1,4 @@
+import { formatDate } from '../i18n'; // [HERMIA-FE-20261025 I18N P1] shared formatters
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError, apiErrorView, getCollaborationContext, CollaborationContext, Scope } from "../api";
@@ -557,8 +558,8 @@ function Transition({
       {suggestion && <p className="novel-help">建议：{suggestion.suggested_type} · {suggestion.reason} <Button variant="ghost" disabled={disabled} onClick={()=>{setD({...d,type:suggestion.suggested_type});setSuggestionApplied(true)}}>采用建议</Button>{suggestionApplied&&<small> 已应用，点击保存转场后生效</small>}</p>}
       <label>Motion Prompt<textarea readOnly={disabled} value={motionPrompt} onChange={e=>setMotionPrompt(e.target.value)} rows={4}/></label>
       {!disabled&&<Button disabled={motionOperation !== null || !motionPrompt.trim()} onClick={saveMotion}>保存 Motion Prompt</Button>}
-      {prompt && <><label>Transition Prompt<textarea disabled={disabled} value={prompt} onChange={(e)=>{setPrompt(e.target.value);setD({...d,prompt:e.target.value})}} rows={4}/></label>{promptMeta&&<small className="novel-help">模板 {promptMeta.template_version} · {new Date(promptMeta.generated_at).toLocaleString()}</small>}{!disabled&&<Button onClick={()=>save({expected_version:d.expected_version,type:d.type,duration_seconds:d.duration_seconds,note:d.note,prompt})}>保存 Prompt</Button>}</>}
-      {row.prompt_history?.length>0&&<details><summary>Prompt 历史（{row.prompt_history.length}）</summary>{row.prompt_history.slice().reverse().map((item:any,index:number)=><p key={`${item.saved_at}-${index}`} className="novel-help">{new Date(item.saved_at).toLocaleString()} · {item.prompt} <Button variant="ghost" disabled={disabled} onClick={()=>{setPrompt(item.prompt);setD({...d,prompt:item.prompt})}}>恢复此版本</Button></p>)}</details>}
+      {prompt && <><label>Transition Prompt<textarea disabled={disabled} value={prompt} onChange={(e)=>{setPrompt(e.target.value);setD({...d,prompt:e.target.value})}} rows={4}/></label>{promptMeta&&<small className="novel-help">模板 {promptMeta.template_version} · {formatDate(promptMeta.generated_at)}</small>}{!disabled&&<Button onClick={()=>save({expected_version:d.expected_version,type:d.type,duration_seconds:d.duration_seconds,note:d.note,prompt})}>保存 Prompt</Button>}</>}
+      {row.prompt_history?.length>0&&<details><summary>Prompt 历史（{row.prompt_history.length}）</summary>{row.prompt_history.slice().reverse().map((item:any,index:number)=><p key={`${item.saved_at}-${index}`} className="novel-help">{formatDate(item.saved_at)} · {item.prompt} <Button variant="ghost" disabled={disabled} onClick={()=>{setPrompt(item.prompt);setD({...d,prompt:item.prompt})}}>恢复此版本</Button></p>)}</details>}
       {transitionPromptError && <p role="alert">{transitionPromptError}</p>}
       {suggestionError && <p role="alert">{suggestionError}</p>}
       {motionPromptError && <p role="alert">{motionPromptError}</p>}
