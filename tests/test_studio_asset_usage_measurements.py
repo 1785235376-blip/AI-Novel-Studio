@@ -29,12 +29,15 @@ def test_measure_original_usage_graph(usage_rig, monkeypatch):
 
 
 @pytest.mark.parametrize('entry', ['HTTP', 'File-service'])
-@pytest.mark.parametrize('scenario', ['graph', 'mixed-graph', 'timeline'])
+@pytest.mark.parametrize('scenario', ['graph', 'mixed-graph', 'timeline', 'mixed-owners'])
 def test_new_paged_usage_measurements(usage_rig, monkeypatch, scenario, entry):
     from studio_asset_usage_fixture import copied_graph_consumers, copied_timeline_consumers
     e = usage_rig
     expected = copied_timeline_consumers(e) if scenario == 'timeline' else copied_graph_consumers(e, 30, 16, mixed=scenario == 'mixed-graph')
     suffix = 'studio-timeline-usages' if scenario == 'timeline' else 'studio-graph-usages'
+    if scenario == 'mixed-owners':
+        expected += copied_timeline_consumers(e, count=2)
+        suffix = 'studio-asset-usages'
     before = snapshot(e.rig.root)
     runs = []
     for phase in ('first-read-warm-os-cache', 'repeat-read-warm-process'):
@@ -48,6 +51,14 @@ def test_new_paged_usage_measurements(usage_rig, monkeypatch, scenario, entry):
                     return e.client.get(e.usage_base + '/' + suffix, headers=e.headers, params=params)
                 from app.creative.asset_usages import graph_asset_usages, timeline_asset_usages
                 from types import SimpleNamespace
+                if scenario == 'mixed-owners':
+                    from app.creative.asset_usage_paging import paged_usages
+                    from app.creative.asset_usage_budget import usage_read_budget
+                    with e.graph.store.existing_owner_only(), e.production.store.existing_owner_only(), usage_read_budget():
+                        body = paged_usages(e.graph, e.rig.nid, e.rig.scope, e.actor, e.asset['id'], lambda: None,
+                            graph=True, production=e.production, sources=['graph', 'timeline'], **params)
+                    content = json.dumps(body, separators=(',', ':')).encode()
+                    return SimpleNamespace(status_code=200, text=content.decode(), content=content, json=lambda: body)
                 function = timeline_asset_usages if scenario == 'timeline' else graph_asset_usages
                 service = e.production if scenario == 'timeline' else e.graph
                 with service.store.existing_owner_only():
@@ -59,7 +70,7 @@ def test_new_paged_usage_measurements(usage_rig, monkeypatch, scenario, entry):
             body = response.json()
             assert body['other_dependencies'] == 'UNKNOWN'
             assert len(body['items']) <= 100
-            found.extend((x['id'], x.get('node_id', x.get('clip_id'))) for x in body['items'])
+            found.extend((x['owner'], x['id'], x.get('node_id', x.get('clip_id'))) for x in body['items'])
             pages.append({'page': page_number, 'returned': len(body['items']),
                 'response_bytes': len(response.content), 'scanned_consumers': body['scanned_consumers'],
                 'scanned_references': body['scanned_references'], **metrics})
