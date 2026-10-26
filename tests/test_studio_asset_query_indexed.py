@@ -4,6 +4,7 @@ Small budget overrides make rejection deterministic. Fault-injection wrappers
 only schedule actual source/index writes; every query still reads real files.
 """
 from collections import Counter
+from contextlib import closing
 import errno
 import json
 import os
@@ -197,9 +198,12 @@ def test_damaged_derived_filter_cannot_silently_hide_source_match(rig):
     row = rig.seed("needle.png")
     assert ids(get(rig, {"q": "needle", "limit": 1})) == [row["id"]]
     before = source_snapshot(rig.root)
-    with sqlite3.connect(rig.workspace.query_index.path) as connection:
-        connection.execute("UPDATE sources SET filename_folded=? WHERE asset_id=?",
-                           ("nonmatching damage", row["id"]))
+    # The SQLite transaction context commits but does not close its handle.
+    # Release it before the original owner atomically replaces the damaged DB.
+    with closing(sqlite3.connect(rig.workspace.query_index.path)) as connection:
+        with connection:
+            connection.execute("UPDATE sources SET filename_folded=? WHERE asset_id=?",
+                               ("nonmatching damage", row["id"]))
     response = get(rig, {"q": "needle", "limit": 1})
     assert ids(response) == [row["id"]] and response.json()["total"] == 1
     assert source_snapshot(rig.root) == before
