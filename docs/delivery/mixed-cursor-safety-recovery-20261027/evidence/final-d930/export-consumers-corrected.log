@@ -1,0 +1,5 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+........................................................................ [ 71%]
+.............................                                            [100%]
+- generated xml file: /workspace/scratch/20a0022d2b33/mixed-recovery-evidence/final2/export-consumers-corrected.xml -
+101 passed, 3 warnings in 75.71s (0:01:15)

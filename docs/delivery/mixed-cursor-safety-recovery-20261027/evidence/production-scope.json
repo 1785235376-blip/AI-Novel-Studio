@@ -1,0 +1,27 @@
+{
+  "app/experimental/api.py": {
+    "donor_identical": true
+  },
+  "app/experimental/taskcenter_cursor_http.py": {
+    "donor_identical": true
+  },
+  "app/experimental/taskcenter_local_mixed_cursor.py": {
+    "donor_identical": true
+  },
+  "app/experimental/taskcenter_query.py": {
+    "donor_identical": true
+  },
+  "app/experimental/ux.py": {
+    "donor_identical": true
+  },
+  "protected_changed": [
+    "app/creative/asset_usage_budget.py",
+    "app/creative/asset_usage_request.py",
+    "app/experimental/api.py",
+    "app/experimental/taskcenter_cursor_http.py",
+    "app/experimental/taskcenter_local_mixed_cursor.py",
+    "app/experimental/taskcenter_query.py",
+    "app/experimental/ux.py",
+    "app/repositories/file/mutation_coordinator.py"
+  ]
+}

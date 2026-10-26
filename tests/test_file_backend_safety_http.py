@@ -1,7 +1,7 @@
 """Combined real TCP HTTP protections using original File application owners.
 
 Synthetic saved scale fixture remains 32 consumers / 540 direct references.
-TaskCenter's three single-source combinations are checked independently; its
+TaskCenter's original single sources and exact local pair are checked; its
 contract does not inherit the asset-only resource budget.
 """
 from contextlib import contextmanager
@@ -205,8 +205,19 @@ def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_r
         finally:
             owner._pool.shutdown(wait=True)
         assert body(task_page(client,prefix,nid,'exports',export_token),409)['code']=='TASKCENTER_CURSOR_RESTART_REQUIRED'
-        mixed=task_page(client,prefix,nid,['semantic_import','exports'])
-        assert body(mixed,501)['code']=='TASKCENTER_CURSOR_UNSUPPORTED'
+        mixed_first=body(task_page(client,prefix,nid,['semantic_import','exports']))
+        mixed_token=mixed_first['next_cursor']
+        mixed_pages=[mixed_first]
+        while mixed_pages[-1]['has_more']:
+            current=mixed_pages[-1]['next_cursor']
+            page=body(task_page(client,prefix,nid,['semantic_import','exports'],current))
+            assert body(task_page(client,prefix,nid,['semantic_import','exports'],current))==page
+            mixed_pages.append(page)
+            assert len(mixed_pages)<=6
+        assert len(mixed_pages)==6 and mixed_pages[-1]['next_cursor'] is None
+        assert mixed_pages[-1]['observed_total']==6
+        assert [r['authority'] for page in mixed_pages for r in page['items']]==['semantic_import']*3+['exports']*3
+        assert {r['id'] for page in mixed_pages for r in page['items']}=={r['id'] for r in imports+exports}
         # Repeated asset read after a legal owner lifecycle mutation must restart.
         timeline=body(client.get(f'{prefix}/projects/{nid}/studio/production/timelines/synthetic-timeline-0000'))
         body(client.put(f'{prefix}/projects/{nid}/studio/production/timelines/synthetic-timeline-0000',json={'expected_version':timeline['version'],'title':'Changed owner title','timeline':timeline['timeline']}))
@@ -214,6 +225,8 @@ def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_r
     with application(run,label='reopened') as client:
         assert task_page(client,prefix,nid,'semantic_import',token).status_code==409
         assert task_page(client,prefix,nid,'exports',export_token).status_code==409
+        assert task_page(client,prefix,nid,['semantic_import','exports'],mixed_token).status_code==409
+        assert body(task_page(client,prefix,nid,['semantic_import','exports']))['observed_total']==6
         before=snapshot(run/'data')
         traverse(client,prefix,nid,'semantic_import',[r['id'] for r in imports])
         traverse(client,prefix,nid,'exports',[r['id'] for r in exports])

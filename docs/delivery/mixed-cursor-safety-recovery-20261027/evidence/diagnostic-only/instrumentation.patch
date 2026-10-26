@@ -1,0 +1,28 @@
+diff --git a/tests/file_safety_http_server.py b/tests/file_safety_http_server.py
+index 241586cf..be964431 100644
+--- a/tests/file_safety_http_server.py
++++ b/tests/file_safety_http_server.py
+@@ -66,7 +66,22 @@ def observe_command(original, label):
+ 
+ sys.addaudithook(audit)
+ from app.main import app as original_app
+-from app.creative.asset_usage_budget import UsageReadBudget
++from app.creative.asset_usage_budget import UsageReadBudget, UsageBudgetError, current_usage_budget
++import time
++import traceback
++_original_budget_error_init = UsageBudgetError.__init__
++def diagnostic_budget_error(self):
++    _original_budget_error_init(self)
++    budget = current_usage_budget()
++    print('BUDGET_DIAGNOSTIC ' + json.dumps({
++        'elapsed_seconds': None if budget is None else budget.MAX_SECONDS + time.monotonic() - budget.deadline,
++        'snapshot': None if budget is None else budget.snapshot(),
++        'max_seconds': None if budget is None else budget.MAX_SECONDS,
++        'max_reads': None if budget is None else budget.MAX_READS,
++        'max_bytes': None if budget is None else budget.MAX_READ_BYTES,
++    }), file=sys.stderr, flush=True)
++    traceback.print_stack(file=sys.stderr)
++UsageBudgetError.__init__ = diagnostic_budget_error
+ from app import dependencies, api as legacy_api
+ 
+ # Storage/queue acceptance uses a deterministic stub executor, never a real

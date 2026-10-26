@@ -227,6 +227,11 @@ taskcenter_cursor_adapter.export_adapter = LocalExportTaskCenterCursorAdapter(
     actual_repositories=lambda: (legacy_api.novel_service, legacy_api.chapter_service),
     runtime_mode=lambda: (settings.enable_packaged_runtime, settings.enable_collaboration_runtime),
 )
+from .taskcenter_local_mixed_cursor import LocalMixedTaskCenterCursorAdapter
+taskcenter_cursor_adapter.mixed_adapter = LocalMixedTaskCenterCursorAdapter(
+    workspace_tools_service, taskcenter_cursor_adapter, taskcenter_cursor_adapter.export_adapter,
+    actual_sources=lambda: (import_service, legacy_api.export_job_service),
+)
 router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag,
                                      cursor_adapter=taskcenter_cursor_adapter))
 

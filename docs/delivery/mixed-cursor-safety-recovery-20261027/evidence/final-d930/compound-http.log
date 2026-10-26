@@ -1,0 +1,43 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+.F..                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api/v1] _
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x7f2516b4f8c0>, nid='query-a67ada021a8c47cd...5', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+prefix = '/api/v1'
+
+    @pytest.mark.parametrize('prefix', ['/api', '/api/v1'])
+    def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_rig, prefix):
+        e = usage_rig
+        assert copied_graph_consumers(e,30,16)+copied_timeline_consumers(e,count=2) == 540
+        run = e.rig.root.parent / ('combined-'+e.rig.root.name)
+        shutil.copytree(e.rig.root, run/'data')
+        nid = e.rig.nid
+        url = f'{prefix}/novels/{nid}/experimental/production/assets/{e.asset["id"]}/studio-asset-usages'
+        with application(run) as client:
+            cold = snapshot(run/'data')
+            assert body(asset_page(client,url,strict=True),409)['code'] == 'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE'
+            assert snapshot(run/'data') == cold
+            first = body(asset_page(client,url))
+            next_page = body(asset_page(client,url,first['next_cursor']))
+            replay=body(asset_page(client,url,first['next_cursor']))
+            assert replay['items']==next_page['items'] and replay['total']==next_page['total']
+>           pins=[]; page=body(asset_page(client,url,strict=True)); pages=0
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_file_backend_safety_http.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [409 Conflict]>, status = 200
+
+    def body(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"STUDIO_ASSET_USAGE_UNAVAILABLE"},"code":"STUDIO_ASSET_USAGE_UNAVAILABLE","message":"STUDIO_ASSET_USAGE_UNAVAILABLE","details":{"code":"STUDIO_ASSET_USAGE_UNAVAILABLE"},"request_id":"3c24a47f-1f2d-454e-90a0-a67a417a41a9"}
+E       assert 409 == 200
+E        +  where 409 = <Response [409 Conflict]>.status_code
+
+tests/test_file_backend_safety_http.py:32: AssertionError
+- generated xml file: /workspace/scratch/20a0022d2b33/mixed-recovery-evidence/final2/compound-http.xml -
+=========================== short test summary info ============================
+FAILED tests/test_file_backend_safety_http.py::test_socket_local_asset_and_two_task_sources_survive_mutation_reopen[/api/v1]
+1 failed, 3 passed, 3 warnings in 365.06s (0:06:05)

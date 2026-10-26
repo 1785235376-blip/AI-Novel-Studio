@@ -16,6 +16,16 @@ _thread_state = local()
 _existing_only = ContextVar('workspace_existing_coordination_only', default=False)
 
 
+@contextmanager
+def isolate_coordination_request_context():
+    """Clear only an independent request's inherited strict marker."""
+    token = _existing_only.set(False)
+    try:
+        yield
+    finally:
+        _existing_only.reset(token)
+
+
 class ReadOnlyCoordinationUnavailable(RuntimeError):
     def __init__(self):
         super().__init__('STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE')

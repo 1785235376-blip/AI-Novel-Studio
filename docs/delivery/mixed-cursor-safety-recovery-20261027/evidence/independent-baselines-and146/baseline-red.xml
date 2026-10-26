@@ -1,0 +1,1492 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="22" skipped="0" tests="26" time="12.402" timestamp="2026-10-27T05:49:25.414225+09:00" hostname="3aa60f4fc551"><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[chapter_post]" time="8.774"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae57b433b0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae57b433b0&gt;">case = 'chapter_post'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae57b433b0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae57b433b0&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[taskcenter_get]" time="0.002"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0b67b0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0b67b0&gt;">case = 'taskcenter_get'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0b67b0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0b67b0&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[health_get]" time="0.001"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d011b50&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d011b50&gt;">case = 'health_get'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d011b50&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d011b50&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[asset_post]" time="0.002"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd0860&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd0860&gt;">case = 'asset_post'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd0860&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd0860&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[legacy_graph_get]" time="0.001"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd2c00&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd2c00&gt;">case = 'legacy_graph_get'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd2c00&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd2c00&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[compat_asset_get]" time="0.001"><failure message="AssertionError: prior strict scope leaked&#10;assert True == ('compat_asset_get' == 'strict_asset_get'&#10;  &#10;  - strict_asset_get&#10;  ? ----&#10;  + compat_asset_get&#10;  ?  ++++)">case = 'compat_asset_get'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+      assert b is not original[0], 'prior expired request budget leaked'
+      assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+&gt;     assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+E     AssertionError: prior strict scope leaked
+E     assert True == ('compat_asset_get' == 'strict_asset_get'
+E       
+E       - strict_asset_get
+E       ? ----
+E       + compat_asset_get
+E       ?  ++++)
+
+tests/test_file_usage_request_context.py:55: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[strict_asset_get]" time="0.001" /><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[websocket]" time="0.001"><failure message="AssertionError: prior expired request budget leaked&#10;assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0161e0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0161e0&gt;">case = 'websocket'
+
+    @pytest.mark.parametrize('case',list(CHOICES)+['background'])
+    def test_real_middleware_drops_previous_request_but_keeps_owned_background(case):
+     async def scenario():
+      gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active()
+       if request.get('first'):
+        assert b is not None and strict;original.append(b);b.deadline=-1
+        if case=='background':
+         async def child():
+          await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+         pending.append(asyncio.create_task(child()))
+        await send({'type':'http.response.start','status':200,'headers':[]})
+        await send({'type':'http.response.body','body':b'ok'})
+       else:observed.append((b,strict))
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      async def send(message):
+       if message['type']=='http.response.body' and case!='background':
+        async def following():
+         await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      first=scope(CHOICES['strict_asset_get']);first['first']=True
+      await middleware(first,receive,send)
+      assert current_usage_budget() is None and not strict_coordination_active()
+      gate.set();await asyncio.gather(*pending)
+      b,strict=observed[0]
+      if case=='background':assert b is original[0] and strict
+      else:
+       assert b is not original[0], 'prior expired request budget leaked'
+       assert (b is not None)==(case in {'compat_asset_get','strict_asset_get'})
+       assert strict==(case=='strict_asset_get'), 'prior strict scope leaked'
+       if b is not None:b.check()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     gate=asyncio.Event(); pending=[]; observed=[]; original=[]
+     async def inner(request,receive,send):
+      b=current_usage_budget(); strict=strict_coordination_active()
+      if request.get('first'):
+       assert b is not None and strict;original.append(b);b.deadline=-1
+       if case=='background':
+        async def child():
+         await gate.wait();observed.append((current_usage_budget(),strict_coordination_active()))
+        pending.append(asyncio.create_task(child()))
+       await send({'type':'http.response.start','status':200,'headers':[]})
+       await send({'type':'http.response.body','body':b'ok'})
+      else:observed.append((b,strict))
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     async def send(message):
+      if message['type']=='http.response.body' and case!='background':
+       async def following():
+        await gate.wait();await middleware(scope(CHOICES[case]),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     first=scope(CHOICES['strict_asset_get']);first['first']=True
+     await middleware(first,receive,send)
+     assert current_usage_budget() is None and not strict_coordination_active()
+     gate.set();await asyncio.gather(*pending)
+     b,strict=observed[0]
+     if case=='background':assert b is original[0] and strict
+     else:
+&gt;     assert b is not original[0], 'prior expired request budget leaked'
+E     AssertionError: prior expired request budget leaked
+E     assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0161e0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4d0161e0&gt;
+
+tests/test_file_usage_request_context.py:53: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_real_middleware_drops_previous_request_but_keeps_owned_background[background]" time="0.001" /><testcase classname="tests.test_file_usage_request_context" name="test_failed_request_is_clean_and_restores_callers[False]" time="0.002"><failure message="assert [(&lt;app.creati...d3a40&gt;, True)] == [(None, False)]&#10;  &#10;  At index 0 diff: (&lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3a40&gt;, True) != (None, False)&#10;  Use -v to get more diff">cancel = False
+
+    @pytest.mark.parametrize('cancel',[False,True])
+    def test_failed_request_is_clean_and_restores_callers(cancel):
+     async def scenario():
+      seen=[];error=asyncio.CancelledError if cancel else RuntimeError
+      async def inner(request,receive,send):
+       seen.append((current_usage_budget(),strict_coordination_active()));raise error('synthetic')
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      with usage_read_budget() as outer,existing_coordination_only():
+       with pytest.raises(error):await middleware(scope(CHOICES['chapter_post']),receive,noop)
+       assert current_usage_budget() is outer and strict_coordination_active()
+      assert seen==[(None,False)]
+      assert current_usage_budget() is None and not strict_coordination_active()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     seen=[];error=asyncio.CancelledError if cancel else RuntimeError
+     async def inner(request,receive,send):
+      seen.append((current_usage_budget(),strict_coordination_active()));raise error('synthetic')
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     with usage_read_budget() as outer,existing_coordination_only():
+      with pytest.raises(error):await middleware(scope(CHOICES['chapter_post']),receive,noop)
+      assert current_usage_budget() is outer and strict_coordination_active()
+&gt;    assert seen==[(None,False)]
+E    assert [(&lt;app.creati...d3a40&gt;, True)] == [(None, False)]
+E      
+E      At index 0 diff: (&lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3a40&gt;, True) != (None, False)
+E      Use -v to get more diff
+
+tests/test_file_usage_request_context.py:69: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_failed_request_is_clean_and_restores_callers[True]" time="0.001"><failure message="assert [(&lt;app.creati...d21b0&gt;, True)] == [(None, False)]&#10;  &#10;  At index 0 diff: (&lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd21b0&gt;, True) != (None, False)&#10;  Use -v to get more diff">cancel = True
+
+    @pytest.mark.parametrize('cancel',[False,True])
+    def test_failed_request_is_clean_and_restores_callers(cancel):
+     async def scenario():
+      seen=[];error=asyncio.CancelledError if cancel else RuntimeError
+      async def inner(request,receive,send):
+       seen.append((current_usage_budget(),strict_coordination_active()));raise error('synthetic')
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      with usage_read_budget() as outer,existing_coordination_only():
+       with pytest.raises(error):await middleware(scope(CHOICES['chapter_post']),receive,noop)
+       assert current_usage_budget() is outer and strict_coordination_active()
+      assert seen==[(None,False)]
+      assert current_usage_budget() is None and not strict_coordination_active()
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     seen=[];error=asyncio.CancelledError if cancel else RuntimeError
+     async def inner(request,receive,send):
+      seen.append((current_usage_budget(),strict_coordination_active()));raise error('synthetic')
+     middleware=AssetUsageRequestBudgetMiddleware(inner)
+     with usage_read_budget() as outer,existing_coordination_only():
+      with pytest.raises(error):await middleware(scope(CHOICES['chapter_post']),receive,noop)
+      assert current_usage_budget() is outer and strict_coordination_active()
+&gt;    assert seen==[(None,False)]
+E    assert [(&lt;app.creati...d21b0&gt;, True)] == [(None, False)]
+E      
+E      At index 0 diff: (&lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd21b0&gt;, True) != (None, False)
+E      Use -v to get more diff
+
+tests/test_file_usage_request_context.py:69: AssertionError</failure></testcase><testcase classname="tests.test_file_usage_request_context" name="test_concurrent_requests_isolate_but_nested_operations_reuse" time="0.002"><failure message="assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3fb0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3fb0&gt;">def test_concurrent_requests_isolate_but_nested_operations_reuse():
+     async def scenario():
+      all_entered=asyncio.Event();entered=[];budgets=[]
+      async def inner(request,receive,send):
+       b=current_usage_budget(); strict=strict_coordination_active();label=request['label']
+       entered.append(label)
+       if len(entered)==3:all_entered.set()
+       await all_entered.wait()
+       assert current_usage_budget() is b and strict_coordination_active()==strict
+       assert b is not outer
+       assert (b is not None)==(label!='taskcenter_get')
+       assert strict==(label=='strict_asset_get')
+       if b is not None:
+        with usage_read_budget() as nested,existing_coordination_only(False):
+         assert nested is b and strict_coordination_active()==strict
+        budgets.append(b)
+      middleware=AssetUsageRequestBudgetMiddleware(inner)
+      with usage_read_budget() as outer,existing_coordination_only():
+       tasks=[]
+       for label in ('strict_asset_get','compat_asset_get','taskcenter_get'):
+        request=scope(CHOICES[label]);request['label']=label
+        tasks.append(asyncio.create_task(middleware(request,receive,noop)))
+       await asyncio.gather(*tasks)
+       assert current_usage_budget() is outer and strict_coordination_active()
+      assert len(budgets)==2 and budgets[0] is not budgets[1]
+&gt;    asyncio.run(scenario())
+
+tests/test_file_usage_request_context.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_file_usage_request_context.py:95: in scenario
+    await asyncio.gather(*tasks)
+app/creative/asset_usage_request.py:24: in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+request = {'label': 'taskcenter_get', 'method': 'GET', 'path': '/api/novels/synthetic/experimental/workspace/tasks', 'query_string': b'page_mode=cursor', ...}
+receive = &lt;function receive at 0x7fae57904b80&gt;
+send = &lt;function noop at 0x7fae57904900&gt;
+
+    async def inner(request,receive,send):
+     b=current_usage_budget(); strict=strict_coordination_active();label=request['label']
+     entered.append(label)
+     if len(entered)==3:all_entered.set()
+     await all_entered.wait()
+     assert current_usage_budget() is b and strict_coordination_active()==strict
+&gt;    assert b is not outer
+E    assert &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3fb0&gt; is not &lt;app.creative.asset_usage_budget.UsageReadBudget object at 0x7fae4cfd3fb0&gt;
+
+tests/test_file_usage_request_context.py:82: AssertionError</failure></testcase><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[POST]" time="0.008"><failure message="AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]&#10;  &#10;  At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None&#10;  Use -v to get more diff)">case = 'POST'
+
+    @pytest.mark.parametrize('case',['POST','PUT','websocket','GET','background','exception'])
+    def test_observer_request_attribution_and_get_owned_background(case):
+     async def scenario():
+      active=contextvars.ContextVar('independent_observer',default=None)
+      records=[];seen=[];pending=[];gate=asyncio.Event()
+      async def inner(scope,receive,send):
+       r=active.get()
+       if scope['type']!='http' or scope['method']!='GET':
+        seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-nonget-write')
+        if case=='exception':raise RuntimeError('synthetic')
+        return
+       if case=='background':
+        async def owned():
+         await gate.wait();r=active.get();seen.append(r)
+         if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+        pending.append(asyncio.create_task(owned()))
+       await send({'type':'http.response.start','status':200})
+       await send({'type':'http.response.body','body':b'ok'})
+      source=Path(__file__).with_name('file_safety_http_server.py')
+      node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+      ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+      exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+      app=ns['app']
+      def scope(method='GET',path='/first',kind='http'):
+       return dict(type=kind,method=method,path=path,query_string=b'')
+      async def receive():return {'type':'http.request','body':b''}
+      async def noop(message):pass
+      async def send(message):
+       if message['type']=='http.response.body' and case not in {'background','exception'}:
+        async def following():
+         await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      if case=='exception':
+       marker={'command_calls':[]};t=active.set(marker)
+       try:
+        with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+        assert active.get() is marker
+       finally:active.reset(t)
+       assert seen==[None] and marker['command_calls']==[]
+      else:
+       await app(scope(),receive,send);assert active.get() is None
+       gate.set();await asyncio.gather(*pending)
+       if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+       elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+       else:assert seen==[None] and records[0]['command_calls']==[]
+&gt;    asyncio.run(scenario())
+
+tests/test_file_safety_observer_context.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     active=contextvars.ContextVar('independent_observer',default=None)
+     records=[];seen=[];pending=[];gate=asyncio.Event()
+     async def inner(scope,receive,send):
+      r=active.get()
+      if scope['type']!='http' or scope['method']!='GET':
+       seen.append(r)
+       if r is not None:r['command_calls'].append('synthetic-nonget-write')
+       if case=='exception':raise RuntimeError('synthetic')
+       return
+      if case=='background':
+       async def owned():
+        await gate.wait();r=active.get();seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+       pending.append(asyncio.create_task(owned()))
+      await send({'type':'http.response.start','status':200})
+      await send({'type':'http.response.body','body':b'ok'})
+     source=Path(__file__).with_name('file_safety_http_server.py')
+     node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+     ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+     exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+     app=ns['app']
+     def scope(method='GET',path='/first',kind='http'):
+      return dict(type=kind,method=method,path=path,query_string=b'')
+     async def receive():return {'type':'http.request','body':b''}
+     async def noop(message):pass
+     async def send(message):
+      if message['type']=='http.response.body' and case not in {'background','exception'}:
+       async def following():
+        await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     if case=='exception':
+      marker={'command_calls':[]};t=active.set(marker)
+      try:
+       with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+       assert active.get() is marker
+      finally:active.reset(t)
+      assert seen==[None] and marker['command_calls']==[]
+     else:
+      await app(scope(),receive,send);assert active.get() is None
+      gate.set();await asyncio.gather(*pending)
+      if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+      elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+&gt;     else:assert seen==[None] and records[0]['command_calls']==[]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]
+E       
+E       At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None
+E       Use -v to get more diff)
+
+tests/test_file_safety_observer_context.py:54: AssertionError</failure></testcase><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[PUT]" time="0.010"><failure message="AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]&#10;  &#10;  At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None&#10;  Use -v to get more diff)">case = 'PUT'
+
+    @pytest.mark.parametrize('case',['POST','PUT','websocket','GET','background','exception'])
+    def test_observer_request_attribution_and_get_owned_background(case):
+     async def scenario():
+      active=contextvars.ContextVar('independent_observer',default=None)
+      records=[];seen=[];pending=[];gate=asyncio.Event()
+      async def inner(scope,receive,send):
+       r=active.get()
+       if scope['type']!='http' or scope['method']!='GET':
+        seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-nonget-write')
+        if case=='exception':raise RuntimeError('synthetic')
+        return
+       if case=='background':
+        async def owned():
+         await gate.wait();r=active.get();seen.append(r)
+         if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+        pending.append(asyncio.create_task(owned()))
+       await send({'type':'http.response.start','status':200})
+       await send({'type':'http.response.body','body':b'ok'})
+      source=Path(__file__).with_name('file_safety_http_server.py')
+      node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+      ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+      exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+      app=ns['app']
+      def scope(method='GET',path='/first',kind='http'):
+       return dict(type=kind,method=method,path=path,query_string=b'')
+      async def receive():return {'type':'http.request','body':b''}
+      async def noop(message):pass
+      async def send(message):
+       if message['type']=='http.response.body' and case not in {'background','exception'}:
+        async def following():
+         await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      if case=='exception':
+       marker={'command_calls':[]};t=active.set(marker)
+       try:
+        with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+        assert active.get() is marker
+       finally:active.reset(t)
+       assert seen==[None] and marker['command_calls']==[]
+      else:
+       await app(scope(),receive,send);assert active.get() is None
+       gate.set();await asyncio.gather(*pending)
+       if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+       elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+       else:assert seen==[None] and records[0]['command_calls']==[]
+&gt;    asyncio.run(scenario())
+
+tests/test_file_safety_observer_context.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     active=contextvars.ContextVar('independent_observer',default=None)
+     records=[];seen=[];pending=[];gate=asyncio.Event()
+     async def inner(scope,receive,send):
+      r=active.get()
+      if scope['type']!='http' or scope['method']!='GET':
+       seen.append(r)
+       if r is not None:r['command_calls'].append('synthetic-nonget-write')
+       if case=='exception':raise RuntimeError('synthetic')
+       return
+      if case=='background':
+       async def owned():
+        await gate.wait();r=active.get();seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+       pending.append(asyncio.create_task(owned()))
+      await send({'type':'http.response.start','status':200})
+      await send({'type':'http.response.body','body':b'ok'})
+     source=Path(__file__).with_name('file_safety_http_server.py')
+     node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+     ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+     exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+     app=ns['app']
+     def scope(method='GET',path='/first',kind='http'):
+      return dict(type=kind,method=method,path=path,query_string=b'')
+     async def receive():return {'type':'http.request','body':b''}
+     async def noop(message):pass
+     async def send(message):
+      if message['type']=='http.response.body' and case not in {'background','exception'}:
+       async def following():
+        await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     if case=='exception':
+      marker={'command_calls':[]};t=active.set(marker)
+      try:
+       with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+       assert active.get() is marker
+      finally:active.reset(t)
+      assert seen==[None] and marker['command_calls']==[]
+     else:
+      await app(scope(),receive,send);assert active.get() is None
+      gate.set();await asyncio.gather(*pending)
+      if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+      elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+&gt;     else:assert seen==[None] and records[0]['command_calls']==[]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]
+E       
+E       At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None
+E       Use -v to get more diff)
+
+tests/test_file_safety_observer_context.py:54: AssertionError</failure></testcase><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[websocket]" time="0.005"><failure message="AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]&#10;  &#10;  At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None&#10;  Use -v to get more diff)">case = 'websocket'
+
+    @pytest.mark.parametrize('case',['POST','PUT','websocket','GET','background','exception'])
+    def test_observer_request_attribution_and_get_owned_background(case):
+     async def scenario():
+      active=contextvars.ContextVar('independent_observer',default=None)
+      records=[];seen=[];pending=[];gate=asyncio.Event()
+      async def inner(scope,receive,send):
+       r=active.get()
+       if scope['type']!='http' or scope['method']!='GET':
+        seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-nonget-write')
+        if case=='exception':raise RuntimeError('synthetic')
+        return
+       if case=='background':
+        async def owned():
+         await gate.wait();r=active.get();seen.append(r)
+         if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+        pending.append(asyncio.create_task(owned()))
+       await send({'type':'http.response.start','status':200})
+       await send({'type':'http.response.body','body':b'ok'})
+      source=Path(__file__).with_name('file_safety_http_server.py')
+      node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+      ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+      exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+      app=ns['app']
+      def scope(method='GET',path='/first',kind='http'):
+       return dict(type=kind,method=method,path=path,query_string=b'')
+      async def receive():return {'type':'http.request','body':b''}
+      async def noop(message):pass
+      async def send(message):
+       if message['type']=='http.response.body' and case not in {'background','exception'}:
+        async def following():
+         await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      if case=='exception':
+       marker={'command_calls':[]};t=active.set(marker)
+       try:
+        with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+        assert active.get() is marker
+       finally:active.reset(t)
+       assert seen==[None] and marker['command_calls']==[]
+      else:
+       await app(scope(),receive,send);assert active.get() is None
+       gate.set();await asyncio.gather(*pending)
+       if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+       elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+       else:assert seen==[None] and records[0]['command_calls']==[]
+&gt;    asyncio.run(scenario())
+
+tests/test_file_safety_observer_context.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     active=contextvars.ContextVar('independent_observer',default=None)
+     records=[];seen=[];pending=[];gate=asyncio.Event()
+     async def inner(scope,receive,send):
+      r=active.get()
+      if scope['type']!='http' or scope['method']!='GET':
+       seen.append(r)
+       if r is not None:r['command_calls'].append('synthetic-nonget-write')
+       if case=='exception':raise RuntimeError('synthetic')
+       return
+      if case=='background':
+       async def owned():
+        await gate.wait();r=active.get();seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+       pending.append(asyncio.create_task(owned()))
+      await send({'type':'http.response.start','status':200})
+      await send({'type':'http.response.body','body':b'ok'})
+     source=Path(__file__).with_name('file_safety_http_server.py')
+     node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+     ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+     exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+     app=ns['app']
+     def scope(method='GET',path='/first',kind='http'):
+      return dict(type=kind,method=method,path=path,query_string=b'')
+     async def receive():return {'type':'http.request','body':b''}
+     async def noop(message):pass
+     async def send(message):
+      if message['type']=='http.response.body' and case not in {'background','exception'}:
+       async def following():
+        await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     if case=='exception':
+      marker={'command_calls':[]};t=active.set(marker)
+      try:
+       with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+       assert active.get() is marker
+      finally:active.reset(t)
+      assert seen==[None] and marker['command_calls']==[]
+     else:
+      await app(scope(),receive,send);assert active.get() is None
+      gate.set();await asyncio.gather(*pending)
+      if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+      elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+&gt;     else:assert seen==[None] and records[0]['command_calls']==[]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     AssertionError: assert ([{'budget_rea...ns': [], ...}] == [None]
+E       
+E       At index 0 diff: {'path': '/first', 'completed': True, 'strict': False, 'write_opens': [], 'write_calls': [], 'file_creations': [], 'filesystem_mutations': [], 'command_calls': ['synthetic-nonget-write'], 'budget_reads': [], 'status': 200} != None
+E       Use -v to get more diff)
+
+tests/test_file_safety_observer_context.py:54: AssertionError</failure></testcase><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[GET]" time="0.004" /><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[background]" time="0.005" /><testcase classname="tests.test_file_safety_observer_context" name="test_observer_request_attribution_and_get_owned_background[exception]" time="0.005"><failure message="AssertionError: assert ([{'command_ca...nget-write']}] == [None]&#10;  &#10;  At index 0 diff: {'command_calls': ['synthetic-nonget-write']} != None&#10;  Use -v to get more diff)">case = 'exception'
+
+    @pytest.mark.parametrize('case',['POST','PUT','websocket','GET','background','exception'])
+    def test_observer_request_attribution_and_get_owned_background(case):
+     async def scenario():
+      active=contextvars.ContextVar('independent_observer',default=None)
+      records=[];seen=[];pending=[];gate=asyncio.Event()
+      async def inner(scope,receive,send):
+       r=active.get()
+       if scope['type']!='http' or scope['method']!='GET':
+        seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-nonget-write')
+        if case=='exception':raise RuntimeError('synthetic')
+        return
+       if case=='background':
+        async def owned():
+         await gate.wait();r=active.get();seen.append(r)
+         if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+        pending.append(asyncio.create_task(owned()))
+       await send({'type':'http.response.start','status':200})
+       await send({'type':'http.response.body','body':b'ok'})
+      source=Path(__file__).with_name('file_safety_http_server.py')
+      node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+      ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+      exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+      app=ns['app']
+      def scope(method='GET',path='/first',kind='http'):
+       return dict(type=kind,method=method,path=path,query_string=b'')
+      async def receive():return {'type':'http.request','body':b''}
+      async def noop(message):pass
+      async def send(message):
+       if message['type']=='http.response.body' and case not in {'background','exception'}:
+        async def following():
+         await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+        pending.append(asyncio.create_task(following()))
+      if case=='exception':
+       marker={'command_calls':[]};t=active.set(marker)
+       try:
+        with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+        assert active.get() is marker
+       finally:active.reset(t)
+       assert seen==[None] and marker['command_calls']==[]
+      else:
+       await app(scope(),receive,send);assert active.get() is None
+       gate.set();await asyncio.gather(*pending)
+       if case=='background':assert seen==[records[0]] and records[0]['command_calls']==['synthetic-get-owned-write']
+       elif case=='GET':assert [r['path'] for r in records]==['/first','/next']
+       else:assert seen==[None] and records[0]['command_calls']==[]
+&gt;    asyncio.run(scenario())
+
+tests/test_file_safety_observer_context.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def scenario():
+     active=contextvars.ContextVar('independent_observer',default=None)
+     records=[];seen=[];pending=[];gate=asyncio.Event()
+     async def inner(scope,receive,send):
+      r=active.get()
+      if scope['type']!='http' or scope['method']!='GET':
+       seen.append(r)
+       if r is not None:r['command_calls'].append('synthetic-nonget-write')
+       if case=='exception':raise RuntimeError('synthetic')
+       return
+      if case=='background':
+       async def owned():
+        await gate.wait();r=active.get();seen.append(r)
+        if r is not None:r['command_calls'].append('synthetic-get-owned-write')
+       pending.append(asyncio.create_task(owned()))
+      await send({'type':'http.response.start','status':200})
+      await send({'type':'http.response.body','body':b'ok'})
+     source=Path(__file__).with_name('file_safety_http_server.py')
+     node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.AsyncFunctionDef) and n.name=='app')
+     ns=dict(active=active,records=records,save=lambda:None,original_app=inner)
+     exec(compile(ast.Module(body=[node],type_ignores=[]),str(source),'exec'),ns)
+     app=ns['app']
+     def scope(method='GET',path='/first',kind='http'):
+      return dict(type=kind,method=method,path=path,query_string=b'')
+     async def receive():return {'type':'http.request','body':b''}
+     async def noop(message):pass
+     async def send(message):
+      if message['type']=='http.response.body' and case not in {'background','exception'}:
+       async def following():
+        await gate.wait();await app(scope(case,'/next','websocket' if case=='websocket' else 'http'),receive,noop)
+       pending.append(asyncio.create_task(following()))
+     if case=='exception':
+      marker={'command_calls':[]};t=active.set(marker)
+      try:
+       with pytest.raises(RuntimeError):await app(scope('POST'),receive,noop)
+       assert active.get() is marker
+      finally:active.reset(t)
+&gt;     assert seen==[None] and marker['command_calls']==[]
+E     AssertionError: assert ([{'command_ca...nget-write']}] == [None]
+E       
+E       At index 0 diff: {'command_calls': ['synthetic-nonget-write']} != None
+E       Use -v to get more diff)
+
+tests/test_file_safety_observer_context.py:48: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[chapter_post-/api]" time="0.222"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api', next_kind = 'chapter_post'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[chapter_post-/api/v1]" time="0.205"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api/v1', next_kind = 'chapter_post'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[taskcenter_get-/api]" time="0.205"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api', next_kind = 'taskcenter_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[taskcenter_get-/api/v1]" time="0.206"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api/v1', next_kind = 'taskcenter_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[health_get-/api]" time="0.204"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api', next_kind = 'health_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[health_get-/api/v1]" time="0.205"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}&#10;  &#10;  Differing items:&#10;  {'expired': True} != {'expired': False}&#10;  {'budget': True} != {'budget': False}&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api/v1', next_kind = 'health_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Fa...trict': False}
+E       
+E       Differing items:
+E       {'expired': True} != {'expired': False}
+E       {'budget': True} != {'budget': False}
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[ordinary_asset_get-/api]" time="0.258"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Tr...trict': False}&#10;  &#10;  Omitting 2 identical items, use -vv to show&#10;  Differing items:&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api', next_kind = 'ordinary_asset_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Tr...trict': False}
+E       
+E       Omitting 2 identical items, use -vv to show
+E       Differing items:
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase><testcase classname="tests.test_usage_request_context_tcp" name="test_pipelined_transport_request_context_isolation[ordinary_asset_get-/api/v1]" time="0.206"><failure message="AssertionError: assert {'budget': Tr...strict': True} == {'budget': Tr...trict': False}&#10;  &#10;  Omitting 2 identical items, use -vv to show&#10;  Differing items:&#10;  {'strict': True} != {'strict': False}&#10;  Use -v to get more diff">prefix = '/api/v1', next_kind = 'ordinary_asset_get'
+
+    @pytest.mark.parametrize('prefix',['/api','/api/v1'])
+    @pytest.mark.parametrize('next_kind',['chapter_post','taskcenter_get','health_get','ordinary_asset_get'])
+    def test_pipelined_transport_request_context_isolation(prefix,next_kind):
+     selected=prefix+'/novels/synthetic/experimental/production/assets/synthetic/studio-asset-usages'
+     choices={'chapter_post':('POST',prefix+'/novels/synthetic/chapters'),
+              'taskcenter_get':('GET',prefix+'/novels/synthetic/experimental/workspace/tasks'),
+              'health_get':('GET','/health'),'ordinary_asset_get':('GET',selected+'?limit=1')}
+     method,path=choices[next_kind]
+     async def endpoint(scope,receive,send):
+      budget=current_usage_budget()
+      if b'strict_read_only=true' in scope.get('query_string',b''):
+       assert budget is not None;budget.deadline=0
+      body=json.dumps(dict(budget=budget is not None,strict=strict_coordination_active(),expired=budget is not None and budget.deadline==0)).encode()
+      await send({'type':'http.response.start','status':200,'headers':[(b'content-length',str(len(body)).encode())]})
+      await send({'type':'http.response.body','body':body})
+     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+     server=uvicorn.Server(uvicorn.Config(AssetUsageRequestBudgetMiddleware(endpoint),host='127.0.0.1',port=port,http='h11',lifespan='off',log_level='error'))
+     thread=threading.Thread(target=server.run,kwargs={'sockets':[sock]},daemon=True);thread.start()
+     try:
+      deadline=time.monotonic()+10
+      while not server.started:
+       assert thread.is_alive() and time.monotonic()&lt;deadline;time.sleep(.01)
+      first=f'GET {selected}?limit=1&amp;strict_read_only=true HTTP/1.1\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n'
+      second=f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+      with socket.create_connection(('127.0.0.1',port),timeout=10) as client:
+       client.sendall((first+second).encode());raw=b''
+       while True:
+        piece=client.recv(65536)
+        if not piece:break
+        raw+=piece
+      got=responses(raw);assert len(got)==2
+      assert got[0]==dict(budget=True,strict=True,expired=True)
+&gt;     assert got[1]==dict(budget=next_kind=='ordinary_asset_get',strict=False,expired=False)
+E     AssertionError: assert {'budget': Tr...strict': True} == {'budget': Tr...trict': False}
+E       
+E       Omitting 2 identical items, use -vv to show
+E       Differing items:
+E       {'strict': True} != {'strict': False}
+E       Use -v to get more diff
+
+tests/test_usage_request_context_tcp.py:54: AssertionError</failure></testcase></testsuite></testsuites>

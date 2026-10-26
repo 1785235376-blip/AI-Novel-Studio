@@ -1,0 +1,69 @@
+{
+  "asset-regressions": [
+    "tests/test_asset_library.py",
+    "tests/test_studio_asset_query.py",
+    "tests/test_studio_asset_query_authority.py",
+    "tests/test_studio_asset_query_indexed.py",
+    "tests/test_studio_workspace_identity_history_contract.py",
+    "tests/test_studio_asset_usage_compat.py",
+    "tests/test_studio_asset_usage_budget.py",
+    "tests/test_studio_production_query.py",
+    "tests/test_studio_backend_integration_v2.py",
+    "tests/test_studio_integration_independent_v2.py",
+    "tests/test_studio_process_reopen_v2.py",
+    "tests/test_file_keyed_activation.py"
+  ],
+  "resource-core": [
+    "tests/test_file_backend_safety_integration.py",
+    "tests/test_studio_asset_usage_budget_guards.py",
+    "tests/test_studio_asset_usage_authority_budget.py",
+    "tests/test_studio_asset_usage_resource_integration.py",
+    "tests/test_studio_asset_usage_strict_coordination.py",
+    "tests/test_canvas_adoption_auth.py",
+    "tests/test_canvas_adoption_auth_independent.py",
+    "tests/test_file_backend_safety_process.py",
+    "tests/test_file_backend_safety_windows_owners.py",
+    "tests/test_file_backend_safety_independent.py"
+  ],
+  "taskcenter-lifecycle": [
+    "tests/test_taskcenter_query_backend.py",
+    "tests/test_taskcenter_consistent_query.py",
+    "tests/test_taskcenter_lifecycle_http.py",
+    "tests/test_taskcenter_cursor_independent.py",
+    "tests/test_taskcenter_private_cache.py",
+    "tests/test_taskcenter_store_consumers.py",
+    "tests/test_taskcenter_store_lifecycle.py",
+    "tests/test_identity_binding_rebuild.py",
+    "tests/test_taskcenter_scope_grant_observation.py",
+    "tests/test_taskcenter_team_rebuilt.py",
+    "tests/test_taskcenter_collaboration_rebuilt.py",
+    "tests/test_taskcenter_local_export_http.py",
+    "tests/test_taskcenter_local_export_external.py",
+    "tests/test_taskcenter_local_export_external_cases.py",
+    "tests/test_taskcenter_local_export_external_singleton.py",
+    "tests/test_taskcenter_reader_receipts.py",
+    "tests/test_taskcenter_rebuilt_process_boundaries.py",
+    "tests/test_taskcenter_mixed_external_cases.py",
+    "tests/test_taskcenter_mixed_external_races.py",
+    "tests/test_taskcenter_mixed_external_empty_denial.py",
+    "tests/test_taskcenter_query_measurements.py",
+    "tests/test_taskcenter_local_mixed_http.py",
+    "tests/test_taskcenter_mixed_external_observer_contract.py",
+    "tests/test_taskcenter_mixed_external_order_race.py",
+    "tests/test_taskcenter_mixed_external_aggregate_denial.py",
+    "tests/test_taskcenter_store_process.py",
+    "tests/test_taskcenter_mixed_external.py"
+  ],
+  "export-consumers-corrected": [
+    "tests/test_export_jobs.py",
+    "tests/test_export_owner_readonly.py",
+    "tests/test_export_owner_independent_edgecases.py",
+    "tests/test_export_owner_independent_serialization.py",
+    "tests/test_export_owner_independent_process.py",
+    "tests/test_export_local_window_observation.py",
+    "tests/test_export_snapshot_and_import_review.py"
+  ],
+  "compound-http": [
+    "tests/test_file_backend_safety_http.py"
+  ]
+}

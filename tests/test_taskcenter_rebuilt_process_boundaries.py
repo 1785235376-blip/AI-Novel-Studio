@@ -83,9 +83,9 @@ def replace(src,dst):
     if mode in ('before','after','hold'): sys.stdin.readline()
     if mode != 'after': original_replace(src,dst)
 
-def lock(handle):
+def lock(handle, *, initialize=True):
     if mode == 'contend': print('LOCK_ATTEMPT',flush=True)
-    return original_lock(handle)
+    return original_lock(handle, initialize=initialize)
 storage.os.replace=replace
 mutation_coordinator._lock_file=lock
 append(root,kind,name)

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="12" skipped="0" tests="20" time="26.379" timestamp="2026-10-27T05:58:02.965961+09:00" hostname="3aa60f4fc551"><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[before-identity]" time="12.083"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus0')
+kind = 'identity', boundary = 'before'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[before-scope]" time="1.127"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus1')
+kind = 'scope', boundary = 'before'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[before-grants]" time="1.062"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus2')
+kind = 'grants', boundary = 'before'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[before-team]" time="1.903"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus3')
+kind = 'team', boundary = 'before'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[after-identity]" time="1.004"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus4')
+kind = 'identity', boundary = 'after'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[after-scope]" time="0.786"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus5')
+kind = 'scope', boundary = 'after'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[after-grants]" time="1.694"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus6')
+kind = 'grants', boundary = 'after'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_kill_at_replace_pairs_business_and_lifecycle[after-team]" time="1.047"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_kill_at_replace_pairs_bus7')
+kind = 'team', boundary = 'after'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    @pytest.mark.parametrize('boundary',['before','after'])
+    def test_kill_at_replace_pairs_business_and_lifecycle(tmp_path,kind,boundary):
+        seed(tmp_path,kind); path=target(tmp_path,kind); before=path.read_bytes(); ids,meta=paired_rows(tmp_path,kind)
+        proc=child(tmp_path,kind,'new',boundary)
+        try:
+&gt;           line(proc,'COMMIT_READY'); proc.kill(); proc.communicate(timeout=40)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[fsync-identity]" time="0.030" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[fsync-scope]" time="0.016" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[fsync-grants]" time="0.012" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[fsync-team]" time="0.021" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[replace-identity]" time="0.022" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[replace-scope]" time="0.020" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[replace-grants]" time="0.019" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_write_failure_preserves_exact_bytes_and_next_commit[replace-team]" time="0.038" /><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_real_process_lock_serializes_complete_commits[identity]" time="0.919"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_real_process_lock_seriali0')
+kind = 'identity'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    def test_real_process_lock_serializes_complete_commits(tmp_path,kind):
+        seed(tmp_path,kind)
+        first=child(tmp_path,kind,'first','hold');second=None
+        try:
+&gt;           line(first,'COMMIT_READY')
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_real_process_lock_serializes_complete_commits[scope]" time="1.702"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_real_process_lock_seriali1')
+kind = 'scope'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    def test_real_process_lock_serializes_complete_commits(tmp_path,kind):
+        seed(tmp_path,kind)
+        first=child(tmp_path,kind,'first','hold');second=None
+        try:
+&gt;           line(first,'COMMIT_READY')
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_real_process_lock_serializes_complete_commits[grants]" time="0.957"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_real_process_lock_seriali2')
+kind = 'grants'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    def test_real_process_lock_serializes_complete_commits(tmp_path,kind):
+        seed(tmp_path,kind)
+        first=child(tmp_path,kind,'first','hold');second=None
+        try:
+&gt;           line(first,'COMMIT_READY')
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase><testcase classname="tests.test_taskcenter_rebuilt_process_boundaries" name="test_real_process_lock_serializes_complete_commits[team]" time="0.754"><failure message="AssertionError: ('', 1, 'Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 24, in &lt;module&gt;&#10;    File &quot;/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)&#10;  TypeError: lock() got an unexpected keyword argument \'initialize\'&#10;  ')&#10;assert '' == 'COMMIT_READY'&#10;  &#10;  - COMMIT_READY">tmp_path = PosixPath('/workspace/scratch/20a0022d2b33/mixed-recovery-independent-baseline/.runtime/tmp/lock-spy-baseline/test_real_process_lock_seriali3')
+kind = 'team'
+
+    @pytest.mark.parametrize('kind',KINDS)
+    def test_real_process_lock_serializes_complete_commits(tmp_path,kind):
+        seed(tmp_path,kind)
+        first=child(tmp_path,kind,'first','hold');second=None
+        try:
+&gt;           line(first,'COMMIT_READY')
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+proc = &lt;Popen: returncode: 1 args: ['/workspace/scratch/20a0022d2b33/studio-overnig...&gt;
+expected = 'COMMIT_READY'
+
+    def line(proc, expected):
+        readable,_,_ = select.select([proc.stdout], [], [], 40)
+        assert readable, ('child boundary timeout',proc.poll())
+        value = proc.stdout.readline().strip()
+&gt;       assert value == expected, (value,proc.poll(), proc.stderr.read() if proc.poll() is not None else '')
+E       AssertionError: ('', 1, 'Traceback (most recent call last):
+E           File "&lt;string&gt;", line 24, in &lt;module&gt;
+E           File "/workspace/scratch/20a00...n    _lock_file(handle, initialize=not strict)
+E         TypeError: lock() got an unexpected keyword argument \'initialize\'
+E         ')
+E       assert '' == 'COMMIT_READY'
+E         
+E         - COMMIT_READY
+
+tests/test_taskcenter_rebuilt_process_boundaries.py:106: AssertionError</failure></testcase></testsuite></testsuites>

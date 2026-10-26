@@ -1,0 +1,44 @@
+{
+  "focused-context": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 26
+  },
+  "taskcenter-lifecycle": {
+    "tests": 508,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 508
+  },
+  "export-consumers-corrected": {
+    "tests": 101,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 101
+  },
+  "compound-http": {
+    "tests": 4,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 3
+  },
+  "asset-regressions": {
+    "tests": 192,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 192
+  },
+  "resource-core": {
+    "tests": 213,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 35,
+    "passed": 178
+  }
+}

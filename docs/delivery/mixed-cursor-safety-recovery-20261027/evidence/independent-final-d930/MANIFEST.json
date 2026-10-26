@@ -1,0 +1,30 @@
+{
+  "COMPOUND_FAILURE_REVIEW.md": {
+    "bytes": 1426,
+    "sha256": "786dab457d12e1f82ceeebc68f74c97375eb287b68498c5f68f7942ea799c082"
+  },
+  "REVIEW.md": {
+    "bytes": 2439,
+    "sha256": "aedff5a958a098203947688bda731a98e669639e4a579a165850b8939c1861b9"
+  },
+  "final-exit.txt": {
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "final-receipt.json": {
+    "bytes": 198745,
+    "sha256": "73f4b1b5cfbdf0647b4ad3b21697e47ef254731ee0b1d23d866a570b2f33150e"
+  },
+  "final.log": {
+    "bytes": 1603,
+    "sha256": "49f883ca0e605a9230ef0dea6ce1c34e35f0752ac26cb978a089e78cf297639f"
+  },
+  "final.xml": {
+    "bytes": 15829,
+    "sha256": "673b9fd008636ab6276f775169d802cf22799d3c0b0b154c42a0adf2193c3e06"
+  },
+  "run_frozen.py": {
+    "bytes": 1364,
+    "sha256": "39c2b190613835d7b6235f7d920d5a0744fc4b16709dd2df32da3a847646a0eb"
+  }
+}
