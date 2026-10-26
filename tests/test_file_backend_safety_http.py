@@ -1,8 +1,8 @@
 """Combined real TCP HTTP protections using original File application owners.
 
 Synthetic saved scale fixture remains 32 consumers / 540 direct references.
-TaskCenter's three single-source combinations are checked independently; its
-contract does not inherit the asset-only resource budget.
+TaskCenter's original single-source combinations and the File/local mixed pair
+share this real HTTP assembly; neither inherits the asset-only resource budget.
 """
 from contextlib import contextmanager
 import hashlib
@@ -133,6 +133,54 @@ def traverse(client, prefix, nid, authority, ids, headers=None):
     return first['next_cursor']
 
 
+def traverse_mixed(client, prefix, nid, import_ids, export_ids):
+    authorities = ['semantic_import', 'exports']
+    # Compare the cursor with the original aggregate, including its reader order.
+    request = client.build_request('GET', f'{prefix}/novels/{nid}/experimental/workspace/tasks',
+        params={'authority': authorities, 'page_mode': 'offset', 'limit': 100})
+    request.headers.pop('X-Session-Token', None)
+    expected = body(client.send(request))['items']
+    assert [row['authority'] for row in expected] == ['semantic_import']*3 + ['exports']*3
+    assert {(row['authority'], row['id']) for row in expected} == {
+        *(('semantic_import', rid) for rid in import_ids),
+        *(('exports', rid) for rid in export_ids),
+    }
+    first = body(task_page(client, prefix, nid, authorities))
+    assert first['next_cursor'] and first['observed_total'] == 6
+    page, items, count = first, [], 0
+    while True:
+        count += 1
+        assert count <= 6
+        assert page['observed_total'] == 6 and page['unavailable'] == []
+        assert page['source_truncated'] is False
+        assert page['coverage']['completeness'] == 'NOT_ASSERTED'
+        assert page['capabilities']['cross_owner_atomic_snapshot'] is False
+        assert page['capabilities']['full_history_query'] is False
+        assert page['executor'] is False and page['automatic_retries'] is False
+        encoded = json.dumps(page)
+        for private in ('row_lifecycles', 'document_incarnation', 'private-source', 'SYNTHETIC_PRIVATE_ABA'):
+            assert private not in encoded
+        items.extend(page['items'])
+        if not page['has_more']:
+            assert page['next_cursor'] is None
+            break
+        token = page['next_cursor']
+        page = body(task_page(client, prefix, nid, authorities, token))
+        assert body(task_page(client, prefix, nid, authorities, token)) == page
+    assert count == 6 and items == expected
+    # Parameter canonicalization does not change the actual reader order.
+    second = body(task_page(client, prefix, nid, authorities, first['next_cursor']))
+    assert body(task_page(client, prefix, nid,
+        ['exports', 'semantic_import', 'exports'], first['next_cursor'])) == second
+    return first['next_cursor'], second
+
+
+def task_refusal(response, status, code):
+    rejected = body(response, status)
+    assert rejected['code'] == code
+    assert 'items' not in rejected and 'next_cursor' not in rejected
+
+
 def asset_page(client, url, token=None, strict=False, headers=None):
     params = {'limit':100}
     if strict:
@@ -192,6 +240,9 @@ def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_r
             exports.append(job)
         before=snapshot(run/'data')
         export_token=traverse(client,prefix,nid,'exports',[r['id'] for r in exports])
+        import_ids, export_ids = [r['id'] for r in imports], [r['id'] for r in exports]
+        mixed_authorities = ['semantic_import', 'exports']
+        mixed_token, _ = traverse_mixed(client,prefix,nid,import_ids,export_ids)
         assert snapshot(run/'data')==before
         from copy import deepcopy
         from app.services.export_job_service import ExportJobService
@@ -205,18 +256,36 @@ def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_r
         finally:
             owner._pool.shutdown(wait=True)
         assert body(task_page(client,prefix,nid,'exports',export_token),409)['code']=='TASKCENTER_CURSOR_RESTART_REQUIRED'
-        mixed=task_page(client,prefix,nid,['semantic_import','exports'])
-        assert body(mixed,501)['code']=='TASKCENTER_CURSOR_UNSUPPORTED'
+        before=snapshot(run/'data')
+        task_refusal(task_page(client,prefix,nid,mixed_authorities,mixed_token),409,'TASKCENTER_CURSOR_RESTART_REQUIRED')
+        mixed_token, _ = traverse_mixed(client,prefix,nid,import_ids,export_ids)
+        assert snapshot(run/'data')==before
+        # Either original selected writer invalidates the pair, without a GET repair.
+        body(client.post(f'{prefix}/novels/{nid}/experimental/imports/jobs/{imports[1]["id"]}/cancel',
+            json={'expected_version':imports[1]['version']}))
+        before=snapshot(run/'data')
+        task_refusal(task_page(client,prefix,nid,mixed_authorities,mixed_token),409,'TASKCENTER_CURSOR_RESTART_REQUIRED')
+        mixed_token, mixed_second = traverse_mixed(client,prefix,nid,import_ids,export_ids)
+        for unsupported in (['exports','agent_team'], ['semantic_import','agent_team'],
+                            ['semantic_import','exports','agent_team']):
+            task_refusal(task_page(client,prefix,nid,unsupported),501,'TASKCENTER_CURSOR_UNSUPPORTED')
+        assert snapshot(run/'data')==before
         # Repeated asset read after a legal owner lifecycle mutation must restart.
         timeline=body(client.get(f'{prefix}/projects/{nid}/studio/production/timelines/synthetic-timeline-0000'))
         body(client.put(f'{prefix}/projects/{nid}/studio/production/timelines/synthetic-timeline-0000',json={'expected_version':timeline['version'],'title':'Changed owner title','timeline':timeline['timeline']}))
+        before=snapshot(run/'data')
         assert asset_page(client,url,first['next_cursor']).status_code==409
+        # The unrelated Timeline owner must not become a global task invalidation epoch.
+        assert body(task_page(client,prefix,nid,mixed_authorities,mixed_token))==mixed_second
+        assert snapshot(run/'data')==before
     with application(run,label='reopened') as client:
+        before=snapshot(run/'data')
         assert task_page(client,prefix,nid,'semantic_import',token).status_code==409
         assert task_page(client,prefix,nid,'exports',export_token).status_code==409
-        before=snapshot(run/'data')
+        task_refusal(task_page(client,prefix,nid,mixed_authorities,mixed_token),409,'TASKCENTER_CURSOR_RESTART_REQUIRED')
         traverse(client,prefix,nid,'semantic_import',[r['id'] for r in imports])
         traverse(client,prefix,nid,'exports',[r['id'] for r in exports])
+        traverse_mixed(client,prefix,nid,import_ids,export_ids)
         assert body(asset_page(client,url))['items']
         assert snapshot(run/'data')==before
     with application(run,budget=4096,label='exhausted') as client:
@@ -226,6 +295,7 @@ def test_socket_local_asset_and_two_task_sources_survive_mutation_reopen(usage_r
         assert rejected.json()['code']=='STUDIO_ASSET_USAGE_UNAVAILABLE'
         # TaskCenter is deliberately not the asset-only budget contract.
         traverse(client,prefix,nid,'semantic_import',[r['id'] for r in imports])
+        traverse_mixed(client,prefix,nid,import_ids,export_ids)
         assert snapshot(run/'data')==before
 
 
@@ -258,7 +328,7 @@ def test_socket_collaboration_team_original_no_chapters_and_revocation(usage_rig
         assert body(asset_page(client,url,headers=headers),403)['code']=='LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE'
         token=traverse(client,prefix,nid,'agent_team',[r['id'] for r in rows],headers)
         assert snapshot(run/'data')==before
-        for authority in ('exports',['agent_team','semantic_import']):
+        for authority in ('exports',['agent_team','semantic_import'],['semantic_import','exports']):
             assert body(task_page(client,prefix,nid,authority,headers=headers),501)['code']=='TASKCENTER_CURSOR_UNSUPPORTED'
         body(client.post(f'{prefix}/novels/{nid}/experimental/teams/runs/{rows[0]["id"]}/cancel',headers=headers,json={'expected_version':rows[0]['version']}))
         assert task_page(client,prefix,nid,'agent_team',token,headers).status_code==409
