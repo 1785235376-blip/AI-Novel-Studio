@@ -1731,3 +1731,68 @@ zh/en、basic/pro、1024/1366/1920 下只有 moderate 级的 heading-order 和 l
 (a) 三次取最好 293 ≤ 297 ✅；(b) 一次重试内 ≤ 297 ✅。
 
 阻塞项：P1。
+
+---
+
+## [VERA-FE] 复验 be3f67b0（tree 142f2436，同分支）
+
+**结论：PASS。** 上一轮的 P1 已修复，不再阻塞。另有 P2 一项：仓库测试里没有 rcv 宽度断言。
+证据：`/workspace/hr/vera-compare/dci-be3f67b0/`
+
+### 1. diff 核对
+- 用 cmp 比对了 880f694b 里的复审段和我本地未提交的版本：完全一致。
+- 7c964d66..be3f67b0 一共改了两个文件：INDEPENDENT_REVIEW.md（+39 行）和 RebuildCanvas.tsx（1 行，`fix.diff`）。
+- RebuildCanvas.tsx 这一行除了声称的 alignSelf stretch / flex 1 1 auto / width 100% / minWidth 0，还多加了一个 `data-rcv-wrap` 属性。这个属性不影响样式（INFO）。
+
+### 2. rcv 尺寸（`rcv9-*.json`、`rcv9-compare.txt`、`s-*.png`）
+- 范围：9 个宽度 × 普通/专业 × IMAGE/VIDEO，深色主题全覆盖；浅色在 1024 和 1366 两个宽度抽样。共 44 组，全部 rcv>0，没有越界，没有横向滚动。
+- 专业模式：和 7c964d66 的尺寸完全一致。
+- 普通模式：和 f8d76863（接入 DualStack 之前）的尺寸完全一致。例如 1366 下 IMAGE 是 1366×525，VIDEO 是 1190×320。
+- 7c964d66 在普通模式下宽度全部为 0，证实修复前确实有问题。
+- 非 GET 请求数为 0。
+
+### 3. f 组回归（`af.json`）和 b1/e1 抽查
+- axe 深/浅 × 普通/专业 × NOVEL/IMAGE/VIDEO 共 12 组，0 违规。
+- 1024–1370：rcv 宽度等于视口宽度，没有溢出。
+- “任务”抽屉：Esc 能关闭，焦点回到触发按钮。
+- 双画布非 GET 请求数为 0。
+- 在真实后端上重跑 B1 和 E1：都 PASS，请求序列和上一轮一致。
+
+### 4. 反向验证
+- 在临时 worktree 里去掉这次的 flex 修复后，rcv 检查有 22 组变红，正好是全部普通模式的组合（22/22）；专业模式不受影响。
+- **P2**：这次没有把 rcv 宽度断言加进仓库测试，`tests/m5/themeDualCanvas.browser.mjs` 只检查了亮度和节点数。建议补一个“普通模式 rcv 宽度大于 0”的断言。
+
+### 5. 门禁（基线 298/297；adjusted = raw − ISI + 8）
+| 轮次 | raw | ISI | adjusted | 基线外失败 |
+|---|---|---|---|---|
+| 1 | 292 | 8 | 292 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 294 | 8 | 294 | 1 个 u1.purge.host（单独跑 5 次失败 1 次，是 flaky；这次的 diff 没有碰到它） |
+
+- (a) 三轮最好 292 ≤ 297 ✅；(b) 一次重试内 ≤ 297 ✅。
+- 补充：第 1 轮额外报了 studioComicBootstrap.capture 套件错误，之后两轮没有出现。
+- 第 2 轮最初那次跑的时候 box 被挂起（loadavg 采样在 15:18→15:25→15:37 之间断档），那次作废并重跑；表中的第 2 轮是重跑后的结果。
+
+### Hermia 第 3 轮的 5 个基线外失败
+单独跑的设计：每个文件跑 5 次，共 5 种条件。
+- be3f67b0：负载中（load 2.4–5.3）、空负载（1.98–5.47）、重压（8 个 CPU 占满，load 最高 9.94）。
+- 7c964d66 对照：负载中（4.97–6.79）、空负载（1.36–2.53）。
+- 一共 125 次运行，基线外失败 0 次。
+- 我自己的三轮全量里，这 5 个也全部没有出现。
+
+Hermia 第 3 轮（14:28–14:46）的情况：
+- 这几个文件的耗时异常长：StoryboardImageHandoff 287 秒，IndependentStudioWorkspace 304 秒，AppModuleNavigationIntent 237 秒，DeclarativeTemplatePanels 234 秒。它们都集中在 14:29–14:39 同时运行；她第 1 轮里最长的文件也只有 118 秒左右。
+- 失败的形态都是 5000ms 超时，或者超时之后的级联查找失败。
+- 她没有留连续的负载日志，只记了每轮开始时的负载，第 3 轮开始时是 2.30。
+- 结合我这边观测到的 box 挂起断档，推断她那一轮也是环境停顿（挂起或卡顿），不是代码问题。
+- 补充：这次的 diff 只改了 RebuildCanvas.tsx 包裹层的样式，这 5 个测试都不会走到这段代码。
+
+| 测试 | 判定 |
+|---|---|
+| AppModuleNavigationIntent（delayed overview，超时 5809ms） | flaky（环境停顿），不是回归。另外两条“工作流/主控”的失败在基线里本来就有，在 7c964d66 上同样失败 |
+| StoryboardImageHandoff.additive | flaky（耗时 275 秒，超时），不是回归 |
+| DeclarativeTemplatePanels | flaky（超时），不是回归 |
+| PortableProjectsPanel.assetRelations | flaky（找不到元素，是被停顿拖慢后的级联），不是回归 |
+| ImageQueuePanel.execute.independent | flaky（超时），不是回归 |
+
+所有临时 worktree（old/pre/mut/be）已删除。
