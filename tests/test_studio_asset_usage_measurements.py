@@ -93,3 +93,19 @@ def test_new_paged_usage_measurements(usage_rig, monkeypatch, scenario, entry):
     print('PAGED_USAGE_MEASUREMENTS ' + json.dumps(runs))
 
 
+
+
+def test_mixed_usage_fresh_process_cold_and_warm(usage_rig):
+    import subprocess
+    import sys
+    from studio_asset_usage_fixture import copied_graph_consumers, copied_timeline_consumers
+    e = usage_rig
+    assert copied_graph_consumers(e, 30, 16) + copied_timeline_consumers(e, count=2) == 540
+    destination = Path(os.environ['STUDIO_TEST_RUN_ROOT']) / 'fresh-process-mixed-metrics.json'
+    command = [sys.executable, 'scripts/measure_asset_usage_process.py', str(e.rig.root),
+               e.rig.nid, e.asset['id'], str(destination)]
+    result = subprocess.run(command, cwd=Path(__file__).resolve().parents[1], capture_output=True,
+                            text=True, encoding='utf-8', errors='replace', timeout=600)
+    print(result.stdout)
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert destination.is_file()
