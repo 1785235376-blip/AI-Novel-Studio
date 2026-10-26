@@ -106,7 +106,7 @@ def test_unrelated_member_does_not_invalidate(collaboration_rig):
 
 
 def test_legacy_source_is_zero_write_unsupported(collaboration_rig):
-    e=collaboration_rig;p=e.store.path(e.rig.nid,e.scope);d=json.loads(p.read_text());d.pop('_taskcenter_team_lifecycle_v1');p.write_text(json.dumps(d))
+    e=collaboration_rig;p=e.store.path(e.rig.nid,e.scope);d=json.loads(p.read_text(encoding='utf-8'));d.pop('_taskcenter_team_lifecycle_v1');p.write_text(json.dumps(d),encoding='utf-8')
     before=snapshot(e.rig.root);r=get(e);assert r.status_code==501,r.text;assert snapshot(e.rig.root)==before
 
 @pytest.mark.parametrize('params',[{'authority':['agent_team','semantic_import']},{'authority':'media'}])

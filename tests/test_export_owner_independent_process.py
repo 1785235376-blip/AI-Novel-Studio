@@ -65,7 +65,7 @@ def test_original_export_create_serializes_independent_processes(tmp_path,same_k
             stdout,stderr=child.communicate(timeout=30)
             assert child.returncode==0,(stdout,stderr)
         a=json.loads((control/'a-result').read_text());b=json.loads((control/'b-result').read_text())
-        rows=json.loads((data/'export_jobs.json').read_text())
+        rows=json.loads((data/'export_jobs.json').read_text(encoding='utf-8'))
         if same_key:
             assert a['id']==b['id'],'same idempotency key created two logical jobs'
         else:
