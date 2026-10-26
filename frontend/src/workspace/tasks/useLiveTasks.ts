@@ -3,7 +3,7 @@
  * the existing owners (createTaskCenterClient + studioProductionClient read methods only). No identity ⇒ readers=null
  * ⇒ "not connected". A new lease per (identity key, novel) so A→B→A drops late responses. hasNode reads the local canvas draft only.
  */
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {createTaskCenterClient} from '../../taskcenter/taskCenterClient';
 import {studioTransport} from '../../creative/studioClient';
 import {studioProductionClient} from '../../creative/studioProductionClient';
@@ -21,6 +21,8 @@ export function canvasHasNode(storage: Pick<Storage, 'getItem'> | null, novelId:
 }
 
 export function useLiveTasks(novelId: string | null, ctx: CollaborationContext | null, identityKey: string | null) {
+  // [HERMIA-FE-20261025 UWPORT-S2] StrictMode/remount: a lease retired by the previous cleanup is rebuilt (rev bump), never reused.
+  const [rev, setRev] = useState(0);
   const built = useMemo(() => {
     if (!novelId || !ctx || !identityKey) return {feed: new TaskFeed(null, null), navigator: null as TaskNavigator | null, lease: null};
     const lease = createScopeLease(`${identityKey}|${novelId}`);
@@ -28,7 +30,10 @@ export function useLiveTasks(novelId: string | null, ctx: CollaborationContext |
     const pc = studioProductionClient(novelId, ctx);
     const readers: TaskReaders = {taskCenter: {readTasks: (f, s) => tc.readTasks(f, s)}, production: {list: s => pc.list(s), get: (o, id, s) => pc.get(o, id, s)}};
     return {feed: new TaskFeed(readers, lease), navigator: new TaskNavigator(lease), lease};
-  }, [novelId, ctx, identityKey]);
-  useEffect(() => () => built.lease?.retire(), [built]);
+  }, [novelId, ctx, identityKey, rev]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (built.lease && !built.lease.isCurrent()) setRev(r => r + 1);
+    return () => built.lease?.retire();
+  }, [built]);
   return built;
 }

@@ -1507,3 +1507,133 @@ suiteErr 只有 LocalAiBrowserJourneyContracts（基线内）。规则 (a) 三�
 - 唯一的 suite error 是基线已有的 LocalAiBrowserJourneyContracts ENOENT。
 - 注：full1 与浏览器矩阵并发，负载偏高，但结果与 full2/3 一致。
 - 交叉核对 /workspace/hr/duim3：293/293/293，与 Hermia 的说法一致。
+
+---
+
+## [VERA-FE] 复审 work/hermia-default-uw-port-20261025 @ ca8bdac0（base 73819989）— 2026-10-25
+
+**结论：MUST-FIX**（1 个 P0，2 个 P1）。证据：`/workspace/hr/vera-compare/uwport-ca8bdac0/`（假后端 fakeBackend.mjs:4698，vite:4599；全程未写 8000、未碰 4299）。
+
+### P0
+1. **有真实身份时重开不回到上次章节，还会把记录覆盖成第 1 章。** 已存 ch-003，冷启动后落在 ch-001，lastpos 被改写成 ch-001。原因：章节列表先于 bootstrap actor 到达，此时 `useLastChapter` 的 identity 还是 session，`pickChapter` 回落到首章，store 随后有了 chapterId；actor 到达后 `if (chapterId) return`，再由 rememberChapter 用真实 key 写入 ch-001。延迟实验（reopen-race.json）：bootstrap 晚 2.5s → 回落；chapters 晚 → 正确落在第 3 章；不加延迟 → 回落。单测只覆盖纯函数，没有覆盖这个竞态（变异测试无法杀死）。修复方向：identity 还没确定（actor 未到）时不要 pick，也不要 remember。
+
+### P1
+2. **"仅本次会话"在主界面从不显示。** App.tsx 丢掉了 `useLastChapter` 的返回值，`LAST_POSITION_TEXT` 没有渲染的地方；只有无身份时抽屉内部有会话提示。
+3. **抽屉不能滚动。** `.dui-tasks-drawer` 用 fixed + 居中，没有 max-height，也没有 overflow。1366×768 下读取结果和历史并展开对比后，「恢复这个版本…」跑到视口外点不到（Playwright 提示 outside of viewport）。1920×1080 下可以完成。
+4. **焦点陷阱缺失。** 打开后 Tab 到第 9 下焦点逃到 body，Shift+Tab 同样会逃出。焦点逃出后 Esc 不再关闭（esc.mjs）。不过有 role=dialog + aria-modal，焦点在抽屉内时 Esc 能关闭，关闭后焦点回到「任务与结果」按钮。
+
+### P2
+5. EN 界面下「任务与结果」按钮和整个抽屉仍是中文（硬编码，没有走 i18n）。
+6. axe 只有 moderate 级：heading-order、landmark-unique，没有 serious/critical。
+
+### 通过项
+- **采用（adopt）**：确认前 0 次写入；取消后 0 次写入；双击确认只发出 1 次 PUT，带 expected_version/digest/incarnation/expected_card；作品 v1→v2；Canon/设定 0 次写入，写入设定按钮为 disabled。
+- **恢复（restore）**：取消 0 次写入；确认后只有 1 次 POST …/restore，追加出 v3，历史为 [1,2,3]，旧版本保留。
+- **异常**：409/500（JSON 与纯文本 traceback）/断连/403，在 normal 和 pro 两种模式下，adopt 和 restore 各测一遍，共 20 例：都只写一次，没有自动重发；断连和 500 显示「不确定，请重新读取」（UNKNOWN 语义）；均未泄露原始错误（faults.json）。
+- **U1 老问题**：lastpos key 为 `poemseed.default.lastpos.v1::user::project::instance`，与 prefs 和其他 `poemseed.*` key 不冲突；无身份时不写 storage；200 [] 不清空其他设置；已删除的章节回落到首章；切换用户时隔离；没有伪造的身份。
+- **StrictMode**：dev 浏览器中任务列表能加载；快速开关 12 次再加延迟刷新后，不会卡在「正在读取任务」，也没有 pageerror。
+- **1024/1366/1920 × zh/en × normal/pro**：无横向溢出，没有多种状态同时显示（P0-3 未复现）。
+- **变异测试（8/8 全部被测试杀死）**：去掉 StrictMode 修复、无身份时持久化、复活已删除章节、跳过恢复确认、跳过采用确认、写 Canon、去掉恢复前的新鲜度校验、去掉 Esc。所有变异均已还原，git status 干净。
+- **全量（Node 22.14，三轮，开跑前 load 约 1.8–2.3）**：raw 293/294/293，ISI 8/9/8，adjusted 293/293/293；与基线相比无新增失败；LocalAiBrowserJourneyContracts ENOENT 在基线里已有。规则 (a) 三取最好 ≤297：PASS；规则 (b) 允许重试 1 次 ≤297：PASS。
+
+### 未覆盖
+- 浏览器内切换项目（proj-b）没有实测。只做了代码审查：抽屉的 key 含 novelId，换项目会重挂载；lastpos key 含 project。
+
+---
+
+## [VERA-FE] 第三轮前端独立复验 — f7174b6b（2026-10-25，UTC+8）
+
+**结论：MUST-FIX**。证据目录：`/workspace/hr/vera-compare/uwport-f7174b6b/`。环境：vite 4599，假后端 4698。8000 没有写入，4299 没有碰过。
+
+### 必须修复
+1. **[P1] identity 失败后恢复会覆盖真实记录**（recover.json "online"）。复现步骤：bootstrap 失败一次 → 以会话模式落在 ch1 → online/focus 触发 refetch 并成功 → u-m5 的 lastpos 由 ch3 被覆盖成 ch1。另外，失败后切到 B 账号，B 的键也会被写入 ch1。建议二选一：
+   - 带 token/scope 的 bootstrap 出错时也算 pending；
+   - 只有在当前真实身份下完成过 pick，或用户显式导航之后，才允许写入。
+2. **[P1] 抽屉内确认 adopt/restore 后焦点丢到 body**。确认按钮被卸载后，Tab/Shift+Tab 第一下就离开了陷阱。Esc 还能关闭抽屉，焦点也会回到触发按钮。其余情况下 Tab/Shift+Tab ×30 都留在抽屉内：刚打开、选中任务后、confirm 打开时。
+
+### 其他问题
+- [P1 测试缺口] App 层门控没有单测。M4（门控恒 false）、M5（删 isLoading 项）、M6（删 mismatch 项）、M7（删会话提示）、M10（删 document 级 Esc 监听）这 5 个变异全部存活。hook 层和陷阱相关的变异（M1–3、M8、M9、M11、M12）都被测试杀掉。
+- [P2] 会话中途从 A 切到 B，A 的 ch3 会写进 B 的键（actor 变化时 chapterId 没有重置）。
+- [P2] 英文 UI 的抽屉里，TasksPanel/ResultsPanel/HistoryPanel 还有 17 行中文。
+- [P3] bootHang 期间页面显示"未打开章节"，没有 loading 也没有超时提示。boot 6s 期间先显示入口卡片，没有显式的加载态。
+
+### 竞态表（1366，已存 ch3）
+| 场景 | 落点 | lastpos 写入 |
+|---|---|---|
+| 无延迟 | ch3 | 1× ch3 |
+| boot 0.5s | ch3 | 1× ch3 |
+| boot 2.5s | ch3 | 1× ch3 |
+| boot 6s | ch3 | 1× ch3 |
+| chapters 2.5s | ch3 | 1× ch3 |
+| chapters 6s + boot 2.5s | ch3 | 1× ch3 |
+| boot 500 | ch1 + 会话提示 | 0 |
+| bootDrop | ch1 | 0 |
+| bootHang 30–35s | 不打开章节；resolve 后 ch3 | resolve 后 1× ch3 |
+| actorB（无记录） | ch1 | 只写 u-b |
+| 无 identity | ch1 + 会话提示 | 0 |
+| **失败 → online 恢复** | **ch1** | **u-m5 被写成 ch1 ✗** |
+
+### 通过项
+- 会话提示：zh 为"· 章节位置：仅本次会话"，en 为"· Chapter position: this session only"。只在没有 identity 时显示。
+- 抽屉滚动：1366×768、1024×768、1280×720 三个尺寸下，都能滚到恢复按钮，并用真实点击完成恢复（1 次 POST，生成 v3）。
+- axe 没有 serious/critical，只有 moderate（heading-order、landmark-unique）。
+- 回归：
+  - adopt/restore：确认前 0 写，取消 0 写，双击只有 1 个 PUT；Canon 0 写。
+  - 20/20 故障场景：无泄漏，显示 UNKNOWN，不重发。
+  - StrictMode 不卡死，0 个 pageerror。
+  - U1 reopen 隔离正确。
+  - 溢出矩阵 12 格全部无横向溢出。
+
+### 门控（adj = raw − ISI + 8；基线 298 / adj 297）
+| run | raw | ISI | adj | 基线外的新失败（非 ISI） |
+|---|---|---|---|---|
+| 1 | 294 | 9 | 293 | 0 |
+| 2 | 293 | 8 | 293 | 0 |
+| 3 | 293 | 8 | 293 | 0 |
+
+(a) 三次取最好 293 ≤ 297，通过。(b) 允许重试一次，同样通过。三次都有 suite 错误 `LocalAiBrowserJourneyContracts.test.tsx`，它不在基线外的新失败里。
+
+### Hermia 的 2 个新失败（每个单独跑 5 次，分支 f7174b6b vs 基线 73819989）
+- ISI "admits a newly mounted owner…"：分支 1/5 失败，基线 0/5。整个文件稳定有 8 个失败。这条属于 ISI 文件内部的时序抖动，已经由 ISI 扣减覆盖，不阻塞，但建议跟踪。
+- u1.purge.host "left the list"：分支 0/5，基线 0/5。三次全量跑也都没有复现，判定为高负载下的偶发失败，不阻塞。
+
+## [VERA-FE] 第四轮前端独立复验 — uw-port @ 2ed4c99c（范围 f7174b6b..2ed4c99c）
+
+**结论：PASS**（上一轮的 MUST-FIX 全部关闭；新发现都是 P2/P3，留待下一阶段处理，不阻塞）。
+证据：`/workspace/hr/vera-compare/uwport-2ed4c99c/`（vite 4799 + 假后端 4698；8000/4299 在路由层拦截，guard=[]）。
+
+### 上轮 MUST-FIX 复现重放
+- P1 bootstrap 失败 → 联网 refetch：u-m5 恢复到第 3 章，写入的是 ch-003，**没有**被覆盖成 ch1（recover.log）。✅
+- P1 确认采用/恢复后焦点：落在抽屉标题 `dui-tasks-home`，Tab 留在抽屉内（focus.json）。✅（Shift+Tab 见 P2-1）
+- P1 App 层 gate 单测：逻辑已抽到 lastPosGate 并有单测，M4–M6 被杀；App.tsx 的接线仍无测试（见 P2-2）。✅（降为 P2）
+- P2 A→B：B 拿到 ch-001，A 的 ch3 没写进 B 的 key（ab.json）。A→B→A→B 往返：各自回到自己的记录，没有串写（nr.json aba）。✅
+- P2 英文抽屉中文：运行时残留从 17 行降到 5 行（列表态只剩 1 行，是用户数据的任务名「封面与分镜」）；静态统计三个面板含中文的行共 51 行，44 行已用 z() 包裹，未包裹 2 行（覆盖率约 94%）。只作观察项。
+- P3 加载态：2s/6s 显示 loading，10s 显示 timeout，12s bootstrap 成功后 15s 回到第 3 章，提示消失（nr.json late）。失败时显示 failed，联网恢复后提示消失（failRecover）。✅
+- Esc、关闭按钮、焦点归还给触发按钮、Tab/Shift+Tab 循环 25 次都留在抽屉内、抽屉滚动/max-height（a11y.log）、「仅本次会话」提示（单测 M7 被杀）：都正常。
+
+### 新发现（都留待下一阶段）
+- **P2-1** 焦点停在抽屉标题（确认采用/恢复之后）时按 Shift+Tab，焦点会跳出模态框，落到背后的「任务与结果」触发按钮上（focus.json restoreShiftTab inDrawer=false）。原因：trapTab 认为标题在抽屉内（inside=true），但标题不等于 first，所以没有 preventDefault。再按一次 Tab 会被 document 级拦截拉回来，Esc 也仍然有效，所以评为 P2。
+- **P2-2** App 层接线没有测试：M4b（App identityPending=false）、M4c（isError 传 false）、M7b（App 不渲染 lastPosStatus）都存活。
+- **P2-3** 会话已经成功之后，如果某次后台 bootstrap 重取失败（例如窗口重新聚焦时网络抖动），状态栏会在会话中途显示 failed；这期间手动点的章节（ch4）属主 key=null，联网恢复后也**永远不会被记住**，下次打开会回到 ch2（nr2.json bgFailClick4/bgRecovered）。没有串写，但「上次位置」会丢。
+- **P3-1** bootstrap 永久失败时不会自动打开任何章节，编辑器为空，需要手动点章（点了可以正常编辑，不写记忆）。行为安全，但首屏是空的。
+- **P3-2** 焦点在 body 时按 Esc 关闭抽屉，焦点落到「Expand sidebar」，没有回到触发按钮（抽屉内按 Esc 时是正常的）。
+- **P3-3** M2（写入时的 pending 判断）存活：被属主规则覆盖了，近似等价变异。M20（关闭后 document 监听器泄漏）存活：panel 为 null 时这个监听器不会拦截 Tab，危害很低。
+- 关闭抽屉后在页面其他地方按 Tab/Shift+Tab 不会被劫持（defaultPrevented=0）。
+
+### 变异（DefaultTasksDrawer / useLastChapter / lastPosGate 三个测试文件，共 21 个用例）
+被杀：M1 M3 M4 M5 M5b M6 M7 M8 M9 M10 M11 M12 M13 M14 M15 M16 M17 M18 M19 M21（20 个）；存活：M2 M4b M4c M7b M20（5 个）。详见 mutations.txt。
+
+### axe
+zh/en、basic/pro、1024/1366/1920 下只有 moderate 级的 heading-order 和 landmark-unique，与上一轮相同；没有 serious/critical。
+
+### 全量 gate（Node 22.14，三次独立运行）
+| 运行 | raw | ISI | adjusted |
+|---|---|---|---|
+| 1 | 293 | 8 | 293 |
+| 2 | 295 | 10 | 293 |
+| 3 | 295 | 10 | 293 |
+基线 298/297。(a) 三次中最好 293 ≤297 ✅；(b) 允许重跑一次 ≤297 ✅（三次都 ≤297）。三次都没有基线之外的非 ISI 失败。
+
+### Hermia 未确认点
+- LocalAiBrowserJourneyContracts：整个套件在文件加载阶段报 ENOENT（`tests/e2e/v2-local-ai-files-live.spec.ts` 不存在），与基线 persistent-node22.json 中的 `<file load>` 条目以及 m1flaky2 日志里的报错完全相同。**属于基线。**
+- esc.mjs 里 closebtn 超时：**是我的脚本问题，不是回归**。脚本用 /Tasks/ 选到的是页头的 rb-trigger 按钮，抽屉根本没有打开，所以抽屉里的关闭按钮不存在，click 一直等到超时。改用 `status-bar__action[aria-haspopup=dialog]` 重测后，关闭按钮能关闭抽屉，焦点也回到了触发按钮（nr.json keys.closeBtn）。
