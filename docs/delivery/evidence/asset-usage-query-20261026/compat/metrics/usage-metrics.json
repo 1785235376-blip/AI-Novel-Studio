@@ -1,0 +1,46 @@
+[
+  {
+    "phase": "first-read-warm-os-cache",
+    "entry": "original-main.app-HTTP",
+    "references": 224,
+    "consumers": 14,
+    "response_bytes": 119972,
+    "read_calls": 5566,
+    "bytes_read": 99690903,
+    "file_read_opens": 5566,
+    "distinct_files_read": 4,
+    "write_opens": 2822,
+    "write_calls": 0,
+    "written_bytes": 0,
+    "write_files": [],
+    "owner_reader_calls": {
+      "list": 2,
+      "get": 28
+    },
+    "elapsed_seconds": 42.34289529998205,
+    "python_peak_bytes": 3220030,
+    "memory_scope": "tracemalloc Python allocations during request; not RSS"
+  },
+  {
+    "phase": "repeat-read-warm-process",
+    "entry": "original-main.app-HTTP",
+    "references": 224,
+    "consumers": 14,
+    "response_bytes": 119972,
+    "read_calls": 5566,
+    "bytes_read": 99690903,
+    "file_read_opens": 5566,
+    "distinct_files_read": 4,
+    "write_opens": 2822,
+    "write_calls": 0,
+    "written_bytes": 0,
+    "write_files": [],
+    "owner_reader_calls": {
+      "list": 2,
+      "get": 28
+    },
+    "elapsed_seconds": 43.79459880001377,
+    "python_peak_bytes": 3138072,
+    "memory_scope": "tracemalloc Python allocations during request; not RSS"
+  }
+]

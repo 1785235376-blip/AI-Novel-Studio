@@ -1,0 +1,38 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+.....F
+================================== FAILURES ===================================
+____________ test_postgres_explicit_paging_refuses_before_connect _____________
+
+usage_rig = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x0000021E4AFEBF50>, nid='query-17088caf70fb...2', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000021E3FDE0510>
+
+    def test_postgres_explicit_paging_refuses_before_connect(usage_rig, monkeypatch):
+        e = usage_rig
+        graph_create(e, 3)
+        reached = []
+    
+        def forbidden():
+            reached.append(True)
+            raise AssertionError('unbounded PostgreSQL reader was invoked')
+    
+        monkeypatch.setattr(e.graph.store, 'backend', 'postgres')
+        monkeypatch.setattr(e.graph.store, '_connect', forbidden)
+>       refused(query(e, {'limit': 1}), e)
+
+docs\delivery\evidence\asset-usage-query-20261026\coordinator\supplemental_counterexamples.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = <Response [422 Unprocessable Entity]>
+e = namespace(rig=namespace(client=<starlette.testclient.TestClient object at 0x0000021E4AFEBF50>, nid='query-17088caf70fb...2', 'version': 1, 'digest': '3ac1bdf363578593c029ce12bf607ba277901c9c959ad7fed11b05d0edaadb06', 'asset_kind': 'audio'})
+
+    def refused(response, e):
+>       assert response.status_code == 409, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_INVALID","message":"PostgreSQL experimental store requires DATABASE_URL"},"code":"EXPERIMENTAL_INVALID","message":"PostgreSQL experimental store requires DATABASE_URL","details":{"code":"EXPERIMENTAL_INVALID","message":"PostgreSQL experimental store requires DATABASE_URL"},"request_id":"e1da7b63-b1f0-4689-b990-2eab80858c08"}
+E       assert 422 == 409
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests\test_studio_asset_usage_independent.py:35: AssertionError
+=========================== short test summary info ===========================
+FAILED docs/delivery/evidence/asset-usage-query-20261026/coordinator/supplemental_counterexamples.py::test_postgres_explicit_paging_refuses_before_connect
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 5 passed, 3 warnings in 7.33s

@@ -16,4 +16,26 @@ The fixed baseline has no tracked original dedicated Graph/Timeline usage test s
 
 Normal legacy Graph creation permits at most 25 graphs and 16 nodes per graph. The 30-graph fixture explicitly copies valid saved original owner records and exceeds normal create capacity; it tests querying already-saved metadata, not newly authorized graph capacity. A 201-node graph is rejected by original HTTP schema validation. Timeline's normal per-timeline maximum is 30 clips; those fixtures first pass the real save route. Claims remain exact saved direct references only, with other_dependencies UNKNOWN.
 
-Final paged metrics await the frozen implementation. Full restart cold-process and cleared OS-cache measurements are NOT_RUN; first-read/repeat-read labels describe observed query state only.
+Final frozen results are in `final-measurements.log` and its receipt: **10 passed**
+on exact `554de521fb2640152408bcede62cbd21d3eaab49`, tree
+`9a1ad60c58b42bf7d0b740048e7a34b5f997c642`, with source unchanged throughout.
+Raw data are in `metrics/`, including per-page original reader call counts and
+actual reads/writes. The source code was not modified to produce the metrics.
+
+The four scenarios are 30 Graphs/480 matches, mixed audio/image Graphs/240
+matches, 10 Timelines/300 matches, and 30 Graphs plus 2 Timelines/540 matches.
+Each runs through original mounted ASGI HTTP and direct original File service,
+first/repeat separately. The final test starts a new interpreter and opens the
+same synthetic saved files with original `main.app` assembly; it measures all
+540 mixed pins in six pages, then repeats in the same process. This is actual
+fresh-process cold state with warm OS cache; interpreter startup/import time is
+excluded. It is ASGI mounted HTTP, not a TCP socket measurement. Cleared OS-cache
+experiments, real PostgreSQL and real model execution remain NOT_RUN.
+
+New-process first/repeated traversals read 222626838 bytes in 7739 calls;
+instrumented times were 97.388/92.691 seconds, with largest per-page Python
+allocation peaks 32892223/5796423 bytes. No speed improvement or RSS bound is
+claimed. All measured initialized-path traversals recorded zero actual writes;
+the separate first-use socket probe documents an operational lock-file creation.
+`metrics/summary.json` is a derived summary; sibling per-page JSON and the raw
+test output are the primary measurements.

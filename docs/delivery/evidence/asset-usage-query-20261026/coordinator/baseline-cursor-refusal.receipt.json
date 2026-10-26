@@ -1,0 +1,19 @@
+{
+  "source_commit": "8ea45399816bf74783c4f01247b440ce4a82b5ba",
+  "source_tree": "3372d4742f0de3f5ec96f2f7c3b505f3d968a107",
+  "command": [
+    "python",
+    "scripts/run_studio_backend_tests.py",
+    "tests/test_studio_asset_query_cursor.py::test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection",
+    "-q",
+    "--disable-warnings"
+  ],
+  "exit_code": 1,
+  "result": "1 failed, 3 warnings; same ASSET_QUERY_CURSOR_UNAVAILABLE on fixed baseline",
+  "cause": "Original durable cursor key loader requires POSIX dir_fd/O_NOFOLLOW/O_DIRECTORY; unsupported on this Windows environment",
+  "source_sha256": {
+    "app/creative/asset_query_cursor.py": "2df1e33aa43ce30f0f4e9706b898b8e8c6b035932cd245885f147b51505fce80",
+    "tests/test_studio_asset_query_cursor.py": "8fe969e8bf018cc5357cc7bfb386991fd1ed6ef3a9bde5e04ebe3f18fe1be495"
+  },
+  "log_sha256": "812f8dfbc9788292b8946f0189079e621d5c7a903eb70983ddc6a90f7863e09b"
+}
