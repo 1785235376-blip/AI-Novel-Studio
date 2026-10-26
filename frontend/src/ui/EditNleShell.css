@@ -234,52 +234,52 @@
   border-radius: 0;
   border: 0;
   border-right: var(--border-default);
-  background: #1a1d24;
-  color: #e8eaef;
+  background: var(--stg-mon);
+  color: var(--stg-ink);
 }
-.edit-nle-shell__monitor-label { color: #8b93a5; }
+.edit-nle-shell__monitor-label { color: var(--stg-ink-muted); }
 .edit-nle-shell__monitor strong {
   font-variant-numeric: tabular-nums;
   font-family: var(--font-mono, ui-monospace, monospace);
-  color: #e8eaef;
+  color: var(--stg-ink);
 }
-.edit-nle-shell__monitor small { color: #9aa3b5; }
+.edit-nle-shell__monitor small { color: var(--stg-ink-3); }
 .edit-nle-shell__monitor--source {
-  background: radial-gradient(ellipse at 50% 40%, #2a3140 0%, #14171e 70%);
+  background: radial-gradient(ellipse at 50% 40%, var(--stg-frame-a) 0%, var(--stg-frame-b) 70%);
 }
 .edit-nle-shell__toolbar {
   border-radius: 0;
   border: 0;
-  background: #2a303a;
-  color: #a8b0bc;
+  background: var(--stg-tools);
+  color: var(--stg-ink-4);
 }
-.edit-nle-shell__toolbar small { color: #a8b0bc; }
+.edit-nle-shell__toolbar small { color: var(--stg-ink-4); }
 .edit-nle-shell__hero {
-  background: #232830;
+  background: var(--stg-tl);
   border: 0;
   border-radius: 0;
-  color: #d7dbe3;
+  color: var(--stg-ink-tl);
   min-height: 400px;
 }
 .edit-nle-shell__hero .panel,
 .edit-nle-shell__hero .nle-workspace__scope,
 .edit-nle-shell__hero .nle-workspace__note,
 .edit-nle-shell__hero .nle-workspace__foot {
-  color: #a8b0bc;
+  color: var(--stg-ink-4);
 }
 .edit-nle-shell__hero .nle-ruler {
-  background: #1e232b;
-  border-color: #3a4250;
+  background: var(--stg-ruler);
+  border-color: var(--stg-line-strong);
 }
 .edit-nle-shell__hero .nle-track {
-  background: #1e232b;
-  border-color: #3a4250;
+  background: var(--stg-ruler);
+  border-color: var(--stg-line-strong);
 }
 .edit-nle-shell__hero .nle-track__clips > li,
 .edit-nle-shell__hero .nle-track__clips code {
-  background: color-mix(in srgb, #c9d8f5 55%, #2a303a);
+  background: color-mix(in srgb, #c9d8f5 55%, var(--stg-tools));
   border-color: #8eaee6;
-  color: #1a1d24;
+  color: var(--stg-mon);
 }
 .edit-nle-rail {
   background: var(--color-bg-surface);
@@ -293,9 +293,9 @@
 }
 .edit-nle-shell__foot {
   padding: var(--space-2) var(--space-3);
-  background: #1e232b;
-  color: #8b93a5;
-  border-top: 1px solid #3a4250;
+  background: var(--stg-ruler);
+  color: var(--stg-ink-muted);
+  border-top: 1px solid var(--stg-line-strong);
 }
 
 /* [HERMIA-FE-20261022 W-UX-05] density polish — dual monitors / tracks / pool */
@@ -308,13 +308,13 @@
   justify-content: space-between;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid #3a4250;
-  background: #1a1e26;
-  color: #c5cad4;
+  border-bottom: 1px solid var(--stg-line-strong);
+  background: var(--stg-track);
+  color: var(--stg-ink-6);
   font-size: 12px;
 }
 .edit-nle-shell__track-meta small {
-  color: #8b93a5;
+  color: var(--stg-ink-muted);
 }
 .edit-nle-rail__ref {
   font-style: normal;

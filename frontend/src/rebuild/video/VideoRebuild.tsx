@@ -14,7 +14,7 @@ import '../image/imageRebuild.css';
 import './videoRebuild.css';
 import {RebuildCanvas} from '../canvas/RebuildCanvas';
 import type {CvGraph} from '../canvas/RebuildCanvas';
-import {DualCanvas} from '../canvas/DualCanvas';
+import {DualStack} from '../canvas/DualStack';
 
 export type VideoView = 'studio' | 'script' | 'gen' | 'dual'; // [HERMIA-FE-20261022 U2] + 双画布
 type Shot = {key: string; n: number; title: string; size: string; dialogue: string; status: string; hasFrame: boolean};
@@ -95,7 +95,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
       <div className="mw-lh vid-rail-lh">场景 / 镜头树</div>
       <div className="mw-tree">
         {!loaded ? <p className="mw-muted">读取中…</p> : shots.length === 0 ? <p className="mw-muted">还没有镜头</p> :
-          shots.map(s => <button key={s.key} type="button" aria-selected={cur?.key === s.key} onClick={() => setSel(s.key)}><span className="ic">·</span><span>镜头 {s.n} {s.title}<span className="sub">{s.size} · {s.status}</span></span></button>)}
+          shots.map(s => <button key={s.key} type="button" aria-pressed={cur?.key === s.key} onClick={() => setSel(s.key)}><span className="ic">·</span><span>镜头 {s.n} {s.title}<span className="sub">{s.size} · {s.status}</span></span></button>)}
       </div>
       <div className="mw-lh vid-rail-lh">素材引用</div>
       <p className="mw-muted">从图片页「送去视频当参考」后会出现在这里。</p>
@@ -132,7 +132,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
     </div>
   );
   else if (view === 'dual' && isPro) main = (
-    <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualCanvas scope={novelId} initial="split" videoSeed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
+    <div className="vid-main vid-dual" data-surface="canvas">{loaded ? <DualStack kind="video" scope={novelId} seed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}</div>
   );
   else if (view === 'gen' && isPro) main = (
     <div className="vid-main vid-sub">
@@ -152,7 +152,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         <div className="vl-h"><span className="lab">① 镜头脚本</span><span className="nv-spacer" />{cur ? <span className="vl-meta">选中 镜头 {cur.n}</span> : null}</div>
         <div className="shot-row" /* [HERMIA-FE-20261025 DUI P1-7] list 只包 listitem，空态/＋镜头放在 list 外 */>
           {shots.length === 0 ? <p className="vl-note">{loaded ? emptyLine : '读取中…'}</p> : <div role="list" aria-label="镜头卡条" style={{display: 'contents'}}>{shots.map(s =>
-            <button key={s.key} type="button" className="vid-shot" role="listitem" aria-selected={cur?.key === s.key} onClick={() => setSel(s.key)}>
+            <button key={s.key} type="button" className="vid-shot" role="listitem" aria-current={cur?.key === s.key ? 'true' : undefined} onClick={() => setSel(s.key)}>
               <span className="shot-num">S{s.n}</span><b>{s.title}</b><span className="meta">{s.size}{s.dialogue ? <><br />{s.dialogue}</> : null}<br /><span className="nv-badge nv-badge--off">{s.status}</span></span></button>)}</div>}
           <button type="button" className="nv-btn vid-add" id="addShot" onClick={addShot}>{i18nTz('＋ 镜头')}</button>
           {shots.length === 0 && loaded ? <button type="button" className="nv-btn vid-add" onClick={addShot}>{i18nTz('从剧本拆镜头')}</button> : null}
@@ -162,7 +162,7 @@ export function VideoRebuild({novelId, shellMode = 'basic', onSendToEdit, onOpen
         <div className="vl-h"><span className="lab">② 无限画布</span><span className="nv-spacer" /><span className="vl-meta">节点 · 素材引用 · 关系边</span></div>
         <div className="vid-canvas-host" id="vidCanvasHost" data-surface="canvas">
           {/* [HERMIA-FE-20261022 U1] 换成共用黑色无限画布：右键空白加节点；镜头作为初始种子（仅首次，之后按本机草稿） */}
-          {loaded ? <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} /> : <p className="vid-canvas-empty">读取中…</p>}
+          {loaded ? (isPro ? <DualStack kind="video" scope={novelId} seed={shotSeed} /> : <RebuildCanvas kind="video" scope={novelId} label="视频画布" seed={shotSeed} />) : <p className="vid-canvas-empty">读取中…</p>}
         </div>
       </section>
       <section className="vid-layer vid-layer--director" aria-label="③ 内置导演台">

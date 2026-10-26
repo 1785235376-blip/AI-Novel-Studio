@@ -17,10 +17,10 @@ html .app-shell[data-module="ASSETS"] .media-ws-main{flex:1;min-height:0;display
 .ast-tile:hover{border-color:var(--color-accent-primary)}
 .ast-tile[aria-selected="true"]{border-color:var(--color-accent-primary);box-shadow:0 0 0 1px var(--color-accent-primary)}
 .ast-tile.is-trash{cursor:default;opacity:.85}
-.ast-ws .th{height:78px;background:linear-gradient(145deg,#2a3444,#3a4a5c);display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:6px 6px 0 0}
+.ast-ws .th{height:78px;background:linear-gradient(145deg,var(--stg-ph-a),var(--stg-ph-c));display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:6px 6px 0 0}
 .ast-ws .th img{width:100%;height:100%;object-fit:cover;display:block}
-.ast-ws .th--kind span{font-size:22px;color:#c5ccd8;opacity:.8}
-.ast-ws .th[data-kind="音频"]{background:linear-gradient(145deg,#2a3a30,#1a2420)}.ast-ws .th[data-kind="视频"]{background:linear-gradient(145deg,#3a4458,#262d3a)}.ast-ws .th[data-kind="其他"]{background:linear-gradient(145deg,#2a303c,#1c2129)}
+.ast-ws .th--kind span{font-size:22px;color:var(--stg-ink-5);opacity:.8}
+.ast-ws .th[data-kind="音频"]{background:linear-gradient(145deg,var(--stg-ph-aud-a),var(--stg-ph-aud-b))}.ast-ws .th[data-kind="视频"]{background:linear-gradient(145deg,var(--stg-ph-vid-a),var(--stg-ph-vid-b))}.ast-ws .th[data-kind="其他"]{background:linear-gradient(145deg,#2a303c,var(--cv-node))}
 .ast-tile .meta{padding:6px 8px;display:flex;flex-direction:column;gap:2px}
 .ast-tile .meta b{display:block;font-size:12px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ast-tile .meta span{font-size:10.5px;color:var(--color-text-muted)}

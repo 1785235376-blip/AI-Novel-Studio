@@ -28,11 +28,23 @@ export const NODE_TYPES: Record<CanvasKind, NodeType[]> = {
 };
 const NW = 180, NH = 60;
 const REVEAL_W = 186; // [HERMIA-FE-20261024 M3-s1fix] rendered box incl. border/ports (Chrome)
-const typeOf = (k: CanvasKind, t: string) => NODE_TYPES[k].find(x => x.id === t);
 let seq = 0; const uid = (p: string) => `${p}${Date.now().toString(36)}${(seq++).toString(36)}`;
 export const canvasStorageKey = (k: CanvasKind, scope: string) => `poemseed.rebuild.canvas.${k}.${scope}`;
 
-function load(key: string, seed: CvGraph): CvGraph {
+// [HERMIA-FE-20261026 DUAL] in-memory store for 「仅本次会话」 canvases (no identity → never written to localStorage).
+const SESSION_GRAPHS = new Map<string, CvGraph>();
+export const sessionCanvasStore = {get: (k: string) => SESSION_GRAPHS.get(k), set: (k: string, g: CvGraph) => { SESSION_GRAPHS.set(k, g); }, clear: () => SESSION_GRAPHS.clear()};
+export function readCanvasGraph(key: string, persist: 'local' | 'session' = 'local'): CvGraph | null {
+  if (persist === 'session') return SESSION_GRAPHS.get(key) ?? null;
+  try { const raw = localStorage.getItem(key); if (raw) { const g = JSON.parse(raw); if (Array.isArray(g?.nodes) && Array.isArray(g?.edges)) return g; } } catch { /* corrupt: leave untouched */ }
+  return null;
+}
+export function writeCanvasGraph(key: string, g: CvGraph, persist: 'local' | 'session' = 'local') {
+  if (persist === 'session') { SESSION_GRAPHS.set(key, g); return; }
+  try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ }
+}
+function load(key: string, seed: CvGraph, persist: 'local' | 'session' = 'local'): CvGraph {
+  if (persist === 'session') return SESSION_GRAPHS.get(key) ?? seed;
   try { const raw = localStorage.getItem(key); if (raw) { const g = JSON.parse(raw); if (Array.isArray(g?.nodes) && Array.isArray(g?.edges)) return g; } } catch { /* ignore */ }
   return seed;
 }
@@ -40,10 +52,15 @@ function load(key: string, seed: CvGraph): CvGraph {
 export type CvViewport = {x: number; y: number; k: number};
 // [HERMIA-FE-20261024 M3-s1] optional initialSelected / initialViewport / onViewport so a host that remounts the canvas
 // (after an external local-draft write) keeps the user's selection and pan/zoom. Defaults unchanged.
-export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
-  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean; onRevealed?: () => void}) {
-  const key = canvasStorageKey(kind, scope);
-  const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}));
+export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelected, initialViewport, onViewport, revealLast, onRevealed,
+  storageKey, persist = 'local', types: typesProp, ariaLabel, menuTitle, badge, badgeTitle, emptyHint}: {kind: CanvasKind; scope: string; seed?: CvGraph; label?: string; onSelect?: (n: CvNode | null) => void;
+  initialSelected?: string | null; initialViewport?: CvViewport; onViewport?: (vp: CvViewport) => void; revealLast?: boolean; onRevealed?: () => void;
+  // [HERMIA-FE-20261026 DUAL] optional: own storage key / session-only persistence / own node palette / labels. Defaults unchanged.
+  storageKey?: string; persist?: 'local' | 'session'; types?: NodeType[]; ariaLabel?: string; menuTitle?: string; badge?: string; badgeTitle?: string; emptyHint?: string}) {
+  const key = storageKey ?? canvasStorageKey(kind, scope);
+  const palette = typesProp ?? NODE_TYPES[kind];
+  const typeOf = (_k: CanvasKind, t: string) => palette.find(x => x.id === t) ?? NODE_TYPES[_k].find(x => x.id === t);
+  const [g, setG] = useState<CvGraph>(() => load(key, seed || {nodes: [], edges: []}, persist));
   const [vp, setVp] = useState<CvViewport>(() => initialViewport ?? {x: 40, y: 40, k: 1});
   const [sel, setSel] = useState<string | null>(() => (initialSelected && g.nodes.some(n => n.id === initialSelected) ? initialSelected : null));
   useEffect(() => { onViewport?.(vp); }, [vp, onViewport]);
@@ -80,7 +97,7 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; request consumed once
   }, []);
   const drag = useRef<null | {mode: 'pan' | 'node'; id?: string; sx: number; sy: number; ox: number; oy: number}>(null);
-  useEffect(() => { try { localStorage.setItem(key, JSON.stringify(g)); } catch { /* ignore */ } }, [g, key]);
+  useEffect(() => { writeCanvasGraph(key, g, persist); }, [g, key, persist]);
   useEffect(() => { onSelect?.(g.nodes.find(n => n.id === sel) || null); }, [sel, g.nodes, onSelect]);
 
   const world = useCallback((cx: number, cy: number) => {
@@ -141,13 +158,13 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
   };
   const by = Object.fromEntries(g.nodes.map(n => [n.id, n]));
   const curve = (x1: number, y1: number, x2: number, y2: number) => { const m = Math.max(40, Math.abs(x2 - x1) / 2); return `M${x1},${y1} C${x1 + m},${y1} ${x2 - m},${y2} ${x2},${y2}`; };
-  const types = NODE_TYPES[kind].filter(t => !q || t.label.includes(q));
+  const types = palette.filter(t => !q || t.label.includes(q));
 
   return (
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
-      <span className="rcv-local" title="还没有接到服务端画布图接口；切换作品或清浏览器数据会丢">仅本机草稿 · 未同步服务端</span>
-      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={kind === 'image' ? '图片无限画布' : '视频无限画布'} tabIndex={0}
+      <span className="rcv-local" title={badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢'}>{badge ?? '仅本机草稿 · 未同步服务端'}</span>
+      <svg ref={svgRef} className="rcv-svg" role="application" aria-label={ariaLabel ?? (kind === 'image' ? '图片无限画布' : '视频无限画布')} tabIndex={0}
         onContextMenu={onContext} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel}
         onKeyDown={e => { if ((e.key === 'Delete' || e.key === 'Backspace') && sel) delNode(sel); }}>
         <g transform={`translate(${vp.x},${vp.y}) scale(${vp.k})`}>
@@ -158,12 +175,12 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
               <rect className="box" width={NW} height={NH} rx={8} /><rect className="bar" width={5} height={NH} rx={2} fill={c} />
               <text className="ttl" x={16} y={24}>{ty?.icon} {n.title.length > 12 ? n.title.slice(0, 12) + '…' : n.title}</text>
               <text className="sub" x={16} y={44}>{ty?.label || n.t}</text><text className="sub" x={NW - 10} y={44} textAnchor="end">本地</text>
-              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} fill="#8a93a5" data-port="in"><title>输入端口</title></circle> : null}
+              {ty?.ins ? <circle className="port" cx={0} cy={NH / 2} r={5.5} style={{fill: 'var(--cv-port-in)'}} data-port="in"><title>输入端口</title></circle> : null}
               {ty?.outs ? <circle className="port" cx={NW} cy={NH / 2} r={5.5} fill={c} data-port="out" data-for={n.id}><title>输出端口（拖动连线）</title></circle> : null}
             </g>; })}
         </g>
       </svg>
-      {g.nodes.length === 0 ? <p className="rcv-empty">在空白处<b>右键</b>添加节点 · 滚轮缩放 · 拖动空白平移</p> : null}
+      {g.nodes.length === 0 ? <p className="rcv-empty">{emptyHint ? <>{emptyHint}<br /></> : null}在空白处<b>右键</b>添加节点 · 滚轮缩放 · 拖动空白平移</p> : null}
       <div className="rcv-zoom" aria-label="缩放">
         <button type="button" onClick={() => zoom(1 / 1.2)} aria-label="缩小">−</button><span>{Math.round(vp.k * 100)}%</span>
         <button type="button" onClick={() => zoom(1.2)} aria-label="放大">＋</button><button type="button" onClick={fit}>适配</button>
@@ -174,7 +191,7 @@ export function RebuildCanvas({kind, scope, seed, label, onSelect, initialSelect
           <div className="grp">节点</div>
           <button type="button" role="menuitem" onClick={() => delNode(menu.node!)}>删除节点</button>
         </> : <>
-          <div className="grp">添加到{kind === 'image' ? '图片' : '视频'}画布（本机草稿）</div>
+          <div className="grp">{menuTitle ?? `添加到${kind === 'image' ? '图片' : '视频'}画布（本机草稿）`}</div>
           <input autoFocus placeholder="搜索节点类型" aria-label="搜索节点类型" value={q} onChange={e => setQ(e.target.value)}
             onKeyDown={e => { if (e.key === 'Escape') setMenu(null); if (e.key === 'Enter' && types[0]) addNode(types[0]); }} />
           <div className="lst">{types.map(t => <button key={t.id} type="button" role="menuitem" data-node-type={t.id} onClick={() => addNode(t)}><i style={{background: t.color}} />{t.icon} {t.label}</button>)}

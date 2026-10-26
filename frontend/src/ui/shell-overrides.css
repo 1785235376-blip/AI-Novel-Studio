@@ -52,3 +52,5 @@ body,
 /* [HERMIA-FE-20261025 VERA-FIX2] 搜索框全语言防重叠：kbd 回到 flex 流（覆盖 desktop-craft 的 absolute），span 省略号 */
 .app-shell .global-search>span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .app-shell .global-search kbd{position:static;flex:none;margin-left:auto}
+/* [HERMIA-FE-20261026 THEME] 浅色下状态栏按钮字色 #c5cad3 落在白底上仅 1.6:1（axe serious），改用次级文字色 */
+html[data-theme="light"] .status-bar__action{color:var(--color-text-secondary)}
