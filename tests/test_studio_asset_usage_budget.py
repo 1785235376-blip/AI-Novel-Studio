@@ -44,7 +44,9 @@ def test_token_replay_expiration_capacity_and_cleanup(usage_rig, monkeypatch):
     assert first['selected_sources'] == ['graph']
     assert first['excluded_graph_schemas'] == [6, 7]
     assert first['total_scope'] == 'VISIBLE_SELECTED_SAVED_DIRECT_ASSET_REFERENCES'
-    assert first['budgets']['authority_reads_in_budget'] is False
+    assert first['budgets']['authority_reads_in_budget'] is True
+    assert first['budgets']['authority_budget_scope'] == 'FILE_HTTP_REQUEST_INCLUDING_ORIGINAL_MIDDLEWARE'
+    assert first['budgets']['request_file_read_bytes'] == first['budgets']['scope_asset_metadata_read_bytes']
     assert 'file_read_bytes' not in first['budgets']
     assert first['budgets']['scope_asset_metadata_read_bytes'] > 0
     token = first['next_cursor']

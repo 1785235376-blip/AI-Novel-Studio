@@ -425,3 +425,8 @@ app.include_router(create_local_interop_router(local_interop_host, prefix="/api/
 
 if settings.enable_packaged_runtime:
     mount_packaged_frontend(app, Path(os.environ.get("PACKAGED_FRONTEND_DIST", "")))
+
+# The saved-usage budget must precede packaged/collaboration admission reads.
+# This narrow middleware leaves all other routes and legacy unpaged calls alone.
+from .creative.asset_usage_request import AssetUsageRequestBudgetMiddleware
+app.add_middleware(AssetUsageRequestBudgetMiddleware)

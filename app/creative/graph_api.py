@@ -169,6 +169,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         from .asset_usages import graph_asset_usages
         from .asset_usage_paging import query_options
         from .asset_usage_budget import usage_read_budget, UsageBudgetError
+        from .asset_usage_read_mode import usage_coordination, ReadOnlyCoordinationUnavailable
         def observe(actor, scope, guard):
             try:
                 return graph_asset_usages(service, nid, scope, actor, aid, guard,
@@ -177,11 +178,13 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                 guard()
                 raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
         # Observation must never mint a missing File project incarnation.
-        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))):
+        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))), usage_coordination(request):
             try:
                 return graph_invoke(nid, x_session_token, x_branch_id, "domain.read",
                     observe,
                     request, target=("list",), inspection_host=True)
+            except ReadOnlyCoordinationUnavailable:
+                raise HTTPException(409, {'code': 'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE'}) from None
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
             except (AttributeError, RecursionError):
@@ -195,6 +198,7 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         from contextlib import ExitStack
         from .asset_usage_paging import paged_usages, query_options
         from .asset_usage_budget import usage_read_budget, UsageBudgetError
+        from .asset_usage_read_mode import usage_coordination, ReadOnlyCoordinationUnavailable
         from .production_execution_api import create_production_invoker
         production_call = create_production_invoker(invoke, require_host_session=require_host_session,
                                                     model_host_authority=model_host_authority)
@@ -245,8 +249,11 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             if usage_production is not None:
                 contexts.enter_context(usage_production.store.existing_owner_only())
             contexts.enter_context(usage_read_budget())
+            contexts.enter_context(usage_coordination(request))
             try:
                 return invoke(nid, x_session_token, x_branch_id, 'domain.read', admitted)
+            except ReadOnlyCoordinationUnavailable:
+                raise HTTPException(409, {'code': 'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE'}) from None
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError,
                     UsageBudgetError, AttributeError, RecursionError):
                 raise HTTPException(409, {'code': 'STUDIO_ASSET_USAGE_UNAVAILABLE'}) from None

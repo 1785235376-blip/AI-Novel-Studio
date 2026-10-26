@@ -65,11 +65,15 @@ def query_options(request, *, combined=False):
     pairs = list(request.query_params.multi_items())
     if not pairs:
         return None
-    allowed = {'limit', 'cursor', 'state', 'sources'} if combined else {'limit', 'cursor', 'state'}
+    allowed = {'limit', 'cursor', 'state', 'strict_read_only'}
+    if combined:
+        allowed.add('sources')
     if (len(pairs) > len(allowed) or len({key for key, _ in pairs}) != len(pairs) or
             any(key not in allowed for key, _ in pairs)):
         raise ValueError('STUDIO_USAGE_QUERY_INVALID')
     values = dict(pairs)
+    if values.get('strict_read_only', 'true') != 'true':
+        raise ValueError('STUDIO_USAGE_QUERY_INVALID')
     limit = values.get('limit', '')
     if not re.fullmatch(r'[1-9][0-9]{0,2}', limit) or int(limit) > 200:
         raise ValueError('STUDIO_USAGE_QUERY_INVALID')
@@ -194,8 +198,10 @@ def _paged_usages(service, nid, scope, actor, aid, guard, *, graph, limit, curso
         reader = original.usage_get if name == 'CREATIVE_GRAPH' else original.timeline_usage_get
         return reader(nid, scope, actor, rid, guard)
     incarnation = service.store.incarnation(nid)
+    from ..repositories.file.mutation_coordinator import strict_coordination_active
+    strict = strict_coordination_active()
     binding = _hash([str(service.store.root), nid, scope, actor, incarnation, owner,
-                     [name for name, _ in owners], aid, limit, state])
+                     [name for name, _ in owners], aid, limit, state, strict])
     saved = _load(cursor, binding) if cursor else None
     _checkpoint('before_source')
     source = _source(service.workspace, nid, scope, aid, guard)
@@ -267,13 +273,26 @@ def _paged_usages(service, nid, scope, actor, aid, guard, *, graph, limit, curso
         consistency='VISIBLE_SELECTED_DOUBLE_OBSERVATION',
         consistency_limits={'transient_changes_detected': False, 'strong_aba': False,
                             'durable_snapshot': False, 'token_ttl_seconds': TOKEN_TTL},
+        filesystem_mode='STRICT_EXISTING_COORDINATION' if strict else 'COMPATIBLE_COORDINATION',
         budgets={'consumers_per_page': MAX_CONSUMERS, 'references_per_page': MAX_REFERENCES,
                  'validation_references_per_consumer': MAX_VALIDATION_REFERENCES,
                  'response_bytes': MAX_RESPONSE_BYTES, 'directory_entries_per_collection': MAX_DIRECTORY_ROWS,
                  'scope_document_bytes': UsageReadBudget.MAX_SCOPE_BYTES,
                  'scope_asset_metadata_read_bytes': UsageReadBudget.MAX_READ_BYTES,
                  'scope_asset_metadata_reads': UsageReadBudget.MAX_READS,
-                 'authority_reads_in_budget': False,
+                 'json_depth': UsageReadBudget.MAX_JSON_DEPTH,
+                 'json_string_encoded_bytes': UsageReadBudget.MAX_JSON_STRING_BYTES,
+                 'json_number_encoded_bytes': UsageReadBudget.MAX_JSON_NUMBER_BYTES,
+                 'json_tokens_per_document': UsageReadBudget.MAX_JSON_TOKENS,
+                 'json_tokens_per_request': UsageReadBudget.MAX_REQUEST_JSON_TOKENS,
+                 'asset_content_single_file_bytes': UsageReadBudget.MAX_BINARY_BYTES,
+                 'asset_content_reads_share_budget': True,
+                 'authority_reads_in_budget': True,
+                 'authority_budget_scope': 'FILE_HTTP_REQUEST_INCLUDING_ORIGINAL_MIDDLEWARE',
+                 'request_file_read_attempts': UsageReadBudget.MAX_READS,
+                 'request_file_read_bytes': UsageReadBudget.MAX_READ_BYTES,
+                 'process_rss_hard_limit': False,
+                 'hard_cpu_timeout': False,
                  'storage_read_mode': 'BOUNDED_WHOLE_DOCUMENT'})
     if more:
         result['next_cursor'] = _issue({'binding': binding, 'fingerprint': fingerprint,

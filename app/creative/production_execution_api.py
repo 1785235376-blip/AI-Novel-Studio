@@ -511,6 +511,7 @@ def create_production_execution_router(service, invoke, *, require_host_session,
         from .asset_usages import timeline_asset_usages
         from .asset_usage_paging import query_options
         from .asset_usage_budget import usage_read_budget, UsageBudgetError
+        from .asset_usage_read_mode import usage_coordination, ReadOnlyCoordinationUnavailable
         def observe(actor, scope, guard):
             try:
                 return timeline_asset_usages(service, nid, scope, actor, aid, guard,
@@ -518,10 +519,12 @@ def create_production_execution_router(service, invoke, *, require_host_session,
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 guard()
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
-        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))):
+        with service.store.existing_owner_only(), usage_read_budget(bool(request.scope.get('query_string'))), usage_coordination(request):
             try:
                 return call(request, nid, x_session_token, x_branch_id, "domain.read",
                     observe)
+            except ReadOnlyCoordinationUnavailable:
+                raise HTTPException(409, {'code': 'STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE'}) from None
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
             except (AttributeError, RecursionError):
