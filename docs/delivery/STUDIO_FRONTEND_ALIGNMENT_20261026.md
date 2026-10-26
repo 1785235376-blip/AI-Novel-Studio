@@ -59,16 +59,23 @@ the behavior of the missing merge result. Backend work is independently tested.
 All frontend paths in this table are under `frontend/src` at the published
 uw-port parent reference `34eb95c7`, not the unpublished actual target.
 `studio` means `/api/projects/{projectId}/studio`.
+Creative Storyboard documents use a separate root:
+`/api/novels/{projectId}/experimental/creative`. In the published parent,
+`creative/client.ts` constructs that root and passes it to
+`createStoryboardClient` at line 81; the backend `app/creative/api.py` declares
+the matching `/novels/{nid}/experimental/creative` router prefix. Production jobs
+remain under the Studio root. The backend also mounts `/api/v1` aliases; the
+source-reviewed frontend calls shown here use `/api`.
 
 | Consumer / source | Request and response contract | Backend owner / boundary |
 | --- | --- | --- |
 | `App.tsx:191-192,2162`, `workspace/defaultui/DefaultTasksDrawer.tsx:32-37` | Default entry stays `LegacyApp` and mounts the new tasks/results/history drawer; `?uw=1` remains an opt-in alternate. Drawer constructs clients only for a real actor and complete collaboration scope | User-facing default integration, not proof that local placeholder identities may access collaboration; no identity means no reads |
 | `workspace/tasks/useLiveTasks.ts:31` | Actual default-drawer feed calls TaskCenter `readTasks` plus Production `list` and `get`; uses original session/branch headers and retires late-response leases | Existing read routes; Production pagination SDK is not used by this feed |
 | `workspace/integration/useUnifiedLoop.ts:20,40-42` | Result target exists only when selected command has `canvas_return`; asset reads call `sc.assets(false)`, history/restore use existing `graphs.canvasViews` | No new execution owner. No target capsule means the drawer shows a gap rather than inventing an adoption target |
-| `creative/useStoryboardProductionController.ts:160`, `creative/studioStoryboardClient.ts:23` | POST `studio/documents/{id}/shots/{shot}/image-request`; `expected_version`, `shot_version`, `shot_digest`, explicit operation/provider/model/request ID/parameters; response command must retain the selected shot pin | Original Storyboard service; produces reviewed input, not an executed job |
+| `creative/useStoryboardProductionController.ts:160`, `creative/studioStoryboardClient.ts:23` | POST `/api/novels/{projectId}/experimental/creative/documents/{id}/shots/{shot}/image-request`; `expected_version`, `shot_version`, `shot_digest`, explicit operation/provider/model/request ID/parameters; response command must retain the selected shot pin | Original Storyboard service; produces reviewed input, not an executed job |
 | `creative/studioProductionClient.ts` `preview/create` | POST `studio/production/preview` with command; POST `/jobs` with command and `reviewed_preview_digest`; create uses original request ID as idempotency key | Original Production owner and ImageJobService; preview does not dispatch |
 | Same client's `get/execute/refresh/cancel/reconcile/review/candidate` | `GET /jobs/{owner}/{id}`; actions POST exact `expected_version` and `expected_request_digest`; review adds `reviewed_output_digest`; candidate reads bytes from `/candidate` | Original job lifecycle; candidate is not a reviewed asset; later manual review and Storyboard binding remain separate |
-| `creative/studioStoryboardClient.ts:22`, `useStoryboardProductionController.ts` `bind` / exact-image flow | POST image-binding with current document/shot versions/digest and `asset_id/version/digest/kind`; response advances document exactly one version and preserves the shot | Original Storyboard image-binding owner; no alternate adoption store |
+| `creative/studioStoryboardClient.ts:22`, `useStoryboardProductionController.ts` `bind` / exact-image flow | POST `/api/novels/{projectId}/experimental/creative/documents/{id}/shots/{shot}/image-binding` with current document/shot versions/digest and `asset_id/version/digest/kind`; response advances document exactly one version and preserves the shot | Original Storyboard image-binding owner; no alternate adoption store |
 | `workspace/UnifiedWorkspacePreview.tsx:150-178`, `workspace/state/projectIncarnation.ts` | GET `studio`; require matching `project.id`, printable nonempty `project.incarnation` <=200 chars; different incarnation retires owned UI geometry | Original File project incarnation; failed reads are not deletion evidence |
 | `creative/studioCanvasViewClient.ts:80-122`, `workspace/history/restoreFlow.ts` | History has current incarnation/version/digest and ascending version snapshots; restore posts current CAS pins plus selected historical version/digest | Existing CanvasView metadata history; no binary restoration or execution authority |
 | `creative/studioProductionClient.ts:677-692` | `listPage` sends optional owner/operation plus limit 1..100, offset 0..1,000,000; envelope requires total/limit/offset/has_more together, `has_more = offset + limit < total`, out-of-range page empty | Existing query adapter; response pagination is not a stable snapshot or storage index |
