@@ -99,19 +99,19 @@ def test_independent_timeline_multitrack_positions_survive_page_boundaries(usage
     assert snapshot(e.rig.root) == before
 
 
-@pytest.mark.parametrize("mutation", ["add", "move", "remove_pin", "asset_version", "recreate"])
+@pytest.mark.parametrize("mutation", ["add", "move", "consumer_title", "asset_version", "recreate"])
 def test_independent_continuation_rejects_changed_source_or_selected_consumer(usage_rig, mutation):
     e = usage_rig
     graph = graph_create(e, 3)
     first = page(query(e, {"limit": 1}))
     if mutation == "add":
         graph_create(e, 1, "added-after-page")
-    elif mutation in {"move", "remove_pin"}:
+    elif mutation in {"move", "consumer_title"}:
         definition = deepcopy(graph["definition"])
         if mutation == "move":
-            definition["nodes"][1]["id"] = "moved-position"
+            definition["nodes"][1]["position"] = {"x": 100.0, "y": 200.0}
         else:
-            definition["nodes"].pop()
+            definition["title"] = "Changed selected consumer title"
         response = e.client.put(e.graph_url + "/" + graph["id"], headers=e.headers,
             json={"expected_version": graph["version"], "definition": definition})
         assert response.status_code == 200, response.text
