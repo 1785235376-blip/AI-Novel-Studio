@@ -10,11 +10,12 @@ import os
 from pathlib import Path
 import socket
 import sys
+from uuid import uuid4
 
 
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
-    run = Path(os.environ.get("STUDIO_TEST_RUN_ROOT", root / ".runtime/studio-backend-tests")).resolve()
+    run = Path(os.environ.get("STUDIO_TEST_RUN_ROOT", root / ".runtime/studio-backend-tests" / uuid4().hex)).resolve()
     for folder in ("home", "xdg/config", "xdg/cache", "xdg/data", "data", "tmp", "appdata", "localappdata"):
         (run / folder).mkdir(parents=True, exist_ok=True)
     for key in tuple(os.environ):
