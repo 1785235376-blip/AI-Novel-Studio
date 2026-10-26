@@ -1,0 +1,13 @@
+{
+  "classification": "read_only_static_revalidation_not_http_runtime_acceptance",
+  "source_head": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+  "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+  "production_merge": "f6ae6c5fb2bda8b875bdbd1f32b5bafd18d9d070",
+  "app_diff_exit_code": 0,
+  "http_diff_from_reviewed_F_exit_code": 0,
+  "reviewed_files": {
+    "tests/file_safety_http_server.py": "4ac58cd375506b880186ccf28d53e03e861bbfaffe5a654fe16e1978a95a6fdd",
+    "tests/test_file_backend_safety_http.py": "b871ff33c5c9d082078551a021a7a840b9414b41205ff173b6fdfa99ea39b9d4"
+  },
+  "original_F_report_preserved_byte_for_byte": true
+}

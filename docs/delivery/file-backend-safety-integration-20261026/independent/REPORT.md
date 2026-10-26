@@ -1,15 +1,20 @@
 # Independent File backend safety merge review
 
 Status: PASS for this independent 23-case File/Windows scope at the final common
-freeze `66e5c97c22ff719aa75f036988073bc24ebf9c57`, tree
-`50c1ef09896dc94ad097e806ce9805bacef935ea`.
+freeze G `d24458225be78f3cbe804b2e325a2f02c3e95568`, tree
+`f17fe2b160606c660bca6c0d400c21aff29b30ef`.
 
 All 23 cases passed in one final run; process exit 0, no timeout, no skipped,
 xfail, or xpass cases. Tracked app/tests/scripts SHA256 manifests are unchanged,
 and all 482 recorded loaded modules came from the independent detached final
-worktree. The final pytest duration was 8.88 s; subprocess wall time was
-10.84 s under an explicit 600 s timeout. The final acceptance result is this
+worktree. The final pytest duration was 9.24 s; subprocess wall time was
+11.12 s under an explicit 600 s timeout. The final acceptance result is this
 single run, not a sum of development results.
+
+The prior F report remains byte-preserved as `REPORT-F1-66e5c97c.md`; its
+receipts remain under `final-66e5c97c/`. G supersedes F for the current
+independent result. A passing independent group does not resolve separate
+refusals or override the coordinator's broader PARTIAL classification.
 
 ## Scope and independence
 
@@ -59,7 +64,8 @@ PostgreSQL, browser, or hosted CI acceptance is asserted.
 | --- | --- | --- | --- | --- | --- |
 | `136686a4db95b120d96f14b34098b4298d59e14c` | First development run | 19 passed, 4 failed | 1 | No, 600 s limit | Yes |
 | `dd1a70b510bc11bfe7b914b7fca5abc1c4777fb7` | Corrected development run | 23 passed, 3 warnings | 0 | No, 600 s limit | Yes |
-| `66e5c97c22ff719aa75f036988073bc24ebf9c57` | Final common freeze | 23 passed, 3 warnings | 0 | No, 600 s limit | Yes |
+| `66e5c97c22ff719aa75f036988073bc24ebf9c57` | Historical common freeze F, superseded | 23 passed, 3 warnings | 0 | No, 600 s limit | Yes |
+| `d24458225be78f3cbe804b2e325a2f02c3e95568` | Final common freeze G | 23 passed, 3 warnings | 0 | No, 600 s limit | Yes |
 
 The four first-run failures were an independent test assumption error. The
 test asserted the internal `STUDIO_USAGE_RESOURCE_UNAVAILABLE` label; fixed A's
@@ -77,10 +83,17 @@ after. Acceptance requires all of these checks together. Both development
 runs loaded 482 relevant modules from their own detached worktree, with no
 foreign source import. The second run completed its pytest suite in 8.85 s.
 
-Final evidence is in `final-66e5c97c/`. The final source root is
-`D:\PoemSeed\Worktrees\file-safety-independent-final-66e5c97c`.
+Final evidence is in `final-G-d2445822/`. The final source root is
+`D:\PoemSeed\Worktrees\file-safety-independent-final-G-d2445822`.
 The reviewer also verified that the final app tree is unchanged from production
 merge `f6ae6c5fb2bda8b875bdbd1f32b5bafd18d9d070`.
+
+After F, the coordinator observed three Windows GBK decoding failures outside
+this group. `gbk-portability/REPORT.md` records the independent fixed-B
+reproduction (3 failures) and a test-only fix (3 passes), both retaining the
+machine's real cp936 default and unchanged production source. The correction
+is in G. This report's complete 23-case group was rerun on G rather than reused
+from F; the focused portability counts are not added to 23.
 
 The three warnings concern the installed TestClient dependency and two existing
 Pydantic `schema` field names. They are recorded in the logs. No warning was
@@ -89,7 +102,8 @@ converted to a passing test or used to excuse a failure.
 ## Read-only review of HTTP acceptance instrumentation
 
 The reviewer separately inspected the HTTP helper and tests, first as explicitly
-provided by the coordinator and then again at final freeze. This static review
+provided by the coordinator and then again at freeze F. The two reviewed HTTP
+files are byte-identical between F and final G. This static review
 does not add HTTP tests to the 23-case result above; the coordinator owns the
 separate final TCP test run.
 

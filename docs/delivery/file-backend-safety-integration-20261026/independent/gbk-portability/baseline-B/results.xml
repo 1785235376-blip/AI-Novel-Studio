@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="12.086" timestamp="2026-10-26T23:42:33.547218+08:00" hostname="冢"><testcase classname="tests.test_taskcenter_collaboration_rebuilt" name="test_legacy_source_is_zero_write_unsupported" time="4.562"><failure message="UnicodeDecodeError: 'gbk' codec can't decode byte 0x92 in position 1366: illegal multibyte sequence">collaboration_rig = namespace(rig=namespace(client=&lt;starlette.testclient.TestClient object at 0x0000011AC5AC1110&gt;, nid='query-7a0f7ccaf750...r=&lt;app.experimental.taskcenter_collaboration_cursor.CollaborationTaskCenterCursorAdapter object at 0x0000011AC2FBE590&gt;)
+
+    def test_legacy_source_is_zero_write_unsupported(collaboration_rig):
+&gt;       e=collaboration_rig;p=e.store.path(e.rig.nid,e.scope);d=json.loads(p.read_text());d.pop('_taskcenter_team_lifecycle_v1');p.write_text(json.dumps(d))
+                                                                           ^^^^^^^^^^^^^
+
+tests\test_taskcenter_collaboration_rebuilt.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/file-safety-independent-20261026/docs/delivery/file-backend-safety-integration-2026...test_legacy_source_is_zero_wri0/experimental_v1/e216b4e55df1379f1556b1a29accd7a61fc6231ae9fdf3f9cf50409f7430cddb.json')
+encoding = 'locale', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+        with self.open(mode='r', encoding=encoding, errors=errors) as f:
+&gt;           return f.read()
+                   ^^^^^^^^
+E           UnicodeDecodeError: 'gbk' codec can't decode byte 0x92 in position 1366: illegal multibyte sequence
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: UnicodeDecodeError</failure></testcase><testcase classname="tests.test_export_owner_independent_process" name="test_original_export_create_serializes_independent_processes[False]" time="3.454"><failure message="UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 392: illegal multibyte sequence">tmp_path = WindowsPath('D:/PoemSeed/Worktrees/file-safety-independent-20261026/docs/delivery/file-backend-safety-integration-20261026/independent/gbk-portability/baseline-B/runtime/tmp/pytest-of-admin/pytest-0/test_original_export_create_se0')
+same_key = False
+
+    @pytest.mark.parametrize('same_key',[False,True])
+    def test_original_export_create_serializes_independent_processes(tmp_path,same_key):
+        data=tmp_path/'data';data.mkdir();control=tmp_path/'control';control.mkdir()
+        source=Path(__file__).resolve().parents[1]
+        children=[]
+        try:
+            for role in ('a','b'):
+                key='same' if same_key else role
+                children.append(subprocess.Popen([sys.executable,'-c',WORKER,str(data),str(control),role,key],cwd=source,env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+            assert wait_file(control/'a-ready') and wait_file(control/'b-ready')
+            (control/'a-go').touch();assert wait_file(control/'a-read')
+            (control/'b-go').touch()
+            # Old independent RLocks let B commit over A's retained snapshot.
+            # A serialized owner instead keeps B blocked until A releases.
+            wait_file(control/'b-done',3)
+            (control/'a-release').touch()
+            for child in children:
+                stdout,stderr=child.communicate(timeout=30)
+                assert child.returncode==0,(stdout,stderr)
+            a=json.loads((control/'a-result').read_text());b=json.loads((control/'b-result').read_text())
+&gt;           rows=json.loads((data/'export_jobs.json').read_text())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_export_owner_independent_process.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/file-safety-independent-20261026/docs/delivery/file-backend-safety-integration-2026...gbk-portability/baseline-B/runtime/tmp/pytest-of-admin/pytest-0/test_original_export_create_se0/data/export_jobs.json')
+encoding = 'locale', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+        with self.open(mode='r', encoding=encoding, errors=errors) as f:
+&gt;           return f.read()
+                   ^^^^^^^^
+E           UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 392: illegal multibyte sequence
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: UnicodeDecodeError</failure></testcase><testcase classname="tests.test_export_owner_independent_process" name="test_original_export_create_serializes_independent_processes[True]" time="3.440"><failure message="UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 395: illegal multibyte sequence">tmp_path = WindowsPath('D:/PoemSeed/Worktrees/file-safety-independent-20261026/docs/delivery/file-backend-safety-integration-20261026/independent/gbk-portability/baseline-B/runtime/tmp/pytest-of-admin/pytest-0/test_original_export_create_se1')
+same_key = True
+
+    @pytest.mark.parametrize('same_key',[False,True])
+    def test_original_export_create_serializes_independent_processes(tmp_path,same_key):
+        data=tmp_path/'data';data.mkdir();control=tmp_path/'control';control.mkdir()
+        source=Path(__file__).resolve().parents[1]
+        children=[]
+        try:
+            for role in ('a','b'):
+                key='same' if same_key else role
+                children.append(subprocess.Popen([sys.executable,'-c',WORKER,str(data),str(control),role,key],cwd=source,env={**os.environ,'PYTHONPATH':str(source)},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+            assert wait_file(control/'a-ready') and wait_file(control/'b-ready')
+            (control/'a-go').touch();assert wait_file(control/'a-read')
+            (control/'b-go').touch()
+            # Old independent RLocks let B commit over A's retained snapshot.
+            # A serialized owner instead keeps B blocked until A releases.
+            wait_file(control/'b-done',3)
+            (control/'a-release').touch()
+            for child in children:
+                stdout,stderr=child.communicate(timeout=30)
+                assert child.returncode==0,(stdout,stderr)
+            a=json.loads((control/'a-result').read_text());b=json.loads((control/'b-result').read_text())
+&gt;           rows=json.loads((data/'export_jobs.json').read_text())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_export_owner_independent_process.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/PoemSeed/Worktrees/file-safety-independent-20261026/docs/delivery/file-backend-safety-integration-2026...gbk-portability/baseline-B/runtime/tmp/pytest-of-admin/pytest-0/test_original_export_create_se1/data/export_jobs.json')
+encoding = 'locale', errors = None
+
+    def read_text(self, encoding=None, errors=None):
+        """
+        Open the file in text mode, read it, and close the file.
+        """
+        encoding = io.text_encoding(encoding)
+        with self.open(mode='r', encoding=encoding, errors=errors) as f:
+&gt;           return f.read()
+                   ^^^^^^^^
+E           UnicodeDecodeError: 'gbk' codec can't decode byte 0xad in position 395: illegal multibyte sequence
+
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: UnicodeDecodeError</failure></testcase></testsuite></testsuites>
