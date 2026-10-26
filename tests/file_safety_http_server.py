@@ -148,7 +148,7 @@ UsageReadBudget._read_bytes = observe_read_bytes
 command_names = {'_submit', '_run', 'execute', 'process', 'create_job', 'create_run', 'transition',
                  'generate', 'generate_text', 'generate_image', 'generate_audio', 'transcribe', 'synthesize',
                  'cancel', 'retry', 'review', 'adopt', 'approve', 'reject', '_recover_on_startup', 'dispatch',
-                 '_invoke_exporter', 'export', 'export_snapshot_result'}
+                 '_invoke_exporter', 'export', 'export_snapshot_result', 'commit', 'review_batch'}
 seen = set()
 for module_name, module in tuple(sys.modules.items()):
     if not module_name.startswith('app.'):
