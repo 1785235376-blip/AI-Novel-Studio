@@ -235,3 +235,37 @@ def test_independent_compat_read_existing_lock_is_not_a_strict_mode(usage_rig, m
     # The original coordinator still opens lock handles in a writable mode.
     assert meter.write_opens > 0
 
+
+def test_independent_compat_first_lock_creation_remains_explicit(usage_rig, monkeypatch):
+    """Removing only this synthetic fixture's locks models a new absolute path.
+
+    No query code removes, precreates or bypasses any coordination facility.
+    The fixture starts with saved business data and absent operational locks.
+    """
+    from app.creative import asset_usage_paging
+    from app.repositories.file import mutation_coordinator
+    e = usage_rig
+    graph_create(e, 2)
+    lockdir = e.rig.root / ".workspace-mutation-locks"
+    assert lockdir.is_dir()
+    for lock in lockdir.iterdir():
+        assert lock.is_file() and lock.suffix == ".lock"
+        lock.unlink()
+    lockdir.rmdir()
+    before = complete_snapshot(e.rig.root)
+    business_before = snapshot(e.rig.root)
+    locks_before = set(mutation_coordinator._locks)
+    monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+    meter = ReadMeter(e.rig.root)
+    with monkeypatch.context() as patch:
+        meter.install(patch)
+        body = page(query(e, {"limit": 1}, owner="asset"))
+    after = complete_snapshot(e.rig.root)
+    created = set(after) - set(before)
+    assert created and all(name.startswith(".workspace-mutation-locks") for name in created)
+    assert {key: value for key, value in snapshot(e.rig.root).items()
+            if not key.startswith(".workspace-mutation-locks")} == business_before
+    assert meter.write_opens > 0 and body["items"]
+    assert set(mutation_coordinator._locks) == locks_before
+    assert len(asset_usage_paging._tokens) == 1
+
