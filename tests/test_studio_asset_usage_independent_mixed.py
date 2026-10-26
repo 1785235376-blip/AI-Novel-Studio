@@ -163,7 +163,7 @@ def test_independent_scope_over_four_mib_refused_before_payload_read(usage_rig, 
 
 @pytest.mark.parametrize("change", ["actor", "branch"])
 def test_independent_continuation_cannot_cross_real_collaboration_authority(usage_rig, monkeypatch, change):
-    from app import main
+    from app import main, dependencies
     from app.authorization import AuthorizationScope, ModalityDomain, PermissionAssignment, ScopeKind
     from app.packaging.bootstrap_api import PackagedBootstrapRegistry
     from app.packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLocalIdentity
@@ -190,6 +190,7 @@ def test_independent_continuation_cannot_cross_real_collaboration_authority(usag
         registry = PackagedBootstrapRegistry()
         registry.configure(manager)
         monkeypatch.setattr(main, "packaged_bootstrap_registry", registry)
+        monkeypatch.setattr(dependencies, "packaged_bootstrap_registry", registry)
         return token
     headers = {**headers, "X-Session-Token": issued_host("reader")}
     e.headers = headers
