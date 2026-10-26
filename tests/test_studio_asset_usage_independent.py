@@ -223,7 +223,8 @@ def test_independent_real_host_revocation_at_each_checkpoint_denies(usage_rig, m
     monkeypatch.setattr(asset_usage_paging, "_checkpoint", checkpoint)
     response = query(e, {"limit": 1})
     assert reached == [stage]
-    assert response.status_code in {401, 403}, response.text
+    assert response.status_code == 401, response.text
+    assert response.json()["code"] == "SESSION_REQUIRED", response.text
     assert "items" not in response.json() and e.asset["id"] not in response.text
 
 

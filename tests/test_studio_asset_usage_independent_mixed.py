@@ -87,6 +87,7 @@ def test_independent_mixed_read_rechecks_real_host(usage_rig, monkeypatch, stage
     response = query(e, {"limit": 2}, owner="asset")
     assert reached == [stage]
     assert response.status_code == 401, response.text
+    assert response.json()["code"] == "SESSION_REQUIRED", response.text
     assert "items" not in response.json() and e.asset["id"] not in response.text
 
 
