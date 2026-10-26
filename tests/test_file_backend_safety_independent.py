@@ -287,7 +287,8 @@ def test_actual_native_reader_refusal_never_issues_cursor_and_releases_context(u
     with path.open("r+b"):
         rejected = e.client.get(url, headers=e.headers, params=params)
     assert rejected.status_code == 409, rejected.text
-    assert rejected.json()["code"] == "STUDIO_USAGE_RESOURCE_UNAVAILABLE"
+    # The graph route deliberately publishes its original owner-specific code.
+    assert rejected.json()["code"] == "STUDIO_GRAPH_USAGE_UNAVAILABLE"
     assert "items" not in rejected.json() and "next_cursor" not in rejected.json()
     assert rejected.headers["cache-control"] == "no-store"
     assert asset_usage_paging._tokens == {} and disk_snapshot(e.rig.root) == before
