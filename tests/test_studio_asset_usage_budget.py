@@ -40,6 +40,13 @@ def test_token_replay_expiration_capacity_and_cleanup(usage_rig, monkeypatch):
     graph_create(e, 3)
     monkeypatch.setattr(paging, '_tokens', {})
     first = query(e, limit=1).json()
+    assert first['supported_sources'] == ['graph', 'timeline']
+    assert first['selected_sources'] == ['graph']
+    assert first['excluded_graph_schemas'] == [6, 7]
+    assert first['total_scope'] == 'VISIBLE_SELECTED_SAVED_DIRECT_ASSET_REFERENCES'
+    assert first['budgets']['authority_reads_in_budget'] is False
+    assert 'file_read_bytes' not in first['budgets']
+    assert first['budgets']['scope_asset_metadata_read_bytes'] > 0
     token = first['next_cursor']
     replay1 = query(e, limit=1, cursor=token)
     replay2 = query(e, limit=1, cursor=token)

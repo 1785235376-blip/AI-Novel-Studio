@@ -260,6 +260,10 @@ def _paged_usages(service, nid, scope, actor, aid, guard, *, graph, limit, curso
     result.update(limit=limit, truncated=False, has_more=more, next_cursor=None,
         observed_count=observed, scanned_consumers=scanned_consumers,
         scanned_references=scanned_references, total=None if more else observed,
+        supported_sources=['graph', 'timeline'],
+        selected_sources=['graph' if name == 'CREATIVE_GRAPH' else 'timeline' for name, _ in owners],
+        excluded_graph_schemas=[6, 7],
+        total_scope='VISIBLE_SELECTED_SAVED_DIRECT_ASSET_REFERENCES',
         consistency='VISIBLE_SELECTED_DOUBLE_OBSERVATION',
         consistency_limits={'transient_changes_detected': False, 'strong_aba': False,
                             'durable_snapshot': False, 'token_ttl_seconds': TOKEN_TTL},
@@ -267,8 +271,9 @@ def _paged_usages(service, nid, scope, actor, aid, guard, *, graph, limit, curso
                  'validation_references_per_consumer': MAX_VALIDATION_REFERENCES,
                  'response_bytes': MAX_RESPONSE_BYTES, 'directory_entries_per_collection': MAX_DIRECTORY_ROWS,
                  'scope_document_bytes': UsageReadBudget.MAX_SCOPE_BYTES,
-                 'file_read_bytes': UsageReadBudget.MAX_READ_BYTES,
-                 'file_reads': UsageReadBudget.MAX_READS,
+                 'scope_asset_metadata_read_bytes': UsageReadBudget.MAX_READ_BYTES,
+                 'scope_asset_metadata_reads': UsageReadBudget.MAX_READS,
+                 'authority_reads_in_budget': False,
                  'storage_read_mode': 'BOUNDED_WHOLE_DOCUMENT'})
     if more:
         result['next_cursor'] = _issue({'binding': binding, 'fingerprint': fingerprint,
