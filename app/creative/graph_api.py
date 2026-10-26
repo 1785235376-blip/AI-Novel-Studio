@@ -184,6 +184,10 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
                     request, target=("list",), inspection_host=True)
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
+            except (AttributeError, RecursionError):
+                if not request.scope.get('query_string'):
+                    raise
+                raise HTTPException(409, {"code": "STUDIO_GRAPH_USAGE_UNAVAILABLE"}) from None
 
     @router.get("/novels/{nid}/experimental/production/assets/{aid}/studio-asset-usages")
     def saved_asset_usages(nid: str, aid: str, request: Request,
@@ -243,7 +247,8 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
             contexts.enter_context(usage_read_budget())
             try:
                 return invoke(nid, x_session_token, x_branch_id, 'domain.read', admitted)
-            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
+            except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError,
+                    UsageBudgetError, AttributeError, RecursionError):
                 raise HTTPException(409, {'code': 'STUDIO_ASSET_USAGE_UNAVAILABLE'}) from None
             except HTTPException as exc:
                 if exc.status_code in {404, 409, 422}:

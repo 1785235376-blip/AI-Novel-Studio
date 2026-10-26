@@ -524,6 +524,10 @@ def create_production_execution_router(service, invoke, *, require_host_session,
                     observe)
             except (ValueError, TypeError, KeyError, FileNotFoundError, PermissionError, UsageBudgetError):
                 raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
+            except (AttributeError, RecursionError):
+                if not request.scope.get('query_string'):
+                    raise
+                raise HTTPException(409, {"code": "STUDIO_TIMELINE_USAGE_UNAVAILABLE"}) from None
 
     @router.post("/projects/{nid}/studio/production/canvas-video/preview")
     def canvas_video_preview(nid: str, request: Request, body: CanvasVideoCommand,
