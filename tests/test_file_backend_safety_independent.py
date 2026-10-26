@@ -190,6 +190,64 @@ def test_selected_source_proofs_ignore_unselected_collection_with_guarded_reads(
         assert budget.reads >= 1
 
 
+@pytest.fixture
+def export_owner(tmp_path, monkeypatch):
+    from app.services.export_job_service import ExportJobService
+    monkeypatch.setattr(ExportJobService, "_submit", lambda *args: pytest.fail("synthetic export must not execute"))
+    owner = ExportJobService(tmp_path, lambda *args: pytest.fail("synthetic export must not execute"))
+    owner._write({f"job-{i:03}": {"id": f"job-{i:03}", "novel_id": NID,
+        "format": "txt", "status": "queued", "created_at": f"{i:05}",
+        "permission_context": {"mode": "local", "novel_id": NID},
+        "snapshot": {"synthetic": i}} for i in range(101)})
+    yield owner
+    owner._pool.shutdown(wait=True)
+
+
+def test_export_guarded_selected_window_ignores_foreign_actor_and_hidden_tail(export_owner):
+    owner = export_owner
+    with usage_read_budget(), coordination.existing_coordination_only():
+        initial = owner.local_task_observation(NID)
+    assert len(initial["rows"]) == 100 and initial["source_more"]
+    content = owner._read()
+    content["job-000"]["snapshot"]["synthetic"] = "hidden tail update"
+    content["foreign"] = {**deepcopy(content["job-100"]), "id": "foreign",
+                          "permission_context": {"mode": "local", "novel_id": NID, "actor_id": "other"}}
+    owner._write(content)
+    with usage_read_budget() as budget, coordination.existing_coordination_only():
+        assert owner.local_task_observation(NID) == initial
+        assert budget.reads > 0
+
+
+def test_export_guarded_failure_is_not_empty_success_and_original_writer_recovers(export_owner):
+    owner = export_owner
+    before = disk_snapshot(owner.path.parent)
+    with pytest.raises(UsageBudgetError):
+        with usage_read_budget() as budget, coordination.existing_coordination_only():
+            budget.MAX_READ_BYTES = 1
+            owner.local_task_observation(NID)
+    assert disk_snapshot(owner.path.parent) == before
+    assert current_usage_budget() is None and not coordination.strict_coordination_active()
+    content = owner._read()
+    content["job-100"]["snapshot"]["synthetic"] = "next committed version"
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pool.submit(owner._write, content).result(timeout=10)
+    with usage_read_budget(), coordination.existing_coordination_only():
+        assert owner.local_task_observation(NID)["rows"]
+
+
+def test_export_equal_duplicate_metadata_is_rejected_under_budget(export_owner):
+    owner = export_owner
+    doc = json.loads(owner.path.read_text(encoding="utf-8"))
+    key = "_export_lifecycle_v1"
+    owner.path.write_text("{" + json.dumps(key) + ":" + json.dumps(doc[key]) + "," + json.dumps(doc)[1:], encoding="utf-8")
+    before = disk_snapshot(owner.path.parent)
+    with usage_read_budget() as budget, coordination.existing_coordination_only():
+        with pytest.raises(ValueError):
+            owner.local_task_observation(NID)
+        assert budget.reads > 0
+    assert disk_snapshot(owner.path.parent) == before
+
+
 @pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
 def test_strict_http_missing_original_lock_never_initializes_then_writer_recovers(usage_rig, prefix):
     e = usage_rig
