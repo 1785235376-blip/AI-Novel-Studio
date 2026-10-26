@@ -6,6 +6,7 @@ lease and AssetLibraryService mutation lease. This is index lifecycle coverage;
 the mounted-route authority and response checks live in the Studio query tests.
 """
 import hashlib
+from contextlib import closing
 import json
 import os
 from pathlib import Path
@@ -230,9 +231,9 @@ def test_in_place_source_edit_is_detected_without_directory_mtime_change(rig):
     path = rig.assets.root / (saved["id"] + ".json")
     directory_time = rig.assets.root.stat().st_mtime_ns
     previous_stat = path.stat()
-    text = path.read_text(encoding="utf-8")
-    assert '"before.png"' in text
-    path.write_text(text.replace('"before.png"', '"afters.png"'), encoding="utf-8")
+    content = path.read_bytes()
+    assert b'"before.png"' in content
+    path.write_bytes(content.replace(b'"before.png"', b'"afters.png"'))
     # Even a writer preserving mtime and file length changes ctime.
     os.utime(path, ns=(previous_stat.st_atime_ns, previous_stat.st_mtime_ns))
     assert path.stat().st_size == previous_stat.st_size
@@ -257,14 +258,15 @@ def test_missing_corrupt_or_incompatible_index_rebuilds_from_real_sources(rig, d
     elif damage == "invalid_sqlite":
         path.write_bytes(b"this is not a SQLite database")
     else:
-        with sqlite3.connect(path) as connection:
-            if damage == "filter_column":
-                connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
-            elif damage == "oversized_cell":
-                connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
-            else:
-                key = "format" if damage == "old_format" else "source_root"
-                connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
+        with closing(sqlite3.connect(path)) as connection:
+            with connection:
+                if damage == "filter_column":
+                    connection.execute("UPDATE sources SET filename_folded='hidden-by-corruption'")
+                elif damage == "oversized_cell":
+                    connection.execute("UPDATE sources SET payload=?", ("x" * (9 * 1024 * 1024),))
+                else:
+                    key = "format" if damage == "old_format" else "source_root"
+                    connection.execute("UPDATE metadata SET value=? WHERE key=?", ("incompatible", key))
     recovered = query_process(rig, keyword="needle")
     assert recovered["pid"] != original["pid"]
     assert recovered["build_metadata_reads"] == 1
