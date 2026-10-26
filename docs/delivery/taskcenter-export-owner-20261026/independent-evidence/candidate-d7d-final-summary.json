@@ -1,0 +1,45 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[False]",
+    "tests/test_export_owner_independent_process.py::test_original_export_create_serializes_independent_processes[True]",
+    "tests/test_export_owner_independent_process.py::test_private_metadata_never_changes_original_read_or_public_map",
+    "tests/test_export_owner_independent_process.py::test_legacy_file_remains_unbound_without_read_write_migration",
+    "tests/test_export_owner_independent_process.py::test_reserved_null_injection_rejected_without_business_write",
+    "tests/test_export_owner_independent_process.py::test_selected_row_aba_invalidates_but_unrelated_write_does_not",
+    "tests/test_export_owner_independent_process.py::test_before_atomic_write_failure_preserves_document_and_nonce",
+    "tests/test_export_owner_independent_process.py::test_original_commit_sigkill_matches_selected_nonce[before]",
+    "tests/test_export_owner_independent_process.py::test_original_commit_sigkill_matches_selected_nonce[after]",
+    "tests/test_export_owner_independent_process.py::test_original_startup_recovery_and_cancel_still_advance_selected_evidence",
+    "tests/test_export_owner_independent_process.py::test_malformed_lifecycle_observation_fails_closed_without_repair",
+    "tests/test_export_owner_independent_edgecases.py::test_json_distinct_selected_row_changes_nonce[True-1]",
+    "tests/test_export_owner_independent_edgecases.py::test_json_distinct_selected_row_changes_nonce[1-1.0]",
+    "tests/test_export_owner_independent_edgecases.py::test_internal_metadata_namespace_cannot_be_selected_as_a_job"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_owner_independent_process.py",
+    "tests/test_export_owner_independent_edgecases.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-export-independent-evidence/candidate-d7d-final.xml",
+    "--basetemp=/tmp/tmppjjkt3je/candidate-d7d-final/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmppjjkt3je/candidate-d7d-final/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-export-independent-final",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 14
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

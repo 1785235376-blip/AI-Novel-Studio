@@ -1,0 +1,34 @@
+{
+  "collected_nodeids": [
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[fresh]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[legacy]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[managed]",
+    "tests/test_export_owner_readonly.py::test_idle_startup_and_observation_need_no_writer_lock[corrupt]"
+  ],
+  "collection_errors": [],
+  "command": [
+    "/workspace/scratch/20a0022d2b33/studio-overnight/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_export_owner_readonly.py",
+    "-q",
+    "-p",
+    "taskcenter_evidence",
+    "--junitxml=/workspace/shared/taskcenter-export-owner-evidence/export-readonly.xml",
+    "--basetemp=/tmp/tmppk2ukv_9/export-readonly/pytest-tmp",
+    "-o",
+    "cache_dir=/tmp/tmppk2ukv_9/export-readonly/pytest-cache"
+  ],
+  "cwd": "/workspace/shared/taskcenter-export-owner-20261026",
+  "failed_reports": [],
+  "junit": {
+    "errors": [],
+    "failures": [],
+    "present": true,
+    "tests": 4
+  },
+  "loaded_module_evidence_present": true,
+  "outside_source_modules": [],
+  "returncode": 0,
+  "timed_out": false
+}

@@ -11,6 +11,10 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from contextlib import contextmanager
+from copy import deepcopy
+
+from ..repositories.file.mutation_coordinator import workspace_mutation
 
 from ..industry_export_formats import IndustryExportError
 from ..pdf_export import PDFExportError
@@ -114,12 +118,69 @@ class ExportJobService:
         # a permanently-running item in the local queue.
         self._recover_on_startup()
 
-    def _read(self) -> dict:
+    _LIFECYCLE = "_export_lifecycle_v1"
+
+    @contextmanager
+    def _mutation(self):
+        # The original queue owns serialization, including its existing workers.
+        # This is the shared File coordinator, not a TaskCenter/query authority.
+        with workspace_mutation(self.path.parent, "export-jobs"), self._lock:
+            yield
+
+    @staticmethod
+    def _nonce(value):
+        try:
+            return isinstance(value, str) and str(uuid.UUID(value)) == value and uuid.UUID(value).version == 4
+        except (ValueError, TypeError, AttributeError):
+            return False
+
+    def _validate_lifecycle(self, document):
+        if self._LIFECYCLE not in document:
+            return
+        meta = document[self._LIFECYCLE]
+        rows = {k for k in document if k != self._LIFECYCLE}
+        if (not isinstance(meta, dict) or set(meta) != {"schema_version", "incarnation", "rows"}
+                or type(meta["schema_version"]) is not int or meta["schema_version"] != 1
+                or not self._nonce(meta["incarnation"]) or not isinstance(meta["rows"], dict)
+                or set(meta["rows"]) != rows or not all(self._nonce(v) for v in meta["rows"].values())):
+            raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+
+    def _read_document(self) -> dict:
         try:
             value = json.loads(self.path.read_text(encoding="utf-8"))
-            return value if isinstance(value, dict) else {}
+            if not isinstance(value, dict):
+                return {}
+            self._validate_lifecycle(value)
+            return value
         except (FileNotFoundError, json.JSONDecodeError):
             return {}
+
+    def _read(self) -> dict:
+        # Existing consumers retain the exact top-level job-map contract.
+        return {k: v for k, v in self._read_document().items() if k != self._LIFECYCLE}
+
+    def binding_observation(self, job_ids):
+        """Private selected committed-row evidence, never an authorization grant.
+
+        No migration or provisioning occurs here. A caller still needs the
+        original actor/scope/per-record authorization and public projection.
+        """
+        if (type(job_ids) not in (list, tuple) or not 1 <= len(job_ids) <= 200
+                or any(type(jid) is not str or not jid or jid == self._LIFECYCLE for jid in job_ids)
+                or len(set(job_ids)) != len(job_ids)):
+            raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+        # atomic_write gives a single committed document; a read needs no
+        # writable coordinator directory or new lockfile.
+        with self._lock:
+            document = self._read_document()
+            meta = document.get(self._LIFECYCLE)
+            if not isinstance(meta, dict) or any(not isinstance(document.get(jid), dict) for jid in job_ids):
+                raise ValueError("EXPORT_BINDING_UNSUPPORTED")
+            return {"document_incarnation": meta["incarnation"],
+                    "rows": {jid: meta["rows"][jid] for jid in job_ids}}
+
+    def revalidate_binding(self, job_ids, observation):
+        return self.binding_observation(job_ids) == observation
 
     @classmethod
     def _is_idempotency_fresh(cls, item: dict) -> bool:
@@ -131,8 +192,31 @@ class ExportJobService:
         except (TypeError, ValueError):
             return False
 
+    @staticmethod
+    def _committed_row(row):
+        # Match the original JSON serializer's coercions (for example numeric
+        # object keys and tuples), then compare the committed JSON semantics.
+        return json.dumps(json.loads(json.dumps(row, ensure_ascii=False)),
+                          sort_keys=True, separators=(",", ":"))
+
     def _write(self, value: dict) -> None:
-        atomic_write(self.path, json.dumps(value, ensure_ascii=False, indent=2))
+        if not isinstance(value, dict) or self._LIFECYCLE in value:
+            raise ValueError("export lifecycle metadata is owner-managed")
+        with self._mutation():
+            fresh = not self.path.exists()
+            before = self._read_document()
+            old = before.get(self._LIFECYCLE)
+            result = deepcopy(value)
+            # Existing legacy/corrupt documents remain unbound on ordinary writes.
+            if old is not None or fresh:
+                meta = deepcopy(old) if old is not None else {
+                    "schema_version": 1, "incarnation": str(uuid.uuid4()), "rows": {}}
+                meta["rows"] = {jid: (meta["rows"][jid] if jid in before and self._committed_row(before[jid])
+                                      == self._committed_row(row)
+                                      else str(uuid.uuid4())) for jid, row in value.items()}
+                result[self._LIFECYCLE] = meta
+                self._validate_lifecycle(result)
+            atomic_write(self.path, json.dumps(result, ensure_ascii=False, indent=2))
 
     @staticmethod
     def _normalise_job(job: dict) -> dict:
@@ -178,9 +262,14 @@ class ExportJobService:
         interrupted export is safe and deterministic.  A job explicitly marked
         ``cancel_requested`` is finalised as cancelled instead.
         """
+        # A queue with no recoverable work remains usable in a read-only
+        # profile. Only a real recovery mutation needs the writer coordinator.
+        if not any(isinstance(raw, dict) and str(raw.get("status") or "").lower() in {"queued", "running"}
+                   for raw in self._read().values()):
+            return
         pending = []
         changed = False
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             for job_id, raw in list(jobs.items()):
                 if not isinstance(raw, dict):
@@ -225,7 +314,7 @@ class ExportJobService:
             future = self._pool.submit(self._run, job_id)
         except RuntimeError as exc:
             # A service being shut down should not leave a forever-queued job.
-            with self._lock:
+            with self._mutation():
                 jobs = self._read()
                 job = jobs.get(job_id)
                 if isinstance(job, dict) and str(job.get("status", "")).lower() == "queued":
@@ -238,7 +327,7 @@ class ExportJobService:
                     )
                     self._write(jobs)
             return
-        with self._lock:
+        with self._mutation():
             if future.done():
                 self._futures.pop(job_id, None)
             else:
@@ -258,7 +347,7 @@ class ExportJobService:
             raise ValueError("unsupported export format")
         fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
         fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
@@ -371,7 +460,7 @@ class ExportJobService:
         except (TypeError, ValueError):
             return False
         value = max(0, min(100, value))
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
             if not isinstance(job, dict) or str(job.get("status", "")).lower() in {"succeeded", "failed", "cancelled"}:
@@ -391,7 +480,7 @@ class ExportJobService:
 
     def cancel(self, job_id: str) -> dict:
         """Request cooperative cancellation and return the final queue record."""
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
             if not isinstance(job, dict):
@@ -588,7 +677,7 @@ class ExportJobService:
         }
 
     def _mark_cancelled_from_worker(self, job_id: str) -> None:
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
             if not isinstance(job, dict) or str(job.get("status", "")).lower() in {"succeeded", "failed", "cancelled"}:
@@ -632,17 +721,17 @@ class ExportJobService:
         return item
 
     def _run(self, job_id: str) -> None:
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
             if not isinstance(job, dict) or str(job.get("status") or "").lower() != "queued":
-                with self._lock:
+                with self._mutation():
                     self._futures.pop(job_id, None)
                     self._cancel_events.pop(job_id, None)
                 return
             cancel_event = self._cancel_events.setdefault(job_id, threading.Event())
             if cancel_event.is_set() or job.get("cancel_requested"):
-                with self._lock:
+                with self._mutation():
                     self._futures.pop(job_id, None)
                     self._cancel_events.pop(job_id, None)
                 return
@@ -673,7 +762,7 @@ class ExportJobService:
             self._mark_cancelled_from_worker(job_id)
             return
         except Exception as exc:
-            with self._lock:
+            with self._mutation():
                 current = self._read().get(job_id)
                 if isinstance(current, dict) and (cancel_event.is_set() or str(current.get("status", "")).lower() == "cancelled"):
                     self._mark_cancelled_from_worker(job_id)
@@ -682,7 +771,7 @@ class ExportJobService:
             if isinstance(exc, (IndustryExportError, PDFExportError)):
                 error.update(code=exc.code, details=exc.details)
             update = {"status": "failed", "result": None, "error": error, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
-        with self._lock:
+        with self._mutation():
             jobs = self._read()
             job = jobs.get(job_id)
             if job:
