@@ -1,3 +1,6 @@
-*.log -text
 *.json -text
-*.xml -text
+*.log -text -whitespace
+*.xml -text -whitespace
+*.txt -text -whitespace
+*.patch -text -whitespace
+owner-diagnostics/*.py -text

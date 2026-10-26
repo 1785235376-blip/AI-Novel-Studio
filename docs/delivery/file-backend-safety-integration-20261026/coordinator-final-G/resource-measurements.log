@@ -1,0 +1,9 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+RESOURCE_COSTS_JSON D:\PoemSeed\FSVG\resource-measurements\resource-costs-initialized-http.json
+FRESH_RESOURCE_COSTS_JSON D:\PoemSeed\FSVG\resource-measurements\resource-costs-fresh-process.json
+
+.RESOURCE_SCHEMA3_COSTS_JSON D:\PoemSeed\FSVG\resource-measurements\resource-costs-schema3-binary.json
+.RESOURCE_AUTHORITY_COSTS_JSON D:\PoemSeed\FSVG\resource-measurements\resource-costs-real-authority.json
+.COMBINED_WINDOWS_MEMORY_JSON D:\PoemSeed\FSVG\resource-measurements\combined-windows-memory.json
+.
+4 passed, 3 warnings in 37.98s

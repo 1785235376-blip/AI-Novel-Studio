@@ -1,0 +1,388 @@
+{
+  "status": "PARTIAL",
+  "source_freeze": {
+    "commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+    "tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef"
+  },
+  "A": {
+    "commit": "856d1ed3341fe0c24df1daff9a8bc1242c260e6c",
+    "tree": "d6c8057a0595d93eab6d3799787226faf660e834"
+  },
+  "B": {
+    "commit": "31b6cb56ba3d2fa08719cf917c2c75ee8f168c8f",
+    "tree": "fc6f7e5510313e0e334b07efaae99127a895d568"
+  },
+  "merge_base": "ffe1937911cff32d4ebd4770b350674627501d3a",
+  "merge_commit": "f6ae6c5fb2bda8b875bdbd1f32b5bafd18d9d070",
+  "groups_not_additive": [
+    {
+      "label": "asset-regressions",
+      "tests": 192,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 192,
+      "seconds": 168.7312998000125,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/asset-regressions.receipt.json"
+    },
+    {
+      "label": "resource-core",
+      "tests": 122,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 122,
+      "seconds": 18.218263399990974,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/resource-core.receipt.json"
+    },
+    {
+      "label": "taskcenter-lifecycle",
+      "tests": 386,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 386,
+      "seconds": 51.27784709999105,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/taskcenter-lifecycle.receipt.json"
+    },
+    {
+      "label": "export-consumers-corrected",
+      "tests": 101,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "passed": 99,
+      "seconds": 27.58119609998539,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/export-consumers-corrected.receipt.json"
+    },
+    {
+      "label": "windows-process",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 26,
+      "seconds": 32.98520410002675,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/windows-process.receipt.json"
+    },
+    {
+      "label": "asset-independent-existing",
+      "tests": 90,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 90,
+      "seconds": 129.63220459999866,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/asset-independent-existing.receipt.json"
+    },
+    {
+      "label": "resource-measurements",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 4,
+      "seconds": 39.573749800008954,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": false,
+      "receipt": "coordinator-final-G/resource-measurements.receipt.json"
+    },
+    {
+      "label": "original-scale-loopback",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 2,
+      "seconds": 221.5096629000036,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "diagnostic_stack_dump": true,
+      "receipt": "coordinator-final-G/original-scale-loopback.receipt.json"
+    },
+    {
+      "label": "new-independent",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 23,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "seconds": 11.121640682220459,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "receipt": "independent/final-G-d2445822/receipt.json"
+    },
+    {
+      "label": "combined-TCP-HTTP",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 4,
+      "source_commit": "d24458225be78f3cbe804b2e325a2f02c3e95568",
+      "source_tree": "f17fe2b160606c660bca6c0d400c21aff29b30ef",
+      "seconds": 221.44033319997834,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "source_unchanged": true,
+      "receipt": "http/final-G-d2445822/frozen-http-G.receipt.json"
+    }
+  ],
+  "measurement_observations": [
+    {
+      "file": "combined-windows-memory.json",
+      "phase": "initialized_first",
+      "read_calls": 389,
+      "actual_bytes": 250131,
+      "charged_bytes": 250131,
+      "elapsed_seconds": 0.8912920999864582,
+      "python_peak_bytes": 848394,
+      "sampled_working_set_peak_bytes": 239542272
+    },
+    {
+      "file": "combined-windows-memory.json",
+      "phase": "continuation",
+      "read_calls": 420,
+      "actual_bytes": 273730,
+      "charged_bytes": 273730,
+      "elapsed_seconds": 0.961489100009203,
+      "python_peak_bytes": 877816,
+      "sampled_working_set_peak_bytes": 240742400
+    },
+    {
+      "file": "combined-windows-memory.json",
+      "phase": "replay_continuation",
+      "read_calls": 420,
+      "actual_bytes": 273730,
+      "charged_bytes": 273730,
+      "elapsed_seconds": 0.9940789999964181,
+      "python_peak_bytes": 903563,
+      "sampled_working_set_peak_bytes": 241176576
+    },
+    {
+      "file": "combined-windows-memory.json",
+      "phase": "repeat_first",
+      "read_calls": 389,
+      "actual_bytes": 250131,
+      "charged_bytes": 250131,
+      "elapsed_seconds": 0.8845267000142485,
+      "python_peak_bytes": 841817,
+      "sampled_working_set_peak_bytes": 242257920
+    },
+    {
+      "file": "resource-costs-fresh-process.json",
+      "phase": "first_page",
+      "read_calls": 389,
+      "actual_bytes": 250033,
+      "charged_bytes": 250033,
+      "elapsed_seconds": 5.432797199988272,
+      "python_peak_bytes": 27995677,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-fresh-process.json",
+      "phase": "continuation_page",
+      "read_calls": 420,
+      "actual_bytes": 273622,
+      "charged_bytes": 273622,
+      "elapsed_seconds": 0.9263225000177044,
+      "python_peak_bytes": 641101,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-fresh-process.json",
+      "phase": "repeat_continuation_page",
+      "read_calls": 420,
+      "actual_bytes": 273622,
+      "charged_bytes": 273622,
+      "elapsed_seconds": 0.9263325999781955,
+      "python_peak_bytes": 448944,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-fresh-process.json",
+      "phase": "repeat_first_page",
+      "read_calls": 389,
+      "actual_bytes": 250033,
+      "charged_bytes": 250033,
+      "elapsed_seconds": 0.8517875999968965,
+      "python_peak_bytes": 453277,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-initialized-http.json",
+      "phase": "first_page",
+      "read_calls": 389,
+      "actual_bytes": 250033,
+      "charged_bytes": 250033,
+      "elapsed_seconds": 0.9005570999870542,
+      "python_peak_bytes": 515071,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-initialized-http.json",
+      "phase": "continuation_page",
+      "read_calls": 420,
+      "actual_bytes": 273622,
+      "charged_bytes": 273622,
+      "elapsed_seconds": 0.94135589999496,
+      "python_peak_bytes": 635927,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-initialized-http.json",
+      "phase": "repeat_continuation_page",
+      "read_calls": 420,
+      "actual_bytes": 273622,
+      "charged_bytes": 273622,
+      "elapsed_seconds": 0.9350493999954779,
+      "python_peak_bytes": 476729,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-initialized-http.json",
+      "phase": "repeat_first_page",
+      "read_calls": 389,
+      "actual_bytes": 250033,
+      "charged_bytes": 250033,
+      "elapsed_seconds": 0.8480600999901071,
+      "python_peak_bytes": 463079,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-real-authority.json",
+      "phase": "first_page",
+      "read_calls": 1931,
+      "actual_bytes": 3301579,
+      "charged_bytes": 3301579,
+      "elapsed_seconds": 3.4134487000119407,
+      "python_peak_bytes": 659650,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-real-authority.json",
+      "phase": "continuation_page",
+      "read_calls": 1931,
+      "actual_bytes": 3301579,
+      "charged_bytes": 3301579,
+      "elapsed_seconds": 3.3724992999923415,
+      "python_peak_bytes": 654583,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-real-authority.json",
+      "phase": "repeat_continuation_page",
+      "read_calls": 1931,
+      "actual_bytes": 3301579,
+      "charged_bytes": 3301579,
+      "elapsed_seconds": 3.3426168999867514,
+      "python_peak_bytes": 648247,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-real-authority.json",
+      "phase": "repeat_first_page",
+      "read_calls": 1931,
+      "actual_bytes": 3301579,
+      "charged_bytes": 3301579,
+      "elapsed_seconds": 3.3509359000017866,
+      "python_peak_bytes": 656679,
+      "sampled_working_set_peak_bytes": null
+    },
+    {
+      "file": "resource-costs-schema3-binary.json",
+      "phase": "first_page_schema3",
+      "read_calls": 251,
+      "actual_bytes": 133329,
+      "charged_bytes": 133329,
+      "elapsed_seconds": 0.5109097999811638,
+      "python_peak_bytes": 436892,
+      "sampled_working_set_peak_bytes": null
+    }
+  ],
+  "scale_observations": [
+    {
+      "phase": "first-read-warm-os-cache",
+      "pages": 6,
+      "read_calls": 11000,
+      "actual_bytes": 222835542,
+      "elapsed_seconds": 78.63635430001887,
+      "largest_page_actual_bytes": 48593156,
+      "largest_python_peak_bytes": 3919576,
+      "write_calls": 0
+    },
+    {
+      "phase": "repeat-read-warm-process",
+      "pages": 6,
+      "read_calls": 11000,
+      "actual_bytes": 222835542,
+      "elapsed_seconds": 79.1020025999751,
+      "largest_page_actual_bytes": 48593156,
+      "largest_python_peak_bytes": 3807548,
+      "write_calls": 0
+    }
+  ],
+  "http_audit": {
+    "get_count": 142,
+    "command_calls": 0,
+    "actual_write_calls": 2,
+    "business_write_calls": 0,
+    "coordinator_write_calls": 2,
+    "strict_write_calls": 0,
+    "strict_file_creations": 0,
+    "strict_directory_creations": 0
+  },
+  "remaining": [
+    "Known pre-existing Windows asset-list cursor 503 remains",
+    "Candidate F 37 asset-regression refusals remain unexplained and not reproduced; no repair is claimed",
+    "Positive collaboration Asset plus TaskCenter TCP in one Host configuration not covered",
+    "POSIX/PostgreSQL/browser/frontend/GPU/real-model/hosted-CI NOT_RUN",
+    "No hard RSS/CPU/lock-wait bounds, full-history ABA, cross-owner atomicity or persistent cross-worker cursor"
+  ]
+}

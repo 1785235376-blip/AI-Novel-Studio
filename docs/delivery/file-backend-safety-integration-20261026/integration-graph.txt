@@ -1,0 +1,93 @@
+* d2445822 test: read original File JSON explicitly as UTF-8 on Windows
+* 5cd59989 docs: archive independent frozen File TCP HTTP evidence
+* 39ad6315 docs: preserve raw pytest failure whitespace as evidence
+* eaf84971 docs: preserve independent frozen File safety acceptance evidence
+* 66e5c97c test: scope HTTP command audit and preserve raw receipts
+* 299a1237 test: cover combined File safety over original loopback HTTP
+* 575fb995 docs: freeze owner contracts for later published mixed-source work [skip ci]
+* 85fc3e0f docs: record exact inputs, executor gate and shallow-history rule [skip ci]
+* 1c07fa9c docs: archive Windows owner precursor verification [skip ci]
+* 43a0d432 test: cover Windows collaboration owner commit boundaries [skip ci]
+* dd1a70b5 docs: record integrated File coverage boundaries [skip ci]
+* 13a35592 test: load original resource measurement fixture dependencies [skip ci]
+* 097d0f9e test: preserve graph route public resource refusal code
+* d361caad test: avoid notifying terminated Windows event waiters [skip ci]
+* 136686a4 test: independently combine export observations with read guards
+* e92f033d test: add frozen integration receipts and Windows owner process probes [skip ci]
+* bc985bfc test: record frozen independent source and module provenance
+* ae1703e5 test: add independent File safety merge counterexamples
+*   f6ae6c5f Merge published File budgets and lifecycle owners [skip ci]
+|\  
+| * 31b6cb56 feat(taskcenter): publish verified File local exports single-source cursor
+| * 3e027e8b fix(exports): serialize original File writers and add private lifecycle observation
+| * 692c2c66 feat(taskcenter): publish verified narrow File collaboration cursor rebuild
+| * c2bb1d5e feat(taskcenter): deliver verified File local semantic-import cursor slice
+| * 63636958 docs(taskcenter): record M0 executor block and original-owner audit
+| * 1587b577 docs(taskcenter): archive partial delivery, independent review and actual CI blocker
+| * d227d3e0 ci(taskcenter): add isolated public-runner verification for this task branch
+| * 6017104a test(taskcenter): strengthen File counterexamples and document integration gaps
+| * 47dfea63 feat(taskcenter): add authority filters and explicit unsupported cursor boundary
+| * 35798e5a docs(taskcenter): record exact baseline and cloud execution blockers
+* 856d1ed3 docs: archive frozen resource guard receipts, costs and remaining limits [skip ci]
+* 18731bec test: freeze full-chain cost and real loopback resource acceptance [skip ci]
+* 257a0790 feat: add strict existing coordination and whole-request usage budgets [skip ci]
+* ce056588 feat: meter integrity content and prove native read admission [skip ci]
+* 96a7672d feat: charge original File authority readers to usage budgets [skip ci]
+* e32e2f13 feat: bound usage input chunks and JSON shape before decode [skip ci]
+* 0b03ec4c test: compare full HTTP actual bytes with fresh request budgets
+* 4ff1c9cb test: independently exercise authorized strict readonly query contract
+* 134995e4 test: add mounted growth replacement and invisible consumer probes
+* 67f2a366 docs: archive independent baseline receipts and explicit readonly gap
+* c56848cf test: derive cumulative token cap from first admitted document
+* 1a5366dc test: distinguish inspected JSON token sentinel from admitted decodes
+* 09d26255 test: retain first-read operational lock creation evidence
+* 59b2cdd0 test: add independent asset usage resource counterexamples
+* 739bf97a docs: freeze resource-guard baseline and existing Windows cursor failure [skip ci]
+* c6ec9529 docs: archive frozen usage paging receipts and honest coverage limits [skip ci]
+* 554de521 test: finalize source identity of synthetic usage fixtures [skip ci]
+* 6105fe9a test: assert precise original Host revocation error contract
+* 4e043be4 fix(studio): state precise pagination budget and coverage boundaries [skip ci]
+* 045c53b4 test: bind bootstrap fixture consistently across original authorities
+* 89ba679e test: use real launcher bootstrap for collaboration Host provenance
+* 5147031d fix(studio): fail closed on malformed paged usage records [skip ci]
+* 9b5da0ae test: retain original missing-incarnation route status semantics
+* 6b8234a4 feat(studio): page saved asset references through bounded original readers [skip ci]
+* b7ec2be3 test: prove filtered pagination progresses at hard scan ceiling
+* 780863c8 test: bind fresh-process usage driver into validation receipts [skip ci]
+* dec5e457 docs: archive baseline usage compatibility receipts and exploratory metrics [skip ci]
+* 793d02cf test: measure cold fresh process and warm mixed usage queries
+* 2afa10ae test: exercise cursor isolation through real collaboration grants
+* 53e8c24a test: add independent mixed owner and resource refusal counterexamples
+* bd071a60 test: assert per-page consumer reference response and read-only limits
+* 7646ec5b test: measure mixed Graph and Timeline pagination on both entries
+* ffcfd4a0 test: retain Graph save history and stale source observations
+* 818ccf31 test: isolate cursor ownership for equal graph and timeline IDs
+* ab4c82ac test: retain single Timeline thirty-reference compatibility
+* 4e3b99cd test: cover mixed sources timeline pagination and original graph capacity
+* 935810f5 test: use original supported graph move and title edits
+* 59a82c77 test: independently verify timeline multitrack pagination completeness
+* d02d2f3b test: add transparent File I/O meter and paged usage scale driver
+* d1c1177b test: cover invisible actor and original admission precedence
+* 2dd37a3f test: add independent adversarial asset usage pagination cases
+* 09e20427 test: archive asset usage validation with frozen source identity [skip ci]
+* 47cfeba6 test: add real File usage compatibility fixture and route checks
+* 8ea45399 docs: freeze verified Studio integration and frontend blockers [skip ci]
+* 89bcabf6 test: bind confirmed dual-canvas frontend and retain wire failure
+* e9061190 docs: retain source provenance without conversation quotations
+* 51014e08 test(assets): independently probe native Windows signature boundaries
+* 5489fafe test(assets): preserve recovery fixture bytes and close SQLite handles
+* 29d0bfcd fix(assets): use native Windows change time for query signatures
+* b9a2509e test: exercise Studio process restart through both API mounts
+* 2341958b docs: distinguish Creative storyboard and Studio production roots
+* 335a192a docs: bind pending frontend target and retain parent-only wire evidence
+* eab89105 docs: supersede wrong frontend target with provisional default UI mapping
+* 1aca572b test(asset): independently verify failed staging flush preserves index
+* a3b87092 test: close SQLite corruption fixture before atomic rebuild
+* b7ea991e fix: sync staged asset index with writable Windows handle
+* c9e44efc test: separate concurrent Studio validation storage roots
+* 331a463e test(studio): independently probe frozen storyboard production boundaries
+* 26d94794 test(studio): exercise durable storyboard production and configuration lifecycle
+* 13705484 test: verify original Studio HTTP assembly across process restart
+* f2c538b9 test: pin Studio frontend contracts and preserve compatibility blocker
+* caa7c1ce fix(studio): fence storyboard image queue admission at original owner
+* f2055564 test: isolate Studio File mock runs with Windows loopback support

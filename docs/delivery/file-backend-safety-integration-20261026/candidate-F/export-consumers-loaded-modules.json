@@ -1,0 +1,14 @@
+{
+  "pid": 107308,
+  "pytest_return_code": 4,
+  "modules": {
+    "app": {
+      "path": "D:\\PoemSeed\\Worktrees\\file-backend-safety-final-20261026\\app\\__init__.py",
+      "sha256": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e"
+    },
+    "app.config": {
+      "path": "D:\\PoemSeed\\Worktrees\\file-backend-safety-final-20261026\\app\\config.py",
+      "sha256": "fea26ebcccdf421b0b9e5b53c0150682b839556988d766ee0276025b6a669b32"
+    }
+  }
+}

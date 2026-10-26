@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="4.531" timestamp="2026-10-26T23:54:08.693325+08:00" hostname="冢"><testcase classname="tests.test_studio_asset_query_cursor" name="test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection" time="4.072"><failure message="AssertionError: {&quot;detail&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_CURSOR_UNAVAILABLE&quot;},&quot;code&quot;:&quot;ASSET_QUERY_CURSOR_UNAVAILABLE&quot;,&quot;message&quot;:&quot;ASSET_QUERY_CURSOR_UNAVAILABLE&quot;,&quot;details&quot;:{&quot;code&quot;:&quot;ASSET_QUERY_CURSOR_UNAVAILABLE&quot;},&quot;request_id&quot;:&quot;376e5fb3-e5d6-4371-abc2-93f37ab22226&quot;}&#10;assert 503 == 200&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">rig = namespace(client=&lt;starlette.testclient.TestClient object at 0x000001F015A88F10&gt;, nid='query-5b493be832584404af7173d726...ntial_vault_backend='memory', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001F0162F76D0&gt;
+
+    def test_stable_cursor_traversal_has_exact_visible_total_and_allowlisted_projection(rig, monkeypatch):
+        from app.experimental import api as experimental_api
+    
+        stamp = "2026-10-23T00:00:00+00:00"
+        selected = [rig.seed(f"Straße-{index}.png", stamp=stamp) for index in range(5)]
+        rig.seed("Straße-audio.wav", "audio", stamp=stamp)
+        rig.seed("different.png", stamp=stamp)
+        rig.seed("Straße-private.png", owner="another-actor", stamp=stamp)
+        rig.seed("Straße-deleted.png", deleted=True, stamp=stamp)
+        rig.seed("Straße-hidden.png", required_features=("asset_lineage_v2",), stamp=stamp)
+        rig.seed("Straße-other-project.png", project_id=rig.project(), stamp=stamp)
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", "narrative_production_v2")
+    
+        def full_projection_forbidden(*_args, **_kwargs):
+            raise AssertionError("metadata cursor invoked content/cross-owner projection")
+        monkeypatch.setattr(experimental_api.independent_workspace_service, "_view", full_projection_forbidden)
+        monkeypatch.setattr(rig.assets, "_verified_content", full_projection_forbidden)
+        query = {"q": " STRASSE ", "kind": "image", "limit": 2}
+        visited, token = [], None
+        for count in (2, 2, 1):
+            response = cursor_get(rig, {**query, **({"cursor": token} if token else {})})
+            page = response.json()
+&gt;           visited.extend(ids(response))
+                           ^^^^^^^^^^^^^
+
+tests\test_studio_asset_query_cursor.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+response = &lt;Response [503 Service Unavailable]&gt;
+
+    def ids(response):
+&gt;       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":{"code":"ASSET_QUERY_CURSOR_UNAVAILABLE"},"code":"ASSET_QUERY_CURSOR_UNAVAILABLE","message":"ASSET_QUERY_CURSOR_UNAVAILABLE","details":{"code":"ASSET_QUERY_CURSOR_UNAVAILABLE"},"request_id":"376e5fb3-e5d6-4371-abc2-93f37ab22226"}
+E       assert 503 == 200
+E        +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code
+
+tests\test_studio_asset_query.py:100: AssertionError</failure></testcase></testsuite></testsuites>

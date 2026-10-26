@@ -1,0 +1,4 @@
+STUDIO_BACKEND_TEST_MODE File/Mock; external network blocked; local loopback allowed
+........................................................................ [ 59%]
+..................................................                       [100%]
+122 passed, 3 warnings in 17.58s
