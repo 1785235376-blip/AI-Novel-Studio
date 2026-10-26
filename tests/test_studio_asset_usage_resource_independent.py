@@ -6,6 +6,7 @@ authorization decision, never depend on timing sleeps, and never invoke models.
 from copy import deepcopy
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -315,4 +316,94 @@ def test_independent_compat_first_lock_creation_remains_explicit(usage_rig, monk
     assert meter.write_opens > 0 and body["items"]
     assert set(mutation_coordinator._locks) == locks_before
     assert len(asset_usage_paging._tokens) == 1
+
+
+def install_mutation_observer(patch, root):
+    """Observe attempts as well as persistent differences under the fixture."""
+    attempts = []
+    def contained(path):
+        try:
+            return Path(path).resolve().is_relative_to(root.resolve())
+        except (TypeError, OSError, ValueError):
+            return False
+    for name in ("mkdir", "unlink", "rmdir", "rename", "replace", "write_bytes", "write_text"):
+        original = getattr(Path, name)
+        def observed(path, *args, _name=name, _original=original, **kwargs):
+            if contained(path):
+                attempts.append(_name)
+            return _original(path, *args, **kwargs)
+        patch.setattr(Path, name, observed)
+    original_open = os.open
+    def opened(path, flags, *args, **kwargs):
+        if contained(path) and flags & (os.O_CREAT | os.O_TRUNC):
+            attempts.append("os.open-create-or-truncate")
+        return original_open(path, flags, *args, **kwargs)
+    patch.setattr(os, "open", opened)
+    return attempts
+
+
+@pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+def test_independent_strict_initialized_query_replay_and_final_page_have_no_mutations(usage_rig, monkeypatch, prefix):
+    from app.creative import asset_usage_paging
+    from app.repositories.file import mutation_coordinator
+    e = usage_rig
+    graph_create(e, 2)
+    monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+    before = complete_snapshot(e.rig.root)
+    registry_before = dict(mutation_coordinator._locks)
+    meter = ReadMeter(e.rig.root)
+    with monkeypatch.context() as patch:
+        meter.install(patch)
+        attempts = install_mutation_observer(patch, e.rig.root)
+        first = page(query(e, {"limit": 1, "strict_read_only": "true"}, owner="asset", prefix=prefix))
+        params = {"limit": 1, "strict_read_only": "true", "cursor": first["next_cursor"]}
+        second = page(query(e, params, owner="asset", prefix=prefix))
+        replay = page(query(e, params, owner="asset", prefix=prefix))
+    assert first["has_more"] and second["total"] == 2 and not second["has_more"]
+    assert second["items"] == replay["items"] and second["items"] != first["items"]
+    assert attempts == [] and meter.write_calls == 0
+    assert complete_snapshot(e.rig.root) == before
+    assert mutation_coordinator._locks == registry_before
+    assert len(asset_usage_paging._tokens) == 1, "only the first delivered cursor should be issued"
+
+
+@pytest.mark.parametrize("missing", ["lock_file", "registry"])
+def test_independent_strict_missing_original_facility_refuses_without_initialization(usage_rig, monkeypatch, missing):
+    from app.creative import asset_usage_paging
+    from app.repositories.file import mutation_coordinator
+    e = usage_rig
+    graph_create(e, 2)
+    if missing == "lock_file":
+        lockdir = e.rig.root / ".workspace-mutation-locks"
+        for lock in lockdir.iterdir():
+            assert lock.suffix == ".lock"
+            lock.unlink()
+        lockdir.rmdir()
+    else:
+        monkeypatch.setattr(mutation_coordinator, "_locks", {
+            key: value for key, value in mutation_coordinator._locks.items()
+            if key[0] != str(e.rig.root.resolve())})
+    monkeypatch.setattr(asset_usage_paging, "_tokens", {})
+    before = complete_snapshot(e.rig.root)
+    registry_before = dict(mutation_coordinator._locks)
+    meter = ReadMeter(e.rig.root)
+    with monkeypatch.context() as patch:
+        meter.install(patch)
+        attempts = install_mutation_observer(patch, e.rig.root)
+        response = query(e, {"limit": 1, "strict_read_only": "true"}, owner="asset")
+    refused(response, e)
+    assert response.json()["code"] == "STUDIO_USAGE_STRICT_READ_ONLY_UNAVAILABLE", response.text
+    assert attempts == [] and meter.write_calls == 0
+    assert complete_snapshot(e.rig.root) == before
+    assert mutation_coordinator._locks == registry_before and asset_usage_paging._tokens == {}
+
+
+def test_independent_strict_retains_original_host_denial_before_query_details(usage_rig):
+    e = usage_rig
+    before = complete_snapshot(e.rig.root)
+    response = query(e, {"limit": 0, "cursor": "bad", "strict_read_only": "true"},
+                     owner="asset", headers={})
+    assert response.status_code == 401 and response.json()["code"] == "SESSION_REQUIRED"
+    assert "items" not in response.json()
+    assert complete_snapshot(e.rig.root) == before
 
