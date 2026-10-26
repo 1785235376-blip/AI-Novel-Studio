@@ -1,6 +1,9 @@
-"""Wire-level checks against the reviewed 048c5ebb frontend contract.
+"""Wire checks against provisional friendlier-default frontend 34eb95c7.
 
 Real mounted File/HTTP routes and original owners, with no provider execution.
+User rejected the earlier 048c5ebb target; its evidence remains historical.
+34eb95c7 contains the default tasks drawer and is a provisional target, not
+user-confirmed acceptance. Its Production client blob is identical to 048c5ebb.
 This is not browser acceptance. The strict xfail records a real, unresolved
 frontend command-validator incompatibility; it must not be counted as a pass.
 """
@@ -19,7 +22,9 @@ from test_studio_workspace_identity_history_contract import (
 
 
 pytestmark = pytest.mark.file_backend_only
-FRONTEND_SHA = "048c5ebb3cedb138dcef15bbfc5e9f4be8c92760"
+FRONTEND_SHA = "34eb95c7f247e90168b27f96e33e6feacd80fc8d"
+FRONTEND_TARGET_STATUS = "PROVISIONAL_DEFAULT_UW_PORT"
+SUPERSEDED_FRONTEND_SHA = "048c5ebb3cedb138dcef15bbfc5e9f4be8c92760"
 # studioProductionClient.ts:426, job() strict command-key validator at that SHA.
 # Keep this snapshot distinct from the newer backend branch's frontend sources.
 FRONTEND_COMMAND_KEYS = frozenset((
@@ -157,7 +162,7 @@ def test_original_backend_retains_formal_node_provenance(resume_source):
     assert row["status"] == "QUEUED" and row["output_candidate"] is None
 
 
-@pytest.mark.xfail(strict=True, reason="FRONTEND_OWNER_REQUIRED: 048c5ebb job command allowlist rejects canvas_image_node provenance")
+@pytest.mark.xfail(strict=True, reason="PROVISIONAL_FRONTEND_BLOCKED: 34eb95c7 job command allowlist rejects canvas_image_node provenance")
 def test_selected_frontend_admits_formal_image_node_job_command(resume_source):
     e = resume_source
     row = formal_image_job_wire(e)

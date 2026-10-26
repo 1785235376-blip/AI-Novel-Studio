@@ -1,25 +1,38 @@
 # Studio frontend/backend alignment, 2026-10-26
 
-Status: **PARTIAL; FRONTEND_BLOCKED for formal image-node job consumption**.
-This report establishes source provenance and mounted File/HTTP contracts. It
-does not assert browser, PostgreSQL, external-model, GPU, or product acceptance.
+Status: **TARGET PROVISIONAL; PARTIAL; no frontend acceptance claim**.
+The user explicitly rejected the initially selected `048c5ebb` frontend:
+"你使用的前端是错误的，bot做了个新的，更友好的". All earlier claims that
+`048c5ebb` was the intended frontend are superseded; original evidence is retained.
+The stronger candidate is the newer default-shell integration `34eb95c7` below,
+supported by actual default entry code and the coordinator's read-only recovery
+of the earlier bot handoff referring to ancestor `f7174b6b`. Exact user target
+confirmation remains pending. This report does not assert browser, PostgreSQL,
+external-model, GPU, or product acceptance.
 
 ## Fixed sources and ownership
 
 - Backend baseline: `ffe1937911cff32d4ebd4770b350674627501d3a`.
-- Selected remote frontend: `origin/work/hermia-default-ui-i18n-20261025`,
-  `048c5ebb3cedb138dcef15bbfc5e9f4be8c92760`, commit time
-  `2026-10-26 10:14:00 +0800`.
-- The selected ref contains `work/hermia-fe-contracts-20261025` at
+- Provisional remote frontend: `origin/work/hermia-default-uw-port-20261025`,
+  `34eb95c7f247e90168b27f96e33e6feacd80fc8d`, commit time
+  `2026-10-26 10:14:02 +0800`; includes `f7174b6b` identity-pending/default
+  drawer work and `2ed4c99c` follow-up fixes. This is a separate branch from
+  `work/hermia-default-ui-i18n-20261025`, whose `048c5ebb` target was rejected.
+- The candidate ref contains `work/hermia-fe-contracts-20261025` at
   `3e72db70f6270e4f27d21647b229e6cf0d2c1b32` and
   `work/hermia-loop-u4-20261025` at
   `a0a56101a58ebdd210b996402b617d09b13b2d6e`: each pair's `git merge-base`
-  equals the corresponding older head. Selection is from fetched relevant
-  frontend refs and actual source, not `main` or frontend files in the backend
-  checkout. Remote ref inventory was supplied by the coordinating unit.
-- Selected frontend `studioProductionClient.ts` Git blob:
+  equals the corresponding older head. Its merge-base with `048c5ebb` is
+  `73819989d1c7764cd78ffb279afa954d98a37af8`; timestamp alone is insufficient
+  to choose the user-facing target. Both candidate refs were fetched read-only;
+  no branch checkout/reset or frontend merge occurred.
+- Candidate frontend `studioProductionClient.ts` Git blob:
   `1d4036653297a0379faabc56ebcfbbf66c392068`; backend baseline's different
   frontend client blob: `660d1b2921cab32a073d2d32281649abdef21671`.
+  The candidate's Production client is byte-identical to the old `048c5ebb`
+  client. Both Storyboard client blobs are also identical:
+  `132d234b40cab1950ebb2baae74f28c7ea3e199a`. This preserves the specific wire
+  findings, not the superseded target-selection or UI-acceptance claims.
 - Read first: repository `AGENTS.md`,
   `docs/delivery/HERMIA_CAPABILITY_LEDGER_20261022.md`, selected frontend
   `docs/delivery/INTERFACE_COVERAGE.md` and
@@ -33,13 +46,16 @@ does not assert browser, PostgreSQL, external-model, GPU, or product acceptance.
   cursor/collaboration, audio history owner, permissions, model runtime,
   dependencies, or protected checkout was modified.
 
-## Actual selected frontend callers and wire contracts
+## Actual provisional frontend callers and wire contracts
 
-All frontend paths in this table are under `frontend/src` at `048c5ebb`.
+All frontend paths in this table are under `frontend/src` at `34eb95c7`.
 `studio` means `/api/projects/{projectId}/studio`.
 
 | Consumer / source | Request and response contract | Backend owner / boundary |
 | --- | --- | --- |
+| `App.tsx:191-192,2162`, `workspace/defaultui/DefaultTasksDrawer.tsx:32-37` | Default entry stays `LegacyApp` and mounts the new tasks/results/history drawer; `?uw=1` remains an opt-in alternate. Drawer constructs clients only for a real actor and complete collaboration scope | User-facing default integration, not proof that local placeholder identities may access collaboration; no identity means no reads |
+| `workspace/tasks/useLiveTasks.ts:31` | Actual default-drawer feed calls TaskCenter `readTasks` plus Production `list` and `get`; uses original session/branch headers and retires late-response leases | Existing read routes; Production pagination SDK is not used by this feed |
+| `workspace/integration/useUnifiedLoop.ts:20,40-42` | Result target exists only when selected command has `canvas_return`; asset reads call `sc.assets(false)`, history/restore use existing `graphs.canvasViews` | No new execution owner. No target capsule means the drawer shows a gap rather than inventing an adoption target |
 | `creative/useStoryboardProductionController.ts:160`, `creative/studioStoryboardClient.ts:23` | POST `studio/documents/{id}/shots/{shot}/image-request`; `expected_version`, `shot_version`, `shot_digest`, explicit operation/provider/model/request ID/parameters; response command must retain the selected shot pin | Original Storyboard service; produces reviewed input, not an executed job |
 | `creative/studioProductionClient.ts` `preview/create` | POST `studio/production/preview` with command; POST `/jobs` with command and `reviewed_preview_digest`; create uses original request ID as idempotency key | Original Production owner and ImageJobService; preview does not dispatch |
 | Same client's `get/execute/refresh/cancel/reconcile/review/candidate` | `GET /jobs/{owner}/{id}`; actions POST exact `expected_version` and `expected_request_digest`; review adds `reviewed_output_digest`; candidate reads bytes from `/candidate` | Original job lifecycle; candidate is not a reviewed asset; later manual review and Storyboard binding remain separate |
@@ -66,9 +82,9 @@ query returns 422 with `EXPERIMENTAL_INVALID` /
 `STUDIO_PRODUCTION_QUERY_INVALID`, without echoing private input. Stale Canvas
 restore returns 409 and does not overwrite current content.
 
-## P1 frontend incompatibility: formal image-node provenance
+## P1 provisional-frontend incompatibility: formal image-node provenance
 
-At selected frontend `creative/studioProductionClient.ts:376`, `job()` parses all
+At provisional frontend `creative/studioProductionClient.ts:376`, `job()` parses all
 Production list, get and action responses. Its exact command-key allowlist at
 line **426** excludes `canvas_image_node`. The fixed backend legitimately emits
 this field for formal image-node jobs, binding project incarnation, canvas and
@@ -81,7 +97,8 @@ preview/create/get, then applies the source-reviewed frozen allowlist. Its
 failure is:
 
 ```text
-AssertionError: Frontend 048c5ebb3cedb138dcef15bbfc5e9f4be8c92760 rejects original backend command fields: ['canvas_image_node']
+Historical 048c5ebb probe: rejects original backend command fields: ['canvas_image_node']
+34eb95c7 has the identical validator blob; provisional-target probe uses that SHA.
 ```
 
 This probe is a wire-contract reproduction, not execution of the complete
@@ -99,6 +116,10 @@ frontend tree wholesale. Re-run actual selected-client and browser tests after
 the owner integrates the port. This backend-only unit cannot close that work.
 
 ## Executed verification and retained failures
+
+The following initial run numbers belong to the superseded `048c5ebb` target.
+They retain backend HTTP regression value, but do not prove acceptance of the
+user's intended new frontend. See the subsequent provisional-target rerun below.
 
 The coordinating unit reported M0 PASS before this unit ran tests. Its isolated
 runner was copied temporarily, untracked, without installation. It configures
@@ -132,3 +153,20 @@ preview/create requests; this was not a backend repair or hidden product failure
 GraphFlow `gf_read` was used before exploration. The configured server exposes
 `gf_read/gf_exec/gf_edit/gf_macro`, not the instructed old
 `graphflow_context/plan/index`; no old-name index success is claimed.
+
+### Provisional target correction verification
+
+After fetching and inspecting `34eb95c7`, the frozen test contract was relabeled
+with that SHA and `PROVISIONAL_DEFAULT_UW_PORT`. Its former `048c5ebb` SHA is
+explicitly retained as superseded. The inspected Production/Storyboard client
+blobs are identical across these refs, while default App and drawer consumers
+are different as mapped above. No frontend file was modified or merged.
+
+Rerun with a fresh per-invocation settings/data root:
+`10 passed, 1 xfailed, 3 warnings in 8.65s`.
+Evidence: `.runtime/frontend-provisional-34eb95c7.log` and
+`.runtime/frontend-provisional-34eb95c7-results.xml`.
+The expected failure remains a **provisional frontend blocker**, not product
+PASS. This is a backend wire regression run against source-reviewed constraints;
+the complete TypeScript parser, default drawer UI and browser were not executed.
+It does not finalize the user's target selection.
