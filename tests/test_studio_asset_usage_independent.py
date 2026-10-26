@@ -104,6 +104,30 @@ def test_independent_unselected_timeline_changes_do_not_invalidate_graph_page(us
     assert second["items"][0]["node_id"] != first["items"][0]["node_id"]
 
 
+def test_independent_other_actor_graph_is_not_a_cursor_or_count_oracle(usage_rig):
+    e = usage_rig
+    graph_create(e, 3)
+    first = page(query(e, {"limit": 1}))
+    # Fixture data use the original owner create path; no permission method is
+    # mocked. This row is deliberately owned by a different actor.
+    private = e.graph.create(e.rig.nid, e.rig.scope, "another-actor", {
+        "request_id": "private-create", "definition": {"title": "PRIVATE-TITLE-NOT-EXPOSED", "nodes": []}})
+    second_response = query(e, {"limit": 1, "cursor": first["next_cursor"]})
+    second = page(second_response)
+    assert private["id"] not in second_response.text and "PRIVATE-TITLE" not in second_response.text
+    last = page(query(e, {"limit": 1, "cursor": second["next_cursor"]}))
+    assert last["total"] == 3
+
+
+@pytest.mark.parametrize("prefix", ["/api", "/api/v1"])
+def test_independent_no_host_denial_precedes_bad_query_or_missing_asset(usage_rig, prefix):
+    e = usage_rig
+    for aid in (e.asset["id"], "missing-asset"):
+        response = query(e, {"limit": 0, "cursor": "x" * 10000}, headers={}, aid=aid, prefix=prefix)
+        assert response.status_code == 401, response.text
+        assert "items" not in response.json() and e.asset["id"] not in response.text
+
+
 @pytest.mark.parametrize("params", [
     [("limit", "1"), ("limit", "2")], [("limit", "1"), ("state", "CURRENT"), ("state", "STALE")],
     {"limit": "0"}, {"limit": "201"}, {"limit": "1", "unknown": "x"},
