@@ -1424,3 +1424,44 @@ MF2（头部）已修好；MF1 只修了 `call()` 一条路，**下载类接口 
 ### Hermia 的 2 个新失败（每个单独跑 5 次，分支 f7174b6b vs 基线 73819989）
 - ISI "admits a newly mounted owner…"：分支 1/5 失败，基线 0/5。整个文件稳定有 8 个失败。这条属于 ISI 文件内部的时序抖动，已经由 ISI 扣减覆盖，不阻塞，但建议跟踪。
 - u1.purge.host "left the list"：分支 0/5，基线 0/5。三次全量跑也都没有复现，判定为高负载下的偶发失败，不阻塞。
+
+## [VERA-FE] 第四轮前端独立复验 — uw-port @ 2ed4c99c（范围 f7174b6b..2ed4c99c）
+
+**结论：PASS**（上一轮的 MUST-FIX 全部关闭；新发现都是 P2/P3，留待下一阶段处理，不阻塞）。
+证据：`/workspace/hr/vera-compare/uwport-2ed4c99c/`（vite 4799 + 假后端 4698；8000/4299 在路由层拦截，guard=[]）。
+
+### 上轮 MUST-FIX 复现重放
+- P1 bootstrap 失败 → 联网 refetch：u-m5 恢复到第 3 章，写入的是 ch-003，**没有**被覆盖成 ch1（recover.log）。✅
+- P1 确认采用/恢复后焦点：落在抽屉标题 `dui-tasks-home`，Tab 留在抽屉内（focus.json）。✅（Shift+Tab 见 P2-1）
+- P1 App 层 gate 单测：逻辑已抽到 lastPosGate 并有单测，M4–M6 被杀；App.tsx 的接线仍无测试（见 P2-2）。✅（降为 P2）
+- P2 A→B：B 拿到 ch-001，A 的 ch3 没写进 B 的 key（ab.json）。A→B→A→B 往返：各自回到自己的记录，没有串写（nr.json aba）。✅
+- P2 英文抽屉中文：运行时残留从 17 行降到 5 行（列表态只剩 1 行，是用户数据的任务名「封面与分镜」）；静态统计三个面板含中文的行共 51 行，44 行已用 z() 包裹，未包裹 2 行（覆盖率约 94%）。只作观察项。
+- P3 加载态：2s/6s 显示 loading，10s 显示 timeout，12s bootstrap 成功后 15s 回到第 3 章，提示消失（nr.json late）。失败时显示 failed，联网恢复后提示消失（failRecover）。✅
+- Esc、关闭按钮、焦点归还给触发按钮、Tab/Shift+Tab 循环 25 次都留在抽屉内、抽屉滚动/max-height（a11y.log）、「仅本次会话」提示（单测 M7 被杀）：都正常。
+
+### 新发现（都留待下一阶段）
+- **P2-1** 焦点停在抽屉标题（确认采用/恢复之后）时按 Shift+Tab，焦点会跳出模态框，落到背后的「任务与结果」触发按钮上（focus.json restoreShiftTab inDrawer=false）。原因：trapTab 认为标题在抽屉内（inside=true），但标题不等于 first，所以没有 preventDefault。再按一次 Tab 会被 document 级拦截拉回来，Esc 也仍然有效，所以评为 P2。
+- **P2-2** App 层接线没有测试：M4b（App identityPending=false）、M4c（isError 传 false）、M7b（App 不渲染 lastPosStatus）都存活。
+- **P2-3** 会话已经成功之后，如果某次后台 bootstrap 重取失败（例如窗口重新聚焦时网络抖动），状态栏会在会话中途显示 failed；这期间手动点的章节（ch4）属主 key=null，联网恢复后也**永远不会被记住**，下次打开会回到 ch2（nr2.json bgFailClick4/bgRecovered）。没有串写，但「上次位置」会丢。
+- **P3-1** bootstrap 永久失败时不会自动打开任何章节，编辑器为空，需要手动点章（点了可以正常编辑，不写记忆）。行为安全，但首屏是空的。
+- **P3-2** 焦点在 body 时按 Esc 关闭抽屉，焦点落到「Expand sidebar」，没有回到触发按钮（抽屉内按 Esc 时是正常的）。
+- **P3-3** M2（写入时的 pending 判断）存活：被属主规则覆盖了，近似等价变异。M20（关闭后 document 监听器泄漏）存活：panel 为 null 时这个监听器不会拦截 Tab，危害很低。
+- 关闭抽屉后在页面其他地方按 Tab/Shift+Tab 不会被劫持（defaultPrevented=0）。
+
+### 变异（DefaultTasksDrawer / useLastChapter / lastPosGate 三个测试文件，共 21 个用例）
+被杀：M1 M3 M4 M5 M5b M6 M7 M8 M9 M10 M11 M12 M13 M14 M15 M16 M17 M18 M19 M21（20 个）；存活：M2 M4b M4c M7b M20（5 个）。详见 mutations.txt。
+
+### axe
+zh/en、basic/pro、1024/1366/1920 下只有 moderate 级的 heading-order 和 landmark-unique，与上一轮相同；没有 serious/critical。
+
+### 全量 gate（Node 22.14，三次独立运行）
+| 运行 | raw | ISI | adjusted |
+|---|---|---|---|
+| 1 | 293 | 8 | 293 |
+| 2 | 295 | 10 | 293 |
+| 3 | 295 | 10 | 293 |
+基线 298/297。(a) 三次中最好 293 ≤297 ✅；(b) 允许重跑一次 ≤297 ✅（三次都 ≤297）。三次都没有基线之外的非 ISI 失败。
+
+### Hermia 未确认点
+- LocalAiBrowserJourneyContracts：整个套件在文件加载阶段报 ENOENT（`tests/e2e/v2-local-ai-files-live.spec.ts` 不存在），与基线 persistent-node22.json 中的 `<file load>` 条目以及 m1flaky2 日志里的报错完全相同。**属于基线。**
+- esc.mjs 里 closebtn 超时：**是我的脚本问题，不是回归**。脚本用 /Tasks/ 选到的是页头的 rb-trigger 按钮，抽屉根本没有打开，所以抽屉里的关闭按钮不存在，click 一直等到超时。改用 `status-bar__action[aria-haspopup=dialog]` 重测后，关闭按钮能关闭抽屉，焦点也回到了触发按钮（nr.json keys.closeBtn）。
