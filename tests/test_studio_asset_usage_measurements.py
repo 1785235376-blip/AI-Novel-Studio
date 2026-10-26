@@ -70,6 +70,10 @@ def test_new_paged_usage_measurements(usage_rig, monkeypatch, scenario, entry):
             body = response.json()
             assert body['other_dependencies'] == 'UNKNOWN'
             assert len(body['items']) <= 100
+            assert len(response.content) <= 256 * 1024
+            assert body['scanned_consumers'] <= 16
+            assert body['scanned_references'] <= 256
+            assert metrics['write_calls'] == 0, metrics
             found.extend((x['owner'], x['id'], x.get('node_id', x.get('clip_id'))) for x in body['items'])
             pages.append({'page': page_number, 'returned': len(body['items']),
                 'response_bytes': len(response.content), 'scanned_consumers': body['scanned_consumers'],
