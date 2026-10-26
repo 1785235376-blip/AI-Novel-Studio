@@ -42,9 +42,12 @@ def create_creative_graph_router(service, invoke, *, require_host_session=None, 
         return any(protected_result(item) for item in value.get("items", []))
 
     def graph_invoke(nid, token, branch, permission, callback, request, *, model_input=False, target=None,
-                     inspection_host=False, local_input=False, local_cleanup=False):
+                     inspection_host=False, local_input=False, local_cleanup=False,
+                     requires_source_read=False):
         def source_read_required(actor, scope):
-            if local_input:
+            # Result association needs source authorization before an empty
+            # Canvas acquires its first origin, and throughout its commit.
+            if requires_source_read or local_input:
                 return True
             if target is None or target[0] == "list":
                 return False

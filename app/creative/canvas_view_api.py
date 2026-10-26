@@ -109,6 +109,7 @@ def create_canvas_view_router(service, invoke):
                 current()
                 return service.canvas_views.image_node_result(nid,scope,actor,vid,body,current)
             return invoke(nid,x_session_token,x_branch_id,'domain.read',read,request,target=(CANVAS_VIEWS,vid))
-        return invoke(nid,x_session_token,x_branch_id,'domain.write',write,request,target=(CANVAS_VIEWS,vid))
+        return invoke(nid,x_session_token,x_branch_id,'domain.write',write,request,
+            target=(CANVAS_VIEWS,vid),requires_source_read=True)
 
     return router
