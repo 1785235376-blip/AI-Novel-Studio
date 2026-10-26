@@ -141,7 +141,9 @@ def test_windows_terminate_at_atomic_replace_keeps_business_and_lifecycle_paired
                 reopened.join(10)
         print("WINDOWS_TERMINATE_PROCESS", kind, point, "paired_commit_and_reopen_passed")
     finally:
-        release.set()
+        # TerminateProcess can strand Event's condition waiter; notifying that
+        # dead waiter can block in multiprocessing itself. No release is needed
+        # because this probe always terminates the boundary worker.
         if child.is_alive():
             child.terminate()
             child.join(10)
