@@ -197,7 +197,7 @@ function RebuildCanvasSession({kind, scope, seed, label, onSelect, initialSelect
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto'}}>
+    <div data-rcv-wrap="" style={{display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'auto', alignSelf: 'stretch', flex: '1 1 auto', width: '100%', minWidth: 0}}>
     <div className="rcv" data-rebuild-canvas={kind} style={{backgroundPosition: `${vp.x}px ${vp.y}px`, backgroundSize: `${22 * vp.k}px ${22 * vp.k}px`}}>
       {label ? <span className="rcv-label">{label}</span> : null}
       <span className="rcv-local" title={badgeTitle ?? '还没有接到服务端画布图接口；切换作品或清浏览器数据会丢'}>{badge ?? '仅本机草稿 · 未同步服务端'}</span>
